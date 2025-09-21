@@ -890,7 +890,6 @@ public partial class PlayerCameraController : Node3D
 
 	public int motionBlurRequests;
 
-	private readonly float TimeBreakMotionBlurStrength = 4.0f;
 	private readonly float RotationMotionBlurStrength = 5.0f;
 	private readonly string OpacityParameter = "opacity";
 	private readonly string LinearVelocityParameter = "linear_velocity";
@@ -914,9 +913,7 @@ public partial class PlayerCameraController : Node3D
 	private Vector3 CalculateLinearVelocity()
 	{
 		Vector3 velocity = Camera.GlobalPosition - previousCameraPosition;
-		if (Player.Skills.IsTimeBreakActive)
-			return velocity * PhysicsManager.physicsDelta * TimeBreakMotionBlurStrength;
-
+		velocity *= Mathf.Abs(velocity.Normalized().Dot(Camera.Forward()));
 		return velocity * PhysicsManager.physicsDelta;
 	}
 
