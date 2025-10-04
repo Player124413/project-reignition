@@ -22,11 +22,14 @@ public partial class PathTraveller : Node3D
 	[Export] protected float MaxSpeed { get; private set; }
 	/// <summary> How fast to turn. </summary>
 	[Export] protected float TurnSpeed { get; private set; }
+	[Export] private float turnSmoothing = 20f;
 
 	/// <summary> Allow object to move vertically? </summary>
 	[Export] private bool isVerticalMovementDisabled;
 	public bool IsVerticalMovementDisabled => isVerticalMovementDisabled;
 
+	/// <summary> Should this PathTraveller automatically respawn the player after taking damage? </summary>
+	[Export] public bool AutoDefeat { get; private set; }
 	[Export] private float rotationAmount = 45;
 	[Export] private float tiltRatio = 1.0f;
 	[Export] private bool disableStepButtons;
@@ -54,6 +57,10 @@ public partial class PathTraveller : Node3D
 	/// <summary> Reference to the animator. </summary>
 	[Export] protected AnimationPlayer animator;
 
+	/// <summary> Should the player play the crouching animation? </summary>
+	public bool IsCrouching { get; protected set; }
+	private bool isSpeedBreaking;
+
 	/// <summary> How fast is the object currently moving? </summary>
 	public float CurrentSpeed { get; protected set; }
 	/// <summary> How much is the object currently turning? </summary>
@@ -70,7 +77,6 @@ public partial class PathTraveller : Node3D
 	/// <summary> At what distance should inputs start being smoothed? </summary>
 	private readonly float CollisionSmoothingDistance = 1f;
 	private readonly float SpeedSmoothing = 25f;
-	private readonly float TurnSmoothing = 20f;
 
 	protected PlayerController Player => StageSettings.Player;
 
@@ -152,6 +158,8 @@ public partial class PathTraveller : Node3D
 
 		ApplyMovement();
 		UpdateAnimation();
+
+		isSpeedBreaking = Player.Skills.IsSpeedBreakActive;
 	}
 
 	/// <summary> Check for walls. </summary>
@@ -176,6 +184,9 @@ public partial class PathTraveller : Node3D
 		if (IsVerticalMovementDisabled) // Ignore vertical input
 			inputVector.Y = 0;
 
+		if (isSpeedBreaking) // Reduce turning strength during speedbreak
+			inputVector *= 0.2f;
+
 		if (!disableStepButtons)
 		{
 			// Add step input influence
@@ -197,19 +208,33 @@ public partial class PathTraveller : Node3D
 		if (isSmoothingVertical)
 			inputVector.Y *= 1.0f - ((Mathf.Abs(PathFollower.VOffset) - VerticalTurnSmoothing) / (Bounds.Y - VerticalTurnSmoothing));
 
-		CurrentTurnAmount = CurrentTurnAmount.SmoothDamp(inputVector, ref turnVelocity, TurnSmoothing * PhysicsManager.physicsDelta);
+		CurrentTurnAmount = CurrentTurnAmount.SmoothDamp(inputVector, ref turnVelocity, turnSmoothing * PhysicsManager.physicsDelta);
 		Accelerate();
 	}
 
 	protected virtual void Accelerate()
 	{
-		CurrentSpeed = ExtensionMethods.SmoothDamp(CurrentSpeed, GetCurrentMaxSpeed, ref speedVelocity, SpeedSmoothing * PhysicsManager.physicsDelta);
+		if (isSpeedBreaking)
+		{
+			CurrentSpeed = GetCurrentMaxSpeed();
+			return;
+		}
+
+		CurrentSpeed = ExtensionMethods.SmoothDamp(CurrentSpeed, GetCurrentMaxSpeed(), ref speedVelocity, SpeedSmoothing * PhysicsManager.physicsDelta);
 	}
 
 	/// <summary> Override this if you want specific control over the PathFollower's speed. </summary>
-	protected virtual float GetCurrentMaxSpeed => MaxSpeed;
+	protected virtual float GetCurrentMaxSpeed()
+	{
+		if (isSpeedBreaking)
+			return Player.MoveSpeed;
+
+		return MaxSpeed;
+	}
 	/// <summary> Override this if you want specific control over the PathFollower's turning. </summary>
 	protected virtual float GetCurrentTurnSpeed => TurnSpeed;
+
+	public bool IsOverSpeeding() => CurrentSpeed / GetCurrentMaxSpeed() > 1.1f;
 
 	private void UpdateAnimation()
 	{
@@ -265,6 +290,7 @@ public partial class PathTraveller : Node3D
 		}
 
 		Player.StartPathTraveller(this);
+		isSpeedBreaking = Player.Skills.IsSpeedBreakActive;
 		EmitSignal(SignalName.Activated);
 	}
 

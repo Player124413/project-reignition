@@ -315,21 +315,23 @@ public partial class PlayerInputController : Node
 
 		if (controlMode == CameraSettingsResource.ControlModeEnum.Sidescrolling)
 		{
-			int rotationDirection = Mathf.Sign(ExtensionMethods.SignedDeltaAngleRad(XformAngle, baseAngle));
+			int rotationDirection = Mathf.Sign(ExtensionMethods.SignedDeltaAngleRad(baseAngle, XformAngle));
 			inputs = inputs.Rotated(rotationDirection * Mathf.Pi * .5f);
 		}
-
-		if (controlMode == CameraSettingsResource.ControlModeEnum.Reverse) // Transform inputs based on the control mode
-			inputs.X *= -1;
-
-		if (allowBackstep && SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.Autorun)) // Check for backstep
+		else if (controlMode == CameraSettingsResource.ControlModeEnum.Reverse)
 		{
-			if (controlMode == CameraSettingsResource.ControlModeEnum.Reverse) // Transform inputs based on the control mode
-				inputs.Y *= -1;
-
-			if (Player.IsMovingBackward)
-				baseAngle = Player.PathFollower.BackAngle;
+			// Transform inputs based on the control mode
+			inputs *= -1;
 		}
+		else if (controlMode == CameraSettingsResource.ControlModeEnum.Auto)
+		{
+			// Transform inputs based on camera angle
+			int sign = Mathf.Sign(ExtensionMethods.DotAngle(baseAngle, XformAngle));
+			inputs *= sign >= 0 ? 1 : -1;
+		}
+
+		if (Player.IsMovingBackward)
+			baseAngle = Player.PathFollower.BackAngle;
 
 		float strafeAngle = inputs.X * TurningDampingRange;
 		if (Player.IsMovingBackward)

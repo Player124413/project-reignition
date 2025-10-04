@@ -349,7 +349,7 @@ public partial class PlayerCameraController : Node3D
 
 	private void UpdateGameplayCamera()
 	{
-		UpdateInputCameraAngle();
+		UpdateLookaroundCameraAngle();
 		UpdateTransitionTimer();
 		UpdateLockonTarget();
 		UpdateCameraBlends();
@@ -370,7 +370,7 @@ public partial class PlayerCameraController : Node3D
 	private readonly float MaxLookaroundPitch = Mathf.Pi * 0.3f;
 	private readonly float MaxLookaroundYaw = Mathf.Pi * 0.1f;
 	private readonly float MaxInputCameraDistance = 2f;
-	private void UpdateInputCameraAngle()
+	private void UpdateLookaroundCameraAngle()
 	{
 		Vector2 targetRotation = targetRotation = Vector2.Zero;
 
@@ -387,6 +387,20 @@ public partial class PlayerCameraController : Node3D
 
 		cameraLookaroundRotation = cameraLookaroundRotation.SmoothDamp(targetRotation, ref cameraLookaroundVelocity, InputCameraSmoothing * PhysicsManager.physicsDelta);
 		inputCameraDistance = Mathf.SmoothStep(0f, 1f, Mathf.Max(cameraLookaroundRotation.Y / -MaxLookaroundPitch, 0f)) * MaxInputCameraDistance;
+	}
+
+	private Vector2 GetLookaroundCameraInput()
+	{
+		if (Player.Controller.CameraAxis.IsZeroApprox() || isFreeCamActive)
+			return Vector2.Zero;
+
+		if (StageSettings.Instance.IsControlTest && Player.IsLaunching)
+			return Vector2.Zero;
+
+		if (Mathf.Abs(Player.Controller.CameraAxis.X) > Mathf.Abs(Player.Controller.CameraAxis.Y))
+			return Vector2.Left * Player.Controller.CameraAxis.X * MaxLookaroundYaw;
+
+		return Vector2.Up * Player.Controller.CameraAxis.Y * MaxLookaroundPitch;
 	}
 
 	private void UpdateCameraBlends()
@@ -591,9 +605,11 @@ public partial class PlayerCameraController : Node3D
 		else
 			data = SimulateDynamicCamera(settings, ref data);
 
-		data.blendData.Fov = DefaultFov;
-		if (!Mathf.IsZeroApprox(settings.targetFOV))
+		if (!settings.copyFov && !Mathf.IsZeroApprox(settings.targetFOV))
 			data.blendData.Fov = settings.targetFOV;
+
+		if (Mathf.IsZeroApprox(data.blendData.Fov))
+			data.blendData.Fov = DefaultFov;
 
 		if (!data.blendData.WasInitialized)
 			data.blendData.WasInitialized = true;

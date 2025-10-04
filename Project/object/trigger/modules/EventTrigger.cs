@@ -16,6 +16,9 @@ public partial class EventTrigger : StageTriggerModule
 	[Signal] public delegate void EventFinishedEventHandler();
 	[Signal] public delegate void EventSkippedEventHandler();
 
+	[ExportToolButton("Sync Animations to Respawn State")]
+	private Callable SyncAnimationCallable => Callable.From(PlayRespawnAnimation);
+
 	/// <summary> Automatically reset the event when player respawns? </summary>
 	private bool autoRespawn;
 	/// <summary> Only allow event to play once? </summary>
@@ -44,11 +47,11 @@ public partial class EventTrigger : StageTriggerModule
 		Activate,
 		Deactivate,
 	}
-	[Export] private bool respawnToEnd = true;
+	[Export(PropertyHint.Range, "0,1")] private float respawnRatio = 1f;
 
 	private readonly string ResetAnimation = "RESET";
-	private readonly string EventAnimation = "event";
-	private readonly string DeactivateEventAnimation = "event-deactivate";
+	[Export] private string eventAnimation = "event";
+	[Export] private string deactivateEventAnimation = "event-deactivate";
 
 	[Export(PropertyHint.Range, "0.1,10,0.1,or_greater")] private float activationSpeedScale = 1f;
 	[Export(PropertyHint.Range, "0.1,10,0.1,or_greater")] private float deactivationSpeedScale = 1f;
@@ -161,7 +164,13 @@ public partial class EventTrigger : StageTriggerModule
 
 	public override void _Ready()
 	{
-		if (Engine.IsEditorHint()) return;
+		if (Engine.IsEditorHint())
+		{
+			if (!Mathf.IsEqualApprox(respawnRatio, 1f))
+				PlayRespawnAnimation();
+
+			return;
+		}
 
 		if (autoRespawn)
 			StageSettings.Instance.Respawned += Respawn;
@@ -185,32 +194,49 @@ public partial class EventTrigger : StageTriggerModule
 	public override void Respawn()
 	{
 		isActivated = false;
+		PlayRespawnAnimation();
 
 		switch (respawnAnimation)
 		{
 			case RespawnAnimation.Reset:
 				EmitSignal(SignalName.Respawned);
+				break;
+			case RespawnAnimation.Activate:
+				EmitSignal(SignalName.Activated);
+				break;
+			case RespawnAnimation.Deactivate:
+				EmitSignal(SignalName.Deactivated);
+				break;
+		}
+	}
+
+	private void PlayRespawnAnimation()
+	{
+		if (animator == null)
+			return;
+
+		switch (respawnAnimation)
+		{
+			case RespawnAnimation.Reset:
 				if (animator.HasAnimation(ResetAnimation))
 					animator.Play(ResetAnimation);
 				break;
 			case RespawnAnimation.Activate:
-				EmitSignal(SignalName.Activated);
-				if (animator.HasAnimation(EventAnimation))
-					animator.Play(EventAnimation);
+				if (animator.HasAnimation(eventAnimation))
+					animator.Play(eventAnimation);
 				break;
 			case RespawnAnimation.Deactivate:
-				EmitSignal(SignalName.Deactivated);
-				if (animator.HasAnimation(DeactivateEventAnimation))
-					animator.Play(DeactivateEventAnimation);
+				if (animator.HasAnimation(deactivateEventAnimation))
+					animator.Play(deactivateEventAnimation);
 				break;
 		}
 
 		if (string.IsNullOrEmpty(animator.CurrentAnimation))
 			return;
 
-		animator.Seek(respawnToEnd ? animator.CurrentAnimationLength : 0, true, true);
+		animator.Seek(animator.CurrentAnimationLength * respawnRatio, true, true);
 		animator.Advance(0);
-		if (!respawnToEnd)
+		if (!Mathf.IsEqualApprox(respawnRatio, 1f) || Engine.IsEditorHint())
 			animator.Stop(true);
 	}
 
@@ -219,7 +245,7 @@ public partial class EventTrigger : StageTriggerModule
 		if (isOneShot && isActivated) return;
 
 		Visible = true;
-		PlayAnimation(EventAnimation, activationSpeedScale);
+		PlayAnimation(eventAnimation, activationSpeedScale);
 		EmitSignal(SignalName.Activated);
 	}
 
@@ -227,7 +253,7 @@ public partial class EventTrigger : StageTriggerModule
 	{
 		if (isOneShot && !isActivated) return;
 
-		PlayAnimation(DeactivateEventAnimation, deactivationSpeedScale);
+		PlayAnimation(deactivateEventAnimation, deactivationSpeedScale);
 		EmitSignal(SignalName.Deactivated);
 	}
 

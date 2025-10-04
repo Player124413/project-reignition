@@ -685,6 +685,7 @@ public partial class PlayerController : CharacterBody3D
 	}
 
 	[Export] private PathTravellerState pathTravellerState;
+	public bool IsPathTravellerActive => pathTravellerState.Traveller != null;
 	public void StartPathTraveller(PathTraveller traveller)
 	{
 		pathTravellerState.Traveller = traveller;
@@ -835,6 +836,8 @@ public partial class PlayerController : CharacterBody3D
 		driftState.Trigger = trigger;
 		StateMachine.ChangeState(driftState);
 	}
+
+	public bool IsDriftTriggerEqualTo(DriftTrigger trigger) => driftState.Trigger == trigger;
 
 	[Export] private IvyState ivyState;
 	public void StartIvy(Ivy trigger)
@@ -1256,6 +1259,7 @@ public partial class PlayerController : CharacterBody3D
 
 	public void Deactivate()
 	{
+		Engine.TimeScale = 1f;
 		if (Skills.IsUsingBreakSkills)
 			Skills.CancelBreakSkills();
 
