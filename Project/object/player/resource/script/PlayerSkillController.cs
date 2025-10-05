@@ -343,7 +343,7 @@ public partial class PlayerSkillController : Node3D
 
 				bool disablingSpeedBreak = (SaveManager.Config.useHoldBreakMode && !Input.IsActionPressed("button_speedbreak")) ||
 					(!SaveManager.Config.useHoldBreakMode && Input.IsActionJustPressed("button_speedbreak"));
-				if (IsSoulGaugeEmpty || disablingSpeedBreak)// Check whether we should cancel speed break
+				if (IsSoulGaugeEmpty || disablingSpeedBreak && !Player.IsAirBoosting)// Check whether we should cancel speed break
 					ToggleSpeedBreak();
 
 				if (!IsSpeedBreakOverrideActive && (Player.IsOnGround || AllowExternalSpeedBreak)) // Speed is only applied while on the ground
@@ -368,8 +368,9 @@ public partial class PlayerSkillController : Node3D
 		{
 			if (!IsSoulGaugeCharged) return;
 			if (!IsSpeedBreakEnabled) return;
-			if ((!Player.IsOnGround && !AllowExternalSpeedBreak) || Player.IsDefeated) return;
+			if (Player.IsDefeated) return;
 			if (Player.IsDrifting && !IsSpeedBreakActive) return;
+			if (!Player.IsOnGround && !AllowExternalSpeedBreak && !Player.CanAirBoost) return;
 
 			if (IsTimeBreakActive) // Deactivate Time Break
 				ToggleTimeBreak();
@@ -422,10 +423,14 @@ public partial class PlayerSkillController : Node3D
 		breakDrainTimer = 0;
 		IsSpeedBreakActive = !IsSpeedBreakActive;
 		SoundManager.IsBreakChannelMuted = IsSpeedBreakActive;
-		bool isInstantSpeedbreak = SkillRing.IsSkillEquipped(SkillKey.InstantSpeedBreak);
+		bool isAirBoost = !Player.IsOnGround && !AllowExternalSpeedBreak && Player.CanAirBoost;
+		bool isInstantSpeedbreak = SkillRing.IsSkillEquipped(SkillKey.InstantSpeedBreak) || isAirBoost;
 
 		if (IsSpeedBreakActive)
 		{
+			if (isAirBoost)
+				Player.CanAirBoost = false;
+
 			if (!isInstantSpeedbreak)
 				speedBreakTimer = SpeedBreakDelay;
 		}
@@ -445,7 +450,6 @@ public partial class PlayerSkillController : Node3D
 			speedBreakAnimator.Advance(0.0);
 			speedBreakParticles.SetEmitting(true);
 
-			Player.Effect.PlayVoice("speed break");
 			Player.MovementAngle = Player.PathFollower.ForwardAngle;
 			Player.CollisionMask = Runtime.Instance.environmentMask; // Don't collide with any objects
 
@@ -454,6 +458,11 @@ public partial class PlayerSkillController : Node3D
 
 			Player.ChangeHitbox("speed break");
 			Player.AttackState = PlayerController.AttackStates.OneShot;
+
+			if (isAirBoost)
+				Player.StartAirBoost();
+			else
+				Player.Effect.PlayVoice("speed break");
 
 			SaveManager.SharedData.SpeedBreakActivationCount = (int)Mathf.MoveToward(SaveManager.SharedData.SpeedBreakActivationCount, int.MaxValue, 1);
 			if (SaveManager.SharedData.SpeedBreakActivationCount >= SpeedBreakAchievementRequirement)

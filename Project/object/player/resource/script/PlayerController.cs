@@ -49,6 +49,7 @@ public partial class PlayerController : CharacterBody3D
 		StateMachine.Initialize(this);
 
 		CanDoubleJump = true;
+		CanAirBoost = SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.AirBoost);
 		ChangeHitbox("RESET");
 		ResetCheckpointOrientation();
 		SnapToGround();
@@ -622,6 +623,7 @@ public partial class PlayerController : CharacterBody3D
 	#region State
 	public bool CanJumpDash { get; set; }
 	public bool CanDoubleJump { get; set; }
+	public bool CanAirBoost { get; set; }
 	public bool IsJumpDashing { get; set; }
 	public bool IsHomingAttacking { get; set; }
 	public bool IsPerfectHomingAttacking { get; set; }
@@ -730,6 +732,10 @@ public partial class PlayerController : CharacterBody3D
 		quickStepState.IsSteppingRight = isSteppingRight;
 		StateMachine.CallDeferred(PlayerStateMachine.MethodName.ChangeState, quickStepState);
 	}
+
+	[Export] private AirBoostState airBoostState;
+	public bool IsAirBoosting => StateMachine.CurrentState == airBoostState;
+	public void StartAirBoost() => StateMachine.ChangeState(airBoostState);
 
 	[Export] private LightSpeedDashState lightSpeedDashState;
 	public bool IsLightDashing => lightSpeedDashState.CurrentTarget != null;
