@@ -5,18 +5,13 @@ namespace Project.Gameplay;
 
 public partial class IdleState : PlayerState
 {
-	[Export]
-	private PlayerState runState;
-	[Export]
-	private PlayerState backstepState;
-	[Export]
-	private PlayerState crouchState;
-	[Export]
-	private PlayerState jumpState;
-	[Export]
-	private PlayerState backflipState;
-	[Export]
-	private PlayerState fallState;
+	[Export] private PlayerState runState;
+	[Export] private PlayerState backstepState;
+	[Export] private PlayerState crouchState;
+	[Export] private PlayerState jumpState;
+	[Export] private PlayerState backflipState;
+	[Export] private PlayerState fallState;
+	[Export] private PlayerState homingAttackState;
 
 	public override void EnterState()
 	{
@@ -37,39 +32,42 @@ public partial class IdleState : PlayerState
 		if (Player.Skills.IsSpeedBreakActive)
 			return runState;
 
-		if (!Player.Skills.IsSpeedBreakActive)
+		if (Player.Controller.IsJumpBufferActive)
 		{
-			if (Player.Controller.IsJumpBufferActive)
+			Player.Controller.ResetJumpBuffer();
+
+			float inputAngle = Player.Controller.GetTargetInputAngle();
+			float inputStrength = Player.Controller.GetInputStrength();
+			if (!Player.IsLockoutDisablingAction(LockoutResource.ActionFlags.Backflip) &&
+				!Mathf.IsZeroApprox(inputStrength) &&
+				Player.Controller.IsHoldingDirection(inputAngle, Player.PathFollower.BackAngle))
 			{
-				Player.Controller.ResetJumpBuffer();
-
-				float inputAngle = Player.Controller.GetTargetInputAngle();
-				float inputStrength = Player.Controller.GetInputStrength();
-				if (!Player.IsLockoutDisablingAction(LockoutResource.ActionFlags.Backflip) &&
-					!Mathf.IsZeroApprox(inputStrength) &&
-					Player.Controller.IsHoldingDirection(inputAngle, Player.PathFollower.BackAngle))
-				{
-					return backflipState;
-				}
-
-				if (SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.ChargeJump))
-					return crouchState;
-
-				return jumpState;
+				return backflipState;
 			}
 
-			if (!SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.ChargeJump) &&
-				Player.Controller.IsActionBufferActive)
-			{
-				Player.Controller.ResetActionBuffer();
+			if (SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.ChargeJump))
 				return crouchState;
-			}
 
-			if (SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.LightSpeedDash) &&
-				Player.Controller.IsLightDashBufferActive && Player.StartLightSpeedDash())
-			{
-				return null;
-			}
+			return jumpState;
+		}
+
+		if (!SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.ChargeJump) &&
+			Player.Controller.IsActionBufferActive)
+		{
+			Player.Controller.ResetActionBuffer();
+			return crouchState;
+		}
+
+		if (SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.LightSpeedDash) &&
+			Player.Controller.IsLightDashBufferActive && Player.StartLightSpeedDash())
+		{
+			return null;
+		}
+
+		if (Player.Controller.IsAttackBufferActive && Player.Lockon.IsTargetAttackable)
+		{
+			Player.Controller.ResetAttackBuffer();
+			return homingAttackState;
 		}
 
 		if (SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.Autorun) && !Player.Controller.IsBrakeHeld())

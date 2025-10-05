@@ -12,7 +12,12 @@ namespace Project.Gameplay;
 public partial class PlayerLockonController : Area3D
 {
 	private PlayerController Player;
-	public void Initialize(PlayerController player) => Player = player;
+	public void Initialize(PlayerController player)
+	{
+		Player = player;
+		IsMonitoring = SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.GroundedHomingAttack);
+	}
+
 
 	/// <summary> Active lockon target shown on the HUD. </summary>
 	public Node3D Target { get; private set; }
@@ -34,6 +39,7 @@ public partial class PlayerLockonController : Area3D
 	private readonly float AutotargetDistanceAmount = 16f;
 	/// <summary> How far ahead the player must be to ignore the active lockon target. </summary>
 	private readonly float IgnoreTargetDistance = 0.2f;
+	private readonly float HomingAttackHeight = 3f;
 	private readonly string LevelWallGroup = "level wall";
 	private readonly string IgnoreLockonCastGroup = "ignore lockon cast";
 	/// <summary> List of all possible targets. </summary>
@@ -200,7 +206,10 @@ public partial class PlayerLockonController : Area3D
 			return TargetState.Invisible;
 
 		// Check Height
-		bool isTargetAttackable = target.GlobalPosition.Y <= Player.CenterPosition.Y + (Player.CollisionSize.Y * 2.0f);
+		float maxTargetHeight = Player.CenterPosition.Y + (Player.CollisionSize.Y * 2.0f);
+		if (Player.IsOnGround)
+			maxTargetHeight += HomingAttackHeight;
+		bool isTargetAttackable = target.GlobalPosition.Y <= maxTargetHeight;
 		if (Player.IsBouncing && !Player.IsBounceInteruptable)
 		{
 			isTargetAttackable = false;

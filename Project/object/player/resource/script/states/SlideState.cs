@@ -5,16 +5,12 @@ namespace Project.Gameplay;
 
 public partial class SlideState : PlayerState
 {
-	[Export]
-	private PlayerState runState;
-	[Export]
-	private PlayerState crouchState;
-	[Export]
-	private PlayerState jumpState;
-	[Export]
-	private PlayerState backflipState;
-	[Export]
-	private PlayerState fallState;
+	[Export] private PlayerState runState;
+	[Export] private PlayerState crouchState;
+	[Export] private PlayerState jumpState;
+	[Export] private PlayerState backflipState;
+	[Export] private PlayerState fallState;
+	[Export] private PlayerState homingAttackState;
 	/// <summary> Maximum amount the player can turn when sliding. </summary>
 	private readonly float MaxTurningAdjustment = Mathf.Pi * .4f;
 
@@ -142,6 +138,12 @@ public partial class SlideState : PlayerState
 		else if (!Input.IsActionPressed("button_action") && !Player.Animator.IsSlideTransitionActive)
 		{
 			return runState;
+		}
+
+		if (Player.Controller.IsAttackBufferActive && Player.Lockon.IsTargetAttackable)
+		{
+			Player.Controller.ResetAttackBuffer();
+			return homingAttackState;
 		}
 
 		// Lockout is disabling action button (slides included)

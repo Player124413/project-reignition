@@ -11,6 +11,7 @@ public partial class RunState : PlayerState
 	[Export] private PlayerState slideState;
 	[Export] private PlayerState jumpState;
 	[Export] private PlayerState backflipState;
+	[Export] private PlayerState homingAttackState;
 
 	[Export] private Curve turningSpeedLossCurve;
 
@@ -91,6 +92,12 @@ public partial class RunState : PlayerState
 			{
 				return null;
 			}
+		}
+
+		if (Player.Controller.IsAttackBufferActive && Player.Lockon.IsTargetAttackable)
+		{
+			Player.Controller.ResetAttackBuffer();
+			return homingAttackState;
 		}
 
 		if (SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.QuickStep) &&

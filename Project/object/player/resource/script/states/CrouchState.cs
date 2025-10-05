@@ -5,14 +5,11 @@ namespace Project.Gameplay;
 
 public partial class CrouchState : PlayerState
 {
-	[Export]
-	private PlayerState idleState;
-	[Export]
-	private PlayerState runState;
-	[Export]
-	private PlayerState jumpState;
-	[Export]
-	private PlayerState fallState;
+	[Export] private PlayerState idleState;
+	[Export] private PlayerState runState;
+	[Export] private PlayerState jumpState;
+	[Export] private PlayerState fallState;
+	[Export] private PlayerState homingAttackState;
 
 	public override void EnterState()
 	{
@@ -71,6 +68,12 @@ public partial class CrouchState : PlayerState
 		else if (!Input.IsActionPressed("button_action") && !Player.Animator.IsCrouchTransitionActive)
 		{
 			return idleState;
+		}
+
+		if (Player.Controller.IsAttackBufferActive && Player.Lockon.IsTargetAttackable)
+		{
+			Player.Controller.ResetAttackBuffer();
+			return homingAttackState;
 		}
 
 		if (Player.Skills.IsSpeedBreakActive)

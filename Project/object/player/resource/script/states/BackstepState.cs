@@ -5,18 +5,13 @@ namespace Project.Gameplay;
 
 public partial class BackstepState : PlayerState
 {
-	[Export]
-	private PlayerState fallState;
-	[Export]
-	private PlayerState idleState;
-	[Export]
-	private PlayerState runState;
-	[Export]
-	private PlayerState crouchState;
-	[Export]
-	private PlayerState jumpState;
-	[Export]
-	private PlayerState backflipState;
+	[Export] private PlayerState fallState;
+	[Export] private PlayerState idleState;
+	[Export] private PlayerState runState;
+	[Export] private PlayerState crouchState;
+	[Export] private PlayerState jumpState;
+	[Export] private PlayerState backflipState;
+	[Export] private PlayerState homingAttackState;
 
 	public override void EnterState()
 	{
@@ -73,6 +68,12 @@ public partial class BackstepState : PlayerState
 		{
 			Player.Controller.ResetActionBuffer();
 			return crouchState;
+		}
+
+		if (Player.Controller.IsAttackBufferActive && Player.Lockon.IsTargetAttackable)
+		{
+			Player.Controller.ResetAttackBuffer();
+			return homingAttackState;
 		}
 
 		Player.Animator.BackstepAnimation();

@@ -5,24 +5,18 @@ namespace Project.Gameplay;
 
 public partial class HomingAttackState : PlayerState
 {
-	[Export]
-	private PlayerState landState;
-	[Export]
-	private PlayerState stompState;
-	[Export]
-	private PlayerState jumpDashState;
+	[Export] private PlayerState landState;
+	[Export] private PlayerState stompState;
+	[Export] private PlayerState jumpDashState;
 
-	[Export]
-	private float normalStrikeSpeed;
-	[Export]
-	private float perfectStrikeSpeed;
-	[Export]
-	private float homingAttackAcceleration;
-
+	[Export] private float normalStrikeSpeed;
+	[Export] private float perfectStrikeSpeed;
+	[Export] private float homingAttackAcceleration;
 
 	public override void EnterState()
 	{
-		Player.VerticalSpeed = 0;
+		Player.IsOnGround = false;
+		Player.VerticalSpeed = 0.1f;
 		Player.IsMovingBackward = false;
 		Player.IsHomingAttacking = true;
 		Player.ChangeHitbox("spin");
