@@ -467,7 +467,6 @@ public partial class PlayerSkillController : Node3D
 			speedBreakSFX.Stream = speedBreakDeactivate;
 			speedBreakSFX.Play();
 
-			Player.MoveSpeed = Player.Stats.GroundSettings.Speed; // Override speed
 			Player.CollisionMask = normalCollisionMask; // Reset collision layer
 			Player.AttackState = PlayerController.AttackStates.None;
 			Player.ChangeHitbox("RESET");
