@@ -8,14 +8,10 @@ namespace Project.Gameplay;
 /// </summary>
 public partial class PlayerSkillController : Node3D
 {
-	[Signal]
-	public delegate void TimeBreakStartedEventHandler();
-	[Signal]
-	public delegate void SpeedBreakStartedEventHandler();
-	[Signal]
-	public delegate void TimeBreakStoppedEventHandler();
-	[Signal]
-	public delegate void SpeedBreakStoppedEventHandler();
+	[Signal] public delegate void TimeBreakStartedEventHandler();
+	[Signal] public delegate void SpeedBreakStartedEventHandler();
+	[Signal] public delegate void TimeBreakStoppedEventHandler();
+	[Signal] public delegate void SpeedBreakStoppedEventHandler();
 
 	private PlayerController Player;
 	public void Initialize(PlayerController player)
@@ -66,8 +62,7 @@ public partial class PlayerSkillController : Node3D
 	}
 
 	[ExportGroup("Countdown Skills")]
-	[Export]
-	public float countdownBoostSpeed;
+	[Export] public float countdownBoostSpeed;
 
 	/// <summary> How many rings to start with when the level starts. </summary>
 	public int StartingRingCount => SkillRing.IsSkillEquipped(SkillKey.RingSpawn) ? 5 : 0;
@@ -75,8 +70,7 @@ public partial class PlayerSkillController : Node3D
 	public int RespawnRingCount => SkillRing.IsSkillEquipped(SkillKey.RingRespawn) ? 5 : 0;
 
 	/// <summary> Minimum speed when landing on the ground and holding forward. Makes Sonic feel faster. </summary>
-	[Export]
-	public float landingDashSpeed;
+	[Export] public float landingDashSpeed;
 	public bool AllowCrestSkill { get; private set; }
 	private readonly float CrestOfFlameHueOffset = .45f;
 	private readonly float DefaultHueOffset = .02f;
@@ -224,29 +218,20 @@ public partial class PlayerSkillController : Node3D
 	private bool isSpeedBreakEnabled = true;
 	private bool isTimeBreakEnabled = true;
 
-	[Export]
-	private Control speedBreakShockwave;
-	[Export]
-	private AnimationPlayer speedBreakAnimator;
+	[Export] private Control speedBreakShockwave;
+	[Export] private CustomNodes.GroupGpuParticles3D speedBreakParticles;
+	[Export] private AnimationPlayer speedBreakAnimator;
 	// Audio clips
-	[Export]
-	private AudioStream speedBreakActivate;
-	[Export]
-	private AudioStream speedBreakDeactivate;
+	[Export] private AudioStream speedBreakActivate;
+	[Export] private AudioStream speedBreakDeactivate;
 	// Audio players
-	[Export]
-	private AudioStreamPlayer speedBreakSFX;
-	[Export]
-	private AnimationPlayer timeBreakAnimator;
-	[Export]
-	private AudioStreamPlayer timeBreakSFX;
-	[Export]
-	private AudioStreamPlayer heartbeatSFX;
+	[Export] private AudioStreamPlayer speedBreakSFX;
+	[Export] private AnimationPlayer timeBreakAnimator;
+	[Export] private AudioStreamPlayer timeBreakSFX;
+	[Export] private AudioStreamPlayer heartbeatSFX;
 
-	[Export]
-	public ShaderMaterial speedbreakOverlayMaterial;
-	[Export]
-	public float speedBreakSpeed; // Movement speed during speed break
+	[Export] public ShaderMaterial speedbreakOverlayMaterial;
+	[Export] public float speedBreakSpeed; // Movement speed during speed break
 	public bool IsTimeBreakActive { get; private set; }
 	public bool IsSpeedBreakActive { get; private set; }
 	public bool AllowExternalSpeedBreak { get; set; } // Allow speedbreaking when on a gimmick?
@@ -437,8 +422,18 @@ public partial class PlayerSkillController : Node3D
 		breakDrainTimer = 0;
 		IsSpeedBreakActive = !IsSpeedBreakActive;
 		SoundManager.IsBreakChannelMuted = IsSpeedBreakActive;
+		bool isSpeedbreakPlus = SkillRing.IsSkillEquipped(SkillKey.SpeedBreakPlus);
 
-		speedBreakTimer = IsSpeedBreakActive ? SpeedBreakDelay : BreakSkillsCooldown;
+		if (IsSpeedBreakActive)
+		{
+			if (!isSpeedbreakPlus)
+				speedBreakTimer = SpeedBreakDelay;
+		}
+		else
+		{
+			speedBreakTimer = BreakSkillsCooldown;
+		}
+
 		IsSpeedBreakOverrideActive = false; // Always disable override
 
 		if (IsSpeedBreakActive)
@@ -448,12 +443,13 @@ public partial class PlayerSkillController : Node3D
 			speedBreakShockwave.PivotOffset = speedBreakShockwave.Size * 0.5f;
 			speedBreakAnimator.Play("start");
 			speedBreakAnimator.Advance(0.0);
+			speedBreakParticles.SetEmitting(true);
 
 			Player.Effect.PlayVoice("speed break");
 			Player.MovementAngle = Player.PathFollower.ForwardAngle;
 			Player.CollisionMask = Runtime.Instance.environmentMask; // Don't collide with any objects
 
-			if (!Player.IsPathTravellerActive)
+			if (!isSpeedbreakPlus)
 				Player.Animator.SpeedBreak();
 
 			Player.ChangeHitbox("speed break");
@@ -469,6 +465,7 @@ public partial class PlayerSkillController : Node3D
 		{
 			speedBreakAnimator.Play("stop");
 			speedBreakAnimator.Advance(0.0);
+			speedBreakParticles.SetEmitting(false);
 			speedBreakSFX.Stream = speedBreakDeactivate;
 			speedBreakSFX.Play();
 

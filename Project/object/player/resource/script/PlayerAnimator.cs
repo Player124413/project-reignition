@@ -72,6 +72,7 @@ public partial class PlayerAnimator : Node3D
 	private AnimationNodeOneShot oneShotTrigger;
 	/// <summary> Animation index for countdown animation. </summary>
 	private readonly string CountdownAnimation = "countdown";
+	private readonly string SpeedbreakAnimation = "speedbreak_windup";
 
 	public void PlayCountdown()
 	{
@@ -87,9 +88,10 @@ public partial class PlayerAnimator : Node3D
 	private readonly string OneshotActive = "parameters/oneshot_trigger/active";
 	private readonly string OneshotCurrent = "parameters/oneshot_tree/oneshot_transition/current_state";
 	private readonly string OneshotTransition = "parameters/oneshot_tree/oneshot_transition/transition_request";
-	public void PlayOneshotAnimation(string animation, float fadein = 0) // Play a specific one-shot animation
+	public void PlayOneshotAnimation(string animation, float fadein = 0, float fadeout = 0) // Play a specific one-shot animation
 	{
 		oneShotTrigger.FadeInTime = fadein;
+		oneShotTrigger.FadeOutTime = fadeout;
 		animationTree.Set(OneshotTrigger, (int)AnimationNodeOneShot.OneShotRequest.Fire);
 		animationTree.Set(OneshotSeek, 0);
 		animationTree.Set(OneshotTransition, animation);
@@ -176,8 +178,6 @@ public partial class PlayerAnimator : Node3D
 	private readonly string ReversePathTrigger = "parameters/ground_tree/reverse_path_trigger/request";
 	private readonly string ReversePathActive = "parameters/ground_tree/reverse_path_trigger/active";
 
-	private readonly string SpeedBreakTrigger = "parameters/ground_tree/speedbreak_trigger/request";
-
 	[Export]
 	private Curve movementAnimationSpeedCurve;
 	/// <summary> Disables speed smoothing. </summary>
@@ -228,7 +228,7 @@ public partial class PlayerAnimator : Node3D
 	public void SpeedBreak()
 	{
 		animationTree.Set(ForwardSeek, .5f);
-		animationTree.Set(SpeedBreakTrigger, (int)AnimationNodeOneShot.OneShotRequest.Fire);
+		PlayOneshotAnimation(SpeedbreakAnimation, 0f, 0.1f);
 		animationTree.Set(LandTrigger, (int)AnimationNodeOneShot.OneShotRequest.Abort);
 	}
 
