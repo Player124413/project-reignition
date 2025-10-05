@@ -63,8 +63,9 @@ public partial class PlayerAnimator : Node3D
 	{
 		AirAnimations();
 		UpdateVisualRotation();
-		UpdateShaderVariables();
 	}
+
+	public override void _Process(double _delta) => CallDeferred(MethodName.UpdateShaderVariables);
 
 	#region Oneshot Animations
 	private AnimationNodeTransition oneShotTransition;
