@@ -413,8 +413,7 @@ public enum SkillKey
 	AirBoost, // Allows Sonic to boost in the air
 	LightSpeedDash, // SA2 style
 	LightSpeedAttack, // SA2 style
-	SpeedBreakPlus, // Instant speedbreak--Unleashed style
-	TimeBreakPlus, // Make Sonic move normally during TimeBreak
+	InstantSpeedBreak, // Instant speedbreak--Unleashed style
 
 	// Crest skills
 	CrestWind,

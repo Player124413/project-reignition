@@ -422,11 +422,11 @@ public partial class PlayerSkillController : Node3D
 		breakDrainTimer = 0;
 		IsSpeedBreakActive = !IsSpeedBreakActive;
 		SoundManager.IsBreakChannelMuted = IsSpeedBreakActive;
-		bool isSpeedbreakPlus = SkillRing.IsSkillEquipped(SkillKey.SpeedBreakPlus);
+		bool isInstantSpeedbreak = SkillRing.IsSkillEquipped(SkillKey.InstantSpeedBreak);
 
 		if (IsSpeedBreakActive)
 		{
-			if (!isSpeedbreakPlus)
+			if (!isInstantSpeedbreak)
 				speedBreakTimer = SpeedBreakDelay;
 		}
 		else
@@ -449,7 +449,7 @@ public partial class PlayerSkillController : Node3D
 			Player.MovementAngle = Player.PathFollower.ForwardAngle;
 			Player.CollisionMask = Runtime.Instance.environmentMask; // Don't collide with any objects
 
-			if (!isSpeedbreakPlus)
+			if (!isInstantSpeedbreak)
 				Player.Animator.SpeedBreak();
 
 			Player.ChangeHitbox("speed break");
