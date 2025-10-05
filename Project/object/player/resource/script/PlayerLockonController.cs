@@ -39,7 +39,6 @@ public partial class PlayerLockonController : Area3D
 	private readonly float AutotargetDistanceAmount = 16f;
 	/// <summary> How far ahead the player must be to ignore the active lockon target. </summary>
 	private readonly float IgnoreTargetDistance = 0.2f;
-	private readonly float HomingAttackHeight = 3f;
 	private readonly string LevelWallGroup = "level wall";
 	private readonly string IgnoreLockonCastGroup = "ignore lockon cast";
 	/// <summary> List of all possible targets. </summary>
@@ -208,7 +207,7 @@ public partial class PlayerLockonController : Area3D
 		// Check Height
 		float maxTargetHeight = Player.CenterPosition.Y + (Player.CollisionSize.Y * 2.0f);
 		if (Player.IsOnGround)
-			maxTargetHeight += HomingAttackHeight;
+			maxTargetHeight += Player.Stats.JumpHeight;
 		bool isTargetAttackable = target.GlobalPosition.Y <= maxTargetHeight;
 		if (Player.IsBouncing && !Player.IsBounceInteruptable)
 		{
