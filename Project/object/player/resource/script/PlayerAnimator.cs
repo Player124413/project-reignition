@@ -618,6 +618,12 @@ public partial class PlayerAnimator : Node3D
 		eventAnimationPlayer.Play("teleport-end");
 		eventAnimationPlayer.Seek(0.0, true);
 	}
+
+	public void CancelTeleport()
+	{
+		eventAnimationPlayer.Play("teleport-end");
+		eventAnimationPlayer.Seek(eventAnimationPlayer.CurrentAnimationLength, true);
+	}
 	#endregion
 
 	#region Visual Rotation

@@ -127,6 +127,13 @@ public partial class HomingAttackState : PlayerState
 		Vector3 castVector = Player.Lockon.Target.GlobalPosition - castPosition;
 		RaycastHit hit = Player.CastRay(castPosition, castVector, Runtime.Instance.lockonObstructionMask);
 		DebugManager.DrawRay(castPosition, castVector, Colors.Magenta);
-		return hit && hit.collidedObject.IsInGroup("wall") && !hit.collidedObject.IsInGroup("level wall");
+
+		if (!hit)
+			return false;
+
+		if (hit.collidedObject.IsInGroup("force lockon bounce"))
+			return true;
+
+		return hit.collidedObject.IsInGroup("wall") && !hit.collidedObject.IsInGroup("level wall");
 	}
 }

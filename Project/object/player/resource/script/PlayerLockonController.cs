@@ -35,6 +35,7 @@ public partial class PlayerLockonController : Area3D
 	/// <summary> How far ahead the player must be to ignore the active lockon target. </summary>
 	private readonly float IgnoreTargetDistance = 0.2f;
 	private readonly string LevelWallGroup = "level wall";
+	private readonly string IgnoreLockonCastGroup = "ignore lockon cast";
 	/// <summary> List of all possible targets. </summary>
 	private readonly List<Node3D> potentialTargets = [];
 
@@ -266,6 +267,9 @@ public partial class PlayerLockonController : Area3D
 
 		if (h && h.collidedObject != target)
 		{
+			if (h.collidedObject.IsInGroup(IgnoreLockonCastGroup))
+				return false;
+
 			if (!h.collidedObject.IsInGroup(LevelWallGroup)) // Hit an obstacle
 				return true;
 

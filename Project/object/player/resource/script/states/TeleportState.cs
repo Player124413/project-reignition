@@ -147,7 +147,10 @@ public partial class TeleportState : PlayerState
 	private bool StopTeleportFX()
 	{
 		if (!Trigger.enableEndFX)
+		{
+			Player.Animator.CancelTeleport();
 			return false;
+		}
 
 		teleportTimer = 0;
 		currentState = States.Stop;
