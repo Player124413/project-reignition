@@ -166,6 +166,7 @@ public partial class SidleState : PlayerState
 
 		velocity = 0;
 		cycleTimer = 0;
+		Player.MoveSpeed = 0;
 
 		if (Player.IsDamageDefeatingPlayer())
 		{
