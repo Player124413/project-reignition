@@ -17,6 +17,7 @@ public partial class BoneAttachment3DNoScale : Node3D
 
 	[ExportToolButton("Update Linked Data")]
 	public Callable RefreshResourceGroup => Callable.From(UpdateLinkedData);
+	private Callable SkeletonUpdatedCallable => new(this, MethodName.OnSkeletonUpdate);
 
 	public override void _EnterTree()
 	{
@@ -28,17 +29,10 @@ public partial class BoneAttachment3DNoScale : Node3D
 
 	public override void _ExitTree()
 	{
-		if (_skeleton == null)
+		if (_skeleton == null || !_skeleton.IsConnected(Skeleton3D.SignalName.SkeletonUpdated, SkeletonUpdatedCallable))
 			return;
 
-		try
-		{
-			_skeleton.SkeletonUpdated -= OnSkeletonUpdate;
-		}
-		catch
-		{
-			return;
-		}
+		_skeleton.Disconnect(Skeleton3D.SignalName.SkeletonUpdated, SkeletonUpdatedCallable);
 	}
 
 	private void UpdateLinkedData()
@@ -47,33 +41,36 @@ public partial class BoneAttachment3DNoScale : Node3D
 		Skeleton3D targetSkeleton = GetNode<Skeleton3D>(skeleton);
 		if (_skeleton != targetSkeleton)
 		{
-			if (_skeleton != null)
-				_skeleton.SkeletonUpdated -= OnSkeletonUpdate;
+			if (_skeleton != null && _skeleton.IsConnected(Skeleton3D.SignalName.SkeletonUpdated, SkeletonUpdatedCallable))
+				_skeleton.Disconnect(Skeleton3D.SignalName.SkeletonUpdated, SkeletonUpdatedCallable);
 
 			_skeleton = targetSkeleton;
-			_skeleton.SkeletonUpdated += OnSkeletonUpdate;
+			if (!_skeleton.IsConnected(Skeleton3D.SignalName.SkeletonUpdated, SkeletonUpdatedCallable))
+				_skeleton.Connect(Skeleton3D.SignalName.SkeletonUpdated, SkeletonUpdatedCallable);
 		}
 
-		if (prioritizeBoneName)
-		{
-			// Linear search for the bone
-			for (int i = 0; i < _skeleton.GetBoneCount(); i++)
-			{
-				if (_skeleton.GetBoneName(i) != boneName)
-					continue;
-
-				boneIndex = i;
-				break;
-			}
-		}
-		else
+		if (!prioritizeBoneName)
 		{
 			boneName = _skeleton.GetBoneName(boneIndex);
+			return;
+		}
+
+		// Linear search for the bone
+		for (int i = 0; i < _skeleton.GetBoneCount(); i++)
+		{
+			if (_skeleton.GetBoneName(i) != boneName)
+				continue;
+
+			boneIndex = i;
+			break;
 		}
 	}
 
 	private void OnSkeletonUpdate()
 	{
+		if (!IsInsideTree())
+			return;
+
 		Transform3D transform = _skeleton.GetBoneGlobalPose(boneIndex);
 		if (parentNode != null)
 		{
