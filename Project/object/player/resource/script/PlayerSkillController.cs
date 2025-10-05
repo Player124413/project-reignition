@@ -80,6 +80,8 @@ public partial class PlayerSkillController : Node3D
 	public bool AllowCrestSkill { get; private set; }
 	private readonly float CrestOfFlameHueOffset = .45f;
 	private readonly float DefaultHueOffset = .02f;
+
+	public bool IsRingExchangeEquipped { get; private set; }
 	private void SetUpSkills()
 	{
 		// Expand hitbox if skills is equipped
@@ -87,6 +89,9 @@ public partial class PlayerSkillController : Node3D
 			(StageSettings.Instance.Data.MissionType != LevelDataResource.MissionTypes.Pearl || StageSettings.Instance.Data.MissionObjectiveCount != 0);
 		bool isRingRangeEquipped = SkillRing.IsSkillEquipped(SkillKey.RingRange) &&
 			(StageSettings.Instance.Data.MissionType != LevelDataResource.MissionTypes.Ring || StageSettings.Instance.Data.MissionObjectiveCount != 0);
+
+		IsRingExchangeEquipped = SkillRing.IsSkillEquipped(SkillKey.RingPearlConvert) &&
+			(StageSettings.Instance.Data.MissionType != LevelDataResource.MissionTypes.Ring || StageSettings.Instance.Data.MissionObjectiveCount == 0);
 
 		Runtime.Instance.UpdatePearlCollisionShapes(isPearlRangeEquipped ? 5 : 1);
 		Runtime.Instance.UpdateRingCollisionShapes(isRingRangeEquipped ? 5 : 1);
