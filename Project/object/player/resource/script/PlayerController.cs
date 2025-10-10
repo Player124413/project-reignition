@@ -76,7 +76,15 @@ public partial class PlayerController : CharacterBody3D
 	}
 
 	/// <summary> Player's horizontal movespeed, ignoring slopes. </summary>
-	public float MoveSpeed { get; set; }
+	public float MoveSpeed
+	{
+		get => moveSpeed;
+		set
+		{
+			moveSpeed = value;
+		}
+	}
+	private float moveSpeed;
 	/// <summary> Player's vertical speed -- only effective when not on the ground. </summary>
 	public float VerticalSpeed { get; set; }
 	public bool IsMovingBackward { get; set; }
@@ -639,6 +647,20 @@ public partial class PlayerController : CharacterBody3D
 	/// <summary> True while the player is defeated but hasn't respawned yet. </summary>
 	public bool IsDefeated { get; set; }
 	public bool AllowLandingSkills { get; set; }
+
+	public bool IsBackflipInputValid()
+	{
+		if (IsLockoutDisablingAction(LockoutResource.ActionFlags.Backflip))
+			return false;
+
+		if (Mathf.IsZeroApprox(Controller.GetInputStrength()))
+			return false;
+
+		if (SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.FreeRoam))
+			return Controller.IsHoldingDirection(Controller.GetTargetInputAngle(), MovementAngle + Mathf.Pi);
+
+		return Controller.IsHoldingDirection(Controller.GetTargetInputAngle(), PathFollower.BackAngle);
+	}
 
 	[ExportGroup("States")]
 	[Export] private CountdownState countdownState;

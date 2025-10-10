@@ -36,14 +36,8 @@ public partial class IdleState : PlayerState
 		{
 			Player.Controller.ResetJumpBuffer();
 
-			float inputAngle = Player.Controller.GetTargetInputAngle();
-			float inputStrength = Player.Controller.GetInputStrength();
-			if (!Player.IsLockoutDisablingAction(LockoutResource.ActionFlags.Backflip) &&
-				!Mathf.IsZeroApprox(inputStrength) &&
-				Player.Controller.IsHoldingDirection(inputAngle, Player.PathFollower.BackAngle))
-			{
+			if (Player.IsBackflipInputValid())
 				return backflipState;
-			}
 
 			if (SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.ChargeJump))
 				return crouchState;
@@ -87,8 +81,11 @@ public partial class IdleState : PlayerState
 			if (!Player.Controller.IsBrakeHeld() &&
 				(SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.Autorun) || !Mathf.IsZeroApprox(Player.Controller.GetInputStrength())))
 			{
-				if (Player.Controller.GetHoldingDistance(Player.Controller.GetTargetInputAngle(), Player.PathFollower.ForwardAngle) >= 1.0f)
+				if (Player.Controller.GetHoldingDistance(Player.Controller.GetTargetInputAngle(), Player.PathFollower.ForwardAngle) >= 1.0f &&
+					!SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.FreeRoam))
+				{
 					return backstepState;
+				}
 
 				return runState;
 			}

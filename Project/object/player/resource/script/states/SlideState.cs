@@ -124,14 +124,8 @@ public partial class SlideState : PlayerState
 		{
 			Player.Controller.ResetJumpBuffer();
 
-			float inputAngle = Player.Controller.GetTargetInputAngle();
-			float inputStrength = Player.Controller.GetInputStrength();
-			if (!Player.IsLockoutDisablingAction(LockoutResource.ActionFlags.Backflip) &&
-				!Mathf.IsZeroApprox(inputStrength) &&
-				Player.Controller.IsHoldingDirection(inputAngle, Player.PathFollower.BackAngle))
-			{
+			if (Player.IsBackflipInputValid())
 				return backflipState;
-			}
 
 			return jumpState;
 		}
@@ -168,11 +162,11 @@ public partial class SlideState : PlayerState
 		float inputAmount = -.5f; // Default to halfway
 		float inputStrength = Player.Controller.GetInputStrength();
 		float inputAngle = Player.Controller.GetTargetMovementAngle();
-		if (Player.Controller.IsHoldingDirection(inputAngle, Player.PathFollower.BackAngle))
+		if (Player.Controller.IsHoldingDirection(inputAngle, Player.MovementAngle + Mathf.Pi))
 			inputAmount = -(1 + inputStrength) * .5f; // -0.5 to -1
 		else if (SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.Autorun))
 			inputAmount = 0;
-		else if (Player.Controller.IsHoldingDirection(inputAngle, Player.PathFollower.ForwardAngle))
+		else if (Player.Controller.IsHoldingDirection(inputAngle, Player.MovementAngle))
 			inputAmount = -(1 - inputStrength) * .5f; // 0 to -0.5
 		Player.MoveSpeed = Player.Stats.SlideSettings.UpdateSlide(Player.MoveSpeed, inputAmount);
 	}
@@ -180,8 +174,10 @@ public partial class SlideState : PlayerState
 	protected override float ProcessTargetMovementAngle(float targetMovementAngle)
 	{
 		targetMovementAngle = base.ProcessTargetMovementAngle(targetMovementAngle);
-		targetMovementAngle = ExtensionMethods.ClampAngleRange(targetMovementAngle, Player.PathFollower.ForwardAngle, MaxTurningAdjustment);
 
-		return targetMovementAngle;
+		if (SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.FreeRoam))
+			return targetMovementAngle;
+
+		return ExtensionMethods.ClampAngleRange(targetMovementAngle, Player.PathFollower.ForwardAngle, MaxTurningAdjustment);
 	}
 }

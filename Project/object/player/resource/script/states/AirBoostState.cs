@@ -15,10 +15,13 @@ public partial class AirBoostState : PlayerState
 	{
 		airBoostTimer = 0;
 
-		if (ExtensionMethods.DeltaAngleRad(Player.MovementAngle, Player.PathFollower.BackAngle) <= Mathf.Pi * .25f)
-			Player.MovementAngle = Player.PathFollower.ForwardAngle;
-		else
-			Player.MovementAngle = ExtensionMethods.ClampAngleRange(Player.MovementAngle, Player.PathFollower.ForwardAngle, Mathf.Pi * .5f);
+		if (!SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.FreeRoam))
+		{
+			if (ExtensionMethods.DeltaAngleRad(Player.MovementAngle, Player.PathFollower.BackAngle) <= Mathf.Pi * .25f)
+				Player.MovementAngle = Player.PathFollower.ForwardAngle;
+			else
+				Player.MovementAngle = ExtensionMethods.ClampAngleRange(Player.MovementAngle, Player.PathFollower.ForwardAngle, Mathf.Pi * .5f);
+		}
 
 		Player.IsMovingBackward = false;
 		Player.MoveSpeed = Player.Skills.speedBreakSpeed;
@@ -54,24 +57,6 @@ public partial class AirBoostState : PlayerState
 			return fallState;
 
 		return null;
-	}
-
-	protected override void ProcessMoveSpeed()
-	{
-		float inputAngle = Player.Controller.GetTargetInputAngle();
-		float inputStrength = Player.Controller.GetInputStrength();
-
-		if (Player.Controller.IsHoldingDirection(inputAngle, Player.PathFollower.ForwardAngle) ||
-			Player.Controller.IsBrakeHeld())
-		{
-			Player.MoveSpeed = Player.Stats.BackflipSettings.UpdateInterpolate(Player.MoveSpeed, -1);
-			return;
-		}
-
-		if (Player.Controller.IsHoldingDirection(inputAngle, Player.PathFollower.BackAngle))
-			Player.MoveSpeed = Player.Stats.BackflipSettings.UpdateInterpolate(Player.MoveSpeed, inputStrength);
-		else if (Mathf.IsZeroApprox(inputStrength))
-			Player.MoveSpeed = Player.Stats.BackflipSettings.UpdateInterpolate(Player.MoveSpeed, 0);
 	}
 
 	protected override void ProcessTurning()

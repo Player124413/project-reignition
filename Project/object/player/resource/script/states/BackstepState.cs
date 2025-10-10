@@ -48,14 +48,8 @@ public partial class BackstepState : PlayerState
 		{
 			Player.Controller.ResetJumpBuffer();
 
-			float inputAngle = Player.Controller.GetTargetInputAngle();
-			float inputStrength = Player.Controller.GetInputStrength();
-			if (!Player.IsLockoutDisablingAction(LockoutResource.ActionFlags.Backflip) &&
-				!Mathf.IsZeroApprox(inputStrength) &&
-				Player.Controller.IsHoldingDirection(inputAngle, Player.PathFollower.BackAngle))
-			{
+			if (Player.IsBackflipInputValid())
 				return backflipState;
-			}
 
 			if (SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.ChargeJump))
 				return crouchState;

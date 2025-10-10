@@ -212,8 +212,11 @@ public partial class JumpState : PlayerState
 	{
 		base.ProcessTurning();
 
-		if (Player.IsAccelerationJumping) // Clamp acceleration jumps so they don't get out of control
+		if (Player.IsAccelerationJumping && !SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.FreeRoam))
+		{
+			// Clamp acceleration jumps so they don't get out of control
 			Player.MovementAngle = ExtensionMethods.ClampAngleRange(Player.MovementAngle, Player.PathFollower.ForwardAngle, MaxAccelerationJumpTurnAmount);
+		}
 	}
 
 	protected override void ProcessGravity()
@@ -258,8 +261,11 @@ public partial class JumpState : PlayerState
 			return;
 		}
 
-		if (ExtensionMethods.DeltaAngleRad(Player.MovementAngle, Player.PathFollower.ForwardAngle) > Mathf.Pi * .5f)
+		if (ExtensionMethods.DeltaAngleRad(Player.MovementAngle, Player.PathFollower.ForwardAngle) > Mathf.Pi * .5f &&
+			!SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.FreeRoam))
+		{
 			Player.MovementAngle = Player.PathFollower.ForwardAngle;
+		}
 
 		Player.MoveSpeed = Mathf.Max(accelerationJumpSpeed, Player.MoveSpeed);
 	}

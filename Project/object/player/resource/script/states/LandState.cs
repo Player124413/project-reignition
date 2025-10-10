@@ -92,7 +92,7 @@ public partial class LandState : PlayerState
 		if (Mathf.IsZeroApprox(Player.MoveSpeed))
 			return idleState;
 
-		if (Player.IsMovingBackward)
+		if (Player.IsMovingBackward && !SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.FreeRoam))
 			return backstepState;
 
 		return runState;
@@ -115,11 +115,15 @@ public partial class LandState : PlayerState
 			return;
 
 		float inputAngle = Player.Controller.GetTargetInputAngle();
-		if (!Player.Controller.IsHoldingDirection(inputAngle, Player.PathFollower.ForwardAngle))
+		float targetForwardAngle = Player.PathFollower.ForwardAngle;
+		if (SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.FreeRoam))
+			targetForwardAngle = Player.MovementAngle;
+
+		if (!Player.Controller.IsHoldingDirection(inputAngle, targetForwardAngle))
 			return;
 
 		Player.Effect.PlayWindFX();
-		Player.MovementAngle = Player.PathFollower.ForwardAngle;
+		Player.MovementAngle = targetForwardAngle;
 		Player.MoveSpeed = Mathf.Max(Player.MoveSpeed, Player.Skills.landingDashSpeed);
 	}
 

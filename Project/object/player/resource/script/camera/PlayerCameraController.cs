@@ -642,13 +642,21 @@ public partial class PlayerCameraController : Node3D
 			targetPitchAngle += delta.AngleTo(delta.RemoveVertical().Normalized()) * Mathf.Sign(delta.Y);
 
 		targetPitchAngle += settings.extraBackstepPitchAngle * data.blendData.BackstepPitchBlend;
-		data.blendData.UpdateBackstepBlend(Player.IsMovingBackward, SnapFlag);
+		data.blendData.UpdateBackstepBlend(IsUsingBackstepCamera(), SnapFlag);
 
 		data.blendData.yawAngle = targetYawAngle;
 		data.blendData.pitchAngle = targetPitchAngle;
 		data.CalculateBasis();
 
 		return data;
+	}
+
+	private bool IsUsingBackstepCamera()
+	{
+		if (SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.FreeRoam))
+			return ExtensionMethods.DotAngle(Player.MovementAngle, Player.PathFollower.ForwardAngle) < 0f;
+
+		return Player.IsMovingBackward;
 	}
 
 	private CameraPositionData SimulateDynamicCamera(CameraSettingsResource settings, ref CameraPositionData data)
@@ -723,7 +731,7 @@ public partial class PlayerCameraController : Node3D
 	private float CalculateDistance(CameraSettingsResource settings)
 	{
 		float targetDistance = settings.distance;
-		if (Player.IsMovingBackward)
+		if (IsUsingBackstepCamera())
 			targetDistance += settings.backstepDistance;
 
 		if (!settings.ignoreHomingAttack)
@@ -812,7 +820,7 @@ public partial class PlayerCameraController : Node3D
 		data.blendData.pitchAngle = Mathf.Lerp(targetPitchAngle, sampledTargetPitchAngle, data.blendData.SampleBlend);
 
 		// Update backstep blend
-		data.blendData.UpdateBackstepBlend(Player.IsMovingBackward, SnapFlag);
+		data.blendData.UpdateBackstepBlend(IsUsingBackstepCamera(), SnapFlag);
 	}
 
 	private float CalculateTilt(CameraSettingsResource settings, ref CameraPositionData data, int yawSamplingFix)
@@ -1342,9 +1350,9 @@ public partial class CameraBlendData : GodotObject
 	public float BackstepPitchBlend { get; private set; }
 	private float backstepPitchVelocity;
 	private readonly float BackstepPitchSmoothing = 10f;
-	public void UpdateBackstepBlend(bool IsMovingBackward, bool snapFlag)
+	public void UpdateBackstepBlend(bool isMovingBackward, bool snapFlag)
 	{
-		float target = IsMovingBackward ? 1f : 0f;
+		float target = isMovingBackward ? 1f : 0f;
 		if (snapFlag)
 		{
 			backstepPitchVelocity = 0;

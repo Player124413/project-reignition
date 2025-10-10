@@ -659,20 +659,7 @@ public partial class PlayerAnimator : Node3D
 		if (Player.IsLaunching)
 			return;
 
-		float targetRotation = Player.MovementAngle;
-		if (Player.ExternalController != null)
-			targetRotation = ExternalAngle;
-		else if (Player.IsHomingAttacking) // Face target
-			targetRotation = ExtensionMethods.CalculateForwardAngle(Player.Lockon.HomingAttackDirection);
-		else if (Player.IsReversePath && Player.IsOnGround)
-			targetRotation = Player.PathFollower.ForwardAngle;
-		else if (Player.IsMovingBackward) // Backstepping
-			targetRotation = Player.PathFollower.ForwardAngle + (groundTurnRatio * Mathf.Pi * .15f);
-		else if (Player.IsLockoutActive && Player.ActiveLockoutData.recenterPlayer)
-			targetRotation = Player.PathFollower.ForwardAngle + Player.PathTurnInfluence;
-		else if (SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.Autorun) && Mathf.IsZeroApprox(Player.MoveSpeed))
-			targetRotation = VisualAngle;
-
+		float targetRotation = CalculateTargetVisualRotation();
 		if (Player.ExternalController == null &&
 			(Player.Skills.IsSpeedBreakActive ||
 			Player.IsLockoutOverridingMovementAngle))
@@ -681,9 +668,43 @@ public partial class PlayerAnimator : Node3D
 			VisualAngle += Player.PathFollower.DeltaAngle;
 		}
 
-		VisualAngle = ExtensionMethods.ClampAngleRange(VisualAngle, Player.PathFollower.ForwardAngle, Mathf.Pi);
+		if (!SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.FreeRoam))
+			VisualAngle = ExtensionMethods.ClampAngleRange(VisualAngle, Player.PathFollower.ForwardAngle, Mathf.Pi);
+
 		VisualAngle = ExtensionMethods.SmoothDampAngle(VisualAngle, targetRotation, ref rotationVelocity, MovementRotationSmoothing);
 		Rotation = Vector3.Up * VisualAngle;
+	}
+
+	private float CalculateTargetVisualRotation()
+	{
+		if (Player.ExternalController != null)
+			return ExternalAngle;
+
+		if (Player.IsHomingAttacking) // Face target
+			return ExtensionMethods.CalculateForwardAngle(Player.Lockon.HomingAttackDirection);
+
+		if (Player.IsReversePath && Player.IsOnGround)
+			return Player.PathFollower.ForwardAngle;
+
+		if (Player.IsMovingBackward) // Backstepping
+		{
+			if (!SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.FreeRoam))
+				return Player.PathFollower.ForwardAngle + (groundTurnRatio * Mathf.Pi * .15f);
+
+			if (Player.IsBackflipping)
+				return Player.MovementAngle + Mathf.Pi + (groundTurnRatio * Mathf.Pi * .15f);
+		}
+
+		if (Player.IsLockoutActive && Player.ActiveLockoutData.recenterPlayer)
+		{
+			if (!SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.FreeRoam))
+				return Player.PathFollower.ForwardAngle + Player.PathTurnInfluence;
+		}
+
+		if (SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.Autorun) && Mathf.IsZeroApprox(Player.MoveSpeed))
+			return VisualAngle;
+
+		return Player.MovementAngle;
 	}
 	#endregion
 

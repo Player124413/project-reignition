@@ -95,7 +95,7 @@ public partial class SidleState : PlayerState
 			return null;
 
 		if (Trigger == null || Player.ExternalController != this)
-			return Player.MoveSpeed >= 0 ? runState : backstepState;
+			return Player.MoveSpeed >= 0 || SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.FreeRoam) ? runState : backstepState;
 
 		if (damageState != DamageStates.Disabled)
 		{
