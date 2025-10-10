@@ -16,6 +16,11 @@ public partial class Countdown : Control
 	[Export] private Node2D[] tickPositions;
 	[Export] private AnimationPlayer animator;
 
+	public float CountdownSkipAmount { get; private set; }
+
+	private readonly float DefaultCountdownLength = 4.0f;
+	private readonly float ShortCountdownLength = 40.0f / 30.0f;
+
 	public override void _EnterTree() => Instance = this;
 	public override void _Ready() => StageSettings.Instance.LevelStarted += StartCountdown;
 
@@ -25,6 +30,7 @@ public partial class Countdown : Control
 
 		if (DebugManager.Instance.SkipCountdown || StageSettings.Instance.Data.DisableCountdown)
 		{
+			CountdownSkipAmount = DefaultCountdownLength;
 			FinishCountdown();
 			return;
 		}
@@ -39,6 +45,7 @@ public partial class Countdown : Control
 		if (SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.QuickStart))
 		{
 			animator.Play("countdown-short");
+			CountdownSkipAmount = DefaultCountdownLength - ShortCountdownLength;
 		}
 		else
 		{
