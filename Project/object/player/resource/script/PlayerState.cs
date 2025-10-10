@@ -96,7 +96,6 @@ public partial class PlayerState : Node
 			return false;
 
 		bool isHoldingBack = Player.Controller.IsHoldingDirection(inputAngle, Player.MovementAngle + Mathf.Pi);
-		GD.PrintT(isHoldingBack, inputAngle, Player.MovementAngle + Mathf.Pi);
 		return isHoldingBack;
 	}
 

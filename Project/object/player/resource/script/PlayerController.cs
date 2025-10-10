@@ -76,15 +76,7 @@ public partial class PlayerController : CharacterBody3D
 	}
 
 	/// <summary> Player's horizontal movespeed, ignoring slopes. </summary>
-	public float MoveSpeed
-	{
-		get => moveSpeed;
-		set
-		{
-			moveSpeed = value;
-		}
-	}
-	private float moveSpeed;
+	public float MoveSpeed { get; set; }
 	/// <summary> Player's vertical speed -- only effective when not on the ground. </summary>
 	public float VerticalSpeed { get; set; }
 	public bool IsMovingBackward { get; set; }
