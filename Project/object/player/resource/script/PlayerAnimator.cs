@@ -72,11 +72,12 @@ public partial class PlayerAnimator : Node3D
 	private AnimationNodeOneShot oneShotTrigger;
 	/// <summary> Animation index for countdown animation. </summary>
 	private readonly string CountdownAnimation = "countdown";
+	private readonly string CountdownShortAnimation = "countdown_short";
 	private readonly string SpeedbreakAnimation = "speedbreak_windup";
 
 	public void PlayCountdown()
 	{
-		PlayOneshotAnimation(CountdownAnimation);
+		PlayOneshotAnimation(SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.QuickStart) ? CountdownShortAnimation : CountdownAnimation);
 
 		// Prevent sluggish transitions into gameplay
 		DisabledSpeedSmoothing = true;

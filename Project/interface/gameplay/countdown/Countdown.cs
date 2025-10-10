@@ -36,8 +36,15 @@ public partial class Countdown : Control
 			Visible = false;
 		}
 
-		animator.Play("countdown");
-		TweenCountdownTicks();
+		if (SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.QuickStart))
+		{
+			animator.Play("countdown-short");
+		}
+		else
+		{
+			animator.Play("countdown");
+			TweenCountdownTicks();
+		}
 
 		IsCountdownActive = true;
 		PauseMenu.AllowInputs = false;
