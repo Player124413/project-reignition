@@ -54,29 +54,32 @@ public partial class RunState : PlayerState
 		if (Player.CheckCeiling())
 			return null;
 
-		if (Player.Controller.IsJumpBufferActive)
+		if (!Player.Skills.IsSpeedBreakCharging)
 		{
-			Player.Controller.ResetJumpBuffer();
-			if (Player.Skills.IsSpeedBreakActive)
-				Player.Skills.ToggleSpeedBreak();
+			if (Player.Controller.IsJumpBufferActive)
+			{
+				Player.Controller.ResetJumpBuffer();
+				if (Player.Skills.IsSpeedBreakActive)
+					Player.Skills.ToggleSpeedBreak();
 
-			if (Player.IsBackflipInputValid())
-				return backflipState;
+				if (Player.IsBackflipInputValid())
+					return backflipState;
 
-			if (SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.ChargeJump))
+				if (SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.ChargeJump))
+					return slideState;
+
+				return jumpState;
+			}
+
+			if (!SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.ChargeJump) &&
+				Player.Controller.IsActionBufferActive)
+			{
+				Player.Controller.ResetActionBuffer();
+				if (Player.Skills.IsSpeedBreakActive)
+					Player.Skills.ToggleSpeedBreak();
+
 				return slideState;
-
-			return jumpState;
-		}
-
-		if (!SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.ChargeJump) &&
-			Player.Controller.IsActionBufferActive)
-		{
-			Player.Controller.ResetActionBuffer();
-			if (Player.Skills.IsSpeedBreakActive)
-				Player.Skills.ToggleSpeedBreak();
-
-			return slideState;
+			}
 		}
 
 		if (!Player.Skills.IsSpeedBreakActive)

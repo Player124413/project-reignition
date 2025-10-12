@@ -250,11 +250,11 @@ public partial class PlayerSkillController : Node3D
 		if (DebugManager.Instance.InfiniteSoulGauge) // Max out the soul gauge
 			ModifySoulGauge(MaxSoulPower);
 
-		UpdateTimeBreak();
-		UpdateSpeedBreak();
-
 		speedBreakTimer = Mathf.MoveToward(speedBreakTimer, 0, PhysicsManager.physicsDelta);
 		timeBreakTimer = Mathf.MoveToward(timeBreakTimer, 0, PhysicsManager.physicsDelta);
+
+		UpdateTimeBreak();
+		UpdateSpeedBreak();
 	}
 
 	public void CancelBreakSkills()
