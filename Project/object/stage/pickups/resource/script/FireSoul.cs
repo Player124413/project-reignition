@@ -25,6 +25,7 @@ public partial class FireSoul : Pickup
 		isCollectedInSaveFile = SaveManager.ActiveGameData.LevelData.IsFireSoulCollected(Stage.Data.LevelID, fireSoulIndex);
 
 		Stage.Respawned += Respawn;
+		Stage.TriggeredCheckpoint += SaveCheckpoint;
 
 		UpdateLockon();
 		Respawn();
@@ -44,9 +45,8 @@ public partial class FireSoul : Pickup
 		isCollected = true;
 		Animator.Play("collect");
 
-		StageSettings.Instance.SetFireSoulCheckpointFlag(fireSoulIndex - 1, true);
+		Stage.SetFireSoulCheckpointFlag(fireSoulIndex - 1, true);
 		HeadsUpDisplay.Instance.CollectFireSoul(fireSoulIndex - 1);
-		StageSettings.Instance.Connect(StageSettings.SignalName.TriggeredCheckpoint, new(this, MethodName.SaveCheckpoint), (uint)ConnectFlags.OneShot);
 
 		if (SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.FireSoulLockon) &&
 			Player.IsHomingAttacking)
@@ -73,9 +73,11 @@ public partial class FireSoul : Pickup
 		else
 			Animator.Play("loop");
 
-		StageSettings.Instance.SetFireSoulCheckpointFlag(fireSoulIndex - 1, false);
-		if (StageSettings.Instance.IsConnected(StageSettings.SignalName.TriggeredCheckpoint, new(this, MethodName.SaveCheckpoint)))
-			StageSettings.Instance.Disconnect(StageSettings.SignalName.TriggeredCheckpoint, new(this, MethodName.SaveCheckpoint));
+		if (!isCollectedInCheckpoint)
+		{
+			StageSettings.Instance.SetFireSoulCheckpointFlag(fireSoulIndex - 1, false);
+			HeadsUpDisplay.Instance.UncollectFireSoul(fireSoulIndex - 1);
+		}
 
 		base.Respawn();
 	}
@@ -105,7 +107,13 @@ public partial class FireSoul : Pickup
 		Animator.Play("hide");
 	}
 
-	private void SaveCheckpoint() => isCollectedInCheckpoint = true;
+	private void SaveCheckpoint()
+	{
+		if (isCollectedInCheckpoint || !isCollected)
+			return;
+
+		isCollectedInCheckpoint = true;
+	}
 
 	public override void Unload()
 	{
