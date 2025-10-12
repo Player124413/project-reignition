@@ -14,15 +14,21 @@ public partial class QuickStepState : PlayerState
 
 	[Export] private Curve movementCurve;
 
+	public bool IsSteppingRight { get; set; }
+
+	private bool isQuickSlide;
+	private bool isQuickSlideActive;
 	private float currentStepLength;
+	private readonly float MaxQuickSlideSamplePosition = 0.5f;
 	private readonly float StepLength = 0.3f;
 	private readonly float InterruptLength = 0.2f;
 	private readonly float FallPreventionLength = 0.1f;
 	private int stepDirection;
-	public bool IsSteppingRight { get; set; }
 
 	public override void EnterState()
 	{
+		isQuickSlide = SaveManager.ActiveSkillRing.GetAugmentIndex(SkillKey.QuickStep) == 1;
+		isQuickSlideActive = isQuickSlide && Player.Controller.StepAxis != 0;
 		currentStepLength = 0.0f;
 
 		stepDirection = 1;
@@ -35,8 +41,21 @@ public partial class QuickStepState : PlayerState
 				IsSteppingRight = !IsSteppingRight;
 		}
 
-		Player.Animator.StartQuickStep(IsSteppingRight);
+		if (isQuickSlide)
+			Player.Animator.StartQuickSlide(IsSteppingRight);
+		else
+			Player.Animator.StartQuickStep(IsSteppingRight);
+
 		Player.Effect.PlayQuickStepFX(IsSteppingRight);
+		Player.Effect.StartDust();
+	}
+
+	public override void ExitState()
+	{
+		if (isQuickSlide)
+			Player.Animator.StopQuickSlide(IsSteppingRight);
+
+		Player.Effect.StopDust();
 	}
 
 	public override PlayerState ProcessPhysics()
@@ -44,8 +63,7 @@ public partial class QuickStepState : PlayerState
 		if (!Player.IsQuickStepValid) // Exit quick step state
 			return runState;
 
-		currentStepLength += PhysicsManager.physicsDelta;
-		float currentSpeed = -movementCurve.Sample(Mathf.Clamp(currentStepLength / StepLength, 0f, 1f));
+		float currentSpeed = CalculateSpeed();
 		if (!IsSteppingRight)
 			currentSpeed *= -1;
 
@@ -104,10 +122,24 @@ public partial class QuickStepState : PlayerState
 			}
 		}
 
-		if (currentStepLength >= StepLength)
+		if (currentStepLength >= StepLength && !isQuickSlideActive)
 			return runState;
 
 		return null;
+	}
+
+	private float CalculateSpeed()
+	{
+		currentStepLength += PhysicsManager.physicsDelta;
+
+		if (isQuickSlideActive)
+		{
+			int axisInput = -Mathf.Sign(Player.Controller.StepAxis) * stepDirection;
+			isQuickSlideActive = (axisInput > 0 && IsSteppingRight) || (axisInput < 0 && !IsSteppingRight);
+			currentStepLength = Mathf.Min(currentStepLength, StepLength * MaxQuickSlideSamplePosition);
+		}
+
+		return -movementCurve.Sample(Mathf.Clamp(currentStepLength / StepLength, 0f, 1f));
 	}
 
 	protected override void ProcessTurning() => Player.MovementAngle = stepDirection == 1 ? Player.PathFollower.ForwardAngle : Player.PathFollower.BackAngle;

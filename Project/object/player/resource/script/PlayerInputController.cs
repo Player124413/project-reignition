@@ -173,18 +173,21 @@ public partial class PlayerInputController : Node
 			return;
 		}
 
-		if (Input.IsActionJustPressed("button_step_right"))
+		if (StepAxis != 0)
 		{
-			stepBuffer = InputBufferLength;
-			stepDirection = -1;
-			return;
-		}
+			if (Input.IsActionJustPressed("button_step_right"))
+			{
+				stepBuffer = InputBufferLength;
+				stepDirection = -1;
+				return;
+			}
 
-		if (Input.IsActionJustPressed("button_step_left"))
-		{
-			stepBuffer = InputBufferLength;
-			stepDirection = 1;
-			return;
+			if (Input.IsActionJustPressed("button_step_left"))
+			{
+				stepBuffer = InputBufferLength;
+				stepDirection = 1;
+				return;
+			}
 		}
 
 		stepBuffer = Mathf.MoveToward(stepBuffer, 0, PhysicsManager.physicsDelta);

@@ -27,12 +27,9 @@ public partial class PlayerAnimator : Node3D
 		oneShotTransition = oneShotTree.GetNode("oneshot_transition") as AnimationNodeTransition;
 	}
 
-	[Export]
-	private AnimationTree animationTree;
-	[Export]
-	private AnimationPlayer eventAnimationPlayer;
-	[Export]
-	private MeshInstance3D bodyMesh;
+	[Export] private AnimationTree animationTree;
+	[Export] private AnimationPlayer eventAnimationPlayer;
+	[Export] private MeshInstance3D bodyMesh;
 
 	/// <summary> Reference to the root blend tree of the animation tree. </summary>
 	private AnimationNodeBlendTree animationRoot;
@@ -179,8 +176,7 @@ public partial class PlayerAnimator : Node3D
 	private readonly string ReversePathTrigger = "parameters/ground_tree/reverse_path_trigger/request";
 	private readonly string ReversePathActive = "parameters/ground_tree/reverse_path_trigger/active";
 
-	[Export]
-	private Curve movementAnimationSpeedCurve;
+	[Export] private Curve movementAnimationSpeedCurve;
 	/// <summary> Disables speed smoothing. </summary>
 	public bool DisabledSpeedSmoothing { get; set; }
 	private float idleBlendVelocity;
@@ -385,8 +381,28 @@ public partial class PlayerAnimator : Node3D
 	private readonly string QuickStepSpeed = "parameters/ground_tree/quick_step_speed/scale";
 	public void StartQuickStep(bool isSteppingRight)
 	{
+		animationTree.Set(QuickSlideTransition, DisabledConstant);
 		animationTree.Set(QuickStepTrigger, (int)AnimationNodeOneShot.OneShotRequest.Fire);
 		animationTree.Set(QuickStepTransition, isSteppingRight ? RightConstant : LeftConstant);
+		animationTree.Set(QuickStepSpeed, 1.5f);
+	}
+
+	private AnimationNodeStateMachinePlayback QuickSlideStatePlayback => animationTree.Get(QuickSlidePlayback).Obj as AnimationNodeStateMachinePlayback;
+	private readonly string QuickSlidePlayback = "parameters/ground_tree/quick_slide_state/playback";
+	private readonly string QuickSlideTransition = "parameters/ground_tree/quick_slide_transition/transition_request";
+	private readonly string QuickSlideStartState = "-start";
+	private readonly string QuickSlideStopState = "-stop";
+	public void StartQuickSlide(bool isSteppingRight)
+	{
+		animationTree.Set(QuickSlideTransition, EnabledConstant);
+		animationTree.Set(QuickStepTrigger, (int)AnimationNodeOneShot.OneShotRequest.Fire);
+		QuickSlideStatePlayback.Start(isSteppingRight ? "r" + QuickSlideStartState : "l" + QuickSlideStartState);
+		animationTree.Set(QuickStepSpeed, 1.2f);
+	}
+
+	public void StopQuickSlide(bool isSteppingRight)
+	{
+		QuickSlideStatePlayback.Travel(isSteppingRight ? "r" + QuickSlideStopState : "l" + QuickSlideStopState);
 		animationTree.Set(QuickStepSpeed, 1.5f);
 	}
 
