@@ -1156,6 +1156,7 @@ public partial class PlayerController : CharacterBody3D
 
 		IsDefeated = false;
 		IsMovingBackward = false;
+		IsGrindstepping = false;
 		MoveSpeed = VerticalSpeed = 0;
 
 		// Clear any collision exceptions
