@@ -46,7 +46,7 @@ public partial class LaunchState : PlayerState
 		Player.AllowLandingGrind = true;
 		Player.AllowLandingSkills = false;
 		Player.CanDoubleJump = true;
-		Player.CanAirBoost = SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.AirBoost);
+		Player.CanAirBoost = true;
 		Player.MoveSpeed = Settings.HorizontalVelocity;
 		Player.VerticalSpeed = Settings.InitialVerticalVelocity;
 

@@ -423,7 +423,7 @@ public partial class PlayerSkillController : Node3D
 		breakDrainTimer = 0;
 		IsSpeedBreakActive = !IsSpeedBreakActive;
 		SoundManager.IsBreakChannelMuted = IsSpeedBreakActive;
-		bool isAirBoost = !Player.IsOnGround && !AllowExternalSpeedBreak && Player.CanAirBoost;
+		bool isAirBoost = !Player.IsOnGround && !AllowExternalSpeedBreak && Player.CanAirBoost && SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.AirBoost);
 		bool isInstantSpeedbreak = SkillRing.IsSkillEquipped(SkillKey.InstantSpeedBreak) || isAirBoost;
 
 		if (IsSpeedBreakActive)

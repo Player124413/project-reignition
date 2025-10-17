@@ -49,7 +49,7 @@ public partial class PlayerController : CharacterBody3D
 		StateMachine.Initialize(this);
 
 		CanDoubleJump = true;
-		CanAirBoost = SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.AirBoost);
+		CanAirBoost = true;
 
 		ChangeHitbox("RESET");
 		ResetCheckpointOrientation();

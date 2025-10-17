@@ -41,9 +41,10 @@ public partial class GrindState : PlayerState
 
 		Player.AllowLandingGrind = false;
 		Player.CanDoubleJump = true;
+		Player.CanAirBoost = true;
 		Player.IsGrindstepping = false;
 		Player.IsGrinding = true;
-		Player.CanAirBoost = SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.AirBoost);
+		Player.CanAirBoost = true;
 
 		float positionSmoothing = .2f;
 		float smoothFactor = RailFudgeFactor * 5f;
