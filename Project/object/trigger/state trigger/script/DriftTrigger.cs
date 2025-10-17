@@ -63,7 +63,7 @@ public partial class DriftTrigger : Area3D
 		if (Player.IsMovingBackward)
 			return;
 
-		if (Player.Stats.GroundSettings.GetSpeedRatio(Player.MoveSpeed) < EntranceSpeedRatio)
+		if (Player.MoveSpeed / Player.Stats.baseGroundSpeed < EntranceSpeedRatio)
 			return;
 
 		if (Player.ExternalController != null || Player.ExternalParent != null)
