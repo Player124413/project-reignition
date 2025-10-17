@@ -370,7 +370,7 @@ public partial class PlayerSkillController : Node3D
 			if (!IsSpeedBreakEnabled) return;
 			if (Player.IsDefeated) return;
 			if (Player.IsDrifting && !IsSpeedBreakActive) return;
-			if (!Player.IsOnGround && !AllowExternalSpeedBreak && !Player.CanAirBoost) return;
+			if (!Player.IsOnGround && !AllowExternalSpeedBreak && !(Player.CanAirBoost && SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.AirBoost))) return;
 
 			if (IsTimeBreakActive) // Deactivate Time Break
 				ToggleTimeBreak();
