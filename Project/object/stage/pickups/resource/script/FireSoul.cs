@@ -63,22 +63,27 @@ public partial class FireSoul : Pickup
 
 	public override void Respawn()
 	{
+		if (isCollectedInCheckpoint)
+			return;
+
 		isCollected = false;
-		Animator.Play(isCollectedInSaveFile || isCollectedInCheckpoint ? "collected" : "RESET");
+		Animator.Play("RESET");
 		Animator.Advance(0);
 		UpdateLockon();
+
+		if (isCollectedInSaveFile)
+		{
+			Animator.Play("collected");
+			Animator.Advance(0);
+		}
 
 		if (isTimeBreakOnly)
 			HideFireSoul();
 		else
 			Animator.Play("loop");
 
-		if (!isCollectedInCheckpoint)
-		{
-			StageSettings.Instance.SetFireSoulCheckpointFlag(fireSoulIndex - 1, false);
-			HeadsUpDisplay.Instance.UncollectFireSoul(fireSoulIndex - 1);
-		}
-
+		StageSettings.Instance.SetFireSoulCheckpointFlag(fireSoulIndex - 1, false);
+		HeadsUpDisplay.Instance.UncollectFireSoul(fireSoulIndex - 1);
 		base.Respawn();
 	}
 
@@ -113,6 +118,7 @@ public partial class FireSoul : Pickup
 			return;
 
 		isCollectedInCheckpoint = true;
+		GD.Print($"Checkpoint Saved for {fireSoulIndex}");
 	}
 
 	public override void Unload()
