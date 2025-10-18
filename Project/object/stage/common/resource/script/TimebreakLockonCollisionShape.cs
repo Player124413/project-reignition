@@ -12,6 +12,7 @@ public partial class TimebreakLockonCollisionShape : CollisionShape3D
 	{
 		Player.Skills.TimeBreakStarted += UpdateCollision;
 		Player.Skills.TimeBreakStopped += UpdateCollision;
+		CallDeferred(MethodName.UpdateCollision);
 	}
 
 
