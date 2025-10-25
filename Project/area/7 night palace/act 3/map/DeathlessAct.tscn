@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=3 uid="uid://q12qnxopos6l"]
+[gd_scene load_steps=19 format=3 uid="uid://q12qnxopos6l"]
 
 [ext_resource type="PackedScene" uid="uid://bdb1nsoasmspq" path="res://area/7 night palace/act 3/Static.tscn" id="1_7kcp2"]
 [ext_resource type="PackedScene" uid="uid://cjupypih0myxo" path="res://object/player/CharacterSpawn.tscn" id="2_l07u7"]
@@ -12,6 +12,12 @@
 [ext_resource type="PackedScene" uid="uid://cj6jnnqlu60tm" path="res://area/7 night palace/object/destructable/SpacePillar.tscn" id="10_1f1ci"]
 [ext_resource type="PackedScene" uid="uid://bn6wr6l8s3qyt" path="res://object/trigger/StageTrigger.tscn" id="11_q8pby"]
 [ext_resource type="Script" uid="uid://coiui4qvdxbqe" path="res://object/trigger/modules/EventTrigger.cs" id="12_bqgfg"]
+[ext_resource type="PackedScene" uid="uid://cdebogumtj1sj" path="res://area/7 night palace/object/destructable/SpacePlatform.tscn" id="13_87yc8"]
+[ext_resource type="PackedScene" uid="uid://dqy65o3le786n" path="res://area/7 night palace/object/destructable/SpacePanel.tscn" id="14_m58n7"]
+
+[sub_resource type="Animation" id="Animation_87yc8"]
+resource_name = "RESET"
+length = 0.001
 
 [sub_resource type="Animation" id="Animation_bqgfg"]
 resource_name = "event"
@@ -58,10 +64,6 @@ tracks/2/keys = {
 "method": &"Activate"
 }]
 }
-
-[sub_resource type="Animation" id="Animation_87yc8"]
-resource_name = "RESET"
-length = 0.001
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_87yc8"]
 _data = {
@@ -246,14 +248,17 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 15.9, 54)
 [node name="DashPanelR" parent="DeathlessAct/Opening" instance=ExtResource("7_jovjt")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 15.9, 54)
 
-[node name="Teleport" parent="DeathlessAct/Opening" instance=ExtResource("8_eok7x")]
+[node name="Teleport" parent="DeathlessAct/Opening" node_paths=PackedStringArray("warpTarget") instance=ExtResource("8_eok7x")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 19, 111)
+warpTarget = NodePath("../../SpaceD/SpawnPoint")
 
 [node name="SpaceD" type="Node3D" parent="DeathlessAct"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 992, 25, -733)
 script = ExtResource("4_eok7x")
 startEnabled = true
 saveVisibilityOnCheckpoint = true
+
+[node name="SpawnPoint" type="Node3D" parent="DeathlessAct/SpaceD"]
 
 [node name="DashPanel" parent="DeathlessAct/SpaceD" instance=ExtResource("7_jovjt")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 6)
@@ -616,9 +621,10 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.2, 0)
 transform = Transform3D(-0.82139385, -0.45854977, -0.33918178, -0.42261827, 0.8886642, -0.17795978, 0.38302216, -0.0028306544, -0.92373484, 94.63098, -18.494392, -17.01056)
 "Enter Mode" = 0
 
-[node name="Event" type="Node3D" parent="DeathlessAct/SpaceD/FallingSpacePillarGroup2"]
+[node name="Event" type="Node3D" parent="DeathlessAct/SpaceD/FallingSpacePillarGroup2" node_paths=PackedStringArray("animator")]
 transform = Transform3D(1, 2.9802322e-08, 0, 0, 1, 0, 0, 1.4901161e-08, 0.99999994, 0, 0, 0)
 script = ExtResource("12_bqgfg")
+animator = NodePath("AnimationPlayer")
 "Trigger Settings/Automatically Respawn" = true
 "Trigger Settings/Is One Shot" = true
 "Trigger Settings/Animation Blending" = 0.0
@@ -958,6 +964,94 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.66913074, -0.74314475, 0)
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.91354555, -0.4067365, 0)
 
 [node name="Ring" parent="DeathlessAct/SpaceD/RingPearlGroup9" instance=ExtResource("5_hu5kg")]
+
+[node name="SpacePlatform" parent="DeathlessAct/SpaceD" instance=ExtResource("13_87yc8")]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 4.7197266, -22.2633, -46.9834)
+
+[node name="SpacePanels" type="Node3D" parent="DeathlessAct/SpaceD"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 32, -25.25, -47)
+
+[node name="SpacePanel1" parent="DeathlessAct/SpaceD/SpacePanels" instance=ExtResource("14_m58n7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -21.4, 0, -3.1)
+
+[node name="SpacePanel2" parent="DeathlessAct/SpaceD/SpacePanels" instance=ExtResource("14_m58n7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -25, 0, 3.1)
+
+[node name="SpacePanel3" parent="DeathlessAct/SpaceD/SpacePanels" instance=ExtResource("14_m58n7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -28.6, 0, -3.1)
+
+[node name="SpacePanel4" parent="DeathlessAct/SpaceD/SpacePanels" instance=ExtResource("14_m58n7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -32.1, 0, 3.1)
+
+[node name="SpacePanel5" parent="DeathlessAct/SpaceD/SpacePanels" instance=ExtResource("14_m58n7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -42.8, 0, -3.1)
+
+[node name="SpacePanel6" parent="DeathlessAct/SpaceD/SpacePanels" instance=ExtResource("14_m58n7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -46.4, 0, 3.1)
+
+[node name="SpacePanel7" parent="DeathlessAct/SpaceD/SpacePanels" instance=ExtResource("14_m58n7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -50, 0, -3.1)
+
+[node name="SpacePanel8" parent="DeathlessAct/SpaceD/SpacePanels" instance=ExtResource("14_m58n7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -57.100025, 0, -3.0999756)
+
+[node name="SpacePanel9" parent="DeathlessAct/SpaceD/SpacePanels" instance=ExtResource("14_m58n7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -60.7, 0, 3.0999756)
+
+[node name="SpacePanel10" parent="DeathlessAct/SpaceD/SpacePanels" instance=ExtResource("14_m58n7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -64.29998, 0, -3.0999756)
+
+[node name="SpacePanel11" parent="DeathlessAct/SpaceD/SpacePanels" instance=ExtResource("14_m58n7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -67.79998, 0, 3.0999756)
+
+[node name="SpacePanel13" parent="DeathlessAct/SpaceD/SpacePanels" instance=ExtResource("14_m58n7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -110.5, 0, 3.0999756)
+
+[node name="SpacePanel14" parent="DeathlessAct/SpaceD/SpacePanels" instance=ExtResource("14_m58n7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -114.099976, 0, -3.0999756)
+
+[node name="SpacePanel15" parent="DeathlessAct/SpaceD/SpacePanels" instance=ExtResource("14_m58n7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -117.599976, 0, 3.0999756)
+
+[node name="SpacePanel16" parent="DeathlessAct/SpaceD/SpacePanels" instance=ExtResource("14_m58n7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -124.8, 0, 3.0999756)
+
+[node name="SpacePanel17" parent="DeathlessAct/SpaceD/SpacePanels" instance=ExtResource("14_m58n7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -128.39998, 0, -3.0999756)
+
+[node name="SpacePanel18" parent="DeathlessAct/SpaceD/SpacePanels" instance=ExtResource("14_m58n7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -131.89998, 0, 3.0999756)
+
+[node name="SpacePanel19" parent="DeathlessAct/SpaceD/SpacePanels" instance=ExtResource("14_m58n7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -135.49997, 0, -3.0999756)
+
+[node name="SpacePanel20" parent="DeathlessAct/SpaceD/SpacePanels" instance=ExtResource("14_m58n7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -167.5, 0, 3.0999756)
+
+[node name="SpacePanel21" parent="DeathlessAct/SpaceD/SpacePanels" instance=ExtResource("14_m58n7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -171.09998, 0, -3.0999756)
+
+[node name="SpacePanel22" parent="DeathlessAct/SpaceD/SpacePanels" instance=ExtResource("14_m58n7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -174.59998, 0, 3.0999756)
+
+[node name="SpacePanel23" parent="DeathlessAct/SpaceD/SpacePanels" instance=ExtResource("14_m58n7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -178.19997, 0, -3.0999756)
+
+[node name="SpacePanel24" parent="DeathlessAct/SpaceD/SpacePanels" instance=ExtResource("14_m58n7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -188.92691, 0, 3.0999756)
+
+[node name="SpacePanel25" parent="DeathlessAct/SpaceD/SpacePanels" instance=ExtResource("14_m58n7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -192.52689, 0, -3.0999756)
+
+[node name="SpacePanel26" parent="DeathlessAct/SpaceD/SpacePanels" instance=ExtResource("14_m58n7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -196.02689, 0, 3.0999756)
+
+[node name="SpacePanel27" parent="DeathlessAct/SpaceD/SpacePanels" instance=ExtResource("14_m58n7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -199.62688, 0, -3.0999756)
+
+[connection signal="Teleport" from="DeathlessAct/Opening/Teleport" to="Static/Visuals/RoomUp" method="Deactivate"]
+[connection signal="Teleport" from="DeathlessAct/Opening/Teleport" to="Static/Visuals/SpaceD" method="Activate"]
+[connection signal="Teleport" from="DeathlessAct/Opening/Teleport" to="Static/Trigger/Path/SpaceDPath" method="Activate"]
 
 [editable path="Static"]
 [editable path="Static/Collision"]
