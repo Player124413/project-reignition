@@ -2,7 +2,7 @@ shader_type spatial;
 render_mode blend_add, cull_disabled, unshaded;
 
 uniform float specular_bias = -0.5;
-uniform float specular_intensity = 0.5;
+uniform float specular_intensity = 0.1;
 
 global uniform vec3 player_position;
 uniform sampler2D albedo : source_color;
