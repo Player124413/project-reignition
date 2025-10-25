@@ -2,7 +2,7 @@ shader_type spatial;
 render_mode unshaded, blend_add, cull_disabled;
 
 uniform float bias = 0.0;
-uniform float intensity = .5;
+uniform float intensity = 1.0;
 
 void fragment()
 {

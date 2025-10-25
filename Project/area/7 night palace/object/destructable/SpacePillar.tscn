@@ -1,9 +1,41 @@
-[gd_scene load_steps=5 format=3 uid="uid://cj6jnnqlu60tm"]
+[gd_scene load_steps=12 format=3 uid="uid://cj6jnnqlu60tm"]
 
 [ext_resource type="PackedScene" uid="uid://c63nbxim8g25l" path="res://area/7 night palace/object/model/destructable/SpacePillar.gltf" id="1_fgncn"]
 [ext_resource type="Script" uid="uid://coiui4qvdxbqe" path="res://object/trigger/modules/EventTrigger.cs" id="1_m865f"]
 [ext_resource type="PackedScene" uid="uid://du046uqyvetcc" path="res://area/7 night palace/object/model/destructable/SpacePillarBroken.gltf" id="2_452lg"]
 [ext_resource type="Script" uid="uid://bri007qdprrbf" path="res://addons/custom_nodes/script/BoneAttachment3DNoScale.cs" id="3_5nsn4"]
+[ext_resource type="AudioStream" uid="uid://ck7skrmenlkas" path="res://sound/sfx/stage/night palace/STG070_16.wav" id="5_cbt2h"]
+[ext_resource type="Script" uid="uid://dnrfeyqvx8aq" path="res://addons/custom_nodes/script/GroupAudioStreamPlayer3D.cs" id="6_unbko"]
+[ext_resource type="Material" uid="uid://c3gddvyjpl0nv" path="res://effect/particle/material/Glass Shard.tres" id="7_tkmsh"]
+
+[sub_resource type="Curve" id="Curve_cbt2h"]
+_data = [Vector2(0, 0), 0.0, 20.632093, 0, 0, Vector2(0.1, 1), 0.0, 0.0, 0, 0, Vector2(0.8, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 4
+
+[sub_resource type="CurveTexture" id="CurveTexture_unbko"]
+width = 64
+texture_mode = 1
+curve = SubResource("Curve_cbt2h")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_tkmsh"]
+lifetime_randomness = 0.4
+emission_shape_offset = Vector3(0, 0, -2)
+emission_shape = 3
+emission_box_extents = Vector3(0.5, 0.5, 3)
+angle_min = 1.0728836e-05
+angle_max = 360.00003
+direction = Vector3(0, 1, 0)
+spread = 30.0
+initial_velocity_min = 10.0
+initial_velocity_max = 25.0
+angular_velocity_min = -720.0
+angular_velocity_max = 386.55
+gravity = Vector3(0, -50, 0)
+scale_min = 0.5
+alpha_curve = SubResource("CurveTexture_unbko")
+
+[sub_resource type="QuadMesh" id="QuadMesh_y7k3w"]
+material = ExtResource("7_tkmsh")
 
 [node name="SpacePillar" type="Node3D" node_paths=PackedStringArray("animator")]
 script = ExtResource("1_m865f")
@@ -23,10 +55,10 @@ visible = false
 [node name="StaticBody3D" parent="SpacePillar/SpacePillarCollisionWall" index="0" groups=["splash jump", "wall"]]
 
 [node name="SpacePillarBroken" parent="." instance=ExtResource("2_452lg")]
-visible = false
+physics_interpolation_mode = 2
 
 [node name="SpacePillarBrokenFloorCollision1" parent="SpacePillarBroken/SpacePillarBrokenRoot" index="0"]
-transform = Transform3D(1, -2.2280948e-16, -2.212569e-16, 2.220446e-16, 0.9999487, -0.0034958113, 2.2204453e-16, 0.0034958113, 0.9999487, 2.3841864e-07, 1.1404481, -0.0024139178)
+transform = Transform3D(1, -2.2280802e-16, -2.2125546e-16, 2.220446e-16, 0.9999422, -0.0034957884, 2.2204453e-16, 0.0034957884, 0.9999422, 2.3841864e-07, 1.1404481, -0.0024139178)
 visible = false
 skeleton = NodePath("../Skeleton3D")
 script = ExtResource("3_5nsn4")
@@ -36,11 +68,8 @@ boneIndex = 3
 
 [node name="StaticBody3D" parent="SpacePillarBroken/SpacePillarBrokenRoot/SpacePillarBrokenFloorCollision1" index="0" groups=["floor", "splash jump"]]
 
-[node name="CollisionShape3D" parent="SpacePillarBroken/SpacePillarBrokenRoot/SpacePillarBrokenFloorCollision1/StaticBody3D" index="0"]
-disabled = true
-
 [node name="SpacePillarBrokenFloorCollision2" parent="SpacePillarBroken/SpacePillarBrokenRoot" index="1"]
-transform = Transform3D(0.9999506, -0.0013366804, 0.002839192, 0.0013551293, 0.9999469, -0.0065122326, -0.0028303904, 0.006516057, 0.99994224, 0.00669311, 3.9966612, 0.0027996849)
+transform = Transform3D(0.9999441, -0.0013366804, 0.0028391737, 0.0013551206, 0.9999469, -0.00651219, -0.002830372, 0.006516057, 0.99993575, 0.00669311, 3.9966612, 0.0027996849)
 visible = false
 skeleton = NodePath("../Skeleton3D")
 script = ExtResource("3_5nsn4")
@@ -50,11 +79,8 @@ boneIndex = 2
 
 [node name="StaticBody3D" parent="SpacePillarBroken/SpacePillarBrokenRoot/SpacePillarBrokenFloorCollision2" index="0" groups=["floor", "splash jump"]]
 
-[node name="CollisionShape3D" parent="SpacePillarBroken/SpacePillarBrokenRoot/SpacePillarBrokenFloorCollision2/StaticBody3D" index="0"]
-disabled = true
-
 [node name="SpacePillarBrokenFloorCollision3" parent="SpacePillarBroken/SpacePillarBrokenRoot" index="2"]
-transform = Transform3D(0.999928, -0.0007988007, 0.004489509, 0.0008343885, 0.99992853, -0.007934574, -0.0044828737, 0.007938139, 0.9999312, 0.06770819, 6.7828474, 0.004411802)
+transform = Transform3D(0.9999215, -0.0007988007, 0.004489509, 0.00083438307, 0.99992853, -0.007934574, -0.004482845, 0.007938139, 0.9999312, 0.06770819, 6.7828474, 0.004411802)
 visible = false
 skeleton = NodePath("../Skeleton3D")
 script = ExtResource("3_5nsn4")
@@ -64,11 +90,8 @@ boneIndex = 1
 
 [node name="StaticBody3D" parent="SpacePillarBroken/SpacePillarBrokenRoot/SpacePillarBrokenFloorCollision3" index="0" groups=["floor", "splash jump"]]
 
-[node name="CollisionShape3D" parent="SpacePillarBroken/SpacePillarBrokenRoot/SpacePillarBrokenFloorCollision3/StaticBody3D" index="0"]
-disabled = true
-
 [node name="SpacePillarBrokenFloorCollision4" parent="SpacePillarBroken/SpacePillarBrokenRoot" index="3"]
-transform = Transform3D(1, 5.2986087e-07, -4.470209e-07, -5.314421e-07, 0.99995375, -0.00349661, 4.4518328e-07, 0.00349661, 0.99995375, -0.16814502, 8.921796, 0.03414421)
+transform = Transform3D(1, 5.2985746e-07, -4.47018e-07, -5.314421e-07, 0.99994725, -0.0034965873, 4.4518328e-07, 0.0034965873, 0.99994725, -0.16814502, 8.921796, 0.03414421)
 visible = false
 skeleton = NodePath("../Skeleton3D")
 script = ExtResource("3_5nsn4")
@@ -78,11 +101,8 @@ boneIndex = 4
 
 [node name="StaticBody3D" parent="SpacePillarBroken/SpacePillarBrokenRoot/SpacePillarBrokenFloorCollision4" index="0" groups=["floor", "splash jump"]]
 
-[node name="CollisionShape3D" parent="SpacePillarBroken/SpacePillarBrokenRoot/SpacePillarBrokenFloorCollision4/StaticBody3D" index="0"]
-disabled = true
-
 [node name="SpacePillarBrokenWallCollision1" parent="SpacePillarBroken/SpacePillarBrokenRoot" index="4"]
-transform = Transform3D(1, -2.228109e-16, -2.2125832e-16, 2.220446e-16, 0.9999551, -0.0034958336, 2.2204453e-16, 0.0034958336, 0.9999551, 2.3841864e-07, 1.1404481, -0.0024139178)
+transform = Transform3D(1, -2.2280945e-16, -2.2125689e-16, 2.220446e-16, 0.9999486, -0.003495811, 2.2204453e-16, 0.003495811, 0.9999486, 2.3841864e-07, 1.1404481, -0.0024139178)
 visible = false
 skeleton = NodePath("../Skeleton3D")
 script = ExtResource("3_5nsn4")
@@ -92,11 +112,8 @@ boneIndex = 3
 
 [node name="StaticBody3D" parent="SpacePillarBroken/SpacePillarBrokenRoot/SpacePillarBrokenWallCollision1" index="0" groups=["crusher", "splash jump", "wall"]]
 
-[node name="CollisionShape3D" parent="SpacePillarBroken/SpacePillarBrokenRoot/SpacePillarBrokenWallCollision1/StaticBody3D" index="0"]
-disabled = true
-
 [node name="SpacePillarBrokenWallCollision2" parent="SpacePillarBroken/SpacePillarBrokenRoot" index="5"]
-transform = Transform3D(0.9999506, -0.0013366804, 0.002839192, 0.0013551293, 0.9999469, -0.0065122326, -0.0028303904, 0.006516057, 0.99994224, 0.00669311, 3.9966612, 0.0027996849)
+transform = Transform3D(0.9999441, -0.0013366804, 0.0028391737, 0.0013551206, 0.9999469, -0.00651219, -0.002830372, 0.006516057, 0.99993575, 0.00669311, 3.9966612, 0.0027996849)
 visible = false
 skeleton = NodePath("../Skeleton3D")
 script = ExtResource("3_5nsn4")
@@ -106,11 +123,8 @@ boneIndex = 2
 
 [node name="StaticBody3D" parent="SpacePillarBroken/SpacePillarBrokenRoot/SpacePillarBrokenWallCollision2" index="0" groups=["crusher", "splash jump", "wall"]]
 
-[node name="CollisionShape3D" parent="SpacePillarBroken/SpacePillarBrokenRoot/SpacePillarBrokenWallCollision2/StaticBody3D" index="0"]
-disabled = true
-
 [node name="SpacePillarBrokenWallCollision3" parent="SpacePillarBroken/SpacePillarBrokenRoot" index="6"]
-transform = Transform3D(0.999928, -0.0007988007, 0.004489509, 0.0008343885, 0.99992853, -0.007934574, -0.0044828737, 0.007938139, 0.9999312, 0.06770819, 6.7828474, 0.004411802)
+transform = Transform3D(0.9999215, -0.0007988007, 0.004489509, 0.00083438307, 0.99992853, -0.007934574, -0.004482845, 0.007938139, 0.9999312, 0.06770819, 6.7828474, 0.004411802)
 visible = false
 skeleton = NodePath("../Skeleton3D")
 script = ExtResource("3_5nsn4")
@@ -120,11 +134,8 @@ boneIndex = 1
 
 [node name="StaticBody3D" parent="SpacePillarBroken/SpacePillarBrokenRoot/SpacePillarBrokenWallCollision3" index="0" groups=["crusher", "splash jump", "wall"]]
 
-[node name="CollisionShape3D" parent="SpacePillarBroken/SpacePillarBrokenRoot/SpacePillarBrokenWallCollision3/StaticBody3D" index="0"]
-disabled = true
-
 [node name="SpacePillarBrokenWallCollision4" parent="SpacePillarBroken/SpacePillarBrokenRoot" index="7"]
-transform = Transform3D(1, 5.298624e-07, -4.4702222e-07, -5.314421e-07, 0.99995667, -0.00349662, 4.4518328e-07, 0.00349662, 0.99995667, -0.16814502, 8.921796, 0.03414421)
+transform = Transform3D(1, 5.29859e-07, -4.4701932e-07, -5.314421e-07, 0.9999502, -0.0034965975, 4.4518328e-07, 0.0034965975, 0.9999502, -0.16814502, 8.921796, 0.03414421)
 visible = false
 skeleton = NodePath("../Skeleton3D")
 script = ExtResource("3_5nsn4")
@@ -134,8 +145,34 @@ boneIndex = 4
 
 [node name="StaticBody3D" parent="SpacePillarBroken/SpacePillarBrokenRoot/SpacePillarBrokenWallCollision4" index="0" groups=["crusher", "stone", "water"]]
 
-[node name="CollisionShape3D" parent="SpacePillarBroken/SpacePillarBrokenRoot/SpacePillarBrokenWallCollision4/StaticBody3D" index="0"]
-disabled = true
+[node name="AnimationPlayer" parent="SpacePillarBroken" index="1"]
+callback_mode_process = 0
+
+[node name="SFX" type="AudioStreamPlayer3D" parent="."]
+stream = ExtResource("5_cbt2h")
+attenuation_model = 3
+max_db = 0.0
+max_distance = 100.0
+bus = &"SFX"
+attenuation_filter_cutoff_hz = 20500.0
+script = ExtResource("6_unbko")
+groupKey = &"glass shatter"
+
+[node name="ShatterVFX" type="GPUParticles3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -3)
+layers = 32
+cast_shadow = 0
+extra_cull_margin = 100.0
+emitting = false
+amount = 16
+lifetime = 0.6
+one_shot = true
+explosiveness = 0.8
+fixed_fps = 0
+interpolate = false
+local_coords = true
+process_material = SubResource("ParticleProcessMaterial_tkmsh")
+draw_pass_1 = SubResource("QuadMesh_y7k3w")
 
 [editable path="SpacePillar"]
 [editable path="SpacePillarBroken"]

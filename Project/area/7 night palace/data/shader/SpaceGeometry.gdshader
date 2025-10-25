@@ -1,6 +1,9 @@
 shader_type spatial;
 render_mode blend_add, cull_disabled, unshaded;
 
+uniform float specular_bias = -0.5;
+uniform float specular_intensity = 0.5;
+
 global uniform vec3 player_position;
 uniform sampler2D albedo : source_color;
 uniform float brightness;
@@ -19,4 +22,7 @@ void fragment()
 	
 	col.rgb += vec3(GLOW_INTENSITY) * glow_factor;
 	ALBEDO = col.rgb * (INTENSITY + brightness);
+	
+	float dotProd = 1.0 - dot(VIEW, NORMAL) + specular_bias;
+	ALBEDO += vec3(clamp(dotProd, 0, 1) + .02) * specular_intensity * COLOR.rgb;
 }
