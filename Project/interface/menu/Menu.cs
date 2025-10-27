@@ -24,6 +24,8 @@ public partial class Menu : Control
 
 		Options,
 
+		TimeAttack,
+
 		ActiveMenu,
 		Max
 	}

@@ -152,7 +152,7 @@ public partial class MainMenu : Menu
 		}
 
 		// Ignore unimplemented menus (PARTY MODE).
-		if (currentSelection == 1) return;
+		//if (currentSelection == 1) return;
 		animator.Play("confirm");
 	}
 
@@ -173,6 +173,16 @@ public partial class MainMenu : Menu
 		{
 			_submenus[currentSelection].ShowMenu();
 			return;
+		}
+
+		if (currentSelection == 1)
+		{
+			TransitionManager.QueueSceneChange(TransitionManager.TimeAttackScenePath);
+			TransitionManager.StartTransition(new()
+			{
+				color = Colors.Black,
+				inSpeed = .5f,
+			});
 		}
 
 		if (currentSelection < 2)
