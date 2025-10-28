@@ -46,7 +46,7 @@ public partial class TimeAttack : Menu
 	{
 		Vector2I input = new(Mathf.Sign(Input.GetAxis("ui_left", "ui_right")), Mathf.Sign(Input.GetAxis("ui_up", "ui_down")));
 		StartSelectionTimer();
-		description.ShowDescription();
+
 		ProcessMenuInput(input);
 	}
 
@@ -56,8 +56,10 @@ public partial class TimeAttack : Menu
 		{
 			currentSelection += input.Y;
 			if (currentSelection > maxSelection || currentSelection < 1)
-				currentSelection = WrapSelection(1, maxSelection);
+				currentSelection = WrapSelection(currentSelection, maxSelection, 1);
 
+			if (input.X == 0)
+				description.ShowDescription();
 			timeAttackAnimator.Play("select-" + currentSelection);
 		}
 		else
