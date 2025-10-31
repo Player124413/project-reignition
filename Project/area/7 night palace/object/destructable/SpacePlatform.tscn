@@ -233,8 +233,9 @@ parentCollider = NodePath("Root/StaticBody3D")
 
 [node name="Root" type="Node3D" parent="." node_paths=PackedStringArray("root", "pieceRoot", "animator")]
 script = ExtResource("2_aawft")
-pieceMass = 0.19999999999708962
+pieceMass = 0.1999999999970896
 shakeScreenOnShatter = false
+stopPlayerOnShatter = true
 snapMode = 2
 root = NodePath("SpacePlatform")
 pieceRoot = NodePath("SpacePlatformPieces")
@@ -291,4 +292,4 @@ libraries = {
 
 [connection signal="area_entered" from="Root/PlatformTrigger" to="." method="OnEntered"]
 [connection signal="area_exited" from="Root/PlatformTrigger" to="." method="OnExited"]
-[connection signal="body_entered" from="Root/ShatterTrigger" to="Root" method="Shatter"]
+[connection signal="body_entered" from="Root/ShatterTrigger" to="Root" method="AttemptPlatformShatter"]

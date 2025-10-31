@@ -262,6 +262,24 @@ public partial class DestructableObject : Node3D
 		isInteractingWithPlayer = false;
 	}
 
+	/// <summary>
+	/// Checks whether the player is jumping into a platform from below, and shatters as necessary.
+	/// </summary>
+	public void AttemptPlatformShatter(Node3D b)
+	{
+		if (!b.IsInGroup("player"))
+		{
+			Shatter(); // Environment collision
+			return;
+		}
+
+		if (Player.IsOnGround || Player.VerticalSpeed <= 0)
+			return;
+
+		Shatter();
+		Player.VerticalSpeed = 0;
+	}
+
 	protected virtual void ProcessPlayerCollision()
 	{
 		if (isShattered)
