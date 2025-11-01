@@ -1,4 +1,4 @@
-[gd_scene load_steps=54 format=3 uid="uid://q12qnxopos6l"]
+[gd_scene load_steps=66 format=3 uid="uid://q12qnxopos6l"]
 
 [ext_resource type="PackedScene" uid="uid://bdb1nsoasmspq" path="res://area/7 night palace/act 3/Static.tscn" id="1_7kcp2"]
 [ext_resource type="PackedScene" uid="uid://cjupypih0myxo" path="res://object/player/CharacterSpawn.tscn" id="2_l07u7"]
@@ -36,6 +36,11 @@
 [ext_resource type="PackedScene" uid="uid://bqvtcp8tkbfyt" path="res://object/stage/common/SpikeBall.tscn" id="34_gd7g2"]
 [ext_resource type="PackedScene" uid="uid://87lgwwefd4g4" path="res://object/stage/common/JumpPanel.tscn" id="34_nii1p"]
 [ext_resource type="PackedScene" uid="uid://cxdonqvb6le03" path="res://object/enemy/majin/data/night palace/BlueMajin.tscn" id="36_i5h04"]
+[ext_resource type="PackedScene" uid="uid://b0uekqdfkbg6h" path="res://object/stage/common/ItemBox.tscn" id="37_27tqh"]
+[ext_resource type="PackedScene" uid="uid://dn28hpi34wpp4" path="res://object/enemy/majin/data/night palace/GreenMajin.tscn" id="38_p8lo0"]
+[ext_resource type="PackedScene" uid="uid://bcsww42lqxn6w" path="res://object/stage/common/LaunchRing.tscn" id="39_sl52c"]
+[ext_resource type="PackedScene" uid="uid://ku2it8hwr58k" path="res://area/7 night palace/object/obstacle/LaserPillar.tscn" id="40_8kwp6"]
+[ext_resource type="PackedScene" uid="uid://0ineyis1gx8t" path="res://area/7 night palace/object/obstacle/Laser.tscn" id="41_84o03"]
 
 [sub_resource type="Animation" id="Animation_87yc8"]
 resource_name = "RESET"
@@ -351,6 +356,111 @@ _data = {
 &"event": SubResource("Animation_p8lo0")
 }
 
+[sub_resource type="Animation" id="Animation_84o03"]
+resource_name = "RESET"
+length = 0.001
+step = 0.1
+
+[sub_resource type="Animation" id="Animation_8kwp6"]
+resource_name = "event"
+length = 0.5
+step = 0.1
+tracks/0/type = "method"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("../SpacePillar1")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"Activate"
+}]
+}
+tracks/1/type = "method"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("../SpacePillar2")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0.2),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"Activate"
+}]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_84o03"]
+_data = {
+&"RESET": SubResource("Animation_84o03"),
+&"event": SubResource("Animation_8kwp6")
+}
+
+[sub_resource type="Animation" id="Animation_tv87d"]
+resource_name = "RESET"
+length = 0.001
+step = 0.1
+
+[sub_resource type="Animation" id="Animation_8hfjn"]
+resource_name = "event"
+step = 0.1
+tracks/0/type = "method"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("SpacePillar1")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"Activate"
+}]
+}
+tracks/1/type = "method"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("SpacePillar2")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0.3),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"Activate"
+}]
+}
+tracks/2/type = "method"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("SpacePillar3")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0.6),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"Activate"
+}]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_krvgn"]
+_data = {
+&"RESET": SubResource("Animation_tv87d"),
+&"event": SubResource("Animation_8hfjn")
+}
+
+[sub_resource type="Curve" id="Curve_84o03"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.1, 0), 0.0, 0.0, 0, 0, Vector2(0.4, 1), 0.0, 0.0, 0, 0, Vector2(0.6, 1), 0.0, 0.0, 0, 0, Vector2(0.90000004, 0), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 6
+
 [node name="World" type="Node"]
 
 [node name="Static" parent="." instance=ExtResource("1_7kcp2")]
@@ -363,10 +473,11 @@ metadata/_edit_group_ = true
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1500, 0, -560)
 
 [node name="CharacterSpawn" parent="DeathlessAct/SpawnPosition" instance=ExtResource("2_l07u7")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -432, 0, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -443, -20, 156)
 
 [node name="Opening" type="Node3D" parent="DeathlessAct"]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 1500, 0, -560)
+visible = false
 script = ExtResource("4_eok7x")
 startEnabled = true
 saveVisibilityOnCheckpoint = true
@@ -537,6 +648,7 @@ script = ExtResource("4_eok7x")
 saveVisibilityOnCheckpoint = true
 
 [node name="SpawnPosition" type="Node3D" parent="DeathlessAct/SpaceD"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -5)
 
 [node name="SpiralObjects" type="Node3D" parent="DeathlessAct/SpaceD"]
 
@@ -2848,7 +2960,6 @@ warpTarget = NodePath("../../SpaceA/SpawnPosition")
 [node name="SpaceA" type="Node3D" parent="DeathlessAct"]
 transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 1072, 0, -560)
 script = ExtResource("4_eok7x")
-startEnabled = true
 saveVisibilityOnCheckpoint = true
 
 [node name="SpawnPosition" type="Node3D" parent="DeathlessAct/SpaceA"]
@@ -4452,8 +4563,1330 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.8477591, 0, -0.76536685)
 [node name="SpacePillar" parent="DeathlessAct/SpaceA/PearlRingGroup3" instance=ExtResource("10_1f1ci")]
 transform = Transform3D(1.5, 0, 0, 0, 1, 0, 0, 0, 1.5, 0, 0, 0)
 
-[node name="Teleport" parent="DeathlessAct/SpaceA" instance=ExtResource("8_eok7x")]
+[node name="Teleport" parent="DeathlessAct/SpaceA" node_paths=PackedStringArray("warpTarget") instance=ExtResource("8_eok7x")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -80, 3, 286)
+warpTarget = NodePath("../../RoomUp/SpawnPosition")
+
+[node name="RoomUp" type="Node3D" parent="DeathlessAct"]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 1398, 16, -560)
+script = ExtResource("4_eok7x")
+saveVisibilityOnCheckpoint = true
+
+[node name="SpawnPosition" type="Node3D" parent="DeathlessAct/RoomUp"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 10)
+
+[node name="Rings1" type="Node3D" parent="DeathlessAct/RoomUp"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.3, 63)
+script = ExtResource("4_pimmg")
+Source = ExtResource("5_hu5kg")
+Amount = 8
+Shape = 2
+Path = NodePath("../../../Static/Path/RoomUp")
+"Path Progress Offset" = 0.0
+"Reverse Path" = false
+"Disable Path Y" = false
+Spacing = 2.5
+"Horizontal Offset" = null
+"Vertical Offset" = null
+metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
+
+[node name="Child01" parent="DeathlessAct/RoomUp/Rings1" instance=ExtResource("5_hu5kg")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 7.8201294e-05, -0.00012207031)
+
+[node name="Child02" parent="DeathlessAct/RoomUp/Rings1" instance=ExtResource("5_hu5kg")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.2719221, 2.1564941)
+
+[node name="Child03" parent="DeathlessAct/RoomUp/Rings1" instance=ExtResource("5_hu5kg")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -2.602929, 4.274658)
+
+[node name="Child04" parent="DeathlessAct/RoomUp/Rings1" instance=ExtResource("5_hu5kg")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -3.9618406, 6.3741455)
+
+[node name="Child05" parent="DeathlessAct/RoomUp/Rings1" instance=ExtResource("5_hu5kg")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -5.3330555, 8.464966)
+
+[node name="Child06" parent="DeathlessAct/RoomUp/Rings1" instance=ExtResource("5_hu5kg")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -6.706357, 10.553833)
+
+[node name="Child07" parent="DeathlessAct/RoomUp/Rings1" instance=ExtResource("5_hu5kg")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -8.073104, 12.646606)
+
+[node name="Child08" parent="DeathlessAct/RoomUp/Rings1" instance=ExtResource("5_hu5kg")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -9.424218, 14.749023)
+
+[node name="PearlsL1" type="Node3D" parent="DeathlessAct/RoomUp"]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 3, -15.5, 97.5)
+script = ExtResource("4_pimmg")
+Source = ExtResource("6_jovjt")
+Amount = 10
+Shape = 0
+Orientation = 0
+Spacing = 1.0
+"Horizontal Offset" = null
+"Vertical Offset" = null
+metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
+
+[node name="Child01" parent="DeathlessAct/RoomUp/PearlsL1" instance=ExtResource("6_jovjt")]
+
+[node name="Child02" parent="DeathlessAct/RoomUp/PearlsL1" instance=ExtResource("6_jovjt")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -1)
+
+[node name="Child03" parent="DeathlessAct/RoomUp/PearlsL1" instance=ExtResource("6_jovjt")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2)
+
+[node name="Child04" parent="DeathlessAct/RoomUp/PearlsL1" instance=ExtResource("6_jovjt")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -3)
+
+[node name="Child05" parent="DeathlessAct/RoomUp/PearlsL1" instance=ExtResource("6_jovjt")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -4)
+
+[node name="Child06" parent="DeathlessAct/RoomUp/PearlsL1" instance=ExtResource("6_jovjt")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -5)
+
+[node name="Child07" parent="DeathlessAct/RoomUp/PearlsL1" instance=ExtResource("6_jovjt")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -6)
+
+[node name="Child08" parent="DeathlessAct/RoomUp/PearlsL1" instance=ExtResource("6_jovjt")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -7)
+
+[node name="Child09" parent="DeathlessAct/RoomUp/PearlsL1" instance=ExtResource("6_jovjt")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -8)
+
+[node name="Child10" parent="DeathlessAct/RoomUp/PearlsL1" instance=ExtResource("6_jovjt")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -9)
+
+[node name="PearlsL2" type="Node3D" parent="DeathlessAct/RoomUp"]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 2.4, -15.5, 97.5)
+script = ExtResource("4_pimmg")
+Source = ExtResource("6_jovjt")
+Amount = 10
+Shape = 0
+Orientation = 0
+Spacing = 1.0
+"Horizontal Offset" = null
+"Vertical Offset" = null
+metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
+
+[node name="Child01" parent="DeathlessAct/RoomUp/PearlsL2" instance=ExtResource("6_jovjt")]
+
+[node name="Child02" parent="DeathlessAct/RoomUp/PearlsL2" instance=ExtResource("6_jovjt")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -1)
+
+[node name="Child03" parent="DeathlessAct/RoomUp/PearlsL2" instance=ExtResource("6_jovjt")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2)
+
+[node name="Child04" parent="DeathlessAct/RoomUp/PearlsL2" instance=ExtResource("6_jovjt")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -3)
+
+[node name="Child05" parent="DeathlessAct/RoomUp/PearlsL2" instance=ExtResource("6_jovjt")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -4)
+
+[node name="Child06" parent="DeathlessAct/RoomUp/PearlsL2" instance=ExtResource("6_jovjt")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -5)
+
+[node name="Child07" parent="DeathlessAct/RoomUp/PearlsL2" instance=ExtResource("6_jovjt")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -6)
+
+[node name="Child08" parent="DeathlessAct/RoomUp/PearlsL2" instance=ExtResource("6_jovjt")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -7)
+
+[node name="Child09" parent="DeathlessAct/RoomUp/PearlsL2" instance=ExtResource("6_jovjt")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -8)
+
+[node name="Child10" parent="DeathlessAct/RoomUp/PearlsL2" instance=ExtResource("6_jovjt")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -9)
+
+[node name="PearlsR1" type="Node3D" parent="DeathlessAct/RoomUp"]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, -2.5, -15.5, 97.5)
+script = ExtResource("4_pimmg")
+Source = ExtResource("6_jovjt")
+Amount = 10
+Shape = 0
+Orientation = 0
+Spacing = 1.0
+"Horizontal Offset" = null
+"Vertical Offset" = null
+metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
+
+[node name="Child01" parent="DeathlessAct/RoomUp/PearlsR1" instance=ExtResource("6_jovjt")]
+
+[node name="Child02" parent="DeathlessAct/RoomUp/PearlsR1" instance=ExtResource("6_jovjt")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -1)
+
+[node name="Child03" parent="DeathlessAct/RoomUp/PearlsR1" instance=ExtResource("6_jovjt")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2)
+
+[node name="Child04" parent="DeathlessAct/RoomUp/PearlsR1" instance=ExtResource("6_jovjt")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -3)
+
+[node name="Child05" parent="DeathlessAct/RoomUp/PearlsR1" instance=ExtResource("6_jovjt")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -4)
+
+[node name="Child06" parent="DeathlessAct/RoomUp/PearlsR1" instance=ExtResource("6_jovjt")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -5)
+
+[node name="Child07" parent="DeathlessAct/RoomUp/PearlsR1" instance=ExtResource("6_jovjt")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -6)
+
+[node name="Child08" parent="DeathlessAct/RoomUp/PearlsR1" instance=ExtResource("6_jovjt")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -7)
+
+[node name="Child09" parent="DeathlessAct/RoomUp/PearlsR1" instance=ExtResource("6_jovjt")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -8)
+
+[node name="Child10" parent="DeathlessAct/RoomUp/PearlsR1" instance=ExtResource("6_jovjt")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -9)
+
+[node name="PearlsR2" type="Node3D" parent="DeathlessAct/RoomUp"]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, -3.1, -15.5, 97.5)
+script = ExtResource("4_pimmg")
+Source = ExtResource("6_jovjt")
+Amount = 10
+Shape = 0
+Orientation = 0
+Spacing = 1.0
+"Horizontal Offset" = null
+"Vertical Offset" = null
+metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
+
+[node name="Child01" parent="DeathlessAct/RoomUp/PearlsR2" instance=ExtResource("6_jovjt")]
+
+[node name="Child02" parent="DeathlessAct/RoomUp/PearlsR2" instance=ExtResource("6_jovjt")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -1)
+
+[node name="Child03" parent="DeathlessAct/RoomUp/PearlsR2" instance=ExtResource("6_jovjt")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2)
+
+[node name="Child04" parent="DeathlessAct/RoomUp/PearlsR2" instance=ExtResource("6_jovjt")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -3)
+
+[node name="Child05" parent="DeathlessAct/RoomUp/PearlsR2" instance=ExtResource("6_jovjt")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -4)
+
+[node name="Child06" parent="DeathlessAct/RoomUp/PearlsR2" instance=ExtResource("6_jovjt")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -5)
+
+[node name="Child07" parent="DeathlessAct/RoomUp/PearlsR2" instance=ExtResource("6_jovjt")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -6)
+
+[node name="Child08" parent="DeathlessAct/RoomUp/PearlsR2" instance=ExtResource("6_jovjt")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -7)
+
+[node name="Child09" parent="DeathlessAct/RoomUp/PearlsR2" instance=ExtResource("6_jovjt")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -8)
+
+[node name="Child10" parent="DeathlessAct/RoomUp/PearlsR2" instance=ExtResource("6_jovjt")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -9)
+
+[node name="SpinningBoxSmall1" parent="DeathlessAct/RoomUp" instance=ExtResource("33_nii1p")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, -13.1, 122.4)
+
+[node name="ItemBox" parent="DeathlessAct/RoomUp/SpinningBoxSmall1" instance=ExtResource("37_27tqh")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 0, 1.4000001, 0)
+"Spawn Settings/Spawn Pearls" = true
+"Spawn Settings/Amount" = 20
+
+[node name="SpinningBoxSmall2" parent="DeathlessAct/RoomUp" instance=ExtResource("33_nii1p")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, -9.099999, 128.9)
+
+[node name="ItemBox" parent="DeathlessAct/RoomUp/SpinningBoxSmall2" instance=ExtResource("37_27tqh")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 0, 1.4000001, 0)
+"Spawn Settings/Spawn Pearls" = true
+"Spawn Settings/Amount" = 20
+
+[node name="SpinningBoxLarge" parent="DeathlessAct/RoomUp" instance=ExtResource("32_u68bb")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5, -5.6, 133.7)
+
+[node name="ItemBox" parent="DeathlessAct/RoomUp/SpinningBoxLarge" instance=ExtResource("37_27tqh")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 0, 3, 0)
+"Spawn Settings/Spawn Pearls" = true
+"Spawn Settings/Amount" = 20
+
+[node name="DashPanelL" parent="DeathlessAct/RoomUp" instance=ExtResource("7_jovjt")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 156)
+
+[node name="DashPanelR" parent="DeathlessAct/RoomUp" instance=ExtResource("7_jovjt")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0, 156)
+
+[node name="Rings2" type="Node3D" parent="DeathlessAct/RoomUp"]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0.8000002, 0.6999998, 158.5)
+script = ExtResource("4_pimmg")
+Source = ExtResource("5_hu5kg")
+Amount = 5
+Shape = 0
+Orientation = 0
+Spacing = 2.0
+"Horizontal Offset" = null
+"Vertical Offset" = null
+metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
+
+[node name="Child01" parent="DeathlessAct/RoomUp/Rings2" instance=ExtResource("5_hu5kg")]
+
+[node name="Child02" parent="DeathlessAct/RoomUp/Rings2" instance=ExtResource("5_hu5kg")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2)
+
+[node name="Child03" parent="DeathlessAct/RoomUp/Rings2" instance=ExtResource("5_hu5kg")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -4)
+
+[node name="Child04" parent="DeathlessAct/RoomUp/Rings2" instance=ExtResource("5_hu5kg")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -6)
+
+[node name="Child05" parent="DeathlessAct/RoomUp/Rings2" instance=ExtResource("5_hu5kg")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -8)
+
+[node name="Rings3" type="Node3D" parent="DeathlessAct/RoomUp"]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, -0.79999983, 0.6999998, 158.5)
+script = ExtResource("4_pimmg")
+Source = ExtResource("5_hu5kg")
+Amount = 5
+Shape = 0
+Orientation = 0
+Spacing = 2.0
+"Horizontal Offset" = null
+"Vertical Offset" = null
+metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
+
+[node name="Child01" parent="DeathlessAct/RoomUp/Rings3" instance=ExtResource("5_hu5kg")]
+
+[node name="Child02" parent="DeathlessAct/RoomUp/Rings3" instance=ExtResource("5_hu5kg")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2)
+
+[node name="Child03" parent="DeathlessAct/RoomUp/Rings3" instance=ExtResource("5_hu5kg")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -4)
+
+[node name="Child04" parent="DeathlessAct/RoomUp/Rings3" instance=ExtResource("5_hu5kg")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -6)
+
+[node name="Child05" parent="DeathlessAct/RoomUp/Rings3" instance=ExtResource("5_hu5kg")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -8)
+
+[node name="Teleport" parent="DeathlessAct/RoomUp" instance=ExtResource("8_eok7x")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3, 212.4)
+
+[node name="SpaceB" type="Node3D" parent="DeathlessAct"]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 1056.3, -20, -404)
+script = ExtResource("4_eok7x")
+startEnabled = true
+saveVisibilityOnCheckpoint = true
+
+[node name="SpawnPosition" type="Node3D" parent="DeathlessAct/SpaceB"]
+
+[node name="Rings" type="Node3D" parent="DeathlessAct/SpaceB"]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 6.119595e-07, 0.6, 7)
+script = ExtResource("4_pimmg")
+Source = ExtResource("5_hu5kg")
+Amount = 5
+Shape = 0
+Orientation = 0
+Spacing = 2.0
+"Horizontal Offset" = null
+"Vertical Offset" = null
+metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
+
+[node name="Child01" parent="DeathlessAct/SpaceB/Rings" instance=ExtResource("5_hu5kg")]
+
+[node name="Child02" parent="DeathlessAct/SpaceB/Rings" instance=ExtResource("5_hu5kg")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2)
+
+[node name="Child03" parent="DeathlessAct/SpaceB/Rings" instance=ExtResource("5_hu5kg")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -4)
+
+[node name="Child04" parent="DeathlessAct/SpaceB/Rings" instance=ExtResource("5_hu5kg")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -6)
+
+[node name="Child05" parent="DeathlessAct/SpaceB/Rings" instance=ExtResource("5_hu5kg")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -8)
+
+[node name="SpacePanelGroup1" type="Node3D" parent="DeathlessAct/SpaceB"]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 0, -0.3, 0)
+
+[node name="SpacePanel1" parent="DeathlessAct/SpaceB/SpacePanelGroup1" instance=ExtResource("14_m58n7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 34, 0, 3.1000001)
+
+[node name="SpacePanel2" parent="DeathlessAct/SpaceB/SpacePanelGroup1" instance=ExtResource("14_m58n7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 37.6, 0, -3.1000001)
+
+[node name="SpacePanel3" parent="DeathlessAct/SpaceB/SpacePanelGroup1" instance=ExtResource("14_m58n7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 41.1, 0, 3.1000001)
+
+[node name="SpacePanel4" parent="DeathlessAct/SpaceB/SpacePanelGroup1" instance=ExtResource("14_m58n7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 44.699997, 0, -3.1000001)
+
+[node name="SpacePanel5" parent="DeathlessAct/SpaceB/SpacePanelGroup1" instance=ExtResource("14_m58n7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 59, 0, -3.1000001)
+
+[node name="SpacePanel6" parent="DeathlessAct/SpaceB/SpacePanelGroup1" instance=ExtResource("14_m58n7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 62.5, 0, 3.1000001)
+
+[node name="SpacePanel7" parent="DeathlessAct/SpaceB/SpacePanelGroup1" instance=ExtResource("14_m58n7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 66.1, 0, -3.1000001)
+
+[node name="SpacePanel8" parent="DeathlessAct/SpaceB/SpacePanelGroup1" instance=ExtResource("14_m58n7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 69.7, 0, 3.1000001)
+
+[node name="GreenMajin1" parent="DeathlessAct/SpaceB" instance=ExtResource("38_p8lo0")]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 2.0000305, 0, 27)
+
+[node name="GreenMajin2" parent="DeathlessAct/SpaceB" instance=ExtResource("38_p8lo0")]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, -2.9999695, 2, 36)
+
+[node name="MovingMajin" type="Node3D" parent="DeathlessAct/SpaceB"]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 3.0517578e-05, 2, 45)
+script = ExtResource("18_2qlbe")
+startPaused = true
+smoothPausing = true
+root = NodePath("BlueMajin")
+animator = NodePath("")
+Movement/Mode = 1
+"Movement/Cycle Length" = 4.0
+"Movement/Starting Offset" = 0.25
+Movement/Distance = 5.0
+Movement/Angle = 0.0
+"Vertical Orientation" = true
+
+[node name="BlueMajin" parent="DeathlessAct/SpaceB/MovingMajin" instance=ExtResource("36_i5h04")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5, 0)
+"Spawn Settings/Spawn Travel Time" = 1.0
+"Spawn Settings/Spawn Delay" = 0.0
+"Spawn Settings/Spawn Offset" = Vector3(0, 10, 0)
+"Spawn Settings/Spawn In Offset" = Vector3(0, 0, 0)
+"Spawn Settings/Spawn Out Offset" = Vector3(0, 0, 0)
+"Attack Settings/Attack Type" = 1
+
+[node name="PillarTrigger1" parent="DeathlessAct/SpaceB" instance=ExtResource("11_q8pby")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.0517578e-05, 0, 13)
+"Enter Mode" = 0
+
+[node name="Event" type="Node3D" parent="DeathlessAct/SpaceB/PillarTrigger1" node_paths=PackedStringArray("animator")]
+script = ExtResource("12_bqgfg")
+animator = NodePath("AnimationPlayer")
+"Trigger Settings/Automatically Respawn" = false
+"Trigger Settings/Is One Shot" = true
+"Trigger Settings/Animation Blending" = 0.0
+"Trigger Settings/Player Stand-in" = NodePath("")
+
+[node name="SpacePillar1" parent="DeathlessAct/SpaceB/PillarTrigger1/Event" instance=ExtResource("10_1f1ci")]
+transform = Transform3D(0, 0, -1.5, 0, 1, 0, 1.5, 0, 0, -4, 0, 10.25)
+
+[node name="SpacePillar2" parent="DeathlessAct/SpaceB/PillarTrigger1/Event" instance=ExtResource("10_1f1ci")]
+transform = Transform3D(-1.3113416e-07, 0, 1.5, 0, 1, 0, -1.5, 0, -1.3113416e-07, 5.5, 0, 17.25)
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="DeathlessAct/SpaceB/PillarTrigger1/Event"]
+libraries = {
+&"": SubResource("AnimationLibrary_84o03")
+}
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="DeathlessAct/SpaceB/PillarTrigger1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 10, 0)
+shape = SubResource("BoxShape3D_bqgfg")
+
+[node name="GrindGroup" type="Node3D" parent="DeathlessAct/SpaceB"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.025360107, 0, 50.25)
+
+[node name="GrindrailL1" parent="DeathlessAct/SpaceB/GrindGroup" instance=ExtResource("25_q1n2k")]
+transform = Transform3D(-1, 0, 8.742277e-08, 0, 1, 0, -8.742277e-08, 0, -1, 2.5, 4.3, -4.3711385e-08)
+railModel = NodePath("")
+startCap = NodePath("")
+endCap = NodePath("")
+collider = NodePath("")
+
+[node name="Rings" type="Node3D" parent="DeathlessAct/SpaceB/GrindGroup/GrindrailL1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.1000004, -1)
+script = ExtResource("4_pimmg")
+Source = ExtResource("5_hu5kg")
+Amount = 5
+Shape = 0
+Orientation = 0
+Spacing = 2.0
+"Horizontal Offset" = null
+"Vertical Offset" = null
+metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
+
+[node name="Child01" parent="DeathlessAct/SpaceB/GrindGroup/GrindrailL1/Rings" instance=ExtResource("5_hu5kg")]
+
+[node name="Child02" parent="DeathlessAct/SpaceB/GrindGroup/GrindrailL1/Rings" instance=ExtResource("5_hu5kg")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2)
+
+[node name="Child03" parent="DeathlessAct/SpaceB/GrindGroup/GrindrailL1/Rings" instance=ExtResource("5_hu5kg")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -4)
+
+[node name="Child04" parent="DeathlessAct/SpaceB/GrindGroup/GrindrailL1/Rings" instance=ExtResource("5_hu5kg")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -6)
+
+[node name="Child05" parent="DeathlessAct/SpaceB/GrindGroup/GrindrailL1/Rings" instance=ExtResource("5_hu5kg")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -8)
+
+[node name="GrindrailL2" parent="DeathlessAct/SpaceB/GrindGroup" instance=ExtResource("17_ysg56")]
+transform = Transform3D(-1, 1.1713444e-08, -8.66345e-08, 0, 0.9909832, 0.13398619, 8.742278e-08, 0.13398619, -0.9909832, 2.5, 4.3, 10)
+railModel = NodePath("")
+startCap = NodePath("")
+endCap = NodePath("")
+collider = NodePath("")
+
+[node name="GrindrailR1" parent="DeathlessAct/SpaceB/GrindGroup" instance=ExtResource("25_q1n2k")]
+transform = Transform3D(-1, 0, 8.742277e-08, 0, 1, 0, -8.742277e-08, 0, -1, -2.5, 4.3, 4.3711385e-08)
+railModel = NodePath("")
+startCap = NodePath("")
+endCap = NodePath("")
+collider = NodePath("")
+
+[node name="Rings" type="Node3D" parent="DeathlessAct/SpaceB/GrindGroup/GrindrailR1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.1000004, -1)
+script = ExtResource("4_pimmg")
+Source = ExtResource("5_hu5kg")
+Amount = 5
+Shape = 0
+Orientation = 0
+Spacing = 2.0
+"Horizontal Offset" = null
+"Vertical Offset" = null
+metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
+
+[node name="Child01" parent="DeathlessAct/SpaceB/GrindGroup/GrindrailR1/Rings" instance=ExtResource("5_hu5kg")]
+
+[node name="Child02" parent="DeathlessAct/SpaceB/GrindGroup/GrindrailR1/Rings" instance=ExtResource("5_hu5kg")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2)
+
+[node name="Child03" parent="DeathlessAct/SpaceB/GrindGroup/GrindrailR1/Rings" instance=ExtResource("5_hu5kg")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -4)
+
+[node name="Child04" parent="DeathlessAct/SpaceB/GrindGroup/GrindrailR1/Rings" instance=ExtResource("5_hu5kg")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -6)
+
+[node name="Child05" parent="DeathlessAct/SpaceB/GrindGroup/GrindrailR1/Rings" instance=ExtResource("5_hu5kg")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -8)
+
+[node name="GrindrailR2" parent="DeathlessAct/SpaceB/GrindGroup" instance=ExtResource("17_ysg56")]
+transform = Transform3D(-1, 1.1713444e-08, -8.66345e-08, 0, 0.9909832, 0.13398619, 8.742278e-08, 0.13398619, -0.9909832, -2.5, 4.3, 10)
+railModel = NodePath("")
+startCap = NodePath("")
+endCap = NodePath("")
+collider = NodePath("")
+
+[node name="SpacePillar1" parent="DeathlessAct/SpaceB/GrindGroup" instance=ExtResource("10_1f1ci")]
+transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 2.4999695, 0, 0)
+
+[node name="SpacePillar2" parent="DeathlessAct/SpaceB/GrindGroup" instance=ExtResource("10_1f1ci")]
+transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, -2.5000305, 0, 0)
+
+[node name="SpacePillar3" parent="DeathlessAct/SpaceB/GrindGroup" instance=ExtResource("10_1f1ci")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.0517578e-05, 0, 3)
+
+[node name="SpacePillar4" parent="DeathlessAct/SpaceB/GrindGroup" instance=ExtResource("10_1f1ci")]
+transform = Transform3D(1, 0, 0, 0, 0.8, 0, 0, 0, 1, -3.0517578e-05, 0, 26)
+
+[node name="RichRing" parent="DeathlessAct/SpaceB/GrindGroup" instance=ExtResource("28_yjve1")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.0517578e-05, 9, 26)
+
+[node name="LaunchRing" parent="DeathlessAct/SpaceB/GrindGroup" instance=ExtResource("39_sl52c")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 14, 3)
+"Secondary Settings/Middle Height" = 0.0
+"Secondary Settings/Final Height" = -6.0
+"Secondary Settings/Distance" = 25.0
+MiddleHeight = 1.0
+FinalHeight = -10.0
+Distance = 15.0
+
+[node name="SpikeBall1" parent="DeathlessAct/SpaceB/GrindGroup" instance=ExtResource("34_gd7g2")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 3)
+Movement/Mode = 2
+"Movement/Cycle Length" = -6.0
+"Movement/Starting Offset" = 0.25
+"Movement/Horizontal Size" = 0.0
+"Movement/Vertical Size" = 0.0
+Movement/Radius = 2.0
+
+[node name="SpikeBall2" parent="DeathlessAct/SpaceB/GrindGroup" instance=ExtResource("34_gd7g2")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5, 26)
+Movement/Mode = 2
+"Movement/Cycle Length" = 5.0
+"Movement/Starting Offset" = 0.25
+"Movement/Horizontal Size" = 0.0
+"Movement/Vertical Size" = 0.0
+Movement/Radius = 2.0
+
+[node name="DashPanelGroup" type="Node3D" parent="DeathlessAct/SpaceB"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.1035156e-05, 0, 93)
+
+[node name="DashPanel1" parent="DeathlessAct/SpaceB/DashPanelGroup" instance=ExtResource("7_jovjt")]
+
+[node name="DashPanel2" parent="DeathlessAct/SpaceB/DashPanelGroup" instance=ExtResource("7_jovjt")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 0, 0)
+
+[node name="DashPanel3" parent="DeathlessAct/SpaceB/DashPanelGroup" instance=ExtResource("7_jovjt")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 0, 0)
+
+[node name="PillarTrigger2" parent="DeathlessAct/SpaceB" instance=ExtResource("11_q8pby")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.00015258789, 0, 96)
+"Enter Mode" = 0
+
+[node name="SpacePillar1" parent="DeathlessAct/SpaceB/PillarTrigger2" instance=ExtResource("10_1f1ci")]
+transform = Transform3D(-1.2990382, 0, -0.74999994, 0, 1, 0, 0.74999994, 0, -1.2990382, -6, 0, -2)
+activationSpeedScale = 0.8
+
+[node name="SpacePillar2" parent="DeathlessAct/SpaceB/PillarTrigger2" instance=ExtResource("10_1f1ci")]
+transform = Transform3D(-0.75000006, 0, 1.299038, 0, 1, 0, -1.299038, 0, -0.75000006, 6, 0, -2)
+activationSpeedScale = 0.8
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="DeathlessAct/SpaceB/PillarTrigger2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 10, 0)
+shape = SubResource("BoxShape3D_bqgfg")
+
+[node name="PillarTrigger3" parent="DeathlessAct/SpaceB" instance=ExtResource("11_q8pby")]
+transform = Transform3D(0.9396926, 0, -0.3420201, 0, 1, 0, 0.34202012, 0, 0.93969256, -4.699768, 0, 122.29999)
+"Enter Mode" = 0
+
+[node name="Event" type="Node3D" parent="DeathlessAct/SpaceB/PillarTrigger3" node_paths=PackedStringArray("animator")]
+transform = Transform3D(1, 0, -2.9802322e-08, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+script = ExtResource("12_bqgfg")
+animator = NodePath("AnimationPlayer")
+"Trigger Settings/Automatically Respawn" = false
+"Trigger Settings/Is One Shot" = true
+"Trigger Settings/Animation Blending" = 0.0
+"Trigger Settings/Player Stand-in" = NodePath("")
+
+[node name="SpacePillar1" parent="DeathlessAct/SpaceB/PillarTrigger3/Event" instance=ExtResource("10_1f1ci")]
+transform = Transform3D(0.28545785, -0.2035517, 1.4405866, -0.109164394, 0.972652, 0.330857, -1.4685361, -0.111869544, 0.25543073, 4.4370117, 1.4240723, 7.7523804)
+
+[node name="SpacePillar2" parent="DeathlessAct/SpaceB/PillarTrigger3/Event" instance=ExtResource("10_1f1ci")]
+transform = Transform3D(0.6720394, -0.2719624, 1.2774763, -0.12284943, 0.9361169, 0.51303023, -1.3353921, -0.22298385, 0.59569687, -0.26208496, 2.6936111, 21.89032)
+
+[node name="SpacePillar3" parent="DeathlessAct/SpaceB/PillarTrigger3/Event" instance=ExtResource("10_1f1ci")]
+transform = Transform3D(0.23392057, -0.2749083, 1.4231088, -0.4108174, 0.91079754, 0.46339834, -1.4235559, -0.3080161, 0.10011709, -4.89209, 3.6553802, 29.783264)
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="DeathlessAct/SpaceB/PillarTrigger3/Event"]
+libraries = {
+&"": SubResource("AnimationLibrary_krvgn")
+}
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="DeathlessAct/SpaceB/PillarTrigger3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 10, 0)
+shape = SubResource("BoxShape3D_bqgfg")
+
+[node name="PearlsL" type="Node3D" parent="DeathlessAct/SpaceB"]
+transform = Transform3D(0.53621155, 0.4061562, 0.7399421, -0.33036605, 0.9076733, -0.25881904, -0.7767467, -0.10566998, 0.6208852, -88.2696, 13.637821, 141.14348)
+script = ExtResource("4_pimmg")
+Source = ExtResource("6_jovjt")
+Amount = 20
+Shape = 2
+Path = NodePath("../../../Static/Path/SpaceB")
+"Path Progress Offset" = 0.0
+"Reverse Path" = false
+"Disable Path Y" = false
+Spacing = 1.2
+"Horizontal Offset" = null
+"Vertical Offset" = null
+metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
+
+[node name="Child01" parent="DeathlessAct/SpaceB/PearlsL" instance=ExtResource("6_jovjt")]
+transform = Transform3D(0.99999994, -2.9802322e-08, 0, -2.9802322e-08, 1, 0, 2.9802322e-08, 0, 1, -6.1035156e-05, -7.6293945e-06, -0.00030517578)
+
+[node name="Child02" parent="DeathlessAct/SpaceB/PearlsL" instance=ExtResource("6_jovjt")]
+transform = Transform3D(0.99999994, -2.9802322e-08, 0, -2.9802322e-08, 1, 0, 2.9802322e-08, 0, 1, 0.023956299, 0.008712769, -1.1491699)
+
+[node name="Child03" parent="DeathlessAct/SpaceB/PearlsL" instance=ExtResource("6_jovjt")]
+transform = Transform3D(0.99999994, -2.9802322e-08, 0, -2.9802322e-08, 1, 0, 2.9802322e-08, 0, 1, 0.072784424, 0.02281189, -2.297058)
+
+[node name="Child04" parent="DeathlessAct/SpaceB/PearlsL" instance=ExtResource("6_jovjt")]
+transform = Transform3D(0.99999994, -2.9802322e-08, 0, -2.9802322e-08, 1, 0, 2.9802322e-08, 0, 1, 0.146698, 0.042114258, -3.4431152)
+
+[node name="Child05" parent="DeathlessAct/SpaceB/PearlsL" instance=ExtResource("6_jovjt")]
+transform = Transform3D(0.99999994, -2.9802322e-08, 0, -2.9802322e-08, 1, 0, 2.9802322e-08, 0, 1, 0.2456665, 0.066719055, -4.586914)
+
+[node name="Child06" parent="DeathlessAct/SpaceB/PearlsL" instance=ExtResource("6_jovjt")]
+transform = Transform3D(0.99999994, -2.9802322e-08, 0, -2.9802322e-08, 1, 0, 2.9802322e-08, 0, 1, 0.36984253, 0.09654236, -5.7279053)
+
+[node name="Child07" parent="DeathlessAct/SpaceB/PearlsL" instance=ExtResource("6_jovjt")]
+transform = Transform3D(0.99999994, -2.9802322e-08, 0, -2.9802322e-08, 1, 0, 2.9802322e-08, 0, 1, 0.51919556, 0.13153076, -6.8654175)
+
+[node name="Child08" parent="DeathlessAct/SpaceB/PearlsL" instance=ExtResource("6_jovjt")]
+transform = Transform3D(0.99999994, -2.9802322e-08, 0, -2.9802322e-08, 1, 0, 2.9802322e-08, 0, 1, 0.69403076, 0.17159271, -7.9989624)
+
+[node name="Child09" parent="DeathlessAct/SpaceB/PearlsL" instance=ExtResource("6_jovjt")]
+transform = Transform3D(0.99999994, -2.9802322e-08, 0, -2.9802322e-08, 1, 0, 2.9802322e-08, 0, 1, 0.89416504, 0.21661377, -9.127869)
+
+[node name="Child10" parent="DeathlessAct/SpaceB/PearlsL" instance=ExtResource("6_jovjt")]
+transform = Transform3D(0.99999994, -2.9802322e-08, 0, -2.9802322e-08, 1, 0, 2.9802322e-08, 0, 1, 1.119873, 0.26650238, -10.251587)
+
+[node name="Child11" parent="DeathlessAct/SpaceB/PearlsL" instance=ExtResource("6_jovjt")]
+transform = Transform3D(0.99999994, -2.9802322e-08, 0, -2.9802322e-08, 1, 0, 2.9802322e-08, 0, 1, 1.3710938, 0.32118988, -11.369568)
+
+[node name="Child12" parent="DeathlessAct/SpaceB/PearlsL" instance=ExtResource("6_jovjt")]
+transform = Transform3D(0.99999994, -2.9802322e-08, 0, -2.9802322e-08, 1, 0, 2.9802322e-08, 0, 1, 1.6477966, 0.38052368, -12.481201)
+
+[node name="Child13" parent="DeathlessAct/SpaceB/PearlsL" instance=ExtResource("6_jovjt")]
+transform = Transform3D(0.99999994, -2.9802322e-08, 0, -2.9802322e-08, 1, 0, 2.9802322e-08, 0, 1, 1.9500427, 0.44443512, -13.585815)
+
+[node name="Child14" parent="DeathlessAct/SpaceB/PearlsL" instance=ExtResource("6_jovjt")]
+transform = Transform3D(0.99999994, -2.9802322e-08, 0, -2.9802322e-08, 1, 0, 2.9802322e-08, 0, 1, 2.2777405, 0.51280975, -14.682861)
+
+[node name="Child15" parent="DeathlessAct/SpaceB/PearlsL" instance=ExtResource("6_jovjt")]
+transform = Transform3D(0.99999994, -2.9802322e-08, 0, -2.9802322e-08, 1, 0, 2.9802322e-08, 0, 1, 2.630951, 0.5855179, -15.771606)
+
+[node name="Child16" parent="DeathlessAct/SpaceB/PearlsL" instance=ExtResource("6_jovjt")]
+transform = Transform3D(0.99999994, -2.9802322e-08, 0, -2.9802322e-08, 1, 0, 2.9802322e-08, 0, 1, 3.009552, 0.6624756, -16.851563)
+
+[node name="Child17" parent="DeathlessAct/SpaceB/PearlsL" instance=ExtResource("6_jovjt")]
+transform = Transform3D(0.99999994, -2.9802322e-08, 0, -2.9802322e-08, 1, 0, 2.9802322e-08, 0, 1, 3.4133606, 0.7435303, -17.92212)
+
+[node name="Child18" parent="DeathlessAct/SpaceB/PearlsL" instance=ExtResource("6_jovjt")]
+transform = Transform3D(0.99999994, -2.9802322e-08, 0, -2.9802322e-08, 1, 0, 2.9802322e-08, 0, 1, 3.8424988, 0.828598, -18.982544)
+
+[node name="Child19" parent="DeathlessAct/SpaceB/PearlsL" instance=ExtResource("6_jovjt")]
+transform = Transform3D(0.99999994, -2.9802322e-08, 0, -2.9802322e-08, 1, 0, 2.9802322e-08, 0, 1, 4.296509, 0.9175339, -20.032532)
+
+[node name="Child20" parent="DeathlessAct/SpaceB/PearlsL" instance=ExtResource("6_jovjt")]
+transform = Transform3D(0.99999994, -2.9802322e-08, 0, -2.9802322e-08, 1, 0, 2.9802322e-08, 0, 1, 4.7754517, 1.0102081, -21.071167)
+
+[node name="PearlsR" type="Node3D" parent="DeathlessAct/SpaceB"]
+transform = Transform3D(0.53621155, 0.4061562, 0.7399421, -0.33036605, 0.9076733, -0.25881904, -0.7767467, -0.10566998, 0.6208852, -87.73337, 13.307456, 140.36676)
+script = ExtResource("4_pimmg")
+Source = ExtResource("6_jovjt")
+Amount = 20
+Shape = 2
+Path = NodePath("../../../Static/Path/SpaceB")
+"Path Progress Offset" = 0.0
+"Reverse Path" = false
+"Disable Path Y" = false
+Spacing = 1.2
+"Horizontal Offset" = null
+"Vertical Offset" = null
+metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
+
+[node name="Child01" parent="DeathlessAct/SpaceB/PearlsR" instance=ExtResource("6_jovjt")]
+transform = Transform3D(0.99999994, -2.9802322e-08, 0, -2.9802322e-08, 1, 0, 2.9802322e-08, 0, 1, -6.1035156e-05, 2.2888184e-05, 0.00061035156)
+
+[node name="Child02" parent="DeathlessAct/SpaceB/PearlsR" instance=ExtResource("6_jovjt")]
+transform = Transform3D(0.99999994, -2.9802322e-08, 0, -2.9802322e-08, 1, 0, 2.9802322e-08, 0, 1, 0.023529053, 0.024681091, -1.126709)
+
+[node name="Child03" parent="DeathlessAct/SpaceB/PearlsR" instance=ExtResource("6_jovjt")]
+transform = Transform3D(0.99999994, -2.9802322e-08, 0, -2.9802322e-08, 1, 0, 2.9802322e-08, 0, 1, 0.071258545, 0.05458069, -2.2525635)
+
+[node name="Child04" parent="DeathlessAct/SpaceB/PearlsR" instance=ExtResource("6_jovjt")]
+transform = Transform3D(0.99999994, -2.9802322e-08, 0, -2.9802322e-08, 1, 0, 2.9802322e-08, 0, 1, 0.14331055, 0.08955383, -3.3763428)
+
+[node name="Child05" parent="DeathlessAct/SpaceB/PearlsR" instance=ExtResource("6_jovjt")]
+transform = Transform3D(0.99999994, -2.9802322e-08, 0, -2.9802322e-08, 1, 0, 2.9802322e-08, 0, 1, 0.23968506, 0.1296463, -4.4977417)
+
+[node name="Child06" parent="DeathlessAct/SpaceB/PearlsR" instance=ExtResource("6_jovjt")]
+transform = Transform3D(0.99999994, -2.9802322e-08, 0, -2.9802322e-08, 1, 0, 2.9802322e-08, 0, 1, 0.3604126, 0.1747818, -5.616089)
+
+[node name="Child07" parent="DeathlessAct/SpaceB/PearlsR" instance=ExtResource("6_jovjt")]
+transform = Transform3D(0.99999994, -2.9802322e-08, 0, -2.9802322e-08, 1, 0, 2.9802322e-08, 0, 1, 0.5057373, 0.22489929, -6.730957)
+
+[node name="Child08" parent="DeathlessAct/SpaceB/PearlsR" instance=ExtResource("6_jovjt")]
+transform = Transform3D(0.99999994, -2.9802322e-08, 0, -2.9802322e-08, 1, 0, 2.9802322e-08, 0, 1, 0.6756592, 0.27985382, -7.841675)
+
+[node name="Child09" parent="DeathlessAct/SpaceB/PearlsR" instance=ExtResource("6_jovjt")]
+transform = Transform3D(0.99999994, -2.9802322e-08, 0, -2.9802322e-08, 1, 0, 2.9802322e-08, 0, 1, 0.8701172, 0.3395691, -8.947815)
+
+[node name="Child10" parent="DeathlessAct/SpaceB/PearlsR" instance=ExtResource("6_jovjt")]
+transform = Transform3D(0.99999994, -2.9802322e-08, 0, -2.9802322e-08, 1, 0, 2.9802322e-08, 0, 1, 1.089325, 0.40390778, -10.048584)
+
+[node name="Child11" parent="DeathlessAct/SpaceB/PearlsR" instance=ExtResource("6_jovjt")]
+transform = Transform3D(0.99999994, -2.9802322e-08, 0, -2.9802322e-08, 1, 0, 2.9802322e-08, 0, 1, 1.333374, 0.47280884, -11.143799)
+
+[node name="Child12" parent="DeathlessAct/SpaceB/PearlsR" instance=ExtResource("6_jovjt")]
+transform = Transform3D(0.99999994, -2.9802322e-08, 0, -2.9802322e-08, 1, 0, 2.9802322e-08, 0, 1, 1.6020813, 0.5461426, -12.232483)
+
+[node name="Child13" parent="DeathlessAct/SpaceB/PearlsR" instance=ExtResource("6_jovjt")]
+transform = Transform3D(0.99999994, -2.9802322e-08, 0, -2.9802322e-08, 1, 0, 2.9802322e-08, 0, 1, 1.8956604, 0.62376404, -13.314331)
+
+[node name="Child14" parent="DeathlessAct/SpaceB/PearlsR" instance=ExtResource("6_jovjt")]
+transform = Transform3D(0.99999994, -2.9802322e-08, 0, -2.9802322e-08, 1, 0, 2.9802322e-08, 0, 1, 2.2138977, 0.70557404, -14.388794)
+
+[node name="Child15" parent="DeathlessAct/SpaceB/PearlsR" instance=ExtResource("6_jovjt")]
+transform = Transform3D(0.99999994, -2.9802322e-08, 0, -2.9802322e-08, 1, 0, 2.9802322e-08, 0, 1, 2.5569458, 0.7914505, -15.4552)
+
+[node name="Child16" parent="DeathlessAct/SpaceB/PearlsR" instance=ExtResource("6_jovjt")]
+transform = Transform3D(0.99999994, -2.9802322e-08, 0, -2.9802322e-08, 1, 0, 2.9802322e-08, 0, 1, 2.9246216, 0.88129425, -16.512817)
+
+[node name="Child17" parent="DeathlessAct/SpaceB/PearlsR" instance=ExtResource("6_jovjt")]
+transform = Transform3D(0.99999994, -2.9802322e-08, 0, -2.9802322e-08, 1, 0, 2.9802322e-08, 0, 1, 3.316925, 0.9749527, -17.561401)
+
+[node name="Child18" parent="DeathlessAct/SpaceB/PearlsR" instance=ExtResource("6_jovjt")]
+transform = Transform3D(0.99999994, -2.9802322e-08, 0, -2.9802322e-08, 1, 0, 2.9802322e-08, 0, 1, 3.7337341, 1.072319, -18.60022)
+
+[node name="Child19" parent="DeathlessAct/SpaceB/PearlsR" instance=ExtResource("6_jovjt")]
+transform = Transform3D(0.99999994, -2.9802322e-08, 0, -2.9802322e-08, 1, 0, 2.9802322e-08, 0, 1, 4.1748962, 1.173233, -19.628723)
+
+[node name="Child20" parent="DeathlessAct/SpaceB/PearlsR" instance=ExtResource("6_jovjt")]
+transform = Transform3D(0.99999994, -2.9802322e-08, 0, -2.9802322e-08, 1, 0, 2.9802322e-08, 0, 1, 4.6403503, 1.2775955, -20.646362)
+
+[node name="RingsL" type="Node3D" parent="DeathlessAct/SpaceB"]
+transform = Transform3D(0.53621155, 0.4061562, 0.7399421, -0.33036605, 0.9076733, -0.25881904, -0.7767467, -0.10566998, 0.6208852, -91.36502, 15.89232, 145.77225)
+script = ExtResource("4_pimmg")
+Source = ExtResource("5_hu5kg")
+Amount = 8
+Shape = 2
+Path = NodePath("../../../Static/Path/SpaceB")
+"Path Progress Offset" = 0.0
+"Reverse Path" = false
+"Disable Path Y" = false
+Spacing = 3.2
+"Horizontal Offset" = null
+"Vertical Offset" = null
+metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
+
+[node name="Child01" parent="DeathlessAct/SpaceB/RingsL" instance=ExtResource("5_hu5kg")]
+transform = Transform3D(0.99999994, -2.9802322e-08, 0, -2.9802322e-08, 1, 0, 2.9802322e-08, 0, 1, 3.0517578e-05, -9.918213e-05, -0.0040893555)
+
+[node name="Child02" parent="DeathlessAct/SpaceB/RingsL" instance=ExtResource("5_hu5kg")]
+transform = Transform3D(0.99999994, -2.9802322e-08, 0, -2.9802322e-08, 1, 0, 2.9802322e-08, 0, 1, 0.12231445, -0.21864319, -3.413025)
+
+[node name="Child03" parent="DeathlessAct/SpaceB/RingsL" instance=ExtResource("5_hu5kg")]
+transform = Transform3D(0.99999994, -2.9802322e-08, 0, -2.9802322e-08, 1, 0, 2.9802322e-08, 0, 1, 0.45480347, -0.39344025, -6.8171997)
+
+[node name="Child04" parent="DeathlessAct/SpaceB/RingsL" instance=ExtResource("5_hu5kg")]
+transform = Transform3D(0.99999994, -2.9802322e-08, 0, -2.9802322e-08, 1, 0, 2.9802322e-08, 0, 1, 1.0000305, -0.5239105, -10.202332)
+
+[node name="Child05" parent="DeathlessAct/SpaceB/RingsL" instance=ExtResource("5_hu5kg")]
+transform = Transform3D(0.99999994, -2.9802322e-08, 0, -2.9802322e-08, 1, 0, 2.9802322e-08, 0, 1, 1.759613, -0.6104202, -13.553528)
+
+[node name="Child06" parent="DeathlessAct/SpaceB/RingsL" instance=ExtResource("5_hu5kg")]
+transform = Transform3D(0.99999994, -2.9802322e-08, 0, -2.9802322e-08, 1, 0, 2.9802322e-08, 0, 1, 2.7333374, -0.65371704, -16.854736)
+
+[node name="Child07" parent="DeathlessAct/SpaceB/RingsL" instance=ExtResource("5_hu5kg")]
+transform = Transform3D(0.99999994, -2.9802322e-08, 0, -2.9802322e-08, 1, 0, 2.9802322e-08, 0, 1, 3.919464, -0.65478516, -20.090027)
+
+[node name="Child08" parent="DeathlessAct/SpaceB/RingsL" instance=ExtResource("5_hu5kg")]
+transform = Transform3D(0.99999994, -2.9802322e-08, 0, -2.9802322e-08, 1, 0, 2.9802322e-08, 0, 1, 5.3141785, -0.6150284, -23.243591)
+
+[node name="RingsR" type="Node3D" parent="DeathlessAct/SpaceB"]
+transform = Transform3D(0.53621155, 0.4061562, 0.7399421, -0.33036605, 0.9076733, -0.25881904, -0.7767467, -0.10566998, 0.6208852, -90.68096, 15.586648, 144.82959)
+script = ExtResource("4_pimmg")
+Source = ExtResource("5_hu5kg")
+Amount = 8
+Shape = 2
+Path = NodePath("../../../Static/Path/SpaceB")
+"Path Progress Offset" = 0.0
+"Reverse Path" = false
+"Disable Path Y" = false
+Spacing = 3.2
+"Horizontal Offset" = null
+"Vertical Offset" = null
+metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
+
+[node name="Child01" parent="DeathlessAct/SpaceB/RingsR" instance=ExtResource("5_hu5kg")]
+transform = Transform3D(0.99999994, -2.9802322e-08, 0, -2.9802322e-08, 1, 0, 2.9802322e-08, 0, 1, 0, -9.1552734e-05, -0.0031738281)
+
+[node name="Child02" parent="DeathlessAct/SpaceB/RingsR" instance=ExtResource("5_hu5kg")]
+transform = Transform3D(0.99999994, -2.9802322e-08, 0, -2.9802322e-08, 1, 0, 2.9802322e-08, 0, 1, 0.1149292, -0.16805267, -3.3410034)
+
+[node name="Child03" parent="DeathlessAct/SpaceB/RingsR" instance=ExtResource("5_hu5kg")]
+transform = Transform3D(0.99999994, -2.9802322e-08, 0, -2.9802322e-08, 1, 0, 2.9802322e-08, 0, 1, 0.43356323, -0.2938156, -6.6728516)
+
+[node name="Child04" parent="DeathlessAct/SpaceB/RingsR" instance=ExtResource("5_hu5kg")]
+transform = Transform3D(0.99999994, -2.9802322e-08, 0, -2.9802322e-08, 1, 0, 2.9802322e-08, 0, 1, 0.9585266, -0.37709045, -9.985291)
+
+[node name="Child05" parent="DeathlessAct/SpaceB/RingsR" instance=ExtResource("5_hu5kg")]
+transform = Transform3D(0.99999994, -2.9802322e-08, 0, -2.9802322e-08, 1, 0, 2.9802322e-08, 0, 1, 1.6914063, -0.41853333, -13.263916)
+
+[node name="Child06" parent="DeathlessAct/SpaceB/RingsR" instance=ExtResource("5_hu5kg")]
+transform = Transform3D(0.99999994, -2.9802322e-08, 0, -2.9802322e-08, 1, 0, 2.9802322e-08, 0, 1, 2.6324158, -0.4190216, -16.493835)
+
+[node name="Child07" parent="DeathlessAct/SpaceB/RingsR" instance=ExtResource("5_hu5kg")]
+transform = Transform3D(0.99999994, -2.9802322e-08, 0, -2.9802322e-08, 1, 0, 2.9802322e-08, 0, 1, 3.7797852, -0.37979126, -19.659729)
+
+[node name="Child08" parent="DeathlessAct/SpaceB/RingsR" instance=ExtResource("5_hu5kg")]
+transform = Transform3D(0.99999994, -2.9802322e-08, 0, -2.9802322e-08, 1, 0, 2.9802322e-08, 0, 1, 5.1305237, -0.30230713, -22.746704)
+
+[node name="SpacePanelGroup2" type="Node3D" parent="DeathlessAct/SpaceB"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -107.5, 19.75, 96.3)
+
+[node name="SpacePanel1" parent="DeathlessAct/SpaceB/SpacePanelGroup2" instance=ExtResource("14_m58n7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 15.1, 0, 3.1000001)
+
+[node name="SpacePanel2" parent="DeathlessAct/SpaceB/SpacePanelGroup2" instance=ExtResource("14_m58n7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 18.7, 0, -3.1000001)
+
+[node name="SpacePanel3" parent="DeathlessAct/SpaceB/SpacePanelGroup2" instance=ExtResource("14_m58n7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22.2, 0, 3.1000001)
+
+[node name="SpacePanel4" parent="DeathlessAct/SpaceB/SpacePanelGroup2" instance=ExtResource("14_m58n7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25.800001, 0, -3.1000001)
+
+[node name="SpacePanel5" parent="DeathlessAct/SpaceB/SpacePanelGroup2" instance=ExtResource("14_m58n7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 32.9, 0, -3.1000001)
+
+[node name="SpacePanel6" parent="DeathlessAct/SpaceB/SpacePanelGroup2" instance=ExtResource("14_m58n7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 36.4, 0, 3.1000001)
+
+[node name="SpacePanel7" parent="DeathlessAct/SpaceB/SpacePanelGroup2" instance=ExtResource("14_m58n7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 40.000004, 0, -3.1000001)
+
+[node name="Rings1" type="Node3D" parent="DeathlessAct/SpaceB"]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, -95.9, 20.6, 96.3)
+script = ExtResource("4_pimmg")
+Source = ExtResource("5_hu5kg")
+Amount = 5
+Shape = 0
+Orientation = 0
+Spacing = 1.8
+"Horizontal Offset" = null
+"Vertical Offset" = null
+metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
+
+[node name="Child01" parent="DeathlessAct/SpaceB/Rings1" instance=ExtResource("5_hu5kg")]
+
+[node name="Child02" parent="DeathlessAct/SpaceB/Rings1" instance=ExtResource("5_hu5kg")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -1.8)
+
+[node name="Child03" parent="DeathlessAct/SpaceB/Rings1" instance=ExtResource("5_hu5kg")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -3.6)
+
+[node name="Child04" parent="DeathlessAct/SpaceB/Rings1" instance=ExtResource("5_hu5kg")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -5.3999996)
+
+[node name="Child05" parent="DeathlessAct/SpaceB/Rings1" instance=ExtResource("5_hu5kg")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -7.2)
+
+[node name="LaserPillar1" type="Node3D" parent="DeathlessAct/SpaceB"]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -90.99994, 20, 96.29999)
+
+[node name="LaserPillarL" parent="DeathlessAct/SpaceB/LaserPillar1" instance=ExtResource("40_8kwp6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 0, 0)
+
+[node name="LaserPillarR" parent="DeathlessAct/SpaceB/LaserPillar1" instance=ExtResource("40_8kwp6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 0, 0)
+
+[node name="Laser" parent="DeathlessAct/SpaceB/LaserPillar1" instance=ExtResource("41_84o03")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4, 0)
+
+[node name="LaserPillar2" type="Node3D" parent="DeathlessAct/SpaceB"]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -78.99988, 20, 96.29999)
+
+[node name="LaserPillarL" parent="DeathlessAct/SpaceB/LaserPillar2" instance=ExtResource("40_8kwp6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 0, 0)
+
+[node name="LaserPillarR" parent="DeathlessAct/SpaceB/LaserPillar2" instance=ExtResource("40_8kwp6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 0, 0)
+
+[node name="Laser" parent="DeathlessAct/SpaceB/LaserPillar2" instance=ExtResource("41_84o03")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+
+[node name="LaserPillar3" type="Node3D" parent="DeathlessAct/SpaceB"]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -70.99988, 20, 97)
+
+[node name="LaserPillarL" parent="DeathlessAct/SpaceB/LaserPillar3" instance=ExtResource("40_8kwp6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 0, 0)
+
+[node name="LaserPillarR" parent="DeathlessAct/SpaceB/LaserPillar3" instance=ExtResource("40_8kwp6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 0, 0)
+
+[node name="MovingLaser" type="Node3D" parent="DeathlessAct/SpaceB/LaserPillar3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, 0)
+script = ExtResource("18_2qlbe")
+timeCurve = SubResource("Curve_84o03")
+root = NodePath("Laser")
+animator = NodePath("")
+Movement/Mode = 1
+"Movement/Cycle Length" = 2.0
+"Movement/Starting Offset" = 0.5
+Movement/Distance = 3.5
+Movement/Angle = 0.0
+"Vertical Orientation" = true
+
+[node name="Laser" parent="DeathlessAct/SpaceB/LaserPillar3/MovingLaser" instance=ExtResource("41_84o03")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.5000002, 0)
+
+[node name="Rings2" type="Node3D" parent="DeathlessAct/SpaceB"]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, -66.9, 20.6, 96.3)
+script = ExtResource("4_pimmg")
+Source = ExtResource("5_hu5kg")
+Amount = 5
+Shape = 0
+Orientation = 0
+Spacing = 1.8
+"Horizontal Offset" = null
+"Vertical Offset" = null
+metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
+
+[node name="Child01" parent="DeathlessAct/SpaceB/Rings2" instance=ExtResource("5_hu5kg")]
+
+[node name="Child02" parent="DeathlessAct/SpaceB/Rings2" instance=ExtResource("5_hu5kg")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -1.8)
+
+[node name="Child03" parent="DeathlessAct/SpaceB/Rings2" instance=ExtResource("5_hu5kg")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -3.6)
+
+[node name="Child04" parent="DeathlessAct/SpaceB/Rings2" instance=ExtResource("5_hu5kg")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -5.3999996)
+
+[node name="Child05" parent="DeathlessAct/SpaceB/Rings2" instance=ExtResource("5_hu5kg")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -7.2)
+
+[node name="SpacePanelGroup3" type="Node3D" parent="DeathlessAct/SpaceB"]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, -55.99997, 19.75, 96.29999)
+
+[node name="SpacePanel1" parent="DeathlessAct/SpaceB/SpacePanelGroup3" instance=ExtResource("14_m58n7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 79.2, 0, 3.1000001)
+
+[node name="SpacePanel2" parent="DeathlessAct/SpaceB/SpacePanelGroup3" instance=ExtResource("14_m58n7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 82.799995, 0, -3.1000001)
+
+[node name="SpacePanel3" parent="DeathlessAct/SpaceB/SpacePanelGroup3" instance=ExtResource("14_m58n7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 86.299995, 0, 3.1000001)
+
+[node name="SpacePanel4" parent="DeathlessAct/SpaceB/SpacePanelGroup3" instance=ExtResource("14_m58n7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 89.9, 0, -3.1000001)
+
+[node name="SpacePanel5" parent="DeathlessAct/SpaceB/SpacePanelGroup3" instance=ExtResource("14_m58n7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 97, 0, -3.1000001)
+
+[node name="SpacePanel6" parent="DeathlessAct/SpaceB/SpacePanelGroup3" instance=ExtResource("14_m58n7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 100.5, 0, 3.1000001)
+
+[node name="SpacePanel7" parent="DeathlessAct/SpaceB/SpacePanelGroup3" instance=ExtResource("14_m58n7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 104.1, 0, -3.1000001)
+
+[node name="SpacePanel8" parent="DeathlessAct/SpaceB/SpacePanelGroup3" instance=ExtResource("14_m58n7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 107.7, 0, 3.1)
+
+[node name="SpacePanel9" parent="DeathlessAct/SpaceB/SpacePanelGroup3" instance=ExtResource("14_m58n7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 122.000015, 0, 3.100006)
+
+[node name="SpacePanel10" parent="DeathlessAct/SpaceB/SpacePanelGroup3" instance=ExtResource("14_m58n7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 125.59999, 0, -3.100006)
+
+[node name="SpacePanel11" parent="DeathlessAct/SpaceB/SpacePanelGroup3" instance=ExtResource("14_m58n7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 129.09999, 0, 3.100006)
+
+[node name="SpacePanel12" parent="DeathlessAct/SpaceB/SpacePanelGroup3" instance=ExtResource("14_m58n7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 132.70003, 0, -3.1000366)
+
+[node name="SpacePanel13" parent="DeathlessAct/SpaceB/SpacePanelGroup3" instance=ExtResource("14_m58n7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 143.33678, 0, 3.100006)
+
+[node name="SpacePanel14" parent="DeathlessAct/SpaceB/SpacePanelGroup3" instance=ExtResource("14_m58n7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 146.93675, 0, -3.100006)
+
+[node name="SpacePanel15" parent="DeathlessAct/SpaceB/SpacePanelGroup3" instance=ExtResource("14_m58n7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 150.43675, 0, 3.100006)
+
+[node name="SpacePanel16" parent="DeathlessAct/SpaceB/SpacePanelGroup3" instance=ExtResource("14_m58n7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 154.03679, 0, -3.1000366)
+
+[node name="SpearGroup1" parent="DeathlessAct/SpaceB" instance=ExtResource("11_q8pby")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -55.99997, 20, 104)
+"Enter Mode" = 0
+
+[node name="SpearCull" type="Node3D" parent="DeathlessAct/SpaceB/SpearGroup1"]
+transform = Transform3D(-0.9999996, 0, -8.742278e-08, 0, 0.9999996, 0, 8.742274e-08, 0, -1, 0, 0, 0)
+script = ExtResource("4_eok7x")
+
+[node name="Spear1" parent="DeathlessAct/SpaceB/SpearGroup1/SpearCull" instance=ExtResource("15_pohcp")]
+transform = Transform3D(0.9999999, 0, 0, 0, 1.0000005, 0, 0, 0, 0.9999995, 3, 1, -150)
+lifetime = 10.0
+moveSpeed = 50.0
+
+[node name="Spear2" parent="DeathlessAct/SpaceB/SpearGroup1/SpearCull" instance=ExtResource("15_pohcp")]
+transform = Transform3D(0.9999999, 0, 0, 0, 1.0000005, 0, 0, 0, 0.9999995, -3.0000005, 1, -199.99998)
+lifetime = 10.0
+moveSpeed = 50.0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="DeathlessAct/SpaceB/SpearGroup1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 10, 0)
+shape = SubResource("BoxShape3D_bqgfg")
+
+[node name="Rings3" type="Node3D" parent="DeathlessAct/SpaceB"]
+transform = Transform3D(-1, 0, 8.742277e-08, 0, 1, 0, -8.742277e-08, 0, -1, -54, 20.6, 112)
+script = ExtResource("4_pimmg")
+Source = ExtResource("5_hu5kg")
+Amount = 5
+Shape = 0
+Orientation = 0
+Spacing = 2.5
+"Horizontal Offset" = null
+"Vertical Offset" = null
+metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
+
+[node name="Child01" parent="DeathlessAct/SpaceB/Rings3" instance=ExtResource("5_hu5kg")]
+
+[node name="Child02" parent="DeathlessAct/SpaceB/Rings3" instance=ExtResource("5_hu5kg")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2.5)
+
+[node name="Child03" parent="DeathlessAct/SpaceB/Rings3" instance=ExtResource("5_hu5kg")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -5)
+
+[node name="Child04" parent="DeathlessAct/SpaceB/Rings3" instance=ExtResource("5_hu5kg")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -7.5)
+
+[node name="Child05" parent="DeathlessAct/SpaceB/Rings3" instance=ExtResource("5_hu5kg")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -10)
+
+[node name="Rings4" type="Node3D" parent="DeathlessAct/SpaceB"]
+transform = Transform3D(-1, 0, 8.742277e-08, 0, 1, 0, -8.742277e-08, 0, -1, -58, 20.6, 131)
+script = ExtResource("4_pimmg")
+Source = ExtResource("5_hu5kg")
+Amount = 5
+Shape = 0
+Orientation = 0
+Spacing = 2.5
+"Horizontal Offset" = null
+"Vertical Offset" = null
+metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
+
+[node name="Child01" parent="DeathlessAct/SpaceB/Rings4" instance=ExtResource("5_hu5kg")]
+
+[node name="Child02" parent="DeathlessAct/SpaceB/Rings4" instance=ExtResource("5_hu5kg")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2.5)
+
+[node name="Child03" parent="DeathlessAct/SpaceB/Rings4" instance=ExtResource("5_hu5kg")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -5)
+
+[node name="Child04" parent="DeathlessAct/SpaceB/Rings4" instance=ExtResource("5_hu5kg")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -7.5)
+
+[node name="Child05" parent="DeathlessAct/SpaceB/Rings4" instance=ExtResource("5_hu5kg")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -10)
+
+[node name="SpearGroup2" parent="DeathlessAct/SpaceB" instance=ExtResource("11_q8pby")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -55.99997, 20, 133)
+"Enter Mode" = 0
+
+[node name="SpearCull" type="Node3D" parent="DeathlessAct/SpaceB/SpearGroup2"]
+transform = Transform3D(-0.9999996, 0, -8.742278e-08, 0, 0.9999996, 0, 8.742274e-08, 0, -1, 0, 0, 0)
+script = ExtResource("4_eok7x")
+
+[node name="Spear1" parent="DeathlessAct/SpaceB/SpearGroup2/SpearCull" instance=ExtResource("15_pohcp")]
+transform = Transform3D(0.9999999, 0, 0, 0, 1.0000005, 0, 0, 0, 0.9999995, -2.999999, 1, -150)
+lifetime = 10.0
+moveSpeed = 50.0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="DeathlessAct/SpaceB/SpearGroup2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 10, 0)
+shape = SubResource("BoxShape3D_bqgfg")
+
+[node name="Rings5" type="Node3D" parent="DeathlessAct/SpaceB"]
+transform = Transform3D(-1, 0, 8.742277e-08, 0, 1, 0, -8.742277e-08, 0, -1, -55, 20.6, 142)
+script = ExtResource("4_pimmg")
+Source = ExtResource("5_hu5kg")
+Amount = 5
+Shape = 0
+Orientation = 0
+Spacing = 2.5
+"Horizontal Offset" = null
+"Vertical Offset" = null
+metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
+
+[node name="Child01" parent="DeathlessAct/SpaceB/Rings5" instance=ExtResource("5_hu5kg")]
+
+[node name="Child02" parent="DeathlessAct/SpaceB/Rings5" instance=ExtResource("5_hu5kg")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2.5)
+
+[node name="Child03" parent="DeathlessAct/SpaceB/Rings5" instance=ExtResource("5_hu5kg")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -5)
+
+[node name="Child04" parent="DeathlessAct/SpaceB/Rings5" instance=ExtResource("5_hu5kg")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -7.5)
+
+[node name="Child05" parent="DeathlessAct/SpaceB/Rings5" instance=ExtResource("5_hu5kg")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -10)
+
+[node name="Rings6" type="Node3D" parent="DeathlessAct/SpaceB"]
+transform = Transform3D(-1, 0, 8.742277e-08, 0, 1, 0, -8.742277e-08, 0, -1, -53, 20.6, 153)
+script = ExtResource("4_pimmg")
+Source = ExtResource("5_hu5kg")
+Amount = 5
+Shape = 0
+Orientation = 0
+Spacing = 2.5
+"Horizontal Offset" = null
+"Vertical Offset" = null
+metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
+
+[node name="Child01" parent="DeathlessAct/SpaceB/Rings6" instance=ExtResource("5_hu5kg")]
+
+[node name="Child02" parent="DeathlessAct/SpaceB/Rings6" instance=ExtResource("5_hu5kg")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2.5)
+
+[node name="Child03" parent="DeathlessAct/SpaceB/Rings6" instance=ExtResource("5_hu5kg")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -5)
+
+[node name="Child04" parent="DeathlessAct/SpaceB/Rings6" instance=ExtResource("5_hu5kg")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -7.5)
+
+[node name="Child05" parent="DeathlessAct/SpaceB/Rings6" instance=ExtResource("5_hu5kg")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -10)
+
+[node name="SpearGroup3" parent="DeathlessAct/SpaceB" instance=ExtResource("11_q8pby")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -55.99994, 20, 170)
+"Enter Mode" = 0
+
+[node name="SpearCull" type="Node3D" parent="DeathlessAct/SpaceB/SpearGroup3"]
+transform = Transform3D(-0.9999996, 0, -8.742278e-08, 0, 0.9999996, 0, 8.742274e-08, 0, -1, 0, 0, 0)
+script = ExtResource("4_eok7x")
+
+[node name="Spear1" parent="DeathlessAct/SpaceB/SpearGroup3/SpearCull" instance=ExtResource("15_pohcp")]
+transform = Transform3D(0.9999999, 0, 0, 0, 1.0000005, 0, 0, 0, 0.9999995, 3, 1, -150)
+lifetime = 10.0
+moveSpeed = 50.0
+
+[node name="Spear2" parent="DeathlessAct/SpaceB/SpearGroup3/SpearCull" instance=ExtResource("15_pohcp")]
+transform = Transform3D(0.9999999, 0, 0, 0, 1.0000005, 0, 0, 0, 0.9999995, -3.0000005, 1, -168)
+lifetime = 10.0
+moveSpeed = 50.0
+
+[node name="Spear3" parent="DeathlessAct/SpaceB/SpearGroup3/SpearCull" instance=ExtResource("15_pohcp")]
+transform = Transform3D(0.9999999, 0, 0, 0, 1.0000005, 0, 0, 0, 0.9999995, 0, 1, -212)
+lifetime = 10.0
+moveSpeed = 50.0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="DeathlessAct/SpaceB/SpearGroup3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 10, 0)
+shape = SubResource("BoxShape3D_bqgfg")
+
+[node name="Rings7" type="Node3D" parent="DeathlessAct/SpaceB"]
+transform = Transform3D(-1, 0, 8.742277e-08, 0, 1, 0, -8.742277e-08, 0, -1, -57, 20.6, 166)
+script = ExtResource("4_pimmg")
+Source = ExtResource("5_hu5kg")
+Amount = 5
+Shape = 0
+Orientation = 0
+Spacing = 2.5
+"Horizontal Offset" = null
+"Vertical Offset" = null
+metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
+
+[node name="Child01" parent="DeathlessAct/SpaceB/Rings7" instance=ExtResource("5_hu5kg")]
+
+[node name="Child02" parent="DeathlessAct/SpaceB/Rings7" instance=ExtResource("5_hu5kg")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2.5)
+
+[node name="Child03" parent="DeathlessAct/SpaceB/Rings7" instance=ExtResource("5_hu5kg")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -5)
+
+[node name="Child04" parent="DeathlessAct/SpaceB/Rings7" instance=ExtResource("5_hu5kg")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -7.5)
+
+[node name="Child05" parent="DeathlessAct/SpaceB/Rings7" instance=ExtResource("5_hu5kg")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -10)
+
+[node name="LaserPillar4" type="Node3D" parent="DeathlessAct/SpaceB"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -55.999817, 20, 213)
+
+[node name="LaserPillarL" parent="DeathlessAct/SpaceB/LaserPillar4" instance=ExtResource("40_8kwp6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 0, 0)
+
+[node name="LaserPillarR" parent="DeathlessAct/SpaceB/LaserPillar4" instance=ExtResource("40_8kwp6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 0, 0)
+
+[node name="MovingLaser" type="Node3D" parent="DeathlessAct/SpaceB/LaserPillar4"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, 0)
+script = ExtResource("18_2qlbe")
+timeCurve = SubResource("Curve_84o03")
+root = NodePath("Laser")
+animator = NodePath("")
+Movement/Mode = 1
+"Movement/Cycle Length" = 3.0
+"Movement/Starting Offset" = 0.5
+Movement/Distance = 3.5
+Movement/Angle = 0.0
+"Vertical Orientation" = true
+
+[node name="Laser" parent="DeathlessAct/SpaceB/LaserPillar4/MovingLaser" instance=ExtResource("41_84o03")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.5000002, 0)
+
+[node name="BlueMajin1" parent="DeathlessAct/SpaceB" instance=ExtResource("36_i5h04")]
+transform = Transform3D(-1, 0, 8.742277e-08, 0, 1, 0, -8.742277e-08, 0, -1, -56.999542, 20, 224)
+rangeOverride = 30
+
+[node name="BlueMajin2" parent="DeathlessAct/SpaceB" instance=ExtResource("36_i5h04")]
+transform = Transform3D(-1, 0, 8.742277e-08, 0, 1, 0, -8.742277e-08, 0, -1, -54.99948, 21, 230)
+rangeOverride = 30
+
+[node name="RedMajin1" parent="DeathlessAct/SpaceB" instance=ExtResource("29_w45ru")]
+transform = Transform3D(-1, 0, 8.742277e-08, 0, 1, 0, -8.742277e-08, 0, -1, -52.799255, 26, 236.09998)
+"Spawn Settings/Spawn Travel Time" = 1.0
+"Spawn Settings/Spawn Delay" = 0.0
+"Spawn Settings/Spawn Offset" = Vector3(0, 15, 0)
+"Spawn Settings/Spawn In Offset" = Vector3(0, 0, 0)
+"Spawn Settings/Spawn Out Offset" = Vector3(0, 0, 0)
+"Rotation Settings/Track Player" = false
+"Rotation Settings/Rotation Time" = 1.0
+"Attack Settings/Flame Active Time" = 2.0
+"Attack Settings/Flame Inactive Time" = 2.0
+"Attack Settings/Flame Aggression Radius" = 0
+"Attack Settings/Attack Instantly" = true
+rangeOverride = 20
+
+[node name="LaserPillar5" type="Node3D" parent="DeathlessAct/SpaceB"]
+transform = Transform3D(0.8660254, 0, -0.5, 0, 1, 0, 0.5, 0, 0.8660254, -57.0997, 20, 233.70001)
+
+[node name="LaserPillarL" parent="DeathlessAct/SpaceB/LaserPillar5" instance=ExtResource("40_8kwp6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 0, 0)
+
+[node name="LaserPillarR" parent="DeathlessAct/SpaceB/LaserPillar5" instance=ExtResource("40_8kwp6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 0, 0)
+
+[node name="MovingLaser" type="Node3D" parent="DeathlessAct/SpaceB/LaserPillar5"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, 0)
+script = ExtResource("18_2qlbe")
+timeCurve = SubResource("Curve_84o03")
+root = NodePath("Laser")
+animator = NodePath("")
+Movement/Mode = 1
+"Movement/Cycle Length" = 2.0
+"Movement/Starting Offset" = 0.5
+Movement/Distance = 3.5
+Movement/Angle = 0.0
+"Vertical Orientation" = true
+
+[node name="Laser" parent="DeathlessAct/SpaceB/LaserPillar5/MovingLaser" instance=ExtResource("41_84o03")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.5000002, 0)
+
+[node name="BlueMajin3" parent="DeathlessAct/SpaceB" instance=ExtResource("36_i5h04")]
+transform = Transform3D(-1, 0, 8.742277e-08, 0, 1, 0, -8.742277e-08, 0, -1, -55.99939, 21, 247)
+rangeOverride = 30
+
+[node name="LaserPillar6" type="Node3D" parent="DeathlessAct/SpaceB"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -55.999573, 20, 255.70001)
+
+[node name="LaserPillarL" parent="DeathlessAct/SpaceB/LaserPillar6" instance=ExtResource("40_8kwp6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 0, 0)
+
+[node name="LaserPillarR" parent="DeathlessAct/SpaceB/LaserPillar6" instance=ExtResource("40_8kwp6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 0, 0)
+
+[node name="MovingLaser" type="Node3D" parent="DeathlessAct/SpaceB/LaserPillar6"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, 0)
+script = ExtResource("18_2qlbe")
+timeCurve = SubResource("Curve_84o03")
+root = NodePath("Laser")
+animator = NodePath("")
+Movement/Mode = 1
+"Movement/Cycle Length" = 3.0
+"Movement/Starting Offset" = 0.5
+Movement/Distance = 3.5
+Movement/Angle = 0.0
+"Vertical Orientation" = true
+
+[node name="Laser" parent="DeathlessAct/SpaceB/LaserPillar6/MovingLaser" instance=ExtResource("41_84o03")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.5000002, 0)
+
+[node name="RedMajin2" parent="DeathlessAct/SpaceB" instance=ExtResource("29_w45ru")]
+transform = Transform3D(-1, 0, 8.742277e-08, 0, 1, 0, -8.742277e-08, 0, -1, -55.799, 20, 259)
+"Spawn Settings/Spawn Travel Time" = 1.0
+"Spawn Settings/Spawn Delay" = 0.0
+"Spawn Settings/Spawn Offset" = Vector3(0, 15, 0)
+"Spawn Settings/Spawn In Offset" = Vector3(0, 0, 0)
+"Spawn Settings/Spawn Out Offset" = Vector3(0, 0, 0)
+"Rotation Settings/Track Player" = false
+"Rotation Settings/Rotation Time" = 0.5
+"Attack Settings/Flame Active Time" = 2.0
+"Attack Settings/Flame Inactive Time" = 2.0
+"Attack Settings/Flame Aggression Radius" = 0
+"Attack Settings/Attack Instantly" = true
+rangeOverride = 20
+
+[node name="Teleport" parent="DeathlessAct/SpaceB" instance=ExtResource("8_eok7x")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -55.89984, 23, 268.90002)
+
+[node name="SpaceC" type="Node3D" parent="DeathlessAct"]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 983, -6, -295.5)
+
+[node name="SpawnPosition" type="Node3D" parent="DeathlessAct/SpaceC"]
 
 [connection signal="Teleport" from="DeathlessAct/Opening/Teleport" to="Static/Visuals/RoomUp" method="Deactivate"]
 [connection signal="Teleport" from="DeathlessAct/Opening/Teleport" to="Static/Visuals/SpaceD" method="Activate"]
@@ -4497,6 +5930,15 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -80, 3, 286)
 [connection signal="Respawned" from="DeathlessAct/SpaceA/Spear1" to="DeathlessAct/SpaceA/Spear1/SpearCull" method="Deactivate"]
 [connection signal="Respawned" from="DeathlessAct/SpaceA/SpearGroup1" to="DeathlessAct/SpaceA/SpearGroup1/SpearCull" method="Deactivate"]
 [connection signal="Respawned" from="DeathlessAct/SpaceA/SpearGroup2" to="DeathlessAct/SpaceA/SpearGroup2/SpearCull" method="Deactivate"]
+[connection signal="Teleport" from="DeathlessAct/SpaceA/Teleport" to="Static/Visuals/RoomUp" method="Activate"]
+[connection signal="Teleport" from="DeathlessAct/SpaceA/Teleport" to="Static/Visuals/SpaceA" method="Deactivate"]
+[connection signal="Teleport" from="DeathlessAct/SpaceA/Teleport" to="Static/Trigger/Path/RoomUpPath" method="Activate"]
+[connection signal="Teleport" from="DeathlessAct/SpaceA/Teleport" to="DeathlessAct/SpaceA" method="Deactivate"]
+[connection signal="Teleport" from="DeathlessAct/SpaceA/Teleport" to="DeathlessAct/RoomUp" method="Activate"]
+[connection signal="SpinStarted" from="DeathlessAct/SpaceB/MovingMajin/BlueMajin" to="DeathlessAct/SpaceB/MovingMajin" method="Unpause"]
+[connection signal="Respawned" from="DeathlessAct/SpaceB/SpearGroup1" to="DeathlessAct/SpaceB/SpearGroup1/SpearCull" method="Deactivate"]
+[connection signal="Respawned" from="DeathlessAct/SpaceB/SpearGroup2" to="DeathlessAct/SpaceB/SpearGroup2/SpearCull" method="Deactivate"]
+[connection signal="Respawned" from="DeathlessAct/SpaceB/SpearGroup3" to="DeathlessAct/SpaceB/SpearGroup3/SpearCull" method="Deactivate"]
 
 [editable path="Static"]
 [editable path="Static/Collision"]
