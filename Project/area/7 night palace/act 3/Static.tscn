@@ -1,4 +1,4 @@
-[gd_scene load_steps=47 format=3 uid="uid://bdb1nsoasmspq"]
+[gd_scene load_steps=48 format=3 uid="uid://bdb1nsoasmspq"]
 
 [ext_resource type="Script" uid="uid://dtkbvehtmy3em" path="res://object/stage/StageSettings.cs" id="1_1bbvc"]
 [ext_resource type="PackedScene" uid="uid://ctlr224must3o" path="res://area/7 night palace/act 3/environment/collision/Collision.tscn" id="2_eem6j"]
@@ -24,6 +24,7 @@
 [ext_resource type="PackedScene" uid="uid://0o1ds8o5k04j" path="res://effect/buffer/PlanarReflectionRenderer.tscn" id="20_rrjrg"]
 [ext_resource type="Curve3D" uid="uid://si0rmpywubij" path="res://area/7 night palace/act 3/environment/path/SpaceDPath.tres" id="21_kdjgm"]
 [ext_resource type="Material" uid="uid://c3kendmmffv8b" path="res://area/7 night palace/data/material/Effect Primary Reflection.tres" id="21_ov4eh"]
+[ext_resource type="PackedScene" uid="uid://etu2s6i547gb" path="res://object/trigger/state trigger/DriftTrigger.tscn" id="22_5bkxj"]
 [ext_resource type="PackedScene" uid="uid://co2wg02egbm0x" path="res://object/trigger/state trigger/AutomationTrigger.tscn" id="24_3gchc"]
 [ext_resource type="Curve3D" path="res://area/7 night palace/act 3/environment/path/RoomUpPath.tres" id="25_5bkxj"]
 [ext_resource type="Script" uid="uid://bssd28yqn1cxg" path="res://object/trigger/modules/PathTrigger.cs" id="25_u1guc"]
@@ -34,7 +35,9 @@
 [ext_resource type="Resource" uid="uid://cmesyjx0jp6ur" path="res://resource/preset/lockout/run/AutorunLockout.tres" id="36_tcefn"]
 [ext_resource type="Resource" uid="uid://c7m6o6vha25j2" path="res://resource/preset/lockout/run/AutorunJumplessLockout.tres" id="37_e72yc"]
 [ext_resource type="Resource" uid="uid://b1pan2tr3ydrk" path="res://area/7 night palace/act 1/camera/SpaceCAutorunCam.tres" id="38_uffb5"]
-[ext_resource type="Script" uid="uid://8ybljftbtxti" path="res://object/trigger/modules/ReflectionTrigger.cs" id="39_krpnb"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_he6ww"]
+size = Vector3(20, 20, 5)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_c1bgt"]
 size = Vector3(83, 30, 30)
@@ -133,6 +136,39 @@ transparency = 0.8
 [node name="Trigger" type="Node3D" parent="."]
 
 [node name="Object" type="Node3D" parent="Trigger"]
+
+[node name="Drift" type="Node3D" parent="Trigger/Object"]
+
+[node name="DriftTrigger1" parent="Trigger/Object/Drift" instance=ExtResource("22_5bkxj")]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 979, 0, -559.87)
+isRightTurn = true
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Trigger/Object/Drift/DriftTrigger1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
+shape = SubResource("BoxShape3D_he6ww")
+
+[node name="DriftTrigger2" parent="Trigger/Object/Drift" instance=ExtResource("22_5bkxj")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 969.5, 0, -629.97)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Trigger/Object/Drift/DriftTrigger2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
+shape = SubResource("BoxShape3D_he6ww")
+
+[node name="DriftTrigger3" parent="Trigger/Object/Drift" instance=ExtResource("22_5bkxj")]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 950, 0, -511.46997)
+isRightTurn = true
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Trigger/Object/Drift/DriftTrigger3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
+shape = SubResource("BoxShape3D_he6ww")
+
+[node name="DriftTrigger4" parent="Trigger/Object/Drift" instance=ExtResource("22_5bkxj")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 960, 0, -470.06998)
+isRightTurn = true
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Trigger/Object/Drift/DriftTrigger4"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
+shape = SubResource("BoxShape3D_he6ww")
 
 [node name="SpaceAAutomation" parent="Trigger/Object" instance=ExtResource("24_3gchc")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 975, 0, -560)
@@ -297,12 +333,8 @@ script = ExtResource("25_u1guc")
 path = NodePath("../../../../Path/SpaceC")
 cameraPathBlendTime = 0.5
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Trigger/Path/SpaceCPath"]
-transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, -5.0000005, 5, 6.4)
-shape = SubResource("BoxShape3D_582m4")
-
 [node name="CollisionShape3D2" type="CollisionShape3D" parent="Trigger/Path/SpaceCPath"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.8, 8, -12.400001)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -29.8, 8, -12.900001)
 shape = SubResource("BoxShape3D_582m4")
 
 [node name="SpaceC2Path" parent="Trigger/Path" instance=ExtResource("10_xejcv")]
@@ -314,23 +346,33 @@ script = ExtResource("25_u1guc")
 path = NodePath("../../../../Path/SpaceC2")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Trigger/Path/SpaceC2Path"]
-transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -6.0000005, 8, -5.9999995)
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -19, 8, 24)
 shape = SubResource("BoxShape3D_582m4")
 
 [node name="CollisionShape3D2" type="CollisionShape3D" parent="Trigger/Path/SpaceC2Path"]
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -13, 1, 8)
 shape = SubResource("BoxShape3D_4uufw")
 
+[node name="SpaceC3Path2" parent="Trigger/Path" instance=ExtResource("10_xejcv")]
+transform = Transform3D(1.0000002, 0, 0, 0, 1, 0, 0, 0, 1.0000002, 957.7577, -4, -306.34302)
+"Enter Mode" = 0
+
+[node name="Path" type="Node3D" parent="Trigger/Path/SpaceC3Path2" node_paths=PackedStringArray("path")]
+script = ExtResource("25_u1guc")
+path = NodePath("../../../../Path/SpaceC3")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Trigger/Path/SpaceC3Path2"]
+transform = Transform3D(-4.3711385e-08, -1, -4.371139e-08, 0, -4.371139e-08, 1, -1, 4.371139e-08, 0, -14, -2.9999998, 11)
+shape = SubResource("BoxShape3D_582m4")
+
+[node name="CollisionShape3D2" type="CollisionShape3D" parent="Trigger/Path/SpaceC3Path2"]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -24, 1.0000004, 15)
+shape = SubResource("BoxShape3D_4uufw")
+
 [node name="SpaceDPath" type="Node3D" parent="Trigger/Path" node_paths=PackedStringArray("path")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 978.4, 0, -295.5)
 script = ExtResource("25_u1guc")
 path = NodePath("../../../Path/SpaceD")
-
-[node name="Reflection" type="Node3D" parent="Trigger"]
-
-[node name="GasRoomReflection" type="Node3D" parent="Trigger/Reflection"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1140, 0, -560)
-script = ExtResource("39_krpnb")
 
 [node name="Path" type="Node3D" parent="."]
 
