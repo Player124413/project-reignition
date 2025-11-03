@@ -1,4 +1,4 @@
-[gd_scene load_steps=58 format=3 uid="uid://bdb1nsoasmspq"]
+[gd_scene load_steps=67 format=3 uid="uid://bdb1nsoasmspq"]
 
 [ext_resource type="Script" uid="uid://dtkbvehtmy3em" path="res://object/stage/StageSettings.cs" id="1_1bbvc"]
 [ext_resource type="PackedScene" uid="uid://ctlr224must3o" path="res://area/7 night palace/act 3/environment/collision/Collision.tscn" id="2_eem6j"]
@@ -32,10 +32,13 @@
 [ext_resource type="Resource" uid="uid://bbmxhjmitmm8l" path="res://area/7 night palace/act 3/camera/RoomSideCam.tres" id="24_0l5w5"]
 [ext_resource type="PackedScene" uid="uid://co2wg02egbm0x" path="res://object/trigger/state trigger/AutomationTrigger.tscn" id="24_3gchc"]
 [ext_resource type="Script" uid="uid://bssd28yqn1cxg" path="res://object/trigger/modules/PathTrigger.cs" id="25_u1guc"]
+[ext_resource type="Script" uid="uid://coiui4qvdxbqe" path="res://object/trigger/modules/EventTrigger.cs" id="26_m52iu"]
 [ext_resource type="Script" uid="uid://dx0a0rhyauccl" path="res://object/trigger/modules/CameraTrigger.cs" id="26_pkst8"]
 [ext_resource type="Resource" uid="uid://cc1pd2qb46tid" path="res://area/7 night palace/act 3/camera/RoomStartCam.tres" id="26_rrjrg"]
 [ext_resource type="Resource" uid="uid://k8rcv545ia3d" path="res://area/7 night palace/act 3/camera/HallCam.tres" id="27_ov4eh"]
+[ext_resource type="Resource" uid="uid://ukcne4um86a6" path="res://resource/preset/camera/common/CutsceneCam.tres" id="27_sxt75"]
 [ext_resource type="Resource" uid="uid://ddpviuxaucnr5" path="res://area/7 night palace/act 3/camera/SpaceBHallCam.tres" id="28_dieks"]
+[ext_resource type="AudioStream" uid="uid://c24151ej80fiy" path="res://sound/sfx/stage/night palace/room flip.ogg" id="28_u4n7j"]
 [ext_resource type="Resource" uid="uid://bku7n4ufln8ro" path="res://resource/preset/camera/common/StaticCam.tres" id="29_3gchc"]
 [ext_resource type="Resource" uid="uid://cbw5klplp18fn" path="res://area/7 night palace/act 3/camera/RoomEndCam.tres" id="29_pkst8"]
 [ext_resource type="Resource" uid="uid://co824g2qfperr" path="res://area/7 night palace/act 3/camera/SpaceAAutomationTransitionCam.tres" id="30_f7m47"]
@@ -69,14 +72,354 @@ size = Vector3(140, 5, 132)
 [sub_resource type="BoxShape3D" id="BoxShape3D_wsw81"]
 size = Vector3(20, 5, 38)
 
+[sub_resource type="Animation" id="Animation_632y5"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("CameraRoot:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(4, 4, 0)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("CameraRoot/Camera:position")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0, 0, 0)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("CameraRoot/Camera:rotation")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0, 0, 0)]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("SFX:playing")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("CameraRoot:rotation")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0, 3.1415927, -1.5707964)]
+}
+
+[sub_resource type="Animation" id="Animation_4jhhj"]
+resource_name = "event"
+length = 11.0
+step = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("CameraRoot:position")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 10),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector3(4, 4, 0), Vector3(4, 4, 50)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("CameraRoot/Camera:position")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0, 0, 0)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("CameraRoot/Camera:rotation")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0, 0, 0)]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("SFX:playing")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0, 10.8),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [true, false]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("CameraRoot:rotation")
+tracks/4/interp = 2
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(7.4, 8.2, 8.5, 8.8, 9),
+"transitions": PackedFloat32Array(2, 1, 1, 1, 1),
+"update": 0,
+"values": [Vector3(0, 3.1415927, -1.5707964), Vector3(0, 3.1415927, 0.17453292), Vector3(0, 3.1415927, -0.08726646), Vector3(0, 3.1415927, 0.034906585), Vector3(0, 3.1415927, 0)]
+}
+tracks/5/type = "method"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath(".")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(1.2, 3.4, 3.9, 5.3999996, 6.4, 7.9, 9, 10),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1),
+"values": [{
+"args": [1.0],
+"method": &"ScreenShake"
+}, {
+"args": [2.0],
+"method": &"ScreenShake"
+}, {
+"args": [1.0],
+"method": &"ScreenShake"
+}, {
+"args": [1.0],
+"method": &"ScreenShake"
+}, {
+"args": [1.0],
+"method": &"ScreenShake"
+}, {
+"args": [2.0],
+"method": &"ScreenShake"
+}, {
+"args": [2.0],
+"method": &"ScreenShake"
+}, {
+"args": [],
+"method": &"FinishEvent"
+}]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_2boic"]
+_data = {
+&"RESET": SubResource("Animation_632y5"),
+&"event": SubResource("Animation_4jhhj")
+}
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_pkst8"]
+size = Vector3(20, 31, 16)
+
+[sub_resource type="Animation" id="Animation_sxt75"]
+resource_name = "RESET"
+length = 0.001
+step = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("CameraRoot:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0, 11, 0)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("CameraRoot/Camera:position")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0, 0, 0)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("CameraRoot/Camera:rotation")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0, 0, 0)]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("SFX:playing")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("CameraRoot:rotation")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0, 3.1415927, -3.1415927)]
+}
+
+[sub_resource type="Animation" id="Animation_m52iu"]
+resource_name = "event"
+length = 11.0
+step = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("CameraRoot:position")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 10),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector3(0, 11, 0), Vector3(0, 11, 50)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("CameraRoot/Camera:position")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0, 0, 0)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("CameraRoot/Camera:rotation")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0, 0, 0)]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("SFX:playing")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0, 10.7),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [true, false]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("CameraRoot:rotation")
+tracks/4/interp = 2
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(6.5, 8.2, 8.5, 8.8, 9),
+"transitions": PackedFloat32Array(4, 1, 1, 1, 1),
+"update": 0,
+"values": [Vector3(0, 3.1415927, -3.1415927), Vector3(0, 3.1415927, 0.17453292), Vector3(0, 3.1415927, -0.08726646), Vector3(0, 3.1415927, 0.034906585), Vector3(0, 3.1415927, 0)]
+}
+tracks/5/type = "method"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath(".")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(1.2, 3.4, 3.9, 5.3999996, 6.4, 7.9, 9, 10),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1),
+"values": [{
+"args": [1.0],
+"method": &"ScreenShake"
+}, {
+"args": [2.0],
+"method": &"ScreenShake"
+}, {
+"args": [1.0],
+"method": &"ScreenShake"
+}, {
+"args": [1.0],
+"method": &"ScreenShake"
+}, {
+"args": [1.0],
+"method": &"ScreenShake"
+}, {
+"args": [2.0],
+"method": &"ScreenShake"
+}, {
+"args": [2.0],
+"method": &"ScreenShake"
+}, {
+"args": [],
+"method": &"FinishEvent"
+}]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_u4n7j"]
+_data = {
+&"RESET": SubResource("Animation_sxt75"),
+&"event": SubResource("Animation_m52iu")
+}
+
 [sub_resource type="BoxShape3D" id="BoxShape3D_582m4"]
 size = Vector3(10, 20, 5)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_4uufw"]
 size = Vector3(10, 20, 2)
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_pkst8"]
-size = Vector3(20, 31, 16)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_f7m47"]
 size = Vector3(20, 31, 13)
@@ -222,6 +565,18 @@ settings = ExtResource("30_f7m47")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 48, 0, 0)
 shape = SubResource("BoxShape3D_c1bgt")
 
+[node name="SpaceAAutomationAutorun" type="Node3D" parent="Trigger/Object"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 975, 0, -560)
+script = ExtResource("35_fr6ak")
+lockoutData = ExtResource("37_e72yc")
+
+[node name="SpaceAAutomationEnd" parent="Trigger/Object" instance=ExtResource("10_xejcv")]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 974, 0, -560)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Trigger/Object/SpaceAAutomationEnd"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
+shape = SubResource("BoxShape3D_he6ww")
+
 [node name="SpaceAFallTrigger" parent="Trigger/Object" instance=ExtResource("10_xejcv")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 877, 0, -640)
 "Enter Mode" = 0
@@ -326,6 +681,104 @@ shape = SubResource("BoxShape3D_p7b3w")
 [node name="CollisionShape3D5" type="CollisionShape3D" parent="Trigger/Object/SpaceDFallTrigger"]
 transform = Transform3D(1, 0, 0, 0, 0.9659258, 0.25881904, 0, -0.25881904, 0.9659258, 282.5, 9, 88)
 shape = SubResource("BoxShape3D_p7b3w")
+
+[node name="RoomSideHallTrigger" parent="Trigger/Object" instance=ExtResource("10_xejcv")]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 1411.5, -4, -421.7)
+"Enter Mode" = 0
+
+[node name="HallEvent" type="Node3D" parent="Trigger/Object/RoomSideHallTrigger" node_paths=PackedStringArray("animator")]
+script = ExtResource("26_m52iu")
+animator = NodePath("AnimationPlayer")
+EventID = "np_a3_side_hall"
+overrideEventLength = 10.0
+"Trigger Settings/Automatically Respawn" = false
+"Trigger Settings/Is One Shot" = true
+"Trigger Settings/Animation Blending" = 0.0
+"Trigger Settings/Player Stand-in" = NodePath("PlayerPosition")
+"Player Event Settings/Animation Fadeout Time" = 0.0
+"Player Event Settings/Position Smoothing" = 0.2
+"Player Event Settings/Normalize Exit Move Speed" = true
+"Player Event Settings/Exit Move Speed" = 0.0
+"Player Event Settings/Exit Vertical Speed" = 0.0
+"Player Event Settings/Exit Lockout" = null
+
+[node name="PlayerPosition" type="Node3D" parent="Trigger/Object/RoomSideHallTrigger/HallEvent"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -3.5)
+
+[node name="CameraRoot" type="Node3D" parent="Trigger/Object/RoomSideHallTrigger/HallEvent"]
+transform = Transform3D(4.371139e-08, -1, -8.742278e-08, -1, -4.371139e-08, 0, -3.821371e-15, 8.742278e-08, -1, 4, 4, 0)
+script = ExtResource("26_pkst8")
+transitionTime = 0.0
+settings = ExtResource("27_sxt75")
+previousSettings = ExtResource("27_ov4eh")
+UpdateEveryFrame = true
+followObject = NodePath("Camera")
+
+[node name="Camera" type="Camera3D" parent="Trigger/Object/RoomSideHallTrigger/HallEvent/CameraRoot"]
+cull_mask = 5
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Trigger/Object/RoomSideHallTrigger/HallEvent"]
+libraries = {
+&"": SubResource("AnimationLibrary_2boic")
+}
+
+[node name="SFX" type="AudioStreamPlayer" parent="Trigger/Object/RoomSideHallTrigger/HallEvent"]
+stream = ExtResource("28_u4n7j")
+volume_db = 9.0
+bus = &"GAME SFX"
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Trigger/Object/RoomSideHallTrigger"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
+shape = SubResource("BoxShape3D_pkst8")
+
+[node name="RoomDownHallTrigger" parent="Trigger/Object" instance=ExtResource("10_xejcv")]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 1411.5, -30.7, -300.00006)
+"Enter Mode" = 0
+
+[node name="HallEvent" type="Node3D" parent="Trigger/Object/RoomDownHallTrigger" node_paths=PackedStringArray("animator")]
+script = ExtResource("26_m52iu")
+animator = NodePath("AnimationPlayer")
+EventID = "np_a3_side_hall"
+overrideEventLength = 10.0
+"Trigger Settings/Automatically Respawn" = false
+"Trigger Settings/Is One Shot" = true
+"Trigger Settings/Animation Blending" = 0.0
+"Trigger Settings/Player Stand-in" = NodePath("PlayerPosition")
+"Player Event Settings/Animation Fadeout Time" = 0.0
+"Player Event Settings/Position Smoothing" = 0.2
+"Player Event Settings/Normalize Exit Move Speed" = true
+"Player Event Settings/Exit Move Speed" = 0.0
+"Player Event Settings/Exit Vertical Speed" = 0.0
+"Player Event Settings/Exit Lockout" = null
+
+[node name="PlayerPosition" type="Node3D" parent="Trigger/Object/RoomDownHallTrigger/HallEvent"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -3.5)
+
+[node name="CameraRoot" type="Node3D" parent="Trigger/Object/RoomDownHallTrigger/HallEvent"]
+transform = Transform3D(1, 8.742278e-08, -8.742278e-08, 8.742278e-08, -1, 0, -8.742278e-08, -7.642742e-15, -1, 0, 11, 0)
+script = ExtResource("26_pkst8")
+transitionTime = 0.0
+settings = ExtResource("27_sxt75")
+previousSettings = ExtResource("27_ov4eh")
+UpdateEveryFrame = true
+followObject = NodePath("Camera")
+
+[node name="Camera" type="Camera3D" parent="Trigger/Object/RoomDownHallTrigger/HallEvent/CameraRoot"]
+cull_mask = 5
+
+[node name="SFX" type="AudioStreamPlayer" parent="Trigger/Object/RoomDownHallTrigger/HallEvent"]
+stream = ExtResource("28_u4n7j")
+volume_db = 9.0
+bus = &"GAME SFX"
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Trigger/Object/RoomDownHallTrigger/HallEvent"]
+libraries = {
+&"": SubResource("AnimationLibrary_u4n7j")
+}
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Trigger/Object/RoomDownHallTrigger"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
+shape = SubResource("BoxShape3D_pkst8")
 
 [node name="Path" type="Node3D" parent="Trigger"]
 
@@ -438,19 +891,6 @@ previousSettings = ExtResource("2_he6ww")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
 shape = SubResource("BoxShape3D_he6ww")
 
-[node name="RoomSideHallTrigger2" parent="Trigger/Camera" instance=ExtResource("10_xejcv")]
-transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 1411.5, -4, -421.60007)
-"Enter Mode" = 0
-
-[node name="Camera" type="Node3D" parent="Trigger/Camera/RoomSideHallTrigger2"]
-script = ExtResource("26_pkst8")
-transitionTime = 0.0
-settings = ExtResource("27_ov4eh")
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Trigger/Camera/RoomSideHallTrigger2"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
-shape = SubResource("BoxShape3D_pkst8")
-
 [node name="RoomSideTrigger" parent="Trigger/Camera" instance=ExtResource("10_xejcv")]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 1434, -4, -421.7)
 "Trigger Mode" = 2
@@ -552,8 +992,6 @@ transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 960,
 [node name="Camera" type="Node3D" parent="Trigger/Camera/SpaceBStaticTrigger"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 5, -10)
 script = ExtResource("26_pkst8")
-transitionTime = 2.0
-deactivationTransitionTime = 0.5
 settings = ExtResource("29_3gchc")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Trigger/Camera/SpaceBStaticTrigger"]
@@ -588,19 +1026,6 @@ settings = ExtResource("28_dieks")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Trigger/Camera/SpaceBHallTrigger3"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
 shape = SubResource("BoxShape3D_he6ww")
-
-[node name="RoomDownHallTrigger2" parent="Trigger/Camera" instance=ExtResource("10_xejcv")]
-transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 1411.5, -30.7, -300.00006)
-"Enter Mode" = 0
-
-[node name="Camera" type="Node3D" parent="Trigger/Camera/RoomDownHallTrigger2"]
-script = ExtResource("26_pkst8")
-transitionTime = 0.0
-settings = ExtResource("27_ov4eh")
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Trigger/Camera/RoomDownHallTrigger2"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
-shape = SubResource("BoxShape3D_pkst8")
 
 [node name="RoomDownStartTrigger" parent="Trigger/Camera" instance=ExtResource("10_xejcv")]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 1453, -30, -299.7)
@@ -717,6 +1142,14 @@ reflectionMaterials = [ExtResource("21_ov4eh")]
 [connection signal="Activated" from="Trigger/Object/SpaceAAutomation" to="Trigger/Object/SpaceAAutomation/Camera" method="Activate"]
 [connection signal="Deactivated" from="Trigger/Object/SpaceAAutomation" to="Trigger/Object/SpaceAAutomation/Path" method="Deactivate"]
 [connection signal="Deactivated" from="Trigger/Object/SpaceAAutomation" to="Trigger/Object/SpaceAAutomation/TransitionCamera" method="Activate"]
+[connection signal="Deactivated" from="Trigger/Object/SpaceAAutomation" to="Trigger/Object/SpaceAAutomationAutorun" method="Activate"]
+[connection signal="Activated" from="Trigger/Object/SpaceAAutomationEnd" to="Trigger/Object/SpaceAAutomationAutorun" method="Deactivate"]
+[connection signal="Activated" from="Trigger/Object/RoomSideHallTrigger/HallEvent" to="Trigger/Object/RoomSideHallTrigger/HallEvent/CameraRoot" method="Activate"]
+[connection signal="EventFinished" from="Trigger/Object/RoomSideHallTrigger/HallEvent" to="Trigger/Object/RoomSideHallTrigger/HallEvent/CameraRoot" method="Deactivate"]
+[connection signal="EventSkipped" from="Trigger/Object/RoomSideHallTrigger/HallEvent" to="Trigger/Object/RoomSideHallTrigger/HallEvent/CameraRoot" method="Deactivate"]
+[connection signal="Activated" from="Trigger/Object/RoomDownHallTrigger/HallEvent" to="Trigger/Object/RoomDownHallTrigger/HallEvent/CameraRoot" method="Activate"]
+[connection signal="EventFinished" from="Trigger/Object/RoomDownHallTrigger/HallEvent" to="Trigger/Object/RoomDownHallTrigger/HallEvent/CameraRoot" method="Deactivate"]
+[connection signal="EventSkipped" from="Trigger/Object/RoomDownHallTrigger/HallEvent" to="Trigger/Object/RoomDownHallTrigger/HallEvent/CameraRoot" method="Deactivate"]
 
 [editable path="Collision"]
 [editable path="Visuals/SpaceSkybox"]
