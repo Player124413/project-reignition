@@ -267,6 +267,9 @@ public partial class DestructableObject : Node3D
 	/// </summary>
 	public void AttemptPlatformShatter(Node3D b)
 	{
+		if (b.GetParent() == this) // Ignore self-collisions
+			return;
+
 		if (!b.IsInGroup("player"))
 		{
 			Shatter(); // Environment collision
