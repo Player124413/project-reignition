@@ -36,7 +36,7 @@ public partial class PlayerLockonController : Area3D
 	/// <summary> Targets whose squared distance is within this range will prioritize height instead of distance. </summary>
 	private readonly float PriorityDistance = 1f;
 	/// <summary> How close a target needs to be to auto-lockon after bouncing. </summary>
-	private readonly float AutotargetDistanceAmount = 16f;
+	private readonly float AutotargetDistanceAmount = 4f;
 	/// <summary> How far ahead the player must be to ignore the active lockon target. </summary>
 	private readonly float IgnoreTargetDistance = 0.2f;
 	private readonly string LevelWallGroup = "level wall";
@@ -215,8 +215,8 @@ public partial class PlayerLockonController : Area3D
 
 			if (Target == null)
 			{
-				// Only allow camera to lockon to extremely close objects
-				float targetDistance = target.GlobalPosition.Flatten().DistanceSquaredTo(Player.GlobalPosition.Flatten());
+				// Allow camera to lockon to close objects
+				float targetDistance = Player.PathFollower.GetProgress(target.GlobalPosition) - Player.PathFollower.Progress;
 				if (targetDistance <= AutotargetDistanceAmount)
 					Player.Camera.SetLockonTarget(target);
 			}
