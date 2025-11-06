@@ -1,4 +1,4 @@
-[gd_scene load_steps=67 format=3 uid="uid://bdb1nsoasmspq"]
+[gd_scene load_steps=68 format=3 uid="uid://bdb1nsoasmspq"]
 
 [ext_resource type="Script" uid="uid://dtkbvehtmy3em" path="res://object/stage/StageSettings.cs" id="1_1bbvc"]
 [ext_resource type="PackedScene" uid="uid://ctlr224must3o" path="res://area/7 night palace/act 3/environment/collision/Collision.tscn" id="2_eem6j"]
@@ -14,8 +14,8 @@
 [ext_resource type="PackedScene" uid="uid://bn6wr6l8s3qyt" path="res://object/trigger/StageTrigger.tscn" id="10_xejcv"]
 [ext_resource type="Script" uid="uid://bvmyay4bo83qu" path="res://object/trigger/modules/DeathTrigger.cs" id="11_eem6j"]
 [ext_resource type="PackedScene" uid="uid://dftou328ishsn" path="res://area/7 night palace/data/BGM.tscn" id="13_dv31r"]
-[ext_resource type="Curve3D" uid="uid://bleu5c56u85aa" path="res://area/7 night palace/act 3/environment/path/RoomDownPath.tres" id="13_eem6j"]
-[ext_resource type="Curve3D" uid="uid://bbtasuy141ywk" path="res://area/7 night palace/act 3/environment/path/RoomSidePath.tres" id="13_jxqr2"]
+[ext_resource type="Curve3D" path="res://area/7 night palace/act 3/environment/path/RoomDownPath.tres" id="13_eem6j"]
+[ext_resource type="Curve3D" path="res://area/7 night palace/act 3/environment/path/RoomSidePath.tres" id="13_jxqr2"]
 [ext_resource type="Resource" uid="uid://bgtnm6w0xqy0h" path="res://area/7 night palace/act 3/camera/SpaceBDriftCam.tres" id="14_u1guc"]
 [ext_resource type="Curve3D" uid="uid://v8cu7fij75ii" path="res://area/7 night palace/act 3/environment/path/SpaceAAutomationPath.tres" id="15_pemb6"]
 [ext_resource type="Curve3D" uid="uid://xejon1fjal3b" path="res://area/7 night palace/act 3/environment/path/SpaceAPath.tres" id="16_kdjgm"]
@@ -43,7 +43,7 @@
 [ext_resource type="Resource" uid="uid://cbw5klplp18fn" path="res://area/7 night palace/act 3/camera/RoomEndCam.tres" id="29_pkst8"]
 [ext_resource type="Resource" uid="uid://co824g2qfperr" path="res://area/7 night palace/act 3/camera/SpaceAAutomationTransitionCam.tres" id="30_f7m47"]
 [ext_resource type="Resource" uid="uid://pkvhehbsqcrc" path="res://area/7 night palace/act 3/camera/RoomDownFieldCam.tres" id="31_pkst8"]
-[ext_resource type="Curve3D" uid="uid://c0gfevm2pndi8" path="res://area/7 night palace/act 3/environment/path/RoomUpPath.tres" id="35_f7m47"]
+[ext_resource type="Curve3D" path="res://area/7 night palace/act 3/environment/path/RoomUpPath.tres" id="35_f7m47"]
 [ext_resource type="Script" uid="uid://bd2g6rmrn77eo" path="res://object/trigger/modules/LockoutTrigger.cs" id="35_fr6ak"]
 [ext_resource type="Resource" uid="uid://c7m6o6vha25j2" path="res://resource/preset/lockout/run/AutorunJumplessLockout.tres" id="37_e72yc"]
 [ext_resource type="Resource" uid="uid://b1pan2tr3ydrk" path="res://area/7 night palace/act 1/camera/SpaceCAutorunCam.tres" id="38_uffb5"]
@@ -53,6 +53,9 @@ size = Vector3(20, 30, 5)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_c1bgt"]
 size = Vector3(75, 30, 30)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_m52iu"]
+size = Vector3(50, 5, 50)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_w54kw"]
 size = Vector3(160, 5, 140)
@@ -563,6 +566,25 @@ shape = SubResource("BoxShape3D_c1bgt")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 975, 0, -560)
 script = ExtResource("35_fr6ak")
 lockoutData = ExtResource("37_e72yc")
+
+[node name="RoomFallTrigger" parent="Trigger/Object" instance=ExtResource("10_xejcv")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1610, 0, -560)
+"Enter Mode" = 0
+
+[node name="Fall" type="Node3D" parent="Trigger/Object/RoomFallTrigger"]
+script = ExtResource("11_eem6j")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Trigger/Object/RoomFallTrigger"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 11, 0)
+shape = SubResource("BoxShape3D_m52iu")
+
+[node name="CollisionShape3D2" type="CollisionShape3D" parent="Trigger/Object/RoomFallTrigger"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -9, 138)
+shape = SubResource("BoxShape3D_m52iu")
+
+[node name="CollisionShape3D3" type="CollisionShape3D" parent="Trigger/Object/RoomFallTrigger"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -36, 260)
+shape = SubResource("BoxShape3D_m52iu")
 
 [node name="SpaceAAutomationEnd" parent="Trigger/Object" instance=ExtResource("10_xejcv")]
 transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 974, 0, -560)
