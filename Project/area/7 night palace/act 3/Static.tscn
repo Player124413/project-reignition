@@ -1,4 +1,4 @@
-[gd_scene load_steps=73 format=3 uid="uid://bdb1nsoasmspq"]
+[gd_scene load_steps=74 format=3 uid="uid://bdb1nsoasmspq"]
 
 [ext_resource type="Script" uid="uid://dtkbvehtmy3em" path="res://object/stage/StageSettings.cs" id="1_1bbvc"]
 [ext_resource type="PackedScene" uid="uid://ctlr224must3o" path="res://area/7 night palace/act 3/environment/collision/Collision.tscn" id="2_eem6j"]
@@ -45,6 +45,7 @@
 [ext_resource type="Resource" uid="uid://pkvhehbsqcrc" path="res://area/7 night palace/act 3/camera/RoomDownFieldCam.tres" id="31_pkst8"]
 [ext_resource type="Curve3D" uid="uid://qd7wofc23bmt" path="res://area/7 night palace/act 3/environment/path/RoomUpPath.tres" id="35_f7m47"]
 [ext_resource type="Script" uid="uid://bd2g6rmrn77eo" path="res://object/trigger/modules/LockoutTrigger.cs" id="35_fr6ak"]
+[ext_resource type="Script" uid="uid://8ybljftbtxti" path="res://object/trigger/modules/ReflectionTrigger.cs" id="35_sxt75"]
 [ext_resource type="Resource" path="res://resource/preset/lockout/run/AutorunJumplessLockout.tres" id="37_e72yc"]
 [ext_resource type="Resource" path="res://area/7 night palace/act 1/camera/SpaceCAutorunCam.tres" id="38_uffb5"]
 
@@ -1573,6 +1574,21 @@ previousSettings = ExtResource("29_pkst8")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
 shape = SubResource("BoxShape3D_he6ww")
 
+[node name="ReflectionUp" type="Node3D" parent="Trigger" node_paths=PackedStringArray("reflectionRenderer")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1500, 0, -560)
+script = ExtResource("35_sxt75")
+reflectionRenderer = NodePath("../../PrimaryReflectionRenderer")
+
+[node name="ReflectionSide" type="Node3D" parent="Trigger" node_paths=PackedStringArray("reflectionRenderer")]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 1500, 0, -445)
+script = ExtResource("35_sxt75")
+reflectionRenderer = NodePath("../../PrimaryReflectionRenderer")
+
+[node name="ReflectionDown" type="Node3D" parent="Trigger" node_paths=PackedStringArray("reflectionRenderer")]
+transform = Transform3D(1, 0, 0, 0, -1, -8.742278e-08, 0, 8.742278e-08, -1, 1500, 0, -300)
+script = ExtResource("35_sxt75")
+reflectionRenderer = NodePath("../../PrimaryReflectionRenderer")
+
 [node name="Path" type="Node3D" parent="."]
 
 [node name="RoomSide" type="Path3D" parent="Path"]
@@ -1633,6 +1649,7 @@ libraries = {
 
 [node name="PrimaryReflectionRenderer" parent="." instance=ExtResource("20_rrjrg")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1500, 0, -560)
+rotationMode = 1
 reflectionMaterials = [ExtResource("21_ov4eh")]
 
 [connection signal="DriftCompleted" from="Trigger/Object/Drift/DriftTrigger3" to="Trigger/Object/Drift/DriftTrigger3/Camera" method="Deactivate"]
@@ -1645,12 +1662,15 @@ reflectionMaterials = [ExtResource("21_ov4eh")]
 [connection signal="Deactivated" from="Trigger/Object/SpaceAAutomation" to="Trigger/Object/SpaceAAutomation/TransitionCamera" method="Activate"]
 [connection signal="Deactivated" from="Trigger/Object/SpaceAAutomation" to="Trigger/Object/SpaceAAutomationAutorun" method="Activate"]
 [connection signal="Activated" from="Trigger/Object/SpaceAAutomationEnd" to="Trigger/Object/SpaceAAutomationAutorun" method="Deactivate"]
+[connection signal="Activated" from="Trigger/Object/RoomSideHallTrigger" to="Trigger/ReflectionSide" method="Activate"]
 [connection signal="Activated" from="Trigger/Object/RoomSideHallTrigger/HallEvent" to="Trigger/Object/RoomSideHallTrigger/HallEvent/CameraRoot" method="Activate"]
 [connection signal="EventFinished" from="Trigger/Object/RoomSideHallTrigger/HallEvent" to="Trigger/Object/RoomSideHallTrigger/HallEvent/CameraRoot" method="Deactivate"]
 [connection signal="EventSkipped" from="Trigger/Object/RoomSideHallTrigger/HallEvent" to="Trigger/Object/RoomSideHallTrigger/HallEvent/CameraRoot" method="Deactivate"]
+[connection signal="Activated" from="Trigger/Object/RoomDownHallTrigger" to="Trigger/ReflectionDown" method="Activate"]
 [connection signal="Activated" from="Trigger/Object/RoomDownHallTrigger/HallEvent" to="Trigger/Object/RoomDownHallTrigger/HallEvent/CameraRoot" method="Activate"]
 [connection signal="EventFinished" from="Trigger/Object/RoomDownHallTrigger/HallEvent" to="Trigger/Object/RoomDownHallTrigger/HallEvent/CameraRoot" method="Deactivate"]
 [connection signal="EventSkipped" from="Trigger/Object/RoomDownHallTrigger/HallEvent" to="Trigger/Object/RoomDownHallTrigger/HallEvent/CameraRoot" method="Deactivate"]
+[connection signal="Activated" from="Trigger/Camera/StartTrigger" to="Trigger/ReflectionUp" method="Activate"]
 
 [editable path="Collision"]
 [editable path="Visuals/SpaceSkybox"]

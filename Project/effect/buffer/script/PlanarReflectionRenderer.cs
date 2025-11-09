@@ -117,15 +117,11 @@ public partial class PlanarReflectionRenderer : Node3D
 
 		// Update reflectionCamera's rotation
 		Vector3 upDirection = GameplayCamera.Up().Reflect(reflectionAxis.Normalized());
-		Vector3 forwardDirection = GameplayCamera.Forward().Reflect(reflectionAxis.Normalized());
 
+		Vector3 forwardDirection = GameplayCamera.Forward().Reflect(reflectionAxis.Normalized());
 		reflectionCamera.LookAtFromPosition(targetPosition, targetPosition + forwardDirection, upDirection);
 
-		if (Engine.IsEditorHint())
-			reflectionViewport.Size = (Vector2I)GameplayCamera.GetViewport().GetVisibleRect().Size;
-		else
-			reflectionViewport.Size = Runtime.HalfScreenSize;
-
+		reflectionViewport.Size = Engine.IsEditorHint() ? (Vector2I)GameplayCamera.GetViewport().GetVisibleRect().Size : Runtime.HalfScreenSize;
 		reflectionViewport.RenderTargetUpdateMode = SubViewport.UpdateMode.Once;
 	}
 
