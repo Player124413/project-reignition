@@ -29,6 +29,8 @@ public partial class TeleportState : PlayerState
 		if (Trigger.resetMovespeed)
 			Player.Skills.DisableBreakSkills();
 
+		Player.AllowLandingSkills = false;
+
 		Player.IsTeleporting = true;
 		if (Player.IsKnockback)
 		{
