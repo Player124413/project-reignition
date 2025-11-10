@@ -4,10 +4,11 @@ using Project.Core;
 
 namespace Project.Interface.Menus;
 
-public partial class TimeAttack : Menu
+public partial class TimeAttackNewRun : Menu
 {
-	[Export] AnimationPlayer timeAttackAnimator;
+	[Export] AnimationPlayer newRunAnimator;
 	[Export] private Description description;
+	[Export] TimeAttack thisParent;
 	private bool isActive;
 	private int currentSelection;
 	private int maxSelection = 4;
@@ -20,25 +21,16 @@ public partial class TimeAttack : Menu
 	public override void ShowMenu()
 	{
 		base.ShowMenu();
-		menuMemory[MemoryKeys.ActiveMenu] = (int)MemoryKeys.TimeAttack;
+		//menuMemory[MemoryKeys.ActiveMenu] = (int)MemoryKeys.TimeAttack;
 	}
 
 	public override void OpenParentMenu()
 	{
-		// Return to main menu
-		FadeBgm(.5f);
-		menuMemory[MemoryKeys.ActiveMenu] = (int)MemoryKeys.MainMenu;
-		TransitionManager.QueueSceneChange(TransitionManager.MenuScenePath);
-		TransitionManager.StartTransition(new()
-		{
-			color = Colors.Black,
-			inSpeed = .5f,
-		});
+		base.OpenParentMenu();
 	}
 
 	protected override void ProcessMenu()
 	{
-
 		base.ProcessMenu();
 	}
 
@@ -60,7 +52,7 @@ public partial class TimeAttack : Menu
 
 			if (input.X == 0)
 				description.ShowDescription();
-			timeAttackAnimator.Play("select-" + currentSelection);
+			newRunAnimator.Play("select-" + currentSelection);
 		}
 		else
 			return;
@@ -69,17 +61,18 @@ public partial class TimeAttack : Menu
 	protected override void Confirm()
 	{
 		if (isActive)
-			if (currentSelection != 2)//custom runs aren't going to be in this version
-				timeAttackAnimator.Play("confirm-" + currentSelection);
+			if (currentSelection == 3) //Only goal percent is in this version
+				newRunAnimator.Play("confirm-" + currentSelection);
 	}
 
 	protected override void Cancel()
 	{
 		if (isActive)
-			OpenParentMenu();
+			newRunAnimator.Play("hide");
 	}
 
-	public void PlayReturnAnim(int selection) => timeAttackAnimator.Play("return-" + selection);
+	public void PlayReturnAnimParent(int selection) => thisParent.PlayReturnAnim(selection);
+	public void PlayReturnAnim(int selection) => newRunAnimator.Play("return-" + selection);
 	public void SetActive() => isActive = true;
 	public void SetInactive() => isActive = false;
 }
