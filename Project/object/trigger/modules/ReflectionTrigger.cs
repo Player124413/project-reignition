@@ -7,18 +7,18 @@ namespace Project.Gameplay.Triggers
 		[Export] private PlanarReflectionRenderer reflectionRenderer;
 
 		// Store previous data for deactivation.
-		private Vector3 previousPosition;
+		private Transform3D previousTransform;
 
 		public override void Activate()
 		{
 			// Cache data
-			previousPosition = reflectionRenderer.GlobalPosition;
+			previousTransform = reflectionRenderer.GlobalTransform;
 
 			// Move to new position
-			reflectionRenderer.GlobalPosition = GlobalPosition;
+			reflectionRenderer.GlobalTransform = GlobalTransform;
 			reflectionRenderer.ResetPhysicsInterpolation();
 		}
 
-		public override void Deactivate() => reflectionRenderer.GlobalPosition = previousPosition;
+		public override void Deactivate() => reflectionRenderer.GlobalTransform = previousTransform;
 	}
 }

@@ -9,8 +9,7 @@ public partial class TeleportState : PlayerState
 	private TeleportTrigger Trigger { get; set; }
 	public void UpdateTrigger(TeleportTrigger trigger) => Trigger = trigger;
 
-	[Export] private PlayerState idleState;
-	[Export] private PlayerState runState;
+	[Export] private PlayerState landState;
 
 	private States currentState;
 	private enum States
@@ -62,7 +61,7 @@ public partial class TeleportState : PlayerState
 	public override void ExitState()
 	{
 		Player.ChangeHitbox("RESET");
-		Player.IsTeleporting = false;
+		Player.SetDeferred("IsTeleporting", false);
 		Player.Skills.EnableBreakSkills();
 	}
 
@@ -81,7 +80,7 @@ public partial class TeleportState : PlayerState
 				ProcessStopFX();
 				return null;
 			default:
-				return Mathf.IsZeroApprox(Player.MoveSpeed) ? idleState : runState;
+				return landState;
 		}
 	}
 

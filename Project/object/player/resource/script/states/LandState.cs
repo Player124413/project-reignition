@@ -45,7 +45,9 @@ public partial class LandState : PlayerState
 		else
 		{
 			knockbackTimer = 0;
-			Player.Animator.LandingAnimation();
+
+			if (!Player.IsTeleporting)
+				Player.Animator.LandingAnimation();
 		}
 	}
 

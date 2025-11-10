@@ -685,6 +685,9 @@ public partial class PlayerCameraController : Node3D
 		else if (!Mathf.IsZeroApprox(settings.hallWidth) || !Mathf.IsZeroApprox(settings.hallRotationStrength)) // Process hall width
 		{
 			float leadAmount = PathFollower.LocalHorizontalVelocity * PhysicsManager.physicsDelta;
+			if (Player.IsHomingAttacking || Player.IsBouncing)
+				leadAmount = 0f;
+
 			data.blendData.HallLeadSmoothDamp(leadAmount, SnapFlag);
 
 			float positionDelta = PathFollower.LocalPlayerPositionDelta.X;

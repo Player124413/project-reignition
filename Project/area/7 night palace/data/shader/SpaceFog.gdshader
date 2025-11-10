@@ -13,5 +13,5 @@ void fragment()
 	offset.y = sin(offset.y);
 	vec4 col = texture(albedo, UV + offset) * intensity * COLOR;
 	ALBEDO = col.rgb;
-	ALPHA = col.a;
+	ALPHA *= col.a;
 }

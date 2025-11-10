@@ -194,7 +194,7 @@ public partial class EventTrigger : StageTriggerModule
 	public override void Respawn()
 	{
 		isActivated = false;
-		PlayRespawnAnimation();
+		CallDeferred(MethodName.PlayRespawnAnimation);
 
 		switch (respawnAnimation)
 		{
@@ -245,7 +245,7 @@ public partial class EventTrigger : StageTriggerModule
 		if (isOneShot && isActivated) return;
 
 		Visible = true;
-		PlayAnimation(eventAnimation, activationSpeedScale);
+		CallDeferred(MethodName.PlayAnimation, eventAnimation, activationSpeedScale);
 		EmitSignal(SignalName.Activated);
 	}
 
@@ -253,7 +253,7 @@ public partial class EventTrigger : StageTriggerModule
 	{
 		if (isOneShot && !isActivated) return;
 
-		PlayAnimation(deactivateEventAnimation, deactivationSpeedScale);
+		CallDeferred(MethodName.PlayAnimation, deactivateEventAnimation, deactivationSpeedScale);
 		EmitSignal(SignalName.Deactivated);
 	}
 

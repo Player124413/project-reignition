@@ -1,4 +1,4 @@
-[gd_scene load_steps=72 format=3 uid="uid://bqck0hqdn3o8r"]
+[gd_scene load_steps=71 format=3 uid="uid://bqck0hqdn3o8r"]
 
 [ext_resource type="Script" uid="uid://cy7pw3hj351lp" path="res://object/player/resource/script/PlayerController.cs" id="1_wygja"]
 [ext_resource type="Script" uid="uid://72x88nalpw8i" path="res://object/player/resource/script/PlayerStateMachine.cs" id="2_ehi1f"]
@@ -1099,11 +1099,6 @@ _limits = [0.0, 20.0, 0.0, 1.0]
 _data = [Vector2(0, 0), 0.0, 153.807, 0, 0, Vector2(0.266846, 20), 0.0, 0.0, 0, 0, Vector2(0.58221, 6.28141), -39.5151, -39.5151, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
 point_count = 4
 
-[sub_resource type="Curve" id="Curve_au4xk"]
-_limits = [0.0, 20.0, 0.0, 1.0]
-_data = [Vector2(0, 0), 0.0, 153.807, 0, 0, Vector2(0.266846, 20), 0.0, 0.0, 0, 0, Vector2(0.5, 10), 0.0, -39.5151, 0, 0]
-point_count = 3
-
 [sub_resource type="Curve" id="Curve_l0cmy"]
 _data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.1, 0), 0.0, 0.0, 0, 0, Vector2(0.7, 0.8), 3.40687, 3.40687, 0, 0, Vector2(0.80001, 1), 0.0, 0.0, 0, 0]
 point_count = 4
@@ -1372,10 +1367,9 @@ crouchState = NodePath("../../Basic/Crouch")
 backflipState = NodePath("../../Basic/Backflip")
 jumpState = NodePath("../../Basic/Jump")
 
-[node name="Teleport" type="Node" parent="StateMachine/Special" node_paths=PackedStringArray("idleState", "runState")]
+[node name="Teleport" type="Node" parent="StateMachine/Special" node_paths=PackedStringArray("landState")]
 script = ExtResource("17_h1v2w")
-idleState = NodePath("../../Basic/Idle")
-runState = NodePath("../../Basic/Run")
+landState = NodePath("../../Basic/Land")
 
 [node name="Launch" type="Node" parent="StateMachine/Special" node_paths=PackedStringArray("landState", "jumpDashState", "homingAttackState", "stompState", "fallState")]
 script = ExtResource("13_d17q6")
@@ -1462,7 +1456,6 @@ backflipState = NodePath("../../Basic/Backflip")
 slideState = NodePath("../../Basic/Slide")
 jumpState = NodePath("../../Basic/Jump")
 movementCurve = SubResource("Curve_1rk8e")
-quickSlideMovementCurve = SubResource("Curve_au4xk")
 
 [node name="LightSpeedDash" type="Node" parent="StateMachine/Skill" node_paths=PackedStringArray("landState", "fallState", "jumpState")]
 script = ExtResource("40_t4xrr")
