@@ -36,7 +36,33 @@ public partial class Sickle : Node3D
 	private readonly float ChainBaseOffset = 1.3f;
 
 	// Set up length when loading into the scene
-	public override void _Ready() => GenerateSickle();
+	public override void _Ready()
+	{
+		GenerateSickle();
+		if (Engine.IsEditorHint())
+			return;
+
+		Interface.Countdown.Instance.CountdownFinished += ProcessCountdownSkip;
+	}
+
+	private void ProcessCountdownSkip()
+	{
+		Interface.Countdown.Instance.CountdownFinished -= ProcessCountdownSkip;
+		if (!CanProcess())
+			return;
+
+		float ratioChangeAmount = Interface.Countdown.Instance.CountdownSkipAmount % (2.0f / cycleLength);
+		ratioChangeAmount *= isSwingingRight ? 1 : -1;
+		float targetRatio = currentRatio + ratioChangeAmount;
+		if (targetRatio <= 1f || targetRatio >= 0f)
+		{
+			currentRatio = targetRatio;
+			return;
+		}
+
+		currentRatio -= ratioChangeAmount;
+	}
+
 
 	private void GenerateSickle()
 	{

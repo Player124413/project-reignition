@@ -110,6 +110,9 @@ public partial class SaveManager : Node
 		BrazilianPortuguese,
 		Polish,
 		Chinese,
+		Turkish,
+		Swedish,
+		Russian,
 		Count
 	}
 
@@ -437,6 +440,9 @@ public partial class SaveManager : Node
 			"pt" => TextLanguage.BrazilianPortuguese,
 			"pl" => TextLanguage.Polish,
 			"zh" => TextLanguage.Chinese,
+			"tr" => TextLanguage.Turkish,
+			"se" => TextLanguage.Swedish,
+			"ru" => TextLanguage.Russian,
 			_ => TextLanguage.English,
 		};
 	}
@@ -569,21 +575,21 @@ public partial class SaveManager : Node
 
 		RenderingServer.EnvironmentGlowSetUseBicubicUpscale(Config.bloomMode == QualitySetting.High);
 
-		int targetShadowAtlasSize = 2048;
+		int targetShadowAtlasSize = 1024;
 		RenderingServer.ShadowQuality targetSoftShadowQuality = RenderingServer.ShadowQuality.Hard;
 		switch (Config.softShadowQuality)
 		{
 			case QualitySetting.Low:
 				targetShadowAtlasSize = 2048;
-				targetSoftShadowQuality = RenderingServer.ShadowQuality.SoftLow;
+				targetSoftShadowQuality = RenderingServer.ShadowQuality.SoftVeryLow;
 				break;
 			case QualitySetting.Medium:
 				targetShadowAtlasSize = 4096;
-				targetSoftShadowQuality = RenderingServer.ShadowQuality.SoftMedium;
+				targetSoftShadowQuality = RenderingServer.ShadowQuality.SoftLow;
 				break;
 			case QualitySetting.High:
 				targetShadowAtlasSize = 8192;
-				targetSoftShadowQuality = RenderingServer.ShadowQuality.SoftHigh;
+				targetSoftShadowQuality = RenderingServer.ShadowQuality.SoftMedium;
 				break;
 		}
 
@@ -595,22 +601,22 @@ public partial class SaveManager : Node
 		switch (Config.postProcessingQuality)
 		{
 			case QualitySetting.Low:
-				RenderingServer.EnvironmentSetSsaoQuality(RenderingServer.EnvironmentSsaoQuality.Low, true, .5f, 0, 50,
-					300);
-				RenderingServer.EnvironmentSetSsilQuality(RenderingServer.EnvironmentSsilQuality.Low, true, .5f, 0, 50,
-					300);
+				RenderingServer.EnvironmentSetSsaoQuality(RenderingServer.EnvironmentSsaoQuality.Low, true, .5f, 0, 20,
+					50);
+				RenderingServer.EnvironmentSetSsilQuality(RenderingServer.EnvironmentSsilQuality.Low, true, .5f, 0, 20,
+					50);
 				break;
 			case QualitySetting.Medium:
 				RenderingServer.EnvironmentSetSsaoQuality(RenderingServer.EnvironmentSsaoQuality.Medium, true, .5f, 1,
-					50, 300);
+					50, 100);
 				RenderingServer.EnvironmentSetSsilQuality(RenderingServer.EnvironmentSsilQuality.Medium, true, .5f, 1,
-					50, 300);
+					50, 100);
 				break;
 			case QualitySetting.High:
-				RenderingServer.EnvironmentSetSsaoQuality(RenderingServer.EnvironmentSsaoQuality.High, true, .5f, 2,
-					50, 300);
-				RenderingServer.EnvironmentSetSsilQuality(RenderingServer.EnvironmentSsilQuality.High, true, .5f, 2,
-					50, 300);
+				RenderingServer.EnvironmentSetSsaoQuality(RenderingServer.EnvironmentSsaoQuality.High, true, .5f, 1,
+					50, 200);
+				RenderingServer.EnvironmentSetSsilQuality(RenderingServer.EnvironmentSsilQuality.High, true, .5f, 1,
+					50, 200);
 				break;
 		}
 
@@ -651,13 +657,21 @@ public partial class SaveManager : Node
 			case TextLanguage.Chinese:
 				TranslationServer.SetLocale("zh");
 				break;
+			case TextLanguage.Turkish:
+				TranslationServer.SetLocale("tr");
+				break;
+			case TextLanguage.Swedish:
+				TranslationServer.SetLocale("se");
+				break;
+			case TextLanguage.Russian:
+				TranslationServer.SetLocale("ru");
+				break;
 			default:
 				// Prefer the retranslation for all languages except when using the voiceover
 				TranslationServer.SetLocale(UseEnglishVoices ? "en" : "en_US");
 				break;
 		}
 	}
-
 	#endregion
 
 	#region Input

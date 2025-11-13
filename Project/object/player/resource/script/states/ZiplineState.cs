@@ -15,6 +15,8 @@ public partial class ZiplineState : PlayerState
 	/// <summary> How strong the player's input has to be to count as a tap. </summary>
 	private readonly float TapRadius = .8f;
 
+	private bool isSpeedBreaking;
+
 	private bool isPromptShown;
 	/// <summary> Localization key for swinging. </summary>
 	private readonly string SwingAction = "action_swing";
@@ -43,22 +45,29 @@ public partial class ZiplineState : PlayerState
 	/// <summary> How far out the player can rotate without doing a full swing. </summary>
 	private readonly float NormalRotationLimit = Mathf.Pi * .3f;
 	private readonly float QueuedFullSwingRotation = Mathf.Pi * .1f;
-	private readonly float QueuedFullSwingSmoothing = 6.0f;
+	private readonly float QueuedFullSwingSmoothing = 5.0f;
+	/// <summary> How much to smooth rotations when at the top of a full swing. </summary>
+	private readonly float TopFullSwingSmoothing = 15.0f;
+	private readonly float FullSwingSmoothing = 8.0f;
+	/// <summary> How much to smooth rotations when cancelling a full swing. </summary>
+	private readonly float ReverseFullSwingSmoothing = 35.0f;
 	/// <summary> Range where the player can start a reverse full-swing. </summary>
 	private readonly float ReverseFullSwingRange = Mathf.Pi * .8f;
 
 	public override void EnterState()
 	{
 		isPromptShown = false;
+		isSpeedBreaking = Player.Skills.IsSpeedBreakActive;
 
 		damageLockout = 0;
 		animationVelocity = 0;
 		fullSwingDirection = 0;
 
+		Player.MoveSpeed = isSpeedBreaking ? Player.Skills.speedBreakSpeed : 0f;
+		Player.Skills.AllowExternalSpeedBreak = true;
 		Player.Animator.StartZipline();
 		Player.Animator.SetZiplineBlend(0f);
 		Player.Animator.ExternalAngle = 0;
-		Player.Skills.IsSpeedBreakEnabled = false;
 		Player.StartExternal(Trigger, Trigger.FollowObject, .5f);
 
 		// Update button prompt(s), but don't show them yet
@@ -70,7 +79,7 @@ public partial class ZiplineState : PlayerState
 
 	public override void ExitState()
 	{
-		Player.Skills.IsSpeedBreakEnabled = true;
+		Player.Skills.AllowExternalSpeedBreak = false;
 		Player.StopExternal();
 
 		HeadsUpDisplay.Instance.HidePrompts();
@@ -91,8 +100,10 @@ public partial class ZiplineState : PlayerState
 		UpdateAnimations();
 
 		UpdateSwing();
-		Trigger.UpdateSpeed(Trigger.ZiplineSpeed);
+		Trigger.UpdateSpeed(isSpeedBreaking ? Player.MoveSpeed : Trigger.ZiplineSpeed, isSpeedBreaking);
 		Player.UpdateExternalControl(false);
+		isSpeedBreaking = Player.Skills.IsSpeedBreakActive;
+
 		return null;
 	}
 
@@ -150,6 +161,9 @@ public partial class ZiplineState : PlayerState
 	/// <summary> Called when a tap occurs. Provides a jolt in the input direction. </summary>
 	private void StartTap()
 	{
+		if (fullSwingDirection != 0) // Full swing takes priority
+			return;
+
 		tapSwingTimer = TapSwingLength;
 		Player.Animator.StartZiplineTap(Mathf.Sign(input) > 0, true);
 	}
@@ -238,14 +252,9 @@ public partial class ZiplineState : PlayerState
 			return;
 		}
 
+		// Change directions
 		if (rotationMagnitude > ReverseFullSwingRange)
-		{
-			// Change directions
 			fullSwingDirection = inputDirection;
-			return;
-		}
-
-		fullSwingDirection = 0;
 	}
 
 	private float CalculateTargetRotation()
@@ -272,7 +281,17 @@ public partial class ZiplineState : PlayerState
 
 		// Full swings are slower at the top
 		if (fullSwingDirection != 0)
-			return Mathf.Abs(Trigger.CurrentRotation) > ReverseFullSwingRange ? NormalRotationSmoothing : TapSwingRotationSmoothing;
+		{
+			if (Trigger.SwingVelocitySide != fullSwingDirection)
+			{
+				// Smooth out rotation based on how far we're rotated
+				float t = Mathf.Abs(Trigger.CurrentRotation) / ReverseFullSwingRange;
+				t = Mathf.Clamp(t + 0.5f, 0f, 1f);
+				return Mathf.Lerp(TopFullSwingSmoothing, ReverseFullSwingSmoothing, t);
+			}
+
+			return Mathf.Abs(Trigger.CurrentRotation) > ReverseFullSwingRange ? TopFullSwingSmoothing : FullSwingSmoothing;
+		}
 
 		if (!Mathf.IsZeroApprox(tapSwingTimer))
 			return TapSwingRotationSmoothing;
@@ -297,6 +316,7 @@ public partial class ZiplineState : PlayerState
 			return;
 		}
 
+		isSpeedBreaking = false;
 		fullSwingDirection = 0;
 		damageLockout = DamageLockoutLength;
 		InvalidateTapping();
@@ -305,6 +325,9 @@ public partial class ZiplineState : PlayerState
 		Player.StartInvincibility();
 		Player.Animator.CancelZiplineTap();
 		Player.Camera.StartMediumCameraShake();
+
+		if (Player.Skills.IsSpeedBreakActive)
+			Player.Skills.ToggleSpeedBreak();
 
 		Trigger.UpdateSpeed(0, true); // Kill speed
 	}

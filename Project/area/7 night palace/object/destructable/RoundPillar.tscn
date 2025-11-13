@@ -1,0 +1,154 @@
+[gd_scene load_steps=7 format=3 uid="uid://cxj50t3vtny1x"]
+
+[ext_resource type="Script" uid="uid://coiui4qvdxbqe" path="res://object/trigger/modules/EventTrigger.cs" id="1_uou3m"]
+[ext_resource type="PackedScene" uid="uid://divntc23ssxes" path="res://area/7 night palace/object/model/destructable/RoundPillar.gltf" id="2_250th"]
+[ext_resource type="PackedScene" uid="uid://hdia8whqfpw8" path="res://area/7 night palace/object/model/destructable/RoundPillarBroken.gltf" id="3_chro1"]
+[ext_resource type="Script" uid="uid://bri007qdprrbf" path="res://addons/custom_nodes/script/BoneAttachment3DNoScale.cs" id="4_250th"]
+[ext_resource type="Script" uid="uid://cs0xaqskg4u66" path="res://object/stage/common/resource/script/TimebreakLockonCollisionShape.cs" id="5_chro1"]
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_250th"]
+
+[node name="RoundPillar" type="Node3D" node_paths=PackedStringArray("animator")]
+script = ExtResource("1_uou3m")
+animator = NodePath("RoundPillarBroken/AnimationPlayer")
+activationSpeedScale = 0.3
+deactivationSpeedScale = 0.3
+"Trigger Settings/Automatically Respawn" = true
+"Trigger Settings/Is One Shot" = true
+"Trigger Settings/Animation Blending" = 0.0
+"Trigger Settings/Player Stand-in" = NodePath("")
+
+[node name="RoundPillar" parent="." instance=ExtResource("2_250th")]
+
+[node name="RoundPillarWallCollision" parent="RoundPillar" index="1"]
+visible = false
+
+[node name="StaticBody3D" parent="RoundPillar/RoundPillarWallCollision" index="0" groups=["force lockon bounce", "grind wall", "splash jump", "wall"]]
+
+[node name="RoundPillarFloorCollision" parent="RoundPillar" index="2"]
+visible = false
+
+[node name="StaticBody3D" parent="RoundPillar/RoundPillarFloorCollision" index="0" groups=["floor", "force lockon bounce", "pavement"]]
+
+[node name="RoundPillarBroken" parent="." instance=ExtResource("3_chro1")]
+physics_interpolation_mode = 2
+
+[node name="RoundPillarBrokenFloorCollision1" parent="RoundPillarBroken/RoundPillarBrokenRoot" index="0"]
+transform = Transform3D(1, 8.754045e-15, -8.7422585e-08, -3.1619152e-13, 0.9999977, -3.5166659e-06, 8.742279e-08, 3.5166659e-06, 0.9999977, -2.1696092e-06, 1.3592143, 4.9471855e-06)
+visible = false
+skeleton = NodePath("../Skeleton3D")
+script = ExtResource("4_250th")
+skeleton = NodePath("../Skeleton3D")
+prioritizeBoneName = false
+boneName = &"piece1"
+boneIndex = 1
+
+[node name="StaticBody3D" parent="RoundPillarBroken/RoundPillarBrokenRoot/RoundPillarBrokenFloorCollision1" index="0" groups=["floor", "pavement", "splash jump"]]
+
+[node name="RoundPillarBrokenFloorCollision2" parent="RoundPillarBroken/RoundPillarBrokenRoot" index="1"]
+transform = Transform3D(0.99999315, 8.754021e-15, -8.742237e-08, -3.1618935e-13, 0.999995, -3.516657e-06, 8.7422194e-08, 3.5166565e-06, 0.9999952, -2.1696092e-06, 4.1024513, 1.4483929e-05)
+visible = false
+skeleton = NodePath("../Skeleton3D")
+script = ExtResource("4_250th")
+skeleton = NodePath("../Skeleton3D")
+prioritizeBoneName = false
+boneName = &"piece2"
+boneIndex = 2
+
+[node name="StaticBody3D" parent="RoundPillarBroken/RoundPillarBrokenRoot/RoundPillarBrokenFloorCollision2" index="0" groups=["floor", "pavement", "splash jump"]]
+
+[node name="RoundPillarBrokenFloorCollision3" parent="RoundPillarBroken/RoundPillarBrokenRoot" index="2"]
+transform = Transform3D(0.9999965, 8.7540465e-15, -8.742255e-08, -3.161904e-13, 0.9999979, -3.5166645e-06, 8.7422485e-08, 3.5166668e-06, 0.99999726, -1.5974044e-06, 8.741452, 3.1471252e-05)
+visible = false
+skeleton = NodePath("../Skeleton3D")
+script = ExtResource("4_250th")
+skeleton = NodePath("../Skeleton3D")
+prioritizeBoneName = false
+boneName = &"piece3"
+boneIndex = 3
+
+[node name="StaticBody3D" parent="RoundPillarBroken/RoundPillarBrokenRoot/RoundPillarBrokenFloorCollision3" index="0" groups=["floor", "pavement", "splash jump"]]
+
+[node name="RoundPillarBrokenFloorCollision4" parent="RoundPillarBroken/RoundPillarBrokenRoot" index="3"]
+transform = Transform3D(0.9999954, -4.9836285e-15, -8.74224e-08, -3.2329545e-13, 0.99999696, -3.7550772e-06, 8.7422364e-08, 3.7550815e-06, 0.9999958, -1.7881393e-06, 13.341823, 4.798174e-05)
+visible = false
+skeleton = NodePath("../Skeleton3D")
+script = ExtResource("4_250th")
+skeleton = NodePath("../Skeleton3D")
+prioritizeBoneName = false
+boneName = &"piece4"
+boneIndex = 4
+
+[node name="StaticBody3D" parent="RoundPillarBroken/RoundPillarBrokenRoot/RoundPillarBrokenFloorCollision4" index="0" groups=["floor", "force lockon bounce", "ignore lockon cast", "pavement", "splash jump"]]
+
+[node name="RoundPillarBrokenWallCollision1" parent="RoundPillarBroken/RoundPillarBrokenRoot" index="4"]
+transform = Transform3D(1, 8.754045e-15, -8.7422585e-08, -3.1619152e-13, 0.9999977, -3.5166659e-06, 8.742279e-08, 3.5166659e-06, 0.9999977, -2.1696092e-06, 1.3592143, 4.9471855e-06)
+visible = false
+skeleton = NodePath("../Skeleton3D")
+script = ExtResource("4_250th")
+skeleton = NodePath("../Skeleton3D")
+prioritizeBoneName = false
+boneName = &"piece1"
+boneIndex = 1
+
+[node name="StaticBody3D" parent="RoundPillarBroken/RoundPillarBrokenRoot/RoundPillarBrokenWallCollision1" index="0" groups=["ceiling", "crusher", "grind wall", "splash jump", "wall"]]
+
+[node name="RoundPillarBrokenWallCollision2" parent="RoundPillarBroken/RoundPillarBrokenRoot" index="5"]
+transform = Transform3D(0.99999315, 8.754021e-15, -8.742237e-08, -3.1618935e-13, 0.999995, -3.516657e-06, 8.7422194e-08, 3.5166565e-06, 0.9999952, -2.1696092e-06, 4.1024513, 1.4483929e-05)
+visible = false
+skeleton = NodePath("../Skeleton3D")
+script = ExtResource("4_250th")
+skeleton = NodePath("../Skeleton3D")
+prioritizeBoneName = false
+boneName = &"piece2"
+boneIndex = 2
+
+[node name="StaticBody3D" parent="RoundPillarBroken/RoundPillarBrokenRoot/RoundPillarBrokenWallCollision2" index="0" groups=["ceiling", "crusher", "grind wall", "splash jump", "wall"]]
+
+[node name="RoundPillarBrokenWallCollision3" parent="RoundPillarBroken/RoundPillarBrokenRoot" index="6"]
+transform = Transform3D(0.9999965, 8.7540465e-15, -8.742255e-08, -3.161904e-13, 0.9999979, -3.5166645e-06, 8.7422485e-08, 3.5166668e-06, 0.99999726, -1.5974044e-06, 8.741452, 3.1471252e-05)
+visible = false
+skeleton = NodePath("../Skeleton3D")
+script = ExtResource("4_250th")
+skeleton = NodePath("../Skeleton3D")
+prioritizeBoneName = false
+boneName = &"piece3"
+boneIndex = 3
+
+[node name="StaticBody3D" parent="RoundPillarBroken/RoundPillarBrokenRoot/RoundPillarBrokenWallCollision3" index="0" groups=["ceiling", "crusher", "grind wall", "splash jump", "wall"]]
+
+[node name="RoundPillarBrokenWallCollision4" parent="RoundPillarBroken/RoundPillarBrokenRoot" index="7"]
+transform = Transform3D(0.9999954, -4.9836285e-15, -8.74224e-08, -3.2329545e-13, 0.99999696, -3.7550772e-06, 8.7422364e-08, 3.7550815e-06, 0.9999958, -1.7881393e-06, 13.341823, 4.798174e-05)
+visible = false
+skeleton = NodePath("../Skeleton3D")
+script = ExtResource("4_250th")
+skeleton = NodePath("../Skeleton3D")
+prioritizeBoneName = false
+boneName = &"piece4"
+boneIndex = 4
+
+[node name="StaticBody3D" parent="RoundPillarBroken/RoundPillarBrokenRoot/RoundPillarBrokenWallCollision4" index="0" groups=["ceiling", "crusher", "force lockon bounce", "grind wall", "ignore lockon cast", "splash jump", "wall"]]
+
+[node name="AnimationPlayer" parent="RoundPillarBroken" index="1"]
+callback_mode_process = 0
+
+[node name="Lockon" type="BoneAttachment3D" parent="RoundPillarBroken"]
+transform = Transform3D(1, -3.5527135e-15, -8.7422755e-08, -3.2329694e-13, 0.9999999, -3.6954877e-06, 8.742276e-08, 3.7550924e-06, 0.9999999, -1.7881393e-06, 13.341823, 4.798174e-05)
+bone_name = "piece4"
+bone_idx = 4
+use_external_skeleton = true
+external_skeleton = NodePath("../RoundPillarBrokenRoot/Skeleton3D")
+
+[node name="Lockon" type="Area3D" parent="RoundPillarBroken/Lockon"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+collision_layer = 4
+collision_mask = 0
+monitoring = false
+monitorable = false
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="RoundPillarBroken/Lockon/Lockon"]
+shape = SubResource("SphereShape3D_250th")
+script = ExtResource("5_chro1")
+
+[editable path="RoundPillar"]
+[editable path="RoundPillarBroken"]

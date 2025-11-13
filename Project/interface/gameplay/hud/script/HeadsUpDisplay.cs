@@ -69,7 +69,7 @@ public partial class HeadsUpDisplay : Control
 		fireSoulAnimator.Seek(0.0, true);
 	}
 
-	public void UncollectFireSoul(int index) => fireSouls[index].Texture = fireSoulImg;
+	public void UncollectFireSoul(int index) => fireSouls[index].Texture = fireSoulDashImg;
 
 	private void UpdateRingCount(int amount, bool disableAnimations) => rings.UpdateRingCount(amount, disableAnimations);
 	#endregion

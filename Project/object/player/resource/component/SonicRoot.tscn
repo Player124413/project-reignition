@@ -1,4 +1,4 @@
-[gd_scene load_steps=32 format=3 uid="uid://wfh54hnc028k"]
+[gd_scene load_steps=31 format=3 uid="uid://wfh54hnc028k"]
 
 [ext_resource type="PackedScene" uid="uid://b5jl3vv1j1fck" path="res://object/player/resource/model/Sonic.gltf" id="1_ea3e1"]
 [ext_resource type="Script" uid="uid://byfnkkp3hy8ca" path="res://object/player/resource/script/PlayerAnimator.cs" id="2_3qp24"]
@@ -16,7 +16,6 @@
 [ext_resource type="AnimationLibrary" uid="uid://dpd4w3nuuvybs" path="res://object/player/resource/model/animation/GimmickLibrary.gltf" id="12_0ewgh"]
 [ext_resource type="AudioStream" uid="uid://c5did7u4f8gq2" path="res://sound/sfx/player/flame countdown 1.wav" id="12_3lyoq"]
 [ext_resource type="Resource" uid="uid://ukcne4um86a6" path="res://resource/preset/camera/common/CutsceneCam.tres" id="14_u1car"]
-[ext_resource type="Material" uid="uid://cyphajdqgwnj8" path="res://object/player/resource/model/material/BodyTransparent.tres" id="16_icvwi"]
 
 [sub_resource type="Curve" id="Curve_skwgn"]
 _limits = [0.0, 2.5, 0.0, 1.0]
@@ -272,7 +271,6 @@ script = ExtResource("2_3qp24")
 animationTree = NodePath("AnimationTree")
 eventAnimationPlayer = NodePath("EventAnimationPlayer")
 bodyMesh = NodePath("SonicRoot/GeneralSkeleton/BodyMesh")
-blurOverrideMaterial = ExtResource("16_icvwi")
 movementAnimationSpeedCurve = SubResource("Curve_skwgn")
 
 [node name="GeneralSkeleton" parent="SonicRoot" index="0"]
@@ -383,7 +381,6 @@ bone_name = "chest"
 bone_idx = 5
 
 [node name="FlameOffset" type="Node3D" parent="SonicRoot/GeneralSkeleton/ChestAttachment" index="0"]
-transform = Transform3D(1, -9.31323e-09, 0, 3.72529e-09, 1, 0, 4.47035e-08, 2.23517e-08, 1, 0.02, -1.49012e-07, 0.1)
 
 [node name="CountdownBoostParticle" parent="SonicRoot/GeneralSkeleton/ChestAttachment/FlameOffset" index="0" instance=ExtResource("3_hb6te")]
 visible = false
@@ -391,6 +388,7 @@ visible = false
 [node name="CountdownFlameParticle" parent="SonicRoot/GeneralSkeleton/ChestAttachment/FlameOffset" index="1" instance=ExtResource("4_js45q")]
 transform = Transform3D(0.1, 0, 0, 0, 0.1, 0, 0, 0, 0.1, 0, 0, 0)
 visible = false
+emitting = false
 
 [node name="Embers" type="GPUParticles3D" parent="SonicRoot/GeneralSkeleton/ChestAttachment/FlameOffset" index="2"]
 transform = Transform3D(1, -2.79123e-13, 2.84217e-13, -1.33353e-14, 1, 0, -2.84217e-13, -2.22045e-15, 1, -3.1665e-08, 0.040546, 0)
@@ -452,7 +450,7 @@ stream = ExtResource("12_3lyoq")
 bus = &"GAME SFX"
 
 [node name="CountdownPosition" type="Camera3D" parent="CountdownRoot" index="1"]
-transform = Transform3D(1, 0, 0, 0, 1.0000001, 0, 0, 0, 1.0000001, 0, 0, 0)
+transform = Transform3D(1.0000013, 0, 0, 0, 0.99999994, 0, 0, 0, 1.0000011, 0, 0, 0)
 cull_mask = 64
 script = ExtResource("10_iki8q")
 transitionTime = 0.0
@@ -571,7 +569,7 @@ parameters/ground_tree/land_speed/scale = 1.5
 parameters/ground_tree/land_trigger/active = false
 parameters/ground_tree/land_trigger/internal_active = false
 parameters/ground_tree/land_trigger/request = 0
-parameters/ground_tree/quick_step_speed/scale = 1.0
+parameters/ground_tree/quick_step_speed/scale = 1.5
 parameters/ground_tree/quick_step_transition/current_state = "left"
 parameters/ground_tree/quick_step_transition/transition_request = ""
 parameters/ground_tree/quick_step_transition/current_index = 0
@@ -581,12 +579,11 @@ parameters/ground_tree/quick_step_trigger/request = 0
 parameters/ground_tree/reverse_path_trigger/active = false
 parameters/ground_tree/reverse_path_trigger/internal_active = false
 parameters/ground_tree/reverse_path_trigger/request = 0
-parameters/ground_tree/speedbreak_speed/scale = 1.2
-parameters/ground_tree/speedbreak_trigger/active = false
-parameters/ground_tree/speedbreak_trigger/internal_active = false
-parameters/ground_tree/speedbreak_trigger/request = 0
 parameters/ground_tree/turn_add/add_amount = 1.0
 parameters/ground_tree/turn_blend/blend_position = Vector2(0, 0)
+parameters/ground_tree/quick_slide_transition/current_state = "disabled"
+parameters/ground_tree/quick_slide_transition/transition_request = ""
+parameters/ground_tree/quick_slide_transition/current_index = 0
 parameters/hurt_trigger/active = false
 parameters/hurt_trigger/internal_active = false
 parameters/hurt_trigger/request = 0
@@ -594,6 +591,7 @@ parameters/oneshot_tree/oneshot_seek/seek_request = -1.0
 parameters/oneshot_tree/oneshot_transition/current_state = "countdown"
 parameters/oneshot_tree/oneshot_transition/transition_request = ""
 parameters/oneshot_tree/oneshot_transition/current_index = 0
+parameters/oneshot_tree/speedbreak_timescale/scale = 1.2000000000000028
 parameters/oneshot_trigger/active = false
 parameters/oneshot_trigger/internal_active = false
 parameters/oneshot_trigger/request = 0

@@ -12,7 +12,12 @@ namespace Project.Gameplay;
 public partial class PlayerLockonController : Area3D
 {
 	private PlayerController Player;
-	public void Initialize(PlayerController player) => Player = player;
+	public void Initialize(PlayerController player)
+	{
+		Player = player;
+		IsMonitoring = SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.GroundedHomingAttack);
+	}
+
 
 	/// <summary> Active lockon target shown on the HUD. </summary>
 	public Node3D Target { get; private set; }
@@ -31,10 +36,11 @@ public partial class PlayerLockonController : Area3D
 	/// <summary> Targets whose squared distance is within this range will prioritize height instead of distance. </summary>
 	private readonly float PriorityDistance = 1f;
 	/// <summary> How close a target needs to be to auto-lockon after bouncing. </summary>
-	private readonly float AutotargetDistanceAmount = 16f;
+	private readonly float AutotargetDistanceAmount = 4f;
 	/// <summary> How far ahead the player must be to ignore the active lockon target. </summary>
 	private readonly float IgnoreTargetDistance = 0.2f;
 	private readonly string LevelWallGroup = "level wall";
+	private readonly string IgnoreLockonCastGroup = "ignore lockon cast";
 	/// <summary> List of all possible targets. </summary>
 	private readonly List<Node3D> potentialTargets = [];
 
@@ -199,15 +205,18 @@ public partial class PlayerLockonController : Area3D
 			return TargetState.Invisible;
 
 		// Check Height
-		bool isTargetAttackable = target.GlobalPosition.Y <= Player.CenterPosition.Y + (Player.CollisionSize.Y * 2.0f);
+		float maxTargetHeight = Player.CenterPosition.Y + (Player.CollisionSize.Y * 2.0f);
+		if (Player.IsOnGround)
+			maxTargetHeight += Player.Stats.JumpHeight;
+		bool isTargetAttackable = target.GlobalPosition.Y <= maxTargetHeight;
 		if (Player.IsBouncing && !Player.IsBounceInteruptable)
 		{
 			isTargetAttackable = false;
 
 			if (Target == null)
 			{
-				// Only allow camera to lockon to extremely close objects
-				float targetDistance = target.GlobalPosition.Flatten().DistanceSquaredTo(Player.GlobalPosition.Flatten());
+				// Allow camera to lockon to close objects
+				float targetDistance = Player.PathFollower.GetProgress(target.GlobalPosition) - Player.PathFollower.Progress;
 				if (targetDistance <= AutotargetDistanceAmount)
 					Player.Camera.SetLockonTarget(target);
 			}
@@ -266,6 +275,9 @@ public partial class PlayerLockonController : Area3D
 
 		if (h && h.collidedObject != target)
 		{
+			if (h.collidedObject.IsInGroup(IgnoreLockonCastGroup))
+				return false;
+
 			if (!h.collidedObject.IsInGroup(LevelWallGroup)) // Hit an obstacle
 				return true;
 

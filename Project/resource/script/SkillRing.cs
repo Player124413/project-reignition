@@ -347,6 +347,8 @@ public enum SkillKey
 	// Control skills
 	Autorun,
 	ChargeJump,
+	FreeRoam, // Allows Sonic to turn around normally
+	QuickStart, // Reduces the length of the countdown
 	SlowTurn, // Decreases Sonic's turning sensitivity
 	QuickTurn, // Increases Sonic's turning sensitivity
 	LockedSoulGauge, // Limits the soul gauge to lvl 1 Sonic
@@ -407,8 +409,11 @@ public enum SkillKey
 	// New skills
 	QuickStep, // Quick Step, Unleashed style
 	PerfectHomingAttack, // Perfect homing attack, Colors Ultimate style
+	GroundedHomingAttack, // Allows Sonic to homing attack from the ground (Frontiers style)
+	AirBoost, // Allows Sonic to boost in the air
 	LightSpeedDash, // SA2 style
 	LightSpeedAttack, // SA2 style
+	InstantSpeedBreak, // Instant speedbreak--Unleashed style
 
 	// Crest skills
 	CrestWind,

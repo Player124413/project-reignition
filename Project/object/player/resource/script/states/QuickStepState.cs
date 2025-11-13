@@ -5,34 +5,57 @@ namespace Project.Gameplay;
 
 public partial class QuickStepState : PlayerState
 {
-	[Export]
-	private PlayerState idleState;
-	[Export]
-	private PlayerState runState;
-	[Export]
-	private PlayerState fallState;
-	[Export]
-	private PlayerState backflipState;
-	[Export]
-	private PlayerState slideState;
-	[Export]
-	private PlayerState jumpState;
+	[Export] private PlayerState idleState;
+	[Export] private PlayerState runState;
+	[Export] private PlayerState fallState;
+	[Export] private PlayerState backflipState;
+	[Export] private PlayerState slideState;
+	[Export] private PlayerState jumpState;
 
-	[Export]
-	private Curve movementCurve;
+	[Export] private Curve movementCurve;
 
+	public bool IsSteppingRight { get; set; }
+
+	private bool isQuickSlide;
+	private bool isQuickSlideActive;
 	private float currentStepLength;
+	private readonly float MaxQuickSlideSamplePosition = 0.5f;
 	private readonly float StepLength = 0.3f;
 	private readonly float InterruptLength = 0.2f;
 	private readonly float FallPreventionLength = 0.1f;
-	public bool IsSteppingRight { get; set; }
+	private int stepDirection;
 
 	public override void EnterState()
 	{
+		isQuickSlide = SaveManager.ActiveSkillRing.GetAugmentIndex(SkillKey.QuickStep) == 1;
+		isQuickSlideActive = isQuickSlide && Player.Controller.StepAxis != 0;
 		currentStepLength = 0.0f;
 
-		Player.Animator.StartQuickStep(IsSteppingRight);
+		stepDirection = 1;
+		if (SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.FreeRoam))
+		{
+			stepDirection = Mathf.Sign(ExtensionMethods.DotAngle(Player.MovementAngle, Player.Controller.XformAngle));
+			if (stepDirection == 0)
+				stepDirection = 1;
+			else if (stepDirection == -1)
+				IsSteppingRight = !IsSteppingRight;
+		}
+
+		if (isQuickSlide)
+			Player.Animator.StartQuickSlide(IsSteppingRight);
+		else
+			Player.Animator.StartQuickStep(IsSteppingRight);
+
 		Player.Effect.PlayQuickStepFX(IsSteppingRight);
+		Player.Effect.StartDust();
+	}
+
+	public override void ExitState()
+	{
+		if (isQuickSlide)
+			Player.Animator.StopQuickSlide(IsSteppingRight);
+
+		Player.Effect.StopDust();
 	}
 
 	public override PlayerState ProcessPhysics()
@@ -40,12 +63,11 @@ public partial class QuickStepState : PlayerState
 		if (!Player.IsQuickStepValid) // Exit quick step state
 			return runState;
 
-		currentStepLength += PhysicsManager.physicsDelta;
-		float currentSpeed = -movementCurve.Sample(Mathf.Clamp(currentStepLength / StepLength, 0f, 1f));
+		float currentSpeed = CalculateSpeed();
 		if (!IsSteppingRight)
 			currentSpeed *= -1;
 
-		Player.Velocity = Player.PathFollower.Right() * currentSpeed;
+		Player.Velocity = Player.PathFollower.Right() * stepDirection * currentSpeed;
 		Player.MoveAndSlide();
 
 		ProcessTurning();
@@ -83,13 +105,8 @@ public partial class QuickStepState : PlayerState
 			{
 				Player.Controller.ResetJumpBuffer();
 
-				float inputAngle = Player.Controller.GetTargetInputAngle();
-				float inputStrength = Player.Controller.GetInputStrength();
-				if (!Mathf.IsZeroApprox(inputStrength) &&
-					Player.Controller.IsHoldingDirection(inputAngle, Player.PathFollower.BackAngle))
-				{
+				if (Player.IsBackflipInputValid())
 					return backflipState;
-				}
 
 				if (SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.ChargeJump))
 					return slideState;
@@ -105,11 +122,25 @@ public partial class QuickStepState : PlayerState
 			}
 		}
 
-		if (currentStepLength >= StepLength)
+		if (currentStepLength >= StepLength && !isQuickSlideActive)
 			return runState;
 
 		return null;
 	}
 
-	protected override void ProcessTurning() => Player.MovementAngle = Player.PathFollower.ForwardAngle;
+	private float CalculateSpeed()
+	{
+		currentStepLength += PhysicsManager.physicsDelta;
+
+		if (isQuickSlideActive)
+		{
+			int axisInput = -Mathf.Sign(Player.Controller.StepAxis) * stepDirection;
+			isQuickSlideActive = (axisInput > 0 && IsSteppingRight) || (axisInput < 0 && !IsSteppingRight);
+			currentStepLength = Mathf.Min(currentStepLength, StepLength * MaxQuickSlideSamplePosition);
+		}
+
+		return -movementCurve.Sample(Mathf.Clamp(currentStepLength / StepLength, 0f, 1f));
+	}
+
+	protected override void ProcessTurning() => Player.MovementAngle = stepDirection == 1 ? Player.PathFollower.ForwardAngle : Player.PathFollower.BackAngle;
 }

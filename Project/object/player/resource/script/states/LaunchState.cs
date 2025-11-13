@@ -45,6 +45,8 @@ public partial class LaunchState : PlayerState
 		Player.IsMovingBackward = false;
 		Player.AllowLandingGrind = true;
 		Player.AllowLandingSkills = false;
+		Player.CanDoubleJump = true;
+		Player.CanAirBoost = true;
 		Player.MoveSpeed = Settings.HorizontalVelocity;
 		Player.VerticalSpeed = Settings.InitialVerticalVelocity;
 

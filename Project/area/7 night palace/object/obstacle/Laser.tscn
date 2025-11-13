@@ -1,0 +1,149 @@
+[gd_scene load_steps=15 format=3 uid="uid://0ineyis1gx8t"]
+
+[ext_resource type="Script" uid="uid://pnh70abopq8e" path="res://object/stage/common/resource/script/Hazard.cs" id="1_p2wlw"]
+[ext_resource type="Material" uid="uid://cf3hi6aubsx0t" path="res://effect/particle/material/explosion/Explosion Smoke Add No Billboard.tres" id="2_0qpod"]
+[ext_resource type="Material" uid="uid://bt48gjcjhfpt8" path="res://effect/particle/material/Lightning Billboard.tres" id="3_0qpod"]
+
+[sub_resource type="Curve" id="Curve_asac1"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.3, 1), 0.0, 0.0, 0, 0, Vector2(0.8, 0), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_poxih"]
+width = 64
+texture_mode = 1
+curve = SubResource("Curve_asac1")
+
+[sub_resource type="Curve" id="Curve_p2wlw"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="Curve" id="Curve_0qpod"]
+_data = [Vector2(0, 0), 0.0, 10.609113, 0, 0, Vector2(0.3, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="Curve" id="Curve_hmhce"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveXYZTexture" id="CurveXYZTexture_asac1"]
+width = 64
+curve_x = SubResource("Curve_p2wlw")
+curve_y = SubResource("Curve_0qpod")
+curve_z = SubResource("Curve_hmhce")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_hmhce"]
+lifetime_randomness = 0.5
+emission_shape_offset = Vector3(1, 0, 0)
+emission_shape_scale = Vector3(1, 1, 0.5)
+emission_shape = 3
+emission_box_extents = Vector3(0, 0.2, 0)
+spread = 0.0
+initial_velocity_min = 10.0
+initial_velocity_max = 20.0
+gravity = Vector3(0, 0, 0)
+scale_min = 0.5
+scale_curve = SubResource("CurveXYZTexture_asac1")
+color = Color(1, 0, 0, 1)
+alpha_curve = SubResource("CurveTexture_poxih")
+
+[sub_resource type="QuadMesh" id="QuadMesh_asac1"]
+material = ExtResource("2_0qpod")
+size = Vector2(5, 1)
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_0qpod"]
+lifetime_randomness = 0.5
+emission_shape_offset = Vector3(3, 0, 0)
+emission_shape_scale = Vector3(1, 1, 0.5)
+emission_shape = 3
+emission_box_extents = Vector3(3, 0.2, 0)
+angle_min = -360.0
+angle_max = 360.00003
+spread = 0.0
+initial_velocity_max = 10.0
+angular_velocity_min = -360.0
+angular_velocity_max = 359.99997
+gravity = Vector3(0, 0, 0)
+scale_min = 0.5
+scale_max = 1.5
+color = Color(1.5720325, 0.68299323, 0.25359336, 1)
+alpha_curve = SubResource("CurveTexture_poxih")
+anim_speed_min = 5.0
+anim_speed_max = 10.0
+anim_offset_max = 1.0
+
+[sub_resource type="QuadMesh" id="QuadMesh_hmhce"]
+material = ExtResource("3_0qpod")
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_poxih"]
+size = Vector3(10, 0.5, 0.5)
+
+[node name="Laser" type="Area3D"]
+collision_layer = 0
+collision_mask = 2
+monitorable = false
+script = ExtResource("1_p2wlw")
+ignoreSpeedbreakingCharacters = true
+
+[node name="BeamsL" type="GPUParticles3D" parent="."]
+transform = Transform3D(0.99999994, 0, 5.960464e-08, 0, 1, 0, -5.960464e-08, 0, 0.99999994, -5, 0, 0)
+rotation_edit_mode = 2
+layers = 32
+cast_shadow = 0
+lifetime = 0.6
+randomness = 0.5
+fixed_fps = 0
+interpolate = false
+visibility_aabb = AABB(-2, -1, -1, 14, 2, 2)
+local_coords = true
+process_material = SubResource("ParticleProcessMaterial_hmhce")
+draw_pass_1 = SubResource("QuadMesh_asac1")
+
+[node name="BeamsR" type="GPUParticles3D" parent="."]
+transform = Transform3D(-0.99999994, 0, 2.7818128e-08, 0, 1, 0, -2.7818128e-08, 0, -0.99999994, 4.999999, 0, 2.781813e-07)
+rotation_edit_mode = 2
+layers = 32
+cast_shadow = 0
+lifetime = 0.6
+randomness = 0.5
+fixed_fps = 0
+interpolate = false
+visibility_aabb = AABB(-2, -1, -1, 14, 2, 2)
+local_coords = true
+process_material = SubResource("ParticleProcessMaterial_hmhce")
+draw_pass_1 = SubResource("QuadMesh_asac1")
+
+[node name="LightningR" type="GPUParticles3D" parent="."]
+transform = Transform3D(-0.99999994, 0, 2.7818128e-08, 0, 1, 0, -2.7818128e-08, 0, -0.99999994, 4.999999, 0, 2.781813e-07)
+rotation_edit_mode = 2
+layers = 32
+cast_shadow = 0
+amount = 16
+lifetime = 0.3
+randomness = 0.5
+fixed_fps = 0
+interpolate = false
+visibility_aabb = AABB(0, -1, -1, 10, 2, 2)
+local_coords = true
+process_material = SubResource("ParticleProcessMaterial_0qpod")
+draw_pass_1 = SubResource("QuadMesh_hmhce")
+
+[node name="LightningL" type="GPUParticles3D" parent="."]
+transform = Transform3D(0.9999999, 0, 4.4703484e-08, 0, 1, 0, -4.4703484e-08, 0, 0.9999999, -5, 0, 7.1525574e-07)
+rotation_edit_mode = 2
+layers = 32
+cast_shadow = 0
+amount = 16
+lifetime = 0.3
+randomness = 0.5
+fixed_fps = 0
+interpolate = false
+visibility_aabb = AABB(0, -1, -1, 10, 2, 2)
+local_coords = true
+process_material = SubResource("ParticleProcessMaterial_0qpod")
+draw_pass_1 = SubResource("QuadMesh_hmhce")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("BoxShape3D_poxih")
+
+[connection signal="area_entered" from="." to="." method="OnEntered"]
+[connection signal="area_exited" from="." to="." method="OnExited"]

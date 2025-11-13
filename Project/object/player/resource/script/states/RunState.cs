@@ -5,21 +5,15 @@ namespace Project.Gameplay;
 
 public partial class RunState : PlayerState
 {
-	[Export]
-	private PlayerState fallState;
-	[Export]
-	private PlayerState idleState;
-	[Export]
-	private PlayerState backstepState;
-	[Export]
-	private PlayerState slideState;
-	[Export]
-	private PlayerState jumpState;
-	[Export]
-	private PlayerState backflipState;
+	[Export] private PlayerState fallState;
+	[Export] private PlayerState idleState;
+	[Export] private PlayerState backstepState;
+	[Export] private PlayerState slideState;
+	[Export] private PlayerState jumpState;
+	[Export] private PlayerState backflipState;
+	[Export] private PlayerState homingAttackState;
 
-	[Export]
-	private Curve turningSpeedLossCurve;
+	[Export] private Curve turningSpeedLossCurve;
 
 	/// <summary> What speed ratio should be considered as fully running? </summary>
 	private readonly float RunRatio = .9f;
@@ -36,6 +30,7 @@ public partial class RunState : PlayerState
 	public override void EnterState()
 	{
 		turningVelocity = 0;
+		Player.MoveSpeed = Mathf.Abs(Player.MoveSpeed);
 		Player.IsMovingBackward = false;
 		ProcessPhysics();
 	}
@@ -59,21 +54,16 @@ public partial class RunState : PlayerState
 		if (Player.CheckCeiling())
 			return null;
 
-		if (!Player.Skills.IsSpeedBreakActive)
+		if (!Player.Skills.IsSpeedBreakCharging)
 		{
 			if (Player.Controller.IsJumpBufferActive)
 			{
 				Player.Controller.ResetJumpBuffer();
+				if (Player.Skills.IsSpeedBreakActive)
+					Player.Skills.ToggleSpeedBreak();
 
-				float inputAngle = Player.Controller.GetTargetInputAngle();
-				float inputStrength = Player.Controller.GetInputStrength();
-
-				if (!Player.IsLockoutDisablingAction(LockoutResource.ActionFlags.Backflip) &&
-					!Mathf.IsZeroApprox(inputStrength) &&
-					Player.Controller.IsHoldingDirection(inputAngle, Player.PathFollower.BackAngle))
-				{
+				if (Player.IsBackflipInputValid())
 					return backflipState;
-				}
 
 				if (SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.ChargeJump))
 					return slideState;
@@ -85,14 +75,26 @@ public partial class RunState : PlayerState
 				Player.Controller.IsActionBufferActive)
 			{
 				Player.Controller.ResetActionBuffer();
+				if (Player.Skills.IsSpeedBreakActive)
+					Player.Skills.ToggleSpeedBreak();
+
 				return slideState;
 			}
+		}
 
+		if (!Player.Skills.IsSpeedBreakActive)
+		{
 			if (SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.LightSpeedDash) &&
 				Player.Controller.IsLightDashBufferActive && Player.StartLightSpeedDash())
 			{
 				return null;
 			}
+		}
+
+		if (Player.Controller.IsAttackBufferActive && Player.Lockon.IsTargetAttackable)
+		{
+			Player.Controller.ResetAttackBuffer();
+			return homingAttackState;
 		}
 
 		if (SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.QuickStep) &&
@@ -110,8 +112,11 @@ public partial class RunState : PlayerState
 		if (!Player.Skills.IsSpeedBreakActive && Mathf.IsZeroApprox(Player.MoveSpeed))
 			return idleState;
 
-		if (Player.Controller.GetHoldingDistance(Player.MovementAngle, Player.PathFollower.ForwardAngle) >= 1.0f)
+		if (Player.Controller.GetHoldingDistance(Player.MovementAngle, Player.PathFollower.ForwardAngle) >= 1.0f &&
+			!SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.FreeRoam))
+		{
 			return backstepState;
+		}
 
 		if (Player.Stats.GroundSettings.GetSpeedRatioClamped(Player.MoveSpeed) > RunRatio &&
 			StageSettings.Instance.IsLevelIngame)
@@ -223,6 +228,9 @@ public partial class RunState : PlayerState
 	protected override float ProcessTargetMovementAngle(float targetMovementAngle)
 	{
 		targetMovementAngle = base.ProcessTargetMovementAngle(targetMovementAngle);
+
+		if (SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.FreeRoam))
+			return targetMovementAngle;
 
 		float speedRatio = Player.Stats.GroundSettings.GetSpeedRatioClamped(Player.MoveSpeed);
 		if (speedRatio > RunRatio)

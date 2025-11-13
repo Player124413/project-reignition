@@ -111,7 +111,7 @@ public partial class LightSpeedDashState : PlayerState
 				float inputAngle = Player.Controller.GetTargetInputAngle();
 				float inputStrength = Player.Controller.GetInputStrength();
 				if (!Mathf.IsZeroApprox(inputStrength) &&
-					Player.Controller.IsHoldingDirection(inputAngle, Player.PathFollower.BackAngle))
+					Player.Controller.IsHoldingDirection(inputAngle, Player.MovementAngle + Mathf.Pi))
 				{
 					Player.MoveSpeed = 0;
 				}

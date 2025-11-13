@@ -349,7 +349,7 @@ public partial class PlayerCameraController : Node3D
 
 	private void UpdateGameplayCamera()
 	{
-		UpdateInputCameraAngle();
+		UpdateLookaroundCameraAngle();
 		UpdateTransitionTimer();
 		UpdateLockonTarget();
 		UpdateCameraBlends();
@@ -370,7 +370,7 @@ public partial class PlayerCameraController : Node3D
 	private readonly float MaxLookaroundPitch = Mathf.Pi * 0.3f;
 	private readonly float MaxLookaroundYaw = Mathf.Pi * 0.1f;
 	private readonly float MaxInputCameraDistance = 2f;
-	private void UpdateInputCameraAngle()
+	private void UpdateLookaroundCameraAngle()
 	{
 		Vector2 targetRotation = targetRotation = Vector2.Zero;
 
@@ -387,6 +387,20 @@ public partial class PlayerCameraController : Node3D
 
 		cameraLookaroundRotation = cameraLookaroundRotation.SmoothDamp(targetRotation, ref cameraLookaroundVelocity, InputCameraSmoothing * PhysicsManager.physicsDelta);
 		inputCameraDistance = Mathf.SmoothStep(0f, 1f, Mathf.Max(cameraLookaroundRotation.Y / -MaxLookaroundPitch, 0f)) * MaxInputCameraDistance;
+	}
+
+	private Vector2 GetLookaroundCameraInput()
+	{
+		if (Player.Controller.CameraAxis.IsZeroApprox() || isFreeCamActive)
+			return Vector2.Zero;
+
+		if (StageSettings.Instance.IsControlTest && Player.IsLaunching)
+			return Vector2.Zero;
+
+		if (Mathf.Abs(Player.Controller.CameraAxis.X) > Mathf.Abs(Player.Controller.CameraAxis.Y))
+			return Vector2.Left * Player.Controller.CameraAxis.X * MaxLookaroundYaw;
+
+		return Vector2.Up * Player.Controller.CameraAxis.Y * MaxLookaroundPitch;
 	}
 
 	private void UpdateCameraBlends()
@@ -591,9 +605,11 @@ public partial class PlayerCameraController : Node3D
 		else
 			data = SimulateDynamicCamera(settings, ref data);
 
-		data.blendData.Fov = DefaultFov;
-		if (!Mathf.IsZeroApprox(settings.targetFOV))
+		if (!settings.copyFov && !Mathf.IsZeroApprox(settings.targetFOV))
 			data.blendData.Fov = settings.targetFOV;
+
+		if (Mathf.IsZeroApprox(data.blendData.Fov))
+			data.blendData.Fov = DefaultFov;
 
 		if (!data.blendData.WasInitialized)
 			data.blendData.WasInitialized = true;
@@ -626,13 +642,21 @@ public partial class PlayerCameraController : Node3D
 			targetPitchAngle += delta.AngleTo(delta.RemoveVertical().Normalized()) * Mathf.Sign(delta.Y);
 
 		targetPitchAngle += settings.extraBackstepPitchAngle * data.blendData.BackstepPitchBlend;
-		data.blendData.UpdateBackstepBlend(Player.IsMovingBackward, SnapFlag);
+		data.blendData.UpdateBackstepBlend(IsUsingBackstepCamera(), SnapFlag);
 
 		data.blendData.yawAngle = targetYawAngle;
 		data.blendData.pitchAngle = targetPitchAngle;
 		data.CalculateBasis();
 
 		return data;
+	}
+
+	private bool IsUsingBackstepCamera()
+	{
+		if (SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.FreeRoam))
+			return ExtensionMethods.DotAngle(Player.MovementAngle, Player.PathFollower.ForwardAngle) < 0f;
+
+		return Player.IsMovingBackward;
 	}
 
 	private CameraPositionData SimulateDynamicCamera(CameraSettingsResource settings, ref CameraPositionData data)
@@ -661,6 +685,9 @@ public partial class PlayerCameraController : Node3D
 		else if (!Mathf.IsZeroApprox(settings.hallWidth) || !Mathf.IsZeroApprox(settings.hallRotationStrength)) // Process hall width
 		{
 			float leadAmount = PathFollower.LocalHorizontalVelocity * PhysicsManager.physicsDelta;
+			if (Player.IsHomingAttacking || Player.IsBouncing)
+				leadAmount = 0f;
+
 			data.blendData.HallLeadSmoothDamp(leadAmount, SnapFlag);
 
 			float positionDelta = PathFollower.LocalPlayerPositionDelta.X;
@@ -707,7 +734,7 @@ public partial class PlayerCameraController : Node3D
 	private float CalculateDistance(CameraSettingsResource settings)
 	{
 		float targetDistance = settings.distance;
-		if (Player.IsMovingBackward)
+		if (IsUsingBackstepCamera())
 			targetDistance += settings.backstepDistance;
 
 		if (!settings.ignoreHomingAttack)
@@ -796,7 +823,7 @@ public partial class PlayerCameraController : Node3D
 		data.blendData.pitchAngle = Mathf.Lerp(targetPitchAngle, sampledTargetPitchAngle, data.blendData.SampleBlend);
 
 		// Update backstep blend
-		data.blendData.UpdateBackstepBlend(Player.IsMovingBackward, SnapFlag);
+		data.blendData.UpdateBackstepBlend(IsUsingBackstepCamera(), SnapFlag);
 	}
 
 	private float CalculateTilt(CameraSettingsResource settings, ref CameraPositionData data, int yawSamplingFix)
@@ -1326,9 +1353,9 @@ public partial class CameraBlendData : GodotObject
 	public float BackstepPitchBlend { get; private set; }
 	private float backstepPitchVelocity;
 	private readonly float BackstepPitchSmoothing = 10f;
-	public void UpdateBackstepBlend(bool IsMovingBackward, bool snapFlag)
+	public void UpdateBackstepBlend(bool isMovingBackward, bool snapFlag)
 	{
-		float target = IsMovingBackward ? 1f : 0f;
+		float target = isMovingBackward ? 1f : 0f;
 		if (snapFlag)
 		{
 			backstepPitchVelocity = 0;

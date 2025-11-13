@@ -22,11 +22,14 @@ public partial class JumpDashState : PlayerState
 
 	public override void EnterState()
 	{
-		// Moving directly backwards -- jumpdash directly forward
-		if (ExtensionMethods.DeltaAngleRad(Player.MovementAngle, Player.PathFollower.BackAngle) <= Mathf.Pi * .25f)
-			Player.MovementAngle = Player.PathFollower.ForwardAngle;
-		else // Don't allow jumpdashing backwards (sideways is OK though)
-			Player.MovementAngle = ExtensionMethods.ClampAngleRange(Player.MovementAngle, Player.PathFollower.ForwardAngle, Mathf.Pi * .5f);
+		if (!SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.FreeRoam))
+		{
+			// Moving directly backwards -- jumpdash directly forward
+			if (ExtensionMethods.DeltaAngleRad(Player.MovementAngle, Player.PathFollower.BackAngle) <= Mathf.Pi * .25f)
+				Player.MovementAngle = Player.PathFollower.ForwardAngle;
+			else // Don't allow jumpdashing backwards (sideways is OK though)
+				Player.MovementAngle = ExtensionMethods.ClampAngleRange(Player.MovementAngle, Player.PathFollower.ForwardAngle, Mathf.Pi * .5f);
+		}
 
 		Player.IsJumpDashing = true;
 		Player.IsMovingBackward = false; // Can't jumpdash backwards!
@@ -135,7 +138,8 @@ public partial class JumpDashState : PlayerState
 		float turnSmoothing = Mathf.Lerp(Player.Stats.MinTurnAmount, maxTurnAmount, speedRatio);
 		Player.MovementAngle += pathControlAmount;
 		Turn(targetMovementAngle, turnSmoothing);
-		Player.MovementAngle = ExtensionMethods.ClampAngleRange(Player.MovementAngle, Player.PathFollower.ForwardAngle, Mathf.Pi * .5f);
+		if (!SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.FreeRoam))
+			Player.MovementAngle = ExtensionMethods.ClampAngleRange(Player.MovementAngle, Player.PathFollower.ForwardAngle, Mathf.Pi * .5f);
 
 		// Strafe implementation
 		if (Player.Controller.IsStrafeModeActive)

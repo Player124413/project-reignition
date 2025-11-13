@@ -46,7 +46,8 @@ public partial class BounceState : PlayerState
 		bounceInterruptTimer = LockoutSettings.length - .5f;
 
 		Player.IsOnGround = false;
-		Player.CanDoubleJump = false;
+		Player.CanDoubleJump = true;
+		Player.CanAirBoost = true;
 		Player.CanJumpDash = true;
 		Player.Lockon.IsMonitoring = true;
 		Player.VerticalSpeed = Runtime.CalculateJumpPower(bounceHeight * BounceHeightScale);
