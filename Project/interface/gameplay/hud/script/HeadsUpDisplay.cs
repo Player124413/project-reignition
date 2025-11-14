@@ -63,7 +63,6 @@ public partial class HeadsUpDisplay : Control
 
 	public void CollectFireSoul(int index)
 	{
-		InitializeFireSouls();
 		fireSouls[index].Texture = fireSoulImg;
 
 		fireSoulAnimator.Play("firesoul-" + (index + 1));

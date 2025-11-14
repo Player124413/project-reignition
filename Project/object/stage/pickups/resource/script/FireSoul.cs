@@ -76,6 +76,10 @@ public partial class FireSoul : Pickup
 			Animator.Play("collected");
 			Animator.Advance(0);
 		}
+		else
+		{
+			HeadsUpDisplay.Instance.UncollectFireSoul(fireSoulIndex - 1);
+		}
 
 		if (isTimeBreakOnly)
 			HideFireSoul();
@@ -83,7 +87,6 @@ public partial class FireSoul : Pickup
 			Animator.Play("loop");
 
 		StageSettings.Instance.SetFireSoulCheckpointFlag(fireSoulIndex - 1, false);
-		HeadsUpDisplay.Instance.UncollectFireSoul(fireSoulIndex - 1);
 		base.Respawn();
 	}
 
