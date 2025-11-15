@@ -79,6 +79,8 @@ public partial class CullingTrigger : StageTriggerModule
 		}
 	}
 
+	private void SetUpRespawning() => SetUpRespawning(this);
+
 	private bool visibleOnCheckpoint;
 	private bool visibleOnDebugCheckpoint;
 	/// <summary> Saves the current visiblity. Called when the player passes a checkpoint. </summary>

@@ -271,10 +271,7 @@ public partial class DestructableObject : Node3D
 			return;
 
 		if (!b.IsInGroup("player"))
-		{
-			Shatter(); // Environment collision
 			return;
-		}
 
 		if (Player.IsOnGround || Player.VerticalSpeed <= 0)
 			return;

@@ -8,9 +8,9 @@ namespace Project.Gameplay.Objects
 	/// </summary>
 	public partial class Hourglass : TeleportTrigger
 	{
-		[ExportGroup("Components")]
-		[Export]
-		private EventTrigger eventHandler;
+		[Signal] public delegate void ActivatedEventHandler();
+		[Export] private bool disableTeleportation;
+		[Export] private EventTrigger eventHandler;
 		private bool isInteractingWithPlayer;
 
 		public override void _PhysicsProcess(double _)
@@ -25,6 +25,15 @@ namespace Project.Gameplay.Objects
 				Player.Skills.ToggleSpeedBreak();
 
 			eventHandler.Activate();
+		}
+
+		public override void Activate()
+		{
+			if (!disableTeleportation)
+				base.Activate();
+
+			GD.Print("Teleportation Disabled.");
+			EmitSignal(SignalName.Activated);
 		}
 
 		public void OnEntered(Area3D a)
