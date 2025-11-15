@@ -32,7 +32,6 @@ namespace Project.Gameplay.Objects
 			if (!disableTeleportation)
 				base.Activate();
 
-			GD.Print("Teleportation Disabled.");
 			EmitSignal(SignalName.Activated);
 		}
 
