@@ -1,3 +1,4 @@
+using System;
 using Godot;
 
 /// <summary>
@@ -12,7 +13,7 @@ public partial class InfiniteHallway : Node3D
 
 	/// <summary> Respawn the same object multiple times since only one item bundle is ever present at a time. </summary>
 	[Export] private Node3D itemBundle;
-	/// <summary> H the same object multiple times since only one item bundle is ever present at a time. </summary>
+	/// <summary> Determines how many chunks away each item bundle is. </summary>
 	[Export] public int[] itemBundleInterval;
 	private int itemBundleIndex;
 	private int itemBundleCounter;
@@ -25,9 +26,11 @@ public partial class InfiniteHallway : Node3D
 	private const float CollisionPieceRotation = 1;
 
 	/// <summary> Called when a duel attack ends. Resets positions and respawns objects. </summary>
-	[Signal] public delegate void ResetHallEventHandler();
+	[Signal] public delegate void HallResetEventHandler();
 	/// <summary> Called when item bundle is respawned. </summary>
-	[Signal] public delegate void RespawnItemBundleEventHandler();
+	[Signal] public delegate void ItemBundleRespawnedEventHandler();
+	/// <summary> Called when entering the final phase. </summary>
+	[Signal] public delegate void ItemBundleDeactivatedEventHandler();
 
 	public override void _Ready()
 	{
@@ -46,6 +49,8 @@ public partial class InfiniteHallway : Node3D
 		hallRoot.GlobalTransform = Transform3D.Identity;
 		primaryCollision.GlobalTransform = Transform3D.Identity;
 		secondaryCollision.GlobalTransform = Transform3D.Identity;
+		itemBundleIndex = 0;
+		itemBundleCounter = 0;
 		MoveNode(secondaryCollision, 1);
 	}
 
@@ -59,25 +64,41 @@ public partial class InfiniteHallway : Node3D
 		MoveNode(hallRoot, direction);
 	}
 
+	/// <summary>
+	/// Called from a signal. 
+	/// Advances the visuals of the hallway to create the illusion of infinity.
+	/// </summary>
+	public void AdvanceItemBundleIndex()
+	{
+		if (itemBundleIndex >= itemBundleInterval.Length) // Item bundles aren't active
+			return;
+
+		itemBundleIndex++;
+
+		if (itemBundleIndex < itemBundleInterval.Length)
+			return;
+
+		// Deactivate item bundles
+		EmitSignal(SignalName.ItemBundleDeactivated);
+	}
+
 	/// <summary> Determines whether the item bundle needs to be spawned. </summary>
 	private void ProcessItemBundle(int direction)
 	{
-		itemBundleCounter--;
-		if (itemBundleCounter > 0)
+		if (itemBundleIndex >= itemBundleInterval.Length) // Finished spawning item bundles
 			return;
 
-		itemBundleCounter = itemBundleInterval[ErazorOld.CurrentPattern];
-		if (itemBundleCounter == 0) // Don't spawn item bundle anymore
-		{
-			itemBundle.GlobalPosition = Vector3.Down * 100;
+		itemBundleCounter += itemBundleCounter + direction;
+		if (Mathf.Abs(itemBundleCounter) < itemBundleInterval[itemBundleIndex])
 			return;
-		}
 
-		EmitSignal(SignalName.RespawnItemBundle);
+		EmitSignal(SignalName.ItemBundleRespawned);
 
 		itemBundle.GlobalTransform = hallRoot.GlobalTransform;
 		for (int i = 0; i < itemBundleCounter; i++) // Move item bundle the correct distance away
 			MoveNode(itemBundle, direction); // Each iteration moves the item bundle one chunk
+
+		itemBundleCounter = 0; // Reset item bundle counter
 	}
 
 	/// <summary>

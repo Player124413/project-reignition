@@ -164,7 +164,8 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1, 80)
 transform = Transform3D(1, 0, -5.58794e-09, 0, 1, 0, 5.58794e-09, 0, 1, 0, 15, 0)
 shape = SubResource("10")
 
-[connection signal="RespawnItemBundle" from="." to="ItemBundle" method="Activate"]
+[connection signal="ItemBundleDeactivated" from="." to="ItemBundle" method="Deactivate"]
+[connection signal="ItemBundleRespawned" from="." to="ItemBundle" method="Activate"]
 [connection signal="Activated" from="HallRoot/ReverseTrigger" to="." method="AdvanceHall" binds= [-1]]
 [connection signal="Activated" from="HallRoot/Hall2/AdvanceTrigger" to="." method="AdvanceHall" binds= [1]]
 [connection signal="Activated" from="PrimaryCollision/AdvanceTrigger" to="." method="AdvanceCollision" binds= [true, 1]]
