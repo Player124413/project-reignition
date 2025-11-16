@@ -1,7 +1,7 @@
-[gd_scene load_steps=25 format=3 uid="uid://ch46r833tuwi0"]
+[gd_scene load_steps=26 format=3 uid="uid://ch46r833tuwi0"]
 
 [ext_resource type="Script" uid="uid://dtkbvehtmy3em" path="res://object/stage/StageSettings.cs" id="1_6j01u"]
-[ext_resource type="Curve3D" uid="uid://bv3af6omd5fye" path="res://area/7 night palace/act 2/environment/path/MainPath.tres" id="2_gnax0"]
+[ext_resource type="Curve3D" uid="uid://c3awpocntchyr" path="res://area/7 night palace/act 2/environment/path/MainPath.tres" id="2_gnax0"]
 [ext_resource type="PackedScene" uid="uid://baa0itya2nvqn" path="res://area/7 night palace/act 2/environment/NPAct2.tscn" id="2_la3f2"]
 [ext_resource type="PackedScene" uid="uid://b4gexcm5wctiv" path="res://area/7 night palace/act 2/environment/collision/Collision.tscn" id="3_1m48j"]
 [ext_resource type="PackedScene" uid="uid://dftou328ishsn" path="res://area/7 night palace/data/BGM.tscn" id="3_j1s7w"]
@@ -9,6 +9,7 @@
 [ext_resource type="PackedScene" uid="uid://d4ivgn14opv12" path="res://area/7 night palace/data/skybox/SpaceSkybox.tscn" id="4_0qu5p"]
 [ext_resource type="Script" uid="uid://bvmyay4bo83qu" path="res://object/trigger/modules/DeathTrigger.cs" id="4_o2jba"]
 [ext_resource type="Script" uid="uid://np5vcxq01ii8" path="res://object/trigger/modules/CheckpointTrigger.cs" id="7_j1fre"]
+[ext_resource type="PackedScene" uid="uid://etu2s6i547gb" path="res://object/trigger/state trigger/DriftTrigger.tscn" id="8_j1fre"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_4glpy"]
 size = Vector3(686, 13.2, 502)
@@ -500,9 +501,17 @@ transform = Transform3D(0.7071069, 0, -0.70710665, 0, 1, 0, 0.70710665, 0, 0.707
 "Enter Mode" = 0
 
 [node name="Checkpoint" type="Node3D" parent="Trigger/Checkpoint/CheapShotCheckpoint"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2.8284302)
 script = ExtResource("7_j1fre")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Trigger/Checkpoint/CheapShotCheckpoint"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
+shape = SubResource("BoxShape3D_josyi")
+
+[node name="DriftTrigger1" parent="Trigger" instance=ExtResource("8_j1fre")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -18.9, 0, 50)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Trigger/DriftTrigger1"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
 shape = SubResource("BoxShape3D_josyi")
 
