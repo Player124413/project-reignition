@@ -66,10 +66,7 @@ public partial class CullingTrigger : StageTriggerModule
 		foreach (Node child in parentNode.GetChildren())
 		{
 			if (child.Name.ToString().Contains("Group")) // Cache recursively if node name contains the word "Group"
-			{
 				SetUpRespawning(child);
-				continue;
-			}
 
 			if (child.HasMethod(MethodName.SetUpRespawning))
 				child.Call(MethodName.SetUpRespawning);
