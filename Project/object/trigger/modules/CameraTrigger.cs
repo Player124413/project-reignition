@@ -20,6 +20,7 @@ public partial class CameraTrigger : StageTriggerModule
 	public bool UseDistanceBlending => distanceBlending != 0;
 
 	[Export] public CameraTransitionType transitionType;
+	[Export] public CameraTransitionType deactivateTransitionType;
 	[Export] public bool enableInputBlending;
 
 	/// <summary> Must be assigned to something. </summary>
@@ -119,6 +120,7 @@ public partial class CameraTrigger : StageTriggerModule
 		{
 			BlendTime = Mathf.IsEqualApprox(deactivationTransitionTime, -1) ? transitionTime : deactivationTransitionTime,
 			SettingsResource = previousSettings,
+			TransitionType = deactivateTransitionType,
 			Position = previousStaticPosition, // Restore cached static position
 			RotationBasis = previousStaticRotation // Restore cached static rotation
 		}, enableInputBlending);

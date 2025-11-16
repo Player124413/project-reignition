@@ -1,4 +1,4 @@
-[gd_scene load_steps=27 format=3 uid="uid://ch46r833tuwi0"]
+[gd_scene load_steps=32 format=3 uid="uid://ch46r833tuwi0"]
 
 [ext_resource type="Script" uid="uid://dtkbvehtmy3em" path="res://object/stage/StageSettings.cs" id="1_6j01u"]
 [ext_resource type="Resource" uid="uid://cphu4ho2e31sn" path="res://area/7 night palace/act 2/camera/MainCam.tres" id="2_8bpc5"]
@@ -11,6 +11,10 @@
 [ext_resource type="Script" uid="uid://bvmyay4bo83qu" path="res://object/trigger/modules/DeathTrigger.cs" id="4_o2jba"]
 [ext_resource type="Script" uid="uid://np5vcxq01ii8" path="res://object/trigger/modules/CheckpointTrigger.cs" id="7_j1fre"]
 [ext_resource type="PackedScene" uid="uid://etu2s6i547gb" path="res://object/trigger/state trigger/DriftTrigger.tscn" id="8_j1fre"]
+[ext_resource type="Script" uid="uid://dx0a0rhyauccl" path="res://object/trigger/modules/CameraTrigger.cs" id="10_j6bow"]
+[ext_resource type="Resource" uid="uid://cgtwkpv6dqu3g" path="res://area/7 night palace/act 2/camera/WideLagTransitionCam.tres" id="11_dm2l3"]
+[ext_resource type="Resource" uid="uid://3ahka7gl2uqk" path="res://area/7 night palace/act 2/camera/WideStraightCam.tres" id="11_h0753"]
+[ext_resource type="Resource" uid="uid://bku7n4ufln8ro" path="res://resource/preset/camera/common/StaticCam.tres" id="13_dm2l3"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_4glpy"]
 size = Vector3(686, 13.2, 502)
@@ -38,6 +42,9 @@ size = Vector3(70, 10, 60)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_josyi"]
 size = Vector3(40, 20, 5)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_dm2l3"]
+size = Vector3(40, 20, 50)
 
 [sub_resource type="Environment" id="Environment_38hsq"]
 ambient_light_source = 2
@@ -518,6 +525,99 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
 shape = SubResource("BoxShape3D_josyi")
 
 [node name="Camera" type="Node3D" parent="Trigger"]
+
+[node name="WideLagTransition" parent="Trigger/Camera" instance=ExtResource("3_jkftw")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 301, -20, -40)
+"Trigger Mode" = 2
+"Exit Mode" = 2
+
+[node name="Cam" type="Node3D" parent="Trigger/Camera/WideLagTransition"]
+script = ExtResource("10_j6bow")
+transitionTime = 0.2
+settings = ExtResource("11_dm2l3")
+previousSettings = ExtResource("2_8bpc5")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Trigger/Camera/WideLagTransition"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
+shape = SubResource("BoxShape3D_josyi")
+
+[node name="WideStraight" parent="Trigger/Camera" instance=ExtResource("3_jkftw")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 301, -20, -21)
+"Trigger Mode" = 2
+"Exit Mode" = 2
+
+[node name="Cam" type="Node3D" parent="Trigger/Camera/WideStraight"]
+script = ExtResource("10_j6bow")
+settings = ExtResource("11_h0753")
+previousSettings = ExtResource("2_8bpc5")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Trigger/Camera/WideStraight"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
+shape = SubResource("BoxShape3D_josyi")
+
+[node name="WideStraightEnd" parent="Trigger/Camera" instance=ExtResource("3_jkftw")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 301, -20, 61)
+"Trigger Mode" = 2
+"Exit Mode" = 2
+
+[node name="Cam" type="Node3D" parent="Trigger/Camera/WideStraightEnd"]
+script = ExtResource("10_j6bow")
+settings = ExtResource("2_8bpc5")
+previousSettings = ExtResource("11_h0753")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Trigger/Camera/WideStraightEnd"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
+shape = SubResource("BoxShape3D_josyi")
+
+[node name="TurnCameraTrigger" parent="Trigger/Camera" instance=ExtResource("3_jkftw")]
+transform = Transform3D(-0.81915206, 0, -0.57357645, 0, 0.9999999, 0, 0.57357645, 0, -0.81915206, -103.4, 9.9, 200.8)
+"Trigger Mode" = 2
+"Enter Mode" = 0
+"Exit Mode" = 0
+
+[node name="Cam" type="Node3D" parent="Trigger/Camera/TurnCameraTrigger"]
+transform = Transform3D(1, 1.4901161e-08, 0, -5.9604645e-08, 0.99999976, 0, 0, -1.8626447e-09, 1, -9.080383, -1.1477394, -1.0406189)
+script = ExtResource("10_j6bow")
+transitionType = 1
+deactivateTransitionType = 1
+settings = ExtResource("13_dm2l3")
+previousSettings = ExtResource("2_8bpc5")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Trigger/Camera/TurnCameraTrigger"]
+transform = Transform3D(0.86602545, 0, -0.50000006, 0, 1, 0, 0.50000006, 0, 0.86602545, 4.7534637, 8.000001, -13.762405)
+shape = SubResource("BoxShape3D_dm2l3")
+
+[node name="CollisionShape3D2" type="CollisionShape3D" parent="Trigger/Camera/TurnCameraTrigger"]
+transform = Transform3D(0.86602557, 0, 0.5000001, 0, 1, 0, -0.5000001, 0, 0.86602557, 3.5204773, 8.000001, 15.893646)
+shape = SubResource("BoxShape3D_dm2l3")
+
+[node name="WideStraight2" parent="Trigger/Camera" instance=ExtResource("3_jkftw")]
+transform = Transform3D(-0.70710677, 0, 0.70710677, 0, 1, 0, -0.70710677, 0, -0.70710677, -85.69849, 5, 146.799)
+"Trigger Mode" = 2
+"Exit Mode" = 2
+
+[node name="Cam" type="Node3D" parent="Trigger/Camera/WideStraight2"]
+script = ExtResource("10_j6bow")
+settings = ExtResource("11_h0753")
+previousSettings = ExtResource("2_8bpc5")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Trigger/Camera/WideStraight2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
+shape = SubResource("BoxShape3D_josyi")
+
+[node name="WideStraightEnd2" parent="Trigger/Camera" instance=ExtResource("3_jkftw")]
+transform = Transform3D(-0.7071067, 0, 0.7071068, 0, 1, 0, -0.7071068, 0, -0.7071067, -25, 5, 86)
+"Trigger Mode" = 2
+"Exit Mode" = 2
+
+[node name="Cam" type="Node3D" parent="Trigger/Camera/WideStraightEnd2"]
+script = ExtResource("10_j6bow")
+settings = ExtResource("2_8bpc5")
+previousSettings = ExtResource("11_h0753")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Trigger/Camera/WideStraightEnd2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
+shape = SubResource("BoxShape3D_josyi")
 
 [node name="Path" type="Node3D" parent="."]
 

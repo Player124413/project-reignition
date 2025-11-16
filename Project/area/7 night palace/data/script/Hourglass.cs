@@ -9,9 +9,13 @@ namespace Project.Gameplay.Objects
 	public partial class Hourglass : TeleportTrigger
 	{
 		[Signal] public delegate void ActivatedEventHandler();
+		[Signal] public delegate void RespawnedEventHandler();
+
 		[Export] private bool disableTeleportation;
 		[Export] private EventTrigger eventHandler;
 		private bool isInteractingWithPlayer;
+
+		public override void Respawn() => EmitSignal(SignalName.Respawned);
 
 		public override void _PhysicsProcess(double _)
 		{

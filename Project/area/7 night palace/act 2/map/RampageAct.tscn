@@ -1,4 +1,4 @@
-[gd_scene load_steps=46 format=3 uid="uid://baaer8ukrwjlq"]
+[gd_scene load_steps=53 format=3 uid="uid://baaer8ukrwjlq"]
 
 [ext_resource type="Resource" uid="uid://bydom45pew51r" path="res://resource/level data/night palace/Act2Rampage.tres" id="2_4jxq1"]
 [ext_resource type="PackedScene" uid="uid://cjupypih0myxo" path="res://object/player/CharacterSpawn.tscn" id="4"]
@@ -24,17 +24,24 @@
 [ext_resource type="PackedScene" uid="uid://d0b2gvx7s6s8u" path="res://object/stage/pickups/Pearl.tscn" id="22_6c7r5"]
 [ext_resource type="PackedScene" uid="uid://bcsww42lqxn6w" path="res://object/stage/common/LaunchRing.tscn" id="22_l8xuh"]
 [ext_resource type="PackedScene" uid="uid://v2hbw6y70jr3" path="res://object/stage/pickups/RichPearl.tscn" id="23_l8xuh"]
+[ext_resource type="PackedScene" uid="uid://cu6lpq7q82grk" path="res://object/stage/pickups/FireSoul.tscn" id="23_q5f61"]
 [ext_resource type="PackedScene" uid="uid://ku2it8hwr58k" path="res://area/7 night palace/object/obstacle/LaserPillar.tscn" id="25_81smg"]
 [ext_resource type="PackedScene" uid="uid://0ineyis1gx8t" path="res://area/7 night palace/object/obstacle/Laser.tscn" id="25_pr3a5"]
+[ext_resource type="Script" uid="uid://dx0a0rhyauccl" path="res://object/trigger/modules/CameraTrigger.cs" id="26_1r6sj"]
 [ext_resource type="PackedScene" uid="uid://cc64d8h51jyx2" path="res://object/stage/common/ItemBoxFlying.tscn" id="27_lem5g"]
 [ext_resource type="PackedScene" uid="uid://cx36fswvjfblm" path="res://object/stage/destructable/EnemyStone.tscn" id="27_oryyw"]
+[ext_resource type="Resource" uid="uid://cyyn7phcql4kc" path="res://area/7 night palace/act 2/camera/rampage/CatapultCam.tres" id="27_rf7sd"]
 [ext_resource type="PackedScene" uid="uid://68st06xyjgvp" path="res://object/stage/pickups/RichRing.tscn" id="28_clvm2"]
+[ext_resource type="Resource" uid="uid://cphu4ho2e31sn" path="res://area/7 night palace/act 2/camera/MainCam.tres" id="28_pdyya"]
 [ext_resource type="PackedScene" uid="uid://djyf0ic4lyhil" path="res://area/7 night palace/object/destructable/Stair.tscn" id="30_g3a6h"]
 [ext_resource type="PackedScene" uid="uid://ch7kbwfavdrk7" path="res://area/7 night palace/object/grindrail/SpaceGrindrail02.tscn" id="31_ai3wj"]
 [ext_resource type="PackedScene" uid="uid://bkoddmjhdowjm" path="res://area/7 night palace/object/obstacle/LaserPillarInterior.tscn" id="32_f13ec"]
 [ext_resource type="PackedScene" uid="uid://dxepb172kmp8n" path="res://object/stage/common/Goal.tscn" id="32_jvi22"]
+[ext_resource type="Resource" uid="uid://bbu275y0hy854" path="res://area/7 night palace/act 2/camera/rampage/MovingLaunchRingCam.tres" id="32_pdyya"]
 [ext_resource type="Script" uid="uid://coiui4qvdxbqe" path="res://object/trigger/modules/EventTrigger.cs" id="33_4wyqf"]
 [ext_resource type="PackedScene" uid="uid://2h6xrqn3jp6l" path="res://object/stage/destructable/Cage.tscn" id="34_lnrty"]
+[ext_resource type="Resource" uid="uid://dvvtgpx01elhl" path="res://area/7 night palace/act 2/camera/rampage/EnemyLaunchCam.tres" id="35_rf7sd"]
+[ext_resource type="Resource" uid="uid://302smay0o04v" path="res://area/7 night palace/act 2/camera/rampage/EnemyLaunchRingCam.tres" id="36_fsbri"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_t4uac"]
 size = Vector3(40, 20, 5)
@@ -104,7 +111,7 @@ tracks/3/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 0,
-"values": [Vector3(0, -3, 26)]
+"values": [Vector3(0, -4, 26)]
 }
 tracks/4/type = "value"
 tracks/4/imported = false
@@ -141,6 +148,18 @@ tracks/6/keys = {
 "transitions": PackedFloat32Array(1),
 "update": 0,
 "values": [Vector3(0, 40, 26)]
+}
+tracks/7/type = "value"
+tracks/7/imported = false
+tracks/7/enabled = true
+tracks/7/path = NodePath("Cage:position")
+tracks/7/interp = 1
+tracks/7/loop_wrap = true
+tracks/7/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0, -2.01, 40.5)]
 }
 
 [sub_resource type="Animation" id="Animation_lnrty"]
@@ -193,7 +212,7 @@ tracks/3/keys = {
 "times": PackedFloat32Array(0, 2.5),
 "transitions": PackedFloat32Array(0.5, 1),
 "update": 0,
-"values": [Vector3(0, -3, 26), Vector3(0, 7, 26)]
+"values": [Vector3(0, -4, 26), Vector3(0, 7, 26)]
 }
 tracks/4/type = "value"
 tracks/4/imported = false
@@ -371,6 +390,18 @@ tracks/16/keys = {
 "method": &"Deactivate"
 }]
 }
+tracks/17/type = "value"
+tracks/17/imported = false
+tracks/17/enabled = true
+tracks/17/path = NodePath("Cage:position")
+tracks/17/interp = 1
+tracks/17/loop_wrap = true
+tracks/17/keys = {
+"times": PackedFloat32Array(0, 2.5),
+"transitions": PackedFloat32Array(0.5, 1),
+"update": 0,
+"values": [Vector3(0, -2.01, 40.5), Vector3(0, 9.01, 40.5)]
+}
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_jvi22"]
 _data = {
@@ -502,7 +533,6 @@ shape = SubResource("BoxShape3D_t4uac")
 
 [node name="Opening" type="Node3D" parent="RampageAct"]
 script = ExtResource("8_l8hmm")
-logCachedRespawnNodes = true
 startEnabled = true
 saveVisibilityOnCheckpoint = true
 respawnOnActivation = true
@@ -984,7 +1014,6 @@ transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 8, 0
 
 [node name="SpearGroup1" parent="RampageAct/Opening" instance=ExtResource("5")]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 14, -0.25, 0)
-logActivation = true
 OneShot = true
 "Respawn Mode" = 3
 
@@ -1197,7 +1226,6 @@ respawnOnActivation = true
 
 [node name="Spear" parent="RampageAct/Opening/SpearGroup2/SpearCull1" instance=ExtResource("8_k3vjq")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -40)
-moveSpeed = 60.0
 
 [node name="SpearCull2" type="Node3D" parent="RampageAct/Opening/SpearGroup2"]
 transform = Transform3D(-0.78635705, 0.52758676, 0.32139385, 0.11161885, 0.633022, -0.76604444, -0.60760427, -0.5665108, -0.5566704, -3.0999987, 0, 16)
@@ -1206,7 +1234,6 @@ respawnOnActivation = true
 
 [node name="Spear" parent="RampageAct/Opening/SpearGroup2/SpearCull2" instance=ExtResource("8_k3vjq")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -40)
-moveSpeed = 60.0
 
 [node name="SpearCull3" type="Node3D" parent="RampageAct/Opening/SpearGroup2"]
 transform = Transform3D(-0.92677635, 0.1268264, -0.3535534, 0.35355324, 0.61237216, -0.70710677, 0.1268265, -0.78032976, -0.6123724, 3.1000023, 0, 26.599998)
@@ -1216,7 +1243,6 @@ respawnOnActivation = true
 [node name="Spear" parent="RampageAct/Opening/SpearGroup2/SpearCull3" instance=ExtResource("8_k3vjq")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.1525574e-06, 0, -50)
 activationDelay = 0.4000000000087311
-moveSpeed = 60.0
 
 [node name="SpearCull4" type="Node3D" parent="RampageAct/Opening/SpearGroup2"]
 transform = Transform3D(-0.92677635, -0.1268264, 0.3535534, -0.35355324, 0.61237216, -0.70710677, -0.1268265, -0.78032976, -0.6123724, -3.0999985, 0, -50)
@@ -1226,7 +1252,6 @@ respawnOnActivation = true
 [node name="Spear" parent="RampageAct/Opening/SpearGroup2/SpearCull4" instance=ExtResource("8_k3vjq")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.3841858e-06, 0, -50)
 activationDelay = 0.4000000000087311
-moveSpeed = 60.0
 
 [node name="SpacePanel1" parent="RampageAct/Opening/SpearGroup2" instance=ExtResource("12")]
 transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 3.1000013, 0, 19.500002)
@@ -1386,7 +1411,7 @@ Movement/Angle = 0.0
 "Vertical Orientation" = true
 
 [node name="LaserRoot" type="Node3D" parent="RampageAct/WideStraight/Lap2Only/Laser1/MovingLaser"]
-transform = Transform3D(0.9999988, -5.913391e-17, 1.1368684e-13, 2.1345852e-14, 1, 1.9539925e-14, -1.4210855e-13, 0, 0.9999988, 0, 0, 0)
+transform = Transform3D(0.9999982, -5.913391e-17, 1.563194e-13, 3.2003995e-14, 1, 2.842171e-14, -2.1316282e-13, 0, 0.9999982, 0, 0, 0)
 
 [node name="LaserL" parent="RampageAct/WideStraight/Lap2Only/Laser1/MovingLaser/LaserRoot" instance=ExtResource("25_pr3a5")]
 transform = Transform3D(0.9999908, 1.4900887e-08, 4.47032e-07, 1.6967168e-13, 1.0000006, 1.0281799e-06, 5.9603522e-08, -1.3410826e-07, 0.99999106, -4.5, 0, 0)
@@ -1416,7 +1441,7 @@ Movement/Angle = 0.0
 "Vertical Orientation" = true
 
 [node name="LaserRoot" type="Node3D" parent="RampageAct/WideStraight/Lap2Only/Laser2/MovingLaser"]
-transform = Transform3D(0.9999988, -5.913391e-17, 1.1368684e-13, 2.1345852e-14, 1, 1.9539925e-14, -1.4210855e-13, 0, 0.9999988, 0, 1.2320004, 0)
+transform = Transform3D(0.9999982, -5.913391e-17, 1.563194e-13, 3.2003995e-14, 1, 2.842171e-14, -2.1316282e-13, 0, 0.9999982, 0, 1.2320004, 0)
 
 [node name="LaserL" parent="RampageAct/WideStraight/Lap2Only/Laser2/MovingLaser/LaserRoot" instance=ExtResource("25_pr3a5")]
 transform = Transform3D(0.9999908, 1.4900887e-08, 4.47032e-07, 1.6967168e-13, 1.0000006, 1.0281799e-06, 5.9603522e-08, -1.3410826e-07, 0.99999106, -4.5, 0, 0)
@@ -1625,6 +1650,9 @@ transform = Transform3D(1, 0, 6.3573026e-08, 0, 1, 0, -6.3573026e-08, 0, 1, 0, 5
 transform = Transform3D(1, 0, 6.3573026e-08, 0, 1, 0, -6.3573026e-08, 0, 1, 0, 7.5, -24)
 "Falling Platform Settings/Enabled" = false
 
+[node name="FireSoul1" parent="RampageAct/WideStraight/HourglassGroup1/SpacePlatform4" instance=ExtResource("23_q5f61")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, 0)
+
 [node name="Hourglass" parent="RampageAct/WideStraight/HourglassGroup1" instance=ExtResource("17_cgime")]
 transform = Transform3D(0.99999994, 0, 6.3573026e-08, 0, 1, 0, -6.357302e-08, 0, 1, 0, 4.3999996, 0)
 disableTeleportation = true
@@ -1824,6 +1852,11 @@ MiddleHeight = 12.0
 FinalHeight = -2.0
 Distance = 16.0
 
+[node name="Camera" type="Node3D" parent="RampageAct/WideStraight/CatapultGroup/Catapult"]
+script = ExtResource("26_1r6sj")
+settings = ExtResource("27_rf7sd")
+previousSettings = ExtResource("28_pdyya")
+
 [node name="PearlRing1" type="Node3D" parent="RampageAct/WideStraight/CatapultGroup"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 10.12, 9)
 script = ExtResource("4_302sa")
@@ -2020,7 +2053,11 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 9.57, 16.5)
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.6293945e-06, 11.519999, 24)
 
 [node name="SpaceBlock4" parent="RampageAct/WideStraight/CatapultGroup" instance=ExtResource("10_ptfc0")]
-transform = Transform3D(3, 0, 0, 0, 3, 0, 0, 0, 3, 0, 1.5, 33)
+transform = Transform3D(3, 0, 0, 0, 3, 0, 0, 0, 3, 7.6293945e-06, 1.5, 33)
+
+[node name="FireSoul2" parent="RampageAct/WideStraight/CatapultGroup" instance=ExtResource("23_q5f61")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 33)
+fireSoulIndex = 2
 
 [node name="MovingLaunchRing" type="Node3D" parent="RampageAct/WideStraight/CatapultGroup"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 17, 32)
@@ -2042,6 +2079,11 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 0, 0)
 MiddleHeight = 1.0
 FinalHeight = -15.0
 Distance = 30.0
+
+[node name="AimCamera" type="Node3D" parent="RampageAct/WideStraight/CatapultGroup/MovingLaunchRing/LaunchRing"]
+script = ExtResource("26_1r6sj")
+settings = ExtResource("32_pdyya")
+previousSettings = ExtResource("28_pdyya")
 
 [node name="SpearGroup6" parent="RampageAct/WideStraight" instance=ExtResource("5")]
 transform = Transform3D(-4.3711392e-08, 0, 1.0000001, 0, 1, 0, -1, 0, -4.371139e-08, 46.999985, 5, -130)
@@ -2203,6 +2245,7 @@ respawnOnActivation = true
 
 [node name="Spear" parent="RampageAct/Hairpins/SpearGroup7/SpearCull1" instance=ExtResource("8_k3vjq")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -50)
+activationDelay = 2.0
 moveSpeed = 50.0
 
 [node name="SpearCull2" type="Node3D" parent="RampageAct/Hairpins/SpearGroup7"]
@@ -2212,6 +2255,7 @@ respawnOnActivation = true
 
 [node name="Spear" parent="RampageAct/Hairpins/SpearGroup7/SpearCull2" instance=ExtResource("8_k3vjq")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -50)
+activationDelay = 2.0
 moveSpeed = 50.0
 
 [node name="SpearCull3" type="Node3D" parent="RampageAct/Hairpins/SpearGroup7"]
@@ -2221,6 +2265,7 @@ respawnOnActivation = true
 
 [node name="Spear" parent="RampageAct/Hairpins/SpearGroup7/SpearCull3" instance=ExtResource("8_k3vjq")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -40)
+activationDelay = 2.0
 moveSpeed = 50.0
 
 [node name="SpearCull4" type="Node3D" parent="RampageAct/Hairpins/SpearGroup7"]
@@ -2230,6 +2275,7 @@ respawnOnActivation = true
 
 [node name="Spear" parent="RampageAct/Hairpins/SpearGroup7/SpearCull4" instance=ExtResource("8_k3vjq")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -40)
+activationDelay = 2.0
 moveSpeed = 70.0
 
 [node name="SpacePanel1" parent="RampageAct/Hairpins/SpearGroup7" instance=ExtResource("12")]
@@ -2340,7 +2386,7 @@ Movement/Angle = 0.0
 "Vertical Orientation" = true
 
 [node name="Laser" parent="RampageAct/Hairpins/LaserGroup/Laser2/MovingLaser" instance=ExtResource("25_pr3a5")]
-transform = Transform3D(1, 0, 1.9073486e-06, 0, 1.0000006, 1.206994e-06, -2.9802322e-08, -1.4901161e-07, 1.0000005, 0, 0, 0)
+transform = Transform3D(1, 0, 2.6524067e-06, 0, 1.0000006, 1.2814999e-06, -2.9802322e-08, -1.4901161e-07, 1.0000004, 0, 0, 0)
 
 [node name="LaserPillarL" parent="RampageAct/Hairpins/LaserGroup/Laser2" instance=ExtResource("25_81smg")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.5, 0, 0)
@@ -2364,7 +2410,7 @@ Movement/Angle = 0.0
 "Vertical Orientation" = true
 
 [node name="Laser" parent="RampageAct/Hairpins/LaserGroup/Laser3/MovingLaser" instance=ExtResource("25_pr3a5")]
-transform = Transform3D(0.9999994, -1.7881393e-07, 3.5762787e-07, 9.536743e-07, 0.99999857, 5.8859587e-07, -1.1920929e-07, 1.4901161e-08, 0.99999875, 0, 0, 0)
+transform = Transform3D(0.9999994, -1.7881393e-07, 6.854534e-07, 1.296401e-06, 0.99999857, 5.1409006e-07, -8.940697e-08, 1.4901161e-08, 0.99999845, 0, 0, 0)
 
 [node name="LaserPillarL" parent="RampageAct/Hairpins/LaserGroup/Laser3" instance=ExtResource("25_81smg")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.5, 0, 0)
@@ -2388,7 +2434,7 @@ Movement/Angle = 0.0
 "Vertical Orientation" = true
 
 [node name="Laser" parent="RampageAct/Hairpins/LaserGroup/Laser4/MovingLaser" instance=ExtResource("25_pr3a5")]
-transform = Transform3D(1.0000149, 1.0430813e-07, -1.9967556e-06, -1.2665987e-07, 1.0000138, 8.4005296e-07, -1.7434359e-06, -3.3713877e-07, 1.0000015, 0, 3.4999995, 7.6293945e-06)
+transform = Transform3D(1.0000161, 9.685755e-08, -1.9967556e-06, -1.7881393e-07, 1.000015, 8.4005296e-07, -1.8924475e-06, -3.632158e-07, 1.0000015, 0, 3.4999995, 7.6293945e-06)
 
 [node name="LaserPillarL" parent="RampageAct/Hairpins/LaserGroup/Laser4" instance=ExtResource("25_81smg")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.5, 0, 0)
@@ -2509,13 +2555,13 @@ root = NodePath("GreenMajin")
 animator = NodePath("")
 Movement/Mode = 1
 "Movement/Cycle Length" = 8.0
-"Movement/Starting Offset" = 0.25
+"Movement/Starting Offset" = 0.75
 Movement/Distance = 6.0
 Movement/Angle = 90.0
 "Vertical Orientation" = false
 
 [node name="GreenMajin" parent="RampageAct/NarrowStraight/Lap1Only/MovingMajin1" instance=ExtResource("11_rfsid")]
-transform = Transform3D(1, 0, 6.989964e-13, 0, 1, 0, -6.989964e-13, 0, 1, -3, 0, 0)
+transform = Transform3D(1, 0, 9.325873e-13, 0, 1, 0, -9.325873e-13, 0, 1, -3, 0, 0)
 "Spawn Settings/Spawn Travel Time" = 1.0
 "Spawn Settings/Spawn Delay" = 0.0
 "Spawn Settings/Spawn Offset" = Vector3(20, 0, 0)
@@ -2537,13 +2583,13 @@ root = NodePath("GreenMajin")
 animator = NodePath("")
 Movement/Mode = 1
 "Movement/Cycle Length" = 8.0
-"Movement/Starting Offset" = 0.25
+"Movement/Starting Offset" = 0.74
 Movement/Distance = 6.0
 Movement/Angle = 90.0
 "Vertical Orientation" = false
 
 [node name="GreenMajin" parent="RampageAct/NarrowStraight/Lap1Only/MovingMajin2" instance=ExtResource("11_rfsid")]
-transform = Transform3D(1, 0, 7.0254913e-13, 0, 1, 0, -7.0254913e-13, 0, 1, -3, 0, 0)
+transform = Transform3D(1, 0, 8.268941e-13, 0, 1, 0, -8.268941e-13, 0, 1, -3.1799011, 0, 0)
 "Spawn Settings/Spawn Travel Time" = 1.0
 "Spawn Settings/Spawn Delay" = 0.0
 "Spawn Settings/Spawn Offset" = Vector3(-20, 0, 0)
@@ -2565,13 +2611,13 @@ root = NodePath("GreenMajin")
 animator = NodePath("")
 Movement/Mode = 1
 "Movement/Cycle Length" = 8.0
-"Movement/Starting Offset" = 0.25
+"Movement/Starting Offset" = 0.73
 Movement/Distance = 6.0
 Movement/Angle = 90.0
 "Vertical Orientation" = false
 
 [node name="GreenMajin" parent="RampageAct/NarrowStraight/Lap1Only/MovingMajin3" instance=ExtResource("11_rfsid")]
-transform = Transform3D(1, 0, 1.7097435e-12, 0, 1, 0, -1.7097435e-12, 0, 1, -3, 0, 0)
+transform = Transform3D(1, 0, 1.9619861e-12, 0, 1, 0, -1.9619861e-12, 0, 1, -3.3592377, 0, 0)
 "Spawn Settings/Spawn Travel Time" = 1.0
 "Spawn Settings/Spawn Delay" = 0.0
 "Spawn Settings/Spawn Offset" = Vector3(20, 0, 0)
@@ -2736,24 +2782,32 @@ transform = Transform3D(0.2303601, -0.2832474, 0.9309701, -0.05429487, 0.9514684
 respawnAnimation = 2
 eventAnimation = "event-deactivate"
 deactivateEventAnimation = "event"
+activationSpeedScale = 1.4
+deactivationSpeedScale = 1.4
 
 [node name="SpacePillar2" parent="RampageAct/NarrowStraight/Lap2Only/PillarGroup" instance=ExtResource("19_nhcr1")]
 transform = Transform3D(0.6786344, -0.2969248, 0.6717818, 0.008448258, 0.9177361, 0.39710107, -0.7344275, -0.26381108, 0.6253158, -3.5922182, 1.2897317, 19.220747)
 respawnAnimation = 2
 eventAnimation = "event-deactivate"
 deactivateEventAnimation = "event"
+activationSpeedScale = 1.2
+deactivationSpeedScale = 1.2
 
 [node name="SpacePillar3" parent="RampageAct/NarrowStraight/Lap2Only/PillarGroup" instance=ExtResource("19_nhcr1")]
 transform = Transform3D(0.9350316, -0.25566536, 0.24566485, 0.16317593, 0.9254165, 0.34202015, -0.31478506, -0.279713, 0.9070121, -17.747576, -0.4380238, 28.946196)
 respawnAnimation = 2
 eventAnimation = "event-deactivate"
 deactivateEventAnimation = "event"
+activationSpeedScale = 0.8
+deactivationSpeedScale = 0.8
 
 [node name="SpacePillar4" parent="RampageAct/NarrowStraight/Lap2Only/PillarGroup" instance=ExtResource("19_nhcr1")]
 transform = Transform3D(0.9750824, -0.1413145, -0.17101003, 0.17101006, 0.96984637, 0.17364818, 0.14131445, -0.19856575, 0.96984625, -34.721207, -3.5860744, 30.090755)
 respawnAnimation = 2
 eventAnimation = "event-deactivate"
 deactivateEventAnimation = "event"
+activationSpeedScale = 0.6
+deactivationSpeedScale = 0.6
 
 [node name="HourglassGroup2" type="Node3D" parent="RampageAct/NarrowStraight"]
 transform = Transform3D(1, 0, 7.1054274e-15, 0, 1, 0, -7.1054274e-15, 0, 1, 0, 0, 0)
@@ -2878,7 +2932,7 @@ Movement/Angle = 0.0
 "Vertical Orientation" = true
 
 [node name="SpaceBlock" parent="RampageAct/NarrowStraight/MovingPlatform" instance=ExtResource("10_ptfc0")]
-transform = Transform3D(4, 0, 7.3896445e-13, 0, 1, 0, -7.3896445e-13, 0, 4, 0, 0, 0)
+transform = Transform3D(4, 0, 1.0231815e-12, 0, 1, 0, -1.0231815e-12, 0, 4, 0, 0, 0)
 
 [node name="StageTrigger" parent="RampageAct/NarrowStraight/MovingPlatform" instance=ExtResource("5")]
 OneShot = true
@@ -2895,6 +2949,20 @@ transform = Transform3D(1, 0, 3.5527137e-14, 0, 1, 0, -3.5527137e-14, 0, 1, -6.1
 "Secondary Settings/Final Height" = 0.0
 "Secondary Settings/Distance" = 50.0
 Distance = 40.0
+
+[node name="AimCamera" type="Node3D" parent="RampageAct/NarrowStraight/LaunchRing"]
+transform = Transform3D(1, 0, 7.1054274e-15, 0, 1, 0, -7.1054274e-15, 0, 1, 0, 0, 0)
+script = ExtResource("26_1r6sj")
+settings = ExtResource("36_fsbri")
+previousSettings = ExtResource("28_pdyya")
+
+[node name="LaunchCamera" type="Node3D" parent="RampageAct/NarrowStraight/LaunchRing"]
+transform = Transform3D(0.9659258, 0, -0.25881898, 0, 1, 0, 0.25881898, 0, 0.9659258, -5.9923897, 0, 35.825676)
+script = ExtResource("26_1r6sj")
+transitionType = 1
+deactivateTransitionType = 1
+settings = ExtResource("35_rf7sd")
+previousSettings = ExtResource("28_pdyya")
 
 [node name="SpacePlatform2" parent="RampageAct/NarrowStraight" instance=ExtResource("16_ebngl")]
 transform = Transform3D(5, 0, 0, 0, 1, 0, 0, 0, 6, 0, 28, 71.5)
@@ -3016,6 +3084,10 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -12)
 
 [node name="Child06" parent="RampageAct/NarrowStraight/GrindGroup/Grindrail1/Grindrail2/Grindrail3/Rings3" instance=ExtResource("5_t4uac")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -15)
+
+[node name="SpacePlatform3" parent="RampageAct/NarrowStraight" instance=ExtResource("16_ebngl")]
+transform = Transform3D(5, 0, 5.684342e-14, 0, 1, 0, -5.684342e-14, 0, 5, -4.5776367e-05, 28, 70.99997)
+"Falling Platform Settings/Animator" = NodePath("../SpacePlatform2/AnimationPlayer")
 
 [node name="ChandelierL2" parent="RampageAct/NarrowStraight" instance=ExtResource("18_tvwxn")]
 transform = Transform3D(1, 0, 3.5527137e-14, 0, 1, 0, -3.5527137e-14, 0, 1, 5, 28, 62.5)
@@ -3196,6 +3268,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0)
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -96.212135, 5, 156.78787)
 script = ExtResource("8_l8hmm")
 saveVisibilityOnCheckpoint = true
+respawnOnActivation = true
 cacheRespawnMethods = true
 
 [node name="Lap2Only" type="Node3D" parent="RampageAct/End"]
@@ -3357,7 +3430,11 @@ transform = Transform3D(-1, 0, -8.940697e-08, 0, 1, 0, 8.940697e-08, 0, -1, 0, 8
 SpawnMode = 1
 
 [node name="Cage" parent="RampageAct/End/HourglassGroup" instance=ExtResource("34_lnrty")]
-transform = Transform3D(-8.940697e-08, 0, 1, 0, 1, 0, -1, 0, -8.940697e-08, 0, 9.01, 40.5)
+transform = Transform3D(-8.940697e-08, 0, 1, 0, 1, 0, -1, 0, -8.940697e-08, 0, -2.01, 40.5)
+
+[node name="FireSoul3" parent="RampageAct/End/HourglassGroup/Cage" instance=ExtResource("23_q5f61")]
+fireSoulIndex = 3
+isTimeBreakOnly = true
 
 [node name="EventTrigger" type="Node3D" parent="RampageAct/End/HourglassGroup" node_paths=PackedStringArray("animator")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 12.5)
@@ -3430,7 +3507,7 @@ transform = Transform3D(7, 0, 0, 0, 4, 0, 0, 0, 8, 0, -15, 12.5)
 transform = Transform3D(18, 0, 0, 0, 6, 0, 0, 0, 19, 0, -10, 26.25)
 
 [node name="SpaceBlockBottom2" parent="RampageAct/End/HourglassGroup/EventTrigger" instance=ExtResource("10_ptfc0")]
-transform = Transform3D(10.000001, 0, 0, 0, 2, 0, 0, 0, 10.000001, 0, -3, 26)
+transform = Transform3D(10.000001, 0, 0, 0, 2, 0, 0, 0, 10.000001, 0, -4, 26)
 
 [node name="SpaceBlockTop1" parent="RampageAct/End/HourglassGroup/EventTrigger" instance=ExtResource("10_ptfc0")]
 transform = Transform3D(7.071068, 0, 7.071068, 0, 1, 0, -7.071068, 0, 7.071068, 0, 30, 26)
@@ -3467,7 +3544,7 @@ Movement/Angle = 0.0
 "Vertical Orientation" = true
 
 [node name="LaserRoot" type="Node3D" parent="RampageAct/End/Laser2/MovingLaser"]
-transform = Transform3D(1, 5.9133594e-17, 0, 2.6349677e-15, 1, -1.5987212e-14, 6.039613e-14, 0, 0.99999994, 0, 3.5000005, 0)
+transform = Transform3D(1, 5.9133594e-17, 0, 2.634967e-15, 1, -2.4868996e-14, 9.592327e-14, 0, 0.99999994, 0, 3.5000005, 0)
 
 [node name="LaserL" parent="RampageAct/End/Laser2/MovingLaser/LaserRoot" instance=ExtResource("25_pr3a5")]
 transform = Transform3D(0.9999908, 1.4900887e-08, 4.47032e-07, 1.6967168e-13, 1.0000006, 1.0281799e-06, 5.9603522e-08, -1.3410826e-07, 0.99999106, -4.5, 0, 0)
@@ -3517,7 +3594,7 @@ Movement/Angle = 0.0
 "Vertical Orientation" = true
 
 [node name="LaserRoot" type="Node3D" parent="RampageAct/End/Laser3/MovingLaser"]
-transform = Transform3D(1, 8.881765e-16, -3.5527137e-15, 1.3322676e-15, 1, 1.7763568e-15, 0, -3.5527137e-14, 0.99999994, 0, 3.5000005, 0)
+transform = Transform3D(1, 8.8817546e-16, -3.5527137e-15, 1.3322676e-15, 1, 1.7763568e-15, 0, -5.3290705e-14, 0.99999994, 0, 3.5000005, 0)
 
 [node name="LaserL" parent="RampageAct/End/Laser3/MovingLaser/LaserRoot" instance=ExtResource("25_pr3a5")]
 transform = Transform3D(0.9999908, 1.4900887e-08, 4.47032e-07, 1.6967168e-13, 1.0000006, 1.0281799e-06, 5.9603522e-08, -1.3410826e-07, 0.99999106, -4.5, 0, 0)
@@ -3657,6 +3734,12 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30.167881, -4.9686213, 32.027
 [connection signal="ObjectHit" from="RampageAct/WideStraight/SpearGroup5/SpearCull2/Spear" to="RampageAct/WideStraight/SpearGroup5/SpacePanel2" method="Shatter"]
 [connection signal="ObjectHit" from="RampageAct/WideStraight/SpearGroup5/SpearCull3/Spear" to="RampageAct/WideStraight/SpearGroup5/SpacePanel3" method="Shatter"]
 [connection signal="ObjectHit" from="RampageAct/WideStraight/SpearGroup5/SpearCull4/Spear" to="RampageAct/WideStraight/SpearGroup5/SpacePanel4" method="Shatter"]
+[connection signal="Activated" from="RampageAct/WideStraight/CatapultGroup/Catapult" to="RampageAct/WideStraight/CatapultGroup/Catapult/Camera" method="Deactivate"]
+[connection signal="PlayerEntered" from="RampageAct/WideStraight/CatapultGroup/Catapult" to="RampageAct/WideStraight/CatapultGroup/Catapult/Camera" method="Activate"]
+[connection signal="PlayerExited" from="RampageAct/WideStraight/CatapultGroup/Catapult" to="RampageAct/WideStraight/CatapultGroup/Catapult/Camera" method="Deactivate"]
+[connection signal="Activated" from="RampageAct/WideStraight/CatapultGroup/MovingLaunchRing/LaunchRing" to="RampageAct/WideStraight/CatapultGroup/MovingLaunchRing/LaunchRing/AimCamera" method="Deactivate"]
+[connection signal="Entered" from="RampageAct/WideStraight/CatapultGroup/MovingLaunchRing/LaunchRing" to="RampageAct/WideStraight/CatapultGroup/MovingLaunchRing/LaunchRing/AimCamera" method="Activate"]
+[connection signal="Exited" from="RampageAct/WideStraight/CatapultGroup/MovingLaunchRing/LaunchRing" to="RampageAct/WideStraight/CatapultGroup/MovingLaunchRing/LaunchRing/AimCamera" method="Deactivate"]
 [connection signal="Respawned" from="RampageAct/WideStraight/SpearGroup6" to="RampageAct/WideStraight/SpearGroup6/SpearCull1" method="Deactivate"]
 [connection signal="Respawned" from="RampageAct/WideStraight/SpearGroup6" to="RampageAct/WideStraight/SpearGroup6/SpearCull2" method="Deactivate"]
 [connection signal="Respawned" from="RampageAct/WideStraight/SpearGroup6" to="RampageAct/WideStraight/SpearGroup6/SpearCull3" method="Deactivate"]
@@ -3696,9 +3779,13 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30.167881, -4.9686213, 32.027
 [connection signal="ObjectHit" from="RampageAct/NarrowStraight/SpearGroup8/SpearCull4/Spear" to="RampageAct/NarrowStraight/SpearGroup8/SpacePanel4" method="Shatter"]
 [connection signal="Activated" from="RampageAct/NarrowStraight/MovingPlatform/StageTrigger" to="RampageAct/NarrowStraight/MovingPlatform" method="Unpause"]
 [connection signal="Respawned" from="RampageAct/NarrowStraight/MovingPlatform/StageTrigger" to="RampageAct/NarrowStraight/MovingPlatform" method="Pause"]
+[connection signal="Activated" from="RampageAct/NarrowStraight/LaunchRing" to="RampageAct/NarrowStraight/LaunchRing/LaunchCamera" method="Activate"]
+[connection signal="Deactivated" from="RampageAct/NarrowStraight/LaunchRing" to="RampageAct/NarrowStraight/LaunchRing/LaunchCamera" method="Deactivate"]
 [connection signal="Entered" from="RampageAct/NarrowStraight/LaunchRing" to="RampageAct/NarrowStraight/Lap1Only/MovingMajin1/GreenMajin" method="Spawn"]
 [connection signal="Entered" from="RampageAct/NarrowStraight/LaunchRing" to="RampageAct/NarrowStraight/Lap1Only/MovingMajin2/GreenMajin" method="Spawn"]
 [connection signal="Entered" from="RampageAct/NarrowStraight/LaunchRing" to="RampageAct/NarrowStraight/Lap1Only/MovingMajin3/GreenMajin" method="Spawn"]
+[connection signal="Entered" from="RampageAct/NarrowStraight/LaunchRing" to="RampageAct/NarrowStraight/LaunchRing/AimCamera" method="Activate"]
+[connection signal="Exited" from="RampageAct/NarrowStraight/LaunchRing" to="RampageAct/NarrowStraight/LaunchRing/AimCamera" method="Deactivate"]
 [connection signal="Respawned" from="RampageAct/NarrowStraight/SpearGroup9" to="RampageAct/NarrowStraight/SpearGroup9/SpearCull1" method="Deactivate"]
 [connection signal="Respawned" from="RampageAct/NarrowStraight/SpearGroup9" to="RampageAct/NarrowStraight/SpearGroup9/SpearCull2" method="Deactivate"]
 [connection signal="Respawned" from="RampageAct/NarrowStraight/SpearGroup9" to="RampageAct/NarrowStraight/SpearGroup9/SpearCull3" method="Deactivate"]
@@ -3712,6 +3799,14 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30.167881, -4.9686213, 32.027
 [connection signal="Activated" from="RampageAct/End/HourglassGroup/Hourglass" to="RampageAct/End/HourglassGroup/BlueMajin" method="Spawn"]
 [connection signal="Activated" from="RampageAct/End/HourglassGroup/Hourglass" to="RampageAct/End/HourglassGroup/RedMajin" method="Spawn"]
 [connection signal="Activated" from="RampageAct/End/HourglassGroup/Hourglass" to="RampageAct/End/HourglassGroup/EventTrigger" method="Activate"]
+[connection signal="Respawned" from="RampageAct/End/HourglassGroup/EventTrigger" to="RampageAct/End/HourglassGroup/EventTrigger/SpacePillarR1" method="Respawn"]
+[connection signal="Respawned" from="RampageAct/End/HourglassGroup/EventTrigger" to="RampageAct/End/HourglassGroup/EventTrigger/SpacePillarL1" method="Respawn"]
+[connection signal="Respawned" from="RampageAct/End/HourglassGroup/EventTrigger" to="RampageAct/End/HourglassGroup/EventTrigger/SpacePillarR2" method="Respawn"]
+[connection signal="Respawned" from="RampageAct/End/HourglassGroup/EventTrigger" to="RampageAct/End/HourglassGroup/EventTrigger/SpacePillarL2" method="Respawn"]
+[connection signal="Respawned" from="RampageAct/End/HourglassGroup/EventTrigger" to="RampageAct/End/HourglassGroup/EventTrigger/ChandelierL1" method="Respawn"]
+[connection signal="Respawned" from="RampageAct/End/HourglassGroup/EventTrigger" to="RampageAct/End/HourglassGroup/EventTrigger/ChandelierR1" method="Respawn"]
+[connection signal="Respawned" from="RampageAct/End/HourglassGroup/EventTrigger" to="RampageAct/End/HourglassGroup/EventTrigger/ChandelierL2" method="Respawn"]
+[connection signal="Respawned" from="RampageAct/End/HourglassGroup/EventTrigger" to="RampageAct/End/HourglassGroup/EventTrigger/ChandelierR2" method="Respawn"]
 
 [editable path="Static"]
 [editable path="RampageAct/WideStraight/HourglassGroup1/SpacePlatform1"]

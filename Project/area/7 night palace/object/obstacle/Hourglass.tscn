@@ -18,7 +18,7 @@ crossfade = true
 [node name="Hourglass" parent="." node_paths=PackedStringArray("animator") instance=ExtResource("1_tgpdv")]
 script = ExtResource("2_la6o2")
 animator = NodePath("AnimationPlayer")
-"Trigger Settings/Automatically Respawn" = true
+"Trigger Settings/Automatically Respawn" = false
 "Trigger Settings/Is One Shot" = true
 "Trigger Settings/Animation Blending" = 0.0
 "Trigger Settings/Player Stand-in" = NodePath("")
@@ -53,6 +53,7 @@ collision_mask = 2
 [node name="CollisionShape3D" type="CollisionShape3D" parent="LockonTrigger"]
 shape = SubResource("CylinderShape3D_oo4ps")
 
+[connection signal="Respawned" from="." to="Hourglass" method="Respawn"]
 [connection signal="area_entered" from="LockonTrigger" to="." method="OnEntered"]
 [connection signal="area_exited" from="LockonTrigger" to="." method="OnExited"]
 
