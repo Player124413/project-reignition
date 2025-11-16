@@ -1,0 +1,173 @@
+[gd_scene load_steps=13 format=3 uid="uid://bpk2a7t5ag3lk"]
+
+[ext_resource type="Script" uid="uid://bombt0pmk6rai" path="res://area/7 night palace/boss/script/InfiniteHallway.cs" id="1_c5vpy"]
+[ext_resource type="Script" uid="uid://kvlmbv66orqt" path="res://object/trigger/modules/CullingTrigger.cs" id="2_v42lc"]
+[ext_resource type="PackedScene" uid="uid://68st06xyjgvp" path="res://object/stage/pickups/RichRing.tscn" id="3_6nr6q"]
+[ext_resource type="Script" uid="uid://dd24u7rlj0dwl" path="res://addons/custom_nodes/script/ObjectGenerator.cs" id="4_0u442"]
+[ext_resource type="PackedScene" uid="uid://c7l8mr7ubn848" path="res://object/stage/pickups/Ring.tscn" id="5_qe0h3"]
+[ext_resource type="PackedScene" uid="uid://v2hbw6y70jr3" path="res://object/stage/pickups/RichPearl.tscn" id="6_p2let"]
+[ext_resource type="PackedScene" uid="uid://dabbmb7ger5ba" path="res://area/7 night palace/boss/environment/NPBoss.tscn" id="7_xnr41"]
+[ext_resource type="PackedScene" uid="uid://bn6wr6l8s3qyt" path="res://object/trigger/StageTrigger.tscn" id="8_sagd8"]
+[ext_resource type="PackedScene" uid="uid://tdw4f3w4e2vb" path="res://area/7 night palace/boss/environment/NPBossLOD.tscn" id="9_1nc1i"]
+[ext_resource type="PackedScene" uid="uid://bu03uey4xyy57" path="res://area/7 night palace/boss/environment/model/NPBossLOD.gltf" id="10_pnsdw"]
+[ext_resource type="PackedScene" uid="uid://b0q8m6sooyjll" path="res://area/7 night palace/boss/environment/collision/Collision.tscn" id="11_o5lkw"]
+
+[sub_resource type="BoxShape3D" id="10"]
+size = Vector3(20, 30, 5)
+
+[node name="InfiniteHall" type="Node3D" node_paths=PackedStringArray("hallRoot", "itemBundle", "primaryCollision", "secondaryCollision")]
+script = ExtResource("1_c5vpy")
+hallRoot = NodePath("HallRoot")
+itemBundle = NodePath("ItemBundle")
+itemBundleInterval = PackedInt32Array(8, 16, 0)
+primaryCollision = NodePath("PrimaryCollision")
+secondaryCollision = NodePath("SecondaryCollision")
+
+[node name="ItemBundle" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -58)
+script = ExtResource("2_v42lc")
+startEnabled = true
+respawnOnActivation = true
+cacheRespawnMethods = true
+
+[node name="RichRing" parent="ItemBundle" instance=ExtResource("3_6nr6q")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+
+[node name="Rings" type="Node3D" parent="ItemBundle"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5, 0)
+script = ExtResource("4_0u442")
+Source = ExtResource("5_qe0h3")
+Amount = 4
+Shape = 0
+Orientation = 1
+Spacing = 1.2
+"Horizontal Offset" = null
+"Vertical Offset" = null
+metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
+
+[node name="Child01" parent="ItemBundle/Rings" instance=ExtResource("5_qe0h3")]
+
+[node name="Child02" parent="ItemBundle/Rings" instance=ExtResource("5_qe0h3")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, 0)
+
+[node name="Child03" parent="ItemBundle/Rings" instance=ExtResource("5_qe0h3")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.4, 0)
+
+[node name="Child04" parent="ItemBundle/Rings" instance=ExtResource("5_qe0h3")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.6000001, 0)
+
+[node name="PearlRing" type="Node3D" parent="ItemBundle"]
+transform = Transform3D(0.94832367, 0, 0.31730464, 0, 1, 0, -0.31730464, 0, 0.94832367, 0, 0.6, 0)
+script = ExtResource("4_0u442")
+Source = ExtResource("6_p2let")
+Amount = 5
+Shape = 1
+Orientation = 0
+"Ring Size" = 1.0
+"Ring Ratio" = 1.0
+metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
+
+[node name="Child01" parent="ItemBundle/PearlRing" instance=ExtResource("6_p2let")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0, 0)
+
+[node name="Child02" parent="ItemBundle/PearlRing" instance=ExtResource("6_p2let")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.30901682, 0, 0.9510566)
+
+[node name="Child03" parent="ItemBundle/PearlRing" instance=ExtResource("6_p2let")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.809017, 0, 0.5877852)
+
+[node name="Child04" parent="ItemBundle/PearlRing" instance=ExtResource("6_p2let")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.80901694, 0, -0.58778536)
+
+[node name="Child05" parent="ItemBundle/PearlRing" instance=ExtResource("6_p2let")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.3090173, 0, -0.9510565)
+
+[node name="HallRoot" parent="." instance=ExtResource("7_xnr41")]
+physics_interpolation_mode = 2
+
+[node name="ReverseTrigger" parent="HallRoot" instance=ExtResource("8_sagd8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.1920929e-07, -1, -17.999977)
+"Enter Mode" = 2
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="HallRoot/ReverseTrigger"]
+transform = Transform3D(1, 0, -5.58794e-09, 0, 1, 0, 5.58794e-09, 0, 1, 0, 15, 0)
+shape = SubResource("10")
+
+[node name="Hall2" parent="HallRoot" instance=ExtResource("7_xnr41")]
+transform = Transform3D(0.999848, 0, 0.0174526, 0, 1, 0, -0.0174524, 0, 0.999858, 0, 0, -87)
+
+[node name="Hall3" parent="HallRoot/Hall2" instance=ExtResource("7_xnr41")]
+transform = Transform3D(0.999848, 0, 0.0174524, 0, 1, 0, -0.0174524, 0, 0.999848, 0, 0, -87)
+
+[node name="Hall4" parent="HallRoot/Hall2/Hall3" instance=ExtResource("7_xnr41")]
+transform = Transform3D(0.999849, 0, 0.0174512, 0, 1, 0, -0.0174515, 0, 0.999829, 0, 0, -87)
+
+[node name="Hall5" parent="HallRoot/Hall2/Hall3/Hall4" instance=ExtResource("7_xnr41")]
+transform = Transform3D(0.999848, 0, 0.0174524, 0, 1, 0, -0.0174524, 0, 0.999848, -6.67572e-06, 0, -87)
+
+[node name="Hall6" parent="HallRoot/Hall2/Hall3/Hall4/Hall5" instance=ExtResource("7_xnr41")]
+transform = Transform3D(0.999848, 0, 0.0174524, 0, 1, 0, -0.0174524, 0, 0.999848, 0, 0, -87)
+
+[node name="LOD1" parent="HallRoot/Hall2/Hall3/Hall4/Hall5/Hall6" instance=ExtResource("9_1nc1i")]
+transform = Transform3D(0.999848, 0, 0.0174524, 0, 1, 0, -0.0174524, 0, 0.999848, 9.53674e-06, 0, -87)
+
+[node name="LOD2" parent="HallRoot/Hall2/Hall3/Hall4/Hall5/Hall6/LOD1" instance=ExtResource("9_1nc1i")]
+transform = Transform3D(0.999848, 0, 0.0174524, 0, 1, 0, -0.0174524, 0, 0.999848, -5.72205e-06, 0, -87.0001)
+
+[node name="LOD3" parent="HallRoot/Hall2/Hall3/Hall4/Hall5/Hall6/LOD1/LOD2" instance=ExtResource("10_pnsdw")]
+transform = Transform3D(0.999848, 0, 0.0174524, 0, 1, 0, -0.0174524, 0, 0.999848, -3.8147e-06, 0, -87)
+
+[node name="LOD4" parent="HallRoot/Hall2/Hall3/Hall4/Hall5/Hall6/LOD1/LOD2/LOD3" instance=ExtResource("9_1nc1i")]
+transform = Transform3D(0.999848, 0, 0.0174524, 0, 1, 0, -0.0174524, 0, 0.999848, 0, 0, -87.0001)
+
+[node name="AdvanceTrigger" parent="HallRoot/Hall2" instance=ExtResource("8_sagd8")]
+transform = Transform3D(1, 0, -1.49012e-08, 0, 1, 0, 1.49012e-08, 0, 1, -0.628286, -1, -36.0057)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="HallRoot/Hall2/AdvanceTrigger"]
+transform = Transform3D(1, 0, -5.58794e-09, 0, 1, 0, 5.58794e-09, 0, 1, 0, 15, 0)
+shape = SubResource("10")
+
+[node name="PrimaryCollision" parent="." instance=ExtResource("11_o5lkw")]
+visible = false
+
+[node name="AdvanceTrigger" parent="PrimaryCollision" instance=ExtResource("8_sagd8")]
+transform = Transform3D(0.999848, 0, 0.0174524, 0, 1, 0, -0.0174524, 0, 0.999848, 0, -1, -100)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="PrimaryCollision/AdvanceTrigger"]
+transform = Transform3D(1, 0, -5.58794e-09, 0, 1, 0, 5.58794e-09, 0, 1, 0, 15, 0)
+shape = SubResource("10")
+
+[node name="ReverseTrigger" parent="PrimaryCollision" instance=ExtResource("8_sagd8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1, 80)
+"Enter Mode" = 2
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="PrimaryCollision/ReverseTrigger"]
+transform = Transform3D(1, 0, -5.58794e-09, 0, 1, 0, 5.58794e-09, 0, 1, 0, 15, 0)
+shape = SubResource("10")
+
+[node name="SecondaryCollision" parent="." instance=ExtResource("11_o5lkw")]
+transform = Transform3D(0.999847, 0, 0.0174524, 0, 1, 0, -0.0174524, 0, 0.999847, 0, 0, -87)
+visible = false
+
+[node name="AdvanceTrigger" parent="SecondaryCollision" instance=ExtResource("8_sagd8")]
+transform = Transform3D(0.9998477, 0, 0.017452406, 0, 1, 0, -0.017452406, 0, 0.9998477, 0, -1, -100)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="SecondaryCollision/AdvanceTrigger"]
+transform = Transform3D(1, 0, -5.58794e-09, 0, 1, 0, 5.58794e-09, 0, 1, 0, 15, 0)
+shape = SubResource("10")
+
+[node name="ReverseTrigger" parent="SecondaryCollision" instance=ExtResource("8_sagd8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1, 80)
+"Enter Mode" = 2
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="SecondaryCollision/ReverseTrigger"]
+transform = Transform3D(1, 0, -5.58794e-09, 0, 1, 0, 5.58794e-09, 0, 1, 0, 15, 0)
+shape = SubResource("10")
+
+[connection signal="RespawnItemBundle" from="." to="ItemBundle" method="Activate"]
+[connection signal="Activated" from="HallRoot/ReverseTrigger" to="." method="AdvanceHall" binds= [-1]]
+[connection signal="Activated" from="HallRoot/Hall2/AdvanceTrigger" to="." method="AdvanceHall" binds= [1]]
+[connection signal="Activated" from="PrimaryCollision/AdvanceTrigger" to="." method="AdvanceCollision" binds= [true, 1]]
+[connection signal="Activated" from="PrimaryCollision/ReverseTrigger" to="." method="AdvanceCollision" binds= [true, -1]]
+[connection signal="Activated" from="SecondaryCollision/AdvanceTrigger" to="." method="AdvanceCollision" binds= [false, 1]]
+[connection signal="Activated" from="SecondaryCollision/ReverseTrigger" to="." method="AdvanceCollision" binds= [false, -1]]
