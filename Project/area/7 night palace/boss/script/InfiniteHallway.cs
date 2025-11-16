@@ -35,6 +35,7 @@ public partial class InfiniteHallway : Node3D
 	public override void _Ready()
 	{
 		StageSettings.Instance.Respawned += Respawn;
+		Respawn();
 	}
 
 	public override void _PhysicsProcess(double _)
@@ -49,9 +50,9 @@ public partial class InfiniteHallway : Node3D
 		hallRoot.GlobalTransform = Transform3D.Identity;
 		primaryCollision.GlobalTransform = Transform3D.Identity;
 		secondaryCollision.GlobalTransform = Transform3D.Identity;
-		itemBundleIndex = 0;
-		itemBundleCounter = 0;
 		MoveNode(secondaryCollision, 1);
+		itemBundleIndex = 0;
+		itemBundleCounter = itemBundleInterval[itemBundleIndex] - 2;
 	}
 
 	/// <summary>
@@ -60,8 +61,8 @@ public partial class InfiniteHallway : Node3D
 	/// </summary>
 	public void AdvanceHall(int direction)
 	{
-		ProcessItemBundle(direction);
 		MoveNode(hallRoot, direction);
+		ProcessItemBundle(direction);
 	}
 
 	/// <summary>
@@ -88,17 +89,24 @@ public partial class InfiniteHallway : Node3D
 		if (itemBundleIndex >= itemBundleInterval.Length) // Finished spawning item bundles
 			return;
 
-		itemBundleCounter += itemBundleCounter + direction;
-		if (Mathf.Abs(itemBundleCounter) < itemBundleInterval[itemBundleIndex])
+		itemBundleCounter += direction;
+		if (itemBundleCounter < itemBundleInterval[itemBundleIndex] && itemBundleCounter >= 0)
 			return;
 
 		EmitSignal(SignalName.ItemBundleRespawned);
 
 		itemBundle.GlobalTransform = hallRoot.GlobalTransform;
-		for (int i = 0; i < itemBundleCounter; i++) // Move item bundle the correct distance away
-			MoveNode(itemBundle, direction); // Each iteration moves the item bundle one chunk
+		itemBundle.ResetPhysicsInterpolation();
 
-		itemBundleCounter = 0; // Reset item bundle counter
+		if (direction > 0)
+		{
+			MoveNode(itemBundle, itemBundleInterval[itemBundleIndex] - 1); // Move item bundle the correct distance away
+			itemBundleCounter = 0; // Reset item bundle counter
+		}
+		else
+		{
+			itemBundleCounter = itemBundleInterval[itemBundleIndex] - 1; // Reset item bundle counter
+		}
 	}
 
 	/// <summary>
@@ -108,8 +116,7 @@ public partial class InfiniteHallway : Node3D
 	public void AdvanceCollision(bool isPrimaryPiece, int direction)
 	{
 		Node3D targetPiece = isPrimaryPiece ? primaryCollision : secondaryCollision;
-		for (int i = 0; i < 2; i++) // Perform twice to skip over the current collision piece
-			MoveNode(targetPiece, direction);
+		MoveNode(targetPiece, direction * 2); // Perform twice to skip over the current collision piece
 	}
 
 	/// <summary>
@@ -117,12 +124,19 @@ public partial class InfiniteHallway : Node3D
 	/// </summary>
 	private void MoveNode(Node3D node, int direction)
 	{
-		if (direction == -1)
+		if (direction == 0)
+			return;
+
+		if (direction < 0)
 			node.Rotation -= Vector3.Up * Mathf.DegToRad(CollisionPieceRotation);
 
-		node.GlobalPosition += node.Forward() * direction * CollisionPieceSpacing;
+		node.GlobalPosition += node.Forward() * Mathf.Sign(direction) * CollisionPieceSpacing;
 
-		if (direction == 1)
+		if (direction > 0)
 			node.Rotation += Vector3.Up * Mathf.DegToRad(CollisionPieceRotation);
+		node.ResetPhysicsInterpolation();
+
+		direction -= Mathf.Sign(direction);
+		MoveNode(node, direction);
 	}
 }
