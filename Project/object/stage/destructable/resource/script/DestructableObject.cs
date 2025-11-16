@@ -311,7 +311,7 @@ public partial class DestructableObject : Node3D
 			return;
 		}
 
-		if (FlagSetting.HasFlag(ShatterFlags.SpeedBreak) && Player.Skills.IsSpeedBreakActive)
+		if (FlagSetting.HasFlag(ShatterFlags.SpeedBreak) && Player.Skills.IsSpeedBreakActive && !Player.Skills.IsSpeedBreakCharging)
 		{
 			Shatter();
 			return;
