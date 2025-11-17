@@ -9,6 +9,7 @@ public partial class TimeAttackNewRun : Menu
 	[Export] AnimationPlayer newRunAnimator;
 	[Export] private Description description;
 	[Export] TimeAttack thisParent;
+	[Export] SaveSelect saveSelect;
 	private bool isActive;
 	private int currentSelection;
 	private int maxSelection = 4;
@@ -21,7 +22,7 @@ public partial class TimeAttackNewRun : Menu
 	public override void ShowMenu()
 	{
 		base.ShowMenu();
-		//menuMemory[MemoryKeys.ActiveMenu] = (int)MemoryKeys.TimeAttack;
+		currentSelection = 1;
 	}
 
 	public override void OpenParentMenu()
@@ -72,7 +73,17 @@ public partial class TimeAttackNewRun : Menu
 	}
 
 	public void PlayReturnAnimParent(int selection) => thisParent.PlayReturnAnim(selection);
-	public void PlayReturnAnim(int selection) => newRunAnimator.Play("return-" + selection);
+	public override void PlayReturnAnim()
+	{
+		newRunAnimator.Play("return-" + currentSelection);
+	}
 	public void SetActive() => isActive = true;
 	public void SetInactive() => isActive = false;
+
+	public void OpenSaveSelect()
+	{
+		saveSelect.Visible = true;
+		saveSelect.parentMenu = this;
+		saveSelect.ShowMenu();
+	}
 }

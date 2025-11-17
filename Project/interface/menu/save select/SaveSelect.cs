@@ -25,7 +25,9 @@ public partial class SaveSelect : Menu
 
 	protected override void SetUp()
 	{
-		VerticalSelection = menuMemory[MemoryKeys.SaveSelect];
+		if (menuMemory[MemoryKeys.ActiveMenu] != (int)MemoryKeys.TimeAttack)//If the last menu selected was time attack, DON'T set the memory keys
+			VerticalSelection = menuMemory[MemoryKeys.SaveSelect];
+
 		scrollRatio = VerticalSelection / (SaveManager.SaveSlotCount - 1.0f);
 
 		for (int i = 0; i < saveOptions.Count; i++)
@@ -86,7 +88,13 @@ public partial class SaveSelect : Menu
 			return;
 		}
 
-		base.Cancel();
+		if (menuMemory[MemoryKeys.ActiveMenu] != (int)MemoryKeys.TimeAttack)
+			base.Cancel();
+		else
+		{
+			parentMenu.PlayReturnAnim();
+			animator.Play("cancel-for-time-attack");
+		}
 	}
 
 	private void ShowDeleteMenu()
@@ -138,16 +146,21 @@ public partial class SaveSelect : Menu
 			SaveManager.ResetSaveData(SaveManager.ActiveSaveSlotIndex, false);
 			SaveManager.SaveGameData();
 
-			if (!DebugManager.Instance.UseDemoSave) // Don't load into cutscenes in the demo
+			if (menuMemory[MemoryKeys.ActiveMenu] != (int)MemoryKeys.TimeAttack)//Don't load a scene if we are in the time attack menu
 			{
-				// Load directly into the first cutscene
-				TransitionManager.QueueSceneChange($"{TransitionManager.EventScenePath}1.tscn");
-				TransitionManager.StartTransition(new()
+				if (!DebugManager.Instance.UseDemoSave) // Don't load into cutscenes in the demo
 				{
-					color = Colors.Black,
-					inSpeed = 1f,
-				});
+					// Load directly into the first cutscene
+					TransitionManager.QueueSceneChange($"{TransitionManager.EventScenePath}1.tscn");
+					TransitionManager.StartTransition(new()
+					{
+						color = Colors.Black,
+						inSpeed = 1f,
+					});
+				}
+
 			}
+
 		}
 
 		if (DebugManager.Instance.UseDemoSave || OS.IsDebugBuild()) // Unlock all worlds in the demo

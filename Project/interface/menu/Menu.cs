@@ -119,7 +119,45 @@ public partial class Menu : Control
 		}
 		parentMenu.ShowMenu();
 	}
+
+	public virtual void OpenParentMenu(bool playReturnAnim)
+	{
+		if (parentMenu == null)
+		{
+			GD.PrintErr($"No parent menu found for '{Name}'.");
+			return;
+		}
+		if (!playReturnAnim)
+			parentMenu.ShowMenu();
+		else
+			parentMenu.PlayReturnAnim();
+
+	}
+
+	public virtual void OpenParentMenu(bool playReturnAnim, int animNum)
+	{
+		if (parentMenu == null)
+		{
+			GD.PrintErr($"No parent menu found for '{Name}'.");
+			return;
+		}
+		if (!playReturnAnim)
+			parentMenu.ShowMenu();
+		else
+			parentMenu.PlayReturnAnim(animNum);
+
+	}
 	public virtual void OpenSubmenu() => GD.PrintErr($"Submenus unimplemented on '{Name}'.");
+
+	public virtual void PlayReturnAnim()
+	{
+		animator.Play("return");
+	}
+
+	public virtual void PlayReturnAnim(int animNum)
+	{
+		animator.Play("return-" + animNum);
+	}
 
 	/// <summary> How long between each interval selection. </summary>
 	protected float cursorSelectionTimer;

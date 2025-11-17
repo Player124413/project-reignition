@@ -20,6 +20,7 @@ public partial class TimeAttack : Menu
 	public override void ShowMenu()
 	{
 		base.ShowMenu();
+		currentSelection = 1;
 		menuMemory[MemoryKeys.ActiveMenu] = (int)MemoryKeys.TimeAttack;
 	}
 
