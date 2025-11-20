@@ -172,6 +172,10 @@ public partial class Ivy : Launcher
 			if (ExtensionMethods.DeltaAngleRad(Player.MovementAngle, forwardAngle) >= Mathf.Pi * 0.5f)
 				amount *= -1;
 		}
+		else if (rotationVelocity < 0) // Invert incoming force if swinging backwards
+		{
+			amount *= -1;
+		}
 
 		IsSleeping = false;
 		rotationVelocity += amount * lengthInfluence;
