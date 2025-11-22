@@ -80,7 +80,7 @@ public partial class TimeAttack : Menu
 			OpenParentMenu();
 	}
 
-	public void PlayReturnAnim(int selection) => timeAttackAnimator.Play("return-" + selection);
+	public override void PlayReturnAnim() => timeAttackAnimator.Play("return-" + currentSelection);
 	public void SetActive() => isActive = true;
 	public void SetInactive() => isActive = false;
 }

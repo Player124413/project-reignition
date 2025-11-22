@@ -23,6 +23,11 @@ public partial class SaveSelect : Menu
 	private bool isDeleteMenuActive;
 	private bool isDeleteSelected;
 
+	[Export]
+	private string descriptionText;
+	[Export]
+	private Description description;
+
 	protected override void SetUp()
 	{
 		if (menuMemory[MemoryKeys.ActiveMenu] != (int)MemoryKeys.TimeAttack)//If the last menu selected was time attack, DON'T set the memory keys
@@ -211,4 +216,6 @@ public partial class SaveSelect : Menu
 			_saveOptions[i].SaveIndex = saveIndex;
 		}
 	}
+
+	public void SetDescriptionText() => description.Text = descriptionText;
 }
