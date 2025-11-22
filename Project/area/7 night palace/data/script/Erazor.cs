@@ -58,7 +58,7 @@ public partial class Erazor : Node3D
 	/// <summary> The preferred distance when far from the player. </summary>
 	private readonly float FarDistance = 30f;
 	/// <summary> The preferred distance when attacking the player. </summary>
-	private readonly float CloseDistance = 10f;
+	private readonly float CloseDistance = 9f;
 	/// <summary> Use more smoothing to allow evasion via backflips. </summary>
 	private readonly float BackflipSmoothing = 5f;
 	/// <summary> Snappy smoothing to ensure attacks connect. </summary>
