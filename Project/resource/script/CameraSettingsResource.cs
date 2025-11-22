@@ -49,7 +49,7 @@ public partial class CameraSettingsResource : Resource
 
 		if (!copyPosition)
 		{
-			properties.Add(ExtensionMethods.CreateProperty(DistanceKey, Variant.Type.Float, PropertyHint.Range, "0,30,.1"));
+			properties.Add(ExtensionMethods.CreateProperty(DistanceKey, Variant.Type.Float, PropertyHint.Range, "0,50,.1"));
 			properties.Add(ExtensionMethods.CreateProperty(BackstepDistanceKey, Variant.Type.Float, PropertyHint.Range, "0,10,.1"));
 			properties.Add(ExtensionMethods.CreateProperty(HomingAttackDistanceKey, Variant.Type.Bool));
 			properties.Add(ExtensionMethods.CreateProperty(DistanceModeKey, Variant.Type.Int, PropertyHint.Enum, distanceCalculationMode.EnumToString()));

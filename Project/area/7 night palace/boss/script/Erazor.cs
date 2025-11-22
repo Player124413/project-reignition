@@ -9,6 +9,8 @@ public partial class Erazor : Node3D
 	[Export] private AnimationTree animationTree;
 	[Export] private PathFollow3D bossPathFollower;
 	[Export] private CameraTrigger cutsceneCamera;
+	[Export] private CameraTrigger duelCamera;
+	[Export] private LockoutTrigger recenterLockout;
 
 	[Export] private string[] attackPatterns;
 	/// <summary> Tracks the index of the current phase. </summary>
@@ -63,6 +65,11 @@ public partial class Erazor : Node3D
 	private readonly float HorizontalTrackingSmoothing = 10f;
 	/// <summary> The maximum amount Erazor can track horizontally. </summary>
 	private readonly float MaxHorizontalTracking = 5f;
+	/// <summary> How fast to move towards the player during the duel. </summary>
+	private readonly float DuelSpeed = 30f;
+	private readonly float DuelDistance = 60f;
+	/// <summary> The distance at which the Duel Slash comes out. </summary>
+	private readonly float SlashDistance = 8f;
 
 	/// ANIMATION PARAMETERS
 	private readonly string IntroCutsceneID = "np_boss_intro";
@@ -88,6 +95,10 @@ public partial class Erazor : Node3D
 
 	public void Respawn()
 	{
+		cutsceneCamera.Deactivate();
+		duelCamera.Deactivate();
+		recenterLockout.Deactivate();
+
 		CurrentFightState = FightState.Idle;
 
 		currentHealth = MaxHealth;
@@ -190,6 +201,9 @@ public partial class Erazor : Node3D
 	{
 		switch (CurrentFightState)
 		{
+			case FightState.Duel:
+				ProcessDuel();
+				break;
 			case FightState.Introduction:
 				if ((Input.IsActionJustPressed("sys_pause") || Input.IsActionJustPressed("button_jump")) &&
 					SaveManager.ActiveGameData.CanSkipCutscene(IntroCutsceneID))
@@ -223,7 +237,13 @@ public partial class Erazor : Node3D
 		}
 
 		// TODO Change animation based on Duel State
-		if (CurrentFightState != FightState.Hitstun)
+		if (CurrentFightState == FightState.Duel)
+		{
+			AttackStatePlayback.Start($"attack-d-damage");
+			cutsceneCamera.Activate();
+			CurrentFightState = FightState.Hitstun;
+		}
+		else if (CurrentFightState != FightState.Hitstun)
 		{
 			animationTree.Set(DamageTrigger, (int)AnimationNodeOneShot.OneShotRequest.Fire);
 			animationTree.Set(AttackTrigger, (int)AnimationNodeOneShot.OneShotRequest.FadeOut);
@@ -255,6 +275,9 @@ public partial class Erazor : Node3D
 
 	private void UpdatePosition()
 	{
+		if (CurrentFightState == FightState.Duel)
+			return;
+
 		float targetProgress = PlayerPathFollower.Progress + currentDistance;
 		float smoothing = DistanceSmoothing;
 		if (Player.IsHomingAttacking || CurrentFightState == FightState.Hitstun || PlayerPathFollower.IsAheadOfPoint(GlobalPosition))
@@ -307,7 +330,7 @@ public partial class Erazor : Node3D
 
 		if (currentCharacter == 'd')
 		{
-			GD.Print("STARTING A DUEL...");
+			StartDuel();
 		}
 		else if (currentCharacter == 'c' || currentCharacter == 'f')
 		{
@@ -354,6 +377,70 @@ public partial class Erazor : Node3D
 			stateTimer = teleportDelays[currentAttackPatternIndex];
 	}
 
+	public void StartDuel()
+	{
+		CurrentFightState = FightState.Duel;
+		AttackStatePlayback.Start($"attack-d-charge");
+		animationTree.Set(AttackSpeed, attackSpeedScales[currentAttackPatternIndex]);
+		animationTree.Set(AttackTrigger, (int)AnimationNodeOneShot.OneShotRequest.Fire);
+
+		// Quick Transition
+		TransitionManager.StartTransition(new()
+		{
+			inSpeed = 0f,
+			outSpeed = .2f,
+			color = Colors.Black
+		});
+		TransitionManager.FinishTransition();
+		duelCamera.Activate();
+		recenterLockout.Activate();
+		currentDistance = DuelDistance;
+		SnapDistance();
+
+		// TODO Edit the timing
+		stateTimer = 5f;
+	}
+
+	public void ProcessDuel()
+	{
+		if (Mathf.IsZeroApprox(stateTimer))
+			currentDistance = Mathf.MoveToward(currentDistance, 0, DuelSpeed * PhysicsManager.physicsDelta);
+
+		bossPathFollower.Progress = PlayerPathFollower.Progress + currentDistance;
+		if (currentDistance <= SlashDistance && !Player.IsHomingAttacking)
+		{
+			TransitionManager.StartTransition(new()
+			{
+				inSpeed = 0f,
+				outSpeed = .2f,
+				color = Colors.Black
+			});
+			TransitionManager.FinishTransition();
+			cutsceneCamera.Activate();
+			StartAttackStrike();
+			bossPathFollower.Progress = PlayerPathFollower.Progress;
+
+			// TODO Play special animation for Sonic
+			Player.TakeDamage();
+		}
+	}
+
+	public void FinishDuel()
+	{
+		CurrentFightState = FightState.Idle;
+		stateTimer = teleportDelays[currentAttackPatternIndex];
+
+		TransitionManager.StartTransition(new()
+		{
+			inSpeed = 0f,
+			outSpeed = .2f,
+			color = Colors.Black
+		});
+		TransitionManager.FinishTransition();
+		cutsceneCamera.Deactivate();
+		recenterLockout.Deactivate();
+	}
+
 	public void StartAttackWindup()
 	{
 		CurrentFightState = FightState.AttackWindup;
@@ -373,7 +460,7 @@ public partial class Erazor : Node3D
 		CurrentFightState = FightState.AttackStrike;
 	}
 
-	private void FinishAttackStrike()
+	public void FinishAttackStrike()
 	{
 		CurrentFightState = FightState.Idle;
 		stateTimer = attackDelays[currentAttackPatternIndex];
