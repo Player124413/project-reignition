@@ -11,6 +11,7 @@ public partial class Erazor : Node3D
 	[Export] private CameraTrigger cutsceneCamera;
 	[Export] private CameraTrigger duelCamera;
 	[Export] private LockoutTrigger recenterLockout;
+	[Export] private LockoutTrigger stopLockout;
 
 	[Export] private string[] attackPatterns;
 	/// <summary> Tracks the index of the current phase. </summary>
@@ -38,6 +39,7 @@ public partial class Erazor : Node3D
 		AttackWindup,
 		AttackStrike,
 		Duel,
+		DuelHitstun,
 		Defeated,
 	}
 
@@ -66,7 +68,7 @@ public partial class Erazor : Node3D
 	/// <summary> The maximum amount Erazor can track horizontally. </summary>
 	private readonly float MaxHorizontalTracking = 5f;
 	/// <summary> How fast to move towards the player during the duel. </summary>
-	private readonly float DuelSpeed = 30f;
+	private readonly float DuelSpeed = 60f;
 	private readonly float DuelDistance = 60f;
 	/// <summary> The distance at which the Duel Slash comes out. </summary>
 	private readonly float SlashDistance = 8f;
@@ -98,6 +100,7 @@ public partial class Erazor : Node3D
 		cutsceneCamera.Deactivate();
 		duelCamera.Deactivate();
 		recenterLockout.Deactivate();
+		stopLockout.Deactivate();
 
 		CurrentFightState = FightState.Idle;
 
@@ -199,11 +202,15 @@ public partial class Erazor : Node3D
 
 	public override void _PhysicsProcess(double _)
 	{
+		UpdateDamage();
+
 		switch (CurrentFightState)
 		{
 			case FightState.Duel:
-				ProcessDuel();
-				break;
+				UpdateDuel();
+				return;
+			case FightState.DuelHitstun:
+				return;
 			case FightState.Introduction:
 				if ((Input.IsActionJustPressed("sys_pause") || Input.IsActionJustPressed("button_jump")) &&
 					SaveManager.ActiveGameData.CanSkipCutscene(IntroCutsceneID))
@@ -225,6 +232,20 @@ public partial class Erazor : Node3D
 		UpdatePosition();
 	}
 
+	private void UpdateDamage()
+	{
+		if (!isHeadHitboxEntered)
+			return;
+
+		if (!Player.IsHomingAttacking)
+			return;
+
+		if (CurrentFightState == FightState.DuelHitstun)
+			return;
+
+		TakeDamage();
+	}
+
 	public void TakeDamage()
 	{
 		currentHealth -= CurrentFightState == FightState.Duel ? 6 : 1;
@@ -239,15 +260,18 @@ public partial class Erazor : Node3D
 		// TODO Change animation based on Duel State
 		if (CurrentFightState == FightState.Duel)
 		{
-			AttackStatePlayback.Start($"attack-d-damage");
-			cutsceneCamera.Activate();
-			CurrentFightState = FightState.Hitstun;
+			StartDuelResultAnimation(true);
 		}
-		else if (CurrentFightState != FightState.Hitstun)
+		else
 		{
-			animationTree.Set(DamageTrigger, (int)AnimationNodeOneShot.OneShotRequest.Fire);
-			animationTree.Set(AttackTrigger, (int)AnimationNodeOneShot.OneShotRequest.FadeOut);
-			CurrentFightState = FightState.Hitstun;
+			if (CurrentFightState != FightState.Hitstun)
+			{
+				animationTree.Set(DamageTrigger, (int)AnimationNodeOneShot.OneShotRequest.Fire);
+				animationTree.Set(AttackTrigger, (int)AnimationNodeOneShot.OneShotRequest.FadeOut);
+				CurrentFightState = FightState.Hitstun;
+			}
+
+			Player.StartBounce();
 		}
 
 		if ((currentAttackPatternIndex == 0 && currentHealth <= 20) || (currentAttackPatternIndex == 1 && currentHealth <= 7))
@@ -275,9 +299,6 @@ public partial class Erazor : Node3D
 
 	private void UpdatePosition()
 	{
-		if (CurrentFightState == FightState.Duel)
-			return;
-
 		float targetProgress = PlayerPathFollower.Progress + currentDistance;
 		float smoothing = DistanceSmoothing;
 		if (Player.IsHomingAttacking || CurrentFightState == FightState.Hitstun || PlayerPathFollower.IsAheadOfPoint(GlobalPosition))
@@ -381,7 +402,7 @@ public partial class Erazor : Node3D
 	{
 		CurrentFightState = FightState.Duel;
 		AttackStatePlayback.Start($"attack-d-charge");
-		animationTree.Set(AttackSpeed, attackSpeedScales[currentAttackPatternIndex]);
+		animationTree.Set(AttackSpeed, 1f);
 		animationTree.Set(AttackTrigger, (int)AnimationNodeOneShot.OneShotRequest.Fire);
 
 		// Quick Transition
@@ -398,37 +419,62 @@ public partial class Erazor : Node3D
 		SnapDistance();
 
 		// TODO Edit the timing
-		stateTimer = 5f;
+		stateTimer = 2f;
 	}
 
-	public void ProcessDuel()
+	public void UpdateDuel()
 	{
+		stateTimer = Mathf.MoveToward(stateTimer, 0, PhysicsManager.physicsDelta);
 		if (Mathf.IsZeroApprox(stateTimer))
 			currentDistance = Mathf.MoveToward(currentDistance, 0, DuelSpeed * PhysicsManager.physicsDelta);
 
 		bossPathFollower.Progress = PlayerPathFollower.Progress + currentDistance;
 		if (currentDistance <= SlashDistance && !Player.IsHomingAttacking)
-		{
-			TransitionManager.StartTransition(new()
-			{
-				inSpeed = 0f,
-				outSpeed = .2f,
-				color = Colors.Black
-			});
-			TransitionManager.FinishTransition();
-			cutsceneCamera.Activate();
-			StartAttackStrike();
-			bossPathFollower.Progress = PlayerPathFollower.Progress;
+			StartDuelResultAnimation(false);
+	}
 
-			// TODO Play special animation for Sonic
+	private void StartDuelResultAnimation(bool isSuccess)
+	{
+		TransitionManager.StartTransition(new()
+		{
+			inSpeed = 0f,
+			outSpeed = .2f,
+			color = Colors.Black
+		});
+		TransitionManager.FinishTransition();
+
+		if (isSuccess)
+			AttackStatePlayback.Start($"attack-d-damage");
+		else
+			StartAttackStrike();
+
+		stopLockout.Activate();
+		Player.MoveSpeed = 0;
+		Player.SnapToGround();
+
+		cutsceneCamera.Activate();
+		currentDistance = 0f;
+		SnapDistance();
+
+		// Play special animation for Sonic
+		if (isSuccess)
+		{
+			Player.StateMachine.ResetStateMachine();
+			Player.Animator.PlayOneshotAnimation("np_duel_success");
+			CurrentFightState = FightState.DuelHitstun;
+		}
+		else
+		{
 			Player.TakeDamage();
+			Player.StartInvincibility();
+			Player.Animator.PlayOneshotAnimation("np_duel_fail");
 		}
 	}
 
 	public void FinishDuel()
 	{
 		CurrentFightState = FightState.Idle;
-		stateTimer = teleportDelays[currentAttackPatternIndex];
+		stateTimer = 0f;
 
 		TransitionManager.StartTransition(new()
 		{
@@ -437,8 +483,16 @@ public partial class Erazor : Node3D
 			color = Colors.Black
 		});
 		TransitionManager.FinishTransition();
+
+		// Reset animations
+		animationTree.Set(AttackTrigger, (int)AnimationNodeOneShot.OneShotRequest.Abort);
+		currentDistance = CloseDistance;
+		SnapDistance();
+		Player.Animator.CancelOneshot();
+
 		cutsceneCamera.Deactivate();
 		recenterLockout.Deactivate();
+		stopLockout.Deactivate();
 	}
 
 	public void StartAttackWindup()
@@ -479,12 +533,7 @@ public partial class Erazor : Node3D
 			return;
 
 		isHeadHitboxEntered = true;
-
-		if (Player.IsHomingAttacking)
-		{
-			TakeDamage();
-			Player.StartBounce();
-		}
+		UpdateDamage();
 	}
 
 	public void OnHeadExited(Area3D a)
