@@ -1,4 +1,4 @@
-[gd_scene load_steps=94 format=3 uid="uid://dpjlgmdlddjik"]
+[gd_scene load_steps=96 format=3 uid="uid://dpjlgmdlddjik"]
 
 [ext_resource type="Script" uid="uid://w1r45ql607mg" path="res://area/7 night palace/data/script/Erazor.cs" id="1"]
 [ext_resource type="PackedScene" uid="uid://dfgdf7gg3d62t" path="res://area/7 night palace/boss/data/model/Erazor.gltf" id="2"]
@@ -6,7 +6,6 @@
 [ext_resource type="PackedScene" uid="uid://dka47yji7vx6d" path="res://area/7 night palace/boss/data/model/Chain.gltf" id="3"]
 [ext_resource type="PackedScene" uid="uid://bfctfevmdhs6a" path="res://area/7 night palace/boss/data/model/ChainEnd.gltf" id="4"]
 [ext_resource type="Script" uid="uid://pnh70abopq8e" path="res://object/stage/common/resource/script/Hazard.cs" id="4_shf07"]
-[ext_resource type="Script" uid="uid://dfk7w7cwojprf" path="res://area/7 night palace/data/script/ErazorChain.cs" id="5"]
 [ext_resource type="Texture2D" uid="uid://co46e7yqpktgn" path="res://area/7 night palace/boss/data/effect/sword attack.png" id="9"]
 [ext_resource type="Texture2D" uid="uid://dkv8vit4cnvoa" path="res://area/7 night palace/boss/data/effect/sword smoke.png" id="10"]
 [ext_resource type="Material" uid="uid://c2lqqtvy2q1xp" path="res://effect/particle/material/environment/Common Dust.tres" id="11_10ncd"]
@@ -43,6 +42,16 @@ radius = 0.7
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_ye8st"]
 size = Vector3(0.5, 1, 3)
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_446as"]
+radius = 0.4
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_d1xp1"]
+radius = 0.1
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_d1xp1"]
+radius = 0.05
+height = 0.25
 
 [sub_resource type="Gradient" id="31"]
 offsets = PackedFloat32Array(0, 0.866953, 1)
@@ -345,6 +354,9 @@ windupDelays = PackedFloat32Array(0.3, 0.2, 0.1)
 
 [node name="Erazor" parent="." instance=ExtResource("2")]
 
+[node name="AnimationPlayer" parent="Erazor" index="1"]
+callback_mode_process = 0
+
 [node name="HeadAttachment" type="Node3D" parent="."]
 transform = Transform3D(0.9998235, 4.950049e-07, -4.950048e-07, -4.949895e-07, 0.99985427, 2.8741292e-07, 4.9498965e-07, -2.8741258e-07, 0.99985456, -1.12708975e-07, 7.2600017, 2.5939093e-05)
 script = ExtResource("2_xu0gp")
@@ -362,7 +374,7 @@ monitorable = false
 shape = SubResource("2")
 
 [node name="EdgeAttachment" type="Node3D" parent="."]
-transform = Transform3D(0.20416826, 0.9459465, -0.25148165, 0.95118386, -0.252323, -0.17681293, -0.23073797, -0.20314524, -0.95140904, 4.147947, 6.7127714, 2.1578724)
+transform = Transform3D(3.1557384e-08, 0.965805, -0.25877836, 0.9998377, 1.9468284e-07, 8.4847125e-07, 8.699422e-07, -0.25878677, -0.96577364, 4.1420135, 6.082181, 2.2401326)
 script = ExtResource("2_xu0gp")
 skeleton = NodePath("../Erazor/ErazorRoot/Skeleton3D")
 boneName = &"edge"
@@ -380,97 +392,216 @@ script = ExtResource("4_shf07")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2)
 shape = SubResource("BoxShape3D_ye8st")
 
-[node name="ChainAttachment" type="BoneAttachment3D" parent="."]
-transform = Transform3D(0.9789272, 0.20420116, -0.0019091552, -0.19798586, 0.9513387, 0.23612744, 0.05003373, -0.23077364, 0.97171986, 4.567634, 6.510125, -1.1940831)
-bone_name = "chain"
-bone_idx = 37
-use_external_skeleton = true
-external_skeleton = NodePath("../Erazor/ErazorRoot/Skeleton3D")
+[node name="ChainAttachment" type="Node3D" parent="."]
+transform = Transform3D(1, -3.67887e-07, -1.6080851e-14, 0, -4.371139e-08, 1, -3.67887e-07, -1, -4.371139e-08, 4.4252667, 6.685099, -1.0693915)
+script = ExtResource("2_xu0gp")
+skeleton = NodePath("../Erazor/ErazorRoot/Skeleton3D")
+boneName = &"chain"
+boneIndex = 37
 
-[node name="Controller" type="Node3D" parent="ChainAttachment" node_paths=PackedStringArray("childChain")]
-transform = Transform3D(1.0000001, -5.9604595e-08, -2.9802289e-08, 5.9604606e-08, 0.99999994, -3.5527128e-15, 2.9802303e-08, 1.7763598e-15, 0.99999964, 0, 0, 0)
-script = ExtResource("5")
-childChain = NodePath("../ChainPieces/Chain1")
-gravity = 9.81
+[node name="SickleCollider" type="StaticBody3D" parent="ChainAttachment"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.5)
+collision_layer = 16
+collision_mask = 0
 
-[node name="ChainPieces" type="Node3D" parent="ChainAttachment"]
-transform = Transform3D(0.177427, -0.630464, 0.755669, 0.469653, 0.729017, 0.497956, -0.864839, 0.266551, 0.425447, 1.78467, -6.18668, 0.794713)
+[node name="CollisionShape3D" type="CollisionShape3D" parent="ChainAttachment/SickleCollider"]
+transform = Transform3D(0.866025, 0.49999908, 3.0267972e-07, 0.49999937, -0.8660259, -5.821375e-07, -3.390706e-07, -1.7897926e-07, -0.99999964, 0.14999925, -0.25980446, -0.055274896)
+shape = SubResource("CapsuleShape3D_446as")
 
-[node name="Chain1" parent="ChainAttachment/ChainPieces" node_paths=PackedStringArray("parentChain", "childChain") instance=ExtResource("3")]
-transform = Transform3D(0.8648386, -0.49667993, 0.07323491, -0.26655132, -0.57786787, -0.7713745, -0.42544657, -0.64759374, 0.63215286, 3.306787, 5.4282975, 1.3962436)
-script = ExtResource("5")
-parentChain = NodePath("../../Controller")
-childChain = NodePath("../Chain2")
-chainSize = 0.031
+[node name="ChainRoot" type="StaticBody3D" parent="ChainAttachment"]
+transform = Transform3D(0.9999996, 0, 0, 0, 1, 0, 0, 0, 0.99999946, 0, 0, 0)
+collision_layer = 16
+collision_mask = 0
 
-[node name="Chain2" parent="ChainAttachment/ChainPieces" node_paths=PackedStringArray("parentChain", "childChain") instance=ExtResource("3")]
-transform = Transform3D(0.073234946, 0.9973137, 0.0014075917, -0.7713749, 0.055749014, 0.6339343, 0.6321532, -0.047511935, 0.77338505, 3.4433699, 5.4291406, 1.3953037)
-script = ExtResource("5")
-parentChain = NodePath("../Chain1")
-childChain = NodePath("../Chain3")
-chainSize = 0.15
+[node name="CollisionShape3D" type="CollisionShape3D" parent="ChainAttachment/ChainRoot"]
+shape = SubResource("SphereShape3D_d1xp1")
 
-[node name="Chain3" parent="ChainAttachment/ChainPieces" node_paths=PackedStringArray("parentChain", "childChain") instance=ExtResource("3")]
-transform = Transform3D(-0.0014076018, -0.9999961, 0.0023993165, -0.6339347, -0.0009632751, -0.77338576, -0.77338547, 0.0026096296, 0.63393056, 3.5793943, 5.4302516, 1.3961449)
-script = ExtResource("5")
-parentChain = NodePath("../Chain2")
-childChain = NodePath("../Chain4")
-chainSize = 0.15
+[node name="Joint1" type="PinJoint3D" parent="ChainAttachment"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.05, 0)
+node_a = NodePath("../ChainRoot")
+node_b = NodePath("../Chain1")
 
-[node name="Chain4" parent="ChainAttachment/ChainPieces" node_paths=PackedStringArray("parentChain", "childChain") instance=ExtResource("3")]
-transform = Transform3D(0.0023993219, 0.99848014, -0.05505861, -0.7733862, 0.03675635, 0.6328686, 0.63393086, 0.04106312, 0.7722986, 3.7170773, 5.4411397, 1.3970385)
-script = ExtResource("5")
-parentChain = NodePath("../Chain3")
-childChain = NodePath("../Chain5")
-chainSize = 0.15
+[node name="Chain1" type="RigidBody3D" parent="ChainAttachment"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.05, 0)
+collision_layer = 0
+collision_mask = 16
+mass = 0.4
 
-[node name="Chain5" parent="ChainAttachment/ChainPieces" node_paths=PackedStringArray("parentChain", "childChain") instance=ExtResource("3")]
-transform = Transform3D(0.055058677, -0.99773985, -0.03851782, -0.63286895, -0.0050341445, -0.77424234, -0.772299, -0.0670055, 0.6317155, 3.8533483, 5.4330935, 1.3954864)
-script = ExtResource("5")
-parentChain = NodePath("../Chain4")
-childChain = NodePath("../Chain6")
-chainSize = 0.15
+[node name="Chain" parent="ChainAttachment/Chain1" instance=ExtResource("3")]
+transform = Transform3D(1.0000001, 1.8626451e-09, 3.7252903e-09, -4.656613e-09, 1.0000001, -1.4901161e-08, 0, 0, 1.0000001, 0, 0, 0)
 
-[node name="Chain6" parent="ChainAttachment/ChainPieces" node_paths=PackedStringArray("parentChain", "childChain") instance=ExtResource("3")]
-transform = Transform3D(-0.038517892, 0.9992574, -0.0010022317, -0.7742427, -0.029210253, 0.63221425, 0.63171583, 0.025127536, 0.77479243, 3.9893394, 5.432924, 1.3958011)
-script = ExtResource("5")
-parentChain = NodePath("../Chain5")
-childChain = NodePath("../Chain7")
-chainSize = 0.15
+[node name="CollisionShape3D" type="CollisionShape3D" parent="ChainAttachment/Chain1"]
+shape = SubResource("CapsuleShape3D_d1xp1")
 
-[node name="Chain7" parent="ChainAttachment/ChainPieces" node_paths=PackedStringArray("parentChain", "childChain") instance=ExtResource("3")]
-transform = Transform3D(0.0010021777, -0.9987653, 0.049666148, -0.63221455, -0.03911383, -0.7738052, -0.77479285, 0.03062418, 0.6314729, 4.1296573, 5.4431033, 1.3972387)
-script = ExtResource("5")
-parentChain = NodePath("../Chain6")
-childChain = NodePath("../Chain8")
-chainSize = 0.15
+[node name="Joint2" type="PinJoint3D" parent="ChainAttachment"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.125, 0)
+node_a = NodePath("../Chain1")
+node_b = NodePath("../Chain2")
 
-[node name="Chain8" parent="ChainAttachment/ChainPieces" node_paths=PackedStringArray("parentChain", "childChain") instance=ExtResource("3")]
-transform = Transform3D(0.049666204, 0.99750865, 0.050096728, -0.7738056, 0.0067180465, 0.63338745, 0.6314733, -0.070223086, 0.7722111, 4.2626486, 5.434536, 1.3956375)
-script = ExtResource("5")
-parentChain = NodePath("../Chain7")
-childChain = NodePath("../Chain9")
-chainSize = 0.15
+[node name="Chain2" type="RigidBody3D" parent="ChainAttachment"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.2, 0)
+collision_layer = 0
+collision_mask = 16
+mass = 0.4
 
-[node name="Chain9" parent="ChainAttachment/ChainPieces" node_paths=PackedStringArray("parentChain", "childChain") instance=ExtResource("3")]
-transform = Transform3D(-0.050096802, -0.9981854, 0.033408463, -0.63338774, 0.00588949, -0.77381194, -0.7722115, 0.059926026, 0.63253313, 4.4017005, 5.4413614, 1.3966432)
-script = ExtResource("5")
-parentChain = NodePath("../Chain8")
-childChain = NodePath("../Chain10")
-chainSize = 0.15
+[node name="Chain" parent="ChainAttachment/Chain2" instance=ExtResource("3")]
+transform = Transform3D(-4.3711392e-08, 0, 1.0000001, 0, 1.0000001, 0, -1.0000001, 0, -4.3711392e-08, 0, 0, 0)
 
-[node name="Chain10" parent="ChainAttachment/ChainPieces" node_paths=PackedStringArray("parentChain", "childChain") instance=ExtResource("3")]
-transform = Transform3D(0.033408437, 0.9979335, 0.054886315, -0.77381235, -0.008928973, 0.6333519, 0.6325335, -0.063631006, 0.77191454, 4.535064, 5.4300427, 1.3964477)
-script = ExtResource("5")
-parentChain = NodePath("../Chain9")
-childChain = NodePath("../ChainEnd")
-chainSize = 0.15
+[node name="CollisionShape3D" type="CollisionShape3D" parent="ChainAttachment/Chain2"]
+shape = SubResource("CapsuleShape3D_d1xp1")
 
-[node name="ChainEnd" parent="ChainAttachment/ChainPieces" node_paths=PackedStringArray("parentChain") instance=ExtResource("4")]
-transform = Transform3D(-0.054886334, -0.99272305, 0.107183404, -0.63335216, -0.0483728, -0.77235013, -0.771915, 0.110276334, 0.626088, 4.6298785, 5.440719, 1.3933859)
-script = ExtResource("5")
-parentChain = NodePath("../Chain10")
-chainSize = 0.1
+[node name="Joint3" type="PinJoint3D" parent="ChainAttachment"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.27499998, 0)
+node_a = NodePath("../Chain2")
+node_b = NodePath("../Chain3")
+
+[node name="Chain3" type="RigidBody3D" parent="ChainAttachment"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.35, 0)
+collision_layer = 0
+collision_mask = 16
+mass = 0.4
+
+[node name="Chain" parent="ChainAttachment/Chain3" instance=ExtResource("3")]
+transform = Transform3D(1.0000001, 1.8626451e-09, 3.7252903e-09, -4.656613e-09, 1.0000001, -1.4901161e-08, 0, 0, 1.0000001, 0, 0, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="ChainAttachment/Chain3"]
+shape = SubResource("CapsuleShape3D_d1xp1")
+
+[node name="Joint4" type="PinJoint3D" parent="ChainAttachment"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.42499998, 0)
+node_a = NodePath("../Chain3")
+node_b = NodePath("../Chain4")
+
+[node name="Chain4" type="RigidBody3D" parent="ChainAttachment"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+collision_layer = 0
+collision_mask = 16
+mass = 0.4
+
+[node name="Chain" parent="ChainAttachment/Chain4" instance=ExtResource("3")]
+transform = Transform3D(-4.3711392e-08, 0, 1.0000001, 0, 1.0000001, 0, -1.0000001, 0, -4.3711392e-08, 0, 0, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="ChainAttachment/Chain4"]
+shape = SubResource("CapsuleShape3D_d1xp1")
+
+[node name="Joint5" type="PinJoint3D" parent="ChainAttachment"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.55, 0)
+node_a = NodePath("../Chain4")
+node_b = NodePath("../Chain5")
+
+[node name="Chain5" type="RigidBody3D" parent="ChainAttachment"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.65000004, 0)
+collision_layer = 0
+collision_mask = 16
+mass = 0.4
+
+[node name="Chain" parent="ChainAttachment/Chain5" instance=ExtResource("3")]
+transform = Transform3D(1.0000001, 1.8626451e-09, 3.7252903e-09, -4.656613e-09, 1.0000001, -1.4901161e-08, 0, 0, 1.0000001, 0, 0, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="ChainAttachment/Chain5"]
+shape = SubResource("CapsuleShape3D_d1xp1")
+
+[node name="Joint6" type="PinJoint3D" parent="ChainAttachment"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.725, 0)
+node_a = NodePath("../Chain5")
+node_b = NodePath("../Chain6")
+
+[node name="Chain6" type="RigidBody3D" parent="ChainAttachment"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, 0)
+collision_layer = 0
+collision_mask = 16
+mass = 0.4
+
+[node name="Chain" parent="ChainAttachment/Chain6" instance=ExtResource("3")]
+transform = Transform3D(-4.3711392e-08, 0, 1.0000001, 0, 1.0000001, 0, -1.0000001, 0, -4.3711392e-08, 0, 0, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="ChainAttachment/Chain6"]
+shape = SubResource("CapsuleShape3D_d1xp1")
+
+[node name="Joint7" type="PinJoint3D" parent="ChainAttachment"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.875, 0)
+node_a = NodePath("../Chain6")
+node_b = NodePath("../Chain7")
+
+[node name="Chain7" type="RigidBody3D" parent="ChainAttachment"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.95, 0)
+collision_layer = 0
+collision_mask = 16
+mass = 0.4
+
+[node name="Chain" parent="ChainAttachment/Chain7" instance=ExtResource("3")]
+transform = Transform3D(1.0000001, 1.8626451e-09, 3.7252903e-09, -4.656613e-09, 1.0000001, -1.4901161e-08, 0, 0, 1.0000001, 0, 0, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="ChainAttachment/Chain7"]
+shape = SubResource("CapsuleShape3D_d1xp1")
+
+[node name="Joint8" type="PinJoint3D" parent="ChainAttachment"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.0250001, 0)
+node_a = NodePath("../Chain7")
+node_b = NodePath("../Chain8")
+
+[node name="Chain8" type="RigidBody3D" parent="ChainAttachment"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.1000001, 0)
+collision_layer = 0
+collision_mask = 16
+mass = 0.4
+
+[node name="Chain" parent="ChainAttachment/Chain8" instance=ExtResource("3")]
+transform = Transform3D(-4.3711392e-08, 0, 1.0000001, 0, 1.0000001, 0, -1.0000001, 0, -4.3711392e-08, 0, 0, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="ChainAttachment/Chain8"]
+shape = SubResource("CapsuleShape3D_d1xp1")
+
+[node name="Joint9" type="PinJoint3D" parent="ChainAttachment"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.1750001, 0)
+node_a = NodePath("../Chain8")
+node_b = NodePath("../Chain9")
+
+[node name="Chain9" type="RigidBody3D" parent="ChainAttachment"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.25, 0)
+collision_layer = 0
+collision_mask = 16
+mass = 0.4
+
+[node name="Chain" parent="ChainAttachment/Chain9" instance=ExtResource("3")]
+transform = Transform3D(1.0000001, 1.8626451e-09, 3.7252903e-09, -4.656613e-09, 1.0000001, -1.4901161e-08, 0, 0, 1.0000001, 0, 0, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="ChainAttachment/Chain9"]
+shape = SubResource("CapsuleShape3D_d1xp1")
+
+[node name="Joint10" type="PinJoint3D" parent="ChainAttachment"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.325, 0)
+node_a = NodePath("../Chain9")
+node_b = NodePath("../Chain10")
+
+[node name="Chain10" type="RigidBody3D" parent="ChainAttachment"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.4000001, 0)
+collision_layer = 0
+collision_mask = 16
+mass = 0.4
+
+[node name="Chain" parent="ChainAttachment/Chain10" instance=ExtResource("3")]
+transform = Transform3D(-4.3711392e-08, 0, 1.0000001, 0, 1.0000001, 0, -1.0000001, 0, -4.3711392e-08, 0, 0, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="ChainAttachment/Chain10"]
+shape = SubResource("CapsuleShape3D_d1xp1")
+
+[node name="Joint11" type="PinJoint3D" parent="ChainAttachment"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.4750001, 0)
+node_a = NodePath("../Chain10")
+node_b = NodePath("../ChainEnd")
+
+[node name="ChainEnd" type="RigidBody3D" parent="ChainAttachment"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5250001, 0)
+collision_layer = 0
+collision_mask = 16
+mass = 2.0
+
+[node name="ChainEnd" parent="ChainAttachment/ChainEnd" instance=ExtResource("4")]
+transform = Transform3D(1, 0, 0, 0, -1, 1.509958e-07, 0, -1.509958e-07, -1, 0, 0, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="ChainAttachment/ChainEnd"]
+shape = SubResource("CapsuleShape3D_d1xp1")
 
 [node name="Particles" type="Node3D" parent="."]
 
@@ -583,6 +714,7 @@ lockoutData = ExtResource("18_d1xp1")
 [node name="AnimationTree" type="AnimationTree" parent="."]
 active = false
 root_node = NodePath("../Erazor")
+callback_mode_process = 0
 libraries = {
 &"": SubResource("AnimationLibrary_txupt")
 }

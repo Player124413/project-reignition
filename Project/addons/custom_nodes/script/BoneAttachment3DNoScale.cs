@@ -17,7 +17,8 @@ public partial class BoneAttachment3DNoScale : Node3D
 
 	[ExportToolButton("Update Linked Data")]
 	public Callable RefreshResourceGroup => Callable.From(UpdateLinkedData);
-	private Callable SkeletonUpdatedCallable => new(this, MethodName.OnSkeletonUpdate);
+	private Callable SkeletonUpdatedCallable => new(this, MethodName.UpdateTransform);
+	private Transform3D currentTransform;
 
 	public override void _EnterTree()
 	{
@@ -35,6 +36,15 @@ public partial class BoneAttachment3DNoScale : Node3D
 		_skeleton.Disconnect(Skeleton3D.SignalName.SkeletonUpdated, SkeletonUpdatedCallable);
 	}
 
+	public override void _PhysicsProcess(double _)
+	{
+		if (Engine.IsEditorHint())
+			return;
+
+		UpdateTransform();
+		ApplyTransform();
+	}
+
 	private void UpdateLinkedData()
 	{
 		parentNode = GetParentNode3D();
@@ -46,7 +56,7 @@ public partial class BoneAttachment3DNoScale : Node3D
 
 			_skeleton = targetSkeleton;
 			if (!_skeleton.IsConnected(Skeleton3D.SignalName.SkeletonUpdated, SkeletonUpdatedCallable))
-				_skeleton.Connect(Skeleton3D.SignalName.SkeletonUpdated, SkeletonUpdatedCallable);
+				_skeleton.Connect(Skeleton3D.SignalName.SkeletonUpdated, SkeletonUpdatedCallable, (int)ConnectFlags.Deferred);
 		}
 
 		if (!prioritizeBoneName)
@@ -66,21 +76,28 @@ public partial class BoneAttachment3DNoScale : Node3D
 		}
 	}
 
-	private void OnSkeletonUpdate()
+	private void UpdateTransform()
 	{
 		if (!IsInsideTree())
 			return;
 
-		Transform3D transform = _skeleton.GetBoneGlobalPose(boneIndex);
+		currentTransform = _skeleton.GetBoneGlobalPose(boneIndex);
 		if (parentNode != null)
 		{
-			transform.Origin = parentNode.GlobalBasis * transform.Origin;
-			transform.Origin += parentNode.GlobalPosition;
-			transform.Basis = parentNode.GlobalBasis * transform.Basis;
-			transform = transform.Orthonormalized();
+			currentTransform.Origin = parentNode.GlobalBasis * currentTransform.Origin;
+			currentTransform.Origin += parentNode.GlobalPosition;
+
+			currentTransform.Basis = parentNode.GlobalBasis * currentTransform.Basis;
+			currentTransform = currentTransform.Orthonormalized();
 		}
 
-		GlobalPosition = transform.Origin;
-		GlobalRotation = transform.Basis.GetEuler();
+		if (Engine.IsEditorHint())
+			ApplyTransform();
+	}
+
+	private void ApplyTransform()
+	{
+		GlobalPosition = currentTransform.Origin;
+		GlobalRotation = currentTransform.Basis.GetEuler();
 	}
 }
