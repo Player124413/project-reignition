@@ -19,28 +19,22 @@ public partial class Erazor : Node3D
 	private char currentCharacter;
 
 	[Export] private float[] attackDelays;
+	[Export] private float[] attackSpeedScales;
 	[Export] private float[] teleportDelays;
 	[Export] private float[] windupDelays;
 	/// <summary> Keeps track of attack intervals and windup times. </summary>
-	private float attackTimer;
-	/// <summary> Tracks whether Erazor is winding up his attack. </summary>
-	private AttackState CurrentAttackState;
-	private enum AttackState
-	{
-		Inactive,
-		Windup,
-		Active,
-	}
+	private float stateTimer;
 
 	/// <summary> Tracks Erazor's current action. </summary>
 	private FightState CurrentFightState;
 	private enum FightState
 	{
 		Introduction,
-		Active,
+		Idle,
 		Teleport,
 		Hitstun,
-		Attack,
+		AttackWindup,
+		AttackStrike,
 		Duel,
 		Defeated,
 	}
@@ -50,21 +44,29 @@ public partial class Erazor : Node3D
 	private bool isHeadHitboxEntered;
 	private readonly int MaxHealth = 25;
 
-	private float startingProgress;
-	private float currentDistance;
+	/// <summary> Is Erazor far-away from the player? </summary>
 	private bool isFarAway;
+	/// <summary> Should Erazor track the player's horizontal position? </summary>
+	private bool isTrackingHorizontal;
+	private float currentDistance;
 	private float distanceVelocity;
+	private float trackingVelocity;
 	/// <summary> The preferred distance when far from the player. </summary>
 	private readonly float FarDistance = 30f;
 	/// <summary> The preferred distance when attacking the player. </summary>
 	private readonly float CloseDistance = 10f;
 	private readonly float DistanceSmoothing = 5f;
+	/// <summary> The speed at which to track the player horizontally. </summary>
+	private readonly float HorizontalTrackingSmoothing = 10f;
+	/// <summary> The maximum amount Erazor can track horizontally. </summary>
+	private readonly float MaxHorizontalTracking = 5f;
 
 	/// ANIMATION PARAMETERS
 	private readonly string IntroCutsceneID = "np_boss_intro";
 	private readonly string DefeatCutsceneID = "np_boss_defeat";
 	private readonly StringName TeleportTrigger = "parameters/teleport_trigger/request";
 	private readonly StringName TeleportSpeed = "parameters/teleport_speed/scale";
+	private readonly StringName AttackTrigger = "parameters/attack_trigger/request";
 	private readonly StringName AttackPlayback = "parameters/attack_state/playback";
 	private readonly StringName AttackSpeed = "parameters/attack_speed/scale";
 	private AnimationNodeStateMachinePlayback AttackStatePlayback => animationTree.Get(AttackPlayback).Obj as AnimationNodeStateMachinePlayback;
@@ -74,7 +76,6 @@ public partial class Erazor : Node3D
 
 	public override void _Ready()
 	{
-		startingProgress = bossPathFollower.Progress;
 		animationTree.Active = true; // Activate animation trees
 
 		StageSettings.Instance.Respawned += Respawn;
@@ -83,17 +84,28 @@ public partial class Erazor : Node3D
 
 	public void Respawn()
 	{
+		CurrentFightState = FightState.Idle;
+
 		currentHealth = MaxHealth;
 
 		currentAttackPatternIndex = 0;
 		currentCharacterIndex = 0;
 
-		CurrentFightState = FightState.Active;
-		CurrentAttackState = AttackState.Inactive;
+		isTrackingHorizontal = false;
+		bossPathFollower.HOffset = 0;
+		trackingVelocity = 0;
 
-		bossPathFollower.Progress = startingProgress;
+		isFarAway = false;
+		currentDistance = CloseDistance;
+		distanceVelocity = 0;
+
+		bossPathFollower.Progress = PathFollower.Progress + currentDistance;
 		Transform = Transform3D.Identity;
 		ResetPhysicsInterpolation();
+
+		// Reset Animations
+		animationTree.Set(TeleportTrigger, (int)AnimationNodeOneShot.OneShotRequest.Abort);
+		animationTree.Set(AttackTrigger, (int)AnimationNodeOneShot.OneShotRequest.Abort);
 	}
 
 	private void StartIntroduction()
@@ -180,15 +192,7 @@ public partial class Erazor : Node3D
 				{
 					FinishIntroduction();
 				}
-				break;
-			case FightState.Active:
-				// Update Boss
-				UpdatePosition();
-				UpdateAttacks();
-				break;
-			case FightState.Teleport:
-				UpdatePosition();
-				break;
+				return;
 			case FightState.Defeated:
 				if ((Input.IsActionJustPressed("sys_pause") || Input.IsActionJustPressed("button_jump")) &&
 					SaveManager.ActiveGameData.CanSkipCutscene(DefeatCutsceneID))
@@ -196,8 +200,11 @@ public partial class Erazor : Node3D
 					//eventAnimator.Play("finish-defeat");
 					//rootAnimationTree.Set(DefeatSeekParameter, 10);
 				}
-				break;
+				return;
 		}
+
+		UpdateTimer();
+		UpdatePosition();
 	}
 
 	public void TakeDamage()
@@ -224,14 +231,36 @@ public partial class Erazor : Node3D
 			currentDistance = ExtensionMethods.SmoothDamp(currentDistance, 0, ref distanceVelocity, DistanceSmoothing * PhysicsManager.physicsDelta);
 
 		bossPathFollower.Progress = Player.PathFollower.Progress + currentDistance;
+
+
+		float targetHorizontalTracking = bossPathFollower.HOffset;
+		if (isTrackingHorizontal)
+			targetHorizontalTracking = Mathf.Clamp(PathFollower.LocalPlayerPositionDelta.X, -MaxHorizontalTracking, MaxHorizontalTracking);
+
+		bossPathFollower.HOffset = ExtensionMethods.SmoothDamp(bossPathFollower.HOffset,
+			targetHorizontalTracking, ref trackingVelocity, HorizontalTrackingSmoothing * PhysicsManager.physicsDelta);
 	}
 
-	private void UpdateAttacks()
+	private void UpdateTimer()
 	{
-		attackTimer = Mathf.MoveToward(attackTimer, 0, PhysicsManager.physicsDelta);
+		// Wait for attack animations
+		if (CurrentFightState == FightState.AttackWindup && !AttackStatePlayback.GetCurrentNode().ToString().EndsWith("-loop"))
+			return;
 
-		if (Mathf.IsZeroApprox(attackTimer))
-			ProcessAttackPattern();
+		stateTimer = Mathf.MoveToward(stateTimer, 0, PhysicsManager.physicsDelta);
+
+		if (!Mathf.IsZeroApprox(stateTimer))
+			return;
+
+		switch (CurrentFightState)
+		{
+			case FightState.Idle:
+				ProcessAttackPattern();
+				break;
+			case FightState.AttackWindup:
+				StartAttackStrike();
+				break;
+		}
 	}
 
 	/// <summary> Performs an action based on the character read from the attack pattern string. </summary>
@@ -256,7 +285,7 @@ public partial class Erazor : Node3D
 				return;
 			}
 
-			GD.Print("Unimplemented attack.");
+			StartAttackWindup();
 		}
 
 		// Queue the next character
@@ -265,11 +294,9 @@ public partial class Erazor : Node3D
 
 	private void StartTeleport()
 	{
-		attackTimer = attackDelays[currentAttackPatternIndex];
 		CurrentFightState = FightState.Teleport;
 		animationTree.Set(TeleportTrigger, (int)AnimationNodeOneShot.OneShotRequest.Fire);
 	}
-
 
 	/// <summary> Instantly moves Erazor to his proper position. </summary>
 	public void ApplyTeleport()
@@ -277,9 +304,42 @@ public partial class Erazor : Node3D
 		isFarAway = currentCharacter == 'f';
 		currentDistance = isFarAway ? FarDistance : CloseDistance;
 		distanceVelocity = 0;
+		isTrackingHorizontal = false;
+		bossPathFollower.HOffset = 0;
+		trackingVelocity = 0;
 	}
 
-	public void FinishTeleport() => CurrentFightState = FightState.Active;
+	public void FinishTeleport()
+	{
+		CurrentFightState = FightState.Idle;
+		if (currentCharacter == 'f')
+			stateTimer = teleportDelays[currentAttackPatternIndex];
+	}
+
+	public void StartAttackWindup()
+	{
+		CurrentFightState = FightState.AttackWindup;
+
+		isTrackingHorizontal = currentCharacter == 'i' || currentCharacter == 'v';
+		stateTimer = windupDelays[currentAttackPatternIndex];
+
+		AttackStatePlayback.Start($"attack-{currentCharacter}-start");
+		animationTree.Set(AttackSpeed, attackSpeedScales[currentAttackPatternIndex]);
+		animationTree.Set(AttackTrigger, (int)AnimationNodeOneShot.OneShotRequest.Fire);
+	}
+
+	private void StartAttackStrike()
+	{
+		isTrackingHorizontal = false;
+		AttackStatePlayback.Start($"attack-{currentCharacter}-strike");
+		CurrentFightState = FightState.AttackStrike;
+	}
+
+	private void FinishAttackStrike()
+	{
+		CurrentFightState = FightState.Idle;
+		stateTimer = attackDelays[currentAttackPatternIndex];
+	}
 
 	public void OnHeadEntered(Area3D a)
 	{
