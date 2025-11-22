@@ -10,6 +10,8 @@ public partial class Erazor : Node3D
 	[Export] private PathFollow3D bossPathFollower;
 	[Export] private CameraTrigger cutsceneCamera;
 	[Export] private CameraTrigger duelCamera;
+	[Export] private CameraSettingsResource normalCameraResource;
+	[Export] private CameraSettingsResource duelCameraResource;
 	[Export] private LockoutTrigger recenterLockout;
 	[Export] private LockoutTrigger stopLockout;
 
@@ -204,6 +206,7 @@ public partial class Erazor : Node3D
 	public override void _PhysicsProcess(double _)
 	{
 		UpdateDamage();
+		UpdateCameras();
 
 		switch (CurrentFightState)
 		{
@@ -415,9 +418,11 @@ public partial class Erazor : Node3D
 		});
 		TransitionManager.FinishTransition();
 		duelCamera.Activate();
+		duelCameraResource.distance = DuelInitialDistance;
 		recenterLockout.Activate();
 		currentDistance = DuelDistance;
 		SnapDistance();
+
 
 		// TODO Edit the timing
 		stateTimer = 2f;
@@ -529,6 +534,25 @@ public partial class Erazor : Node3D
 	{
 		distanceVelocity = 0;
 		bossPathFollower.Progress = PlayerPathFollower.Progress + currentDistance;
+	}
+
+	private float cameraVelocity;
+	private readonly float CameraSmoothing = 10f;
+	private readonly float DuelCloseDistance = 5f;
+	private readonly float DuelFarDistance = 40f;
+	private readonly float DuelInitialDistance = 40f;
+	private readonly Vector2 DuelFarOffset = new(30f, 10f);
+	private readonly Vector2 DuelCloseOffset = new(0f, 2f);
+	private void UpdateCameras()
+	{
+		if (CurrentFightState == FightState.Duel)
+		{
+			float factor = Mathf.SmoothStep(0f, 1f, currentDistance / DuelDistance);
+			float targetDistance = Mathf.Lerp(DuelCloseDistance, DuelFarDistance, factor);
+			Vector2 targetOffset = DuelCloseOffset.Lerp(DuelFarOffset, factor);
+			duelCameraResource.distance = targetDistance;
+			duelCameraResource.viewportOffset = targetOffset;
+		}
 	}
 
 	public void OnHeadEntered(Area3D a)
