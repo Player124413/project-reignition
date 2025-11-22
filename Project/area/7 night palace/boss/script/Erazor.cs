@@ -69,6 +69,7 @@ public partial class Erazor : Node3D
 	private readonly StringName AttackTrigger = "parameters/attack_trigger/request";
 	private readonly StringName AttackPlayback = "parameters/attack_state/playback";
 	private readonly StringName AttackSpeed = "parameters/attack_speed/scale";
+	private readonly StringName DamageTrigger = "parameters/damage_trigger/request";
 	private AnimationNodeStateMachinePlayback AttackStatePlayback => animationTree.Get(AttackPlayback).Obj as AnimationNodeStateMachinePlayback;
 
 	private PlayerController Player => StageSettings.Player;
@@ -97,15 +98,15 @@ public partial class Erazor : Node3D
 
 		isFarAway = false;
 		currentDistance = CloseDistance;
-		distanceVelocity = 0;
+		SnapDistance();
 
-		bossPathFollower.Progress = PathFollower.Progress + currentDistance;
 		Transform = Transform3D.Identity;
 		ResetPhysicsInterpolation();
 
 		// Reset Animations
 		animationTree.Set(TeleportTrigger, (int)AnimationNodeOneShot.OneShotRequest.Abort);
 		animationTree.Set(AttackTrigger, (int)AnimationNodeOneShot.OneShotRequest.Abort);
+		animationTree.Set(DamageTrigger, (int)AnimationNodeOneShot.OneShotRequest.Abort);
 	}
 
 	private void StartIntroduction()
@@ -210,6 +211,7 @@ public partial class Erazor : Node3D
 	public void TakeDamage()
 	{
 		currentHealth -= CurrentFightState == FightState.Duel ? 6 : 1;
+		GD.Print($"Erazor's Health is now {currentHealth}");
 
 		if (currentHealth <= 0)
 		{
@@ -217,21 +219,44 @@ public partial class Erazor : Node3D
 			return;
 		}
 
+		// TODO Change animation based on Duel State
+		if (CurrentFightState != FightState.Hitstun)
+		{
+			animationTree.Set(DamageTrigger, (int)AnimationNodeOneShot.OneShotRequest.Fire);
+			animationTree.Set(AttackTrigger, (int)AnimationNodeOneShot.OneShotRequest.FadeOut);
+			CurrentFightState = FightState.Hitstun;
+		}
+
 		if ((currentAttackPatternIndex == 0 && currentHealth <= 20) || (currentAttackPatternIndex == 1 && currentHealth <= 7))
 		{
 			// Advance Phase
 			currentAttackPatternIndex++;
 			currentCharacterIndex = 0;
+
+			GD.Print($"Advanced Phase to {currentAttackPatternIndex}.");
 		}
+	}
+
+	private void FinishHitstun()
+	{
+		// Cram in a far teleport into the pattern so Erazor doesn't shift in front of the player
+		if (attackPatterns[currentAttackPatternIndex][currentCharacterIndex] != 'f')
+		{
+			currentCharacter = 'f';
+			StartTeleport();
+			return;
+		}
+
+		CurrentFightState = FightState.Idle;
 	}
 
 	private void UpdatePosition()
 	{
-		if (Player.IsHomingAttacking || CurrentFightState == FightState.Hitstun)
-			currentDistance = ExtensionMethods.SmoothDamp(currentDistance, 0, ref distanceVelocity, DistanceSmoothing * PhysicsManager.physicsDelta);
+		float targetProgress = Player.PathFollower.Progress + currentDistance;
+		if (Player.IsHomingAttacking || CurrentFightState == FightState.Hitstun || bossPathFollower.Progress < PathFollower.Progress)
+			targetProgress = bossPathFollower.Progress;
 
-		bossPathFollower.Progress = Player.PathFollower.Progress + currentDistance;
-
+		bossPathFollower.Progress = ExtensionMethods.SmoothDamp(bossPathFollower.Progress, targetProgress, ref distanceVelocity, DistanceSmoothing * PhysicsManager.physicsDelta);
 
 		float targetHorizontalTracking = bossPathFollower.HOffset;
 		if (isTrackingHorizontal)
@@ -302,8 +327,10 @@ public partial class Erazor : Node3D
 	public void ApplyTeleport()
 	{
 		isFarAway = currentCharacter == 'f';
+
 		currentDistance = isFarAway ? FarDistance : CloseDistance;
-		distanceVelocity = 0;
+		SnapDistance();
+
 		isTrackingHorizontal = false;
 		bossPathFollower.HOffset = 0;
 		trackingVelocity = 0;
@@ -339,6 +366,13 @@ public partial class Erazor : Node3D
 	{
 		CurrentFightState = FightState.Idle;
 		stateTimer = attackDelays[currentAttackPatternIndex];
+	}
+
+	/// <summary> Snaps Erazor's distance to currentDistance. </summary>
+	private void SnapDistance()
+	{
+		distanceVelocity = 0;
+		bossPathFollower.Progress = PathFollower.Progress + currentDistance;
 	}
 
 	public void OnHeadEntered(Area3D a)
