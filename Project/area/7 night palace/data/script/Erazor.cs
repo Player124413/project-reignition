@@ -91,7 +91,7 @@ public partial class Erazor : Node3D
 	{
 		animationTree.Active = true; // Activate animation trees
 
-		StageSettings.Instance.Respawned += Respawn;
+		StageSettings.Instance.RespawnedEnemies += Respawn;
 		StageSettings.Instance.LevelStarted += StartIntroduction;
 	}
 
@@ -101,6 +101,7 @@ public partial class Erazor : Node3D
 		duelCamera.Deactivate();
 		recenterLockout.Deactivate();
 		stopLockout.Deactivate();
+		Player.Animator.CancelOneshot();
 
 		CurrentFightState = FightState.Idle;
 
@@ -435,22 +436,14 @@ public partial class Erazor : Node3D
 
 	private void StartDuelResultAnimation(bool isSuccess)
 	{
-		TransitionManager.StartTransition(new()
-		{
-			inSpeed = 0f,
-			outSpeed = .2f,
-			color = Colors.Black
-		});
-		TransitionManager.FinishTransition();
-
 		if (isSuccess)
 			AttackStatePlayback.Start($"attack-d-damage");
 		else
 			StartAttackStrike();
 
-		stopLockout.Activate();
 		Player.MoveSpeed = 0;
 		Player.SnapToGround();
+		stopLockout.Activate();
 
 		cutsceneCamera.Activate();
 		currentDistance = 0f;
@@ -469,6 +462,17 @@ public partial class Erazor : Node3D
 			Player.StartInvincibility();
 			Player.Animator.PlayOneshotAnimation("np_duel_fail");
 		}
+
+		if (Player.IsDefeated)
+			return;
+
+		TransitionManager.StartTransition(new()
+		{
+			inSpeed = 0f,
+			outSpeed = .2f,
+			color = Colors.Black
+		});
+		TransitionManager.FinishTransition();
 	}
 
 	public void FinishDuel()
