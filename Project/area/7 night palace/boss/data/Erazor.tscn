@@ -1,10 +1,11 @@
-[gd_scene load_steps=91 format=3 uid="uid://dpjlgmdlddjik"]
+[gd_scene load_steps=93 format=3 uid="uid://dpjlgmdlddjik"]
 
 [ext_resource type="Script" uid="uid://w1r45ql607mg" path="res://area/7 night palace/boss/script/Erazor.cs" id="1"]
 [ext_resource type="PackedScene" uid="uid://dfgdf7gg3d62t" path="res://area/7 night palace/boss/data/model/Erazor.gltf" id="2"]
 [ext_resource type="Script" uid="uid://bri007qdprrbf" path="res://addons/custom_nodes/script/BoneAttachment3DNoScale.cs" id="2_xu0gp"]
 [ext_resource type="PackedScene" uid="uid://dka47yji7vx6d" path="res://area/7 night palace/boss/data/model/Chain.gltf" id="3"]
 [ext_resource type="PackedScene" uid="uid://bfctfevmdhs6a" path="res://area/7 night palace/boss/data/model/ChainEnd.gltf" id="4"]
+[ext_resource type="Script" uid="uid://pnh70abopq8e" path="res://object/stage/common/resource/script/Hazard.cs" id="4_shf07"]
 [ext_resource type="Script" uid="uid://dfk7w7cwojprf" path="res://area/7 night palace/boss/script/ErazorChain.cs" id="5"]
 [ext_resource type="Texture2D" uid="uid://co46e7yqpktgn" path="res://area/7 night palace/boss/data/effect/sword attack.png" id="9"]
 [ext_resource type="Texture2D" uid="uid://dkv8vit4cnvoa" path="res://area/7 night palace/boss/data/effect/sword smoke.png" id="10"]
@@ -35,6 +36,9 @@
 
 [sub_resource type="SphereShape3D" id="2"]
 radius = 0.7
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_ye8st"]
+size = Vector3(0.5, 1, 3)
 
 [sub_resource type="Gradient" id="31"]
 offsets = PackedFloat32Array(0, 0.866953, 1)
@@ -364,14 +368,14 @@ animationTree = NodePath("AnimationTree")
 cutsceneCamera = NodePath("CutsceneCamera")
 attackPatterns = PackedStringArray("fvfiflfiifdfi", "iclfivficzfifdf", "iviczfiivclfvvczfdf")
 attackDelays = PackedFloat32Array(0.4, 0.2, 0)
-attackSpeedScales = PackedFloat32Array(0.8, 1, 1.5)
-teleportDelays = PackedFloat32Array(1, 1, 1)
+attackSpeedScales = PackedFloat32Array(0.8, 1, 1.2)
+teleportDelays = PackedFloat32Array(1, 0.8, 0.2)
 windupDelays = PackedFloat32Array(0.3, 0.2, 0.1)
 
 [node name="Erazor" parent="." instance=ExtResource("2")]
 
 [node name="HeadAttachment" type="Node3D" parent="."]
-transform = Transform3D(0.9998212, 4.950021e-07, -4.950025e-07, -4.9498834e-07, 0.99984866, 2.8741155e-07, 4.949885e-07, -2.8741096e-07, 0.99984986, -1.12708975e-07, 7.2600017, 2.5939093e-05)
+transform = Transform3D(0.9998215, 4.9500244e-07, -4.950035e-07, -4.9498846e-07, 0.9998494, 2.8741215e-07, 4.949886e-07, -2.8741118e-07, 0.9998519, -1.12708975e-07, 7.2600017, 2.5939093e-05)
 script = ExtResource("2_xu0gp")
 skeleton = NodePath("../Erazor/ErazorRoot/Skeleton3D")
 boneName = &"head"
@@ -387,10 +391,23 @@ monitorable = false
 shape = SubResource("2")
 
 [node name="EdgeAttachment" type="Node3D" parent="."]
-transform = Transform3D(0.9998671, 0, 0, 0, -4.370538e-08, 0.9998489, 0, -0.99986255, -4.3704784e-08, 0, 0, 1.6724358e-05)
+transform = Transform3D(0.20417368, 0.94593376, -0.2514841, 0.9512091, -0.2523196, -0.17681466, -0.23074411, -0.2031425, -0.9514183, 4.147947, 6.7127714, 2.1578724)
 script = ExtResource("2_xu0gp")
 skeleton = NodePath("../Erazor/ErazorRoot/Skeleton3D")
-boneName = &""
+boneName = &"edge"
+boneIndex = 36
+
+[node name="Hitbox" type="Area3D" parent="EdgeAttachment"]
+transform = Transform3D(1, 0, 0, 0, 0.90630776, 0.42261827, 0, -0.42261827, 0.90630776, 0, 0, 0)
+collision_layer = 0
+collision_mask = 2
+monitoring = false
+monitorable = false
+script = ExtResource("4_shf07")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="EdgeAttachment/Hitbox"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2)
+shape = SubResource("BoxShape3D_ye8st")
 
 [node name="ChainAttachment" type="BoneAttachment3D" parent="."]
 transform = Transform3D(0.9789272, 0.20420116, -0.0019091552, -0.19798586, 0.9513387, 0.23612744, 0.05003373, -0.23077364, 0.97171986, 4.567634, 6.510125, -1.1940831)
@@ -409,77 +426,77 @@ gravity = 9.81
 transform = Transform3D(0.177427, -0.630464, 0.755669, 0.469653, 0.729017, 0.497956, -0.864839, 0.266551, 0.425447, 1.78467, -6.18668, 0.794713)
 
 [node name="Chain1" parent="ChainAttachment/ChainPieces" node_paths=PackedStringArray("parentChain", "childChain") instance=ExtResource("3")]
-transform = Transform3D(0.8648388, -0.4996335, 0.04919809, -0.26655132, -0.53999746, -0.79834366, -0.4254463, -0.6773248, 0.60018843, 3.3046503, 5.4266725, 1.3958154)
+transform = Transform3D(0.86483866, -0.49979037, 0.047579035, -0.2665513, -0.5374079, -0.8000892, -0.42544645, -0.6792659, 0.59799063, 3.3046198, 5.426674, 1.3959131)
 script = ExtResource("5")
 parentChain = NodePath("../../Controller")
 childChain = NodePath("../Chain2")
 chainSize = 0.031
 
 [node name="Chain2" parent="ChainAttachment/ChainPieces" node_paths=PackedStringArray("parentChain", "childChain") instance=ExtResource("3")]
-transform = Transform3D(0.049198117, 0.99878776, -0.0015706666, -0.798344, 0.040269565, 0.6008536, 0.60018885, -0.02830694, 0.79935706, 3.4413533, 5.428261, 1.3948898)
+transform = Transform3D(0.047579043, 0.99886686, -0.0010251645, -0.80008954, 0.038725052, 0.59862924, 0.597991, -0.027661989, 0.8010251, 3.441391, 5.4281397, 1.3949928)
 script = ExtResource("5")
 parentChain = NodePath("../Chain1")
 childChain = NodePath("../Chain3")
 chainSize = 0.15
 
 [node name="Chain3" parent="ChainAttachment/ChainPieces" node_paths=PackedStringArray("parentChain", "childChain") instance=ExtResource("3")]
-transform = Transform3D(0.001570668, -0.99999833, 0.0008815397, -0.60085386, -0.0016484096, -0.79935694, -0.7993576, -0.00072584784, 0.6008552, 3.5771575, 5.4289412, 1.395596)
+transform = Transform3D(0.0010250913, -0.9999982, 0.0015266754, -0.59862953, -0.0018365569, -0.80102366, -0.8010255, 9.2790455e-05, 0.5986301, 3.5771585, 5.428921, 1.3956919)
 script = ExtResource("5")
 parentChain = NodePath("../Chain2")
 childChain = NodePath("../Chain4")
 chainSize = 0.15
 
 [node name="Chain4" parent="ChainAttachment/ChainPieces" node_paths=PackedStringArray("parentChain", "childChain") instance=ExtResource("3")]
-transform = Transform3D(0.00088145596, 0.9984032, -0.056480624, -0.79935735, 0.0346402, 0.5998565, 0.6008555, 0.044619452, 0.7981111, 3.7148852, 5.4402204, 1.3968654)
+transform = Transform3D(0.0015265981, 0.99848986, -0.054914575, -0.801024, 0.034094617, 0.5976604, 0.5986305, 0.043075513, 0.799866, 3.714868, 5.4399385, 1.396914)
 script = ExtResource("5")
 parentChain = NodePath("../Chain3")
 childChain = NodePath("../Chain5")
 chainSize = 0.15
 
 [node name="Chain5" parent="ChainAttachment/ChainPieces" node_paths=PackedStringArray("parentChain", "childChain") instance=ExtResource("3")]
-transform = Transform3D(0.056480706, -0.9972971, -0.04699193, -0.5998568, 0.0037279548, -0.8000985, -0.7981116, -0.073378555, 0.5980246, 3.850009, 5.4309487, 1.3950787)
+transform = Transform3D(0.05491457, -0.9974503, -0.045576215, -0.5976606, 0.0037295534, -0.8017403, -0.7998665, -0.071266346, 0.59593165, 3.8501096, 5.430946, 1.3951588)
 script = ExtResource("5")
 parentChain = NodePath("../Chain4")
 childChain = NodePath("../Chain6")
 chainSize = 0.15
 
 [node name="Chain6" parent="ChainAttachment/ChainPieces" node_paths=PackedStringArray("parentChain", "childChain") instance=ExtResource("3")]
-transform = Transform3D(-0.046991948, 0.9988648, -0.0077971593, -0.80009884, -0.032965407, 0.59896165, 0.598025, 0.03438488, 0.8007393, 3.9868097, 5.432015, 1.3956132)
+transform = Transform3D(-0.04557619, 0.9989398, -0.0064739017, -0.8017407, -0.03271148, 0.5967761, 0.595932, 0.032389175, 0.8023812, 3.9867635, 5.4317203, 1.3956857)
 script = ExtResource("5")
 parentChain = NodePath("../Chain5")
 childChain = NodePath("../Chain7")
 chainSize = 0.15
 
 [node name="Chain7" parent="ChainAttachment/ChainPieces" node_paths=PackedStringArray("parentChain", "childChain") instance=ExtResource("3")]
-transform = Transform3D(0.007797164, -0.999039, 0.04312848, -0.598962, -0.039202787, -0.799817, -0.80073965, 0.01959602, 0.5986918, 4.126839, 5.440626, 1.3970299)
+transform = Transform3D(0.00647387, -0.9989802, 0.044680618, -0.5967764, -0.039712086, -0.801424, -0.8023816, 0.021476032, 0.5964247, 4.1268854, 5.4405937, 1.3971124)
 script = ExtResource("5")
 parentChain = NodePath("../Chain6")
 childChain = NodePath("../Chain8")
 chainSize = 0.15
 
 [node name="Chain8" parent="ChainAttachment/ChainPieces" node_paths=PackedStringArray("parentChain", "childChain") instance=ExtResource("3")]
-transform = Transform3D(0.043128457, 0.99811465, 0.043667946, -0.7998173, 0.008301626, 0.60018593, 0.59869224, -0.060811486, 0.79866713, 4.2606807, 5.433315, 1.3952065)
+transform = Transform3D(0.04468061, 0.9980669, 0.043197434, -0.8014244, 0.009994822, 0.59801245, 0.596425, -0.061339054, 0.8003214, 4.260717, 5.433315, 1.395328)
 script = ExtResource("5")
 parentChain = NodePath("../Chain7")
 childChain = NodePath("../Chain9")
 chainSize = 0.15
 
 [node name="Chain9" parent="ChainAttachment/ChainPieces" node_paths=PackedStringArray("parentChain", "childChain") instance=ExtResource("3")]
-transform = Transform3D(-0.043667834, -0.99845964, 0.034224335, -0.6001863, -0.0011676347, -0.79985917, -0.7986675, 0.055469103, 0.5992105, 4.3995433, 5.440281, 1.3965745)
+transform = Transform3D(-0.04319743, -0.998496, 0.033758342, -0.5980128, -0.0012260694, -0.80148536, -0.8003218, 0.054810036, 0.59706014, 4.399516, 5.4401965, 1.396718)
 script = ExtResource("5")
 parentChain = NodePath("../Chain8")
 childChain = NodePath("../Chain10")
 chainSize = 0.15
 
 [node name="Chain10" parent="ChainAttachment/ChainPieces" node_paths=PackedStringArray("parentChain", "childChain") instance=ExtResource("3")]
-transform = Transform3D(0.034224328, 0.99802893, 0.05260051, -0.79985946, -0.0042030355, 0.60017246, 0.59921086, -0.062613524, 0.79813874, 4.532521, 5.42888, 1.3963833)
+transform = Transform3D(0.03375834, 0.99805516, 0.05240387, -0.80148584, -0.004288974, 0.5979984, 0.59706044, -0.062188394, 0.79978186, 4.5326686, 5.4288425, 1.396483)
 script = ExtResource("5")
 parentChain = NodePath("../Chain9")
 childChain = NodePath("../ChainEnd")
 chainSize = 0.15
 
 [node name="ChainEnd" parent="ChainAttachment/ChainPieces" node_paths=PackedStringArray("parentChain") instance=ExtResource("4")]
-transform = Transform3D(-0.05260037, -0.9927778, 0.107820034, -0.60017276, -0.0548659, -0.7979862, -0.79813915, 0.106685035, 0.592952, 4.6274176, 5.439264, 1.3931022)
+transform = Transform3D(-0.052403934, -0.9926851, 0.108765945, -0.5979986, -0.056034718, -0.7995357, -0.7997823, 0.10694073, 0.59068763, 4.6273274, 5.439273, 1.3931713)
 script = ExtResource("5")
 parentChain = NodePath("../Chain10")
 chainSize = 0.1
@@ -571,7 +588,7 @@ settings = ExtResource("23_pwxop")
 previousSettings = ExtResource("24_pwxop")
 
 [node name="Camera" type="Camera3D" parent="CutsceneCamera"]
-transform = Transform3D(0.98480725, -0.17364809, 0, 0.16317584, 0.92541605, -0.3420201, 0.05939114, 0.33682388, 0.93969256, 0, 0, 10)
+transform = Transform3D(0.9848071, -0.17364806, 0, 0.1631758, 0.9254159, -0.3420201, 0.059391133, 0.33682382, 0.93969256, 0, 0, 10)
 cull_mask = 1143
 
 [node name="AnimationTree" type="AnimationTree" parent="."]
@@ -594,6 +611,13 @@ parameters/attack_trigger/internal_active = false
 parameters/attack_trigger/request = 0
 parameters/teleport_speed/scale = 1.0
 
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+root_node = NodePath("../ScreenTransition")
+libraries = {
+&"": SubResource("AnimationLibrary_c73ws")
+}
+autoplay = "RESET"
+
 [node name="ScreenTransition" type="ColorRect" parent="."]
 modulate = Color(0, 0, 0, 1)
 anchors_preset = -1
@@ -601,13 +625,9 @@ offset_right = 1920.0
 offset_bottom = 1080.0
 color = Color(0, 0, 0, 0)
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="ScreenTransition"]
-libraries = {
-&"": SubResource("AnimationLibrary_c73ws")
-}
-autoplay = "RESET"
-
 [connection signal="area_entered" from="HeadAttachment/Lockon" to="." method="OnHeadEntered"]
 [connection signal="area_exited" from="HeadAttachment/Lockon" to="." method="OnHeadExited"]
+[connection signal="area_entered" from="EdgeAttachment/Hitbox" to="EdgeAttachment/Hitbox" method="OnEntered"]
+[connection signal="area_exited" from="EdgeAttachment/Hitbox" to="EdgeAttachment/Hitbox" method="OnExited"]
 
 [editable path="Erazor"]

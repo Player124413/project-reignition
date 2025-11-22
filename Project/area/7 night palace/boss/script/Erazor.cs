@@ -55,7 +55,10 @@ public partial class Erazor : Node3D
 	private readonly float FarDistance = 30f;
 	/// <summary> The preferred distance when attacking the player. </summary>
 	private readonly float CloseDistance = 10f;
-	private readonly float DistanceSmoothing = 5f;
+	/// <summary> Use more smoothing to allow evasion via backflips. </summary>
+	private readonly float BackflipSmoothing = 5f;
+	/// <summary> Snappy smoothing to ensure attacks connect. </summary>
+	private readonly float DistanceSmoothing = 1f;
 	/// <summary> The speed at which to track the player horizontally. </summary>
 	private readonly float HorizontalTrackingSmoothing = 10f;
 	/// <summary> The maximum amount Erazor can track horizontally. </summary>
@@ -73,7 +76,7 @@ public partial class Erazor : Node3D
 	private AnimationNodeStateMachinePlayback AttackStatePlayback => animationTree.Get(AttackPlayback).Obj as AnimationNodeStateMachinePlayback;
 
 	private PlayerController Player => StageSettings.Player;
-	private PlayerPathController PathFollower => Player.PathFollower;
+	private PlayerPathController PlayerPathFollower => Player.PathFollower;
 
 	public override void _Ready()
 	{
@@ -252,15 +255,23 @@ public partial class Erazor : Node3D
 
 	private void UpdatePosition()
 	{
-		float targetProgress = Player.PathFollower.Progress + currentDistance;
-		if (Player.IsHomingAttacking || CurrentFightState == FightState.Hitstun || bossPathFollower.Progress < PathFollower.Progress)
+		float targetProgress = PlayerPathFollower.Progress + currentDistance;
+		float smoothing = DistanceSmoothing;
+		if (Player.IsHomingAttacking || CurrentFightState == FightState.Hitstun || PlayerPathFollower.IsAheadOfPoint(GlobalPosition))
 			targetProgress = bossPathFollower.Progress;
 
-		bossPathFollower.Progress = ExtensionMethods.SmoothDamp(bossPathFollower.Progress, targetProgress, ref distanceVelocity, DistanceSmoothing * PhysicsManager.physicsDelta);
+		if (Player.IsBackflipping &&
+			CurrentFightState == FightState.AttackStrike &&
+			ExtensionMethods.DotAngle(Player.MovementAngle, Player.PathFollower.ForwardAngle) < -0.5f)
+		{
+			smoothing = BackflipSmoothing;
+		}
+
+		bossPathFollower.Progress = ExtensionMethods.SmoothDamp(bossPathFollower.Progress, targetProgress, ref distanceVelocity, smoothing * PhysicsManager.physicsDelta);
 
 		float targetHorizontalTracking = bossPathFollower.HOffset;
 		if (isTrackingHorizontal)
-			targetHorizontalTracking = Mathf.Clamp(PathFollower.LocalPlayerPositionDelta.X, -MaxHorizontalTracking, MaxHorizontalTracking);
+			targetHorizontalTracking = Mathf.Clamp(PlayerPathFollower.LocalPlayerPositionDelta.X, -MaxHorizontalTracking, MaxHorizontalTracking);
 
 		bossPathFollower.HOffset = ExtensionMethods.SmoothDamp(bossPathFollower.HOffset,
 			targetHorizontalTracking, ref trackingVelocity, HorizontalTrackingSmoothing * PhysicsManager.physicsDelta);
@@ -372,7 +383,7 @@ public partial class Erazor : Node3D
 	private void SnapDistance()
 	{
 		distanceVelocity = 0;
-		bossPathFollower.Progress = PathFollower.Progress + currentDistance;
+		bossPathFollower.Progress = PlayerPathFollower.Progress + currentDistance;
 	}
 
 	public void OnHeadEntered(Area3D a)
