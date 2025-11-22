@@ -120,6 +120,10 @@ public partial class Erazor : Node3D
 		currentDistance = CloseDistance;
 		SnapDistance();
 
+		cameraVelocity = 0f;
+		lookaroundVelocity = Vector2.Zero;
+		Player.Camera.LookaroundAmount = Vector2.Zero;
+
 		Transform = Transform3D.Identity;
 		ResetPhysicsInterpolation();
 
@@ -537,14 +541,19 @@ public partial class Erazor : Node3D
 	}
 
 	private float cameraVelocity;
+	private Vector2 lookaroundVelocity;
 	private readonly float CameraSmoothing = 10f;
 	private readonly float DuelCloseDistance = 5f;
 	private readonly float DuelFarDistance = 40f;
 	private readonly float DuelInitialDistance = 40f;
+	private readonly float CloseLookaroundAmount = Mathf.Pi * 0.05f;
+	private readonly float HorizontalTrackingLookaroundAmount = Mathf.Pi * 0.05f;
 	private readonly Vector2 DuelFarOffset = new(30f, 10f);
 	private readonly Vector2 DuelCloseOffset = new(0f, 2f);
 	private void UpdateCameras()
 	{
+		Vector2 targetCameraLookaround = Vector2.Zero;
+
 		if (CurrentFightState == FightState.Duel)
 		{
 			float factor = Mathf.SmoothStep(0f, 1f, currentDistance / DuelDistance);
@@ -553,6 +562,18 @@ public partial class Erazor : Node3D
 			duelCameraResource.distance = targetDistance;
 			duelCameraResource.viewportOffset = targetOffset;
 		}
+
+		if (!isFarAway && CurrentFightState != FightState.Introduction && CurrentFightState != FightState.Defeated)
+		{
+			float rotationFactor = (PlayerPathFollower.LocalPlayerPositionDelta.X - bossPathFollower.HOffset) / MaxHorizontalTracking;
+			targetCameraLookaround.X = HorizontalTrackingLookaroundAmount * rotationFactor;
+
+			if (!Player.IsHomingAttacking && CurrentFightState != FightState.Hitstun)
+				targetCameraLookaround.Y = CloseLookaroundAmount;
+		}
+
+		Player.Camera.LookaroundAmount = Player.Camera.LookaroundAmount.SmoothDamp(targetCameraLookaround,
+			ref lookaroundVelocity, CameraSmoothing * PhysicsManager.physicsDelta);
 	}
 
 	public void OnHeadEntered(Area3D a)

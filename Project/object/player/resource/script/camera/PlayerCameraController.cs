@@ -35,6 +35,9 @@ public partial class PlayerCameraController : Node3D
 	[Export] private Node3D sampler;
 	private Basis previousSamplerBasis;
 
+	/// <summary> Use this to focus on objects programatically. </summary>
+	public Vector2 LookaroundAmount { get; set; }
+
 	private readonly string ShaderPlayerScreenPosition = new("player_screen_position");
 
 	private PlayerController Player;
@@ -372,16 +375,16 @@ public partial class PlayerCameraController : Node3D
 	private readonly float MaxInputCameraDistance = 2f;
 	private void UpdateLookaroundCameraAngle()
 	{
-		Vector2 targetRotation = targetRotation = Vector2.Zero;
+		Vector2 targetRotation = LookaroundAmount;
 
 		if (!isFreeCamActive)
 		{
 			if (!Player.Controller.CameraAxis.IsZeroApprox() && !StageSettings.Instance.IsControlTest || !Player.IsLaunching)
 			{
 				if (Mathf.Abs(Player.Controller.CameraAxis.X) > Mathf.Abs(Player.Controller.CameraAxis.Y))
-					targetRotation.X = -Player.Controller.CameraAxis.X * MaxLookaroundYaw;
+					targetRotation.X += -Player.Controller.CameraAxis.X * MaxLookaroundYaw;
 				else
-					targetRotation.Y = -Player.Controller.CameraAxis.Y * MaxLookaroundPitch;
+					targetRotation.Y += -Player.Controller.CameraAxis.Y * MaxLookaroundPitch;
 			}
 		}
 
@@ -497,8 +500,8 @@ public partial class PlayerCameraController : Node3D
 		lookaroundPitch *= fovLookaroundInfluence * lookaroundDistanceInfluence;
 		lookaroundYaw *= fovLookaroundInfluence;
 
-		cameraTransform = cameraTransform.RotatedLocal(Vector3.Right, lookaroundPitch);
 		cameraTransform = cameraTransform.RotatedLocal(Vector3.Up, lookaroundYaw);
+		cameraTransform = cameraTransform.RotatedLocal(Vector3.Right, lookaroundPitch);
 
 		cameraTransform.Origin += cameraTransform.Basis.Z.Rotated(cameraTransform.Basis.X.Normalized(), lookaroundPitch) * inputCameraDistance;
 
