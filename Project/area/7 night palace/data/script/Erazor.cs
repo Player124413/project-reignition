@@ -78,6 +78,9 @@ public partial class Erazor : Node3D
 	/// ANIMATION PARAMETERS
 	private readonly string IntroCutsceneID = "np_boss_intro";
 	private readonly string DefeatCutsceneID = "np_boss_defeat";
+	private readonly StringName IntroductionTrigger = "parameters/introduction_trigger/request";
+	private readonly StringName DefeatTrigger = "parameters/defeat_trigger/request";
+	private readonly StringName DefeatSeek = "parameters/defeat_seek/seek_request";
 	private readonly StringName TeleportTrigger = "parameters/teleport_trigger/request";
 	private readonly StringName TeleportSpeed = "parameters/teleport_speed/scale";
 	private readonly StringName AttackTrigger = "parameters/attack_trigger/request";
@@ -128,6 +131,8 @@ public partial class Erazor : Node3D
 		ResetPhysicsInterpolation();
 
 		// Reset Animations
+		animationTree.Set(IntroductionTrigger, (int)AnimationNodeOneShot.OneShotRequest.Abort);
+		animationTree.Set(DefeatTrigger, (int)AnimationNodeOneShot.OneShotRequest.Abort);
 		animationTree.Set(TeleportTrigger, (int)AnimationNodeOneShot.OneShotRequest.Abort);
 		animationTree.Set(AttackTrigger, (int)AnimationNodeOneShot.OneShotRequest.Abort);
 		animationTree.Set(DamageTrigger, (int)AnimationNodeOneShot.OneShotRequest.Abort);
@@ -138,6 +143,7 @@ public partial class Erazor : Node3D
 		GlobalTransform = Transform3D.Identity;
 		ResetPhysicsInterpolation();
 
+		animationTree.Set(IntroductionTrigger, (int)AnimationNodeOneShot.OneShotRequest.Fire);
 		cutsceneCamera.Activate();
 		Player.Deactivate();
 	}
@@ -154,6 +160,7 @@ public partial class Erazor : Node3D
 		});
 		TransitionManager.instance.Connect(TransitionManager.SignalName.TransitionProcess, new Callable(this, MethodName.StartBattle), (uint)ConnectFlags.OneShot);
 		SaveManager.ActiveGameData.AllowSkippingCutscene(IntroCutsceneID);
+		animationTree.Set(IntroductionTrigger, (int)AnimationNodeOneShot.OneShotRequest.Abort);
 	}
 
 	private void StartBattle()
@@ -175,11 +182,17 @@ public partial class Erazor : Node3D
 		});
 		TransitionManager.FinishTransition();
 
+		cutsceneCamera.Activate();
+		animationTree.Set(DefeatTrigger, (int)AnimationNodeOneShot.OneShotRequest.Fire);
+
+		CurrentFightState = FightState.Defeated;
+
 		Player.Skills.CancelBreakSkills();
 		Player.Skills.DisableBreakSkills();
 		Player.MoveSpeed = 0;
 
 		Player.Visible = false;
+		Player.Deactivate();
 		Player.AddLockoutData(Runtime.Instance.DefaultCompletionLockout);
 		Interface.PauseMenu.AllowInputs = false;
 
@@ -187,21 +200,12 @@ public partial class Erazor : Node3D
 		BonusManager.instance.QueueBonus(new(BonusType.Boss, 1000));
 	}
 
-	private void DefeatBoss()
-	{
-		cutsceneCamera.Activate();
-		// TODO animationTree.Set(DefeatParameter, (int)AnimationNodeOneShot.OneShotRequest.Fire);
-
-		CurrentFightState = FightState.Defeated;
-		Player.Deactivate();
-	}
-
 	private void FinishDefeat()
 	{
 		cutsceneCamera.Deactivate();
-		// animationTree.Active = false;
-		// eventAnimator.Play("finish-defeat");
 
+		animationTree.Set(DefeatSeek, 16.5f);
+		animationTree.SetDeferred("active", false);
 		Player.Activate();
 		StageSettings.Instance.FinishLevel(true);
 		SaveManager.ActiveGameData.AllowSkippingCutscene(DefeatCutsceneID);
@@ -209,6 +213,7 @@ public partial class Erazor : Node3D
 
 	public override void _PhysicsProcess(double _)
 	{
+		GlobalTransform = bossPathFollower.GlobalTransform;
 		UpdateDamage();
 		UpdateCameras();
 
@@ -230,8 +235,7 @@ public partial class Erazor : Node3D
 				if ((Input.IsActionJustPressed("sys_pause") || Input.IsActionJustPressed("button_jump")) &&
 					SaveManager.ActiveGameData.CanSkipCutscene(DefeatCutsceneID))
 				{
-					//eventAnimator.Play("finish-defeat");
-					//rootAnimationTree.Set(DefeatSeekParameter, 10);
+					FinishDefeat();
 				}
 				return;
 		}
@@ -256,6 +260,9 @@ public partial class Erazor : Node3D
 
 	public void TakeDamage()
 	{
+		if (CurrentFightState == FightState.Defeated)
+			return;
+
 		currentHealth -= CurrentFightState == FightState.Duel ? 6 : 1;
 		GD.Print($"Erazor's Health is now {currentHealth}");
 
@@ -327,6 +334,8 @@ public partial class Erazor : Node3D
 
 		bossPathFollower.HOffset = ExtensionMethods.SmoothDamp(bossPathFollower.HOffset,
 			targetHorizontalTracking, ref trackingVelocity, HorizontalTrackingSmoothing * PhysicsManager.physicsDelta);
+
+		GlobalTransform = bossPathFollower.GlobalTransform;
 	}
 
 	private void UpdateTimer()

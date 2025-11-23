@@ -1,4 +1,4 @@
-[gd_scene load_steps=96 format=3 uid="uid://dpjlgmdlddjik"]
+[gd_scene load_steps=104 format=3 uid="uid://dpjlgmdlddjik"]
 
 [ext_resource type="Script" uid="uid://w1r45ql607mg" path="res://area/7 night palace/data/script/Erazor.cs" id="1"]
 [ext_resource type="PackedScene" uid="uid://dfgdf7gg3d62t" path="res://area/7 night palace/boss/data/model/Erazor.gltf" id="2"]
@@ -19,12 +19,15 @@
 [ext_resource type="Resource" uid="uid://38s0wkpi5mlf" path="res://resource/preset/lockout/run/RecenterLockout.tres" id="17_d1xp1"]
 [ext_resource type="Script" uid="uid://bitgnn108jmaa" path="res://object/trigger/modules/DialogTrigger.cs" id="18"]
 [ext_resource type="Resource" uid="uid://bxgjkovm2u880" path="res://resource/preset/lockout/run/StopLockout.tres" id="18_d1xp1"]
+[ext_resource type="Animation" uid="uid://vqpjwramwskf" path="res://area/7 night palace/boss/data/model/animation/attack-d-windup.res" id="18_do477"]
 [ext_resource type="Animation" uid="uid://bqpkpexop5sl3" path="res://area/7 night palace/boss/data/model/animation/idle.res" id="18_gm6dy"]
 [ext_resource type="Animation" uid="uid://bkd1jonerkbdy" path="res://area/7 night palace/boss/data/model/animation/attack-i-start.res" id="18_xsyb5"]
 [ext_resource type="Animation" uid="uid://t5yk6p0s2k4v" path="res://area/7 night palace/boss/data/model/animation/attack-i-loop.res" id="19_713fk"]
 [ext_resource type="Animation" uid="uid://dnvxubfg8aibx" path="res://area/7 night palace/boss/data/model/animation/attack-d-charge.res" id="20_2bu5w"]
+[ext_resource type="Animation" uid="uid://cr34x7l7nw4gr" path="res://area/7 night palace/boss/data/model/animation/defeat.res" id="20_42rvu"]
 [ext_resource type="Animation" uid="uid://6na6g4qrjsbw" path="res://area/7 night palace/boss/data/model/animation/attack-i-strike.res" id="20_115e6"]
 [ext_resource type="Animation" uid="uid://nxn5hkwp4den" path="res://area/7 night palace/boss/data/model/animation/attack-l-start.res" id="21_115e6"]
+[ext_resource type="Animation" uid="uid://btn0flhav7ec" path="res://area/7 night palace/boss/data/model/animation/intro.res" id="21_nrx0x"]
 [ext_resource type="Script" uid="uid://dx0a0rhyauccl" path="res://object/trigger/modules/CameraTrigger.cs" id="22_2bu5w"]
 [ext_resource type="Animation" uid="uid://bl2h0fq7rwk1b" path="res://area/7 night palace/boss/data/model/animation/attack-l-loop.res" id="22_32647"]
 [ext_resource type="Animation" uid="uid://bbph8t4bsu1k1" path="res://area/7 night palace/boss/data/model/animation/attack-l-strike.res" id="23_nbet8"]
@@ -132,6 +135,7 @@ _data = {
 &"attack-d-charge": ExtResource("20_2bu5w"),
 &"attack-d-damage": ExtResource("11_ynp26"),
 &"attack-d-strike": ExtResource("12_hqad1"),
+&"attack-d-windup": ExtResource("18_do477"),
 &"attack-i-loop": ExtResource("19_713fk"),
 &"attack-i-start": ExtResource("18_xsyb5"),
 &"attack-i-strike": ExtResource("20_115e6"),
@@ -145,7 +149,9 @@ _data = {
 &"attack-z-start": ExtResource("27_1whda"),
 &"attack-z-strike": ExtResource("29_ye8st"),
 &"damage": ExtResource("14_hqad1"),
+&"defeat": ExtResource("20_42rvu"),
 &"idle": ExtResource("18_gm6dy"),
+&"intro": ExtResource("21_nrx0x"),
 &"teleport": ExtResource("17_6t4qp")
 }
 
@@ -302,8 +308,20 @@ animation = &"damage"
 fadein_time = 0.05
 fadeout_time = 0.05
 
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_nrx0x"]
+animation = &"defeat"
+
+[sub_resource type="AnimationNodeTimeSeek" id="AnimationNodeTimeSeek_do477"]
+
+[sub_resource type="AnimationNodeOneShot" id="AnimationNodeOneShot_b0yqh"]
+
 [sub_resource type="AnimationNodeAnimation" id="14"]
 animation = &"idle"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_ikfko"]
+animation = &"intro"
+
+[sub_resource type="AnimationNodeOneShot" id="AnimationNodeOneShot_7jy5n"]
 
 [sub_resource type="AnimationNodeAnimation" id="46"]
 animation = &"teleport"
@@ -315,27 +333,37 @@ fadein_time = 0.05
 fadeout_time = 0.2
 
 [sub_resource type="AnimationNodeBlendTree" id="9"]
-graph_offset = Vector2(-833.6019, -11.704971)
-nodes/output/position = Vector2(352, 208)
+graph_offset = Vector2(-745.0539, -335.76236)
+nodes/output/position = Vector2(760, -60)
 nodes/attack_speed/node = SubResource("AnimationNodeTimeScale_ynp26")
-nodes/attack_speed/position = Vector2(-920, 160)
+nodes/attack_speed/position = Vector2(-880, 100)
 nodes/teleport_anim/node = SubResource("46")
-nodes/teleport_anim/position = Vector2(-520, 280)
+nodes/teleport_anim/position = Vector2(-860, 320)
 nodes/idle_anim/node = SubResource("14")
-nodes/idle_anim/position = Vector2(-1100, -40)
+nodes/idle_anim/position = Vector2(-1060, -120)
 nodes/attack_state/node = SubResource("AnimationNodeStateMachine_pwxop")
-nodes/attack_state/position = Vector2(-1220, 160)
+nodes/attack_state/position = Vector2(-1120, 100)
 nodes/teleport_trigger/node = SubResource("AnimationNodeOneShot_xu0gp")
-nodes/teleport_trigger/position = Vector2(-200, 160)
+nodes/teleport_trigger/position = Vector2(-460, -20)
 nodes/damage_trigger/node = SubResource("AnimationNodeOneShot_hqad1")
-nodes/damage_trigger/position = Vector2(180, 160)
+nodes/damage_trigger/position = Vector2(-180, 0)
 nodes/damage_anim/node = SubResource("AnimationNodeAnimation_ynp26")
-nodes/damage_anim/position = Vector2(-20, 380)
+nodes/damage_anim/position = Vector2(-400, 340)
 nodes/attack_trigger/node = SubResource("AnimationNodeOneShot_2bu5w")
-nodes/attack_trigger/position = Vector2(-700, 20)
+nodes/attack_trigger/position = Vector2(-680, -60)
 nodes/teleport_speed/node = SubResource("41")
-nodes/teleport_speed/position = Vector2(-360, 280)
-node_connections = [&"output", 0, &"damage_trigger", &"attack_speed", 0, &"attack_state", &"teleport_trigger", 0, &"attack_trigger", &"teleport_trigger", 1, &"teleport_speed", &"damage_trigger", 0, &"teleport_trigger", &"damage_trigger", 1, &"damage_anim", &"attack_trigger", 0, &"idle_anim", &"attack_trigger", 1, &"attack_speed", &"teleport_speed", 0, &"teleport_anim"]
+nodes/teleport_speed/position = Vector2(-680, 300)
+nodes/introduction_trigger/node = SubResource("AnimationNodeOneShot_7jy5n")
+nodes/introduction_trigger/position = Vector2(480, -60)
+nodes/introduction_anim/node = SubResource("AnimationNodeAnimation_ikfko")
+nodes/introduction_anim/position = Vector2(260, 280)
+nodes/defeat_trigger/node = SubResource("AnimationNodeOneShot_b0yqh")
+nodes/defeat_trigger/position = Vector2(220, -40)
+nodes/defeat_anim/node = SubResource("AnimationNodeAnimation_nrx0x")
+nodes/defeat_anim/position = Vector2(-160, 320)
+nodes/defeat_seek/node = SubResource("AnimationNodeTimeSeek_do477")
+nodes/defeat_seek/position = Vector2(40, 320)
+node_connections = [&"output", 0, &"introduction_trigger", &"attack_speed", 0, &"attack_state", &"teleport_trigger", 0, &"attack_trigger", &"teleport_trigger", 1, &"teleport_speed", &"damage_trigger", 0, &"teleport_trigger", &"damage_trigger", 1, &"damage_anim", &"attack_trigger", 0, &"idle_anim", &"attack_trigger", 1, &"attack_speed", &"teleport_speed", 0, &"teleport_anim", &"introduction_trigger", 0, &"defeat_trigger", &"introduction_trigger", 1, &"introduction_anim", &"defeat_trigger", 0, &"damage_trigger", &"defeat_trigger", 1, &"defeat_seek", &"defeat_seek", 0, &"defeat_anim"]
 
 [node name="Erazor" type="Node3D" node_paths=PackedStringArray("animationTree", "cutsceneCamera", "duelCamera", "recenterLockout", "stopLockout")]
 script = ExtResource("1")
@@ -358,7 +386,7 @@ windupDelays = PackedFloat32Array(0.3, 0.2, 0.1)
 callback_mode_process = 0
 
 [node name="HeadAttachment" type="Node3D" parent="."]
-transform = Transform3D(0.9998235, 4.950049e-07, -4.950048e-07, -4.949895e-07, 0.99985427, 2.8741292e-07, 4.9498965e-07, -2.8741258e-07, 0.99985456, -1.12708975e-07, 7.2600017, 2.5939093e-05)
+transform = Transform3D(0.9920495, -0.12428663, -0.0054148566, 0.07015682, 0.59490377, -0.80054396, 0.10273005, 0.79394424, 0.59900135, -0.24372166, 7.6915736, 1.792407)
 script = ExtResource("2_xu0gp")
 skeleton = NodePath("../Erazor/ErazorRoot/Skeleton3D")
 boneName = &"head"
@@ -374,7 +402,7 @@ monitorable = false
 shape = SubResource("2")
 
 [node name="EdgeAttachment" type="Node3D" parent="."]
-transform = Transform3D(3.1557384e-08, 0.965805, -0.25877836, 0.9998377, 1.9468284e-07, 8.4847125e-07, 8.699422e-07, -0.25878677, -0.96577364, 4.1420135, 6.082181, 2.2401326)
+transform = Transform3D(0.17807028, -0.48652124, -0.8551547, 0.70740086, 0.6673224, -0.23232879, 0.68377906, -0.56367546, 0.4630549, 0.13344765, 3.9128194, 3.4440784)
 script = ExtResource("2_xu0gp")
 skeleton = NodePath("../Erazor/ErazorRoot/Skeleton3D")
 boneName = &"edge"
@@ -393,7 +421,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2)
 shape = SubResource("BoxShape3D_ye8st")
 
 [node name="ChainAttachment" type="Node3D" parent="."]
-transform = Transform3D(1, -3.67887e-07, -1.6080851e-14, 0, -4.371139e-08, 1, -3.67887e-07, -1, -4.371139e-08, 4.4252667, 6.685099, -1.0693915)
+transform = Transform3D(0.48658022, 0.8552869, 0.17809522, -0.6674028, 0.23236763, 0.707512, 0.5637431, -0.4631238, 0.68388927, 3.2092526, 4.9193654, 2.4833558)
 script = ExtResource("2_xu0gp")
 skeleton = NodePath("../Erazor/ErazorRoot/Skeleton3D")
 boneName = &"chain"
@@ -731,6 +759,13 @@ parameters/attack_trigger/active = false
 parameters/attack_trigger/internal_active = false
 parameters/attack_trigger/request = 0
 parameters/teleport_speed/scale = 1.0
+parameters/introduction_trigger/active = false
+parameters/introduction_trigger/internal_active = false
+parameters/introduction_trigger/request = 0
+parameters/defeat_trigger/active = false
+parameters/defeat_trigger/internal_active = false
+parameters/defeat_trigger/request = 0
+parameters/defeat_seek/seek_request = -1.0
 
 [connection signal="area_entered" from="HeadAttachment/Lockon" to="." method="OnHeadEntered"]
 [connection signal="area_exited" from="HeadAttachment/Lockon" to="." method="OnHeadExited"]
