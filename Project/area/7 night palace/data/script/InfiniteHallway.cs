@@ -17,6 +17,7 @@ public partial class InfiniteHallway : Node3D
 	[Export] public int[] itemBundleInterval;
 	private int itemBundleIndex;
 	private int itemBundleCounter;
+	private Transform3D itemRespawnTransform;
 
 	[Export] private Node3D primaryCollision;
 	[Export] private Node3D secondaryCollision;
@@ -34,6 +35,7 @@ public partial class InfiniteHallway : Node3D
 
 	public override void _Ready()
 	{
+		itemRespawnTransform = itemBundle.GlobalTransform;
 		StageSettings.Instance.Respawned += Respawn;
 		Respawn();
 	}
@@ -53,6 +55,7 @@ public partial class InfiniteHallway : Node3D
 		MoveNode(secondaryCollision, 1);
 		itemBundleIndex = 0;
 		itemBundleCounter = itemBundleInterval[itemBundleIndex] - 2;
+		itemBundle.GlobalTransform = itemRespawnTransform;
 	}
 
 	/// <summary>
