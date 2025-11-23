@@ -1,4 +1,4 @@
-[gd_scene load_steps=104 format=3 uid="uid://dpjlgmdlddjik"]
+[gd_scene load_steps=106 format=3 uid="uid://dpjlgmdlddjik"]
 
 [ext_resource type="Script" uid="uid://w1r45ql607mg" path="res://area/7 night palace/data/script/Erazor.cs" id="1"]
 [ext_resource type="PackedScene" uid="uid://dfgdf7gg3d62t" path="res://area/7 night palace/boss/data/model/Erazor.gltf" id="2"]
@@ -19,7 +19,7 @@
 [ext_resource type="Resource" uid="uid://38s0wkpi5mlf" path="res://resource/preset/lockout/run/RecenterLockout.tres" id="17_d1xp1"]
 [ext_resource type="Script" uid="uid://bitgnn108jmaa" path="res://object/trigger/modules/DialogTrigger.cs" id="18"]
 [ext_resource type="Resource" uid="uid://bxgjkovm2u880" path="res://resource/preset/lockout/run/StopLockout.tres" id="18_d1xp1"]
-[ext_resource type="Animation" uid="uid://vqpjwramwskf" path="res://area/7 night palace/boss/data/model/animation/attack-d-windup.res" id="18_do477"]
+[ext_resource type="Animation" uid="uid://cqk4ecdne83i4" path="res://area/7 night palace/boss/data/model/animation/attack-d-windup.res" id="18_do477"]
 [ext_resource type="Animation" uid="uid://bqpkpexop5sl3" path="res://area/7 night palace/boss/data/model/animation/idle.res" id="18_gm6dy"]
 [ext_resource type="Animation" uid="uid://bkd1jonerkbdy" path="res://area/7 night palace/boss/data/model/animation/attack-i-start.res" id="18_xsyb5"]
 [ext_resource type="Animation" uid="uid://t5yk6p0s2k4v" path="res://area/7 night palace/boss/data/model/animation/attack-i-loop.res" id="19_713fk"]
@@ -166,6 +166,9 @@ animation = &"attack-d-damage"
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_42rvu"]
 animation = &"attack-d-strike"
 
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_b0yqh"]
+animation = &"attack-d-windup"
+
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_xsyb5"]
 animation = &"attack-i-loop"
 
@@ -250,10 +253,6 @@ xfade_time = 0.05
 switch_mode = 2
 advance_mode = 2
 
-[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_4xwmy"]
-
-[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_jmgd0"]
-
 [sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_2g80e"]
 switch_mode = 2
 advance_mode = 2
@@ -262,14 +261,23 @@ advance_mode = 2
 switch_mode = 2
 advance_mode = 2
 
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_ltm0g"]
+xfade_time = 0.05
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_4xwmy"]
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_jmgd0"]
+
 [sub_resource type="AnimationNodeStateMachine" id="AnimationNodeStateMachine_pwxop"]
 states/Start/position = Vector2(201, 100)
 states/attack-d-charge/node = SubResource("AnimationNodeAnimation_446as")
-states/attack-d-charge/position = Vector2(1066.6943, 189)
+states/attack-d-charge/position = Vector2(1254.6943, 189)
 states/attack-d-damage/node = SubResource("AnimationNodeAnimation_do477")
 states/attack-d-damage/position = Vector2(1066.6943, 100)
 states/attack-d-strike/node = SubResource("AnimationNodeAnimation_42rvu")
 states/attack-d-strike/position = Vector2(900, 189)
+states/attack-d-windup/node = SubResource("AnimationNodeAnimation_b0yqh")
+states/attack-d-windup/position = Vector2(1066.6943, 189)
 states/attack-i-loop/node = SubResource("AnimationNodeAnimation_xsyb5")
 states/attack-i-loop/position = Vector2(552.6942, 100)
 states/attack-i-start/node = SubResource("AnimationNodeAnimation_713fk")
@@ -294,8 +302,8 @@ states/attack-z-start/node = SubResource("AnimationNodeAnimation_d1xp1")
 states/attack-z-start/position = Vector2(358.6943, -86)
 states/attack-z-strike/node = SubResource("AnimationNodeAnimation_67o07")
 states/attack-z-strike/position = Vector2(732.6941, -86)
-transitions = ["attack-i-start", "attack-i-loop", SubResource("AnimationNodeStateMachineTransition_115e6"), "attack-i-loop", "attack-i-strike", SubResource("AnimationNodeStateMachineTransition_32647"), "attack-i-strike", "End", SubResource("AnimationNodeStateMachineTransition_nbet8"), "attack-l-start", "attack-l-loop", SubResource("AnimationNodeStateMachineTransition_ye8st"), "attack-l-loop", "attack-l-strike", SubResource("AnimationNodeStateMachineTransition_67o07"), "attack-l-strike", "End", SubResource("AnimationNodeStateMachineTransition_8vfqi"), "attack-v-start", "attack-v-loop", SubResource("AnimationNodeStateMachineTransition_446as"), "attack-v-loop", "attack-v-strike", SubResource("AnimationNodeStateMachineTransition_do477"), "attack-v-strike", "End", SubResource("AnimationNodeStateMachineTransition_42rvu"), "attack-z-start", "attack-z-loop", SubResource("AnimationNodeStateMachineTransition_b0yqh"), "attack-z-loop", "attack-z-strike", SubResource("AnimationNodeStateMachineTransition_ikfko"), "attack-z-strike", "End", SubResource("AnimationNodeStateMachineTransition_7jy5n"), "attack-d-charge", "attack-d-damage", SubResource("AnimationNodeStateMachineTransition_4xwmy"), "attack-d-charge", "attack-d-strike", SubResource("AnimationNodeStateMachineTransition_jmgd0"), "attack-d-damage", "End", SubResource("AnimationNodeStateMachineTransition_2g80e"), "attack-d-strike", "End", SubResource("AnimationNodeStateMachineTransition_180dd")]
-graph_offset = Vector2(-68.305695, -37)
+transitions = ["attack-i-start", "attack-i-loop", SubResource("AnimationNodeStateMachineTransition_115e6"), "attack-i-loop", "attack-i-strike", SubResource("AnimationNodeStateMachineTransition_32647"), "attack-i-strike", "End", SubResource("AnimationNodeStateMachineTransition_nbet8"), "attack-l-start", "attack-l-loop", SubResource("AnimationNodeStateMachineTransition_ye8st"), "attack-l-loop", "attack-l-strike", SubResource("AnimationNodeStateMachineTransition_67o07"), "attack-l-strike", "End", SubResource("AnimationNodeStateMachineTransition_8vfqi"), "attack-v-start", "attack-v-loop", SubResource("AnimationNodeStateMachineTransition_446as"), "attack-v-loop", "attack-v-strike", SubResource("AnimationNodeStateMachineTransition_do477"), "attack-v-strike", "End", SubResource("AnimationNodeStateMachineTransition_42rvu"), "attack-z-start", "attack-z-loop", SubResource("AnimationNodeStateMachineTransition_b0yqh"), "attack-z-loop", "attack-z-strike", SubResource("AnimationNodeStateMachineTransition_ikfko"), "attack-z-strike", "End", SubResource("AnimationNodeStateMachineTransition_7jy5n"), "attack-d-damage", "End", SubResource("AnimationNodeStateMachineTransition_2g80e"), "attack-d-strike", "End", SubResource("AnimationNodeStateMachineTransition_180dd"), "attack-d-charge", "attack-d-windup", SubResource("AnimationNodeStateMachineTransition_ltm0g"), "attack-d-windup", "attack-d-damage", SubResource("AnimationNodeStateMachineTransition_4xwmy"), "attack-d-windup", "attack-d-strike", SubResource("AnimationNodeStateMachineTransition_jmgd0")]
+graph_offset = Vector2(191.6943, -62)
 
 [sub_resource type="AnimationNodeOneShot" id="AnimationNodeOneShot_2bu5w"]
 fadein_time = 0.05
@@ -333,7 +341,7 @@ fadein_time = 0.05
 fadeout_time = 0.2
 
 [sub_resource type="AnimationNodeBlendTree" id="9"]
-graph_offset = Vector2(-745.0539, -335.76236)
+graph_offset = Vector2(-1064.9236, 39.619537)
 nodes/output/position = Vector2(760, -60)
 nodes/attack_speed/node = SubResource("AnimationNodeTimeScale_ynp26")
 nodes/attack_speed/position = Vector2(-880, 100)
@@ -386,7 +394,7 @@ windupDelays = PackedFloat32Array(0.3, 0.2, 0.1)
 callback_mode_process = 0
 
 [node name="HeadAttachment" type="Node3D" parent="."]
-transform = Transform3D(0.9920495, -0.12428663, -0.0054148566, 0.07015682, 0.59490377, -0.80054396, 0.10273005, 0.79394424, 0.59900135, -0.24372166, 7.6915736, 1.792407)
+transform = Transform3D(0.9998188, 4.9500403e-07, -4.9500323e-07, -4.9498715e-07, 0.99985254, 2.8741198e-07, 4.949873e-07, -2.874121e-07, 0.9998513, -1.12708975e-07, 7.2600017, 2.5939093e-05)
 script = ExtResource("2_xu0gp")
 skeleton = NodePath("../Erazor/ErazorRoot/Skeleton3D")
 boneName = &"head"
@@ -402,7 +410,7 @@ monitorable = false
 shape = SubResource("2")
 
 [node name="EdgeAttachment" type="Node3D" parent="."]
-transform = Transform3D(0.17807028, -0.48652124, -0.8551547, 0.70740086, 0.6673224, -0.23232879, 0.68377906, -0.56367546, 0.4630549, 0.13344765, 3.9128194, 3.4440784)
+transform = Transform3D(3.1557438e-08, 0.9658061, -0.2587785, 0.99983937, 1.9468305e-07, 8.484717e-07, 8.699436e-07, -0.25878707, -0.9657742, 4.1420135, 6.082181, 2.2401326)
 script = ExtResource("2_xu0gp")
 skeleton = NodePath("../Erazor/ErazorRoot/Skeleton3D")
 boneName = &"edge"
@@ -421,7 +429,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2)
 shape = SubResource("BoxShape3D_ye8st")
 
 [node name="ChainAttachment" type="Node3D" parent="."]
-transform = Transform3D(0.48658022, 0.8552869, 0.17809522, -0.6674028, 0.23236763, 0.707512, 0.5637431, -0.4631238, 0.68388927, 3.2092526, 4.9193654, 2.4833558)
+transform = Transform3D(0.99999654, -3.678859e-07, -1.6080817e-14, 0, -4.3711257e-08, 0.99999785, -3.6788572e-07, -0.999997, -4.3711296e-08, 4.4252667, 6.685099, -1.0693915)
 script = ExtResource("2_xu0gp")
 skeleton = NodePath("../Erazor/ErazorRoot/Skeleton3D")
 boneName = &"chain"

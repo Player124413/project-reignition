@@ -74,6 +74,8 @@ public partial class Erazor : Node3D
 	private readonly float DuelDistance = 60f;
 	/// <summary> The distance at which the Duel Slash comes out. </summary>
 	private readonly float SlashDistance = 8f;
+	/// <summary> The distance at which the Duel Windup comes out. </summary>
+	private readonly float DuelWindupDistance = 20f;
 
 	/// ANIMATION PARAMETERS
 	private readonly string IntroCutsceneID = "np_boss_intro";
@@ -445,7 +447,12 @@ public partial class Erazor : Node3D
 	{
 		stateTimer = Mathf.MoveToward(stateTimer, 0, PhysicsManager.physicsDelta);
 		if (Mathf.IsZeroApprox(stateTimer))
+		{
 			currentDistance = Mathf.MoveToward(currentDistance, 0, DuelSpeed * PhysicsManager.physicsDelta);
+
+			if (currentDistance <= DuelWindupDistance)
+				AttackStatePlayback.Travel("attack-d-windup");
+		}
 
 		bossPathFollower.Progress = PlayerPathFollower.Progress + currentDistance;
 		if (currentDistance <= SlashDistance && !Player.IsHomingAttacking)
