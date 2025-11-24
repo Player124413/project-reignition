@@ -591,7 +591,7 @@ public partial class StageSettings : Node3D
 
 		BGMPlayer.StageMusicPaused = true;
 		SoundManager.instance.CancelDialog();
-		Interface.PauseMenu.AllowInputs = false;
+		PauseMenu.AllowInputs = false;
 		LevelState = wasSuccessful ? LevelStateEnum.Success : LevelStateEnum.Failed;
 
 		EmitSignal(SignalName.LevelCompleted);

@@ -37,6 +37,7 @@ public partial class InfiniteHallway : Node3D
 	{
 		itemRespawnTransform = itemBundle.GlobalTransform;
 		StageSettings.Instance.Respawned += Respawn;
+		StageSettings.Instance.LevelDemoStarted += Respawn;
 		Respawn();
 	}
 
