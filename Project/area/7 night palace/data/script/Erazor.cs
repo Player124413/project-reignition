@@ -246,6 +246,7 @@ public partial class Erazor : Node3D
 				GlobalTransform = bossPathFollower.GlobalTransform;
 				return;
 			case FightState.DuelHitstun:
+				GlobalTransform = bossPathFollower.GlobalTransform;
 				return;
 			case FightState.Introduction:
 				if ((Input.IsActionJustPressed("sys_pause") || Input.IsActionJustPressed("button_jump")) &&
