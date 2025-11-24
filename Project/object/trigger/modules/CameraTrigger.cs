@@ -57,7 +57,10 @@ public partial class CameraTrigger : StageTriggerModule
 		if (data.SettingsResource != settings || !IsOverridingCameraTransform) return;
 
 		if (data.SettingsResource.copyPosition)
+		{
 			data.Position = _followObject.GlobalPosition;
+			data.ResetPhysicsInterpolation = true;
+		}
 
 		if (data.SettingsResource.copyRotation)
 			data.RotationBasis = _followObject.GlobalBasis;

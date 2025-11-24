@@ -519,7 +519,7 @@ public partial class PlayerCameraController : Node3D
 		{
 			cameraRoot.GlobalTransform = cameraTransform; // Update transform
 
-			if (SnapFlag)
+			if (SnapFlag || ActiveBlendData.ResetPhysicsInterpolation)
 				cameraRoot.ResetPhysicsInterpolation();
 		}
 
@@ -1376,6 +1376,7 @@ public partial class CameraBlendData : GodotObject
 	public float BlendTime { get; set; }
 	/// <summary> Camera's static position. Only used when CameraSettingsResource.copyPosition is true. </summary>
 	public Vector3 Position { get; set; }
+	public bool ResetPhysicsInterpolation { get; set; }
 
 	/// <summary> Camera's static rotation. Only used when CameraSettingsResource.copyRotation is true. </summary>
 	public Basis RotationBasis { get; set; }

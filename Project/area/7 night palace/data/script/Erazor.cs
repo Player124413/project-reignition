@@ -198,18 +198,22 @@ public partial class Erazor : Node3D
 		});
 		TransitionManager.FinishTransition();
 
-		cutsceneCamera.Activate();
-		animationTree.Set(DefeatTrigger, (int)AnimationNodeOneShot.OneShotRequest.Fire);
-
-		CurrentFightState = FightState.Defeated;
-
 		Player.Skills.CancelBreakSkills();
 		Player.Skills.DisableBreakSkills();
 		Player.MoveSpeed = 0;
+		Player.SnapToGround();
+		Player.Effect.CanelSpinFX();
+		Player.Effect.StopTrailFX();
+		Player.Animator.ResetState(0.0f);
 		Player.Animator.PlayOneshotAnimation(DefeatCutsceneID);
 		Player.AddLockoutData(Runtime.Instance.DefaultCompletionLockout);
 		Interface.PauseMenu.AllowInputs = false;
 		HeadsUpDisplay.Instance.SetVisibility(false);
+
+		cutsceneCamera.Activate();
+		animationTree.Set(DefeatTrigger, (int)AnimationNodeOneShot.OneShotRequest.Fire);
+
+		CurrentFightState = FightState.Defeated;
 
 		// Award 1000 points for defeating the boss
 		BonusManager.instance.QueueBonus(new(BonusType.Boss, 1000));
@@ -256,6 +260,10 @@ public partial class Erazor : Node3D
 				{
 					FinishDefeat();
 				}
+
+				bossPathFollower.Progress = PlayerPathFollower.Progress;
+				GlobalTransform = bossPathFollower.GlobalTransform;
+				ResetPhysicsInterpolation();
 				return;
 		}
 
