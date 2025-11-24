@@ -142,4 +142,7 @@ public partial class InfiniteHallway : Node3D
 		direction -= Mathf.Sign(direction);
 		MoveNode(node, direction);
 	}
+
+	private void ShowItemBox() => itemBundle.Visible = true;
+	private void HideItemBox() => itemBundle.Visible = false;
 }

@@ -6,6 +6,9 @@ namespace Project.Gameplay.Bosses;
 
 public partial class Erazor : Node3D
 {
+	[Signal] public delegate void CutsceneStartedEventHandler();
+	[Signal] public delegate void CutsceneFinishedEventHandler();
+
 	[Export] private AnimationTree animationTree;
 	[Export] private PathFollow3D bossPathFollower;
 	[Export] private CameraTrigger cutsceneCamera;
@@ -142,12 +145,18 @@ public partial class Erazor : Node3D
 
 	private void StartIntroduction()
 	{
-		GlobalTransform = Transform3D.Identity;
+		GlobalTransform = Player.GlobalTransform;
 		ResetPhysicsInterpolation();
 
 		animationTree.Set(IntroductionTrigger, (int)AnimationNodeOneShot.OneShotRequest.Fire);
 		cutsceneCamera.Activate();
-		Player.Deactivate();
+		Interface.PauseMenu.AllowInputs = false;
+		HeadsUpDisplay.Instance.SetVisibility(false);
+		Player.Skills.DisableBreakSkills();
+		Player.Animator.PlayOneshotAnimation(IntroCutsceneID);
+		stopLockout.Activate();
+
+		EmitSignal(SignalName.CutsceneStarted);
 	}
 
 	private void FinishIntroduction()
@@ -163,6 +172,9 @@ public partial class Erazor : Node3D
 		TransitionManager.instance.Connect(TransitionManager.SignalName.TransitionProcess, new Callable(this, MethodName.StartBattle), (uint)ConnectFlags.OneShot);
 		SaveManager.ActiveGameData.AllowSkippingCutscene(IntroCutsceneID);
 		animationTree.Set(IntroductionTrigger, (int)AnimationNodeOneShot.OneShotRequest.Abort);
+		Player.Animator.CancelOneshot();
+
+		EmitSignal(SignalName.CutsceneFinished);
 	}
 
 	private void StartBattle()
@@ -170,8 +182,10 @@ public partial class Erazor : Node3D
 		cutsceneCamera.Deactivate();
 
 		Respawn();
+		Player.Skills.EnableBreakSkills();
 		TransitionManager.FinishTransition();
-		Player.Activate();
+		Interface.PauseMenu.AllowInputs = true;
+		HeadsUpDisplay.Instance.SetVisibility(true);
 	}
 
 	private void StartFinalBlow()
@@ -192,14 +206,14 @@ public partial class Erazor : Node3D
 		Player.Skills.CancelBreakSkills();
 		Player.Skills.DisableBreakSkills();
 		Player.MoveSpeed = 0;
-
-		Player.Visible = false;
-		Player.Deactivate();
+		Player.Animator.PlayOneshotAnimation(DefeatCutsceneID);
 		Player.AddLockoutData(Runtime.Instance.DefaultCompletionLockout);
 		Interface.PauseMenu.AllowInputs = false;
+		HeadsUpDisplay.Instance.SetVisibility(false);
 
 		// Award 1000 points for defeating the boss
 		BonusManager.instance.QueueBonus(new(BonusType.Boss, 1000));
+		EmitSignal(SignalName.CutsceneStarted);
 	}
 
 	private void FinishDefeat()
@@ -208,14 +222,16 @@ public partial class Erazor : Node3D
 
 		animationTree.Set(DefeatSeek, 16.5f);
 		animationTree.SetDeferred("active", false);
-		Player.Activate();
+
+		Player.Animator.CancelOneshot();
+
 		StageSettings.Instance.FinishLevel(true);
 		SaveManager.ActiveGameData.AllowSkippingCutscene(DefeatCutsceneID);
+		EmitSignal(SignalName.CutsceneFinished);
 	}
 
 	public override void _PhysicsProcess(double _)
 	{
-		GlobalTransform = bossPathFollower.GlobalTransform;
 		UpdateDamage();
 		UpdateCameras();
 
@@ -223,6 +239,7 @@ public partial class Erazor : Node3D
 		{
 			case FightState.Duel:
 				UpdateDuel();
+				GlobalTransform = bossPathFollower.GlobalTransform;
 				return;
 			case FightState.DuelHitstun:
 				return;
@@ -242,6 +259,7 @@ public partial class Erazor : Node3D
 				return;
 		}
 
+		GlobalTransform = bossPathFollower.GlobalTransform;
 		UpdateTimer();
 		UpdatePosition();
 	}

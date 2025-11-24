@@ -24,7 +24,10 @@ sky = NodePath("../../Static/Visuals/Skybox")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -50)
 
 [node name="Erazor" parent="BossAct" node_paths=PackedStringArray("bossPathFollower") instance=ExtResource("2_edjp2")]
-transform = Transform3D(0.999992, 0, 0.00084701396, 0, 1, 0, -0.00084701396, 0, 0.999992, 0.13043167, 0, -59.999912)
+transform = Transform3D(0.999992, 0, 0.00084701396, 0, 1, 0, -0.00084701396, 0, 0.999992, 0, 0, -50)
 bossPathFollower = NodePath("../../Static/Path/MainPath/ErazorPathFollower")
+
+[connection signal="CutsceneFinished" from="BossAct/Erazor" to="BossAct/InfiniteHall" method="ShowItemBox"]
+[connection signal="CutsceneStarted" from="BossAct/Erazor" to="BossAct/InfiniteHall" method="HideItemBox"]
 
 [editable path="Static"]
