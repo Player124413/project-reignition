@@ -618,6 +618,14 @@ public partial class Erazor : Node3D
 			ref lookaroundVelocity, CameraSmoothing * PhysicsManager.physicsDelta);
 	}
 
+	public void PlayScreenShake(float magnitude)
+	{
+		StageSettings.Player.Camera.StartCameraShake(new()
+		{
+			magnitude = Vector3.One.RemoveDepth() * magnitude,
+		});
+	}
+
 	public void OnHeadEntered(Area3D a)
 	{
 		if (!a.IsInGroup("player"))
