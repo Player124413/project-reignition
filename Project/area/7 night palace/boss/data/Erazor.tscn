@@ -1,4 +1,4 @@
-[gd_scene load_steps=182 format=4 uid="uid://dpjlgmdlddjik"]
+[gd_scene load_steps=223 format=4 uid="uid://dpjlgmdlddjik"]
 
 [ext_resource type="Script" uid="uid://w1r45ql607mg" path="res://area/7 night palace/data/script/Erazor.cs" id="1"]
 [ext_resource type="PackedScene" uid="uid://dfgdf7gg3d62t" path="res://area/7 night palace/boss/data/model/Erazor.gltf" id="2"]
@@ -16,7 +16,10 @@
 [ext_resource type="Material" uid="uid://cf3hi6aubsx0t" path="res://effect/particle/material/explosion/Explosion Smoke Add No Billboard.tres" id="11_e0l26"]
 [ext_resource type="Animation" uid="uid://bsl1k7jn4rq5i" path="res://area/7 night palace/boss/data/model/animation/attack-d-damage.res" id="11_ynp26"]
 [ext_resource type="Animation" uid="uid://qrj1ve66xl2c" path="res://area/7 night palace/boss/data/model/animation/attack-d-strike.res" id="12_hqad1"]
+[ext_resource type="Material" uid="uid://7lvqh1a70ae4" path="res://effect/particle/material/explosion/Explosion Flame.tres" id="13_4bh8v"]
+[ext_resource type="Script" uid="uid://c65ffkknyq6gr" path="res://addons/custom_nodes/script/GroupGpuParticles3D.cs" id="13_d8m8e"]
 [ext_resource type="AudioStream" uid="uid://v6qg2dkalu0a" path="res://sound/boss/erazor/ev_01_stg073_e.ogg" id="13_f70i7"]
+[ext_resource type="Material" uid="uid://dsn3x4u283jxc" path="res://effect/particle/material/Teleport Spark.tres" id="13_ho7ab"]
 [ext_resource type="Animation" uid="uid://cfiydlfbc7k87" path="res://area/7 night palace/boss/data/model/animation/damage.res" id="14_hqad1"]
 [ext_resource type="AudioStream" uid="uid://baw65xwl0pqea" path="res://sound/boss/erazor/ev_02_stg073_e.ogg" id="14_nnxp6"]
 [ext_resource type="Material" uid="uid://b7igx10rq8saj" path="res://effect/particle/material/Aegis Feather No Billboard.tres" id="14_qysdu"]
@@ -25,11 +28,14 @@
 [ext_resource type="Material" uid="uid://qm8ql8iysuye" path="res://area/1 sand oasis/boss/effect/material/Light Spark.tres" id="16_1s5xk"]
 [ext_resource type="Script" uid="uid://bd2g6rmrn77eo" path="res://object/trigger/modules/LockoutTrigger.cs" id="16_8vfqi"]
 [ext_resource type="Material" uid="uid://cd8mqsy8lhhcb" path="res://object/stage/pickups/resource/model/material/Ring Spark.tres" id="16_d1uw2"]
+[ext_resource type="Material" uid="uid://4batii1hel0b" path="res://effect/particle/material/explosion/Explosion Smoke.tres" id="16_mjwk1"]
 [ext_resource type="Animation" uid="uid://dwosporlkgicc" path="res://area/7 night palace/boss/data/model/animation/teleport.res" id="17_6t4qp"]
 [ext_resource type="Resource" uid="uid://38s0wkpi5mlf" path="res://resource/preset/lockout/run/RecenterLockout.tres" id="17_d1xp1"]
+[ext_resource type="Material" uid="uid://cctsu5ymh5eev" path="res://effect/particle/material/environment/Common Splatter.tres" id="17_x1p43"]
 [ext_resource type="Script" uid="uid://bitgnn108jmaa" path="res://object/trigger/modules/DialogTrigger.cs" id="18"]
 [ext_resource type="Resource" uid="uid://bxgjkovm2u880" path="res://resource/preset/lockout/run/StopLockout.tres" id="18_d1xp1"]
 [ext_resource type="Animation" uid="uid://cqk4ecdne83i4" path="res://area/7 night palace/boss/data/model/animation/attack-d-windup.res" id="18_do477"]
+[ext_resource type="Material" uid="uid://ph7gwhlyucdx" path="res://effect/particle/material/environment/Common Dust Add.tres" id="18_eslb3"]
 [ext_resource type="Animation" uid="uid://bqpkpexop5sl3" path="res://area/7 night palace/boss/data/model/animation/idle.res" id="18_gm6dy"]
 [ext_resource type="Animation" uid="uid://bkd1jonerkbdy" path="res://area/7 night palace/boss/data/model/animation/attack-i-start.res" id="18_xsyb5"]
 [ext_resource type="Animation" uid="uid://t5yk6p0s2k4v" path="res://area/7 night palace/boss/data/model/animation/attack-i-loop.res" id="19_713fk"]
@@ -344,6 +350,177 @@ scale_curve = SubResource("CurveTexture_e0l26")
 color = Color(1, 0.49803922, 0, 1)
 alpha_curve = SubResource("CurveTexture_f70i7")
 
+[sub_resource type="Gradient" id="Gradient_ho7ab"]
+offsets = PackedFloat32Array(0, 0.36938775, 1)
+colors = PackedColorArray(0.81960785, 1, 1, 1, 0.9098039, 0.44313726, 0.23921569, 1, 1, 0.015686275, 0, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_eslb3"]
+gradient = SubResource("Gradient_ho7ab")
+width = 64
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_f11ij"]
+lifetime_randomness = 0.4
+angle_min = 1.0728836e-05
+angle_max = 360.00003
+spread = 180.0
+gravity = Vector3(0, 0, 0)
+scale_max = 2.0
+scale_curve = SubResource("CurveTexture_e0l26")
+color_ramp = SubResource("GradientTexture1D_eslb3")
+alpha_curve = SubResource("CurveTexture_f70i7")
+
+[sub_resource type="QuadMesh" id="QuadMesh_uvwtd"]
+material = ExtResource("13_ho7ab")
+size = Vector2(2, 8)
+center_offset = Vector3(0, 5, 0)
+
+[sub_resource type="Curve" id="Curve_mjwk1"]
+_data = [Vector2(0, 0), 0.0, 21.128593, 0, 0, Vector2(0.1, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_x1p43"]
+width = 64
+texture_mode = 1
+curve = SubResource("Curve_mjwk1")
+
+[sub_resource type="Curve" id="Curve_4bh8v"]
+_data = [Vector2(0, 0.2), 0.0, 2.0257702, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_mjwk1"]
+width = 64
+curve = SubResource("Curve_4bh8v")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_uvwtd"]
+emission_shape = 1
+emission_sphere_radius = 1.0
+angle_min = 1.0728836e-05
+angle_max = 360.00003
+gravity = Vector3(0, 0, 0)
+scale_min = 2.0
+scale_max = 3.0
+scale_curve = SubResource("CurveTexture_mjwk1")
+alpha_curve = SubResource("CurveTexture_x1p43")
+
+[sub_resource type="QuadMesh" id="QuadMesh_mjwk1"]
+material = ExtResource("13_4bh8v")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_gur6o"]
+angle_min = 1.0728836e-05
+angle_max = 360.00003
+direction = Vector3(0, 1, 0)
+initial_velocity_min = 20.0
+initial_velocity_max = 20.0
+gravity = Vector3(0, 0, 0)
+scale_min = 5.0
+scale_max = 10.0
+scale_curve = SubResource("CurveTexture_mjwk1")
+color = Color(1.8247963, 0.853542, 0.37140858, 1)
+alpha_curve = SubResource("CurveTexture_x1p43")
+
+[sub_resource type="QuadMesh" id="QuadMesh_x1p43"]
+material = ExtResource("8_180dd")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_qgxp5"]
+angle_min = 1.0728836e-05
+angle_max = 360.00003
+direction = Vector3(0, 1, 0)
+initial_velocity_min = 5.0
+initial_velocity_max = 5.0
+gravity = Vector3(0, 0, 0)
+scale_min = 2.0
+scale_max = 3.0
+scale_curve = SubResource("CurveTexture_mjwk1")
+color = Color(2.1168277, 1.8342742, 1.4467721, 1)
+alpha_curve = SubResource("CurveTexture_x1p43")
+
+[sub_resource type="QuadMesh" id="QuadMesh_gur6o"]
+material = ExtResource("18_eslb3")
+
+[sub_resource type="Curve" id="Curve_x1p43"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.2, 0), 0.0, 21.128593, 0, 0, Vector2(0.29999, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 4
+
+[sub_resource type="CurveTexture" id="CurveTexture_ho7ab"]
+width = 64
+texture_mode = 1
+curve = SubResource("Curve_x1p43")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_jm2ou"]
+angle_min = 1.0728836e-05
+angle_max = 360.00003
+gravity = Vector3(0, 0, 0)
+scale_min = 5.0
+scale_max = 8.0
+scale_curve = SubResource("CurveTexture_mjwk1")
+color = Color(0, 0, 0, 1)
+alpha_curve = SubResource("CurveTexture_ho7ab")
+
+[sub_resource type="QuadMesh" id="QuadMesh_ho7ab"]
+material = ExtResource("16_mjwk1")
+
+[sub_resource type="Gradient" id="Gradient_eslb3"]
+offsets = PackedFloat32Array(0, 0.3244898, 0.6571429, 1)
+colors = PackedColorArray(1, 0.39607844, 0, 1, 1, 0, 0, 1, 0.9999986, 0.34905252, 0.054773718, 1, 1, 1, 1, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_uvwtd"]
+gradient = SubResource("Gradient_eslb3")
+width = 64
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_rm1lc"]
+angle_min = 1.0728836e-05
+angle_max = 360.00003
+direction = Vector3(0, 1, 0)
+initial_velocity_min = 5.0
+initial_velocity_max = 5.0
+gravity = Vector3(0, 0, 0)
+scale_min = 0.5
+scale_curve = SubResource("CurveTexture_mjwk1")
+color_ramp = SubResource("GradientTexture1D_uvwtd")
+alpha_curve = SubResource("CurveTexture_ho7ab")
+anim_offset_max = 1.0
+
+[sub_resource type="QuadMesh" id="QuadMesh_uj6tm"]
+material = ExtResource("10_wmjwl")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_uj6tm"]
+lifetime_randomness = 0.2
+direction = Vector3(0, 1, 0)
+spread = 180.0
+initial_velocity_min = 30.0
+initial_velocity_max = 30.0
+angular_velocity_min = -360.0
+angular_velocity_max = 359.99997
+gravity = Vector3(0, 80, 0)
+damping_min = 10.0
+damping_max = 20.0
+scale_min = 2.0
+scale_max = 5.0
+scale_curve = SubResource("CurveTexture_wmjwl")
+color_ramp = SubResource("GradientTexture1D_uvwtd")
+alpha_curve = SubResource("CurveTexture_d1uw2")
+anim_offset_max = 1.0
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_sgvfh"]
+lifetime_randomness = 0.6
+emission_shape = 3
+emission_box_extents = Vector3(3, 1, 4)
+angle_min = 1.0728836e-05
+angle_max = 360.00003
+direction = Vector3(0, 1, 0)
+spread = 60.0
+initial_velocity_min = 3.0
+initial_velocity_max = 8.0
+gravity = Vector3(0, 0, 0)
+scale_min = 5.0
+scale_max = 8.0
+scale_curve = SubResource("CurveTexture_mjwk1")
+color = Color(1, 0.8627451, 0.78431374, 1)
+alpha_curve = SubResource("CurveTexture_x1p43")
+
+[sub_resource type="QuadMesh" id="QuadMesh_f11ij"]
+material = ExtResource("7_7vfyl")
+
 [sub_resource type="SphereShape3D" id="2"]
 radius = 0.7
 
@@ -357,10 +534,79 @@ initial_velocity_min = 10.0
 initial_velocity_max = 15.0
 gravity = Vector3(0, 0, 0)
 scale_min = 5.0
-scale_max = 8.0
+scale_max = 12.0
 scale_curve = SubResource("CurveTexture_e0l26")
 color = Color(2.454227, 1.5588241, 1.8759459, 1)
 alpha_curve = SubResource("CurveTexture_f70i7")
+
+[sub_resource type="QuadMesh" id="QuadMesh_jm2ou"]
+material = ExtResource("8_f70i7")
+
+[sub_resource type="Gradient" id="Gradient_uvwtd"]
+offsets = PackedFloat32Array(0, 0.18571429, 0.4265306, 1)
+colors = PackedColorArray(1, 0.654902, 0.5568628, 1, 1, 0.5137255, 0.0627451, 1, 0.99832267, 0.2738499, 0, 1, 1, 0, 1, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_gur6o"]
+gradient = SubResource("Gradient_uvwtd")
+width = 64
+
+[sub_resource type="Curve" id="Curve_eslb3"]
+_data = [Vector2(0, 0.1), 0.0, 0.7624698, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_uvwtd"]
+width = 64
+curve = SubResource("Curve_eslb3")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_q1oxe"]
+lifetime_randomness = 0.2
+angle_min = 1.0728836e-05
+angle_max = 360.00003
+spread = 180.0
+initial_velocity_min = 1.0
+initial_velocity_max = 1.0
+gravity = Vector3(0, 0, 0)
+scale_min = 25.0
+scale_max = 25.0
+scale_curve = SubResource("CurveTexture_uvwtd")
+color = Color(2.1168277, 2.1168277, 2.1168277, 1)
+color_ramp = SubResource("GradientTexture1D_gur6o")
+alpha_curve = SubResource("CurveTexture_f70i7")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_xvivb"]
+lifetime_randomness = 0.4
+angle_min = 1.0728836e-05
+angle_max = 360.00003
+direction = Vector3(0, 1, 0)
+spread = 20.0
+initial_velocity_min = 10.0
+initial_velocity_max = 15.0
+gravity = Vector3(0, 0, 0)
+scale_max = 5.0
+scale_curve = SubResource("CurveTexture_e0l26")
+color = Color(0.96862745, 0, 0.13725491, 1)
+alpha_curve = SubResource("CurveTexture_f70i7")
+
+[sub_resource type="QuadMesh" id="QuadMesh_xelnk"]
+material = ExtResource("8_f70i7")
+size = Vector2(1, 2)
+center_offset = Vector3(0, 1, 0)
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_xelnk"]
+lifetime_randomness = 0.4
+angle_min = 1.0728836e-05
+angle_max = 360.00003
+direction = Vector3(0, 1, 0)
+initial_velocity_min = 10.0
+initial_velocity_max = 15.0
+gravity = Vector3(0, 0, 0)
+scale_max = 5.0
+scale_curve = SubResource("CurveTexture_e0l26")
+color = Color(0.83137256, 0.101960786, 0.85490197, 1)
+alpha_curve = SubResource("CurveTexture_f70i7")
+
+[sub_resource type="QuadMesh" id="QuadMesh_eslb3"]
+material = ExtResource("17_x1p43")
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_ye8st"]
 size = Vector3(0.5, 1, 3)
@@ -1044,7 +1290,7 @@ windupDelays = PackedFloat32Array(0.3, 0.2, 0.1)
 callback_mode_process = 0
 
 [node name="RootAttachment" type="Node3D" parent="."]
-transform = Transform3D(0.9999107, 0, 0, 0, -4.370606e-08, 0.99986523, 0, -0.9998781, -4.3705498e-08, 0, 0, 1.6724358e-05)
+transform = Transform3D(0.9999095, 0, 0, 0, -4.3704894e-08, 0.99984884, 0, -0.9998514, -4.370478e-08, 0, 0, 1.6724358e-05)
 script = ExtResource("2_xu0gp")
 skeleton = NodePath("../Erazor/ErazorRoot/Skeleton3D")
 boneName = &"root"
@@ -1108,7 +1354,6 @@ draw_pass_1 = SubResource("QuadMesh_6y55w")
 
 [node name="IntroLetters" type="GPUParticles3D" parent="RootAttachment"]
 transform = Transform3D(1.0001801, 0, 0, 0, -4.3772154e-08, -1.0001513, 0, 1.000153, -4.377216e-08, 0, 0, 3)
-visible = false
 layers = 32
 cast_shadow = 0
 emitting = false
@@ -1162,8 +1407,186 @@ interpolate = false
 process_material = SubResource("ParticleProcessMaterial_wmjwl")
 draw_pass_1 = SubResource("QuadMesh_f70i7")
 
+[node name="DefeatSpark" type="GPUParticles3D" parent="RootAttachment"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 5)
+layers = 32
+cast_shadow = 0
+emitting = false
+amount = 32
+lifetime = 0.2
+fixed_fps = 0
+interpolate = false
+process_material = SubResource("ParticleProcessMaterial_f11ij")
+draw_pass_1 = SubResource("QuadMesh_uvwtd")
+
+[node name="DefeatExplosion1" type="GPUParticles3D" parent="RootAttachment" node_paths=PackedStringArray("subSystems")]
+transform = Transform3D(1, 0, 0, 0, 0.25881907, -0.9659258, 0, 0.9659258, 0.25881907, 1.4, 1.5, 6.6)
+layers = 32
+cast_shadow = 0
+emitting = false
+amount = 4
+lifetime = 0.3
+one_shot = true
+fixed_fps = 0
+interpolate = false
+process_material = SubResource("ParticleProcessMaterial_uvwtd")
+draw_pass_1 = SubResource("QuadMesh_mjwk1")
+script = ExtResource("13_d8m8e")
+subSystems = [NodePath("Dust"), NodePath("CommonDust"), NodePath("BlackSmoke"), NodePath("Letters")]
+
+[node name="Dust" type="GPUParticles3D" parent="RootAttachment/DefeatExplosion1"]
+transform = Transform3D(1.0000001, 0, 0, 0, 1.0000001, -3.5527137e-15, 0, 3.5527137e-15, 1, 0, 0, 0)
+layers = 32
+cast_shadow = 0
+emitting = false
+amount = 16
+lifetime = 0.5
+one_shot = true
+explosiveness = 0.6
+fixed_fps = 0
+interpolate = false
+process_material = SubResource("ParticleProcessMaterial_gur6o")
+draw_pass_1 = SubResource("QuadMesh_x1p43")
+
+[node name="CommonDust" type="GPUParticles3D" parent="RootAttachment/DefeatExplosion1"]
+transform = Transform3D(1.0000002, 0, 0, 0, 1.0000002, 0, 0, 2.9802322e-08, 1, 0, 0, 0)
+layers = 32
+cast_shadow = 0
+emitting = false
+amount = 4
+lifetime = 0.3
+one_shot = true
+explosiveness = 0.6
+fixed_fps = 0
+interpolate = false
+process_material = SubResource("ParticleProcessMaterial_qgxp5")
+draw_pass_1 = SubResource("QuadMesh_gur6o")
+
+[node name="BlackSmoke" type="GPUParticles3D" parent="RootAttachment/DefeatExplosion1"]
+transform = Transform3D(1.0000001, 0, 0, 0, 1.0000001, -2.9802322e-08, 0, 0, 1.0000001, 0, 0, 0)
+layers = 32
+cast_shadow = 0
+emitting = false
+amount = 4
+lifetime = 0.5
+one_shot = true
+fixed_fps = 0
+interpolate = false
+process_material = SubResource("ParticleProcessMaterial_jm2ou")
+draw_pass_1 = SubResource("QuadMesh_ho7ab")
+
+[node name="Letters" type="GPUParticles3D" parent="RootAttachment/DefeatExplosion1"]
+transform = Transform3D(1.0000001, 0, 0, 0, 1.0000001, -2.9802322e-08, 0, 0, 1.0000001, 0, 0, 0)
+layers = 32
+cast_shadow = 0
+emitting = false
+lifetime = 0.5
+one_shot = true
+explosiveness = 0.6
+fixed_fps = 0
+interpolate = false
+process_material = SubResource("ParticleProcessMaterial_rm1lc")
+draw_pass_1 = SubResource("QuadMesh_uj6tm")
+
+[node name="DefeatExplosion2" type="GPUParticles3D" parent="RootAttachment" node_paths=PackedStringArray("subSystems")]
+transform = Transform3D(1, 0, 0, 0, -0.17364818, -0.9848077, 0, 0.9848077, -0.17364818, -0.6, -0.6906707, 6.1517124)
+layers = 32
+cast_shadow = 0
+emitting = false
+amount = 4
+lifetime = 0.3
+one_shot = true
+fixed_fps = 0
+interpolate = false
+process_material = SubResource("ParticleProcessMaterial_uvwtd")
+draw_pass_1 = SubResource("QuadMesh_mjwk1")
+script = ExtResource("13_d8m8e")
+subSystems = [NodePath("Dust"), NodePath("CommonDust"), NodePath("BlackSmoke"), NodePath("Letters")]
+
+[node name="Dust" type="GPUParticles3D" parent="RootAttachment/DefeatExplosion2"]
+transform = Transform3D(1.0000001, 0, 0, 0, 1.0000001, -3.5527137e-15, 0, 3.5527137e-15, 1, 0, 0, 0)
+layers = 32
+cast_shadow = 0
+emitting = false
+amount = 16
+lifetime = 0.5
+one_shot = true
+explosiveness = 0.6
+fixed_fps = 0
+interpolate = false
+process_material = SubResource("ParticleProcessMaterial_gur6o")
+draw_pass_1 = SubResource("QuadMesh_x1p43")
+
+[node name="CommonDust" type="GPUParticles3D" parent="RootAttachment/DefeatExplosion2"]
+transform = Transform3D(1.0000001, 0, 0, 0, 1.0000001, -3.5527137e-15, 0, 3.5527137e-15, 1, 0, 0, 0)
+layers = 32
+cast_shadow = 0
+emitting = false
+amount = 4
+lifetime = 0.3
+one_shot = true
+explosiveness = 0.6
+fixed_fps = 0
+interpolate = false
+process_material = SubResource("ParticleProcessMaterial_qgxp5")
+draw_pass_1 = SubResource("QuadMesh_gur6o")
+
+[node name="BlackSmoke" type="GPUParticles3D" parent="RootAttachment/DefeatExplosion2"]
+transform = Transform3D(1.0000001, 0, 0, 0, 1.0000001, -2.9802322e-08, 0, 0, 1.0000001, 0, 0, 0)
+layers = 32
+cast_shadow = 0
+emitting = false
+amount = 4
+lifetime = 0.5
+one_shot = true
+fixed_fps = 0
+interpolate = false
+process_material = SubResource("ParticleProcessMaterial_jm2ou")
+draw_pass_1 = SubResource("QuadMesh_ho7ab")
+
+[node name="Letters" type="GPUParticles3D" parent="RootAttachment/DefeatExplosion2"]
+transform = Transform3D(1.0000001, 0, 0, 0, 1.0000001, -2.9802322e-08, 0, 0, 1.0000001, 0, 0, 0)
+layers = 32
+cast_shadow = 0
+emitting = false
+lifetime = 0.5
+one_shot = true
+explosiveness = 0.6
+fixed_fps = 0
+interpolate = false
+process_material = SubResource("ParticleProcessMaterial_rm1lc")
+draw_pass_1 = SubResource("QuadMesh_uj6tm")
+
+[node name="DefeatLetters" type="GPUParticles3D" parent="RootAttachment"]
+transform = Transform3D(1.0001802, 0, 0, 0, -4.3772154e-08, -1.0001514, 0, 1.000153, -4.3772168e-08, 0, 0, 3.0000002)
+layers = 32
+cast_shadow = 0
+emitting = false
+amount = 128
+lifetime = 0.8
+explosiveness = 0.2
+fixed_fps = 0
+interpolate = false
+transform_align = 3
+process_material = SubResource("ParticleProcessMaterial_uj6tm")
+draw_pass_1 = SubResource("QuadMesh_d1uw2")
+
+[node name="DefeatImpactDust" type="GPUParticles3D" parent="RootAttachment"]
+transform = Transform3D(1.0000001, 0, 0, 0, -4.3711395e-08, -1, 0, 1.0000001, -4.3711392e-08, 0, -2.9999998, -6.0797134e-07)
+layers = 32
+cast_shadow = 0
+emitting = false
+amount = 32
+lifetime = 2.0
+one_shot = true
+explosiveness = 0.8
+fixed_fps = 0
+interpolate = false
+process_material = SubResource("ParticleProcessMaterial_sgvfh")
+draw_pass_1 = SubResource("QuadMesh_f11ij")
+
 [node name="HeadAttachment" type="Node3D" parent="."]
-transform = Transform3D(0.9997842, 4.9499425e-07, -4.9499926e-07, -4.9497e-07, 0.99983287, 2.8740968e-07, 4.9497015e-07, -2.8740644e-07, 0.99984324, -1.12708975e-07, 7.2600017, 2.5939093e-05)
+transform = Transform3D(0.9998211, 4.9499727e-07, -4.949987e-07, -4.949883e-07, 0.9998389, 2.8740934e-07, 4.9498846e-07, -2.8740817e-07, 0.9998421, -1.12708975e-07, 7.2600017, 2.5939093e-05)
 script = ExtResource("2_xu0gp")
 skeleton = NodePath("../Erazor/ErazorRoot/Skeleton3D")
 boneName = &"head"
@@ -1187,11 +1610,52 @@ amount = 32
 lifetime = 0.5
 fixed_fps = 0
 interpolate = false
+transform_align = 3
 process_material = SubResource("ParticleProcessMaterial_ho7ab")
-draw_pass_1 = SubResource("QuadMesh_f70i7")
+draw_pass_1 = SubResource("QuadMesh_jm2ou")
+
+[node name="DefeatPinkDust" type="GPUParticles3D" parent="HeadAttachment"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1, -0.5)
+layers = 32
+cast_shadow = 0
+emitting = false
+amount = 16
+lifetime = 0.5
+fixed_fps = 0
+interpolate = false
+transform_align = 2
+process_material = SubResource("ParticleProcessMaterial_q1oxe")
+draw_pass_1 = SubResource("QuadMesh_jm2ou")
+
+[node name="DefeatRedDust" type="GPUParticles3D" parent="HeadAttachment"]
+transform = Transform3D(1, -6.9514865e-09, -2.8608333e-09, -7.450581e-09, 0.49999994, 0.86602545, -3.7252903e-09, -0.86602545, 0.49999997, 0, 1.0000019, 1.9073486e-06)
+layers = 32
+cast_shadow = 0
+emitting = false
+amount = 32
+lifetime = 0.4
+fixed_fps = 0
+interpolate = false
+local_coords = true
+transform_align = 2
+process_material = SubResource("ParticleProcessMaterial_xvivb")
+draw_pass_1 = SubResource("QuadMesh_xelnk")
+
+[node name="DefeatSplatter" type="GPUParticles3D" parent="HeadAttachment"]
+transform = Transform3D(1, 0, 0, 0, 0.70710677, 0.70710677, 0, -0.70710677, 0.70710677, 0, 1, 0)
+layers = 32
+cast_shadow = 0
+emitting = false
+amount = 128
+lifetime = 0.4
+fixed_fps = 0
+interpolate = false
+local_coords = true
+process_material = SubResource("ParticleProcessMaterial_xelnk")
+draw_pass_1 = SubResource("QuadMesh_eslb3")
 
 [node name="EdgeAttachment" type="Node3D" parent="."]
-transform = Transform3D(3.155811e-08, 0.9657851, -0.25877836, 0.99986064, 1.9467882e-07, 8.4847125e-07, 8.6996215e-07, -0.25878143, -0.96577364, 4.1420135, 6.082181, 2.2401326)
+transform = Transform3D(3.155744e-08, 0.96577805, -0.2587779, 0.9998395, 1.946774e-07, 8.484697e-07, 8.6994373e-07, -0.25877956, -0.9657719, 4.1420135, 6.082181, 2.2401326)
 script = ExtResource("2_xu0gp")
 skeleton = NodePath("../Erazor/ErazorRoot/Skeleton3D")
 boneName = &"edge"
@@ -1291,7 +1755,7 @@ process_material = SubResource("ParticleProcessMaterial_x1p43")
 draw_pass_1 = SubResource("QuadMesh_wmjwl")
 
 [node name="ChainAttachment" type="Node3D" parent="."]
-transform = Transform3D(0.99987113, -3.678338e-07, -1.6078562e-14, 0, -4.3705064e-08, 0.99985766, -3.678396e-07, -0.99985534, -4.3705167e-08, 4.4252667, 6.685099, -1.0693915)
+transform = Transform3D(0.9998695, -3.678309e-07, -1.6078298e-14, 0, -4.3704723e-08, 0.9998413, -3.67839e-07, -0.99984753, -4.370445e-08, 4.4252667, 6.685099, -1.0693915)
 script = ExtResource("2_xu0gp")
 skeleton = NodePath("../Erazor/ErazorRoot/Skeleton3D")
 boneName = &"chain"
@@ -1553,13 +2017,11 @@ randomizedDialogTriggers = []
 
 [node name="IntroDialog" type="AudioStreamPlayer" parent="Voice"]
 stream = ExtResource("13_f70i7")
-volume_db = 12.0
-bus = &"GAME SFX"
+bus = &"VOICE"
 
 [node name="DefeatDialog" type="AudioStreamPlayer" parent="Voice"]
 stream = ExtResource("14_nnxp6")
-volume_db = 12.0
-bus = &"GAME SFX"
+bus = &"VOICE"
 
 [node name="CutsceneCamera" type="Node3D" parent="."]
 physics_interpolation_mode = 2
