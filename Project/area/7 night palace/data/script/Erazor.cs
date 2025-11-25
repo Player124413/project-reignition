@@ -8,6 +8,7 @@ public partial class Erazor : Node3D
 {
 	[Signal] public delegate void CutsceneStartedEventHandler();
 	[Signal] public delegate void CutsceneFinishedEventHandler();
+	[Signal] public delegate void DuelStartedEventHandler();
 
 	[Export] private AnimationTree animationTree;
 	[Export] private PathFollow3D bossPathFollower;
@@ -79,6 +80,8 @@ public partial class Erazor : Node3D
 	private readonly float SlashDistance = 8f;
 	/// <summary> The distance at which the Duel Windup comes out. </summary>
 	private readonly float DuelWindupDistance = 20f;
+	/// <summary> How long before Erazor lunges towards Sonic in the duel. Retail is 6 seconds. </summary>
+	private readonly float DuelAttackStartup = 5f;
 
 	/// ANIMATION PARAMETERS
 	private readonly string IntroCutsceneID = "np_boss_intro";
@@ -465,9 +468,8 @@ public partial class Erazor : Node3D
 		currentDistance = DuelDistance;
 		SnapDistance();
 
-
-		// TODO Edit the timing
-		stateTimer = 2f;
+		stateTimer = DuelAttackStartup;
+		EmitSignal(SignalName.DuelStarted);
 	}
 
 	public void UpdateDuel()
