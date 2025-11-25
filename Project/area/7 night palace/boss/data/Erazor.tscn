@@ -1,4 +1,4 @@
-[gd_scene load_steps=234 format=4 uid="uid://dpjlgmdlddjik"]
+[gd_scene load_steps=271 format=4 uid="uid://dpjlgmdlddjik"]
 
 [ext_resource type="Script" uid="uid://w1r45ql607mg" path="res://area/7 night palace/data/script/Erazor.cs" id="1"]
 [ext_resource type="PackedScene" uid="uid://dfgdf7gg3d62t" path="res://area/7 night palace/boss/data/model/Erazor.gltf" id="2"]
@@ -48,6 +48,7 @@
 [ext_resource type="Animation" uid="uid://b3rkgwf3tdf6x" path="res://area/7 night palace/boss/data/model/animation/intro.res" id="21_nrx0x"]
 [ext_resource type="Script" uid="uid://dx0a0rhyauccl" path="res://object/trigger/modules/CameraTrigger.cs" id="22_2bu5w"]
 [ext_resource type="Animation" uid="uid://bl2h0fq7rwk1b" path="res://area/7 night palace/boss/data/model/animation/attack-l-loop.res" id="22_32647"]
+[ext_resource type="Material" uid="uid://bdk8qnv7ytydw" path="res://effect/particle/material/environment/Common Dust Splatter Add No Billboard.tres" id="22_gotry"]
 [ext_resource type="Animation" uid="uid://bbph8t4bsu1k1" path="res://area/7 night palace/boss/data/model/animation/attack-l-strike.res" id="23_nbet8"]
 [ext_resource type="Resource" uid="uid://ukcne4um86a6" path="res://resource/preset/camera/common/CutsceneCam.tres" id="23_pwxop"]
 [ext_resource type="AudioStream" uid="uid://c26iu3xtkg28t" path="res://sound/boss/erazor/damage.wav" id="23_sgvfh"]
@@ -59,9 +60,15 @@
 [ext_resource type="AudioStream" uid="uid://dgl6toy1dk3nn" path="res://sound/boss/erazor/v strike.wav" id="26_xelnk"]
 [ext_resource type="Animation" uid="uid://baru7cgp8lm6f" path="res://area/7 night palace/boss/data/model/animation/attack-z-start.res" id="27_1whda"]
 [ext_resource type="AudioStream" uid="uid://cgt0xucfp6xlu" path="res://sound/boss/erazor/i strike.wav" id="27_f11ij"]
+[ext_resource type="Material" uid="uid://g2ntypqb7whm" path="res://effect/particle/material/flame/Countdown Flame.tres" id="27_gs1o0"]
+[ext_resource type="Material" uid="uid://b4c12p1fsec3b" path="res://effect/particle/material/Teleport Spark No Billboard.tres" id="27_itxic"]
+[ext_resource type="Material" uid="uid://br3rof2cswaa1" path="res://effect/particle/material/explosion/Explosion Flame No Billboard.tres" id="28_o1dyr"]
 [ext_resource type="Animation" uid="uid://c6jq47glboxn6" path="res://area/7 night palace/boss/data/model/animation/attack-z-loop.res" id="28_shf07"]
 [ext_resource type="Script" uid="uid://dajb13s16p8mt" path="res://sound/script/LocalizedTrackLoader.cs" id="28_uvwtd"]
+[ext_resource type="Material" uid="uid://cnx2a5epxn88l" path="res://effect/particle/material/explosion/Explosion Ember.tres" id="28_xu4h0"]
 [ext_resource type="Animation" uid="uid://cxe1qqmaleyt1" path="res://area/7 night palace/boss/data/model/animation/attack-z-strike.res" id="29_ye8st"]
+[ext_resource type="Script" uid="uid://w0fu66sf048c" path="res://area/7 night palace/data/script/ErazorSwordTrail.cs" id="36_ul8nf"]
+[ext_resource type="Shader" uid="uid://cgprp30wn6qm3" path="res://area/7 night palace/data/shader/ErazorSwordTrail.gdshader" id="37_illsf"]
 [ext_resource type="Script" uid="uid://byfnkkp3hy8ca" path="res://object/player/resource/script/PlayerAnimator.cs" id="40_7vfyl"]
 [ext_resource type="AudioStream" uid="uid://bu1h8fvhp7a4d" path="res://sound/boss/erazor/duel transition start.wav" id="40_qgxp5"]
 [ext_resource type="Material" uid="uid://bklx3tbpw7s8e" path="res://object/player/resource/model/material/SpeedbreakOverlay.tres" id="41_f70i7"]
@@ -147,6 +154,121 @@ color_initial_ramp = SubResource("GradientTexture1D_e0l26")
 alpha_curve = SubResource("CurveTexture_f70i7")
 
 [sub_resource type="QuadMesh" id="QuadMesh_f70i7"]
+material = ExtResource("7_7vfyl")
+
+[sub_resource type="Curve" id="Curve_o1dyr"]
+_data = [Vector2(0, 0.5), 0.0, 21.075699, 0, 0, Vector2(0.055555552, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_gotry"]
+width = 64
+texture_mode = 1
+curve = SubResource("Curve_o1dyr")
+
+[sub_resource type="Curve" id="Curve_ul8nf"]
+_limits = [-200.0, 200.0, 0.0, 1.0]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, -160), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_illsf"]
+width = 64
+texture_mode = 1
+curve = SubResource("Curve_ul8nf")
+
+[sub_resource type="Curve" id="Curve_xu4h0"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="Curve" id="Curve_itxic"]
+_data = [Vector2(0, 0.2), 0.0, 1.6318032, 0, 0, Vector2(0.6, 1), 0.0, 0.0, 0, 0, Vector2(1, 0.2), -3.2503762, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveXYZTexture" id="CurveXYZTexture_gotry"]
+width = 64
+curve_x = SubResource("Curve_xu4h0")
+curve_y = SubResource("Curve_xu4h0")
+curve_z = SubResource("Curve_itxic")
+
+[sub_resource type="Curve" id="Curve_gotry"]
+_limits = [-200.0, 200.0, 0.0, 1.0]
+_data = [Vector2(0, 120), 0.0, 0.0, 0, 0, Vector2(0.5, -80), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_ul8nf"]
+width = 64
+texture_mode = 1
+curve = SubResource("Curve_gotry")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_xu4h0"]
+lifetime_randomness = 0.5
+emission_shape = 6
+emission_ring_axis = Vector3(0, 0, 1)
+emission_ring_height = 0.0
+emission_ring_radius = 8.0
+emission_ring_inner_radius = 6.0
+emission_ring_cone_angle = 90.0
+direction = Vector3(0, 0, 1)
+spread = 0.0
+initial_velocity_min = 20.0
+initial_velocity_max = 20.0
+radial_velocity_min = 9.999977
+radial_velocity_max = 9.999977
+gravity = Vector3(0, 0, 0)
+radial_accel_min = 0.99999774
+radial_accel_max = 0.99999774
+radial_accel_curve = SubResource("CurveTexture_illsf")
+tangential_accel_min = 0.99999774
+tangential_accel_max = 0.99999774
+tangential_accel_curve = SubResource("CurveTexture_ul8nf")
+scale_min = 3.0
+scale_max = 4.0
+scale_curve = SubResource("CurveXYZTexture_gotry")
+color = Color(0.84313726, 0, 0.62352943, 1)
+alpha_curve = SubResource("CurveTexture_gotry")
+
+[sub_resource type="QuadMesh" id="QuadMesh_itxic"]
+material = ExtResource("16_1s5xk")
+size = Vector2(3, 2)
+center_offset = Vector3(0, 0.5, 0)
+
+[sub_resource type="Gradient" id="Gradient_o1dyr"]
+offsets = PackedFloat32Array(0.5081633, 0.82653064)
+colors = PackedColorArray(0, 0, 0, 1, 0.78039217, 0, 0.627451, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_gotry"]
+gradient = SubResource("Gradient_o1dyr")
+width = 64
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_illsf"]
+lifetime_randomness = 0.5
+emission_shape = 6
+emission_ring_axis = Vector3(0, 0, 1)
+emission_ring_height = 0.0
+emission_ring_radius = 8.0
+emission_ring_inner_radius = 5.0
+emission_ring_cone_angle = 90.0
+angle_min = 1.0728836e-05
+angle_max = 360.00003
+direction = Vector3(0, 0, 1)
+spread = 0.0
+initial_velocity_min = 20.0
+initial_velocity_max = 20.0
+radial_velocity_min = 9.999977
+radial_velocity_max = 9.999977
+gravity = Vector3(0, 0, 0)
+radial_accel_min = 0.99999774
+radial_accel_max = 0.99999774
+radial_accel_curve = SubResource("CurveTexture_illsf")
+tangential_accel_min = 0.99999774
+tangential_accel_max = 0.99999774
+tangential_accel_curve = SubResource("CurveTexture_ul8nf")
+scale_min = 3.0
+scale_max = 6.0
+scale_curve = SubResource("CurveXYZTexture_gotry")
+color_initial_ramp = SubResource("GradientTexture1D_gotry")
+alpha_curve = SubResource("CurveTexture_gotry")
+
+[sub_resource type="QuadMesh" id="QuadMesh_illsf"]
 material = ExtResource("7_7vfyl")
 
 [sub_resource type="Gradient" id="Gradient_7vfyl"]
@@ -584,22 +706,30 @@ color = Color(2.1168277, 2.1168277, 2.1168277, 1)
 color_ramp = SubResource("GradientTexture1D_gur6o")
 alpha_curve = SubResource("CurveTexture_f70i7")
 
+[sub_resource type="Gradient" id="Gradient_gotry"]
+offsets = PackedFloat32Array(0.14489795, 0.48367348, 0.8387755)
+colors = PackedColorArray(1, 1, 1, 1, 1, 0, 1, 1, 1, 0, 0, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_ul8nf"]
+gradient = SubResource("Gradient_gotry")
+width = 64
+
 [sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_xvivb"]
 lifetime_randomness = 0.4
 angle_min = 1.0728836e-05
 angle_max = 360.00003
 direction = Vector3(0, 1, 0)
-spread = 20.0
 initial_velocity_min = 10.0
 initial_velocity_max = 15.0
 gravity = Vector3(0, 0, 0)
 scale_max = 5.0
 scale_curve = SubResource("CurveTexture_e0l26")
-color = Color(0.96862745, 0, 0.13725491, 1)
+color = Color(1.8247963, 1.8247963, 1.8247963, 1)
+color_ramp = SubResource("GradientTexture1D_ul8nf")
 alpha_curve = SubResource("CurveTexture_f70i7")
 
 [sub_resource type="QuadMesh" id="QuadMesh_xelnk"]
-material = ExtResource("8_f70i7")
+material = ExtResource("22_gotry")
 size = Vector2(1, 2)
 center_offset = Vector3(0, 1, 0)
 
@@ -621,6 +751,25 @@ material = ExtResource("17_x1p43")
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_ye8st"]
 size = Vector3(0.5, 1, 3)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_w31ik"]
+render_priority = 0
+shader = ExtResource("37_illsf")
+shader_parameter/albedo = Color(1, 0, 0.83137256, 1)
+shader_parameter/albedo_texture_size = Vector2i(0, 0)
+shader_parameter/point_size = 0.0
+shader_parameter/roughness = 0.0
+shader_parameter/metallic_texture_channel = Vector4(1, 0, 0, 0)
+shader_parameter/specular = 0.5
+shader_parameter/metallic = 0.0
+shader_parameter/uv1_scale = Vector3(1, 1, 1)
+shader_parameter/uv1_offset = Vector3(0, 0, 0)
+shader_parameter/uv2_scale = Vector3(1, 1, 1)
+shader_parameter/uv2_offset = Vector3(0, 0, 0)
+
+[sub_resource type="Curve" id="Curve_illsf"]
+_data = [Vector2(0, 0), 0.0, 5.890115, 0, 0, Vector2(0.3, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 3
 
 [sub_resource type="Gradient" id="Gradient_2g80e"]
 colors = PackedColorArray(1, 0.72156864, 0.6784314, 1, 1, 0.6597601, 0.41081595, 1)
@@ -709,6 +858,93 @@ alpha_curve = SubResource("CurveTexture_180dd")
 
 [sub_resource type="QuadMesh" id="QuadMesh_d8m8e"]
 material = ExtResource("16_1s5xk")
+
+[sub_resource type="Gradient" id="Gradient_itxic"]
+offsets = PackedFloat32Array(0, 0.37142858, 1)
+colors = PackedColorArray(0.81960785, 1, 1, 1, 0.8914749, 0.41912335, 0.55567497, 1, 0.9082213, 0.0001180166, 0.73783773, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_o1dyr"]
+gradient = SubResource("Gradient_itxic")
+width = 64
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_o1dyr"]
+lifetime_randomness = 0.4
+angle_min = -19.99999
+angle_max = 20.000011
+direction = Vector3(0, 1, 0)
+spread = 0.0
+initial_velocity_min = -20.0
+gravity = Vector3(0, 0, 0)
+scale_max = 3.0
+scale_curve = SubResource("CurveTexture_e0l26")
+color_ramp = SubResource("GradientTexture1D_o1dyr")
+alpha_curve = SubResource("CurveTexture_f70i7")
+hue_variation_min = -2.2351742e-08
+hue_variation_max = 0.19999997
+
+[sub_resource type="QuadMesh" id="QuadMesh_gotry"]
+material = ExtResource("27_itxic")
+size = Vector2(2, 7)
+center_offset = Vector3(0, 3, 0)
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_gotry"]
+lifetime_randomness = 0.4
+direction = Vector3(0, 1, 0)
+spread = 0.0
+initial_velocity_min = 20.0
+initial_velocity_max = 20.0
+gravity = Vector3(0, 0, 0)
+scale_curve = SubResource("CurveTexture_e0l26")
+alpha_curve = SubResource("CurveTexture_f70i7")
+
+[sub_resource type="QuadMesh" id="QuadMesh_ul8nf"]
+material = ExtResource("28_o1dyr")
+size = Vector2(1, 10)
+center_offset = Vector3(0, 5, 0)
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_ul8nf"]
+lifetime_randomness = 0.4
+direction = Vector3(0, 1, 0)
+spread = 50.0
+initial_velocity_min = 1.0
+initial_velocity_max = 1.0
+gravity = Vector3(0, 0, 0)
+scale_min = 0.19999999
+scale_max = 0.5
+scale_curve = SubResource("CurveTexture_e0l26")
+alpha_curve = SubResource("CurveTexture_f70i7")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_gs1o0"]
+lifetime_randomness = 0.4
+emission_shape = 3
+emission_box_extents = Vector3(0.5, 0.5, 2)
+angle_min = 1.0728836e-05
+angle_max = 720.0
+gravity = Vector3(0, 0, 0)
+scale_min = 5.0
+scale_max = 5.0
+scale_curve = SubResource("CurveTexture_nnxp6")
+color_ramp = SubResource("GradientTexture1D_wmjwl")
+alpha_curve = SubResource("CurveTexture_180dd")
+anim_speed_min = 1.0
+anim_speed_max = 1.0
+anim_offset_max = 1.0
+
+[sub_resource type="QuadMesh" id="QuadMesh_xu4h0"]
+material = ExtResource("27_gs1o0")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_itxic"]
+lifetime_randomness = 0.4
+emission_shape = 1
+emission_sphere_radius = 5.0
+angle_min = 1.0728836e-05
+angle_max = 360.00003
+gravity = Vector3(0, 0, 0)
+scale_curve = SubResource("CurveTexture_nnxp6")
+alpha_curve = SubResource("CurveTexture_180dd")
+
+[sub_resource type="QuadMesh" id="QuadMesh_o1dyr"]
+material = ExtResource("28_xu4h0")
 
 [sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_mjwk1"]
 lifetime_randomness = 0.4
@@ -1301,7 +1537,7 @@ windupDelays = PackedFloat32Array(0.3, 0.2, 0.1)
 callback_mode_process = 0
 
 [node name="RootAttachment" type="Node3D" parent="."]
-transform = Transform3D(0.99988496, 0, 0, 0, -4.370476e-08, 0.999846, 0, -0.9998483, -4.3704656e-08, 0, 0, 1.6724358e-05)
+transform = Transform3D(0.99985427, 0, 0, 0, -4.3704496e-08, 0.99983555, 0, -0.9998423, -4.37042e-08, 0, 0, 1.6724358e-05)
 script = ExtResource("2_xu0gp")
 skeleton = NodePath("../Erazor/ErazorRoot/Skeleton3D")
 boneName = &"root"
@@ -1320,12 +1556,38 @@ draw_pass_1 = SubResource("30")
 transform = Transform3D(1.0001801, 0, 0, 0, -4.3718074e-08, -1.0001513, 0, 1.000153, -4.3718e-08, 0, 0, 1)
 layers = 32
 cast_shadow = 0
-amount = 16
 lifetime = 0.5
 fixed_fps = 0
 interpolate = false
 process_material = SubResource("ParticleProcessMaterial_qysdu")
 draw_pass_1 = SubResource("QuadMesh_f70i7")
+
+[node name="TeleportSpiral" type="GPUParticles3D" parent="RootAttachment"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8.742278e-08, -2)
+layers = 32
+cast_shadow = 0
+emitting = false
+amount = 32
+lifetime = 0.6
+one_shot = true
+explosiveness = 0.8
+fixed_fps = 0
+interpolate = false
+transform_align = 3
+process_material = SubResource("ParticleProcessMaterial_xu4h0")
+draw_pass_1 = SubResource("QuadMesh_itxic")
+
+[node name="TeleportDust" type="GPUParticles3D" parent="RootAttachment"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8.742278e-08, -2)
+layers = 32
+cast_shadow = 0
+emitting = false
+amount = 64
+lifetime = 0.6
+fixed_fps = 0
+interpolate = false
+process_material = SubResource("ParticleProcessMaterial_illsf")
+draw_pass_1 = SubResource("QuadMesh_illsf")
 
 [node name="IntroLightning" type="GPUParticles3D" parent="RootAttachment"]
 transform = Transform3D(1.0001801, 0, 0, 0, -4.3718074e-08, -1.0001512, 0, 1.0001528, -4.3718e-08, 0, 0, 3.9999998)
@@ -1619,7 +1881,7 @@ bus = &"GAME SFX"
 attenuation_filter_cutoff_hz = 20500.0
 
 [node name="HeadAttachment" type="Node3D" parent="."]
-transform = Transform3D(0.99981314, 4.949993e-07, -4.9500045e-07, -4.9498436e-07, 0.99984306, 2.8741036e-07, 4.9498453e-07, -2.8740936e-07, 0.9998457, -1.12708975e-07, 7.2600017, 2.5939093e-05)
+transform = Transform3D(0.9998095, 4.949957e-07, -4.9499954e-07, -4.9498254e-07, 0.9998357, 2.8740985e-07, 4.949827e-07, -2.8740726e-07, 0.9998439, -1.12708975e-07, 7.2600017, 2.5939093e-05)
 script = ExtResource("2_xu0gp")
 skeleton = NodePath("../Erazor/ErazorRoot/Skeleton3D")
 boneName = &"head"
@@ -1666,7 +1928,6 @@ amount = 32
 lifetime = 0.4
 fixed_fps = 0
 interpolate = false
-local_coords = true
 transform_align = 2
 process_material = SubResource("ParticleProcessMaterial_xvivb")
 draw_pass_1 = SubResource("QuadMesh_xelnk")
@@ -1702,7 +1963,7 @@ max_distance = 150.0
 bus = &"GAME SFX"
 
 [node name="EdgeAttachment" type="Node3D" parent="."]
-transform = Transform3D(3.1557647e-08, 0.9657804, -0.25878003, 0.99984604, 1.9467787e-07, 8.4847676e-07, 8.699494e-07, -0.25878015, -0.9657799, 4.1420135, 6.082181, 2.2401326)
+transform = Transform3D(3.155775e-08, 0.9658129, -0.25878286, 0.9998493, 1.9468443e-07, 8.4848597e-07, 8.699523e-07, -0.25878888, -0.9657904, 4.1420135, 6.082181, 2.2401326)
 script = ExtResource("2_xu0gp")
 skeleton = NodePath("../Erazor/ErazorRoot/Skeleton3D")
 boneName = &"edge"
@@ -1719,6 +1980,16 @@ script = ExtResource("4_shf07")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="EdgeAttachment/Hitbox"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2)
 shape = SubResource("BoxShape3D_ye8st")
+
+[node name="Trail" type="Node3D" parent="EdgeAttachment"]
+transform = Transform3D(1, -4.8630215e-09, 6.714788e-08, 0, -0.9848078, -0.17364824, -1.4901161e-08, 0.1736482, -0.9848077, -8.270145e-08, 0.6866026, 0.98923045)
+script = ExtResource("36_ul8nf")
+iterationCount = 3
+height = 3.0
+lifetime = 0.3000000000029104
+layer = 32
+material = SubResource("ShaderMaterial_w31ik")
+transparencyCurve = SubResource("Curve_illsf")
 
 [node name="SwordGlitter" type="GPUParticles3D" parent="EdgeAttachment"]
 transform = Transform3D(1.0000001, 0, 0, 2.9802322e-08, 0.93969274, 0.34202015, 2.9802322e-08, -0.34202018, 0.9396926, 0, 0, 0)
@@ -1766,6 +2037,81 @@ fixed_fps = 0
 interpolate = false
 process_material = SubResource("ParticleProcessMaterial_eslb3")
 draw_pass_1 = SubResource("QuadMesh_d8m8e")
+
+[node name="StrikeSpark" type="GPUParticles3D" parent="EdgeAttachment"]
+transform = Transform3D(1.0000128, 0, 0, 0, 1.0000151, 0, 0, 0, 0.9999867, 0, -5, 0)
+layers = 32
+cast_shadow = 0
+emitting = false
+amount = 16
+lifetime = 0.3
+explosiveness = 0.4
+fixed_fps = 0
+interpolate = false
+process_material = SubResource("ParticleProcessMaterial_o1dyr")
+draw_pass_1 = SubResource("QuadMesh_gotry")
+
+[node name="ExplosionTrail" type="GPUParticles3D" parent="EdgeAttachment/StrikeSpark"]
+layers = 32
+cast_shadow = 0
+emitting = false
+amount = 4
+lifetime = 0.3
+explosiveness = 0.4
+fixed_fps = 0
+interpolate = false
+transform_align = 3
+process_material = SubResource("ParticleProcessMaterial_gotry")
+draw_pass_1 = SubResource("QuadMesh_ul8nf")
+
+[node name="ExplosionBurst" type="GPUParticles3D" parent="EdgeAttachment/StrikeSpark"]
+layers = 32
+cast_shadow = 0
+emitting = false
+lifetime = 0.4
+one_shot = true
+explosiveness = 0.8
+fixed_fps = 0
+interpolate = false
+transform_align = 3
+process_material = SubResource("ParticleProcessMaterial_ul8nf")
+draw_pass_1 = SubResource("QuadMesh_ul8nf")
+
+[node name="FlameEdge" type="GPUParticles3D" parent="EdgeAttachment"]
+transform = Transform3D(1, 0, 0, 0, 0.96592575, 0.258819, 0, -0.258819, 0.96592575, 0, 1.1673033, 1.8516437)
+layers = 32
+cast_shadow = 0
+emitting = false
+amount = 16
+lifetime = 0.2
+fixed_fps = 0
+interpolate = false
+local_coords = true
+process_material = SubResource("ParticleProcessMaterial_gs1o0")
+draw_pass_1 = SubResource("QuadMesh_xu4h0")
+
+[node name="FlameEmber" type="GPUParticles3D" parent="EdgeAttachment/FlameEdge"]
+transform = Transform3D(1, -1.4901161e-08, 2.0954758e-09, 0, 1, -1.071021e-08, -2.0838343e-08, 1.3504177e-08, 1, 0, 0, 0)
+layers = 32
+cast_shadow = 0
+emitting = false
+lifetime = 0.5
+fixed_fps = 0
+interpolate = false
+process_material = SubResource("ParticleProcessMaterial_itxic")
+draw_pass_1 = SubResource("QuadMesh_o1dyr")
+
+[node name="FlameTrail" type="GPUParticles3D" parent="EdgeAttachment/FlameEdge"]
+transform = Transform3D(1, -4.4703484e-08, 7.1013346e-09, -1.4901161e-08, 1, 7.916242e-09, -3.5972334e-08, 2.3283064e-09, 1, 0, 0, 0)
+layers = 32
+cast_shadow = 0
+emitting = false
+amount = 32
+lifetime = 0.2
+fixed_fps = 0
+interpolate = false
+process_material = SubResource("ParticleProcessMaterial_gs1o0")
+draw_pass_1 = SubResource("QuadMesh_xu4h0")
 
 [node name="TipGlitter" type="GPUParticles3D" parent="EdgeAttachment"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, 3.5)
@@ -1828,7 +2174,7 @@ max_polyphony = 2
 bus = &"GAME SFX"
 
 [node name="ChainAttachment" type="Node3D" parent="."]
-transform = Transform3D(0.999846, -3.678311e-07, -1.6078129e-14, 0, -4.370475e-08, 0.99983066, -3.6783032e-07, -0.99984807, -4.3703988e-08, 4.4252667, 6.685099, -1.0693915)
+transform = Transform3D(0.9998546, -3.678325e-07, -1.6078528e-14, 0, -4.3704915e-08, 0.9998555, -3.678335e-07, -0.9998519, -4.370507e-08, 4.4252667, 6.685099, -1.0693915)
 script = ExtResource("2_xu0gp")
 skeleton = NodePath("../Erazor/ErazorRoot/Skeleton3D")
 boneName = &"chain"
