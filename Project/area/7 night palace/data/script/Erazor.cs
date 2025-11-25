@@ -51,7 +51,13 @@ public partial class Erazor : Node3D
 
 	private int currentHealth;
 	/// <summary> Tracks whether the head hitbox is being interacted with. </summary>
-	private bool isHeadHitboxEntered;
+	private bool isInteractingWithPlayer;
+	/// <summary> True when a particular playerinteraction has already been processed. </summary>
+	private bool isInteractionProcessed;
+	/// <summary> How long it's been since Erazor last interacted with the player. </summary>
+	private float timeSinceLastInteraction;
+	/// <summary> How long an interaction can last before being "reset". </summary>
+	private readonly float MaxInteractionLength = .2f;
 	private readonly int MaxHealth = 25;
 
 	/// <summary> Is Erazor far-away from the player? </summary>
@@ -278,10 +284,7 @@ public partial class Erazor : Node3D
 
 	private void UpdateDamage()
 	{
-		if (!isHeadHitboxEntered)
-			return;
-
-		if (!Player.IsHomingAttacking)
+		if (!isInteractingWithPlayer)
 			return;
 
 		if (CurrentFightState == FightState.DuelHitstun)
@@ -295,7 +298,20 @@ public partial class Erazor : Node3D
 		if (CurrentFightState == FightState.Defeated)
 			return;
 
-		currentHealth -= CurrentFightState == FightState.Duel ? 6 : 1;
+		if (isInteractionProcessed)
+		{
+			timeSinceLastInteraction += PhysicsManager.physicsDelta;
+			if (timeSinceLastInteraction < MaxInteractionLength)
+				return;
+
+			ResetInteractionProcessed();
+		}
+
+		if (CurrentFightState == FightState.Duel)
+			currentHealth -= 6;
+		else
+			currentHealth -= Player.AttackState == PlayerController.AttackStates.Strong ? 2 : 1;
+
 		GD.Print($"Erazor's Health is now {currentHealth}");
 
 		if (currentHealth <= 0)
@@ -304,7 +320,6 @@ public partial class Erazor : Node3D
 			return;
 		}
 
-		// TODO Change animation based on Duel State
 		if (CurrentFightState == FightState.Duel)
 		{
 			StartDuelResultAnimation(true);
@@ -320,6 +335,8 @@ public partial class Erazor : Node3D
 
 			Player.StartBounce();
 		}
+
+		SetInteractionProcessed();
 
 		if ((currentAttackPatternIndex == 0 && currentHealth <= 20) || (currentAttackPatternIndex == 1 && currentHealth <= 7))
 		{
@@ -342,6 +359,20 @@ public partial class Erazor : Node3D
 		}
 
 		CurrentFightState = FightState.Idle;
+	}
+
+	private void SetInteractionProcessed()
+	{
+		isInteractionProcessed = true;
+		timeSinceLastInteraction = 0;
+		Player.AttackStateChanged += ResetInteractionProcessed;
+	}
+
+	private void ResetInteractionProcessed()
+	{
+		isInteractionProcessed = false;
+		timeSinceLastInteraction = 0;
+		Player.AttackStateChanged -= ResetInteractionProcessed;
 	}
 
 	private void UpdatePosition()
@@ -634,7 +665,7 @@ public partial class Erazor : Node3D
 		if (!a.IsInGroup("player"))
 			return;
 
-		isHeadHitboxEntered = true;
+		isInteractingWithPlayer = true;
 		UpdateDamage();
 	}
 
@@ -643,6 +674,6 @@ public partial class Erazor : Node3D
 		if (!a.IsInGroup("player"))
 			return;
 
-		isHeadHitboxEntered = false;
+		isInteractingWithPlayer = false;
 	}
 }
