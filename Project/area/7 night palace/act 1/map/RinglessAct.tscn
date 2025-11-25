@@ -1,0 +1,2211 @@
+[gd_scene load_steps=26 format=3 uid="uid://dihece7roitvg"]
+
+[ext_resource type="PackedScene" uid="uid://ctfcgpodfhnp0" path="res://area/7 night palace/act 1/Static.tscn" id="1_j76o2"]
+[ext_resource type="Resource" uid="uid://dy6ndeuh3jnaa" path="res://resource/level data/night palace/Act1Ringless.tres" id="2_m2sp5"]
+[ext_resource type="Resource" uid="uid://c8plnbhxxi7v3" path="res://area/7 night palace/act 1/camera/OpeningCam.tres" id="3_xosbf"]
+[ext_resource type="PackedScene" uid="uid://cjupypih0myxo" path="res://object/player/CharacterSpawn.tscn" id="4_1etd6"]
+[ext_resource type="PackedScene" uid="uid://bn6wr6l8s3qyt" path="res://object/trigger/StageTrigger.tscn" id="5_3ka41"]
+[ext_resource type="Script" uid="uid://kvlmbv66orqt" path="res://object/trigger/modules/CullingTrigger.cs" id="6_75hq5"]
+[ext_resource type="PackedScene" uid="uid://cjufptew8n6bw" path="res://area/7 night palace/object/obstacle/SpinningBoxLarge.tscn" id="7_m2sp5"]
+[ext_resource type="Script" uid="uid://dd24u7rlj0dwl" path="res://addons/custom_nodes/script/ObjectGenerator.cs" id="7_pkijh"]
+[ext_resource type="PackedScene" uid="uid://c7l8mr7ubn848" path="res://object/stage/pickups/Ring.tscn" id="8_yrd1i"]
+[ext_resource type="PackedScene" uid="uid://68st06xyjgvp" path="res://object/stage/pickups/RichRing.tscn" id="13_g8x5s"]
+[ext_resource type="PackedScene" uid="uid://b4omh0erkr8si" path="res://object/enemy/majin/data/night palace/RedMajin.tscn" id="21_a7e17"]
+[ext_resource type="PackedScene" uid="uid://bqvtcp8tkbfyt" path="res://object/stage/common/SpikeBall.tscn" id="25_sucjm"]
+[ext_resource type="Script" uid="uid://dx0a0rhyauccl" path="res://object/trigger/modules/CameraTrigger.cs" id="27_6h0nq"]
+[ext_resource type="PackedScene" uid="uid://d0b2gvx7s6s8u" path="res://object/stage/pickups/Pearl.tscn" id="33_usbu6"]
+[ext_resource type="Resource" uid="uid://ukcne4um86a6" path="res://resource/preset/camera/common/CutsceneCam.tres" id="35_8ngf8"]
+[ext_resource type="PackedScene" uid="uid://bil31auctbk52" path="res://area/7 night palace/act 1/environment/hall stretch event/HallStretchEvent.tscn" id="36_8i0fc"]
+[ext_resource type="PackedScene" uid="uid://dxepb172kmp8n" path="res://object/stage/common/Goal.tscn" id="39_yac2x"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_mow5f"]
+size = Vector3(20, 20, 5)
+
+[sub_resource type="Curve" id="Curve_m2sp5"]
+_limits = [-2.0, 0.0, 0.0, 1.0]
+_data = [Vector2(0, 0), 0.0, -4.515276, 0, 0, Vector2(0.5, -1), 0.0, 0.0, 0, 0, Vector2(1, 0), 5.25388, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="Curve" id="Curve_t3u0p"]
+_data = [Vector2(0, 0), 0.0, 3.6928961, 0, 0, Vector2(0.5, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), -4.4125896, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="Curve3D" id="Curve3D_6i6w1"]
+_data = {
+"points": PackedVector3Array(0, 0, 0, 0, 0, 0, -3, 0, 0, -3, 0, 20, 1.5, 0, -10, -1, -3, -25, 0, 0, 0, 0, 0, 0, 1, -2, -50),
+"tilts": PackedFloat32Array(0, 0, 0)
+}
+point_count = 3
+
+[sub_resource type="Curve" id="Curve_pvb6h"]
+_limits = [0.0, 2.0, 0.0, 1.0]
+_data = [Vector2(0, 0), 0.0, 1.0, 0, 1, Vector2(1, 1), 1.0, 0.0, 1, 0]
+point_count = 2
+
+[sub_resource type="Curve" id="Curve_8m7cr"]
+_limits = [-2.0, 0.0, 0.0, 1.0]
+_data = [Vector2(0, 0), 0.0, -2.0, 0, 1, Vector2(1, -2), -2.0, 0.0, 1, 0]
+point_count = 2
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_m2sp5"]
+size = Vector3(20, 20, 5)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_laovf"]
+size = Vector3(30, 20, 5)
+
+[node name="World" type="Node"]
+
+[node name="Static" parent="." instance=ExtResource("1_j76o2")]
+Data = ExtResource("2_m2sp5")
+InitialCameraSettings = ExtResource("3_xosbf")
+
+[node name="01Start" parent="Static/Visuals/MainSection" index="0"]
+startEnabled = false
+
+[node name="04Interior" parent="Static/Visuals/MainSection" index="3"]
+startEnabled = true
+
+[node name="SpaceSection" parent="Static/Visuals" index="4"]
+visible = false
+
+[node name="CarpetPathFollower" parent="Static/Path/CarpetPath" index="0"]
+transform = Transform3D(4.3710767e-08, 0, 0.9999871, 0, 0.9999836, 0, -0.9999858, 0, 4.3710827e-08, 0, 0, 0)
+
+[node name="MainAct" type="Node3D" parent="."]
+
+[node name="SpawnPosition" type="Node3D" parent="MainAct"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -10)
+metadata/_edit_lock_ = true
+
+[node name="CharacterSpawn" parent="MainAct/SpawnPosition" instance=ExtResource("4_1etd6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -195, 2, -450)
+
+[node name="CullingMap" type="Node3D" parent="MainAct"]
+visible = false
+
+[node name="CarpetL" parent="MainAct/CullingMap" instance=ExtResource("5_3ka41")]
+transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, -173.66, 10.0227, -495.021)
+"Trigger Mode" = 2
+"Exit Mode" = 2
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="MainAct/CullingMap/CarpetL"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
+shape = SubResource("BoxShape3D_mow5f")
+
+[node name="InteriorU" parent="MainAct/CullingMap" instance=ExtResource("5_3ka41")]
+transform = Transform3D(5.96046e-08, 0, -1, 0, 1, 0, 1, 0, 5.96046e-08, -145.529, 10.0265, -481.689)
+"Trigger Mode" = 2
+"Exit Mode" = 2
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="MainAct/CullingMap/InteriorU"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
+shape = SubResource("BoxShape3D_mow5f")
+
+[node name="Interior" type="Node3D" parent="MainAct"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -195, 2, -502.3)
+script = ExtResource("6_75hq5")
+startEnabled = true
+saveVisibilityOnCheckpoint = true
+
+[node name="SpinningBoxLarge" parent="MainAct/Interior" instance=ExtResource("7_m2sp5")]
+transform = Transform3D(1, 0, 0, 0, 2, 0, 0, 0, 1, 50, 5, 0)
+
+[node name="PearlsL1" type="Node3D" parent="MainAct/Interior"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -20.900024, 8.5, 8)
+script = ExtResource("7_pkijh")
+Source = ExtResource("33_usbu6")
+Amount = 5
+Shape = 0
+Orientation = 0
+Spacing = 3.0
+"Horizontal Offset" = null
+"Vertical Offset" = null
+
+[node name="Child01" parent="MainAct/Interior/PearlsL1" instance=ExtResource("33_usbu6")]
+
+[node name="Child02" parent="MainAct/Interior/PearlsL1" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -3)
+
+[node name="Child03" parent="MainAct/Interior/PearlsL1" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -6)
+
+[node name="Child04" parent="MainAct/Interior/PearlsL1" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -9)
+
+[node name="Child05" parent="MainAct/Interior/PearlsL1" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -12)
+
+[node name="PearlsR1" type="Node3D" parent="MainAct/Interior"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -19.799988, 8.5, 8)
+script = ExtResource("7_pkijh")
+Source = ExtResource("33_usbu6")
+Amount = 5
+Shape = 0
+Orientation = 0
+Spacing = 3.0
+"Horizontal Offset" = null
+"Vertical Offset" = null
+
+[node name="Child01" parent="MainAct/Interior/PearlsR1" instance=ExtResource("33_usbu6")]
+
+[node name="Child02" parent="MainAct/Interior/PearlsR1" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -3)
+
+[node name="Child03" parent="MainAct/Interior/PearlsR1" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -6)
+
+[node name="Child04" parent="MainAct/Interior/PearlsR1" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -9)
+
+[node name="Child05" parent="MainAct/Interior/PearlsR1" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -12)
+
+[node name="PearlsL2" type="Node3D" parent="MainAct/Interior"]
+transform = Transform3D(-4.3711392e-08, 0, -1, 0, 1, 0, 1, 0, -4.3711392e-08, -5.3500366, 8.5, -21.901382)
+script = ExtResource("7_pkijh")
+Source = ExtResource("33_usbu6")
+Amount = 10
+Shape = 0
+Orientation = 0
+Spacing = 1.0
+"Horizontal Offset" = null
+"Vertical Offset" = null
+
+[node name="Child01" parent="MainAct/Interior/PearlsL2" instance=ExtResource("33_usbu6")]
+
+[node name="Child02" parent="MainAct/Interior/PearlsL2" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -1)
+
+[node name="Child03" parent="MainAct/Interior/PearlsL2" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2)
+
+[node name="Child04" parent="MainAct/Interior/PearlsL2" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -3)
+
+[node name="Child05" parent="MainAct/Interior/PearlsL2" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -4)
+
+[node name="Child06" parent="MainAct/Interior/PearlsL2" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -5)
+
+[node name="Child07" parent="MainAct/Interior/PearlsL2" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -6)
+
+[node name="Child08" parent="MainAct/Interior/PearlsL2" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -7)
+
+[node name="Child09" parent="MainAct/Interior/PearlsL2" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -8)
+
+[node name="Child10" parent="MainAct/Interior/PearlsL2" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -9)
+
+[node name="PearlsR2" type="Node3D" parent="MainAct/Interior"]
+transform = Transform3D(-4.3711392e-08, 0, -1, 0, 1, 0, 1, 0, -4.3711392e-08, -5.3500366, 8.5, -20.801346)
+script = ExtResource("7_pkijh")
+Source = ExtResource("33_usbu6")
+Amount = 10
+Shape = 0
+Orientation = 0
+Spacing = 1.0
+"Horizontal Offset" = null
+"Vertical Offset" = null
+
+[node name="Child01" parent="MainAct/Interior/PearlsR2" instance=ExtResource("33_usbu6")]
+
+[node name="Child02" parent="MainAct/Interior/PearlsR2" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -1)
+
+[node name="Child03" parent="MainAct/Interior/PearlsR2" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2)
+
+[node name="Child04" parent="MainAct/Interior/PearlsR2" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -3)
+
+[node name="Child05" parent="MainAct/Interior/PearlsR2" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -4)
+
+[node name="Child06" parent="MainAct/Interior/PearlsR2" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -5)
+
+[node name="Child07" parent="MainAct/Interior/PearlsR2" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -6)
+
+[node name="Child08" parent="MainAct/Interior/PearlsR2" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -7)
+
+[node name="Child09" parent="MainAct/Interior/PearlsR2" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -8)
+
+[node name="Child10" parent="MainAct/Interior/PearlsR2" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -9)
+
+[node name="Carpet" type="Node3D" parent="MainAct"]
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, -148, 10, -481.85)
+script = ExtResource("6_75hq5")
+saveVisibilityOnCheckpoint = true
+
+[node name="Rings2" type="Node3D" parent="MainAct/Carpet"]
+transform = Transform3D(-0.11520229, 0, -0.9933411, 0, 1, 0, 0.9933411, 0, -0.11520229, 25.969452, -4.52, 74.67753)
+script = ExtResource("7_pkijh")
+Source = ExtResource("8_yrd1i")
+Amount = 7
+Shape = 2
+Path = NodePath("../../../Static/Path/CarpetPath")
+"Path Progress Offset" = 0.0
+"Reverse Path" = false
+"Disable Path Y" = false
+Spacing = 2.0
+"Horizontal Offset" = null
+"Vertical Offset" = null
+metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
+
+[node name="Child01" parent="MainAct/Carpet/Rings2" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, -7.450581e-09, 0, 1, 0, 7.450581e-09, 0, 1, 0, 0, -6.1035156e-05)
+
+[node name="Child02" parent="MainAct/Carpet/Rings2" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, -7.450581e-09, 0, 1, 0, 7.450581e-09, 0, 1, 0.06958008, 0, -2.0022583)
+
+[node name="Child03" parent="MainAct/Carpet/Rings2" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, -7.450581e-09, 0, 1, 0, 7.450581e-09, 0, 1, 0.08258057, 0, -4.0052185)
+
+[node name="Child04" parent="MainAct/Carpet/Rings2" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, -7.450581e-09, 0, 1, 0, 7.450581e-09, 0, 1, 0.045074463, 0, -6.007599)
+
+[node name="Child05" parent="MainAct/Carpet/Rings2" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, -7.450581e-09, 0, 1, 0, 7.450581e-09, 0, 1, -0.03781128, 0, -8.008392)
+
+[node name="Child06" parent="MainAct/Carpet/Rings2" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, -7.450581e-09, 0, 1, 0, 7.450581e-09, 0, 1, -0.16148376, 0, -10.006775)
+
+[node name="Child07" parent="MainAct/Carpet/Rings2" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, -7.450581e-09, 0, 1, 0, 7.450581e-09, 0, 1, -0.32202148, 0, -12.002319)
+
+[node name="Rings3" type="Node3D" parent="MainAct/Carpet"]
+transform = Transform3D(-0.05692603, 0.011286481, -0.9983128, -0.008572192, 0.9998933, 0.011793122, 0.99834013, 0.009229093, -0.056823213, 45.76242, -3.0190997, 72.7928)
+script = ExtResource("7_pkijh")
+Source = ExtResource("8_yrd1i")
+Amount = 7
+Shape = 2
+Path = NodePath("../../../Static/Path/CarpetPath")
+"Path Progress Offset" = 0.0
+"Reverse Path" = false
+"Disable Path Y" = false
+Spacing = 2.0
+"Horizontal Offset" = null
+"Vertical Offset" = null
+metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
+
+[node name="Child01" parent="MainAct/Carpet/Rings3" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1.0000001, 1.1641532e-10, -3.7252903e-09, -2.3283064e-10, 1.0000001, 9.313226e-10, 0, -9.313226e-10, 1.0000001, 7.6293945e-06, 0, 0.0012207031)
+
+[node name="Child02" parent="MainAct/Carpet/Rings3" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1.0000001, 1.1641532e-10, -3.7252903e-09, -2.3283064e-10, 1.0000001, 9.313226e-10, 0, -9.313226e-10, 1.0000001, 0.007926941, 0.009843826, -2.07312)
+
+[node name="Child03" parent="MainAct/Carpet/Rings3" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1.0000001, 1.1641532e-10, -3.7252903e-09, -2.3283064e-10, 1.0000001, 9.313226e-10, 0, -9.313226e-10, 1.0000001, 0.06726074, 0.009677887, -4.1502686)
+
+[node name="Child04" parent="MainAct/Carpet/Rings3" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1.0000001, 1.1641532e-10, -3.7252903e-09, -2.3283064e-10, 1.0000001, 9.313226e-10, 0, -9.313226e-10, 1.0000001, 0.18073273, -0.0006980896, -6.228882)
+
+[node name="Child05" parent="MainAct/Carpet/Rings3" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1.0000001, 1.1641532e-10, -3.7252903e-09, -2.3283064e-10, 1.0000001, 9.313226e-10, 0, -9.313226e-10, 1.0000001, 0.35118866, -0.0214777, -8.307678)
+
+[node name="Child06" parent="MainAct/Carpet/Rings3" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1.0000001, 1.1641532e-10, -3.7252903e-09, -2.3283064e-10, 1.0000001, 9.313226e-10, 0, -9.313226e-10, 1.0000001, 0.5817032, -0.052854538, -10.384888)
+
+[node name="Child07" parent="MainAct/Carpet/Rings3" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1.0000001, 1.1641532e-10, -3.7252903e-09, -2.3283064e-10, 1.0000001, 9.313226e-10, 0, -9.313226e-10, 1.0000001, 0.8756027, -0.095012665, -12.458801)
+
+[node name="Rings4" type="Node3D" parent="MainAct/Carpet"]
+transform = Transform3D(-0.05692603, 0.011286481, -0.9983128, -0.008572192, 0.9998933, 0.011793122, 0.99834013, 0.009229093, -0.056823213, 45.76242, -3.0190997, 78.7928)
+script = ExtResource("7_pkijh")
+Source = ExtResource("8_yrd1i")
+Amount = 7
+Shape = 2
+Path = NodePath("../../../Static/Path/CarpetPath")
+"Path Progress Offset" = 0.0
+"Reverse Path" = false
+"Disable Path Y" = false
+Spacing = 2.0
+"Horizontal Offset" = null
+"Vertical Offset" = null
+metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
+
+[node name="Child01" parent="MainAct/Carpet/Rings4" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1.0000001, 1.1641532e-10, -3.7252903e-09, -2.3283064e-10, 1.0000001, 9.313226e-10, 0, -9.313226e-10, 1.0000001, -1.5258789e-05, 9.536743e-07, -0.0022583008)
+
+[node name="Child02" parent="MainAct/Carpet/Rings4" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1.0000001, 1.1641532e-10, -3.7252903e-09, -2.3283064e-10, 1.0000001, 9.313226e-10, 0, -9.313226e-10, 1.0000001, 0.014678955, -0.018345833, -1.9318237)
+
+[node name="Child03" parent="MainAct/Carpet/Rings4" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1.0000001, 1.1641532e-10, -3.7252903e-09, -2.3283064e-10, 1.0000001, 9.313226e-10, 0, -9.313226e-10, 1.0000001, 0.07723236, -0.047276497, -3.8567505)
+
+[node name="Child04" parent="MainAct/Carpet/Rings4" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1.0000001, 1.1641532e-10, -3.7252903e-09, -2.3283064e-10, 1.0000001, 9.313226e-10, 0, -9.313226e-10, 1.0000001, 0.18977356, -0.08701134, -5.7753906)
+
+[node name="Child05" parent="MainAct/Carpet/Rings4" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1.0000001, 1.1641532e-10, -3.7252903e-09, -2.3283064e-10, 1.0000001, 9.313226e-10, 0, -9.313226e-10, 1.0000001, 0.35447693, -0.13777256, -7.685547)
+
+[node name="Child06" parent="MainAct/Carpet/Rings4" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1.0000001, 1.1641532e-10, -3.7252903e-09, -2.3283064e-10, 1.0000001, 9.313226e-10, 0, -9.313226e-10, 1.0000001, 0.57367706, -0.19977283, -9.585449)
+
+[node name="Child07" parent="MainAct/Carpet/Rings4" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1.0000001, 1.1641532e-10, -3.7252903e-09, -2.3283064e-10, 1.0000001, 9.313226e-10, 0, -9.313226e-10, 1.0000001, 0.84976196, -0.27321815, -11.472412)
+
+[node name="RingGroup1" type="Node3D" parent="MainAct/Carpet"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 81.76242, -12.5191, 150.79283)
+
+[node name="Rings8" type="Node3D" parent="MainAct/Carpet/RingGroup1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, 0)
+script = ExtResource("7_pkijh")
+Source = ExtResource("8_yrd1i")
+Amount = 7
+Shape = 2
+Path = NodePath("../../../../Static/Path/CarpetPath")
+"Path Progress Offset" = 0.0
+"Reverse Path" = false
+"Disable Path Y" = false
+Spacing = 2.0
+"Horizontal Offset" = null
+"Vertical Offset" = null
+metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
+
+[node name="Child01" parent="MainAct/Carpet/RingGroup1/Rings8" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.00061035156, 0.00011730194, -0.0010986328)
+
+[node name="Child02" parent="MainAct/Carpet/RingGroup1/Rings8" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.97650146, -0.19885826, 1.7804263)
+
+[node name="Child03" parent="MainAct/Carpet/RingGroup1/Rings8" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.9800415, -0.3975711, 3.543762)
+
+[node name="Child04" parent="MainAct/Carpet/RingGroup1/Rings8" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.0073853, -0.5961833, 5.289856)
+
+[node name="Child05" parent="MainAct/Carpet/RingGroup1/Rings8" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.0561523, -0.7948661, 7.0197144)
+
+[node name="Child06" parent="MainAct/Carpet/RingGroup1/Rings8" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.1237793, -0.9937835, 8.734375)
+
+[node name="Child07" parent="MainAct/Carpet/RingGroup1/Rings8" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.208008, -1.1931367, 10.435059)
+
+[node name="Rings9" type="Node3D" parent="MainAct/Carpet/RingGroup1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -1.5258789e-05)
+script = ExtResource("7_pkijh")
+Source = ExtResource("8_yrd1i")
+Amount = 7
+Shape = 2
+Path = NodePath("../../../../Static/Path/CarpetPath")
+"Path Progress Offset" = 0.0
+"Reverse Path" = false
+"Disable Path Y" = false
+Spacing = 2.0
+"Horizontal Offset" = null
+"Vertical Offset" = null
+metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
+
+[node name="Child01" parent="MainAct/Carpet/RingGroup1/Rings9" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.00030517578, 6.151199e-05, -0.000579834)
+
+[node name="Child02" parent="MainAct/Carpet/RingGroup1/Rings9" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.98358154, -0.19889212, 1.7771914)
+
+[node name="Child03" parent="MainAct/Carpet/RingGroup1/Rings9" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.9937134, -0.39754725, 3.5364835)
+
+[node name="Child04" parent="MainAct/Carpet/RingGroup1/Rings9" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.0274658, -0.5960555, 5.2782135)
+
+[node name="Child05" parent="MainAct/Carpet/RingGroup1/Rings9" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.0824585, -0.7945962, 7.003525)
+
+[node name="Child06" parent="MainAct/Carpet/RingGroup1/Rings9" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.156128, -0.9933381, 8.713409)
+
+[node name="Child07" parent="MainAct/Carpet/RingGroup1/Rings9" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.246277, -1.1924729, 10.409119)
+
+[node name="Rings10" type="Node3D" parent="MainAct/Carpet/RingGroup1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.2, 0)
+script = ExtResource("7_pkijh")
+Source = ExtResource("8_yrd1i")
+Amount = 7
+Shape = 2
+Path = NodePath("../../../../Static/Path/CarpetPath")
+"Path Progress Offset" = 0.0
+"Reverse Path" = false
+"Disable Path Y" = false
+Spacing = 2.0
+"Horizontal Offset" = null
+"Vertical Offset" = null
+metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
+
+[node name="Child01" parent="MainAct/Carpet/RingGroup1/Rings10" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0004272461, 8.6307526e-05, -0.0008087158)
+
+[node name="Child02" parent="MainAct/Carpet/RingGroup1/Rings10" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.9902344, -0.1988473, 1.7731478)
+
+[node name="Child03" parent="MainAct/Carpet/RingGroup1/Rings10" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.006958, -0.39743662, 3.528381)
+
+[node name="Child04" parent="MainAct/Carpet/RingGroup1/Rings10" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.0471191, -0.59584475, 5.265793)
+
+[node name="Child05" parent="MainAct/Carpet/RingGroup1/Rings10" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.1082764, -0.7942424, 6.986496)
+
+[node name="Child06" parent="MainAct/Carpet/RingGroup1/Rings10" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.1879883, -0.99280214, 8.691574)
+
+[node name="Child07" parent="MainAct/Carpet/RingGroup1/Rings10" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.2840576, -1.1917167, 10.382324)
+
+[node name="RingGroup2" type="Node3D" parent="MainAct/Carpet"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 69.76242, -12.5191, 155.79288)
+
+[node name="Rings8" type="Node3D" parent="MainAct/Carpet/RingGroup2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, 0)
+script = ExtResource("7_pkijh")
+Source = ExtResource("8_yrd1i")
+Amount = 7
+Shape = 2
+Path = NodePath("../../../../Static/Path/CarpetPath")
+"Path Progress Offset" = 0.0
+"Reverse Path" = false
+"Disable Path Y" = false
+Spacing = 2.0
+"Horizontal Offset" = null
+"Vertical Offset" = null
+metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
+
+[node name="Child01" parent="MainAct/Carpet/RingGroup2/Rings8" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0007324219, 0.00011944771, -0.0010681152)
+
+[node name="Child02" parent="MainAct/Carpet/RingGroup2/Rings8" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.0460205, -0.15550542, 1.6296082)
+
+[node name="Child03" parent="MainAct/Carpet/RingGroup2/Rings8" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.111084, -0.3120067, 3.2573853)
+
+[node name="Child04" parent="MainAct/Carpet/RingGroup2/Rings8" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.1924438, -0.46958518, 4.883301)
+
+[node name="Child05" parent="MainAct/Carpet/RingGroup2/Rings8" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.288147, -0.6284244, 6.5082703)
+
+[node name="Child06" parent="MainAct/Carpet/RingGroup2/Rings8" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.39624, -0.7887132, 8.133255)
+
+[node name="Child07" parent="MainAct/Carpet/RingGroup2/Rings8" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.5148315, -0.95064616, 9.759353)
+
+[node name="Rings9" type="Node3D" parent="MainAct/Carpet/RingGroup2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -1.5258789e-05)
+script = ExtResource("7_pkijh")
+Source = ExtResource("8_yrd1i")
+Amount = 7
+Shape = 2
+Path = NodePath("../../../../Static/Path/CarpetPath")
+"Path Progress Offset" = 0.0
+"Reverse Path" = false
+"Disable Path Y" = false
+Spacing = 2.0
+"Horizontal Offset" = null
+"Vertical Offset" = null
+metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
+
+[node name="Child01" parent="MainAct/Carpet/RingGroup2/Rings9" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.3841858e-06, -3.0517578e-05)
+
+[node name="Child02" parent="MainAct/Carpet/RingGroup2/Rings9" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.0518799, -0.15561533, 1.6273651)
+
+[node name="Child03" parent="MainAct/Carpet/RingGroup2/Rings9" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.1219482, -0.3120799, 3.251709)
+
+[node name="Child04" parent="MainAct/Carpet/RingGroup2/Rings9" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.208191, -0.46958876, 4.874008)
+
+[node name="Child05" parent="MainAct/Carpet/RingGroup2/Rings9" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.308655, -0.62833166, 6.495224)
+
+[node name="Child06" parent="MainAct/Carpet/RingGroup2/Rings9" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.4213867, -0.7884898, 8.116348)
+
+[node name="Child07" parent="MainAct/Carpet/RingGroup2/Rings9" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.5445557, -0.9502635, 9.738494)
+
+[node name="Rings10" type="Node3D" parent="MainAct/Carpet/RingGroup2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.2, 0)
+script = ExtResource("7_pkijh")
+Source = ExtResource("8_yrd1i")
+Amount = 7
+Shape = 2
+Path = NodePath("../../../../Static/Path/CarpetPath")
+"Path Progress Offset" = 0.0
+"Reverse Path" = false
+"Disable Path Y" = false
+Spacing = 2.0
+"Horizontal Offset" = null
+"Vertical Offset" = null
+metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
+
+[node name="Child01" parent="MainAct/Carpet/RingGroup2/Rings10" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.1035156e-05, 1.9788742e-05, -0.00018310547)
+
+[node name="Child02" parent="MainAct/Carpet/RingGroup2/Rings10" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.0569458, -0.1555903, 1.6239319)
+
+[node name="Child03" parent="MainAct/Carpet/RingGroup2/Rings10" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.132019, -0.31201577, 3.2447815)
+
+[node name="Child04" parent="MainAct/Carpet/RingGroup2/Rings10" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.2230835, -0.46945596, 4.8634644)
+
+[node name="Child05" parent="MainAct/Carpet/RingGroup2/Rings10" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.328308, -0.6280968, 6.4809265)
+
+[node name="Child06" parent="MainAct/Carpet/RingGroup2/Rings10" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.4456787, -0.7881272, 8.098175)
+
+[node name="Child07" parent="MainAct/Carpet/RingGroup2/Rings10" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.5733643, -0.9497359, 9.716308)
+
+[node name="Pearls1" type="Node3D" parent="MainAct/Carpet"]
+transform = Transform3D(-0.7581663, -0.11562011, 0.6417229, -0.08812069, 0.99328953, 0.074851826, -0.6460737, 0.00020107489, -0.76327, 78.667816, -12.926938, 148.62363)
+script = ExtResource("7_pkijh")
+Source = ExtResource("33_usbu6")
+Amount = 13
+Shape = 2
+Path = NodePath("../../../Static/Path/CarpetPath")
+"Path Progress Offset" = 0.0
+"Reverse Path" = false
+"Disable Path Y" = false
+Spacing = 3.0
+"Horizontal Offset" = SubResource("Curve_m2sp5")
+"Vertical Offset" = SubResource("Curve_t3u0p")
+metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
+
+[node name="Child01" parent="MainAct/Carpet/Pearls1" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, -2.9802322e-08, -7.450581e-09, 1.0000001, 7.450581e-09, 0, 0, 1, -6.1035156e-05, -1.5258789e-05, -0.00018310547)
+
+[node name="Child02" parent="MainAct/Carpet/Pearls1" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, -2.9802322e-08, -7.450581e-09, 1.0000001, 7.450581e-09, 0, 0, 1, -0.23815918, 0.19924164, -2.972229)
+
+[node name="Child03" parent="MainAct/Carpet/Pearls1" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, -2.9802322e-08, -7.450581e-09, 1.0000001, 7.450581e-09, 0, 0, 1, -0.48580933, 0.3649292, -5.932617)
+
+[node name="Child04" parent="MainAct/Carpet/Pearls1" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, -2.9802322e-08, -7.450581e-09, 1.0000001, 7.450581e-09, 0, 0, 1, -0.7445679, 0.49015045, -8.887054)
+
+[node name="Child05" parent="MainAct/Carpet/Pearls1" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, -2.9802322e-08, -7.450581e-09, 1.0000001, 7.450581e-09, 0, 0, 1, -1.0152588, 0.568161, -11.839844)
+
+[node name="Child06" parent="MainAct/Carpet/Pearls1" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, -2.9802322e-08, -7.450581e-09, 1.0000001, 7.450581e-09, 0, 0, 1, -1.2979126, 0.5924454, -14.794128)
+
+[node name="Child07" parent="MainAct/Carpet/Pearls1" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, -2.9802322e-08, -7.450581e-09, 1.0000001, 7.450581e-09, 0, 0, 1, -1.5920715, 0.55670166, -17.751984)
+
+[node name="Child08" parent="MainAct/Carpet/Pearls1" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, -2.9802322e-08, -7.450581e-09, 1.0000001, 7.450581e-09, 0, 0, 1, -1.8911438, 0.46497345, -20.714844)
+
+[node name="Child09" parent="MainAct/Carpet/Pearls1" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, -2.9802322e-08, -7.450581e-09, 1.0000001, 7.450581e-09, 0, 0, 1, -2.2047424, 0.31948853, -23.682343)
+
+[node name="Child10" parent="MainAct/Carpet/Pearls1" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, -2.9802322e-08, -7.450581e-09, 1.0000001, 7.450581e-09, 0, 0, 1, -2.555664, 0.11096954, -26.651825)
+
+[node name="Child11" parent="MainAct/Carpet/Pearls1" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, -2.9802322e-08, -7.450581e-09, 1.0000001, 7.450581e-09, 0, 0, 1, -2.966156, -0.17031097, -29.620514)
+
+[node name="Child12" parent="MainAct/Carpet/Pearls1" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, -2.9802322e-08, -7.450581e-09, 1.0000001, 7.450581e-09, 0, 0, 1, -3.439911, -0.56079865, -32.56372)
+
+[node name="Child13" parent="MainAct/Carpet/Pearls1" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, -2.9802322e-08, -7.450581e-09, 1.0000001, 7.450581e-09, 0, 0, 1, -3.977295, -1.0430527, -35.493744)
+
+[node name="Pearls3" type="Node3D" parent="MainAct/Carpet"]
+transform = Transform3D(-0.7581663, -0.11562011, 0.6417229, -0.08812069, 0.99328953, 0.074851826, -0.6460737, 0.00020107489, -0.76327, 80.72598, -12.838818, 148.66971)
+script = ExtResource("7_pkijh")
+Source = ExtResource("33_usbu6")
+Amount = 13
+Shape = 2
+Path = NodePath("../../../Static/Path/CarpetPath")
+"Path Progress Offset" = 0.0
+"Reverse Path" = false
+"Disable Path Y" = false
+Spacing = 3.0
+"Horizontal Offset" = SubResource("Curve_m2sp5")
+"Vertical Offset" = SubResource("Curve_t3u0p")
+metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
+
+[node name="Child01" parent="MainAct/Carpet/Pearls3" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, -2.9802322e-08, -7.450581e-09, 1.0000001, 7.450581e-09, 0, 0, 1, 9.1552734e-05, 1.5258789e-05, 0.0002746582)
+
+[node name="Child02" parent="MainAct/Carpet/Pearls3" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, -2.9802322e-08, -7.450581e-09, 1.0000001, 7.450581e-09, 0, 0, 1, -0.2680359, 0.18151093, -3.026001)
+
+[node name="Child03" parent="MainAct/Carpet/Pearls3" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, -2.9802322e-08, -7.450581e-09, 1.0000001, 7.450581e-09, 0, 0, 1, -0.54052734, 0.3298111, -6.0341187)
+
+[node name="Child04" parent="MainAct/Carpet/Pearls3" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, -2.9802322e-08, -7.450581e-09, 1.0000001, 7.450581e-09, 0, 0, 1, -0.81973267, 0.43795013, -9.029785)
+
+[node name="Child05" parent="MainAct/Carpet/Pearls3" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, -2.9802322e-08, -7.450581e-09, 1.0000001, 7.450581e-09, 0, 0, 1, -1.106781, 0.49918365, -12.017517)
+
+[node name="Child06" parent="MainAct/Carpet/Pearls3" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, -2.9802322e-08, -7.450581e-09, 1.0000001, 7.450581e-09, 0, 0, 1, -1.4023132, 0.5069351, -15.00058)
+
+[node name="Child07" parent="MainAct/Carpet/Pearls3" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, -2.9802322e-08, -7.450581e-09, 1.0000001, 7.450581e-09, 0, 0, 1, -1.7060242, 0.45487213, -17.98114)
+
+[node name="Child08" parent="MainAct/Carpet/Pearls3" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, -2.9802322e-08, -7.450581e-09, 1.0000001, 7.450581e-09, 0, 0, 1, -2.0117493, 0.34700012, -20.96106)
+
+[node name="Child09" parent="MainAct/Carpet/Pearls3" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, -2.9802322e-08, -7.450581e-09, 1.0000001, 7.450581e-09, 0, 0, 1, -2.3292847, 0.18553925, -23.939972)
+
+[node name="Child10" parent="MainAct/Carpet/Pearls3" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, -2.9802322e-08, -7.450581e-09, 1.0000001, 7.450581e-09, 0, 0, 1, -2.6815186, -0.038742065, -26.915558)
+
+[node name="Child11" parent="MainAct/Carpet/Pearls3" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, -2.9802322e-08, -7.450581e-09, 1.0000001, 7.450581e-09, 0, 0, 1, -3.0909119, -0.3355713, -29.88501)
+
+[node name="Child12" parent="MainAct/Carpet/Pearls3" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, -2.9802322e-08, -7.450581e-09, 1.0000001, 7.450581e-09, 0, 0, 1, -3.5754395, -0.71269226, -32.84659)
+
+[node name="Child13" parent="MainAct/Carpet/Pearls3" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, -2.9802322e-08, -7.450581e-09, 1.0000001, 7.450581e-09, 0, 0, 1, -4.13031, -1.1631699, -35.808716)
+
+[node name="Pearls2" type="Node3D" parent="MainAct/Carpet"]
+transform = Transform3D(-0.97984123, -0.04175704, 0.19533394, -0.018745353, 0.99280596, 0.11820428, -0.19886535, 0.11216019, -0.97358394, 59.470062, -16.863325, 181.67868)
+script = ExtResource("7_pkijh")
+Source = ExtResource("33_usbu6")
+Amount = 13
+Shape = 2
+Path = NodePath("../../../Static/Path/CarpetPath")
+"Path Progress Offset" = 0.0
+"Reverse Path" = false
+"Disable Path Y" = false
+Spacing = 3.0
+"Horizontal Offset" = SubResource("Curve_t3u0p")
+"Vertical Offset" = null
+metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
+
+[node name="Child01" parent="MainAct/Carpet/Pearls2" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 1.4901161e-08, 0, 1, -4.656613e-09, 0, 4.656613e-09, 1, 0, 1.9073486e-06, -7.6293945e-05)
+
+[node name="Child02" parent="MainAct/Carpet/Pearls2" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 1.4901161e-08, 0, 1, -4.656613e-09, 0, 4.656613e-09, 1, 1.0748901, 0.06764412, -2.8282852)
+
+[node name="Child03" parent="MainAct/Carpet/Pearls2" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 1.4901161e-08, 0, 1, -4.656613e-09, 0, 4.656613e-09, 1, 2.2349243, 0.13448143, -5.623787)
+
+[node name="Child04" parent="MainAct/Carpet/Pearls2" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 1.4901161e-08, 0, 1, -4.656613e-09, 0, 4.656613e-09, 1, 3.4851685, 0.19760513, -8.381573)
+
+[node name="Child05" parent="MainAct/Carpet/Pearls2" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 1.4901161e-08, 0, 1, -4.656613e-09, 0, 4.656613e-09, 1, 4.8306274, 0.25372314, -11.095966)
+
+[node name="Child06" parent="MainAct/Carpet/Pearls2" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 1.4901161e-08, 0, 1, -4.656613e-09, 0, 4.656613e-09, 1, 6.276367, 0.29913712, -13.760639)
+
+[node name="Child07" parent="MainAct/Carpet/Pearls2" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 1.4901161e-08, 0, 1, -4.656613e-09, 0, 4.656613e-09, 1, 7.8276978, 0.32964897, -16.368263)
+
+[node name="Child08" parent="MainAct/Carpet/Pearls2" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 1.4901161e-08, 0, 1, -4.656613e-09, 0, 4.656613e-09, 1, 9.482056, 0.34230804, -18.915634)
+
+[node name="Child09" parent="MainAct/Carpet/Pearls2" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 1.4901161e-08, 0, 1, -4.656613e-09, 0, 4.656613e-09, 1, 11.238037, 0.33398056, -21.398178)
+
+[node name="Child10" parent="MainAct/Carpet/Pearls2" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 1.4901161e-08, 0, 1, -4.656613e-09, 0, 4.656613e-09, 1, 13.1033325, 0.29920006, -23.804161)
+
+[node name="Child11" parent="MainAct/Carpet/Pearls2" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 1.4901161e-08, 0, 1, -4.656613e-09, 0, 4.656613e-09, 1, 15.085144, 0.23147392, -26.118946)
+
+[node name="Child12" parent="MainAct/Carpet/Pearls2" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 1.4901161e-08, 0, 1, -4.656613e-09, 0, 4.656613e-09, 1, 17.190552, 0.12308502, -28.324432)
+
+[node name="Child13" parent="MainAct/Carpet/Pearls2" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 1.4901161e-08, 0, 1, -4.656613e-09, 0, 4.656613e-09, 1, 19.425537, -0.035276413, -30.39737)
+
+[node name="Pearls4" type="Node3D" parent="MainAct/Carpet"]
+transform = Transform3D(-0.97984123, -0.04175704, 0.19533394, -0.018745353, 0.99280596, 0.11820428, -0.19886535, 0.11216019, -0.97358394, 57.362, -16.855827, 180.65822)
+script = ExtResource("7_pkijh")
+Source = ExtResource("33_usbu6")
+Amount = 13
+Shape = 2
+Path = NodePath("../../../Static/Path/CarpetPath")
+"Path Progress Offset" = 0.0
+"Reverse Path" = false
+"Disable Path Y" = false
+Spacing = 3.0
+"Horizontal Offset" = SubResource("Curve_t3u0p")
+"Vertical Offset" = null
+metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
+
+[node name="Child01" parent="MainAct/Carpet/Pearls4" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 1.4901161e-08, 0, 1, -4.656613e-09, 0, 4.656613e-09, 1, -0.00018310547, -5.722046e-06, 0.00032806396)
+
+[node name="Child02" parent="MainAct/Carpet/Pearls4" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 1.4901161e-08, 0, 1, -4.656613e-09, 0, 4.656613e-09, 1, 1.0653076, 0.04034996, -2.802971)
+
+[node name="Child03" parent="MainAct/Carpet/Pearls4" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 1.4901161e-08, 0, 1, -4.656613e-09, 0, 4.656613e-09, 1, 2.2147217, 0.0794754, -5.5726852)
+
+[node name="Child04" parent="MainAct/Carpet/Pearls4" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 1.4901161e-08, 0, 1, -4.656613e-09, 0, 4.656613e-09, 1, 3.4528198, 0.114370346, -8.303604)
+
+[node name="Child05" parent="MainAct/Carpet/Pearls4" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 1.4901161e-08, 0, 1, -4.656613e-09, 0, 4.656613e-09, 1, 4.784607, 0.1416626, -10.989792)
+
+[node name="Child06" parent="MainAct/Carpet/Pearls4" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 1.4901161e-08, 0, 1, -4.656613e-09, 0, 4.656613e-09, 1, 6.2147827, 0.15755081, -13.624672)
+
+[node name="Child07" parent="MainAct/Carpet/Pearls4" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 1.4901161e-08, 0, 1, -4.656613e-09, 0, 4.656613e-09, 1, 7.74823, 0.1577053, -16.200539)
+
+[node name="Child08" parent="MainAct/Carpet/Pearls4" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 1.4901161e-08, 0, 1, -4.656613e-09, 0, 4.656613e-09, 1, 9.381775, 0.13903236, -18.7137)
+
+[node name="Child09" parent="MainAct/Carpet/Pearls4" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 1.4901161e-08, 0, 1, -4.656613e-09, 0, 4.656613e-09, 1, 11.113647, 0.098257065, -21.159153)
+
+[node name="Child10" parent="MainAct/Carpet/Pearls4" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 1.4901161e-08, 0, 1, -4.656613e-09, 0, 4.656613e-09, 1, 12.950439, 0.02967453, -23.524364)
+
+[node name="Child11" parent="MainAct/Carpet/Pearls4" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 1.4901161e-08, 0, 1, -4.656613e-09, 0, 4.656613e-09, 1, 14.898254, -0.07345772, -25.794037)
+
+[node name="Child12" parent="MainAct/Carpet/Pearls4" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 1.4901161e-08, 0, 1, -4.656613e-09, 0, 4.656613e-09, 1, 16.962402, -0.21919823, -27.948772)
+
+[node name="Child13" parent="MainAct/Carpet/Pearls4" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 1.4901161e-08, 0, 1, -4.656613e-09, 0, 4.656613e-09, 1, 19.146301, -0.4172573, -29.964157)
+
+[node name="RingGroup3" type="Node3D" parent="MainAct/Carpet"]
+transform = Transform3D(0.8660254, 0, 0.5, 0, 1, 0, -0.5, 0, 0.8660254, 35.22652, -20.5191, 201.52496)
+
+[node name="Rings8" type="Node3D" parent="MainAct/Carpet/RingGroup3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, 0)
+script = ExtResource("7_pkijh")
+Source = ExtResource("8_yrd1i")
+Amount = 7
+Shape = 2
+Path = NodePath("../../../../Static/Path/CarpetPath")
+"Path Progress Offset" = 0.0
+"Reverse Path" = false
+"Disable Path Y" = false
+Spacing = 2.0
+"Horizontal Offset" = null
+"Vertical Offset" = null
+metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
+
+[node name="Child01" parent="MainAct/Carpet/RingGroup3/Rings8" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0020446777, -0.0002603531, 0.00033569336)
+
+[node name="Child02" parent="MainAct/Carpet/RingGroup3/Rings8" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.8858643, -0.28960705, 0.282135)
+
+[node name="Child03" parent="MainAct/Carpet/RingGroup3/Rings8" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.7669373, -0.5858698, 0.51290894)
+
+[node name="Child04" parent="MainAct/Carpet/RingGroup3/Rings8" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.642273, -0.8897867, 0.68685913)
+
+[node name="Child05" parent="MainAct/Carpet/RingGroup3/Rings8" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.5082703, -1.2022295, 0.7973938)
+
+[node name="Child06" parent="MainAct/Carpet/RingGroup3/Rings8" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.359467, -1.5241575, 0.8366089)
+
+[node name="Child07" parent="MainAct/Carpet/RingGroup3/Rings8" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11.18866, -1.8566904, 0.79519653)
+
+[node name="Rings9" type="Node3D" parent="MainAct/Carpet/RingGroup3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -1.5258789e-05)
+script = ExtResource("7_pkijh")
+Source = ExtResource("8_yrd1i")
+Amount = 7
+Shape = 2
+Path = NodePath("../../../../Static/Path/CarpetPath")
+"Path Progress Offset" = 0.0
+"Reverse Path" = false
+"Disable Path Y" = false
+Spacing = 2.0
+"Horizontal Offset" = null
+"Vertical Offset" = null
+metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
+
+[node name="Child01" parent="MainAct/Carpet/RingGroup3/Rings9" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.00024414063, 3.4332275e-05, -6.1035156e-05)
+
+[node name="Child02" parent="MainAct/Carpet/RingGroup3/Rings9" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.8777466, -0.28931046, 0.2947693)
+
+[node name="Child03" parent="MainAct/Carpet/RingGroup3/Rings9" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.7531738, -0.58540726, 0.539093)
+
+[node name="Child04" parent="MainAct/Carpet/RingGroup3/Rings9" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.6231995, -0.88897324, 0.7274475)
+
+[node name="Child05" parent="MainAct/Carpet/RingGroup3/Rings9" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.4843445, -1.200861, 0.853302)
+
+[node name="Child06" parent="MainAct/Carpet/RingGroup3/Rings9" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.33136, -1.5220108, 0.908844)
+
+[node name="Child07" parent="MainAct/Carpet/RingGroup3/Rings9" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11.15744, -1.8535118, 0.88500977)
+
+[node name="Rings10" type="Node3D" parent="MainAct/Carpet/RingGroup3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.2, 0)
+script = ExtResource("7_pkijh")
+Source = ExtResource("8_yrd1i")
+Amount = 7
+Shape = 2
+Path = NodePath("../../../../Static/Path/CarpetPath")
+"Path Progress Offset" = 0.0
+"Reverse Path" = false
+"Disable Path Y" = false
+Spacing = 2.0
+"Horizontal Offset" = null
+"Vertical Offset" = null
+metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
+
+[node name="Child01" parent="MainAct/Carpet/RingGroup3/Rings10" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.00079345703, 0.00010585785, -0.00015258789)
+
+[node name="Child02" parent="MainAct/Carpet/RingGroup3/Rings10" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.8713074, -0.28924274, 0.30773926)
+
+[node name="Child03" parent="MainAct/Carpet/RingGroup3/Rings10" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.7411194, -0.58518124, 0.56573486)
+
+[node name="Child04" parent="MainAct/Carpet/RingGroup3/Rings10" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.605835, -0.88839436, 0.7685547)
+
+[node name="Child05" parent="MainAct/Carpet/RingGroup3/Rings10" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.462097, -1.1997309, 0.90979004)
+
+[node name="Child06" parent="MainAct/Carpet/RingGroup3/Rings10" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.305054, -1.5201006, 0.9818115)
+
+[node name="Child07" parent="MainAct/Carpet/RingGroup3/Rings10" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11.128143, -1.8505621, 0.9758301)
+
+[node name="SpikeBall1" parent="MainAct/Carpet" instance=ExtResource("25_sucjm")]
+transform = Transform3D(-0.24283506, 0.069617495, 0.9675642, -0.6907011, 0.687932, -0.2228507, -0.68113244, -0.7224163, -0.11897132, 32.640717, -20.444199, 211.57312)
+Movement/Mode = 0
+
+[node name="SpikeBall2" parent="MainAct/Carpet" instance=ExtResource("25_sucjm")]
+transform = Transform3D(0.41283077, -0.1581624, 0.89696115, -0.085226774, 0.97376055, 0.21093515, -0.90679425, -0.16352642, 0.38852903, 1.5267639, -25.908972, 214.66476)
+Movement/Mode = 0
+
+[node name="Rings" type="Node3D" parent="MainAct/Carpet/SpikeBall2"]
+script = ExtResource("7_pkijh")
+Source = ExtResource("8_yrd1i")
+Amount = 10
+Shape = 1
+Orientation = 0
+"Ring Size" = 2.0
+"Ring Ratio" = 1.0
+metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
+
+[node name="Child01" parent="MainAct/Carpet/SpikeBall2/Rings" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0, 0)
+
+[node name="Child02" parent="MainAct/Carpet/SpikeBall2/Rings" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.6180341, 0, 1.1755705)
+
+[node name="Child03" parent="MainAct/Carpet/SpikeBall2/Rings" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.61803365, 0, 1.9021132)
+
+[node name="Child04" parent="MainAct/Carpet/SpikeBall2/Rings" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.618034, 0, 1.9021131)
+
+[node name="Child05" parent="MainAct/Carpet/SpikeBall2/Rings" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.618034, 0, 1.1755704)
+
+[node name="Child06" parent="MainAct/Carpet/SpikeBall2/Rings" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0, -1.7484557e-07)
+
+[node name="Child07" parent="MainAct/Carpet/SpikeBall2/Rings" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.6180339, 0, -1.1755707)
+
+[node name="Child08" parent="MainAct/Carpet/SpikeBall2/Rings" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.61803395, 0, -1.9021131)
+
+[node name="Child09" parent="MainAct/Carpet/SpikeBall2/Rings" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.6180346, 0, -1.902113)
+
+[node name="Child10" parent="MainAct/Carpet/SpikeBall2/Rings" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.6180346, 0, -1.1755699)
+
+[node name="SpikeBall3" parent="MainAct/Carpet" instance=ExtResource("25_sucjm")]
+transform = Transform3D(0.7811483, 0.39345282, -0.484704, -0.33463502, 0.91930306, 0.20694692, 0.5270219, 0.0005427247, 0.849827, -5.5780334, -38.652424, 170.47571)
+Movement/Mode = 0
+
+[node name="Rings" type="Node3D" parent="MainAct/Carpet/SpikeBall3"]
+script = ExtResource("7_pkijh")
+Source = ExtResource("8_yrd1i")
+Amount = 10
+Shape = 1
+Orientation = 0
+"Ring Size" = 2.0
+"Ring Ratio" = 1.0
+metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
+
+[node name="Child01" parent="MainAct/Carpet/SpikeBall3/Rings" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0, 0)
+
+[node name="Child02" parent="MainAct/Carpet/SpikeBall3/Rings" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.6180341, 0, 1.1755705)
+
+[node name="Child03" parent="MainAct/Carpet/SpikeBall3/Rings" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.61803365, 0, 1.9021132)
+
+[node name="Child04" parent="MainAct/Carpet/SpikeBall3/Rings" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.618034, 0, 1.9021131)
+
+[node name="Child05" parent="MainAct/Carpet/SpikeBall3/Rings" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.618034, 0, 1.1755704)
+
+[node name="Child06" parent="MainAct/Carpet/SpikeBall3/Rings" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0, -1.7484557e-07)
+
+[node name="Child07" parent="MainAct/Carpet/SpikeBall3/Rings" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.6180339, 0, -1.1755707)
+
+[node name="Child08" parent="MainAct/Carpet/SpikeBall3/Rings" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.61803395, 0, -1.9021131)
+
+[node name="Child09" parent="MainAct/Carpet/SpikeBall3/Rings" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.6180346, 0, -1.902113)
+
+[node name="Child10" parent="MainAct/Carpet/SpikeBall3/Rings" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.6180346, 0, -1.1755699)
+
+[node name="SpikeBall4" parent="MainAct/Carpet" instance=ExtResource("25_sucjm")]
+transform = Transform3D(-0.23657016, 0.18078609, -0.9546298, -0.2864853, 0.9258334, 0.24633981, 0.92837685, 0.3317686, -0.16724262, 26.308256, -45.65569, 152.71877)
+Movement/Mode = 0
+
+[node name="Rings" type="Node3D" parent="MainAct/Carpet/SpikeBall4"]
+script = ExtResource("7_pkijh")
+Source = ExtResource("8_yrd1i")
+Amount = 10
+Shape = 1
+Orientation = 0
+"Ring Size" = 3.0
+"Ring Ratio" = 1.0
+metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
+
+[node name="Child01" parent="MainAct/Carpet/SpikeBall4/Rings" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 0, 0)
+
+[node name="Child02" parent="MainAct/Carpet/SpikeBall4/Rings" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.427051, 0, 1.7633557)
+
+[node name="Child03" parent="MainAct/Carpet/SpikeBall4/Rings" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.9270505, 0, 2.85317)
+
+[node name="Child04" parent="MainAct/Carpet/SpikeBall4/Rings" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.927051, 0, 2.8531697)
+
+[node name="Child05" parent="MainAct/Carpet/SpikeBall4/Rings" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.427051, 0, 1.7633555)
+
+[node name="Child06" parent="MainAct/Carpet/SpikeBall4/Rings" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 0, -2.6226834e-07)
+
+[node name="Child07" parent="MainAct/Carpet/SpikeBall4/Rings" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.4270508, 0, -1.7633561)
+
+[node name="Child08" parent="MainAct/Carpet/SpikeBall4/Rings" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.92705095, 0, -2.8531697)
+
+[node name="Child09" parent="MainAct/Carpet/SpikeBall4/Rings" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.9270519, 0, -2.8531694)
+
+[node name="Child10" parent="MainAct/Carpet/SpikeBall4/Rings" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.427052, 0, -1.7633548)
+
+[node name="ItemGroup1" type="Node3D" parent="MainAct/Carpet"]
+transform = Transform3D(0.99999994, 0, 0, 0, 0.99999994, 0, 0, 0, 1, 44.620697, -52.429085, 168.45209)
+
+[node name="RichRing" parent="MainAct/Carpet/ItemGroup1" instance=ExtResource("13_g8x5s")]
+
+[node name="PearlRing" type="Node3D" parent="MainAct/Carpet/ItemGroup1"]
+transform = Transform3D(0.81915194, 0.09960049, 0.56486243, 7.450581e-09, 0.98480755, -0.17364816, -0.5735764, 0.14224423, 0.8067071, 0, 0, 0)
+script = ExtResource("7_pkijh")
+Source = ExtResource("33_usbu6")
+Amount = 20
+Shape = 1
+Orientation = 1
+"Ring Size" = 2.0
+"Ring Ratio" = 1.0
+metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
+
+[node name="Child01" parent="MainAct/Carpet/ItemGroup1/PearlRing" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0, 0)
+
+[node name="Child02" parent="MainAct/Carpet/ItemGroup1/PearlRing" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.9021131, 0.61803406, 0)
+
+[node name="Child03" parent="MainAct/Carpet/ItemGroup1/PearlRing" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.6180341, 1.1755705, 0)
+
+[node name="Child04" parent="MainAct/Carpet/ItemGroup1/PearlRing" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.1755705, 1.618034, 0)
+
+[node name="Child05" parent="MainAct/Carpet/ItemGroup1/PearlRing" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.61803365, 1.9021132, 0)
+
+[node name="Child06" parent="MainAct/Carpet/ItemGroup1/PearlRing" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.7484557e-07, 2, 0)
+
+[node name="Child07" parent="MainAct/Carpet/ItemGroup1/PearlRing" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.618034, 1.9021131, 0)
+
+[node name="Child08" parent="MainAct/Carpet/ItemGroup1/PearlRing" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.1755706, 1.6180341, 0)
+
+[node name="Child09" parent="MainAct/Carpet/ItemGroup1/PearlRing" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.618034, 1.1755704, 0)
+
+[node name="Child10" parent="MainAct/Carpet/ItemGroup1/PearlRing" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.9021133, 0.6180336, 0)
+
+[node name="Child11" parent="MainAct/Carpet/ItemGroup1/PearlRing" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, -1.7484557e-07, 0)
+
+[node name="Child12" parent="MainAct/Carpet/ItemGroup1/PearlRing" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.9021131, -0.618034, 0)
+
+[node name="Child13" parent="MainAct/Carpet/ItemGroup1/PearlRing" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.6180339, -1.1755707, 0)
+
+[node name="Child14" parent="MainAct/Carpet/ItemGroup1/PearlRing" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.17557, -1.6180344, 0)
+
+[node name="Child15" parent="MainAct/Carpet/ItemGroup1/PearlRing" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.61803395, -1.9021131, 0)
+
+[node name="Child16" parent="MainAct/Carpet/ItemGroup1/PearlRing" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.4969113e-07, -2, 0)
+
+[node name="Child17" parent="MainAct/Carpet/ItemGroup1/PearlRing" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.6180346, -1.902113, 0)
+
+[node name="Child18" parent="MainAct/Carpet/ItemGroup1/PearlRing" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.1755712, -1.6180336, 0)
+
+[node name="Child19" parent="MainAct/Carpet/ItemGroup1/PearlRing" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.6180346, -1.1755699, 0)
+
+[node name="Child20" parent="MainAct/Carpet/ItemGroup1/PearlRing" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.9021131, -0.6180339, 0)
+
+[node name="ItemGroup2" type="Node3D" parent="MainAct/Carpet"]
+transform = Transform3D(0.9659257, 0, 0.258819, 0, 0.9999999, 0, -0.258819, 0, 0.9659258, 52.620697, -52.429085, 177.45209)
+
+[node name="RichRing" parent="MainAct/Carpet/ItemGroup2" instance=ExtResource("13_g8x5s")]
+
+[node name="PearlRing" type="Node3D" parent="MainAct/Carpet/ItemGroup2"]
+transform = Transform3D(0.70940644, 0.6115264, 0.35039648, -0.4095759, 0.7622897, -0.50115985, -0.5735764, 0.21201213, 0.7912399, 0, 0, 0)
+script = ExtResource("7_pkijh")
+Source = ExtResource("33_usbu6")
+Amount = 20
+Shape = 1
+Orientation = 0
+"Ring Size" = 2.0
+"Ring Ratio" = 1.0
+metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
+
+[node name="Child01" parent="MainAct/Carpet/ItemGroup2/PearlRing" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0, 0)
+
+[node name="Child02" parent="MainAct/Carpet/ItemGroup2/PearlRing" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.9021131, 0, 0.61803406)
+
+[node name="Child03" parent="MainAct/Carpet/ItemGroup2/PearlRing" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.6180341, 0, 1.1755705)
+
+[node name="Child04" parent="MainAct/Carpet/ItemGroup2/PearlRing" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.1755705, 0, 1.618034)
+
+[node name="Child05" parent="MainAct/Carpet/ItemGroup2/PearlRing" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.61803365, 0, 1.9021132)
+
+[node name="Child06" parent="MainAct/Carpet/ItemGroup2/PearlRing" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.7484557e-07, 0, 2)
+
+[node name="Child07" parent="MainAct/Carpet/ItemGroup2/PearlRing" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.618034, 0, 1.9021131)
+
+[node name="Child08" parent="MainAct/Carpet/ItemGroup2/PearlRing" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.1755706, 0, 1.6180341)
+
+[node name="Child09" parent="MainAct/Carpet/ItemGroup2/PearlRing" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.618034, 0, 1.1755704)
+
+[node name="Child10" parent="MainAct/Carpet/ItemGroup2/PearlRing" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.9021133, 0, 0.6180336)
+
+[node name="Child11" parent="MainAct/Carpet/ItemGroup2/PearlRing" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0, -1.7484557e-07)
+
+[node name="Child12" parent="MainAct/Carpet/ItemGroup2/PearlRing" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.9021131, 0, -0.618034)
+
+[node name="Child13" parent="MainAct/Carpet/ItemGroup2/PearlRing" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.6180339, 0, -1.1755707)
+
+[node name="Child14" parent="MainAct/Carpet/ItemGroup2/PearlRing" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.17557, 0, -1.6180344)
+
+[node name="Child15" parent="MainAct/Carpet/ItemGroup2/PearlRing" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.61803395, 0, -1.9021131)
+
+[node name="Child16" parent="MainAct/Carpet/ItemGroup2/PearlRing" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.4969113e-07, 0, -2)
+
+[node name="Child17" parent="MainAct/Carpet/ItemGroup2/PearlRing" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.6180346, 0, -1.902113)
+
+[node name="Child18" parent="MainAct/Carpet/ItemGroup2/PearlRing" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.1755712, 0, -1.6180336)
+
+[node name="Child19" parent="MainAct/Carpet/ItemGroup2/PearlRing" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.6180346, 0, -1.1755699)
+
+[node name="Child20" parent="MainAct/Carpet/ItemGroup2/PearlRing" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.9021131, 0, -0.6180339)
+
+[node name="ItemGroup3" type="Node3D" parent="MainAct/Carpet"]
+transform = Transform3D(0.99999994, 0, 0, 0, 0.99999994, 0, 0, 0, 1, 51.220673, -52.429085, 184.45209)
+
+[node name="RichRing" parent="MainAct/Carpet/ItemGroup3" instance=ExtResource("13_g8x5s")]
+
+[node name="PearlRing" type="Node3D" parent="MainAct/Carpet/ItemGroup3"]
+transform = Transform3D(0.70940644, 0.6115264, 0.35039648, -0.4095759, 0.7622897, -0.50115985, -0.5735764, 0.21201213, 0.7912399, 0, 0, 0)
+script = ExtResource("7_pkijh")
+Source = ExtResource("33_usbu6")
+Amount = 20
+Shape = 1
+Orientation = 1
+"Ring Size" = 2.0
+"Ring Ratio" = 1.0
+metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
+
+[node name="Child01" parent="MainAct/Carpet/ItemGroup3/PearlRing" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0, 0)
+
+[node name="Child02" parent="MainAct/Carpet/ItemGroup3/PearlRing" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.9021131, 0.61803406, 0)
+
+[node name="Child03" parent="MainAct/Carpet/ItemGroup3/PearlRing" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.6180341, 1.1755705, 0)
+
+[node name="Child04" parent="MainAct/Carpet/ItemGroup3/PearlRing" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.1755705, 1.618034, 0)
+
+[node name="Child05" parent="MainAct/Carpet/ItemGroup3/PearlRing" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.61803365, 1.9021132, 0)
+
+[node name="Child06" parent="MainAct/Carpet/ItemGroup3/PearlRing" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.7484557e-07, 2, 0)
+
+[node name="Child07" parent="MainAct/Carpet/ItemGroup3/PearlRing" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.618034, 1.9021131, 0)
+
+[node name="Child08" parent="MainAct/Carpet/ItemGroup3/PearlRing" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.1755706, 1.6180341, 0)
+
+[node name="Child09" parent="MainAct/Carpet/ItemGroup3/PearlRing" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.618034, 1.1755704, 0)
+
+[node name="Child10" parent="MainAct/Carpet/ItemGroup3/PearlRing" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.9021133, 0.6180336, 0)
+
+[node name="Child11" parent="MainAct/Carpet/ItemGroup3/PearlRing" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, -1.7484557e-07, 0)
+
+[node name="Child12" parent="MainAct/Carpet/ItemGroup3/PearlRing" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.9021131, -0.618034, 0)
+
+[node name="Child13" parent="MainAct/Carpet/ItemGroup3/PearlRing" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.6180339, -1.1755707, 0)
+
+[node name="Child14" parent="MainAct/Carpet/ItemGroup3/PearlRing" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.17557, -1.6180344, 0)
+
+[node name="Child15" parent="MainAct/Carpet/ItemGroup3/PearlRing" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.61803395, -1.9021131, 0)
+
+[node name="Child16" parent="MainAct/Carpet/ItemGroup3/PearlRing" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.4969113e-07, -2, 0)
+
+[node name="Child17" parent="MainAct/Carpet/ItemGroup3/PearlRing" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.6180346, -1.902113, 0)
+
+[node name="Child18" parent="MainAct/Carpet/ItemGroup3/PearlRing" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.1755712, -1.6180336, 0)
+
+[node name="Child19" parent="MainAct/Carpet/ItemGroup3/PearlRing" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.6180346, -1.1755699, 0)
+
+[node name="Child20" parent="MainAct/Carpet/ItemGroup3/PearlRing" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.9021131, -0.6180339, 0)
+
+[node name="SpiralRings" type="Node3D" parent="MainAct/Carpet"]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 51.8, -53, 241)
+
+[node name="Rings1" type="Node3D" parent="MainAct/Carpet/SpiralRings"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 1.4210855e-14, 0, 1, -3, 0, 0)
+script = ExtResource("7_pkijh")
+Source = ExtResource("8_yrd1i")
+Amount = 15
+Shape = 2
+Path = NodePath("../RingPath")
+"Path Progress Offset" = -2.5
+"Reverse Path" = false
+"Disable Path Y" = false
+Spacing = 3.5
+"Horizontal Offset" = null
+"Vertical Offset" = null
+metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
+
+[node name="Child01" parent="MainAct/Carpet/SpiralRings/Rings1" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.040100098, -0.16130447, -0.3599701)
+
+[node name="Child02" parent="MainAct/Carpet/SpiralRings/Rings1" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.14727783, -1.2003098, -3.6862946)
+
+[node name="Child03" parent="MainAct/Carpet/SpiralRings/Rings1" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.018249512, -1.8616409, -7.118332)
+
+[node name="Child04" parent="MainAct/Carpet/SpiralRings/Rings1" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.23571777, -2.3159447, -10.578026)
+
+[node name="Child05" parent="MainAct/Carpet/SpiralRings/Rings1" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.57470703, -2.626728, -14.046738)
+
+[node name="Child06" parent="MainAct/Carpet/SpiralRings/Rings1" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.9776001, -2.8284492, -17.516884)
+
+[node name="Child07" parent="MainAct/Carpet/SpiralRings/Rings1" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.4310913, -2.9428291, -20.985092)
+
+[node name="Child08" parent="MainAct/Carpet/SpiralRings/Rings1" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.9262085, -2.984787, -24.449188)
+
+[node name="Child09" parent="MainAct/Carpet/SpiralRings/Rings1" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.402893, -2.960991, -27.916283)
+
+[node name="Child10" parent="MainAct/Carpet/SpiralRings/Rings1" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.7877808, -2.8828201, -31.394081)
+
+[node name="Child11" parent="MainAct/Carpet/SpiralRings/Rings1" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.107544, -2.766964, -34.877487)
+
+[node name="Child12" parent="MainAct/Carpet/SpiralRings/Rings1" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.3778687, -2.622589, -38.36402)
+
+[node name="Child13" parent="MainAct/Carpet/SpiralRings/Rings1" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.6079102, -2.4550629, -41.85241)
+
+[node name="Child14" parent="MainAct/Carpet/SpiralRings/Rings1" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.8029785, -2.2673912, -45.342094)
+
+[node name="Child15" parent="MainAct/Carpet/SpiralRings/Rings1" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.9638672, -2.060173, -48.83251)
+
+[node name="Rings2" type="Node3D" parent="MainAct/Carpet/SpiralRings"]
+transform = Transform3D(0.30901697, -0.95105654, 1.7484555e-07, 0.95105654, 0.30901697, 0, -5.403023e-08, 1.66288e-07, 1, -0.927063, -2.8531685, 0)
+script = ExtResource("7_pkijh")
+Source = ExtResource("8_yrd1i")
+Amount = 15
+Shape = 2
+Path = NodePath("")
+"Path Progress Offset" = -2.5
+"Reverse Path" = false
+"Disable Path Y" = false
+Spacing = 3.5
+"Horizontal Offset" = null
+"Vertical Offset" = null
+metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
+
+[node name="Child01" parent="MainAct/Carpet/SpiralRings/Rings2" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.040100098, -0.16130447, -0.3599701)
+
+[node name="Child02" parent="MainAct/Carpet/SpiralRings/Rings2" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.14727783, -1.2003098, -3.6862946)
+
+[node name="Child03" parent="MainAct/Carpet/SpiralRings/Rings2" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.018249512, -1.8616409, -7.118332)
+
+[node name="Child04" parent="MainAct/Carpet/SpiralRings/Rings2" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.23571777, -2.3159447, -10.578026)
+
+[node name="Child05" parent="MainAct/Carpet/SpiralRings/Rings2" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.57470703, -2.626728, -14.046738)
+
+[node name="Child06" parent="MainAct/Carpet/SpiralRings/Rings2" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.9776001, -2.8284492, -17.516884)
+
+[node name="Child07" parent="MainAct/Carpet/SpiralRings/Rings2" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.4310913, -2.9428291, -20.985092)
+
+[node name="Child08" parent="MainAct/Carpet/SpiralRings/Rings2" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.9262085, -2.984787, -24.449188)
+
+[node name="Child09" parent="MainAct/Carpet/SpiralRings/Rings2" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.402893, -2.960991, -27.916283)
+
+[node name="Child10" parent="MainAct/Carpet/SpiralRings/Rings2" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.7877808, -2.8828201, -31.394081)
+
+[node name="Child11" parent="MainAct/Carpet/SpiralRings/Rings2" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.107544, -2.766964, -34.877487)
+
+[node name="Child12" parent="MainAct/Carpet/SpiralRings/Rings2" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.3778687, -2.622589, -38.36402)
+
+[node name="Child13" parent="MainAct/Carpet/SpiralRings/Rings2" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.6079102, -2.4550629, -41.85241)
+
+[node name="Child14" parent="MainAct/Carpet/SpiralRings/Rings2" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.8029785, -2.2673912, -45.342094)
+
+[node name="Child15" parent="MainAct/Carpet/SpiralRings/Rings2" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.9638672, -2.060173, -48.83251)
+
+[node name="Rings3" type="Node3D" parent="MainAct/Carpet/SpiralRings"]
+transform = Transform3D(-0.8090171, -0.58778524, -3.5527137e-15, 0.58778524, -0.8090171, -3.5527137e-15, 2.4868996e-14, 3.5527137e-15, 1, 2.427063, -1.7633324, 0)
+script = ExtResource("7_pkijh")
+Source = ExtResource("8_yrd1i")
+Amount = 15
+Shape = 2
+Path = NodePath("")
+"Path Progress Offset" = -2.5
+"Reverse Path" = false
+"Disable Path Y" = false
+Spacing = 3.5
+"Horizontal Offset" = null
+"Vertical Offset" = null
+metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
+
+[node name="Child01" parent="MainAct/Carpet/SpiralRings/Rings3" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.040100098, -0.16130447, -0.3599701)
+
+[node name="Child02" parent="MainAct/Carpet/SpiralRings/Rings3" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.14727783, -1.2003098, -3.6862946)
+
+[node name="Child03" parent="MainAct/Carpet/SpiralRings/Rings3" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.018249512, -1.8616409, -7.118332)
+
+[node name="Child04" parent="MainAct/Carpet/SpiralRings/Rings3" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.23571777, -2.3159447, -10.578026)
+
+[node name="Child05" parent="MainAct/Carpet/SpiralRings/Rings3" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.57470703, -2.626728, -14.046738)
+
+[node name="Child06" parent="MainAct/Carpet/SpiralRings/Rings3" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.9776001, -2.8284492, -17.516884)
+
+[node name="Child07" parent="MainAct/Carpet/SpiralRings/Rings3" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.4310913, -2.9428291, -20.985092)
+
+[node name="Child08" parent="MainAct/Carpet/SpiralRings/Rings3" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.9262085, -2.984787, -24.449188)
+
+[node name="Child09" parent="MainAct/Carpet/SpiralRings/Rings3" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.402893, -2.960991, -27.916283)
+
+[node name="Child10" parent="MainAct/Carpet/SpiralRings/Rings3" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.7877808, -2.8828201, -31.394081)
+
+[node name="Child11" parent="MainAct/Carpet/SpiralRings/Rings3" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.107544, -2.766964, -34.877487)
+
+[node name="Child12" parent="MainAct/Carpet/SpiralRings/Rings3" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.3778687, -2.622589, -38.36402)
+
+[node name="Child13" parent="MainAct/Carpet/SpiralRings/Rings3" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.6079102, -2.4550629, -41.85241)
+
+[node name="Child14" parent="MainAct/Carpet/SpiralRings/Rings3" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.8029785, -2.2673912, -45.342094)
+
+[node name="Child15" parent="MainAct/Carpet/SpiralRings/Rings3" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.9638672, -2.060173, -48.83251)
+
+[node name="Rings4" type="Node3D" parent="MainAct/Carpet/SpiralRings"]
+transform = Transform3D(-0.809017, 0.58778536, 1.7484555e-07, -0.58778536, -0.809017, 0, 1.4145304e-07, -1.0277165e-07, 1, 2.427063, 1.763401, 0)
+script = ExtResource("7_pkijh")
+Source = ExtResource("8_yrd1i")
+Amount = 15
+Shape = 2
+Path = NodePath("")
+"Path Progress Offset" = -2.5
+"Reverse Path" = false
+"Disable Path Y" = false
+Spacing = 3.5
+"Horizontal Offset" = null
+"Vertical Offset" = null
+metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
+
+[node name="Child01" parent="MainAct/Carpet/SpiralRings/Rings4" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.040100098, -0.16130447, -0.3599701)
+
+[node name="Child02" parent="MainAct/Carpet/SpiralRings/Rings4" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.14727783, -1.2003098, -3.6862946)
+
+[node name="Child03" parent="MainAct/Carpet/SpiralRings/Rings4" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.018249512, -1.8616409, -7.118332)
+
+[node name="Child04" parent="MainAct/Carpet/SpiralRings/Rings4" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.23571777, -2.3159447, -10.578026)
+
+[node name="Child05" parent="MainAct/Carpet/SpiralRings/Rings4" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.57470703, -2.626728, -14.046738)
+
+[node name="Child06" parent="MainAct/Carpet/SpiralRings/Rings4" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.9776001, -2.8284492, -17.516884)
+
+[node name="Child07" parent="MainAct/Carpet/SpiralRings/Rings4" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.4310913, -2.9428291, -20.985092)
+
+[node name="Child08" parent="MainAct/Carpet/SpiralRings/Rings4" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.9262085, -2.984787, -24.449188)
+
+[node name="Child09" parent="MainAct/Carpet/SpiralRings/Rings4" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.402893, -2.960991, -27.916283)
+
+[node name="Child10" parent="MainAct/Carpet/SpiralRings/Rings4" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.7877808, -2.8828201, -31.394081)
+
+[node name="Child11" parent="MainAct/Carpet/SpiralRings/Rings4" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.107544, -2.766964, -34.877487)
+
+[node name="Child12" parent="MainAct/Carpet/SpiralRings/Rings4" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.3778687, -2.622589, -38.36402)
+
+[node name="Child13" parent="MainAct/Carpet/SpiralRings/Rings4" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.6079102, -2.4550629, -41.85241)
+
+[node name="Child14" parent="MainAct/Carpet/SpiralRings/Rings4" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.8029785, -2.2673912, -45.342094)
+
+[node name="Child15" parent="MainAct/Carpet/SpiralRings/Rings4" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.9638672, -2.060173, -48.83251)
+
+[node name="Rings5" type="Node3D" parent="MainAct/Carpet/SpiralRings"]
+transform = Transform3D(0.309017, 0.9510566, -3.5527137e-15, -0.9510566, 0.309017, -3.5527137e-15, 1.8651747e-14, -2.842171e-14, 1, -0.927124, 2.8531876, 0)
+script = ExtResource("7_pkijh")
+Source = ExtResource("8_yrd1i")
+Amount = 15
+Shape = 2
+Path = NodePath("")
+"Path Progress Offset" = -2.5
+"Reverse Path" = false
+"Disable Path Y" = false
+Spacing = 3.5
+"Horizontal Offset" = null
+"Vertical Offset" = null
+metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
+
+[node name="Child01" parent="MainAct/Carpet/SpiralRings/Rings5" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.040100098, -0.16130447, -0.3599701)
+
+[node name="Child02" parent="MainAct/Carpet/SpiralRings/Rings5" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.14727783, -1.2003098, -3.6862946)
+
+[node name="Child03" parent="MainAct/Carpet/SpiralRings/Rings5" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.018249512, -1.8616409, -7.118332)
+
+[node name="Child04" parent="MainAct/Carpet/SpiralRings/Rings5" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.23571777, -2.3159447, -10.578026)
+
+[node name="Child05" parent="MainAct/Carpet/SpiralRings/Rings5" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.57470703, -2.626728, -14.046738)
+
+[node name="Child06" parent="MainAct/Carpet/SpiralRings/Rings5" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.9776001, -2.8284492, -17.516884)
+
+[node name="Child07" parent="MainAct/Carpet/SpiralRings/Rings5" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.4310913, -2.9428291, -20.985092)
+
+[node name="Child08" parent="MainAct/Carpet/SpiralRings/Rings5" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.9262085, -2.984787, -24.449188)
+
+[node name="Child09" parent="MainAct/Carpet/SpiralRings/Rings5" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.402893, -2.960991, -27.916283)
+
+[node name="Child10" parent="MainAct/Carpet/SpiralRings/Rings5" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.7877808, -2.8828201, -31.394081)
+
+[node name="Child11" parent="MainAct/Carpet/SpiralRings/Rings5" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.107544, -2.766964, -34.877487)
+
+[node name="Child12" parent="MainAct/Carpet/SpiralRings/Rings5" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.3778687, -2.622589, -38.36402)
+
+[node name="Child13" parent="MainAct/Carpet/SpiralRings/Rings5" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.6079102, -2.4550629, -41.85241)
+
+[node name="Child14" parent="MainAct/Carpet/SpiralRings/Rings5" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.8029785, -2.2673912, -45.342094)
+
+[node name="Child15" parent="MainAct/Carpet/SpiralRings/Rings5" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.9638672, -2.060173, -48.83251)
+
+[node name="RingPath" type="Path3D" parent="MainAct/Carpet/SpiralRings"]
+curve = SubResource("Curve3D_6i6w1")
+
+[node name="FlatRingGroup1" type="Node3D" parent="MainAct/Carpet"]
+transform = Transform3D(0.17572457, 0.4163942, -0.89202285, 0.30519238, 0.83842033, 0.45150775, 0.9359074, -0.35158414, 0.020251576, 79.904434, -69.36114, 359.18716)
+
+[node name="Rings6" type="Node3D" parent="MainAct/Carpet/FlatRingGroup1"]
+transform = Transform3D(0.99999994, -1.4901161e-08, -1.4901161e-08, 7.450581e-09, 0.99999994, 0, -1.4901161e-08, -2.9802322e-08, 1, 0, 0, 0)
+script = ExtResource("7_pkijh")
+Source = ExtResource("8_yrd1i")
+Amount = 9
+Shape = 2
+Path = NodePath("../../../../Static/Path/CarpetPath")
+"Path Progress Offset" = 0.0
+"Reverse Path" = false
+"Disable Path Y" = false
+Spacing = 2.0
+"Horizontal Offset" = SubResource("Curve_pvb6h")
+"Vertical Offset" = null
+metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
+
+[node name="Child01" parent="MainAct/Carpet/FlatRingGroup1/Rings6" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(0.99999994, -5.2154064e-08, -1.4901161e-08, 1.4901161e-08, 0.99999994, 0, -1.4901161e-08, 0, 0.9999999, 0, -1.5258789e-05, -0.008239746)
+
+[node name="Child02" parent="MainAct/Carpet/FlatRingGroup1/Rings6" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(0.99999994, -5.2154064e-08, -1.4901161e-08, 1.4901161e-08, 0.99999994, 0, -1.4901161e-08, 0, 0.9999999, -0.20205688, 0.103134155, -2.1364746)
+
+[node name="Child03" parent="MainAct/Carpet/FlatRingGroup1/Rings6" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(0.99999994, -5.2154064e-08, -1.4901161e-08, 1.4901161e-08, 0.99999994, 0, -1.4901161e-08, 0, 0.9999999, -0.5557251, 0.2554474, -4.2317505)
+
+[node name="Child04" parent="MainAct/Carpet/FlatRingGroup1/Rings6" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(0.99999994, -5.2154064e-08, -1.4901161e-08, 1.4901161e-08, 0.99999994, 0, -1.4901161e-08, 0, 0.9999999, -1.0575867, 0.45240784, -6.2817993)
+
+[node name="Child05" parent="MainAct/Carpet/FlatRingGroup1/Rings6" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(0.99999994, -5.2154064e-08, -1.4901161e-08, 1.4901161e-08, 0.99999994, 0, -1.4901161e-08, 0, 0.9999999, -1.7022095, 0.68898773, -8.275757)
+
+[node name="Child06" parent="MainAct/Carpet/FlatRingGroup1/Rings6" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(0.99999994, -5.2154064e-08, -1.4901161e-08, 1.4901161e-08, 0.99999994, 0, -1.4901161e-08, 0, 0.9999999, -2.4830933, 0.96001434, -10.204163)
+
+[node name="Child07" parent="MainAct/Carpet/FlatRingGroup1/Rings6" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(0.99999994, -5.2154064e-08, -1.4901161e-08, 1.4901161e-08, 0.99999994, 0, -1.4901161e-08, 0, 0.9999999, -3.3927612, 1.2603302, -12.05896)
+
+[node name="Child08" parent="MainAct/Carpet/FlatRingGroup1/Rings6" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(0.99999994, -5.2154064e-08, -1.4901161e-08, 1.4901161e-08, 0.99999994, 0, -1.4901161e-08, 0, 0.9999999, -4.42334, 1.5847626, -13.833435)
+
+[node name="Child09" parent="MainAct/Carpet/FlatRingGroup1/Rings6" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(0.99999994, -5.2154064e-08, -1.4901161e-08, 1.4901161e-08, 0.99999994, 0, -1.4901161e-08, 0, 0.9999999, -5.5668945, 1.9282532, -15.521912)
+
+[node name="Rings7" type="Node3D" parent="MainAct/Carpet/FlatRingGroup1"]
+transform = Transform3D(0.99999994, -1.4901161e-08, -1.4901161e-08, 7.450581e-09, 0.99999994, 0, -1.4901161e-08, -2.9802322e-08, 1, 1.5, 0, 0)
+script = ExtResource("7_pkijh")
+Source = ExtResource("8_yrd1i")
+Amount = 9
+Shape = 2
+Path = NodePath("../../../../Static/Path/CarpetPath")
+"Path Progress Offset" = 0.0
+"Reverse Path" = false
+"Disable Path Y" = false
+Spacing = 2.0
+"Horizontal Offset" = SubResource("Curve_pvb6h")
+"Vertical Offset" = null
+metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
+
+[node name="Child01" parent="MainAct/Carpet/FlatRingGroup1/Rings7" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(0.99999994, -5.2154064e-08, -1.4901161e-08, 1.4901161e-08, 0.99999994, 0, -1.4901161e-08, 0, 0.9999999, 0, -1.5258789e-05, -0.008666992)
+
+[node name="Child02" parent="MainAct/Carpet/FlatRingGroup1/Rings7" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(0.99999994, -5.2154064e-08, -1.4901161e-08, 1.4901161e-08, 0.99999994, 0, -1.4901161e-08, 0, 0.9999999, -0.20684814, 0.16220093, -2.2410278)
+
+[node name="Child03" parent="MainAct/Carpet/FlatRingGroup1/Rings7" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(0.99999994, -5.2154064e-08, -1.4901161e-08, 1.4901161e-08, 0.99999994, 0, -1.4901161e-08, 0, 0.9999999, -0.57470703, 0.3756714, -4.437134)
+
+[node name="Child04" parent="MainAct/Carpet/FlatRingGroup1/Rings7" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(0.99999994, -5.2154064e-08, -1.4901161e-08, 1.4901161e-08, 0.99999994, 0, -1.4901161e-08, 0, 0.9999999, -1.0995178, 0.6347656, -6.583191)
+
+[node name="Child05" parent="MainAct/Carpet/FlatRingGroup1/Rings7" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(0.99999994, -5.2154064e-08, -1.4901161e-08, 1.4901161e-08, 0.99999994, 0, -1.4901161e-08, 0, 0.9999999, -1.775116, 0.9336395, -8.6675415)
+
+[node name="Child06" parent="MainAct/Carpet/FlatRingGroup1/Rings7" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(0.99999994, -5.2154064e-08, -1.4901161e-08, 1.4901161e-08, 0.99999994, 0, -1.4901161e-08, 0, 0.9999999, -2.5939026, 1.2663116, -10.679993)
+
+[node name="Child07" parent="MainAct/Carpet/FlatRingGroup1/Rings7" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(0.99999994, -5.2154064e-08, -1.4901161e-08, 1.4901161e-08, 0.99999994, 0, -1.4901161e-08, 0, 0.9999999, -3.5475464, 1.6269836, -12.612183)
+
+[node name="Child08" parent="MainAct/Carpet/FlatRingGroup1/Rings7" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(0.99999994, -5.2154064e-08, -1.4901161e-08, 1.4901161e-08, 0.99999994, 0, -1.4901161e-08, 0, 0.9999999, -4.6272583, 2.0100632, -14.457336)
+
+[node name="Child09" parent="MainAct/Carpet/FlatRingGroup1/Rings7" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(0.99999994, -5.2154064e-08, -1.4901161e-08, 1.4901161e-08, 0.99999994, 0, -1.4901161e-08, 0, 0.9999999, -5.824188, 2.410263, -16.2099)
+
+[node name="Rings8" type="Node3D" parent="MainAct/Carpet/FlatRingGroup1"]
+transform = Transform3D(0.99999994, -1.4901161e-08, -1.4901161e-08, 7.450581e-09, 0.99999994, 0, -1.4901161e-08, -2.9802322e-08, 1, -1.5, 0, 0)
+script = ExtResource("7_pkijh")
+Source = ExtResource("8_yrd1i")
+Amount = 9
+Shape = 2
+Path = NodePath("../../../../Static/Path/CarpetPath")
+"Path Progress Offset" = 0.0
+"Reverse Path" = false
+"Disable Path Y" = false
+Spacing = 2.0
+"Horizontal Offset" = SubResource("Curve_pvb6h")
+"Vertical Offset" = null
+metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
+
+[node name="Child01" parent="MainAct/Carpet/FlatRingGroup1/Rings8" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(0.99999994, -5.2154064e-08, -1.4901161e-08, 1.4901161e-08, 0.99999994, 0, -1.4901161e-08, 0, 0.9999999, 0, 0, -0.0014648438)
+
+[node name="Child02" parent="MainAct/Carpet/FlatRingGroup1/Rings8" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(0.99999994, -5.2154064e-08, -1.4901161e-08, 1.4901161e-08, 0.99999994, 0, -1.4901161e-08, 0, 0.9999999, -0.19677734, 0.043899536, -2.0255737)
+
+[node name="Child03" parent="MainAct/Carpet/FlatRingGroup1/Rings8" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(0.99999994, -5.2154064e-08, -1.4901161e-08, 1.4901161e-08, 0.99999994, 0, -1.4901161e-08, 0, 0.9999999, -0.5357971, 0.13491058, -4.0201416)
+
+[node name="Child04" parent="MainAct/Carpet/FlatRingGroup1/Rings8" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(0.99999994, -5.2154064e-08, -1.4901161e-08, 1.4901161e-08, 0.99999994, 0, -1.4901161e-08, 0, 0.9999999, -1.0142212, 0.269516, -5.974121)
+
+[node name="Child05" parent="MainAct/Carpet/FlatRingGroup1/Rings8" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(0.99999994, -5.2154064e-08, -1.4901161e-08, 1.4901161e-08, 0.99999994, 0, -1.4901161e-08, 0, 0.9999999, -1.6275024, 0.44371033, -7.8779297)
+
+[node name="Child06" parent="MainAct/Carpet/FlatRingGroup1/Rings8" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(0.99999994, -5.2154064e-08, -1.4901161e-08, 1.4901161e-08, 0.99999994, 0, -1.4901161e-08, 0, 0.9999999, -2.3700256, 0.6530075, -9.722473)
+
+[node name="Child07" parent="MainAct/Carpet/FlatRingGroup1/Rings8" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(0.99999994, -5.2154064e-08, -1.4901161e-08, 1.4901161e-08, 0.99999994, 0, -1.4901161e-08, 0, 0.9999999, -3.235321, 0.8928604, -11.500183)
+
+[node name="Child08" parent="MainAct/Carpet/FlatRingGroup1/Rings8" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(0.99999994, -5.2154064e-08, -1.4901161e-08, 1.4901161e-08, 0.99999994, 0, -1.4901161e-08, 0, 0.9999999, -4.2164917, 1.1585388, -13.204224)
+
+[node name="Child09" parent="MainAct/Carpet/FlatRingGroup1/Rings8" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(0.99999994, -5.2154064e-08, -1.4901161e-08, 1.4901161e-08, 0.99999994, 0, -1.4901161e-08, 0, 0.9999999, -5.3062744, 1.4452286, -14.828796)
+
+[node name="FlatRingGroup2" type="Node3D" parent="MainAct/Carpet"]
+transform = Transform3D(0.86004573, -0.12615135, -0.49432522, 0.32230145, 0.8854232, 0.3348035, 0.39545634, -0.44727382, 0.8021989, 98.50668, -79.41552, 344.40356)
+
+[node name="Rings7" type="Node3D" parent="MainAct/Carpet/FlatRingGroup2"]
+script = ExtResource("7_pkijh")
+Source = ExtResource("8_yrd1i")
+Amount = 10
+Shape = 2
+Path = NodePath("../../../../Static/Path/CarpetPath")
+"Path Progress Offset" = 0.0
+"Reverse Path" = false
+"Disable Path Y" = false
+Spacing = 2.0
+"Horizontal Offset" = SubResource("Curve_8m7cr")
+"Vertical Offset" = SubResource("Curve_pvb6h")
+metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
+
+[node name="Child01" parent="MainAct/Carpet/FlatRingGroup2/Rings7" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, -1.4901161e-08, 0, 7.450581e-09, 1, -2.9802322e-08, 2.9802322e-08, 7.450581e-09, 1, 6.1035156e-05, -3.0517578e-05, 0.0015716553)
+
+[node name="Child02" parent="MainAct/Carpet/FlatRingGroup2/Rings7" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, -1.4901161e-08, 0, 7.450581e-09, 1, -2.9802322e-08, 2.9802322e-08, 7.450581e-09, 1, 0.15588379, 0.12413025, -1.935318)
+
+[node name="Child03" parent="MainAct/Carpet/FlatRingGroup2/Rings7" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, -1.4901161e-08, 0, 7.450581e-09, 1, -2.9802322e-08, 2.9802322e-08, 7.450581e-09, 1, 0.19995117, 0.3166504, -3.8815155)
+
+[node name="Child04" parent="MainAct/Carpet/FlatRingGroup2/Rings7" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, -1.4901161e-08, 0, 7.450581e-09, 1, -2.9802322e-08, 2.9802322e-08, 7.450581e-09, 1, 0.13043213, 0.5744324, -5.828293)
+
+[node name="Child05" parent="MainAct/Carpet/FlatRingGroup2/Rings7" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, -1.4901161e-08, 0, 7.450581e-09, 1, -2.9802322e-08, 2.9802322e-08, 7.450581e-09, 1, -0.053649902, 0.89427185, -7.767456)
+
+[node name="Child06" parent="MainAct/Carpet/FlatRingGroup2/Rings7" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, -1.4901161e-08, 0, 7.450581e-09, 1, -2.9802322e-08, 2.9802322e-08, 7.450581e-09, 1, -0.35327148, 1.2729645, -9.690445)
+
+[node name="Child07" parent="MainAct/Carpet/FlatRingGroup2/Rings7" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, -1.4901161e-08, 0, 7.450581e-09, 1, -2.9802322e-08, 2.9802322e-08, 7.450581e-09, 1, -0.7687378, 1.7071228, -11.589432)
+
+[node name="Child08" parent="MainAct/Carpet/FlatRingGroup2/Rings7" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, -1.4901161e-08, 0, 7.450581e-09, 1, -2.9802322e-08, 2.9802322e-08, 7.450581e-09, 1, -1.2997437, 2.1933594, -13.455917)
+
+[node name="Child09" parent="MainAct/Carpet/FlatRingGroup2/Rings7" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, -1.4901161e-08, 0, 7.450581e-09, 1, -2.9802322e-08, 2.9802322e-08, 7.450581e-09, 1, -1.9454956, 2.728119, -15.28212)
+
+[node name="Child10" parent="MainAct/Carpet/FlatRingGroup2/Rings7" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, -1.4901161e-08, 0, 7.450581e-09, 1, -2.9802322e-08, 2.9802322e-08, 7.450581e-09, 1, -2.7103271, 3.3084106, -17.069962)
+
+[node name="Rings8" type="Node3D" parent="MainAct/Carpet/FlatRingGroup2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5, 0, 0)
+script = ExtResource("7_pkijh")
+Source = ExtResource("8_yrd1i")
+Amount = 10
+Shape = 2
+Path = NodePath("../../../../Static/Path/CarpetPath")
+"Path Progress Offset" = 0.0
+"Reverse Path" = false
+"Disable Path Y" = false
+Spacing = 2.0
+"Horizontal Offset" = SubResource("Curve_8m7cr")
+"Vertical Offset" = SubResource("Curve_pvb6h")
+metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
+
+[node name="Child01" parent="MainAct/Carpet/FlatRingGroup2/Rings8" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, -1.4901161e-08, 0, 7.450581e-09, 1, -2.9802322e-08, 2.9802322e-08, 7.450581e-09, 1, 0, 0, -0.00024414063)
+
+[node name="Child02" parent="MainAct/Carpet/FlatRingGroup2/Rings8" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, -1.4901161e-08, 0, 7.450581e-09, 1, -2.9802322e-08, 2.9802322e-08, 7.450581e-09, 1, 0.1531372, 0.15805054, -2.0187225)
+
+[node name="Child03" parent="MainAct/Carpet/FlatRingGroup2/Rings8" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, -1.4901161e-08, 0, 7.450581e-09, 1, -2.9802322e-08, 2.9802322e-08, 7.450581e-09, 1, 0.18939209, 0.38557434, -4.044754)
+
+[node name="Child04" parent="MainAct/Carpet/FlatRingGroup2/Rings8" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, -1.4901161e-08, 0, 7.450581e-09, 1, -2.9802322e-08, 2.9802322e-08, 7.450581e-09, 1, 0.1071167, 0.6793976, -6.06958)
+
+[node name="Child05" parent="MainAct/Carpet/FlatRingGroup2/Rings8" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, -1.4901161e-08, 0, 7.450581e-09, 1, -2.9802322e-08, 2.9802322e-08, 7.450581e-09, 1, -0.09454346, 1.0361938, -8.084824)
+
+[node name="Child06" parent="MainAct/Carpet/FlatRingGroup2/Rings8" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, -1.4901161e-08, 0, 7.450581e-09, 1, -2.9802322e-08, 2.9802322e-08, 7.450581e-09, 1, -0.4165039, 1.4527283, -10.081909)
+
+[node name="Child07" parent="MainAct/Carpet/FlatRingGroup2/Rings8" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, -1.4901161e-08, 0, 7.450581e-09, 1, -2.9802322e-08, 2.9802322e-08, 7.450581e-09, 1, -0.85894775, 1.9255066, -12.052719)
+
+[node name="Child08" parent="MainAct/Carpet/FlatRingGroup2/Rings8" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, -1.4901161e-08, 0, 7.450581e-09, 1, -2.9802322e-08, 2.9802322e-08, 7.450581e-09, 1, -1.4214478, 2.4509735, -13.988586)
+
+[node name="Child09" parent="MainAct/Carpet/FlatRingGroup2/Rings8" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, -1.4901161e-08, 0, 7.450581e-09, 1, -2.9802322e-08, 2.9802322e-08, 7.450581e-09, 1, -2.1029663, 3.0253906, -15.881332)
+
+[node name="Child10" parent="MainAct/Carpet/FlatRingGroup2/Rings8" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, -1.4901161e-08, 0, 7.450581e-09, 1, -2.9802322e-08, 2.9802322e-08, 7.450581e-09, 1, -2.9093018, 3.6463928, -17.735535)
+
+[node name="SpikeBall8" parent="MainAct/Carpet" instance=ExtResource("25_sucjm")]
+transform = Transform3D(1.4486339, -0.25107712, 1.3558177, -0.32586777, 1.8484572, 0.6905033, -1.3397896, -0.72106194, 1.2980176, 97.532074, -90.61779, 307.5585)
+Movement/Mode = 0
+
+[node name="SpikeBall10" parent="MainAct/Carpet" instance=ExtResource("25_sucjm")]
+transform = Transform3D(0.22179237, -0.5655427, 1.9054763, -0.33141372, 1.8799102, 0.5965489, -1.959779, -0.3819109, 0.114765815, 81.035, -99.75869, 306.7618)
+Movement/Mode = 0
+
+[node name="SpikeBall11" parent="MainAct/Carpet" instance=ExtResource("25_sucjm")]
+transform = Transform3D(-0.21732333, -0.55919313, 1.9078634, -0.33530968, 1.9020128, 0.5193004, -1.9596124, -0.26343867, -0.3004419, 73.90018, -98.931404, 302.95428)
+Movement/Mode = 0
+
+[node name="RedMajin1" parent="MainAct/Carpet" instance=ExtResource("21_a7e17")]
+transform = Transform3D(-0.9185553, 0.018102765, 0.3947775, 0.019699633, 0.99976826, 0, -0.39469105, 0.0077785114, -0.9187564, 25.376642, -106.21656, 354.54733)
+"Attack Settings/Flame Inactive Time" = 1.0
+"Attack Settings/Flame Aggression Radius" = 0
+"Attack Settings/Attack Instantly" = false
+
+[node name="PearlRingGroup1" type="Node3D" parent="MainAct/Carpet"]
+transform = Transform3D(0.9354391, 0, -0.35347337, 0, 0.9999936, 0, 0.35347298, 0, 0.9354401, 25.91513, -108.06608, 360.2458)
+
+[node name="Rings" type="Node3D" parent="MainAct/Carpet/PearlRingGroup1"]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 0, 0, 0)
+script = ExtResource("7_pkijh")
+Source = ExtResource("8_yrd1i")
+Amount = 10
+Shape = 0
+Orientation = 0
+Spacing = 1.5
+"Horizontal Offset" = null
+"Vertical Offset" = null
+metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
+
+[node name="Child01" parent="MainAct/Carpet/PearlRingGroup1/Rings" instance=ExtResource("8_yrd1i")]
+
+[node name="Child02" parent="MainAct/Carpet/PearlRingGroup1/Rings" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -1.5)
+
+[node name="Child03" parent="MainAct/Carpet/PearlRingGroup1/Rings" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -3)
+
+[node name="Child04" parent="MainAct/Carpet/PearlRingGroup1/Rings" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -4.5)
+
+[node name="Child05" parent="MainAct/Carpet/PearlRingGroup1/Rings" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -6)
+
+[node name="Child06" parent="MainAct/Carpet/PearlRingGroup1/Rings" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -7.5)
+
+[node name="Child07" parent="MainAct/Carpet/PearlRingGroup1/Rings" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -9)
+
+[node name="Child08" parent="MainAct/Carpet/PearlRingGroup1/Rings" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -10.5)
+
+[node name="Child09" parent="MainAct/Carpet/PearlRingGroup1/Rings" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -12)
+
+[node name="Child10" parent="MainAct/Carpet/PearlRingGroup1/Rings" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -13.5)
+
+[node name="Pearls" type="Node3D" parent="MainAct/Carpet/PearlRingGroup1"]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 0, 0, 0)
+script = ExtResource("7_pkijh")
+Source = ExtResource("33_usbu6")
+Amount = 10
+Shape = 0
+Orientation = 0
+Spacing = 1.5
+"Horizontal Offset" = null
+"Vertical Offset" = null
+metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
+
+[node name="Child01" parent="MainAct/Carpet/PearlRingGroup1/Pearls" instance=ExtResource("33_usbu6")]
+
+[node name="Child02" parent="MainAct/Carpet/PearlRingGroup1/Pearls" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -1.5)
+
+[node name="Child03" parent="MainAct/Carpet/PearlRingGroup1/Pearls" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -3)
+
+[node name="Child04" parent="MainAct/Carpet/PearlRingGroup1/Pearls" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -4.5)
+
+[node name="Child05" parent="MainAct/Carpet/PearlRingGroup1/Pearls" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -6)
+
+[node name="Child06" parent="MainAct/Carpet/PearlRingGroup1/Pearls" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -7.5)
+
+[node name="Child07" parent="MainAct/Carpet/PearlRingGroup1/Pearls" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -9)
+
+[node name="Child08" parent="MainAct/Carpet/PearlRingGroup1/Pearls" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -10.5)
+
+[node name="Child09" parent="MainAct/Carpet/PearlRingGroup1/Pearls" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -12)
+
+[node name="Child10" parent="MainAct/Carpet/PearlRingGroup1/Pearls" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -13.5)
+
+[node name="RedMajin2" parent="MainAct/Carpet" instance=ExtResource("21_a7e17")]
+transform = Transform3D(-0.96633315, 0, 0.25712782, 0, 0.9999624, 0, -0.25712138, 0, -0.9663574, 9.822144, -108.23983, 376.62506)
+"Attack Settings/Flame Aggression Radius" = 0
+"Attack Settings/Attack Instantly" = false
+
+[node name="PearlRingGroup2" type="Node3D" parent="MainAct/Carpet"]
+transform = Transform3D(0.977034, 0, -0.21302828, 0, 0.99998575, 0, 0.2130279, 0, 0.97703576, 19.783356, -104.566124, 381.38507)
+
+[node name="Rings" type="Node3D" parent="MainAct/Carpet/PearlRingGroup2"]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 0, 0, 0)
+script = ExtResource("7_pkijh")
+Source = ExtResource("8_yrd1i")
+Amount = 10
+Shape = 0
+Orientation = 0
+Spacing = 1.5
+"Horizontal Offset" = null
+"Vertical Offset" = null
+metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
+
+[node name="Child01" parent="MainAct/Carpet/PearlRingGroup2/Rings" instance=ExtResource("8_yrd1i")]
+
+[node name="Child02" parent="MainAct/Carpet/PearlRingGroup2/Rings" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -1.5)
+
+[node name="Child03" parent="MainAct/Carpet/PearlRingGroup2/Rings" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -3)
+
+[node name="Child04" parent="MainAct/Carpet/PearlRingGroup2/Rings" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -4.5)
+
+[node name="Child05" parent="MainAct/Carpet/PearlRingGroup2/Rings" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -6)
+
+[node name="Child06" parent="MainAct/Carpet/PearlRingGroup2/Rings" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -7.5)
+
+[node name="Child07" parent="MainAct/Carpet/PearlRingGroup2/Rings" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -9)
+
+[node name="Child08" parent="MainAct/Carpet/PearlRingGroup2/Rings" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -10.5)
+
+[node name="Child09" parent="MainAct/Carpet/PearlRingGroup2/Rings" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -12)
+
+[node name="Child10" parent="MainAct/Carpet/PearlRingGroup2/Rings" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -13.5)
+
+[node name="Pearls" type="Node3D" parent="MainAct/Carpet/PearlRingGroup2"]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 0, 0, 0)
+script = ExtResource("7_pkijh")
+Source = ExtResource("33_usbu6")
+Amount = 10
+Shape = 0
+Orientation = 0
+Spacing = 1.5
+"Horizontal Offset" = null
+"Vertical Offset" = null
+metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
+
+[node name="Child01" parent="MainAct/Carpet/PearlRingGroup2/Pearls" instance=ExtResource("33_usbu6")]
+
+[node name="Child02" parent="MainAct/Carpet/PearlRingGroup2/Pearls" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -1.5)
+
+[node name="Child03" parent="MainAct/Carpet/PearlRingGroup2/Pearls" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -3)
+
+[node name="Child04" parent="MainAct/Carpet/PearlRingGroup2/Pearls" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -4.5)
+
+[node name="Child05" parent="MainAct/Carpet/PearlRingGroup2/Pearls" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -6)
+
+[node name="Child06" parent="MainAct/Carpet/PearlRingGroup2/Pearls" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -7.5)
+
+[node name="Child07" parent="MainAct/Carpet/PearlRingGroup2/Pearls" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -9)
+
+[node name="Child08" parent="MainAct/Carpet/PearlRingGroup2/Pearls" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -10.5)
+
+[node name="Child09" parent="MainAct/Carpet/PearlRingGroup2/Pearls" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -12)
+
+[node name="Child10" parent="MainAct/Carpet/PearlRingGroup2/Pearls" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -13.5)
+
+[node name="RedMajin3" parent="MainAct/Carpet" instance=ExtResource("21_a7e17")]
+transform = Transform3D(-0.999954, 0, -0.0017452847, 0, 0.9999624, 0, 0.0017452101, 0, -0.99997914, 5.1908875, -106.23991, 403.04352)
+"Attack Settings/Flame Inactive Time" = 1.0
+"Attack Settings/Flame Aggression Radius" = 0
+"Attack Settings/Attack Instantly" = false
+
+[node name="RedMajin4" parent="MainAct/Carpet" instance=ExtResource("21_a7e17")]
+transform = Transform3D(-0.9999555, 0, 8.74211e-08, 0, 0.9999624, 0, -8.74189e-08, 0, -0.9999806, 12.00354, -106.23991, 408.0019)
+"Attack Settings/Flame Inactive Time" = 1.0
+"Attack Settings/Flame Aggression Radius" = 0
+"Attack Settings/Attack Instantly" = false
+
+[node name="PearlRingGroup3" type="Node3D" parent="MainAct/Carpet"]
+transform = Transform3D(0.9987052, 0, -0.05059234, 0, 0.9999836, 0, 0.050592273, 0, 0.9987065, 15.197449, -104.06613, 416.9438)
+
+[node name="Rings" type="Node3D" parent="MainAct/Carpet/PearlRingGroup3"]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 0, 0, 0)
+script = ExtResource("7_pkijh")
+Source = ExtResource("8_yrd1i")
+Amount = 10
+Shape = 0
+Orientation = 0
+Spacing = 1.5
+"Horizontal Offset" = null
+"Vertical Offset" = null
+metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
+
+[node name="Child01" parent="MainAct/Carpet/PearlRingGroup3/Rings" instance=ExtResource("8_yrd1i")]
+
+[node name="Child02" parent="MainAct/Carpet/PearlRingGroup3/Rings" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -1.5)
+
+[node name="Child03" parent="MainAct/Carpet/PearlRingGroup3/Rings" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -3)
+
+[node name="Child04" parent="MainAct/Carpet/PearlRingGroup3/Rings" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -4.5)
+
+[node name="Child05" parent="MainAct/Carpet/PearlRingGroup3/Rings" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -6)
+
+[node name="Child06" parent="MainAct/Carpet/PearlRingGroup3/Rings" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -7.5)
+
+[node name="Child07" parent="MainAct/Carpet/PearlRingGroup3/Rings" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -9)
+
+[node name="Child08" parent="MainAct/Carpet/PearlRingGroup3/Rings" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -10.5)
+
+[node name="Child09" parent="MainAct/Carpet/PearlRingGroup3/Rings" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -12)
+
+[node name="Child10" parent="MainAct/Carpet/PearlRingGroup3/Rings" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -13.5)
+
+[node name="Pearls" type="Node3D" parent="MainAct/Carpet/PearlRingGroup3"]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 0, 0, 0)
+script = ExtResource("7_pkijh")
+Source = ExtResource("33_usbu6")
+Amount = 10
+Shape = 0
+Orientation = 0
+Spacing = 1.5
+"Horizontal Offset" = null
+"Vertical Offset" = null
+metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
+
+[node name="Child01" parent="MainAct/Carpet/PearlRingGroup3/Pearls" instance=ExtResource("33_usbu6")]
+
+[node name="Child02" parent="MainAct/Carpet/PearlRingGroup3/Pearls" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -1.5)
+
+[node name="Child03" parent="MainAct/Carpet/PearlRingGroup3/Pearls" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -3)
+
+[node name="Child04" parent="MainAct/Carpet/PearlRingGroup3/Pearls" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -4.5)
+
+[node name="Child05" parent="MainAct/Carpet/PearlRingGroup3/Pearls" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -6)
+
+[node name="Child06" parent="MainAct/Carpet/PearlRingGroup3/Pearls" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -7.5)
+
+[node name="Child07" parent="MainAct/Carpet/PearlRingGroup3/Pearls" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -9)
+
+[node name="Child08" parent="MainAct/Carpet/PearlRingGroup3/Pearls" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -10.5)
+
+[node name="Child09" parent="MainAct/Carpet/PearlRingGroup3/Pearls" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -12)
+
+[node name="Child10" parent="MainAct/Carpet/PearlRingGroup3/Pearls" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -13.5)
+
+[node name="PearlRingGroup4" type="Node3D" parent="MainAct/Carpet"]
+transform = Transform3D(0.9987052, 0, -0.05059234, 0, 0.9999836, 0, 0.050592273, 0, 0.9987065, 15.197449, -108.06607, 416.9438)
+
+[node name="Rings" type="Node3D" parent="MainAct/Carpet/PearlRingGroup4"]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 0, 0, 0)
+script = ExtResource("7_pkijh")
+Source = ExtResource("8_yrd1i")
+Amount = 10
+Shape = 0
+Orientation = 0
+Spacing = 1.5
+"Horizontal Offset" = null
+"Vertical Offset" = null
+metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
+
+[node name="Child01" parent="MainAct/Carpet/PearlRingGroup4/Rings" instance=ExtResource("8_yrd1i")]
+
+[node name="Child02" parent="MainAct/Carpet/PearlRingGroup4/Rings" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -1.5)
+
+[node name="Child03" parent="MainAct/Carpet/PearlRingGroup4/Rings" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -3)
+
+[node name="Child04" parent="MainAct/Carpet/PearlRingGroup4/Rings" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -4.5)
+
+[node name="Child05" parent="MainAct/Carpet/PearlRingGroup4/Rings" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -6)
+
+[node name="Child06" parent="MainAct/Carpet/PearlRingGroup4/Rings" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -7.5)
+
+[node name="Child07" parent="MainAct/Carpet/PearlRingGroup4/Rings" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -9)
+
+[node name="Child08" parent="MainAct/Carpet/PearlRingGroup4/Rings" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -10.5)
+
+[node name="Child09" parent="MainAct/Carpet/PearlRingGroup4/Rings" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -12)
+
+[node name="Child10" parent="MainAct/Carpet/PearlRingGroup4/Rings" instance=ExtResource("8_yrd1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -13.5)
+
+[node name="Pearls" type="Node3D" parent="MainAct/Carpet/PearlRingGroup4"]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 0, 0, 0)
+script = ExtResource("7_pkijh")
+Source = ExtResource("33_usbu6")
+Amount = 10
+Shape = 0
+Orientation = 0
+Spacing = 1.5
+"Horizontal Offset" = null
+"Vertical Offset" = null
+metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
+
+[node name="Child01" parent="MainAct/Carpet/PearlRingGroup4/Pearls" instance=ExtResource("33_usbu6")]
+
+[node name="Child02" parent="MainAct/Carpet/PearlRingGroup4/Pearls" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -1.5)
+
+[node name="Child03" parent="MainAct/Carpet/PearlRingGroup4/Pearls" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -3)
+
+[node name="Child04" parent="MainAct/Carpet/PearlRingGroup4/Pearls" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -4.5)
+
+[node name="Child05" parent="MainAct/Carpet/PearlRingGroup4/Pearls" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -6)
+
+[node name="Child06" parent="MainAct/Carpet/PearlRingGroup4/Pearls" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -7.5)
+
+[node name="Child07" parent="MainAct/Carpet/PearlRingGroup4/Pearls" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -9)
+
+[node name="Child08" parent="MainAct/Carpet/PearlRingGroup4/Pearls" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -10.5)
+
+[node name="Child09" parent="MainAct/Carpet/PearlRingGroup4/Pearls" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -12)
+
+[node name="Child10" parent="MainAct/Carpet/PearlRingGroup4/Pearls" instance=ExtResource("33_usbu6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -13.5)
+
+[node name="HallStretchTrigger" parent="MainAct/Carpet" instance=ExtResource("5_3ka41")]
+transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, 8.149994, -114, 483)
+OneShot = true
+"Respawn Mode" = 0
+"Enter Mode" = 0
+
+[node name="Camera" type="Node3D" parent="MainAct/Carpet/HallStretchTrigger"]
+script = ExtResource("27_6h0nq")
+transitionTime = 0.0
+settings = ExtResource("35_8ngf8")
+UpdateEveryFrame = true
+followObject = NodePath("../CameraReference")
+
+[node name="CameraReference" type="Camera3D" parent="MainAct/Carpet/HallStretchTrigger"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.0517578e-05, 20, -30)
+cull_mask = 1143
+
+[node name="HallStretchEvent" parent="MainAct/Carpet/HallStretchTrigger" instance=ExtResource("36_8i0fc")]
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 490, 104, 335)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="MainAct/Carpet/HallStretchTrigger"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
+shape = SubResource("BoxShape3D_m2sp5")
+
+[node name="Goal" parent="MainAct/Carpet" instance=ExtResource("39_yac2x")]
+transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, 8.149994, -105, 444)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="MainAct/Carpet/Goal"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -6, 0)
+shape = SubResource("BoxShape3D_laovf")
+
+[connection signal="Activated" from="MainAct/CullingMap/CarpetL" to="MainAct/Carpet" method="Activate"]
+[connection signal="Deactivated" from="MainAct/CullingMap/CarpetL" to="MainAct/Carpet" method="Deactivate"]
+[connection signal="Activated" from="MainAct/CullingMap/InteriorU" to="MainAct/Interior" method="Deactivate"]
+[connection signal="Deactivated" from="MainAct/CullingMap/InteriorU" to="MainAct/Interior" method="Activate"]
+[connection signal="Activated" from="MainAct/Carpet/HallStretchTrigger/HallStretchEvent" to="MainAct/Carpet/HallStretchTrigger/Camera" method="Activate"]
+[connection signal="EventFinished" from="MainAct/Carpet/HallStretchTrigger/HallStretchEvent" to="MainAct/Carpet/HallStretchTrigger/Camera" method="Deactivate"]
+
+[editable path="Static"]
+[editable path="Static/Collision"]
+[editable path="MainAct/Carpet/HallStretchTrigger/HallStretchEvent"]
