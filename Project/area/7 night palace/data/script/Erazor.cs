@@ -528,6 +528,8 @@ public partial class Erazor : Node3D
 
 		Player.MoveSpeed = 0;
 		Player.SnapToGround();
+		Player.Skills.CancelBreakSkills();
+		Player.Skills.DisableBreakSkills();
 		stopLockout.Activate();
 
 		cutsceneCamera.Activate();
@@ -578,6 +580,7 @@ public partial class Erazor : Node3D
 		currentDistance = CloseDistance;
 		SnapDistance();
 		Player.Animator.CancelOneshot();
+		Player.Skills.EnableBreakSkills();
 
 		cutsceneCamera.Deactivate();
 		recenterLockout.Deactivate();
