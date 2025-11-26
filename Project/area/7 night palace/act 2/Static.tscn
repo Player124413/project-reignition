@@ -1,4 +1,4 @@
-[gd_scene load_steps=32 format=3 uid="uid://ch46r833tuwi0"]
+[gd_scene load_steps=34 format=3 uid="uid://ch46r833tuwi0"]
 
 [ext_resource type="Script" uid="uid://dtkbvehtmy3em" path="res://object/stage/StageSettings.cs" id="1_6j01u"]
 [ext_resource type="Resource" uid="uid://cphu4ho2e31sn" path="res://area/7 night palace/act 2/camera/MainCam.tres" id="2_8bpc5"]
@@ -15,6 +15,8 @@
 [ext_resource type="Resource" uid="uid://cgtwkpv6dqu3g" path="res://area/7 night palace/act 2/camera/WideLagTransitionCam.tres" id="11_dm2l3"]
 [ext_resource type="Resource" uid="uid://3ahka7gl2uqk" path="res://area/7 night palace/act 2/camera/WideStraightCam.tres" id="11_h0753"]
 [ext_resource type="Resource" uid="uid://bku7n4ufln8ro" path="res://resource/preset/camera/common/StaticCam.tres" id="13_dm2l3"]
+[ext_resource type="Script" uid="uid://bd2g6rmrn77eo" path="res://object/trigger/modules/LockoutTrigger.cs" id="14_ytx0r"]
+[ext_resource type="Resource" uid="uid://cmesyjx0jp6ur" path="res://resource/preset/lockout/run/AutorunLockout.tres" id="15_l07ul"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_4glpy"]
 size = Vector3(686, 13.2, 502)
@@ -44,7 +46,7 @@ size = Vector3(70, 10, 60)
 size = Vector3(40, 20, 5)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_dm2l3"]
-size = Vector3(40, 20, 50)
+size = Vector3(40, 36, 50)
 
 [sub_resource type="Environment" id="Environment_38hsq"]
 ambient_light_source = 2
@@ -580,15 +582,21 @@ transform = Transform3D(1, 1.4901161e-08, 0, -5.9604645e-08, 0.99999976, 0, 0, -
 script = ExtResource("10_j6bow")
 transitionType = 1
 deactivateTransitionType = 1
+enableInputBlending = true
 settings = ExtResource("13_dm2l3")
 previousSettings = ExtResource("2_8bpc5")
 
+[node name="Lockout" type="Node3D" parent="Trigger/Camera/TurnCameraTrigger"]
+transform = Transform3D(1, 1.4901161e-08, 0, -5.9604645e-08, 0.99999976, 0, 0, -1.8626447e-09, 1, -9.080383, -1.1477394, -1.0406189)
+script = ExtResource("14_ytx0r")
+lockoutData = ExtResource("15_l07ul")
+
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Trigger/Camera/TurnCameraTrigger"]
-transform = Transform3D(0.86602545, 0, -0.50000006, 0, 1, 0, 0.50000006, 0, 0.86602545, 4.7534637, 8.000001, -13.762405)
+transform = Transform3D(0.86602545, 0, -0.50000006, 0, 1, 0, 0.50000006, 0, 0.86602545, 4.753, 5, -13.762)
 shape = SubResource("BoxShape3D_dm2l3")
 
 [node name="CollisionShape3D2" type="CollisionShape3D" parent="Trigger/Camera/TurnCameraTrigger"]
-transform = Transform3D(0.86602557, 0, 0.5000001, 0, 1, 0, -0.5000001, 0, 0.86602557, 3.5204773, 8.000001, 15.893646)
+transform = Transform3D(0.86602557, 0, 0.5000001, 0, 1, 0, -0.5000001, 0, 0.86602557, 3.5204773, 9.536743e-07, 15.893669)
 shape = SubResource("BoxShape3D_dm2l3")
 
 [node name="WideStraight2" parent="Trigger/Camera" instance=ExtResource("3_jkftw")]
