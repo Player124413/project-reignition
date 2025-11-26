@@ -10,6 +10,7 @@ public partial class TimeAttackNewRun : Menu
 	[Export] private Description description;
 	[Export] TimeAttack thisParent;
 	[Export] SaveSelect saveSelect;
+	[Export] ReadyMenu readyMenu;
 	private bool isActive;
 	private int currentSelection;
 	private int maxSelection = 4;
@@ -63,7 +64,15 @@ public partial class TimeAttackNewRun : Menu
 	{
 		if (isActive)
 			if (currentSelection == 3) //Only goal percent is in this version
+			{
+				TimeAttackManager.Instance.ResetLevelCount();
+				TimeAttackManager.Instance.SetRunType(TimeAttackManager.RunType.GoalPercent);
+
+
+				readyMenu.SetupReadyMenu(TimeAttackManager.Instance.GetCurrentRunLevels(TimeAttackManager.Instance.CurrentRunType)[0]);
 				newRunAnimator.Play("confirm-" + currentSelection);
+			}
+
 	}
 
 	protected override void Cancel()

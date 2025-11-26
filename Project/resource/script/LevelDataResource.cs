@@ -32,6 +32,7 @@ public partial class LevelDataResource : Resource
 	{
 		Array<Dictionary> properties =
 		[
+			ExtensionMethods.CreateProperty("Area Key", Variant.Type.String),
 			ExtensionMethods.CreateProperty("Level ID", Variant.Type.StringName),
 			ExtensionMethods.CreateProperty("Level Index", Variant.Type.Int),
 			ExtensionMethods.CreateProperty("Level Path", Variant.Type.String),
@@ -62,6 +63,10 @@ public partial class LevelDataResource : Resource
 		if (!SkipScore)
 			properties.Add(ExtensionMethods.CreateProperty("Ranking/Score Requirement", Variant.Type.Int, PropertyHint.Range, "0,999999,10"));
 
+		properties.Add(ExtensionMethods.CreateProperty("Ranking/Gold - Time Attack", Variant.Type.Int));
+		properties.Add(ExtensionMethods.CreateProperty("Ranking/Silver - Time Attack", Variant.Type.Int));
+		properties.Add(ExtensionMethods.CreateProperty("Ranking/Bronze - Time Attack", Variant.Type.Int));
+
 		properties.Add(ExtensionMethods.CreateProperty("Completion/Disable Object Cull", Variant.Type.Bool));
 		properties.Add(ExtensionMethods.CreateProperty("Completion/Delay", Variant.Type.Float, PropertyHint.Range, "0,5,.1"));
 		properties.Add(ExtensionMethods.CreateProperty("Completion/Lockout", Variant.Type.Object, PropertyHint.ResourceType, "LockoutResource"));
@@ -78,6 +83,8 @@ public partial class LevelDataResource : Resource
 	{
 		switch ((string)property)
 		{
+			case "Area Key":
+				return AreaKey;
 			case "Level ID":
 				return LevelID;
 			case "Level Index":
@@ -117,6 +124,12 @@ public partial class LevelDataResource : Resource
 				return BronzeTime;
 			case "Ranking/Score Requirement":
 				return Score;
+			case "Ranking/Gold Time Attack":
+				return GoldTimeTA;
+			case "Ranking/Silver Time Attack":
+				return SilverTimeTA;
+			case "Ranking/Bronze Time Attack":
+				return BronzeTimeTA;
 
 			case "Completion/Disable Object Cull":
 				return DisableObjectCullOnCompletion;
@@ -139,6 +152,9 @@ public partial class LevelDataResource : Resource
 	{
 		switch ((string)property)
 		{
+			case "Area Key":
+				AreaKey = (string)value;
+				break;
 			case "Level ID":
 				LevelID = (StringName)value;
 				break;
@@ -198,6 +214,15 @@ public partial class LevelDataResource : Resource
 			case "Ranking/Score Requirement":
 				Score = (int)value;
 				break;
+			case "Ranking/Gold - Time Attack":
+				GoldTimeTA = (int)value;
+				break;
+			case "Ranking/Silver - Time Attack":
+				SilverTimeTA = (int)value;
+				break;
+			case "Ranking/Bronze - Time Attack":
+				BronzeTimeTA = (int)value;
+				break;
 
 			case "Completion/Disable Object Cull":
 				DisableObjectCullOnCompletion = (bool)value;
@@ -224,7 +249,8 @@ public partial class LevelDataResource : Resource
 		return true;
 	}
 	#endregion
-
+	/// <summary> Level's world - used for the ready menu
+	public string AreaKey { get; private set; }
 	/// <summary> Level's id - used for save data. </summary>
 	public StringName LevelID { get; private set; }
 	/// <summary> The index of the level in the mission select screen. Used by the Special Book. </summary>
@@ -262,6 +288,10 @@ public partial class LevelDataResource : Resource
 	public int GoldTime { get; private set; }
 	public int SilverTime { get; private set; }
 	public int BronzeTime { get; private set; }
+
+	public int GoldTimeTA { get; private set; }
+	public int SilverTimeTA { get; private set; }
+	public int BronzeTimeTA { get; private set; }
 	// Requirement for score rank
 	public int Score { get; private set; }
 

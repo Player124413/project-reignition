@@ -1,5 +1,6 @@
 using Godot;
 using Project.Core;
+using Project.Gameplay;
 
 namespace Project.Interface.Menus;
 
@@ -110,5 +111,13 @@ public partial class ReadyMenu : Menu
 		});
 		TransitionManager.instance.SetMissionDescriptionText(missionLabel.Text, description.Text);
 		TransitionManager.instance.UpdateLoadingText("load_level");
+	}
+
+	///<summary> Sets up the ready menu for time attack
+	public void SetupReadyMenu(LevelDataResource level)
+	{
+		SetMapText(level.AreaKey);
+		SetMissionText(level.MissionTypeKey);
+		LevelPath = level.LevelPath;
 	}
 }

@@ -8,6 +8,7 @@ public partial class TimeAttack : Menu
 {
 	[Export] AnimationPlayer timeAttackAnimator;
 	[Export] private Description description;
+	[Export] private ReadyMenu readyMenu;
 	private bool isActive;
 	private int currentSelection;
 	private int maxSelection = 4;
@@ -83,4 +84,7 @@ public partial class TimeAttack : Menu
 	public override void PlayReturnAnim() => timeAttackAnimator.Play("return-" + currentSelection);
 	public void SetActive() => isActive = true;
 	public void SetInactive() => isActive = false;
+
+
+
 }
