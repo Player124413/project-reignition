@@ -1,4 +1,4 @@
-[gd_scene load_steps=52 format=3 uid="uid://csf6lg813lo8y"]
+[gd_scene load_steps=53 format=3 uid="uid://csf6lg813lo8y"]
 
 [ext_resource type="PackedScene" uid="uid://ch46r833tuwi0" path="res://area/7 night palace/act 2/Static.tscn" id="1_e2i0a"]
 [ext_resource type="Resource" uid="uid://dabiqxed5c43h" path="res://resource/level data/night palace/Act2Stealth.tres" id="2_e2i0a"]
@@ -18,6 +18,7 @@
 [ext_resource type="PackedScene" uid="uid://ccaosjiyckt3t" path="res://area/7 night palace/object/destructable/SpaceBlock.tscn" id="18_0md0y"]
 [ext_resource type="PackedScene" uid="uid://dn28hpi34wpp4" path="res://object/enemy/majin/data/night palace/GreenMajin.tscn" id="19_0t148"]
 [ext_resource type="PackedScene" uid="uid://cclwh52o4uphx" path="res://object/stage/common/InvisibleGrindrail.tscn" id="20_ffk5m"]
+[ext_resource type="PackedScene" uid="uid://cu6lpq7q82grk" path="res://object/stage/pickups/FireSoul.tscn" id="20_ifxg7"]
 [ext_resource type="PackedScene" uid="uid://b4omh0erkr8si" path="res://object/enemy/majin/data/night palace/RedMajin.tscn" id="20_kg3sq"]
 [ext_resource type="PackedScene" uid="uid://ckjoa1p7lnd7y" path="res://area/7 night palace/object/obstacle/SpaceWall.tscn" id="22_icp7u"]
 [ext_resource type="PackedScene" uid="uid://bqvtcp8tkbfyt" path="res://object/stage/common/SpikeBall.tscn" id="23_gj8vu"]
@@ -60,6 +61,21 @@ point_count = 4
 [sub_resource type="BoxShape3D" id="BoxShape3D_pjaj0"]
 size = Vector3(40, 20, 69)
 
+[sub_resource type="Animation" id="Animation_pjaj0"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("SpaceBlock:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(10, -0.5, 0)]
+}
+
 [sub_resource type="Animation" id="Animation_wi150"]
 resource_name = "event"
 length = 3.0
@@ -76,33 +92,18 @@ tracks/0/keys = {
 "values": [Vector3(10, -0.5, 0), Vector3(10, 3, 0)]
 }
 
-[sub_resource type="Animation" id="Animation_pjaj0"]
-length = 0.001
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("SpaceBlock:position")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [Vector3(10, -0.5, 0)]
-}
-
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_ifxg7"]
 _data = {
 &"RESET": SubResource("Animation_pjaj0"),
 &"event": SubResource("Animation_wi150")
 }
 
+[sub_resource type="Animation" id="Animation_8drai"]
+length = 0.001
+
 [sub_resource type="Animation" id="Animation_ifxg7"]
 resource_name = "event"
 length = 2.0
-
-[sub_resource type="Animation" id="Animation_8drai"]
-length = 0.001
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_8drai"]
 _data = {
@@ -128,9 +129,6 @@ point_count = 4
 
 [node name="Static" parent="." instance=ExtResource("1_e2i0a")]
 Data = ExtResource("2_e2i0a")
-
-[node name="SpaceSkybox" parent="Static/Visuals" index="1"]
-visible = true
 
 [node name="StealthAct" type="Node3D" parent="."]
 
@@ -735,13 +733,13 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 6, -35)
 railLength = 30
 
 [node name="Rings" type="Node3D" parent="StealthAct/WideStraight/EnemyGroup3/InvisibleGrindrail1"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.1000004, -1)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.1, -2)
 script = ExtResource("6_7pocf")
 Source = ExtResource("7_t4ttu")
 Amount = 11
 Shape = 0
 Orientation = 0
-Spacing = 2.5
+Spacing = 2.0
 "Horizontal Offset" = null
 "Vertical Offset" = null
 metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
@@ -749,34 +747,37 @@ metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
 [node name="Child01" parent="StealthAct/WideStraight/EnemyGroup3/InvisibleGrindrail1/Rings" instance=ExtResource("7_t4ttu")]
 
 [node name="Child02" parent="StealthAct/WideStraight/EnemyGroup3/InvisibleGrindrail1/Rings" instance=ExtResource("7_t4ttu")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2.5)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2)
 
 [node name="Child03" parent="StealthAct/WideStraight/EnemyGroup3/InvisibleGrindrail1/Rings" instance=ExtResource("7_t4ttu")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -5)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -4)
 
 [node name="Child04" parent="StealthAct/WideStraight/EnemyGroup3/InvisibleGrindrail1/Rings" instance=ExtResource("7_t4ttu")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -7.5)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -6)
 
 [node name="Child05" parent="StealthAct/WideStraight/EnemyGroup3/InvisibleGrindrail1/Rings" instance=ExtResource("7_t4ttu")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -10)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -8)
 
 [node name="Child06" parent="StealthAct/WideStraight/EnemyGroup3/InvisibleGrindrail1/Rings" instance=ExtResource("7_t4ttu")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -12.5)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -10)
 
 [node name="Child07" parent="StealthAct/WideStraight/EnemyGroup3/InvisibleGrindrail1/Rings" instance=ExtResource("7_t4ttu")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -15)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -12)
 
 [node name="Child08" parent="StealthAct/WideStraight/EnemyGroup3/InvisibleGrindrail1/Rings" instance=ExtResource("7_t4ttu")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -17.5)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -14)
 
 [node name="Child09" parent="StealthAct/WideStraight/EnemyGroup3/InvisibleGrindrail1/Rings" instance=ExtResource("7_t4ttu")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -20)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -16)
 
 [node name="Child10" parent="StealthAct/WideStraight/EnemyGroup3/InvisibleGrindrail1/Rings" instance=ExtResource("7_t4ttu")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -22.5)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -18)
 
 [node name="Child11" parent="StealthAct/WideStraight/EnemyGroup3/InvisibleGrindrail1/Rings" instance=ExtResource("7_t4ttu")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -25)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -20)
+
+[node name="FireSoul1" parent="StealthAct/WideStraight/EnemyGroup3/InvisibleGrindrail1" instance=ExtResource("20_ifxg7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, -27)
 
 [node name="InvisibleGrindrail2" parent="StealthAct/WideStraight/EnemyGroup3" instance=ExtResource("20_ffk5m")]
 transform = Transform3D(1, 0, 0, 0, 0.9961947, 0.08715574, 0, -0.08715574, 0.9961947, -2, 5, -76)
@@ -1449,7 +1450,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.8209114, 0, 5.745331)
 rangeOverride = 30
 
 [node name="RedMajin" parent="StealthAct/Hairpins" instance=ExtResource("20_kg3sq")]
-transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, -40, 15, 91)
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, -40, 15, 88.5)
 "Spawn Settings/Spawn Travel Time" = 1.0
 "Spawn Settings/Spawn Delay" = 0.0
 "Spawn Settings/Spawn Offset" = Vector3(0, 20, 0)
@@ -1459,6 +1460,10 @@ transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, -40,
 "Attack Settings/Flame Inactive Time" = 0.5
 "Attack Settings/Flame Aggression Radius" = 0
 "Attack Settings/Attack Instantly" = false
+
+[node name="FireSoul2" parent="StealthAct/Hairpins" instance=ExtResource("20_ifxg7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -40, 15.6, 86.5)
+fireSoulIndex = 2
 
 [node name="PanelGroup" type="Node3D" parent="StealthAct/Hairpins"]
 transform = Transform3D(4.569558e-08, 0, 1, 0, 1, 0, -1, 0, 4.569558e-08, -40, 15, 74)
@@ -1495,7 +1500,7 @@ Movement/Angle = 0.0
 "Vertical Orientation" = true
 
 [node name="Laser" parent="StealthAct/Hairpins/LaserGroup/Laser1/MovingLaser" instance=ExtResource("13_ju6t2")]
-transform = Transform3D(1.000002, 4.0978193e-08, 5.4240227e-06, 5.9604645e-08, 1.0000082, 1.6652048e-06, -6.2584877e-07, 0, 1.0000019, 0, 0, 0)
+transform = Transform3D(1.0000021, 4.8428774e-08, 5.4240227e-06, 5.9604645e-08, 1.0000083, 1.6503036e-06, -6.2584877e-07, -1.4901161e-08, 1.0000019, 0, 0, 0)
 
 [node name="LaserPillarL" parent="StealthAct/Hairpins/LaserGroup/Laser1" instance=ExtResource("14_fw4is")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.5, 0, 0)
@@ -1568,7 +1573,7 @@ Movement/Angle = 0.0
 "Vertical Orientation" = true
 
 [node name="Laser" parent="StealthAct/Hairpins/LaserGroup/Laser4/MovingLaser" instance=ExtResource("13_ju6t2")]
-transform = Transform3D(1.0000187, 1.0430813e-07, -1.9967556e-06, -2.682209e-07, 1.0000172, 8.4005296e-07, -2.2500753e-06, -4.1909516e-07, 1.0000015, 0, 3.4999995, 7.6293945e-06)
+transform = Transform3D(1.0000188, 1.1175871e-07, -1.9967556e-06, -2.682209e-07, 1.0000173, 8.4005296e-07, -2.2649765e-06, -4.2282045e-07, 1.0000015, 0, 3.4999995, 7.6293945e-06)
 
 [node name="LaserPillarL" parent="StealthAct/Hairpins/LaserGroup/Laser4" instance=ExtResource("14_fw4is")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.5, 0, 0)
@@ -2434,6 +2439,10 @@ transform = Transform3D(-5.9604645e-08, 0, -0.99999994, 0, 1, 0, 0.99999994, 0, 
 "Attack Settings/Attack Instantly" = true
 SpawnMode = 1
 
+[node name="FireSoul3" parent="StealthAct/End/RightSide/SpacePanelGroup2" instance=ExtResource("20_ifxg7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 17, 11, 0)
+fireSoulIndex = 3
+
 [node name="AnimationPlayer" type="AnimationPlayer" parent="StealthAct/End/RightSide/SpacePanelGroup2"]
 callback_mode_process = 0
 libraries = {
@@ -2488,7 +2497,7 @@ Movement/Angle = 0.0
 "Vertical Orientation" = true
 
 [node name="Laser" parent="StealthAct/End/RightSide/SpacePanelGroup3/Laser/MovingLaser" instance=ExtResource("13_ju6t2")]
-transform = Transform3D(1.000001, 8.1959186e-08, 5.722046e-06, 2.2351463e-08, 1.0000074, 1.7844396e-06, -4.172325e-07, 5.21553e-08, 1.0000091, 0, 0.90740776, 0)
+transform = Transform3D(1.000001, 8.1959186e-08, 5.722046e-06, 2.235146e-08, 1.0000074, 1.7844396e-06, -4.172325e-07, 5.21553e-08, 1.0000091, 0, 0.90740776, 0)
 
 [node name="LaserPillarL" parent="StealthAct/End/RightSide/SpacePanelGroup3/Laser" instance=ExtResource("14_fw4is")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 0, 0)
@@ -2510,6 +2519,15 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.5, 0, 0)
 
 [node name="LaserPillarR" parent="StealthAct/End/RightSide/Laser4" instance=ExtResource("14_fw4is")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.5, 0, 0)
+
+[node name="BlueMajin" parent="StealthAct/End/RightSide" instance=ExtResource("9_r3bsh")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, -6, 0, 95)
+"Spawn Settings/Spawn Travel Time" = 0.5
+"Spawn Settings/Spawn Delay" = 0.0
+"Spawn Settings/Spawn Offset" = Vector3(0, 15, 0)
+"Spawn Settings/Spawn In Offset" = Vector3(0, 0, 0)
+"Spawn Settings/Spawn Out Offset" = Vector3(0, 0, 0)
+rangeOverride = 10
 
 [node name="LeftSide" type="Node3D" parent="StealthAct/End"]
 transform = Transform3D(-0.7071068, 0, 0.7071067, 0, 1, 0, -0.7071067, 0, -0.7071068, 0, 0, 0)
@@ -2572,7 +2590,7 @@ Movement/Angle = 0.0
 "Vertical Orientation" = true
 
 [node name="Laser" parent="StealthAct/End/LeftSide/Laser1/MovingLaser" instance=ExtResource("13_ju6t2")]
-transform = Transform3D(1.000001, 8.1959186e-08, 5.722046e-06, 2.2350312e-08, 1.0000074, 1.7844396e-06, -4.172325e-07, 5.21553e-08, 1.0000091, 0, 3.5000005, 0)
+transform = Transform3D(1.000001, 8.1959186e-08, 5.722046e-06, 2.2349907e-08, 1.0000074, 1.7844396e-06, -4.172325e-07, 5.21553e-08, 1.0000091, 0, 2.2680001, 0)
 
 [node name="LaserPillarL" parent="StealthAct/End/LeftSide/Laser1" instance=ExtResource("14_fw4is")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 0, 0)
@@ -2596,7 +2614,7 @@ Movement/Angle = 0.0
 "Vertical Orientation" = true
 
 [node name="Laser" parent="StealthAct/End/LeftSide/Laser2/MovingLaser" instance=ExtResource("13_ju6t2")]
-transform = Transform3D(1.000001, 8.1959186e-08, 5.722046e-06, 2.2348376e-08, 1.0000074, 1.7844396e-06, -4.172325e-07, 5.21553e-08, 1.0000091, 0, 2.2679992, 0)
+transform = Transform3D(1.000001, 8.1959186e-08, 5.722046e-06, 2.2348372e-08, 1.0000074, 1.7844396e-06, -4.172325e-07, 5.21553e-08, 1.0000091, 0, 3.4999995, 0)
 
 [node name="LaserPillarL" parent="StealthAct/End/LeftSide/Laser2" instance=ExtResource("14_fw4is")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 0, 0)
