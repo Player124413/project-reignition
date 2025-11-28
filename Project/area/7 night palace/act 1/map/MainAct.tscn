@@ -1,4 +1,4 @@
-[gd_scene load_steps=102 format=3 uid="uid://c58uuw11dgeta"]
+[gd_scene load_steps=103 format=3 uid="uid://c58uuw11dgeta"]
 
 [ext_resource type="PackedScene" uid="uid://cjupypih0myxo" path="res://object/player/CharacterSpawn.tscn" id="1_dm4pv"]
 [ext_resource type="Resource" uid="uid://beyea7f0e70sm" path="res://resource/level data/night palace/Act1Main.tres" id="2_wwd1j"]
@@ -9,6 +9,7 @@
 [ext_resource type="PackedScene" uid="uid://bo061vk53h0fv" path="res://area/7 night palace/object/foothold/SidleFooting.tscn" id="5_6dn8w"]
 [ext_resource type="PackedScene" uid="uid://c7l8mr7ubn848" path="res://object/stage/pickups/Ring.tscn" id="5_guij8"]
 [ext_resource type="PackedScene" uid="uid://ddqtfsujegqep" path="res://object/stage/common/SpikeBallSpawner.tscn" id="6_3bewd"]
+[ext_resource type="Script" uid="uid://bitgnn108jmaa" path="res://object/trigger/modules/DialogTrigger.cs" id="6_4xtwa"]
 [ext_resource type="PackedScene" uid="uid://b0uekqdfkbg6h" path="res://object/stage/common/ItemBox.tscn" id="6_pusyw"]
 [ext_resource type="PackedScene" uid="uid://68st06xyjgvp" path="res://object/stage/pickups/RichRing.tscn" id="7_fjkar"]
 [ext_resource type="PackedScene" uid="uid://bhnh1as6xgpiy" path="res://object/stage/common/DashPanel.tscn" id="7_luf24"]
@@ -1117,6 +1118,165 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -10)
 metadata/_edit_lock_ = true
 
 [node name="CharacterSpawn" parent="MainAct/SpawnPosition" instance=ExtResource("1_dm4pv")]
+
+[node name="DialogTriggers" type="Node3D" parent="MainAct"]
+
+[node name="ErazorTrigger" parent="MainAct/DialogTriggers" instance=ExtResource("26_bkait")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.13500214, 0, -33.21)
+collision_layer = 0
+OneShot = true
+"Respawn Mode" = 4
+"Enter Mode" = 0
+
+[node name="Dialog" type="Node3D" parent="MainAct/DialogTriggers/ErazorTrigger" node_paths=PackedStringArray("randomizedDialogTriggers")]
+script = ExtResource("6_4xtwa")
+textKeys = ["nig_opening_sh", "nig_opening_so"]
+randomizedDialogTriggers = []
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="MainAct/DialogTriggers/ErazorTrigger"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
+shape = SubResource("BoxShape3D_mow5f")
+
+[node name="CrumbleTrigger" parent="MainAct/DialogTriggers" instance=ExtResource("26_bkait")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 160, 0, -129)
+collision_layer = 0
+OneShot = true
+"Respawn Mode" = 4
+"Enter Mode" = 0
+
+[node name="Dialog" type="Node3D" parent="MainAct/DialogTriggers/CrumbleTrigger" node_paths=PackedStringArray("randomizedDialogTriggers")]
+script = ExtResource("6_4xtwa")
+textKeys = ["nig_footing_so", "nig_footing_sh"]
+randomizedDialogTriggers = []
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="MainAct/DialogTriggers/CrumbleTrigger"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
+shape = SubResource("BoxShape3D_mow5f")
+
+[node name="CrumbleTrigger2" parent="MainAct/DialogTriggers" instance=ExtResource("26_bkait")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 160, 0, -160)
+collision_layer = 0
+OneShot = true
+"Respawn Mode" = 4
+"Enter Mode" = 0
+
+[node name="Dialog" type="Node3D" parent="MainAct/DialogTriggers/CrumbleTrigger2" node_paths=PackedStringArray("randomizedDialogTriggers")]
+script = ExtResource("6_4xtwa")
+textKeys = ["nig_footing2_sh", "nig_footing2_so"]
+randomizedDialogTriggers = []
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="MainAct/DialogTriggers/CrumbleTrigger2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
+shape = SubResource("BoxShape3D_mow5f")
+
+[node name="EnemyTrigger" parent="MainAct/DialogTriggers" instance=ExtResource("26_bkait")]
+transform = Transform3D(0.34202015, 0, 0.9396926, 0, 1, 0, -0.9396926, 0, 0.34202015, 16.957739, 10, -281.90936)
+collision_layer = 0
+OneShot = true
+"Respawn Mode" = 4
+"Enter Mode" = 0
+
+[node name="Dialog" type="Node3D" parent="MainAct/DialogTriggers/EnemyTrigger" node_paths=PackedStringArray("randomizedDialogTriggers")]
+script = ExtResource("6_4xtwa")
+textKeys = ["nig_enemy_so", "nig_enemy_sh"]
+randomizedDialogTriggers = []
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="MainAct/DialogTriggers/EnemyTrigger"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
+shape = SubResource("BoxShape3D_mow5f")
+
+[node name="TrapDialog" type="Node3D" parent="MainAct/DialogTriggers" node_paths=PackedStringArray("randomizedDialogTriggers")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 119.00001, 0.51, -277.6)
+script = ExtResource("6_4xtwa")
+textKeys = ["nig_trap_sh", "nig_trap_so"]
+randomizedDialogTriggers = []
+
+[node name="CarpetDialog" type="Node3D" parent="MainAct/DialogTriggers" node_paths=PackedStringArray("randomizedDialogTriggers")]
+script = ExtResource("6_4xtwa")
+textKeys = ["nig_carpet_sh", "nig_carpet_so"]
+randomizedDialogTriggers = []
+
+[node name="CarpetEndDialog" type="Node3D" parent="MainAct/DialogTriggers" node_paths=PackedStringArray("randomizedDialogTriggers")]
+script = ExtResource("6_4xtwa")
+textKeys = ["nig_entrance_so", "nig_entrance_sh"]
+randomizedDialogTriggers = []
+
+[node name="HallStretchDialog" type="Node3D" parent="MainAct/DialogTriggers" node_paths=PackedStringArray("randomizedDialogTriggers")]
+script = ExtResource("6_4xtwa")
+displayLength = Array[float]([3.5])
+textKeys = ["nig_stretch_event_so", "nig_stretch_event_sh"]
+randomizedDialogTriggers = []
+
+[node name="HallStretchEndDialog" type="Node3D" parent="MainAct/DialogTriggers" node_paths=PackedStringArray("randomizedDialogTriggers")]
+script = ExtResource("6_4xtwa")
+textKeys = ["nig_warp_sh", "nig_warp_so"]
+randomizedDialogTriggers = []
+
+[node name="SpaceATrigger" parent="MainAct/DialogTriggers" instance=ExtResource("26_bkait")]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 790, 0, -640)
+collision_layer = 0
+OneShot = true
+"Respawn Mode" = 4
+"Enter Mode" = 0
+
+[node name="Dialog" type="Node3D" parent="MainAct/DialogTriggers/SpaceATrigger" node_paths=PackedStringArray("randomizedDialogTriggers")]
+script = ExtResource("6_4xtwa")
+textKeys = ["nig_spirit_world_sh", "nig_spirit_world_so"]
+randomizedDialogTriggers = []
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="MainAct/DialogTriggers/SpaceATrigger"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
+shape = SubResource("BoxShape3D_mow5f")
+
+[node name="SpearTrigger" parent="MainAct/DialogTriggers" instance=ExtResource("26_bkait")]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 809, 0, -640)
+collision_layer = 0
+OneShot = true
+"Respawn Mode" = 4
+"Enter Mode" = 0
+
+[node name="Dialog" type="Node3D" parent="MainAct/DialogTriggers/SpearTrigger" node_paths=PackedStringArray("randomizedDialogTriggers")]
+script = ExtResource("6_4xtwa")
+textKeys = ["nig_hint_spears_so", "nig_hint_spears_sh"]
+randomizedDialogTriggers = []
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="MainAct/DialogTriggers/SpearTrigger"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
+shape = SubResource("BoxShape3D_mow5f")
+
+[node name="HourglassTrigger" parent="MainAct/DialogTriggers" instance=ExtResource("26_bkait")]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 1060, 0, -560)
+collision_layer = 0
+OneShot = true
+"Respawn Mode" = 4
+"Enter Mode" = 0
+
+[node name="Dialog" type="Node3D" parent="MainAct/DialogTriggers/HourglassTrigger" node_paths=PackedStringArray("randomizedDialogTriggers")]
+script = ExtResource("6_4xtwa")
+textKeys = ["nig_hint_hourglass_sh", "nig_hint_hourglass_so"]
+randomizedDialogTriggers = []
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="MainAct/DialogTriggers/HourglassTrigger"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
+shape = SubResource("BoxShape3D_mow5f")
+
+[node name="GasDialog" type="Node3D" parent="MainAct/DialogTriggers" node_paths=PackedStringArray("randomizedDialogTriggers")]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 1148, 0, -560)
+script = ExtResource("6_4xtwa")
+textKeys = ["nig_hint_gas_so", "nig_hint_gas_sh"]
+randomizedDialogTriggers = []
+
+[node name="GateDialog" type="Node3D" parent="MainAct/DialogTriggers" node_paths=PackedStringArray("randomizedDialogTriggers")]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 473, -91, -488.00003)
+script = ExtResource("6_4xtwa")
+textKeys = ["nig_gate_sh", "nig_gate_so"]
+randomizedDialogTriggers = []
+
+[node name="EndingDialog" type="Node3D" parent="MainAct/DialogTriggers" node_paths=PackedStringArray("randomizedDialogTriggers")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 473, -91, -488.00003)
+script = ExtResource("6_4xtwa")
+textKeys = ["nig_end_so", "nig_end_sh"]
+randomizedDialogTriggers = []
 
 [node name="CullingMap" type="Node3D" parent="MainAct"]
 visible = false
@@ -5884,7 +6044,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -12)
 transform = Transform3D(-1, 0, 8.742279e-08, 0, 1, 0, -8.742279e-08, 0, -1, 0, 3, 153.19995)
 
 [node name="ItemBoxFlying" parent="MainAct/GasRoom/GasA/ItemBoxGroup4" instance=ExtResource("43_sswox")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.59198, 0.9720001, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.59198, 0.9719999, 0)
 "Spawn Settings/Pickup Parent" = NodePath("../PickupParent")
 "Spawn Settings/Travel Time" = 1.0
 
@@ -7664,6 +7824,8 @@ libraries = {
 &"": SubResource("AnimationLibrary_1vic0")
 }
 
+[connection signal="Activated" from="Static/Carpet/Carpet" to="MainAct/DialogTriggers/CarpetDialog" method="Activate"]
+[connection signal="Activated" from="Static/Carpet/EndTrigger" to="MainAct/DialogTriggers/CarpetEndDialog" method="Activate"]
 [connection signal="Activated" from="MainAct/CullingMap/SidleL" to="MainAct/Sidle" method="Activate"]
 [connection signal="Deactivated" from="MainAct/CullingMap/SidleL" to="MainAct/Sidle" method="Deactivate"]
 [connection signal="Activated" from="MainAct/CullingMap/StartU" to="MainAct/Start" method="Deactivate"]
@@ -7688,6 +7850,7 @@ libraries = {
 [connection signal="Deactivated" from="MainAct/CullingMap/EndL" to="MainAct/Ending" method="Deactivate"]
 [connection signal="Activated" from="MainAct/CullingMap/CarpetU" to="MainAct/Carpet" method="Deactivate"]
 [connection signal="Deactivated" from="MainAct/CullingMap/CarpetU" to="MainAct/Carpet" method="Activate"]
+[connection signal="Collected" from="MainAct/Hall/ItemBox1" to="MainAct/DialogTriggers/TrapDialog" method="Activate"]
 [connection signal="Collected" from="MainAct/Hall/ItemBox1" to="MainAct/Hall/ItemBox1/Event" method="Activate"]
 [connection signal="Respawned" from="MainAct/Hall/ItemBox1/RichRing" to="MainAct/Hall/ItemBox1/Event" method="Respawn"]
 [connection signal="Collected" from="MainAct/Hall/ItemBox2" to="MainAct/Hall/ItemBox2/Event" method="Activate"]
@@ -7715,10 +7878,13 @@ libraries = {
 [connection signal="GrindStarted" from="MainAct/Tower/InvisibleGrindrail2" to="MainAct/Tower/InvisibleGrindrail2/Spring2" method="ShowLauncher"]
 [connection signal="Deactivated" from="MainAct/Tower/InvisibleGrindrail2/Spring2" to="MainAct/Tower/InvisibleGrindrail2/Spring2" method="HideLauncher"]
 [connection signal="Spawned" from="MainAct/Interior/MajinGroup/GreenMajin1" to="MainAct/Interior/MajinGroup/GreenMajin2" method="Spawn"]
+[connection signal="Activated" from="MainAct/Ending/HallStretchTrigger/HallStretchEvent" to="MainAct/DialogTriggers/HallStretchDialog" method="Activate"]
 [connection signal="Activated" from="MainAct/Ending/HallStretchTrigger/HallStretchEvent" to="MainAct/Ending/HallStretchTrigger/Camera" method="Activate"]
+[connection signal="EventFinished" from="MainAct/Ending/HallStretchTrigger/HallStretchEvent" to="MainAct/DialogTriggers/HallStretchEndDialog" method="Activate"]
 [connection signal="EventFinished" from="MainAct/Ending/HallStretchTrigger/HallStretchEvent" to="MainAct/Ending/HallStretchTrigger/Camera" method="Deactivate"]
 [connection signal="Activated" from="MainAct/Ending/Gate1" to="Static/Visuals/MainSection" method="Activate"]
 [connection signal="Activated" from="MainAct/Ending/Gate1" to="Static/Visuals/SpaceSection" method="Deactivate"]
+[connection signal="Activated" from="MainAct/Ending/Gate1" to="MainAct/DialogTriggers/GateDialog" method="Activate"]
 [connection signal="Activated" from="MainAct/Ending/Gate1" to="MainAct/Ending" method="Activate"]
 [connection signal="Activated" from="MainAct/Ending/Gate1" to="MainAct/Ending/Gate1/Gate" method="Activate"]
 [connection signal="Teleport" from="MainAct/Ending/Gate1/Teleport" to="Static/Trigger/Path/SpaceAPath" method="Activate"]
@@ -7739,6 +7905,7 @@ libraries = {
 [connection signal="Teleport" from="MainAct/Ending/Gate2/Teleport" to="MainAct/SpaceB" method="Activate"]
 [connection signal="Activated" from="MainAct/Ending/Gate3" to="Static/Visuals/MainSection" method="Activate"]
 [connection signal="Activated" from="MainAct/Ending/Gate3" to="Static/Visuals/SpaceSection" method="Deactivate"]
+[connection signal="Activated" from="MainAct/Ending/Gate3" to="MainAct/DialogTriggers/EndingDialog" method="Activate"]
 [connection signal="Activated" from="MainAct/Ending/Gate3" to="MainAct/Ending" method="Activate"]
 [connection signal="Activated" from="MainAct/Ending/Gate3" to="MainAct/Ending/Gate3/Gate" method="Activate"]
 [connection signal="Teleport" from="MainAct/Ending/Gate3/Teleport" to="Static/Trigger/Path/SpaceCPath" method="Activate"]
@@ -7865,6 +8032,7 @@ libraries = {
 [connection signal="Defeated" from="MainAct/GasRoom/GasC/EnemyGroup5/RedMajin" to="MainAct/GasRoom/GasC/EnemyGroup5/EnemyStone" method="IncrementCounter"]
 [connection signal="Defeated" from="MainAct/GasRoom/GasC/EnemyGroup6/RedMajin1" to="MainAct/GasRoom/GasC/EnemyGroup6/EnemyStone1" method="IncrementCounter"]
 [connection signal="Defeated" from="MainAct/GasRoom/GasC/EnemyGroup6/RedMajin2" to="MainAct/GasRoom/GasC/EnemyGroup6/EnemyStone2" method="IncrementCounter"]
+[connection signal="Activated" from="MainAct/GasRoom/GasTrigger" to="MainAct/DialogTriggers/GasDialog" method="Activate"]
 
 [editable path="Static"]
 [editable path="Static/Collision"]
