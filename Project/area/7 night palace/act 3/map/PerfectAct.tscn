@@ -63,7 +63,7 @@ saveVisibilityOnCheckpoint = true
 
 [node name="DashPanel" parent="PerfectAct/SpaceC" instance=ExtResource("8_e06re")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 8)
-length = 0.19999999999708962
+length = 0.1999999999970896
 
 [node name="SpikeBallGroup" type="Node3D" parent="PerfectAct/SpaceC"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 8)
@@ -140,6 +140,7 @@ script = ExtResource("4_8x6qn")
 startEnabled = true
 
 [node name="Teleport" parent="PerfectAct/SpaceC/CullingTrigger" node_paths=PackedStringArray("warpTarget") instance=ExtResource("9_0iose")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1, 0)
 warpTarget = NodePath("../../../RoomSide/TeleportPosition")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="PerfectAct/SpaceC/CullingTrigger" groups=["wall"]]
@@ -377,7 +378,7 @@ Movement/Angle = 0.0
 "Vertical Orientation" = true
 
 [node name="Laser" parent="PerfectAct/SpaceC/Laser1/MovingLaser" instance=ExtResource("44_47ejr")]
-transform = Transform3D(1.0000008, 8.1956365e-08, 5.2452087e-06, 2.2351601e-08, 1.0000074, 1.784414e-06, -4.1723249e-07, 5.2154046e-08, 1.0000008, 0, 0, 0)
+transform = Transform3D(1.0000008, 8.1956365e-08, 5.2452087e-06, 2.2351573e-08, 1.0000074, 1.784414e-06, -4.1723249e-07, 5.2154046e-08, 1.0000008, 0, 0, 0)
 
 [node name="LaserPillarL" parent="PerfectAct/SpaceC/Laser1" instance=ExtResource("43_s6ltb")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.5, 0, 0)
@@ -457,7 +458,7 @@ Movement/Angle = 0.0
 "Vertical Orientation" = true
 
 [node name="Laser" parent="PerfectAct/SpaceC/Laser4/MovingLaser" instance=ExtResource("44_47ejr")]
-transform = Transform3D(1.0000008, 8.1956365e-08, 5.2452087e-06, 2.2351587e-08, 1.0000074, 1.784414e-06, -4.1723249e-07, 5.2154046e-08, 1.0000008, 0, 0, 0)
+transform = Transform3D(1.0000008, 8.1956365e-08, 5.2452087e-06, 2.2351559e-08, 1.0000074, 1.784414e-06, -4.1723249e-07, 5.2154046e-08, 1.0000008, 0, 0, 0)
 
 [node name="LaserPillarL" parent="PerfectAct/SpaceC/Laser4" instance=ExtResource("43_s6ltb")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.5, 0, 0)
@@ -584,19 +585,19 @@ rangeOverride = 40
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3, 212.5)
 warpTarget = NodePath("../../SpaceC/TeleportPosition")
 
-[connection signal="Teleport" from="PerfectAct/SpaceC/CullingTrigger/Teleport" to="PerfectAct/SpaceC" method="Deactivate"]
-[connection signal="Teleport" from="PerfectAct/SpaceC/CullingTrigger/Teleport" to="PerfectAct/SpaceC/CullingTrigger" method="Deactivate"]
-[connection signal="Teleport" from="PerfectAct/SpaceC/CullingTrigger/Teleport" to="PerfectAct/RoomSide" method="Activate"]
 [connection signal="Teleport" from="PerfectAct/SpaceC/CullingTrigger/Teleport" to="Static/Visuals/RoomSide" method="Activate"]
 [connection signal="Teleport" from="PerfectAct/SpaceC/CullingTrigger/Teleport" to="Static/Visuals/SpaceC" method="Deactivate"]
 [connection signal="Teleport" from="PerfectAct/SpaceC/CullingTrigger/Teleport" to="Static/Trigger/Path/RoomSidePath" method="Activate"]
+[connection signal="Teleport" from="PerfectAct/SpaceC/CullingTrigger/Teleport" to="PerfectAct/SpaceC" method="Deactivate"]
+[connection signal="Teleport" from="PerfectAct/SpaceC/CullingTrigger/Teleport" to="PerfectAct/SpaceC/CullingTrigger" method="Deactivate"]
+[connection signal="Teleport" from="PerfectAct/SpaceC/CullingTrigger/Teleport" to="PerfectAct/RoomSide" method="Activate"]
 [connection signal="GrindStarted" from="PerfectAct/SpaceC/WallGroup/InvisibleGrindrail" to="PerfectAct/SpaceC/WallGroup/InvisibleGrindrail/Spring" method="ShowLauncher"]
 [connection signal="Activated" from="PerfectAct/SpaceC/WallGroup/InvisibleGrindrail/Spring" to="PerfectAct/SpaceC/SpringEnemyGroup" method="Activate"]
-[connection signal="Teleport" from="PerfectAct/RoomSide/Teleport" to="PerfectAct/SpaceC" method="Activate"]
-[connection signal="Teleport" from="PerfectAct/RoomSide/Teleport" to="PerfectAct/RoomSide" method="Deactivate"]
 [connection signal="Teleport" from="PerfectAct/RoomSide/Teleport" to="Static/Visuals/RoomSide" method="Deactivate"]
 [connection signal="Teleport" from="PerfectAct/RoomSide/Teleport" to="Static/Visuals/SpaceC" method="Activate"]
 [connection signal="Teleport" from="PerfectAct/RoomSide/Teleport" to="Static/Trigger/Path/SpaceCPath/Path" method="Activate"]
+[connection signal="Teleport" from="PerfectAct/RoomSide/Teleport" to="PerfectAct/SpaceC" method="Activate"]
+[connection signal="Teleport" from="PerfectAct/RoomSide/Teleport" to="PerfectAct/RoomSide" method="Deactivate"]
 
 [editable path="Static"]
 [editable path="Static/Collision"]
