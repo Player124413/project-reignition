@@ -1,9 +1,10 @@
-[gd_scene load_steps=53 format=3 uid="uid://baaer8ukrwjlq"]
+[gd_scene load_steps=54 format=3 uid="uid://baaer8ukrwjlq"]
 
 [ext_resource type="Resource" uid="uid://bydom45pew51r" path="res://resource/level data/night palace/Act2Rampage.tres" id="2_4jxq1"]
 [ext_resource type="PackedScene" uid="uid://cjupypih0myxo" path="res://object/player/CharacterSpawn.tscn" id="4"]
 [ext_resource type="Script" uid="uid://dd24u7rlj0dwl" path="res://addons/custom_nodes/script/ObjectGenerator.cs" id="4_302sa"]
 [ext_resource type="PackedScene" uid="uid://bn6wr6l8s3qyt" path="res://object/trigger/StageTrigger.tscn" id="5"]
+[ext_resource type="Script" uid="uid://bitgnn108jmaa" path="res://object/trigger/modules/DialogTrigger.cs" id="5_g4hve"]
 [ext_resource type="PackedScene" uid="uid://c7l8mr7ubn848" path="res://object/stage/pickups/Ring.tscn" id="5_t4uac"]
 [ext_resource type="PackedScene" uid="uid://bhnh1as6xgpiy" path="res://object/stage/common/DashPanel.tscn" id="6_k3vjq"]
 [ext_resource type="PackedScene" uid="uid://dyfndruxwjpbx" path="res://area/7 night palace/object/obstacle/Spear.tscn" id="8_k3vjq"]
@@ -428,6 +429,166 @@ Data = ExtResource("2_4jxq1")
 [node name="SpawnPosition" type="Node3D" parent="RampageAct"]
 
 [node name="CharacterSpawn" parent="RampageAct/SpawnPosition" instance=ExtResource("4")]
+
+[node name="DialogTriggers" type="Node3D" parent="RampageAct"]
+
+[node name="StartTrigger" parent="RampageAct/DialogTriggers" instance=ExtResource("5")]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 9, 0, -0.2)
+collision_layer = 0
+OneShot = true
+"Respawn Mode" = 4
+"Enter Mode" = 0
+
+[node name="Dialog" type="Node3D" parent="RampageAct/DialogTriggers/StartTrigger" node_paths=PackedStringArray("randomizedDialogTriggers")]
+script = ExtResource("5_g4hve")
+textKeys = ["nig_rampage_start_so", "nig_rampage_start_sh"]
+randomizedDialogTriggers = []
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="RampageAct/DialogTriggers/StartTrigger"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
+shape = SubResource("BoxShape3D_t4uac")
+
+[node name="Enemies1Trigger" parent="RampageAct/DialogTriggers" instance=ExtResource("5")]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 50, 0, -0.2)
+collision_layer = 0
+OneShot = true
+"Respawn Mode" = 4
+"Enter Mode" = 0
+
+[node name="Dialog" type="Node3D" parent="RampageAct/DialogTriggers/Enemies1Trigger" node_paths=PackedStringArray("randomizedDialogTriggers")]
+script = ExtResource("5_g4hve")
+playbackType = 1
+textKeys = ["common_enemy_so", "common_enemy_sh"]
+randomizedDialogTriggers = []
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="RampageAct/DialogTriggers/Enemies1Trigger"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
+shape = SubResource("BoxShape3D_t4uac")
+
+[node name="CockyTrigger" parent="RampageAct/DialogTriggers" instance=ExtResource("5")]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 88, 0, -0.20000166)
+collision_layer = 0
+OneShot = true
+"Respawn Mode" = 4
+"Enter Mode" = 0
+
+[node name="Dialog" type="Node3D" parent="RampageAct/DialogTriggers/CockyTrigger" node_paths=PackedStringArray("randomizedDialogTriggers")]
+script = ExtResource("5_g4hve")
+textKeys = ["common_enemy4_so", "common_enemy4_sh"]
+randomizedDialogTriggers = []
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="RampageAct/DialogTriggers/CockyTrigger"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
+shape = SubResource("BoxShape3D_t4uac")
+
+[node name="Spear1DialogTrigger" parent="RampageAct/DialogTriggers" instance=ExtResource("5")]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 158, -10, -40.200005)
+collision_layer = 0
+OneShot = true
+"Respawn Mode" = 4
+"Enter Mode" = 0
+
+[node name="Dialog" type="Node3D" parent="RampageAct/DialogTriggers/Spear1DialogTrigger" node_paths=PackedStringArray("randomizedDialogTriggers")]
+script = ExtResource("5_g4hve")
+playbackType = 1
+textKeys = ["common_enemy5_sh"]
+randomizedDialogTriggers = []
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="RampageAct/DialogTriggers/Spear1DialogTrigger"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
+shape = SubResource("BoxShape3D_t4uac")
+
+[node name="Spear2DialogTrigger" parent="RampageAct/DialogTriggers" instance=ExtResource("5")]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 220, -10, -40.20001)
+collision_layer = 0
+OneShot = true
+"Respawn Mode" = 4
+"Enter Mode" = 0
+
+[node name="Dialog" type="Node3D" parent="RampageAct/DialogTriggers/Spear2DialogTrigger" node_paths=PackedStringArray("randomizedDialogTriggers")]
+script = ExtResource("5_g4hve")
+textKeys = ["nig_hint_spears2_sh", "nig_hint_spears2_so"]
+randomizedDialogTriggers = []
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="RampageAct/DialogTriggers/Spear2DialogTrigger"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
+shape = SubResource("BoxShape3D_t4uac")
+
+[node name="CloseTrigger" parent="RampageAct/DialogTriggers" instance=ExtResource("5")]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 301, -20, -39.200012)
+collision_layer = 0
+OneShot = true
+"Respawn Mode" = 4
+"Enter Mode" = 0
+
+[node name="Dialog" type="Node3D" parent="RampageAct/DialogTriggers/CloseTrigger" node_paths=PackedStringArray("randomizedDialogTriggers")]
+script = ExtResource("5_g4hve")
+textKeys = ["common_recovery_sh", "common_recovery_so"]
+randomizedDialogTriggers = []
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="RampageAct/DialogTriggers/CloseTrigger"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
+shape = SubResource("BoxShape3D_t4uac")
+
+[node name="CatapultDialog" type="Node3D" parent="RampageAct/DialogTriggers" node_paths=PackedStringArray("randomizedDialogTriggers")]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 283, -15, 99.79999)
+script = ExtResource("5_g4hve")
+textKeys = ["nig_hint_catapult_so", "nig_hint_catapult_sh"]
+randomizedDialogTriggers = []
+
+[node name="Close2Trigger" parent="RampageAct/DialogTriggers" instance=ExtResource("5")]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 116, 0, 59.999996)
+collision_layer = 0
+OneShot = true
+"Respawn Mode" = 4
+"Enter Mode" = 0
+
+[node name="Dialog" type="Node3D" parent="RampageAct/DialogTriggers/Close2Trigger" node_paths=PackedStringArray("randomizedDialogTriggers")]
+script = ExtResource("5_g4hve")
+textKeys = ["common_recovery2_sh", "common_recovery2_so"]
+randomizedDialogTriggers = []
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="RampageAct/DialogTriggers/Close2Trigger"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
+shape = SubResource("BoxShape3D_t4uac")
+
+[node name="ConfusedTrigger" parent="RampageAct/DialogTriggers" instance=ExtResource("5")]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 117, 10, 159)
+collision_layer = 0
+OneShot = true
+"Respawn Mode" = 4
+"Enter Mode" = 0
+
+[node name="Dialog" type="Node3D" parent="RampageAct/DialogTriggers/ConfusedTrigger" node_paths=PackedStringArray("randomizedDialogTriggers")]
+script = ExtResource("5_g4hve")
+textKeys = ["common_confused_so", "common_confused_sh"]
+randomizedDialogTriggers = []
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="RampageAct/DialogTriggers/ConfusedTrigger"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
+shape = SubResource("BoxShape3D_t4uac")
+
+[node name="LaunchRingDialog" type="Node3D" parent="RampageAct/DialogTriggers" node_paths=PackedStringArray("randomizedDialogTriggers")]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 283, -15, 99.79999)
+script = ExtResource("5_g4hve")
+textKeys = ["common_dizzy3_so", "common_dizzy3_sh"]
+randomizedDialogTriggers = []
+
+[node name="SpeedTrigger" parent="RampageAct/DialogTriggers" instance=ExtResource("5")]
+transform = Transform3D(0.16773123, -0.04494345, -0.9848077, 0.25881904, 0.9659258, 0, 0.9512512, -0.254887, 0.17364813, -78.06158, 10, 211.13916)
+collision_layer = 0
+OneShot = true
+"Respawn Mode" = 4
+"Enter Mode" = 0
+
+[node name="Dialog" type="Node3D" parent="RampageAct/DialogTriggers/SpeedTrigger" node_paths=PackedStringArray("randomizedDialogTriggers")]
+script = ExtResource("5_g4hve")
+textKeys = ["common_start4_so", "common_start4_sh"]
+randomizedDialogTriggers = []
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="RampageAct/DialogTriggers/SpeedTrigger"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
+shape = SubResource("BoxShape3D_t4uac")
 
 [node name="CullingMap" type="Node3D" parent="RampageAct"]
 visible = false
@@ -857,6 +1018,22 @@ transform = Transform3D(1.0000001, 2.9802322e-08, -7.450581e-09, 0, 1, 3.7252903
 
 [node name="Child10" parent="RampageAct/Opening/Lap2Only/Rings3" instance=ExtResource("5_t4uac")]
 transform = Transform3D(1.0000001, 2.9802322e-08, -7.450581e-09, 0, 1, 3.7252903e-09, 0, -7.450581e-09, 1.0000001, 12.8999405, 5.9619827, -22.924835)
+
+[node name="LapTrigger" parent="RampageAct/Opening/Lap2Only" instance=ExtResource("5")]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -8, 0, 3.496911e-07)
+collision_layer = 0
+OneShot = true
+"Respawn Mode" = 4
+"Enter Mode" = 0
+
+[node name="Dialog" type="Node3D" parent="RampageAct/Opening/Lap2Only/LapTrigger" node_paths=PackedStringArray("randomizedDialogTriggers")]
+script = ExtResource("5_g4hve")
+textKeys = ["common_lap_sh", "common_lap_so"]
+randomizedDialogTriggers = []
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="RampageAct/Opening/Lap2Only/LapTrigger"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
+shape = SubResource("BoxShape3D_t4uac")
 
 [node name="DashPanelGroup2" type="Node3D" parent="RampageAct/Opening"]
 transform = Transform3D(0, 0, 0.99999994, 0, 1, 0, -0.99999994, 0, 0, -59.416615, 0, 0.009033203)
@@ -1411,7 +1588,7 @@ Movement/Angle = 0.0
 "Vertical Orientation" = true
 
 [node name="LaserRoot" type="Node3D" parent="RampageAct/WideStraight/Lap2Only/Laser1/MovingLaser"]
-transform = Transform3D(0.99999785, -5.913391e-17, 1.9895197e-13, 3.9109425e-14, 1, 3.375078e-14, -2.629008e-13, 0, 0.99999785, 0, 0, 0)
+transform = Transform3D(0.9999976, -5.913391e-17, 2.1316282e-13, 4.4438496e-14, 1, 3.7303494e-14, -2.9132252e-13, 0, 0.9999976, 0, 0, 0)
 
 [node name="LaserL" parent="RampageAct/WideStraight/Lap2Only/Laser1/MovingLaser/LaserRoot" instance=ExtResource("25_pr3a5")]
 transform = Transform3D(0.9999908, 1.4900887e-08, 4.47032e-07, 1.6967168e-13, 1.0000006, 1.0281799e-06, 5.9603522e-08, -1.3410826e-07, 0.99999106, -4.5, 0, 0)
@@ -1441,7 +1618,7 @@ Movement/Angle = 0.0
 "Vertical Orientation" = true
 
 [node name="LaserRoot" type="Node3D" parent="RampageAct/WideStraight/Lap2Only/Laser2/MovingLaser"]
-transform = Transform3D(0.99999785, -5.913391e-17, 1.9895197e-13, 3.9109425e-14, 1, 3.375078e-14, -2.629008e-13, 0, 0.99999785, 0, 1.2320004, 0)
+transform = Transform3D(0.9999976, -5.913391e-17, 2.1316282e-13, 4.4438496e-14, 1, 3.7303494e-14, -2.9132252e-13, 0, 0.9999976, 0, 1.2320004, 0)
 
 [node name="LaserL" parent="RampageAct/WideStraight/Lap2Only/Laser2/MovingLaser/LaserRoot" instance=ExtResource("25_pr3a5")]
 transform = Transform3D(0.9999908, 1.4900887e-08, 4.47032e-07, 1.6967168e-13, 1.0000006, 1.0281799e-06, 5.9603522e-08, -1.3410826e-07, 0.99999106, -4.5, 0, 0)
@@ -2386,7 +2563,7 @@ Movement/Angle = 0.0
 "Vertical Orientation" = true
 
 [node name="Laser" parent="RampageAct/Hairpins/LaserGroup/Laser2/MovingLaser" instance=ExtResource("25_pr3a5")]
-transform = Transform3D(1, 0, 3.0994415e-06, 0, 1.0000006, 1.2814999e-06, -2.9802322e-08, -1.4901161e-07, 1.0000004, 0, 0, 0)
+transform = Transform3D(1, 0, 3.3080578e-06, 0, 1.0000006, 1.296401e-06, -2.9802322e-08, -1.4901161e-07, 1.0000005, 0, 0, 0)
 
 [node name="LaserPillarL" parent="RampageAct/Hairpins/LaserGroup/Laser2" instance=ExtResource("25_81smg")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.5, 0, 0)
@@ -2410,7 +2587,7 @@ Movement/Angle = 0.0
 "Vertical Orientation" = true
 
 [node name="Laser" parent="RampageAct/Hairpins/LaserGroup/Laser3/MovingLaser" instance=ExtResource("25_pr3a5")]
-transform = Transform3D(0.99999934, -1.7881393e-07, 1.0430813e-06, 1.4901161e-06, 0.99999857, 4.8428774e-07, -1.1920929e-07, 1.4901161e-08, 0.9999984, 0, 0, 0)
+transform = Transform3D(0.9999993, -1.7881393e-07, 1.2814999e-06, 1.6093254e-06, 0.99999857, 4.5448542e-07, -1.1920929e-07, 1.4901161e-08, 0.9999982, 0, 0, 0)
 
 [node name="LaserPillarL" parent="RampageAct/Hairpins/LaserGroup/Laser3" instance=ExtResource("25_81smg")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.5, 0, 0)
@@ -2434,7 +2611,7 @@ Movement/Angle = 0.0
 "Vertical Orientation" = true
 
 [node name="Laser" parent="RampageAct/Hairpins/LaserGroup/Laser4/MovingLaser" instance=ExtResource("25_pr3a5")]
-transform = Transform3D(1.000017, 1.0430813e-07, -1.9967556e-06, -1.937151e-07, 1.0000157, 8.4005296e-07, -2.0116568e-06, -3.8184226e-07, 1.0000015, 0, 3.4999995, 7.6293945e-06)
+transform = Transform3D(1.0000175, 1.0430813e-07, -1.9967556e-06, -2.0116568e-07, 1.0000162, 8.4005296e-07, -2.115965e-06, -3.9674342e-07, 1.0000015, 0, 3.4999995, 7.6293945e-06)
 
 [node name="LaserPillarL" parent="RampageAct/Hairpins/LaserGroup/Laser4" instance=ExtResource("25_81smg")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.5, 0, 0)
@@ -2561,7 +2738,7 @@ Movement/Angle = 90.0
 "Vertical Orientation" = false
 
 [node name="GreenMajin" parent="RampageAct/NarrowStraight/Lap1Only/MovingMajin1" instance=ExtResource("11_rfsid")]
-transform = Transform3D(1, 0, 9.379164e-13, 0, 1, 0, -9.379164e-13, 0, 1, -3, 0, 0)
+transform = Transform3D(1, 0, 9.414691e-13, 0, 1, 0, -9.414691e-13, 0, 1, -3, 0, 0)
 "Spawn Settings/Spawn Travel Time" = 1.0
 "Spawn Settings/Spawn Delay" = 0.0
 "Spawn Settings/Spawn Offset" = Vector3(20, 0, 0)
@@ -2589,7 +2766,7 @@ Movement/Angle = 90.0
 "Vertical Orientation" = false
 
 [node name="GreenMajin" parent="RampageAct/NarrowStraight/Lap1Only/MovingMajin2" instance=ExtResource("11_rfsid")]
-transform = Transform3D(1, 0, 8.322232e-13, 0, 1, 0, -8.322232e-13, 0, 1, -3.1799011, 0, 0)
+transform = Transform3D(1, 0, 8.357759e-13, 0, 1, 0, -8.357759e-13, 0, 1, -3.1799011, 0, 0)
 "Spawn Settings/Spawn Travel Time" = 1.0
 "Spawn Settings/Spawn Delay" = 0.0
 "Spawn Settings/Spawn Offset" = Vector3(-20, 0, 0)
@@ -2617,7 +2794,7 @@ Movement/Angle = 90.0
 "Vertical Orientation" = false
 
 [node name="GreenMajin" parent="RampageAct/NarrowStraight/Lap1Only/MovingMajin3" instance=ExtResource("11_rfsid")]
-transform = Transform3D(1, 0, 1.9673152e-12, 0, 1, 0, -1.9673152e-12, 0, 1, -3.3592377, 0, 0)
+transform = Transform3D(1, 0, 1.970868e-12, 0, 1, 0, -1.970868e-12, 0, 1, -3.3592377, 0, 0)
 "Spawn Settings/Spawn Travel Time" = 1.0
 "Spawn Settings/Spawn Delay" = 0.0
 "Spawn Settings/Spawn Offset" = Vector3(20, 0, 0)
@@ -2933,7 +3110,7 @@ Movement/Angle = 0.0
 "Vertical Orientation" = true
 
 [node name="SpaceBlock" parent="RampageAct/NarrowStraight/MovingPlatform" instance=ExtResource("10_ptfc0")]
-transform = Transform3D(4, 0, 1.1937118e-12, 0, 1, 0, -1.1937118e-12, 0, 4, 0, 0, 0)
+transform = Transform3D(4, 0, 1.3073986e-12, 0, 1, 0, -1.3073986e-12, 0, 4, 0, 0, 0)
 
 [node name="StageTrigger" parent="RampageAct/NarrowStraight/MovingPlatform" instance=ExtResource("5")]
 OneShot = true
@@ -3545,7 +3722,7 @@ Movement/Angle = 0.0
 "Vertical Orientation" = true
 
 [node name="LaserRoot" type="Node3D" parent="RampageAct/End/Laser2/MovingLaser"]
-transform = Transform3D(1, 5.9133594e-17, 0, 2.6349668e-15, 1, -3.0198066e-14, 1.1723955e-13, 0, 0.99999994, 0, 3.5000005, 0)
+transform = Transform3D(1, 5.9133594e-17, 0, 2.6349666e-15, 1, -3.375078e-14, 1.314504e-13, 0, 0.99999994, 0, 3.5000005, 0)
 
 [node name="LaserL" parent="RampageAct/End/Laser2/MovingLaser/LaserRoot" instance=ExtResource("25_pr3a5")]
 transform = Transform3D(0.9999908, 1.4900887e-08, 4.47032e-07, 1.6967168e-13, 1.0000006, 1.0281799e-06, 5.9603522e-08, -1.3410826e-07, 0.99999106, -4.5, 0, 0)
@@ -3595,7 +3772,7 @@ Movement/Angle = 0.0
 "Vertical Orientation" = true
 
 [node name="LaserRoot" type="Node3D" parent="RampageAct/End/Laser3/MovingLaser"]
-transform = Transform3D(1, 8.881748e-16, -3.5527137e-15, 1.3322676e-15, 1, 1.7763568e-15, 0, -6.3948846e-14, 0.99999994, 0, 3.5000005, 0)
+transform = Transform3D(1, 8.881744e-16, -3.5527137e-15, 1.3322676e-15, 1, 1.7763568e-15, 0, -7.1054274e-14, 0.99999994, 0, 3.5000005, 0)
 
 [node name="LaserL" parent="RampageAct/End/Laser3/MovingLaser/LaserRoot" instance=ExtResource("25_pr3a5")]
 transform = Transform3D(0.9999908, 1.4900887e-08, 4.47032e-07, 1.6967168e-13, 1.0000006, 1.0281799e-06, 5.9603522e-08, -1.3410826e-07, 0.99999106, -4.5, 0, 0)
@@ -3736,6 +3913,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30.167881, -4.9686213, 32.027
 [connection signal="ObjectHit" from="RampageAct/WideStraight/SpearGroup5/SpearCull3/Spear" to="RampageAct/WideStraight/SpearGroup5/SpacePanel3" method="Shatter"]
 [connection signal="ObjectHit" from="RampageAct/WideStraight/SpearGroup5/SpearCull4/Spear" to="RampageAct/WideStraight/SpearGroup5/SpacePanel4" method="Shatter"]
 [connection signal="Activated" from="RampageAct/WideStraight/CatapultGroup/Catapult" to="RampageAct/WideStraight/CatapultGroup/Catapult/Camera" method="Deactivate"]
+[connection signal="PlayerEntered" from="RampageAct/WideStraight/CatapultGroup/Catapult" to="RampageAct/DialogTriggers/CatapultDialog" method="Activate"]
 [connection signal="PlayerEntered" from="RampageAct/WideStraight/CatapultGroup/Catapult" to="RampageAct/WideStraight/CatapultGroup/Catapult/Camera" method="Activate"]
 [connection signal="PlayerExited" from="RampageAct/WideStraight/CatapultGroup/Catapult" to="RampageAct/WideStraight/CatapultGroup/Catapult/Camera" method="Deactivate"]
 [connection signal="Activated" from="RampageAct/WideStraight/CatapultGroup/MovingLaunchRing/LaunchRing" to="RampageAct/WideStraight/CatapultGroup/MovingLaunchRing/LaunchRing/AimCamera" method="Deactivate"]
@@ -3780,6 +3958,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30.167881, -4.9686213, 32.027
 [connection signal="ObjectHit" from="RampageAct/NarrowStraight/SpearGroup8/SpearCull4/Spear" to="RampageAct/NarrowStraight/SpearGroup8/SpacePanel4" method="Shatter"]
 [connection signal="Activated" from="RampageAct/NarrowStraight/MovingPlatform/StageTrigger" to="RampageAct/NarrowStraight/MovingPlatform" method="Unpause"]
 [connection signal="Respawned" from="RampageAct/NarrowStraight/MovingPlatform/StageTrigger" to="RampageAct/NarrowStraight/MovingPlatform" method="Pause"]
+[connection signal="Activated" from="RampageAct/NarrowStraight/LaunchRing" to="RampageAct/DialogTriggers/LaunchRingDialog" method="Activate"]
 [connection signal="Activated" from="RampageAct/NarrowStraight/LaunchRing" to="RampageAct/NarrowStraight/LaunchRing/LaunchCamera" method="Activate"]
 [connection signal="Deactivated" from="RampageAct/NarrowStraight/LaunchRing" to="RampageAct/NarrowStraight/LaunchRing/LaunchCamera" method="Deactivate"]
 [connection signal="Entered" from="RampageAct/NarrowStraight/LaunchRing" to="RampageAct/NarrowStraight/Lap1Only/MovingMajin1/GreenMajin" method="Spawn"]
