@@ -1,4 +1,4 @@
-[gd_scene load_steps=271 format=4 uid="uid://dpjlgmdlddjik"]
+[gd_scene load_steps=273 format=4 uid="uid://dpjlgmdlddjik"]
 
 [ext_resource type="Script" uid="uid://w1r45ql607mg" path="res://area/7 night palace/data/script/Erazor.cs" id="1"]
 [ext_resource type="PackedScene" uid="uid://dfgdf7gg3d62t" path="res://area/7 night palace/boss/data/model/Erazor.gltf" id="2"]
@@ -20,7 +20,6 @@
 [ext_resource type="Script" uid="uid://c65ffkknyq6gr" path="res://addons/custom_nodes/script/GroupGpuParticles3D.cs" id="13_d8m8e"]
 [ext_resource type="Material" uid="uid://dsn3x4u283jxc" path="res://effect/particle/material/Teleport Spark.tres" id="13_ho7ab"]
 [ext_resource type="Animation" uid="uid://cfiydlfbc7k87" path="res://area/7 night palace/boss/data/model/animation/damage.res" id="14_hqad1"]
-[ext_resource type="AudioStream" uid="uid://baw65xwl0pqea" path="res://sound/boss/erazor/ev_02_stg073_en.ogg" id="14_nnxp6"]
 [ext_resource type="Material" uid="uid://b7igx10rq8saj" path="res://effect/particle/material/Aegis Feather No Billboard.tres" id="14_qysdu"]
 [ext_resource type="Animation" uid="uid://c37hsa0rej2nr" path="res://area/7 night palace/boss/data/model/animation/RESET.res" id="15_2bu5w"]
 [ext_resource type="Resource" uid="uid://uron5waxbl66" path="res://area/7 night palace/boss/camera/DuelCamera.tres" id="15_ye8st"]
@@ -82,6 +81,93 @@
 [ext_resource type="PackedScene" uid="uid://c2bl1sk5cfyq3" path="res://object/player/resource/effect/countdown/CountdownFlameParticle.tscn" id="46_1s5xk"]
 [ext_resource type="Material" uid="uid://cpvxjsa6vte37" path="res://effect/particle/material/Ember Orange.tres" id="47_d8m8e"]
 [ext_resource type="AnimationLibrary" uid="uid://bo26mw8v8m0eh" path="res://object/player/resource/model/animation/EventLibrary.gltf" id="50_x1p43"]
+
+[sub_resource type="Animation" id="Animation_ul8nf"]
+resource_name = "damage"
+length = 0.25
+tracks/0/type = "method"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("../HeadAttachment/Damage")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0.033333335),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [0.0],
+"method": &"play"
+}]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("../HeadAttachment/DamageSplatter:emitting")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.06666667, 0.23333333),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 1,
+"values": [false, true, false]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("../HeadAttachment/DamageRedDust:emitting")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 0.06666667, 0.23333333),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 1,
+"values": [false, true, false]
+}
+
+[sub_resource type="Animation" id="Animation_illsf"]
+resource_name = "RESET"
+length = 0.001
+tracks/0/type = "method"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("../HeadAttachment/Damage")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(),
+"transitions": PackedFloat32Array(),
+"values": []
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("../HeadAttachment/DamageSplatter:emitting")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("../HeadAttachment/DamageRedDust:emitting")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_illsf"]
+_data = {
+&"RESET": SubResource("Animation_illsf"),
+&"damage": SubResource("Animation_ul8nf")
+}
 
 [sub_resource type="Curve" id="Curve_2g80e"]
 _data = [Vector2(0, 0.5), 0.0, 2.7253063, 0, 0, Vector2(0.4, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
@@ -1193,26 +1279,26 @@ fadein_time = 0.05
 fadeout_time = 0.2
 
 [sub_resource type="AnimationNodeBlendTree" id="9"]
-graph_offset = Vector2(-930.4348, 29.653984)
+graph_offset = Vector2(-890.3236, -76.28833)
 nodes/output/position = Vector2(760, -60)
 nodes/attack_speed/node = SubResource("AnimationNodeTimeScale_ynp26")
-nodes/attack_speed/position = Vector2(-880, 100)
+nodes/attack_speed/position = Vector2(-880, 80)
 nodes/teleport_anim/node = SubResource("46")
-nodes/teleport_anim/position = Vector2(-860, 320)
+nodes/teleport_anim/position = Vector2(-860, 300)
 nodes/idle_anim/node = SubResource("14")
-nodes/idle_anim/position = Vector2(-1060, -120)
+nodes/idle_anim/position = Vector2(-1060, -140)
 nodes/attack_state/node = SubResource("AnimationNodeStateMachine_pwxop")
-nodes/attack_state/position = Vector2(-1120, 100)
+nodes/attack_state/position = Vector2(-1120, 80)
 nodes/teleport_trigger/node = SubResource("AnimationNodeOneShot_xu0gp")
-nodes/teleport_trigger/position = Vector2(-460, -20)
+nodes/teleport_trigger/position = Vector2(-460, -40)
 nodes/damage_trigger/node = SubResource("AnimationNodeOneShot_hqad1")
-nodes/damage_trigger/position = Vector2(-180, 0)
+nodes/damage_trigger/position = Vector2(-180, -20)
 nodes/damage_anim/node = SubResource("AnimationNodeAnimation_ynp26")
-nodes/damage_anim/position = Vector2(-400, 340)
+nodes/damage_anim/position = Vector2(-400, 320)
 nodes/attack_trigger/node = SubResource("AnimationNodeOneShot_2bu5w")
-nodes/attack_trigger/position = Vector2(-680, -60)
+nodes/attack_trigger/position = Vector2(-680, -80)
 nodes/teleport_speed/node = SubResource("41")
-nodes/teleport_speed/position = Vector2(-680, 300)
+nodes/teleport_speed/position = Vector2(-680, 280)
 nodes/introduction_trigger/node = SubResource("AnimationNodeOneShot_7jy5n")
 nodes/introduction_trigger/position = Vector2(480, -60)
 nodes/introduction_anim/node = SubResource("AnimationNodeAnimation_ikfko")
@@ -1516,15 +1602,17 @@ scale_curve = SubResource("CurveTexture_j53km")
 material = ExtResource("47_d8m8e")
 size = Vector2(0.1, 0.1)
 
-[node name="Erazor" type="Node3D" node_paths=PackedStringArray("animationTree", "cutsceneCamera", "duelCamera", "recenterLockout", "stopLockout")]
+[node name="Erazor" type="Node3D" node_paths=PackedStringArray("animationTree", "damageFxAnimator", "cutsceneCamera", "duelCamera", "recenterLockout", "stopLockout", "dialogTriggers")]
 script = ExtResource("1")
 animationTree = NodePath("AnimationTree")
+damageFxAnimator = NodePath("Erazor/DamageAnimator")
 cutsceneCamera = NodePath("CutsceneCamera")
 duelCamera = NodePath("DuelCamera")
 normalCameraResource = ExtResource("24_pwxop")
 duelCameraResource = ExtResource("15_ye8st")
 recenterLockout = NodePath("DuelCamera/RecenterLockout")
 stopLockout = NodePath("DuelCamera/StopLockout")
+dialogTriggers = [NodePath("Voice/ShahraHint"), NodePath("Voice/DamageHint"), NodePath("Voice/Hit1"), NodePath("Voice/Hit2"), NodePath("Voice/Duel1"), NodePath("Voice/Duel2"), NodePath("Voice/ErazorGrunt"), NodePath("Voice/ErazorWarn")]
 attackPatterns = PackedStringArray("fvfiflfiifdfi", "ficlfivficzfifd", "fiviczfiivclfvvczfd")
 attackDelays = PackedFloat32Array(0.4, 0.2, 0)
 attackSpeedScales = PackedFloat32Array(0.8, 1, 1.2)
@@ -1536,8 +1624,13 @@ windupDelays = PackedFloat32Array(0.3, 0.2, 0.1)
 [node name="AnimationPlayer" parent="Erazor" index="1"]
 callback_mode_process = 0
 
+[node name="DamageAnimator" type="AnimationPlayer" parent="Erazor"]
+libraries = {
+&"": SubResource("AnimationLibrary_illsf")
+}
+
 [node name="RootAttachment" type="Node3D" parent="."]
-transform = Transform3D(0.99985427, 0, 0, 0, -4.3704496e-08, 0.99983555, 0, -0.9998423, -4.37042e-08, 0, 0, 1.6724358e-05)
+transform = Transform3D(0.99985427, 0, 0, 0, -4.3704524e-08, 0.99983585, 0, -0.99984294, -4.3704212e-08, 0, 0, 1.6724358e-05)
 script = ExtResource("2_xu0gp")
 skeleton = NodePath("../Erazor/ErazorRoot/Skeleton3D")
 boneName = &"root"
@@ -1881,7 +1974,7 @@ bus = &"GAME SFX"
 attenuation_filter_cutoff_hz = 20500.0
 
 [node name="HeadAttachment" type="Node3D" parent="."]
-transform = Transform3D(0.9998095, 4.949957e-07, -4.9499954e-07, -4.9498254e-07, 0.9998357, 2.8740985e-07, 4.949827e-07, -2.8740726e-07, 0.9998439, -1.12708975e-07, 7.2600017, 2.5939093e-05)
+transform = Transform3D(0.99981064, 4.9499585e-07, -4.949995e-07, -4.949831e-07, 0.999836, 2.8740982e-07, 4.949833e-07, -2.8740735e-07, 0.9998438, -1.12708975e-07, 7.2600017, 2.5939093e-05)
 script = ExtResource("2_xu0gp")
 skeleton = NodePath("../Erazor/ErazorRoot/Skeleton3D")
 boneName = &"head"
@@ -1945,6 +2038,32 @@ local_coords = true
 process_material = SubResource("ParticleProcessMaterial_xelnk")
 draw_pass_1 = SubResource("QuadMesh_eslb3")
 
+[node name="DamageRedDust" type="GPUParticles3D" parent="HeadAttachment"]
+transform = Transform3D(1, -6.9514385e-09, -2.8608156e-09, -7.450608e-09, 0.49999997, 0.8660255, -3.7252335e-09, -0.8660255, 0.50000006, -2.2737368e-13, 1.0000029, 1.9073486e-06)
+layers = 32
+cast_shadow = 0
+emitting = false
+amount = 32
+lifetime = 0.4
+fixed_fps = 0
+interpolate = false
+transform_align = 2
+process_material = SubResource("ParticleProcessMaterial_xvivb")
+draw_pass_1 = SubResource("QuadMesh_xelnk")
+
+[node name="DamageSplatter" type="GPUParticles3D" parent="HeadAttachment"]
+transform = Transform3D(1, 0, 0, 0, 0.70710677, 0.70710677, 0, -0.70710677, 0.70710677, 0, 1, 0)
+layers = 32
+cast_shadow = 0
+emitting = false
+amount = 128
+lifetime = 0.4
+fixed_fps = 0
+interpolate = false
+local_coords = true
+process_material = SubResource("ParticleProcessMaterial_xelnk")
+draw_pass_1 = SubResource("QuadMesh_eslb3")
+
 [node name="Damage" type="AudioStreamPlayer3D" parent="HeadAttachment"]
 stream = ExtResource("23_sgvfh")
 attenuation_model = 3
@@ -1963,7 +2082,7 @@ max_distance = 150.0
 bus = &"GAME SFX"
 
 [node name="EdgeAttachment" type="Node3D" parent="."]
-transform = Transform3D(3.155775e-08, 0.9658129, -0.25878286, 0.9998493, 1.9468443e-07, 8.4848597e-07, 8.699523e-07, -0.25878888, -0.9657904, 4.1420135, 6.082181, 2.2401326)
+transform = Transform3D(3.1557764e-08, 0.9658128, -0.25878268, 0.9998497, 1.946844e-07, 8.4848546e-07, 8.699526e-07, -0.25878885, -0.9657898, 4.1420135, 6.082181, 2.2401326)
 script = ExtResource("2_xu0gp")
 skeleton = NodePath("../Erazor/ErazorRoot/Skeleton3D")
 boneName = &"edge"
@@ -2174,7 +2293,7 @@ max_polyphony = 2
 bus = &"GAME SFX"
 
 [node name="ChainAttachment" type="Node3D" parent="."]
-transform = Transform3D(0.9998546, -3.678325e-07, -1.6078528e-14, 0, -4.3704915e-08, 0.9998555, -3.678335e-07, -0.9998519, -4.370507e-08, 4.4252667, 6.685099, -1.0693915)
+transform = Transform3D(0.9998405, -3.6783246e-07, -1.6078532e-14, 0, -4.3704908e-08, 0.9998558, -3.678283e-07, -0.99985176, -4.3705086e-08, 4.4252667, 6.685099, -1.0693915)
 script = ExtResource("2_xu0gp")
 skeleton = NodePath("../Erazor/ErazorRoot/Skeleton3D")
 boneName = &"chain"
@@ -2388,50 +2507,65 @@ shape = SubResource("CapsuleShape3D_d1xp1")
 
 [node name="Intro" type="Node3D" parent="Voice" node_paths=PackedStringArray("randomizedDialogTriggers")]
 script = ExtResource("18")
-delays = [0.0, 0.0]
+delays = [9.0, 0.0]
+displayLength = Array[float]([3.5, 5.0])
 textKeys = ["nig_boss_intro_so", "nig_boss_intro_er"]
-randomizedDialogTriggers = []
-
-[node name="Duel" type="Node3D" parent="Voice" node_paths=PackedStringArray("randomizedDialogTriggers")]
-script = ExtResource("18")
-delays = []
-displayLength = [4.0]
-textKeys = ["nig_boss_duel_er"]
-randomizedDialogTriggers = []
-
-[node name="DuelAlt" type="Node3D" parent="Voice" node_paths=PackedStringArray("randomizedDialogTriggers")]
-script = ExtResource("18")
-delays = []
-displayLength = [4.0]
-textKeys = ["nig_boss_duel_alt_er"]
 randomizedDialogTriggers = []
 
 [node name="ShahraHint" type="Node3D" parent="Voice" node_paths=PackedStringArray("randomizedDialogTriggers")]
 script = ExtResource("18")
-delays = []
-displayLength = []
-textKeys = ["nig_boss_duel_sh"]
+textKeys = Array[String](["nig_boss_warn_sh"])
 randomizedDialogTriggers = []
 
-[node name="Sonic" type="Node3D" parent="Voice" node_paths=PackedStringArray("randomizedDialogTriggers")]
+[node name="DamageHint" type="Node3D" parent="Voice" node_paths=PackedStringArray("randomizedDialogTriggers")]
 script = ExtResource("18")
-delays = [0.0]
-displayLength = []
-textKeys = ["nig_boss_duel_so"]
+displayLength = Array[float]([4.0])
+textKeys = ["nig_boss_hint"]
 randomizedDialogTriggers = []
 
-[node name="Hint1" type="Node3D" parent="Voice" node_paths=PackedStringArray("randomizedDialogTriggers")]
+[node name="Hit1" type="Node3D" parent="Voice" node_paths=PackedStringArray("randomizedDialogTriggers")]
 script = ExtResource("18")
-delays = []
-displayLength = [2.0]
-textKeys = ["nig_boss_duel_hint1"]
+textKeys = ["nig_boss_hit1_so", "nig_boss_hit1_er"]
 randomizedDialogTriggers = []
 
-[node name="Hint2" type="Node3D" parent="Voice" node_paths=PackedStringArray("randomizedDialogTriggers")]
+[node name="Hit2" type="Node3D" parent="Voice" node_paths=PackedStringArray("randomizedDialogTriggers")]
 script = ExtResource("18")
-delays = []
-displayLength = [2.0]
-textKeys = ["nig_boss_duel_hint2"]
+textKeys = ["nig_boss_hit2_so", "nig_boss_hit2_er"]
+randomizedDialogTriggers = []
+
+[node name="Duel1" type="Node3D" parent="Voice" node_paths=PackedStringArray("randomizedDialogTriggers")]
+script = ExtResource("18")
+isOneShot = false
+randomize = true
+displayLength = Array[float]([3.0, 3.0])
+textKeys = Array[String](["nig_boss_duel_er", "nig_boss_duel2_er"])
+randomizedDialogTriggers = []
+
+[node name="Duel2" type="Node3D" parent="Voice" node_paths=PackedStringArray("randomizedDialogTriggers")]
+script = ExtResource("18")
+isOneShot = false
+randomize = true
+displayLength = Array[float]([2.0, 2.0, 2.0, 2.0, 2.0])
+textKeys = Array[String](["nig_boss_duel_so", "nig_boss_duel_hint1", "nig_boss_duel_hint2", "nig_boss_duel_hint3", "nig_boss_duel_hint4"])
+randomizedDialogTriggers = []
+
+[node name="ErazorGrunt" type="Node3D" parent="Voice" node_paths=PackedStringArray("randomizedDialogTriggers")]
+script = ExtResource("18")
+isOneShot = false
+textKeys = Array[String](["nig_boss_grunt_er"])
+randomizedDialogTriggers = []
+
+[node name="ErazorWarn" type="Node3D" parent="Voice" node_paths=PackedStringArray("randomizedDialogTriggers")]
+script = ExtResource("18")
+isOneShot = false
+textKeys = Array[String](["nig_boss_warn_er"])
+randomizedDialogTriggers = []
+
+[node name="Defeat" type="Node3D" parent="Voice" node_paths=PackedStringArray("randomizedDialogTriggers")]
+script = ExtResource("18")
+delays = [5.0, 1.0]
+displayLength = Array[float]([4.5, 3.5])
+textKeys = ["nig_boss_defeat_er", "nig_boss_defeat_so"]
 randomizedDialogTriggers = []
 
 [node name="IntroDialog" type="AudioStreamPlayer" parent="Voice"]
@@ -2440,7 +2574,6 @@ script = ExtResource("28_uvwtd")
 audioPaths = PackedStringArray("res://sound/boss/erazor/ev_01_stg073_en.ogg", "res://sound/boss/erazor/ev_01_stg073_ja.ogg", "res://sound/boss/erazor/ev_01_stg073_es.ogg")
 
 [node name="DefeatDialog" type="AudioStreamPlayer" parent="Voice"]
-stream = ExtResource("14_nnxp6")
 bus = &"VOICE"
 script = ExtResource("28_uvwtd")
 audioPaths = PackedStringArray("res://sound/boss/erazor/ev_02_stg073_en.ogg", "res://sound/boss/erazor/ev_02_stg073_ja.ogg", "res://sound/boss/erazor/ev_02_stg073_es.ogg")
@@ -3033,6 +3166,8 @@ libraries = {
 &"EventLibrary": ExtResource("50_x1p43")
 }
 
+[connection signal="CutsceneFinished" from="." to="Voice/Intro" method="Deactivate"]
+[connection signal="CutsceneFinished" from="." to="Voice/Defeat" method="Deactivate"]
 [connection signal="CutsceneFinished" from="." to="Voice/IntroDialog" method="stop" flags=3]
 [connection signal="CutsceneFinished" from="." to="Voice/DefeatDialog" method="stop" flags=3]
 [connection signal="DuelStarted" from="." to="DuelCamera/DuelTransitionStart" method="play" binds= [0.0]]

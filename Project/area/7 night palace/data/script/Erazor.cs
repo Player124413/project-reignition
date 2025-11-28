@@ -11,6 +11,7 @@ public partial class Erazor : Node3D
 	[Signal] public delegate void DuelStartedEventHandler();
 
 	[Export] private AnimationTree animationTree;
+	[Export] private AnimationPlayer damageFxAnimator;
 	[Export] private PathFollow3D bossPathFollower;
 	[Export] private CameraTrigger cutsceneCamera;
 	[Export] private CameraTrigger duelCamera;
@@ -18,6 +19,9 @@ public partial class Erazor : Node3D
 	[Export] private CameraSettingsResource duelCameraResource;
 	[Export] private LockoutTrigger recenterLockout;
 	[Export] private LockoutTrigger stopLockout;
+
+	[Export] private DialogTrigger[] dialogTriggers;
+	private int currentDialogIndex;
 
 	[Export] private string[] attackPatterns;
 	/// <summary> Tracks the index of the current phase. </summary>
@@ -150,6 +154,7 @@ public partial class Erazor : Node3D
 		animationTree.Set(TeleportTrigger, (int)AnimationNodeOneShot.OneShotRequest.Abort);
 		animationTree.Set(AttackTrigger, (int)AnimationNodeOneShot.OneShotRequest.Abort);
 		animationTree.Set(DamageTrigger, (int)AnimationNodeOneShot.OneShotRequest.Abort);
+		damageFxAnimator.Play("RESET");
 	}
 
 	private void StartIntroduction()
@@ -333,6 +338,8 @@ public partial class Erazor : Node3D
 				CurrentFightState = FightState.Hitstun;
 			}
 
+			damageFxAnimator.Seek(0.0);
+			damageFxAnimator.Play("damage");
 			Player.StartBounce();
 		}
 
@@ -348,8 +355,30 @@ public partial class Erazor : Node3D
 		}
 	}
 
+	private void CheckDamageDialog()
+	{
+		if (currentDialogIndex <= 1) // Damage 1 voice index
+		{
+			currentDialogIndex = 2;
+			PlayDialog();
+		}
+		else if (currentDialogIndex == 3 && currentHealth <= MaxHealth / 2) // Phase 2 damage voice
+		{
+			PlayDialog();
+		}
+	}
+
+	/// <summary> Plays the current dialog index, then increments the dialog index. </summary>
+	private void PlayDialog()
+	{
+		dialogTriggers[currentDialogIndex].Activate();
+		currentDialogIndex++;
+	}
+
 	private void FinishHitstun()
 	{
+		CheckDamageDialog();
+
 		// Cram in a far teleport into the pattern so Erazor doesn't shift in front of the player
 		if (attackPatterns[currentAttackPatternIndex][currentCharacterIndex] != 'f')
 		{
@@ -499,6 +528,9 @@ public partial class Erazor : Node3D
 		currentDistance = DuelDistance;
 		SnapDistance();
 
+		dialogTriggers[4].Activate(); // Play part A dialog
+		dialogTriggers[5].Activate(); // Queue randomized part B
+
 		stateTimer = DuelAttackStartup;
 		EmitSignal(SignalName.DuelStarted);
 	}
@@ -564,6 +596,9 @@ public partial class Erazor : Node3D
 
 	public void FinishDuel()
 	{
+		if (CurrentFightState == FightState.DuelHitstun)
+			CheckDamageDialog();
+
 		CurrentFightState = FightState.Idle;
 		stateTimer = 0f;
 
@@ -597,6 +632,21 @@ public partial class Erazor : Node3D
 		AttackStatePlayback.Start($"attack-{currentCharacter}-start");
 		animationTree.Set(AttackSpeed, attackSpeedScales[currentAttackPatternIndex]);
 		animationTree.Set(AttackTrigger, (int)AnimationNodeOneShot.OneShotRequest.Fire);
+
+		if (currentDialogIndex == 0) // Shahra hint
+		{
+			PlayDialog();
+			return;
+		}
+
+		if (SoundManager.instance.IsSubtitlesActive || Runtime.randomNumberGenerator.Randf() < 0.8f)
+			return;
+
+		// Play dialog as needed
+		if (currentCharacter == 'i' || currentCharacter == 'v') // Light attack
+			dialogTriggers[6].Activate();
+		else // Heavy attack
+			dialogTriggers[7].Activate();
 	}
 
 	private void StartAttackStrike()
@@ -610,6 +660,9 @@ public partial class Erazor : Node3D
 	{
 		CurrentFightState = FightState.Idle;
 		stateTimer = attackDelays[currentAttackPatternIndex];
+
+		if (currentDialogIndex == 1 && currentCharacter == 'l') // Hint
+			PlayDialog();
 	}
 
 	/// <summary> Snaps Erazor's distance to currentDistance. </summary>

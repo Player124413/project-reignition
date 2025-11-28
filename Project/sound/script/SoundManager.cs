@@ -134,7 +134,6 @@ public partial class SoundManager : Node
 		{
 			if (!SaveManager.Config.isSubtitleDisabled)
 				subtitleAnimator.Play("deactivate");
-			CallDeferred(MethodName.UpdateDialog, true);
 		}
 		else
 		{
@@ -160,6 +159,16 @@ public partial class SoundManager : Node
 
 		if (dialogChannel.IsConnected(AudioStreamPlayer.SignalName.Finished, new Callable(this, MethodName.OnDialogFinished)))
 			dialogChannel.Disconnect(AudioStreamPlayer.SignalName.Finished, new Callable(this, MethodName.OnDialogFinished));
+
+	}
+
+	private void OnSubtitleAnimationFinished()
+	{
+		if (IsSubtitlesActive)
+		{
+			UpdateDialog(true);
+			return;
+		}
 
 		if (dialogQueue.Count != 0) // Start queued dialog if it exists
 			PlayDialog(dialogQueue.Dequeue());
@@ -192,7 +201,7 @@ public partial class SoundManager : Node
 		if (targetStream != null) // Using audio
 		{
 			dialogChannel.Stream = targetStream;
-			subtitleLabel.Text = Tr(currentDialog.textKeys[currentDialogIndex]);
+			subtitleLabel.Text = FormatText(Tr(currentDialog.textKeys[currentDialogIndex]));
 			dialogChannel.Play();
 			if (!currentDialog.HasLength(currentDialogIndex))// Use audio length
 			{
@@ -214,13 +223,21 @@ public partial class SoundManager : Node
 
 			if (string.IsNullOrEmpty(key) || key.EndsWith("*")) // Cutscene Support - To avoid busywork in editor
 				key = currentDialog.textKeys[0].Replace("*", (currentDialogIndex + 1).ToString());
-			subtitleLabel.Text = Tr(key); // Update subtitles
+			subtitleLabel.Text = FormatText(Tr(key)); // Update subtitles
 		}
 
 		// If we've made it this far, we're using the custom specified time
 		if (!delayTimer.IsConnected(Timer.SignalName.Timeout, new Callable(this, MethodName.OnDialogFinished)))
 			delayTimer.Connect(Timer.SignalName.Timeout, new Callable(this, MethodName.OnDialogFinished), (uint)ConnectFlags.OneShot);
 		delayTimer.Start(currentDialog.displayLength[currentDialogIndex]);
+	}
+
+	/// <summary> Replaces curly braces with quotation marks for cutscene subtitles. </summary>
+	private string FormatText(string text)
+	{
+		text = text.Replace('{', '"');
+		text = text.Replace('}', '"');
+		return text;
 	}
 
 	public bool IsSonicSfxVoiceChannelActive { get; set; }
