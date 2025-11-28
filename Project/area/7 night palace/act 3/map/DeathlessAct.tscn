@@ -1,10 +1,11 @@
-[gd_scene load_steps=87 format=3 uid="uid://q12qnxopos6l"]
+[gd_scene load_steps=88 format=3 uid="uid://q12qnxopos6l"]
 
 [ext_resource type="PackedScene" uid="uid://bdb1nsoasmspq" path="res://area/7 night palace/act 3/Static.tscn" id="1_7kcp2"]
 [ext_resource type="PackedScene" uid="uid://cjupypih0myxo" path="res://object/player/CharacterSpawn.tscn" id="2_l07u7"]
 [ext_resource type="Resource" uid="uid://cy2sh1olcrbuc" path="res://resource/level data/night palace/Act3Deathless.tres" id="2_shcwo"]
 [ext_resource type="Script" uid="uid://kvlmbv66orqt" path="res://object/trigger/modules/CullingTrigger.cs" id="4_eok7x"]
 [ext_resource type="Script" uid="uid://dd24u7rlj0dwl" path="res://addons/custom_nodes/script/ObjectGenerator.cs" id="4_pimmg"]
+[ext_resource type="Script" uid="uid://bitgnn108jmaa" path="res://object/trigger/modules/DialogTrigger.cs" id="5_abm0g"]
 [ext_resource type="PackedScene" uid="uid://c7l8mr7ubn848" path="res://object/stage/pickups/Ring.tscn" id="5_hu5kg"]
 [ext_resource type="PackedScene" uid="uid://d0b2gvx7s6s8u" path="res://object/stage/pickups/Pearl.tscn" id="6_jovjt"]
 [ext_resource type="PackedScene" uid="uid://bhnh1as6xgpiy" path="res://object/stage/common/DashPanel.tscn" id="7_jovjt"]
@@ -1098,6 +1099,72 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1500, 0, -560)
 metadata/_edit_lock_ = true
 
 [node name="CharacterSpawn" parent="DeathlessAct/SpawnPosition" instance=ExtResource("2_l07u7")]
+
+[node name="DialogTriggers" type="Node3D" parent="DeathlessAct"]
+
+[node name="StartTrigger" parent="DeathlessAct/DialogTriggers" instance=ExtResource("11_q8pby")]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 1517, 0, -560.00006)
+collision_layer = 0
+OneShot = true
+"Respawn Mode" = 4
+"Enter Mode" = 0
+
+[node name="Dialog" type="Node3D" parent="DeathlessAct/DialogTriggers/StartTrigger" node_paths=PackedStringArray("randomizedDialogTriggers")]
+script = ExtResource("5_abm0g")
+textKeys = ["nig_lost_so", "nig_lost_sh"]
+randomizedDialogTriggers = []
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="DeathlessAct/DialogTriggers/StartTrigger"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 10, 0)
+shape = SubResource("BoxShape3D_bqgfg")
+
+[node name="DejavuTrigger" parent="DeathlessAct/DialogTriggers" instance=ExtResource("11_q8pby")]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 1425, -4.5, -421.70004)
+collision_layer = 0
+OneShot = true
+"Respawn Mode" = 4
+"Enter Mode" = 0
+
+[node name="Dialog" type="Node3D" parent="DeathlessAct/DialogTriggers/DejavuTrigger" node_paths=PackedStringArray("randomizedDialogTriggers")]
+script = ExtResource("5_abm0g")
+textKeys = ["nig_deja_vu_so", "nig_deja_vu_sh"]
+randomizedDialogTriggers = []
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="DeathlessAct/DialogTriggers/DejavuTrigger"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 10, 0)
+shape = SubResource("BoxShape3D_bqgfg")
+
+[node name="SpearTrigger" parent="DeathlessAct/DialogTriggers" instance=ExtResource("11_q8pby")]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 942, 0, -640)
+collision_layer = 0
+OneShot = true
+"Respawn Mode" = 4
+"Enter Mode" = 0
+
+[node name="Dialog" type="Node3D" parent="DeathlessAct/DialogTriggers/SpearTrigger" node_paths=PackedStringArray("randomizedDialogTriggers")]
+script = ExtResource("5_abm0g")
+textKeys = ["nig_hint_spears2_sh", "nig_hint_spears2_so"]
+randomizedDialogTriggers = []
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="DeathlessAct/DialogTriggers/SpearTrigger"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 10, 0)
+shape = SubResource("BoxShape3D_bqgfg")
+
+[node name="SpinningTrigger" parent="DeathlessAct/DialogTriggers" instance=ExtResource("11_q8pby")]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 1447, -31, -299.99997)
+collision_layer = 0
+OneShot = true
+"Respawn Mode" = 4
+"Enter Mode" = 0
+
+[node name="Dialog" type="Node3D" parent="DeathlessAct/DialogTriggers/SpinningTrigger" node_paths=PackedStringArray("randomizedDialogTriggers")]
+script = ExtResource("5_abm0g")
+textKeys = ["nig_spinning_room_sh", "nig_spinning_room_so"]
+randomizedDialogTriggers = []
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="DeathlessAct/DialogTriggers/SpinningTrigger"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 10, 0)
+shape = SubResource("BoxShape3D_bqgfg")
 
 [node name="Opening" type="Node3D" parent="DeathlessAct"]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 1500, 0, -560)
