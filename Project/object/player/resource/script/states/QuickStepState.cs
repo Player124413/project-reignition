@@ -32,7 +32,8 @@ public partial class QuickStepState : PlayerState
 		currentStepLength = 0.0f;
 
 		stepDirection = 1;
-		if (SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.FreeRoam))
+		if (SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.FreeRoam) &&
+			(!Player.IsLockoutActive || !Player.IsLockoutOverridingMovementAngle))
 		{
 			stepDirection = Mathf.Sign(ExtensionMethods.DotAngle(Player.MovementAngle, Player.Controller.XformAngle));
 			if (stepDirection == 0)
