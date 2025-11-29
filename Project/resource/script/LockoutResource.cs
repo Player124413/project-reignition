@@ -221,6 +221,7 @@ public partial class LockoutResource : Resource
 		Attacks = 8,
 		Sidestep = 16,
 		Lightdash = 32,
+		SpeedBreak = 64,
 		GeneralActions = ActionButton + Attacks + Backflip + Sidestep + Lightdash,
 	}
 
