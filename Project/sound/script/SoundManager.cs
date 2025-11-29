@@ -73,6 +73,8 @@ public partial class SoundManager : Node
 	private Queue<DialogTrigger> dialogQueue = [];
 	public void QueueDialog(DialogTrigger dialog) => dialogQueue.Enqueue(dialog);
 
+	public void ClearQueue() => dialogQueue.Clear();
+
 	public void PlayDialog(DialogTrigger dialog)
 	{
 		if (dialog.DialogCount == 0 || DebugManager.Instance.DisableDialog || SaveManager.Config.isDialogDisabled) return; // No dialog
@@ -379,7 +381,7 @@ public partial class SoundManager : Node
 	private readonly Dictionary<StringName, int> sfxGroups = [];
 	private readonly Dictionary<StringName, float> sfxGroupTimers = [];
 	/// <summary> Minimum amount of time that must pass before a sfx group can play again. </summary>
-	private readonly float groupSfxSpacing = 0.2f;
+	private readonly float groupSfxSpacing = 0.5f;
 
 	private void UpdateSfxGroups()
 	{
@@ -415,8 +417,8 @@ public partial class SoundManager : Node
 	{
 		if (sfxGroups.TryGetValue(key, out int value))
 		{
-			sfxGroups[key] = --value;
-			if (value < 0)
+			sfxGroups[key] = value - 1;
+			if (sfxGroups[key] < 0)
 			{
 				sfxGroups.Remove(key);
 				sfxGroupTimers.Remove(key);

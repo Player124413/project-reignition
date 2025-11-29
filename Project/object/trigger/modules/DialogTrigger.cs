@@ -41,6 +41,7 @@ public partial class DialogTrigger : StageTriggerModule
 
 		if (playbackType == PlaybackMode.Always || !SoundManager.instance.IsSubtitlesActive)
 		{
+			SoundManager.instance.ClearQueue();
 			SoundManager.instance.PlayDialog(GetRandomDialogTrigger());
 			return;
 		}
