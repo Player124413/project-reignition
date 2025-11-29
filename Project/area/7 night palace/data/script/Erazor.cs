@@ -560,6 +560,7 @@ public partial class Erazor : Node3D
 
 		Player.MoveSpeed = 0;
 		Player.SnapToGround();
+
 		Player.Skills.CancelBreakSkills();
 		Player.Skills.DisableBreakSkills();
 		stopLockout.Activate();

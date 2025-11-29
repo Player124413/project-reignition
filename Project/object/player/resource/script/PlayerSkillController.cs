@@ -259,7 +259,10 @@ public partial class PlayerSkillController : Node3D
 
 	public void CancelBreakSkills()
 	{
-		IsTimeBreakActive = IsSpeedBreakActive = false;
+		if (IsTimeBreakActive) // Cancel time break
+			ToggleTimeBreak();
+		if (IsSpeedBreakActive) // Cancel speed break
+			ToggleTimeBreak();
 		timeBreakAnimator.Play("RESET");
 		timeBreakAnimator.Advance(0);
 
