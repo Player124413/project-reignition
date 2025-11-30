@@ -1,0 +1,96 @@
+[gd_scene load_steps=10 format=3 uid="uid://mpx28q1qmiyp"]
+
+[ext_resource type="PackedScene" uid="uid://byf372uaewx1u" path="res://interface/menu/level select/ReadyMenu.tscn" id="1_mxanw"]
+[ext_resource type="Script" uid="uid://cicbbc02b3gij" path="res://interface/menu/time attack/script/TimeAttackReady.cs" id="1_t0lx7"]
+[ext_resource type="PackedScene" uid="uid://bt32kmhyoo7ec" path="res://interface/menu/skill select/SkillSelect.tscn" id="2_t0lx7"]
+[ext_resource type="PackedScene" uid="uid://c4ohuqlywe4f" path="res://interface/menu/Description.tscn" id="4_kona0"]
+[ext_resource type="AudioStream" uid="uid://vx6xk003rnh0" path="res://sound/ost/bonus disc/Time Attack Loop Fixed.mp3" id="5_ybopv"]
+[ext_resource type="Script" uid="uid://cj76gvi7tbku6" path="res://sound/script/BGMPlayer.cs" id="6_odnbn"]
+
+[sub_resource type="Animation" id="Animation_t0lx7"]
+resource_name = "RESET"
+
+[sub_resource type="Animation" id="Animation_mxanw"]
+resource_name = "show"
+step = 0.1
+tracks/0/type = "method"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("ReadyMenu")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"ShowMenu"
+}]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_kona0"]
+_data = {
+&"RESET": SubResource("Animation_t0lx7"),
+&"show": SubResource("Animation_mxanw")
+}
+
+[node name="TimeAttackReady" type="Control" node_paths=PackedStringArray("readyMenu", "skillMenu", "parentMenu", "bgm", "animator")]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_t0lx7")
+readyMenu = NodePath("ReadyMenu")
+skillMenu = NodePath("SkillSelect")
+parentMenu = NodePath("")
+submenus = Array[NodePath]([NodePath("ReadyMenu")])
+bgm = NodePath("BGM")
+animator = NodePath("AnimationPlayer")
+isProcessing = true
+
+[node name="ReadyMenu" parent="." node_paths=PackedStringArray("description", "parentMenu") instance=ExtResource("1_mxanw")]
+layout_mode = 1
+description = NodePath("../Description/Description")
+parentMenu = NodePath(".")
+submenus = Array[NodePath]([NodePath("../SkillSelect")])
+
+[node name="SkillSelect" parent="." node_paths=PackedStringArray("parentMenu") instance=ExtResource("2_t0lx7")]
+layout_mode = 1
+parentMenu = NodePath("..")
+submenus = Array[NodePath]([])
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+&"": SubResource("AnimationLibrary_kona0")
+}
+
+[node name="Description" type="Control" parent="."]
+z_index = 100
+layout_mode = 1
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 961.0
+offset_top = -252.0
+offset_right = -959.0
+offset_bottom = -252.0
+grow_horizontal = 2
+grow_vertical = 0
+metadata/_edit_group_ = true
+
+[node name="Description" parent="Description" instance=ExtResource("4_kona0")]
+layout_mode = 1
+anchors_preset = -1
+anchor_top = 0.0
+offset_top = 0.0
+offset_bottom = 256.0
+grow_vertical = 1
+
+[node name="BGM" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("5_ybopv")
+bus = &"BGM"
+script = ExtResource("6_odnbn")
+loopStartPosition = 81.6
+loopEndPosition = 249.05

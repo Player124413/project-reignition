@@ -8,7 +8,7 @@ public partial class TimeAttack : Menu
 {
 	[Export] AnimationPlayer timeAttackAnimator;
 	[Export] private Description description;
-	[Export] private ReadyMenu readyMenu;
+	[Export] private TimeAttackReady readyMenu;
 	private bool isActive;
 	private int currentSelection;
 	private int maxSelection = 4;
@@ -23,6 +23,7 @@ public partial class TimeAttack : Menu
 		base.ShowMenu();
 		currentSelection = 1;
 		menuMemory[MemoryKeys.ActiveMenu] = (int)MemoryKeys.TimeAttack;
+
 	}
 
 	public override void OpenParentMenu()

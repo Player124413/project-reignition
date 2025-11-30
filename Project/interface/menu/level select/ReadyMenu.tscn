@@ -5,7 +5,7 @@
 [ext_resource type="Texture2D" uid="uid://vbh7a47k4llw" path="res://interface/menu/title/texture/transition fade.png" id="3_kki8l"]
 [ext_resource type="Texture2D" uid="uid://k8exixourkta" path="res://interface/menu/main/texture/char.png" id="3_kwgm4"]
 [ext_resource type="Texture2D" uid="uid://cno436k6axxi5" path="res://interface/menu/main/texture/background.png" id="4_x0w6p"]
-[ext_resource type="Shader" uid="uid://dj2vtehay1fej" path="res://effect/shader/interface/InterfaceFlashAdd.gdshader" id="6_03cqa"]
+[ext_resource type="Shader" uid="uid://cywcr73eavwo2" path="res://effect/shader/interface/InterfaceFlashAdd.gdshader" id="6_03cqa"]
 [ext_resource type="SpriteFrames" uid="uid://blsqrm1eukmr2" path="res://effect/particle/sprite frames/Flame Menu Small.tres" id="6_kwgm4"]
 [ext_resource type="AudioStream" uid="uid://huxte6rhwx58" path="res://sound/sfx/system/menu selection.wav" id="7_5a0w1"]
 [ext_resource type="AudioStream" uid="uid://cl54rftw5aiyf" path="res://sound/sfx/system/menu cancel.wav" id="8_2da68"]
@@ -1256,6 +1256,7 @@ grow_vertical = 2
 script = ExtResource("1_ldudh")
 mapLabel = NodePath("Menu/Text/MapLabel")
 missionLabel = NodePath("Menu/Text/MissionLabel")
+submenus = Array[NodePath]([])
 animator = NodePath("AnimationPlayer")
 
 [node name="Background" type="Control" parent="."]
@@ -1279,7 +1280,6 @@ color = Color(0, 0, 0, 1)
 [node name="BackgroundClip" type="Control" parent="Background"]
 clip_contents = true
 layout_mode = 1
-anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 offset_bottom = -1.60205
@@ -1288,7 +1288,7 @@ grow_vertical = 2
 
 [node name="Background" type="TextureRect" parent="Background/BackgroundClip"]
 layout_mode = 1
-anchors_preset = 10
+anchors_preset = -1
 anchor_right = 1.0
 offset_bottom = 1078.4
 grow_horizontal = 2
@@ -1298,7 +1298,7 @@ stretch_mode = 6
 
 [node name="Char" type="TextureRect" parent="Background/BackgroundClip"]
 layout_mode = 1
-anchors_preset = 10
+anchors_preset = -1
 anchor_right = 1.0
 offset_bottom = 1078.4
 grow_horizontal = 2
@@ -1581,7 +1581,6 @@ libraries = {
 [node name="Menu" type="Control" parent="."]
 visible = false
 layout_mode = 1
-anchors_preset = 13
 anchor_left = 0.5
 anchor_right = 0.5
 anchor_bottom = 1.0
@@ -1630,7 +1629,7 @@ region_rect = Rect2(367, 0, 140, 60)
 
 [node name="Background" type="NinePatchRect" parent="Menu/Window"]
 self_modulate = Color(1, 1, 1, 0.588235)
-anchors_preset = 15
+anchors_preset = -1
 anchor_right = 1.0
 anchor_bottom = 1.0
 offset_left = -488.0
@@ -1790,7 +1789,6 @@ sprite_frames = ExtResource("32_skf7y")
 autoplay = "default"
 
 [node name="Buttons" type="Control" parent="Menu/Text"]
-layout_mode = 2
 anchors_preset = 0
 offset_left = 960.0
 offset_top = 640.0
@@ -1925,7 +1923,7 @@ vertical_alignment = 1
 [node name="NavigationButtons" type="HBoxContainer" parent="Menu"]
 modulate = Color(1, 1, 1, 0)
 layout_mode = 1
-anchors_preset = 14
+anchors_preset = -1
 anchor_top = 0.5
 anchor_right = 1.0
 anchor_bottom = 0.5
@@ -1938,21 +1936,16 @@ alignment = 1
 
 [node name="Select" parent="Menu/NavigationButtons" instance=ExtResource("35_edhiv")]
 layout_mode = 2
-ActionKey = "sys_select"
 inputKey = &"sys_select"
 fallbackKey = &"ui_select"
 
 [node name="Cancel" parent="Menu/NavigationButtons" instance=ExtResource("35_edhiv")]
 layout_mode = 2
-ActionKey = "sys_return"
 inputKey = &"sys_cancel"
 fallbackKey = &"ui_cancel"
 
 [node name="Skill" parent="Menu/NavigationButtons" instance=ExtResource("35_edhiv")]
 layout_mode = 2
-ActionKey = "sys_skill"
-inputKey = "sys_pause"
-fallbackKey = "ui_accept"
 
 [node name="Flames" parent="." instance=ExtResource("31_1njce")]
 modulate = Color(1, 1, 1, 0)

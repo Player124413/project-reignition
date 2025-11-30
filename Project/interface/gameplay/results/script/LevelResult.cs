@@ -80,8 +80,14 @@ public partial class LevelResult : Control
 			SetInputProcessing(false);
 
 			// Determine which scene to load without connecting it
-			if (Runtime.Instance.IsActionJustPressed("sys_cancel", "ui_cancel")) // Retry stage
+			if (Runtime.Instance.IsActionJustPressed("sys_cancel", "ui_cancel") && !TimeAttackManager.Instance.IsRunActive) // Retry stage
 				TransitionManager.instance.QueuedScene = string.Empty;
+			else if (TimeAttackManager.Instance.IsRunActive)
+			{
+				TimeAttackManager.Instance.IncreaseLevel();
+				TransitionManager.instance.QueuedScene = "res://interface/menu/time attack/TimeAttackReady.tscn";
+			}
+
 			else// if (Level.storyEventIndex == 0) // Load main menu
 				TransitionManager.instance.QueuedScene = TransitionManager.MenuScenePath;
 

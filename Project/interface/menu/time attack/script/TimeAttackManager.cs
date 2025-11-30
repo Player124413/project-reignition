@@ -31,7 +31,7 @@ public partial class TimeAttackManager : Node
 	private LevelDataResource[] Levels_Custom;
 
 	public int CurrentLevel { get; private set; }
-	public int IsRunActive { get; private set; }
+	public bool IsRunActive { get; private set; }
 
 
 	public override void _EnterTree()
@@ -60,6 +60,10 @@ public partial class TimeAttackManager : Node
 		return Levels_AnyPercent;
 	}
 
+	public LevelDataResource GetCurrentLevel()
+	{
+		return GetCurrentRunLevels(CurrentRunType)[CurrentLevel];
+	}
 	public LevelDataResource GetNextLevel()
 	{
 		return GetCurrentRunLevels(CurrentRunType)[CurrentLevel + 1];
@@ -73,5 +77,8 @@ public partial class TimeAttackManager : Node
 			return false;
 	}
 
+	public void IncreaseLevel() => CurrentLevel += 1;
 	public void ResetLevelCount() => CurrentLevel = 0;
+
+	public void SetRunActive(bool isActive) => IsRunActive = isActive;
 }

@@ -31,6 +31,12 @@ public partial class ReadyMenu : Menu
 			base.ShowMenu();
 		}
 
+		if (TimeAttackManager.Instance.IsRunActive)
+		{
+			if (!TimeAttackManager.Instance.IsLastLevel())
+				SetupReadyMenu(TimeAttackManager.Instance.GetCurrentLevel());
+		}
+
 		menuMemory[MemoryKeys.SkillMenuOpen] = 0;
 	}
 
@@ -53,6 +59,9 @@ public partial class ReadyMenu : Menu
 		if (HorizontalSelection == 0) // Load level
 		{
 			StopBgm(); // Stop bgm
+			if (menuMemory[MemoryKeys.ActiveMenu] == (int)MemoryKeys.TimeAttack)
+				TimeAttackManager.Instance.SetRunActive(true);
+
 			menuMemory[MemoryKeys.ActiveMenu] = (int)MemoryKeys.LevelSelect;
 			base.Confirm();
 		}
