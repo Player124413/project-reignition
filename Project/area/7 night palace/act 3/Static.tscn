@@ -1,4 +1,4 @@
-[gd_scene load_steps=77 format=3 uid="uid://bdb1nsoasmspq"]
+[gd_scene load_steps=78 format=3 uid="uid://bdb1nsoasmspq"]
 
 [ext_resource type="Script" uid="uid://dtkbvehtmy3em" path="res://object/stage/StageSettings.cs" id="1_1bbvc"]
 [ext_resource type="PackedScene" uid="uid://ctlr224must3o" path="res://area/7 night palace/act 3/environment/collision/Collision.tscn" id="2_eem6j"]
@@ -13,6 +13,7 @@
 [ext_resource type="PackedScene" uid="uid://d4ivgn14opv12" path="res://area/7 night palace/data/skybox/SpaceSkybox.tscn" id="9_dv31r"]
 [ext_resource type="PackedScene" uid="uid://bn6wr6l8s3qyt" path="res://object/trigger/StageTrigger.tscn" id="10_xejcv"]
 [ext_resource type="Script" uid="uid://bvmyay4bo83qu" path="res://object/trigger/modules/DeathTrigger.cs" id="11_eem6j"]
+[ext_resource type="PackedScene" uid="uid://d3bwpl53f2wsi" path="res://area/5 pirate storm/data/skybox/SkyboxLightning.tscn" id="12_u4n7j"]
 [ext_resource type="PackedScene" uid="uid://dftou328ishsn" path="res://area/7 night palace/data/BGM.tscn" id="13_dv31r"]
 [ext_resource type="Curve3D" uid="uid://ph6vg27125aa" path="res://area/7 night palace/act 3/environment/path/RoomDownPath.tres" id="13_eem6j"]
 [ext_resource type="Curve3D" uid="uid://drr4yu1dqycw0" path="res://area/7 night palace/act 3/environment/path/RoomSidePath.tres" id="13_jxqr2"]
@@ -450,17 +451,22 @@ background_color = Color(0.7941853, 0.007609857, 0.9866634, 1)
 background_energy_multiplier = 0.25
 ambient_light_source = 3
 ambient_light_color = Color(0.24587917, 0.00050768314, 0.62364674, 1)
-ambient_light_sky_contribution = 0.44
-ambient_light_energy = 0.2
+ambient_light_sky_contribution = 0.39
+ambient_light_energy = 1.12
 reflected_light_source = 2
 tonemap_mode = 3
 tonemap_exposure = 1.38
 tonemap_white = 2.55
 ssr_depth_tolerance = 2.61
+ssao_enabled = true
 ssao_radius = 2.71
+ssao_intensity = 1.08
 ssao_light_affect = 0.05
 ssao_ao_channel_affect = 0.05
+sdfgi_enabled = true
 sdfgi_use_occlusion = true
+sdfgi_bounce_feedback = 0.69
+sdfgi_cascades = 2
 sdfgi_min_cell_size = 0.44
 glow_enabled = true
 glow_normalized = true
@@ -488,9 +494,9 @@ volumetric_fog_albedo = Color(0, 0.5188727, 0.52805287, 1)
 volumetric_fog_emission = Color(0.1779917, 0.12229142, 0.16786438, 1)
 volumetric_fog_anisotropy = -0.8
 adjustment_enabled = true
-adjustment_brightness = 0.94
-adjustment_contrast = 1.06
-adjustment_saturation = 1.13
+adjustment_brightness = 0.88
+adjustment_contrast = 1.16
+adjustment_saturation = 1.26
 
 [sub_resource type="Animation" id="Animation_lnqhi"]
 length = 0.001
@@ -1039,6 +1045,10 @@ layers = 16
 mesh = SubResource("CylinderMesh_sxt75")
 skeleton = NodePath("../..")
 surface_material_override/0 = SubResource("StandardMaterial3D_u4n7j")
+
+[node name="PSSkyLightning" parent="Visuals/SpaceSkybox" instance=ExtResource("12_u4n7j")]
+process_priority = 1
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1054.3129, 0, -1592.0403)
 
 [node name="Trigger" type="Node3D" parent="."]
 
