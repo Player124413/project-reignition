@@ -76,7 +76,10 @@ public partial class PathTraveller : Node3D
 	private float VerticalTurnSmoothing => Bounds.Y - CollisionSmoothingDistance;
 	/// <summary> At what distance should inputs start being smoothed? </summary>
 	private readonly float CollisionSmoothingDistance = 1f;
+	/// <summary> How much to smooth speeds. </summary>
 	private readonly float SpeedSmoothing = 25f;
+	/// <summary> How much to smooth speeds when going faster than expected. </summary>
+	private readonly float OverspeedSmoothing = 80f;
 
 	protected PlayerController Player => StageSettings.Player;
 
@@ -220,7 +223,8 @@ public partial class PathTraveller : Node3D
 			return;
 		}
 
-		CurrentSpeed = ExtensionMethods.SmoothDamp(CurrentSpeed, GetCurrentMaxSpeed(), ref speedVelocity, SpeedSmoothing * PhysicsManager.physicsDelta);
+		float smoothing = CurrentSpeed <= MaxSpeed ? SpeedSmoothing : OverspeedSmoothing;
+		CurrentSpeed = ExtensionMethods.SmoothDamp(CurrentSpeed, GetCurrentMaxSpeed(), ref speedVelocity, smoothing * PhysicsManager.physicsDelta);
 	}
 
 	/// <summary> Override this if you want specific control over the PathFollower's speed. </summary>

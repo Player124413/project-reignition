@@ -145,6 +145,7 @@ public partial class GrindState : PlayerState
 		// Check if the player is holding a direction parallel to rail and start a grindstep
 		float targetInputAngle = Player.Controller.GetTargetInputAngle();
 		isAttemptingGrindStep = !Mathf.IsZeroApprox(Player.Controller.GetInputStrength()) &&
+				!Mathf.IsZeroApprox(Player.Controller.InputHorizontal) &&
 				(Player.Controller.IsHoldingDirection(targetInputAngle, Player.MovementAngle + (Mathf.Pi * .5f)) ||
 				Player.Controller.IsHoldingDirection(targetInputAngle, Player.MovementAngle - (Mathf.Pi * .5f)));
 

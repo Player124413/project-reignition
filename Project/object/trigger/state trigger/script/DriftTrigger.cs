@@ -63,6 +63,10 @@ public partial class DriftTrigger : Area3D
 		if (Player.IsMovingBackward)
 			return;
 
+		// Free roam turnaround fix
+		if (SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.FreeRoam) && ExtensionMethods.DotAngle(Player.MovementAngle, Player.PathFollower.ForwardAngle) < 0)
+			return;
+
 		if (Player.MoveSpeed / Player.Stats.baseGroundSpeed < EntranceSpeedRatio)
 			return;
 

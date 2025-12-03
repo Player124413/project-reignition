@@ -1,8 +1,10 @@
-[gd_scene load_steps=15 format=3 uid="uid://0ineyis1gx8t"]
+[gd_scene load_steps=17 format=3 uid="uid://0ineyis1gx8t"]
 
 [ext_resource type="Script" uid="uid://pnh70abopq8e" path="res://object/stage/common/resource/script/Hazard.cs" id="1_p2wlw"]
 [ext_resource type="Material" uid="uid://cf3hi6aubsx0t" path="res://effect/particle/material/explosion/Explosion Smoke Add No Billboard.tres" id="2_0qpod"]
 [ext_resource type="Material" uid="uid://bt48gjcjhfpt8" path="res://effect/particle/material/Lightning Billboard.tres" id="3_0qpod"]
+[ext_resource type="AudioStream" uid="uid://c7vytwbxiib6w" path="res://sound/sfx/stage/night palace/laser beam 1.wav" id="4_hmhce"]
+[ext_resource type="AudioStream" uid="uid://cqwv00v4wyjkl" path="res://sound/sfx/stage/night palace/laser beam 2.wav" id="5_asac1"]
 
 [sub_resource type="Curve" id="Curve_asac1"]
 _data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.3, 1), 0.0, 0.0, 0, 0, Vector2(0.8, 0), 0.0, 0.0, 0, 0]
@@ -144,6 +146,24 @@ draw_pass_1 = SubResource("QuadMesh_hmhce")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 shape = SubResource("BoxShape3D_poxih")
+
+[node name="Laser1" type="AudioStreamPlayer3D" parent="."]
+stream = ExtResource("4_hmhce")
+attenuation_model = 3
+unit_size = 30.0
+max_db = -6.0
+autoplay = true
+max_distance = 50.0
+bus = &"GAME SFX"
+
+[node name="Laser2" type="AudioStreamPlayer3D" parent="."]
+stream = ExtResource("5_asac1")
+attenuation_model = 3
+unit_size = 30.0
+max_db = -9.0
+autoplay = true
+max_distance = 50.0
+bus = &"GAME SFX"
 
 [connection signal="area_entered" from="." to="." method="OnEntered"]
 [connection signal="area_exited" from="." to="." method="OnExited"]

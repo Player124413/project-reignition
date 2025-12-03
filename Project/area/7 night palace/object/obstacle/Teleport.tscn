@@ -1,10 +1,11 @@
-[gd_scene load_steps=24 format=3 uid="uid://dvp0eoegosx00"]
+[gd_scene load_steps=25 format=3 uid="uid://dvp0eoegosx00"]
 
 [ext_resource type="Script" uid="uid://dtvj1vg0nkhi6" path="res://object/trigger/modules/TeleportTrigger.cs" id="1_af5uk"]
 [ext_resource type="Material" uid="uid://c2lqqtvy2q1xp" path="res://effect/particle/material/environment/Common Dust.tres" id="2_rjw3s"]
 [ext_resource type="Texture2D" uid="uid://bqk3vp0tj6jyx" path="res://area/7 night palace/data/particle/swirl.png" id="3_m53jp"]
 [ext_resource type="Material" uid="uid://boyiki4rgce2h" path="res://effect/particle/material/environment/Common Dust Splatter.tres" id="4_pxnfi"]
 [ext_resource type="Material" uid="uid://dxchrwvn2cemd" path="res://effect/particle/material/Common Sparkle.tres" id="5_wlwjg"]
+[ext_resource type="AudioStream" uid="uid://cbdtig33euxyy" path="res://sound/sfx/stage/night palace/teleport.wav" id="6_y68pj"]
 
 [sub_resource type="Gradient" id="Gradient_jhxgy"]
 offsets = PackedFloat32Array(0, 0.08125, 0.875, 1)
@@ -179,4 +180,9 @@ radius = 5.0
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 shape = SubResource("SphereShape3D_x3qay")
 
+[node name="SFX" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("6_y68pj")
+bus = &"GAME SFX"
+
+[connection signal="Teleport" from="." to="SFX" method="play" binds= [0.0]]
 [connection signal="area_entered" from="." to="." method="Activate"]

@@ -259,7 +259,10 @@ public partial class PlayerSkillController : Node3D
 
 	public void CancelBreakSkills()
 	{
-		IsTimeBreakActive = IsSpeedBreakActive = false;
+		if (IsTimeBreakActive) // Cancel time break
+			ToggleTimeBreak();
+		if (IsSpeedBreakActive) // Cancel speed break
+			ToggleTimeBreak();
 		timeBreakAnimator.Play("RESET");
 		timeBreakAnimator.Advance(0);
 
@@ -370,6 +373,8 @@ public partial class PlayerSkillController : Node3D
 			if (!IsSoulGaugeCharged) return;
 			if (!IsSpeedBreakEnabled) return;
 			if (Player.IsDefeated) return;
+			if (Player.IsLaunching) return;
+			if (Player.IsLockoutActive && Player.ActiveLockoutData.disableActionFlags.HasFlag(LockoutResource.ActionFlags.SpeedBreak)) return;
 			if (Player.IsDrifting && !IsSpeedBreakActive) return;
 			if (!Player.IsOnGround && !AllowExternalSpeedBreak && !(Player.CanAirBoost && SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.AirBoost))) return;
 

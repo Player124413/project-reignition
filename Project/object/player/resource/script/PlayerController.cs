@@ -301,15 +301,30 @@ public partial class PlayerController : CharacterBody3D
 
 		bool isCornerCollision = IsInWallCorner(castDirection, castLength);
 		float wallDelta = ExtensionMethods.DeltaAngleRad(ExtensionMethods.CalculateForwardAngle(WallRaycastHit.normal.RemoveVertical(), IsOnGround ? PathFollower.Up() : Vector3.Up), MovementAngle);
+		if (SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.FreeRoam))
+			wallDelta = Mathf.Abs(wallDelta);
+
 		if (wallDelta >= Mathf.Pi * .8f || isCornerCollision) // Process head-on collision
 		{
 			// Cancel speed break
-			if (Skills.IsSpeedBreakActive && !WallRaycastHit.collidedObject.IsInGroup("level wall"))
+			if (Skills.IsSpeedBreakActive)
 			{
 				float pathDelta = ExtensionMethods.DeltaAngleRad(PathFollower.BackAngle, ExtensionMethods.CalculateForwardAngle(WallRaycastHit.normal));
+				if (SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.FreeRoam))
+					pathDelta = Mathf.Abs(pathDelta);
+
 				if (!isCornerCollision && pathDelta >= Mathf.Pi * .25f) // Snap to path direction
 				{
-					MovementAngle = PathFollower.ForwardAngle;
+					if (SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.FreeRoam) &&
+						ExtensionMethods.DotAngle(MovementAngle, PathFollower.ForwardAngle) < 0)
+					{
+						MovementAngle = PathFollower.BackAngle;
+					}
+					else
+					{
+						MovementAngle = PathFollower.ForwardAngle;
+					}
+
 					return;
 				}
 

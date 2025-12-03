@@ -498,6 +498,9 @@ public partial class StageSettings : Node3D
 
 		for (int i = 0; i < pathList.Count; i++)
 		{
+			if (!pathList[i].Visible)
+				continue;
+
 			Vector3 closestPoint = pathList[i].Curve.GetClosestPoint(globalPosition - pathList[i].GlobalPosition);
 			closestPoint += pathList[i].GlobalPosition;
 			float dstSquared = globalPosition.DistanceSquaredTo(closestPoint);

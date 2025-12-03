@@ -74,10 +74,19 @@ public partial class AutomationTrigger : Area3D
 	public void Activate() => EmitSignal(SignalName.Activated);
 	public void Deactivate() => EmitSignal(SignalName.Deactivated);
 
-	public void OnEntered(Area3D _)
+	public void OnEntered(Area3D a)
 	{
+		if (!a.IsInGroup("player"))
+			return;
+
 		isAutomationQueued = autoQueueOnLand;
 		isInteractingWithPlayer = true;
 	}
-	public void OnExited(Area3D _) => isInteractingWithPlayer = false;
+	public void OnExited(Area3D a)
+	{
+		if (!a.IsInGroup("player"))
+			return;
+
+		isInteractingWithPlayer = false;
+	}
 }

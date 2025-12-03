@@ -1,7 +1,10 @@
-[gd_scene load_steps=9 format=3 uid="uid://bo061vk53h0fv"]
+[gd_scene load_steps=12 format=3 uid="uid://bo061vk53h0fv"]
 
 [ext_resource type="Script" uid="uid://bdlofqc6xiigo" path="res://object/trigger/modules/PlatformTrigger.cs" id="1_lvjt2"]
 [ext_resource type="PackedScene" uid="uid://uwnkocedgmtq" path="res://area/7 night palace/object/model/foothold/SidleFooting.gltf" id="1_xky6q"]
+[ext_resource type="AudioStream" uid="uid://0738r2wpfchu" path="res://sound/sfx/stage/night palace/sidle shake.wav" id="3_ywhrj"]
+[ext_resource type="AudioStream" uid="uid://cpykixlhn0hyq" path="res://sound/sfx/stage/night palace/sidle fall.wav" id="4_xr76x"]
+[ext_resource type="Script" uid="uid://dnrfeyqvx8aq" path="res://addons/custom_nodes/script/GroupAudioStreamPlayer3D.cs" id="4_ymq3v"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_yx42l"]
 size = Vector3(0.4, 0.5, 3)
@@ -82,6 +85,18 @@ tracks/5/keys = {
 "transitions": PackedFloat32Array(1),
 "update": 1,
 "values": [false]
+}
+tracks/6/type = "value"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("Shake:volume_db")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [-80.0]
 }
 
 [sub_resource type="Animation" id="Animation_w2n5s"]
@@ -174,6 +189,43 @@ tracks/6/keys = {
 "method": &"ResetShakeTimer"
 }]
 }
+tracks/7/type = "value"
+tracks/7/imported = false
+tracks/7/enabled = true
+tracks/7/path = NodePath("Shake:volume_db")
+tracks/7/interp = 1
+tracks/7/loop_wrap = true
+tracks/7/keys = {
+"times": PackedFloat32Array(0, 0.5),
+"transitions": PackedFloat32Array(2, 1),
+"update": 0,
+"values": [0.0, -80.0]
+}
+tracks/8/type = "method"
+tracks/8/imported = false
+tracks/8/enabled = true
+tracks/8/path = NodePath("Crumble")
+tracks/8/interp = 1
+tracks/8/loop_wrap = true
+tracks/8/keys = {
+"times": PackedFloat32Array(0.1),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [0.0],
+"method": &"play"
+}]
+}
+tracks/9/type = "method"
+tracks/9/imported = false
+tracks/9/enabled = true
+tracks/9/path = NodePath("Shake")
+tracks/9/interp = 1
+tracks/9/loop_wrap = true
+tracks/9/keys = {
+"times": PackedFloat32Array(),
+"transitions": PackedFloat32Array(),
+"values": []
+}
 
 [sub_resource type="Animation" id="Animation_2yb40"]
 resource_name = "shake"
@@ -252,6 +304,32 @@ tracks/5/keys = {
 "update": 1,
 "values": [false]
 }
+tracks/6/type = "value"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("Shake:volume_db")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.0]
+}
+tracks/7/type = "method"
+tracks/7/imported = false
+tracks/7/enabled = true
+tracks/7/path = NodePath("Shake")
+tracks/7/interp = 1
+tracks/7/loop_wrap = true
+tracks/7/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"PlayInGroup"
+}]
+}
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_2svow"]
 _data = {
@@ -295,6 +373,25 @@ callback_mode_process = 0
 libraries = {
 &"": SubResource("AnimationLibrary_2svow")
 }
+
+[node name="Shake" type="AudioStreamPlayer3D" parent="."]
+stream = ExtResource("3_ywhrj")
+attenuation_model = 3
+volume_db = -80.0
+max_db = 0.0
+max_distance = 100.0
+bus = &"GAME SFX"
+attenuation_filter_cutoff_hz = 20500.0
+script = ExtResource("4_ymq3v")
+groupKey = &"sidle footing shake"
+audioLengthOverride = 1.0
+
+[node name="Crumble" type="AudioStreamPlayer3D" parent="."]
+stream = ExtResource("4_xr76x")
+attenuation_model = 3
+max_db = 0.0
+max_distance = 100.0
+bus = &"GAME SFX"
 
 [connection signal="area_entered" from="Root/PlatformTrigger" to="." method="OnEntered"]
 [connection signal="area_exited" from="Root/PlatformTrigger" to="." method="OnExited"]
