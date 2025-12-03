@@ -311,8 +311,11 @@ public partial class PathTraveller : Node3D
 
 	public void OnBodyEntered(PhysicsBody3D b)
 	{
-		if (b.IsInGroup("stagger"))
+		if (b.IsInGroup("pathtraveller stagger"))
 		{
+			if (Player.Skills.IsSpeedBreakActive) // Don't stagger when speed-breaking
+				return;
+
 			Stagger();
 			return;
 		}
