@@ -233,6 +233,7 @@ public partial class PauseMenu : Node
 		{
 			// Resume
 			TransitionManager.instance.QueuedScene = string.Empty;
+			SoundManager.instance.StageMusicPlayer.Stop();
 			EmitSignal(SignalName.OnSceneChangeSelected);
 		}
 		else if (currentSelection == 3) // Open the Skill Menu
@@ -246,6 +247,7 @@ public partial class PauseMenu : Node
 		{
 			SaveManager.SaveGameData();
 			TransitionManager.instance.QueuedScene = TransitionManager.MenuScenePath;
+			SoundManager.instance.StageMusicPlayer.Stop();
 			EmitSignal(SignalName.OnSceneChangeSelected);
 		}
 	}
@@ -405,6 +407,6 @@ public partial class PauseMenu : Node
 	private void ApplyPause()
 	{
 		GetTree().Paused = isActive;
-		BGMPlayer.StageMusicPaused = isActive;
+		SoundManager.instance.IsStageMusicPaused = isActive;
 	}
 }

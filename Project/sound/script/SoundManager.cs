@@ -436,4 +436,34 @@ public partial class SoundManager : Node
 		return 0.0f; // Don't modify db
 	}
 	#endregion
+
+	#region BGM
+	[Export] public BGMPlayer StageMusicPlayer { get; private set; }
+	public void UpdateBgmResource(BGMResource bgmResource)
+	{
+		if (StageMusicPlayer.GetBgmResource() == bgmResource)
+			return;
+
+		StageMusicPlayer.SetBgmResource(bgmResource);
+		StageMusicPlayer.LoadBgmResource();
+	}
+
+	// Called when countdown starts to keep things in sync, regardless of load times.
+	public void StartBgm(bool forceRestart)
+	{
+		GD.Print(StageMusicPlayer.VolumeDb);
+		if (StageMusicPlayer.Playing && !forceRestart) // Persistent BGM
+			return;
+
+		StageMusicPlayer.Play();
+	}
+
+	public bool IsStageMusicPaused
+	{
+		get => StageMusicPlayer.StreamPaused != false;
+		set => StageMusicPlayer.StreamPaused = value;
+	}
+
+	public void SetStageMusicVolume(float db) => StageMusicPlayer.VolumeDb = db;
+	#endregion
 }

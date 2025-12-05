@@ -26,7 +26,7 @@ public partial class Countdown : Control
 
 	public void StartCountdown()
 	{
-		BGMPlayer.StartStageMusic(); // Start BGM
+		SoundManager.instance.StartBgm(false); // Start BGM
 
 		if (DebugManager.Instance.SkipCountdown || StageSettings.Instance.Data.DisableCountdown)
 		{

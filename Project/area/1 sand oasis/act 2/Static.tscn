@@ -1,9 +1,10 @@
-[gd_scene load_steps=61 format=3 uid="uid://skx536edn7yd"]
+[gd_scene load_steps=60 format=3 uid="uid://skx536edn7yd"]
 
 [ext_resource type="PackedScene" uid="uid://g7vhevg8ipxh" path="res://area/1 sand oasis/act 2/environment/01Opening.tscn" id="1_vn5mm"]
 [ext_resource type="Script" uid="uid://dtkbvehtmy3em" path="res://object/stage/StageSettings.cs" id="1_yumdi"]
 [ext_resource type="PackedScene" uid="uid://b3ywiq8hj525h" path="res://area/1 sand oasis/act 2/environment/02Islands.tscn" id="2_6nnkp"]
 [ext_resource type="Resource" uid="uid://wo1vjhfjnj70" path="res://area/1 sand oasis/act 1/camera/InteriorCam.tres" id="2_57nsp"]
+[ext_resource type="Resource" uid="uid://1rn1m2u0yfcf" path="res://resource/bgm/bgm so act2.tres" id="2_t41dx"]
 [ext_resource type="PackedScene" uid="uid://cndqbo16qru3q" path="res://area/1 sand oasis/act 2/environment/03Forest.tscn" id="3_2hkcl"]
 [ext_resource type="PackedScene" uid="uid://bn6wr6l8s3qyt" path="res://object/trigger/StageTrigger.tscn" id="3_i2fbd"]
 [ext_resource type="Resource" uid="uid://b57nulf6d3pq4" path="res://area/1 sand oasis/data/DialogLibrary.tres" id="3_mmv1d"]
@@ -32,7 +33,6 @@
 [ext_resource type="Resource" uid="uid://dqgebfmms4iqa" path="res://area/1 sand oasis/act 2/camera/FieldCam.tres" id="18_tep6q"]
 [ext_resource type="Script" uid="uid://bd2g6rmrn77eo" path="res://object/trigger/modules/LockoutTrigger.cs" id="20_662ia"]
 [ext_resource type="Resource" uid="uid://38s0wkpi5mlf" path="res://resource/preset/lockout/run/RecenterLockout.tres" id="21_tnfaf"]
-[ext_resource type="AudioStream" uid="uid://btny7mardoxn7" path="res://sound/ost/bonus disc/Sand Oasis Act 2.mp3" id="21_yo7ty"]
 [ext_resource type="Script" uid="uid://np5vcxq01ii8" path="res://object/trigger/modules/CheckpointTrigger.cs" id="28_s8f82"]
 [ext_resource type="PackedScene" uid="uid://bd40ra0xnjbfv" path="res://area/1 sand oasis/data/skybox/Skybox.tscn" id="29_7usu5"]
 [ext_resource type="Shader" uid="uid://ckbpl50myf7p6" path="res://effect/sun/shader/Sun.gdshader" id="30_n3txd"]
@@ -40,7 +40,6 @@
 [ext_resource type="Material" uid="uid://bsgdi50gupc5s" path="res://area/1 sand oasis/data/skybox/model/material/Sky Mountain Dusty.tres" id="31_eo4wn"]
 [ext_resource type="Texture2D" uid="uid://cq8nonxnp634w" path="res://effect/sun/texture/base.png" id="31_t41dx"]
 [ext_resource type="PackedScene" uid="uid://bxso4ejxqcm4k" path="res://area/1 sand oasis/act 2/completion/CompletionDemo.gltf" id="34_7u7yr"]
-[ext_resource type="Script" uid="uid://cj76gvi7tbku6" path="res://sound/script/BGMPlayer.cs" id="36_o3cna"]
 [ext_resource type="PackedScene" uid="uid://0o1ds8o5k04j" path="res://effect/buffer/PlanarReflectionRenderer.tscn" id="43_ggjet"]
 [ext_resource type="Material" uid="uid://5wxyrpeo8ycq" path="res://area/1 sand oasis/data/material/Water.tres" id="44_bp8pk"]
 
@@ -143,6 +142,7 @@ adjustment_color_correction = SubResource("GradientTexture1D_wehji")
 
 [node name="Static" type="Node3D" node_paths=PackedStringArray("pathParent", "completionAnimator", "Environment")]
 script = ExtResource("1_yumdi")
+DefaultBgm = ExtResource("2_t41dx")
 InitialCameraSettings = ExtResource("2_57nsp")
 dialogLibrary = ExtResource("3_mmv1d")
 pathParent = NodePath("Paths")
@@ -703,14 +703,6 @@ curve = ExtResource("14_5rbnr")
 [node name="Camera" type="Camera3D" parent="CompletionDemo/Completion" index="0"]
 cull_mask = 1086
 fov = 45.0
-
-[node name="BGM" type="AudioStreamPlayer" parent="."]
-stream = ExtResource("21_yo7ty")
-bus = &"BGM"
-script = ExtResource("36_o3cna")
-loopStartPosition = 12.46
-loopEndPosition = 90.42
-isStageMusic = true
 
 [node name="PlanarReflectionRenderer" parent="." instance=ExtResource("43_ggjet")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 100, -50, -250)

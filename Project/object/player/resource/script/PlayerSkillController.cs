@@ -399,7 +399,7 @@ public partial class PlayerSkillController : Node3D
 			timeBreakAnimator.Play("start");
 			Player.Effect.PlayVoice("time break");
 
-			BGMPlayer.SetStageMusicVolume(-80f);
+			SoundManager.instance.SetStageMusicVolume(-80f);
 
 			// Reset volume and play
 			timeBreakSFX.VolumeDb = heartbeatSFX.VolumeDb = 0f;
@@ -415,7 +415,7 @@ public partial class PlayerSkillController : Node3D
 			timeBreakAnimator.Advance(0.0);
 
 			speedBreakTimer = BreakSkillsCooldown;
-			BGMPlayer.SetStageMusicVolume(0f);
+			SoundManager.instance.SetStageMusicVolume(0f);
 			HeadsUpDisplay.Instance?.ActiveSoulGauge.UpdateSoulGaugeColor(IsSoulGaugeCharged);
 			EmitSignal(SignalName.TimeBreakStopped);
 		}

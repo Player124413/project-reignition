@@ -1,4 +1,4 @@
-[gd_scene load_steps=110 format=3 uid="uid://d1rcieilh21gs"]
+[gd_scene load_steps=109 format=3 uid="uid://d1rcieilh21gs"]
 
 [ext_resource type="Script" uid="uid://dtkbvehtmy3em" path="res://object/stage/StageSettings.cs" id="1_0tght"]
 [ext_resource type="Curve3D" uid="uid://56gh0yeexer3" path="res://area/6 skeleton dome/act 1/environment/path/ExteriorPath.tres" id="1_h00gj"]
@@ -62,10 +62,9 @@
 [ext_resource type="Curve3D" uid="uid://bfnsb54vg6vkv" path="res://area/6 skeleton dome/act 1/environment/path/AutomationPath.tres" id="40_ih587"]
 [ext_resource type="PackedScene" uid="uid://0q5cfpfqkhek" path="res://area/6 skeleton dome/data/skybox/Skybox.tscn" id="41_pilw5"]
 [ext_resource type="Script" uid="uid://coiui4qvdxbqe" path="res://object/trigger/modules/EventTrigger.cs" id="48_m0cc8"]
-[ext_resource type="AudioStream" uid="uid://t1ye7s5fb488" path="res://sound/ost/adventure disc/11 The White of Sky.mp3" id="59_rqena"]
 [ext_resource type="Material" uid="uid://dndcjme3820wo" path="res://area/6 skeleton dome/data/material/Snowflake.tres" id="59_sg7yc"]
 [ext_resource type="Script" uid="uid://ch4pb1qqwy5al" path="res://object/stage/common/resource/script/CameraFollower.cs" id="60_0ml3r"]
-[ext_resource type="Script" uid="uid://cj76gvi7tbku6" path="res://sound/script/BGMPlayer.cs" id="60_sg7yc"]
+[ext_resource type="Resource" uid="uid://bailq02vv2xw8" path="res://resource/bgm/bgm sd act1.tres" id="67_3ot08"]
 [ext_resource type="PackedScene" uid="uid://0o1ds8o5k04j" path="res://effect/buffer/PlanarReflectionRenderer.tscn" id="67_mt304"]
 [ext_resource type="Material" uid="uid://bia2fywx2kiva" path="res://area/6 skeleton dome/data/material/Water.tres" id="68_3ot08"]
 
@@ -971,6 +970,7 @@ fog_depth_end = 200.0
 
 [node name="Static" type="Node3D" node_paths=PackedStringArray("pathParent", "completionAnimator", "Environment")]
 script = ExtResource("1_0tght")
+DefaultBgm = ExtResource("67_3ot08")
 InitialCameraSettings = ExtResource("2_g7phu")
 dialogLibrary = ExtResource("3_c618p")
 pathParent = NodePath("Path")
@@ -2317,14 +2317,6 @@ libraries = {
 &"": SubResource("AnimationLibrary_c618p")
 }
 
-[node name="BGM" type="AudioStreamPlayer" parent="."]
-stream = ExtResource("59_rqena")
-bus = &"BGM"
-script = ExtResource("60_sg7yc")
-loopStartPosition = 26.863
-loopEndPosition = 175.588
-isStageMusic = true
-
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_w7cdv")
 
@@ -2340,17 +2332,17 @@ reflectionMaterials = [ExtResource("68_3ot08")]
 [connection signal="Deactivated" from="Trigger/Object/CavernBTeleport/CavernBEntranceAutomation" to="Trigger/Object/CavernBTeleport/Teleport" method="Activate"]
 [connection signal="Teleport" from="Trigger/Object/CavernBTeleport/Teleport" to="Visuals/03Field" method="Deactivate"]
 [connection signal="Teleport" from="Trigger/Object/CavernBTeleport/Teleport" to="Visuals/05CavernB" method="Activate"]
+[connection signal="Activated" from="Trigger/Object/Automation" to="Collision/OneWayWall" method="Deactivate"]
 [connection signal="Activated" from="Trigger/Object/Automation" to="Trigger/Object/Automation/Path" method="Activate"]
 [connection signal="Activated" from="Trigger/Object/Automation" to="Trigger/Object/Automation/Camera" method="Activate"]
-[connection signal="Activated" from="Trigger/Object/Automation" to="Collision/OneWayWall" method="Deactivate"]
+[connection signal="Deactivated" from="Trigger/Object/Automation" to="Collision/OneWayWall" method="Activate"]
 [connection signal="Deactivated" from="Trigger/Object/Automation" to="Trigger/Object/Automation/Path" method="Deactivate"]
 [connection signal="Deactivated" from="Trigger/Object/Automation" to="Trigger/Object/Automation/Camera" method="Deactivate"]
 [connection signal="Deactivated" from="Trigger/Object/Automation" to="Trigger/Camera/CavernB" method="Activate"]
-[connection signal="Deactivated" from="Trigger/Object/Automation" to="Collision/OneWayWall" method="Activate"]
 [connection signal="Activated" from="Trigger/Object/JumpTrigger" to="Collision/OneWayWall" method="Deactivate"]
+[connection signal="JumpFinished" from="Trigger/Object/JumpTrigger/Jump" to="Collision/OneWayWall" method="Activate"]
 [connection signal="JumpFinished" from="Trigger/Object/JumpTrigger/Jump" to="Trigger/Object/JumpTrigger/Jump/CameraPath" method="Activate"]
 [connection signal="JumpFinished" from="Trigger/Object/JumpTrigger/Jump" to="Trigger/Object/JumpTrigger/Camera" method="Deactivate"]
-[connection signal="JumpFinished" from="Trigger/Object/JumpTrigger/Jump" to="Collision/OneWayWall" method="Activate"]
 [connection signal="Activated" from="Trigger/Object/SidleTrigger" to="Trigger/Object/SidleTrigger/Path" method="Activate"]
 [connection signal="Activated" from="Trigger/Object/SidleTrigger" to="Trigger/Object/SidleTrigger/Camera" method="Activate"]
 [connection signal="Deactivated" from="Trigger/Object/SidleTrigger" to="Trigger/Object/SidleTrigger/Path" method="Deactivate"]

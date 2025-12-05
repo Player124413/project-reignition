@@ -1,4 +1,4 @@
-[gd_scene load_steps=145 format=3 uid="uid://cby2m0q2072c2"]
+[gd_scene load_steps=144 format=3 uid="uid://cby2m0q2072c2"]
 
 [ext_resource type="PackedScene" uid="uid://d3ppk3bftcyht" path="res://area/2 dino jungle/act 1/environment/collision/Collision.tscn" id="1_0crfa"]
 [ext_resource type="Script" uid="uid://dtkbvehtmy3em" path="res://object/stage/StageSettings.cs" id="1_hpjme"]
@@ -97,8 +97,7 @@
 [ext_resource type="Curve3D" uid="uid://d1cd8xa7wprvy" path="res://area/2 dino jungle/act 1/environment/path/EndMiddlePath.tres" id="80_4h07x"]
 [ext_resource type="Curve3D" uid="uid://dkof5hnvrvbuu" path="res://area/2 dino jungle/act 1/environment/path/EndTopPath.tres" id="81_vy7ml"]
 [ext_resource type="PackedScene" uid="uid://6cdlojevxvu7" path="res://area/2 dino jungle/act 1/completion/CompletionDemo.gltf" id="89_i1ci7"]
-[ext_resource type="AudioStream" uid="uid://tjq8v1nvh7i7" path="res://sound/ost/adventure disc/5 The Wicked Wild.mp3" id="95_tbflj"]
-[ext_resource type="Script" uid="uid://cj76gvi7tbku6" path="res://sound/script/BGMPlayer.cs" id="96_ubg5c"]
+[ext_resource type="Resource" uid="uid://c8haap0ftp8qy" path="res://resource/bgm/bgm dj act1.tres" id="96_4on6f"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_ibe76"]
 size = Vector3(20, 20, 5)
@@ -405,6 +404,7 @@ adjustment_color_correction = SubResource("GradientTexture1D_k3y72")
 
 [node name="Static" type="Node3D" node_paths=PackedStringArray("pathParent", "completionAnimator", "Environment")]
 script = ExtResource("1_hpjme")
+DefaultBgm = ExtResource("96_4on6f")
 dialogLibrary = ExtResource("2_2vrnn")
 pathParent = NodePath("Path")
 completionAnimator = NodePath("CompletionDemo/AnimationPlayer")
@@ -2425,15 +2425,6 @@ ambient_color_energy = 0.1
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_f4b5x")
-
-[node name="BGM" type="AudioStreamPlayer" parent="."]
-stream = ExtResource("95_tbflj")
-bus = &"BGM"
-script = ExtResource("96_ubg5c")
-startPosition = 0.5
-loopStartPosition = 24.213
-loopEndPosition = 164.51
-isStageMusic = true
 
 [node name="CompletionDemo" parent="." instance=ExtResource("89_i1ci7")]
 
