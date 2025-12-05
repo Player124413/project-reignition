@@ -9,16 +9,7 @@ public partial class BGMPlayer : AudioStreamPlayer
 	public BGMResource GetBgmResource() => bgmResource;
 	public void SetBgmResource(BGMResource resource) => bgmResource = resource;
 
-	[Export]
-	public float startPosition;
-	[Export]
-	public float loopStartPosition;
-	[Export]
-	public float loopEndPosition;
-	[Export]
-	public float debugSeek = -1; // Editor debug. Seeks to the specified point (in seconds)
-	[Export]
-	public bool isStageMusic; // TODO BGM-REWORK Remove This
+	[Export] public bool loadAsyncronously;
 
 	private bool canLoop;
 	private float LoopLength => bgmResource.LoopEnd - bgmResource.LoopStart;
@@ -33,12 +24,6 @@ public partial class BGMPlayer : AudioStreamPlayer
 		float currentPosition = GetPlaybackPosition() + (float)AudioServer.GetTimeSinceLastMix();
 		if (currentPosition >= bgmResource.LoopEnd)
 			Seek(currentPosition - LoopLength);
-
-		if (Engine.IsEditorHint() && !Mathf.IsEqualApprox(debugSeek, -1))
-		{
-			Seek(debugSeek);
-			debugSeek = -1;
-		}
 	}
 
 	/// <summary> Updates the BgmPlayer's Stream. </summary>
@@ -51,8 +36,29 @@ public partial class BGMPlayer : AudioStreamPlayer
 		if (!canLoop)
 			GD.PrintErr("BGM loop points are set up incorrectly. Looping is disabled.");
 
+
+		if (loadAsyncronously)
+		{
+			LoadBgmResourceAsync();
+			return;
+		}
+
 		AudioStream stream = ResourceLoader.Load<AudioStream>(bgmResource.StreamPath);
 		Stream = stream;
+
+		if (Autoplay)
+			Play();
+	}
+
+	public async void LoadBgmResourceAsync()
+	{
+		if (ResourceLoader.LoadThreadedRequest(bgmResource.StreamPath) != Error.Ok)
+			return; // Load failed
+
+		while (ResourceLoader.LoadThreadedGetStatus(bgmResource.StreamPath) == ResourceLoader.ThreadLoadStatus.InProgress)
+			await ToSignal(GetTree().CreateTimer(.1f), SceneTreeTimer.SignalName.Timeout); // Still loading; wait a bit
+
+		Stream = ResourceLoader.LoadThreadedGet(bgmResource.StreamPath) as AudioStream;
 
 		if (Autoplay)
 			Play();
@@ -64,5 +70,5 @@ public partial class BGMPlayer : AudioStreamPlayer
 			Play(bgmResource.LoopStart);
 	}
 
-	public void Play() => Play(startPosition);
+	public void Play() => Play(bgmResource.StartPosition);
 }
