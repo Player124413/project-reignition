@@ -101,6 +101,20 @@ public partial class PauseMenu : Node
 		if (Runtime.Instance.IsActionJustPressed("sys_pause", "ui_accept") &&
 			!Input.IsActionJustPressed("toggle_fullscreen"))
 		{
+			if (Input.IsActionPressed("button_step_left") && Input.IsActionPressed("button_step_right")) // Quick restart
+			{
+				TransitionManager.QueueSceneChange(string.Empty);
+				TransitionManager.StartTransition(new TransitionData()
+				{
+					color = Colors.Black,
+					inSpeed = 0.2f,
+					outSpeed = 0.5f,
+					loadAsynchronously = true,
+					disableAutoTransition = true
+				});
+				return;
+			}
+
 			TogglePause();
 			return;
 		}

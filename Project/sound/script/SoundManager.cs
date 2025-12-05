@@ -451,7 +451,6 @@ public partial class SoundManager : Node
 	// Called when countdown starts to keep things in sync, regardless of load times.
 	public void StartBgm(bool forceRestart)
 	{
-		GD.Print(StageMusicPlayer.VolumeDb);
 		if (StageMusicPlayer.Playing && !forceRestart) // Persistent BGM
 			return;
 
