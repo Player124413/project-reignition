@@ -741,6 +741,7 @@ script = ExtResource("9_bc5dk")
 triggerType = 1
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Trigger/Object/WaterTrigger"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -50)
 shape = SubResource("165")
 
 [node name="CollisionShape3D2" type="CollisionShape3D" parent="Trigger/Object/WaterTrigger"]
@@ -1188,6 +1189,19 @@ path = NodePath("../../../../Path/Island2Path")
 cameraPathBlendTime = 1.0
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Trigger/Path/Island2Trigger"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
+shape = SubResource("BoxShape3D_84q52")
+
+[node name="IslandEndTrigger" parent="Trigger/Path" instance=ExtResource("5_4sfp2")]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 91.147995, -47.386, -436)
+"Enter Mode" = 0
+
+[node name="PathTrigger" type="Node3D" parent="Trigger/Path/IslandEndTrigger" node_paths=PackedStringArray("path")]
+script = ExtResource("19_gytq8")
+path = NodePath("../../../../Path/IslandEndPath")
+cameraPathBlendTime = 1.0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Trigger/Path/IslandEndTrigger"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
 shape = SubResource("BoxShape3D_84q52")
 
@@ -1650,8 +1664,8 @@ reflectionMaterials = [ExtResource("29_lfji7")]
 [connection signal="Activated" from="Trigger/Object/HallOneWayTrigger" to="Collision/HallOneWay" method="Activate"]
 [connection signal="Activated" from="Trigger/Object/UTurnTrigger" to="Trigger/Object/UTurnTrigger/UTurnPath" method="Activate"]
 [connection signal="Activated" from="Trigger/Object/UTurnTrigger" to="Trigger/Object/UTurnTrigger/Camera" method="Activate"]
-[connection signal="Deactivated" from="Trigger/Object/UTurnTrigger" to="Collision/UTurnOneWay" method="Activate"]
 [connection signal="Deactivated" from="Trigger/Object/UTurnTrigger" to="Trigger/Object/UTurnTrigger/BeachPath" method="Activate"]
+[connection signal="Deactivated" from="Trigger/Object/UTurnTrigger" to="Collision/UTurnOneWay" method="Activate"]
 [connection signal="Activated" from="Trigger/Object/WallClimbTrigger" to="Trigger/Object/WallClimbTrigger/Camera" method="Activate"]
 [connection signal="Activated" from="Trigger/Object/WallClimbTrigger" to="Trigger/Object/WallClimbTrigger/Path" method="Activate"]
 [connection signal="Deactivated" from="Trigger/Object/WallClimbTrigger" to="Trigger/Object/SidleTrigger/Path" method="Activate"]
@@ -1660,6 +1674,7 @@ reflectionMaterials = [ExtResource("29_lfji7")]
 [connection signal="Activated" from="Trigger/Object/SidleTrigger" to="Trigger/Object/SidleTrigger/Camera" method="Activate"]
 [connection signal="Deactivated" from="Trigger/Object/SidleTrigger" to="Trigger/Object/SidleTrigger/Camera" method="Deactivate"]
 [connection signal="Activated" from="Trigger/Path/Island2Trigger" to="Collision/IslandOneWay" method="Activate"]
+[connection signal="Activated" from="Trigger/Path/IslandEndTrigger" to="Collision/IslandOneWay" method="Activate"]
 [connection signal="Activated" from="Visuals/CullingMap/02Load" to="Visuals/02Slope" method="Activate"]
 [connection signal="Deactivated" from="Visuals/CullingMap/02Load" to="Visuals/02Slope" method="Deactivate"]
 [connection signal="Activated" from="Visuals/CullingMap/03Load" to="Visuals/03Oasis" method="Activate"]
