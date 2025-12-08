@@ -3,59 +3,18 @@ using Godot;
 /// <summary> Loops an audio stream seamlessly. </summary>
 namespace Project;
 
-[Tool]
 public partial class BGMPlayer : AudioStreamPlayer
 {
-	private static BGMPlayer stageMusicInstance;
-	public static bool StageMusicPaused
-	{
-		get => stageMusicInstance?.StreamPaused != false;
-		set
-		{
-			if (stageMusicInstance == null) return;
-			stageMusicInstance.StreamPaused = value;
-		}
-	}
+	[Export] private BGMResource bgmResource;
+	public BGMResource GetBgmResource() => bgmResource;
+	public void SetBgmResource(BGMResource resource) => bgmResource = resource;
 
-	public static void SetStageMusicVolume(float db)
-	{
-		if (stageMusicInstance != null)
-			stageMusicInstance.VolumeDb = db;
-	}
-
-	// Called when countdown starts to keep things in sync, regardless of load times.
-	public static void StartStageMusic() => stageMusicInstance?.Play();
-
-	[Export]
-	public float startPosition;
-	[Export]
-	public float loopStartPosition;
-	[Export]
-	public float loopEndPosition;
-	[Export]
-	public float debugSeek = -1; // Editor debug. Seeks to the specified point (in seconds)
-	[Export]
-	public bool isStageMusic;
+	[Export] public bool loadAsyncronously;
 
 	private bool canLoop;
-	private float LoopLength => loopEndPosition - loopStartPosition;
+	private float LoopLength => bgmResource.LoopEnd - bgmResource.LoopStart;
 
-	public override void _EnterTree()
-	{
-		canLoop = loopEndPosition > loopStartPosition;
-		if (!canLoop)
-			GD.PrintErr("BGM loop points are set up incorrectly. Looping is disabled.");
-
-		// Only one stage music can be playing at a time
-		if (isStageMusic)
-			stageMusicInstance = this;
-	}
-
-	public override void _ExitTree()
-	{
-		if (stageMusicInstance == this) // Unreference
-			stageMusicInstance = null;
-	}
+	public override void _EnterTree() => LoadBgmResource();
 
 	public override void _Process(double _)
 	{
@@ -63,21 +22,53 @@ public partial class BGMPlayer : AudioStreamPlayer
 		if (!Playing) return;
 
 		float currentPosition = GetPlaybackPosition() + (float)AudioServer.GetTimeSinceLastMix();
-		if (currentPosition >= loopEndPosition)
+		if (currentPosition >= bgmResource.LoopEnd)
 			Seek(currentPosition - LoopLength);
+	}
 
-		if (Engine.IsEditorHint() && !Mathf.IsEqualApprox(debugSeek, -1))
+	/// <summary> Updates the BgmPlayer's Stream. </summary>
+	public void LoadBgmResource()
+	{
+		if (bgmResource == null)
+			return;
+
+		canLoop = bgmResource.LoopEnd > bgmResource.LoopStart;
+		if (!canLoop)
+			GD.PrintErr("BGM loop points are set up incorrectly. Looping is disabled.");
+
+
+		if (loadAsyncronously)
 		{
-			Seek(debugSeek);
-			debugSeek = -1;
+			LoadBgmResourceAsync();
+			return;
 		}
+
+		AudioStream stream = ResourceLoader.Load<AudioStream>(bgmResource.StreamPath);
+		Stream = stream;
+
+		if (Autoplay)
+			Play();
+	}
+
+	public async void LoadBgmResourceAsync()
+	{
+		if (ResourceLoader.LoadThreadedRequest(bgmResource.StreamPath) != Error.Ok)
+			return; // Load failed
+
+		while (ResourceLoader.LoadThreadedGetStatus(bgmResource.StreamPath) == ResourceLoader.ThreadLoadStatus.InProgress)
+			await ToSignal(GetTree().CreateTimer(.1f), SceneTreeTimer.SignalName.Timeout); // Still loading; wait a bit
+
+		Stream = ResourceLoader.LoadThreadedGet(bgmResource.StreamPath) as AudioStream;
+
+		if (Autoplay)
+			Play();
 	}
 
 	public void RestartLoop()
 	{
-		if (GetPlaybackPosition() >= loopEndPosition)
-			Play(loopStartPosition);
+		if (GetPlaybackPosition() >= bgmResource.LoopEnd)
+			Play(bgmResource.LoopStart);
 	}
 
-	public void Play() => Play(startPosition);
+	public void Play() => Play(bgmResource.StartPosition);
 }

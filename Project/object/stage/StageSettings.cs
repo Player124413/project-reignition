@@ -63,6 +63,7 @@ public partial class StageSettings : Node3D
 
 		// Update gameplay sfx audio channel
 		SoundManager.SetAudioBusVolume(SoundManager.AudioBuses.GameSfx, IsControlTest ? 100 : 0);
+		SoundManager.instance.UpdateBgmResource(DefaultBgm); // TODO Update with player-selected value
 
 		if (IsControlTest)
 		{
@@ -217,6 +218,7 @@ public partial class StageSettings : Node3D
 	#region Level Settings
 	/// <summary> Reference to the level's data. </summary>
 	[Export] public LevelDataResource Data { get; private set; }
+	[Export] public BGMResource DefaultBgm { get; private set; }
 	[Export] private bool disableObjectiveAutocompletion;
 	[Export] public CameraSettingsResource InitialCameraSettings { get; private set; }
 	[Export] public SFXLibraryResource dialogLibrary;
@@ -592,7 +594,7 @@ public partial class StageSettings : Node3D
 		// Attempt to start the completion demo
 		GetTree().CreateTimer(wasSuccessful ? Data.CompletionDelay : FAIL_COMPLETION_DELAY).Connect(SceneTreeTimer.SignalName.Timeout, new Callable(this, MethodName.StartCompletionDemo));
 
-		BGMPlayer.StageMusicPaused = true;
+		SoundManager.instance.IsStageMusicPaused = true;
 		SoundManager.instance.CancelDialog();
 		PauseMenu.AllowInputs = false;
 		LevelState = wasSuccessful ? LevelStateEnum.Success : LevelStateEnum.Failed;

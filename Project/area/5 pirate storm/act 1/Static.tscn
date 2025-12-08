@@ -1,4 +1,4 @@
-[gd_scene load_steps=92 format=3 uid="uid://csk7y7y8vgg6l"]
+[gd_scene load_steps=91 format=3 uid="uid://csk7y7y8vgg6l"]
 
 [ext_resource type="Script" uid="uid://dtkbvehtmy3em" path="res://object/stage/StageSettings.cs" id="1_g84th"]
 [ext_resource type="PackedScene" uid="uid://npgcl1ctbjyt" path="res://area/5 pirate storm/act 1/environment/01Opening.tscn" id="2_444mk"]
@@ -26,10 +26,8 @@
 [ext_resource type="Curve3D" uid="uid://d1g7gn830812p" path="res://area/5 pirate storm/act 1/environment/path/GrindPath.tres" id="19_28ai1"]
 [ext_resource type="PackedScene" uid="uid://dwg8morsdrkm" path="res://area/5 pirate storm/object/Cannonball.tscn" id="19_fqgif"]
 [ext_resource type="Curve3D" uid="uid://1gnofk534tm6" path="res://area/5 pirate storm/act 1/environment/path/GrottoPath.tres" id="20_ki03t"]
-[ext_resource type="AudioStream" uid="uid://bdupjn76esufr" path="res://sound/ost/adventure disc/9 No Way Through.mp3" id="22_m37yi"]
 [ext_resource type="PackedScene" uid="uid://bn6wr6l8s3qyt" path="res://object/trigger/StageTrigger.tscn" id="22_ypnsc"]
 [ext_resource type="Script" uid="uid://bvmyay4bo83qu" path="res://object/trigger/modules/DeathTrigger.cs" id="23_k720b"]
-[ext_resource type="Script" uid="uid://cj76gvi7tbku6" path="res://sound/script/BGMPlayer.cs" id="23_s1a7j"]
 [ext_resource type="Script" uid="uid://bssd28yqn1cxg" path="res://object/trigger/modules/PathTrigger.cs" id="23_vf6sl"]
 [ext_resource type="Script" uid="uid://cciy1oeuvbh3e" path="res://object/trigger/modules/JumpTrigger.cs" id="24_auuan"]
 [ext_resource type="PackedScene" uid="uid://0o1ds8o5k04j" path="res://effect/buffer/PlanarReflectionRenderer.tscn" id="24_havkg"]
@@ -61,6 +59,7 @@
 [ext_resource type="Resource" uid="uid://cppeiepucyyse" path="res://area/5 pirate storm/act 1/camera/CannonballEndCam.tres" id="48_p2b7g"]
 [ext_resource type="Script" uid="uid://coiui4qvdxbqe" path="res://object/trigger/modules/EventTrigger.cs" id="49_qhv7k"]
 [ext_resource type="Resource" uid="uid://wd6b8tved132" path="res://area/5 pirate storm/act 1/camera/CannonballVTrackCam.tres" id="50_dpvh1"]
+[ext_resource type="Resource" uid="uid://dghw1tb5iir7p" path="res://resource/bgm/bgm ps act1.tres" id="62_uv0vh"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_k720b"]
 size = Vector3(25, 20, 5)
@@ -1017,6 +1016,7 @@ _data = {
 
 [node name="Static" type="Node3D" node_paths=PackedStringArray("pathParent", "completionAnimator", "Environment")]
 script = ExtResource("1_g84th")
+DefaultBgm = ExtResource("62_uv0vh")
 dialogLibrary = ExtResource("2_djq2b")
 pathParent = NodePath("Path")
 completionAnimator = NodePath("DemoCamera/AnimationPlayer")
@@ -2332,14 +2332,6 @@ cull_mask = 1086
 libraries = {
 &"": SubResource("AnimationLibrary_tsasv")
 }
-
-[node name="BGM" type="AudioStreamPlayer" parent="."]
-stream = ExtResource("22_m37yi")
-bus = &"BGM"
-script = ExtResource("23_s1a7j")
-loopStartPosition = 7.44
-loopEndPosition = 227.86
-isStageMusic = true
 
 [connection signal="LevelStarted" from="." to="Rain/Rain" method="set_emitting" binds= [true]]
 [connection signal="Activated" from="Visuals/CullingTriggers/02-L" to="Visuals/02Islands" method="Activate"]

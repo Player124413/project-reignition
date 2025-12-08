@@ -86,7 +86,7 @@ public partial class HomingAttackState : PlayerState
 			Player.MoveSpeed = Mathf.MoveToward(Player.MoveSpeed, normalStrikeSpeed, homingAttackAcceleration * PhysicsManager.physicsDelta);
 
 		Player.MoveSpeed = Mathf.Min(Player.MoveSpeed, Player.CenterPosition.DistanceTo(Player.Lockon.Target.GlobalPosition) / PhysicsManager.physicsDelta);
-		Player.VerticalSpeed = 0f; // Don't add extra vertical speed influence
+		Player.VerticalSpeed = Player.Lockon.HomingAttackDirection.Y;
 		Player.MovementAngle = ExtensionMethods.CalculateForwardAngle(Player.Lockon.HomingAttackDirection);
 		Player.ApplyMovement(Player.Lockon.HomingAttackDirection.Normalized());
 

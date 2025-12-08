@@ -1,4 +1,4 @@
-[gd_scene load_steps=43 format=3 uid="uid://d1gknocio5io1"]
+[gd_scene load_steps=42 format=3 uid="uid://d1gknocio5io1"]
 
 [ext_resource type="Script" uid="uid://dtkbvehtmy3em" path="res://object/stage/StageSettings.cs" id="1_4xujv"]
 [ext_resource type="Resource" uid="uid://c2qttlm1qg5ji" path="res://area/5 pirate storm/act 2/camera/CloseCam.tres" id="2_or2ge"]
@@ -10,11 +10,9 @@
 [ext_resource type="Curve3D" uid="uid://dmixqtejadyme" path="res://area/5 pirate storm/boss/environment/path/MainPath.tres" id="6_thlvq"]
 [ext_resource type="PackedScene" uid="uid://mcdscyg16ic2" path="res://area/5 pirate storm/object/CrowGroup.tscn" id="6_w7r6t"]
 [ext_resource type="PackedScene" uid="uid://bn6wr6l8s3qyt" path="res://object/trigger/StageTrigger.tscn" id="7_kc6hj"]
-[ext_resource type="AudioStream" uid="uid://cmthrjjnbihvh" path="res://sound/ost/bonus disc/Pirate Storm Act 2.mp3" id="8_auaow"]
 [ext_resource type="Script" uid="uid://bvmyay4bo83qu" path="res://object/trigger/modules/DeathTrigger.cs" id="8_euei3"]
 [ext_resource type="PackedScene" uid="uid://d3bwpl53f2wsi" path="res://area/5 pirate storm/data/skybox/SkyboxLightning.tscn" id="9_l6cxa"]
 [ext_resource type="Script" uid="uid://np5vcxq01ii8" path="res://object/trigger/modules/CheckpointTrigger.cs" id="9_or2ge"]
-[ext_resource type="Script" uid="uid://cj76gvi7tbku6" path="res://sound/script/BGMPlayer.cs" id="9_patcr"]
 [ext_resource type="PackedScene" uid="uid://0q5cfpfqkhek" path="res://area/6 skeleton dome/data/skybox/Skybox.tscn" id="10_gy6uc"]
 [ext_resource type="Script" uid="uid://dx0a0rhyauccl" path="res://object/trigger/modules/CameraTrigger.cs" id="10_q3ufd"]
 [ext_resource type="Resource" uid="uid://bsdv21422t2gf" path="res://area/5 pirate storm/act 2/camera/OverheadCam.tres" id="11_oejkb"]
@@ -22,6 +20,7 @@
 [ext_resource type="Material" uid="uid://ve75fqv3qek3" path="res://area/5 pirate storm/data/material/Rain Process Material.tres" id="17_gy6uc"]
 [ext_resource type="Material" uid="uid://6q7k10n0i0bn" path="res://area/5 pirate storm/data/material/Rain Drop.tres" id="18_iqmf8"]
 [ext_resource type="Material" uid="uid://86s1me03t0lu" path="res://area/5 pirate storm/data/material/Rain Impact.tres" id="19_w543s"]
+[ext_resource type="Resource" uid="uid://bgbd7rtaik725" path="res://resource/bgm/bgm ps act2.tres" id="23_iqmf8"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_q3ufd"]
 render_priority = -124
@@ -485,6 +484,7 @@ adjustment_saturation = 0.9
 
 [node name="Static" type="Node3D" node_paths=PackedStringArray("pathParent", "completionAnimator", "Environment")]
 script = ExtResource("1_4xujv")
+DefaultBgm = ExtResource("23_iqmf8")
 InitialCameraSettings = ExtResource("2_or2ge")
 dialogLibrary = ExtResource("3_oejkb")
 pathParent = NodePath("Path")
@@ -722,14 +722,6 @@ libraries = {
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_74w7x")
-
-[node name="BGM" type="AudioStreamPlayer" parent="."]
-stream = ExtResource("8_auaow")
-bus = &"BGM"
-script = ExtResource("9_patcr")
-loopStartPosition = 6.8
-loopEndPosition = 202.17
-isStageMusic = true
 
 [connection signal="LevelStarted" from="." to="Rain/Rain" method="set_emitting" binds= [true]]
 

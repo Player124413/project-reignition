@@ -101,6 +101,9 @@ public partial class PauseMenu : Node
 		if (Runtime.Instance.IsActionJustPressed("sys_pause", "ui_accept") &&
 			!Input.IsActionJustPressed("toggle_fullscreen"))
 		{
+			if (IsQuickRestart())
+				return;
+
 			TogglePause();
 			return;
 		}
@@ -130,6 +133,27 @@ public partial class PauseMenu : Node
 		int sign = Mathf.Sign(Input.GetAxis("ui_up", "ui_down"));
 		if (sign != 0)
 			ChangeSelection(sign);
+	}
+
+	private bool IsQuickRestart()
+	{
+		if (SaveManager.ActiveGameData.LevelData.GetClearStatus(StageSettings.Instance.Data.LevelID) != SaveManager.LevelSaveData.LevelStatus.Cleared)
+			return false;
+
+		if (!Input.IsActionPressed("button_step_left") || !Input.IsActionPressed("button_step_right")) // Quick restart
+			return false;
+
+		TransitionManager.QueueSceneChange(string.Empty);
+		TransitionManager.StartTransition(new TransitionData()
+		{
+			color = Colors.Black,
+			inSpeed = 0.2f,
+			outSpeed = 0.5f,
+			loadAsynchronously = true,
+			disableAutoTransition = true
+		});
+
+		return true;
 	}
 
 	private void UpdateSkillScrollbar()
@@ -233,6 +257,7 @@ public partial class PauseMenu : Node
 		{
 			// Resume
 			TransitionManager.instance.QueuedScene = string.Empty;
+			SoundManager.instance.StageMusicPlayer.Stop();
 			EmitSignal(SignalName.OnSceneChangeSelected);
 		}
 		else if (currentSelection == 3) // Open the Skill Menu
@@ -246,6 +271,7 @@ public partial class PauseMenu : Node
 		{
 			SaveManager.SaveGameData();
 			TransitionManager.instance.QueuedScene = TransitionManager.MenuScenePath;
+			SoundManager.instance.StageMusicPlayer.Stop();
 			EmitSignal(SignalName.OnSceneChangeSelected);
 		}
 	}
@@ -405,6 +431,6 @@ public partial class PauseMenu : Node
 	private void ApplyPause()
 	{
 		GetTree().Paused = isActive;
-		BGMPlayer.StageMusicPaused = isActive;
+		SoundManager.instance.IsStageMusicPaused = isActive;
 	}
 }

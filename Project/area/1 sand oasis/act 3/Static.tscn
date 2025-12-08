@@ -1,8 +1,9 @@
-[gd_scene load_steps=34 format=3 uid="uid://7kcasi6v1odv"]
+[gd_scene load_steps=33 format=3 uid="uid://7kcasi6v1odv"]
 
 [ext_resource type="Script" uid="uid://dtkbvehtmy3em" path="res://object/stage/StageSettings.cs" id="1_fxxlg"]
 [ext_resource type="PackedScene" uid="uid://ctpgc4qaiar68" path="res://area/1 sand oasis/act 3/environment/collision/Collision.tscn" id="1_wbafh"]
 [ext_resource type="PackedScene" uid="uid://bd40ra0xnjbfv" path="res://area/1 sand oasis/data/skybox/Skybox.tscn" id="2_1co7j"]
+[ext_resource type="Resource" uid="uid://cdb3jk6rmboey" path="res://resource/bgm/bgm so act3.tres" id="2_2ednf"]
 [ext_resource type="Resource" uid="uid://dx3nq2bnotxl3" path="res://area/1 sand oasis/act 3/camera/StartCam.tres" id="2_lhfq0"]
 [ext_resource type="PackedScene" uid="uid://bgg1qa2ad1gbh" path="res://area/1 sand oasis/act 3/environment/00Exterior.tscn" id="3_5ndpe"]
 [ext_resource type="PackedScene" uid="uid://bn6wr6l8s3qyt" path="res://object/trigger/StageTrigger.tscn" id="3_vakpl"]
@@ -17,8 +18,6 @@
 [ext_resource type="PackedScene" uid="uid://dj37itfdjb74j" path="res://area/1 sand oasis/act 3/environment/02Descent.tscn" id="7_dg1ex"]
 [ext_resource type="Curve3D" uid="uid://27uwgglqp1g6" path="res://area/1 sand oasis/act 3/environment/path/MainPath.tres" id="8_5ae3c"]
 [ext_resource type="PackedScene" uid="uid://semhlskb8slv" path="res://area/1 sand oasis/act 3/environment/model/LightBlocker.gltf" id="14_5tb48"]
-[ext_resource type="AudioStream" uid="uid://ds4hdcdcfcwmj" path="res://sound/ost/bonus disc/Sand Oasis Act 3.mp3" id="16_7drhp"]
-[ext_resource type="Script" uid="uid://cj76gvi7tbku6" path="res://sound/script/BGMPlayer.cs" id="17_5dd51"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_kh3tl"]
 size = Vector3(15, 20, 66)
@@ -509,6 +508,7 @@ adjustment_saturation = 1.2
 
 [node name="Static" type="Node3D" node_paths=PackedStringArray("pathParent", "completionAnimator", "Environment")]
 script = ExtResource("1_fxxlg")
+DefaultBgm = ExtResource("2_2ednf")
 InitialCameraSettings = ExtResource("2_lhfq0")
 dialogLibrary = ExtResource("3_xy7mm")
 pathParent = NodePath("Path")
@@ -842,14 +842,6 @@ libraries = {
 next/demo1 = &"demo2"
 next/demo2 = &"demo3"
 next/demo3 = &"demo1"
-
-[node name="BGM" type="AudioStreamPlayer" parent="."]
-stream = ExtResource("16_7drhp")
-bus = &"BGM"
-script = ExtResource("17_5dd51")
-loopStartPosition = 5.33
-loopEndPosition = 90.67
-isStageMusic = true
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_i6k4x")
