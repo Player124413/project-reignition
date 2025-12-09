@@ -24,7 +24,7 @@ public partial class Surfboard : PathTraveller
 
 	private int waveIndex;
 	private int currentSpeedIndex;
-	private float speedFactor;
+	private float SpeedFactor => currentSpeedIndex / MaxSpeedIndex;
 	private readonly float MaxSpeedIndex = 10;
 
 	private Wave currentWave;
@@ -46,11 +46,14 @@ public partial class Surfboard : PathTraveller
 
 	protected override float GetCurrentMaxSpeed()
 	{
-		float speed = Mathf.Lerp(initialSpeed, MaxSpeed, speedFactor);
-		if (Player.Skills.IsSpeedBreakActive)
-			speed = Player.MoveSpeed;
+		if (IsSpeedBreaking)
+			return Player.MoveSpeed;
 
-		if (currentWave?.IsWaveCleared == false)
+		float speed = Mathf.Lerp(initialSpeed, MaxSpeed, SpeedFactor);
+		if (currentWave == null)
+			return MaxSpeed;
+
+		if (!currentWave.IsWaveCleared)
 		{
 			float waveRatio = currentWave.CalculateMovementRatio(GlobalPosition);
 			float speedLoss = currentWave.requiredSpeedBoosts / (currentSpeedIndex + 0.5f);
@@ -59,7 +62,7 @@ public partial class Surfboard : PathTraveller
 			if (currentSpeedIndex >= currentWave.requiredSpeedBoosts)
 				speedLoss = Mathf.Min(speedLoss, 0.4f);
 
-			if (!Player.Skills.IsSpeedBreakActive)
+			if (!IsSpeedBreaking)
 				speed = Mathf.Lerp(speed, 0, speedLoss);
 
 			waveCameraSettings.targetFOV = Mathf.Lerp(BaseWaveFov, FocusedWaveFov, waveRatio);
@@ -69,7 +72,7 @@ public partial class Surfboard : PathTraveller
 		return speed;
 	}
 
-	protected override float GetCurrentTurnSpeed => Mathf.Lerp(initialTurnSpeed, TurnSpeed, GetCurrentMaxSpeed() / MaxSpeed);
+	protected override float GetCurrentTurnSpeed => Mathf.Lerp(initialTurnSpeed, TurnSpeed, CurrentSpeed / MaxSpeed);
 
 	protected override void SetUp()
 	{
@@ -80,7 +83,6 @@ public partial class Surfboard : PathTraveller
 	protected override void Respawn()
 	{
 		waveIndex = 0;
-		speedFactor = 0;
 		currentSpeedIndex = 0;
 
 		IsCrouching = false;
@@ -110,12 +112,13 @@ public partial class Surfboard : PathTraveller
 			Player.Camera.StartCameraShake(new()
 			{
 				duration = ScreenShakeInterval,
-				magnitude = Vector3.One * (0.1f + 0.1f * speedFactor)
+				magnitude = Vector3.One * (0.1f + 0.1f * SpeedFactor)
 			});
 			screenshakeTimer = ScreenShakeInterval;
 		}
 
 		Player.Animator.UpdateBalanceCrouch(IsCrouching);
+		UpdateSpeedIndex(0); // Update animations
 
 		if (Mathf.IsZeroApprox(jumpCameraTimer))
 			return;
@@ -132,13 +135,9 @@ public partial class Surfboard : PathTraveller
 
 	protected override void Accelerate()
 	{
-		if (currentWave?.IsWaveCleared == false)
+		if (currentWave?.IsWaveCleared == false && CurrentSpeed < MinimumSpeed) // Going too slow! Fall off the board
 		{
-			CurrentSpeed = GetCurrentMaxSpeed();
-
-			if (CurrentSpeed < MinimumSpeed) // Going too slow! Fall off the board
-				CallDeferred(MethodName.EmitSignal, SignalName.Damaged);
-
+			CallDeferred(MethodName.EmitSignal, SignalName.Damaged);
 			return;
 		}
 
@@ -194,13 +193,18 @@ public partial class Surfboard : PathTraveller
 		}
 
 		Player.Camera.StartMediumCameraShake();
+
+		if (currentWave != null) // Minimum speed
+		{
+			currentSpeedIndex = Mathf.Max(currentSpeedIndex, currentWave.requiredSpeedBoosts + 1);
+			UpdateSpeedIndex(0);
+		}
 	}
 
 	private void UpdateSpeedIndex(int amount)
 	{
 		currentSpeedIndex = (int)Mathf.Clamp(currentSpeedIndex + amount, 0, MaxSpeedIndex);
-		speedFactor = currentSpeedIndex / MaxSpeedIndex;
-		animator.SpeedScale = 1f + speedFactor * 2f;
+		animator.SpeedScale = 1f + SpeedFactor * 2f;
 	}
 
 	protected override void Stagger()
@@ -218,7 +222,7 @@ public partial class Surfboard : PathTraveller
 		// Vroom Vroom
 		UpdateSpeedIndex(1);
 		IsCrouching = true;
-		CurrentSpeed = GetCurrentMaxSpeed();
+		CurrentSpeed = Mathf.Max(CurrentSpeed, GetCurrentMaxSpeed());
 		EmitSignal(SignalName.BoostStarted);
 	}
 

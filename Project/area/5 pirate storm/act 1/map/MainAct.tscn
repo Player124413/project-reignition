@@ -5464,6 +5464,7 @@ draw_pass_1 = SubResource("QuadMesh_dq5fv")
 [node name="Dialog" type="Node3D" parent="MainAct/Surf/Wave1" node_paths=PackedStringArray("randomizedDialogTriggers")]
 script = ExtResource("5_mrnau")
 allowRespawn = true
+playbackType = 2
 textKeys = Array[String](["pir_surf_jump1_so"])
 randomizedDialogTriggers = []
 
@@ -5650,6 +5651,7 @@ draw_pass_1 = SubResource("QuadMesh_dq5fv")
 [node name="Dialog" type="Node3D" parent="MainAct/Surf/Wave2" node_paths=PackedStringArray("randomizedDialogTriggers")]
 script = ExtResource("5_mrnau")
 allowRespawn = true
+playbackType = 2
 textKeys = Array[String](["pir_surf_jump2_so"])
 randomizedDialogTriggers = []
 
@@ -5899,6 +5901,7 @@ draw_pass_1 = SubResource("QuadMesh_dq5fv")
 [node name="Dialog" type="Node3D" parent="MainAct/Surf/Wave3" node_paths=PackedStringArray("randomizedDialogTriggers")]
 script = ExtResource("5_mrnau")
 allowRespawn = true
+playbackType = 2
 textKeys = Array[String](["pir_surf_jump3_so"])
 randomizedDialogTriggers = []
 
@@ -6523,14 +6526,14 @@ shape = SubResource("BoxShape3D_6yc6x")
 [connection signal="Defeated" from="MainAct/Ships/Ship1/GreenMajin2" to="MainAct/Ships/Ship1/EnemyStone" method="IncrementCounter"]
 [connection signal="Activated" from="MainAct/Ships/Ship1/SwitchM" to="MainAct/Ships/Ship1/BridgeSquareFallingR" method="StartShaking"]
 [connection signal="Activated" from="MainAct/Ships/Ship1/SwitchM" to="MainAct/Ships/Ship1/BridgeSquareFallingL" method="StartShaking"]
-[connection signal="Activated" from="MainAct/Ships/Ship1/Catapult" to="MainAct/Ships/Ship1/Catapult/LaunchCamera" method="Activate"]
 [connection signal="Activated" from="MainAct/Ships/Ship1/Catapult" to="Static/Collision/OneWayWall" method="Deactivate"]
-[connection signal="Deactivated" from="MainAct/Ships/Ship1/Catapult" to="MainAct/Ships/Ship1/Catapult/LaunchCamera" method="Deactivate"]
+[connection signal="Activated" from="MainAct/Ships/Ship1/Catapult" to="MainAct/Ships/Ship1/Catapult/LaunchCamera" method="Activate"]
 [connection signal="Deactivated" from="MainAct/Ships/Ship1/Catapult" to="Static/Collision/OneWayWall" method="Activate"]
+[connection signal="Deactivated" from="MainAct/Ships/Ship1/Catapult" to="MainAct/Ships/Ship1/Catapult/LaunchCamera" method="Deactivate"]
 [connection signal="PlayerEntered" from="MainAct/Ships/Ship1/Catapult" to="MainAct/Ships/Ship1/Catapult/AimCamera" method="Activate"]
 [connection signal="PlayerExited" from="MainAct/Ships/Ship1/Catapult" to="MainAct/Ships/Ship1/Catapult/AimCamera" method="Deactivate"]
-[connection signal="JumpFinished" from="MainAct/Ships/Ship1/JumpTrigger2/Jump" to="MainAct/Ships/Ship1/JumpTrigger2/Jump/Camera" method="Activate"]
 [connection signal="JumpFinished" from="MainAct/Ships/Ship1/JumpTrigger2/Jump" to="Static/Collision/OneWayWall" method="Activate"]
+[connection signal="JumpFinished" from="MainAct/Ships/Ship1/JumpTrigger2/Jump" to="MainAct/Ships/Ship1/JumpTrigger2/Jump/Camera" method="Activate"]
 [connection signal="GrindCompleted" from="MainAct/Ships/Ship2/InvisibleGrindrail" to="MainAct/Ships/Ship2/InvisibleGrindrail/Camera" method="Deactivate"]
 [connection signal="GrindStarted" from="MainAct/Ships/Ship2/InvisibleGrindrail" to="MainAct/Ships/Ship2/InvisibleGrindrail/Camera" method="Activate"]
 [connection signal="Defeated" from="MainAct/Ships/Ship2/SlimeMajinL" to="MainAct/Ships/Ship2/EnemyStone1" method="IncrementCounter"]
@@ -6569,17 +6572,17 @@ shape = SubResource("BoxShape3D_6yc6x")
 [connection signal="Defeated" from="MainAct/Ships/Ship3/Throne/RedMajin" to="MainAct/Ships/Ship3/Throne/EnemyStone3" method="IncrementCounter"]
 [connection signal="Defeated" from="MainAct/Ships/Ship3/Throne/RedMajin" to="MainAct/Ships/Ship3/Throne/EnemyStone4" method="IncrementCounter"]
 [connection signal="Defeated" from="MainAct/Ships/Ship3/Throne/RedMajin" to="MainAct/Ships/Ship3/Throne/EnemyStone5" method="IncrementCounter"]
+[connection signal="Activated" from="MainAct/Ships/Ship3/Throne/JumpPanel" to="Static/Collision/OneWayWall" method="Deactivate"]
 [connection signal="Activated" from="MainAct/Ships/Ship3/Throne/JumpPanel" to="MainAct/Ships/Ship3/Throne/JumpPanel/Camera" method="Activate"]
 [connection signal="Activated" from="MainAct/Ships/Ship3/Throne/JumpPanel" to="MainAct/Ships/Ship3/Throne/JumpPanel/Dialog" method="Activate"]
-[connection signal="Activated" from="MainAct/Ships/Ship3/Throne/JumpPanel" to="Static/Collision/OneWayWall" method="Deactivate"]
-[connection signal="Deactivated" from="MainAct/Ships/Ship3/Throne/JumpPanel" to="MainAct/Ships/Ship3/Throne/JumpPanel/Path" method="Activate"]
 [connection signal="Deactivated" from="MainAct/Ships/Ship3/Throne/JumpPanel" to="Static/Collision/OneWayWall" method="Activate"]
+[connection signal="Deactivated" from="MainAct/Ships/Ship3/Throne/JumpPanel" to="MainAct/Ships/Ship3/Throne/JumpPanel/Path" method="Activate"]
 [connection signal="Activated" from="MainAct/Grotto/Switch" to="MainAct/Grotto/Spring" method="ShowLauncher"]
 [connection signal="Shattered" from="MainAct/Grotto/Cage" to="MainAct/Grotto/GreenMajin2" method="Defeat" flags=3]
 [connection signal="Collected" from="MainAct/Grotto/MovingItemBox/ItemBoxFlying" to="MainAct/Grotto/MovingItemBox" method="Pause"]
 [connection signal="Respawned" from="MainAct/Grotto/MovingItemBox/ItemBoxFlying" to="MainAct/Grotto/MovingItemBox" method="Unpause"]
-[connection signal="Activated" from="MainAct/Cave/Sword3" to="MainAct/Cave/GrindPath/Camera" method="Activate"]
 [connection signal="Activated" from="MainAct/Cave/Sword3" to="Static/Collision/GrindOneWayWall" method="Activate"]
+[connection signal="Activated" from="MainAct/Cave/Sword3" to="MainAct/Cave/GrindPath/Camera" method="Activate"]
 [connection signal="Activated" from="MainAct/Cave/GrindPathCameraDeactivateTrigger" to="MainAct/Cave/GrindPath/Camera" method="Deactivate"]
 [connection signal="GrindStarted" from="MainAct/Cave/GrindPath/InvisibleGrindrail" to="MainAct/Dialog/BladeCullingTrigger" method="Deactivate"]
 [connection signal="GrindStarted" from="MainAct/Cave/GrindPath/InvisibleGrindrail" to="MainAct/Dialog/TractionCullingTrigger" method="Activate"]
