@@ -886,6 +886,7 @@ visible = false
 
 [node name="Rukh2Event" parent="Visuals" instance=ExtResource("4_px5bn")]
 visible = false
+activationSpeedScale = 1.2
 
 [node name="Rukh2LOD" parent="Visuals" instance=ExtResource("5_t3vhq")]
 visible = false
@@ -1080,6 +1081,30 @@ OneShot = true
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
 shape = SubResource("BoxShape3D_gwjfc")
 
+[node name="Rukh2Finish" parent="Triggers/Object" instance=ExtResource("19_fp3yh")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.7, 11.9, -245)
+OneShot = true
+"Respawn Mode" = 0
+"Enter Mode" = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Triggers/Object/Rukh2Finish"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
+shape = SubResource("BoxShape3D_gwjfc")
+
+[node name="Rukh2Path" parent="Triggers/Object" instance=ExtResource("19_fp3yh")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -50.000004, -18.1, -414)
+OneShot = true
+"Respawn Mode" = 0
+"Enter Mode" = 0
+
+[node name="Path" type="Node3D" parent="Triggers/Object/Rukh2Path" node_paths=PackedStringArray("path")]
+script = ExtResource("21_22ibx")
+path = NodePath("../../../../Paths/Rukh2")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Triggers/Object/Rukh2Path"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
+shape = SubResource("BoxShape3D_gwjfc")
+
 [node name="TreeLockout" parent="Triggers/Object" instance=ExtResource("19_fp3yh")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -50.1, -8.5, -604)
 "Trigger Mode" = 2
@@ -1144,9 +1169,11 @@ shape = SubResource("BoxShape3D_gwjfc")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -50, -19, -388)
 "Enter Mode" = 0
 
-[node name="Checkpoint" type="Node3D" parent="Triggers/Checkpoint/Checkpoint1"]
+[node name="Checkpoint" type="Node3D" parent="Triggers/Checkpoint/Checkpoint1" node_paths=PackedStringArray("PlayerPath", "CameraPath")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1, 0)
 script = ExtResource("27_474uf")
+PlayerPath = NodePath("../../../../Paths/Rukh2")
+CameraPath = NodePath("../../../../Paths/Rukh2")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Triggers/Checkpoint/Checkpoint1"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
@@ -2371,6 +2398,8 @@ external_skeleton = NodePath("../PrisonDoorRoot/Skeleton3D")
 [connection signal="Activated" from="Visuals/CullingTriggers/L5" to="Visuals/Rukh5" method="Activate"]
 [connection signal="Activated" from="Visuals/CullingTriggers/L5" to="Visuals/Rukh5LOD" method="Deactivate"]
 [connection signal="Activated" from="Triggers/Object/Rukh2" to="Visuals/Rukh2Event" method="Activate"]
+[connection signal="Activated" from="Triggers/Object/Rukh2Finish" to="Visuals/Rukh2" method="Activate"]
+[connection signal="Activated" from="Triggers/Object/Rukh2Finish" to="Visuals/Rukh2Event" method="Deactivate"]
 [connection signal="JumpFinished" from="Triggers/Object/Rukh3Jump/Jump" to="Collision/OneWayWall" method="Activate"]
 [connection signal="JumpFinished" from="Triggers/Object/Rukh3Jump/Jump" to="Triggers/Object/Rukh3Jump/Jump/Path" method="Activate"]
 [connection signal="JumpFinished" from="Triggers/Object/Rukh3Jump/Jump" to="Triggers/Object/Rukh3Jump/Jump/Camera" method="Activate"]

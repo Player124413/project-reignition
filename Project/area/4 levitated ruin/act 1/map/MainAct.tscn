@@ -1,4 +1,4 @@
-[gd_scene load_steps=85 format=3 uid="uid://tomoh11jttkl"]
+[gd_scene load_steps=83 format=3 uid="uid://tomoh11jttkl"]
 
 [ext_resource type="PackedScene" uid="uid://bm61nw4o1jcrb" path="res://area/4 levitated ruin/act 1/Static.tscn" id="1_jeukd"]
 [ext_resource type="Resource" uid="uid://4u4smu0br2v8" path="res://resource/level data/levitated ruin/Act1Main.tres" id="2_5dvfu"]
@@ -13,12 +13,10 @@
 [ext_resource type="PackedScene" uid="uid://x3scwb5r13dw" path="res://area/4 levitated ruin/object/platform/GrindPillarFly.tscn" id="8_6mhfy"]
 [ext_resource type="PackedScene" uid="uid://bhnh1as6xgpiy" path="res://object/stage/common/DashPanel.tscn" id="8_qbwj7"]
 [ext_resource type="Script" uid="uid://dx0a0rhyauccl" path="res://object/trigger/modules/CameraTrigger.cs" id="8_xcxgd"]
-[ext_resource type="Resource" uid="uid://jvsbdfsrni4p" path="res://area/4 levitated ruin/act 1/camera/main/LaunchRing1Cam.tres" id="9_b6tta"]
 [ext_resource type="Script" uid="uid://bssd28yqn1cxg" path="res://object/trigger/modules/PathTrigger.cs" id="9_kt1ho"]
 [ext_resource type="Script" uid="uid://dd24u7rlj0dwl" path="res://addons/custom_nodes/script/ObjectGenerator.cs" id="9_v4ux6"]
 [ext_resource type="PackedScene" uid="uid://c7l8mr7ubn848" path="res://object/stage/pickups/Ring.tscn" id="10_250we"]
 [ext_resource type="PackedScene" uid="uid://cggks1kly71mq" path="res://object/enemy/majin/data/levitated ruin/BlueMajin.tscn" id="11_427b8"]
-[ext_resource type="Resource" uid="uid://b3h54r5awfek0" path="res://area/4 levitated ruin/act 1/camera/Rukh2PreviewCam.tres" id="11_kaap7"]
 [ext_resource type="PackedScene" uid="uid://ci8d3jdqrc0nr" path="res://area/4 levitated ruin/object/special/Ivy.tscn" id="13_xqwht"]
 [ext_resource type="PackedScene" uid="uid://01vxs3in41h" path="res://area/4 levitated ruin/object/special/Zipline.tscn" id="14_ym4ng"]
 [ext_resource type="Script" uid="uid://bd2g6rmrn77eo" path="res://object/trigger/modules/LockoutTrigger.cs" id="15_a5o6r"]
@@ -137,8 +135,17 @@ size = Vector3(20, 40, 130)
 
 [node name="Static" parent="." instance=ExtResource("1_jeukd")]
 Data = ExtResource("2_5dvfu")
-metadata/_edit_group_ = true
-metadata/_edit_lock_ = true
+
+[node name="Skeleton3D" parent="Static/Visuals/LRSky/SkyRoot" index="0"]
+bones/2/position = Vector3(0, 0.00033497438, 2820.001)
+bones/3/position = Vector3(0, 0.00027457604, 2020.0005)
+bones/4/position = Vector3(0, 9.210742e-05, 1220.0002)
+bones/5/position = Vector3(0, 3.1709107e-05, 420.00006)
+bones/6/position = Vector3(0, -2.8689205e-05, -380.00018)
+bones/7/position = Vector3(0, 3.2982804e-05, -1180.0004)
+bones/8/position = Vector3(0, -0.00014948582, -1980.0006)
+bones/9/position = Vector3(0, -8.781382e-05, -2780.001)
+bones/13/rotation = Quaternion(-3.5527137e-14, 0, 0, 1)
 
 [node name="SkyRoad01" parent="Static/SkyRoad/SkyRoad01" index="0"]
 instance_shader_parameters/path_length = 1000.0
@@ -158,6 +165,15 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -50, -16, -460)
 "Exit Mode" = 2
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="MainAct/CullingTrigger/Rukh1-U"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
+shape = SubResource("BoxShape3D_ypvwq")
+
+[node name="Rukh2-L" parent="MainAct/CullingTrigger" instance=ExtResource("5_yejv7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 10, -280)
+"Trigger Mode" = 2
+"Exit Mode" = 2
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="MainAct/CullingTrigger/Rukh2-L"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
 shape = SubResource("BoxShape3D_ypvwq")
 
@@ -675,7 +691,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2.5)
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -5)
 
 [node name="JumpDialog" parent="MainAct/Rukh1" instance=ExtResource("5_yejv7")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.37114e-07, 8.4, -283)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.37114e-07, 8.4, -286)
 "Enter Mode" = 0
 
 [node name="Dialog" type="Node3D" parent="MainAct/Rukh1/JumpDialog" node_paths=PackedStringArray("randomizedDialogTriggers")]
@@ -701,14 +717,6 @@ transform = Transform3D(-0.182235, 0.851524, -0.491627, 0, 0.5, 0.866025, 0.9832
 MiddleHeight = 5.0
 Distance = 75.0
 LauncherDirection = 2
-
-[node name="Cam" type="Node3D" parent="MainAct/Rukh1/LaunchRing1"]
-transform = Transform3D(0.182236, -1.56462e-07, -0.983255, -0.851524, 0.5, -0.15782, 0.491628, 0.866026, 0.0911175, 46.213, 16.6175, 11.6524)
-script = ExtResource("8_xcxgd")
-transitionTime = 1.0
-deactivationTransitionTime = 0.5
-settings = ExtResource("9_b6tta")
-previousSettings = ExtResource("11_kaap7")
 
 [node name="LaunchRingSpike" parent="MainAct/Rukh1" instance=ExtResource("7_txkek")]
 transform = Transform3D(-0.414693, -0.64344, 0.64344, 0, 0.707107, 0.707107, -0.909961, 0.293232, -0.293232, -90, -10, -350)
@@ -1562,6 +1570,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 11, -130)
 
 [node name="Dialog" type="Node3D" parent="MainAct/Rukh3/SpikeDialog" node_paths=PackedStringArray("randomizedDialogTriggers")]
 script = ExtResource("7_gktnu")
+playbackType = 2
 textKeys = Array[String](["common_hint_spikes_sh"])
 randomizedDialogTriggers = []
 
@@ -2043,6 +2052,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 15, -232)
 
 [node name="GargoyleDialog" type="Node3D" parent="MainAct/Rukh3/GargoylePlatform" node_paths=PackedStringArray("randomizedDialogTriggers")]
 script = ExtResource("7_gktnu")
+playbackType = 1
 randomize = true
 textKeys = Array[String](["lev_hint_gargoyle_so", "lev_hint_gargoyle_sh"])
 randomizedDialogTriggers = []
@@ -2560,33 +2570,33 @@ script = ExtResource("4_4rpxf")
 respawnOnActivation = true
 
 [node name="MissileTracking1" parent="MainAct/Skyroad1/TrackingMissileGroup" instance=ExtResource("45_o7bxy")]
-transform = Transform3D(-0.933622, 0.24766839, 0.2588193, 0.29757568, 0.93843085, 0.17543525, -0.19943374, 0.24080935, -0.9498601, -18.160885, 55.243767, -236.2493)
+transform = Transform3D(-0.93362176, 0.24766839, 0.25881943, 0.29757562, 0.93843085, 0.17543533, -0.1994337, 0.24080935, -0.9498606, -18.160885, 55.243767, -236.2493)
 progress = 400.0
 h_offset = -0.5
 v_offset = 0.5
 explosionPoint = 500
 
 [node name="MissileTracking2" parent="MainAct/Skyroad1/TrackingMissileGroup" instance=ExtResource("45_o7bxy")]
-transform = Transform3D(-0.81502813, 0.5565095, 0.16129628, 0.5776881, 0.8019409, 0.15217961, -0.04466079, 0.21721092, -0.9750982, -21.03332, 54.595844, -228.71169)
+transform = Transform3D(-0.81502885, 0.5565101, 0.1612963, 0.5776886, 0.8019418, 0.15217963, -0.04466083, 0.21721116, -0.9750983, -21.03332, 54.595844, -228.71169)
 progress = 392.0
 h_offset = 1.0
 v_offset = 0.5
 explosionPoint = 450
 
 [node name="MissileTracking3" parent="MainAct/Skyroad1/TrackingMissileGroup" instance=ExtResource("45_o7bxy")]
-transform = Transform3D(-0.32806697, 0.5691716, -0.75392526, 0.61588126, 0.73403007, 0.28614756, 0.7162728, -0.37045795, -0.59135425, -14.838174, 50.212395, -208.59265)
+transform = Transform3D(-0.32806697, 0.5691723, -0.753926, 0.61588126, 0.7340311, 0.28614786, 0.7162728, -0.37045842, -0.5913548, -14.838174, 50.212395, -208.59265)
 progress = 370.0
 h_offset = 1.0
 v_offset = 0.5
 
 [node name="MissileTracking4" parent="MainAct/Skyroad1/TrackingMissileGroup" instance=ExtResource("45_o7bxy")]
-transform = Transform3D(0.18010293, 0.3855632, -0.90492815, 0.58519536, 0.69745237, 0.41363487, 0.79063106, -0.6040578, -0.100017525, -6.0930467, 45.82818, -206.39674)
+transform = Transform3D(0.18010315, 0.3855636, -0.90492815, 0.5851961, 0.6974531, 0.41363487, 0.790632, -0.60405844, -0.100017525, -6.0930467, 45.82818, -206.39674)
 progress = 360.0
 h_offset = -0.5
 v_offset = 0.5
 
 [node name="MissileTracking5" parent="MainAct/Skyroad1/TrackingMissileGroup" instance=ExtResource("45_o7bxy")]
-transform = Transform3D(0.78364474, -0.6148941, -0.08826256, 0.60283136, 0.718475, 0.34694967, -0.14992309, -0.32509536, 0.9337162, 11.475067, 34.134995, -223.12651)
+transform = Transform3D(0.78364474, -0.6148942, -0.08826256, 0.60283136, 0.71847516, 0.34694967, -0.14992309, -0.32509544, 0.9337162, 11.475067, 34.134995, -223.12651)
 progress = 330.0
 h_offset = 1.0
 v_offset = 0.5
@@ -2983,7 +2993,7 @@ Movement/Angle = 90.0
 "Vertical Orientation" = false
 
 [node name="BlueMajin" parent="MainAct/Rukh4/MovingMajin3" instance=ExtResource("11_427b8")]
-transform = Transform3D(0.9999957, 0, 1.4901161e-08, 0, 1, 0, -1.4901161e-08, 0, 0.9999957, 0, 0, 0)
+transform = Transform3D(0.9999956, 0, 1.4901161e-08, 0, 1, 0, -1.4901161e-08, 0, 0.9999956, 0, 0, 0)
 "Spawn Settings/Spawn Travel Time" = 0.5
 "Spawn Settings/Spawn Delay" = 0.0
 "Spawn Settings/Spawn Offset" = Vector3(0, 10, 0)
@@ -3351,14 +3361,14 @@ script = ExtResource("4_4rpxf")
 respawnOnActivation = true
 
 [node name="MissileTracking1" parent="MainAct/Skyroad2/TrackingMissileGroup1" instance=ExtResource("45_o7bxy")]
-transform = Transform3D(0.013076033, 0.07871944, 0.9968341, 0.44257042, -0.89438325, 0.06482668, 0.89662606, 0.44031534, -0.046535574, 29.174686, 49.306915, -64.038086)
+transform = Transform3D(0.013076047, 0.07871957, 0.9968391, 0.4425709, -0.89438474, 0.06482701, 0.896627, 0.44031605, -0.04653581, 29.174686, 49.306915, -64.038086)
 progress = 120.0
 h_offset = -0.5
 v_offset = 0.5
 explosionPoint = 250
 
 [node name="MissileTracking2" parent="MainAct/Skyroad2/TrackingMissileGroup1" instance=ExtResource("45_o7bxy")]
-transform = Transform3D(-0.008777395, 0.10005825, 0.9949661, 0.81119114, -0.5810822, 0.06559551, 0.58470213, 0.8076712, -0.07606832, 24.202682, 50.17011, -62.526)
+transform = Transform3D(-0.008777397, 0.100058414, 0.9949727, 0.8111914, -0.58108324, 0.06559594, 0.58470225, 0.8076725, -0.076068826, 24.202682, 50.17011, -62.526)
 progress = 115.0
 h_offset = 1.0
 v_offset = 0.5
@@ -4668,7 +4678,7 @@ script = ExtResource("4_4rpxf")
 respawnOnActivation = true
 
 [node name="MissileTracking1" parent="MainAct/Skyroad4/TrackingMissileGroup1" instance=ExtResource("45_o7bxy")]
-transform = Transform3D(0.0018572652, 0.14584838, -0.98931104, 4.344659e-05, 0.989307, 0.14584954, 0.9999862, -0.0003138655, 0.0018311017, -8.396107, 52.982773, 107.43897)
+transform = Transform3D(0.0018572668, 0.14584838, -0.98931104, 4.3446627e-05, 0.989307, 0.14584954, 0.999987, -0.0003138655, 0.0018311017, -8.396107, 52.982773, 107.43897)
 progress = 225.0
 h_offset = -0.5
 v_offset = 0.5
@@ -5087,20 +5097,20 @@ script = ExtResource("4_4rpxf")
 respawnOnActivation = true
 
 [node name="MissileTracking1" parent="MainAct/Skyroad4/TrackingMissileGroup2" instance=ExtResource("45_o7bxy")]
-transform = Transform3D(-0.11305568, 0.13538522, -0.98432297, 0.14751276, 0.981984, 0.11811961, 0.98255724, -0.13184895, -0.13099234, -279.52118, 86.51733, 233.14723)
+transform = Transform3D(-0.11305578, 0.13538522, -0.98432297, 0.14751288, 0.981984, 0.11811961, 0.9825581, -0.13184895, -0.13099234, -279.52118, 86.51733, 233.14723)
 progress = 1000.0
 v_offset = 0.5
 explosionPoint = 1120
 
 [node name="MissileTracking2" parent="MainAct/Skyroad4/TrackingMissileGroup2" instance=ExtResource("45_o7bxy")]
-transform = Transform3D(0.30404612, -0.049052093, -0.95139164, 0.12556778, 0.99201983, -0.011017144, 0.94433177, -0.11611558, 0.30778414, -269.63693, 86.85095, 232.56232)
+transform = Transform3D(0.30404598, -0.049052052, -0.95139056, 0.12556772, 0.992019, -0.011017132, 0.94433135, -0.11611548, 0.3077838, -269.63693, 86.85095, 232.56232)
 progress = 990.0
 h_offset = 0.5
 v_offset = 1.0
 explosionPoint = 1100
 
 [node name="MissileTracking3" parent="MainAct/Skyroad4/TrackingMissileGroup2" instance=ExtResource("45_o7bxy")]
-transform = Transform3D(0.39419544, -0.095436886, -0.91405594, 0.02882261, 0.995387, -0.0914986, 0.9185606, 0.009722964, 0.39513326, -258.46515, 87.32453, 228.33957)
+transform = Transform3D(0.3941954, -0.095436886, -0.91405594, 0.028822608, 0.995387, -0.0914986, 0.9185606, 0.009722964, 0.39513326, -258.46515, 87.32453, 228.33957)
 progress = 978.0
 h_offset = 1.0
 v_offset = 1.0
@@ -5122,21 +5132,21 @@ script = ExtResource("4_4rpxf")
 respawnOnActivation = true
 
 [node name="MissileTracking1" parent="MainAct/Skyroad4/TrackingMissileGroup3" instance=ExtResource("45_o7bxy")]
-transform = Transform3D(-0.0226934, 0.031838745, -0.99923706, -4.389345e-05, 0.999489, 0.03184811, 0.9997198, 0.0007666151, -0.02268104, -369.2801, 87.352104, 218.6985)
+transform = Transform3D(-0.02269338, 0.031838745, -0.99923706, -4.3893415e-05, 0.999489, 0.03184811, 0.99971896, 0.0007666151, -0.02268104, -369.2801, 87.352104, 218.6985)
 progress = 1150.0
 h_offset = -1.2
 v_offset = 1.0
 explosionPoint = 1290
 
 [node name="MissileTracking2" parent="MainAct/Skyroad4/TrackingMissileGroup3" instance=ExtResource("45_o7bxy")]
-transform = Transform3D(-0.22594652, 0.12645806, -0.96589196, -4.3544595e-05, 0.99153334, 0.12982512, 0.974129, 0.02937592, -0.22403015, -359.56985, 86.5141, 222.11917)
+transform = Transform3D(-0.22594652, 0.12645818, -0.96589196, -4.3544595e-05, 0.9915342, 0.12982512, 0.974129, 0.029375946, -0.22403015, -359.56985, 86.5141, 222.11917)
 progress = 1140.0
 h_offset = 1.0
 v_offset = 1.0
 explosionPoint = 1190
 
 [node name="MissileTracking3" parent="MainAct/Skyroad4/TrackingMissileGroup3" instance=ExtResource("45_o7bxy")]
-transform = Transform3D(-0.38178417, 0.13692306, -0.91404486, -4.3431486e-05, 0.9889505, 0.14816368, 0.92423874, 0.05660659, -0.37756628, -350.34222, 85.00816, 225.20555)
+transform = Transform3D(-0.38178378, 0.13692278, -0.91404486, -4.3431442e-05, 0.9889485, 0.14816368, 0.9242378, 0.05660648, -0.37756628, -350.34222, 85.00816, 225.20555)
 progress = 1130.0
 h_offset = 1.0
 v_offset = 1.0
@@ -5831,6 +5841,8 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -4, 3)
 shape = SubResource("BoxShape3D_ypvwq")
 
 [connection signal="Activated" from="MainAct/CullingTrigger/Rukh1-U" to="MainAct/Rukh1" method="Deactivate"]
+[connection signal="Activated" from="MainAct/CullingTrigger/Rukh2-L" to="MainAct/Rukh2" method="Activate"]
+[connection signal="Deactivated" from="MainAct/CullingTrigger/Rukh2-L" to="MainAct/Rukh2" method="Deactivate"]
 [connection signal="Activated" from="MainAct/CullingTrigger/Rukh3-L" to="MainAct/Rukh3" method="Activate"]
 [connection signal="Deactivated" from="MainAct/CullingTrigger/Rukh3-L" to="MainAct/Rukh3" method="Deactivate"]
 [connection signal="Activated" from="MainAct/CullingTrigger/Rukh2-U Skyroad1-L" to="Static/Visuals/Rukh2" method="Deactivate"]
@@ -5857,13 +5869,6 @@ shape = SubResource("BoxShape3D_ypvwq")
 [connection signal="Activated" from="MainAct/Rukh1/GrindPillarFlyTrigger3" to="MainAct/Rukh1/GrindPillarFlyTrigger3/GrindPillarFly2" method="Activate"]
 [connection signal="Activated" from="MainAct/Rukh1/SquarePillarFlyTrigger2" to="MainAct/Rukh1/SquarePillarFlyTrigger2/SquarePillarFly" method="Activate"]
 [connection signal="Activated" from="MainAct/Rukh1/SquarePillarFlyTrigger3" to="MainAct/Rukh1/SquarePillarFlyTrigger3/SquarePillarFly2" method="Activate"]
-[connection signal="Activated" from="MainAct/Rukh1/JumpPanel" to="Static/Collision/OneWayWall" method="Deactivate"]
-[connection signal="Deactivated" from="MainAct/Rukh1/JumpPanel" to="Static/Collision/OneWayWall" method="Activate"]
-[connection signal="Activated" from="MainAct/Rukh1/LaunchRing1" to="MainAct/Rukh1/LaunchRing1/Cam" method="Activate"]
-[connection signal="Deactivated" from="MainAct/Rukh1/LaunchRing1" to="MainAct/Rukh1/LaunchRing1/Cam" method="Deactivate"]
-[connection signal="Entered" from="MainAct/Rukh1/LaunchRing1" to="Static/Visuals/Rukh2" method="Activate"]
-[connection signal="Entered" from="MainAct/Rukh1/LaunchRing1" to="Static/Visuals/Rukh2Event" method="Deactivate"]
-[connection signal="Entered" from="MainAct/Rukh1/LaunchRing1" to="MainAct/Rukh2" method="Activate"]
 [connection signal="Entered" from="MainAct/Rukh1/LaunchRingSpike" to="Static/Visuals/Rukh1" method="Deactivate"]
 [connection signal="Entered" from="MainAct/Rukh1/LaunchRingSpike" to="Static/Visuals/Rukh1LOD" method="Activate"]
 [connection signal="Entered" from="MainAct/Rukh1/LaunchRing2" to="MainAct/Rukh1/LaunchRing2/Path" method="Activate"]
