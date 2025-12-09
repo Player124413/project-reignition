@@ -97,7 +97,8 @@ public partial class HomingAttackState : PlayerState
 			return null;
 		}
 
-		Player.CheckGround();
+		if (Player.VerticalSpeed <= 0)
+			Player.CheckGround();
 		Player.CheckWall();
 		Player.UpdateUpDirection(true);
 		Player.PathFollower.Resync();
