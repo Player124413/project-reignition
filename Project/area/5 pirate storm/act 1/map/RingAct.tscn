@@ -23,7 +23,7 @@
 [ext_resource type="Script" uid="uid://cciy1oeuvbh3e" path="res://object/trigger/modules/JumpTrigger.cs" id="32_8460m"]
 [ext_resource type="PackedScene" uid="uid://bqvtcp8tkbfyt" path="res://object/stage/common/SpikeBall.tscn" id="35_v3tve"]
 [ext_resource type="PackedScene" uid="uid://bhnh1as6xgpiy" path="res://object/stage/common/DashPanel.tscn" id="36_ly2bx"]
-[ext_resource type="PackedScene" uid="uid://bpym1aa2ews4w" path="res://area/5 pirate storm/object/BombVisualOnly.tscn" id="37_mcf1w"]
+[ext_resource type="PackedScene" uid="uid://bpym1aa2ews4w" path="res://area/5 pirate storm/object/BombBulletStagger.tscn" id="37_mcf1w"]
 [ext_resource type="PackedScene" uid="uid://c85xw5ix60fe8" path="res://object/stage/common/Switch.tscn" id="38_iypsv"]
 [ext_resource type="PackedScene" uid="uid://cx36fswvjfblm" path="res://object/stage/destructable/EnemyStone.tscn" id="39_13sn5"]
 [ext_resource type="Resource" uid="uid://bq5miu44us6i1" path="res://area/5 pirate storm/act 1/camera/ShipFightCam.tres" id="40_hi7bt"]
@@ -117,15 +117,13 @@ startEnabled = true
 [node name="CollisionShape3D" parent="Static/Triggers/PathAndCameraTriggers/IslandCamera4" index="1"]
 disabled = true
 
-[node name="Dialog" type="Node3D" parent="Static/Triggers/CannonEvent/CannonEventTrigger" index="0"]
+[node name="Dialog" type="Node3D" parent="Static/Triggers/CannonEvent/CannonEventTrigger" index="0" node_paths=PackedStringArray("randomizedDialogTriggers")]
 script = ExtResource("4_v80dm")
 textKeys = Array[String](["pir_cannon_start_so"])
+randomizedDialogTriggers = []
 
 [node name="RainCollision" parent="Static/Rain" index="0"]
 transform = Transform3D(1, 0, 0, 0, 1, 7.45058e-09, 0, -7.45058e-09, 1, -1, 7.47332e-09, 1)
-
-[node name="Camera" parent="Static/DemoCamera" index="0"]
-transform = Transform3D(1, 0, 0, 0, 0.99619496, 0.0871558, 0, -0.0871558, 0.99619496, 0, 0, 0)
 
 [node name="RingAct" type="Node3D" parent="."]
 
@@ -147,9 +145,10 @@ shape = SubResource("BoxShape3D_6yc6x")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -129.9, 30.9, 1045)
 "Enter Mode" = 0
 
-[node name="Dialog" type="Node3D" parent="RingAct/Dialog/StartGroup"]
+[node name="Dialog" type="Node3D" parent="RingAct/Dialog/StartGroup" node_paths=PackedStringArray("randomizedDialogTriggers")]
 script = ExtResource("4_v80dm")
 textKeys = Array[String](["pir_treasure_so", "common_start_sh"])
+randomizedDialogTriggers = []
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="RingAct/Dialog/StartGroup"]
 shape = SubResource("BoxShape3D_6rj8d")
@@ -158,9 +157,10 @@ shape = SubResource("BoxShape3D_6rj8d")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -130, 9.9, 1105)
 "Enter Mode" = 0
 
-[node name="Dialog" type="Node3D" parent="RingAct/Dialog/EnemyGroup"]
+[node name="Dialog" type="Node3D" parent="RingAct/Dialog/EnemyGroup" node_paths=PackedStringArray("randomizedDialogTriggers")]
 script = ExtResource("4_v80dm")
 textKeys = Array[String](["common_enemy8_so", "common_enemy8_sh"])
+randomizedDialogTriggers = []
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="RingAct/Dialog/EnemyGroup"]
 shape = SubResource("BoxShape3D_6rj8d")
@@ -596,7 +596,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.565686, -0.565685, 0)
 [node name="Bomb" type="Node3D" parent="RingAct/Cannonball"]
 
 [node name="BombTrigger1" parent="RingAct/Cannonball/Bomb" instance=ExtResource("5_461lq")]
-transform = Transform3D(1, 0, 0, 0, 0.999999, 0, 0, 0, 1, 0, 4, 70)
+transform = Transform3D(1, 0, 0, 0, 0.99999887, 0, 0, 0, 0.9999999, 0, 6, 60)
 OneShot = true
 "Respawn Mode" = 0
 "Enter Mode" = 0

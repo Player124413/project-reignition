@@ -307,6 +307,7 @@ public partial class BombMissile : Node3D
 		launchTimer = -launchDelay;
 	}
 
+
 	public void Activate()
 	{
 		if (LaunchMode != LaunchModes.Code)
@@ -326,6 +327,7 @@ public partial class BombMissile : Node3D
 		EmitSignal(SignalName.Launched);
 	}
 
+	public void Explode(Area3D _) => Explode();
 	public void Explode()
 	{
 		IsActive = false;
