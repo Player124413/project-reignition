@@ -1,4 +1,4 @@
-[gd_scene load_steps=91 format=3 uid="uid://csk7y7y8vgg6l"]
+[gd_scene load_steps=92 format=3 uid="uid://csk7y7y8vgg6l"]
 
 [ext_resource type="Script" uid="uid://dtkbvehtmy3em" path="res://object/stage/StageSettings.cs" id="1_g84th"]
 [ext_resource type="PackedScene" uid="uid://npgcl1ctbjyt" path="res://area/5 pirate storm/act 1/environment/01Opening.tscn" id="2_444mk"]
@@ -81,6 +81,9 @@ size = Vector3(20, 2, 2)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_q3kya"]
 size = Vector3(50, 50, 52)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_dpvh1"]
+size = Vector3(7, 20, 5)
 
 [sub_resource type="BoxMesh" id="BoxMesh_08hmi"]
 
@@ -1600,6 +1603,19 @@ cameraPathBlendTime = 1.0
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
 shape = SubResource("BoxShape3D_k720b")
 
+[node name="CaveGrindPath" parent="Triggers/PathAndCameraTriggers" instance=ExtResource("22_ypnsc")]
+transform = Transform3D(1, 0, -1.0658141e-14, 0, 1, 0, 1.0658141e-14, 0, 1, -515.661, 54.692303, 1588.5)
+"Trigger Mode" = 2
+"Exit Mode" = 2
+
+[node name="Path" type="Node3D" parent="Triggers/PathAndCameraTriggers/CaveGrindPath" node_paths=PackedStringArray("path")]
+script = ExtResource("23_vf6sl")
+path = NodePath("../../../../Path/GrindPath")
+cameraPathBlendTime = 1.0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Triggers/PathAndCameraTriggers/CaveGrindPath"]
+shape = SubResource("BoxShape3D_dpvh1")
+
 [node name="CaveNearCamera" parent="Triggers/PathAndCameraTriggers" instance=ExtResource("22_ypnsc")]
 transform = Transform3D(0.173648, 0, -0.984808, 0, 1, 0, 0.984808, 0, 0.173648, -524.762, 49.9, 1585.26)
 "Trigger Mode" = 2
@@ -1794,8 +1810,10 @@ transform = Transform3D(0.258819, 0, -0.965926, 0, 1, 0, 0.965926, 0, 0.258819, 
 "Trigger Mode" = 2
 "Exit Mode" = 2
 
-[node name="Checkpoint" type="Node3D" parent="Triggers/Checkpoints/CaveStart"]
+[node name="Checkpoint" type="Node3D" parent="Triggers/Checkpoints/CaveStart" node_paths=PackedStringArray("PlayerPath", "CameraPath")]
 script = ExtResource("30_3vwxx")
+PlayerPath = NodePath("../../../../Path/CavePath")
+CameraPath = NodePath("../../../../Path/CavePath")
 CameraSettings = ExtResource("26_ybwgy")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Triggers/Checkpoints/CaveStart"]

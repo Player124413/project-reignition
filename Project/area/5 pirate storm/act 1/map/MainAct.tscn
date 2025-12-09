@@ -1,4 +1,4 @@
-[gd_scene load_steps=123 format=3 uid="uid://bkuwj6xj81tuv"]
+[gd_scene load_steps=124 format=3 uid="uid://bkuwj6xj81tuv"]
 
 [ext_resource type="PackedScene" uid="uid://csk7y7y8vgg6l" path="res://area/5 pirate storm/act 1/Static.tscn" id="1_8fsep"]
 [ext_resource type="PackedScene" uid="uid://cjupypih0myxo" path="res://object/player/CharacterSpawn.tscn" id="2_kflh0"]
@@ -171,6 +171,9 @@ point_count = 2
 [sub_resource type="Curve" id="Curve_mt1sj"]
 _data = [Vector2(0, 0), 0.0, 0.5, 0, 1, Vector2(1, 0.5), 0.5, 0.0, 1, 0]
 point_count = 2
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_2fchw"]
+size = Vector3(20, 10, 9)
 
 [sub_resource type="Curve" id="Curve_k2etd"]
 _limits = [-1.0, 1.0, 0.0, 1.0]
@@ -1882,7 +1885,7 @@ Movement/Angle = 0.0
 "Vertical Orientation" = false
 
 [node name="Blade" parent="MainAct/Islands/Island4/MovingBlade1" instance=ExtResource("16_scpb0")]
-transform = Transform3D(1, -1.4901161e-08, -2.5757174e-14, 0, -4.37114e-08, -1, 1.4901161e-08, 1, -4.3711516e-08, 0, 0, 0)
+transform = Transform3D(1, -1.4901161e-08, -2.5757174e-14, 0, -4.37114e-08, -1, 1.4901161e-08, 1, -4.371153e-08, 0, 0, 0)
 
 [node name="MovingBlade2" type="Node3D" parent="MainAct/Islands/Island4"]
 transform = Transform3D(0.990268, 0, 0.139173, 0, 1, 0, -0.139173, 0, 0.990268, -30.323, 0.3, 6.98822)
@@ -4321,6 +4324,14 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -54)
 [node name="Child20" parent="MainAct/Cave/Pearls" instance=ExtResource("8_ytq25")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -57)
 
+[node name="GrindPathCameraDeactivateTrigger" parent="MainAct/Cave" instance=ExtResource("26_1c4me")]
+transform = Transform3D(1.0000001, 0, 0, 0, 1.0000004, 0, 0, 0, 0.9999996, -11.491028, 5.2249756, 0)
+"Enter Mode" = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="MainAct/Cave/GrindPathCameraDeactivateTrigger"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2)
+shape = SubResource("BoxShape3D_2fchw")
+
 [node name="GrindPath" type="Node3D" parent="MainAct/Cave"]
 transform = Transform3D(-0.99824, -0.00743305, 0.0588386, 0, 0.992115, 0.125333, -0.0593063, 0.125113, -0.990368, -11.491, 15.225, 0)
 
@@ -4632,7 +4643,7 @@ Movement/Angle = 90.0
 "Vertical Orientation" = true
 
 [node name="Blade" parent="MainAct/Cave/BladeGroup4/Blade1" instance=ExtResource("16_scpb0")]
-transform = Transform3D(0.9999978, 2.220446e-15, -6.109476e-07, -9.31323e-09, 1, -6.27479e-08, -6.109476e-07, -4.00469e-08, 0.9999977, -0.4161377, 0, 3.0517578e-05)
+transform = Transform3D(0.9999978, 2.220446e-15, -5.9604645e-07, -9.31323e-09, 1, -6.27479e-08, -6.109476e-07, -4.00469e-08, 0.99999756, -0.4161377, 0, 3.0517578e-05)
 playSFX = false
 
 [node name="Blade2" type="Node3D" parent="MainAct/Cave/BladeGroup4"]
@@ -4666,7 +4677,7 @@ Movement/Angle = 90.0
 "Vertical Orientation" = true
 
 [node name="Blade" parent="MainAct/Cave/BladeGroup4/Blade3" instance=ExtResource("16_scpb0")]
-transform = Transform3D(1.00003, 4.4703594e-08, 6.109476e-07, 0, 1, -3.72529e-08, -6.109476e-07, -1.0756803e-07, 1.00003, 0, 0, 0)
+transform = Transform3D(1.00003, 4.4703594e-08, 6.109476e-07, 0, 1, -3.72529e-08, -6.109476e-07, -1.07568034e-07, 1.00003, 0, 0, 0)
 playSFX = false
 
 [node name="BladeGroupSfx" type="AudioStreamPlayer3D" parent="MainAct/Cave/BladeGroup4"]
@@ -6512,14 +6523,14 @@ shape = SubResource("BoxShape3D_6yc6x")
 [connection signal="Defeated" from="MainAct/Ships/Ship1/GreenMajin2" to="MainAct/Ships/Ship1/EnemyStone" method="IncrementCounter"]
 [connection signal="Activated" from="MainAct/Ships/Ship1/SwitchM" to="MainAct/Ships/Ship1/BridgeSquareFallingR" method="StartShaking"]
 [connection signal="Activated" from="MainAct/Ships/Ship1/SwitchM" to="MainAct/Ships/Ship1/BridgeSquareFallingL" method="StartShaking"]
-[connection signal="Activated" from="MainAct/Ships/Ship1/Catapult" to="Static/Collision/OneWayWall" method="Deactivate"]
 [connection signal="Activated" from="MainAct/Ships/Ship1/Catapult" to="MainAct/Ships/Ship1/Catapult/LaunchCamera" method="Activate"]
-[connection signal="Deactivated" from="MainAct/Ships/Ship1/Catapult" to="Static/Collision/OneWayWall" method="Activate"]
+[connection signal="Activated" from="MainAct/Ships/Ship1/Catapult" to="Static/Collision/OneWayWall" method="Deactivate"]
 [connection signal="Deactivated" from="MainAct/Ships/Ship1/Catapult" to="MainAct/Ships/Ship1/Catapult/LaunchCamera" method="Deactivate"]
+[connection signal="Deactivated" from="MainAct/Ships/Ship1/Catapult" to="Static/Collision/OneWayWall" method="Activate"]
 [connection signal="PlayerEntered" from="MainAct/Ships/Ship1/Catapult" to="MainAct/Ships/Ship1/Catapult/AimCamera" method="Activate"]
 [connection signal="PlayerExited" from="MainAct/Ships/Ship1/Catapult" to="MainAct/Ships/Ship1/Catapult/AimCamera" method="Deactivate"]
-[connection signal="JumpFinished" from="MainAct/Ships/Ship1/JumpTrigger2/Jump" to="Static/Collision/OneWayWall" method="Activate"]
 [connection signal="JumpFinished" from="MainAct/Ships/Ship1/JumpTrigger2/Jump" to="MainAct/Ships/Ship1/JumpTrigger2/Jump/Camera" method="Activate"]
+[connection signal="JumpFinished" from="MainAct/Ships/Ship1/JumpTrigger2/Jump" to="Static/Collision/OneWayWall" method="Activate"]
 [connection signal="GrindCompleted" from="MainAct/Ships/Ship2/InvisibleGrindrail" to="MainAct/Ships/Ship2/InvisibleGrindrail/Camera" method="Deactivate"]
 [connection signal="GrindStarted" from="MainAct/Ships/Ship2/InvisibleGrindrail" to="MainAct/Ships/Ship2/InvisibleGrindrail/Camera" method="Activate"]
 [connection signal="Defeated" from="MainAct/Ships/Ship2/SlimeMajinL" to="MainAct/Ships/Ship2/EnemyStone1" method="IncrementCounter"]
@@ -6558,19 +6569,18 @@ shape = SubResource("BoxShape3D_6yc6x")
 [connection signal="Defeated" from="MainAct/Ships/Ship3/Throne/RedMajin" to="MainAct/Ships/Ship3/Throne/EnemyStone3" method="IncrementCounter"]
 [connection signal="Defeated" from="MainAct/Ships/Ship3/Throne/RedMajin" to="MainAct/Ships/Ship3/Throne/EnemyStone4" method="IncrementCounter"]
 [connection signal="Defeated" from="MainAct/Ships/Ship3/Throne/RedMajin" to="MainAct/Ships/Ship3/Throne/EnemyStone5" method="IncrementCounter"]
-[connection signal="Activated" from="MainAct/Ships/Ship3/Throne/JumpPanel" to="Static/Collision/OneWayWall" method="Deactivate"]
 [connection signal="Activated" from="MainAct/Ships/Ship3/Throne/JumpPanel" to="MainAct/Ships/Ship3/Throne/JumpPanel/Camera" method="Activate"]
 [connection signal="Activated" from="MainAct/Ships/Ship3/Throne/JumpPanel" to="MainAct/Ships/Ship3/Throne/JumpPanel/Dialog" method="Activate"]
-[connection signal="Deactivated" from="MainAct/Ships/Ship3/Throne/JumpPanel" to="Static/Collision/OneWayWall" method="Activate"]
+[connection signal="Activated" from="MainAct/Ships/Ship3/Throne/JumpPanel" to="Static/Collision/OneWayWall" method="Deactivate"]
 [connection signal="Deactivated" from="MainAct/Ships/Ship3/Throne/JumpPanel" to="MainAct/Ships/Ship3/Throne/JumpPanel/Path" method="Activate"]
+[connection signal="Deactivated" from="MainAct/Ships/Ship3/Throne/JumpPanel" to="Static/Collision/OneWayWall" method="Activate"]
 [connection signal="Activated" from="MainAct/Grotto/Switch" to="MainAct/Grotto/Spring" method="ShowLauncher"]
 [connection signal="Shattered" from="MainAct/Grotto/Cage" to="MainAct/Grotto/GreenMajin2" method="Defeat" flags=3]
 [connection signal="Collected" from="MainAct/Grotto/MovingItemBox/ItemBoxFlying" to="MainAct/Grotto/MovingItemBox" method="Pause"]
 [connection signal="Respawned" from="MainAct/Grotto/MovingItemBox/ItemBoxFlying" to="MainAct/Grotto/MovingItemBox" method="Unpause"]
-[connection signal="Activated" from="MainAct/Cave/Sword3" to="Static/Collision/OneWayWall" method="Deactivate"]
-[connection signal="Activated" from="MainAct/Cave/Sword3" to="Static/Collision/GrindOneWayWall" method="Activate"]
 [connection signal="Activated" from="MainAct/Cave/Sword3" to="MainAct/Cave/GrindPath/Camera" method="Activate"]
-[connection signal="Activated" from="MainAct/Cave/Sword3" to="MainAct/Cave/GrindPath/Path" method="Activate"]
+[connection signal="Activated" from="MainAct/Cave/Sword3" to="Static/Collision/GrindOneWayWall" method="Activate"]
+[connection signal="Activated" from="MainAct/Cave/GrindPathCameraDeactivateTrigger" to="MainAct/Cave/GrindPath/Camera" method="Deactivate"]
 [connection signal="GrindStarted" from="MainAct/Cave/GrindPath/InvisibleGrindrail" to="MainAct/Dialog/BladeCullingTrigger" method="Deactivate"]
 [connection signal="GrindStarted" from="MainAct/Cave/GrindPath/InvisibleGrindrail" to="MainAct/Dialog/TractionCullingTrigger" method="Activate"]
 [connection signal="Activated" from="MainAct/Cave/GrindInvisibleWallTrigger" to="Static/Collision/OneWayWall" method="Activate"]
