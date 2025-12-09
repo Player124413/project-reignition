@@ -75,20 +75,30 @@ public partial class GargoyleSkyroad : PathFollow3D
 		// Smoothly move the local position to the correct distance
 		root.Position = root.Position.SmoothDamp(Vector3.Back * 2.0f, ref velocity, PositionSmoothing);
 
-		float pathDelta = CalculateMovementDelta();
-		ProcessSlipstream(pathDelta);
-		if (pathDelta < MinDistanceToPlayer && Player.PathFollower.ActivePath == CurrentPath) // Ensure we're a set distance away from the player
-			Progress = Player.PathFollower.Progress + MinDistanceToPlayer;
-
 		// Move gargoyle along the path
-		float movementDelta = CalculateMoveSpeed(pathDelta) * PhysicsManager.physicsDelta;
-		float targetProgress = Progress - movementDelta;
+		float movementDelta = CalculateMoveSpeed() * PhysicsManager.physicsDelta;
+		float targetProgress = Progress + movementDelta;
+		float originalProgress = Progress;
 		Progress += movementDelta;
+		float remainingProgress = targetProgress - Progress;
 
 		activeRoad.SetPathRatio((traveledDistance + Progress) / totalDistance); // Update visuals
 		if (Mathf.IsEqualApprox(ProgressRatio, 1.0f))
-			IncrementPathIndex(targetProgress - Progress);
+		{
+			IncrementPathIndex();
+			if (currentPathIndex == paths.Length)
+				return;
 
+			Progress += remainingProgress;
+		}
+
+		float playerProgress = CurrentPath.Curve.GetClosestOffset(CurrentPath.ToLocal(Player.GlobalPosition));
+		float pathDelta = Progress - playerProgress;
+		ProcessSlipstream(pathDelta);
+		if (pathDelta < MinDistanceToPlayer) // Ensure we're a set distance away from the player
+			Progress = playerProgress + MinDistanceToPlayer;
+
+		ProcessMoveSpeedTimer(pathDelta);
 		UpdateAnimations();
 	}
 
@@ -101,16 +111,13 @@ public partial class GargoyleSkyroad : PathFollow3D
 			animationTree.Set(FlapSpeedParameter, 1.5f + (speedBlend * .2f));
 	}
 
-	private float CalculateMovementDelta()
+	private float CalculateMoveSpeed()
 	{
-		if (Player.PathFollower.ActivePath == CurrentPath)
-			return Progress - Player.PathFollower.Progress;
-
-		// Different path
-		return Mathf.Inf;
+		speedBlend = Mathf.MoveToward(speedBlend, isFastSpeed ? 1.0f : 0.0f, SpeedSmoothing * PhysicsManager.physicsDelta);
+		return Mathf.Lerp(BaseMovementSpeed, FastMovementSpeed, speedBlend) + (Player.Stats.GroundSettings.Speed - Player.Stats.baseGroundSpeed);
 	}
 
-	private float CalculateMoveSpeed(float pathDelta)
+	private void ProcessMoveSpeedTimer(float pathDelta)
 	{
 		if (Mathf.IsZeroApprox(speedBlend) || Mathf.IsEqualApprox(speedBlend, 1.0f))
 		{
@@ -119,9 +126,6 @@ public partial class GargoyleSkyroad : PathFollow3D
 			if (CanToggleSpeed(pathDelta))
 				ToggleFastSpeed();
 		}
-
-		speedBlend = Mathf.MoveToward(speedBlend, isFastSpeed ? 1.0f : 0.0f, SpeedSmoothing * PhysicsManager.physicsDelta);
-		return Mathf.Lerp(BaseMovementSpeed, FastMovementSpeed, speedBlend) + (Player.Stats.GroundSettings.Speed - Player.Stats.baseGroundSpeed);
 	}
 
 	private bool CanToggleSpeed(float pathDelta)
@@ -221,7 +225,7 @@ public partial class GargoyleSkyroad : PathFollow3D
 		}
 	}
 
-	private void IncrementPathIndex(float remainingProgress)
+	private void IncrementPathIndex()
 	{
 		traveledDistance += CurrentPath.Curve.GetBakedLength(); // Add the current path's length to traveled distance
 
@@ -233,7 +237,6 @@ public partial class GargoyleSkyroad : PathFollow3D
 		}
 
 		ReparentToPath(); // Reparent to new path and start again
-		Progress = Mathf.Max(remainingProgress, 0f);
 	}
 
 	// Get the length of all our paths and store for later
@@ -254,13 +257,11 @@ public partial class GargoyleSkyroad : PathFollow3D
 
 	private void ReparentToPath()
 	{
-		Vector3 offset = root.GlobalPosition;
+		Vector3 globalPosition = GlobalPosition;
 		GetParent().RemoveChild(this);
 		CurrentPath.AddChild(this);
-		Progress = 0;
-		root.GlobalPosition = offset;
-		ResetPhysicsInterpolation();
-		root.ResetPhysicsInterpolation();
+		Progress = CurrentPath.Curve.GetClosestOffset(CurrentPath.ToLocal(globalPosition));
+		root.Position = GlobalPosition - globalPosition;
 	}
 
 	private void PlayEntryAnimation()
