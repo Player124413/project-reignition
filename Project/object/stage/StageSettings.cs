@@ -63,7 +63,6 @@ public partial class StageSettings : Node3D
 
 		// Update gameplay sfx audio channel
 		SoundManager.SetAudioBusVolume(SoundManager.AudioBuses.GameSfx, IsControlTest ? 100 : 0);
-		SoundManager.instance.UpdateBgmResource(DefaultBgm); // TODO Update with player-selected value
 
 		if (IsControlTest)
 		{
@@ -95,6 +94,7 @@ public partial class StageSettings : Node3D
 		}
 
 		SetEnvironmentFxFactor(environmentFxFactor, 0);
+		SoundManager.instance.UpdateBgmResource(DefaultBgm); // TODO Update with player-selected value
 	}
 
 	public override void _ExitTree() => EmitSignal(SignalName.Unloaded);
