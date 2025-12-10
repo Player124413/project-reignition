@@ -1,0 +1,145 @@
+[gd_scene load_steps=8 format=3 uid="uid://cut03dqij3ydl"]
+
+[ext_resource type="PackedScene" uid="uid://dax0mun2bjm1v" path="res://area/0 lost prologue/act/Static.tscn" id="1_xo1y7"]
+[ext_resource type="Resource" uid="uid://dfakaoborq6c3" path="res://resource/level data/lost prologue/Classic5.tres" id="2_xo1y7"]
+[ext_resource type="PackedScene" uid="uid://cjupypih0myxo" path="res://object/player/CharacterSpawn.tscn" id="3_2jvj6"]
+[ext_resource type="PackedScene" uid="uid://bqvtcp8tkbfyt" path="res://object/stage/common/SpikeBall.tscn" id="4_41y3a"]
+[ext_resource type="PackedScene" uid="uid://bn6wr6l8s3qyt" path="res://object/trigger/StageTrigger.tscn" id="5_007ru"]
+[ext_resource type="PackedScene" uid="uid://dxepb172kmp8n" path="res://object/stage/common/Goal.tscn" id="8_tnl7y"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_e5om0"]
+size = Vector3(20, 30, 5)
+
+[node name="Stage" type="Node"]
+
+[node name="Static" parent="." instance=ExtResource("1_xo1y7")]
+Data = ExtResource("2_xo1y7")
+
+[node name="Classic05" type="Node3D" parent="."]
+
+[node name="SpawnPosition" type="Node3D" parent="Classic05"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 100, 0, -320)
+
+[node name="CharacterSpawn" parent="Classic05/SpawnPosition" instance=ExtResource("3_2jvj6")]
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Classic05"]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 95, 0, -320)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Classic05/StaticBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
+shape = SubResource("BoxShape3D_e5om0")
+
+[node name="SpikeBallGroup" type="Node3D" parent="Classic05"]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 100, 0, -320)
+
+[node name="SpikeBall1" parent="Classic05/SpikeBallGroup" instance=ExtResource("4_41y3a")]
+transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 3, 6, 42)
+"Movement/Cycle Length" = 5.0
+"Movement/Starting Offset" = 0.25
+Movement/Distance = 6.0
+Movement/Angle = 90.0
+
+[node name="SpikeBall2" parent="Classic05/SpikeBallGroup" instance=ExtResource("4_41y3a")]
+transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 3, 6, 46)
+"Movement/Cycle Length" = 5.0
+"Movement/Starting Offset" = 0.75
+Movement/Distance = 6.0
+Movement/Angle = 90.0
+
+[node name="SpikeBall3" parent="Classic05/SpikeBallGroup" instance=ExtResource("4_41y3a")]
+transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 3, 6, 50)
+"Movement/Cycle Length" = 5.0
+"Movement/Starting Offset" = 0.25
+Movement/Distance = 6.0
+Movement/Angle = 90.0
+
+[node name="SpikeBall4" parent="Classic05/SpikeBallGroup" instance=ExtResource("4_41y3a")]
+transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 3, 6, 67.32295)
+"Movement/Cycle Length" = 5.0
+"Movement/Starting Offset" = 0.75
+Movement/Distance = 6.0
+Movement/Angle = 90.0
+
+[node name="SpikeBall5" parent="Classic05/SpikeBallGroup" instance=ExtResource("4_41y3a")]
+transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 3, 6, 71.32295)
+"Movement/Cycle Length" = 5.0
+"Movement/Starting Offset" = 0.25
+Movement/Distance = 6.0
+Movement/Angle = 90.0
+
+[node name="SpikeBall6" parent="Classic05/SpikeBallGroup" instance=ExtResource("4_41y3a")]
+transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 3, 6, 87.32295)
+"Movement/Cycle Length" = 5.0
+"Movement/Starting Offset" = 0.75
+Movement/Distance = 6.0
+Movement/Angle = 90.0
+
+[node name="SpikeBall7" parent="Classic05/SpikeBallGroup" instance=ExtResource("4_41y3a")]
+transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 3, 6, 91.32295)
+"Movement/Cycle Length" = 5.0
+"Movement/Starting Offset" = 0.25
+Movement/Distance = 6.0
+Movement/Angle = 90.0
+
+[node name="TriggeredSpikeBalls" type="Node3D" parent="Classic05"]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 100, 0, -320)
+
+[node name="SpikeBallTrigger1" parent="Classic05/TriggeredSpikeBalls" instance=ExtResource("5_007ru")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 6)
+"Enter Mode" = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Classic05/TriggeredSpikeBalls/SpikeBallTrigger1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
+shape = SubResource("BoxShape3D_e5om0")
+
+[node name="SpikeBallTrigger2" parent="Classic05/TriggeredSpikeBalls" instance=ExtResource("5_007ru")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 57)
+"Enter Mode" = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Classic05/TriggeredSpikeBalls/SpikeBallTrigger2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
+shape = SubResource("BoxShape3D_e5om0")
+
+[node name="SpikeBallTrigger3" parent="Classic05/TriggeredSpikeBalls" instance=ExtResource("5_007ru")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 76)
+"Enter Mode" = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Classic05/TriggeredSpikeBalls/SpikeBallTrigger3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
+shape = SubResource("BoxShape3D_e5om0")
+
+[node name="SpikeBall1" parent="Classic05/TriggeredSpikeBalls" instance=ExtResource("4_41y3a")]
+transform = Transform3D(3.5, 0, 0, 0, 3.5, 0, 0, 0, 3.5, 0, -4, 55)
+startPaused = true
+smoothPausing = true
+"Movement/Cycle Length" = 10.0
+Movement/Distance = 12.0
+"Vertical Orientation" = true
+
+[node name="SpikeBall2" parent="Classic05/TriggeredSpikeBalls" instance=ExtResource("4_41y3a")]
+transform = Transform3D(3.5, 0, 0, 0, 3.5, 0, 0, 0, 3.5, 0, -4, 74)
+startPaused = true
+smoothPausing = true
+"Movement/Cycle Length" = 10.0
+Movement/Distance = 12.0
+"Vertical Orientation" = true
+
+[node name="SpikeBall3" parent="Classic05/TriggeredSpikeBalls" instance=ExtResource("4_41y3a")]
+transform = Transform3D(3.5, 0, 0, 0, 3.5, 0, 0, 0, 3.5, 0, 0, 95)
+startPaused = true
+smoothPausing = true
+"Movement/Cycle Length" = 10.0
+Movement/Distance = 12.0
+"Vertical Orientation" = true
+
+[node name="Goal" parent="Classic05" instance=ExtResource("8_tnl7y")]
+transform = Transform3D(-2.1855695e-07, 0, -1, 0, 1, 0, 1, 0, -2.1855695e-07, 204, 8, -320)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Classic05/Goal"]
+shape = SubResource("BoxShape3D_e5om0")
+
+[connection signal="Activated" from="Classic05/TriggeredSpikeBalls/SpikeBallTrigger1" to="Classic05/TriggeredSpikeBalls/SpikeBall1" method="Unpause"]
+[connection signal="Activated" from="Classic05/TriggeredSpikeBalls/SpikeBallTrigger2" to="Classic05/TriggeredSpikeBalls/SpikeBall2" method="Unpause"]
+[connection signal="Activated" from="Classic05/TriggeredSpikeBalls/SpikeBallTrigger3" to="Classic05/TriggeredSpikeBalls/SpikeBall3" method="Unpause"]
+
+[editable path="Static"]
