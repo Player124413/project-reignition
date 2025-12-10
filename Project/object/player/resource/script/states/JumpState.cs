@@ -25,7 +25,7 @@ public partial class JumpState : PlayerState
 
 	private readonly float JumpCurve = .5f;
 	/// <summary> How fast the jump button needs to be released to count as an Acceleration Jump. </summary>
-	private readonly float AccelerationJumpLength = .08f;
+	private readonly float AccelerationJumpLength = .1f;
 	/// <summary> Maximum deviation from PathFollower.ForwardAngle allowed during an Acceleration Jump. </summary>
 	private readonly float MaxAccelerationJumpTurnAmount = Mathf.Pi * .1f;
 
