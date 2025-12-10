@@ -1,4 +1,4 @@
-[gd_scene load_steps=21 format=3 uid="uid://dax0mun2bjm1v"]
+[gd_scene load_steps=24 format=3 uid="uid://dax0mun2bjm1v"]
 
 [ext_resource type="Script" uid="uid://dtkbvehtmy3em" path="res://object/stage/StageSettings.cs" id="1_inrdn"]
 [ext_resource type="PackedScene" uid="uid://bdqp0wj6evtuh" path="res://area/0 lost prologue/act/environment/collision/Collision.tscn" id="1_qgh10"]
@@ -17,13 +17,18 @@
 [ext_resource type="Resource" uid="uid://38s0wkpi5mlf" path="res://resource/preset/lockout/run/RecenterLockout.tres" id="13_nr4fr"]
 [ext_resource type="Script" uid="uid://bvmyay4bo83qu" path="res://object/trigger/modules/DeathTrigger.cs" id="14_4p6kh"]
 [ext_resource type="PackedScene" uid="uid://c1qim6x2gc38r" path="res://effect/buffer/MultiplicativeBloomRenderer.tscn" id="15_d5koe"]
+[ext_resource type="Script" uid="uid://dx0a0rhyauccl" path="res://object/trigger/modules/CameraTrigger.cs" id="17_2iklh"]
 [ext_resource type="Resource" uid="uid://dfunc16etllav" path="res://resource/bgm/bgm lp.tres" id="18_2iklh"]
+[ext_resource type="Resource" uid="uid://vh0ero0xmm4u" path="res://area/0 lost prologue/act/camera/TiltCamera.tres" id="18_wcxv5"]
 
 [sub_resource type="BoxShape3D" id="12"]
 size = Vector3(90, 20, 10)
 
 [sub_resource type="BoxShape3D" id="13"]
 size = Vector3(153.4, 20, 251.8)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_iq1ju"]
+size = Vector3(20, 20, 5)
 
 [node name="Static" type="Node3D" node_paths=PackedStringArray("pathParent", "Environment")]
 script = ExtResource("1_inrdn")
@@ -94,6 +99,32 @@ script = ExtResource("14_4p6kh")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Trigger/FallTrigger"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
 shape = SubResource("13")
+
+[node name="TiltCameraTrigger" parent="Trigger" instance=ExtResource("11_lsqhg")]
+transform = Transform3D(-5.9604645e-08, 0, 1, 0, 1, 0, -1, 0, -5.9604645e-08, 204, 0, -320)
+"Trigger Mode" = 2
+"Exit Mode" = 2
+
+[node name="Camera" type="Node3D" parent="Trigger/TiltCameraTrigger"]
+script = ExtResource("17_2iklh")
+settings = ExtResource("18_wcxv5")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Trigger/TiltCameraTrigger"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
+shape = SubResource("BoxShape3D_iq1ju")
+
+[node name="TiltCameraTrigger2" parent="Trigger" instance=ExtResource("11_lsqhg")]
+transform = Transform3D(0.7660445, 0, -0.6427876, 0, 1, 0, 0.6427876, 0, 0.7660445, 185.60707, -10, -25.853683)
+"Trigger Mode" = 2
+"Exit Mode" = 2
+
+[node name="Camera" type="Node3D" parent="Trigger/TiltCameraTrigger2"]
+script = ExtResource("17_2iklh")
+settings = ExtResource("3_jiiep")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Trigger/TiltCameraTrigger2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
+shape = SubResource("BoxShape3D_iq1ju")
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = ExtResource("2_ooith")
