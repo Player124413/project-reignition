@@ -47,23 +47,19 @@ public partial class MultiplicativeBloomRenderer : Node
 		}
 		objectViewport.Size = bloomViewport.Size;
 
-		if (!RenderingServer.Singleton.IsConnected(RenderingServer.SignalName.FramePreDraw, UpdatePositionCallable))
-			RenderingServer.Singleton.Connect(RenderingServer.SignalName.FramePreDraw, UpdatePositionCallable, (uint)ConnectFlags.Deferred);
-
 		if (!RenderingServer.Singleton.IsConnected(RenderingServer.SignalName.FramePostDraw, ApplyTextureCallable))
 			RenderingServer.Singleton.Connect(RenderingServer.SignalName.FramePostDraw, ApplyTextureCallable, (uint)ConnectFlags.Deferred);
 	}
 
 	public override void _ExitTree()
 	{
-		if (RenderingServer.Singleton.IsConnected(RenderingServer.SignalName.FramePreDraw, UpdatePositionCallable))
-			RenderingServer.Singleton.Disconnect(RenderingServer.SignalName.FramePreDraw, UpdatePositionCallable);
-
 		if (RenderingServer.Singleton.IsConnected(RenderingServer.SignalName.FramePostDraw, ApplyTextureCallable))
 			RenderingServer.Singleton.Disconnect(RenderingServer.SignalName.FramePostDraw, ApplyTextureCallable);
 
 		ApplyTexture();
 	}
+
+	public override void _Process(double _) => UpdatePosition();
 
 	private void UpdatePosition()
 	{
@@ -71,7 +67,9 @@ public partial class MultiplicativeBloomRenderer : Node
 		bloomCamera.Size = objectCamera.Size = GameplayCamera.Size;
 		bloomCamera.Projection = objectCamera.Projection = GameplayCamera.Projection;
 
-		bloomCamera.GlobalTransform = objectCamera.GlobalTransform = GameplayCamera.GlobalTransform;
+		bloomCamera.GlobalTransform = objectCamera.GlobalTransform = GameplayCamera.GetGlobalTransformInterpolated();
+		bloomCamera.ResetPhysicsInterpolation();
+		objectCamera.ResetPhysicsInterpolation();
 	}
 
 	private void ApplyTexture()

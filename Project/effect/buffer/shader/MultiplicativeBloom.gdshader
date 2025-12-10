@@ -42,7 +42,8 @@ void fragment() {
 	vec2 ps = vec2(1.0) / iResolution.xy * .000001 * strength;
 	
 	vec3 col = blur(UV, ps);
+	vec4 obj_col = texture(object_texture, UV);
 	col = clamp(col, vec3(0.0), vec3(1.0));
-	col += texture(object_texture, UV).a;
+	col += obj_col.a;
 	COLOR.rgb = col;
 }

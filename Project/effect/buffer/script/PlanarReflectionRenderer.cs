@@ -63,9 +63,6 @@ public partial class PlanarReflectionRenderer : Node3D
 				break;
 		}
 
-		if (!RenderingServer.Singleton.IsConnected(RenderingServer.SignalName.FramePreDraw, UpdatePositionCallable))
-			RenderingServer.Singleton.Connect(RenderingServer.SignalName.FramePreDraw, UpdatePositionCallable, (uint)ConnectFlags.Deferred);
-
 		if (!RenderingServer.Singleton.IsConnected(RenderingServer.SignalName.FramePostDraw, ApplyTextureCallable))
 			RenderingServer.Singleton.Connect(RenderingServer.SignalName.FramePostDraw, ApplyTextureCallable, (uint)ConnectFlags.Deferred);
 
@@ -84,14 +81,13 @@ public partial class PlanarReflectionRenderer : Node3D
 
 	public override void _ExitTree()
 	{
-		if (RenderingServer.Singleton.IsConnected(RenderingServer.SignalName.FramePreDraw, UpdatePositionCallable))
-			RenderingServer.Singleton.Disconnect(RenderingServer.SignalName.FramePreDraw, UpdatePositionCallable);
-
 		if (RenderingServer.Singleton.IsConnected(RenderingServer.SignalName.FramePostDraw, ApplyTextureCallable))
 			RenderingServer.Singleton.Disconnect(RenderingServer.SignalName.FramePostDraw, ApplyTextureCallable);
 
 		ApplyTexture();
 	}
+
+	public override void _Process(double _) => UpdatePosition();
 
 	// Mirror main camera along plane
 	private void UpdatePosition()
