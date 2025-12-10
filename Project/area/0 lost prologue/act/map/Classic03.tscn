@@ -1,0 +1,319 @@
+[gd_scene load_steps=16 format=3 uid="uid://cxx2hp7613y0"]
+
+[ext_resource type="PackedScene" uid="uid://dax0mun2bjm1v" path="res://area/0 lost prologue/act/Static.tscn" id="1_6t1pj"]
+[ext_resource type="Resource" uid="uid://cshst1323knck" path="res://resource/level data/lost prologue/Classic3.tres" id="2_6t1pj"]
+[ext_resource type="PackedScene" uid="uid://cjupypih0myxo" path="res://object/player/CharacterSpawn.tscn" id="3_qcat6"]
+[ext_resource type="PackedScene" uid="uid://bn6wr6l8s3qyt" path="res://object/trigger/StageTrigger.tscn" id="4_2j5yq"]
+[ext_resource type="Script" uid="uid://dx0a0rhyauccl" path="res://object/trigger/modules/CameraTrigger.cs" id="5_rdlyd"]
+[ext_resource type="PackedScene" uid="uid://bmgmok3n82tte" path="res://area/0 lost prologue/object/wonder/WonderBlock4.tscn" id="6_1cxql"]
+[ext_resource type="Resource" uid="uid://cmcksgatwxf5p" path="res://area/0 lost prologue/act/camera/OverheadPlatformingCamera.tres" id="6_6t1pj"]
+[ext_resource type="Resource" uid="uid://b6ynjki0mxqdh" path="res://area/0 lost prologue/act/camera/CloseCamera.tres" id="7_2upot"]
+[ext_resource type="PackedScene" uid="uid://cyd7uu3t42s2r" path="res://area/0 lost prologue/object/wonder/WonderBar5.tscn" id="7_gpy6u"]
+[ext_resource type="PackedScene" uid="uid://dgq0cufk1muvh" path="res://area/0 lost prologue/object/wonder/WonderBlock2.tscn" id="8_ry6bo"]
+[ext_resource type="Script" uid="uid://dd24u7rlj0dwl" path="res://addons/custom_nodes/script/ObjectGenerator.cs" id="9_jrn7m"]
+[ext_resource type="PackedScene" uid="uid://c7l8mr7ubn848" path="res://object/stage/pickups/Ring.tscn" id="10_u754k"]
+[ext_resource type="PackedScene" uid="uid://dxepb172kmp8n" path="res://object/stage/common/Goal.tscn" id="12_dtxrv"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_e5om0"]
+size = Vector3(20, 30, 5)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_pt4og"]
+size = Vector3(20, 20, 5)
+
+[node name="Stage" type="Node"]
+
+[node name="Static" parent="." instance=ExtResource("1_6t1pj")]
+Data = ExtResource("2_6t1pj")
+
+[node name="Classic03" type="Node3D" parent="."]
+
+[node name="SpawnPosition" type="Node3D" parent="Classic03"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 191.28075, -9.8, -32.716682)
+
+[node name="CharacterSpawn" parent="Classic03/SpawnPosition" instance=ExtResource("3_qcat6")]
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Classic03"]
+transform = Transform3D(0.76604444, 0, -0.6427876, 0, 1, 0, 0.6427876, 0, 0.76604444, 194.25977, -9.8, -36.08744)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Classic03/StaticBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
+shape = SubResource("BoxShape3D_e5om0")
+
+[node name="PlatformStartCamera1" parent="Classic03" instance=ExtResource("4_2j5yq")]
+transform = Transform3D(0.70710677, 0, -0.70710677, 0, 1, 0, 0.70710677, 0, 0.70710677, 181, -10, -21)
+"Trigger Mode" = 2
+"Exit Mode" = 2
+
+[node name="Camera" type="Node3D" parent="Classic03/PlatformStartCamera1"]
+script = ExtResource("5_rdlyd")
+settings = ExtResource("6_6t1pj")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Classic03/PlatformStartCamera1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
+shape = SubResource("BoxShape3D_pt4og")
+
+[node name="PlatformEndCamera1" parent="Classic03" instance=ExtResource("4_2j5yq")]
+transform = Transform3D(0.70710677, 0, -0.70710677, 0, 1, 0, 0.70710677, 0, 0.70710677, 118.06751, -5, 41.932503)
+"Trigger Mode" = 2
+"Exit Mode" = 2
+
+[node name="Camera" type="Node3D" parent="Classic03/PlatformEndCamera1"]
+script = ExtResource("5_rdlyd")
+settings = ExtResource("7_2upot")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Classic03/PlatformEndCamera1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
+shape = SubResource("BoxShape3D_pt4og")
+
+[node name="PlatformStartCamera2" parent="Classic03" instance=ExtResource("4_2j5yq")]
+transform = Transform3D(0.99999994, 0, 0, 0, 1, 0, 0, 0, 0.99999994, 100, -5, 77)
+"Trigger Mode" = 2
+"Exit Mode" = 2
+
+[node name="Camera" type="Node3D" parent="Classic03/PlatformStartCamera2"]
+script = ExtResource("5_rdlyd")
+settings = ExtResource("6_6t1pj")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Classic03/PlatformStartCamera2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
+shape = SubResource("BoxShape3D_pt4og")
+
+[node name="PlatformEndCamera2" parent="Classic03" instance=ExtResource("4_2j5yq")]
+transform = Transform3D(0.99999994, 0, 0, 0, 1, 0, 0, 0, 0.99999994, 100, -5, 178.99998)
+"Trigger Mode" = 2
+"Exit Mode" = 2
+
+[node name="Camera" type="Node3D" parent="Classic03/PlatformEndCamera2"]
+script = ExtResource("5_rdlyd")
+settings = ExtResource("7_2upot")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Classic03/PlatformEndCamera2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
+shape = SubResource("BoxShape3D_pt4og")
+
+[node name="PlatformingGroup1" type="Node3D" parent="Classic03"]
+transform = Transform3D(0.72537434, 0, -0.6883545, 0, 1, 0, 0.6883545, 0, 0.72537434, 180, -10, -20)
+
+[node name="WonderBlock2" parent="Classic03/PlatformingGroup1" instance=ExtResource("8_ry6bo")]
+transform = Transform3D(1, 0, 0, 0, 1.5, 0, 0, 0, 1.5, 0, -3.2, 3.95)
+
+[node name="WonderBlock4" parent="Classic03/PlatformingGroup1" instance=ExtResource("8_ry6bo")]
+transform = Transform3D(1, 0, 0, 0, 1.5, 0, 0, 0, 1.5, 0, -3.2, 11.4)
+
+[node name="WonderBlock3" parent="Classic03/PlatformingGroup1" instance=ExtResource("6_1cxql")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1.5, -1, -5.5, 18)
+
+[node name="WonderBlock5" parent="Classic03/PlatformingGroup1" instance=ExtResource("7_gpy6u")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.25, 14.75)
+
+[node name="Rings1" type="Node3D" parent="Classic03/PlatformingGroup1"]
+transform = Transform3D(-1.0000001, 0, -8.940697e-08, 0, 1, 0, 8.940697e-08, 0, -1.0000001, -1, 1.6, 22)
+script = ExtResource("9_jrn7m")
+Source = ExtResource("10_u754k")
+Amount = 3
+Shape = 0
+Orientation = 0
+Spacing = 1.2
+"Horizontal Offset" = null
+"Vertical Offset" = null
+metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
+
+[node name="Child01" parent="Classic03/PlatformingGroup1/Rings1" instance=ExtResource("10_u754k")]
+
+[node name="Child02" parent="Classic03/PlatformingGroup1/Rings1" instance=ExtResource("10_u754k")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -1.2)
+
+[node name="Child03" parent="Classic03/PlatformingGroup1/Rings1" instance=ExtResource("10_u754k")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2.4)
+
+[node name="WonderBlock6" parent="Classic03/PlatformingGroup1" instance=ExtResource("6_1cxql")]
+transform = Transform3D(1, 0, 0, 0, 2, 0, 0, 0, 2.25, -1, -7, 26.25)
+
+[node name="WonderBlock7" parent="Classic03/PlatformingGroup1" instance=ExtResource("7_gpy6u")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 1, 31.5)
+
+[node name="WonderBlock8" parent="Classic03/PlatformingGroup1" instance=ExtResource("6_1cxql")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1.5, -2, -4.5, 35.7)
+
+[node name="Rings2" type="Node3D" parent="Classic03/PlatformingGroup1"]
+transform = Transform3D(-1.0000002, 0, -8.940697e-08, 0, 1, 0, 8.940697e-08, 0, -1.0000002, -2, 2.6, 40)
+script = ExtResource("9_jrn7m")
+Source = ExtResource("10_u754k")
+Amount = 3
+Shape = 0
+Orientation = 0
+Spacing = 1.2
+"Horizontal Offset" = null
+"Vertical Offset" = null
+metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
+
+[node name="Child01" parent="Classic03/PlatformingGroup1/Rings2" instance=ExtResource("10_u754k")]
+
+[node name="Child02" parent="Classic03/PlatformingGroup1/Rings2" instance=ExtResource("10_u754k")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -1.2)
+
+[node name="Child03" parent="Classic03/PlatformingGroup1/Rings2" instance=ExtResource("10_u754k")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2.4)
+
+[node name="WonderBlock9" parent="Classic03/PlatformingGroup1" instance=ExtResource("6_1cxql")]
+transform = Transform3D(1, 0, 0, 0, 2, 0, 0, 0, 2, -2, -6, 44)
+
+[node name="WonderBlock10" parent="Classic03/PlatformingGroup1" instance=ExtResource("6_1cxql")]
+transform = Transform3D(1, 0, 0, 0, 2, 0, 0, 0, 2, -2, -6, 53.225)
+
+[node name="WonderBlock13" parent="Classic03/PlatformingGroup1" instance=ExtResource("6_1cxql")]
+transform = Transform3D(1, 0, 0, 0, 2.5, 0, 0, 0, 1.5, -2, -6, 70.475)
+
+[node name="WonderBlock11" parent="Classic03/PlatformingGroup1" instance=ExtResource("6_1cxql")]
+transform = Transform3D(1, 0, 5.960463e-08, 0, 1, 0, -3.973642e-08, 0, 1.5, -2, -3.5, 62.5)
+
+[node name="WonderBlock12" parent="Classic03/PlatformingGroup1" instance=ExtResource("6_1cxql")]
+transform = Transform3D(1, 0, 7.9472834e-08, 0, 2, 0, -3.9736417e-08, 0, 2, -2, -2, 79.5)
+
+[node name="Rings3" type="Node3D" parent="Classic03/PlatformingGroup1"]
+transform = Transform3D(-1.0000004, 0, -8.940697e-08, 0, 1, 0, 8.940697e-08, 0, -1.0000004, -2, 4.6, 68)
+script = ExtResource("9_jrn7m")
+Source = ExtResource("10_u754k")
+Amount = 3
+Shape = 0
+Orientation = 0
+Spacing = 1.2
+"Horizontal Offset" = null
+"Vertical Offset" = null
+metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
+
+[node name="Child01" parent="Classic03/PlatformingGroup1/Rings3" instance=ExtResource("10_u754k")]
+
+[node name="Child02" parent="Classic03/PlatformingGroup1/Rings3" instance=ExtResource("10_u754k")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -1.2)
+
+[node name="Child03" parent="Classic03/PlatformingGroup1/Rings3" instance=ExtResource("10_u754k")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2.4)
+
+[node name="PlatformingGroup2" type="Node3D" parent="Classic03"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 100, -5, 80)
+
+[node name="Group1" type="Node3D" parent="Classic03/PlatformingGroup2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1, 3)
+
+[node name="WonderBlock2" parent="Classic03/PlatformingGroup2/Group1" instance=ExtResource("8_ry6bo")]
+transform = Transform3D(1, 0, 0, 0, 0.5, 0, 0, 0, 1.2, 0, 0, 0)
+
+[node name="WonderBlock3" parent="Classic03/PlatformingGroup2/Group1" instance=ExtResource("8_ry6bo")]
+transform = Transform3D(1, 0, 0, 0, 0.5, 0, 0, 0, 1.2, 0, 0, 6)
+
+[node name="WonderBlock4" parent="Classic03/PlatformingGroup2/Group1" instance=ExtResource("8_ry6bo")]
+transform = Transform3D(1, 0, 0, 0, 0.5, 0, 0, 0, 1.2, 0, 0, 12)
+
+[node name="WonderBlock5" parent="Classic03/PlatformingGroup2/Group1" instance=ExtResource("7_gpy6u")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 14.5)
+
+[node name="Group2" type="Node3D" parent="Classic03/PlatformingGroup2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 26)
+
+[node name="Rings1" type="Node3D" parent="Classic03/PlatformingGroup2/Group2"]
+transform = Transform3D(-1.0000001, 0, -8.940697e-08, 0, 1, 0, 8.940697e-08, 0, -1.0000001, 0, 1.6, 0.7)
+script = ExtResource("9_jrn7m")
+Source = ExtResource("10_u754k")
+Amount = 3
+Shape = 0
+Orientation = 0
+Spacing = 2.0
+"Horizontal Offset" = null
+"Vertical Offset" = null
+metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
+
+[node name="Child01" parent="Classic03/PlatformingGroup2/Group2/Rings1" instance=ExtResource("10_u754k")]
+
+[node name="Child02" parent="Classic03/PlatformingGroup2/Group2/Rings1" instance=ExtResource("10_u754k")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2)
+
+[node name="Child03" parent="Classic03/PlatformingGroup2/Group2/Rings1" instance=ExtResource("10_u754k")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -4)
+
+[node name="WonderBlock6" parent="Classic03/PlatformingGroup2/Group2" instance=ExtResource("8_ry6bo")]
+transform = Transform3D(1, 0, 0, 0, 0.5, 0, 0, 0, 1, 0, 0, 0)
+
+[node name="WonderBlock7" parent="Classic03/PlatformingGroup2/Group2" instance=ExtResource("8_ry6bo")]
+transform = Transform3D(1, 0, 0, 0, 0.5, 0, 0, 0, 1.2, 0, 0, 5.5)
+
+[node name="WonderBlock8" parent="Classic03/PlatformingGroup2/Group2" instance=ExtResource("8_ry6bo")]
+transform = Transform3D(1, 0, 0, 0, 0.5, 0, 0, 0, 1.2, 0, 0, 11.5)
+
+[node name="WonderBlock9" parent="Classic03/PlatformingGroup2/Group2" instance=ExtResource("8_ry6bo")]
+transform = Transform3D(1, 0, 0, 0, 0.5, 0, 0, 0, 1.2, 0, 0, 17.5)
+
+[node name="Group3" type="Node3D" parent="Classic03/PlatformingGroup2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 55)
+
+[node name="Rings1" type="Node3D" parent="Classic03/PlatformingGroup2/Group3"]
+transform = Transform3D(-1.0000001, 0, -8.940697e-08, 0, 1, 0, 8.940697e-08, 0, -1.0000001, 0, 1.6, 0.7)
+script = ExtResource("9_jrn7m")
+Source = ExtResource("10_u754k")
+Amount = 3
+Shape = 0
+Orientation = 0
+Spacing = 2.0
+"Horizontal Offset" = null
+"Vertical Offset" = null
+metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
+
+[node name="Child01" parent="Classic03/PlatformingGroup2/Group3/Rings1" instance=ExtResource("10_u754k")]
+
+[node name="Child02" parent="Classic03/PlatformingGroup2/Group3/Rings1" instance=ExtResource("10_u754k")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2)
+
+[node name="Child03" parent="Classic03/PlatformingGroup2/Group3/Rings1" instance=ExtResource("10_u754k")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -4)
+
+[node name="WonderBlock10" parent="Classic03/PlatformingGroup2/Group3" instance=ExtResource("8_ry6bo")]
+transform = Transform3D(1, 0, 0, 0, 0.5, 0, 0, 0, 1, 0, 0, 0)
+
+[node name="WonderBlock11" parent="Classic03/PlatformingGroup2/Group3" instance=ExtResource("8_ry6bo")]
+transform = Transform3D(1, 0, 0, 0, 0.5, 0, 0, 0, 1.5, 0, 0, 6.199997)
+
+[node name="WonderBlock12" parent="Classic03/PlatformingGroup2/Group3" instance=ExtResource("8_ry6bo")]
+transform = Transform3D(1, 0, 0, 0, 0.5, 0, 0, 0, 1.5, 0, 0, 13.699997)
+
+[node name="Group4" type="Node3D" parent="Classic03/PlatformingGroup2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 81)
+
+[node name="WonderBlock5" parent="Classic03/PlatformingGroup2/Group4" instance=ExtResource("7_gpy6u")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 8)
+
+[node name="Rings1" type="Node3D" parent="Classic03/PlatformingGroup2/Group4"]
+transform = Transform3D(-1.0000001, 0, -8.940697e-08, 0, 1, 0, 8.940697e-08, 0, -1.0000001, 0, 1.6, 0.7)
+script = ExtResource("9_jrn7m")
+Source = ExtResource("10_u754k")
+Amount = 3
+Shape = 0
+Orientation = 0
+Spacing = 2.0
+"Horizontal Offset" = null
+"Vertical Offset" = null
+metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
+
+[node name="Child01" parent="Classic03/PlatformingGroup2/Group4/Rings1" instance=ExtResource("10_u754k")]
+
+[node name="Child02" parent="Classic03/PlatformingGroup2/Group4/Rings1" instance=ExtResource("10_u754k")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2)
+
+[node name="Child03" parent="Classic03/PlatformingGroup2/Group4/Rings1" instance=ExtResource("10_u754k")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -4)
+
+[node name="WonderBlock10" parent="Classic03/PlatformingGroup2/Group4" instance=ExtResource("8_ry6bo")]
+transform = Transform3D(1, 0, 0, 0, 0.5, 0, 0, 0, 1, 0, 0, 0)
+
+[node name="WonderBlock11" parent="Classic03/PlatformingGroup2/Group4" instance=ExtResource("8_ry6bo")]
+transform = Transform3D(1, 0, 0, 0, 0.5, 0, 0, 0, 1.2, 0, 0, 5.5)
+
+[node name="WonderBlock2" parent="Classic03/PlatformingGroup2" instance=ExtResource("8_ry6bo")]
+transform = Transform3D(1, 0, 0, 0, 0.5, 0, 0, 0, 0.8, 0, 4, 98)
+
+[node name="Goal" parent="Classic03" instance=ExtResource("12_dtxrv")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 100, 11, 184)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Classic03/Goal"]
+shape = SubResource("BoxShape3D_e5om0")
+
+[editable path="Static"]
