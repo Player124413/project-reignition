@@ -23,7 +23,6 @@ public partial class JumpState : PlayerState
 	/// <summary> Cached acceleration jump height. Used to determine when the acceleration jump should start slowing down. </summary>
 	private float accelerationJumpHeight;
 
-	private readonly float JumpCurve = .5f;
 	/// <summary> How fast the jump button needs to be released to count as an Acceleration Jump. </summary>
 	private readonly float AccelerationJumpLength = .1f;
 	/// <summary> Maximum deviation from PathFollower.ForwardAngle allowed during an Acceleration Jump. </summary>
@@ -222,7 +221,7 @@ public partial class JumpState : PlayerState
 	protected override void ProcessGravity()
 	{
 		if (isShortenedJump && Player.VerticalSpeed > 0)
-			Player.VerticalSpeed *= JumpCurve; // Kill jump height
+			Player.VerticalSpeed = 0f; // Kill jump height
 
 		base.ProcessGravity();
 	}
