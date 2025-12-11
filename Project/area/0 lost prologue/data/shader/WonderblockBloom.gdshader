@@ -5,7 +5,7 @@ const float distance_fade_min = 2.0;
 const float distance_fade_max = 80.0;
 const float grow_scale = 2.0;
 const float offset_bias = 3.0;
-const float fade_offset = -8.0;
+const float fade_offset = -20.0;
 
 void vertex()
 {

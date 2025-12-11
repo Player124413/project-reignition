@@ -1,8 +1,10 @@
-shader_type canvas_item;
-render_mode blend_mul;
+shader_type spatial;
+render_mode blend_mul, unshaded, fog_disabled, depth_draw_never;
 
 #define pow2(x) (x * x)
-#define iResolution 1.0 / SCREEN_PIXEL_SIZE
+#define iResolution 1.0 / VIEWPORT_SIZE
+
+global uniform float render_distance;
 
 uniform sampler2D bloom_texture : hint_default_white;
 uniform sampler2D object_texture : hint_default_white;
@@ -21,29 +23,35 @@ vec3 sample_texture(vec2 uv) {
 }
 
 vec3 blur(vec2 uv, vec2 scale) {
-    vec3 col = vec3(0.0);
-    float accum = 0.0;
-    float weight;
-    vec2 offset;
+	vec3 col = vec3(0.0);
+	float accum = 0.0;
+	float weight;
+	vec2 offset;
     
-    for (int x = -samples / 2; x < samples / 2; ++x) {
-        for (int y = -samples / 2; y < samples / 2; ++y) {
-            offset = vec2(float(x), float(y));
-            weight = gaussian(offset);
-            col += sample_texture(uv + scale * offset) * weight;
-            accum += weight;
-        }
-    }
-    
-    return col / accum;
+	for (int x = -samples / 2; x < samples / 2; ++x) {
+		for (int y = -samples / 2; y < samples / 2; ++y) {
+			offset = vec2(float(x), float(y));
+			weight = gaussian(offset);
+			col += sample_texture(uv + scale * offset) * weight;
+			accum += weight;
+		}
+	}
+	
+	return col / accum;
+}
+
+void vertex() {
+	POSITION = vec4(VERTEX.xy, 1.0, 1.0);
 }
 
 void fragment() {
-	vec2 ps = vec2(1.0) / iResolution.xy * .000001 * strength;
+	vec2 ps = vec2(1.0) / iResolution.xy * strength;
+	vec2 uv = SCREEN_UV;
+	vec3 col = blur(uv, ps);
 	
-	vec3 col = blur(UV, ps);
-	vec4 obj_col = texture(object_texture, UV);
-	col = clamp(col, vec3(0.0), vec3(1.0));
+	// TODO Cut out objects based on depth buffer
+	vec4 obj_col = texture(object_texture, uv);
 	col += obj_col.a;
-	COLOR.rgb = col;
+	col = clamp(col, vec3(0.0), vec3(1.0));
+	ALBEDO = col;
 }
