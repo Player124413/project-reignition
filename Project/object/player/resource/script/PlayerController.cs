@@ -694,6 +694,7 @@ public partial class PlayerController : CharacterBody3D
 	}
 
 	[Export] private LaunchRingState launchRingState;
+	public bool IsLaunchRingActive => launchRingState.Launcher != null;
 	public void StartLaunchRing(LaunchRing launcher)
 	{
 		launchRingState.Launcher = launcher;

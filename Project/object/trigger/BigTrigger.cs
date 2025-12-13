@@ -37,7 +37,7 @@ public partial class BigTrigger : Area3D
 		if (!isInteractingWithPlayer)
 			return;
 
-		if (!Player.IsOnGround || !Mathf.IsZeroApprox(Player.MoveSpeed))
+		if ((!Player.IsOnGround && !Player.IsLaunchRingActive) || !Mathf.IsZeroApprox(Player.MoveSpeed))
 			return;
 
 		bigTimer += PhysicsManager.physicsDelta;
