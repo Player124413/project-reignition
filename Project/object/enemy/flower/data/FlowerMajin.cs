@@ -307,4 +307,12 @@ public partial class FlowerMajin : Enemy
 			StopAttackState();
 		EmitSignal(SignalName.Stagger);
 	}
+
+	public void SetSeedMovement(bool value)
+	{
+		for (int i = 0; i < seedIndex; i++)
+			seedPool[i].IsMoving = value;
+
+		disableAttacking = !value;
+	}
 }

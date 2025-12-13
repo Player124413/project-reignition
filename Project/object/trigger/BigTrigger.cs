@@ -6,6 +6,9 @@ namespace Project.Gameplay.Triggers;
 /// <summary> Handles everybody's favorite character. </summary>
 public partial class BigTrigger : Area3D
 {
+	[Signal] public delegate void BigSightedEventHandler();
+	[Signal] public delegate void BigFinishedEventHandler();
+
 	[Export] private StringName bigAnimation;
 	[Export] private AnimationPlayer bigAnimator;
 	[Export] private AnimationPlayer cameraAnimator;
@@ -35,7 +38,9 @@ public partial class BigTrigger : Area3D
 		stopLockout.Activate();
 		cameraTrigger.Activate();
 		StageSettings.Player.Skills.DisableBreakSkills();
+		StageSettings.Player.Deactivate();
 		HeadsUpDisplay.Instance.SetVisibility(false);
+		EmitSignal(SignalName.BigSighted);
 	}
 
 	private void FinishCutscene(StringName anim)
@@ -49,12 +54,14 @@ public partial class BigTrigger : Area3D
 	{
 		stopLockout.Deactivate();
 		cameraTrigger.Deactivate();
+		StageSettings.Player.Activate();
 		HeadsUpDisplay.Instance.SetVisibility(true);
 
 		// Write to file immediately
 		if (!SaveManager.SharedData.bigCameos.Contains(StageSettings.Instance.Data.LevelID))
 			SaveManager.SharedData.bigCameos.Add(StageSettings.Instance.Data.LevelID);
 
+		EmitSignal(SignalName.BigFinished);
 		StageSettings.Player.Skills.EnableBreakSkills();
 		Visible = false;
 		ProcessMode = ProcessModeEnum.Disabled;
