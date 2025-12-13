@@ -14,8 +14,12 @@ public partial class BigTrigger : Area3D
 	[Export] private AnimationPlayer cameraAnimator;
 	[Export] private CameraTrigger cameraTrigger;
 	[Export] private LockoutTrigger stopLockout;
-	[Export] private Timer timer;
 
+	private PlayerController Player => StageSettings.Player;
+	private float bigTimer;
+	private bool isInteractingWithPlayer;
+
+	private readonly float ActivationTimeLength = 3.0f;
 	private readonly StringName CameraActivateString = "activate";
 
 	public override void _Ready()
@@ -23,11 +27,24 @@ public partial class BigTrigger : Area3D
 		AreaEntered += OnEntered;
 		AreaExited += OnExited;
 
-		timer.Timeout += StartCutscene;
 		cameraAnimator.AnimationFinished += FinishCutscene;
 
 		Visible = false;
 	}
+
+	public override void _PhysicsProcess(double _)
+	{
+		if (!isInteractingWithPlayer)
+			return;
+
+		if (!Player.IsOnGround || !Mathf.IsZeroApprox(Player.MoveSpeed))
+			return;
+
+		bigTimer += PhysicsManager.physicsDelta;
+		if (bigTimer >= ActivationTimeLength)
+			StartCutscene();
+	}
+
 
 	private void StartCutscene()
 	{
@@ -37,8 +54,8 @@ public partial class BigTrigger : Area3D
 		cameraAnimator.Play(CameraActivateString);
 		stopLockout.Activate();
 		cameraTrigger.Activate();
-		StageSettings.Player.Skills.DisableBreakSkills();
-		StageSettings.Player.Deactivate();
+		Player.Skills.DisableBreakSkills();
+		Player.Deactivate();
 		HeadsUpDisplay.Instance.SetVisibility(false);
 		EmitSignal(SignalName.BigSighted);
 	}
@@ -54,7 +71,7 @@ public partial class BigTrigger : Area3D
 	{
 		stopLockout.Deactivate();
 		cameraTrigger.Deactivate();
-		StageSettings.Player.Activate();
+		Player.Activate();
 		HeadsUpDisplay.Instance.SetVisibility(true);
 
 		// Write to file immediately
@@ -62,7 +79,7 @@ public partial class BigTrigger : Area3D
 			SaveManager.SharedData.bigCameos.Add(StageSettings.Instance.Data.LevelID);
 
 		EmitSignal(SignalName.BigFinished);
-		StageSettings.Player.Skills.EnableBreakSkills();
+		Player.Skills.EnableBreakSkills();
 		Visible = false;
 		ProcessMode = ProcessModeEnum.Disabled;
 	}
@@ -72,7 +89,8 @@ public partial class BigTrigger : Area3D
 		if (!a.IsInGroup("player"))
 			return;
 
-		timer.Start();
+		bigTimer = 0f;
+		isInteractingWithPlayer = true;
 	}
 
 	public void OnExited(Area3D a)
@@ -80,6 +98,6 @@ public partial class BigTrigger : Area3D
 		if (!a.IsInGroup("player"))
 			return;
 
-		timer.Stop();
+		isInteractingWithPlayer = false;
 	}
 }
