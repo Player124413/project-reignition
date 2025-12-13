@@ -279,6 +279,7 @@ public partial class FlowerMajin : Enemy
 		targetOffset -= Vector3.Up * .4f; // Aim slightly higher so seeds avoid hitting the ground
 		seedPool[seedIndex].LookAtFromPosition(Hurtbox.GlobalPosition, Hurtbox.GlobalPosition + targetOffset, Vector3.Up);
 		seedPool[seedIndex].Spawn();
+		seedPool[seedIndex].ResetPhysicsInterpolation();
 
 		seedIndex++; // Increment counter
 	}
