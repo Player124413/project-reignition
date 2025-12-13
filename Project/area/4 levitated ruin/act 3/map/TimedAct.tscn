@@ -1,4 +1,4 @@
-[gd_scene load_steps=27 format=3 uid="uid://dlejewtr0u6dn"]
+[gd_scene load_steps=29 format=3 uid="uid://dlejewtr0u6dn"]
 
 [ext_resource type="PackedScene" uid="uid://pqaytcsp2twi" path="res://area/4 levitated ruin/act 3/Static.tscn" id="1_ysqq7"]
 [ext_resource type="Resource" uid="uid://cmna4gjkxrscj" path="res://resource/level data/levitated ruin/Act3Time.tres" id="2_p6ymy"]
@@ -21,6 +21,7 @@
 [ext_resource type="PackedScene" uid="uid://c85xw5ix60fe8" path="res://object/stage/common/Switch.tscn" id="20_ogyoo"]
 [ext_resource type="PackedScene" uid="uid://b8m1x0tudbcbd" path="res://object/stage/common/Spring.tscn" id="21_d13kd"]
 [ext_resource type="Script" uid="uid://bssd28yqn1cxg" path="res://object/trigger/modules/PathTrigger.cs" id="22_ut1ms"]
+[ext_resource type="PackedScene" uid="uid://gqxmlgiwtikn" path="res://object/trigger/BigTrigger.tscn" id="24_8lt62"]
 [ext_resource type="PackedScene" uid="uid://d0b2gvx7s6s8u" path="res://object/stage/pickups/Pearl.tscn" id="25_2yyi5"]
 [ext_resource type="PackedScene" uid="uid://bqvtcp8tkbfyt" path="res://object/stage/common/SpikeBall.tscn" id="35_y2dar"]
 
@@ -38,13 +39,14 @@ up_vector_enabled = false
 [sub_resource type="BoxShape3D" id="BoxShape3D_8lt62"]
 size = Vector3(5, 20, 5)
 
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_nas4t"]
+height = 5.0
+radius = 2.0
+
 [node name="RampageAct" type="Node"]
 
 [node name="Static" parent="." instance=ExtResource("1_ysqq7")]
 Data = ExtResource("2_p6ymy")
-
-[node name="Zipline" parent="Static/Paths/ZiplinePath" index="0"]
-transform = Transform3D(1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, 1, 0, 0.0871555, 0.996195)
 
 [node name="SkyRoad" parent="Static" index="6"]
 process_mode = 4
@@ -225,7 +227,7 @@ Movement/Angle = 180.0
 "Vertical Orientation" = false
 
 [node name="GreenMajin" parent="TimedAct/Exterior/MovingMajin1" instance=ExtResource("15_14oaa")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 12.5001)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 12.500122)
 "Spawn Settings/Spawn Travel Time" = 0.8
 "Spawn Settings/Spawn Delay" = 0.0
 "Spawn Settings/Spawn Offset" = Vector3(0, 10, 0)
@@ -249,7 +251,7 @@ Movement/Angle = 180.0
 "Vertical Orientation" = false
 
 [node name="GreenMajin" parent="TimedAct/Exterior/MovingMajin2" instance=ExtResource("15_14oaa")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 12.5001)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 12.500122)
 "Spawn Settings/Spawn Travel Time" = 0.8
 "Spawn Settings/Spawn Delay" = 0.0
 "Spawn Settings/Spawn Offset" = Vector3(0, 10, 0)
@@ -273,7 +275,7 @@ Movement/Angle = 180.0
 "Vertical Orientation" = false
 
 [node name="GreenMajin" parent="TimedAct/Exterior/MovingMajin3" instance=ExtResource("15_14oaa")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 12.5001)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 12.500122)
 "Spawn Settings/Spawn Travel Time" = 0.8
 "Spawn Settings/Spawn Delay" = 0.0
 "Spawn Settings/Spawn Offset" = Vector3(0, 10, 0)
@@ -376,6 +378,7 @@ Amount = 5
 Shape = 2
 Path = NodePath("../RingCurve1")
 "Path Progress Offset" = 1.0
+"Reverse Path" = false
 "Disable Path Y" = false
 Spacing = 2.0
 "Horizontal Offset" = null
@@ -429,6 +432,7 @@ Amount = 5
 Shape = 2
 Path = NodePath("../RingCurve2")
 "Path Progress Offset" = 3.0
+"Reverse Path" = false
 "Disable Path Y" = true
 Spacing = 1.8
 "Horizontal Offset" = null
@@ -630,7 +634,6 @@ OneShot = true
 "Enter Mode" = 0
 
 [node name="Path" type="Node3D" parent="TimedAct/Tower/PathTrigger" node_paths=PackedStringArray("path")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
 script = ExtResource("22_ut1ms")
 path = NodePath("../../../../Static/Paths/TowerTopPath")
 
@@ -650,6 +653,16 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 250, 16, -1389)
 [node name="CollisionShape3D" type="CollisionShape3D" parent="TimedAct/Goal"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -4, 2)
 shape = SubResource("BoxShape3D_lg2f2")
+
+[node name="BigTrigger" parent="." instance=ExtResource("24_8lt62")]
+transform = Transform3D(0.5735764, 0, 0.819152, 0, 1, 0, -0.819152, 0, 0.5735764, 245, -31.8, -1316)
+
+[node name="Camera" parent="BigTrigger" index="1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, -15)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="BigTrigger"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.7, 2, 5.5)
+shape = SubResource("CylinderShape3D_nas4t")
 
 [connection signal="SpinStarted" from="TimedAct/Exterior/MovingMajin1/GreenMajin" to="TimedAct/Exterior/MovingMajin1" method="Unpause"]
 [connection signal="SpinStarted" from="TimedAct/Exterior/MovingMajin2/GreenMajin" to="TimedAct/Exterior/MovingMajin2" method="Unpause"]
@@ -672,3 +685,5 @@ shape = SubResource("BoxShape3D_lg2f2")
 [editable path="Static"]
 [editable path="Static/Collision"]
 [editable path="Static/Visuals/LRSky"]
+[editable path="BigTrigger"]
+[editable path="BigTrigger/Big"]

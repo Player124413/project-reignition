@@ -1,0 +1,870 @@
+[gd_scene load_steps=12 format=3 uid="uid://cuccxwqvvqyw"]
+
+[ext_resource type="PackedScene" uid="uid://dax0mun2bjm1v" path="res://area/0 lost prologue/act/Static.tscn" id="1_3hyve"]
+[ext_resource type="Resource" uid="uid://6bcwul7i6hbu" path="res://resource/level data/lost prologue/Classic9.tres" id="2_bue28"]
+[ext_resource type="PackedScene" uid="uid://cjupypih0myxo" path="res://object/player/CharacterSpawn.tscn" id="3_777hn"]
+[ext_resource type="Script" uid="uid://dd24u7rlj0dwl" path="res://addons/custom_nodes/script/ObjectGenerator.cs" id="4_bue28"]
+[ext_resource type="PackedScene" uid="uid://c7l8mr7ubn848" path="res://object/stage/pickups/Ring.tscn" id="5_hlghe"]
+[ext_resource type="PackedScene" uid="uid://d0b2gvx7s6s8u" path="res://object/stage/pickups/Pearl.tscn" id="7_3hyve"]
+[ext_resource type="PackedScene" uid="uid://ckhdnrnb1sf1i" path="res://object/enemy/majin/data/lost prologue/BlueMajin.tscn" id="7_hlghe"]
+[ext_resource type="PackedScene" uid="uid://dxepb172kmp8n" path="res://object/stage/common/Goal.tscn" id="9_b1s4c"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_lau7f"]
+size = Vector3(20, 30, 5)
+
+[sub_resource type="Curve" id="Curve_oehq1"]
+_limits = [-1.0, 1.0, 0.0, 1.0]
+_data = [Vector2(0, 2.9802322e-08), 0.0, -11.368881, 0, 0, Vector2(0.13752915, -1), 0.0, 0.0, 0, 0, Vector2(0.37062937, 1), 0.0, 0.0, 0, 0, Vector2(0.62470865, -1), 0.0, 0.0, 0, 0, Vector2(0.83682984, 1), 0.0, 0.0, 0, 0, Vector2(1, 2.9802322e-08), -8.572387, 0.0, 0, 0]
+point_count = 6
+
+[sub_resource type="Curve" id="Curve_hlghe"]
+_limits = [0.0, 4.0, 0.0, 1.0]
+_data = [Vector2(0, 0), 0.0, 13.167178, 0, 0, Vector2(0.6, 4), 0.0, 0.0, 0, 0, Vector2(1, 2.8), -6.212874, 0.0, 0, 0]
+point_count = 3
+
+[node name="Stage" type="Node"]
+
+[node name="Static" parent="." instance=ExtResource("1_3hyve")]
+Data = ExtResource("2_bue28")
+
+[node name="Classic09" type="Node3D" parent="."]
+
+[node name="SpawnPosition" type="Node3D" parent="Classic09"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 162)
+
+[node name="CharacterSpawn" parent="Classic09/SpawnPosition" instance=ExtResource("3_777hn")]
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Classic09" groups=["wall"]]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 168)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Classic09/StaticBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
+shape = SubResource("BoxShape3D_lau7f")
+
+[node name="Rings" type="Node3D" parent="Classic09"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6, 156)
+script = ExtResource("4_bue28")
+Source = ExtResource("5_hlghe")
+Amount = 3
+Shape = 0
+Orientation = 0
+Spacing = 2.0
+"Horizontal Offset" = null
+"Vertical Offset" = null
+metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
+
+[node name="Child01" parent="Classic09/Rings" instance=ExtResource("5_hlghe")]
+
+[node name="Child02" parent="Classic09/Rings" instance=ExtResource("5_hlghe")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2)
+
+[node name="Child03" parent="Classic09/Rings" instance=ExtResource("5_hlghe")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -4)
+
+[node name="PearlGroup1" type="Node3D" parent="Classic09"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 146)
+
+[node name="PearlsL" type="Node3D" parent="Classic09/PearlGroup1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.6, 0, 0)
+script = ExtResource("4_bue28")
+Source = ExtResource("7_3hyve")
+Amount = 35
+Shape = 0
+Orientation = 0
+Spacing = 1.7
+"Horizontal Offset" = SubResource("Curve_oehq1")
+"Vertical Offset" = null
+metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
+
+[node name="Child01" parent="Classic09/PearlGroup1/PearlsL" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.9802322e-08, 0, 0)
+
+[node name="Child02" parent="Classic09/PearlGroup1/PearlsL" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.32429677, 0, -1.7)
+
+[node name="Child03" parent="Classic09/PearlGroup1/PearlsL" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.6113541, 0, -3.4)
+
+[node name="Child04" parent="Classic09/PearlGroup1/PearlsL" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.8355588, 0, -5.1000004)
+
+[node name="Child05" parent="Classic09/PearlGroup1/PearlsL" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.97129774, 0, -6.8)
+
+[node name="Child06" parent="Classic09/PearlGroup1/PearlsL" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.9902451, 0, -8.5)
+
+[node name="Child07" parent="Classic09/PearlGroup1/PearlsL" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.8511976, 0, -10.200001)
+
+[node name="Child08" parent="Classic09/PearlGroup1/PearlsL" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.584936, 0, -11.900001)
+
+[node name="Child09" parent="Classic09/PearlGroup1/PearlsL" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.2396712, 0, -13.6)
+
+[node name="Child10" parent="Classic09/PearlGroup1/PearlsL" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.13638577, 0, -15.3)
+
+[node name="Child11" parent="Classic09/PearlGroup1/PearlsL" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.49502385, 0, -17)
+
+[node name="Child12" parent="Classic09/PearlGroup1/PearlsL" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.78803194, 0, -18.7)
+
+[node name="Child13" parent="Classic09/PearlGroup1/PearlsL" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.96719897, 0, -20.400002)
+
+[node name="Child14" parent="Classic09/PearlGroup1/PearlsL" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.98761886, 0, -22.1)
+
+[node name="Child15" parent="Classic09/PearlGroup1/PearlsL" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.85970557, 0, -23.800001)
+
+[node name="Child16" parent="Classic09/PearlGroup1/PearlsL" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.62305963, 0, -25.5)
+
+[node name="Child17" parent="Classic09/PearlGroup1/PearlsL" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.31490862, 0, -27.2)
+
+[node name="Child18" parent="Classic09/PearlGroup1/PearlsL" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.027519614, 0, -28.900002)
+
+[node name="Child19" parent="Classic09/PearlGroup1/PearlsL" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.36699796, 0, -30.6)
+
+[node name="Child20" parent="Classic09/PearlGroup1/PearlsL" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.6662971, 0, -32.3)
+
+[node name="Child21" parent="Classic09/PearlGroup1/PearlsL" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.8881912, 0, -34)
+
+[node name="Child22" parent="Classic09/PearlGroup1/PearlsL" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.9954512, 0, -35.7)
+
+[node name="Child23" parent="Classic09/PearlGroup1/PearlsL" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.938068, 0, -37.4)
+
+[node name="Child24" parent="Classic09/PearlGroup1/PearlsL" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.70084566, 0, -39.100002)
+
+[node name="Child25" parent="Classic09/PearlGroup1/PearlsL" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.34551182, 0, -40.800003)
+
+[node name="Child26" parent="Classic09/PearlGroup1/PearlsL" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.06395562, 0, -42.5)
+
+[node name="Child27" parent="Classic09/PearlGroup1/PearlsL" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.46358123, 0, -44.2)
+
+[node name="Child28" parent="Classic09/PearlGroup1/PearlsL" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.78938675, 0, -45.9)
+
+[node name="Child29" parent="Classic09/PearlGroup1/PearlsL" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.9773968, 0, -47.600002)
+
+[node name="Child30" parent="Classic09/PearlGroup1/PearlsL" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.9849676, 0, -49.300003)
+
+[node name="Child31" parent="Classic09/PearlGroup1/PearlsL" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.88842165, 0, -51)
+
+[node name="Child32" parent="Classic09/PearlGroup1/PearlsL" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.72052485, 0, -52.7)
+
+[node name="Child33" parent="Classic09/PearlGroup1/PearlsL" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.502404, 0, -54.4)
+
+[node name="Child34" parent="Classic09/PearlGroup1/PearlsL" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.25518695, 0, -56.100002)
+
+[node name="Child35" parent="Classic09/PearlGroup1/PearlsL" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.9802322e-08, 0, -57.800003)
+
+[node name="PearlsM" type="Node3D" parent="Classic09/PearlGroup1"]
+script = ExtResource("4_bue28")
+Source = ExtResource("7_3hyve")
+Amount = 35
+Shape = 0
+Orientation = 0
+Spacing = 1.7
+"Horizontal Offset" = SubResource("Curve_oehq1")
+"Vertical Offset" = null
+metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
+
+[node name="Child01" parent="Classic09/PearlGroup1/PearlsM" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.9802322e-08, 0, 0)
+
+[node name="Child02" parent="Classic09/PearlGroup1/PearlsM" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.32429677, 0, -1.7)
+
+[node name="Child03" parent="Classic09/PearlGroup1/PearlsM" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.6113541, 0, -3.4)
+
+[node name="Child04" parent="Classic09/PearlGroup1/PearlsM" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.8355588, 0, -5.1000004)
+
+[node name="Child05" parent="Classic09/PearlGroup1/PearlsM" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.97129774, 0, -6.8)
+
+[node name="Child06" parent="Classic09/PearlGroup1/PearlsM" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.9902451, 0, -8.5)
+
+[node name="Child07" parent="Classic09/PearlGroup1/PearlsM" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.8511976, 0, -10.200001)
+
+[node name="Child08" parent="Classic09/PearlGroup1/PearlsM" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.584936, 0, -11.900001)
+
+[node name="Child09" parent="Classic09/PearlGroup1/PearlsM" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.2396712, 0, -13.6)
+
+[node name="Child10" parent="Classic09/PearlGroup1/PearlsM" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.13638577, 0, -15.3)
+
+[node name="Child11" parent="Classic09/PearlGroup1/PearlsM" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.49502385, 0, -17)
+
+[node name="Child12" parent="Classic09/PearlGroup1/PearlsM" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.78803194, 0, -18.7)
+
+[node name="Child13" parent="Classic09/PearlGroup1/PearlsM" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.96719897, 0, -20.400002)
+
+[node name="Child14" parent="Classic09/PearlGroup1/PearlsM" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.98761886, 0, -22.1)
+
+[node name="Child15" parent="Classic09/PearlGroup1/PearlsM" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.85970557, 0, -23.800001)
+
+[node name="Child16" parent="Classic09/PearlGroup1/PearlsM" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.62305963, 0, -25.5)
+
+[node name="Child17" parent="Classic09/PearlGroup1/PearlsM" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.31490862, 0, -27.2)
+
+[node name="Child18" parent="Classic09/PearlGroup1/PearlsM" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.027519614, 0, -28.900002)
+
+[node name="Child19" parent="Classic09/PearlGroup1/PearlsM" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.36699796, 0, -30.6)
+
+[node name="Child20" parent="Classic09/PearlGroup1/PearlsM" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.6662971, 0, -32.3)
+
+[node name="Child21" parent="Classic09/PearlGroup1/PearlsM" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.8881912, 0, -34)
+
+[node name="Child22" parent="Classic09/PearlGroup1/PearlsM" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.9954512, 0, -35.7)
+
+[node name="Child23" parent="Classic09/PearlGroup1/PearlsM" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.938068, 0, -37.4)
+
+[node name="Child24" parent="Classic09/PearlGroup1/PearlsM" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.70084566, 0, -39.100002)
+
+[node name="Child25" parent="Classic09/PearlGroup1/PearlsM" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.34551182, 0, -40.800003)
+
+[node name="Child26" parent="Classic09/PearlGroup1/PearlsM" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.06395562, 0, -42.5)
+
+[node name="Child27" parent="Classic09/PearlGroup1/PearlsM" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.46358123, 0, -44.2)
+
+[node name="Child28" parent="Classic09/PearlGroup1/PearlsM" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.78938675, 0, -45.9)
+
+[node name="Child29" parent="Classic09/PearlGroup1/PearlsM" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.9773968, 0, -47.600002)
+
+[node name="Child30" parent="Classic09/PearlGroup1/PearlsM" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.9849676, 0, -49.300003)
+
+[node name="Child31" parent="Classic09/PearlGroup1/PearlsM" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.88842165, 0, -51)
+
+[node name="Child32" parent="Classic09/PearlGroup1/PearlsM" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.72052485, 0, -52.7)
+
+[node name="Child33" parent="Classic09/PearlGroup1/PearlsM" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.502404, 0, -54.4)
+
+[node name="Child34" parent="Classic09/PearlGroup1/PearlsM" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.25518695, 0, -56.100002)
+
+[node name="Child35" parent="Classic09/PearlGroup1/PearlsM" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.9802322e-08, 0, -57.800003)
+
+[node name="PearlsR" type="Node3D" parent="Classic09/PearlGroup1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.6, 0, 0)
+script = ExtResource("4_bue28")
+Source = ExtResource("7_3hyve")
+Amount = 35
+Shape = 0
+Orientation = 0
+Spacing = 1.7
+"Horizontal Offset" = SubResource("Curve_oehq1")
+"Vertical Offset" = null
+metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
+
+[node name="Child01" parent="Classic09/PearlGroup1/PearlsR" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.9802322e-08, 0, 0)
+
+[node name="Child02" parent="Classic09/PearlGroup1/PearlsR" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.32429677, 0, -1.7)
+
+[node name="Child03" parent="Classic09/PearlGroup1/PearlsR" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.6113541, 0, -3.4)
+
+[node name="Child04" parent="Classic09/PearlGroup1/PearlsR" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.8355588, 0, -5.1000004)
+
+[node name="Child05" parent="Classic09/PearlGroup1/PearlsR" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.97129774, 0, -6.8)
+
+[node name="Child06" parent="Classic09/PearlGroup1/PearlsR" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.9902451, 0, -8.5)
+
+[node name="Child07" parent="Classic09/PearlGroup1/PearlsR" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.8511976, 0, -10.200001)
+
+[node name="Child08" parent="Classic09/PearlGroup1/PearlsR" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.584936, 0, -11.900001)
+
+[node name="Child09" parent="Classic09/PearlGroup1/PearlsR" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.2396712, 0, -13.6)
+
+[node name="Child10" parent="Classic09/PearlGroup1/PearlsR" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.13638577, 0, -15.3)
+
+[node name="Child11" parent="Classic09/PearlGroup1/PearlsR" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.49502385, 0, -17)
+
+[node name="Child12" parent="Classic09/PearlGroup1/PearlsR" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.78803194, 0, -18.7)
+
+[node name="Child13" parent="Classic09/PearlGroup1/PearlsR" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.96719897, 0, -20.400002)
+
+[node name="Child14" parent="Classic09/PearlGroup1/PearlsR" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.98761886, 0, -22.1)
+
+[node name="Child15" parent="Classic09/PearlGroup1/PearlsR" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.85970557, 0, -23.800001)
+
+[node name="Child16" parent="Classic09/PearlGroup1/PearlsR" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.62305963, 0, -25.5)
+
+[node name="Child17" parent="Classic09/PearlGroup1/PearlsR" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.31490862, 0, -27.2)
+
+[node name="Child18" parent="Classic09/PearlGroup1/PearlsR" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.027519614, 0, -28.900002)
+
+[node name="Child19" parent="Classic09/PearlGroup1/PearlsR" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.36699796, 0, -30.6)
+
+[node name="Child20" parent="Classic09/PearlGroup1/PearlsR" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.6662971, 0, -32.3)
+
+[node name="Child21" parent="Classic09/PearlGroup1/PearlsR" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.8881912, 0, -34)
+
+[node name="Child22" parent="Classic09/PearlGroup1/PearlsR" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.9954512, 0, -35.7)
+
+[node name="Child23" parent="Classic09/PearlGroup1/PearlsR" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.938068, 0, -37.4)
+
+[node name="Child24" parent="Classic09/PearlGroup1/PearlsR" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.70084566, 0, -39.100002)
+
+[node name="Child25" parent="Classic09/PearlGroup1/PearlsR" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.34551182, 0, -40.800003)
+
+[node name="Child26" parent="Classic09/PearlGroup1/PearlsR" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.06395562, 0, -42.5)
+
+[node name="Child27" parent="Classic09/PearlGroup1/PearlsR" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.46358123, 0, -44.2)
+
+[node name="Child28" parent="Classic09/PearlGroup1/PearlsR" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.78938675, 0, -45.9)
+
+[node name="Child29" parent="Classic09/PearlGroup1/PearlsR" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.9773968, 0, -47.600002)
+
+[node name="Child30" parent="Classic09/PearlGroup1/PearlsR" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.9849676, 0, -49.300003)
+
+[node name="Child31" parent="Classic09/PearlGroup1/PearlsR" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.88842165, 0, -51)
+
+[node name="Child32" parent="Classic09/PearlGroup1/PearlsR" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.72052485, 0, -52.7)
+
+[node name="Child33" parent="Classic09/PearlGroup1/PearlsR" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.502404, 0, -54.4)
+
+[node name="Child34" parent="Classic09/PearlGroup1/PearlsR" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.25518695, 0, -56.100002)
+
+[node name="Child35" parent="Classic09/PearlGroup1/PearlsR" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.9802322e-08, 0, -57.800003)
+
+[node name="EnemyGroup1" type="Node3D" parent="Classic09"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 80)
+
+[node name="BlueMajin1" parent="Classic09/EnemyGroup1" instance=ExtResource("7_hlghe")]
+"Defeat Settings/Enable Enemy Launching" = true
+"Defeat Settings/Launch Time" = 0.5
+"Defeat Settings/Launch Direction" = Vector3(0, 0, 20)
+"Defeat Settings/Local Transform" = true
+SpawnMode = 2
+
+[node name="BlueMajin2" parent="Classic09/EnemyGroup1" instance=ExtResource("7_hlghe")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0, -6)
+"Defeat Settings/Enable Enemy Launching" = true
+"Defeat Settings/Launch Time" = 0.5
+"Defeat Settings/Launch Direction" = Vector3(0, 0, 20)
+"Defeat Settings/Local Transform" = true
+SpawnMode = 2
+
+[node name="BlueMajin3" parent="Classic09/EnemyGroup1" instance=ExtResource("7_hlghe")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0, -11)
+"Defeat Settings/Enable Enemy Launching" = true
+"Defeat Settings/Launch Time" = 0.5
+"Defeat Settings/Launch Direction" = Vector3(0, 0, 20)
+"Defeat Settings/Local Transform" = true
+SpawnMode = 2
+
+[node name="PearlGroup2" type="Node3D" parent="Classic09"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0.5, 65)
+
+[node name="PearlsL" type="Node3D" parent="Classic09/PearlGroup2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.6, 0, 0)
+script = ExtResource("4_bue28")
+Source = ExtResource("7_3hyve")
+Amount = 40
+Shape = 0
+Orientation = 0
+Spacing = 2.8
+"Horizontal Offset" = SubResource("Curve_hlghe")
+"Vertical Offset" = null
+metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
+
+[node name="Child01" parent="Classic09/PearlGroup2/PearlsL" instance=ExtResource("7_3hyve")]
+
+[node name="Child02" parent="Classic09/PearlGroup2/PearlsL" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.33067113, 0, -2.8)
+
+[node name="Child03" parent="Classic09/PearlGroup2/PearlsL" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.6474137, 0, -5.6)
+
+[node name="Child04" parent="Classic09/PearlGroup2/PearlsL" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.9501808, 0, -8.4)
+
+[node name="Child05" parent="Classic09/PearlGroup2/PearlsL" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.2389258, 0, -11.2)
+
+[node name="Child06" parent="Classic09/PearlGroup2/PearlsL" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5136024, 0, -14)
+
+[node name="Child07" parent="Classic09/PearlGroup2/PearlsL" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.7741629, 0, -16.8)
+
+[node name="Child08" parent="Classic09/PearlGroup2/PearlsL" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.020562, 0, -19.6)
+
+[node name="Child09" parent="Classic09/PearlGroup2/PearlsL" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.2527518, 0, -22.4)
+
+[node name="Child10" parent="Classic09/PearlGroup2/PearlsL" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.4706864, 0, -25.199999)
+
+[node name="Child11" parent="Classic09/PearlGroup2/PearlsL" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.6743193, 0, -28)
+
+[node name="Child12" parent="Classic09/PearlGroup2/PearlsL" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.863602, 0, -30.8)
+
+[node name="Child13" parent="Classic09/PearlGroup2/PearlsL" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.0384903, 0, -33.6)
+
+[node name="Child14" parent="Classic09/PearlGroup2/PearlsL" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.1989362, 0, -36.399998)
+
+[node name="Child15" parent="Classic09/PearlGroup2/PearlsL" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.3448932, 0, -39.2)
+
+[node name="Child16" parent="Classic09/PearlGroup2/PearlsL" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.4763145, 0, -42)
+
+[node name="Child17" parent="Classic09/PearlGroup2/PearlsL" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.5931535, 0, -44.8)
+
+[node name="Child18" parent="Classic09/PearlGroup2/PearlsL" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.6953638, 0, -47.6)
+
+[node name="Child19" parent="Classic09/PearlGroup2/PearlsL" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.7828984, 0, -50.399998)
+
+[node name="Child20" parent="Classic09/PearlGroup2/PearlsL" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.8557105, 0, -53.2)
+
+[node name="Child21" parent="Classic09/PearlGroup2/PearlsL" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.9137537, 0, -56)
+
+[node name="Child22" parent="Classic09/PearlGroup2/PearlsL" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.9569812, 0, -58.8)
+
+[node name="Child23" parent="Classic09/PearlGroup2/PearlsL" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.9853463, 0, -61.6)
+
+[node name="Child24" parent="Classic09/PearlGroup2/PearlsL" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.9988024, 0, -64.4)
+
+[node name="Child25" parent="Classic09/PearlGroup2/PearlsL" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.9983454, 0, -67.2)
+
+[node name="Child26" parent="Classic09/PearlGroup2/PearlsL" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.9881806, 0, -70)
+
+[node name="Child27" parent="Classic09/PearlGroup2/PearlsL" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.9686375, 0, -72.799995)
+
+[node name="Child28" parent="Classic09/PearlGroup2/PearlsL" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.939583, 0, -75.6)
+
+[node name="Child29" parent="Classic09/PearlGroup2/PearlsL" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.9008815, 0, -78.4)
+
+[node name="Child30" parent="Classic09/PearlGroup2/PearlsL" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.852399, 0, -81.2)
+
+[node name="Child31" parent="Classic09/PearlGroup2/PearlsL" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.7940004, 0, -84)
+
+[node name="Child32" parent="Classic09/PearlGroup2/PearlsL" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.7255511, 0, -86.799995)
+
+[node name="Child33" parent="Classic09/PearlGroup2/PearlsL" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.6469176, 0, -89.6)
+
+[node name="Child34" parent="Classic09/PearlGroup2/PearlsL" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.5579643, 0, -92.4)
+
+[node name="Child35" parent="Classic09/PearlGroup2/PearlsL" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.4585574, 0, -95.2)
+
+[node name="Child36" parent="Classic09/PearlGroup2/PearlsL" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.3485613, 0, -98)
+
+[node name="Child37" parent="Classic09/PearlGroup2/PearlsL" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.227842, 0, -100.799995)
+
+[node name="Child38" parent="Classic09/PearlGroup2/PearlsL" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.0962653, 0, -103.6)
+
+[node name="Child39" parent="Classic09/PearlGroup2/PearlsL" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.9536963, 0, -106.4)
+
+[node name="Child40" parent="Classic09/PearlGroup2/PearlsL" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.8, 0, -109.2)
+
+[node name="PearlsM" type="Node3D" parent="Classic09/PearlGroup2"]
+script = ExtResource("4_bue28")
+Source = ExtResource("7_3hyve")
+Amount = 40
+Shape = 0
+Orientation = 0
+Spacing = 2.8
+"Horizontal Offset" = SubResource("Curve_hlghe")
+"Vertical Offset" = null
+metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
+
+[node name="Child01" parent="Classic09/PearlGroup2/PearlsM" instance=ExtResource("7_3hyve")]
+
+[node name="Child02" parent="Classic09/PearlGroup2/PearlsM" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.33067113, 0, -2.8)
+
+[node name="Child03" parent="Classic09/PearlGroup2/PearlsM" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.6474137, 0, -5.6)
+
+[node name="Child04" parent="Classic09/PearlGroup2/PearlsM" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.9501808, 0, -8.4)
+
+[node name="Child05" parent="Classic09/PearlGroup2/PearlsM" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.2389258, 0, -11.2)
+
+[node name="Child06" parent="Classic09/PearlGroup2/PearlsM" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5136024, 0, -14)
+
+[node name="Child07" parent="Classic09/PearlGroup2/PearlsM" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.7741629, 0, -16.8)
+
+[node name="Child08" parent="Classic09/PearlGroup2/PearlsM" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.020562, 0, -19.6)
+
+[node name="Child09" parent="Classic09/PearlGroup2/PearlsM" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.2527518, 0, -22.4)
+
+[node name="Child10" parent="Classic09/PearlGroup2/PearlsM" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.4706864, 0, -25.199999)
+
+[node name="Child11" parent="Classic09/PearlGroup2/PearlsM" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.6743193, 0, -28)
+
+[node name="Child12" parent="Classic09/PearlGroup2/PearlsM" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.863602, 0, -30.8)
+
+[node name="Child13" parent="Classic09/PearlGroup2/PearlsM" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.0384903, 0, -33.6)
+
+[node name="Child14" parent="Classic09/PearlGroup2/PearlsM" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.1989362, 0, -36.399998)
+
+[node name="Child15" parent="Classic09/PearlGroup2/PearlsM" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.3448932, 0, -39.2)
+
+[node name="Child16" parent="Classic09/PearlGroup2/PearlsM" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.4763145, 0, -42)
+
+[node name="Child17" parent="Classic09/PearlGroup2/PearlsM" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.5931535, 0, -44.8)
+
+[node name="Child18" parent="Classic09/PearlGroup2/PearlsM" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.6953638, 0, -47.6)
+
+[node name="Child19" parent="Classic09/PearlGroup2/PearlsM" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.7828984, 0, -50.399998)
+
+[node name="Child20" parent="Classic09/PearlGroup2/PearlsM" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.8557105, 0, -53.2)
+
+[node name="Child21" parent="Classic09/PearlGroup2/PearlsM" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.9137537, 0, -56)
+
+[node name="Child22" parent="Classic09/PearlGroup2/PearlsM" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.9569812, 0, -58.8)
+
+[node name="Child23" parent="Classic09/PearlGroup2/PearlsM" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.9853463, 0, -61.6)
+
+[node name="Child24" parent="Classic09/PearlGroup2/PearlsM" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.9988024, 0, -64.4)
+
+[node name="Child25" parent="Classic09/PearlGroup2/PearlsM" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.9983454, 0, -67.2)
+
+[node name="Child26" parent="Classic09/PearlGroup2/PearlsM" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.9881806, 0, -70)
+
+[node name="Child27" parent="Classic09/PearlGroup2/PearlsM" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.9686375, 0, -72.799995)
+
+[node name="Child28" parent="Classic09/PearlGroup2/PearlsM" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.939583, 0, -75.6)
+
+[node name="Child29" parent="Classic09/PearlGroup2/PearlsM" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.9008815, 0, -78.4)
+
+[node name="Child30" parent="Classic09/PearlGroup2/PearlsM" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.852399, 0, -81.2)
+
+[node name="Child31" parent="Classic09/PearlGroup2/PearlsM" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.7940004, 0, -84)
+
+[node name="Child32" parent="Classic09/PearlGroup2/PearlsM" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.7255511, 0, -86.799995)
+
+[node name="Child33" parent="Classic09/PearlGroup2/PearlsM" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.6469176, 0, -89.6)
+
+[node name="Child34" parent="Classic09/PearlGroup2/PearlsM" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.5579643, 0, -92.4)
+
+[node name="Child35" parent="Classic09/PearlGroup2/PearlsM" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.4585574, 0, -95.2)
+
+[node name="Child36" parent="Classic09/PearlGroup2/PearlsM" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.3485613, 0, -98)
+
+[node name="Child37" parent="Classic09/PearlGroup2/PearlsM" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.227842, 0, -100.799995)
+
+[node name="Child38" parent="Classic09/PearlGroup2/PearlsM" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.0962653, 0, -103.6)
+
+[node name="Child39" parent="Classic09/PearlGroup2/PearlsM" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.9536963, 0, -106.4)
+
+[node name="Child40" parent="Classic09/PearlGroup2/PearlsM" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.8, 0, -109.2)
+
+[node name="PearlsR" type="Node3D" parent="Classic09/PearlGroup2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.6, 0, 0)
+script = ExtResource("4_bue28")
+Source = ExtResource("7_3hyve")
+Amount = 40
+Shape = 0
+Orientation = 0
+Spacing = 2.8
+"Horizontal Offset" = SubResource("Curve_hlghe")
+"Vertical Offset" = null
+metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
+
+[node name="Child01" parent="Classic09/PearlGroup2/PearlsR" instance=ExtResource("7_3hyve")]
+
+[node name="Child02" parent="Classic09/PearlGroup2/PearlsR" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.33067113, 0, -2.8)
+
+[node name="Child03" parent="Classic09/PearlGroup2/PearlsR" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.6474137, 0, -5.6)
+
+[node name="Child04" parent="Classic09/PearlGroup2/PearlsR" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.9501808, 0, -8.4)
+
+[node name="Child05" parent="Classic09/PearlGroup2/PearlsR" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.2389258, 0, -11.2)
+
+[node name="Child06" parent="Classic09/PearlGroup2/PearlsR" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5136024, 0, -14)
+
+[node name="Child07" parent="Classic09/PearlGroup2/PearlsR" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.7741629, 0, -16.8)
+
+[node name="Child08" parent="Classic09/PearlGroup2/PearlsR" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.020562, 0, -19.6)
+
+[node name="Child09" parent="Classic09/PearlGroup2/PearlsR" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.2527518, 0, -22.4)
+
+[node name="Child10" parent="Classic09/PearlGroup2/PearlsR" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.4706864, 0, -25.199999)
+
+[node name="Child11" parent="Classic09/PearlGroup2/PearlsR" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.6743193, 0, -28)
+
+[node name="Child12" parent="Classic09/PearlGroup2/PearlsR" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.863602, 0, -30.8)
+
+[node name="Child13" parent="Classic09/PearlGroup2/PearlsR" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.0384903, 0, -33.6)
+
+[node name="Child14" parent="Classic09/PearlGroup2/PearlsR" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.1989362, 0, -36.399998)
+
+[node name="Child15" parent="Classic09/PearlGroup2/PearlsR" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.3448932, 0, -39.2)
+
+[node name="Child16" parent="Classic09/PearlGroup2/PearlsR" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.4763145, 0, -42)
+
+[node name="Child17" parent="Classic09/PearlGroup2/PearlsR" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.5931535, 0, -44.8)
+
+[node name="Child18" parent="Classic09/PearlGroup2/PearlsR" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.6953638, 0, -47.6)
+
+[node name="Child19" parent="Classic09/PearlGroup2/PearlsR" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.7828984, 0, -50.399998)
+
+[node name="Child20" parent="Classic09/PearlGroup2/PearlsR" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.8557105, 0, -53.2)
+
+[node name="Child21" parent="Classic09/PearlGroup2/PearlsR" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.9137537, 0, -56)
+
+[node name="Child22" parent="Classic09/PearlGroup2/PearlsR" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.9569812, 0, -58.8)
+
+[node name="Child23" parent="Classic09/PearlGroup2/PearlsR" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.9853463, 0, -61.6)
+
+[node name="Child24" parent="Classic09/PearlGroup2/PearlsR" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.9988024, 0, -64.4)
+
+[node name="Child25" parent="Classic09/PearlGroup2/PearlsR" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.9983454, 0, -67.2)
+
+[node name="Child26" parent="Classic09/PearlGroup2/PearlsR" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.9881806, 0, -70)
+
+[node name="Child27" parent="Classic09/PearlGroup2/PearlsR" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.9686375, 0, -72.799995)
+
+[node name="Child28" parent="Classic09/PearlGroup2/PearlsR" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.939583, 0, -75.6)
+
+[node name="Child29" parent="Classic09/PearlGroup2/PearlsR" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.9008815, 0, -78.4)
+
+[node name="Child30" parent="Classic09/PearlGroup2/PearlsR" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.852399, 0, -81.2)
+
+[node name="Child31" parent="Classic09/PearlGroup2/PearlsR" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.7940004, 0, -84)
+
+[node name="Child32" parent="Classic09/PearlGroup2/PearlsR" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.7255511, 0, -86.799995)
+
+[node name="Child33" parent="Classic09/PearlGroup2/PearlsR" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.6469176, 0, -89.6)
+
+[node name="Child34" parent="Classic09/PearlGroup2/PearlsR" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.5579643, 0, -92.4)
+
+[node name="Child35" parent="Classic09/PearlGroup2/PearlsR" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.4585574, 0, -95.2)
+
+[node name="Child36" parent="Classic09/PearlGroup2/PearlsR" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.3485613, 0, -98)
+
+[node name="Child37" parent="Classic09/PearlGroup2/PearlsR" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.227842, 0, -100.799995)
+
+[node name="Child38" parent="Classic09/PearlGroup2/PearlsR" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.0962653, 0, -103.6)
+
+[node name="Child39" parent="Classic09/PearlGroup2/PearlsR" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.9536963, 0, -106.4)
+
+[node name="Child40" parent="Classic09/PearlGroup2/PearlsR" instance=ExtResource("7_3hyve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.8, 0, -109.2)
+
+[node name="EnemyGroup2" type="Node3D" parent="Classic09"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, -60)
+
+[node name="BlueMajin1" parent="Classic09/EnemyGroup2" instance=ExtResource("7_hlghe")]
+"Defeat Settings/Enable Enemy Launching" = true
+"Defeat Settings/Launch Time" = 0.5
+"Defeat Settings/Launch Direction" = Vector3(0, 0, 20)
+"Defeat Settings/Local Transform" = true
+rangeOverride = 70
+
+[node name="BlueMajin2" parent="Classic09/EnemyGroup2" instance=ExtResource("7_hlghe")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0, -3)
+"Defeat Settings/Enable Enemy Launching" = true
+"Defeat Settings/Launch Time" = 0.5
+"Defeat Settings/Launch Direction" = Vector3(0, 0, 20)
+"Defeat Settings/Local Transform" = true
+rangeOverride = 70
+
+[node name="BlueMajin3" parent="Classic09/EnemyGroup2" instance=ExtResource("7_hlghe")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0, -3)
+"Defeat Settings/Enable Enemy Launching" = true
+"Defeat Settings/Launch Time" = 0.5
+"Defeat Settings/Launch Direction" = Vector3(0, 0, 20)
+"Defeat Settings/Local Transform" = true
+rangeOverride = 70
+
+[node name="Goal" parent="Classic09" instance=ExtResource("9_b1s4c")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, -150)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Classic09/Goal"]
+shape = SubResource("BoxShape3D_lau7f")
+
+[editable path="Static"]

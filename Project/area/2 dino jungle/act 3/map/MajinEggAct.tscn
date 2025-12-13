@@ -1,4 +1,4 @@
-[gd_scene load_steps=29 format=3 uid="uid://drl5b6e5kwx7m"]
+[gd_scene load_steps=31 format=3 uid="uid://drl5b6e5kwx7m"]
 
 [ext_resource type="PackedScene" uid="uid://gnw1drjjo5gi" path="res://area/2 dino jungle/act 3/Static.tscn" id="1_xei2o"]
 [ext_resource type="Resource" uid="uid://pe2kawmnuf4i" path="res://resource/level data/dinosaur jungle/Act3MajinEgg.tres" id="2_e8m24"]
@@ -23,6 +23,7 @@
 [ext_resource type="PackedScene" uid="uid://cx36fswvjfblm" path="res://object/stage/destructable/EnemyStone.tscn" id="20_qu7dv"]
 [ext_resource type="PackedScene" uid="uid://dadka31wrx5f4" path="res://object/enemy/majin/data/dino jungle/GreenMajin.tscn" id="21_51mfu"]
 [ext_resource type="Resource" uid="uid://ctcjx8l5t1ppn" path="res://area/2 dino jungle/act 3/camera/RightCatapultCam.tres" id="22_j1wdt"]
+[ext_resource type="PackedScene" uid="uid://gqxmlgiwtikn" path="res://object/trigger/BigTrigger.tscn" id="24_rsqqd"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_kelnp"]
 size = Vector3(15, 20, 5)
@@ -47,6 +48,10 @@ _limits = [-1.0, 1.0, 0.0, 1.0]
 _data = [Vector2(0, 0), 0.0, 3.29252, 0, 0, Vector2(0.3, 0.4), 0.0, 0.0, 0, 0, Vector2(0.7, -0.8), 0.0, 0.0, 0, 0, Vector2(1, 1.49012e-08), 5.0752, 0.0, 0, 0]
 point_count = 4
 
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_rsqqd"]
+height = 5.0
+radius = 7.0
+
 [node name="Stage" type="Node"]
 
 [node name="Static" parent="." instance=ExtResource("1_xei2o")]
@@ -69,9 +74,10 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20.4716, -3.36349, 72.4388)
 OneShot = true
 "Respawn Mode" = 0
 
-[node name="Dialog" type="Node3D" parent="MajinEggAct/DialogTriggers/EggTrigger"]
+[node name="Dialog" type="Node3D" parent="MajinEggAct/DialogTriggers/EggTrigger" node_paths=PackedStringArray("randomizedDialogTriggers")]
 script = ExtResource("5_577g8")
 textKeys = ["din_majin_egg_sh"]
+randomizedDialogTriggers = []
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="MajinEggAct/DialogTriggers/EggTrigger"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 10, 0)
@@ -82,10 +88,11 @@ transform = Transform3D(0.715315, 0, 0.698802, 0, 1, 0, -0.698802, 0, 0.715315, 
 OneShot = true
 "Respawn Mode" = 0
 
-[node name="Dialog" type="Node3D" parent="MajinEggAct/DialogTriggers/IronBallsDialogTrigger"]
+[node name="Dialog" type="Node3D" parent="MajinEggAct/DialogTriggers/IronBallsDialogTrigger" node_paths=PackedStringArray("randomizedDialogTriggers")]
 script = ExtResource("5_577g8")
 randomize = true
 textKeys = ["din_ball_hint_sh", "din_ball_hint_so"]
+randomizedDialogTriggers = []
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="MajinEggAct/DialogTriggers/IronBallsDialogTrigger"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 10, 0)
@@ -96,9 +103,10 @@ transform = Transform3D(-0.113723, 0, 0.993512, 0, 1, 0, -0.993512, 0, -0.113723
 OneShot = true
 "Respawn Mode" = 0
 
-[node name="Dialog" type="Node3D" parent="MajinEggAct/DialogTriggers/MajinDialogTrigger"]
+[node name="Dialog" type="Node3D" parent="MajinEggAct/DialogTriggers/MajinDialogTrigger" node_paths=PackedStringArray("randomizedDialogTriggers")]
 script = ExtResource("5_577g8")
 textKeys = ["common_enemy_so", "common_enemy_sh"]
+randomizedDialogTriggers = []
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="MajinEggAct/DialogTriggers/MajinDialogTrigger"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 10, 0)
@@ -109,9 +117,10 @@ transform = Transform3D(0.969578, 0, 0.244783, 0, 1, 0, -0.244783, 0, 0.969578, 
 OneShot = true
 "Respawn Mode" = 0
 
-[node name="Dialog" type="Node3D" parent="MajinEggAct/DialogTriggers/VictoryDialogTrigger"]
+[node name="Dialog" type="Node3D" parent="MajinEggAct/DialogTriggers/VictoryDialogTrigger" node_paths=PackedStringArray("randomizedDialogTriggers")]
 script = ExtResource("5_577g8")
 textKeys = ["common_victory_so", "common_victory_sh"]
+randomizedDialogTriggers = []
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="MajinEggAct/DialogTriggers/VictoryDialogTrigger"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 10, 0)
@@ -122,9 +131,10 @@ transform = Transform3D(0.52013, 0, -0.854087, 0, 1, 0, 0.854087, 0, 0.52013, -1
 OneShot = true
 "Respawn Mode" = 0
 
-[node name="Dialog" type="Node3D" parent="MajinEggAct/DialogTriggers/RightMajinsDialogTrigger"]
+[node name="Dialog" type="Node3D" parent="MajinEggAct/DialogTriggers/RightMajinsDialogTrigger" node_paths=PackedStringArray("randomizedDialogTriggers")]
 script = ExtResource("5_577g8")
 textKeys = ["common_enemy6_so", "common_enemy6_sh"]
+randomizedDialogTriggers = []
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="MajinEggAct/DialogTriggers/RightMajinsDialogTrigger"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 10, 0)
@@ -135,9 +145,10 @@ transform = Transform3D(-0.423109, 0, -0.906079, 0, 1, 0, 0.906079, 0, -0.423109
 OneShot = true
 "Respawn Mode" = 0
 
-[node name="Dialog" type="Node3D" parent="MajinEggAct/DialogTriggers/DinoMajinsDialogTrigger"]
+[node name="Dialog" type="Node3D" parent="MajinEggAct/DialogTriggers/DinoMajinsDialogTrigger" node_paths=PackedStringArray("randomizedDialogTriggers")]
 script = ExtResource("5_577g8")
 textKeys = ["common_enemy5_sh"]
+randomizedDialogTriggers = []
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="MajinEggAct/DialogTriggers/DinoMajinsDialogTrigger"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 10, 0)
@@ -148,10 +159,11 @@ transform = Transform3D(-0.57402, 0, -0.818842, 0, 1, 0, 0.818842, 0, -0.57402, 
 OneShot = true
 "Respawn Mode" = 0
 
-[node name="Dialog" type="Node3D" parent="MajinEggAct/DialogTriggers/LapTrigger"]
+[node name="Dialog" type="Node3D" parent="MajinEggAct/DialogTriggers/LapTrigger" node_paths=PackedStringArray("randomizedDialogTriggers")]
 transform = Transform3D(0.984808, 0, 0.173648, 0, 1, 0, -0.173648, 0, 0.984808, 0.196962, 0, -0.034729)
 script = ExtResource("5_577g8")
 textKeys = ["common_lap_sh", "common_lap_so"]
+randomizedDialogTriggers = []
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="MajinEggAct/DialogTriggers/LapTrigger"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 10, 0)
@@ -191,6 +203,7 @@ Amount = 6
 Shape = 2
 Path = NodePath("../../../Static/Path/LeftPath")
 "Path Progress Offset" = 0.0
+"Reverse Path" = false
 "Disable Path Y" = false
 Spacing = 2.0
 "Horizontal Offset" = null
@@ -222,6 +235,7 @@ Amount = 6
 Shape = 2
 Path = NodePath("../../../Static/Path/LeftPath")
 "Path Progress Offset" = 0.0
+"Reverse Path" = false
 "Disable Path Y" = false
 Spacing = 2.0
 "Horizontal Offset" = null
@@ -253,6 +267,7 @@ Amount = 10
 Shape = 2
 Path = NodePath("../../../Static/Path/LeftPath")
 "Path Progress Offset" = 0.0
+"Reverse Path" = false
 "Disable Path Y" = false
 Spacing = 1.0
 "Horizontal Offset" = null
@@ -296,6 +311,7 @@ Amount = 10
 Shape = 2
 Path = NodePath("../../../Static/Path/LeftPath")
 "Path Progress Offset" = 0.0
+"Reverse Path" = false
 "Disable Path Y" = false
 Spacing = 1.0
 "Horizontal Offset" = null
@@ -339,6 +355,7 @@ Amount = 10
 Shape = 2
 Path = NodePath("../../../Static/Path/LeftPath")
 "Path Progress Offset" = 0.0
+"Reverse Path" = false
 "Disable Path Y" = false
 Spacing = 1.0
 "Horizontal Offset" = null
@@ -521,6 +538,7 @@ Amount = 8
 Shape = 2
 Path = NodePath("../../../Static/Path/Boat1Path")
 "Path Progress Offset" = 0.0
+"Reverse Path" = false
 "Disable Path Y" = false
 Spacing = 2.0
 "Horizontal Offset" = null
@@ -707,6 +725,7 @@ Amount = 10
 Shape = 2
 Path = NodePath("../../../../../Static/Path/FlyingPotIslandPath")
 "Path Progress Offset" = 0.0
+"Reverse Path" = false
 "Disable Path Y" = false
 Spacing = 1.0
 "Horizontal Offset" = null
@@ -789,6 +808,7 @@ Amount = 20
 Shape = 2
 Path = NodePath("../../../Static/Path/Boat3Path")
 "Path Progress Offset" = 0.0
+"Reverse Path" = false
 "Disable Path Y" = false
 Spacing = 1.5
 "Horizontal Offset" = SubResource("Curve_2uv8p")
@@ -892,6 +912,7 @@ Amount = 10
 Shape = 2
 Path = NodePath("../../../Static/Path/LongIslandPath")
 "Path Progress Offset" = 0.0
+"Reverse Path" = false
 "Disable Path Y" = false
 Spacing = 1.0
 "Horizontal Offset" = null
@@ -943,6 +964,7 @@ Amount = 15
 Shape = 2
 Path = NodePath("../../../Static/Path/Boat4Path")
 "Path Progress Offset" = 0.0
+"Reverse Path" = false
 "Disable Path Y" = false
 Spacing = 1.0
 "Horizontal Offset" = SubResource("Curve_sd17b")
@@ -1001,6 +1023,7 @@ Amount = 15
 Shape = 2
 Path = NodePath("../../../Static/Path/Boat4Path")
 "Path Progress Offset" = 0.0
+"Reverse Path" = false
 "Disable Path Y" = false
 Spacing = 1.0
 "Horizontal Offset" = SubResource("Curve_rccx2")
@@ -1206,6 +1229,17 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.618035, 0, -1.90211)
 [node name="Child10" parent="MajinEggAct/RightPath/Rings2" instance=ExtResource("6_x45nj")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.61803, 0, -1.17557)
 
+[node name="BigTrigger" parent="." instance=ExtResource("24_rsqqd")]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 54, -2.3, 76)
+bigAnimation = &"jump"
+
+[node name="Camera" parent="BigTrigger" index="1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 40)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="BigTrigger"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.299988, 19, 85.8)
+shape = SubResource("CylinderShape3D_rsqqd")
+
 [connection signal="LevelStarted" from="Static" to="MajinEggAct/SpawnPosition/CharacterSpawn/HeadsUpDisplay" method="PlayObjectiveAnimation" binds= [&"majin-egg"]]
 [connection signal="Shattered" from="MajinEggAct/Eggs/MajinEgg1" to="Static" method="IncrementObjective"]
 [connection signal="Shattered" from="MajinEggAct/Eggs/MajinEgg2" to="Static" method="IncrementObjective"]
@@ -1238,3 +1272,6 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.61803, 0, -1.17557)
 [connection signal="Deactivated" from="MajinEggAct/RightPath/Catapult" to="MajinEggAct/RightPath/Catapult/Camera" method="Deactivate"]
 [connection signal="PlayerEntered" from="MajinEggAct/RightPath/Catapult" to="MajinEggAct/RightPath/Catapult/Camera" method="Activate"]
 [connection signal="PlayerExited" from="MajinEggAct/RightPath/Catapult" to="MajinEggAct/RightPath/Catapult/Camera" method="Deactivate"]
+
+[editable path="BigTrigger"]
+[editable path="BigTrigger/Big"]

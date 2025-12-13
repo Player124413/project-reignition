@@ -1,22 +1,29 @@
-[gd_scene load_steps=3 format=3 uid="uid://5l5gkjoad6bq"]
+[gd_scene load_steps=4 format=3 uid="uid://5l5gkjoad6bq"]
 
-[ext_resource type="PackedScene" uid="uid://cohqmr0dv8g1n" path="res://area/0 lost prologue/object/model/wonder/WonderPillar2.gltf" id="1_sn2g5"]
+[ext_resource type="PackedScene" uid="uid://523smjugvmxt" path="res://area/0 lost prologue/object/wonder/WonderBlockBase.tscn" id="1_skxnk"]
+[ext_resource type="PackedScene" uid="uid://cohqmr0dv8g1n" path="res://area/0 lost prologue/object/model/wonder/WonderPillar2.gltf" id="3_qtkq3"]
 
-[sub_resource type="BoxShape3D" id="BoxShape3D_q7ekq"]
+[sub_resource type="BoxShape3D" id="BoxShape3D_e3dib"]
 size = Vector3(2, 8, 2)
 
-[node name="WonderPillar2" type="StaticBody3D" groups=["floor", "wall"]]
+[node name="WonderPillar2" instance=ExtResource("1_skxnk")]
 
-[node name="WonderPillar2" parent="." instance=ExtResource("1_sn2g5")]
+[node name="WonderPillar2" parent="Root" index="0" instance=ExtResource("3_qtkq3")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4, 0)
 
-[node name="WonderPillar2BloomMesh" parent="WonderPillar2" index="1"]
+[node name="WonderPillar2Mesh" parent="Root/WonderPillar2" index="0"]
+cast_shadow = 0
+
+[node name="WonderPillar2BloomMesh" parent="Root/WonderPillar2" index="1"]
 layers = 131072
 cast_shadow = 0
-extra_cull_margin = 50.0
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+[node name="CollisionShape3D" parent="." index="3"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4, 0)
-shape = SubResource("BoxShape3D_q7ekq")
+shape = SubResource("BoxShape3D_e3dib")
 
-[editable path="WonderPillar2"]
+[node name="VFX" parent="." index="5"]
+transform = Transform3D(2, 0, 0, 0, 1, 0, 0, 0, 2, 0, 0, 0)
+amount = 64
+
+[editable path="Root/WonderPillar2"]

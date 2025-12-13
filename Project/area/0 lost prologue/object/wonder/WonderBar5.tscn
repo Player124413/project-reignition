@@ -1,22 +1,29 @@
-[gd_scene load_steps=3 format=3 uid="uid://cyd7uu3t42s2r"]
+[gd_scene load_steps=4 format=3 uid="uid://cyd7uu3t42s2r"]
 
 [ext_resource type="PackedScene" uid="uid://ddkvne7im0v53" path="res://area/0 lost prologue/object/model/wonder/WonderBar5.gltf" id="1_g0qdb"]
+[ext_resource type="PackedScene" uid="uid://523smjugvmxt" path="res://area/0 lost prologue/object/wonder/WonderBlockBase.tscn" id="1_mkbn3"]
 
-[sub_resource type="BoxShape3D" id="BoxShape3D_q7ekq"]
+[sub_resource type="BoxShape3D" id="BoxShape3D_mkbn3"]
 size = Vector3(5, 0.5, 0.5)
 
-[node name="WonderBar5" type="StaticBody3D" groups=["floor", "wall"]]
+[node name="WonderBlock5" instance=ExtResource("1_mkbn3")]
 
-[node name="WonderBar5" parent="." instance=ExtResource("1_g0qdb")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.275, 0)
+[node name="WonderBar5" parent="Root" index="0" instance=ExtResource("1_g0qdb")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.25, 0)
 
-[node name="WonderBar5BloomMesh" parent="WonderBar5" index="1"]
+[node name="WonderBar5Mesh" parent="Root/WonderBar5" index="0"]
+cast_shadow = 0
+
+[node name="WonderBar5BloomMesh" parent="Root/WonderBar5" index="1"]
 layers = 131072
 cast_shadow = 0
-extra_cull_margin = 50.0
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+[node name="CollisionShape3D" parent="." index="3"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.25, 0)
-shape = SubResource("BoxShape3D_q7ekq")
+shape = SubResource("BoxShape3D_mkbn3")
 
-[editable path="WonderBar5"]
+[node name="VFX" parent="." index="5"]
+transform = Transform3D(3, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+amount = 64
+
+[editable path="Root/WonderBar5"]

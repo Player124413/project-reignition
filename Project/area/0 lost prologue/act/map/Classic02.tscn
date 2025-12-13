@@ -1,0 +1,254 @@
+[gd_scene load_steps=18 format=3 uid="uid://c5c7l1iqlehx7"]
+
+[ext_resource type="PackedScene" uid="uid://dax0mun2bjm1v" path="res://area/0 lost prologue/act/Static.tscn" id="1_tmevk"]
+[ext_resource type="Resource" uid="uid://drty8agumurt5" path="res://resource/level data/lost prologue/Classic2.tres" id="2_e2u66"]
+[ext_resource type="PackedScene" uid="uid://cjupypih0myxo" path="res://object/player/CharacterSpawn.tscn" id="3_ym4qw"]
+[ext_resource type="PackedScene" uid="uid://dxepb172kmp8n" path="res://object/stage/common/Goal.tscn" id="4_7uuc6"]
+[ext_resource type="PackedScene" uid="uid://bn6wr6l8s3qyt" path="res://object/trigger/StageTrigger.tscn" id="4_ym4qw"]
+[ext_resource type="Script" uid="uid://dx0a0rhyauccl" path="res://object/trigger/modules/CameraTrigger.cs" id="5_6r6c3"]
+[ext_resource type="PackedScene" uid="uid://dgq0cufk1muvh" path="res://area/0 lost prologue/object/wonder/WonderBlock2.tscn" id="5_tetak"]
+[ext_resource type="Resource" uid="uid://7fh17f1uaotj" path="res://area/0 lost prologue/act/camera/MediumCamera.tres" id="6_rh0ru"]
+[ext_resource type="Resource" uid="uid://bw3u4i24ks1jc" path="res://area/0 lost prologue/act/camera/BackupOverheadCamera.tres" id="7_6r6c3"]
+[ext_resource type="Script" uid="uid://dd24u7rlj0dwl" path="res://addons/custom_nodes/script/ObjectGenerator.cs" id="7_u1rwr"]
+[ext_resource type="PackedScene" uid="uid://c7l8mr7ubn848" path="res://object/stage/pickups/Ring.tscn" id="8_tn44e"]
+[ext_resource type="Resource" uid="uid://gri0snamoatr" path="res://area/0 lost prologue/act/camera/Classic02BackupOverheadCamera.tres" id="11_rh0ru"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_e5om0"]
+size = Vector3(20, 30, 5)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_w58xj"]
+size = Vector3(10, 2, 5)
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_rh0ru"]
+height = 12.0
+radius = 2.0
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_6r6c3"]
+size = Vector3(10, 20, 35)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_u1rwr"]
+size = Vector3(10, 6, 6)
+
+[node name="Stage" type="Node"]
+
+[node name="Static" parent="." instance=ExtResource("1_tmevk")]
+Data = ExtResource("2_e2u66")
+
+[node name="Classic02" type="Node3D" parent="."]
+
+[node name="SpawnPosition" type="Node3D" parent="Classic02"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 28)
+
+[node name="CharacterSpawn" parent="Classic02/SpawnPosition" instance=ExtResource("3_ym4qw")]
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Classic02" groups=["wall"]]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 35)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Classic02/StaticBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
+shape = SubResource("BoxShape3D_e5om0")
+
+[node name="Camera1" parent="Classic02" instance=ExtResource("4_ym4qw")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -50)
+"Trigger Mode" = 2
+"Enter Mode" = 0
+"Exit Mode" = 0
+
+[node name="Camera" type="Node3D" parent="Classic02/Camera1"]
+script = ExtResource("5_6r6c3")
+transitionTime = 0.2
+settings = ExtResource("6_rh0ru")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Classic02/Camera1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+shape = SubResource("BoxShape3D_w58xj")
+
+[node name="Camera2" parent="Classic02" instance=ExtResource("4_ym4qw")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -70)
+"Trigger Mode" = 2
+"Enter Mode" = 0
+"Exit Mode" = 0
+
+[node name="Camera" type="Node3D" parent="Classic02/Camera2"]
+script = ExtResource("5_6r6c3")
+transitionTime = 0.2
+settings = ExtResource("6_rh0ru")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Classic02/Camera2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+shape = SubResource("BoxShape3D_w58xj")
+
+[node name="Camera3" parent="Classic02" instance=ExtResource("4_ym4qw")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -57.5)
+"Trigger Mode" = 2
+"Enter Mode" = 0
+"Exit Mode" = 0
+
+[node name="Camera" type="Node3D" parent="Classic02/Camera3"]
+script = ExtResource("5_6r6c3")
+settings = ExtResource("7_6r6c3")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Classic02/Camera3"]
+transform = Transform3D(-4.371139e-08, -0.99999994, 0, 1, -4.3711385e-08, 0, 0, 0, 0.99999994, 0, 0, 0)
+shape = SubResource("CylinderShape3D_rh0ru")
+
+[node name="Camera4" parent="Classic02" instance=ExtResource("4_ym4qw")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -77.5)
+"Trigger Mode" = 2
+"Enter Mode" = 0
+"Exit Mode" = 0
+
+[node name="Camera" type="Node3D" parent="Classic02/Camera4"]
+script = ExtResource("5_6r6c3")
+settings = ExtResource("7_6r6c3")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Classic02/Camera4"]
+transform = Transform3D(-4.371139e-08, -0.99999994, 0, 1, -4.3711385e-08, 0, 0, 0, 0.99999994, 0, 0, 0)
+shape = SubResource("CylinderShape3D_rh0ru")
+
+[node name="WonderBlock2" parent="Classic02" instance=ExtResource("5_tetak")]
+transform = Transform3D(1.5, 0, 0, 0, 0.5, 0, 0, 0, 1, 0, 0, 5)
+
+[node name="WonderBlock3" parent="Classic02" instance=ExtResource("5_tetak")]
+transform = Transform3D(1.5, 0, 0, 0, 0.5, 0, 0, 0, 1, 0, 0, -25)
+
+[node name="Rings1" type="Node3D" parent="Classic02"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4, -54)
+script = ExtResource("7_u1rwr")
+Source = ExtResource("8_tn44e")
+Amount = 2
+Shape = 0
+Orientation = 0
+Spacing = 2.0
+"Horizontal Offset" = null
+"Vertical Offset" = null
+metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
+
+[node name="Child01" parent="Classic02/Rings1" instance=ExtResource("8_tn44e")]
+
+[node name="Child02" parent="Classic02/Rings1" instance=ExtResource("8_tn44e")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2)
+
+[node name="WonderBlock4" parent="Classic02" instance=ExtResource("5_tetak")]
+transform = Transform3D(1.5, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -55)
+
+[node name="Rings2" type="Node3D" parent="Classic02"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4, -74)
+script = ExtResource("7_u1rwr")
+Source = ExtResource("8_tn44e")
+Amount = 2
+Shape = 0
+Orientation = 0
+Spacing = 2.0
+"Horizontal Offset" = null
+"Vertical Offset" = null
+metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
+
+[node name="Child01" parent="Classic02/Rings2" instance=ExtResource("8_tn44e")]
+
+[node name="Child02" parent="Classic02/Rings2" instance=ExtResource("8_tn44e")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2)
+
+[node name="WonderBlock5" parent="Classic02" instance=ExtResource("5_tetak")]
+transform = Transform3D(1.5, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -75)
+
+[node name="FinalBlockGroup" type="Node3D" parent="Classic02"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -117)
+
+[node name="Camera" parent="Classic02/FinalBlockGroup" instance=ExtResource("4_ym4qw")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 8)
+"Trigger Mode" = 2
+"Enter Mode" = 0
+"Exit Mode" = 0
+
+[node name="Camera" type="Node3D" parent="Classic02/FinalBlockGroup/Camera"]
+script = ExtResource("5_6r6c3")
+transitionTime = 0.2
+settings = ExtResource("6_rh0ru")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Classic02/FinalBlockGroup/Camera"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 10, -15)
+shape = SubResource("BoxShape3D_6r6c3")
+
+[node name="BackupCamera" parent="Classic02/FinalBlockGroup" instance=ExtResource("4_ym4qw")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -28)
+"Trigger Mode" = 2
+"Enter Mode" = 0
+"Exit Mode" = 0
+
+[node name="Camera" type="Node3D" parent="Classic02/FinalBlockGroup/BackupCamera"]
+script = ExtResource("5_6r6c3")
+transitionTime = 0.2
+settings = ExtResource("11_rh0ru")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Classic02/FinalBlockGroup/BackupCamera"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3, 0)
+shape = SubResource("BoxShape3D_u1rwr")
+
+[node name="WonderBlock6" parent="Classic02/FinalBlockGroup" instance=ExtResource("5_tetak")]
+transform = Transform3D(1.5, 0, 0, 0, 1, 0, 0, 0, 2, 0, 0, 0)
+
+[node name="WonderBlock7" parent="Classic02/FinalBlockGroup" instance=ExtResource("5_tetak")]
+transform = Transform3D(1.5, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, -10)
+
+[node name="WonderBlock8" parent="Classic02/FinalBlockGroup" instance=ExtResource("5_tetak")]
+transform = Transform3D(1.5, 0, 0, 0, 3, 0, 0, 0, 2, 0, 0, -20)
+
+[node name="Rings2" type="Node3D" parent="Classic02/FinalBlockGroup"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4, 3)
+script = ExtResource("7_u1rwr")
+Source = ExtResource("8_tn44e")
+Amount = 2
+Shape = 0
+Orientation = 0
+Spacing = 2.0
+"Horizontal Offset" = null
+"Vertical Offset" = null
+metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
+
+[node name="Child01" parent="Classic02/FinalBlockGroup/Rings2" instance=ExtResource("8_tn44e")]
+
+[node name="Child02" parent="Classic02/FinalBlockGroup/Rings2" instance=ExtResource("8_tn44e")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2)
+
+[node name="Rings3" type="Node3D" parent="Classic02/FinalBlockGroup"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 6, -7)
+script = ExtResource("7_u1rwr")
+Source = ExtResource("8_tn44e")
+Amount = 2
+Shape = 0
+Orientation = 0
+Spacing = 2.0
+"Horizontal Offset" = null
+"Vertical Offset" = null
+metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
+
+[node name="Child01" parent="Classic02/FinalBlockGroup/Rings3" instance=ExtResource("8_tn44e")]
+
+[node name="Child02" parent="Classic02/FinalBlockGroup/Rings3" instance=ExtResource("8_tn44e")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2)
+
+[node name="Rings4" type="Node3D" parent="Classic02/FinalBlockGroup"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, -17)
+script = ExtResource("7_u1rwr")
+Source = ExtResource("8_tn44e")
+Amount = 2
+Shape = 0
+Orientation = 0
+Spacing = 2.0
+"Horizontal Offset" = null
+"Vertical Offset" = null
+metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
+
+[node name="Child01" parent="Classic02/FinalBlockGroup/Rings4" instance=ExtResource("8_tn44e")]
+
+[node name="Child02" parent="Classic02/FinalBlockGroup/Rings4" instance=ExtResource("8_tn44e")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2)
+
+[node name="Goal" parent="Classic02" instance=ExtResource("4_7uuc6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 11, -157)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Classic02/Goal"]
+shape = SubResource("BoxShape3D_e5om0")
+
+[editable path="Static"]

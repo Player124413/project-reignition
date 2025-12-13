@@ -1,0 +1,144 @@
+[gd_scene load_steps=11 format=3 uid="uid://b5u65uive61ea"]
+
+[ext_resource type="PackedScene" uid="uid://dax0mun2bjm1v" path="res://area/0 lost prologue/act/Static.tscn" id="1_gxiam"]
+[ext_resource type="Resource" uid="uid://btd3oihc54a0h" path="res://resource/level data/lost prologue/Classic8.tres" id="2_gxiam"]
+[ext_resource type="PackedScene" uid="uid://1tjbikxq7apd" path="res://area/0 lost prologue/object/grindrail/Grindrail06.tscn" id="3_6kr00"]
+[ext_resource type="PackedScene" uid="uid://cjupypih0myxo" path="res://object/player/CharacterSpawn.tscn" id="3_14fok"]
+[ext_resource type="PackedScene" uid="uid://b8m1x0tudbcbd" path="res://object/stage/common/Spring.tscn" id="4_n5ycy"]
+[ext_resource type="Script" uid="uid://dx0a0rhyauccl" path="res://object/trigger/modules/CameraTrigger.cs" id="5_rbtrm"]
+[ext_resource type="Resource" uid="uid://bw3u4i24ks1jc" path="res://area/0 lost prologue/act/camera/BackupOverheadCamera.tres" id="6_crgco"]
+[ext_resource type="PackedScene" uid="uid://dxepb172kmp8n" path="res://object/stage/common/Goal.tscn" id="6_jdwgn"]
+[ext_resource type="PackedScene" uid="uid://biywpw2ega7fx" path="res://object/enemy/majin/data/lost prologue/GreenMajin.tscn" id="7_ooe3p"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_lau7f"]
+size = Vector3(20, 30, 5)
+
+[node name="Stage" type="Node"]
+
+[node name="Static" parent="." instance=ExtResource("1_gxiam")]
+Data = ExtResource("2_gxiam")
+
+[node name="Classic08" type="Node3D" parent="."]
+
+[node name="SpawnPosition" type="Node3D" parent="Classic08"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 145)
+
+[node name="CharacterSpawn" parent="Classic08/SpawnPosition" instance=ExtResource("3_14fok")]
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Classic08" groups=["wall"]]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 160)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Classic08/StaticBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
+shape = SubResource("BoxShape3D_lau7f")
+
+[node name="GrindrailL1" parent="Classic08" instance=ExtResource("3_6kr00")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0.3, 124)
+railModel = NodePath("")
+startCap = NodePath("")
+endCap = NodePath("")
+collider = NodePath("")
+
+[node name="Spring" parent="Classic08/GrindrailL1" instance=ExtResource("4_n5ycy")]
+transform = Transform3D(-1, -2.990035e-08, -8.2150535e-08, 0, 0.9396926, -0.34202012, 8.742278e-08, -0.34202012, -0.9396926, 0, 0.1, -120)
+MiddleHeight = 8.0
+Distance = 10.0
+
+[node name="Camera" type="Node3D" parent="Classic08/GrindrailL1/Spring"]
+script = ExtResource("5_rbtrm")
+settings = ExtResource("6_crgco")
+
+[node name="GreenMajin" parent="Classic08/GrindrailL1" instance=ExtResource("7_ooe3p")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -124)
+rangeOverride = 30
+
+[node name="GrindrailR1" parent="Classic08" instance=ExtResource("3_6kr00")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0.3, 124)
+railModel = NodePath("")
+startCap = NodePath("")
+endCap = NodePath("")
+collider = NodePath("")
+
+[node name="Spring" parent="Classic08/GrindrailR1" instance=ExtResource("4_n5ycy")]
+transform = Transform3D(-1, -2.990035e-08, -8.2150535e-08, 0, 0.9396926, -0.34202012, 8.742278e-08, -0.34202012, -0.9396926, 0, 0.1, -120)
+MiddleHeight = 8.0
+Distance = 10.0
+
+[node name="Camera" type="Node3D" parent="Classic08/GrindrailR1/Spring"]
+script = ExtResource("5_rbtrm")
+settings = ExtResource("6_crgco")
+
+[node name="GreenMajin" parent="Classic08/GrindrailR1" instance=ExtResource("7_ooe3p")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -124)
+rangeOverride = 30
+
+[node name="GrindrailL2" parent="Classic08" instance=ExtResource("3_6kr00")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0.3, -4)
+railModel = NodePath("")
+startCap = NodePath("")
+endCap = NodePath("")
+collider = NodePath("")
+
+[node name="Spring1" parent="Classic08/GrindrailL2" instance=ExtResource("4_n5ycy")]
+transform = Transform3D(-0.91731745, 0.13617755, 0.37414485, -4.202981e-09, 0.9396925, -0.3420201, -0.39815664, -0.31374097, -0.8619964, 0, 0.099999994, -36)
+MiddleHeight = 8.0
+Distance = 10.0
+
+[node name="Camera" type="Node3D" parent="Classic08/GrindrailL2/Spring1"]
+script = ExtResource("5_rbtrm")
+settings = ExtResource("6_crgco")
+
+[node name="Spring2" parent="Classic08/GrindrailL2" instance=ExtResource("4_n5ycy")]
+transform = Transform3D(-0.91731745, 0.13617755, 0.37414485, -4.202981e-09, 0.9396925, -0.3420201, -0.39815664, -0.31374097, -0.8619964, 0, 0.099999994, -94)
+MiddleHeight = 8.0
+Distance = 10.0
+
+[node name="Camera" type="Node3D" parent="Classic08/GrindrailL2/Spring2"]
+script = ExtResource("5_rbtrm")
+settings = ExtResource("6_crgco")
+
+[node name="GrindrailR2" parent="Classic08" instance=ExtResource("3_6kr00")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0.3, -4)
+railModel = NodePath("")
+startCap = NodePath("")
+endCap = NodePath("")
+collider = NodePath("")
+
+[node name="Spring1" parent="Classic08/GrindrailR2" instance=ExtResource("4_n5ycy")]
+transform = Transform3D(-0.9170601, -0.13638018, -0.3747015, 0, 0.93969256, -0.3420201, 0.39874905, -0.31365296, -0.86175454, 0, 0.1, -60)
+MiddleHeight = 8.0
+Distance = 10.0
+
+[node name="Camera" type="Node3D" parent="Classic08/GrindrailR2/Spring1"]
+script = ExtResource("5_rbtrm")
+settings = ExtResource("6_crgco")
+
+[node name="Spring2" parent="Classic08/GrindrailR2" instance=ExtResource("4_n5ycy")]
+transform = Transform3D(-1, -2.990035e-08, -8.2150535e-08, 0, 0.9396926, -0.34202012, 8.742278e-08, -0.34202012, -0.9396926, 0, 0.099999994, -120)
+MiddleHeight = 8.0
+Distance = 10.0
+
+[node name="Camera" type="Node3D" parent="Classic08/GrindrailR2/Spring2"]
+script = ExtResource("5_rbtrm")
+settings = ExtResource("6_crgco")
+
+[node name="Goal" parent="Classic08" instance=ExtResource("6_jdwgn")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, -150)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Classic08/Goal"]
+shape = SubResource("BoxShape3D_lau7f")
+
+[connection signal="Activated" from="Classic08/GrindrailL1/Spring" to="Classic08/GrindrailL1/Spring/Camera" method="Activate"]
+[connection signal="Deactivated" from="Classic08/GrindrailL1/Spring" to="Classic08/GrindrailL1/Spring/Camera" method="Deactivate"]
+[connection signal="Activated" from="Classic08/GrindrailR1/Spring" to="Classic08/GrindrailR1/Spring/Camera" method="Activate"]
+[connection signal="Deactivated" from="Classic08/GrindrailR1/Spring" to="Classic08/GrindrailR1/Spring/Camera" method="Deactivate"]
+[connection signal="Activated" from="Classic08/GrindrailL2/Spring1" to="Classic08/GrindrailL2/Spring1/Camera" method="Activate"]
+[connection signal="Deactivated" from="Classic08/GrindrailL2/Spring1" to="Classic08/GrindrailL2/Spring1/Camera" method="Deactivate"]
+[connection signal="Activated" from="Classic08/GrindrailL2/Spring2" to="Classic08/GrindrailL2/Spring2/Camera" method="Activate"]
+[connection signal="Deactivated" from="Classic08/GrindrailL2/Spring2" to="Classic08/GrindrailL2/Spring2/Camera" method="Deactivate"]
+[connection signal="Activated" from="Classic08/GrindrailR2/Spring1" to="Classic08/GrindrailR2/Spring1/Camera" method="Activate"]
+[connection signal="Deactivated" from="Classic08/GrindrailR2/Spring1" to="Classic08/GrindrailR2/Spring1/Camera" method="Deactivate"]
+[connection signal="Activated" from="Classic08/GrindrailR2/Spring2" to="Classic08/GrindrailR2/Spring2/Camera" method="Activate"]
+[connection signal="Deactivated" from="Classic08/GrindrailR2/Spring2" to="Classic08/GrindrailR2/Spring2/Camera" method="Deactivate"]
+
+[editable path="Static"]

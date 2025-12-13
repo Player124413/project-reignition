@@ -1,4 +1,4 @@
-[gd_scene load_steps=88 format=3 uid="uid://q12qnxopos6l"]
+[gd_scene load_steps=90 format=3 uid="uid://q12qnxopos6l"]
 
 [ext_resource type="PackedScene" uid="uid://bdb1nsoasmspq" path="res://area/7 night palace/act 3/Static.tscn" id="1_7kcp2"]
 [ext_resource type="PackedScene" uid="uid://cjupypih0myxo" path="res://object/player/CharacterSpawn.tscn" id="2_l07u7"]
@@ -51,9 +51,13 @@
 [ext_resource type="PackedScene" uid="uid://dxepb172kmp8n" path="res://object/stage/common/Goal.tscn" id="45_mb6ug"]
 [ext_resource type="Resource" uid="uid://dt0vdgnlo07h5" path="res://area/7 night palace/act 3/camera/deathless/FlyingPot1Cam.tres" id="48_1h6km"]
 [ext_resource type="Resource" uid="uid://kbceq1xmmh8l" path="res://area/7 night palace/act 3/camera/deathless/FlyingPot2Cam.tres" id="49_sjtvd"]
+[ext_resource type="PackedScene" uid="uid://gqxmlgiwtikn" path="res://object/trigger/BigTrigger.tscn" id="52_4jhhj"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_bqgfg"]
 size = Vector3(30, 25, 5)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_4jhhj"]
+size = Vector3(20, 6, 5)
 
 [sub_resource type="Animation" id="Animation_87yc8"]
 resource_name = "RESET"
@@ -1338,6 +1342,17 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 15.9, 54)
 [node name="Teleport" parent="DeathlessAct/Opening" node_paths=PackedStringArray("warpTarget") instance=ExtResource("8_eok7x")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 19, 111)
 warpTarget = NodePath("../../SpaceD/TeleportPosition")
+
+[node name="BigTrigger" parent="DeathlessAct/Opening" instance=ExtResource("52_4jhhj")]
+transform = Transform3D(-0.42261827, 0, -0.9063077, 0, 1, 0, 0.9063077, 0, -0.42261827, 18, 0, 8)
+bigAnimation = &"spin"
+
+[node name="Camera" parent="DeathlessAct/Opening/BigTrigger" index="1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, -5)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="DeathlessAct/Opening/BigTrigger"]
+transform = Transform3D(-0.42261833, 0, 0.90630776, 0, 1, 0, -0.90630776, 0, -0.42261833, -5.6375084, 2, 22.524385)
+shape = SubResource("BoxShape3D_4jhhj")
 
 [node name="SpaceD" type="Node3D" parent="DeathlessAct"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 992, 25, -733)
@@ -7941,3 +7956,5 @@ transform = Transform3D(-6.556708e-08, 0, 1.5, 0, 1.5, 0, -1.5, 0, -6.556708e-08
 [editable path="Static"]
 [editable path="Static/Collision"]
 [editable path="Static/Visuals/SpaceSkybox"]
+[editable path="DeathlessAct/Opening/BigTrigger"]
+[editable path="DeathlessAct/Opening/BigTrigger/Big"]

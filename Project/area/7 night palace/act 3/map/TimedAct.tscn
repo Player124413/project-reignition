@@ -1,4 +1,4 @@
-[gd_scene load_steps=48 format=3 uid="uid://cmevf5jgsvm7a"]
+[gd_scene load_steps=50 format=3 uid="uid://cmevf5jgsvm7a"]
 
 [ext_resource type="PackedScene" uid="uid://bdb1nsoasmspq" path="res://area/7 night palace/act 3/Static.tscn" id="1_up0is"]
 [ext_resource type="Resource" uid="uid://ct7rdsalyf71x" path="res://resource/level data/night palace/Act3Time.tres" id="2_oejrb"]
@@ -22,6 +22,7 @@
 [ext_resource type="PackedScene" uid="uid://cclwh52o4uphx" path="res://object/stage/common/InvisibleGrindrail.tscn" id="26_rni5l"]
 [ext_resource type="PackedScene" uid="uid://b8m1x0tudbcbd" path="res://object/stage/common/Spring.tscn" id="29_nkd37"]
 [ext_resource type="PackedScene" uid="uid://68st06xyjgvp" path="res://object/stage/pickups/RichRing.tscn" id="31_01ti2"]
+[ext_resource type="PackedScene" uid="uid://gqxmlgiwtikn" path="res://object/trigger/BigTrigger.tscn" id="32_0bv3l"]
 [ext_resource type="PackedScene" uid="uid://b4omh0erkr8si" path="res://object/enemy/majin/data/night palace/RedMajin.tscn" id="32_3g43e"]
 [ext_resource type="PackedScene" uid="uid://c1fsmlx3d5hoi" path="res://area/7 night palace/object/obstacle/SpinningBoxSmall.tscn" id="34_5083j"]
 [ext_resource type="PackedScene" uid="uid://cjufptew8n6bw" path="res://area/7 night palace/object/obstacle/SpinningBoxLarge.tscn" id="35_vnhnf"]
@@ -539,6 +540,9 @@ _data = {
 &"RESET": SubResource("Animation_mb6ug"),
 &"event": SubResource("Animation_krvgn")
 }
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_0bv3l"]
+size = Vector3(10, 5, 5)
 
 [node name="World" type="Node"]
 
@@ -2421,6 +2425,17 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -13.5)
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3, 212.5)
 warpTarget = NodePath("../../SpaceD/LowerSection/TeleportPosition")
 
+[node name="BigTrigger" parent="." instance=ExtResource("32_0bv3l")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1483.5, -12.8, -322)
+bigAnimation = &"hide"
+
+[node name="Camera" parent="BigTrigger" index="1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 10)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="BigTrigger"]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 6.4000244, -29, 22)
+shape = SubResource("BoxShape3D_0bv3l")
+
 [connection signal="Teleport" from="TimedAct/SpaceD/Spiral/SpiralCull/Teleport" to="Static/Visuals/RoomDown" method="Activate"]
 [connection signal="Teleport" from="TimedAct/SpaceD/Spiral/SpiralCull/Teleport" to="Static/Visuals/SpaceD" method="Deactivate"]
 [connection signal="Teleport" from="TimedAct/SpaceD/Spiral/SpiralCull/Teleport" to="Static/Trigger/Path/RoomDownPath" method="Activate"]
@@ -2452,9 +2467,11 @@ warpTarget = NodePath("../../SpaceD/LowerSection/TeleportPosition")
 [connection signal="Teleport" from="TimedAct/RoomDown/Teleport" to="Static/Visuals/SpaceD" method="Activate"]
 [connection signal="Teleport" from="TimedAct/RoomDown/Teleport" to="Static/Trigger/Path/SpaceDPath" method="Activate"]
 [connection signal="Teleport" from="TimedAct/RoomDown/Teleport" to="TimedAct/SpaceD" method="Activate"]
-[connection signal="Teleport" from="TimedAct/RoomDown/Teleport" to="TimedAct/RoomDown" method="Deactivate"]
 [connection signal="Teleport" from="TimedAct/RoomDown/Teleport" to="TimedAct/SpaceD/Checkpoint" method="Activate" flags=3]
+[connection signal="Teleport" from="TimedAct/RoomDown/Teleport" to="TimedAct/RoomDown" method="Deactivate"]
 
 [editable path="Static"]
 [editable path="Static/Collision"]
 [editable path="Static/Visuals/SpaceSkybox"]
+[editable path="BigTrigger"]
+[editable path="BigTrigger/Big"]

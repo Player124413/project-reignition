@@ -106,6 +106,7 @@ public partial class GrindRail : Area3D
 
 		Rail = GetNodeOrNull<Path3D>(rail);
 		Rail.CallDeferred("add_child", PathFollower);
+		StageSettings.Instance.Respawned += Respawn;
 
 		// For Secret Rings' hidden rails
 		if (isInvisibleRail)
@@ -122,6 +123,11 @@ public partial class GrindRail : Area3D
 
 		if (IsInteractingWithPlayer)
 			CheckRailActivation();
+	}
+
+	private void Respawn()
+	{
+		IsBonusDisabled = false; // Allow bonus again after respawning.
 	}
 
 	private void CheckRailActivation()

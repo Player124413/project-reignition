@@ -1,4 +1,4 @@
-[gd_scene load_steps=33 format=3 uid="uid://biwhnkxwrwumg"]
+[gd_scene load_steps=35 format=3 uid="uid://biwhnkxwrwumg"]
 
 [ext_resource type="PackedScene" uid="uid://d1gknocio5io1" path="res://area/5 pirate storm/act 2/Static.tscn" id="1_87yog"]
 [ext_resource type="Resource" uid="uid://c1x1digh80vcc" path="res://resource/level data/pirate storm/Act2Rampage.tres" id="2_6il1n"]
@@ -28,6 +28,7 @@
 [ext_resource type="PackedScene" uid="uid://dldp4m07ddqgq" path="res://area/5 pirate storm/object/platforms/SpoilsLarge.tscn" id="22_oivdj"]
 [ext_resource type="PackedScene" uid="uid://b8s2qjmlhu5tc" path="res://object/stage/common/ThornSpring.tscn" id="23_yyck4"]
 [ext_resource type="PackedScene" uid="uid://cc64d8h51jyx2" path="res://object/stage/common/ItemBoxFlying.tscn" id="24_rj70a"]
+[ext_resource type="PackedScene" uid="uid://gqxmlgiwtikn" path="res://object/trigger/BigTrigger.tscn" id="29_j16tc"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_6uttv"]
 size = Vector3(20, 30, 5)
@@ -42,6 +43,9 @@ size = Vector3(20, 12, 32)
 _limits = [-1.0, 1.0, 0.0, 1.0]
 _data = [Vector2(0, 0), 0.0, -8.28907, 0, 0, Vector2(0.19656, -1), 0.0, 0.0, 0, 0, Vector2(0.5, 1), 0.0, 0.0, 0, 0, Vector2(0.80344, -1), 0.0, 0.0, 0, 0, Vector2(1, 1.49012e-08), 8.66659, 0.0, 0, 0]
 point_count = 5
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_j16tc"]
+size = Vector3(4, 6, 4)
 
 [node name="Stage" type="Node"]
 
@@ -1909,7 +1913,7 @@ Movement/Angle = -90.0
 "Vertical Orientation" = false
 
 [node name="ItemBoxFlying" parent="RampageAct/Ending/BridgeGroup4/MovingObject" instance=ExtResource("24_rj70a")]
-transform = Transform3D(1, 0, 1.8067658e-07, 0, 1, 0, -1.8067658e-07, 0, 1, 0, 0, 0)
+transform = Transform3D(1, 0, 1.8253922e-07, 0, 1, 0, -1.8253922e-07, 0, 1, 0, 0, 0)
 "Spawn Settings/Spawn Pearls" = true
 "Spawn Settings/Amount" = 50
 
@@ -2347,6 +2351,16 @@ transform = Transform3D(0.453154, -7.06722e-09, -0.211309, 3.40036e-09, 1.5, 1.7
 [node name="BridgeSquare6" parent="RampageAct/Ending/BridgeGroup7" instance=ExtResource("11_uiuws")]
 transform = Transform3D(0.453154, -7.06722e-09, -0.211309, 3.40036e-09, 1.5, 1.71794e-09, 0.211309, -8.98213e-09, 0.453154, 16.0673, 0, -47.2667)
 
+[node name="BigTrigger" parent="." instance=ExtResource("29_j16tc")]
+transform = Transform3D(-4.3711385e-08, 0, 0.99999994, 0, 1, 0, -0.99999994, 0, -4.3711385e-08, 130, 33, 94)
+
+[node name="Camera" parent="BigTrigger" index="1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 100)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="BigTrigger"]
+transform = Transform3D(0.9999996, 0, -7.1054274e-15, 0, 1, 0, 7.1054274e-15, 0, 0.9999996, 41.000004, -14, 136)
+shape = SubResource("BoxShape3D_j16tc")
+
 [connection signal="Activated" from="RampageAct/ObjectMap/L-Opening" to="RampageAct/Opening" method="Activate"]
 [connection signal="Deactivated" from="RampageAct/ObjectMap/L-Opening" to="RampageAct/Opening" method="Deactivate"]
 [connection signal="Activated" from="RampageAct/ObjectMap/U-Opening" to="RampageAct/Opening" method="Deactivate"]
@@ -2428,3 +2442,6 @@ transform = Transform3D(0.453154, -7.06722e-09, -0.211309, 3.40036e-09, 1.5, 1.7
 [editable path="Static"]
 [editable path="Static/Collision"]
 [editable path="Static/Visuals/PSSky"]
+[editable path="Static/Visuals/Skybox"]
+[editable path="BigTrigger"]
+[editable path="BigTrigger/Big"]
