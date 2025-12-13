@@ -1,9 +1,10 @@
-[gd_scene load_steps=20 format=3 uid="uid://b6tymj1vanl66"]
+[gd_scene load_steps=25 format=3 uid="uid://b6tymj1vanl66"]
 
 [ext_resource type="Script" uid="uid://dtkbvehtmy3em" path="res://object/stage/StageSettings.cs" id="1_fvbu3"]
 [ext_resource type="Resource" uid="uid://du86d7lfu3g3t" path="res://resource/level data/night palace/Boss.tres" id="2_wdw6t"]
 [ext_resource type="Resource" uid="uid://du4pmau2pvhp7" path="res://area/7 night palace/boss/camera/StandardCamera.tres" id="3_8l8k8"]
 [ext_resource type="Resource" uid="uid://cedbgtjhhisjg" path="res://area/7 night palace/data/BossDialogLibrary.tres" id="4_p7tjh"]
+[ext_resource type="Texture2D" uid="uid://caxeerv5m6p41" path="res://area/7 night palace/data/skybox/model/texture/sky moon.png" id="7_njf43"]
 [ext_resource type="PackedScene" uid="uid://1mlq23jb6byp" path="res://area/7 night palace/data/skybox/Skybox.tscn" id="9_aohgx"]
 [ext_resource type="Curve3D" uid="uid://dvdtvb7kixby0" path="res://area/7 night palace/boss/environment/path/MainPath.tres" id="10_7yaqk"]
 [ext_resource type="PackedScene" uid="uid://bpk2a7t5ag3lk" path="res://area/7 night palace/boss/data/InfiniteHall.tscn" id="10_jhood"]
@@ -11,6 +12,53 @@
 [ext_resource type="Resource" uid="uid://cl8grcpx1vjdo" path="res://resource/bgm/bgm np boss.tres" id="12_njf43"]
 [ext_resource type="Material" uid="uid://c3kendmmffv8b" path="res://area/7 night palace/data/material/Effect Primary Reflection.tres" id="15_48h34"]
 [ext_resource type="Material" uid="uid://dwmvujonhvjd7" path="res://area/7 night palace/data/material/Effect Secondary Reflection.tres" id="16_gcw3n"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ca2n2"]
+resource_name = "Moon"
+render_priority = -125
+shading_mode = 0
+specular_mode = 2
+disable_fog = true
+vertex_color_use_as_albedo = true
+albedo_color = Color(1, 0.973, 0.90999997, 1)
+albedo_texture = ExtResource("7_njf43")
+
+[sub_resource type="Animation" id="Animation_g51bp"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("DirectionalLight3D:directional_shadow_max_distance")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [80.0]
+}
+
+[sub_resource type="Animation" id="Animation_js1vy"]
+resource_name = "why do i have to do this"
+step = 1.0
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("DirectionalLight3D:directional_shadow_max_distance")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [50.0, 80.0]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_iowwo"]
+_data = {
+&"RESET": SubResource("Animation_g51bp"),
+&"why do i have to do this": SubResource("Animation_js1vy")
+}
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_kamdx"]
 sky_top_color = Color(0, 0, 0.109804, 1)
@@ -24,18 +72,22 @@ sky_material = SubResource("ProceduralSkyMaterial_kamdx")
 [sub_resource type="Environment" id="Environment_gk03j"]
 background_color = Color(0, 0, 0.109804, 1)
 sky = SubResource("Sky_e8t8m")
-ambient_light_source = 3
-ambient_light_color = Color(0.470588, 0.54902, 0.54902, 1)
+ambient_light_source = 2
+ambient_light_color = Color(1, 1, 1, 1)
 ambient_light_sky_contribution = 0.2
-reflected_light_source = 2
-tonemap_mode = 2
-tonemap_exposure = 1.2
-tonemap_white = 1.4
+ambient_light_energy = 0.05
+reflected_light_source = 1
+tonemap_mode = 1
+tonemap_white = 1.3
 glow_enabled = true
+glow_levels/5 = 0.0
+glow_levels/6 = 0.1
 glow_normalized = true
 glow_intensity = 1.5
-glow_bloom = 0.01
-glow_blend_mode = 1
+glow_strength = 2.0
+glow_mix = 0.03
+glow_bloom = 0.5
+glow_blend_mode = 4
 glow_hdr_threshold = 1.2
 volumetric_fog_density = 0.01
 adjustment_enabled = true
@@ -384,17 +436,38 @@ Environment = NodePath("WorldEnvironment")
 
 [node name="Visuals" type="Node3D" parent="."]
 
+[node name="bouncelight" type="DirectionalLight3D" parent="Visuals"]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0)
+layers = 1024
+light_color = Color(0.45, 0.45, 1, 1)
+light_energy = 0.5
+light_cull_mask = 4293918722
+
 [node name="Skybox" parent="Visuals" instance=ExtResource("9_aohgx")]
 metadata/_edit_lock_ = true
 
-[node name="Moonlight" type="DirectionalLight3D" parent="Visuals/Skybox"]
-transform = Transform3D(0.42261824, -0.4962608, 0.75836605, 0, 0.83676434, 0.5475632, -0.9063078, -0.23141019, 0.35363188, 12.4917, 3, -7.73828)
+[node name="MoonMesh" parent="Visuals/Skybox/SkyRoot/Skeleton3D" index="5"]
+surface_material_override/0 = SubResource("StandardMaterial3D_ca2n2")
+
+[node name="moonlight" type="Node3D" parent="Visuals/Skybox"]
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="Visuals/Skybox/moonlight"]
+transform = Transform3D(0.7582935, -0.15555832, 0.63308156, -6.7525194e-09, 0.9711134, 0.23861818, -0.651913, -0.18094265, 0.73638904, 0, 0.7781255, 0)
 layers = 1024
+light_color = Color(0.7, 0.765, 1, 1)
 light_energy = 1.2
-light_cull_mask = 4293918786
+light_specular = 2.0
+light_cull_mask = 4293918787
 shadow_enabled = true
-directional_shadow_blend_splits = true
-directional_shadow_max_distance = 50.0
+directional_shadow_split_1 = 0.15
+directional_shadow_split_2 = 0.3
+directional_shadow_max_distance = 80.0
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Visuals/Skybox/moonlight"]
+libraries = {
+&"": SubResource("AnimationLibrary_iowwo")
+}
+autoplay = "why do i have to do this"
 
 [node name="InfiniteHall" parent="Visuals" node_paths=PackedStringArray("sky") instance=ExtResource("10_jhood")]
 sky = NodePath("../Skybox")
@@ -423,3 +496,5 @@ cull_mask = 1086
 libraries = {
 &"": SubResource("AnimationLibrary_njf43")
 }
+
+[editable path="Visuals/Skybox"]

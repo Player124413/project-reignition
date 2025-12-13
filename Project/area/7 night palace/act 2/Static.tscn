@@ -1,4 +1,4 @@
-[gd_scene load_steps=35 format=3 uid="uid://ch46r833tuwi0"]
+[gd_scene load_steps=43 format=3 uid="uid://ch46r833tuwi0"]
 
 [ext_resource type="Script" uid="uid://dtkbvehtmy3em" path="res://object/stage/StageSettings.cs" id="1_6j01u"]
 [ext_resource type="Resource" uid="uid://cphu4ho2e31sn" path="res://area/7 night palace/act 2/camera/MainCam.tres" id="2_8bpc5"]
@@ -10,6 +10,8 @@
 [ext_resource type="Resource" uid="uid://u3yhk7ogxodx" path="res://area/7 night palace/data/DialogLibrary.tres" id="3_l07ul"]
 [ext_resource type="PackedScene" uid="uid://d4ivgn14opv12" path="res://area/7 night palace/data/skybox/SpaceSkybox.tscn" id="4_0qu5p"]
 [ext_resource type="Script" uid="uid://bvmyay4bo83qu" path="res://object/trigger/modules/DeathTrigger.cs" id="4_o2jba"]
+[ext_resource type="Shader" uid="uid://d2xknh07n1p76" path="res://area/7 night palace/data/shader/SpaceSky.gdshader" id="6_at3yj"]
+[ext_resource type="Texture2D" uid="uid://cloeucvq2bpgs" path="res://area/7 night palace/data/skybox/model/texture/space sky blue.png" id="7_d80el"]
 [ext_resource type="Script" uid="uid://np5vcxq01ii8" path="res://object/trigger/modules/CheckpointTrigger.cs" id="7_j1fre"]
 [ext_resource type="PackedScene" uid="uid://etu2s6i547gb" path="res://object/trigger/state trigger/DriftTrigger.tscn" id="8_j1fre"]
 [ext_resource type="Script" uid="uid://dx0a0rhyauccl" path="res://object/trigger/modules/CameraTrigger.cs" id="10_j6bow"]
@@ -18,6 +20,18 @@
 [ext_resource type="Resource" uid="uid://bku7n4ufln8ro" path="res://resource/preset/camera/common/StaticCam.tres" id="13_dm2l3"]
 [ext_resource type="Script" uid="uid://bd2g6rmrn77eo" path="res://object/trigger/modules/LockoutTrigger.cs" id="14_ytx0r"]
 [ext_resource type="Resource" uid="uid://cmesyjx0jp6ur" path="res://resource/preset/lockout/run/AutorunLockout.tres" id="15_l07ul"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_2asr8"]
+render_priority = -128
+shader = ExtResource("6_at3yj")
+shader_parameter/albedo = ExtResource("7_d80el")
+shader_parameter/intensity = 1.0
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_32qwx"]
+render_priority = -127
+shader = ExtResource("6_at3yj")
+shader_parameter/albedo = ExtResource("7_d80el")
+shader_parameter/intensity = 1.0
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_4glpy"]
 size = Vector3(686, 13.2, 502)
@@ -49,21 +63,44 @@ size = Vector3(40, 20, 5)
 [sub_resource type="BoxShape3D" id="BoxShape3D_dm2l3"]
 size = Vector3(40, 36, 50)
 
+[sub_resource type="Gradient" id="Gradient_d80el"]
+offsets = PackedFloat32Array(0, 0.6388889, 1)
+colors = PackedColorArray(0, 0, 0, 1, 0.72, 0.72, 0.54, 1, 1, 1, 1, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_2asr8"]
+gradient = SubResource("Gradient_d80el")
+
+[sub_resource type="Gradient" id="Gradient_at3yj"]
+offsets = PackedFloat32Array(1)
+colors = PackedColorArray(1, 0.8, 0, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_d80el"]
+gradient = SubResource("Gradient_at3yj")
+
 [sub_resource type="Environment" id="Environment_38hsq"]
 ambient_light_source = 2
-ambient_light_color = Color(0.341176, 0.411765, 0.521569, 1)
+ambient_light_color = Color(0.40066665, 0.38, 1, 1)
 ambient_light_sky_contribution = 0.2
-tonemap_mode = 2
-tonemap_exposure = 1.2
-tonemap_white = 1.2
+ambient_light_energy = 0.3
+tonemap_mode = 1
+tonemap_exposure = 0.6
+tonemap_white = 0.7
 glow_enabled = true
+glow_levels/2 = 0.5
+glow_levels/3 = 0.0
+glow_levels/4 = 1.0
+glow_levels/5 = 0.0
 glow_normalized = true
-glow_strength = 0.6
-glow_bloom = 0.1
-glow_blend_mode = 0
+glow_intensity = 0.5
+glow_strength = 1.3
+glow_bloom = 0.95
+glow_blend_mode = 1
 glow_hdr_threshold = 1.5
+glow_map = SubResource("GradientTexture1D_d80el")
 volumetric_fog_density = 0.01
 adjustment_enabled = true
+adjustment_contrast = 1.2
+adjustment_color_correction = SubResource("GradientTexture1D_2asr8")
 
 [sub_resource type="Animation" id="Animation_8bpc5"]
 length = 0.001
@@ -411,21 +448,25 @@ Environment = NodePath("WorldEnvironment")
 
 [node name="SpaceSkybox" parent="Visuals" instance=ExtResource("4_0qu5p")]
 
+[node name="SpaceSky" parent="Visuals/SpaceSkybox" index="0"]
+surface_material_override/0 = SubResource("ShaderMaterial_2asr8")
+
+[node name="SpaceSkyBlend" parent="Visuals/SpaceSkybox" index="1"]
+surface_material_override/0 = SubResource("ShaderMaterial_32qwx")
+
+[node name="SpaceFog" parent="Visuals/SpaceSkybox" index="2"]
+visible = false
+
+[node name="SpaceFog2" parent="Visuals/SpaceSkybox" index="3"]
+visible = false
+
 [node name="Lights" type="Node3D" parent="Visuals"]
 
 [node name="MainLight" type="DirectionalLight3D" parent="Visuals/Lights"]
 transform = Transform3D(-0.984808, 3.00452e-09, -0.173648, 0.17318, 0.0733427, -0.982156, 0.0127358, -0.997307, -0.0722284, 0, 0, 0)
 layers = 1024
-light_color = Color(0.901961, 1, 1, 1)
-light_energy = 1.4
-light_cull_mask = 4293918727
-
-[node name="EnvironmentLight" type="DirectionalLight3D" parent="Visuals/Lights"]
-transform = Transform3D(-0.984808, -2.27712e-08, 0.173648, 0.173648, -1.29142e-07, 0.984808, 7.64274e-15, 1, 1.31134e-07, 0, 0, 0)
-layers = 1024
-light_color = Color(0.92549, 0.882353, 0.752941, 1)
-light_energy = 0.6
-light_cull_mask = 4293918727
+light_color = Color(1, 0.9615, 0.66999996, 1)
+light_cull_mask = 4293918787
 
 [node name="Collision" parent="." instance=ExtResource("3_1m48j")]
 visible = false
@@ -650,3 +691,5 @@ cull_mask = 1086
 libraries = {
 &"": SubResource("AnimationLibrary_josyi")
 }
+
+[editable path="Visuals/SpaceSkybox"]

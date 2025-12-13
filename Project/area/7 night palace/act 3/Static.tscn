@@ -1,4 +1,4 @@
-[gd_scene load_steps=85 format=3 uid="uid://bdb1nsoasmspq"]
+[gd_scene load_steps=90 format=3 uid="uid://bdb1nsoasmspq"]
 
 [ext_resource type="Script" uid="uid://dtkbvehtmy3em" path="res://object/stage/StageSettings.cs" id="1_1bbvc"]
 [ext_resource type="PackedScene" uid="uid://ctlr224must3o" path="res://area/7 night palace/act 3/environment/collision/Collision.tscn" id="2_eem6j"]
@@ -52,6 +52,99 @@
 [ext_resource type="Script" uid="uid://np5vcxq01ii8" path="res://object/trigger/modules/CheckpointTrigger.cs" id="36_lnqhi"]
 [ext_resource type="Resource" uid="uid://c7m6o6vha25j2" path="res://resource/preset/lockout/run/AutorunJumplessLockout.tres" id="37_e72yc"]
 [ext_resource type="Resource" uid="uid://b1pan2tr3ydrk" path="res://area/7 night palace/act 1/camera/SpaceCAutorunCam.tres" id="38_uffb5"]
+
+[sub_resource type="Animation" id="Animation_uffb5"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("underlight:visible")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("interior_directional_lights:visible")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+
+[sub_resource type="Animation" id="Animation_e72yc"]
+resource_name = "event"
+step = 0.5
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("underlight:visible")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("interior_directional_lights:visible")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+
+[sub_resource type="Animation" id="Animation_krpnb"]
+resource_name = "event-deactivate"
+step = 0.5
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("underlight:visible")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("interior_directional_lights:visible")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_0kltq"]
+_data = {
+&"RESET": SubResource("Animation_uffb5"),
+&"event": SubResource("Animation_e72yc"),
+&"event-deactivate": SubResource("Animation_krpnb")
+}
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_tcefn"]
+size = Vector3(353.45782, 108.92099, 710.89355)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_drhlu"]
 render_priority = -120
@@ -471,14 +564,11 @@ ambient_light_sky_contribution = 0.15
 ambient_light_energy = 0.58
 reflected_light_source = 2
 tonemap_mode = 2
-tonemap_exposure = 1.8
-tonemap_white = 1.2
-ssao_enabled = true
+tonemap_exposure = 1.4
 ssao_radius = 3.02
 ssao_intensity = 3.28
 ssao_power = 1.8467187
 ssao_detail = 0.95
-ssil_enabled = true
 ssil_radius = 7.5
 ssil_intensity = 2.1
 sdfgi_use_occlusion = true
@@ -486,10 +576,14 @@ sdfgi_bounce_feedback = 0.69
 sdfgi_cascades = 2
 sdfgi_min_cell_size = 0.44
 glow_enabled = true
+glow_levels/3 = 0.0
+glow_levels/4 = 1.0
+glow_levels/5 = 0.0
 glow_normalized = true
-glow_mix = 0.357
-glow_bloom = 0.01
-glow_hdr_threshold = 1.2
+glow_strength = 2.0
+glow_mix = 0.031
+glow_bloom = 1.0
+glow_blend_mode = 4
 fog_enabled = true
 fog_mode = 1
 fog_light_color = Color(0.26278868, 0.00082823395, 0.5656632, 1)
@@ -499,7 +593,8 @@ fog_depth_curve = 0.6372806
 fog_depth_begin = 0.0
 fog_depth_end = 500.0
 adjustment_enabled = true
-adjustment_contrast = 1.07
+adjustment_brightness = 0.95
+adjustment_contrast = 1.1
 adjustment_color_correction = SubResource("GradientTexture1D_e72yc")
 
 [sub_resource type="Animation" id="Animation_lnqhi"]
@@ -1005,27 +1100,56 @@ visible = false
 metadata/_edit_lock_ = true
 metadata/_edit_group_ = true
 
-[node name="Moonlight" type="DirectionalLight3D" parent="Visuals"]
+[node name="UnderlightEvent" type="Node3D" parent="Visuals" node_paths=PackedStringArray("animator")]
+script = ExtResource("26_m52iu")
+animator = NodePath("AnimationPlayer")
+"Trigger Settings/Automatically Respawn" = false
+"Trigger Settings/Is One Shot" = false
+"Trigger Settings/Animation Blending" = 0.0
+"Trigger Settings/Player Stand-in" = NodePath("")
+
+[node name="interior_directional_lights" type="Node3D" parent="Visuals/UnderlightEvent"]
+
+[node name="Moonlight" type="DirectionalLight3D" parent="Visuals/UnderlightEvent/interior_directional_lights"]
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 1, -4.37114e-08)
 layers = 1024
 light_color = Color(0.6392157, 0.26666668, 0.9882353, 1)
-light_energy = 1.267
-light_indirect_energy = 1.304
-light_volumetric_fog_energy = 2.386
-light_angular_distance = 9.08
-light_specular = 2.154
-light_cull_mask = 4293918727
+light_energy = 0.8
+light_cull_mask = 4293918791
 shadow_enabled = true
-directional_shadow_blend_splits = true
+shadow_opacity = 0.5
+directional_shadow_max_distance = 60.0
 
-[node name="BounceLight" type="DirectionalLight3D" parent="Visuals"]
+[node name="BounceLight" type="DirectionalLight3D" parent="Visuals/UnderlightEvent/interior_directional_lights"]
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 1, -4.37114e-08)
 layers = 1024
 light_color = Color(0.8733358, 0.00015223757, 0.1490018, 1)
 light_energy = 1.415
-light_indirect_energy = 0.88
-light_angular_distance = 5.41
 light_cull_mask = 4293918791
+
+[node name="underlight" type="DirectionalLight3D" parent="Visuals/UnderlightEvent"]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 1, -4.37114e-08)
+visible = false
+layers = 1024
+light_color = Color(0.87, 0.87, 0.87, 1)
+light_energy = 1.5
+light_specular = 0.0
+light_cull_mask = 4293918791
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Visuals/UnderlightEvent"]
+libraries = {
+&"": SubResource("AnimationLibrary_0kltq")
+}
+
+[node name="underlight_trigger1" parent="Visuals" instance=ExtResource("10_xejcv")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 796.43353, -16.200714, -279.7486)
+"Trigger Mode" = 2
+"Enter Mode" = 0
+"Exit Mode" = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Visuals/underlight_trigger1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 136.97272, 35.697105, -322.1859)
+shape = SubResource("BoxShape3D_tcefn")
 
 [node name="RoomUp" parent="Visuals" instance=ExtResource("2_trgmg")]
 startEnabled = true
@@ -1033,48 +1157,52 @@ startEnabled = true
 [node name="Lantern" type="SpotLight3D" parent="Visuals/RoomUp"]
 transform = Transform3D(1, 0, 0, 0, 0.027607586, 0.9996189, 0, -0.9996189, 0.027607586, 1476.6202, 27.176222, -575.8132)
 layers = 1024
-light_color = Color(0.4997501, 0.9902345, 1.3169999, 1)
-light_energy = 7.594
-light_indirect_energy = 3.923
-light_volumetric_fog_energy = 2.383
+light_color = Color(0.37, 0.7479999, 1, 1)
+light_energy = 2.0
 distance_fade_enabled = true
+distance_fade_begin = 50.0
+distance_fade_length = 50.0
 spot_range = 57.839
-spot_attenuation = 0.35
+spot_attenuation = 0.0
 spot_angle = 25.29
+spot_angle_attenuation = 1.5
 
 [node name="Lantern2" type="SpotLight3D" parent="Visuals/RoomUp/Lantern"]
 transform = Transform3D(1, 0, 0, 0, 0.99999994, -1.8626451e-09, 0, 1.8626451e-09, 0.99999994, 46.40332, -0.005859375, -0.21409416)
 layers = 1024
-light_color = Color(0.4997501, 0.9902345, 1.3169999, 1)
-light_energy = 7.594
-light_indirect_energy = 3.923
-light_volumetric_fog_energy = 2.383
+light_color = Color(0.37, 0.7479999, 1, 1)
+light_energy = 2.0
+distance_fade_begin = 50.0
+distance_fade_length = 50.0
 spot_range = 57.839
-spot_attenuation = 0.35
+spot_attenuation = 0.0
 spot_angle = 25.29
+spot_angle_attenuation = 1.5
 
 [node name="Lantern3" type="SpotLight3D" parent="Visuals/RoomUp/Lantern"]
 transform = Transform3D(1, 0, 0, 0, 0.99999994, -1.8626451e-09, 0, 1.8626451e-09, 0.99999994, 46.40332, -31.595398, 0.65835)
 layers = 1024
-light_color = Color(0.4997501, 0.9902345, 1.3169999, 1)
-light_energy = 7.594
-light_indirect_energy = 3.923
-light_volumetric_fog_energy = 2.383
+light_color = Color(0.37, 0.7479999, 1, 1)
+light_energy = 2.0
+distance_fade_begin = 50.0
+distance_fade_length = 50.0
 spot_range = 57.839
-spot_attenuation = 0.35
+spot_attenuation = 0.0
 spot_angle = 25.29
+spot_angle_attenuation = 1.5
 
 [node name="Lantern4" type="SpotLight3D" parent="Visuals/RoomUp/Lantern"]
 transform = Transform3D(1, 0, 0, 0, 0.99999994, -1.8626451e-09, 0, 1.8626451e-09, 0.99999994, -0.0068359375, -31.595398, 0.65835)
 layers = 1024
-light_color = Color(0.4997501, 0.9902345, 1.3169999, 1)
-light_energy = 7.594
-light_indirect_energy = 3.923
-light_volumetric_fog_energy = 2.383
+light_color = Color(0.37, 0.7479999, 1, 1)
+light_energy = 2.0
 distance_fade_enabled = true
+distance_fade_begin = 50.0
+distance_fade_length = 50.0
 spot_range = 57.839
-spot_attenuation = 0.35
+spot_attenuation = 0.0
 spot_angle = 25.29
+spot_angle_attenuation = 1.5
 
 [node name="OmniLight3D1" type="OmniLight3D" parent="Visuals/RoomUp"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1499.7382, 5.665024, -559.61035)
@@ -1082,8 +1210,6 @@ layers = 1024
 light_color = Color(0.6268094, 0.29738548, 1, 1)
 shadow_bias = 1.002
 distance_fade_enabled = true
-distance_fade_begin = 394.17
-distance_fade_shadow = 665.94
 omni_range = 43.843
 omni_attenuation = 0.7
 omni_shadow_mode = 0
@@ -1098,6 +1224,8 @@ light_energy = 16.0
 light_indirect_energy = 5.203
 light_volumetric_fog_energy = 2.383
 distance_fade_enabled = true
+distance_fade_begin = 70.0
+distance_fade_length = 50.0
 spot_range = 57.454
 spot_attenuation = 0.35
 spot_angle = 25.29
@@ -1109,6 +1237,9 @@ light_color = Color(1, 0.3514654, 0.53104407, 1)
 light_energy = 16.0
 light_indirect_energy = 5.203
 light_volumetric_fog_energy = 2.383
+distance_fade_enabled = true
+distance_fade_begin = 70.0
+distance_fade_length = 50.0
 spot_range = 57.454
 spot_attenuation = 0.35
 spot_angle = 25.29
@@ -1120,6 +1251,9 @@ light_color = Color(1, 0.3514654, 0.53104407, 1)
 light_energy = 16.0
 light_indirect_energy = 5.203
 light_volumetric_fog_energy = 2.383
+distance_fade_enabled = true
+distance_fade_begin = 70.0
+distance_fade_length = 50.0
 spot_range = 57.454
 spot_attenuation = 0.35
 spot_angle = 25.29
@@ -1132,6 +1266,8 @@ light_energy = 16.0
 light_indirect_energy = 5.203
 light_volumetric_fog_energy = 2.383
 distance_fade_enabled = true
+distance_fade_begin = 70.0
+distance_fade_length = 50.0
 spot_range = 57.454
 spot_attenuation = 0.35
 spot_angle = 25.29
@@ -1140,86 +1276,86 @@ spot_angle = 25.29
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1493.7128, -13.938023, -299.5026)
 layers = 1024
 light_color = Color(0.47102797, 0.5042826, 1, 1)
-light_energy = 5.331
-light_indirect_energy = 1.913
-light_volumetric_fog_energy = 5.451
-light_size = 0.1
+light_energy = 0.4
 distance_fade_enabled = true
-omni_range = 33.57625
-omni_attenuation = 0.7
+omni_range = 25.719
+omni_attenuation = 0.0
 
 [node name="RoomSide" parent="Visuals" instance=ExtResource("4_2xavd")]
 
 [node name="Lantern2" type="SpotLight3D" parent="Visuals/RoomSide"]
 transform = Transform3D(1, 0, 0, 0, -0.99847573, 0.05519413, 0, -0.05519413, -0.99847573, 1477.1023, -16.15693, -417.8814)
 layers = 1024
-light_color = Color(0.55699325, 0.9802004, 1.3167266, 1)
-light_energy = 8.98
+light_color = Color(0.42000002, 0.7390001, 1, 1)
+light_energy = 2.821
 light_indirect_energy = 2.323
 light_volumetric_fog_energy = 2.383
 distance_fade_enabled = true
+distance_fade_begin = 50.0
+distance_fade_length = 50.0
 spot_range = 57.839
-spot_attenuation = 0.35
-spot_angle = 25.29
+spot_attenuation = 0.0
+spot_angle = 37.51
+spot_angle_attenuation = 2.0705302
 
 [node name="Lantern2" type="SpotLight3D" parent="Visuals/RoomSide/Lantern2"]
 transform = Transform3D(1, 0, 0, 0, 1, -1.4901161e-08, 0, 1.4901161e-08, 1, 45.895752, -0.44067764, 0.15527344)
 layers = 1024
-light_color = Color(0.55699325, 0.9802004, 1.3167266, 1)
-light_energy = 8.98
+light_color = Color(0.42000002, 0.7390001, 1, 1)
+light_energy = 2.821
 light_indirect_energy = 2.323
 light_volumetric_fog_energy = 2.383
+distance_fade_enabled = true
+distance_fade_begin = 50.0
+distance_fade_length = 50.0
 spot_range = 57.839
-spot_attenuation = 0.35
-spot_angle = 25.29
+spot_attenuation = 0.0
+spot_angle = 37.51
+spot_angle_attenuation = 2.0705302
 
 [node name="Lantern3" type="SpotLight3D" parent="Visuals/RoomSide/Lantern2"]
 transform = Transform3D(1, 0, 0, 0, 1, -1.1175871e-08, 0, 1.1175871e-08, 1, 45.75769, -31.902176, 1.9463501)
 layers = 1024
-light_color = Color(0.55699325, 0.9802004, 1.3167266, 1)
-light_energy = 8.98
+light_color = Color(0.42000002, 0.7390001, 1, 1)
+light_energy = 2.821
 light_indirect_energy = 2.323
 light_volumetric_fog_energy = 2.383
+distance_fade_enabled = true
+distance_fade_begin = 50.0
+distance_fade_length = 50.0
 spot_range = 57.839
-spot_attenuation = 0.35
-spot_angle = 25.29
+spot_attenuation = 0.0
+spot_angle = 37.51
+spot_angle_attenuation = 2.0705302
 
 [node name="Lantern4" type="SpotLight3D" parent="Visuals/RoomSide/Lantern2"]
 transform = Transform3D(1, 0, 0, 0, 1, -3.7252903e-09, 0, 3.7252903e-09, 1, -0.6524658, -31.652761, 0.6614075)
 layers = 1024
-light_color = Color(0.55699325, 0.9802004, 1.3167266, 1)
-light_energy = 8.98
+light_color = Color(0.42000002, 0.7390001, 1, 1)
+light_energy = 2.821
 light_indirect_energy = 2.323
 light_volumetric_fog_energy = 2.383
 distance_fade_enabled = true
+distance_fade_begin = 50.0
+distance_fade_length = 50.0
 spot_range = 57.839
-spot_attenuation = 0.35
-spot_angle = 25.29
+spot_attenuation = 0.0
+spot_angle = 37.51
+spot_angle_attenuation = 2.0705302
 
 [node name="OmniLight3D2" type="OmniLight3D" parent="Visuals/RoomSide"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1496.7255, 8.633579, -417.36575)
 layers = 1024
 light_color = Color(0.95768243, 0, 0.28125978, 1)
-light_energy = 7.015
+light_energy = 3.0
 light_indirect_energy = 2.023
 light_volumetric_fog_energy = 2.564
 light_size = 0.1
 distance_fade_enabled = true
-omni_range = 37.358807
-omni_attenuation = 0.7
-
-[node name="OmniLight3D2" type="OmniLight3D" parent="Visuals/RoomSide/OmniLight3D2"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.2978516, -21.256973, -0.8746643)
-layers = 1024
-light_color = Color(0.34509805, 0.21960784, 0.8352941, 1)
-light_energy = 3.226
-light_indirect_energy = 3.467
-light_volumetric_fog_energy = 4.068
-light_size = 0.044
-light_specular = 0.921
-distance_fade_enabled = true
-omni_range = 42.387
-omni_attenuation = 1.076
+distance_fade_begin = 60.0
+distance_fade_length = 50.0
+omni_range = 30.0
+omni_attenuation = 0.0
 
 [node name="SpaceA" parent="Visuals" instance=ExtResource("5_35hll")]
 
@@ -2032,6 +2168,9 @@ libraries = {
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1500, 0, -560)
 reflectionMaterials = [ExtResource("21_ov4eh")]
 
+[connection signal="Activated" from="Visuals/underlight_trigger1" to="Visuals/UnderlightEvent" method="Activate"]
+[connection signal="Deactivated" from="Visuals/underlight_trigger1" to="Visuals/UnderlightEvent" method="Deactivate"]
+[connection signal="Respawned" from="Visuals/underlight_trigger1" to="Visuals/UnderlightEvent" method="Respawn"]
 [connection signal="DriftCompleted" from="Trigger/Object/Drift/DriftTrigger3" to="Trigger/Object/Drift/DriftTrigger3/Camera" method="Deactivate"]
 [connection signal="DriftStarted" from="Trigger/Object/Drift/DriftTrigger3" to="Trigger/Object/Drift/DriftTrigger3/Camera" method="Activate"]
 [connection signal="DriftCompleted" from="Trigger/Object/Drift/DriftTrigger4" to="Trigger/Object/Drift/DriftTrigger4/Camera" method="Deactivate"]
