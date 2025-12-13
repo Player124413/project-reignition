@@ -11,12 +11,12 @@ public partial class Seed : Area3D
 	[Export]
 	private AnimationPlayer animator;
 
-	public bool IsMoving { get; set; }
+	private bool isMoving;
 	private PlayerController Player => StageSettings.Player;
 
 	public override void _PhysicsProcess(double _)
 	{
-		if (!IsMoving) return;
+		if (!isMoving) return;
 
 		GlobalPosition += this.Forward() * moveSpeed * PhysicsManager.physicsDelta;
 	}
@@ -27,12 +27,12 @@ public partial class Seed : Area3D
 		animator.Advance(0.0);
 
 		animator.Play("move");
-		IsMoving = true;
+		isMoving = true;
 	}
 
 	private void Explode()
 	{
-		IsMoving = false;
+		isMoving = false;
 		animator.Play("explode");
 	}
 

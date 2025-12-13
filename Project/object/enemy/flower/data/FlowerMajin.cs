@@ -25,6 +25,7 @@ public partial class FlowerMajin : Enemy
 	/// <summary> Don't attack. NOTE: This will lead the flower majin to never move onto the PostAttack state. </summary>
 	[Export]
 	private bool disableAttacking;
+	public void SetDisableAttacking(bool value) => disableAttacking = value;
 	/// <summary> How long to remain passive. </summary>
 	[Export(PropertyHint.Range, "0, 5, .1")]
 	private float passiveLength;
@@ -121,13 +122,7 @@ public partial class FlowerMajin : Enemy
 		stateTimer = 0;
 		rotationVelocity = 0;
 
-		// Remove seeds
-		seedIndex = 0;
-		for (int i = 0; i < MaxSeedCount; i++)
-		{
-			if (seedPool[i].IsInsideTree())
-				seedPool[i].GetParent().CallDeferred(MethodName.RemoveChild, seedPool[i]);
-		}
+		DespawnSeeds();
 	}
 
 	protected override void UpdateInteraction()
@@ -308,11 +303,14 @@ public partial class FlowerMajin : Enemy
 		EmitSignal(SignalName.Stagger);
 	}
 
-	public void SetSeedMovement(bool value)
+	public void DespawnSeeds()
 	{
-		for (int i = 0; i < seedIndex; i++)
-			seedPool[i].IsMoving = value;
-
-		disableAttacking = !value;
+		// Remove seeds
+		seedIndex = 0;
+		for (int i = 0; i < MaxSeedCount; i++)
+		{
+			if (seedPool[i].IsInsideTree())
+				seedPool[i].GetParent().CallDeferred(MethodName.RemoveChild, seedPool[i]);
+		}
 	}
 }

@@ -1260,14 +1260,14 @@ transform = Transform3D(1, 0, 8.9407e-08, 0, 1, 0, -8.9407e-08, 0, 1, 0, -3, 0)
 shape = SubResource("BoxShape3D_3wcby")
 
 [node name="BigTrigger" parent="." instance=ExtResource("43_ce3j1")]
-transform = Transform3D(0.99939084, 0, -0.034899496, 0, 1, 0, 0.034899496, 0, 0.99939084, -335.97906, -274.25, -1112.5996)
+transform = Transform3D(0.99939084, 0, -0.034899496, 0, 1, 0, 0.034899496, 0, 0.99939084, -335.97208, -274.25, -1112.7996)
 bigAnimation = &"hide"
 
 [node name="Camera" parent="BigTrigger" index="1"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 0)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="BigTrigger"]
-transform = Transform3D(0.8910065, 0, 0.4539905, 0, 1, 0, -0.4539905, 0, 0.8910065, 40.474453, -1, 23.14289)
+transform = Transform3D(0.8910065, 0, 0.4539905, 0, 1, 0, -0.4539905, 0, 0.8910065, 38.69244, -1, 24.050873)
 shape = SubResource("BoxShape3D_ce3j1")
 
 [connection signal="Activated" from="StealthAct/CullingMap/Cavern-L" to="StealthAct/Cavern" method="Activate"]
@@ -1316,8 +1316,9 @@ shape = SubResource("BoxShape3D_ce3j1")
 [connection signal="Activated" from="StealthAct/FeedingTunnel/JumpPanel" to="StealthAct/FeedingTunnel/JumpPanel/Camera" method="Activate"]
 [connection signal="Deactivated" from="StealthAct/FeedingTunnel/JumpPanel" to="Static/Collision/ArenaOneWay" method="Activate"]
 [connection signal="Deactivated" from="StealthAct/FeedingTunnel/JumpPanel" to="StealthAct/FeedingTunnel/JumpPanel/Path" method="Activate"]
-[connection signal="BigFinished" from="BigTrigger" to="StealthAct/Crossing/FlowerMajin" method="SetSeedMovement" binds= [true]]
-[connection signal="BigSighted" from="BigTrigger" to="StealthAct/Crossing/FlowerMajin" method="SetSeedMovement" binds= [false]]
+[connection signal="BigFinished" from="BigTrigger" to="StealthAct/Crossing/FlowerMajin" method="SetDisableAttacking" binds= [false]]
+[connection signal="BigSighted" from="BigTrigger" to="StealthAct/Crossing/FlowerMajin" method="DespawnSeeds"]
+[connection signal="BigSighted" from="BigTrigger" to="StealthAct/Crossing/FlowerMajin" method="SetDisableAttacking" binds= [true]]
 
 [editable path="Static"]
 [editable path="Static/Collision"]
