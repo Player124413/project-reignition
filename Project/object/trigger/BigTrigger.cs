@@ -55,7 +55,6 @@ public partial class BigTrigger : Area3D
 		stopLockout.Activate();
 		cameraTrigger.Activate();
 		Player.Skills.DisableBreakSkills();
-		Player.Deactivate();
 		HeadsUpDisplay.Instance.SetVisibility(false);
 		EmitSignal(SignalName.BigSighted);
 	}
@@ -71,7 +70,6 @@ public partial class BigTrigger : Area3D
 	{
 		stopLockout.Deactivate();
 		cameraTrigger.Deactivate();
-		Player.Activate();
 		HeadsUpDisplay.Instance.SetVisibility(true);
 
 		// Write to file immediately
