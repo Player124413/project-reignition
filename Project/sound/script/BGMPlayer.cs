@@ -70,5 +70,11 @@ public partial class BGMPlayer : AudioStreamPlayer
 			Play(bgmResource.LoopStart);
 	}
 
-	public void Play() => Play(bgmResource.StartPosition);
+	public void Play()
+	{
+		if (bgmResource == null)
+			return;
+
+		Play(bgmResource.StartPosition);
+	}
 }
