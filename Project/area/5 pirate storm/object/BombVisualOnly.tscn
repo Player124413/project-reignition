@@ -1,4 +1,4 @@
-[gd_scene load_steps=41 format=3 uid="uid://bpym1aa2ews4w"]
+[gd_scene load_steps=40 format=3 uid="uid://bpym1aa2ews4w"]
 
 [ext_resource type="Script" uid="uid://01bsn0f21qa0" path="res://object/stage/common/resource/script/BombMissile.cs" id="1_3d80n"]
 [ext_resource type="PackedScene" uid="uid://bmrns4285t26c" path="res://area/5 pirate storm/object/model/Bomb.gltf" id="2_ajc4d"]
@@ -72,9 +72,6 @@ alpha_curve = SubResource("CurveTexture_a5ppq")
 
 [sub_resource type="QuadMesh" id="QuadMesh_di570"]
 material = ExtResource("4_gdqsu")
-
-[sub_resource type="SphereShape3D" id="SphereShape3D_5y56b"]
-radius = 1.5
 
 [sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_6fpuu"]
 lifetime_randomness = 0.4
@@ -205,30 +202,6 @@ tracks/3/keys = {
 "update": 1,
 "values": [false]
 }
-tracks/4/type = "value"
-tracks/4/imported = false
-tracks/4/enabled = true
-tracks/4/path = NodePath("Bomb/ExplosionArea/CollisionShape3D:disabled")
-tracks/4/interp = 1
-tracks/4/loop_wrap = true
-tracks/4/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [true]
-}
-tracks/5/type = "value"
-tracks/5/imported = false
-tracks/5/enabled = true
-tracks/5/path = NodePath("Bomb/StaggerBody/CollisionShape3D:disabled")
-tracks/5/interp = 1
-tracks/5/loop_wrap = true
-tracks/5/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [true]
-}
 
 [sub_resource type="Animation" id="Animation_4asmq"]
 resource_name = "explode"
@@ -297,30 +270,6 @@ tracks/4/keys = {
 "method": &"PlayInGroup"
 }]
 }
-tracks/5/type = "value"
-tracks/5/imported = false
-tracks/5/enabled = true
-tracks/5/path = NodePath("Bomb/ExplosionArea/CollisionShape3D:disabled")
-tracks/5/interp = 1
-tracks/5/loop_wrap = true
-tracks/5/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [true]
-}
-tracks/6/type = "value"
-tracks/6/imported = false
-tracks/6/enabled = true
-tracks/6/path = NodePath("Bomb/StaggerBody/CollisionShape3D:disabled")
-tracks/6/interp = 1
-tracks/6/loop_wrap = true
-tracks/6/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [true]
-}
 
 [sub_resource type="Animation" id="Animation_a21m6"]
 resource_name = "fly"
@@ -387,30 +336,6 @@ tracks/4/keys = {
 "method": &"PlayInGroup"
 }]
 }
-tracks/5/type = "value"
-tracks/5/imported = false
-tracks/5/enabled = true
-tracks/5/path = NodePath("Bomb/ExplosionArea/CollisionShape3D:disabled")
-tracks/5/interp = 1
-tracks/5/loop_wrap = true
-tracks/5/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [false]
-}
-tracks/6/type = "value"
-tracks/6/imported = false
-tracks/6/enabled = true
-tracks/6/path = NodePath("Bomb/StaggerBody/CollisionShape3D:disabled")
-tracks/6/interp = 1
-tracks/6/loop_wrap = true
-tracks/6/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [false]
-}
 
 [sub_resource type="Animation" id="Animation_wr0f1"]
 resource_name = "init"
@@ -422,30 +347,6 @@ tracks/0/path = NodePath("Bomb:visible")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [false]
-}
-tracks/1/type = "value"
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/path = NodePath("Bomb/ExplosionArea/CollisionShape3D:disabled")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
-tracks/1/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [false]
-}
-tracks/2/type = "value"
-tracks/2/imported = false
-tracks/2/enabled = true
-tracks/2/path = NodePath("Bomb/StaggerBody/CollisionShape3D:disabled")
-tracks/2/interp = 1
-tracks/2/loop_wrap = true
-tracks/2/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 1,
@@ -518,23 +419,6 @@ attenuation_filter_cutoff_hz = 20500.0
 script = ExtResource("6_oo16f")
 groupKey = &"bomb travel"
 
-[node name="StaggerBody" type="StaticBody3D" parent="Bomb" groups=["pathtraveller stagger"]]
-collision_layer = 8
-collision_mask = 0
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Bomb/StaggerBody"]
-shape = SubResource("SphereShape3D_5y56b")
-disabled = true
-
-[node name="ExplosionArea" type="Area3D" parent="Bomb"]
-collision_layer = 0
-collision_mask = 2
-monitorable = false
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Bomb/ExplosionArea"]
-shape = SubResource("SphereShape3D_5y56b")
-disabled = true
-
 [node name="ExplosionEmbers" type="GPUParticles3D" parent="." node_paths=PackedStringArray("subSystems")]
 layers = 32
 cast_shadow = 0
@@ -601,7 +485,5 @@ deterministic = true
 libraries = {
 &"": SubResource("AnimationLibrary_rsyn7")
 }
-
-[connection signal="area_entered" from="Bomb/ExplosionArea" to="." method="Explode"]
 
 [editable path="Bomb"]
