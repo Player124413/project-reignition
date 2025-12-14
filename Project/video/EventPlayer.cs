@@ -41,7 +41,7 @@ public partial class EventPlayer : Node
 	/// <summary> How long the pause button needs to be held to skip the cutscene. </summary>
 	private readonly float SkipLength = 1f;
 	/// <summary> Dialog keys are offset by this much so the fade-in lines up with the editor preview. </summary>
-	private readonly float InitialSubtitleOffset = 0.5f;
+	private readonly float InitialSubtitleOffset = 0.2f;
 
 	public override void _Ready()
 	{
@@ -71,11 +71,6 @@ public partial class EventPlayer : Node
 			_ => (StringName)"en",
 		};
 
-		if (!animator.HasAnimation(targetLocale)) // Fallback to English timings
-			targetLocale = "en";
-
-		animator.AssignedAnimation = targetLocale;
-
 		// Load audio
 		string targetAudio = englishAudioPath.Replace("/en/", $"/{targetLocale}/");
 		if (!ResourceLoader.Exists(targetAudio))
@@ -85,6 +80,12 @@ public partial class EventPlayer : Node
 		}
 
 		audioPlayer.Stream = ResourceLoader.Load<AudioStreamOggVorbis>(targetAudio);
+
+		// Load timing animation
+		if (!animator.HasAnimation(targetLocale))
+			targetLocale = "en";
+
+		animator.AssignedAnimation = targetLocale;
 	}
 
 	private void StartCutscene()
@@ -132,7 +133,6 @@ public partial class EventPlayer : Node
 	/// <summary> Creates a dialog trigger based on the keyframes in an animation. </summary>
 	private void CreateSubtitles()
 	{
-		// TODO Unimplemented.
 		subtitles = new Gameplay.Triggers.DialogTrigger()
 		{
 			IsCutscene = true,
@@ -207,7 +207,6 @@ public partial class EventPlayer : Node
 	{
 		animator.Play();
 		audioPlayer.Play((float)animator.CurrentAnimationPosition);
-		UpdateEditorLocale();
 		InitializeEditorIndex();
 	}
 
@@ -216,18 +215,6 @@ public partial class EventPlayer : Node
 		audioPlayer.Stop();
 		animator.Pause();
 		editorIsPlaybackInitialized = false;
-	}
-
-	private void UpdateEditorLocale()
-	{
-		if (string.IsNullOrEmpty(animator.CurrentAnimation) ||
-			animator.CurrentAnimation.Equals(TranslationServer.GetLocale()))
-		{
-			return;
-		}
-
-		TranslationServer.SetLocale(animator.CurrentAnimation);
-		GD.Print($"Locale Updated to {animator.CurrentAnimation}");
 	}
 
 	private void InitializeEditorIndex()

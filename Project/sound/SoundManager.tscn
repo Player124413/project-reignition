@@ -143,7 +143,7 @@ tracks/2/keys = {
 }
 
 [sub_resource type="Animation" id="5"]
-resource_name = "deactivate-text"
+resource_name = "deactivate-cutscene"
 length = 0.1
 tracks/0/type = "value"
 tracks/0/imported = false
@@ -155,7 +155,7 @@ tracks/0/keys = {
 "times": PackedFloat32Array(0, 0.1),
 "transitions": PackedFloat32Array(1, 1),
 "update": 0,
-"values": [Color(1, 1, 1, 1), Color(1, 1, 1, 1)]
+"values": [Color(1, 1, 1, 1), Color(1, 1, 1, 0)]
 }
 tracks/1/type = "value"
 tracks/1/imported = false
@@ -176,7 +176,7 @@ _data = {
 &"activate": SubResource("2"),
 &"activate-text": SubResource("3"),
 &"deactivate": SubResource("4"),
-&"deactivate-text": SubResource("5")
+&"deactivate-cutscene": SubResource("5")
 }
 
 [node name="SoundManager" type="Control" node_paths=PackedStringArray("subtitleLabel", "subtitleLetterbox", "subtitleAnimator", "dialogChannel", "delayTimer", "ringSFX", "richRingSFX", "pearlSFX", "richPearlSFX", "pearlTimer", "StageMusicPlayer")]
@@ -244,6 +244,7 @@ libraries = {
 bus = &"VOICE"
 
 [node name="DelayTimer" type="Timer" parent="DialogChannel"]
+process_callback = 0
 one_shot = true
 
 [node name="RingSFX" type="AudioStreamPlayer" parent="."]

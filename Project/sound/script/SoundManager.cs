@@ -82,9 +82,6 @@ public partial class SoundManager : Node
 		IsSubtitlesActive = true;
 		subtitleLabel.Text = string.Empty;
 
-		// Show background during cutscenes, disable during in-game dialog
-		//subtitleLetterbox.SelfModulate = dialog.IsCutscene ? Colors.White : Colors.Transparent;
-
 		currentDialog = dialog;
 		currentDialogIndex = GetInitialDialogIndex();
 		UpdateDialog(true);
@@ -132,15 +129,24 @@ public partial class SoundManager : Node
 	public void OnDialogFinished()
 	{
 		currentDialogIndex++;
-		if (!currentDialog.randomize && currentDialogIndex < currentDialog.DialogCount) // Start next dialog line
-		{
-			if (!SaveManager.Config.isSubtitleDisabled)
-				subtitleAnimator.Play("deactivate");
-		}
-		else
+		if (currentDialog.randomize || currentDialogIndex >= currentDialog.DialogCount) // Start next dialog line
 		{
 			CallDeferred(MethodName.DisableDialog);
+			return;
 		}
+
+		if (SaveManager.Config.isSubtitleDisabled)
+			return;
+
+		if (currentDialog.IsCutscene)
+		{
+			if (currentDialog.HasDelay(currentDialogIndex))
+				subtitleAnimator.Play("deactivate-cutscene");
+			OnSubtitleAnimationFinished();
+			return;
+		}
+
+		subtitleAnimator.Play("deactivate");
 	}
 
 	private void DisableDialog()

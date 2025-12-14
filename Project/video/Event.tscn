@@ -1,11 +1,9 @@
-[gd_scene load_steps=6 format=3 uid="uid://ct1tmuno23lj2"]
+[gd_scene load_steps=5 format=3 uid="uid://ct1tmuno23lj2"]
 
 [ext_resource type="Script" uid="uid://bjn5rtskut21d" path="res://video/EventPlayer.cs" id="1"]
 [ext_resource type="Script" uid="uid://bjs225yvpdim2" path="res://video/VideoStreamFileLoadPlayer.cs" id="2_k3sn5"]
 [ext_resource type="Script" uid="uid://df7uyhsm3g1ji" path="res://video/EventResizer.cs" id="2_oo0l5"]
 [ext_resource type="FontFile" uid="uid://bsoin3p4iygoo" path="res://interface/font/otf/Chiaro Std B.otf" id="4_56y11"]
-
-[sub_resource type="AnimationLibrary" id="AnimationLibrary_7qjnt"]
 
 [node name="Event" type="Control" node_paths=PackedStringArray("animator", "audioPlayer", "videoPlayer", "editorSubtitleLabel", "editorSubtitleRoot")]
 layout_mode = 3
@@ -15,7 +13,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1")
-animator = NodePath("AnimationPlayer")
+animator = NodePath("")
 audioPlayer = NodePath("Audio")
 videoPlayer = NodePath("Resizer/Video")
 editorSubtitleLabel = NodePath("SubtitleLetterbox/Subtitles")
@@ -39,15 +37,11 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 expand = true
+buffering_msec = 1000
 script = ExtResource("2_k3sn5")
 
 [node name="Audio" type="AudioStreamPlayer" parent="."]
 autoplay = true
-
-[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
-libraries = {
-&"": SubResource("AnimationLibrary_7qjnt")
-}
 
 [node name="SubtitleLetterbox" type="ColorRect" parent="."]
 visible = false
