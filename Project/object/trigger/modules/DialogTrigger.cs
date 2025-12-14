@@ -39,10 +39,11 @@ public partial class DialogTrigger : StageTriggerModule
 
 		isTriggered = isOneShot;
 
-		if (playbackType == PlaybackMode.Always || !SoundManager.instance.IsSubtitlesActive)
+		if (IsCutscene || playbackType == PlaybackMode.Always || !SoundManager.instance.IsSubtitlesActive)
 		{
 			SoundManager.instance.ClearQueue();
 			SoundManager.instance.PlayDialog(GetRandomDialogTrigger());
+			GD.Print("Playing Dialog");
 			return;
 		}
 

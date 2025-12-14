@@ -40,8 +40,6 @@ public partial class EventPlayer : Node
 	private float skipTimer;
 	/// <summary> How long the pause button needs to be held to skip the cutscene. </summary>
 	private readonly float SkipLength = 1f;
-	/// <summary> Dialog keys are offset by this much so the fade-in lines up with the editor preview. </summary>
-	private readonly float InitialSubtitleOffset = 0.2f;
 
 	public override void _Ready()
 	{
@@ -144,7 +142,8 @@ public partial class EventPlayer : Node
 
 		Animation currentAnimation = animator.GetAnimation(animator.AssignedAnimation);
 		int currentDialogIndex = 0;
-		float accumulatedDelay = (float)currentAnimation.TrackGetKeyTime(0, 0) - InitialSubtitleOffset;
+		float accumulatedDelay = (float)currentAnimation.TrackGetKeyTime(0, 0);
+
 		for (int i = 0; i < currentAnimation.TrackGetKeyCount(0); i++)
 		{
 			Dictionary currentKeyData = currentAnimation.TrackGetKeyValue(0, i).As<Dictionary>();
@@ -241,6 +240,9 @@ public partial class EventPlayer : Node
 
 	private void ResyncEditorIndex()
 	{
+		if (animator == null)
+			return;
+
 		if (string.IsNullOrEmpty(animator.CurrentAnimation))
 		{
 			if (editorIsPlaybackInitialized)
@@ -257,9 +259,8 @@ public partial class EventPlayer : Node
 
 		Animation currentAnimation = animator.GetAnimation(animator.CurrentAnimation);
 
-		GD.PrintT(editorKeyIndex, currentAnimation.TrackGetKeyTime(0, editorKeyIndex), animator.CurrentAnimationPosition);
-		if (currentAnimation.TrackGetKeyTime(0, editorKeyIndex) > animator.CurrentAnimationPosition ||
-			editorKeyIndex >= currentAnimation.TrackGetKeyCount(0))
+		if (editorKeyIndex >= currentAnimation.TrackGetKeyCount(0) ||
+			currentAnimation.TrackGetKeyTime(0, editorKeyIndex) > animator.CurrentAnimationPosition)
 		{
 			return;
 		}
