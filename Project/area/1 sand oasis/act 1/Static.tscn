@@ -1,4 +1,4 @@
-[gd_scene load_steps=85 format=3 uid="uid://tvjx2wghc06t"]
+[gd_scene load_steps=91 format=3 uid="uid://tvjx2wghc06t"]
 
 [ext_resource type="Script" uid="uid://dtkbvehtmy3em" path="res://object/stage/StageSettings.cs" id="1_0njhg"]
 [ext_resource type="PackedScene" uid="uid://c2ckwltf2j1kv" path="res://area/1 sand oasis/act 1/environment/collision/Collision.tscn" id="1_pkods"]
@@ -53,6 +53,7 @@
 [ext_resource type="Curve3D" uid="uid://byicms7vwsqxd" path="res://area/1 sand oasis/act 1/environment/path/SidlePath.tres" id="41_2kxa5"]
 [ext_resource type="Curve3D" uid="uid://p2pt4ps3pmj" path="res://area/1 sand oasis/act 1/environment/path/Island2Path.tres" id="41_bop36"]
 [ext_resource type="Curve3D" uid="uid://b4qnnk3nkq7i4" path="res://area/1 sand oasis/act 1/environment/path/BeachPath.tres" id="41_tujp6"]
+[ext_resource type="Script" uid="uid://coiui4qvdxbqe" path="res://object/trigger/modules/EventTrigger.cs" id="44_tp8n3"]
 [ext_resource type="Curve3D" uid="uid://dyf3xaw47l0tm" path="res://area/1 sand oasis/act 1/environment/path/EndingPath.tres" id="45_mavj3"]
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_eqslh"]
@@ -103,9 +104,104 @@ size = Vector3(40, 40, 5)
 [sub_resource type="BoxShape3D" id="BoxShape3D_y0xl3"]
 size = Vector3(20, 20, 5)
 
+[sub_resource type="Animation" id="Animation_chr2p"]
+resource_name = "event-deactivate"
+length = 0.3
+step = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("ExteriorLighting:light_energy")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.3),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [0.2, 1.4]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("ExteriorLighting:shadow_enabled")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+
+[sub_resource type="Animation" id="Animation_50ywy"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("ExteriorLighting:light_energy")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [1.4]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("ExteriorLighting:shadow_enabled")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+
+[sub_resource type="Animation" id="Animation_dtvsn"]
+resource_name = "event"
+length = 0.3
+step = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("ExteriorLighting:light_energy")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.3),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [1.4, 0.2]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("ExteriorLighting:shadow_enabled")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_w1b86"]
+_data = {
+&"RESET": SubResource("Animation_50ywy"),
+&"event": SubResource("Animation_dtvsn"),
+&"event-deactivate": SubResource("Animation_chr2p")
+}
+
 [sub_resource type="PlaneMesh" id="PlaneMesh_njmjg"]
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_l6yro"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_tp8n3"]
+size = Vector3(117.334595, 88.487305, 141.38818)
 
 [sub_resource type="Animation" id="Animation_hknyw"]
 length = 0.001
@@ -583,13 +679,12 @@ ambient_light_color = Color(0.269526, 0.203777, 1, 1)
 ambient_light_sky_contribution = 0.2
 ambient_light_energy = 0.3
 reflected_light_source = 2
-tonemap_mode = 2
-tonemap_exposure = 0.79
-tonemap_white = 1.3
+tonemap_mode = 1
+tonemap_exposure = 0.8
+tonemap_white = 1.2
 ssao_radius = 3.19
 ssao_intensity = 3.36
 ssao_detail = 0.0
-ssil_enabled = true
 ssil_sharpness = 0.9
 ssil_normal_rejection = 0.8
 glow_enabled = true
@@ -605,7 +700,8 @@ fog_light_color = Color(0.533585, 0.699592, 1, 1)
 fog_density = 0.0002
 fog_sky_affect = 0.0
 adjustment_enabled = true
-adjustment_saturation = 1.2
+adjustment_brightness = 1.1
+adjustment_saturation = 1.1
 
 [node name="Static" type="Node3D" node_paths=PackedStringArray("pathParent", "completionAnimator", "Environment")]
 script = ExtResource("1_0njhg")
@@ -1338,8 +1434,16 @@ startEnabled = true
 
 [node name="Lighting" type="Node3D" parent="."]
 
-[node name="ExteriorLighting" type="DirectionalLight3D" parent="Lighting"]
-transform = Transform3D(0.999903, -0.00751761, -0.0117014, 0.00859075, -0.327816, 0.944703, -0.0109378, -0.944712, -0.32772, -11, 108, -67)
+[node name="dim_light_trigger" type="Node3D" parent="Lighting" node_paths=PackedStringArray("animator")]
+script = ExtResource("44_tp8n3")
+animator = NodePath("AnimationPlayer")
+"Trigger Settings/Automatically Respawn" = false
+"Trigger Settings/Is One Shot" = false
+"Trigger Settings/Animation Blending" = 0.0
+"Trigger Settings/Player Stand-in" = NodePath("")
+
+[node name="ExteriorLighting" type="DirectionalLight3D" parent="Lighting/dim_light_trigger"]
+transform = Transform3D(0.9999033, -0.0063418094, -0.012378252, 0.008590691, -0.41831127, 0.9082631, -0.010937994, -0.90828156, -0.41821632, -11, 108, -67)
 layers = 1024
 light_color = Color(1, 0.956667, 0.74, 1)
 light_energy = 1.4
@@ -1347,15 +1451,11 @@ light_cull_mask = 4293918787
 shadow_enabled = true
 shadow_bias = 0.02
 shadow_caster_mask = 4293918787
-directional_shadow_blend_splits = true
 
-[node name="ExteriorBounceLighting" type="DirectionalLight3D" parent="Lighting"]
-transform = Transform3D(0.88626, 0, 0.463188, 0, 1, 0, -0.463188, 0, 0.88626, -11, 108, -67)
-layers = 1024
-light_color = Color(1, 0.777745, 0.629883, 1)
-light_energy = 0.15
-light_cull_mask = 4293918787
-directional_shadow_mode = 0
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Lighting/dim_light_trigger"]
+libraries = {
+&"": SubResource("AnimationLibrary_w1b86")
+}
 
 [node name="LightBlockers" type="Node3D" parent="Lighting"]
 
@@ -1390,6 +1490,12 @@ mesh = SubResource("PlaneMesh_njmjg")
 
 [node name="HallBuildingBlock5" type="MeshInstance3D" parent="Lighting/LightBlockers"]
 transform = Transform3D(13.5325, 0.619047, 5.12598, 8.08571e-07, 0.483282, -13.132, -13.5325, 0.619047, 5.12598, -132.027, -57.1021, -355.345)
+layers = 2
+cast_shadow = 3
+mesh = SubResource("PlaneMesh_njmjg")
+
+[node name="HallBuildingBlock12" type="MeshInstance3D" parent="Lighting/LightBlockers"]
+transform = Transform3D(13.5325, 0.3345573, 9.344318, 4.7683716e-07, 0.8809896, -7.0970573, -13.5325, 0.33455732, 9.344318, -107.10928, -30.418001, -370.37753)
 layers = 2
 cast_shadow = 3
 mesh = SubResource("PlaneMesh_njmjg")
@@ -1460,38 +1566,24 @@ layers = 2
 cast_shadow = 3
 mesh = SubResource("PlaneMesh_l6yro")
 
+[node name="StageTrigger" parent="Lighting" instance=ExtResource("5_4sfp2")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 35.486893, 89.83028, 0)
+"Trigger Mode" = 2
+"Enter Mode" = 0
+"Exit Mode" = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Lighting/StageTrigger"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 31.262962, -5.7563477, -20.694092)
+shape = SubResource("BoxShape3D_tp8n3")
+
 [node name="ReflectionProbes" type="Node3D" parent="."]
-
-[node name="OpeningEnvironmentProbe" type="ReflectionProbe" parent="ReflectionProbes"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 57.3455, 101.853, -17.259)
-layers = 1024
-blend_distance = 5.0
-size = Vector3(110, 75, 122)
-interior = true
-cull_mask = 5
-reflection_mask = 4
-ambient_mode = 2
-ambient_color = Color(0.80419, 0.882119, 0.981411, 1)
-ambient_color_energy = 0.7
-
-[node name="OpeningObjectProbe" type="ReflectionProbe" parent="ReflectionProbes"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 54.8455, 96.1018, -17.2035)
-layers = 1024
-blend_distance = 5.0
-size = Vector3(113, 86.5015, 121.889)
-interior = true
-cull_mask = 4
-reflection_mask = 65
-ambient_mode = 2
-ambient_color = Color(0.98, 0.96824, 0.8036, 1)
-ambient_color_energy = 0.1
 
 [node name="ExteriorObjectProbe" type="ReflectionProbe" parent="ReflectionProbes"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -263.473, 7.29287, -435.326)
 layers = 1024
 size = Vector3(871, 214.509, 971)
 interior = true
-cull_mask = 1042
+cull_mask = 0
 reflection_mask = 65
 ambient_mode = 2
 ambient_color = Color(0.4416, 0.45024, 0.96, 1)
@@ -1517,87 +1609,6 @@ reflection_mask = 8
 ambient_mode = 2
 ambient_color = Color(0.217124, 0.703919, 0.823945, 1)
 ambient_color_energy = 0.7
-
-[node name="InteriorEnvironmentProbe" type="ReflectionProbe" parent="ReflectionProbes"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -219, -54.5292, -395.947)
-layers = 1024
-size = Vector3(251.42, 61.3035, 140.99)
-interior = true
-cull_mask = 5
-reflection_mask = 4
-ambient_mode = 2
-ambient_color = Color(0.772545, 0.799443, 0.989929, 1)
-ambient_color_energy = 0.5
-
-[node name="InteriorObjectProbe" type="ReflectionProbe" parent="ReflectionProbes"]
-transform = Transform3D(0.722874, 0.0510934, -0.689089, -0.0705051, 0.997511, -4.86195e-08, 0.687374, 0.0485843, 0.724677, -195.867, -59.823, -406.966)
-layers = 1024
-blend_distance = 5.0
-size = Vector3(178.311, 71.6976, 93.1371)
-interior = true
-cull_mask = 1028
-reflection_mask = 65
-ambient_mode = 2
-ambient_color = Color(0.99, 0.396, 0.396, 1)
-ambient_color_energy = 0.2
-
-[node name="InteriorObjectProbe2" type="ReflectionProbe" parent="ReflectionProbes"]
-transform = Transform3D(0.722957, -0.0499074, -0.689089, 0.0688685, 0.997626, 2.23075e-08, 0.687453, -0.0474565, 0.724677, -283.961, -54.5605, -411.474)
-layers = 1024
-blend_distance = 5.0
-size = Vector3(69.1662, 61.3035, 59.3877)
-interior = true
-cull_mask = 1028
-reflection_mask = 65
-ambient_mode = 2
-ambient_color = Color(0.99, 0.93555, 0.7722, 1)
-ambient_color_energy = 0.3
-
-[node name="BeachEnvironmentProbe" type="ReflectionProbe" parent="ReflectionProbes"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -393.955, -66.7991, -500.492)
-layers = 1024
-blend_distance = 5.0
-size = Vector3(293, 119, 288)
-cull_mask = 1042
-reflection_mask = 8
-ambient_mode = 2
-ambient_color = Color(0.589628, 0.605155, 0.906456, 1)
-ambient_color_energy = 0.7
-
-[node name="TownEnvironmentProbe" type="ReflectionProbe" parent="ReflectionProbes"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -275.055, -16.9015, -747.941)
-layers = 1024
-blend_distance = 50.0
-size = Vector3(228, 51, 251)
-cull_mask = 18
-reflection_mask = 2
-ambient_mode = 2
-ambient_color = Color(0.935916, 0.779712, 9.2411e-06, 1)
-ambient_color_energy = 3.5
-
-[node name="TownObjectProbe" type="ReflectionProbe" parent="ReflectionProbes"]
-transform = Transform3D(0.877431, 0, 0.479703, 0, 1, 0, -0.479703, 0, 0.877431, -260.781, -31.8238, -723.818)
-layers = 1024
-size = Vector3(155, 40, 83)
-interior = true
-enable_shadows = true
-cull_mask = 1026
-reflection_mask = 65
-ambient_mode = 2
-ambient_color = Color(0.00749636, 0.417345, 0.6579, 1)
-ambient_color_energy = 0.1
-
-[node name="TownObjectProbe2" type="ReflectionProbe" parent="ReflectionProbes"]
-transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, -228.174, -32.361, -765.04)
-layers = 1024
-size = Vector3(108, 41.0743, 29.187)
-interior = true
-enable_shadows = true
-cull_mask = 1026
-reflection_mask = 65
-ambient_mode = 2
-ambient_color = Color(0.00749636, 0.417345, 0.6579, 1)
-ambient_color_energy = 0.1
 
 [node name="Path" type="Node3D" parent="."]
 
@@ -1664,8 +1675,8 @@ reflectionMaterials = [ExtResource("29_lfji7")]
 [connection signal="Activated" from="Trigger/Object/HallOneWayTrigger" to="Collision/HallOneWay" method="Activate"]
 [connection signal="Activated" from="Trigger/Object/UTurnTrigger" to="Trigger/Object/UTurnTrigger/UTurnPath" method="Activate"]
 [connection signal="Activated" from="Trigger/Object/UTurnTrigger" to="Trigger/Object/UTurnTrigger/Camera" method="Activate"]
-[connection signal="Deactivated" from="Trigger/Object/UTurnTrigger" to="Trigger/Object/UTurnTrigger/BeachPath" method="Activate"]
 [connection signal="Deactivated" from="Trigger/Object/UTurnTrigger" to="Collision/UTurnOneWay" method="Activate"]
+[connection signal="Deactivated" from="Trigger/Object/UTurnTrigger" to="Trigger/Object/UTurnTrigger/BeachPath" method="Activate"]
 [connection signal="Activated" from="Trigger/Object/WallClimbTrigger" to="Trigger/Object/WallClimbTrigger/Camera" method="Activate"]
 [connection signal="Activated" from="Trigger/Object/WallClimbTrigger" to="Trigger/Object/WallClimbTrigger/Path" method="Activate"]
 [connection signal="Deactivated" from="Trigger/Object/WallClimbTrigger" to="Trigger/Object/SidleTrigger/Path" method="Activate"]
@@ -1709,5 +1720,7 @@ reflectionMaterials = [ExtResource("29_lfji7")]
 [connection signal="Activated" from="Visuals/CullingMap/07SLoad" to="Visuals/07SandfallLOD" method="Deactivate"]
 [connection signal="Deactivated" from="Visuals/CullingMap/07SLoad" to="Visuals/07Sandfall" method="Deactivate"]
 [connection signal="Deactivated" from="Visuals/CullingMap/07SLoad" to="Visuals/07SandfallLOD" method="Activate"]
+[connection signal="Activated" from="Lighting/StageTrigger" to="Lighting/dim_light_trigger" method="Activate"]
+[connection signal="Deactivated" from="Lighting/StageTrigger" to="Lighting/dim_light_trigger" method="Deactivate"]
 
 [editable path="Collision"]
