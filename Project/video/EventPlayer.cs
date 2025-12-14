@@ -1,4 +1,5 @@
 using Godot;
+using Godot.Collections;
 using Project.Core;
 
 namespace Project.Interface.Menus;
@@ -6,33 +7,52 @@ namespace Project.Interface.Menus;
 /// <summary>
 /// Plays an event (cutscene) with the correct audio depending on the localization settings
 /// </summary>
+[Tool]
 public partial class EventPlayer : Node
 {
-	[Export] private AudioStream enAudio;
-	[Export] private AudioStream jaAudio;
-	/// <summary> Subtitle time table, separated by spaces. We'll probably want to redo this later. </summary>
-	[Export(PropertyHint.MultilineText)] private string subtitleData;
+	[ExportToolButton("Play")] private Callable Play => new(this, MethodName.PlayFromEditor);
+	[ExportToolButton("Pause")] private Callable Pause => new(this, MethodName.PauseFromEditor);
+
+	[ExportGroup("Cutscene Settings")]
+	[Export] private string englishAudioPath;
+	[Export] private string localizationKeyPrefix;
+	/// <summary> Optional key for unlocking a world ring. Use Lost Prologue for no world ring. </summary>
+	[Export] private SaveManager.WorldEnum worldRing = SaveManager.WorldEnum.LostPrologue;
 	private Gameplay.Triggers.DialogTrigger subtitles;
+
+	[ExportGroup("Components")]
+	[Export] private AnimationPlayer animator;
+	[Export] private AudioStreamPlayer audioPlayer;
+	[Export] private VideoStreamPlayer videoPlayer;
+
+	[ExportGroup("Editor Only")]
+	/// <summary> Subtitles used to preview cutscene in the editor. </summary>
+	[Export] private Label editorSubtitleLabel;
+	[Export] private Control editorSubtitleRoot;
+	[Export] private int editorEventNumber = 1;
+	private int editorKeyIndex = 0;
+	private int editorDialogIndex = 0;
+	private double editorLastUpdateTime;
+	private bool editorIsPlaybackInitialized;
 
 	private bool IsSpecialBook => Menu.menuMemory[Menu.MemoryKeys.ActiveMenu] == (int)Menu.MemoryKeys.SpecialBook;
 
-	[Export] private AudioStreamPlayer audioPlayer;
-	[Export] private VideoStreamPlayer videoPlayer;
-	/// <summary> Optional key for unlocking a world ring. </summary>
-	[Export(PropertyHint.Enum, "None, Sand Oasis, Dinosaur Jungle, Evil Foundry, Levitated Ruin, Pirate Storm, Skeleton Dome, Night Palace")]
-	private SaveManager.WorldEnum worldRing;
-
 	private float skipTimer;
-	private const float SkipLength = 1f; // How long the pause button needs to be held to skip the cutscene
+	/// <summary> How long the pause button needs to be held to skip the cutscene. </summary>
+	private readonly float SkipLength = 1f;
+	/// <summary> Dialog keys are offset by this much so the fade-in lines up with the editor preview. </summary>
+	private readonly float InitialSubtitleOffset = 0.5f;
 
 	public override void _Ready()
 	{
-		if (!string.IsNullOrEmpty(subtitleData))
-			CreateSubtitles();
+		editorSubtitleRoot.Visible = false;
 
-		// TODO Add spanish audio
-		audioPlayer.Stream = SaveManager.UseEnglishVoices ? enAudio : jaAudio;
-		CallDeferred(nameof(StartCutscene));
+		if (Engine.IsEditorHint())
+			return;
+
+		LoadLocalization();
+		CreateSubtitles();
+		CallDeferred(MethodName.StartCutscene);
 
 		if (worldRing != SaveManager.WorldEnum.LostPrologue && !SaveManager.ActiveGameData.IsWorldRingObtained(worldRing))
 		{
@@ -41,16 +61,50 @@ public partial class EventPlayer : Node
 		}
 	}
 
+	private void LoadLocalization()
+	{
+		StringName targetLocale;
+		targetLocale = SaveManager.Config.voiceLanguage switch
+		{
+			SaveManager.VoiceLanguage.Japanese => (StringName)"ja",
+			SaveManager.VoiceLanguage.Spanish => (StringName)"es",
+			_ => (StringName)"en",
+		};
+
+		if (!animator.HasAnimation(targetLocale)) // Fallback to English timings
+			targetLocale = "en";
+
+		animator.AssignedAnimation = targetLocale;
+
+		// Load audio
+		string targetAudio = englishAudioPath.Replace("/en/", $"/{targetLocale}/");
+		if (!ResourceLoader.Exists(targetAudio))
+		{
+			GD.PushError($"Couldn't find audio at {targetAudio}!");
+			targetAudio = englishAudioPath;
+		}
+
+		audioPlayer.Stream = ResourceLoader.Load<AudioStreamOggVorbis>(targetAudio);
+	}
+
 	private void StartCutscene()
 	{
 		videoPlayer.Play();
 		audioPlayer.Play();
+		animator.Seek(0.0);
+		animator.Play();
 
 		subtitles?.Activate();
 	}
 
 	public override void _PhysicsProcess(double _)
 	{
+		if (Engine.IsEditorHint())
+		{
+			ResyncEditorIndex();
+			return;
+		}
+
 		if (TransitionManager.IsTransitionActive)
 			return;
 
@@ -59,8 +113,8 @@ public partial class EventPlayer : Node
 			// Process skipping story cutscene
 			if (Runtime.Instance.IsActionJustPressed("sys_pause", "ui_accept") && !Input.IsActionJustPressed("toggle_fullscreen"))
 			{
-				skipTimer = Mathf.MoveToward(skipTimer, 1, PhysicsManager.physicsDelta);
-				if (Mathf.IsEqualApprox(skipTimer, 1))
+				skipTimer = Mathf.MoveToward(skipTimer, SkipLength, PhysicsManager.physicsDelta);
+				if (Mathf.IsEqualApprox(skipTimer, SkipLength))
 					OnEventFinished();
 
 				return;
@@ -75,24 +129,10 @@ public partial class EventPlayer : Node
 			OnEventFinished();
 	}
 
-	private float GetStartTime(string[] data)
-	{
-		float t = SaveManager.UseEnglishVoices ? data[1].ToFloat() : data[3].ToFloat();
-		if (t == -1) // Fallback to english
-			t = data[1].ToFloat();
-		return t;
-	}
-
-	private float GetSpacing(string[] data)
-	{
-		float t = SaveManager.UseEnglishVoices ? data[2].ToFloat() : data[4].ToFloat();
-		if (t == -1) // Fallback to english
-			t = data[2].ToFloat();
-		return t;
-	}
-
+	/// <summary> Creates a dialog trigger based on the keyframes in an animation. </summary>
 	private void CreateSubtitles()
 	{
+		// TODO Unimplemented.
 		subtitles = new Gameplay.Triggers.DialogTrigger()
 		{
 			IsCutscene = true,
@@ -102,39 +142,37 @@ public partial class EventPlayer : Node
 		};
 		AddChild(subtitles);
 
-		// Calculate the delays and display lengths
-		string[] dataPoints = subtitleData.Split('\n', System.StringSplitOptions.RemoveEmptyEntries);
-		string[] currentData = dataPoints[0].Split('	');
-		string[] nextData = dataPoints[1].Split('	');
-		float previousSpacing = GetStartTime(currentData); // First key is an exception and uses it's start time as delay
-		float nextStartTime = GetStartTime(nextData);
-
-		for (int i = 0; i < dataPoints.Length - 1; i++) // Skip the last key
+		Animation currentAnimation = animator.GetAnimation(animator.AssignedAnimation);
+		int currentDialogIndex = 0;
+		float accumulatedDelay = (float)currentAnimation.TrackGetKeyTime(0, 0) - InitialSubtitleOffset;
+		for (int i = 0; i < currentAnimation.TrackGetKeyCount(0); i++)
 		{
-			subtitles.textKeys.Add(currentData[0]); // Assign key
-			float currentStartTime = GetStartTime(currentData); // When to start subtitles
-			float currentSpacing = GetSpacing(currentData); // Space between this subtitle and the next
+			Dictionary currentKeyData = currentAnimation.TrackGetKeyValue(0, i).As<Dictionary>();
 
-			subtitles.delays.Add(previousSpacing); // Copy from previous delay
-			subtitles.displayLength.Add(nextStartTime - currentStartTime - currentSpacing);
+			// Calculate key length
+			double currentKeyTime = currentAnimation.TrackGetKeyTime(0, i);
+			float keyLength;
+			if (i == currentAnimation.TrackGetKeyCount(0) - 1) // Final key; hide at the end of the cutscene
+				keyLength = currentAnimation.Length - (float)currentKeyTime;
+			else // Change text at next key
+				keyLength = (float)(currentAnimation.TrackGetKeyTime(0, i + 1) - currentKeyTime);
 
-			// Advance read position
-			currentData = nextData;
-			if (i < dataPoints.Length - 2)
-				nextData = dataPoints[i + 2].Split('	');
-			else
-				nextData = dataPoints[i + 1].Split('	');
+			StringName method = currentKeyData["method"].As<StringName>();
 
-			// Update values
-			previousSpacing = currentSpacing;
-			nextStartTime = GetStartTime(nextData);
+			if (method.Equals(MethodName.ShowSubtitles)) // Add a new key
+			{
+				currentDialogIndex++;
+				subtitles.textKeys.Add($"{localizationKeyPrefix}{currentDialogIndex}");
+				subtitles.delays.Add(accumulatedDelay);
+				subtitles.displayLength.Add(keyLength);
+
+				accumulatedDelay = 0f;
+				continue;
+			}
+
+			// Delay the next key
+			accumulatedDelay += keyLength;
 		}
-
-		// Deal with the last key
-		currentData = dataPoints[dataPoints.Length - 1].Split('	');
-		subtitles.textKeys.Add(currentData[0]); // Assign key
-		subtitles.delays.Add(previousSpacing);
-		subtitles.displayLength.Add(currentData[2].ToFloat()); // Final key's spacing is casted to be the display length
 	}
 
 	/// <summary> Called after the cutscene has finished playing. </summary>
@@ -146,5 +184,117 @@ public partial class EventPlayer : Node
 			color = Colors.Black,
 			inSpeed = .5f,
 		});
+	}
+
+	private void ShowSubtitles()
+	{
+		if (!Engine.IsEditorHint())
+			return;
+
+		editorSubtitleRoot.Visible = true;
+		editorSubtitleLabel.Text = Tr($"event{editorEventNumber}_{editorDialogIndex}");
+	}
+
+	private void HideSubtitles()
+	{
+		if (!Engine.IsEditorHint())
+			return;
+
+		editorSubtitleRoot.Visible = false;
+	}
+
+	private void PlayFromEditor()
+	{
+		animator.Play();
+		audioPlayer.Play((float)animator.CurrentAnimationPosition);
+		UpdateEditorLocale();
+		InitializeEditorIndex();
+	}
+
+	private void PauseFromEditor()
+	{
+		audioPlayer.Stop();
+		animator.Pause();
+		editorIsPlaybackInitialized = false;
+	}
+
+	private void UpdateEditorLocale()
+	{
+		if (string.IsNullOrEmpty(animator.CurrentAnimation) ||
+			animator.CurrentAnimation.Equals(TranslationServer.GetLocale()))
+		{
+			return;
+		}
+
+		TranslationServer.SetLocale(animator.CurrentAnimation);
+		GD.Print($"Locale Updated to {animator.CurrentAnimation}");
+	}
+
+	private void InitializeEditorIndex()
+	{
+		if (string.IsNullOrEmpty(animator.CurrentAnimation))
+			return;
+
+		editorKeyIndex = 0;
+		editorDialogIndex = 0;
+		editorLastUpdateTime = animator.CurrentAnimationPosition;
+		HideSubtitles();
+
+		Animation currentAnimation = animator.GetAnimation(animator.CurrentAnimation);
+		for (int i = 0; i < currentAnimation.TrackGetKeyCount(0); i++)
+		{
+			if (currentAnimation.TrackGetKeyTime(0, i) > editorLastUpdateTime)
+				break;
+
+			ProcessEditorKeyframe(currentAnimation.TrackGetKeyValue(0, i).As<Dictionary>());
+		}
+
+		editorIsPlaybackInitialized = true;
+	}
+
+	private void ResyncEditorIndex()
+	{
+		if (string.IsNullOrEmpty(animator.CurrentAnimation))
+		{
+			if (editorIsPlaybackInitialized)
+				PauseFromEditor();
+
+			return;
+		}
+
+		if (!editorIsPlaybackInitialized)
+		{
+			PlayFromEditor();
+			return;
+		}
+
+		Animation currentAnimation = animator.GetAnimation(animator.CurrentAnimation);
+
+		GD.PrintT(editorKeyIndex, currentAnimation.TrackGetKeyTime(0, editorKeyIndex), animator.CurrentAnimationPosition);
+		if (currentAnimation.TrackGetKeyTime(0, editorKeyIndex) > animator.CurrentAnimationPosition ||
+			editorKeyIndex >= currentAnimation.TrackGetKeyCount(0))
+		{
+			return;
+		}
+
+		ProcessEditorKeyframe(currentAnimation.TrackGetKeyValue(0, editorKeyIndex).As<Dictionary>());
+		editorLastUpdateTime = animator.CurrentAnimationPosition;
+	}
+
+	private void ProcessEditorKeyframe(Dictionary key)
+	{
+		editorKeyIndex++;
+
+		StringName method = key["method"].As<StringName>();
+
+		if (method.Equals(MethodName.ShowSubtitles))
+		{
+			editorDialogIndex++;
+			ShowSubtitles();
+			return;
+		}
+
+		if (method.Equals(MethodName.HideSubtitles))
+			HideSubtitles();
 	}
 }
