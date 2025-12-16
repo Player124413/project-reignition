@@ -14,7 +14,7 @@ public partial class EventPlayer : Node
 	[ExportToolButton("Pause")] private Callable Pause => new(this, MethodName.PauseFromEditor);
 
 	[ExportGroup("Cutscene Settings")]
-	[Export] private string englishAudioPath;
+	[Export(PropertyHint.FilePath, "*.ogg")] private string englishAudioPath;
 	[Export] private string localizationKeyPrefix;
 	/// <summary> Optional key for unlocking a world ring. Use Lost Prologue for no world ring. </summary>
 	[Export] private SaveManager.WorldEnum worldRing = SaveManager.WorldEnum.LostPrologue;
@@ -29,7 +29,6 @@ public partial class EventPlayer : Node
 	/// <summary> Subtitles used to preview cutscene in the editor. </summary>
 	[Export] private Label editorSubtitleLabel;
 	[Export] private Control editorSubtitleRoot;
-	[Export] private int editorEventNumber = 1;
 	private int editorKeyIndex = 0;
 	private int editorDialogIndex = 0;
 	private double editorLastUpdateTime;
@@ -52,7 +51,9 @@ public partial class EventPlayer : Node
 		CreateSubtitles();
 		CallDeferred(MethodName.StartCutscene);
 
-		if (worldRing != SaveManager.WorldEnum.LostPrologue && !SaveManager.ActiveGameData.IsWorldRingObtained(worldRing))
+		if (Menu.menuMemory[Menu.MemoryKeys.ActiveMenu] != (int)Menu.MemoryKeys.SpecialBook &&
+			worldRing != SaveManager.WorldEnum.LostPrologue &&
+			!SaveManager.ActiveGameData.IsWorldRingObtained(worldRing))
 		{
 			SaveManager.ActiveGameData.UnlockWorldRing(worldRing);
 			NotificationManager.Instance.AddNotification(NotificationManager.NotificationType.WorldRing, $"unlock_ring_{worldRing.ToString().ToSnakeCase()}");
@@ -191,7 +192,7 @@ public partial class EventPlayer : Node
 			return;
 
 		editorSubtitleRoot.Visible = true;
-		editorSubtitleLabel.Text = Tr($"event{editorEventNumber}_{editorDialogIndex}");
+		editorSubtitleLabel.Text = Tr($"{localizationKeyPrefix}{editorDialogIndex}");
 	}
 
 	private void HideSubtitles()
