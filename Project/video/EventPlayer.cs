@@ -1,3 +1,4 @@
+using System.Numerics;
 using Godot;
 using Godot.Collections;
 using Project.Core;
@@ -10,8 +11,7 @@ namespace Project.Interface.Menus;
 [Tool]
 public partial class EventPlayer : Node
 {
-	[ExportToolButton("Play")] private Callable Play => new(this, MethodName.PlayFromEditor);
-	[ExportToolButton("Pause")] private Callable Pause => new(this, MethodName.PauseFromEditor);
+	[ExportToolButton("Auto Setup")] public Callable AutoSetupCallable => new(this, MethodName.AutoSetup);
 
 	[ExportGroup("Cutscene Settings")]
 	[Export(PropertyHint.FilePath, "*.ogg")] private string englishAudioPath;
@@ -23,7 +23,7 @@ public partial class EventPlayer : Node
 	[ExportGroup("Components")]
 	[Export] private AnimationPlayer animator;
 	[Export] private AudioStreamPlayer audioPlayer;
-	[Export] private VideoStreamPlayer videoPlayer;
+	[Export] private VideoStreamFileLoadPlayer videoPlayer;
 
 	[ExportGroup("Editor Only")]
 	/// <summary> Subtitles used to preview cutscene in the editor. </summary>
@@ -70,6 +70,17 @@ public partial class EventPlayer : Node
 			_ => (StringName)"en",
 		};
 
+		LoadAudioTrack(targetLocale);
+
+		// Load timing animation
+		if (!animator.HasAnimation(targetLocale))
+			targetLocale = "en";
+
+		animator.AssignedAnimation = targetLocale;
+	}
+
+	private void LoadAudioTrack(string targetLocale)
+	{
 		// Load audio
 		string targetAudio = englishAudioPath.Replace("/en/", $"/{targetLocale}/");
 		if (!ResourceLoader.Exists(targetAudio))
@@ -78,13 +89,69 @@ public partial class EventPlayer : Node
 			targetAudio = englishAudioPath;
 		}
 
+		if (audioPlayer.Stream != null && audioPlayer.Stream.ResourcePath.Equals(targetAudio))
+			return;
+
 		audioPlayer.Stream = ResourceLoader.Load<AudioStreamOggVorbis>(targetAudio);
+	}
 
-		// Load timing animation
-		if (!animator.HasAnimation(targetLocale))
-			targetLocale = "en";
+	private void AutoSetup()
+	{
+		string name = Name.ToString().ToCamelCase();
 
-		animator.AssignedAnimation = targetLocale;
+		// Get event number
+		string eventNumber = string.Empty;
+		for (int i = name.Length - 1; i >= 0; i--)
+		{
+			if (name[i] < '0' || name[i] > '9')
+				break;
+
+			eventNumber = $"{name[i]}{eventNumber}";
+		}
+
+		if (string.IsNullOrEmpty(eventNumber))
+		{
+			GD.PrintErr("Couldn't find an event number in the node's name! Cancelling auto-setup.");
+			return;
+		}
+
+		while (eventNumber.Length < 2)
+			eventNumber = $"0{eventNumber}";
+
+		englishAudioPath = $"res://video/event/en/{name}.ogg";
+		localizationKeyPrefix = $"event_{eventNumber}";
+
+		videoPlayer.SetVideoFilePath($"res://video/event/stream/E00{eventNumber}.mp4");
+
+		animator = GetChildOrNull<AnimationPlayer>(-1);
+		if (animator != null) // Animator is already set up.
+			return;
+
+		animator = new AnimationPlayer
+		{
+			Name = "AnimationPlayer"
+		};
+		AddChild(animator);
+		animator.Owner = GetTree().EditedSceneRoot;
+
+		// Create default anim
+		Animation enAnim = new();
+		enAnim.AddTrack(Animation.TrackType.Method);
+		enAnim.TrackSetPath(0, ".");
+		enAnim.Step = 0.1f;
+
+		LoadAudioTrack("en");
+		if (audioPlayer.Stream != null)
+		{
+			enAnim.Length = Mathf.CeilToInt(audioPlayer.Stream.GetLength());
+			audioPlayer.Stream = null;
+		}
+
+		// Create animation library
+		AnimationLibrary animLibrary = new();
+		animLibrary.AddAnimation("en", enAnim);
+
+		animator.AddAnimationLibrary(string.Empty, animLibrary);
 	}
 
 	private void StartCutscene()
@@ -206,6 +273,8 @@ public partial class EventPlayer : Node
 	private void PlayFromEditor()
 	{
 		animator.Play();
+		LoadAudioTrack(animator.CurrentAnimation);
+
 		audioPlayer.Play((float)animator.CurrentAnimationPosition);
 		InitializeEditorIndex();
 	}
@@ -213,6 +282,7 @@ public partial class EventPlayer : Node
 	private void PauseFromEditor()
 	{
 		audioPlayer.Stop();
+		audioPlayer.Stream = null;
 		animator.Pause();
 		editorIsPlaybackInitialized = false;
 	}

@@ -1,13 +1,36 @@
 [gd_scene load_steps=4 format=3 uid="uid://dt2irybq37abg"]
 
 [ext_resource type="PackedScene" uid="uid://ct1tmuno23lj2" path="res://video/Event.tscn" id="1"]
-[ext_resource type="AudioStream" uid="uid://bh2klryhskj5s" path="res://video/event/ja/event10.ogg" id="3"]
-[ext_resource type="AudioStream" uid="uid://gngbj1l4do0n" path="res://video/event/en/event10.ogg" id="4"]
 
-[node name="Event" instance=ExtResource("1")]
-enAudio = ExtResource("4")
-jaAudio = ExtResource("3")
-subtitleData = ""
+[sub_resource type="Animation" id="Animation_yhl5w"]
+length = 58.0
+step = 0.1
+tracks/0/type = "method"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(),
+"transitions": PackedFloat32Array(),
+"values": []
+}
 
-[node name="Video" parent="." index="1"]
-videoFilePath = "res://video/event/stream/E0011.mp4"
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_d4uoj"]
+_data = {
+&"en": SubResource("Animation_yhl5w")
+}
+
+[node name="Event10" node_paths=PackedStringArray("animator") instance=ExtResource("1")]
+englishAudioPath = "res://video/event/en/event10.ogg"
+localizationKeyPrefix = "event_10"
+animator = NodePath("AnimationPlayer")
+
+[node name="Video" parent="Resizer" index="0"]
+videoFilePath = "res://video/event/stream/E0010.mp4"
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." index="3"]
+libraries = {
+&"": SubResource("AnimationLibrary_d4uoj")
+}
