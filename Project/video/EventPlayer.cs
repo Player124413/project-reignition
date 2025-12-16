@@ -119,7 +119,7 @@ public partial class EventPlayer : Node
 			eventNumber = $"0{eventNumber}";
 
 		englishAudioPath = $"res://video/event/en/{name}.ogg";
-		localizationKeyPrefix = $"event_{eventNumber}";
+		localizationKeyPrefix = $"event{eventNumber}_";
 
 		videoPlayer.SetVideoFilePath($"res://video/event/stream/E00{eventNumber}.mp4");
 
