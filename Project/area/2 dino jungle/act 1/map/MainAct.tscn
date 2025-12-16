@@ -257,7 +257,7 @@ Data = ExtResource("2_p4x35")
 InitialCameraSettings = ExtResource("3_51j1g")
 metadata/_edit_group_ = true
 
-[node name="PlanarReflectionRenderer" parent="Static" index="9"]
+[node name="PlanarReflectionRenderer" parent="Static" index="8"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -310, -237, -718)
 
 [node name="MainAct" type="Node3D" parent="."]
@@ -5017,8 +5017,14 @@ transform = Transform3D(0.842181, -0.265909, 1.21244, 0.159256, 1.47621, 0.21313
 [node name="GrassPillar1" parent="MainAct/Cave" instance=ExtResource("50_sikom")]
 transform = Transform3D(1.18177, 0, 0.208378, 0, 1.2, 0, -0.208378, 0, 1.18177, -65.3342, -4.14993, -192.373)
 
+[node name="GrassPillarMesh" parent="MainAct/Cave/GrassPillar1" index="0"]
+layers = 4
+
 [node name="CactusPlatform1" parent="MainAct/Cave" instance=ExtResource("51_xmrkn")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -60.9632, -0.437378, -188.261)
+
+[node name="CactusPlatformMesh" parent="MainAct/Cave/CactusPlatform1" index="0"]
+layers = 4
 
 [node name="GreenMajin1" parent="MainAct/Cave/CactusPlatform1" instance=ExtResource("59_fvrl3")]
 transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 0, 0.399994, 0)
@@ -5026,17 +5032,26 @@ transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 0, 0.3
 [node name="CactusPlatform2" parent="MainAct/Cave" instance=ExtResource("51_xmrkn")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -65.1632, 3.56262, -187.861)
 
+[node name="CactusPlatformMesh" parent="MainAct/Cave/CactusPlatform2" index="0"]
+layers = 4
+
 [node name="GreenMajin2" parent="MainAct/Cave/CactusPlatform2" instance=ExtResource("59_fvrl3")]
 transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 0, 0.5, 0.0999756)
 
 [node name="CactusPlatform3" parent="MainAct/Cave" instance=ExtResource("51_xmrkn")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -69.2632, 7.56262, -189.061)
 
+[node name="CactusPlatformMesh" parent="MainAct/Cave/CactusPlatform3" index="0"]
+layers = 4
+
 [node name="GreenMajin3" parent="MainAct/Cave/CactusPlatform3" instance=ExtResource("59_fvrl3")]
 transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 0, 0.199997, 0)
 
 [node name="GrassPillar2" parent="MainAct/Cave" instance=ExtResource("50_sikom")]
 transform = Transform3D(1.18177, 0, 0.208378, 0, 1.2, 0, -0.208378, 0, 1.18177, -82.334, -1.1, -194.373)
+
+[node name="GrassPillarMesh" parent="MainAct/Cave/GrassPillar2" index="0"]
+layers = 4
 
 [node name="Cactus3" parent="MainAct/Cave" instance=ExtResource("43_4v8c0")]
 transform = Transform3D(0.951252, 0.281168, 0.126749, -0.258819, 0.951251, -0.167731, -0.167731, 0.126749, 0.977651, -77.7734, -1.64995, -187.921)
@@ -5062,6 +5077,9 @@ transform = Transform3D(0.981591, 0.0807556, 0.173081, -0.0795287, 0.996734, -0.
 
 [node name="GrassPillar3" parent="MainAct/Cave" instance=ExtResource("50_sikom")]
 transform = Transform3D(0.984808, 0, 0.173648, 0, 1, 0, -0.173648, 0, 0.984808, -77.734, 0, -214.273)
+
+[node name="GrassPillarMesh" parent="MainAct/Cave/GrassPillar3" index="0"]
+layers = 4
 
 [node name="Spiral" type="Node3D" parent="MainAct"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -439.2, -220.4, -848)
@@ -6968,6 +6986,28 @@ transform = Transform3D(0.333494, 0, -0.942752, 0, 1, 0, 0.942752, 0, 0.333494, 
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.000244141, 0, -4.00003)
 shape = SubResource("BoxShape3D_7im1x")
 
+[connection signal="Activated" from="Static/Trigger/Checkpoints/BoatLCheckpoint" to="Static/Collision/LSideWall" method="Deactivate"]
+[connection signal="Activated" from="Static/Trigger/Checkpoints/BoatLCheckpoint" to="Static/Collision/RSideWall" method="Activate"]
+[connection signal="Teleport" from="Static/Trigger/Checkpoints/BoatLCheckpoint/Checkpoint" to="Static/Collision/LSideWall" method="Deactivate"]
+[connection signal="Teleport" from="Static/Trigger/Checkpoints/BoatLCheckpoint/Checkpoint" to="Static/Collision/RSideWall" method="Activate"]
+[connection signal="Activated" from="Static/Trigger/Checkpoints/BoatRCheckpoint" to="Static/Collision/LSideWall" method="Activate"]
+[connection signal="Activated" from="Static/Trigger/Checkpoints/BoatRCheckpoint" to="Static/Collision/RSideWall" method="Deactivate"]
+[connection signal="Teleport" from="Static/Trigger/Checkpoints/BoatRCheckpoint/Checkpoint" to="Static/Collision/LSideWall" method="Activate"]
+[connection signal="Teleport" from="Static/Trigger/Checkpoints/BoatRCheckpoint/Checkpoint" to="Static/Collision/RSideWall" method="Deactivate"]
+[connection signal="Activated" from="Static/Trigger/Object/Apatos1/ActivateTrigger" to="Static/Collision/WallDinoOneWay" method="Deactivate"]
+[connection signal="JumpFinished" from="Static/Trigger/Object/Apatos1/ActivateTrigger/JumpTrigger" to="Static/Collision/WallDinoOneWay" method="Activate"]
+[connection signal="Activated" from="Static/Trigger/Object/Apatos2/Event" to="Static/Collision/WallDinoRightOneWay" method="Activate"]
+[connection signal="Activated" from="Static/Trigger/Object/Apatos2/Event" to="Static/Collision/WallDinoLeftOneWay" method="Deactivate"]
+[connection signal="Activated" from="Static/Trigger/Object/Apatos2/Event" to="Static/Collision/FloorDinoRight" method="Activate"]
+[connection signal="Activated" from="Static/Trigger/Object/Apatos2/Event" to="Static/Collision/FloorDinoLeft" method="Deactivate"]
+[connection signal="Deactivated" from="Static/Trigger/Object/Apatos2/Event" to="Static/Collision/WallDinoRightOneWay" method="Deactivate"]
+[connection signal="Deactivated" from="Static/Trigger/Object/Apatos2/Event" to="Static/Collision/WallDinoLeftOneWay" method="Activate"]
+[connection signal="Deactivated" from="Static/Trigger/Object/Apatos2/Event" to="Static/Collision/FloorDinoRight" method="Deactivate"]
+[connection signal="Deactivated" from="Static/Trigger/Object/Apatos2/Event" to="Static/Collision/FloorDinoLeft" method="Activate"]
+[connection signal="Respawned" from="Static/Trigger/Object/Apatos2/Event" to="Static/Collision/WallDinoRightOneWay" method="Deactivate"]
+[connection signal="Respawned" from="Static/Trigger/Object/Apatos2/Event" to="Static/Collision/WallDinoLeftOneWay" method="Activate"]
+[connection signal="Respawned" from="Static/Trigger/Object/Apatos2/Event" to="Static/Collision/FloorDinoRight" method="Deactivate"]
+[connection signal="Respawned" from="Static/Trigger/Object/Apatos2/Event" to="Static/Collision/FloorDinoLeft" method="Activate"]
 [connection signal="Activated" from="MainAct/CullingMap/River-L" to="MainAct/River" method="Activate"]
 [connection signal="Deactivated" from="MainAct/CullingMap/River-L" to="MainAct/River" method="Deactivate"]
 [connection signal="Activated" from="MainAct/CullingMap/Chase-U" to="MainAct/Chase" method="Deactivate"]
@@ -7063,3 +7103,9 @@ shape = SubResource("BoxShape3D_7im1x")
 [editable path="Static/Trigger/Object/DinoParaGroup/DinoPara1"]
 [editable path="Static/Trigger/Object/DinoParaGroup/DinoPara2"]
 [editable path="Static/CompletionDemo"]
+[editable path="MainAct/Cave/GrassPillar1"]
+[editable path="MainAct/Cave/CactusPlatform1"]
+[editable path="MainAct/Cave/CactusPlatform2"]
+[editable path="MainAct/Cave/CactusPlatform3"]
+[editable path="MainAct/Cave/GrassPillar2"]
+[editable path="MainAct/Cave/GrassPillar3"]
