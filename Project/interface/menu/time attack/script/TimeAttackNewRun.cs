@@ -11,6 +11,7 @@ public partial class TimeAttackNewRun : Menu
 	[Export] TimeAttack thisParent;
 	[Export] SaveSelect saveSelect;
 	[Export] TimeAttackReady readyMenu;
+	[Export] TimeAttackLevelList levelList;
 	private bool isActive;
 	private int currentSelection;
 	private int maxSelection = 4;
@@ -67,7 +68,7 @@ public partial class TimeAttackNewRun : Menu
 			{
 				TimeAttackManager.Instance.ResetLevelCount();
 				TimeAttackManager.Instance.SetRunType(TimeAttackManager.RunType.GoalPercent);
-
+				levelList.parentMenu = this;
 
 				readyMenu.SetupReadyMenu();
 				newRunAnimator.Play("confirm-" + currentSelection);

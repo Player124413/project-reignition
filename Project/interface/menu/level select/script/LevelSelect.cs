@@ -76,7 +76,6 @@ public partial class LevelSelect : Menu
 		initialCursorPosition = cursor.Position.Y;
 		base.SetUp();
 	}
-
 	protected override void ProcessMenu()
 	{
 		base.ProcessMenu();
@@ -85,30 +84,47 @@ public partial class LevelSelect : Menu
 
 	public override void ShowMenu()
 	{
+		if (menuMemory[MemoryKeys.ActiveMenu] == (int)MemoryKeys.TimeAttack)
+		{
+			menuMemory[MemoryKeys.LevelSelect] = 0;
+			SetUp();
+		}
+
+
 		VerticalSelection = menuMemory[MemoryKeys.LevelSelect];
 		RecalculateListPosition();
 		UpdateListPosition(0);
 
 		animator.Play("show");
-		UpdateDescription();
-
-		for (int i = 0; i < levelOptions.Count; i++)
-			levelOptions[i].ShowOption();
-
-		bool canPlayBgm = !SaveManager.Config.useRetailMenuMusic && IsWorldUnlocked() && bgm?.Stream != null;
-		if (canPlayBgm && bgm?.Playing == false)
+		if (menuMemory[MemoryKeys.ActiveMenu] != (int)MemoryKeys.TimeAttack)
 		{
-			// Change to world specific level select music
-			parentMenu.FadeBgm(.5f);
-			FadeBgm(.5f, true, .5f); // Fade in bgm
-			CurrentBgmTime = parentMenu.CurrentBgmTime; // Sync bgm
-			readyMenu.SetBgmPlayer(bgm); // Update readymenu's bgm player
+			UpdateDescription();
+			for (int i = 0; i < levelOptions.Count; i++)
+				levelOptions[i].ShowOption();
+
+			bool canPlayBgm = !SaveManager.Config.useRetailMenuMusic && IsWorldUnlocked() && bgm?.Stream != null;
+			if (canPlayBgm && bgm?.Playing == false)
+			{
+				// Change to world specific level select music
+				parentMenu.FadeBgm(.5f);
+				FadeBgm(.5f, true, .5f); // Fade in bgm
+				CurrentBgmTime = parentMenu.CurrentBgmTime; // Sync bgm
+				readyMenu.SetBgmPlayer(bgm); // Update readymenu's bgm player
+			}
+			else if (!canPlayBgm)
+			{
+				// As a fallback, play the parent menu's bgm (won't do anything if parent bgm is already playing)
+				parentMenu.PlayBgm();
+				readyMenu.SetBgmPlayer(parentMenu.bgm);
+			}
 		}
-		else if (!canPlayBgm)
+		else
 		{
-			// As a fallback, play the parent menu's bgm (won't do anything if parent bgm is already playing)
-			parentMenu.PlayBgm();
-			readyMenu.SetBgmPlayer(parentMenu.bgm);
+			for (int i = 0; i < levelOptions.Count; i++)
+			{
+				levelOptions[i].EnableTAInfo();
+			}
+
 		}
 	}
 
@@ -120,23 +136,41 @@ public partial class LevelSelect : Menu
 
 	protected override void Confirm()
 	{
-		if (!levelOptions[VerticalSelection].IsUnlocked)
-			return;
+		if (menuMemory[MemoryKeys.ActiveMenu] != (int)MemoryKeys.TimeAttack)
+		{
+			if (!levelOptions[VerticalSelection].IsUnlocked)
+				return;
 
-		base.Confirm();
+			base.Confirm();
+		}
+		else
+		{
+			base.Confirm();
+		}
 	}
 
 	protected override void Cancel()
 	{
 		// Revert bgm music
-		if (bgm?.Playing == true)
+		if (bgm?.Playing == true && menuMemory[MemoryKeys.ActiveMenu] != (int)MemoryKeys.TimeAttack)
 		{
 			FadeBgm(.5f); // Fade out bgm
 			parentMenu.FadeBgm(.5f, true, .5f); // Fade in parent bgm
 			parentMenu.CurrentBgmTime = CurrentBgmTime; // Sync bgm
+			base.Cancel();
+		}
+		else if (menuMemory[MemoryKeys.ActiveMenu] == (int)MemoryKeys.TimeAttack)
+		{
+			base.Cancel();
+			HideMenu();
+			cursorPosition = 0;
+			levelOptions.Clear();
+
+			parentMenu.OpenParentMenu();
+
 		}
 
-		base.Cancel();
+
 	}
 
 	/// <summary> Shows the "Are you ready?" screen. </summary>
@@ -154,10 +188,13 @@ public partial class LevelSelect : Menu
 		if (Mathf.IsZeroApprox(Input.GetAxis("ui_up", "ui_down"))) return;
 
 		VerticalSelection = WrapSelection(VerticalSelection + Mathf.Sign(Input.GetAxis("ui_up", "ui_down")), levelOptions.Count);
+
 		menuMemory[MemoryKeys.LevelSelect] = VerticalSelection;
 		animator.Play("select");
 		animator.Seek(0, true);
-		UpdateDescription();
+
+		if (menuMemory[MemoryKeys.ActiveMenu] != (int)MemoryKeys.TimeAttack)
+			UpdateDescription();
 		StartSelectionTimer();
 		RecalculateListPosition();
 	}

@@ -60,15 +60,24 @@ public partial class TimeAttackManager : Node
 		return Levels_AnyPercent;
 	}
 
+	///<summary> Gets all levels of the selected run </summary>
+	public LevelDataResource[] GetCurrentRun()
+	{
+		return GetCurrentRunLevels(CurrentRunType);
+	}
+
+	///<summary> Gets the current level of the run being played </summary>
 	public LevelDataResource GetCurrentLevel()
 	{
 		return GetCurrentRunLevels(CurrentRunType)[CurrentLevel];
 	}
+	///<summary> Gets the next level of the run being played </summary>
 	public LevelDataResource GetNextLevel()
 	{
 		return GetCurrentRunLevels(CurrentRunType)[CurrentLevel + 1];
 	}
 
+	///<summary> Are we on the last level? </summary>
 	public bool IsLastLevel()
 	{
 		if (GetCurrentRunLevels(CurrentRunType)[CurrentLevel + 1] == null)
@@ -81,4 +90,18 @@ public partial class TimeAttackManager : Node
 	public void ResetLevelCount() => CurrentLevel = 0;
 
 	public void SetRunActive(bool isActive) => IsRunActive = isActive;
+	public void LoadLevel(LevelDataResource level)
+	{
+		TransitionManager.QueueSceneChange(level.LevelPath);
+		TransitionManager.StartTransition(new()
+		{
+			inSpeed = 0.2f,
+			color = Colors.Black,
+			loadAsynchronously = true,
+			disableAutoTransition = true,
+			showMissionDescription = true
+		});
+		TransitionManager.instance.SetMissionDescriptionText(level.MissionTypeKey, level.MissionDescriptionKey);
+		TransitionManager.instance.UpdateLoadingText("load_level");
+	}
 }

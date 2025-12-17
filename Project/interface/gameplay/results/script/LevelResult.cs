@@ -83,10 +83,7 @@ public partial class LevelResult : Control
 			if (Runtime.Instance.IsActionJustPressed("sys_cancel", "ui_cancel") && !TimeAttackManager.Instance.IsRunActive) // Retry stage
 				TransitionManager.instance.QueuedScene = string.Empty;
 			else if (TimeAttackManager.Instance.IsRunActive)
-			{
 				TimeAttackManager.Instance.IncreaseLevel();
-				TransitionManager.instance.QueuedScene = "res://interface/menu/time attack/TimeAttackReady.tscn";
-			}
 
 			else// if (Level.storyEventIndex == 0) // Load main menu
 				TransitionManager.instance.QueuedScene = TransitionManager.MenuScenePath;
@@ -95,7 +92,10 @@ public partial class LevelResult : Control
 			//TransitionManager.QueueSceneChange($"{TransitionManager.EVENT_SCENE_PATH}{Level.storyEventIndex}.tscn");
 
 			// Actual scene transition is handled by the experience results screen (which is connected via this signal)
-			EmitSignal(SignalName.ContinuePressed);
+			if (!TimeAttackManager.Instance.IsRunActive)
+				EmitSignal(SignalName.ContinuePressed);
+			else
+				TimeAttackManager.Instance.LoadLevel(TimeAttackManager.Instance.GetCurrentLevel());
 		}
 	}
 
@@ -159,6 +159,7 @@ public partial class LevelResult : Control
 	public void SetInputProcessing(bool value) => isProcessing = value;
 	/// <summary> Mutes the gameplay sfx audio channel. </summary>
 	private void MuteGameplaySoundEffects() => SoundManager.SetAudioBusVolume(SoundManager.AudioBuses.GameSfx, 0);
+
 
 	public void PlayRankQuote()
 	{

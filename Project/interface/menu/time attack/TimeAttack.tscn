@@ -1,4 +1,4 @@
-[gd_scene load_steps=33 format=3 uid="uid://bihux6ieik30s"]
+[gd_scene load_steps=34 format=3 uid="uid://bihux6ieik30s"]
 
 [ext_resource type="Script" uid="uid://cae8orej62amb" path="res://interface/menu/time attack/script/TimeAttack.cs" id="1_vs7fe"]
 [ext_resource type="Texture2D" uid="uid://cno436k6axxi5" path="res://interface/menu/main/texture/background.png" id="1_w3q3t"]
@@ -16,6 +16,7 @@
 [ext_resource type="PackedScene" uid="uid://mpx28q1qmiyp" path="res://interface/menu/time attack/TimeAttackReady.tscn" id="14_khjqs"]
 [ext_resource type="AudioStream" uid="uid://vx6xk003rnh0" path="res://sound/ost/bonus disc/Time Attack Loop Fixed.mp3" id="14_xy5ec"]
 [ext_resource type="Script" uid="uid://cj76gvi7tbku6" path="res://sound/script/BGMPlayer.cs" id="15_khjqs"]
+[ext_resource type="PackedScene" uid="uid://dno4ayd56ben3" path="res://interface/menu/time attack/TimeAttackLevelList.tscn" id="17_f8140"]
 
 [sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_pyiyw"]
 blend_mode = 1
@@ -1656,26 +1657,33 @@ offset_top = 0.0
 offset_bottom = 256.0
 grow_vertical = 1
 
-[node name="TimeAttackNewRun" parent="." node_paths=PackedStringArray("thisParent", "saveSelect", "readyMenu", "parentMenu", "bgm") instance=ExtResource("11_pyiyw")]
+[node name="TimeAttackNewRun" parent="." node_paths=PackedStringArray("thisParent", "saveSelect", "readyMenu", "levelList", "parentMenu", "bgm") instance=ExtResource("11_pyiyw")]
 layout_mode = 1
 thisParent = NodePath("..")
 saveSelect = NodePath("../SaveSelect")
 readyMenu = NodePath("../TimeAttackReady")
+levelList = NodePath("../TimeAttackLevelList")
 parentMenu = NodePath("..")
-submenus = Array[NodePath]([])
+submenus = Array[NodePath]([NodePath("../SaveSelect")])
 bgm = NodePath("../BGM")
 
 [node name="SaveSelect" parent="." instance=ExtResource("13_jpw6d")]
 visible = false
 layout_mode = 1
 descriptionText = "ta_warning_loadsave"
-submenus = Array[NodePath]([NodePath("../TimeAttackReady")])
+submenus = Array[NodePath]([NodePath("../TimeAttackLevelList")])
 
 [node name="TimeAttackReady" parent="." node_paths=PackedStringArray("parentMenu", "bgm") instance=ExtResource("14_khjqs")]
 layout_mode = 1
 parentMenu = NodePath("../TimeAttackNewRun")
 bgm = NodePath("../BGM")
 isProcessing = false
+
+[node name="TimeAttackLevelList" parent="." node_paths=PackedStringArray("readyMenu") instance=ExtResource("17_f8140")]
+visible = false
+layout_mode = 1
+readyMenu = NodePath("../TimeAttackReady")
+submenus = Array[NodePath]([NodePath("../TimeAttackReady")])
 
 [node name="TimeAttackAnimator" type="AnimationPlayer" parent="."]
 libraries = {

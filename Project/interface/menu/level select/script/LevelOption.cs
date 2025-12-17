@@ -19,7 +19,14 @@ public partial class LevelOption : Control
 	[Export] private TextureRect[] fireSoulRects;
 	[Export] private Texture2D fireSoulSprite;
 	[Export] private Texture2D noFireSoulSprite;
+	[Export] private Sprite2D light;
+	[Export] private Label newLabel;
+	[Export] private TextureRect rank;
 	[Export] private AnimationPlayer animator;
+
+	[Export] private Control timeAttackLevelOption;
+	[Export] private Label missionLabelTA;
+	[Export] private Label areaLabelTA;
 
 	private readonly string NoMedalAnimation = "no-medal";
 	private readonly string GoldAnimation = "gold";
@@ -122,5 +129,20 @@ public partial class LevelOption : Control
 				break;
 		}
 		animator.Advance(0.0);
+	}
+
+	public void EnableTAInfo()
+	{
+		missionLabel.Visible = false;
+		fireSoulParent.Visible = false;
+		light.Visible = false;
+		newLabel.Visible = false;
+		rank.Visible = false;
+
+		timeAttackLevelOption.Visible = true;
+		missionLabelTA.Text = data.MissionTypeKey;
+		areaLabelTA.Text = data.AreaKey;
+
+
 	}
 }
