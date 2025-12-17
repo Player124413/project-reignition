@@ -605,10 +605,10 @@ public partial class StageSettings : Node3D
 		// Process save data after emitting level completion
 		CalculateTechnicalBonus(); // Recalculate technical bonus
 		UpdateSaveData();
-		ProcessAchievements();
+		ProcessAchievements(wasSuccessful);
 	}
 
-	private void ProcessAchievements()
+	private void ProcessAchievements(bool wasSuccessful)
 	{
 		if (Data.LevelID == ErazorLevelId)
 		{
@@ -622,7 +622,7 @@ public partial class StageSettings : Node3D
 			AchievementManager.Instance.UnlockAchievement(TrueHeroAchievementName);
 		}
 
-		if (SaveManager.ActiveSkillRing.TotalCost <= 100)
+		if (wasSuccessful && SaveManager.ActiveSkillRing.TotalCost <= 100)
 		{
 			SaveManager.SharedData.MinimalSkillCount = (int)Mathf.MoveToward(SaveManager.SharedData.MinimalSkillCount, int.MaxValue, 1);
 
