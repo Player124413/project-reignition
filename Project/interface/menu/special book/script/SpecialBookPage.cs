@@ -150,7 +150,7 @@ public partial class SpecialBookPage : Resource
 
 	public string AchievementKey { get; private set; }
 	public string AchievementName { get; private set; }
-	public int AchievementType { get; private set; }
+	public int AchievementType { get; private set; } = 1;
 
 	public UnlockTypeEnum UnlockType { get; private set; }
 	public enum UnlockTypeEnum
