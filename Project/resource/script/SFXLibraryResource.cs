@@ -212,21 +212,19 @@ public partial class SFXLibraryResource : Resource
 
 	[ExportToolButton("Refresh Resource")]
 	public Callable RefreshResourceGroup => Callable.From(NotifyPropertyListChanged);
-	[Export]
-	private SFXLibraryResource fallbackResource;
-	[Export]
-	private Array<StringName> keys;
+	[ExportToolButton("Auto-setup Localization Audio")]
+	public Callable SetUpLocalizationGroup => Callable.From(LocalizeAudioStreams);
+	[Export] private SFXLibraryResource fallbackResource;
+	[Export] private Array<StringName> keys;
 	public int KeyCount => keys.Count;
 	/// <summary> Arrays are ordered in Channel -> Key -> Index. </summary>
-	[Export]
-	private Array<Array<Array<AudioStream>>> streams;
+	[Export] private Array<Array<Array<AudioStream>>> streams;
 
 	/// <summary>
 	/// How many channels does this library contain?
-	/// Voice libraries should have 2. [0 -> En, 1 -> Ja]
+	/// Voice libraries should have 3. [0 -> En, 1 -> Ja, 2 -> Es]
 	/// </summary>
-	[Export]
-	private int channelCount = 1;
+	[Export] private int channelCount = 1;
 
 	/// <summary> Current channel index being edited in the inspector. </summary>
 	private int channelEditingIndex;
@@ -241,6 +239,41 @@ public partial class SFXLibraryResource : Resource
 		Before, // Moves the current key before the target key
 		After, // Moves the current key after the target key
 		Swap, // Swaps two keys with each other
+	}
+
+	/// <summary> Automatically set up localized audio streams. Do NOT use this for unlocalized sound effects. </summary>
+	private void LocalizeAudioStreams()
+	{
+		Array<Array<Array<AudioStream>>> tempStreams = [];
+		tempStreams.Add(streams[0]);
+
+		for (int i = 1; i < (int)SaveManager.VoiceLanguage.Count; i++)
+		{
+			tempStreams.Add([]); // Add a language slot
+			string lang = SaveManager.VoiceLanguageToGodotLocale((SaveManager.VoiceLanguage)i);
+
+			for (int j = 0; j < tempStreams[0].Count; j++)
+			{
+				tempStreams[i].Add([]); // Add a dialog slot
+
+				for (int k = 0; k < streams[0][j].Count; k++)
+				{
+					// Add the actual audio files.
+					string targetAudioFile = streams[0][j][k].ResourcePath;
+					targetAudioFile = targetAudioFile.Replace("/en/", $"/{lang}/");
+					if (ResourceLoader.Exists(targetAudioFile, "AudioStream"))
+					{
+						tempStreams[i][j].Add(ResourceLoader.Load<AudioStream>(targetAudioFile));
+						continue;
+					}
+
+					GD.PrintErr($"Couldn't load audio file at '{targetAudioFile}.'");
+					tempStreams[i][j].Add(null); // Add a dialog slot
+				}
+			}
+		}
+
+		streams = tempStreams;
 	}
 
 	/// <summary>

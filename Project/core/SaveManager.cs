@@ -73,6 +73,17 @@ public partial class SaveManager : Node
 	public bool IsQuickLoadAlertEnabled;
 	private const string ConfigFileName = "config.cfg";
 
+	/// <summary> Converts a given VoiceLanguage to match Godot's internal localization key. </summary>
+	public static string VoiceLanguageToGodotLocale(VoiceLanguage lang)
+	{
+		return lang switch
+		{
+			VoiceLanguage.Japanese => "ja",
+			VoiceLanguage.Spanish => "es",
+			_ => "en",
+		};
+	}
+
 	#region Config Enums
 	public enum ControllerType
 	{

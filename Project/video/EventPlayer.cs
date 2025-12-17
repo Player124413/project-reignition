@@ -62,14 +62,7 @@ public partial class EventPlayer : Node
 
 	private void LoadLocalization()
 	{
-		StringName targetLocale;
-		targetLocale = SaveManager.Config.voiceLanguage switch
-		{
-			SaveManager.VoiceLanguage.Japanese => (StringName)"ja",
-			SaveManager.VoiceLanguage.Spanish => (StringName)"es",
-			_ => (StringName)"en",
-		};
-
+		StringName targetLocale = SaveManager.VoiceLanguageToGodotLocale(SaveManager.Config.voiceLanguage);
 		LoadAudioTrack(targetLocale);
 
 		// Load timing animation
