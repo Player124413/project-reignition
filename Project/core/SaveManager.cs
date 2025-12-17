@@ -73,6 +73,17 @@ public partial class SaveManager : Node
 	public bool IsQuickLoadAlertEnabled;
 	private const string ConfigFileName = "config.cfg";
 
+	/// <summary> Converts a given VoiceLanguage to match Godot's internal localization key. </summary>
+	public static string VoiceLanguageToGodotLocale(VoiceLanguage lang)
+	{
+		return lang switch
+		{
+			VoiceLanguage.Japanese => "ja",
+			VoiceLanguage.Spanish => "es",
+			_ => "en",
+		};
+	}
+
 	#region Config Enums
 	public enum ControllerType
 	{
@@ -110,6 +121,9 @@ public partial class SaveManager : Node
 		BrazilianPortuguese,
 		Polish,
 		Chinese,
+		Turkish,
+		Swedish,
+		Russian,
 		Count
 	}
 
@@ -437,6 +451,9 @@ public partial class SaveManager : Node
 			"pt" => TextLanguage.BrazilianPortuguese,
 			"pl" => TextLanguage.Polish,
 			"zh" => TextLanguage.Chinese,
+			"tr" => TextLanguage.Turkish,
+			"se" => TextLanguage.Swedish,
+			"ru" => TextLanguage.Russian,
 			_ => TextLanguage.English,
 		};
 	}
@@ -650,6 +667,15 @@ public partial class SaveManager : Node
 				break;
 			case TextLanguage.Chinese:
 				TranslationServer.SetLocale("zh");
+				break;
+			case TextLanguage.Turkish:
+				TranslationServer.SetLocale("tr");
+				break;
+			case TextLanguage.Swedish:
+				TranslationServer.SetLocale("se");
+				break;
+			case TextLanguage.Russian:
+				TranslationServer.SetLocale("ru");
 				break;
 			default:
 				// Prefer the retranslation for all languages except when using the voiceover

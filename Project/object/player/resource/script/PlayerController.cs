@@ -49,6 +49,8 @@ public partial class PlayerController : CharacterBody3D
 		StateMachine.Initialize(this);
 
 		CanDoubleJump = true;
+		CanAirBoost = true;
+
 		ChangeHitbox("RESET");
 		ResetCheckpointOrientation();
 		SnapToGround();
@@ -299,15 +301,30 @@ public partial class PlayerController : CharacterBody3D
 
 		bool isCornerCollision = IsInWallCorner(castDirection, castLength);
 		float wallDelta = ExtensionMethods.DeltaAngleRad(ExtensionMethods.CalculateForwardAngle(WallRaycastHit.normal.RemoveVertical(), IsOnGround ? PathFollower.Up() : Vector3.Up), MovementAngle);
+		if (SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.FreeRoam))
+			wallDelta = Mathf.Abs(wallDelta);
+
 		if (wallDelta >= Mathf.Pi * .8f || isCornerCollision) // Process head-on collision
 		{
 			// Cancel speed break
-			if (Skills.IsSpeedBreakActive && !WallRaycastHit.collidedObject.IsInGroup("level wall"))
+			if (Skills.IsSpeedBreakActive)
 			{
 				float pathDelta = ExtensionMethods.DeltaAngleRad(PathFollower.BackAngle, ExtensionMethods.CalculateForwardAngle(WallRaycastHit.normal));
+				if (SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.FreeRoam))
+					pathDelta = Mathf.Abs(pathDelta);
+
 				if (!isCornerCollision && pathDelta >= Mathf.Pi * .25f) // Snap to path direction
 				{
-					MovementAngle = PathFollower.ForwardAngle;
+					if (SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.FreeRoam) &&
+						ExtensionMethods.DotAngle(MovementAngle, PathFollower.ForwardAngle) < 0)
+					{
+						MovementAngle = PathFollower.BackAngle;
+					}
+					else
+					{
+						MovementAngle = PathFollower.ForwardAngle;
+					}
+
 					return;
 				}
 
@@ -622,6 +639,7 @@ public partial class PlayerController : CharacterBody3D
 	#region State
 	public bool CanJumpDash { get; set; }
 	public bool CanDoubleJump { get; set; }
+	public bool CanAirBoost { get; set; }
 	public bool IsJumpDashing { get; set; }
 	public bool IsHomingAttacking { get; set; }
 	public bool IsPerfectHomingAttacking { get; set; }
@@ -636,6 +654,20 @@ public partial class PlayerController : CharacterBody3D
 	/// <summary> True while the player is defeated but hasn't respawned yet. </summary>
 	public bool IsDefeated { get; set; }
 	public bool AllowLandingSkills { get; set; }
+
+	public bool IsBackflipInputValid()
+	{
+		if (IsLockoutDisablingAction(LockoutResource.ActionFlags.Backflip))
+			return false;
+
+		if (Mathf.IsZeroApprox(Controller.GetInputStrength()))
+			return false;
+
+		if (SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.FreeRoam))
+			return Controller.IsHoldingDirection(Controller.GetTargetInputAngle(), MovementAngle + Mathf.Pi);
+
+		return Controller.IsHoldingDirection(Controller.GetTargetInputAngle(), PathFollower.BackAngle);
+	}
 
 	[ExportGroup("States")]
 	[Export] private CountdownState countdownState;
@@ -662,6 +694,7 @@ public partial class PlayerController : CharacterBody3D
 	}
 
 	[Export] private LaunchRingState launchRingState;
+	public bool IsLaunchRingActive => launchRingState.Launcher != null;
 	public void StartLaunchRing(LaunchRing launcher)
 	{
 		launchRingState.Launcher = launcher;
@@ -685,6 +718,7 @@ public partial class PlayerController : CharacterBody3D
 	}
 
 	[Export] private PathTravellerState pathTravellerState;
+	public bool IsPathTravellerActive => pathTravellerState.Traveller != null;
 	public void StartPathTraveller(PathTraveller traveller)
 	{
 		pathTravellerState.Traveller = traveller;
@@ -729,6 +763,10 @@ public partial class PlayerController : CharacterBody3D
 		quickStepState.IsSteppingRight = isSteppingRight;
 		StateMachine.CallDeferred(PlayerStateMachine.MethodName.ChangeState, quickStepState);
 	}
+
+	[Export] private AirBoostState airBoostState;
+	public bool IsAirBoosting => StateMachine.CurrentState == airBoostState;
+	public void StartAirBoost() => StateMachine.ChangeState(airBoostState);
 
 	[Export] private LightSpeedDashState lightSpeedDashState;
 	public bool IsLightDashing => lightSpeedDashState.CurrentTarget != null;
@@ -835,6 +873,8 @@ public partial class PlayerController : CharacterBody3D
 		driftState.Trigger = trigger;
 		StateMachine.ChangeState(driftState);
 	}
+
+	public bool IsDriftTriggerEqualTo(DriftTrigger trigger) => driftState.Trigger == trigger;
 
 	[Export] private IvyState ivyState;
 	public void StartIvy(Ivy trigger)
@@ -1132,6 +1172,7 @@ public partial class PlayerController : CharacterBody3D
 
 		IsDefeated = false;
 		IsMovingBackward = false;
+		IsGrindstepping = false;
 		MoveSpeed = VerticalSpeed = 0;
 
 		// Clear any collision exceptions
@@ -1256,6 +1297,7 @@ public partial class PlayerController : CharacterBody3D
 
 	public void Deactivate()
 	{
+		Engine.TimeScale = 1f;
 		if (Skills.IsUsingBreakSkills)
 			Skills.CancelBreakSkills();
 

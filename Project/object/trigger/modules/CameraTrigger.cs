@@ -20,6 +20,7 @@ public partial class CameraTrigger : StageTriggerModule
 	public bool UseDistanceBlending => distanceBlending != 0;
 
 	[Export] public CameraTransitionType transitionType;
+	[Export] public CameraTransitionType deactivateTransitionType;
 	[Export] public bool enableInputBlending;
 
 	/// <summary> Must be assigned to something. </summary>
@@ -56,13 +57,16 @@ public partial class CameraTrigger : StageTriggerModule
 		if (data.SettingsResource != settings || !IsOverridingCameraTransform) return;
 
 		if (data.SettingsResource.copyPosition)
-			data.Position = GlobalPosition;
+		{
+			data.Position = _followObject.GlobalPosition;
+			data.ResetPhysicsInterpolation = true;
+		}
 
 		if (data.SettingsResource.copyRotation)
-			data.RotationBasis = GlobalBasis;
+			data.RotationBasis = _followObject.GlobalBasis;
 
-		if (data.SettingsResource.copyFov && _referenceCamera != null)
-			data.Fov = _referenceCamera.Fov;
+		if (data.SettingsResource.copyFov)
+			data.Fov = _referenceCamera != null ? _referenceCamera.Fov : 0;
 	}
 
 	public override void Activate()
@@ -119,6 +123,7 @@ public partial class CameraTrigger : StageTriggerModule
 		{
 			BlendTime = Mathf.IsEqualApprox(deactivationTransitionTime, -1) ? transitionTime : deactivationTransitionTime,
 			SettingsResource = previousSettings,
+			TransitionType = deactivateTransitionType,
 			Position = previousStaticPosition, // Restore cached static position
 			RotationBasis = previousStaticRotation // Restore cached static rotation
 		}, enableInputBlending);

@@ -30,7 +30,7 @@
 [ext_resource type="Script" uid="uid://c65ffkknyq6gr" path="res://addons/custom_nodes/script/GroupGpuParticles3D.cs" id="21_nenuf"]
 [ext_resource type="Texture2D" uid="uid://dvioww06e1hj3" path="res://effect/particle/texture/flame/flame explosion.png" id="22_gd0vj"]
 [ext_resource type="Material" uid="uid://boyiki4rgce2h" path="res://effect/particle/material/environment/Common Dust Splatter.tres" id="22_r2x5i"]
-[ext_resource type="Material" uid="uid://kuasxg4mhmuo" path="res://object/player/resource/effect/material/Aegis Feather.tres" id="24_8do38"]
+[ext_resource type="Material" uid="uid://kuasxg4mhmuo" path="res://effect/particle/material/Aegis Feather.tres" id="24_8do38"]
 [ext_resource type="Material" uid="uid://2uyghhoj7ydh" path="res://object/player/resource/effect/material/Aegis Dust.tres" id="24_50bad"]
 [ext_resource type="Material" uid="uid://cn2oss03xobla" path="res://effect/particle/material/environment/Sand Dust.tres" id="24_k1k5o"]
 [ext_resource type="Material" uid="uid://b4847susbcf6p" path="res://effect/particle/material/Ember Purple Billboard.tres" id="25_1c1xs"]
@@ -134,12 +134,15 @@ angle_min = -180.0
 angle_max = 180.0
 direction = Vector3(0, 1, 0)
 spread = 80.0
+initial_velocity_min = 1.0
+initial_velocity_max = 2.0
 gravity = Vector3(0, 0, 0)
 damping_min = 3.0
 damping_max = 3.0
 scale_min = 0.4
 scale_max = 0.6
 scale_curve = SubResource("CurveTexture_ftcpn")
+color = Color(1, 1, 1, 0.19607843)
 color_ramp = SubResource("GradientTexture1D_2r5b0")
 
 [sub_resource type="QuadMesh" id="QuadMesh_g63sh"]
@@ -1031,18 +1034,21 @@ curve = SubResource("Curve_5yuv2")
 
 [sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_k03e6"]
 lifetime_randomness = 0.4
-emission_shape_offset = Vector3(0, 0.3, 0)
+emission_shape_offset = Vector3(0, 0.1, -0.2)
+emission_shape = 3
+emission_box_extents = Vector3(0.2, 0, 0)
 angle_min = -180.0
 angle_max = 180.0
-direction = Vector3(0, 0.1, -1)
+direction = Vector3(0, 0.2, -1)
 spread = 5.0
-initial_velocity_min = 3.0
-initial_velocity_max = 6.0
+initial_velocity_min = 2.0
+initial_velocity_max = 4.0
 gravity = Vector3(0, 0, 0)
 damping_min = 4.0
 damping_max = 8.0
 attractor_interaction_enabled = false
-scale_min = 0.5
+scale_min = 0.19999999
+scale_max = 0.5
 scale_curve = SubResource("CurveTexture_6r238")
 color = Color(1, 1, 1, 0.196078)
 color_ramp = SubResource("GradientTexture1D_r7dut")
@@ -1532,6 +1538,7 @@ gravity = Vector3(0, 0, 0)
 scale_min = 2.0
 scale_max = 5.0
 scale_curve = SubResource("CurveTexture_nf18u")
+color = Color(1, 1, 1, 0.19607843)
 alpha_curve = SubResource("CurveTexture_5h5ag")
 anim_speed_min = 1.0
 anim_speed_max = 2.0
@@ -1593,7 +1600,7 @@ attenuation_filter_cutoff_hz = 20500.0
 [node name="FootstepChannel" type="AudioStreamPlayer3D" parent="SFX"]
 process_mode = 1
 unit_size = 20.0
-max_db = -3.0
+max_db = 0.0
 max_distance = 100.0
 bus = &"GAME SFX"
 attenuation_filter_cutoff_hz = 20500.0
@@ -2151,6 +2158,7 @@ cast_shadow = 0
 gi_mode = 0
 emitting = false
 amount = 16
+lifetime = 0.2
 fixed_fps = 0
 interpolate = false
 process_material = SubResource("ParticleProcessMaterial_k03e6")

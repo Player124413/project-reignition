@@ -1,4 +1,4 @@
-[gd_scene load_steps=34 format=3 uid="uid://dx5vkwdack8mp"]
+[gd_scene load_steps=36 format=3 uid="uid://dx5vkwdack8mp"]
 
 [ext_resource type="PackedScene" uid="uid://c5ajp56pbyegl" path="res://area/6 skeleton dome/act 2/Static.tscn" id="1_gj3fe"]
 [ext_resource type="Resource" uid="uid://b4oirghsq16yh" path="res://resource/level data/skeleton dome/Act2Pearless.tres" id="2_42aaq"]
@@ -11,7 +11,7 @@
 [ext_resource type="PackedScene" uid="uid://cl7a6swbawl4b" path="res://area/6 skeleton dome/object/platform/PlatformExteriorEnd.tscn" id="8_so3qg"]
 [ext_resource type="PackedScene" uid="uid://dee1migehwfmq" path="res://area/6 skeleton dome/object/platform/PlatformExterior.tscn" id="9_1gk4q"]
 [ext_resource type="PackedScene" uid="uid://cvjx50c0en38" path="res://area/6 skeleton dome/object/obstacle/Door.tscn" id="11_t41km"]
-[ext_resource type="PackedScene" uid="uid://c2etn7ijwk0bg" path="res://area/6 skeleton dome/object/obstacle/BonePillar.tscn" id="12_e5oj0"]
+[ext_resource type="PackedScene" uid="uid://bilqmq7mc0jrm" path="res://area/6 skeleton dome/object/obstacle/BonePillar.tscn" id="12_e5oj0"]
 [ext_resource type="PackedScene" uid="uid://bqvtcp8tkbfyt" path="res://object/stage/common/SpikeBall.tscn" id="13_suuqc"]
 [ext_resource type="PackedScene" uid="uid://b1daf70kelhld" path="res://area/6 skeleton dome/object/platform/PlatformCavernLarge.tscn" id="14_5421h"]
 [ext_resource type="PackedScene" uid="uid://cxb1fxhrsja13" path="res://object/stage/common/SpikeBallStatic.tscn" id="15_2f27y"]
@@ -23,6 +23,7 @@
 [ext_resource type="PackedScene" uid="uid://b0uekqdfkbg6h" path="res://object/stage/common/ItemBox.tscn" id="23_v1o21"]
 [ext_resource type="PackedScene" uid="uid://dxepb172kmp8n" path="res://object/stage/common/Goal.tscn" id="24_ka07w"]
 [ext_resource type="PackedScene" uid="uid://b8m1x0tudbcbd" path="res://object/stage/common/Spring.tscn" id="24_t8vcf"]
+[ext_resource type="PackedScene" uid="uid://gqxmlgiwtikn" path="res://object/trigger/BigTrigger.tscn" id="25_42aaq"]
 [ext_resource type="PackedScene" uid="uid://d0b2gvx7s6s8u" path="res://object/stage/pickups/Pearl.tscn" id="29_yimen"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_oqbsp"]
@@ -63,6 +64,9 @@ point_count = 3
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_42aaq"]
 size = Vector3(35, 30, 5)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_c0g3x"]
+size = Vector3(6, 3, 5)
 
 [node name="World" type="Node"]
 
@@ -5412,7 +5416,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -19.6157, 0, -3.9018)
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -19.9037, 0, -1.96034)
 
 [node name="PlatformExteriorEnd1" parent="PearlessAct/Arena" instance=ExtResource("8_so3qg")]
-transform = Transform3D(1.23607, -1.08061e-07, -3.80423, -3.49691e-07, -4, 0, -3.80423, 3.32576e-07, -1.23607, -53, 4, -16)
+transform = Transform3D(1.2360686, -2.3330196e-07, -3.804226, -6.039832e-07, -5, 4.1921975e-13, -3.804226, 7.1802754e-07, -1.2360686, -53, 5, -16)
 
 [node name="PlatformExterior1" parent="PearlessAct/Arena/PlatformExteriorEnd1" instance=ExtResource("9_1gk4q")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 4)
@@ -13936,8 +13940,20 @@ transform = Transform3D(0.521978, 0, -0.852959, 0, 1, 0, 0.852959, 0, 0.521978, 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="PearlessAct/Arena/Goal"]
 shape = SubResource("BoxShape3D_42aaq")
 
+[node name="BigTrigger" parent="." instance=ExtResource("25_42aaq")]
+transform = Transform3D(0.99939084, 0, 0.034899496, 0, 1, 0, -0.034899496, 0, 0.99939084, 936, 7.7, -1019)
+
+[node name="Camera" parent="BigTrigger" index="1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, -8)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="BigTrigger"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.6, -7, 19)
+shape = SubResource("BoxShape3D_c0g3x")
+
 [connection signal="Activated" from="PearlessAct/Arena/PlatformGroup/Switch1" to="PearlessAct/Arena/PlatformGroup/Spring1" method="ShowLauncher"]
 [connection signal="Activated" from="PearlessAct/Arena/PlatformGroup/Platform/Switch2" to="PearlessAct/Arena/PlatformGroup/Platform/Spring2" method="ShowLauncher"]
 
 [editable path="Static"]
 [editable path="Static/Collision"]
+[editable path="BigTrigger"]
+[editable path="BigTrigger/Big"]

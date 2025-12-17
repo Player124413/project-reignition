@@ -8,28 +8,21 @@ namespace Project.Gameplay.Objects;
 /// </summary>
 public partial class DestructableObject : Node3D
 {
-	[Signal]
-	public delegate void ShatteredEventHandler();
+	[Signal] public delegate void ShatteredEventHandler();
 
 	private Tween tweener;
 
-	[Export]
-	private float pieceMass;
+	[Export] private float pieceMass;
 	[Export(PropertyHint.Range, "-128,128")]
 	private float gravityScale = 1;
-	[Export]
-	public bool shakeScreenOnShatter = true;
-	[Export]
-	/// <summary> Stop the player when being shattered? </summary>
+	[Export] public bool shakeScreenOnShatter = true;
+	[Export] /// <summary> Stop the player when being shattered? </summary>
 	private bool stopPlayerOnShatter;
-	[Export]
-	private bool damagePlayer;
+	[Export] private bool damagePlayer;
 
-	[Export]
-	/// <summary> Don't collide with the environment? </summary>
+	[Export] /// <summary> Don't collide with the environment? </summary>
 	private bool disableEnvironmentCollision = true;
-	[Export]
-	/// <summary> Don't automatically respawn this object. Call Respawn() manually instead. </summary>
+	[Export] /// <summary> Don't automatically respawn this object. Call Respawn() manually instead. </summary>
 	private bool disableRespawn;
 
 	[Export(PropertyHint.Flags, "PlayerCollision,ObjectCollision,AttackSkill,JumpDash,SpeedBreak")]
@@ -45,8 +38,7 @@ public partial class DestructableObject : Node3D
 	}
 	[Export(PropertyHint.Range, "0,1,0.1")]
 	private float bounceStrength;
-	[Export]
-	private BounceState.SnapMode snapMode = BounceState.SnapMode.SnappingEnabled;
+	[Export] private BounceState.SnapMode snapMode = BounceState.SnapMode.SnappingEnabled;
 	private const float ShatterStrength = 10.0f;
 
 	private ShatterFlags FlagSetting => (ShatterFlags)shatterFlags;
@@ -235,6 +227,11 @@ public partial class DestructableObject : Node3D
 		EmitSignal(SignalName.Shattered);
 	}
 
+	// Overloads for signals
+	public void Shatter(Node3D _) => Shatter();
+	public void Shatter(Area3D _) => Shatter();
+
+
 	// Prevent memory leakage
 	public void Unload() => pieces.Clear();
 
@@ -263,6 +260,24 @@ public partial class DestructableObject : Node3D
 			return;
 
 		isInteractingWithPlayer = false;
+	}
+
+	/// <summary>
+	/// Checks whether the player is jumping into a platform from below, and shatters as necessary.
+	/// </summary>
+	public void AttemptPlatformShatter(Node3D b)
+	{
+		if (b.GetParent() == this) // Ignore self-collisions
+			return;
+
+		if (!b.IsInGroup("player"))
+			return;
+
+		if (Player.IsOnGround || Player.VerticalSpeed <= 0)
+			return;
+
+		Shatter();
+		Player.VerticalSpeed = 0;
 	}
 
 	protected virtual void ProcessPlayerCollision()
@@ -296,7 +311,7 @@ public partial class DestructableObject : Node3D
 			return;
 		}
 
-		if (FlagSetting.HasFlag(ShatterFlags.SpeedBreak) && Player.Skills.IsSpeedBreakActive)
+		if (FlagSetting.HasFlag(ShatterFlags.SpeedBreak) && Player.Skills.IsSpeedBreakActive && !Player.Skills.IsSpeedBreakCharging)
 		{
 			Shatter();
 			return;

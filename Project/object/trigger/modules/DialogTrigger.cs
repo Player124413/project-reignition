@@ -18,7 +18,7 @@ public partial class DialogTrigger : StageTriggerModule
 	{
 		Queue, // Queue dialog to play after the current dialog is finished
 		Always, // Always play dialog immediately
-		NoDialog, // Only play dialog when nothing else is playing
+		NoSubtitles, // Only play dialog when nothing else is playing
 	}
 
 	private bool isTriggered;
@@ -34,14 +34,16 @@ public partial class DialogTrigger : StageTriggerModule
 		if (isTriggered)
 			return;
 
-		if (playbackType == PlaybackMode.NoDialog && SoundManager.instance.IsDialogActive)
+		if (playbackType == PlaybackMode.NoSubtitles && SoundManager.instance.IsSubtitlesActive)
 			return;
 
 		isTriggered = isOneShot;
 
-		if (playbackType == PlaybackMode.Always || !SoundManager.instance.IsDialogActive)
+		if (IsCutscene || playbackType == PlaybackMode.Always || !SoundManager.instance.IsSubtitlesActive)
 		{
+			SoundManager.instance.ClearQueue();
 			SoundManager.instance.PlayDialog(GetRandomDialogTrigger());
+			GD.Print("Playing Dialog");
 			return;
 		}
 

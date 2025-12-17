@@ -86,7 +86,7 @@ namespace Project.Gameplay.Objects
 			{
 				SoundManager.instance.PlayRichRingSFX();
 				Stage.UpdateScore(100, StageSettings.MathModeEnum.Add);
-				if (SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.RingPearlConvert))
+				if (Player.Skills.IsRingExchangeEquipped)
 				{
 					Stage.UpdateRingCount(0, StageSettings.MathModeEnum.Add);
 					Player.Skills.ModifySoulGauge(40);
@@ -100,7 +100,7 @@ namespace Project.Gameplay.Objects
 			{
 				SoundManager.instance.PlayRingSFX();
 				Stage.UpdateScore(10, StageSettings.MathModeEnum.Add);
-				if (SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.RingPearlConvert))
+				if (Player.Skills.IsRingExchangeEquipped)
 				{
 					Stage.UpdateRingCount(0, StageSettings.MathModeEnum.Add);
 					Player.Skills.ModifySoulGauge(2);

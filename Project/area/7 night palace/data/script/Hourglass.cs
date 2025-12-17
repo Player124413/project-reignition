@@ -8,21 +8,35 @@ namespace Project.Gameplay.Objects
 	/// </summary>
 	public partial class Hourglass : TeleportTrigger
 	{
-		[ExportGroup("Components")]
-		[Export]
-		private EventTrigger eventHandler;
+		[Signal] public delegate void ActivatedEventHandler();
+		[Signal] public delegate void RespawnedEventHandler();
+
+		[Export] private bool disableTeleportation;
+		[Export] private EventTrigger eventHandler;
 		private bool isInteractingWithPlayer;
+
+		public override void Respawn() => EmitSignal(SignalName.Respawned);
 
 		public override void _PhysicsProcess(double _)
 		{
 			if (!isInteractingWithPlayer) return;
 
-			if (!Player.Skills.IsSpeedBreakActive && !Player.IsJumpDashOrHomingAttack) return;
+			if (Player.AttackState == PlayerController.AttackStates.None) return;
 
-			if (Player.IsJumpDashOrHomingAttack) // Bounce the player if necessary
-				Player.StartBounce();
+			Player.StartBounce();
+
+			if (Player.Skills.IsSpeedBreakActive) // Turn off speedbreak
+				Player.Skills.ToggleSpeedBreak();
 
 			eventHandler.Activate();
+		}
+
+		public override void Activate()
+		{
+			if (!disableTeleportation)
+				base.Activate();
+
+			EmitSignal(SignalName.Activated);
 		}
 
 		public void OnEntered(Area3D a)

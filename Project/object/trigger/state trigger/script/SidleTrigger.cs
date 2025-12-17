@@ -57,7 +57,6 @@ public partial class SidleTrigger : Area3D
 
 		isInteractingWithPlayer = true;
 
-		Player.Skills.IsSpeedBreakEnabled = false; // Disable speed break
 		Player.AddLockoutData(lockout); // Apply lockout
 		EmitSignal(SignalName.Activated); // Immediately emit signals to allow path changes, etc.
 	}

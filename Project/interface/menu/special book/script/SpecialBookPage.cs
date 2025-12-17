@@ -150,7 +150,7 @@ public partial class SpecialBookPage : Resource
 
 	public string AchievementKey { get; private set; }
 	public string AchievementName { get; private set; }
-	public int AchievementType { get; private set; }
+	public int AchievementType { get; private set; } = 1;
 
 	public UnlockTypeEnum UnlockType { get; private set; }
 	public enum UnlockTypeEnum
@@ -270,12 +270,9 @@ public partial class SpecialBookPage : Resource
 				localizedString = Tr("spb_hint_all_gold");
 				break;
 			case UnlockTypeEnum.BigCameo:
-				return localizedString;
-				/* TODO uncomment this after Big has been implemented
 				localizedString = Tr("spb_hint_big");
 				number = LevelData.LevelIndex;
 				break;
-				*/
 		}
 
 		localizedString = localizedString.Replace("[NUMBER]", number.ToString());

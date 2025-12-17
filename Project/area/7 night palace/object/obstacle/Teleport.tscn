@@ -1,13 +1,14 @@
-[gd_scene load_steps=24 format=3 uid="uid://dvp0eoegosx00"]
+[gd_scene load_steps=25 format=3 uid="uid://dvp0eoegosx00"]
 
 [ext_resource type="Script" uid="uid://dtvj1vg0nkhi6" path="res://object/trigger/modules/TeleportTrigger.cs" id="1_af5uk"]
 [ext_resource type="Material" uid="uid://c2lqqtvy2q1xp" path="res://effect/particle/material/environment/Common Dust.tres" id="2_rjw3s"]
 [ext_resource type="Texture2D" uid="uid://bqk3vp0tj6jyx" path="res://area/7 night palace/data/particle/swirl.png" id="3_m53jp"]
 [ext_resource type="Material" uid="uid://boyiki4rgce2h" path="res://effect/particle/material/environment/Common Dust Splatter.tres" id="4_pxnfi"]
 [ext_resource type="Material" uid="uid://dxchrwvn2cemd" path="res://effect/particle/material/Common Sparkle.tres" id="5_wlwjg"]
+[ext_resource type="AudioStream" uid="uid://cbdtig33euxyy" path="res://sound/sfx/stage/night palace/teleport.wav" id="6_y68pj"]
 
 [sub_resource type="Gradient" id="Gradient_jhxgy"]
-offsets = PackedFloat32Array(0, 0.214876, 0.747934, 1)
+offsets = PackedFloat32Array(0, 0.08125, 0.875, 1)
 colors = PackedColorArray(1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0)
 
 [sub_resource type="GradientTexture1D" id="GradientTexture1D_e0pxo"]
@@ -24,7 +25,7 @@ gravity = Vector3(0, 10, 0)
 attractor_interaction_enabled = false
 scale_min = 3.0
 scale_max = 5.0
-color = Color(0.309804, 0.309804, 0.309804, 0.784314)
+color = Color(0, 0, 0, 1)
 color_ramp = SubResource("GradientTexture1D_e0pxo")
 
 [sub_resource type="QuadMesh" id="QuadMesh_65ygm"]
@@ -47,12 +48,13 @@ gravity = Vector3(0, 0, 0)
 attractor_interaction_enabled = false
 scale_min = 3.0
 scale_max = 5.0
-color = Color(0.46, 0.12, 0.8, 1)
+color = Color(0.45882353, 0.12156863, 0.9607843, 1)
 color_ramp = SubResource("GradientTexture1D_t0dd5")
-hue_variation_min = -0.1
-hue_variation_max = 0.12
+hue_variation_min = -0.05000002
+hue_variation_max = 0.09999998
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ayqcr"]
+render_priority = 1
 blend_mode = 1
 shading_mode = 0
 specular_mode = 2
@@ -140,6 +142,7 @@ draw_pass_1 = SubResource("QuadMesh_65ygm")
 [node name="Swirl" type="GPUParticles3D" parent="."]
 layers = 32
 cast_shadow = 0
+amount = 12
 fixed_fps = 0
 interpolate = false
 local_coords = true
@@ -177,4 +180,9 @@ radius = 5.0
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 shape = SubResource("SphereShape3D_x3qay")
 
+[node name="SFX" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("6_y68pj")
+bus = &"GAME SFX"
+
+[connection signal="Teleport" from="." to="SFX" method="play" binds= [0.0]]
 [connection signal="area_entered" from="." to="." method="Activate"]

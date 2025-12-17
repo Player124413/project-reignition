@@ -5,17 +5,13 @@ namespace Project.Gameplay;
 
 public partial class BackflipState : PlayerState
 {
-	[Export]
-	private PlayerState landState;
-	[Export]
-	private PlayerState jumpDashState;
-	[Export]
-	private PlayerState homingAttackState;
-	[Export]
-	private PlayerState stompState;
-	[Export]
-	private float backflipHeight;
+	[Export] private PlayerState landState;
+	[Export] private PlayerState jumpDashState;
+	[Export] private PlayerState homingAttackState;
+	[Export] private PlayerState stompState;
+	[Export] private float backflipHeight;
 
+	private float referenceAngle;
 	/// <summary> How much can the player adjust their angle while backflipping? </summary>
 	private readonly float MaxBackflipAdjustment = Mathf.Pi * .25f;
 
@@ -25,10 +21,14 @@ public partial class BackflipState : PlayerState
 			Player.Skills.ToggleSpeedBreak();
 
 		turningVelocity = 0;
+		referenceAngle = Player.PathFollower.BackAngle;
+		if (SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.FreeRoam))
+			referenceAngle = Player.MovementAngle + Mathf.Pi;
+
 		Player.IsOnGround = false;
 		Player.IsMovingBackward = true;
 		Player.IsBackflipping = true;
-		Player.MovementAngle = Player.PathFollower.BackAngle;
+		Player.MovementAngle = referenceAngle;
 		Player.MoveSpeed = Player.Stats.BackflipSettings.Speed;
 		Player.VerticalSpeed = Runtime.CalculateJumpPower(backflipHeight);
 
@@ -77,13 +77,25 @@ public partial class BackflipState : PlayerState
 			if (SaveManager.Config.useStompJumpButtonMode)
 				return stompState;
 
-			return Player.Lockon.IsTargetAttackable ? homingAttackState : jumpDashState;
+			if (Player.Lockon.IsTargetAttackable)
+				return homingAttackState;
+
+			if (SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.FreeRoam))
+				Player.MovementAngle += Mathf.Pi;
+
+			return jumpDashState;
 		}
 
 		if (Player.Controller.IsAttackBufferActive)
 		{
 			Player.Controller.ResetAttackBuffer();
-			return Player.Lockon.IsTargetAttackable ? homingAttackState : jumpDashState;
+			if (Player.Lockon.IsTargetAttackable)
+				return homingAttackState;
+
+			if (SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.FreeRoam))
+				Player.MovementAngle += Mathf.Pi;
+
+			return jumpDashState;
 		}
 
 		if (Player.Controller.IsActionBufferActive)
@@ -107,14 +119,14 @@ public partial class BackflipState : PlayerState
 		float inputAngle = Player.Controller.GetTargetInputAngle();
 		float inputStrength = Player.Controller.GetInputStrength();
 
-		if (Player.Controller.IsHoldingDirection(inputAngle, Player.PathFollower.ForwardAngle) ||
+		if (Player.Controller.IsHoldingDirection(inputAngle, referenceAngle + Mathf.Pi) ||
 			Player.Controller.IsBrakeHeld())
 		{
 			Player.MoveSpeed = Player.Stats.BackflipSettings.UpdateInterpolate(Player.MoveSpeed, -1);
 			return;
 		}
 
-		if (Player.Controller.IsHoldingDirection(inputAngle, Player.PathFollower.BackAngle))
+		if (Player.Controller.IsHoldingDirection(inputAngle, referenceAngle))
 			Player.MoveSpeed = Player.Stats.BackflipSettings.UpdateInterpolate(Player.MoveSpeed, inputStrength);
 		else if (Mathf.IsZeroApprox(inputStrength))
 			Player.MoveSpeed = Player.Stats.BackflipSettings.UpdateInterpolate(Player.MoveSpeed, 0);

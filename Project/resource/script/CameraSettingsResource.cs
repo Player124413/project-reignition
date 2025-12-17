@@ -49,7 +49,7 @@ public partial class CameraSettingsResource : Resource
 
 		if (!copyPosition)
 		{
-			properties.Add(ExtensionMethods.CreateProperty(DistanceKey, Variant.Type.Float, PropertyHint.Range, "0,30,.1"));
+			properties.Add(ExtensionMethods.CreateProperty(DistanceKey, Variant.Type.Float, PropertyHint.Range, "0,50,.1"));
 			properties.Add(ExtensionMethods.CreateProperty(BackstepDistanceKey, Variant.Type.Float, PropertyHint.Range, "0,10,.1"));
 			properties.Add(ExtensionMethods.CreateProperty(HomingAttackDistanceKey, Variant.Type.Bool));
 			properties.Add(ExtensionMethods.CreateProperty(DistanceModeKey, Variant.Type.Int, PropertyHint.Enum, distanceCalculationMode.EnumToString()));
@@ -300,7 +300,8 @@ public partial class CameraSettingsResource : Resource
 	{
 		Normal, // Forward is forward and backwards is backwards
 		Reverse, // Invert forward and backwards
-		Sidescrolling // Alter inputs to be faced on IsFacingRight
+		Sidescrolling, // Alter inputs to be faced on IsFacingRight
+		Auto, // Automatically invert controls based on the direction to the camera
 	}
 
 	/// <summary> How closely to follow the path. </summary>

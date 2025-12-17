@@ -1,0 +1,71 @@
+[gd_scene load_steps=8 format=3 uid="uid://lwdk2sexnfyd"]
+
+[ext_resource type="PackedScene" uid="uid://dax0mun2bjm1v" path="res://area/0 lost prologue/act/Static.tscn" id="1_mth38"]
+[ext_resource type="Resource" uid="uid://d0rhjf5iauyv2" path="res://resource/level data/lost prologue/Classic7.tres" id="2_mth38"]
+[ext_resource type="PackedScene" uid="uid://cjupypih0myxo" path="res://object/player/CharacterSpawn.tscn" id="4_laomb"]
+[ext_resource type="PackedScene" uid="uid://cyd7uu3t42s2r" path="res://area/0 lost prologue/object/wonder/WonderBar5.tscn" id="6_02yl5"]
+[ext_resource type="PackedScene" uid="uid://dgq0cufk1muvh" path="res://area/0 lost prologue/object/wonder/WonderBlock2.tscn" id="7_mth38"]
+[ext_resource type="PackedScene" uid="uid://dxepb172kmp8n" path="res://object/stage/common/Goal.tscn" id="7_t56ew"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_lau7f"]
+size = Vector3(20, 30, 5)
+
+[node name="Stage" type="Node"]
+
+[node name="Static" parent="." instance=ExtResource("1_mth38")]
+Data = ExtResource("2_mth38")
+
+[node name="Classic07" type="Node3D" parent="."]
+
+[node name="SpawnPosition" type="Node3D" parent="Classic07"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 145)
+
+[node name="CharacterSpawn" parent="Classic07/SpawnPosition" instance=ExtResource("4_laomb")]
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Classic07" groups=["wall"]]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 160)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Classic07/StaticBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
+shape = SubResource("BoxShape3D_lau7f")
+
+[node name="WonderBlock5" parent="Classic07" instance=ExtResource("6_02yl5")]
+transform = Transform3D(1.5, 0, 0, 0, 1, 0, 0, 0, 2, 0, 0, 106)
+
+[node name="WonderBlock6" parent="Classic07" instance=ExtResource("6_02yl5")]
+transform = Transform3D(1.5, 0, 0, 0, 1, 0, 0, 0, 2, 0, 0, 86)
+
+[node name="WonderBlock7" parent="Classic07" instance=ExtResource("6_02yl5")]
+transform = Transform3D(1.5, 0, 0, 0, 1, 0, 0, 0, 2, 0, 0, 76)
+
+[node name="WonderBlock8" parent="Classic07" instance=ExtResource("6_02yl5")]
+transform = Transform3D(1.5, 0, 0, 0, 1, 0, 0, 0, 2, 0, 0, 54)
+
+[node name="WonderBlock9" parent="Classic07" instance=ExtResource("6_02yl5")]
+transform = Transform3D(1.5, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, 53)
+
+[node name="WonderBlock2" parent="Classic07" instance=ExtResource("7_mth38")]
+transform = Transform3D(1.5, 0, 0, 0, 0.5, 0, 0, 0, 1.6, 0, 0, 32)
+
+[node name="WonderBlock3" parent="Classic07" instance=ExtResource("7_mth38")]
+transform = Transform3D(1.5, 0, 0, 0, 1, 0, 0, 0, 1.6, 0, 0, 24)
+
+[node name="WonderBlock4" parent="Classic07" instance=ExtResource("7_mth38")]
+transform = Transform3D(1.5, 0, 0, 0, 1.5, 0, 0, 0, 2.4, 0, 0, 14)
+
+[node name="WonderBlock10" parent="Classic07" instance=ExtResource("7_mth38")]
+transform = Transform3D(1.5, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, -1)
+
+[node name="WonderBlock11" parent="Classic07" instance=ExtResource("6_02yl5")]
+transform = Transform3D(0.8, 0, 0, 0, 1, 0, 0, 0, 2, 1.5, 0, -26)
+
+[node name="WonderBlock12" parent="Classic07" instance=ExtResource("6_02yl5")]
+transform = Transform3D(0.8, 0, 0, 0, 1, 0, 0, 0, 2, -1.5, 0, -35)
+
+[node name="Goal" parent="Classic07" instance=ExtResource("7_t56ew")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, -50)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Classic07/Goal"]
+shape = SubResource("BoxShape3D_lau7f")
+
+[editable path="Static"]

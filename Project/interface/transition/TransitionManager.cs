@@ -72,7 +72,8 @@ public partial class TransitionManager : Node
 		else
 			animator.SpeedScale = 1.0f / CurrentTransitionData.outSpeed;
 
-		animator.Connect(AnimationPlayer.SignalName.AnimationFinished, new(instance, MethodName.TransitionFinished), (uint)ConnectFlags.OneShot);
+		if (!animator.IsConnected(AnimationPlayer.SignalName.AnimationFinished, new(instance, MethodName.TransitionFinished)))
+			animator.Connect(AnimationPlayer.SignalName.AnimationFinished, new(instance, MethodName.TransitionFinished), (uint)ConnectFlags.OneShot);
 	}
 	#endregion
 

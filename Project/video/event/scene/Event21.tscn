@@ -1,13 +1,135 @@
-[gd_scene load_steps=4 format=3 uid="uid://bihhhh75e6hi7"]
+[gd_scene load_steps=5 format=3 uid="uid://bihhhh75e6hi7"]
 
 [ext_resource type="PackedScene" uid="uid://ct1tmuno23lj2" path="res://video/Event.tscn" id="1"]
-[ext_resource type="AudioStream" uid="uid://dwrgpimuunee2" path="res://video/event/ja/event21.ogg" id="2"]
-[ext_resource type="AudioStream" uid="uid://6npltv6hfi0q" path="res://video/event/en/event21.ogg" id="4"]
 
-[node name="Event" instance=ExtResource("1")]
-enAudio = ExtResource("4")
-jaAudio = ExtResource("2")
-subtitleData = ""
+[sub_resource type="Animation" id="Animation_tcjpy"]
+length = 52.0
+step = 0.1
+tracks/0/type = "method"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0.1, 1.6, 5, 6.6, 14.5, 18, 20.6, 25.9, 32.4, 37.5, 43, 45.100002, 49.4),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
+"values": [{
+"args": [],
+"method": &"ShowSubtitles"
+}, {
+"args": [],
+"method": &"ShowSubtitles"
+}, {
+"args": [],
+"method": &"HideSubtitles"
+}, {
+"args": [],
+"method": &"ShowSubtitles"
+}, {
+"args": [],
+"method": &"ShowSubtitles"
+}, {
+"args": [],
+"method": &"ShowSubtitles"
+}, {
+"args": [],
+"method": &"ShowSubtitles"
+}, {
+"args": [],
+"method": &"ShowSubtitles"
+}, {
+"args": [],
+"method": &"ShowSubtitles"
+}, {
+"args": [],
+"method": &"ShowSubtitles"
+}, {
+"args": [],
+"method": &"ShowSubtitles"
+}, {
+"args": [],
+"method": &"ShowSubtitles"
+}, {
+"args": [],
+"method": &"HideSubtitles"
+}]
+}
 
-[node name="Video" parent="." index="1"]
-videoFilePath = "res://video/event/stream/E0023.mp4"
+[sub_resource type="Animation" id="Animation_fmmx4"]
+resource_name = "ja"
+length = 52.0
+step = 0.1
+tracks/0/type = "method"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0.1, 1.6, 5, 6.3, 14.4, 18, 20.4, 25.9, 32.4, 37.4, 42.8, 45, 49.4),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
+"values": [{
+"args": [],
+"method": &"ShowSubtitles"
+}, {
+"args": [],
+"method": &"ShowSubtitles"
+}, {
+"args": [],
+"method": &"HideSubtitles"
+}, {
+"args": [],
+"method": &"ShowSubtitles"
+}, {
+"args": [],
+"method": &"ShowSubtitles"
+}, {
+"args": [],
+"method": &"ShowSubtitles"
+}, {
+"args": [],
+"method": &"ShowSubtitles"
+}, {
+"args": [],
+"method": &"ShowSubtitles"
+}, {
+"args": [],
+"method": &"ShowSubtitles"
+}, {
+"args": [],
+"method": &"ShowSubtitles"
+}, {
+"args": [],
+"method": &"ShowSubtitles"
+}, {
+"args": [],
+"method": &"ShowSubtitles"
+}, {
+"args": [],
+"method": &"HideSubtitles"
+}]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_fmmx4"]
+_data = {
+&"en": SubResource("Animation_tcjpy"),
+&"ja": SubResource("Animation_fmmx4")
+}
+
+[node name="Event21" node_paths=PackedStringArray("animator") instance=ExtResource("1")]
+englishAudioPath = "res://video/event/en/event21.ogg"
+localizationKeyPrefix = "event21_"
+worldRing = 6
+animator = NodePath("AnimationPlayer")
+
+[node name="Video" parent="Resizer" index="0"]
+videoFilePath = "res://video/event/stream/E0021.mp4"
+
+[node name="Subtitles" parent="SubtitleLetterbox" index="0"]
+text = "event21_11"
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." index="3"]
+libraries = {
+&"": SubResource("AnimationLibrary_fmmx4")
+}

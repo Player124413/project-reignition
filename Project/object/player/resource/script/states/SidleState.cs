@@ -95,7 +95,7 @@ public partial class SidleState : PlayerState
 			return null;
 
 		if (Trigger == null || Player.ExternalController != this)
-			return Player.MoveSpeed >= 0 ? runState : backstepState;
+			return Player.MoveSpeed >= 0 || SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.FreeRoam) ? runState : backstepState;
 
 		if (damageState != DamageStates.Disabled)
 		{
@@ -103,18 +103,15 @@ public partial class SidleState : PlayerState
 			return null;
 		}
 
-		CheckGround();
 		UpdateMoveSpeed();
 		Player.UpdateExternalControl();
+		CheckGround();
 		return null;
 	}
 
 	private void CheckGround()
 	{
-		Vector3 castVector = Vector3.Down * Player.CollisionSize.X * 2.0f;
-		RaycastHit hit = Player.CastRay(Player.CenterPosition, castVector, Runtime.Instance.environmentMask);
-		DebugManager.DrawRay(Player.CenterPosition, castVector, hit ? Colors.Red : Colors.White);
-		if (hit)
+		if (Player.GroundHit)
 			return;
 
 		StartRespawn();
@@ -123,6 +120,9 @@ public partial class SidleState : PlayerState
 
 	private void UpdateMoveSpeed()
 	{
+		if (damageState != DamageStates.Disabled)
+			return;
+
 		// Update velocity
 		float targetInput = Player.Controller.InputHorizontal * (Trigger.IsFacingRight ? 1 : -1) * CycleFrequency;
 		if (Mathf.IsZeroApprox(velocity) && !Mathf.IsZeroApprox(targetInput)) // Ensure sfx plays when starting to move
@@ -166,6 +166,7 @@ public partial class SidleState : PlayerState
 
 		velocity = 0;
 		cycleTimer = 0;
+		Player.MoveSpeed = 0;
 
 		if (Player.IsDamageDefeatingPlayer())
 		{
@@ -208,6 +209,11 @@ public partial class SidleState : PlayerState
 				ProcessDamageRespawn();
 				break;
 		}
+
+		// Keep moving in the direction we're falling
+		Player.MoveSpeed = Mathf.MoveToward(Player.MoveSpeed, 0, Player.Stats.GroundSettings.Turnaround * PhysicsManager.physicsDelta);
+		Player.PathFollower.Progress += Player.MoveSpeed * PhysicsManager.physicsDelta;
+		Player.UpdateExternalControl();
 	}
 
 	private void ProcessDamageStagger()

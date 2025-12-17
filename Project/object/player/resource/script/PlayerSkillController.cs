@@ -8,14 +8,10 @@ namespace Project.Gameplay;
 /// </summary>
 public partial class PlayerSkillController : Node3D
 {
-	[Signal]
-	public delegate void TimeBreakStartedEventHandler();
-	[Signal]
-	public delegate void SpeedBreakStartedEventHandler();
-	[Signal]
-	public delegate void TimeBreakStoppedEventHandler();
-	[Signal]
-	public delegate void SpeedBreakStoppedEventHandler();
+	[Signal] public delegate void TimeBreakStartedEventHandler();
+	[Signal] public delegate void SpeedBreakStartedEventHandler();
+	[Signal] public delegate void TimeBreakStoppedEventHandler();
+	[Signal] public delegate void SpeedBreakStoppedEventHandler();
 
 	private PlayerController Player;
 	public void Initialize(PlayerController player)
@@ -66,8 +62,7 @@ public partial class PlayerSkillController : Node3D
 	}
 
 	[ExportGroup("Countdown Skills")]
-	[Export]
-	public float countdownBoostSpeed;
+	[Export] public float countdownBoostSpeed;
 
 	/// <summary> How many rings to start with when the level starts. </summary>
 	public int StartingRingCount => SkillRing.IsSkillEquipped(SkillKey.RingSpawn) ? 5 : 0;
@@ -75,11 +70,12 @@ public partial class PlayerSkillController : Node3D
 	public int RespawnRingCount => SkillRing.IsSkillEquipped(SkillKey.RingRespawn) ? 5 : 0;
 
 	/// <summary> Minimum speed when landing on the ground and holding forward. Makes Sonic feel faster. </summary>
-	[Export]
-	public float landingDashSpeed;
+	[Export] public float landingDashSpeed;
 	public bool AllowCrestSkill { get; private set; }
 	private readonly float CrestOfFlameHueOffset = .45f;
 	private readonly float DefaultHueOffset = .02f;
+
+	public bool IsRingExchangeEquipped { get; private set; }
 	private void SetUpSkills()
 	{
 		// Expand hitbox if skills is equipped
@@ -87,6 +83,9 @@ public partial class PlayerSkillController : Node3D
 			(StageSettings.Instance.Data.MissionType != LevelDataResource.MissionTypes.Pearl || StageSettings.Instance.Data.MissionObjectiveCount != 0);
 		bool isRingRangeEquipped = SkillRing.IsSkillEquipped(SkillKey.RingRange) &&
 			(StageSettings.Instance.Data.MissionType != LevelDataResource.MissionTypes.Ring || StageSettings.Instance.Data.MissionObjectiveCount != 0);
+
+		IsRingExchangeEquipped = SkillRing.IsSkillEquipped(SkillKey.RingPearlConvert) &&
+			(StageSettings.Instance.Data.MissionType != LevelDataResource.MissionTypes.Ring || StageSettings.Instance.Data.MissionObjectiveCount == 0);
 
 		Runtime.Instance.UpdatePearlCollisionShapes(isPearlRangeEquipped ? 5 : 1);
 		Runtime.Instance.UpdateRingCollisionShapes(isRingRangeEquipped ? 5 : 1);
@@ -219,38 +218,31 @@ public partial class PlayerSkillController : Node3D
 	private bool isSpeedBreakEnabled = true;
 	private bool isTimeBreakEnabled = true;
 
-	[Export]
-	private Control speedBreakShockwave;
-	[Export]
-	private AnimationPlayer speedBreakAnimator;
+	[Export] private Control speedBreakShockwave;
+	[Export] private CustomNodes.GroupGpuParticles3D speedBreakParticles;
+	[Export] private AnimationPlayer speedBreakAnimator;
 	// Audio clips
-	[Export]
-	private AudioStream speedBreakActivate;
-	[Export]
-	private AudioStream speedBreakDeactivate;
+	[Export] private AudioStream speedBreakActivate;
+	[Export] private AudioStream speedBreakDeactivate;
 	// Audio players
-	[Export]
-	private AudioStreamPlayer speedBreakSFX;
-	[Export]
-	private AnimationPlayer timeBreakAnimator;
-	[Export]
-	private AudioStreamPlayer timeBreakSFX;
-	[Export]
-	private AudioStreamPlayer heartbeatSFX;
+	[Export] private AudioStreamPlayer speedBreakSFX;
+	[Export] private AnimationPlayer timeBreakAnimator;
+	[Export] private AudioStreamPlayer timeBreakSFX;
+	[Export] private AudioStreamPlayer heartbeatSFX;
 
-	[Export]
-	public ShaderMaterial speedbreakOverlayMaterial;
-	[Export]
-	public float speedBreakSpeed; // Movement speed during speed break
+	[Export] public ShaderMaterial speedbreakOverlayMaterial;
+	[Export] public float speedBreakSpeed; // Movement speed during speed break
 	public bool IsTimeBreakActive { get; private set; }
 	public bool IsSpeedBreakActive { get; private set; }
-	public bool IsSpeedBreakCharging => IsSpeedBreakActive && !Mathf.IsZeroApprox(breakTimer);
+	public bool AllowExternalSpeedBreak { get; set; } // Allow speedbreaking when on a gimmick?
+	public bool IsSpeedBreakCharging => IsSpeedBreakActive && !Mathf.IsZeroApprox(speedBreakTimer);
 	public bool IsUsingBreakSkills => IsTimeBreakActive || IsSpeedBreakActive;
 
-	private float breakTimer; // Timer for break skills
+	private float speedBreakTimer; // Timer for break skills
+	private float timeBreakTimer;
 	public const float TimebreakRatio = .6f; // Time scale
 	private const float SpeedBreakDelay = 0.2f; // Time to say SPEED BREAK!
-	private const float BreakSkillsCooldown = 1f; // Prevent skill spam
+	private const float BreakSkillsCooldown = 0.4f; // Prevent skill spam
 	private readonly string SpeedbreakOverlayOpacityKey = "opacity";
 
 	public void ProcessPhysics()
@@ -258,15 +250,19 @@ public partial class PlayerSkillController : Node3D
 		if (DebugManager.Instance.InfiniteSoulGauge) // Max out the soul gauge
 			ModifySoulGauge(MaxSoulPower);
 
+		speedBreakTimer = Mathf.MoveToward(speedBreakTimer, 0, PhysicsManager.physicsDelta);
+		timeBreakTimer = Mathf.MoveToward(timeBreakTimer, 0, PhysicsManager.physicsDelta);
+
 		UpdateTimeBreak();
 		UpdateSpeedBreak();
-
-		breakTimer = Mathf.MoveToward(breakTimer, 0, PhysicsManager.physicsDelta);
 	}
 
 	public void CancelBreakSkills()
 	{
-		IsTimeBreakActive = IsSpeedBreakActive = false;
+		if (IsTimeBreakActive) // Cancel time break
+			ToggleTimeBreak();
+		if (IsSpeedBreakActive) // Cancel speed break
+			ToggleTimeBreak();
 		timeBreakAnimator.Play("RESET");
 		timeBreakAnimator.Advance(0);
 
@@ -308,14 +304,17 @@ public partial class PlayerSkillController : Node3D
 		{
 			SoundManager.FadeAudioPlayer(timeBreakSFX, .2f);
 			SoundManager.FadeAudioPlayer(heartbeatSFX, .2f); // Fade out sfx
-			if (breakTimer != 0) return; // Cooldown
+			if (timeBreakTimer != 0) return; // Cooldown
 		}
 
-		if (Input.IsActionJustPressed("button_timebreak") && !IsSpeedBreakActive)
+		if (Input.IsActionJustPressed("button_timebreak"))
 		{
 			if (!IsTimeBreakEnabled) return;
 			if (!IsSoulGaugeCharged) return;
 			if (Player.IsDefeated) return;
+
+			if (IsSpeedBreakActive) // Deactivate Speed Break
+				ToggleSpeedBreak();
 
 			ToggleTimeBreak();
 		}
@@ -329,13 +328,14 @@ public partial class PlayerSkillController : Node3D
 
 		if (IsSpeedBreakActive)
 		{
-			if (Mathf.IsZeroApprox(breakTimer))
+			if (Mathf.IsZeroApprox(speedBreakTimer))
 			{
 				if (speedBreakSFX.Stream != speedBreakActivate) // Play sfx when boost starts
 				{
 					speedBreakSFX.Stream = speedBreakActivate;
 					speedBreakSFX.Play();
 					ModifySoulGauge(-15); // Instantly lose a bunch of soul power
+					Player.CollisionMask = Runtime.Instance.environmentMask; // Don't collide with any objects
 				}
 
 				if (Mathf.IsZeroApprox(breakDrainTimer))
@@ -347,10 +347,10 @@ public partial class PlayerSkillController : Node3D
 
 				bool disablingSpeedBreak = (SaveManager.Config.useHoldBreakMode && !Input.IsActionPressed("button_speedbreak")) ||
 					(!SaveManager.Config.useHoldBreakMode && Input.IsActionJustPressed("button_speedbreak"));
-				if (IsSoulGaugeEmpty || disablingSpeedBreak)// Check whether we shoudl cancel speed break
+				if (IsSoulGaugeEmpty || disablingSpeedBreak && !Player.IsAirBoosting)// Check whether we should cancel speed break
 					ToggleSpeedBreak();
 
-				if (!IsSpeedBreakOverrideActive && Player.IsOnGround) // Speed is only applied while on the ground
+				if (!IsSpeedBreakOverrideActive && (Player.IsOnGround || AllowExternalSpeedBreak)) // Speed is only applied while on the ground
 				{
 					IsSpeedBreakOverrideActive = true;
 					Player.MoveSpeed = speedBreakSpeed;
@@ -359,23 +359,27 @@ public partial class PlayerSkillController : Node3D
 			else
 			{
 				Player.MoveSpeed = 0;
-				Player.Camera.StartCrossfade(); // Crossfade the screen briefly
 			}
 
 			return;
 		}
-		else if (!Mathf.IsZeroApprox(breakTimer))
-		{
+
+		if (!Mathf.IsZeroApprox(speedBreakTimer))
 			return; // Cooldown
-		}
 
 		// Check whether we can start speed break
-		if (Input.IsActionJustPressed("button_speedbreak") && !IsTimeBreakActive)
+		if (Input.IsActionJustPressed("button_speedbreak"))
 		{
 			if (!IsSoulGaugeCharged) return;
 			if (!IsSpeedBreakEnabled) return;
-			if (!Player.IsOnGround || Player.IsDefeated) return;
+			if (Player.IsDefeated) return;
+			if (Player.IsLaunching) return;
+			if (Player.IsLockoutActive && Player.ActiveLockoutData.disableActionFlags.HasFlag(LockoutResource.ActionFlags.SpeedBreak)) return;
 			if (Player.IsDrifting && !IsSpeedBreakActive) return;
+			if (!Player.IsOnGround && !AllowExternalSpeedBreak && !(Player.CanAirBoost && SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.AirBoost))) return;
+
+			if (IsTimeBreakActive) // Deactivate Time Break
+				ToggleTimeBreak();
 
 			ToggleSpeedBreak();
 		}
@@ -395,7 +399,7 @@ public partial class PlayerSkillController : Node3D
 			timeBreakAnimator.Play("start");
 			Player.Effect.PlayVoice("time break");
 
-			BGMPlayer.SetStageMusicVolume(-80f);
+			SoundManager.instance.SetStageMusicVolume(-80f);
 
 			// Reset volume and play
 			timeBreakSFX.VolumeDb = heartbeatSFX.VolumeDb = 0f;
@@ -410,8 +414,8 @@ public partial class PlayerSkillController : Node3D
 			timeBreakAnimator.Play(isTimeBreakEnabled ? "stop" : "RESET");
 			timeBreakAnimator.Advance(0.0);
 
-			breakTimer = BreakSkillsCooldown;
-			BGMPlayer.SetStageMusicVolume(0f);
+			speedBreakTimer = BreakSkillsCooldown;
+			SoundManager.instance.SetStageMusicVolume(0f);
 			HeadsUpDisplay.Instance?.ActiveSoulGauge.UpdateSoulGaugeColor(IsSoulGaugeCharged);
 			EmitSignal(SignalName.TimeBreakStopped);
 		}
@@ -425,7 +429,22 @@ public partial class PlayerSkillController : Node3D
 		breakDrainTimer = 0;
 		IsSpeedBreakActive = !IsSpeedBreakActive;
 		SoundManager.IsBreakChannelMuted = IsSpeedBreakActive;
-		breakTimer = IsSpeedBreakActive ? SpeedBreakDelay : BreakSkillsCooldown;
+		bool isAirBoost = !Player.IsOnGround && !AllowExternalSpeedBreak && Player.CanAirBoost && SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.AirBoost);
+		bool isInstantSpeedbreak = SkillRing.IsSkillEquipped(SkillKey.InstantSpeedBreak) || isAirBoost;
+
+		if (IsSpeedBreakActive)
+		{
+			if (isAirBoost)
+				Player.CanAirBoost = false;
+
+			if (!isInstantSpeedbreak)
+				speedBreakTimer = SpeedBreakDelay;
+		}
+		else
+		{
+			speedBreakTimer = BreakSkillsCooldown;
+		}
+
 		IsSpeedBreakOverrideActive = false; // Always disable override
 
 		if (IsSpeedBreakActive)
@@ -435,13 +454,21 @@ public partial class PlayerSkillController : Node3D
 			speedBreakShockwave.PivotOffset = speedBreakShockwave.Size * 0.5f;
 			speedBreakAnimator.Play("start");
 			speedBreakAnimator.Advance(0.0);
+			speedBreakParticles.SetEmitting(true);
 
-			Player.Effect.PlayVoice("speed break");
-			Player.MovementAngle = Player.PathFollower.ForwardAngle;
-			Player.CollisionMask = Runtime.Instance.environmentMask; // Don't collide with any objects
-			Player.Animator.SpeedBreak();
+			if (!SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.FreeRoam))
+				Player.MovementAngle = Player.PathFollower.ForwardAngle;
+
+			if (!isInstantSpeedbreak)
+				Player.Animator.SpeedBreak();
+
 			Player.ChangeHitbox("speed break");
 			Player.AttackState = PlayerController.AttackStates.OneShot;
+
+			if (isAirBoost)
+				Player.StartAirBoost();
+			else
+				Player.Effect.PlayVoice("speed break");
 
 			SaveManager.SharedData.SpeedBreakActivationCount = (int)Mathf.MoveToward(SaveManager.SharedData.SpeedBreakActivationCount, int.MaxValue, 1);
 			if (SaveManager.SharedData.SpeedBreakActivationCount >= SpeedBreakAchievementRequirement)
@@ -453,10 +480,10 @@ public partial class PlayerSkillController : Node3D
 		{
 			speedBreakAnimator.Play("stop");
 			speedBreakAnimator.Advance(0.0);
+			speedBreakParticles.SetEmitting(false);
 			speedBreakSFX.Stream = speedBreakDeactivate;
 			speedBreakSFX.Play();
 
-			Player.MoveSpeed = Player.Stats.GroundSettings.Speed; // Override speed
 			Player.CollisionMask = normalCollisionMask; // Reset collision layer
 			Player.AttackState = PlayerController.AttackStates.None;
 			Player.ChangeHitbox("RESET");
@@ -468,8 +495,8 @@ public partial class PlayerSkillController : Node3D
 
 	public void CancelSpeedbreakFX()
 	{
-		speedBreakAnimator.Play("RESET");
-		speedBreakAnimator.Advance(0.0);
+		speedBreakAnimator.Play("stop");
+		speedBreakAnimator.Advance(speedBreakAnimator.CurrentAnimationLength);
 	}
 
 	public void EnableBreakSkills() => IsTimeBreakEnabled = IsSpeedBreakEnabled = true;

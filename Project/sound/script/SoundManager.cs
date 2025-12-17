@@ -73,15 +73,14 @@ public partial class SoundManager : Node
 	private Queue<DialogTrigger> dialogQueue = [];
 	public void QueueDialog(DialogTrigger dialog) => dialogQueue.Enqueue(dialog);
 
+	public void ClearQueue() => dialogQueue.Clear();
+
 	public void PlayDialog(DialogTrigger dialog)
 	{
 		if (dialog.DialogCount == 0 || DebugManager.Instance.DisableDialog || SaveManager.Config.isDialogDisabled) return; // No dialog
 
 		IsSubtitlesActive = true;
 		subtitleLabel.Text = string.Empty;
-
-		// Show background during cutscenes, disable during in-game dialog
-		//subtitleLetterbox.SelfModulate = dialog.IsCutscene ? Colors.White : Colors.Transparent;
 
 		currentDialog = dialog;
 		currentDialogIndex = GetInitialDialogIndex();
@@ -130,16 +129,24 @@ public partial class SoundManager : Node
 	public void OnDialogFinished()
 	{
 		currentDialogIndex++;
-		if (!currentDialog.randomize && currentDialogIndex < currentDialog.DialogCount) // Start next dialog line
-		{
-			if (!SaveManager.Config.isSubtitleDisabled)
-				subtitleAnimator.Play("deactivate");
-			CallDeferred(MethodName.UpdateDialog, true);
-		}
-		else
+		if (currentDialog.randomize || currentDialogIndex >= currentDialog.DialogCount) // Start next dialog line
 		{
 			CallDeferred(MethodName.DisableDialog);
+			return;
 		}
+
+		if (SaveManager.Config.isSubtitleDisabled)
+			return;
+
+		if (currentDialog.IsCutscene)
+		{
+			if (currentDialog.HasDelay(currentDialogIndex))
+				subtitleAnimator.Play("deactivate-cutscene");
+			OnSubtitleAnimationFinished();
+			return;
+		}
+
+		subtitleAnimator.Play("deactivate");
 	}
 
 	private void DisableDialog()
@@ -160,6 +167,16 @@ public partial class SoundManager : Node
 
 		if (dialogChannel.IsConnected(AudioStreamPlayer.SignalName.Finished, new Callable(this, MethodName.OnDialogFinished)))
 			dialogChannel.Disconnect(AudioStreamPlayer.SignalName.Finished, new Callable(this, MethodName.OnDialogFinished));
+
+	}
+
+	private void OnSubtitleAnimationFinished()
+	{
+		if (IsSubtitlesActive)
+		{
+			UpdateDialog(true);
+			return;
+		}
 
 		if (dialogQueue.Count != 0) // Start queued dialog if it exists
 			PlayDialog(dialogQueue.Dequeue());
@@ -192,7 +209,7 @@ public partial class SoundManager : Node
 		if (targetStream != null) // Using audio
 		{
 			dialogChannel.Stream = targetStream;
-			subtitleLabel.Text = Tr(currentDialog.textKeys[currentDialogIndex]);
+			subtitleLabel.Text = FormatText(Tr(currentDialog.textKeys[currentDialogIndex]));
 			dialogChannel.Play();
 			if (!currentDialog.HasLength(currentDialogIndex))// Use audio length
 			{
@@ -214,13 +231,21 @@ public partial class SoundManager : Node
 
 			if (string.IsNullOrEmpty(key) || key.EndsWith("*")) // Cutscene Support - To avoid busywork in editor
 				key = currentDialog.textKeys[0].Replace("*", (currentDialogIndex + 1).ToString());
-			subtitleLabel.Text = Tr(key); // Update subtitles
+			subtitleLabel.Text = FormatText(Tr(key)); // Update subtitles
 		}
 
 		// If we've made it this far, we're using the custom specified time
 		if (!delayTimer.IsConnected(Timer.SignalName.Timeout, new Callable(this, MethodName.OnDialogFinished)))
 			delayTimer.Connect(Timer.SignalName.Timeout, new Callable(this, MethodName.OnDialogFinished), (uint)ConnectFlags.OneShot);
 		delayTimer.Start(currentDialog.displayLength[currentDialogIndex]);
+	}
+
+	/// <summary> Replaces curly braces with quotation marks for cutscene subtitles. </summary>
+	private string FormatText(string text)
+	{
+		text = text.Replace('{', '"');
+		text = text.Replace('}', '"');
+		return text;
 	}
 
 	public bool IsSonicSfxVoiceChannelActive { get; set; }
@@ -362,7 +387,7 @@ public partial class SoundManager : Node
 	private readonly Dictionary<StringName, int> sfxGroups = [];
 	private readonly Dictionary<StringName, float> sfxGroupTimers = [];
 	/// <summary> Minimum amount of time that must pass before a sfx group can play again. </summary>
-	private readonly float groupSfxSpacing = 0.2f;
+	private readonly float groupSfxSpacing = 0.5f;
 
 	private void UpdateSfxGroups()
 	{
@@ -398,8 +423,8 @@ public partial class SoundManager : Node
 	{
 		if (sfxGroups.TryGetValue(key, out int value))
 		{
-			sfxGroups[key] = --value;
-			if (value < 0)
+			sfxGroups[key] = value - 1;
+			if (sfxGroups[key] < 0)
 			{
 				sfxGroups.Remove(key);
 				sfxGroupTimers.Remove(key);
@@ -416,5 +441,34 @@ public partial class SoundManager : Node
 
 		return 0.0f; // Don't modify db
 	}
+	#endregion
+
+	#region BGM
+	[Export] public BGMPlayer StageMusicPlayer { get; private set; }
+	public void UpdateBgmResource(BGMResource bgmResource)
+	{
+		if (StageMusicPlayer.GetBgmResource() == bgmResource)
+			return;
+
+		StageMusicPlayer.SetBgmResource(bgmResource);
+		StageMusicPlayer.LoadBgmResource();
+	}
+
+	// Called when countdown starts to keep things in sync, regardless of load times.
+	public void StartBgm(bool forceRestart)
+	{
+		if (StageMusicPlayer.Playing && !forceRestart) // Persistent BGM
+			return;
+
+		StageMusicPlayer.Play();
+	}
+
+	public bool IsStageMusicPaused
+	{
+		get => StageMusicPlayer.StreamPaused != false;
+		set => StageMusicPlayer.StreamPaused = value;
+	}
+
+	public void SetStageMusicVolume(float db) => StageMusicPlayer.VolumeDb = db;
 	#endregion
 }

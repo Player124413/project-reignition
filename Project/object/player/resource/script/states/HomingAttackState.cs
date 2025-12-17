@@ -5,24 +5,19 @@ namespace Project.Gameplay;
 
 public partial class HomingAttackState : PlayerState
 {
-	[Export]
-	private PlayerState landState;
-	[Export]
-	private PlayerState stompState;
-	[Export]
-	private PlayerState jumpDashState;
+	[Export] private PlayerState landState;
+	[Export] private PlayerState stompState;
+	[Export] private PlayerState jumpDashState;
 
-	[Export]
-	private float normalStrikeSpeed;
-	[Export]
-	private float perfectStrikeSpeed;
-	[Export]
-	private float homingAttackAcceleration;
-
+	[Export] private float normalStrikeSpeed;
+	[Export] private float perfectStrikeSpeed;
+	[Export] private float homingAttackAcceleration;
 
 	public override void EnterState()
 	{
-		Player.VerticalSpeed = 0;
+		Player.IsOnGround = false;
+		Player.VerticalSpeed = 0.1f;
+
 		Player.IsMovingBackward = false;
 		Player.IsHomingAttacking = true;
 		Player.ChangeHitbox("spin");
@@ -91,6 +86,7 @@ public partial class HomingAttackState : PlayerState
 			Player.MoveSpeed = Mathf.MoveToward(Player.MoveSpeed, normalStrikeSpeed, homingAttackAcceleration * PhysicsManager.physicsDelta);
 
 		Player.MoveSpeed = Mathf.Min(Player.MoveSpeed, Player.CenterPosition.DistanceTo(Player.Lockon.Target.GlobalPosition) / PhysicsManager.physicsDelta);
+		Player.VerticalSpeed = Player.Lockon.HomingAttackDirection.Y;
 		Player.MovementAngle = ExtensionMethods.CalculateForwardAngle(Player.Lockon.HomingAttackDirection);
 		Player.ApplyMovement(Player.Lockon.HomingAttackDirection.Normalized());
 
@@ -101,7 +97,8 @@ public partial class HomingAttackState : PlayerState
 			return null;
 		}
 
-		Player.CheckGround();
+		if (Player.VerticalSpeed <= 0)
+			Player.CheckGround();
 		Player.CheckWall();
 		Player.UpdateUpDirection(true);
 		Player.PathFollower.Resync();
@@ -127,6 +124,13 @@ public partial class HomingAttackState : PlayerState
 		Vector3 castVector = Player.Lockon.Target.GlobalPosition - castPosition;
 		RaycastHit hit = Player.CastRay(castPosition, castVector, Runtime.Instance.lockonObstructionMask);
 		DebugManager.DrawRay(castPosition, castVector, Colors.Magenta);
-		return hit && hit.collidedObject.IsInGroup("wall") && !hit.collidedObject.IsInGroup("level wall");
+
+		if (!hit)
+			return false;
+
+		if (hit.collidedObject.IsInGroup("force lockon bounce"))
+			return true;
+
+		return hit.collidedObject.IsInGroup("wall") && !hit.collidedObject.IsInGroup("level wall");
 	}
 }

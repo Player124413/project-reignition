@@ -302,13 +302,15 @@ public partial class ObjectGenerator : Node3D
 		PathFollow3D follow = new()
 		{
 			RotationMode = PathFollow3D.RotationModeEnum.Xyz,
-			UseModelFront = true
+			UseModelFront = true,
+			Loop = false
 		};
 
 		path.AddChild(follow);
-		follow.Progress = path.Curve.GetClosestOffset(GlobalPosition - path.GlobalPosition) + progressOffset;
-
+		follow.Progress = path.Curve.GetClosestOffset(path.ToLocal(GlobalPosition));
 		Vector3 offset = follow.GlobalTransform.Inverse().Basis * (GlobalPosition - follow.GlobalPosition);
+		follow.Progress += progressOffset;
+
 		for (int i = 0; i < amount; i++)
 		{
 			follow.HOffset = offset.X;

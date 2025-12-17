@@ -7,18 +7,26 @@ namespace Project.Gameplay.Hazards
 	{
 		/// <summary> Spikeball's current lifetime. </summary>
 		private float Lifetime { get; set; }
-		[Export]
 		/// <summary> How long should the spikeball last? </summary>
-		public float MaxLifetime { get; set; }
+		[Export] public float MaxLifetime { get; set; }
+		/// <summary> Is this spikeball spawned directly from the editor? </summary>
+		[Export] public bool IsSpawnedFromEditor { get; set; }
 		/// <summary> Is this spikeball currently spawned? </summary>
 		public bool IsSpawned { get; private set; }
 		/// <summary> Spikeball's animator. </summary>
-		[Export]
-		private Vector3 startingVelocity;
-		[Export]
-		private AnimationPlayer animator;
+		[Export] private Vector3 startingVelocity;
+		[Export] private AnimationPlayer animator;
 
-		public override void _Ready() => StageSettings.Instance.Unloaded += Unload;
+		public override void _Ready()
+		{
+			StageSettings.Instance.Unloaded += Unload;
+
+			if (IsSpawnedFromEditor)
+			{
+				if (Sleeping)
+					Freeze = true;
+			}
+		}
 
 		public override void _PhysicsProcess(double _)
 		{
@@ -40,6 +48,7 @@ namespace Project.Gameplay.Hazards
 			Visible = true;
 			ProcessMode = ProcessModeEnum.Inherit;
 
+			GlobalRotation = Vector3.Zero;
 			LinearVelocity = GlobalBasis * startingVelocity;
 			AngularVelocity = Vector3.Zero;
 			animator.Play("spawn");
@@ -54,6 +63,20 @@ namespace Project.Gameplay.Hazards
 			IsSpawned = false;
 			Visible = false;
 			ProcessMode = ProcessModeEnum.Disabled;
+		}
+
+		/// <summary>
+		/// Called when the player runs into the Spike Ball.
+		/// </summary>
+		public void BounceFromPlayer()
+		{
+			if (!Freeze) // Only apply artificial physics when frozen
+				return;
+
+			Freeze = false;
+			Vector3 impulse = (GlobalPosition - StageSettings.Player.GlobalPosition) * StageSettings.Player.GetRealVelocity().Length();
+			ApplyCentralImpulse(impulse);
+			ApplyTorqueImpulse(impulse);
 		}
 
 		private void Unload() => QueueFree();

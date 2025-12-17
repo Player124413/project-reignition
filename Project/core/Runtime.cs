@@ -13,7 +13,7 @@ public partial class Runtime : Node
 	public static readonly Vector2I HalfScreenSize = (Vector2I)((Vector2)ScreenSize * .5f);
 
 	private readonly StringName AchievementTimeKey = "bookworm";
-	private readonly float AchievementTimeRequirement = 360f * 24f;
+	private readonly int AchievementTimeRequirement = 86400; // Number of seconds in 24 hours
 
 	public override void _EnterTree()
 	{
@@ -266,10 +266,15 @@ public partial class Runtime : Node
 	/// <param name="actionId"> The primary inputId to use. </param>
 	/// <param name="builtInId"> The fallback used if actionId isn't assigned to anything. </param>
 	/// <returns></returns>
-	public bool IsActionJustPressed(StringName actionId, StringName builtInId)
+	public bool IsActionJustPressed(StringName actionId, StringName builtInId, StringName fallbackId = null)
 	{
-		return Input.IsActionJustPressed(actionId) ||
+		bool pressed = Input.IsActionJustPressed(actionId) ||
 			(Input.IsActionJustPressed(builtInId) && Runtime.Instance.IsActionUnmapped(actionId));
+
+		if (pressed || fallbackId == null)
+			return pressed;
+
+		return Input.IsActionJustPressed(fallbackId);
 	}
 
 	public bool IsActionUnmapped(StringName action)

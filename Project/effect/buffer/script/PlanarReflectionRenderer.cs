@@ -63,9 +63,6 @@ public partial class PlanarReflectionRenderer : Node3D
 				break;
 		}
 
-		if (!RenderingServer.Singleton.IsConnected(RenderingServer.SignalName.FramePreDraw, UpdatePositionCallable))
-			RenderingServer.Singleton.Connect(RenderingServer.SignalName.FramePreDraw, UpdatePositionCallable, (uint)ConnectFlags.Deferred);
-
 		if (!RenderingServer.Singleton.IsConnected(RenderingServer.SignalName.FramePostDraw, ApplyTextureCallable))
 			RenderingServer.Singleton.Connect(RenderingServer.SignalName.FramePostDraw, ApplyTextureCallable, (uint)ConnectFlags.Deferred);
 
@@ -84,14 +81,13 @@ public partial class PlanarReflectionRenderer : Node3D
 
 	public override void _ExitTree()
 	{
-		if (RenderingServer.Singleton.IsConnected(RenderingServer.SignalName.FramePreDraw, UpdatePositionCallable))
-			RenderingServer.Singleton.Disconnect(RenderingServer.SignalName.FramePreDraw, UpdatePositionCallable);
-
 		if (RenderingServer.Singleton.IsConnected(RenderingServer.SignalName.FramePostDraw, ApplyTextureCallable))
 			RenderingServer.Singleton.Disconnect(RenderingServer.SignalName.FramePostDraw, ApplyTextureCallable);
 
 		ApplyTexture();
 	}
+
+	public override void _Process(double _) => UpdatePosition();
 
 	// Mirror main camera along plane
 	private void UpdatePosition()
@@ -117,15 +113,11 @@ public partial class PlanarReflectionRenderer : Node3D
 
 		// Update reflectionCamera's rotation
 		Vector3 upDirection = GameplayCamera.Up().Reflect(reflectionAxis.Normalized());
-		Vector3 forwardDirection = GameplayCamera.Forward().Reflect(reflectionAxis.Normalized());
 
+		Vector3 forwardDirection = GameplayCamera.Forward().Reflect(reflectionAxis.Normalized());
 		reflectionCamera.LookAtFromPosition(targetPosition, targetPosition + forwardDirection, upDirection);
 
-		if (Engine.IsEditorHint())
-			reflectionViewport.Size = (Vector2I)GameplayCamera.GetViewport().GetVisibleRect().Size;
-		else
-			reflectionViewport.Size = Runtime.HalfScreenSize;
-
+		reflectionViewport.Size = Engine.IsEditorHint() ? (Vector2I)GameplayCamera.GetViewport().GetVisibleRect().Size : Runtime.HalfScreenSize;
 		reflectionViewport.RenderTargetUpdateMode = SubViewport.UpdateMode.Once;
 	}
 

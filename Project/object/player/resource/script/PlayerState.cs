@@ -99,11 +99,21 @@ public partial class PlayerState : Node
 		return isHoldingBack;
 	}
 
-	protected virtual void Deccelerate() =>
+	protected virtual void Deccelerate()
+	{
 		Player.MoveSpeed = ActiveMovementSettings.UpdateInterpolate(Player.MoveSpeed, 0);
+	}
 
-	protected virtual void AccelerateLockout() =>
+	protected virtual void AccelerateLockout()
+	{
+		if (Player.IsMovingBackward)
+		{
+			Deccelerate();
+			return;
+		}
+
 		Player.MoveSpeed = Player.ActiveLockoutData.ApplySpeed(Player.MoveSpeed, ActiveMovementSettings);
+	}
 
 	protected virtual void Accelerate(float inputStrength)
 	{
@@ -195,7 +205,22 @@ public partial class PlayerState : Node
 
 	protected virtual void Turn(float targetMovementAngle, float smoothing) => Player.MovementAngle = ExtensionMethods.SmoothDampAngle(Player.MovementAngle, targetMovementAngle, ref turningVelocity, smoothing);
 
-	protected virtual float ProcessTargetMovementAngle(float targetMovementAngle) => Player.Controller.ImproveAnalogPrecision(targetMovementAngle, Player.PathFollower.ForwardAngle);
+	protected virtual float ProcessTargetMovementAngle(float targetMovementAngle)
+	{
+		if (SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.FreeRoam))
+		{
+			float dot = ExtensionMethods.DotAngle(Player.MovementAngle, Player.PathFollower.ForwardAngle);
+
+			if (Mathf.Abs(dot) <= .5f)
+				return targetMovementAngle;
+
+			if (dot < 0f)
+				return Player.Controller.ImproveAnalogPrecision(targetMovementAngle, Player.PathFollower.BackAngle);
+		}
+
+
+		return Player.Controller.ImproveAnalogPrecision(targetMovementAngle, Player.PathFollower.ForwardAngle);
+	}
 
 	protected virtual void SnapRotation(float targetMovementAngle)
 	{

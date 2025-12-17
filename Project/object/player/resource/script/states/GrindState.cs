@@ -29,7 +29,6 @@ public partial class GrindState : PlayerState
 	public override void EnterState()
 	{
 		currentCharge = 0;
-		perfectChargeTimer = 0;
 		fallbackShuffleTimer = 0;
 		fallbackOffsetTimer = FallbackInputWindow * 0.5f;
 		canBufferPerfectShuffle = true;
@@ -41,8 +40,10 @@ public partial class GrindState : PlayerState
 
 		Player.AllowLandingGrind = false;
 		Player.CanDoubleJump = true;
+		Player.CanAirBoost = true;
 		Player.IsGrindstepping = false;
 		Player.IsGrinding = true;
+		Player.CanAirBoost = true;
 
 		float positionSmoothing = .2f;
 		float smoothFactor = RailFudgeFactor * 5f;
@@ -143,6 +144,7 @@ public partial class GrindState : PlayerState
 		// Check if the player is holding a direction parallel to rail and start a grindstep
 		float targetInputAngle = Player.Controller.GetTargetInputAngle();
 		isAttemptingGrindStep = !Mathf.IsZeroApprox(Player.Controller.GetInputStrength()) &&
+				!Mathf.IsZeroApprox(Player.Controller.InputHorizontal) &&
 				(Player.Controller.IsHoldingDirection(targetInputAngle, Player.MovementAngle + (Mathf.Pi * .5f)) ||
 				Player.Controller.IsHoldingDirection(targetInputAngle, Player.MovementAngle - (Mathf.Pi * .5f)));
 
@@ -249,7 +251,6 @@ public partial class GrindState : PlayerState
 	private float fallbackShuffleTimer;
 	private float fallbackOffsetTimer;
 	private float currentCharge;
-	private float perfectChargeTimer;
 	private readonly float PerfectChargeInputWindow = .3f;
 	private readonly float FallbackInputWindow = .2f;
 	private readonly float ChargeSpeed = 3.0f;
@@ -257,8 +258,6 @@ public partial class GrindState : PlayerState
 	{
 		bool isCharging = Input.IsActionPressed("button_action") || Input.IsActionPressed("button_attack");
 		bool isCharged = Mathf.IsEqualApprox(currentCharge, 1.0f);
-
-		perfectChargeTimer = Mathf.MoveToward(perfectChargeTimer, 0, PhysicsManager.physicsDelta);
 
 		if (isCharging)
 		{
@@ -323,12 +322,7 @@ public partial class GrindState : PlayerState
 		if (!isCharged)
 		{
 			// Play fully charged VFX
-			perfectChargeTimer = PerfectChargeInputWindow;
 			Player.Effect.StartFullChargeFX();
-		}
-		else if (Mathf.IsZeroApprox(perfectChargeTimer))
-		{
-			Player.Effect.StopFullChargeFX();
 		}
 	}
 
@@ -343,7 +337,7 @@ public partial class GrindState : PlayerState
 		// Update shuffling
 		if (!Player.Animator.IsBalanceShuffleActive && isCharged)
 		{
-			StartShuffle(!Mathf.IsZeroApprox(perfectChargeTimer));
+			StartShuffle(true);
 			return;
 		}
 
@@ -361,9 +355,7 @@ public partial class GrindState : PlayerState
 		{
 			float speedRatio = Player.Stats.GrindSettings.GetSpeedRatioClamped(Player.MoveSpeed);
 			Player.Effect.UpdateGrindFX(speedRatio);
-
-			if (Mathf.IsZeroApprox(perfectChargeTimer))
-				Player.MoveSpeed = Player.Stats.GrindSettings.UpdateInterpolate(Player.MoveSpeed, isCharging ? 0f : -1f);
+			Player.MoveSpeed = Player.Stats.GrindSettings.UpdateInterpolate(Player.MoveSpeed, isCharging ? 0f : -1f);
 		}
 	}
 

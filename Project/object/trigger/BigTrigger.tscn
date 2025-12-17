@@ -1,0 +1,85 @@
+[gd_scene load_steps=10 format=3 uid="uid://gqxmlgiwtikn"]
+
+[ext_resource type="Script" uid="uid://63modgu1nm31" path="res://object/trigger/BigTrigger.cs" id="1_kksc7"]
+[ext_resource type="PackedScene" uid="uid://d4fjpfriuh1ij" path="res://object/stage/common/Big.tscn" id="2_c2025"]
+[ext_resource type="Script" uid="uid://bd2g6rmrn77eo" path="res://object/trigger/modules/LockoutTrigger.cs" id="2_kxf83"]
+[ext_resource type="Resource" uid="uid://bxgjkovm2u880" path="res://resource/preset/lockout/run/StopLockout.tres" id="3_c2025"]
+[ext_resource type="Script" uid="uid://dx0a0rhyauccl" path="res://object/trigger/modules/CameraTrigger.cs" id="5_13m3c"]
+[ext_resource type="Resource" uid="uid://ukcne4um86a6" path="res://resource/preset/camera/common/CutsceneCam.tres" id="6_kksc7"]
+
+[sub_resource type="Animation" id="Animation_oxwls"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Cam:fov")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [50.0]
+}
+
+[sub_resource type="Animation" id="Animation_10g23"]
+resource_name = "activate"
+length = 4.0
+step = 1.0
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Cam:fov")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 1, 2),
+"transitions": PackedFloat32Array(2, 0.5, 1),
+"update": 0,
+"values": [75.0, 45.0, 15.0]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_l5nir"]
+_data = {
+&"RESET": SubResource("Animation_oxwls"),
+&"activate": SubResource("Animation_10g23")
+}
+
+[node name="BigTrigger" type="Area3D" node_paths=PackedStringArray("bigAnimator", "cameraAnimator", "cameraTrigger", "stopLockout")]
+collision_layer = 0
+collision_mask = 2
+monitorable = false
+script = ExtResource("1_kksc7")
+bigAnimation = &"wave"
+bigAnimator = NodePath("Big/AnimationPlayer")
+cameraAnimator = NodePath("Camera/AnimationPlayer")
+cameraTrigger = NodePath("Camera")
+stopLockout = NodePath("StopLockout")
+
+[node name="Big" parent="." instance=ExtResource("2_c2025")]
+
+[node name="BigMesh" parent="Big/BigRoot/Skeleton3D" index="0"]
+cast_shadow = 0
+
+[node name="Camera" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+script = ExtResource("5_13m3c")
+transitionTime = 0.0
+settings = ExtResource("6_kksc7")
+UpdateEveryFrame = true
+followObject = NodePath("Cam")
+
+[node name="Cam" type="Camera3D" parent="Camera"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 30)
+fov = 50.0
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Camera"]
+libraries = {
+&"": SubResource("AnimationLibrary_l5nir")
+}
+
+[node name="StopLockout" type="Node3D" parent="."]
+script = ExtResource("2_kxf83")
+lockoutData = ExtResource("3_c2025")
+
+[editable path="Big"]

@@ -1,9 +1,9 @@
-[gd_scene load_steps=63 format=3 uid="uid://b4bdc5vtf52m6"]
+[gd_scene load_steps=64 format=3 uid="uid://b4bdc5vtf52m6"]
 
 [ext_resource type="PackedScene" uid="uid://slvtrs84m8s0" path="res://area/6 skeleton dome/act 3/Static.tscn" id="1_7mhht"]
 [ext_resource type="Resource" uid="uid://cxmfjdvam8ucj" path="res://resource/level data/skeleton dome/Act3Bone.tres" id="2_ftyvr"]
 [ext_resource type="PackedScene" uid="uid://cjupypih0myxo" path="res://object/player/CharacterSpawn.tscn" id="2_mh17e"]
-[ext_resource type="PackedScene" uid="uid://bgqkl6m4c27kk" path="res://area/6 skeleton dome/object/obstacle/Warp.tscn" id="3_6sudf"]
+[ext_resource type="PackedScene" uid="uid://cbovci4wqnpxl" path="res://area/6 skeleton dome/object/obstacle/Warp.tscn" id="3_6sudf"]
 [ext_resource type="PackedScene" uid="uid://dypfstf220mvi" path="res://area/6 skeleton dome/object/obstacle/WarpExit.tscn" id="4_46mj5"]
 [ext_resource type="Script" uid="uid://bitgnn108jmaa" path="res://object/trigger/modules/DialogTrigger.cs" id="5_coxly"]
 [ext_resource type="Script" uid="uid://dx0a0rhyauccl" path="res://object/trigger/modules/CameraTrigger.cs" id="5_phq0i"]
@@ -63,6 +63,9 @@ size = Vector3(30, 30, 5)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_n0wyt"]
 size = Vector3(20, 20, 5)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_coxly"]
+size = Vector3(10, 10, 2)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_1e57r"]
 size = Vector3(20, 15, 60)
@@ -244,14 +247,6 @@ size = Vector3(176.92297, 160, 160.85716)
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1150, 0.000195503, -1125)
 
 [node name="CharacterSpawn" parent="BoneAct/SpawnPosition" instance=ExtResource("2_mh17e")]
-
-[node name="Player" parent="BoneAct/SpawnPosition/CharacterSpawn" index="0"]
-transform = Transform3D(0.90566504, 0, -0.42399395, 0, 1, 0, 0.42399395, 0, 0.90566504, 0, 0, 0)
-
-[node name="HeadsUpDisplay" parent="BoneAct/SpawnPosition/CharacterSpawn" index="3" node_paths=PackedStringArray("fireSouls")]
-fireSouls = []
-fireSoulImg = null
-fireSoulDashImg = null
 
 [node name="Dialog" type="Node3D" parent="BoneAct"]
 
@@ -858,6 +853,13 @@ distance_fade_length = 40.0
 omni_range = 12.458833
 omni_attenuation = 0.1
 
+[node name="SoftlockFix" type="StaticBody3D" parent="BoneAct/BlueHall" groups=["wall"]]
+transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, -141)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="BoneAct/BlueHall/SoftlockFix"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3, 0)
+shape = SubResource("BoxShape3D_coxly")
+
 [node name="YellowHall" type="Node3D" parent="BoneAct"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 900, 0, -488)
 script = ExtResource("16_v6q0e")
@@ -1049,6 +1051,13 @@ transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 3, 0, -138.5)
 [node name="WarpWhiteR" parent="BoneAct/YellowHall" node_paths=PackedStringArray("warpTarget") instance=ExtResource("21_ne6wt")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 0, -138.5)
 warpTarget = NodePath("../WarpExit")
+
+[node name="SoftlockFix" type="StaticBody3D" parent="BoneAct/YellowHall" groups=["wall"]]
+transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, -141)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="BoneAct/YellowHall/SoftlockFix"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3, 0)
+shape = SubResource("BoxShape3D_coxly")
 
 [node name="TreasureHall" type="Node3D" parent="BoneAct"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1100, 0, -488)
@@ -2145,7 +2154,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.300415, -0.0999999, -1.4007
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.999878)
 
 [node name="PlatformSpiralLarge2" parent="BoneAct/Spiral/TopRow/PlatformGroup5" instance=ExtResource("32_v31tp")]
-transform = Transform3D(0.987942, 0, -0.154831, 0, 1, 0, 0.154831, 0, 0.987942, 0.253174, 4.7, -9.65948)
+transform = Transform3D(0.98906064, 0, -0.14751586, 0, 1, 0, 0.14751586, 0, 0.98906064, 0.6483154, 4.7, -9.597534)
 
 [node name="LaunchRing1" parent="BoneAct/Spiral/TopRow/PlatformGroup5" instance=ExtResource("36_n0wyt")]
 transform = Transform3D(-0.916851, 0, 0.399229, 0, 1, 0, -0.399229, 0, -0.916851, 2.21764, 5, -18.1319)
@@ -2373,6 +2382,7 @@ enemyCount = 3
 transform = Transform3D(-0.933737, 0, -0.357961, 0, 1, 0, 0.357961, 0, -0.933737, 76.2753, 2, 43.9041)
 
 [node name="PlatformSpiralLarge" parent="BoneAct/Spiral/MiddleRow/PlatformGroup1" instance=ExtResource("32_v31tp")]
+transform = Transform3D(0.99997497, 0, 0.007085979, 0, 1, 0, -0.007085979, 0, 0.99997497, 0.067961216, 0, -0.00048158006)
 
 [node name="Sickle1" parent="BoneAct/Spiral/MiddleRow/PlatformGroup1" instance=ExtResource("23_18g7e")]
 transform = Transform3D(0.994567, 0, -0.104095, 0, 1, 0, 0.104095, 0, 0.994567, 8.51245, 9.5, -3.23572)
@@ -2396,6 +2406,7 @@ isTimeBreakSpring = true
 transform = Transform3D(-0.989874, 0, 0.141955, 0, 1, 0, -0.141955, 0, -0.989874, 80.6027, -1.5, 78.5769)
 
 [node name="PlatformSpiralLarge" parent="BoneAct/Spiral/MiddleRow/PlatformGroup2" instance=ExtResource("32_v31tp")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.10089972, 0, -9.313226e-10)
 
 [node name="Sickle" parent="BoneAct/Spiral/MiddleRow/PlatformGroup2" instance=ExtResource("23_18g7e")]
 transform = Transform3D(0.998478, 0, 0.0551413, 0, 1, 0, -0.0551413, 0, 0.998478, 8.22314, 11, -0.649048)
@@ -2421,12 +2432,13 @@ isTimeBreakSpring = true
 transform = Transform3D(-0.804977, 0, 0.593307, 0, 1, 0, -0.593307, 0, -0.804977, 66.4971, -3.5, 113.213)
 
 [node name="PlatformSpiralLarge" parent="BoneAct/Spiral/MiddleRow/PlatformGroup3" instance=ExtResource("32_v31tp")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.42612165, 0, 0)
 
 [node name="Cage" parent="BoneAct/Spiral/MiddleRow/PlatformGroup3" instance=ExtResource("30_wv35e")]
-transform = Transform3D(0.866025, 0, 0.5, 0, 1, 0, -0.5, 0, 0.866025, -0.000244141, 1, -4.19995)
+transform = Transform3D(0.866025, 0, 0.5, 0, 1, 0, -0.5, 0, 0.866025, 0.43276834, 1, -4.44995)
 
 [node name="FireSoul2" parent="BoneAct/Spiral/MiddleRow/PlatformGroup3" instance=ExtResource("33_phq0i")]
-transform = Transform3D(0.866025, 0, 0.5, 0, 1, 0, -0.5, 0, 0.866025, -0.000244141, 1, -4.19995)
+transform = Transform3D(0.866025, 0, 0.5, 0, 1, 0, -0.5, 0, 0.866025, 0.43276834, 1, -4.44995)
 fireSoulIndex = 2
 isTimeBreakOnly = true
 
@@ -2738,37 +2750,36 @@ travelBounds = Vector2(5, 10)
 boundOffset = -4.0
 customCameraSettings = ExtResource("51_q5r1r")
 
-[connection signal="LevelStarted" from="Static" to="BoneAct/SpawnPosition/CharacterSpawn/HeadsUpDisplay" method="PlayObjectiveAnimation" binds= [&"bone"]]
-[connection signal="Teleport" from="BoneAct/BoneWarp" to="Static/Visuals/02HallA" method="Deactivate"]
-[connection signal="Teleport" from="BoneAct/BoneWarp" to="Static/Visuals/03HallB" method="Deactivate"]
-[connection signal="Teleport" from="BoneAct/BoneWarp" to="Static/Visuals/04HallC" method="Deactivate"]
-[connection signal="Teleport" from="BoneAct/BoneWarp" to="Static/Visuals/05HallTreasure" method="Activate"]
-[connection signal="Teleport" from="BoneAct/BoneWarp" to="Static/Trigger/Path/HallTreasurePath" method="Activate"]
 [connection signal="Teleport" from="BoneAct/BoneWarp" to="BoneAct/BoneWarp/Camera" method="Activate"]
 [connection signal="Teleport" from="BoneAct/BoneWarp" to="BoneAct/RedHall" method="Deactivate"]
 [connection signal="Teleport" from="BoneAct/BoneWarp" to="BoneAct/BlueHall" method="Deactivate"]
 [connection signal="Teleport" from="BoneAct/BoneWarp" to="BoneAct/YellowHall" method="Deactivate"]
 [connection signal="Teleport" from="BoneAct/BoneWarp" to="BoneAct/TreasureHall" method="Activate"]
-[connection signal="Teleport" from="BoneAct/HandWarp" to="Static/Visuals/06Arena" method="Deactivate"]
-[connection signal="Teleport" from="BoneAct/HandWarp" to="Static/Visuals/07Spiral" method="Activate"]
-[connection signal="Teleport" from="BoneAct/HandWarp" to="Static/Trigger/Path/SpiralPath" method="Activate"]
-[connection signal="Teleport" from="BoneAct/HandWarp" to="Static/Trigger/Checkpoint/Spiral" method="Activate" flags=3]
+[connection signal="Teleport" from="BoneAct/BoneWarp" to="Static/Visuals/02HallA" method="Deactivate"]
+[connection signal="Teleport" from="BoneAct/BoneWarp" to="Static/Visuals/03HallB" method="Deactivate"]
+[connection signal="Teleport" from="BoneAct/BoneWarp" to="Static/Visuals/04HallC" method="Deactivate"]
+[connection signal="Teleport" from="BoneAct/BoneWarp" to="Static/Visuals/05HallTreasure" method="Activate"]
+[connection signal="Teleport" from="BoneAct/BoneWarp" to="Static/Trigger/Path/HallTreasurePath" method="Activate"]
 [connection signal="Teleport" from="BoneAct/HandWarp" to="BoneAct/HandWarp/Camera" method="Activate"]
 [connection signal="Teleport" from="BoneAct/HandWarp" to="BoneAct/Arena" method="Deactivate"]
 [connection signal="Teleport" from="BoneAct/HandWarp" to="BoneAct/Arena/ArenaPath/Hand" method="Deactivate"]
 [connection signal="Teleport" from="BoneAct/HandWarp" to="BoneAct/Spiral" method="Activate"]
+[connection signal="Teleport" from="BoneAct/HandWarp" to="Static/Visuals/06Arena" method="Deactivate"]
+[connection signal="Teleport" from="BoneAct/HandWarp" to="Static/Visuals/07Spiral" method="Activate"]
+[connection signal="Teleport" from="BoneAct/HandWarp" to="Static/Trigger/Path/SpiralPath" method="Activate"]
+[connection signal="Teleport" from="BoneAct/HandWarp" to="Static/Trigger/Checkpoint/Spiral" method="Activate" flags=3]
+[connection signal="Teleport" from="BoneAct/Throne/Warp" to="BoneAct/Throne" method="Deactivate"]
+[connection signal="Teleport" from="BoneAct/Throne/Warp" to="BoneAct/RedHall" method="Activate"]
 [connection signal="Teleport" from="BoneAct/Throne/Warp" to="Static/Visuals/01Throne" method="Deactivate"]
 [connection signal="Teleport" from="BoneAct/Throne/Warp" to="Static/Visuals/02HallA" method="Activate"]
 [connection signal="Teleport" from="BoneAct/Throne/Warp" to="Static/Trigger/Path/HallRedPath" method="Activate"]
 [connection signal="Teleport" from="BoneAct/Throne/Warp" to="Static/Trigger/Checkpoint/HallRed" method="Activate" flags=3]
-[connection signal="Teleport" from="BoneAct/Throne/Warp" to="BoneAct/Throne" method="Deactivate"]
-[connection signal="Teleport" from="BoneAct/Throne/Warp" to="BoneAct/RedHall" method="Activate"]
+[connection signal="Teleport" from="BoneAct/RedHall/WarpRed" to="BoneAct/RedHall" method="Deactivate"]
+[connection signal="Teleport" from="BoneAct/RedHall/WarpRed" to="BoneAct/BlueHall" method="Activate"]
 [connection signal="Teleport" from="BoneAct/RedHall/WarpRed" to="Static/Visuals/02HallA" method="Deactivate"]
 [connection signal="Teleport" from="BoneAct/RedHall/WarpRed" to="Static/Visuals/03HallB" method="Activate"]
 [connection signal="Teleport" from="BoneAct/RedHall/WarpRed" to="Static/Trigger/Path/HallBluePath" method="Activate"]
 [connection signal="Teleport" from="BoneAct/RedHall/WarpRed" to="Static/Trigger/Checkpoint/HallBlue" method="Activate" flags=3]
-[connection signal="Teleport" from="BoneAct/RedHall/WarpRed" to="BoneAct/RedHall" method="Deactivate"]
-[connection signal="Teleport" from="BoneAct/RedHall/WarpRed" to="BoneAct/BlueHall" method="Activate"]
 [connection signal="Defeated" from="BoneAct/RedHall/RedHall1/SkeletonMajin1" to="BoneAct/RedHall/RedHall1/EnemyStone" method="IncrementCounter"]
 [connection signal="Spawned" from="BoneAct/RedHall/RedHall1/SkeletonMajin1" to="BoneAct/RedHall/RedHall1/SkeletonMajin5" method="Spawn"]
 [connection signal="Spawned" from="BoneAct/RedHall/RedHall1/SkeletonMajin1" to="BoneAct/RedHall/RedHall1/SkeletonMajin6" method="Spawn"]
@@ -2809,18 +2820,18 @@ customCameraSettings = ExtResource("51_q5r1r")
 [connection signal="Activated" from="BoneAct/BlueHall/SwitchGroup5/Switch" to="BoneAct/BlueHall/SwitchGroup5/Gate" method="Activate"]
 [connection signal="JumpFinished" from="BoneAct/BlueHall/SwitchGroup5/Bone" to="BoneAct/BoneWarp" method="Activate"]
 [connection signal="ObjectiveFinished" from="BoneAct/BlueHall/SwitchGroup5/Bone" to="BoneAct/BoneWarpCamera" method="Activate"]
+[connection signal="Teleport" from="BoneAct/BlueHall/WarpWhite" to="BoneAct/RedHall" method="Activate"]
+[connection signal="Teleport" from="BoneAct/BlueHall/WarpWhite" to="BoneAct/BlueHall" method="Deactivate"]
 [connection signal="Teleport" from="BoneAct/BlueHall/WarpWhite" to="Static/Visuals/02HallA" method="Activate"]
 [connection signal="Teleport" from="BoneAct/BlueHall/WarpWhite" to="Static/Visuals/03HallB" method="Deactivate"]
 [connection signal="Teleport" from="BoneAct/BlueHall/WarpWhite" to="Static/Trigger/Path/HallRedPath" method="Activate"]
 [connection signal="Teleport" from="BoneAct/BlueHall/WarpWhite" to="Static/Trigger/Checkpoint/HallRed" method="Activate" flags=3]
-[connection signal="Teleport" from="BoneAct/BlueHall/WarpWhite" to="BoneAct/RedHall" method="Activate"]
-[connection signal="Teleport" from="BoneAct/BlueHall/WarpWhite" to="BoneAct/BlueHall" method="Deactivate"]
+[connection signal="Teleport" from="BoneAct/BlueHall/WarpRed" to="BoneAct/BlueHall" method="Deactivate"]
+[connection signal="Teleport" from="BoneAct/BlueHall/WarpRed" to="BoneAct/YellowHall" method="Activate"]
 [connection signal="Teleport" from="BoneAct/BlueHall/WarpRed" to="Static/Visuals/03HallB" method="Deactivate"]
 [connection signal="Teleport" from="BoneAct/BlueHall/WarpRed" to="Static/Visuals/04HallC" method="Activate"]
 [connection signal="Teleport" from="BoneAct/BlueHall/WarpRed" to="Static/Trigger/Path/HallYellowPath" method="Activate"]
 [connection signal="Teleport" from="BoneAct/BlueHall/WarpRed" to="Static/Trigger/Checkpoint/HallYellow" method="Activate" flags=3]
-[connection signal="Teleport" from="BoneAct/BlueHall/WarpRed" to="BoneAct/BlueHall" method="Deactivate"]
-[connection signal="Teleport" from="BoneAct/BlueHall/WarpRed" to="BoneAct/YellowHall" method="Activate"]
 [connection signal="Defeated" from="BoneAct/YellowHall/SkeletonMajin2" to="BoneAct/YellowHall/EnemyStone2" method="IncrementCounter"]
 [connection signal="Defeated" from="BoneAct/YellowHall/SkeletonMajin3" to="BoneAct/YellowHall/EnemyStone2" method="IncrementCounter"]
 [connection signal="Defeated" from="BoneAct/YellowHall/SkeletonMajin4" to="BoneAct/YellowHall/EnemyStone3" method="IncrementCounter"]
@@ -2835,20 +2846,20 @@ customCameraSettings = ExtResource("51_q5r1r")
 [connection signal="ObjectiveFinished" from="BoneAct/YellowHall/Bone2" to="BoneAct/BoneWarpCamera" method="Activate"]
 [connection signal="JumpFinished" from="BoneAct/YellowHall/Bone3" to="BoneAct/BoneWarp" method="Activate"]
 [connection signal="ObjectiveFinished" from="BoneAct/YellowHall/Bone3" to="BoneAct/BoneWarpCamera" method="Activate"]
-[connection signal="Teleport" from="BoneAct/YellowHall/WarpRed" to="Static/Visuals/02HallA" method="Activate"]
-[connection signal="Teleport" from="BoneAct/YellowHall/WarpRed" to="Static/Visuals/04HallC" method="Deactivate"]
-[connection signal="Teleport" from="BoneAct/YellowHall/WarpRed" to="Static/Trigger/Path/HallRedPath" method="Activate"]
-[connection signal="Teleport" from="BoneAct/YellowHall/WarpRed" to="Static/Trigger/Checkpoint/HallRed" method="Activate" flags=3]
 [connection signal="Teleport" from="BoneAct/YellowHall/WarpRed" to="BoneAct/RedHall" method="Activate"]
 [connection signal="Teleport" from="BoneAct/YellowHall/WarpRed" to="BoneAct/RedHall/RedHall1" method="Deactivate"]
 [connection signal="Teleport" from="BoneAct/YellowHall/WarpRed" to="BoneAct/RedHall/RedHall2" method="Activate"]
 [connection signal="Teleport" from="BoneAct/YellowHall/WarpRed" to="BoneAct/YellowHall" method="Deactivate"]
+[connection signal="Teleport" from="BoneAct/YellowHall/WarpRed" to="Static/Visuals/02HallA" method="Activate"]
+[connection signal="Teleport" from="BoneAct/YellowHall/WarpRed" to="Static/Visuals/04HallC" method="Deactivate"]
+[connection signal="Teleport" from="BoneAct/YellowHall/WarpRed" to="Static/Trigger/Path/HallRedPath" method="Activate"]
+[connection signal="Teleport" from="BoneAct/YellowHall/WarpRed" to="Static/Trigger/Checkpoint/HallRed" method="Activate" flags=3]
+[connection signal="Teleport" from="BoneAct/YellowHall/WarpWhiteL" to="BoneAct/BlueHall" method="Activate"]
+[connection signal="Teleport" from="BoneAct/YellowHall/WarpWhiteL" to="BoneAct/YellowHall" method="Deactivate"]
 [connection signal="Teleport" from="BoneAct/YellowHall/WarpWhiteL" to="Static/Visuals/03HallB" method="Activate"]
 [connection signal="Teleport" from="BoneAct/YellowHall/WarpWhiteL" to="Static/Visuals/04HallC" method="Deactivate"]
 [connection signal="Teleport" from="BoneAct/YellowHall/WarpWhiteL" to="Static/Trigger/Path/HallBluePath" method="Activate"]
 [connection signal="Teleport" from="BoneAct/YellowHall/WarpWhiteL" to="Static/Trigger/Checkpoint/HallBlue" method="Activate" flags=3]
-[connection signal="Teleport" from="BoneAct/YellowHall/WarpWhiteL" to="BoneAct/BlueHall" method="Activate"]
-[connection signal="Teleport" from="BoneAct/YellowHall/WarpWhiteL" to="BoneAct/YellowHall" method="Deactivate"]
 [connection signal="Collected" from="BoneAct/TreasureHall/ItemBoxGroup1/ItemBox4/ItemBoxFlying" to="BoneAct/TreasureHall/ItemBoxGroup1/ItemBox4/HorizontalMovement" method="Pause"]
 [connection signal="Collected" from="BoneAct/TreasureHall/ItemBoxGroup1/ItemBox4/ItemBoxFlying" to="BoneAct/TreasureHall/ItemBoxGroup1/ItemBox4/VerticalMovement" method="Pause"]
 [connection signal="Respawned" from="BoneAct/TreasureHall/ItemBoxGroup1/ItemBox4/ItemBoxFlying" to="BoneAct/TreasureHall/ItemBoxGroup1/ItemBox4/HorizontalMovement" method="Unpause"]
@@ -2865,14 +2876,14 @@ customCameraSettings = ExtResource("51_q5r1r")
 [connection signal="Collected" from="BoneAct/TreasureHall/ItemBoxGroup2/ItemBox3/ItemBoxFlying" to="BoneAct/TreasureHall/ItemBoxGroup2/ItemBox3/VerticalMovement" method="Pause"]
 [connection signal="Respawned" from="BoneAct/TreasureHall/ItemBoxGroup2/ItemBox3/ItemBoxFlying" to="BoneAct/TreasureHall/ItemBoxGroup2/ItemBox3/HorizontalMovement" method="Unpause"]
 [connection signal="Respawned" from="BoneAct/TreasureHall/ItemBoxGroup2/ItemBox3/ItemBoxFlying" to="BoneAct/TreasureHall/ItemBoxGroup2/ItemBox3/VerticalMovement" method="Unpause"]
-[connection signal="Teleport" from="BoneAct/TreasureHall/Warp" to="Static/Visuals/05HallTreasure" method="Deactivate"]
-[connection signal="Teleport" from="BoneAct/TreasureHall/Warp" to="Static/Visuals/06Arena" method="Activate"]
-[connection signal="Teleport" from="BoneAct/TreasureHall/Warp" to="Static/Trigger/Path/ArenaPath" method="Activate"]
-[connection signal="Teleport" from="BoneAct/TreasureHall/Warp" to="Static/Trigger/Checkpoint/Arena" method="Activate" flags=3]
 [connection signal="Teleport" from="BoneAct/TreasureHall/Warp" to="BoneAct/TreasureHall" method="Deactivate"]
 [connection signal="Teleport" from="BoneAct/TreasureHall/Warp" to="BoneAct/TreasureHall/Warp/Camera" method="Activate"]
 [connection signal="Teleport" from="BoneAct/TreasureHall/Warp" to="BoneAct/Arena" method="Activate"]
 [connection signal="Teleport" from="BoneAct/TreasureHall/Warp" to="BoneAct/Arena/ArenaPath/Hand" method="Activate"]
+[connection signal="Teleport" from="BoneAct/TreasureHall/Warp" to="Static/Visuals/05HallTreasure" method="Deactivate"]
+[connection signal="Teleport" from="BoneAct/TreasureHall/Warp" to="Static/Visuals/06Arena" method="Activate"]
+[connection signal="Teleport" from="BoneAct/TreasureHall/Warp" to="Static/Trigger/Path/ArenaPath" method="Activate"]
+[connection signal="Teleport" from="BoneAct/TreasureHall/Warp" to="Static/Trigger/Checkpoint/Arena" method="Activate" flags=3]
 [connection signal="PlayerCaught" from="BoneAct/Arena/ArenaPath/Hand" to="BoneAct/HandWarp" method="Activate"]
 [connection signal="PlayerInteracted" from="BoneAct/Arena/ArenaPath/Hand" to="BoneAct/Arena/ArenaPath/Hand/Camera" method="Activate"]
 [connection signal="Activated" from="BoneAct/Arena/SwitchGroup1/Switch1" to="BoneAct/Arena/SwitchGroup1/Gate1" method="Activate"]
@@ -2943,17 +2954,16 @@ customCameraSettings = ExtResource("51_q5r1r")
 [connection signal="Activated" from="BoneAct/Spiral/Warp/GateGroup2" to="BoneAct/Spiral/Warp/Gate3" method="Deactivate"]
 [connection signal="Activated" from="BoneAct/Spiral/Warp/GateGroup2" to="BoneAct/Spiral/Warp/Gate4" method="Deactivate"]
 [connection signal="Activated" from="BoneAct/Spiral/Warp/GateGroup2" to="BoneAct/Spiral/Warp/Gate5" method="Deactivate"]
+[connection signal="Teleport" from="BoneAct/Spiral/Warp/WarpRed" to="BoneAct/Throne" method="Activate"]
+[connection signal="Teleport" from="BoneAct/Spiral/Warp/WarpRed" to="BoneAct/Spiral" method="Deactivate"]
 [connection signal="Teleport" from="BoneAct/Spiral/Warp/WarpRed" to="Static/Visuals/01Throne" method="Activate"]
 [connection signal="Teleport" from="BoneAct/Spiral/Warp/WarpRed" to="Static/Visuals/07Spiral" method="Deactivate"]
 [connection signal="Teleport" from="BoneAct/Spiral/Warp/WarpRed" to="Static/Trigger/Path/ThronePathReverse" method="Activate"]
-[connection signal="Teleport" from="BoneAct/Spiral/Warp/WarpRed" to="BoneAct/Throne" method="Activate"]
-[connection signal="Teleport" from="BoneAct/Spiral/Warp/WarpRed" to="BoneAct/Spiral" method="Deactivate"]
 [connection signal="Activated" from="BoneAct/Spiral/OneWayEnableTrigger" to="Static/Collision/OneWayWall" method="Activate"]
 [connection signal="PotEntered" from="BoneAct/Spiral/FlyingPot1" to="BoneAct/Spiral/FlyingPot1/Camera" method="Activate"]
 
 [editable path="Static"]
 [editable path="Static/Collision"]
-[editable path="BoneAct/SpawnPosition/CharacterSpawn"]
 [editable path="BoneAct/Arena/SwitchGroup5/Sickle1"]
 [editable path="BoneAct/Arena/SwitchGroup5/Sickle1/SickleBase"]
 [editable path="BoneAct/Arena/SwitchGroup5/Sickle1/Root/SickleHead"]

@@ -23,7 +23,6 @@ public partial class JumpState : PlayerState
 	/// <summary> Cached acceleration jump height. Used to determine when the acceleration jump should start slowing down. </summary>
 	private float accelerationJumpHeight;
 
-	private readonly float JumpCurve = .95f;
 	/// <summary> How fast the jump button needs to be released to count as an Acceleration Jump. </summary>
 	private readonly float AccelerationJumpLength = .1f;
 	/// <summary> Maximum deviation from PathFollower.ForwardAngle allowed during an Acceleration Jump. </summary>
@@ -212,14 +211,17 @@ public partial class JumpState : PlayerState
 	{
 		base.ProcessTurning();
 
-		if (Player.IsAccelerationJumping) // Clamp acceleration jumps so they don't get out of control
+		if (Player.IsAccelerationJumping && !SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.FreeRoam))
+		{
+			// Clamp acceleration jumps so they don't get out of control
 			Player.MovementAngle = ExtensionMethods.ClampAngleRange(Player.MovementAngle, Player.PathFollower.ForwardAngle, MaxAccelerationJumpTurnAmount);
+		}
 	}
 
 	protected override void ProcessGravity()
 	{
 		if (isShortenedJump && Player.VerticalSpeed > 0)
-			Player.VerticalSpeed *= JumpCurve; // Kill jump height
+			Player.VerticalSpeed = 0f; // Kill jump height
 
 		base.ProcessGravity();
 	}
@@ -258,8 +260,11 @@ public partial class JumpState : PlayerState
 			return;
 		}
 
-		if (ExtensionMethods.DeltaAngleRad(Player.MovementAngle, Player.PathFollower.ForwardAngle) > Mathf.Pi * .5f)
+		if (ExtensionMethods.DeltaAngleRad(Player.MovementAngle, Player.PathFollower.ForwardAngle) > Mathf.Pi * .5f &&
+			!SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.FreeRoam))
+		{
 			Player.MovementAngle = Player.PathFollower.ForwardAngle;
+		}
 
 		Player.MoveSpeed = Mathf.Max(accelerationJumpSpeed, Player.MoveSpeed);
 	}

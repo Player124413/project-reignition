@@ -62,6 +62,8 @@ public partial class ThornSpring : Launcher
 		base.SetUp();
 
 		currentTime = startingTimeOffset;
+		Interface.Countdown.Instance.CountdownFinished += ProcessCountdownSkip;
+
 		if (pauseHalfway && startRotated)
 		{
 			animator.Play(halfKey);
@@ -93,6 +95,15 @@ public partial class ThornSpring : Launcher
 		}
 
 		UpdateRotationTimer();
+	}
+
+	private void ProcessCountdownSkip()
+	{
+		Interface.Countdown.Instance.CountdownFinished -= ProcessCountdownSkip;
+		if (!CanProcess())
+			return;
+
+		currentTime += Interface.Countdown.Instance.CountdownSkipAmount;
 	}
 
 	/// <summary> Updates a time break spring based on the player's break skills. </summary>
@@ -154,7 +165,7 @@ public partial class ThornSpring : Launcher
 	/// <summary> Reset time and stop rotating. </summary>
 	private void OnAnimationFinished(StringName animationName)
 	{
-		currentTime = 0;
+		currentTime -= staticTime;
 
 		if (animationName == halfKey)
 		{

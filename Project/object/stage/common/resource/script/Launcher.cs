@@ -193,6 +193,7 @@ public partial class Launcher : Node3D // Jumps between static points w/ custom 
 			return;
 
 		IsPlayerCentered = false;
+		PlayerCenterOffset = Player.GlobalPosition - StartingPoint;
 		Activate();
 	}
 
@@ -205,6 +206,7 @@ public partial class Launcher : Node3D // Jumps between static points w/ custom 
 			Player.Effect.PlayVoice(voiceKey);
 
 		IsPlayerCentered = recenterSpeed == 0;
+		PlayerCenterOffset = Player.GlobalPosition - StartingPoint;
 		Player.StartLauncher(GetLaunchSettings());
 
 		LaunchAnimation();
@@ -238,14 +240,15 @@ public partial class Launcher : Node3D // Jumps between static points w/ custom 
 	private int recenterSpeed = 32; // How fast to recenter the character
 
 	public virtual bool IsPlayerCentered { get; protected set; }
+	public Vector3 PlayerCenterOffset { get; protected set; }
 	protected PlayerController Player => StageSettings.Player;
 
 	public Vector3 RecenterPlayer()
 	{
 		Vector3 targetPosition = CalculateStartingPoint();
-		Vector3 pos = Player.GlobalPosition.MoveToward(targetPosition, recenterSpeed * PhysicsManager.physicsDelta);
-		IsPlayerCentered = pos.IsEqualApprox(targetPosition);
-		return pos;
+		PlayerCenterOffset = PlayerCenterOffset.MoveToward(Vector3.Zero, recenterSpeed * PhysicsManager.physicsDelta);
+		IsPlayerCentered = PlayerCenterOffset.IsZeroApprox();
+		return targetPosition + PlayerCenterOffset;
 	}
 
 	public void Deactivate() => EmitSignal(SignalName.Deactivated);

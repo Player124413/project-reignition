@@ -1,0 +1,435 @@
+[gd_scene load_steps=13 format=3 uid="uid://by4l2emxjrhny"]
+
+[ext_resource type="PackedScene" uid="uid://dax0mun2bjm1v" path="res://area/0 lost prologue/act/Static.tscn" id="1_e5om0"]
+[ext_resource type="Resource" uid="uid://dk3ieffp4nroy" path="res://resource/level data/lost prologue/Classic1.tres" id="2_voo6r"]
+[ext_resource type="PackedScene" uid="uid://cjupypih0myxo" path="res://object/player/CharacterSpawn.tscn" id="3_iq7x8"]
+[ext_resource type="PackedScene" uid="uid://bhnh1as6xgpiy" path="res://object/stage/common/DashPanel.tscn" id="4_gcoqu"]
+[ext_resource type="Script" uid="uid://bssd28yqn1cxg" path="res://object/trigger/modules/PathTrigger.cs" id="5_ejht8"]
+[ext_resource type="PackedScene" uid="uid://dpdmwi0k3jhd1" path="res://area/0 lost prologue/object/wonder/WonderBlock1.tscn" id="6_voo6r"]
+[ext_resource type="Script" uid="uid://dd24u7rlj0dwl" path="res://addons/custom_nodes/script/ObjectGenerator.cs" id="7_gcoqu"]
+[ext_resource type="PackedScene" uid="uid://c7l8mr7ubn848" path="res://object/stage/pickups/Ring.tscn" id="8_ejht8"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_e5om0"]
+size = Vector3(10, 20, 5)
+
+[sub_resource type="Curve" id="Curve_gcoqu"]
+_limits = [-2.0, 2.0, 0.0, 1.0]
+_data = [Vector2(0, 2.9802322e-08), 0.0, -9.120778, 0, 0, Vector2(0.3, -1.2), 0.0, 0.0, 0, 0, Vector2(0.7, 1.2), 0.0, 0.0, 0, 0, Vector2(1, 2.9802322e-08), -7.383418, 0.0, 0, 0]
+point_count = 4
+
+[sub_resource type="Curve" id="Curve_ejht8"]
+_limits = [-2.5, 2.5, 0.0, 1.0]
+_data = [Vector2(0, 2.9802322e-08), 0.0, -25.744352, 0, 0, Vector2(0.24941726, -2.5), 0.0, 0.0, 0, 0, Vector2(0.7529138, 2.5), 0.0, 0.0, 0, 0, Vector2(1, 2.9802322e-08), -20.811827, 0.0, 0, 0]
+point_count = 4
+
+[sub_resource type="Curve" id="Curve_ss5oq"]
+_limits = [-1.0, 1.0, 0.0, 1.0]
+_data = [Vector2(0, 2.9802322e-08), 0.0, -6.771871, 0, 0, Vector2(0.24941726, -1), 0.0, 0.0, 0, 0, Vector2(0.7529138, 1), 0.0, 0.0, 0, 0, Vector2(1, 2.9802322e-08), -6.1621737, 0.0, 0, 0]
+point_count = 4
+
+[node name="Stage" type="Node"]
+
+[node name="Static" parent="." instance=ExtResource("1_e5om0")]
+Data = ExtResource("2_voo6r")
+
+[node name="Classic01" type="Node3D" parent="."]
+
+[node name="SpawnPosition" type="Node3D" parent="Classic01"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 160)
+
+[node name="CharacterSpawn" parent="Classic01/SpawnPosition" instance=ExtResource("3_iq7x8")]
+
+[node name="DashPanelGroup1" type="Node3D" parent="Classic01"]
+transform = Transform3D(-0.80670726, 0.14224426, -0.57357645, 0.1736482, 0.9848077, 0, 0.5648625, -0.09960051, -0.81915206, 9.838658, 0.03472964, 193.11298)
+
+[node name="DashPanel1" parent="Classic01/DashPanelGroup1" instance=ExtResource("4_gcoqu")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0, 0)
+
+[node name="DashPanel2" parent="Classic01/DashPanelGroup1" instance=ExtResource("4_gcoqu")]
+
+[node name="DashPanel3" parent="Classic01/DashPanelGroup1" instance=ExtResource("4_gcoqu")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0, 0)
+
+[node name="PathForward" type="Node3D" parent="Classic01/DashPanelGroup1" node_paths=PackedStringArray("path")]
+script = ExtResource("5_ejht8")
+path = NodePath("../../../Static/Path/MainPath")
+cameraPathBlendTime = 0.5
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Classic01/DashPanelGroup1" groups=["wall"]]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -4)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Classic01/DashPanelGroup1/StaticBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
+shape = SubResource("BoxShape3D_e5om0")
+
+[node name="BlockGroup1" type="Node3D" parent="Classic01"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 150)
+
+[node name="WonderBlock1" parent="Classic01/BlockGroup1" instance=ExtResource("6_voo6r")]
+
+[node name="WonderBlockL" parent="Classic01/BlockGroup1" instance=ExtResource("6_voo6r")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.5, 0, -20)
+
+[node name="WonderBlockR" parent="Classic01/BlockGroup1" instance=ExtResource("6_voo6r")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.5, 0, -20)
+
+[node name="Rings1" type="Node3D" parent="Classic01"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6, 114)
+script = ExtResource("7_gcoqu")
+Source = ExtResource("8_ejht8")
+Amount = 4
+Shape = 0
+Orientation = 0
+Spacing = 2.0
+"Horizontal Offset" = null
+"Vertical Offset" = null
+metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
+
+[node name="Child01" parent="Classic01/Rings1" instance=ExtResource("8_ejht8")]
+
+[node name="Child02" parent="Classic01/Rings1" instance=ExtResource("8_ejht8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2)
+
+[node name="Child03" parent="Classic01/Rings1" instance=ExtResource("8_ejht8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -4)
+
+[node name="Child04" parent="Classic01/Rings1" instance=ExtResource("8_ejht8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -6)
+
+[node name="Rings2" type="Node3D" parent="Classic01"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0.6, 92)
+script = ExtResource("7_gcoqu")
+Source = ExtResource("8_ejht8")
+Amount = 4
+Shape = 0
+Orientation = 0
+Spacing = 2.0
+"Horizontal Offset" = null
+"Vertical Offset" = null
+metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
+
+[node name="Child01" parent="Classic01/Rings2" instance=ExtResource("8_ejht8")]
+
+[node name="Child02" parent="Classic01/Rings2" instance=ExtResource("8_ejht8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2)
+
+[node name="Child03" parent="Classic01/Rings2" instance=ExtResource("8_ejht8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -4)
+
+[node name="Child04" parent="Classic01/Rings2" instance=ExtResource("8_ejht8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -6)
+
+[node name="WonderBlock2" parent="Classic01" instance=ExtResource("6_voo6r")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 89)
+
+[node name="WonderBlockL2" parent="Classic01" instance=ExtResource("6_voo6r")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.5, 0, 59)
+
+[node name="WonderBlockR2" parent="Classic01" instance=ExtResource("6_voo6r")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.5, 0, 59)
+
+[node name="Rings3" type="Node3D" parent="Classic01"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6, 61)
+script = ExtResource("7_gcoqu")
+Source = ExtResource("8_ejht8")
+Amount = 4
+Shape = 0
+Orientation = 0
+Spacing = 2.0
+"Horizontal Offset" = null
+"Vertical Offset" = null
+metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
+
+[node name="Child01" parent="Classic01/Rings3" instance=ExtResource("8_ejht8")]
+
+[node name="Child02" parent="Classic01/Rings3" instance=ExtResource("8_ejht8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2)
+
+[node name="Child03" parent="Classic01/Rings3" instance=ExtResource("8_ejht8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -4)
+
+[node name="Child04" parent="Classic01/Rings3" instance=ExtResource("8_ejht8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -6)
+
+[node name="WonderBlock3" parent="Classic01" instance=ExtResource("6_voo6r")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 30.589996)
+
+[node name="Rings4" type="Node3D" parent="Classic01"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0.6, 34)
+script = ExtResource("7_gcoqu")
+Source = ExtResource("8_ejht8")
+Amount = 4
+Shape = 0
+Orientation = 0
+Spacing = 2.0
+"Horizontal Offset" = null
+"Vertical Offset" = null
+metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
+
+[node name="Child01" parent="Classic01/Rings4" instance=ExtResource("8_ejht8")]
+
+[node name="Child02" parent="Classic01/Rings4" instance=ExtResource("8_ejht8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2)
+
+[node name="Child03" parent="Classic01/Rings4" instance=ExtResource("8_ejht8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -4)
+
+[node name="Child04" parent="Classic01/Rings4" instance=ExtResource("8_ejht8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -6)
+
+[node name="Rings5" type="Node3D" parent="Classic01"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6, 10)
+script = ExtResource("7_gcoqu")
+Source = ExtResource("8_ejht8")
+Amount = 10
+Shape = 0
+Orientation = 0
+Spacing = 2.5
+"Horizontal Offset" = SubResource("Curve_gcoqu")
+"Vertical Offset" = null
+metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
+
+[node name="Child01" parent="Classic01/Rings5" instance=ExtResource("8_ejht8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.9802322e-08, 0, 0)
+
+[node name="Child02" parent="Classic01/Rings5" instance=ExtResource("8_ejht8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.77364796, 0, -2.5)
+
+[node name="Child03" parent="Classic01/Rings5" instance=ExtResource("8_ejht8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.1360824, 0, -5)
+
+[node name="Child04" parent="Classic01/Rings5" instance=ExtResource("8_ejht8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.1527779, 0, -7.5)
+
+[node name="Child05" parent="Classic01/Rings5" instance=ExtResource("8_ejht8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.48713997, 0, -10)
+
+[node name="Child06" parent="Classic01/Rings5" instance=ExtResource("8_ejht8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.48714012, 0, -12.5)
+
+[node name="Child07" parent="Classic01/Rings5" instance=ExtResource("8_ejht8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.1527779, 0, -15)
+
+[node name="Child08" parent="Classic01/Rings5" instance=ExtResource("8_ejht8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.1101319, 0, -17.5)
+
+[node name="Child09" parent="Classic01/Rings5" instance=ExtResource("8_ejht8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.6971205, 0, -20)
+
+[node name="Child10" parent="Classic01/Rings5" instance=ExtResource("8_ejht8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.9802322e-08, 0, -22.5)
+
+[node name="WonderBlockR3" parent="Classic01" instance=ExtResource("6_voo6r")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.5, 0, 5)
+
+[node name="WonderBlockL3" parent="Classic01" instance=ExtResource("6_voo6r")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.5, 0, -5)
+
+[node name="WonderBlockR4" parent="Classic01" instance=ExtResource("6_voo6r")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.5, 0, -12)
+
+[node name="Rings6" type="Node3D" parent="Classic01"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6, -36)
+script = ExtResource("7_gcoqu")
+Source = ExtResource("8_ejht8")
+Amount = 15
+Shape = 0
+Orientation = 0
+Spacing = 3.0
+"Horizontal Offset" = SubResource("Curve_ejht8")
+"Vertical Offset" = null
+metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
+
+[node name="Child01" parent="Classic01/Rings6" instance=ExtResource("8_ejht8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.9802322e-08, 0, 0)
+
+[node name="Child02" parent="Classic01/Rings6" instance=ExtResource("8_ejht8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.4341241, 0, -3)
+
+[node name="Child03" parent="Classic01/Rings6" instance=ExtResource("8_ejht8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.192243, 0, -6)
+
+[node name="Child04" parent="Classic01/Rings6" instance=ExtResource("8_ejht8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.4746232, 0, -9)
+
+[node name="Child05" parent="Classic01/Rings6" instance=ExtResource("8_ejht8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.425792, 0, -12)
+
+[node name="Child06" parent="Classic01/Rings6" instance=ExtResource("8_ejht8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.9112903, 0, -15)
+
+[node name="Child07" parent="Classic01/Rings6" instance=ExtResource("8_ejht8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.0513778, 0, -18)
+
+[node name="Child08" parent="Classic01/Rings6" instance=ExtResource("8_ejht8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.017360955, 0, -21)
+
+[node name="Child09" parent="Classic01/Rings6" instance=ExtResource("8_ejht8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.0194507, 0, -24)
+
+[node name="Child10" parent="Classic01/Rings6" instance=ExtResource("8_ejht8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.8877491, 0, -27)
+
+[node name="Child11" parent="Classic01/Rings6" instance=ExtResource("8_ejht8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.4162273, 0, -30)
+
+[node name="Child12" parent="Classic01/Rings6" instance=ExtResource("8_ejht8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.458119, 0, -33)
+
+[node name="Child13" parent="Classic01/Rings6" instance=ExtResource("8_ejht8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.0697842, 0, -36)
+
+[node name="Child14" parent="Classic01/Rings6" instance=ExtResource("8_ejht8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.2572877, 0, -39)
+
+[node name="Child15" parent="Classic01/Rings6" instance=ExtResource("8_ejht8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.9802322e-08, 0, -42)
+
+[node name="WonderBlock4" parent="Classic01" instance=ExtResource("6_voo6r")]
+transform = Transform3D(2, 0, 0, 0, 1, 0, 0, 0, 2, 1, 0, -50)
+
+[node name="WonderBlock5" parent="Classic01" instance=ExtResource("6_voo6r")]
+transform = Transform3D(2, 0, 0, 0, 1, 0, 0, 0, 2, -1, 0, -69)
+
+[node name="Rings7" type="Node3D" parent="Classic01"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6, -100)
+script = ExtResource("7_gcoqu")
+Source = ExtResource("8_ejht8")
+Amount = 9
+Shape = 0
+Orientation = 0
+Spacing = 1.5
+"Horizontal Offset" = SubResource("Curve_ss5oq")
+"Vertical Offset" = null
+metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
+
+[node name="Child01" parent="Classic01/Rings7" instance=ExtResource("8_ejht8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.9802322e-08, 0, 0)
+
+[node name="Child02" parent="Classic01/Rings7" instance=ExtResource("8_ejht8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.71238554, 0, -1.5)
+
+[node name="Child03" parent="Classic01/Rings7" instance=ExtResource("8_ejht8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.9999919, 0, -3)
+
+[node name="Child04" parent="Classic01/Rings7" instance=ExtResource("8_ejht8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.68880117, 0, -4.5)
+
+[node name="Child05" parent="Classic01/Rings7" instance=ExtResource("8_ejht8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0069443956, 0, -6)
+
+[node name="Child06" parent="Classic01/Rings7" instance=ExtResource("8_ejht8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.6783364, 0, -7.5)
+
+[node name="Child07" parent="Classic01/Rings7" instance=ExtResource("8_ejht8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.9997998, 0, -9)
+
+[node name="Child08" parent="Classic01/Rings7" instance=ExtResource("8_ejht8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.69689703, 0, -10.5)
+
+[node name="Child09" parent="Classic01/Rings7" instance=ExtResource("8_ejht8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.9802322e-08, 0, -12)
+
+[node name="Rings8" type="Node3D" parent="Classic01"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6, -121)
+script = ExtResource("7_gcoqu")
+Source = ExtResource("8_ejht8")
+Amount = 20
+Shape = 0
+Orientation = 0
+Spacing = 1.5
+"Horizontal Offset" = null
+"Vertical Offset" = null
+metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
+
+[node name="Child01" parent="Classic01/Rings8" instance=ExtResource("8_ejht8")]
+
+[node name="Child02" parent="Classic01/Rings8" instance=ExtResource("8_ejht8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -1.5)
+
+[node name="Child03" parent="Classic01/Rings8" instance=ExtResource("8_ejht8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -3)
+
+[node name="Child04" parent="Classic01/Rings8" instance=ExtResource("8_ejht8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -4.5)
+
+[node name="Child05" parent="Classic01/Rings8" instance=ExtResource("8_ejht8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -6)
+
+[node name="Child06" parent="Classic01/Rings8" instance=ExtResource("8_ejht8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -7.5)
+
+[node name="Child07" parent="Classic01/Rings8" instance=ExtResource("8_ejht8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -9)
+
+[node name="Child08" parent="Classic01/Rings8" instance=ExtResource("8_ejht8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -10.5)
+
+[node name="Child09" parent="Classic01/Rings8" instance=ExtResource("8_ejht8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -12)
+
+[node name="Child10" parent="Classic01/Rings8" instance=ExtResource("8_ejht8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -13.5)
+
+[node name="Child11" parent="Classic01/Rings8" instance=ExtResource("8_ejht8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -15)
+
+[node name="Child12" parent="Classic01/Rings8" instance=ExtResource("8_ejht8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -16.5)
+
+[node name="Child13" parent="Classic01/Rings8" instance=ExtResource("8_ejht8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -18)
+
+[node name="Child14" parent="Classic01/Rings8" instance=ExtResource("8_ejht8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -19.5)
+
+[node name="Child15" parent="Classic01/Rings8" instance=ExtResource("8_ejht8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -21)
+
+[node name="Child16" parent="Classic01/Rings8" instance=ExtResource("8_ejht8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -22.5)
+
+[node name="Child17" parent="Classic01/Rings8" instance=ExtResource("8_ejht8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -24)
+
+[node name="Child18" parent="Classic01/Rings8" instance=ExtResource("8_ejht8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -25.5)
+
+[node name="Child19" parent="Classic01/Rings8" instance=ExtResource("8_ejht8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -27)
+
+[node name="Child20" parent="Classic01/Rings8" instance=ExtResource("8_ejht8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -28.5)
+
+[node name="DashPanelGroup2" type="Node3D" parent="Classic01"]
+transform = Transform3D(0.42261824, 0, -0.9063078, 0, 1, 0, 0.9063078, 0, 0.42261824, 10.838658, 0.03472964, -177.88702)
+
+[node name="DashPanel1" parent="Classic01/DashPanelGroup2" instance=ExtResource("4_gcoqu")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0, 0)
+
+[node name="DashPanel2" parent="Classic01/DashPanelGroup2" instance=ExtResource("4_gcoqu")]
+
+[node name="DashPanel3" parent="Classic01/DashPanelGroup2" instance=ExtResource("4_gcoqu")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0, 0)
+
+[node name="PathReverse" type="Node3D" parent="Classic01/DashPanelGroup2" node_paths=PackedStringArray("path")]
+script = ExtResource("5_ejht8")
+path = NodePath("../../../Static/Path/MainPath")
+pathMode = 1
+cameraPathBlendTime = 0.5
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Classic01/DashPanelGroup2" groups=["wall"]]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -4)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Classic01/DashPanelGroup2/StaticBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
+shape = SubResource("BoxShape3D_e5om0")
+
+[connection signal="Activated" from="Classic01/DashPanelGroup1/DashPanel1" to="Classic01/DashPanelGroup1/PathForward" method="Activate"]
+[connection signal="Activated" from="Classic01/DashPanelGroup1/DashPanel2" to="Classic01/DashPanelGroup1/PathForward" method="Activate"]
+[connection signal="Activated" from="Classic01/DashPanelGroup1/DashPanel3" to="Classic01/DashPanelGroup1/PathForward" method="Activate"]
+[connection signal="Activated" from="Classic01/DashPanelGroup2/DashPanel1" to="Classic01/DashPanelGroup2/PathReverse" method="Activate"]
+[connection signal="Activated" from="Classic01/DashPanelGroup2/DashPanel2" to="Classic01/DashPanelGroup2/PathReverse" method="Activate"]
+[connection signal="Activated" from="Classic01/DashPanelGroup2/DashPanel3" to="Classic01/DashPanelGroup2/PathReverse" method="Activate"]
+
+[editable path="Static"]

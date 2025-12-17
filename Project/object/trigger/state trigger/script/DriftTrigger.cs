@@ -54,7 +54,7 @@ public partial class DriftTrigger : Area3D
 	/// <summary> Checks whether the player is in a state where a drift is possible. </summary>
 	private void AttemptDrift()
 	{
-		if (Player.IsDrifting)
+		if (Player.IsDriftTriggerEqualTo(this))
 			return;
 
 		if (!Player.IsOnGround)
@@ -63,7 +63,11 @@ public partial class DriftTrigger : Area3D
 		if (Player.IsMovingBackward)
 			return;
 
-		if (Player.Stats.GroundSettings.GetSpeedRatio(Player.MoveSpeed) < EntranceSpeedRatio)
+		// Free roam turnaround fix
+		if (SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.FreeRoam) && ExtensionMethods.DotAngle(Player.MovementAngle, Player.PathFollower.ForwardAngle) < 0)
+			return;
+
+		if (Player.MoveSpeed / Player.Stats.baseGroundSpeed < EntranceSpeedRatio)
 			return;
 
 		if (Player.ExternalController != null || Player.ExternalParent != null)

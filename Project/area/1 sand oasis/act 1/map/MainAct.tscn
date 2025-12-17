@@ -1,4 +1,4 @@
-[gd_scene load_steps=202 format=3 uid="uid://ms7rm6vsb708"]
+[gd_scene load_steps=204 format=3 uid="uid://ms7rm6vsb708"]
 
 [ext_resource type="Resource" uid="uid://chdva6qp0d51h" path="res://resource/level data/sand oasis/Act1Main.tres" id="2_62va5"]
 [ext_resource type="PackedScene" uid="uid://cjupypih0myxo" path="res://object/player/CharacterSpawn.tscn" id="3_n7uj2"]
@@ -73,6 +73,7 @@
 [ext_resource type="PackedScene" uid="uid://dxepb172kmp8n" path="res://object/stage/common/Goal.tscn" id="68_qyj4m"]
 [ext_resource type="PackedScene" uid="uid://tvjx2wghc06t" path="res://area/1 sand oasis/act 1/Static.tscn" id="69_a710p"]
 [ext_resource type="Script" uid="uid://dpt5o0lh62p6t" path="res://object/stage/MovingObject.cs" id="71_nnqh4"]
+[ext_resource type="PackedScene" uid="uid://gqxmlgiwtikn" path="res://object/trigger/BigTrigger.tscn" id="74_8ah3e"]
 
 [sub_resource type="BoxShape3D" id="305"]
 size = Vector3(15, 20, 5)
@@ -13111,6 +13112,9 @@ size = Vector3(30, 50, 5)
 [sub_resource type="BoxShape3D" id="65"]
 size = Vector3(12, 20, 2)
 
+[sub_resource type="BoxShape3D" id="BoxShape3D_6cl5k"]
+size = Vector3(20, 10, 8)
+
 [node name="Stage" type="Node"]
 
 [node name="Static" parent="." instance=ExtResource("69_a710p")]
@@ -13253,9 +13257,10 @@ OneShot = true
 "Respawn Mode" = 4
 "Enter Mode" = 0
 
-[node name="Dialog" type="Node3D" parent="MainAct/DialogTriggers/KingDialogTrigger"]
+[node name="Dialog" type="Node3D" parent="MainAct/DialogTriggers/KingDialogTrigger" node_paths=PackedStringArray("randomizedDialogTriggers")]
 script = ExtResource("5_ox8ed")
 textKeys = ["oas_opening_so", "oas_opening_sh"]
+randomizedDialogTriggers = []
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="MainAct/DialogTriggers/KingDialogTrigger"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
@@ -13268,9 +13273,10 @@ OneShot = true
 "Respawn Mode" = 4
 "Enter Mode" = 0
 
-[node name="Dialog" type="Node3D" parent="MainAct/DialogTriggers/RingDialogTrigger"]
+[node name="Dialog" type="Node3D" parent="MainAct/DialogTriggers/RingDialogTrigger" node_paths=PackedStringArray("randomizedDialogTriggers")]
 script = ExtResource("5_ox8ed")
 textKeys = ["common_hint_ring_sh"]
+randomizedDialogTriggers = []
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="MainAct/DialogTriggers/RingDialogTrigger"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
@@ -13283,11 +13289,12 @@ OneShot = true
 "Respawn Mode" = 4
 "Enter Mode" = 0
 
-[node name="Dialog" type="Node3D" parent="MainAct/DialogTriggers/PillarDialogTrigger"]
+[node name="Dialog" type="Node3D" parent="MainAct/DialogTriggers/PillarDialogTrigger" node_paths=PackedStringArray("randomizedDialogTriggers")]
 transform = Transform3D(1, 0, 0, 7.45058e-09, 1, 0, -7.45058e-09, 2.98023e-08, 1, 0, 0, 0)
 script = ExtResource("5_ox8ed")
 delays = [0.1]
 textKeys = ["oas_pillar_sh"]
+randomizedDialogTriggers = []
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="MainAct/DialogTriggers/PillarDialogTrigger"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
@@ -13300,10 +13307,11 @@ OneShot = true
 "Respawn Mode" = 4
 "Enter Mode" = 0
 
-[node name="Dialog" type="Node3D" parent="MainAct/DialogTriggers/MajinDialogTrigger"]
+[node name="Dialog" type="Node3D" parent="MainAct/DialogTriggers/MajinDialogTrigger" node_paths=PackedStringArray("randomizedDialogTriggers")]
 transform = Transform3D(1, 0, 0, 7.45058e-09, 1, 0, -7.45058e-09, 2.98023e-08, 1, 0, 0, 0)
 script = ExtResource("5_ox8ed")
 textKeys = ["common_enemy_sh"]
+randomizedDialogTriggers = []
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="MainAct/DialogTriggers/MajinDialogTrigger"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
@@ -13316,10 +13324,11 @@ OneShot = true
 "Respawn Mode" = 4
 "Enter Mode" = 0
 
-[node name="Dialog" type="Node3D" parent="MainAct/DialogTriggers/PearlsDialogTrigger"]
+[node name="Dialog" type="Node3D" parent="MainAct/DialogTriggers/PearlsDialogTrigger" node_paths=PackedStringArray("randomizedDialogTriggers")]
 transform = Transform3D(1, 0, 0, 7.45058e-09, 1, 0, -7.45058e-09, 2.98023e-08, 1, 0, 0, 0)
 script = ExtResource("5_ox8ed")
 textKeys = ["common_enemy_pearl_sh"]
+randomizedDialogTriggers = []
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="MainAct/DialogTriggers/PearlsDialogTrigger"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
@@ -13332,10 +13341,11 @@ OneShot = true
 "Respawn Mode" = 4
 "Enter Mode" = 0
 
-[node name="Dialog" type="Node3D" parent="MainAct/DialogTriggers/UTurnDialogTrigger"]
+[node name="Dialog" type="Node3D" parent="MainAct/DialogTriggers/UTurnDialogTrigger" node_paths=PackedStringArray("randomizedDialogTriggers")]
 script = ExtResource("5_ox8ed")
 delays = [0.0, 0.1]
 textKeys = ["oas_uturn_sh", "oas_uturn_so"]
+randomizedDialogTriggers = []
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="MainAct/DialogTriggers/UTurnDialogTrigger"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
@@ -13348,9 +13358,10 @@ OneShot = true
 "Respawn Mode" = 4
 "Enter Mode" = 0
 
-[node name="Dialog" type="Node3D" parent="MainAct/DialogTriggers/RedMajinDialogTrigger"]
+[node name="Dialog" type="Node3D" parent="MainAct/DialogTriggers/RedMajinDialogTrigger" node_paths=PackedStringArray("randomizedDialogTriggers")]
 script = ExtResource("5_ox8ed")
 textKeys = ["common_red_majin_sh"]
+randomizedDialogTriggers = []
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="MainAct/DialogTriggers/RedMajinDialogTrigger"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
@@ -13363,10 +13374,11 @@ OneShot = true
 "Respawn Mode" = 4
 "Enter Mode" = 0
 
-[node name="Dialog" type="Node3D" parent="MainAct/DialogTriggers/InteriorDialogTrigger"]
+[node name="Dialog" type="Node3D" parent="MainAct/DialogTriggers/InteriorDialogTrigger" node_paths=PackedStringArray("randomizedDialogTriggers")]
 script = ExtResource("5_ox8ed")
 delays = [0.0, 0.0]
 textKeys = ["oas_interior_sh", "oas_interior_so"]
+randomizedDialogTriggers = []
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="MainAct/DialogTriggers/InteriorDialogTrigger"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
@@ -13379,9 +13391,10 @@ OneShot = true
 "Respawn Mode" = 4
 "Enter Mode" = 0
 
-[node name="Dialog" type="Node3D" parent="MainAct/DialogTriggers/FireSoulDialogTrigger"]
+[node name="Dialog" type="Node3D" parent="MainAct/DialogTriggers/FireSoulDialogTrigger" node_paths=PackedStringArray("randomizedDialogTriggers")]
 script = ExtResource("5_ox8ed")
 textKeys = ["common_hint_fire_soul_sh"]
+randomizedDialogTriggers = []
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="MainAct/DialogTriggers/FireSoulDialogTrigger"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
@@ -13394,10 +13407,11 @@ OneShot = true
 "Respawn Mode" = 4
 "Enter Mode" = 0
 
-[node name="Dialog" type="Node3D" parent="MainAct/DialogTriggers/PierDialogTrigger"]
+[node name="Dialog" type="Node3D" parent="MainAct/DialogTriggers/PierDialogTrigger" node_paths=PackedStringArray("randomizedDialogTriggers")]
 script = ExtResource("5_ox8ed")
 delays = []
 textKeys = ["oas_pier_sh", "oas_town_so"]
+randomizedDialogTriggers = []
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="MainAct/DialogTriggers/PierDialogTrigger"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
@@ -13410,10 +13424,11 @@ OneShot = true
 "Respawn Mode" = 4
 "Enter Mode" = 0
 
-[node name="Dialog" type="Node3D" parent="MainAct/DialogTriggers/PalaceDialogTrigger"]
+[node name="Dialog" type="Node3D" parent="MainAct/DialogTriggers/PalaceDialogTrigger" node_paths=PackedStringArray("randomizedDialogTriggers")]
 script = ExtResource("5_ox8ed")
 delays = []
 textKeys = ["oas_palace_so", "oas_palace_sh"]
+randomizedDialogTriggers = []
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="MainAct/DialogTriggers/PalaceDialogTrigger"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
@@ -16784,7 +16799,7 @@ animator = NodePath("AnimationPlayer")
 "Trigger Settings/Player Stand-in" = NodePath("")
 
 [node name="Spear1" parent="MainAct/Hallway/WallSpearGroup/Event" instance=ExtResource("47_1qr4i")]
-transform = Transform3D(0.866025, 1.69747e-15, 0.5, 0, 1, -3.39494e-15, -0.5, 2.9401e-15, 0.866025, 0, 2.4, 0)
+transform = Transform3D(0.86602527, 1.6974692e-15, 0.50000024, 0, 1, -3.3949366e-15, -0.50000024, 2.940101e-15, 0.86602527, 0, 2.4, 0)
 visible = false
 
 [node name="TravelSFX1" type="AudioStreamPlayer3D" parent="MainAct/Hallway/WallSpearGroup/Event/Spear1"]
@@ -16975,7 +16990,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.207, 0, -0.414)
 visible = false
 
 [node name="Spear2" parent="MainAct/Hallway/SpearGroup3/Event/Spear2" instance=ExtResource("47_1qr4i")]
-transform = Transform3D(0.984808, 0, 0.173648, 0, 1, 0, -0.173648, 0, 0.984808, 0, 2.4, 0)
+transform = Transform3D(0.9848078, 0, 0.17364796, 0, 1, 0, -0.17364796, 0, 0.9848078, 0, 2.4, 0)
 isDisabled = true
 
 [node name="TravelSFX2" type="AudioStreamPlayer3D" parent="MainAct/Hallway/SpearGroup3/Event/Spear2/Spear2"]
@@ -17312,29 +17327,24 @@ transform = Transform3D(0.707107, 0, 0.707107, 0, 1, 0, -0.707107, 0, 0.707107, 
 [node name="FlameShooter1" parent="MainAct/Interior/FlameGroup1" instance=ExtResource("50_67i4p")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.599976, 0, 0)
 stateLengths = PackedFloat32Array(0.5, 1.6)
-"Start Paused" = false
 "State Lengths/active" = 1.6
 
 [node name="FlameShooter2" parent="MainAct/Interior/FlameGroup1" instance=ExtResource("50_67i4p")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.699966, 0, -28.4)
 stateLengths = PackedFloat32Array(0.5, 1.6)
-"Start Paused" = false
 "State Lengths/active" = 1.6
 
 [node name="FlameShooter3" parent="MainAct/Interior/FlameGroup1" instance=ExtResource("50_67i4p")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.700089, 0, -50.0999)
-"Start Paused" = false
 
 [node name="FlameShooter4" parent="MainAct/Interior/FlameGroup1" instance=ExtResource("50_67i4p")]
 transform = Transform3D(-4.37113e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 2.49992, 0.699997, -74.0999)
 stateLengths = PackedFloat32Array(0.5, 2.5)
-"Start Paused" = false
 "State Lengths/active" = 2.5
 
 [node name="FlameShooter5" parent="MainAct/Interior/FlameGroup1" instance=ExtResource("50_67i4p")]
 transform = Transform3D(-4.37113e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 2.49992, 1.8, -74.0999)
 stateLengths = PackedFloat32Array(0.5, 2.5)
-"Start Paused" = false
 "State Lengths/active" = 2.5
 
 [node name="Pearls1" type="Node3D" parent="MainAct/Interior"]
@@ -17509,50 +17519,42 @@ transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, -23.08
 [node name="FlameShooter1" parent="MainAct/Interior/FlameGroup2" instance=ExtResource("50_67i4p")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.61285, 0, -0.000289917)
 stateLengths = PackedFloat32Array(0.5, 1.5)
-"Start Paused" = false
 "State Lengths/active" = 1.5
 
 [node name="FlameShooter2" parent="MainAct/Interior/FlameGroup2" instance=ExtResource("50_67i4p")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.512848, 0, -0.000289917)
 stateLengths = PackedFloat32Array(0.5, 1.5)
-"Start Paused" = false
 "State Lengths/active" = 1.5
 
 [node name="FlameShooter3" parent="MainAct/Interior/FlameGroup2" instance=ExtResource("50_67i4p")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.387146, 0, -11.0003)
 stateLengths = PackedFloat32Array(0.5, 1.5)
-"Start Paused" = false
 "State Lengths/active" = 1.5
 
 [node name="FlameShooter4" parent="MainAct/Interior/FlameGroup2" instance=ExtResource("50_67i4p")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.48715, 0, -11.0003)
 stateLengths = PackedFloat32Array(0.5, 1.5)
-"Start Paused" = false
 "State Lengths/active" = 1.5
 
 [node name="FlameShooter5" parent="MainAct/Interior/FlameGroup2" instance=ExtResource("50_67i4p")]
 transform = Transform3D(-4.37114e-08, 1, -4.37114e-08, -1, -4.37114e-08, -4.37114e-08, -4.37114e-08, 4.37114e-08, 1, -2.53714, 0.750015, -19.3003)
 stateLengths = PackedFloat32Array(1.2, 1)
-"Start Paused" = false
 "State Lengths/inactive" = 1.2
 
 [node name="FlameShooter6" parent="MainAct/Interior/FlameGroup2" instance=ExtResource("50_67i4p")]
 transform = Transform3D(-4.37114e-08, 1, -4.37114e-08, -1, -4.37114e-08, -4.37114e-08, -4.37114e-08, 4.37114e-08, 1, -2.53714, 1.85002, -19.3003)
 stateLengths = PackedFloat32Array(1.2, 1)
-"Start Paused" = false
 "State Lengths/inactive" = 1.2
 
 [node name="FlameShooter7" parent="MainAct/Interior/FlameGroup2" instance=ExtResource("50_67i4p")]
 transform = Transform3D(-6.18172e-08, -0.707107, 0.707107, 1, -4.37114e-08, 4.37114e-08, -2.70212e-15, 0.707107, 0.707107, -1.33505, 5.15002, -30.5024)
 stateLengths = PackedFloat32Array(1, 3)
-"Start Paused" = false
 "State Lengths/inactive" = 1.0
 "State Lengths/active" = 3.0
 
 [node name="FlameShooter8" parent="MainAct/Interior/FlameGroup2" instance=ExtResource("50_67i4p")]
 transform = Transform3D(-6.18172e-08, -0.707107, 0.707107, 1, -4.37114e-08, 4.37114e-08, -2.70212e-15, 0.707107, 0.707107, -1.33505, 4.05001, -30.5024)
 stateLengths = PackedFloat32Array(1, 3)
-"Start Paused" = false
 "State Lengths/inactive" = 1.0
 "State Lengths/active" = 3.0
 
@@ -17810,7 +17812,7 @@ transform = Transform3D(0.640856, -0.298836, 0.707107, 0.422618, 0.906308, 0, -0
 visible = false
 
 [node name="Spear2" parent="MainAct/Beach/SpearGroup1/Event/Spear2" instance=ExtResource("47_1qr4i")]
-transform = Transform3D(0.999999, 2.98023e-08, 0, -2.98023e-08, 1, 0, 0, 0, 1, 0, 0, 0)
+transform = Transform3D(0.999999, 2.980233e-08, 0, -2.98023e-08, 1, 0, 0, 0, 1, 0, 0, 0)
 
 [node name="TravelSFX2" type="AudioStreamPlayer3D" parent="MainAct/Beach/SpearGroup1/Event/Spear2/Spear2"]
 process_mode = 1
@@ -17985,7 +17987,7 @@ transform = Transform3D(0.641983, -0.00292918, 0.766714, -0.491566, 0.765855, 0.
 visible = false
 
 [node name="Spear1" parent="MainAct/Beach/SpearGroup2/Event/Spear1" instance=ExtResource("47_1qr4i")]
-transform = Transform3D(1, -4.65661e-08, -1.74623e-08, 4.65661e-08, 1, 1.29512e-07, 1.74623e-08, -1.29512e-07, 1, 0, 0, 0)
+transform = Transform3D(1, -4.6566097e-08, -1.7462305e-08, 4.65661e-08, 1, 1.29512e-07, 1.74623e-08, -1.29512e-07, 1, 0, 0, 0)
 
 [node name="TravelSFX1" type="AudioStreamPlayer3D" parent="MainAct/Beach/SpearGroup2/Event/Spear1/Spear1"]
 process_mode = 1
@@ -18030,7 +18032,7 @@ transform = Transform3D(0.642788, -5.96046e-08, 0.766044, -0.492404, 0.766044, 0
 visible = false
 
 [node name="Spear3" parent="MainAct/Beach/SpearGroup2/Event/Spear3" instance=ExtResource("47_1qr4i")]
-transform = Transform3D(1, 6.35275e-17, 2.91038e-09, 0, 1, -2.18279e-08, -2.91038e-09, 2.18279e-08, 1, 0, 2.4, 0)
+transform = Transform3D(1, 6.352748e-17, 2.91038e-09, 0, 1, -2.18279e-08, -2.91038e-09, 2.18279e-08, 1, 0, 2.4, 0)
 
 [node name="WaterDustParticle3" parent="MainAct/Beach/SpearGroup2/Event/Spear3" instance=ExtResource("18_irrc0")]
 transform = Transform3D(0.5, 0, 0, 0, 1, 0, 0, 0, 0.5, 0, 0, 0)
@@ -18060,7 +18062,7 @@ transform = Transform3D(0.939693, 1.19209e-07, 0.34202, -0.219846, 0.766044, 0.6
 visible = false
 
 [node name="Spear5" parent="MainAct/Beach/SpearGroup2/Event/Spear5" instance=ExtResource("47_1qr4i")]
-transform = Transform3D(1, -5.42103e-16, -2.32831e-08, 0, 1, -2.32831e-08, 2.32831e-08, 2.32831e-08, 1, 7.62939e-05, 2.50003, 3.05176e-05)
+transform = Transform3D(1, -5.4210273e-16, -2.32831e-08, 0, 1, -2.32831e-08, 2.32831e-08, 2.32831e-08, 1, 7.62939e-05, 2.50003, 3.05176e-05)
 
 [node name="TravelSFX5" type="AudioStreamPlayer3D" parent="MainAct/Beach/SpearGroup2/Event/Spear5/Spear5"]
 process_mode = 1
@@ -18318,7 +18320,7 @@ transform = Transform3D(0.939693, -1.49012e-07, 0.34202, -0.219846, 0.766044, 0.
 visible = false
 
 [node name="Spear5" parent="MainAct/Beach/SpearGroup3/Event/Spear5" instance=ExtResource("47_1qr4i")]
-transform = Transform3D(1, 3.33067e-16, 1.49012e-08, 0, 1, -2.23517e-08, -1.49012e-08, 2.23517e-08, 1, 6.10352e-05, 2.39999, 6.10352e-05)
+transform = Transform3D(1, 3.3306715e-16, 1.49012e-08, 0, 1, -2.23517e-08, -1.49012e-08, 2.23517e-08, 1, 6.10352e-05, 2.39999, 6.10352e-05)
 
 [node name="TravelSFX5" type="AudioStreamPlayer3D" parent="MainAct/Beach/SpearGroup3/Event/Spear5/Spear5"]
 process_mode = 1
@@ -18604,10 +18606,10 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 9)
 visible = false
 
 [node name="Pillar2" type="Node3D" parent="MainAct/Beach/FallingPillarGroup3/Event"]
-transform = Transform3D(-3.61999e-06, 0, -1, 0, 1, 0, 1, 0, -3.61999e-06, 17.6424, -0.200001, -3.66907)
+transform = Transform3D(-3.6199901e-06, 0, -1, 0, 1, 0, 1, 0, -3.6199901e-06, 17.6424, -0.200001, -3.66907)
 
 [node name="Pillar2" parent="MainAct/Beach/FallingPillarGroup3/Event/Pillar2" groups=["crusher"] instance=ExtResource("29_4m38a")]
-transform = Transform3D(1, -1.66533e-16, -1.38667e-32, 1.66533e-16, 1, 8.32667e-17, 4.55504e-38, -8.32667e-17, 1, 0, 10, 0)
+transform = Transform3D(1, -1.66533e-16, -1.38667e-32, 1.66533e-16, 1, 8.32667e-17, 4.5550406e-38, -8.32667e-17, 1, 0, 10, 0)
 
 [node name="FallingSFX2" type="AudioStreamPlayer3D" parent="MainAct/Beach/FallingPillarGroup3/Event/Pillar2/Pillar2"]
 process_mode = 1
@@ -18637,7 +18639,7 @@ transform = Transform3D(0.998027, -0.0627907, -1.78814e-07, 0.0591155, 0.939614,
 visible = false
 
 [node name="Pillar3" type="Node3D" parent="MainAct/Beach/FallingPillarGroup3/Event"]
-transform = Transform3D(-0.173649, 0, 0.984808, 0, 1, 0, -0.984808, 0, -0.173649, -21.3539, 0.5, -10.545)
+transform = Transform3D(-0.17364895, 0, 0.98480797, 0, 1, 0, -0.98480797, 0, -0.17364895, -21.3539, 0.5, -10.545)
 
 [node name="Pillar3" parent="MainAct/Beach/FallingPillarGroup3/Event/Pillar3" groups=["crusher"] instance=ExtResource("29_4m38a")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 10, 0)
@@ -18791,10 +18793,11 @@ transform = Transform3D(-1.278e-08, -0.292372, 0.956305, 1, -4.37114e-08, 0, 4.1
 transform = Transform3D(0.292372, 0, 0.956305, 0, 1, 0, -0.956305, 0, 0.292372, -148.565, 12.5, -81.3752)
 travelBounds = Vector2(4.5, 5)
 
-[node name="Dialog" type="Node3D" parent="MainAct/Beach/FlyingPot"]
+[node name="Dialog" type="Node3D" parent="MainAct/Beach/FlyingPot" node_paths=PackedStringArray("randomizedDialogTriggers")]
 script = ExtResource("5_ox8ed")
 delays = Array[float]([0.0, 1.0])
 textKeys = Array[String](["common_hint_pot_sh", "common_hint_pot_exit_sh"])
+randomizedDialogTriggers = []
 
 [node name="GrindrailL1" parent="MainAct/Beach" instance=ExtResource("31_jdgj6")]
 transform = Transform3D(0.292372, 0, 0.956305, 0, 1, 0, -0.956305, 0, 0.292372, -151.966, 10.3, -71.9575)
@@ -21116,6 +21119,13 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 185, 8.8, 2)
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 0)
 shape = SubResource("65")
 
+[node name="BigTrigger" parent="MainAct" instance=ExtResource("74_8ah3e")]
+transform = Transform3D(-0.70710677, 0, -0.7071068, 0, 1, 0, 0.7071068, 0, -0.70710677, -290.47223, -40.7, -252.86803)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="MainAct/BigTrigger"]
+transform = Transform3D(0.81915194, 0, 0.57357633, 0, 1, 0, -0.57357633, 0, 0.81915194, -1.49707, -5, 27.409847)
+shape = SubResource("BoxShape3D_6cl5k")
+
 [connection signal="Activated" from="MainAct/CullingMap/OasisLoad" to="MainAct/Oasis" method="Activate"]
 [connection signal="Deactivated" from="MainAct/CullingMap/OasisLoad" to="MainAct/Oasis" method="Deactivate"]
 [connection signal="Activated" from="MainAct/CullingMap/PlainLoad-StartUnload" to="MainAct/Start" method="Deactivate"]
@@ -21156,9 +21166,11 @@ shape = SubResource("65")
 [connection signal="Deactivated" from="MainAct/Island/JumpPanel1" to="MainAct/Island/TriggerData/JumpCamera" method="Deactivate"]
 [connection signal="Activated" from="MainAct/Island/JumpPanel2" to="MainAct/Island/TriggerData/JumpCamera" method="Activate"]
 [connection signal="Deactivated" from="MainAct/Island/JumpPanel2" to="MainAct/Island/TriggerData/JumpCamera" method="Deactivate"]
+[connection signal="Activated" from="MainAct/Island/JumpPanel3" to="Static/Collision/IslandSpringOneWay" method="Deactivate"]
 [connection signal="Activated" from="MainAct/Island/JumpPanel3" to="MainAct/Island/TriggerData/SpringJumpCamera" method="Activate"]
 [connection signal="Activated" from="MainAct/Island/Spring" to="MainAct/Island/TriggerData/SpringCamera" method="Activate"]
 [connection signal="Activated" from="MainAct/Island/Spring" to="MainAct/Island/TriggerData/SpringPath" method="Activate"]
+[connection signal="Deactivated" from="MainAct/Island/Spring" to="Static/Collision/IslandSpringOneWay" method="Activate"]
 [connection signal="Deactivated" from="MainAct/Island/Spring" to="MainAct/Island/TriggerData/SpringCamera" method="Deactivate"]
 [connection signal="Activated" from="MainAct/Island/JumpPanel4" to="MainAct/Island/TriggerData/JumpEndCamera" method="Activate"]
 [connection signal="Deactivated" from="MainAct/Island/JumpPanel4" to="MainAct/Island/TriggerData/JumpEndCamera" method="Deactivate"]

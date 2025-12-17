@@ -1,11 +1,69 @@
-[gd_scene load_steps=2 format=3 uid="uid://dabbmb7ger5ba"]
+[gd_scene load_steps=8 format=3 uid="uid://dabbmb7ger5ba"]
 
 [ext_resource type="PackedScene" uid="uid://dld3ntxl7c675" path="res://area/7 night palace/boss/environment/model/NPBoss.gltf" id="1_avx7w"]
 
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_jev55"]
+resource_name = "Boss Lights"
+blend_mode = 1
+cull_mode = 2
+shading_mode = 0
+specular_mode = 2
+vertex_color_use_as_albedo = true
+albedo_color = Color(0.594, 0.58000004, 1, 1)
+distance_fade_mode = 1
+distance_fade_max_distance = 150.0
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_jev55"]
+bottom_radius = 1.5
+radial_segments = 12
+rings = 0
+cap_bottom = false
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_qhmit"]
+top_radius = 0.75
+bottom_radius = 0.75
+height = 15.0
+radial_segments = 12
+rings = 0
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_pr8kt"]
+top_radius = 0.75
+bottom_radius = 0.75
+height = 10.0
+radial_segments = 12
+rings = 0
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_2cgi2"]
+top_radius = 0.83
+bottom_radius = 0.83
+height = 12.0
+radial_segments = 12
+rings = 0
+cap_top = false
+cap_bottom = false
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_kj53q"]
+blend_mode = 1
+disable_ambient_light = true
+disable_fog = true
+disable_specular_occlusion = true
+albedo_color = Color(0, 0, 0, 1)
+metallic_specular = 0.2
+roughness = 0.5
+
 [node name="NPBoss" instance=ExtResource("1_avx7w")]
+
+[node name="stg073_w_Mesh_0000" parent="." index="0"]
+layers = 2
+instance_shader_parameters/tint = Color(2.454227, 2.454227, 2.454227, 1)
+
+[node name="stg073_w_Mesh_0001" parent="." index="1"]
+layers = 2
+instance_shader_parameters/tint = Color(1.0627335, 1.0627335, 1.0627335, 1)
 
 [node name="stg073_o_Mesh_0041" parent="." index="2"]
 layers = 2
+cast_shadow = 0
 
 [node name="stg073_o_Mesh_0039" parent="." index="3"]
 layers = 2
@@ -13,15 +71,19 @@ cast_shadow = 0
 
 [node name="stg073_o_Mesh_0035" parent="." index="4"]
 layers = 2
+cast_shadow = 0
 
 [node name="stg073_o_Mesh_0011" parent="." index="5"]
 layers = 2
+cast_shadow = 0
 
 [node name="stg073_p_Mesh_0000" parent="." index="6"]
 layers = 2
+cast_shadow = 0
 
 [node name="stg073_o_Mesh_0028" parent="." index="7"]
 layers = 2
+cast_shadow = 0
 
 [node name="stg073_k_Mesh_0004" parent="." index="8"]
 layers = 2
@@ -33,7 +95,7 @@ cast_shadow = 0
 
 [node name="stg073_o_Mesh_0000" parent="." index="10"]
 layers = 2
-cast_shadow = 2
+cast_shadow = 0
 
 [node name="stg073_o_Mesh_0022" parent="." index="11"]
 layers = 2
@@ -53,6 +115,7 @@ cast_shadow = 0
 
 [node name="stg073_o_Mesh_0007" parent="." index="15"]
 layers = 2
+cast_shadow = 0
 
 [node name="stg073_o_Mesh_0061" parent="." index="16"]
 layers = 2
@@ -64,6 +127,7 @@ cast_shadow = 0
 
 [node name="stg073_o_Mesh_0053" parent="." index="18"]
 layers = 2
+cast_shadow = 0
 
 [node name="stg073_o_Mesh_0038" parent="." index="19"]
 layers = 2
@@ -84,3 +148,186 @@ cast_shadow = 0
 [node name="stg073_o_Mesh_0063" parent="." index="23"]
 layers = 2
 cast_shadow = 0
+
+[node name="stg073_k2_Mesh_0000" parent="." index="24"]
+layers = 2
+surface_material_override/0 = SubResource("StandardMaterial3D_jev55")
+
+[node name="pillar_shadows" type="Node3D" parent="." index="25"]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="pillar_shadows" index="0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.468286, 1.2898893, -0.64178705)
+cast_shadow = 3
+mesh = SubResource("CylinderMesh_jev55")
+
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="pillar_shadows/MeshInstance3D" index="0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.013542175, 7.2518244, 0)
+cast_shadow = 3
+mesh = SubResource("CylinderMesh_qhmit")
+skeleton = NodePath("../..")
+
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="pillar_shadows" index="1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.468286, 1.2898893, -18.07919)
+cast_shadow = 3
+mesh = SubResource("CylinderMesh_jev55")
+
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="pillar_shadows/MeshInstance3D2" index="0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.013542175, 7.2518244, 0)
+cast_shadow = 3
+mesh = SubResource("CylinderMesh_qhmit")
+skeleton = NodePath("../..")
+
+[node name="MeshInstance3D3" type="MeshInstance3D" parent="pillar_shadows" index="2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.468286, 1.2898893, -35.572056)
+cast_shadow = 3
+mesh = SubResource("CylinderMesh_jev55")
+
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="pillar_shadows/MeshInstance3D3" index="0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.013542175, 7.2518244, 0)
+cast_shadow = 3
+mesh = SubResource("CylinderMesh_qhmit")
+skeleton = NodePath("../..")
+
+[node name="MeshInstance3D4" type="MeshInstance3D" parent="pillar_shadows" index="3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.468286, 1.2898893, -53.009457)
+cast_shadow = 3
+mesh = SubResource("CylinderMesh_jev55")
+
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="pillar_shadows/MeshInstance3D4" index="0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.013542175, 7.2518244, 0)
+cast_shadow = 3
+mesh = SubResource("CylinderMesh_qhmit")
+skeleton = NodePath("../..")
+
+[node name="MeshInstance3D5" type="MeshInstance3D" parent="pillar_shadows" index="4"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.468286, 1.2898893, -70.427414)
+cast_shadow = 3
+mesh = SubResource("CylinderMesh_jev55")
+
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="pillar_shadows/MeshInstance3D5" index="0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.013542175, 7.2518244, 0)
+cast_shadow = 3
+mesh = SubResource("CylinderMesh_qhmit")
+skeleton = NodePath("../..")
+
+[node name="MeshInstance3D6" type="MeshInstance3D" parent="pillar_shadows" index="5"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.359001, 1.2898893, -0.64178705)
+cast_shadow = 3
+mesh = SubResource("CylinderMesh_jev55")
+
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="pillar_shadows/MeshInstance3D6" index="0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.013542175, 3.5477724, 0)
+cast_shadow = 3
+mesh = SubResource("CylinderMesh_pr8kt")
+skeleton = NodePath("../..")
+
+[node name="MeshInstance3D7" type="MeshInstance3D" parent="pillar_shadows" index="6"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.359001, 1.2898893, -18.07919)
+cast_shadow = 3
+mesh = SubResource("CylinderMesh_jev55")
+
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="pillar_shadows/MeshInstance3D7" index="0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.013542175, 3.5477724, 0)
+cast_shadow = 3
+mesh = SubResource("CylinderMesh_pr8kt")
+skeleton = NodePath("../..")
+
+[node name="MeshInstance3D8" type="MeshInstance3D" parent="pillar_shadows" index="7"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.359001, 1.2898893, -35.572056)
+cast_shadow = 3
+mesh = SubResource("CylinderMesh_jev55")
+
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="pillar_shadows/MeshInstance3D8" index="0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.013542175, 3.5477724, 0)
+cast_shadow = 3
+mesh = SubResource("CylinderMesh_pr8kt")
+skeleton = NodePath("../..")
+
+[node name="MeshInstance3D9" type="MeshInstance3D" parent="pillar_shadows" index="8"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.359001, 1.2898893, -53.009457)
+cast_shadow = 3
+mesh = SubResource("CylinderMesh_jev55")
+
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="pillar_shadows/MeshInstance3D9" index="0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.013542175, 3.5477724, 0)
+cast_shadow = 3
+mesh = SubResource("CylinderMesh_pr8kt")
+skeleton = NodePath("../..")
+
+[node name="MeshInstance3D10" type="MeshInstance3D" parent="pillar_shadows" index="9"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.359001, 1.2898893, -70.427414)
+cast_shadow = 3
+mesh = SubResource("CylinderMesh_jev55")
+
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="pillar_shadows/MeshInstance3D10" index="0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.013542175, 3.5477724, 0)
+cast_shadow = 3
+mesh = SubResource("CylinderMesh_pr8kt")
+skeleton = NodePath("../..")
+
+[node name="Node3D" type="Node3D" parent="." index="26"]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Node3D" index="0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.475404, 9.084444, -0.6249466)
+cast_shadow = 0
+mesh = SubResource("CylinderMesh_2cgi2")
+surface_material_override/0 = SubResource("StandardMaterial3D_kj53q")
+
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="Node3D" index="1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.475, 9.084, -18.076689)
+cast_shadow = 0
+mesh = SubResource("CylinderMesh_2cgi2")
+surface_material_override/0 = SubResource("StandardMaterial3D_kj53q")
+
+[node name="MeshInstance3D3" type="MeshInstance3D" parent="Node3D" index="2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.475404, 9.084444, -35.572403)
+cast_shadow = 0
+mesh = SubResource("CylinderMesh_2cgi2")
+surface_material_override/0 = SubResource("StandardMaterial3D_kj53q")
+
+[node name="MeshInstance3D4" type="MeshInstance3D" parent="Node3D" index="3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.475, 9.084, -52.975693)
+cast_shadow = 0
+mesh = SubResource("CylinderMesh_2cgi2")
+surface_material_override/0 = SubResource("StandardMaterial3D_kj53q")
+
+[node name="MeshInstance3D5" type="MeshInstance3D" parent="Node3D" index="4"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.475, 9.084, -70.441956)
+cast_shadow = 0
+mesh = SubResource("CylinderMesh_2cgi2")
+surface_material_override/0 = SubResource("StandardMaterial3D_kj53q")
+
+[node name="MeshInstance3D6" type="MeshInstance3D" parent="Node3D" index="5"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.316, 9.084444, -0.67223597)
+transparency = 0.5
+cast_shadow = 0
+mesh = SubResource("CylinderMesh_2cgi2")
+surface_material_override/0 = SubResource("StandardMaterial3D_kj53q")
+
+[node name="MeshInstance3D7" type="MeshInstance3D" parent="Node3D" index="6"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.316, 9.084, -18.076689)
+transparency = 0.5
+cast_shadow = 0
+mesh = SubResource("CylinderMesh_2cgi2")
+surface_material_override/0 = SubResource("StandardMaterial3D_kj53q")
+
+[node name="MeshInstance3D8" type="MeshInstance3D" parent="Node3D" index="7"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.316, 9.084444, -35.55004)
+transparency = 0.5
+cast_shadow = 0
+mesh = SubResource("CylinderMesh_2cgi2")
+surface_material_override/0 = SubResource("StandardMaterial3D_kj53q")
+
+[node name="MeshInstance3D9" type="MeshInstance3D" parent="Node3D" index="8"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.316, 9.084, -53.004837)
+transparency = 0.5
+cast_shadow = 0
+mesh = SubResource("CylinderMesh_2cgi2")
+surface_material_override/0 = SubResource("StandardMaterial3D_kj53q")
+
+[node name="MeshInstance3D10" type="MeshInstance3D" parent="Node3D" index="9"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.316, 9.084, -70.441956)
+transparency = 0.5
+cast_shadow = 0
+mesh = SubResource("CylinderMesh_2cgi2")
+surface_material_override/0 = SubResource("StandardMaterial3D_kj53q")

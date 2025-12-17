@@ -46,9 +46,10 @@ public partial class LaunchRingState : PlayerState
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
 	public override PlayerState ProcessPhysics()
 	{
+		Player.GlobalPosition = Launcher.RecenterPlayer();
+
 		if (!Launcher.IsPlayerCentered)
 		{
-			Player.GlobalPosition = Launcher.RecenterPlayer();
 			Player.Controller.ResetJumpBuffer(); // Reset jump buffers just in case
 			return null;
 		}

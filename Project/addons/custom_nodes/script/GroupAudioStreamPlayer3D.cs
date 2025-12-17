@@ -35,5 +35,13 @@ public partial class GroupAudioStreamPlayer3D : AudioStreamPlayer3D
 		Play();
 	}
 
+	public void StopinGroup()
+	{
+		if (Playing)
+			SoundManager.instance.RemoveGroupSfx(groupKey);
+
+		Stop();
+	}
+
 	public void Play() => Play(0.0f);
 }

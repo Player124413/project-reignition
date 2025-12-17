@@ -1,7 +1,35 @@
-[gd_scene load_steps=3 format=3 uid="uid://cvmned5b3b8hg"]
+[gd_scene load_steps=7 format=3 uid="uid://cvmned5b3b8hg"]
 
 [ext_resource type="PackedScene" uid="uid://b4crmlfynf2qf" path="res://area/7 night palace/act 1/environment/model/03Tower.gltf" id="1_14tp2"]
 [ext_resource type="Script" uid="uid://kvlmbv66orqt" path="res://object/trigger/modules/CullingTrigger.cs" id="2_8vfao"]
+[ext_resource type="PackedScene" uid="uid://wnnthoykndrj" path="res://effect/particle/Lantern.tscn" id="3_4udpb"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_0vm7x"]
+resource_name = "Effect Add"
+blend_mode = 1
+shading_mode = 0
+specular_mode = 2
+disable_fog = true
+vertex_color_use_as_albedo = true
+albedo_color = Color(0.52906674, 0.5290667, 0.5290667, 1)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_c1tyg"]
+resource_name = "Effect Bloom"
+render_priority = 40
+blend_mode = 1
+shading_mode = 0
+specular_mode = 2
+vertex_color_use_as_albedo = true
+albedo_color = Color(0.56, 0.56, 0.56, 1)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_4udpb"]
+resource_name = "Light Emission"
+blend_mode = 1
+cull_mode = 2
+shading_mode = 0
+specular_mode = 2
+vertex_color_use_as_albedo = true
+albedo_color = Color(4.415934, 4.415934, 4.415934, 1)
 
 [node name="03Tower" instance=ExtResource("1_14tp2")]
 script = ExtResource("2_8vfao")
@@ -122,18 +150,160 @@ gi_mode = 1
 layers = 2
 cast_shadow = 0
 gi_mode = 1
+surface_material_override/0 = SubResource("StandardMaterial3D_0vm7x")
 
 [node name="stg070_g05_Mesh_0000" parent="." index="23"]
 layers = 2
 cast_shadow = 0
 gi_mode = 1
+surface_material_override/0 = SubResource("StandardMaterial3D_c1tyg")
 
 [node name="stg070_k09_Mesh_0004" parent="." index="24"]
 layers = 2
 cast_shadow = 0
 gi_mode = 1
+surface_material_override/0 = SubResource("StandardMaterial3D_4udpb")
 
-[node name="stg070_w04_Mesh_000" parent="." index="25"]
+[node name="stg070_w04_Mesh_000_001" parent="." index="25"]
+instance_shader_parameters/tint = Color(1.0954857, 1.0954857, 1.0954857, 1)
+
+[node name="stg070_w04_Mesh_000" parent="." index="26"]
 layers = 2
 cast_shadow = 0
 gi_mode = 1
+
+[node name="object probe2" type="ReflectionProbe" parent="." index="27"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -102.15452, 5.5867615, -331.9331)
+size = Vector3(340.5046, 54.629456, 214.91844)
+cull_mask = 0
+reflection_mask = 65
+ambient_mode = 2
+ambient_color = Color(0.694, 0.65999997, 1, 1)
+ambient_color_energy = 0.1
+
+[node name="OmniLight3D" type="OmniLight3D" parent="." index="28"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30.024254, 14.504406, -310.26733)
+light_color = Color(0.85066664, 0.72, 1, 1)
+light_specular = 1.0
+light_cull_mask = 4293918785
+distance_fade_enabled = true
+distance_fade_begin = 25.0
+distance_fade_shadow = 0.0
+distance_fade_length = 20.0
+omni_range = 40.57
+omni_attenuation = 0.2
+
+[node name="OmniLight3D2" type="OmniLight3D" parent="." index="29"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -106.41159, 4.448386, -319.93127)
+light_color = Color(1, 0.889, 0.63, 1)
+light_energy = 1.3
+light_specular = 0.0
+light_cull_mask = 4293918785
+distance_fade_enabled = true
+distance_fade_begin = 30.0
+distance_fade_shadow = 0.0
+distance_fade_length = 20.0
+omni_range = 25.0
+omni_attenuation = 0.0
+
+[node name="OmniLight3D4" type="OmniLight3D" parent="." index="30"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -204.92616, -2.0198398, -389.62836)
+light_color = Color(1, 0.889, 0.63, 1)
+light_energy = 1.2
+light_specular = 1.0
+light_cull_mask = 4293918785
+distance_fade_enabled = true
+distance_fade_begin = 15.0
+distance_fade_shadow = 0.0
+distance_fade_length = 20.0
+omni_range = 13.0
+omni_attenuation = 0.5
+
+[node name="Lantern" parent="OmniLight3D4" index="0" instance=ExtResource("3_4udpb")]
+transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, 0)
+
+[node name="OmniLight3D9" type="OmniLight3D" parent="." index="31"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -184.55211, -2.0198398, -389.62836)
+light_color = Color(1, 0.889, 0.63, 1)
+light_energy = 1.2
+light_specular = 1.0
+light_cull_mask = 4293918785
+distance_fade_enabled = true
+distance_fade_begin = 15.0
+distance_fade_shadow = 0.0
+distance_fade_length = 20.0
+omni_range = 13.0
+omni_attenuation = 0.5
+
+[node name="Lantern" parent="OmniLight3D9" index="0" instance=ExtResource("3_4udpb")]
+transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, 0)
+
+[node name="OmniLight3D5" type="OmniLight3D" parent="." index="32"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -204.92616, -10.648314, -369.04727)
+light_color = Color(1, 0.889, 0.63, 1)
+light_energy = 1.2
+light_specular = 1.0
+light_cull_mask = 4293918785
+distance_fade_enabled = true
+distance_fade_begin = 15.0
+distance_fade_shadow = 0.0
+distance_fade_length = 20.0
+omni_range = 13.0
+omni_attenuation = 0.5
+
+[node name="Lantern" parent="OmniLight3D5" index="0" instance=ExtResource("3_4udpb")]
+transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, 0)
+
+[node name="OmniLight3D10" type="OmniLight3D" parent="." index="33"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -184.55211, -10.648314, -369.04727)
+light_color = Color(1, 0.889, 0.63, 1)
+light_energy = 1.2
+light_specular = 1.0
+light_cull_mask = 4293918785
+distance_fade_enabled = true
+distance_fade_begin = 15.0
+distance_fade_shadow = 0.0
+distance_fade_length = 20.0
+omni_range = 13.0
+omni_attenuation = 0.5
+
+[node name="Lantern" parent="OmniLight3D10" index="0" instance=ExtResource("3_4udpb")]
+transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, 0)
+
+[node name="Lantern" parent="." index="34" instance=ExtResource("3_4udpb")]
+transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, -204.92616, 4.8653564, -414.78543)
+
+[node name="Lantern2" parent="." index="35" instance=ExtResource("3_4udpb")]
+transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, -184.55211, 4.8653564, -414.78543)
+
+[node name="Lantern3" parent="." index="36" instance=ExtResource("3_4udpb")]
+transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, -204.92616, 4.8653564, -425.61584)
+
+[node name="Lantern4" parent="." index="37" instance=ExtResource("3_4udpb")]
+transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, -184.55211, 4.8653564, -425.61584)
+
+[node name="OmniLight3D7" type="OmniLight3D" parent="." index="38"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -183.99823, 6.465501, -418.8134)
+light_color = Color(1, 0.889, 0.63, 1)
+light_energy = 1.5
+light_specular = 1.0
+light_cull_mask = 4293918785
+distance_fade_enabled = true
+distance_fade_begin = 15.0
+distance_fade_shadow = 0.0
+distance_fade_length = 20.0
+omni_range = 13.0
+omni_attenuation = 0.5
+
+[node name="OmniLight3D8" type="OmniLight3D" parent="." index="39"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -205.3934, 6.465501, -418.8134)
+light_color = Color(1, 0.889, 0.63, 1)
+light_energy = 1.5
+light_specular = 1.0
+light_cull_mask = 4293918785
+distance_fade_enabled = true
+distance_fade_begin = 15.0
+distance_fade_shadow = 0.0
+distance_fade_length = 20.0
+omni_range = 13.0
+omni_attenuation = 0.5

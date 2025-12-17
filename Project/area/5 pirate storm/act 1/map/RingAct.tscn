@@ -45,6 +45,7 @@
 [ext_resource type="PackedScene" uid="uid://ddqtfsujegqep" path="res://object/stage/common/SpikeBallSpawner.tscn" id="61_k6q5t"]
 [ext_resource type="PackedScene" uid="uid://dxepb172kmp8n" path="res://object/stage/common/Goal.tscn" id="80_wgfa1"]
 
+
 [sub_resource type="BoxShape3D" id="BoxShape3D_6yc6x"]
 size = Vector3(20, 20, 5)
 
@@ -117,15 +118,13 @@ startEnabled = true
 [node name="CollisionShape3D" parent="Static/Triggers/PathAndCameraTriggers/IslandCamera4" index="1"]
 disabled = true
 
-[node name="Dialog" type="Node3D" parent="Static/Triggers/CannonEvent/CannonEventTrigger" index="0"]
+[node name="Dialog" type="Node3D" parent="Static/Triggers/CannonEvent/CannonEventTrigger" index="0" node_paths=PackedStringArray("randomizedDialogTriggers")]
 script = ExtResource("4_v80dm")
 textKeys = Array[String](["pir_cannon_start_so"])
+randomizedDialogTriggers = []
 
 [node name="RainCollision" parent="Static/Rain" index="0"]
 transform = Transform3D(1, 0, 0, 0, 1, 7.45058e-09, 0, -7.45058e-09, 1, -1, 7.47332e-09, 1)
-
-[node name="Camera" parent="Static/DemoCamera" index="0"]
-transform = Transform3D(1, 0, 0, 0, 0.99619496, 0.0871558, 0, -0.0871558, 0.99619496, 0, 0, 0)
 
 [node name="RingAct" type="Node3D" parent="."]
 
@@ -147,9 +146,10 @@ shape = SubResource("BoxShape3D_6yc6x")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -129.9, 30.9, 1045)
 "Enter Mode" = 0
 
-[node name="Dialog" type="Node3D" parent="RingAct/Dialog/StartGroup"]
+[node name="Dialog" type="Node3D" parent="RingAct/Dialog/StartGroup" node_paths=PackedStringArray("randomizedDialogTriggers")]
 script = ExtResource("4_v80dm")
 textKeys = Array[String](["pir_treasure_so", "common_start_sh"])
+randomizedDialogTriggers = []
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="RingAct/Dialog/StartGroup"]
 shape = SubResource("BoxShape3D_6rj8d")
@@ -158,9 +158,10 @@ shape = SubResource("BoxShape3D_6rj8d")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -130, 9.9, 1105)
 "Enter Mode" = 0
 
-[node name="Dialog" type="Node3D" parent="RingAct/Dialog/EnemyGroup"]
+[node name="Dialog" type="Node3D" parent="RingAct/Dialog/EnemyGroup" node_paths=PackedStringArray("randomizedDialogTriggers")]
 script = ExtResource("4_v80dm")
 textKeys = Array[String](["common_enemy8_so", "common_enemy8_sh"])
+randomizedDialogTriggers = []
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="RingAct/Dialog/EnemyGroup"]
 shape = SubResource("BoxShape3D_6rj8d")
@@ -596,7 +597,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.565686, -0.565685, 0)
 [node name="Bomb" type="Node3D" parent="RingAct/Cannonball"]
 
 [node name="BombTrigger1" parent="RingAct/Cannonball/Bomb" instance=ExtResource("5_461lq")]
-transform = Transform3D(1, 0, 0, 0, 0.999999, 0, 0, 0, 1, 0, 4, 70)
+transform = Transform3D(1, 0, 0, 0, 0.99999887, 0, 0, 0, 0.9999999, 0, 6, 60)
 OneShot = true
 "Respawn Mode" = 0
 "Enter Mode" = 0

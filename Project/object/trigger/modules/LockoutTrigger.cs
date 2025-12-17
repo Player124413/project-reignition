@@ -7,23 +7,22 @@ namespace Project.Gameplay.Triggers
 	/// </summary>
 	public partial class LockoutTrigger : StageTriggerModule
 	{
-		[Export]
-		public LockoutResource lockoutData;
+		[Export] public LockoutResource lockoutData;
 
 		public override void Activate()
 		{
 			Player.CallDeferred(PlayerController.MethodName.AddLockoutData, lockoutData);
 
-			if (!Player.IsConnected(PlayerController.SignalName.Defeated, new(this, MethodName.Deactivate)))
-				Player.Connect(PlayerController.SignalName.Defeated, new(this, MethodName.Deactivate), (uint)ConnectFlags.OneShot + (uint)ConnectFlags.Deferred);
+			if (!StageSettings.Instance.IsConnected(StageSettings.SignalName.Respawned, new(this, MethodName.Deactivate)))
+				StageSettings.Instance.Connect(StageSettings.SignalName.Respawned, new(this, MethodName.Deactivate), (uint)ConnectFlags.OneShot + (uint)ConnectFlags.Deferred);
 		}
 
 		public override void Deactivate()
 		{
 			Player.RemoveLockoutData(lockoutData);
 
-			if (Player.IsConnected(PlayerController.SignalName.Defeated, new(this, MethodName.Deactivate)))
-				Player.Disconnect(PlayerController.SignalName.Defeated, new(this, MethodName.Deactivate));
+			if (StageSettings.Instance.IsConnected(StageSettings.SignalName.Respawned, new(this, MethodName.Deactivate)))
+				StageSettings.Instance.Disconnect(StageSettings.SignalName.Respawned, new(this, MethodName.Deactivate));
 		}
 	}
 }

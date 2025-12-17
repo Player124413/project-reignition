@@ -1,22 +1,29 @@
-[gd_scene load_steps=3 format=3 uid="uid://loa88tx1asqv"]
+[gd_scene load_steps=4 format=3 uid="uid://loa88tx1asqv"]
 
 [ext_resource type="PackedScene" uid="uid://c1112xg2fttxj" path="res://area/0 lost prologue/object/model/wonder/WonderBlock8.gltf" id="1_jv8qe"]
+[ext_resource type="PackedScene" uid="uid://523smjugvmxt" path="res://area/0 lost prologue/object/wonder/WonderBlockBase.tscn" id="1_pvvdm"]
 
-[sub_resource type="BoxShape3D" id="BoxShape3D_q7ekq"]
+[sub_resource type="BoxShape3D" id="BoxShape3D_pvvdm"]
 size = Vector3(5, 8, 5)
 
-[node name="WonderBlock8" type="StaticBody3D" groups=["floor", "wall"]]
+[node name="WonderBlock8" instance=ExtResource("1_pvvdm")]
 
-[node name="WonderBlock8" parent="." instance=ExtResource("1_jv8qe")]
+[node name="WonderBlock8" parent="Root" index="0" instance=ExtResource("1_jv8qe")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4, 0)
 
-[node name="WonderBlock8BloomMesh" parent="WonderBlock8" index="1"]
+[node name="WonderBlock8Mesh" parent="Root/WonderBlock8" index="0"]
+cast_shadow = 0
+
+[node name="WonderBlock8BloomMesh" parent="Root/WonderBlock8" index="1"]
 layers = 131072
 cast_shadow = 0
-extra_cull_margin = 50.0
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+[node name="CollisionShape3D" parent="." index="3"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4, 0)
-shape = SubResource("BoxShape3D_q7ekq")
+shape = SubResource("BoxShape3D_pvvdm")
 
-[editable path="WonderBlock8"]
+[node name="VFX" parent="." index="5"]
+transform = Transform3D(4, 0, 0, 0, 2, 0, 0, 0, 4, 0, 0, 0)
+amount = 64
+
+[editable path="Root/WonderBlock8"]

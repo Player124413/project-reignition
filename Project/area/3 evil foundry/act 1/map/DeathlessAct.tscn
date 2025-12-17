@@ -1,4 +1,4 @@
-[gd_scene load_steps=59 format=3 uid="uid://wm6qp8wc4aik"]
+[gd_scene load_steps=61 format=3 uid="uid://wm6qp8wc4aik"]
 
 [ext_resource type="PackedScene" uid="uid://wufpyrm8jour" path="res://area/3 evil foundry/act 1/Static.tscn" id="1_8qxdg"]
 [ext_resource type="PackedScene" uid="uid://cjupypih0myxo" path="res://object/player/CharacterSpawn.tscn" id="2_qk3u2"]
@@ -41,6 +41,7 @@
 [ext_resource type="Resource" uid="uid://deb2j8xspvlfq" path="res://area/3 evil foundry/act 1/camera/NarrowHallCam.tres" id="37_5m7l6"]
 [ext_resource type="Script" uid="uid://bssd28yqn1cxg" path="res://object/trigger/modules/PathTrigger.cs" id="38_fwdur"]
 [ext_resource type="Resource" uid="uid://dy7imtvsy4rtp" path="res://area/3 evil foundry/act 1/camera/ElevatorPlatformingCam.tres" id="39_et0ch"]
+[ext_resource type="PackedScene" uid="uid://gqxmlgiwtikn" path="res://object/trigger/BigTrigger.tscn" id="42_mi40f"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_s1mwa"]
 size = Vector3(20, 20, 5)
@@ -407,6 +408,9 @@ _data = {
 [sub_resource type="BoxShape3D" id="BoxShape3D_vcj4s"]
 size = Vector3(20, 10, 5)
 
+[sub_resource type="BoxShape3D" id="BoxShape3D_vrny7"]
+size = Vector3(10, 5, 4)
+
 [node name="Stage" type="Node"]
 
 [node name="Static" parent="." instance=ExtResource("1_8qxdg")]
@@ -423,9 +427,6 @@ startEnabled = true
 
 [node name="14Spiral" parent="Static/Visuals" index="10"]
 startEnabled = true
-
-[node name="DemoCamera" parent="Static" index="6"]
-transform = Transform3D(-3.61999e-06, 0, -1, 0, 1, 0, 1, 0, -3.61999e-06, -491, -30, -360)
 
 [node name="DeathlessAct" type="Node3D" parent="."]
 metadata/_edit_lock_ = true
@@ -564,7 +565,7 @@ transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 35.790
 curve = SubResource("Curve3D_wv2bb")
 
 [node name="PathFollower" type="PathFollow3D" parent="DeathlessAct/Opening/GolemPath"]
-transform = Transform3D(0.999997, 0, 8.74225e-08, 0, 1, 0, -8.74225e-08, 0, 0.999997, 0, 0, 0)
+transform = Transform3D(0.999997, 0, 8.7422514e-08, 0, 1, 0, -8.7422514e-08, 0, 0.999997, 0, 0, 0)
 use_model_front = true
 cubic_interp = false
 tilt_enabled = false
@@ -676,6 +677,7 @@ Amount = 5
 Shape = 2
 Path = NodePath("../../../Static/Path/MiddlePath")
 "Path Progress Offset" = 0.0
+"Reverse Path" = false
 "Disable Path Y" = false
 Spacing = 8.0
 "Horizontal Offset" = SubResource("Curve_luj3r")
@@ -704,6 +706,7 @@ Amount = 5
 Shape = 2
 Path = NodePath("../../../Static/Path/MiddlePath")
 "Path Progress Offset" = 0.0
+"Reverse Path" = false
 "Disable Path Y" = false
 Spacing = 5.0
 "Horizontal Offset" = SubResource("Curve_gc1gy")
@@ -732,6 +735,7 @@ Amount = 5
 Shape = 2
 Path = NodePath("../../../Static/Path/MiddlePath")
 "Path Progress Offset" = 0.0
+"Reverse Path" = false
 "Disable Path Y" = false
 Spacing = 6.5
 "Horizontal Offset" = SubResource("Curve_30x12")
@@ -851,19 +855,19 @@ animator = NodePath("AnimationPlayer")
 "Trigger Settings/Player Stand-in" = NodePath("")
 
 [node name="FurnacePivot1" type="Node3D" parent="DeathlessAct/MineEntrance/FurnaceEvent/Event"]
-transform = Transform3D(-3.61999e-06, -0.0871558, -0.996195, 0, 0.996195, -0.0871558, 1, -3.15503e-07, -3.60622e-06, 0, 0, 0)
+transform = Transform3D(-3.6199901e-06, -0.0871558, -0.99619496, 0, 0.99619496, -0.0871558, 1, -3.1550312e-07, -3.606216e-06, 0, 0, 0)
 
 [node name="Furnace1" parent="DeathlessAct/MineEntrance/FurnaceEvent/Event/FurnacePivot1" instance=ExtResource("7_uib7b")]
 transform = Transform3D(1.25, 0, 0, 0, 1.25, 0, 0, 0, 1.25, -0.8, 0, 0)
 
 [node name="FurnacePivot2" type="Node3D" parent="DeathlessAct/MineEntrance/FurnaceEvent/Event"]
-transform = Transform3D(-3.61999e-06, -0.0871558, -0.996195, 0, 0.996195, -0.0871558, 1, -3.15503e-07, -3.60622e-06, 7.5, 0.900002, 0)
+transform = Transform3D(-3.6199901e-06, -0.0871558, -0.99619496, 0, 0.99619496, -0.0871558, 1, -3.1550312e-07, -3.606216e-06, 7.5, 0.900002, 0)
 
 [node name="Furnace2" parent="DeathlessAct/MineEntrance/FurnaceEvent/Event/FurnacePivot2" instance=ExtResource("7_uib7b")]
 transform = Transform3D(1.25, 0, 0, 0, 1.25, 0, 0, 0, 1.25, -0.8, 0, 0)
 
 [node name="FurnacePivot3" type="Node3D" parent="DeathlessAct/MineEntrance/FurnaceEvent/Event"]
-transform = Transform3D(-3.61993e-06, -0.0871558, -0.996195, -6.34301e-10, 0.996195, -0.0871558, 1, -3.14866e-07, -3.60622e-06, 16.1271, 1.82777, 0)
+transform = Transform3D(-3.6199347e-06, -0.0871558, -0.99619496, -6.343011e-10, 0.99619496, -0.0871558, 1, -3.1486638e-07, -3.606216e-06, 16.1271, 1.82777, 0)
 
 [node name="Furnace3" parent="DeathlessAct/MineEntrance/FurnaceEvent/Event/FurnacePivot3" instance=ExtResource("7_uib7b")]
 transform = Transform3D(1.25, 0, 0, 0, 1.25, 0, 0, 0, 1.25, -0.8, 0, 0)
@@ -1257,6 +1261,16 @@ transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 81.293
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
 shape = SubResource("BoxShape3D_s1mwa")
 
+[node name="BigTrigger" parent="." instance=ExtResource("42_mi40f")]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, -451, -23.2, -359.9)
+
+[node name="Camera" parent="BigTrigger" index="1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 25)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="BigTrigger"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -4.5, 20)
+shape = SubResource("BoxShape3D_vrny7")
+
 [connection signal="Activated" from="DeathlessAct/CullingMap/MineEntrance-L" to="DeathlessAct/MineEntrance" method="Activate"]
 [connection signal="Deactivated" from="DeathlessAct/CullingMap/MineEntrance-L" to="DeathlessAct/MineEntrance" method="Deactivate"]
 [connection signal="Activated" from="DeathlessAct/CullingMap/Opening-U" to="DeathlessAct/Opening" method="Deactivate"]
@@ -1283,3 +1297,5 @@ shape = SubResource("BoxShape3D_s1mwa")
 
 [editable path="Static"]
 [editable path="Static/Collision"]
+[editable path="BigTrigger"]
+[editable path="BigTrigger/Big"]

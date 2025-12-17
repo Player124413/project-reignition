@@ -362,7 +362,7 @@ public partial class Enemy : Node3D
 	/// <summary> Current local rotation of the enemy. </summary>
 	protected float currentRotation;
 	protected float rotationVelocity;
-	protected const float TrackingSmoothing = 10f;
+	protected const float TrackingSmoothing = 20f;
 	/// <summary>
 	/// Updates current rotation to track the player.
 	/// </summary>

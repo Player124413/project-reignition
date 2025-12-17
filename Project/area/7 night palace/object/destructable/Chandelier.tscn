@@ -1,0 +1,99 @@
+[gd_scene load_steps=14 format=3 uid="uid://dr3eymchp1afn"]
+
+[ext_resource type="Script" uid="uid://coiui4qvdxbqe" path="res://object/trigger/modules/EventTrigger.cs" id="1_1ly62"]
+[ext_resource type="PackedScene" uid="uid://d2rl52ixgscql" path="res://area/7 night palace/object/model/destructable/Chandelier.gltf" id="1_4mdm3"]
+[ext_resource type="PackedScene" uid="uid://doskclv2v6ngx" path="res://area/7 night palace/object/model/destructable/ChandelierBase.gltf" id="2_1ly62"]
+[ext_resource type="PackedScene" uid="uid://cjbuu74lougjl" path="res://area/7 night palace/object/model/destructable/ChandelierBloom.gltf" id="3_24adw"]
+[ext_resource type="PackedScene" uid="uid://1am22j0nkit2" path="res://area/7 night palace/object/model/destructable/ChandelierBroken.gltf" id="4_1gcvb"]
+[ext_resource type="Shader" uid="uid://cpu2mnmuq7mr8" path="res://area/5 pirate storm/data/shader/Bloom.gdshader" id="4_omp0d"]
+[ext_resource type="Script" uid="uid://pnh70abopq8e" path="res://object/stage/common/resource/script/Hazard.cs" id="6_24adw"]
+[ext_resource type="AudioStream" uid="uid://cd4ggd26aofo0" path="res://sound/sfx/stage/night palace/time fix.wav" id="7_sgp3b"]
+[ext_resource type="AudioStream" uid="uid://g5qs0drifacc" path="res://sound/sfx/stage/night palace/time reverse.wav" id="8_skxj1"]
+[ext_resource type="Script" uid="uid://dnrfeyqvx8aq" path="res://addons/custom_nodes/script/GroupAudioStreamPlayer3D.cs" id="9_741xa"]
+[ext_resource type="AudioStream" uid="uid://pxhq442j6wte" path="res://sound/sfx/stage/night palace/falling chandelier.wav" id="9_skxj1"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_ktivs"]
+resource_name = "Chandelier Bloom"
+render_priority = 0
+shader = ExtResource("4_omp0d")
+shader_parameter/glow_intensity = 2.0
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_1gcvb"]
+height = 5.0
+radius = 5.0
+
+[node name="Chandelier" type="Node3D" node_paths=PackedStringArray("animator")]
+physics_interpolation_mode = 2
+script = ExtResource("1_1ly62")
+animator = NodePath("ChandelierBroken/AnimationPlayer")
+activationSpeedScale = 0.5
+deactivationSpeedScale = 0.5
+"Trigger Settings/Automatically Respawn" = true
+"Trigger Settings/Is One Shot" = true
+"Trigger Settings/Animation Blending" = 0.0
+"Trigger Settings/Player Stand-in" = NodePath("")
+
+[node name="ChandelierBase" parent="." instance=ExtResource("2_1ly62")]
+
+[node name="Bloom" type="BoneAttachment3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, -3.657739e-06, 0, 3.657739e-06, 1, 0, -16, 0)
+bone_name = "root"
+bone_idx = 0
+use_external_skeleton = true
+external_skeleton = NodePath("../ChandelierBroken/ChandelierBrokenRoot/Skeleton3D")
+
+[node name="ChandelierBloom" parent="Bloom" instance=ExtResource("3_24adw")]
+
+[node name="ChandelierBloomMesh" parent="Bloom/ChandelierBloom" index="0"]
+surface_material_override/0 = SubResource("ShaderMaterial_ktivs")
+
+[node name="Chandelier" parent="." instance=ExtResource("1_4mdm3")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -16, 0)
+
+[node name="ChandelierBroken" parent="." instance=ExtResource("4_1gcvb")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -16, 0)
+
+[node name="Hitbox" type="Area3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -48, 0)
+collision_layer = 0
+collision_mask = 2
+monitorable = false
+script = ExtResource("6_24adw")
+isDisabled = true
+ignoreSpeedbreakingCharacters = true
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Hitbox"]
+shape = SubResource("CylinderShape3D_1gcvb")
+
+[node name="Fix" type="AudioStreamPlayer3D" parent="Hitbox"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 48, 0)
+stream = ExtResource("7_sgp3b")
+attenuation_model = 3
+max_db = 0.0
+max_distance = 100.0
+bus = &"GAME SFX"
+attenuation_filter_cutoff_hz = 12000.0
+
+[node name="Reverse" type="AudioStreamPlayer3D" parent="Hitbox"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 48, 0)
+stream = ExtResource("8_skxj1")
+attenuation_model = 3
+max_db = 0.0
+max_distance = 100.0
+bus = &"GAME SFX"
+script = ExtResource("9_741xa")
+groupKey = &"time reverse"
+
+[node name="Shatter" type="AudioStreamPlayer3D" parent="Hitbox"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 48, 0)
+stream = ExtResource("9_skxj1")
+attenuation_model = 3
+max_db = 0.0
+max_distance = 100.0
+bus = &"GAME SFX"
+
+[connection signal="area_entered" from="Hitbox" to="Hitbox" method="OnEntered"]
+[connection signal="area_exited" from="Hitbox" to="Hitbox" method="OnExited"]
+
+[editable path="Bloom/ChandelierBloom"]
+[editable path="ChandelierBroken"]

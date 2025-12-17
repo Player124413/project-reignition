@@ -21,6 +21,10 @@ public partial class SpecialBook : Menu
 		Image // Player is inspecting an image
 	}
 
+	[Export] private Control SpecialBookTabParent;
+	[Export] private PackedScene SpecialBookTabObject;
+
+	[Export] private SpecialBookTabResource[] tabResources;
 	[Export] private SpecialBookTab[] tabs;
 	[Export] private SpecialBookWindow[] windows;
 	[Export] private Sprite2D[] thumbnails;
@@ -52,6 +56,8 @@ public partial class SpecialBook : Menu
 	protected override void SetUp()
 	{
 		audioPlayer.Finished += PlayBgm;
+
+		LoadTabs();
 
 		foreach (SpecialBookTab tab in tabs)
 		{
@@ -100,6 +106,7 @@ public partial class SpecialBook : Menu
 		}
 
 		UpdateNewTags();
+
 
 		tabs[tabSelection].Select(); // Select chapter tab
 		base.ShowMenu();
@@ -191,7 +198,6 @@ public partial class SpecialBook : Menu
 				audioPlayer.Play();
 				break;
 			case SpecialBookPage.PageTypeEnum.Video:
-				/* TODO Enable these after cutscenes are added
 				bgm.Stop();
 
 				TransitionManager.QueueSceneChange(page.VideoEventPath);
@@ -202,7 +208,6 @@ public partial class SpecialBook : Menu
 				});
 
 				DisableProcessing();
-				*/
 				break;
 		}
 	}
@@ -568,6 +573,17 @@ public partial class SpecialBook : Menu
 		{
 			windows[i].IsNewTagVisible = !SaveManager.SharedData.ViewedPages.Contains($"{tabSelection + 1}_{i + 1}") &&
 				tabs[tabSelection].PageResources[i].IsUnlocked();
+		}
+	}
+
+	private void LoadTabs()
+	{
+		tabs = new SpecialBookTab[tabResources.Length];
+		for (int i = 0; i < tabResources.Length; i++)
+		{
+			SpecialBookTabParent.AddChild(SpecialBookTabObject.Instantiate());
+			tabs[i] = (SpecialBookTab)SpecialBookTabParent.GetChild(i);
+			tabs[i].GetResource(tabResources[i].chapterType, tabResources[i].PageThumbnail, tabResources[i].PageResources, tabResources[i].PageTexturePath);
 		}
 	}
 }

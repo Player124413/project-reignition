@@ -94,6 +94,7 @@ public partial class StageSettings : Node3D
 		}
 
 		SetEnvironmentFxFactor(environmentFxFactor, 0);
+		SoundManager.instance.UpdateBgmResource(DefaultBgm); // TODO Update with player-selected value
 	}
 
 	public override void _ExitTree() => EmitSignal(SignalName.Unloaded);
@@ -217,6 +218,7 @@ public partial class StageSettings : Node3D
 	#region Level Settings
 	/// <summary> Reference to the level's data. </summary>
 	[Export] public LevelDataResource Data { get; private set; }
+	[Export] public BGMResource DefaultBgm { get; private set; }
 	[Export] private bool disableObjectiveAutocompletion;
 	[Export] public CameraSettingsResource InitialCameraSettings { get; private set; }
 	[Export] public SFXLibraryResource dialogLibrary;
@@ -498,6 +500,9 @@ public partial class StageSettings : Node3D
 
 		for (int i = 0; i < pathList.Count; i++)
 		{
+			if (!pathList[i].Visible)
+				continue;
+
 			Vector3 closestPoint = pathList[i].Curve.GetClosestPoint(globalPosition - pathList[i].GlobalPosition);
 			closestPoint += pathList[i].GlobalPosition;
 			float dstSquared = globalPosition.DistanceSquaredTo(closestPoint);
@@ -589,9 +594,9 @@ public partial class StageSettings : Node3D
 		// Attempt to start the completion demo
 		GetTree().CreateTimer(wasSuccessful ? Data.CompletionDelay : FAIL_COMPLETION_DELAY).Connect(SceneTreeTimer.SignalName.Timeout, new Callable(this, MethodName.StartCompletionDemo));
 
-		BGMPlayer.StageMusicPaused = true;
+		SoundManager.instance.IsStageMusicPaused = true;
 		SoundManager.instance.CancelDialog();
-		Interface.PauseMenu.AllowInputs = false;
+		PauseMenu.AllowInputs = false;
 		LevelState = wasSuccessful ? LevelStateEnum.Success : LevelStateEnum.Failed;
 
 		EmitSignal(SignalName.LevelCompleted);
@@ -600,10 +605,10 @@ public partial class StageSettings : Node3D
 		// Process save data after emitting level completion
 		CalculateTechnicalBonus(); // Recalculate technical bonus
 		UpdateSaveData();
-		ProcessAchievements();
+		ProcessAchievements(wasSuccessful);
 	}
 
-	private void ProcessAchievements()
+	private void ProcessAchievements(bool wasSuccessful)
 	{
 		if (Data.LevelID == ErazorLevelId)
 		{
@@ -617,7 +622,7 @@ public partial class StageSettings : Node3D
 			AchievementManager.Instance.UnlockAchievement(TrueHeroAchievementName);
 		}
 
-		if (SaveManager.ActiveSkillRing.TotalCost <= 100)
+		if (wasSuccessful && SaveManager.ActiveSkillRing.TotalCost <= 100)
 		{
 			SaveManager.SharedData.MinimalSkillCount = (int)Mathf.MoveToward(SaveManager.SharedData.MinimalSkillCount, int.MaxValue, 1);
 

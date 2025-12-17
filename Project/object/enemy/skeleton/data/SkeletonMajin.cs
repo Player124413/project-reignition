@@ -35,7 +35,6 @@ public partial class SkeletonMajin : Enemy
 	public void SetAttackStatus(bool value) => isAttacking = value;
 
 	private bool isImpededByWall;
-	private float wallCastTimer;
 	private float movementSpeed;
 	private Vector3 movementDirection;
 	private Vector3 homePosition;
@@ -45,7 +44,6 @@ public partial class SkeletonMajin : Enemy
 	private readonly float MovementTraction = 40f;
 	private readonly float MovementFriction = 120f;
 	private readonly float StrikeRangeSquared = 9f;
-	private readonly float WallCastInterval = .2f;
 
 	/// <summary> Keeps track of whether the skeleton has been spawned before. </summary>
 	private bool wasSpawned;
@@ -200,10 +198,8 @@ public partial class SkeletonMajin : Enemy
 		if (!isMovementEnabled)
 			return;
 
-		wallCastTimer = Mathf.MoveToward(wallCastTimer, 0, PhysicsManager.physicsDelta);
-		if (Mathf.IsZeroApprox(wallCastTimer) && (!Mathf.IsZeroApprox(movementSpeed) || isImpededByWall))
+		if (!Mathf.IsZeroApprox(movementSpeed) || isImpededByWall)
 		{
-			wallCastTimer = WallCastInterval;
 			RaycastHit wallHit = this.CastRay(GlobalPosition + Vector3.Up * 0.2f, Player.GlobalPosition - GlobalPosition, Runtime.Instance.environmentMask);
 			isImpededByWall = wallHit && wallHit.collidedObject.IsInGroup("wall");
 		}

@@ -5,18 +5,13 @@ namespace Project.Gameplay;
 
 public partial class BackstepState : PlayerState
 {
-	[Export]
-	private PlayerState fallState;
-	[Export]
-	private PlayerState idleState;
-	[Export]
-	private PlayerState runState;
-	[Export]
-	private PlayerState crouchState;
-	[Export]
-	private PlayerState jumpState;
-	[Export]
-	private PlayerState backflipState;
+	[Export] private PlayerState fallState;
+	[Export] private PlayerState idleState;
+	[Export] private PlayerState runState;
+	[Export] private PlayerState crouchState;
+	[Export] private PlayerState jumpState;
+	[Export] private PlayerState backflipState;
+	[Export] private PlayerState homingAttackState;
 
 	public override void EnterState()
 	{
@@ -53,14 +48,8 @@ public partial class BackstepState : PlayerState
 		{
 			Player.Controller.ResetJumpBuffer();
 
-			float inputAngle = Player.Controller.GetTargetInputAngle();
-			float inputStrength = Player.Controller.GetInputStrength();
-			if (!Player.IsLockoutDisablingAction(LockoutResource.ActionFlags.Backflip) &&
-				!Mathf.IsZeroApprox(inputStrength) &&
-				Player.Controller.IsHoldingDirection(inputAngle, Player.PathFollower.BackAngle))
-			{
+			if (Player.IsBackflipInputValid())
 				return backflipState;
-			}
 
 			if (SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.ChargeJump))
 				return crouchState;
@@ -73,6 +62,12 @@ public partial class BackstepState : PlayerState
 		{
 			Player.Controller.ResetActionBuffer();
 			return crouchState;
+		}
+
+		if (Player.Controller.IsAttackBufferActive && Player.Lockon.IsTargetAttackable)
+		{
+			Player.Controller.ResetAttackBuffer();
+			return homingAttackState;
 		}
 
 		Player.Animator.BackstepAnimation();

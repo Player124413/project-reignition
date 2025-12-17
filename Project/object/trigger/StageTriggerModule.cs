@@ -15,7 +15,8 @@ public partial class StageTriggerModule : Node3D
 		if (Engine.IsEditorHint())
 			return;
 
-		StageSettings.Instance.Respawned += Respawn;
+		if (StageSettings.Instance != null)
+			StageSettings.Instance.Respawned += Respawn;
 	}
 
 	public virtual void Activate(Area3D a)
@@ -24,8 +25,8 @@ public partial class StageTriggerModule : Node3D
 			return;
 
 		// Culling states shouldn't be changed when level is completed
-		if (StageSettings.Instance.LevelState == StageSettings.LevelStateEnum.Failed ||
-			StageSettings.Instance.LevelState == StageSettings.LevelStateEnum.Success)
+		if (StageSettings.Instance?.LevelState == StageSettings.LevelStateEnum.Failed ||
+			StageSettings.Instance?.LevelState == StageSettings.LevelStateEnum.Success)
 		{
 			return;
 		}
@@ -38,8 +39,8 @@ public partial class StageTriggerModule : Node3D
 			return;
 
 		// Culling states shouldn't be changed when level is completed
-		if (StageSettings.Instance.LevelState == StageSettings.LevelStateEnum.Failed ||
-			StageSettings.Instance.LevelState == StageSettings.LevelStateEnum.Success)
+		if (StageSettings.Instance?.LevelState == StageSettings.LevelStateEnum.Failed ||
+			StageSettings.Instance?.LevelState == StageSettings.LevelStateEnum.Success)
 		{
 			return;
 		}

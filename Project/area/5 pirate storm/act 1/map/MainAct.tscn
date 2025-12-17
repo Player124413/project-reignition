@@ -1,4 +1,4 @@
-[gd_scene load_steps=123 format=3 uid="uid://bkuwj6xj81tuv"]
+[gd_scene load_steps=126 format=3 uid="uid://bkuwj6xj81tuv"]
 
 [ext_resource type="PackedScene" uid="uid://csk7y7y8vgg6l" path="res://area/5 pirate storm/act 1/Static.tscn" id="1_8fsep"]
 [ext_resource type="PackedScene" uid="uid://cjupypih0myxo" path="res://object/player/CharacterSpawn.tscn" id="2_kflh0"]
@@ -82,6 +82,7 @@
 [ext_resource type="Material" uid="uid://ckyg4aygq0uan" path="res://effect/particle/material/environment/Water Dust.tres" id="75_csc40"]
 [ext_resource type="Script" uid="uid://c65ffkknyq6gr" path="res://addons/custom_nodes/script/GroupGpuParticles3D.cs" id="76_7uggd"]
 [ext_resource type="Material" uid="uid://ev5ys13lygcu" path="res://effect/particle/material/environment/Water Splatter Add.tres" id="77_7uggd"]
+[ext_resource type="PackedScene" uid="uid://gqxmlgiwtikn" path="res://object/trigger/BigTrigger.tscn" id="83_vqh3v"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_6yc6x"]
 size = Vector3(20, 20, 5)
@@ -171,6 +172,9 @@ point_count = 2
 [sub_resource type="Curve" id="Curve_mt1sj"]
 _data = [Vector2(0, 0), 0.0, 0.5, 0, 1, Vector2(1, 0.5), 0.5, 0.0, 1, 0]
 point_count = 2
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_2fchw"]
+size = Vector3(20, 10, 9)
 
 [sub_resource type="Curve" id="Curve_k2etd"]
 _limits = [-1.0, 1.0, 0.0, 1.0]
@@ -270,6 +274,9 @@ point_count = 6
 _limits = [-1.0, 1.0, 0.0, 1.0]
 _data = [Vector2(0, 0), 0.0, 7.27226, 0, 0, Vector2(0.2, 1), 0.0, 0.0, 0, 0, Vector2(0.4, -1), 0.0, 0.0, 0, 0, Vector2(0.6, 1), 0.0, 0.0, 0, 0, Vector2(0.8, -1), 0.0, 0.0, 0, 0, Vector2(1, 5.96046e-08), 7.0859, 0.0, 0, 0]
 point_count = 6
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_vqh3v"]
+size = Vector3(8, 5, 5)
 
 [node name="Stage" type="Node"]
 
@@ -1882,7 +1889,7 @@ Movement/Angle = 0.0
 "Vertical Orientation" = false
 
 [node name="Blade" parent="MainAct/Islands/Island4/MovingBlade1" instance=ExtResource("16_scpb0")]
-transform = Transform3D(1, -1.4901161e-08, -2.6201263e-14, 0, -4.37114e-08, -1, 1.4901161e-08, 1, -4.3711513e-08, 0, 0, 0)
+transform = Transform3D(1, -1.4901161e-08, -2.5757174e-14, 0, -4.37114e-08, -1, 1.4901161e-08, 1, -4.371153e-08, 0, 0, 0)
 
 [node name="MovingBlade2" type="Node3D" parent="MainAct/Islands/Island4"]
 transform = Transform3D(0.990268, 0, 0.139173, 0, 1, 0, -0.139173, 0, 0.990268, -30.323, 0.3, 6.98822)
@@ -2394,7 +2401,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.565686, -0.565685, 0)
 [node name="Bomb" type="Node3D" parent="MainAct/Cannonball"]
 
 [node name="BombTrigger1" parent="MainAct/Cannonball/Bomb" instance=ExtResource("26_1c4me")]
-transform = Transform3D(1, 0, 0, 0, 0.999999, 0, 0, 0, 1, 0, 4, 70)
+transform = Transform3D(1, 0, 0, 0, 0.999999, 0, 0, 0, 1, 0, 6, 60)
 OneShot = true
 "Respawn Mode" = 0
 "Enter Mode" = 0
@@ -2803,17 +2810,21 @@ Distance = 4.0
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 66, -8.308)
 fireSoulIndex = 2
 
-[node name="InvisibleGrindrail" parent="MainAct/Ships/Ship2" instance=ExtResource("42_my4pc")]
-transform = Transform3D(-1, -2.23517e-08, -8.9407e-08, 0, 0.96363, -0.267238, 8.9407e-08, -0.267238, -0.96363, 6.10352e-05, 55.9224, -35.2897)
+[node name="InvisibleGrindrailGroup" type="Node3D" parent="MainAct/Ships/Ship2"]
+transform = Transform3D(-1, -2.2351742e-08, -8.940697e-08, 0, 0.96363, -0.267238, 1.1920929e-07, -0.267238, -0.96363, 6.1035156e-05, 55.922398, -35.289795)
+
+[node name="InvisibleGrindrail" parent="MainAct/Ships/Ship2/InvisibleGrindrailGroup" instance=ExtResource("42_my4pc")]
+transform = Transform3D(1, -7.450581e-09, -2.9802322e-08, 1.4901161e-08, 1, -1.4901161e-08, 2.9802322e-08, 0, 1, 0, -3.0517578e-05, -0.00012207031)
+visible = false
 railLength = 50
 
-[node name="Camera" type="Node3D" parent="MainAct/Ships/Ship2/InvisibleGrindrail"]
-transform = Transform3D(1, 0, -2.98023e-08, 7.45058e-09, 1, -1.49012e-08, 0, 0, 1, 0, 0, 0)
+[node name="Camera" type="Node3D" parent="MainAct/Ships/Ship2/InvisibleGrindrailGroup"]
+transform = Transform3D(1, -1.4901161e-08, -8.940697e-08, 2.9802322e-08, 1, -1.4901161e-08, 2.9802322e-08, 0, 1, 0, -3.0517578e-05, -0.00012207031)
 script = ExtResource("21_1aofs")
 settings = ExtResource("48_6pyup")
 
-[node name="Rings1" type="Node3D" parent="MainAct/Ships/Ship2/InvisibleGrindrail"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.1, -7)
+[node name="Rings1" type="Node3D" parent="MainAct/Ships/Ship2/InvisibleGrindrailGroup"]
+transform = Transform3D(1, -1.4901161e-08, -5.9604645e-08, 2.2351742e-08, 1, -1.4901161e-08, 2.9802322e-08, 0, 1, 0, 1.0999451, -7.000244)
 script = ExtResource("6_ytq25")
 Source = ExtResource("7_slh8b")
 Amount = 10
@@ -2824,37 +2835,37 @@ Spacing = 2.0
 "Vertical Offset" = null
 metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
 
-[node name="Child01" parent="MainAct/Ships/Ship2/InvisibleGrindrail/Rings1" instance=ExtResource("7_slh8b")]
+[node name="Child01" parent="MainAct/Ships/Ship2/InvisibleGrindrailGroup/Rings1" instance=ExtResource("7_slh8b")]
 
-[node name="Child02" parent="MainAct/Ships/Ship2/InvisibleGrindrail/Rings1" instance=ExtResource("7_slh8b")]
+[node name="Child02" parent="MainAct/Ships/Ship2/InvisibleGrindrailGroup/Rings1" instance=ExtResource("7_slh8b")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2)
 
-[node name="Child03" parent="MainAct/Ships/Ship2/InvisibleGrindrail/Rings1" instance=ExtResource("7_slh8b")]
+[node name="Child03" parent="MainAct/Ships/Ship2/InvisibleGrindrailGroup/Rings1" instance=ExtResource("7_slh8b")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -4)
 
-[node name="Child04" parent="MainAct/Ships/Ship2/InvisibleGrindrail/Rings1" instance=ExtResource("7_slh8b")]
+[node name="Child04" parent="MainAct/Ships/Ship2/InvisibleGrindrailGroup/Rings1" instance=ExtResource("7_slh8b")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -6)
 
-[node name="Child05" parent="MainAct/Ships/Ship2/InvisibleGrindrail/Rings1" instance=ExtResource("7_slh8b")]
+[node name="Child05" parent="MainAct/Ships/Ship2/InvisibleGrindrailGroup/Rings1" instance=ExtResource("7_slh8b")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -8)
 
-[node name="Child06" parent="MainAct/Ships/Ship2/InvisibleGrindrail/Rings1" instance=ExtResource("7_slh8b")]
+[node name="Child06" parent="MainAct/Ships/Ship2/InvisibleGrindrailGroup/Rings1" instance=ExtResource("7_slh8b")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -10)
 
-[node name="Child07" parent="MainAct/Ships/Ship2/InvisibleGrindrail/Rings1" instance=ExtResource("7_slh8b")]
+[node name="Child07" parent="MainAct/Ships/Ship2/InvisibleGrindrailGroup/Rings1" instance=ExtResource("7_slh8b")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -12)
 
-[node name="Child08" parent="MainAct/Ships/Ship2/InvisibleGrindrail/Rings1" instance=ExtResource("7_slh8b")]
+[node name="Child08" parent="MainAct/Ships/Ship2/InvisibleGrindrailGroup/Rings1" instance=ExtResource("7_slh8b")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -14)
 
-[node name="Child09" parent="MainAct/Ships/Ship2/InvisibleGrindrail/Rings1" instance=ExtResource("7_slh8b")]
+[node name="Child09" parent="MainAct/Ships/Ship2/InvisibleGrindrailGroup/Rings1" instance=ExtResource("7_slh8b")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -16)
 
-[node name="Child10" parent="MainAct/Ships/Ship2/InvisibleGrindrail/Rings1" instance=ExtResource("7_slh8b")]
+[node name="Child10" parent="MainAct/Ships/Ship2/InvisibleGrindrailGroup/Rings1" instance=ExtResource("7_slh8b")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -18)
 
-[node name="Rings2" type="Node3D" parent="MainAct/Ships/Ship2/InvisibleGrindrail"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.1, -31)
+[node name="Rings2" type="Node3D" parent="MainAct/Ships/Ship2/InvisibleGrindrailGroup"]
+transform = Transform3D(1, -1.4901161e-08, -5.9604645e-08, 2.2351742e-08, 1, -1.4901161e-08, 2.9802322e-08, 0, 1, 0, 1.0999756, -31.000122)
 script = ExtResource("6_ytq25")
 Source = ExtResource("7_slh8b")
 Amount = 10
@@ -2865,37 +2876,37 @@ Spacing = 2.0
 "Vertical Offset" = null
 metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
 
-[node name="Child01" parent="MainAct/Ships/Ship2/InvisibleGrindrail/Rings2" instance=ExtResource("7_slh8b")]
+[node name="Child01" parent="MainAct/Ships/Ship2/InvisibleGrindrailGroup/Rings2" instance=ExtResource("7_slh8b")]
 
-[node name="Child02" parent="MainAct/Ships/Ship2/InvisibleGrindrail/Rings2" instance=ExtResource("7_slh8b")]
+[node name="Child02" parent="MainAct/Ships/Ship2/InvisibleGrindrailGroup/Rings2" instance=ExtResource("7_slh8b")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2)
 
-[node name="Child03" parent="MainAct/Ships/Ship2/InvisibleGrindrail/Rings2" instance=ExtResource("7_slh8b")]
+[node name="Child03" parent="MainAct/Ships/Ship2/InvisibleGrindrailGroup/Rings2" instance=ExtResource("7_slh8b")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -4)
 
-[node name="Child04" parent="MainAct/Ships/Ship2/InvisibleGrindrail/Rings2" instance=ExtResource("7_slh8b")]
+[node name="Child04" parent="MainAct/Ships/Ship2/InvisibleGrindrailGroup/Rings2" instance=ExtResource("7_slh8b")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -6)
 
-[node name="Child05" parent="MainAct/Ships/Ship2/InvisibleGrindrail/Rings2" instance=ExtResource("7_slh8b")]
+[node name="Child05" parent="MainAct/Ships/Ship2/InvisibleGrindrailGroup/Rings2" instance=ExtResource("7_slh8b")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -8)
 
-[node name="Child06" parent="MainAct/Ships/Ship2/InvisibleGrindrail/Rings2" instance=ExtResource("7_slh8b")]
+[node name="Child06" parent="MainAct/Ships/Ship2/InvisibleGrindrailGroup/Rings2" instance=ExtResource("7_slh8b")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -10)
 
-[node name="Child07" parent="MainAct/Ships/Ship2/InvisibleGrindrail/Rings2" instance=ExtResource("7_slh8b")]
+[node name="Child07" parent="MainAct/Ships/Ship2/InvisibleGrindrailGroup/Rings2" instance=ExtResource("7_slh8b")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -12)
 
-[node name="Child08" parent="MainAct/Ships/Ship2/InvisibleGrindrail/Rings2" instance=ExtResource("7_slh8b")]
+[node name="Child08" parent="MainAct/Ships/Ship2/InvisibleGrindrailGroup/Rings2" instance=ExtResource("7_slh8b")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -14)
 
-[node name="Child09" parent="MainAct/Ships/Ship2/InvisibleGrindrail/Rings2" instance=ExtResource("7_slh8b")]
+[node name="Child09" parent="MainAct/Ships/Ship2/InvisibleGrindrailGroup/Rings2" instance=ExtResource("7_slh8b")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -16)
 
-[node name="Child10" parent="MainAct/Ships/Ship2/InvisibleGrindrail/Rings2" instance=ExtResource("7_slh8b")]
+[node name="Child10" parent="MainAct/Ships/Ship2/InvisibleGrindrailGroup/Rings2" instance=ExtResource("7_slh8b")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -18)
 
-[node name="SpikeBall" parent="MainAct/Ships/Ship2/InvisibleGrindrail" instance=ExtResource("28_m1od1")]
-transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, -0.0999999, -28)
+[node name="SpikeBall" parent="MainAct/Ships/Ship2/InvisibleGrindrailGroup" instance=ExtResource("28_m1od1")]
+transform = Transform3D(1, 5.9604645e-08, -1.4901161e-08, 2.2351742e-08, -1.4901161e-08, 1, 2.9802322e-08, -1, -4.4703484e-08, 0, -0.10005188, -28.000122)
 Movement/Mode = 0
 
 [node name="ShipFightCamera" parent="MainAct/Ships/Ship2" instance=ExtResource("26_1c4me")]
@@ -4321,6 +4332,14 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -54)
 [node name="Child20" parent="MainAct/Cave/Pearls" instance=ExtResource("8_ytq25")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -57)
 
+[node name="GrindPathCameraDeactivateTrigger" parent="MainAct/Cave" instance=ExtResource("26_1c4me")]
+transform = Transform3D(1.0000001, 0, 0, 0, 1.0000004, 0, 0, 0, 0.9999996, -11.491028, 5.2249756, 0)
+"Enter Mode" = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="MainAct/Cave/GrindPathCameraDeactivateTrigger"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2)
+shape = SubResource("BoxShape3D_2fchw")
+
 [node name="GrindPath" type="Node3D" parent="MainAct/Cave"]
 transform = Transform3D(-0.99824, -0.00743305, 0.0588386, 0, 0.992115, 0.125333, -0.0593063, 0.125113, -0.990368, -11.491, 15.225, 0)
 
@@ -4632,7 +4651,7 @@ Movement/Angle = 90.0
 "Vertical Orientation" = true
 
 [node name="Blade" parent="MainAct/Cave/BladeGroup4/Blade1" instance=ExtResource("16_scpb0")]
-transform = Transform3D(0.9999978, 2.220446e-15, -6.109476e-07, -9.31323e-09, 1, -6.27479e-08, -6.109476e-07, -4.00469e-08, 0.99999774, -0.4161377, 0, 3.0517578e-05)
+transform = Transform3D(0.9999978, 2.220446e-15, -5.9604645e-07, -9.31323e-09, 1, -6.27479e-08, -6.109476e-07, -4.00469e-08, 0.99999756, -0.4161377, 0, 3.0517578e-05)
 playSFX = false
 
 [node name="Blade2" type="Node3D" parent="MainAct/Cave/BladeGroup4"]
@@ -4649,7 +4668,7 @@ Movement/Angle = 90.0
 "Vertical Orientation" = true
 
 [node name="Blade" parent="MainAct/Cave/BladeGroup4/Blade2" instance=ExtResource("16_scpb0")]
-transform = Transform3D(1.00003, 3.7253e-09, -5.9604645e-07, 1.49012e-08, 1, 3.23635e-07, 5.9604645e-07, -9.313217e-09, 1.00003, -4.000122, 0, 0)
+transform = Transform3D(1.00003, 3.7253005e-09, -5.9604645e-07, 1.49012e-08, 1, 3.23635e-07, 5.9604645e-07, -9.313216e-09, 1.00003, -4.000122, 0, 0)
 playSFX = false
 
 [node name="Blade3" type="Node3D" parent="MainAct/Cave/BladeGroup4"]
@@ -4666,7 +4685,7 @@ Movement/Angle = 90.0
 "Vertical Orientation" = true
 
 [node name="Blade" parent="MainAct/Cave/BladeGroup4/Blade3" instance=ExtResource("16_scpb0")]
-transform = Transform3D(1.00003, 4.4703597e-08, 6.109476e-07, 0, 1, -3.72529e-08, -6.109476e-07, -1.0756802e-07, 1.00003, 0, 0, 0)
+transform = Transform3D(1.00003, 4.4703594e-08, 6.109476e-07, 0, 1, -3.72529e-08, -6.109476e-07, -1.07568034e-07, 1.00003, 0, 0, 0)
 playSFX = false
 
 [node name="BladeGroupSfx" type="AudioStreamPlayer3D" parent="MainAct/Cave/BladeGroup4"]
@@ -5397,7 +5416,7 @@ transform = Transform3D(0.187728, -0.200611, 0.961516, -0.459129, 0.847468, 0.26
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.5, 0, 110)
 
 [node name="CrateDestructable2" parent="MainAct/Surf" instance=ExtResource("61_dec8o")]
-transform = Transform3D(0.961516, 0.24004, -0.133669, -0.242362, 0.970185, -0.00114128, 0.129409, 0.0334936, 0.991025, 7.5, -0.5, 117)
+transform = Transform3D(0.961516, 0.24004, -0.133669, -0.242362, 0.970185, -0.00114128, 0.129409, 0.0334936, 0.991025, 9.5, -0.5, 117)
 
 [node name="Wave1Activate" parent="MainAct/Surf" instance=ExtResource("26_1c4me")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.299988, 0, 13.5)
@@ -5453,6 +5472,7 @@ draw_pass_1 = SubResource("QuadMesh_dq5fv")
 [node name="Dialog" type="Node3D" parent="MainAct/Surf/Wave1" node_paths=PackedStringArray("randomizedDialogTriggers")]
 script = ExtResource("5_mrnau")
 allowRespawn = true
+playbackType = 2
 textKeys = Array[String](["pir_surf_jump1_so"])
 randomizedDialogTriggers = []
 
@@ -5639,6 +5659,7 @@ draw_pass_1 = SubResource("QuadMesh_dq5fv")
 [node name="Dialog" type="Node3D" parent="MainAct/Surf/Wave2" node_paths=PackedStringArray("randomizedDialogTriggers")]
 script = ExtResource("5_mrnau")
 allowRespawn = true
+playbackType = 2
 textKeys = Array[String](["pir_surf_jump2_so"])
 randomizedDialogTriggers = []
 
@@ -5888,6 +5909,7 @@ draw_pass_1 = SubResource("QuadMesh_dq5fv")
 [node name="Dialog" type="Node3D" parent="MainAct/Surf/Wave3" node_paths=PackedStringArray("randomizedDialogTriggers")]
 script = ExtResource("5_mrnau")
 allowRespawn = true
+playbackType = 2
 textKeys = Array[String](["pir_surf_jump3_so"])
 randomizedDialogTriggers = []
 
@@ -6445,6 +6467,17 @@ transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, -255, 
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -5, 2)
 shape = SubResource("BoxShape3D_6yc6x")
 
+[node name="BigTrigger" parent="." instance=ExtResource("83_vqh3v")]
+transform = Transform3D(-0.92387944, 0, -0.38268346, 0, 1, 0, 0.38268346, 0, -0.92387944, -99.785805, 87.5, 1282.0504)
+bigAnimation = &"sit"
+
+[node name="Camera" parent="BigTrigger" index="1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 30)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="BigTrigger"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, -27.6, 57.3)
+shape = SubResource("BoxShape3D_vqh3v")
+
 [connection signal="Activated" from="Static/Triggers/PathAndCameraTriggers/ShipsStart/Ships" to="Static/Triggers/PathAndCameraTriggers/ShipsStart/Dialog" method="Activate"]
 [connection signal="Activated" from="Static/Triggers/PathAndCameraTriggers/ShipsStart/Ships" to="MainAct/Ships" method="Activate"]
 [connection signal="Activated" from="Static/Triggers/CannonEvent/CannonEventCull/CannonEvent" to="Static/Triggers/CannonEvent/CannonEventCull/CannonEvent/Dialog" method="Activate"]
@@ -6520,8 +6553,8 @@ shape = SubResource("BoxShape3D_6yc6x")
 [connection signal="PlayerExited" from="MainAct/Ships/Ship1/Catapult" to="MainAct/Ships/Ship1/Catapult/AimCamera" method="Deactivate"]
 [connection signal="JumpFinished" from="MainAct/Ships/Ship1/JumpTrigger2/Jump" to="Static/Collision/OneWayWall" method="Activate"]
 [connection signal="JumpFinished" from="MainAct/Ships/Ship1/JumpTrigger2/Jump" to="MainAct/Ships/Ship1/JumpTrigger2/Jump/Camera" method="Activate"]
-[connection signal="GrindCompleted" from="MainAct/Ships/Ship2/InvisibleGrindrail" to="MainAct/Ships/Ship2/InvisibleGrindrail/Camera" method="Deactivate"]
-[connection signal="GrindStarted" from="MainAct/Ships/Ship2/InvisibleGrindrail" to="MainAct/Ships/Ship2/InvisibleGrindrail/Camera" method="Activate"]
+[connection signal="GrindCompleted" from="MainAct/Ships/Ship2/InvisibleGrindrailGroup/InvisibleGrindrail" to="MainAct/Ships/Ship2/InvisibleGrindrailGroup/Camera" method="Deactivate"]
+[connection signal="GrindStarted" from="MainAct/Ships/Ship2/InvisibleGrindrailGroup/InvisibleGrindrail" to="MainAct/Ships/Ship2/InvisibleGrindrailGroup/Camera" method="Activate"]
 [connection signal="Defeated" from="MainAct/Ships/Ship2/SlimeMajinL" to="MainAct/Ships/Ship2/EnemyStone1" method="IncrementCounter"]
 [connection signal="Spawned" from="MainAct/Ships/Ship2/SlimeMajinL" to="MainAct/Ships/Ship2/BombL" method="Launch"]
 [connection signal="Defeated" from="MainAct/Ships/Ship2/SlimeMajinR" to="MainAct/Ships/Ship2/EnemyStone1" method="IncrementCounter"]
@@ -6567,10 +6600,9 @@ shape = SubResource("BoxShape3D_6yc6x")
 [connection signal="Shattered" from="MainAct/Grotto/Cage" to="MainAct/Grotto/GreenMajin2" method="Defeat" flags=3]
 [connection signal="Collected" from="MainAct/Grotto/MovingItemBox/ItemBoxFlying" to="MainAct/Grotto/MovingItemBox" method="Pause"]
 [connection signal="Respawned" from="MainAct/Grotto/MovingItemBox/ItemBoxFlying" to="MainAct/Grotto/MovingItemBox" method="Unpause"]
-[connection signal="Activated" from="MainAct/Cave/Sword3" to="Static/Collision/OneWayWall" method="Deactivate"]
 [connection signal="Activated" from="MainAct/Cave/Sword3" to="Static/Collision/GrindOneWayWall" method="Activate"]
 [connection signal="Activated" from="MainAct/Cave/Sword3" to="MainAct/Cave/GrindPath/Camera" method="Activate"]
-[connection signal="Activated" from="MainAct/Cave/Sword3" to="MainAct/Cave/GrindPath/Path" method="Activate"]
+[connection signal="Activated" from="MainAct/Cave/GrindPathCameraDeactivateTrigger" to="MainAct/Cave/GrindPath/Camera" method="Deactivate"]
 [connection signal="GrindStarted" from="MainAct/Cave/GrindPath/InvisibleGrindrail" to="MainAct/Dialog/BladeCullingTrigger" method="Deactivate"]
 [connection signal="GrindStarted" from="MainAct/Cave/GrindPath/InvisibleGrindrail" to="MainAct/Dialog/TractionCullingTrigger" method="Activate"]
 [connection signal="Activated" from="MainAct/Cave/GrindInvisibleWallTrigger" to="Static/Collision/OneWayWall" method="Activate"]
@@ -6655,3 +6687,5 @@ shape = SubResource("BoxShape3D_6yc6x")
 [editable path="MainAct/Islands/Island2/Barrel3"]
 [editable path="MainAct/Surf/Wave3"]
 [editable path="MainAct/Surf/Wave3/Wave"]
+[editable path="BigTrigger"]
+[editable path="BigTrigger/Big"]

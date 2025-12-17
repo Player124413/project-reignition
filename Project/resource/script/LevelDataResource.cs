@@ -35,7 +35,7 @@ public partial class LevelDataResource : Resource
 			ExtensionMethods.CreateProperty("Area Key", Variant.Type.String),
 			ExtensionMethods.CreateProperty("Level ID", Variant.Type.StringName),
 			ExtensionMethods.CreateProperty("Level Index", Variant.Type.Int),
-			ExtensionMethods.CreateProperty("Level Path", Variant.Type.String),
+			ExtensionMethods.CreateProperty("Level Path", Variant.Type.String, PropertyHint.FilePath, "*.tscn"),
 			ExtensionMethods.CreateProperty("Story Event Index", Variant.Type.Int, PropertyHint.Range, "-1,31"),
 			ExtensionMethods.CreateProperty("First Clear Bonus", Variant.Type.Int, PropertyHint.Range, "0,10000"),
 

@@ -57,9 +57,9 @@
 [ext_resource type="Resource" uid="uid://cwlm80ug7yxdp" path="res://area/2 dino jungle/act 3/camera/CavernCam.tres" id="34_m5bm2"]
 [ext_resource type="Resource" uid="uid://ji20l0l30t4i" path="res://area/2 dino jungle/act 3/camera/DinoCam.tres" id="40_87ag4"]
 [ext_resource type="Script" uid="uid://np5vcxq01ii8" path="res://object/trigger/modules/CheckpointTrigger.cs" id="41_4yhlb"]
+[ext_resource type="PackedScene" uid="uid://q5aow4f6xlo3" path="res://area/2 dino jungle/object/dino/DinoStego.tscn" id="41_ym8ud"]
+[ext_resource type="Resource" uid="uid://cyxwq344l58or" path="res://resource/bgm/bgm dj act3.tres" id="58_2rc53"]
 [ext_resource type="PackedScene" uid="uid://dar74l2eiux2t" path="res://effect/buffer/DepthRenderer.tscn" id="58_hh6gi"]
-[ext_resource type="AudioStream" uid="uid://cyfvn3k7qur8h" path="res://sound/ost/bonus disc/Dinosaur Jungle Act 3.mp3" id="58_ygica"]
-[ext_resource type="Script" uid="uid://cj76gvi7tbku6" path="res://sound/script/BGMPlayer.cs" id="59_td2gy"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_slcyf"]
 blend_mode = 1
@@ -570,6 +570,7 @@ adjustment_color_correction = SubResource("GradientTexture1D_qxypc")
 
 [node name="Static" type="Node3D" node_paths=PackedStringArray("pathParent", "completionAnimator", "Environment")]
 script = ExtResource("1_tbi4j")
+DefaultBgm = ExtResource("58_2rc53")
 InitialCameraSettings = ExtResource("2_14mqj")
 pathParent = NodePath("Path")
 completionAnimator = NodePath("DemoCamera/AnimationPlayer")
@@ -1190,7 +1191,7 @@ libraries = {
 autoplay = "event"
 
 [node name="Head" type="BoneAttachment3D" parent="Common/Dino"]
-transform = Transform3D(0.999979, -8.9407e-07, 0.00640272, 0.00640272, 0.000292879, -0.999979, -1.01328e-06, 1, 0.000292879, 1.33514e-05, 29.7625, 37.3079)
+transform = Transform3D(0.9999794, -8.940697e-07, 0.006402716, 0.006402717, 0.00029287924, -0.9999795, -1.013279e-06, 0.99999976, 0.00029287906, 1.335144e-05, 29.762484, 37.30789)
 bone_name = "head"
 bone_idx = 1
 use_external_skeleton = true
@@ -1203,6 +1204,9 @@ stream = ExtResource("18_ly4rc")
 max_db = 0.0
 max_distance = 200.0
 bus = &"GAME SFX"
+
+[node name="DinoStego" parent="Common" instance=ExtResource("41_ym8ud")]
+transform = Transform3D(-1.5000002, 0, -2.598076, 0, 3, 0, 2.598076, 0, -1.5000002, 63.401924, -2.5, 76.5)
 
 [node name="Trigger" type="Node3D" parent="." groups=["cull on complete"]]
 
@@ -1395,10 +1399,10 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -157.685, -6, 48.511)
 curve = ExtResource("31_hajvb")
 
 [node name="DemoCamera" type="Node3D" parent="."]
-transform = Transform3D(-0.748955, 0, 0.662621, 0, 1, 0, -0.662621, 0, -0.748955, 119.668, 35.9585, -70.5782)
+transform = Transform3D(-0.7489551, 0, 0.6626209, 0, 1, 0, -0.6626209, 0, -0.7489551, 119.668, 35.9585, -70.5782)
 
 [node name="Camera" type="Camera3D" parent="DemoCamera"]
-transform = Transform3D(1, 0, 0, 0, 0.978148, 0.207912, 0, -0.207912, 0.978148, 0, 0, 0)
+transform = Transform3D(1, 0, 0, 0, 0.97814786, 0.20791224, 0, -0.20791224, 0.97814786, 0, 0, 0)
 cull_mask = 1086
 fov = 30.0
 far = 5000.0
@@ -1410,15 +1414,6 @@ libraries = {
 next/demo1 = &"demo2"
 next/demo2 = &"demo3"
 next/demo3 = &"demo1"
-
-[node name="BGM" type="AudioStreamPlayer" parent="."]
-stream = ExtResource("58_ygica")
-bus = &"BGM"
-script = ExtResource("59_td2gy")
-startPosition = 1.2
-loopStartPosition = 16.431
-loopEndPosition = 164.12
-isStageMusic = true
 
 [node name="DepthRenderer" parent="." instance=ExtResource("58_hh6gi")]
 

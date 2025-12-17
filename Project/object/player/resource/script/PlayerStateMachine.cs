@@ -5,12 +5,10 @@ namespace Project.Gameplay;
 
 public partial class PlayerStateMachine : Node
 {
-	[Export]
-	private NodePath startingState;
+	[Export] private NodePath startingState;
 	public PlayerState CurrentState { get; private set; }
 	public PlayerState QueuedState { get; private set; }
-	[Export]
-	private Array<NodePath> stateParents;
+	[Export] private Array<NodePath> stateParents;
 
 	public void Initialize(PlayerController player)
 	{
@@ -25,8 +23,11 @@ public partial class PlayerStateMachine : Node
 			}
 		}
 
-		ChangeState(GetNode<PlayerState>(startingState));
+		ResetStateMachine();
 	}
+
+	/// <summary> Resets the state machine to its initial state. </summary>
+	public void ResetStateMachine() => ChangeState(GetNode<PlayerState>(startingState));
 
 	/// <summary> Exit the current state and switch to a new state. </summary>
 	public void ChangeState(PlayerState state)

@@ -1,14 +1,37 @@
-[gd_scene load_steps=18 format=3 uid="uid://ch46r833tuwi0"]
+[gd_scene load_steps=43 format=3 uid="uid://ch46r833tuwi0"]
 
 [ext_resource type="Script" uid="uid://dtkbvehtmy3em" path="res://object/stage/StageSettings.cs" id="1_6j01u"]
-[ext_resource type="Curve3D" uid="uid://c87yklkwfa334" path="res://area/7 night palace/act 2/environment/path/MainPath.tres" id="2_gnax0"]
+[ext_resource type="Resource" uid="uid://cphu4ho2e31sn" path="res://area/7 night palace/act 2/camera/MainCam.tres" id="2_8bpc5"]
+[ext_resource type="Curve3D" uid="uid://c3awpocntchyr" path="res://area/7 night palace/act 2/environment/path/MainPath.tres" id="2_gnax0"]
 [ext_resource type="PackedScene" uid="uid://baa0itya2nvqn" path="res://area/7 night palace/act 2/environment/NPAct2.tscn" id="2_la3f2"]
 [ext_resource type="PackedScene" uid="uid://b4gexcm5wctiv" path="res://area/7 night palace/act 2/environment/collision/Collision.tscn" id="3_1m48j"]
 [ext_resource type="PackedScene" uid="uid://dftou328ishsn" path="res://area/7 night palace/data/BGM.tscn" id="3_j1s7w"]
 [ext_resource type="PackedScene" uid="uid://bn6wr6l8s3qyt" path="res://object/trigger/StageTrigger.tscn" id="3_jkftw"]
+[ext_resource type="Resource" uid="uid://u3yhk7ogxodx" path="res://area/7 night palace/data/DialogLibrary.tres" id="3_l07ul"]
 [ext_resource type="PackedScene" uid="uid://d4ivgn14opv12" path="res://area/7 night palace/data/skybox/SpaceSkybox.tscn" id="4_0qu5p"]
 [ext_resource type="Script" uid="uid://bvmyay4bo83qu" path="res://object/trigger/modules/DeathTrigger.cs" id="4_o2jba"]
-[ext_resource type="Environment" uid="uid://qjcvqav7rmjr" path="res://area/7 night palace/data/EnvironmentSpace.tres" id="8_6epym"]
+[ext_resource type="Shader" uid="uid://d2xknh07n1p76" path="res://area/7 night palace/data/shader/SpaceSky.gdshader" id="6_at3yj"]
+[ext_resource type="Texture2D" uid="uid://cloeucvq2bpgs" path="res://area/7 night palace/data/skybox/model/texture/space sky blue.png" id="7_d80el"]
+[ext_resource type="Script" uid="uid://np5vcxq01ii8" path="res://object/trigger/modules/CheckpointTrigger.cs" id="7_j1fre"]
+[ext_resource type="PackedScene" uid="uid://etu2s6i547gb" path="res://object/trigger/state trigger/DriftTrigger.tscn" id="8_j1fre"]
+[ext_resource type="Script" uid="uid://dx0a0rhyauccl" path="res://object/trigger/modules/CameraTrigger.cs" id="10_j6bow"]
+[ext_resource type="Resource" uid="uid://cgtwkpv6dqu3g" path="res://area/7 night palace/act 2/camera/WideLagTransitionCam.tres" id="11_dm2l3"]
+[ext_resource type="Resource" uid="uid://3ahka7gl2uqk" path="res://area/7 night palace/act 2/camera/WideStraightCam.tres" id="11_h0753"]
+[ext_resource type="Resource" uid="uid://bku7n4ufln8ro" path="res://resource/preset/camera/common/StaticCam.tres" id="13_dm2l3"]
+[ext_resource type="Script" uid="uid://bd2g6rmrn77eo" path="res://object/trigger/modules/LockoutTrigger.cs" id="14_ytx0r"]
+[ext_resource type="Resource" uid="uid://cmesyjx0jp6ur" path="res://resource/preset/lockout/run/AutorunLockout.tres" id="15_l07ul"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_2asr8"]
+render_priority = -128
+shader = ExtResource("6_at3yj")
+shader_parameter/albedo = ExtResource("7_d80el")
+shader_parameter/intensity = 1.0
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_32qwx"]
+render_priority = -127
+shader = ExtResource("6_at3yj")
+shader_parameter/albedo = ExtResource("7_d80el")
+shader_parameter/intensity = 1.0
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_4glpy"]
 size = Vector3(686, 13.2, 502)
@@ -34,10 +57,389 @@ size = Vector3(120, 10, 30)
 [sub_resource type="BoxShape3D" id="BoxShape3D_5st8l"]
 size = Vector3(70, 10, 60)
 
-[node name="Static" type="Node3D"]
+[sub_resource type="BoxShape3D" id="BoxShape3D_josyi"]
+size = Vector3(40, 20, 5)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_dm2l3"]
+size = Vector3(40, 36, 50)
+
+[sub_resource type="Gradient" id="Gradient_d80el"]
+offsets = PackedFloat32Array(0, 0.6388889, 1)
+colors = PackedColorArray(0, 0, 0, 1, 0.72, 0.72, 0.54, 1, 1, 1, 1, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_2asr8"]
+gradient = SubResource("Gradient_d80el")
+
+[sub_resource type="Gradient" id="Gradient_at3yj"]
+offsets = PackedFloat32Array(1)
+colors = PackedColorArray(1, 0.8, 0, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_d80el"]
+gradient = SubResource("Gradient_at3yj")
+
+[sub_resource type="Environment" id="Environment_38hsq"]
+ambient_light_source = 2
+ambient_light_color = Color(0.40066665, 0.38, 1, 1)
+ambient_light_sky_contribution = 0.2
+ambient_light_energy = 0.3
+tonemap_mode = 1
+tonemap_exposure = 0.6
+tonemap_white = 0.7
+glow_enabled = true
+glow_levels/2 = 0.5
+glow_levels/3 = 0.0
+glow_levels/4 = 1.0
+glow_levels/5 = 0.0
+glow_normalized = true
+glow_intensity = 0.5
+glow_strength = 1.3
+glow_bloom = 0.95
+glow_blend_mode = 1
+glow_hdr_threshold = 1.5
+glow_map = SubResource("GradientTexture1D_d80el")
+volumetric_fog_density = 0.01
+adjustment_enabled = true
+adjustment_contrast = 1.2
+adjustment_color_correction = SubResource("GradientTexture1D_2asr8")
+
+[sub_resource type="Animation" id="Animation_8bpc5"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(-55, 2, 0)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath(".:rotation")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0, -1.5707964, 0)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Camera:position")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0, 0, 0)]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("Camera:rotation")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0, 0, 0)]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("Camera:current")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("Camera:fov")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [75.0]
+}
+
+[sub_resource type="Animation" id="Animation_j1fre"]
+resource_name = "demo1"
+length = 10.0
+step = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 10),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector3(-55, 5, 0), Vector3(18, 5, 0)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath(".:rotation")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0, -1.5707964, 0)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Camera:position")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0, 0, 0)]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("Camera:rotation")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0, 0, 0)]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("Camera:current")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/5/type = "method"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("..")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(10),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"OnCameraDemoAdvance"
+}]
+}
+tracks/6/type = "value"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("Camera:fov")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [75.0]
+}
+
+[sub_resource type="Animation" id="Animation_josyi"]
+resource_name = "demo2"
+length = 10.0
+step = 0.5
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:position")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 2.5, 5, 7.5, 10),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"update": 0,
+"values": [Vector3(210, -10, 100), Vector3(196.75, -7.5, 99), Vector3(187, -5, 86), Vector3(180, -2.5, 66), Vector3(157, 0, 60)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath(".:rotation")
+tracks/1/interp = 2
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0, 1.5707964, 0)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Camera:position")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 10),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector3(0, 0, 0), Vector3(0, 10, 0)]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("Camera:rotation")
+tracks/3/interp = 2
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0, 5, 10),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector3(0, 0, 0), Vector3(0, -1.0471976, 0), Vector3(0, 0, 0)]
+}
+tracks/4/type = "method"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("..")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(10),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"OnCameraDemoAdvance"
+}]
+}
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("Camera:fov")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [75.0]
+}
+
+[sub_resource type="Animation" id="Animation_j6bow"]
+resource_name = "demo3"
+length = 10.0
+step = 0.5
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 10),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector3(-25, 17, 180), Vector3(100, 17, 180)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath(".:rotation")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0, -0.6981317, 0)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Camera:position")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0, 0, 0)]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("Camera:rotation")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0, 0, 0)]
+}
+tracks/4/type = "method"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("..")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(10),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"OnCameraDemoAdvance"
+}]
+}
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("Camera:fov")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [75.0]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_josyi"]
+_data = {
+&"RESET": SubResource("Animation_8bpc5"),
+&"demo1": SubResource("Animation_j1fre"),
+&"demo2": SubResource("Animation_josyi"),
+&"demo3": SubResource("Animation_j6bow")
+}
+
+[node name="Static" type="Node3D" node_paths=PackedStringArray("pathParent", "completionAnimator", "Environment")]
 script = ExtResource("1_6j01u")
+InitialCameraSettings = ExtResource("2_8bpc5")
+dialogLibrary = ExtResource("3_l07ul")
 pathParent = NodePath("Path")
-completionAnimator = NodePath("")
+completionAnimator = NodePath("DemoCamera/AnimationPlayer")
 Environment = NodePath("WorldEnvironment")
 
 [node name="Visuals" type="Node3D" parent="."]
@@ -46,65 +448,227 @@ Environment = NodePath("WorldEnvironment")
 
 [node name="SpaceSkybox" parent="Visuals" instance=ExtResource("4_0qu5p")]
 
+[node name="SpaceSky" parent="Visuals/SpaceSkybox" index="0"]
+surface_material_override/0 = SubResource("ShaderMaterial_2asr8")
+
+[node name="SpaceSkyBlend" parent="Visuals/SpaceSkybox" index="1"]
+surface_material_override/0 = SubResource("ShaderMaterial_32qwx")
+
+[node name="SpaceFog" parent="Visuals/SpaceSkybox" index="2"]
+visible = false
+
+[node name="SpaceFog2" parent="Visuals/SpaceSkybox" index="3"]
+visible = false
+
 [node name="Lights" type="Node3D" parent="Visuals"]
 
 [node name="MainLight" type="DirectionalLight3D" parent="Visuals/Lights"]
 transform = Transform3D(-0.984808, 3.00452e-09, -0.173648, 0.17318, 0.0733427, -0.982156, 0.0127358, -0.997307, -0.0722284, 0, 0, 0)
-light_color = Color(0.901961, 1, 1, 1)
-light_energy = 1.4
-light_cull_mask = 4293918727
-
-[node name="EnvironmentLight" type="DirectionalLight3D" parent="Visuals/Lights"]
-transform = Transform3D(-0.984808, -2.27712e-08, 0.173648, 0.173648, -1.29142e-07, 0.984808, 7.64274e-15, 1, 1.31134e-07, 0, 0, 0)
-layers = 6
-light_color = Color(0.92549, 0.882353, 0.752941, 1)
-light_energy = 0.4
-light_cull_mask = 4293918727
+layers = 1024
+light_color = Color(1, 0.9615, 0.66999996, 1)
+light_cull_mask = 4293918787
 
 [node name="Collision" parent="." instance=ExtResource("3_1m48j")]
 visible = false
 
-[node name="FallTrigger" parent="." instance=ExtResource("3_jkftw")]
+[node name="Trigger" type="Node3D" parent="."]
+
+[node name="FallTrigger" parent="Trigger" instance=ExtResource("3_jkftw")]
 "Enter Mode" = 0
 
-[node name="Fall" type="Node3D" parent="FallTrigger"]
+[node name="Fall" type="Node3D" parent="Trigger/FallTrigger"]
 script = ExtResource("4_o2jba")
 
-[node name="Base" type="CollisionShape3D" parent="FallTrigger"]
+[node name="Base" type="CollisionShape3D" parent="Trigger/FallTrigger"]
 transform = Transform3D(0.997236, 0.0742999, 0, -0.0742999, 0.997236, 0, 0, 0, 1, 118.3, -26.8085, 76)
 shape = SubResource("BoxShape3D_4glpy")
 
-[node name="1" type="CollisionShape3D" parent="FallTrigger"]
+[node name="1" type="CollisionShape3D" parent="Trigger/FallTrigger"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20, -8, 0)
 shape = SubResource("BoxShape3D_uevov")
 
-[node name="2" type="CollisionShape3D" parent="FallTrigger"]
+[node name="2" type="CollisionShape3D" parent="Trigger/FallTrigger"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 184, -19, -40)
 shape = SubResource("BoxShape3D_h616v")
 
-[node name="3" type="CollisionShape3D" parent="FallTrigger"]
+[node name="3" type="CollisionShape3D" parent="Trigger/FallTrigger"]
 transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 301, -28, 11)
 shape = SubResource("BoxShape3D_2crdr")
 
-[node name="4" type="CollisionShape3D" parent="FallTrigger"]
+[node name="4" type="CollisionShape3D" parent="Trigger/FallTrigger"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 243, -23, 99)
 shape = SubResource("BoxShape3D_h616v")
 
-[node name="5" type="CollisionShape3D" parent="FallTrigger"]
+[node name="5" type="CollisionShape3D" parent="Trigger/FallTrigger"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 130, -8, 60)
 shape = SubResource("BoxShape3D_b4ph1")
 
-[node name="6" type="CollisionShape3D" parent="FallTrigger"]
+[node name="6" type="CollisionShape3D" parent="Trigger/FallTrigger"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30, 3, 178)
 shape = SubResource("BoxShape3D_4v5yl")
 
-[node name="7" type="CollisionShape3D" parent="FallTrigger"]
+[node name="7" type="CollisionShape3D" parent="Trigger/FallTrigger"]
 transform = Transform3D(0.707107, 0, 0.707107, 0, 1, 0, -0.707107, 0, 0.707107, -63.9, -2, 123.6)
 shape = SubResource("BoxShape3D_dtgo4")
 
-[node name="8" type="CollisionShape3D" parent="FallTrigger"]
+[node name="8" type="CollisionShape3D" parent="Trigger/FallTrigger"]
 transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -30.9, -2, 61.6)
 shape = SubResource("BoxShape3D_5st8l")
+
+[node name="Checkpoint" type="Node3D" parent="Trigger"]
+
+[node name="StartCheckpoint" parent="Trigger/Checkpoint" instance=ExtResource("3_jkftw")]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 0, 0, 0)
+"Enter Mode" = 0
+
+[node name="Checkpoint" type="Node3D" parent="Trigger/Checkpoint/StartCheckpoint"]
+script = ExtResource("7_j1fre")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Trigger/Checkpoint/StartCheckpoint"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
+shape = SubResource("BoxShape3D_josyi")
+
+[node name="WideStraightCheckpoint" parent="Trigger/Checkpoint" instance=ExtResource("3_jkftw")]
+transform = Transform3D(1, 0, 1.7484558e-07, 0, 1, 0, -1.7484558e-07, 0, 1, 301, -19.999605, 70)
+"Enter Mode" = 0
+
+[node name="Checkpoint" type="Node3D" parent="Trigger/Checkpoint/WideStraightCheckpoint"]
+script = ExtResource("7_j1fre")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Trigger/Checkpoint/WideStraightCheckpoint"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
+shape = SubResource("BoxShape3D_josyi")
+
+[node name="NarrowStraightCheckpoint" parent="Trigger/Checkpoint" instance=ExtResource("3_jkftw")]
+transform = Transform3D(1.3113419e-07, 0, -1, 0, 1, 0, 1, 0, 1.3113419e-07, 119, 10.000395, 159.7)
+"Enter Mode" = 0
+
+[node name="Checkpoint" type="Node3D" parent="Trigger/Checkpoint/NarrowStraightCheckpoint"]
+script = ExtResource("7_j1fre")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Trigger/Checkpoint/NarrowStraightCheckpoint"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
+shape = SubResource("BoxShape3D_josyi")
+
+[node name="CheapShotCheckpoint" parent="Trigger/Checkpoint" instance=ExtResource("3_jkftw")]
+transform = Transform3D(0.7071069, 0, -0.70710665, 0, 1, 0, 0.70710665, 0, 0.7071069, -22.807968, 10.000395, 163.9021)
+"Enter Mode" = 0
+
+[node name="Checkpoint" type="Node3D" parent="Trigger/Checkpoint/CheapShotCheckpoint"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2.8284302)
+script = ExtResource("7_j1fre")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Trigger/Checkpoint/CheapShotCheckpoint"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
+shape = SubResource("BoxShape3D_josyi")
+
+[node name="DriftTrigger1" parent="Trigger" instance=ExtResource("8_j1fre")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -18.9, 0, 50)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Trigger/DriftTrigger1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
+shape = SubResource("BoxShape3D_josyi")
+
+[node name="Camera" type="Node3D" parent="Trigger"]
+
+[node name="WideLagTransition" parent="Trigger/Camera" instance=ExtResource("3_jkftw")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 301, -20, -40)
+"Trigger Mode" = 2
+"Exit Mode" = 2
+
+[node name="Cam" type="Node3D" parent="Trigger/Camera/WideLagTransition"]
+script = ExtResource("10_j6bow")
+transitionTime = 0.2
+settings = ExtResource("11_dm2l3")
+previousSettings = ExtResource("2_8bpc5")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Trigger/Camera/WideLagTransition"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
+shape = SubResource("BoxShape3D_josyi")
+
+[node name="WideStraight" parent="Trigger/Camera" instance=ExtResource("3_jkftw")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 301, -20, -21)
+"Trigger Mode" = 2
+"Exit Mode" = 2
+
+[node name="Cam" type="Node3D" parent="Trigger/Camera/WideStraight"]
+script = ExtResource("10_j6bow")
+settings = ExtResource("11_h0753")
+previousSettings = ExtResource("2_8bpc5")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Trigger/Camera/WideStraight"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
+shape = SubResource("BoxShape3D_josyi")
+
+[node name="WideStraightEnd" parent="Trigger/Camera" instance=ExtResource("3_jkftw")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 301, -20, 61)
+"Trigger Mode" = 2
+"Exit Mode" = 2
+
+[node name="Cam" type="Node3D" parent="Trigger/Camera/WideStraightEnd"]
+script = ExtResource("10_j6bow")
+settings = ExtResource("2_8bpc5")
+previousSettings = ExtResource("11_h0753")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Trigger/Camera/WideStraightEnd"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
+shape = SubResource("BoxShape3D_josyi")
+
+[node name="TurnCameraTrigger" parent="Trigger/Camera" instance=ExtResource("3_jkftw")]
+transform = Transform3D(-0.81915206, 0, -0.57357645, 0, 0.9999999, 0, 0.57357645, 0, -0.81915206, -103.4, 9.9, 200.8)
+"Trigger Mode" = 2
+"Enter Mode" = 0
+"Exit Mode" = 0
+
+[node name="Cam" type="Node3D" parent="Trigger/Camera/TurnCameraTrigger"]
+transform = Transform3D(1, 1.4901161e-08, 0, -5.9604645e-08, 0.99999976, 0, 0, -1.8626447e-09, 1, -9.080383, -1.1477394, -1.0406189)
+script = ExtResource("10_j6bow")
+transitionType = 1
+deactivateTransitionType = 1
+enableInputBlending = true
+settings = ExtResource("13_dm2l3")
+previousSettings = ExtResource("2_8bpc5")
+
+[node name="Lockout" type="Node3D" parent="Trigger/Camera/TurnCameraTrigger"]
+transform = Transform3D(1, 1.4901161e-08, 0, -5.9604645e-08, 0.99999976, 0, 0, -1.8626447e-09, 1, -9.080383, -1.1477394, -1.0406189)
+script = ExtResource("14_ytx0r")
+lockoutData = ExtResource("15_l07ul")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Trigger/Camera/TurnCameraTrigger"]
+transform = Transform3D(0.86602545, 0, -0.50000006, 0, 1, 0, 0.50000006, 0, 0.86602545, 4.753, 5, -13.762)
+shape = SubResource("BoxShape3D_dm2l3")
+
+[node name="CollisionShape3D2" type="CollisionShape3D" parent="Trigger/Camera/TurnCameraTrigger"]
+transform = Transform3D(0.86602557, 0, 0.5000001, 0, 1, 0, -0.5000001, 0, 0.86602557, 3.5204773, 9.536743e-07, 15.893669)
+shape = SubResource("BoxShape3D_dm2l3")
+
+[node name="WideStraight2" parent="Trigger/Camera" instance=ExtResource("3_jkftw")]
+transform = Transform3D(-0.70710677, 0, 0.70710677, 0, 1, 0, -0.70710677, 0, -0.70710677, -85.69849, 5, 146.799)
+"Trigger Mode" = 2
+"Exit Mode" = 2
+
+[node name="Cam" type="Node3D" parent="Trigger/Camera/WideStraight2"]
+script = ExtResource("10_j6bow")
+settings = ExtResource("11_h0753")
+previousSettings = ExtResource("2_8bpc5")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Trigger/Camera/WideStraight2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
+shape = SubResource("BoxShape3D_josyi")
+
+[node name="WideStraightEnd2" parent="Trigger/Camera" instance=ExtResource("3_jkftw")]
+transform = Transform3D(-0.7071067, 0, 0.7071068, 0, 1, 0, -0.7071068, 0, -0.7071067, -25, 5, 86)
+"Trigger Mode" = 2
+"Exit Mode" = 2
+
+[node name="Cam" type="Node3D" parent="Trigger/Camera/WideStraightEnd2"]
+script = ExtResource("10_j6bow")
+settings = ExtResource("2_8bpc5")
+previousSettings = ExtResource("11_h0753")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Trigger/Camera/WideStraightEnd2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
+shape = SubResource("BoxShape3D_josyi")
 
 [node name="Path" type="Node3D" parent="."]
 
@@ -115,4 +679,17 @@ curve = ExtResource("2_gnax0")
 bus = &"BGM"
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
-environment = ExtResource("8_6epym")
+environment = SubResource("Environment_38hsq")
+
+[node name="DemoCamera" type="Node3D" parent="."]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, -55, 2, 0)
+
+[node name="Camera" type="Camera3D" parent="DemoCamera"]
+cull_mask = 1086
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="DemoCamera"]
+libraries = {
+&"": SubResource("AnimationLibrary_josyi")
+}
+
+[editable path="Visuals/SpaceSkybox"]

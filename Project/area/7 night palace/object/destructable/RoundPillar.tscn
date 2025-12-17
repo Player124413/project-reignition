@@ -1,0 +1,187 @@
+[gd_scene load_steps=11 format=3 uid="uid://cxj50t3vtny1x"]
+
+[ext_resource type="Script" uid="uid://coiui4qvdxbqe" path="res://object/trigger/modules/EventTrigger.cs" id="1_uou3m"]
+[ext_resource type="PackedScene" uid="uid://divntc23ssxes" path="res://area/7 night palace/object/model/destructable/RoundPillar.gltf" id="2_250th"]
+[ext_resource type="PackedScene" uid="uid://hdia8whqfpw8" path="res://area/7 night palace/object/model/destructable/RoundPillarBroken.gltf" id="3_chro1"]
+[ext_resource type="Script" uid="uid://bri007qdprrbf" path="res://addons/custom_nodes/script/BoneAttachment3DNoScale.cs" id="4_250th"]
+[ext_resource type="Script" uid="uid://cs0xaqskg4u66" path="res://object/stage/common/resource/script/TimebreakLockonCollisionShape.cs" id="5_chro1"]
+[ext_resource type="AudioStream" uid="uid://cd4ggd26aofo0" path="res://sound/sfx/stage/night palace/time fix.wav" id="6_xoo11"]
+[ext_resource type="AudioStream" uid="uid://g5qs0drifacc" path="res://sound/sfx/stage/night palace/time reverse.wav" id="7_ega0q"]
+[ext_resource type="Script" uid="uid://dnrfeyqvx8aq" path="res://addons/custom_nodes/script/GroupAudioStreamPlayer3D.cs" id="8_dmso1"]
+[ext_resource type="AudioStream" uid="uid://bbuig187236io" path="res://sound/sfx/stage/night palace/falling pillar.wav" id="8_ega0q"]
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_250th"]
+
+[node name="RoundPillar" type="Node3D" node_paths=PackedStringArray("animator")]
+script = ExtResource("1_uou3m")
+animator = NodePath("RoundPillarBroken/AnimationPlayer")
+activationSpeedScale = 0.3
+deactivationSpeedScale = 0.3
+"Trigger Settings/Automatically Respawn" = true
+"Trigger Settings/Is One Shot" = true
+"Trigger Settings/Animation Blending" = 0.0
+"Trigger Settings/Player Stand-in" = NodePath("")
+
+[node name="RoundPillar" parent="." instance=ExtResource("2_250th")]
+
+[node name="RoundPillarWallCollision" parent="RoundPillar" index="1"]
+visible = false
+
+[node name="StaticBody3D" parent="RoundPillar/RoundPillarWallCollision" index="0" groups=["force lockon bounce", "grind wall", "splash jump", "wall"]]
+
+[node name="RoundPillarFloorCollision" parent="RoundPillar" index="2"]
+visible = false
+
+[node name="StaticBody3D" parent="RoundPillar/RoundPillarFloorCollision" index="0" groups=["floor", "force lockon bounce", "pavement"]]
+
+[node name="RoundPillarBroken" parent="." instance=ExtResource("3_chro1")]
+physics_interpolation_mode = 2
+
+[node name="RoundPillarBrokenFloorCollision1" parent="RoundPillarBroken/RoundPillarBrokenRoot" index="0"]
+transform = Transform3D(1, 8.754042e-15, -8.742256e-08, -3.1619152e-13, 0.9999974, -3.5166647e-06, 8.742279e-08, 3.5166647e-06, 0.9999974, -2.1696092e-06, 1.3592143, 4.9471855e-06)
+visible = false
+skeleton = NodePath("../Skeleton3D")
+script = ExtResource("4_250th")
+skeleton = NodePath("../Skeleton3D")
+prioritizeBoneName = false
+boneName = &"piece1"
+boneIndex = 1
+
+[node name="StaticBody3D" parent="RoundPillarBroken/RoundPillarBrokenRoot/RoundPillarBrokenFloorCollision1" index="0" groups=["floor", "pavement", "splash jump"]]
+
+[node name="RoundPillarBrokenFloorCollision2" parent="RoundPillarBroken/RoundPillarBrokenRoot" index="1"]
+transform = Transform3D(0.9999928, 8.754017e-15, -8.742235e-08, -3.1618924e-13, 0.9999945, -3.5166565e-06, 8.742216e-08, 3.5166547e-06, 0.999995, -2.1696092e-06, 4.1024513, 1.4483929e-05)
+visible = false
+skeleton = NodePath("../Skeleton3D")
+script = ExtResource("4_250th")
+skeleton = NodePath("../Skeleton3D")
+prioritizeBoneName = false
+boneName = &"piece2"
+boneIndex = 2
+
+[node name="StaticBody3D" parent="RoundPillarBroken/RoundPillarBrokenRoot/RoundPillarBrokenFloorCollision2" index="0" groups=["floor", "pavement", "splash jump"]]
+
+[node name="RoundPillarBrokenFloorCollision3" parent="RoundPillarBroken/RoundPillarBrokenRoot" index="2"]
+transform = Transform3D(0.99999666, 8.754045e-15, -8.742253e-08, -3.1619046e-13, 0.9999977, -3.5166634e-06, 8.74225e-08, 3.5166659e-06, 0.99999696, -1.5974044e-06, 8.741452, 3.1471252e-05)
+visible = false
+skeleton = NodePath("../Skeleton3D")
+script = ExtResource("4_250th")
+skeleton = NodePath("../Skeleton3D")
+prioritizeBoneName = false
+boneName = &"piece3"
+boneIndex = 3
+
+[node name="StaticBody3D" parent="RoundPillarBroken/RoundPillarBrokenRoot/RoundPillarBrokenFloorCollision3" index="0" groups=["floor", "pavement", "splash jump"]]
+
+[node name="RoundPillarBrokenFloorCollision4" parent="RoundPillarBroken/RoundPillarBrokenRoot" index="3"]
+transform = Transform3D(0.9999954, -4.9836268e-15, -8.742237e-08, -3.2329545e-13, 0.9999966, -3.755076e-06, 8.7422364e-08, 3.7550801e-06, 0.9999955, -1.7881393e-06, 13.341823, 4.798174e-05)
+visible = false
+skeleton = NodePath("../Skeleton3D")
+script = ExtResource("4_250th")
+skeleton = NodePath("../Skeleton3D")
+prioritizeBoneName = false
+boneName = &"piece4"
+boneIndex = 4
+
+[node name="StaticBody3D" parent="RoundPillarBroken/RoundPillarBrokenRoot/RoundPillarBrokenFloorCollision4" index="0" groups=["floor", "force lockon bounce", "ignore lockon cast", "pavement", "splash jump"]]
+
+[node name="RoundPillarBrokenWallCollision1" parent="RoundPillarBroken/RoundPillarBrokenRoot" index="4"]
+transform = Transform3D(1, 8.754042e-15, -8.742256e-08, -3.1619152e-13, 0.9999974, -3.5166647e-06, 8.742279e-08, 3.5166647e-06, 0.9999974, -2.1696092e-06, 1.3592143, 4.9471855e-06)
+visible = false
+skeleton = NodePath("../Skeleton3D")
+script = ExtResource("4_250th")
+skeleton = NodePath("../Skeleton3D")
+prioritizeBoneName = false
+boneName = &"piece1"
+boneIndex = 1
+
+[node name="StaticBody3D" parent="RoundPillarBroken/RoundPillarBrokenRoot/RoundPillarBrokenWallCollision1" index="0" groups=["ceiling", "crusher", "grind wall", "splash jump", "wall"]]
+
+[node name="RoundPillarBrokenWallCollision2" parent="RoundPillarBroken/RoundPillarBrokenRoot" index="5"]
+transform = Transform3D(0.9999928, 8.754017e-15, -8.742235e-08, -3.1618924e-13, 0.9999945, -3.5166565e-06, 8.742216e-08, 3.5166547e-06, 0.999995, -2.1696092e-06, 4.1024513, 1.4483929e-05)
+visible = false
+skeleton = NodePath("../Skeleton3D")
+script = ExtResource("4_250th")
+skeleton = NodePath("../Skeleton3D")
+prioritizeBoneName = false
+boneName = &"piece2"
+boneIndex = 2
+
+[node name="StaticBody3D" parent="RoundPillarBroken/RoundPillarBrokenRoot/RoundPillarBrokenWallCollision2" index="0" groups=["ceiling", "crusher", "grind wall", "splash jump", "wall"]]
+
+[node name="RoundPillarBrokenWallCollision3" parent="RoundPillarBroken/RoundPillarBrokenRoot" index="6"]
+transform = Transform3D(0.99999666, 8.754045e-15, -8.742253e-08, -3.1619046e-13, 0.9999977, -3.5166634e-06, 8.74225e-08, 3.5166659e-06, 0.99999696, -1.5974044e-06, 8.741452, 3.1471252e-05)
+visible = false
+skeleton = NodePath("../Skeleton3D")
+script = ExtResource("4_250th")
+skeleton = NodePath("../Skeleton3D")
+prioritizeBoneName = false
+boneName = &"piece3"
+boneIndex = 3
+
+[node name="StaticBody3D" parent="RoundPillarBroken/RoundPillarBrokenRoot/RoundPillarBrokenWallCollision3" index="0" groups=["ceiling", "crusher", "grind wall", "splash jump", "wall"]]
+
+[node name="RoundPillarBrokenWallCollision4" parent="RoundPillarBroken/RoundPillarBrokenRoot" index="7"]
+transform = Transform3D(0.9999954, -4.9836268e-15, -8.742237e-08, -3.2329545e-13, 0.9999966, -3.755076e-06, 8.7422364e-08, 3.7550801e-06, 0.9999955, -1.7881393e-06, 13.341823, 4.798174e-05)
+visible = false
+skeleton = NodePath("../Skeleton3D")
+script = ExtResource("4_250th")
+skeleton = NodePath("../Skeleton3D")
+prioritizeBoneName = false
+boneName = &"piece4"
+boneIndex = 4
+
+[node name="StaticBody3D" parent="RoundPillarBroken/RoundPillarBrokenRoot/RoundPillarBrokenWallCollision4" index="0" groups=["ceiling", "crusher", "force lockon bounce", "grind wall", "ignore lockon cast", "splash jump", "wall"]]
+
+[node name="AnimationPlayer" parent="RoundPillarBroken" index="1"]
+callback_mode_process = 0
+
+[node name="Lockon" type="BoneAttachment3D" parent="RoundPillarBroken"]
+transform = Transform3D(1, -3.5527135e-15, -8.7422755e-08, -3.2329694e-13, 0.9999999, -3.6954877e-06, 8.742276e-08, 3.7550924e-06, 0.9999999, -1.7881393e-06, 13.341823, 4.798174e-05)
+bone_name = "piece4"
+bone_idx = 4
+use_external_skeleton = true
+external_skeleton = NodePath("../RoundPillarBrokenRoot/Skeleton3D")
+
+[node name="Lockon" type="Area3D" parent="RoundPillarBroken/Lockon"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+collision_layer = 4
+collision_mask = 0
+monitoring = false
+monitorable = false
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="RoundPillarBroken/Lockon/Lockon"]
+shape = SubResource("SphereShape3D_250th")
+script = ExtResource("5_chro1")
+
+[node name="Fix" type="AudioStreamPlayer3D" parent="."]
+stream = ExtResource("6_xoo11")
+attenuation_model = 3
+max_db = 0.0
+max_distance = 100.0
+bus = &"GAME SFX"
+attenuation_filter_cutoff_hz = 12000.0
+
+[node name="Reverse" type="AudioStreamPlayer3D" parent="."]
+stream = ExtResource("7_ega0q")
+attenuation_model = 3
+max_db = 0.0
+max_distance = 150.0
+bus = &"GAME SFX"
+script = ExtResource("8_dmso1")
+groupKey = &"time reverse"
+
+[node name="Shatter" type="AudioStreamPlayer3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 48, 0)
+stream = ExtResource("8_ega0q")
+attenuation_model = 3
+max_db = 0.0
+max_distance = 100.0
+bus = &"GAME SFX"
+
+[connection signal="Respawned" from="." to="Fix" method="stop" flags=3]
+[connection signal="Respawned" from="." to="Reverse" method="StopinGroup" flags=3]
+[connection signal="Respawned" from="." to="Shatter" method="stop" flags=3]
+
+[editable path="RoundPillar"]
+[editable path="RoundPillarBroken"]

@@ -29,6 +29,7 @@ public partial class CatapultState : PlayerState
 		currentState = State.Control;
 
 		// Disable speedbreak skills
+		Player.Lockon.IsMonitoring = false;
 		Player.Skills.IsSpeedBreakEnabled = false;
 		Player.Effect.StartSpinFX();
 		Player.StartExternal(this, Catapult.PlayerPositionNode);

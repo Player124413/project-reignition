@@ -1,151 +1,476 @@
-[gd_scene load_steps=20 format=3 uid="uid://b6tymj1vanl66"]
+[gd_scene load_steps=25 format=3 uid="uid://b6tymj1vanl66"]
 
 [ext_resource type="Script" uid="uid://dtkbvehtmy3em" path="res://object/stage/StageSettings.cs" id="1_fvbu3"]
 [ext_resource type="Resource" uid="uid://du86d7lfu3g3t" path="res://resource/level data/night palace/Boss.tres" id="2_wdw6t"]
-[ext_resource type="Script" uid="uid://bombt0pmk6rai" path="res://area/7 night palace/boss/script/InfiniteHallway.cs" id="2_wuoms"]
-[ext_resource type="PackedScene" uid="uid://68st06xyjgvp" path="res://object/stage/pickups/RichRing.tscn" id="3_3wins"]
-[ext_resource type="PackedScene" uid="uid://c7l8mr7ubn848" path="res://object/stage/pickups/Ring.tscn" id="4_8p504"]
-[ext_resource type="PackedScene" uid="uid://dabbmb7ger5ba" path="res://area/7 night palace/boss/environment/NPBoss.tscn" id="4_dw3fh"]
-[ext_resource type="PackedScene" uid="uid://v2hbw6y70jr3" path="res://object/stage/pickups/RichPearl.tscn" id="5_702qt"]
-[ext_resource type="PackedScene" uid="uid://tdw4f3w4e2vb" path="res://area/7 night palace/boss/environment/NPBossLOD.tscn" id="5_h1u78"]
-[ext_resource type="PackedScene" uid="uid://bu03uey4xyy57" path="res://area/7 night palace/boss/environment/model/NPBossLOD.gltf" id="6_wn7b0"]
-[ext_resource type="PackedScene" uid="uid://bn6wr6l8s3qyt" path="res://object/trigger/StageTrigger.tscn" id="7_xov83"]
-[ext_resource type="Environment" uid="uid://bv5yu2mslecue" path="res://area/7 night palace/data/Environment.tres" id="8_metfr"]
+[ext_resource type="Resource" uid="uid://du4pmau2pvhp7" path="res://area/7 night palace/boss/camera/StandardCamera.tres" id="3_8l8k8"]
+[ext_resource type="Resource" uid="uid://cedbgtjhhisjg" path="res://area/7 night palace/data/BossDialogLibrary.tres" id="4_p7tjh"]
+[ext_resource type="Texture2D" uid="uid://caxeerv5m6p41" path="res://area/7 night palace/data/skybox/model/texture/sky moon.png" id="7_njf43"]
 [ext_resource type="PackedScene" uid="uid://1mlq23jb6byp" path="res://area/7 night palace/data/skybox/Skybox.tscn" id="9_aohgx"]
-[ext_resource type="PackedScene" uid="uid://b0q8m6sooyjll" path="res://area/7 night palace/boss/environment/collision/Collision.tscn" id="9_tnd5i"]
-[ext_resource type="Curve3D" path="res://area/7 night palace/boss/environment/path/MainPath.tres" id="10_7yaqk"]
+[ext_resource type="Curve3D" uid="uid://dvdtvb7kixby0" path="res://area/7 night palace/boss/environment/path/MainPath.tres" id="10_7yaqk"]
+[ext_resource type="PackedScene" uid="uid://bpk2a7t5ag3lk" path="res://area/7 night palace/boss/data/InfiniteHall.tscn" id="10_jhood"]
 [ext_resource type="PackedScene" uid="uid://0o1ds8o5k04j" path="res://effect/buffer/PlanarReflectionRenderer.tscn" id="11_gi0oh"]
-[ext_resource type="PackedScene" uid="uid://digasi1lyp6oy" path="res://area/7 night palace/data/BGMBoss.tscn" id="11_s0jtr"]
+[ext_resource type="Resource" uid="uid://cl8grcpx1vjdo" path="res://resource/bgm/bgm np boss.tres" id="12_njf43"]
 [ext_resource type="Material" uid="uid://c3kendmmffv8b" path="res://area/7 night palace/data/material/Effect Primary Reflection.tres" id="15_48h34"]
 [ext_resource type="Material" uid="uid://dwmvujonhvjd7" path="res://area/7 night palace/data/material/Effect Secondary Reflection.tres" id="16_gcw3n"]
 
-[sub_resource type="BoxShape3D" id="10"]
-size = Vector3(16, 28, 2)
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ca2n2"]
+resource_name = "Moon"
+render_priority = -125
+shading_mode = 0
+specular_mode = 2
+disable_fog = true
+vertex_color_use_as_albedo = true
+albedo_color = Color(1, 0.973, 0.90999997, 1)
+albedo_texture = ExtResource("7_njf43")
 
-[node name="Static" type="Node3D" node_paths=PackedStringArray("pathParent", "Environment")]
+[sub_resource type="Animation" id="Animation_g51bp"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("DirectionalLight3D:directional_shadow_max_distance")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [80.0]
+}
+
+[sub_resource type="Animation" id="Animation_js1vy"]
+resource_name = "why do i have to do this"
+step = 1.0
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("DirectionalLight3D:directional_shadow_max_distance")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [50.0, 80.0]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_iowwo"]
+_data = {
+&"RESET": SubResource("Animation_g51bp"),
+&"why do i have to do this": SubResource("Animation_js1vy")
+}
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_kamdx"]
+sky_top_color = Color(0, 0, 0.109804, 1)
+sky_horizon_color = Color(0, 0, 0.109804, 1)
+ground_bottom_color = Color(0, 0, 0.109804, 1)
+ground_horizon_color = Color(0, 0, 0.109804, 1)
+
+[sub_resource type="Sky" id="Sky_e8t8m"]
+sky_material = SubResource("ProceduralSkyMaterial_kamdx")
+
+[sub_resource type="Environment" id="Environment_gk03j"]
+background_color = Color(0, 0, 0.109804, 1)
+sky = SubResource("Sky_e8t8m")
+ambient_light_source = 2
+ambient_light_color = Color(1, 1, 1, 1)
+ambient_light_sky_contribution = 0.2
+ambient_light_energy = 0.05
+reflected_light_source = 1
+tonemap_mode = 1
+tonemap_white = 1.3
+glow_enabled = true
+glow_levels/5 = 0.0
+glow_levels/6 = 0.1
+glow_normalized = true
+glow_intensity = 1.5
+glow_strength = 2.0
+glow_mix = 0.03
+glow_bloom = 0.5
+glow_blend_mode = 4
+glow_hdr_threshold = 1.2
+volumetric_fog_density = 0.01
+adjustment_enabled = true
+
+[sub_resource type="Animation" id="Animation_jhood"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0, 0, 0)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath(".:rotation")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0, 0, 0)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Camera:position")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0, 0, 0)]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("Camera:rotation")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0, 0, 0)]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("Camera:fov")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [75.0]
+}
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("Camera:current")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+
+[sub_resource type="Animation" id="Animation_p7tjh"]
+resource_name = "demo1"
+length = 10.0
+step = 0.5
+tracks/0/type = "method"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("..")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(10),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"OnCameraDemoAdvance"
+}]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath(".:position")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 10),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector3(0, 0, 0), Vector3(0, 0, -87)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath(".:rotation")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0, 0, 0)]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("Camera:position")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0, 2, 0)]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("Camera:rotation")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0.08726646, 0, 0)]
+}
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("Camera:fov")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [50.0]
+}
+tracks/6/type = "value"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("Camera:current")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+
+[sub_resource type="Animation" id="Animation_njf43"]
+resource_name = "demo2"
+length = 10.0
+step = 0.5
+tracks/0/type = "method"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("..")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(10),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"OnCameraDemoAdvance"
+}]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath(".:position")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 10),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector3(0, 0, 0), Vector3(0, 0, -87)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath(".:rotation")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0, 0, 0)]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("Camera:position")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(-4, 2, 0)]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("Camera:rotation")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0.08726646, -0.5235988, 0)]
+}
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("Camera:fov")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [50.0]
+}
+
+[sub_resource type="Animation" id="Animation_ca2n2"]
+resource_name = "demo3"
+length = 10.0
+step = 0.5
+tracks/0/type = "method"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("..")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(10),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"OnCameraDemoAdvance"
+}]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath(".:position")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 10),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector3(0, 0, 0), Vector3(0, 0, -87)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath(".:rotation")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0, 0, 0)]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("Camera:position")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(5, 2, 0)]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("Camera:rotation")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0.08726646, 0.7853982, 0)]
+}
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("Camera:fov")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [50.0]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_njf43"]
+_data = {
+&"RESET": SubResource("Animation_jhood"),
+&"demo1": SubResource("Animation_p7tjh"),
+&"demo2": SubResource("Animation_njf43"),
+&"demo3": SubResource("Animation_ca2n2")
+}
+
+[node name="Static" type="Node3D" node_paths=PackedStringArray("pathParent", "completionAnimator", "Environment")]
 script = ExtResource("1_fvbu3")
 Data = ExtResource("2_wdw6t")
+DefaultBgm = ExtResource("12_njf43")
+InitialCameraSettings = ExtResource("3_8l8k8")
+dialogLibrary = ExtResource("4_p7tjh")
 pathParent = NodePath("Path")
+completionAnimator = NodePath("DemoCamera/AnimationPlayer")
 Environment = NodePath("WorldEnvironment")
 
 [node name="Visuals" type="Node3D" parent="."]
 
-[node name="InfiniteHall" type="Node3D" parent="Visuals" node_paths=PackedStringArray("hallRoot", "sky", "itemBundle", "primaryCollision", "secondaryCollision")]
-script = ExtResource("2_wuoms")
-hallRoot = NodePath("HallRoot")
-sky = NodePath("../Skybox")
-itemBundle = NodePath("ItemBundle")
-itemBundleLocations = [6, 18, 0]
-primaryCollision = NodePath("../../Collision/PrimaryCollision")
-secondaryCollision = NodePath("../../Collision/SecondaryCollision")
-
-[node name="ItemBundle" type="Node3D" parent="Visuals/InfiniteHall"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -58)
-
-[node name="RichRing" parent="Visuals/InfiniteHall/ItemBundle" instance=ExtResource("3_3wins")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
-
-[node name="Rings" type="Node3D" parent="Visuals/InfiniteHall/ItemBundle"]
-
-[node name="Ring1" parent="Visuals/InfiniteHall/ItemBundle/Rings" instance=ExtResource("4_8p504")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5, 0)
-
-[node name="Ring2" parent="Visuals/InfiniteHall/ItemBundle/Rings" instance=ExtResource("4_8p504")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.7, 0)
-
-[node name="Ring3" parent="Visuals/InfiniteHall/ItemBundle/Rings" instance=ExtResource("4_8p504")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.9, 0)
-
-[node name="Ring4" parent="Visuals/InfiniteHall/ItemBundle/Rings" instance=ExtResource("4_8p504")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 6.1, 0)
-
-[node name="Pearls" type="Node3D" parent="Visuals/InfiniteHall/ItemBundle"]
-transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, 0, 0.6, 0)
-
-[node name="RichPearl1" parent="Visuals/InfiniteHall/ItemBundle/Pearls" instance=ExtResource("5_702qt")]
-transform = Transform3D(1, 0, 1.74846e-07, 0, 1, 0, -1.74846e-07, 0, 1, -1.74846e-07, 0, -1)
-
-[node name="RichPearl2" parent="Visuals/InfiniteHall/ItemBundle/Pearls" instance=ExtResource("5_702qt")]
-transform = Transform3D(1, 0, 1.74846e-07, 0, 1, 0, -1.74846e-07, 0, 1, -0.951057, 0, -0.309017)
-
-[node name="RichPearl3" parent="Visuals/InfiniteHall/ItemBundle/Pearls" instance=ExtResource("5_702qt")]
-transform = Transform3D(1, 0, 1.74846e-07, 0, 1, 0, -1.74846e-07, 0, 1, -0.587785, 0, 0.809017)
-
-[node name="RichPearl4" parent="Visuals/InfiniteHall/ItemBundle/Pearls" instance=ExtResource("5_702qt")]
-transform = Transform3D(1, 0, 1.74846e-07, 0, 1, 0, -1.74846e-07, 0, 1, 0.587785, 0, 0.809017)
-
-[node name="RichPearl5" parent="Visuals/InfiniteHall/ItemBundle/Pearls" instance=ExtResource("5_702qt")]
-transform = Transform3D(1, 0, 1.74846e-07, 0, 1, 0, -1.74846e-07, 0, 1, 0.951056, 0, -0.309017)
-
-[node name="HallRoot" parent="Visuals/InfiniteHall" instance=ExtResource("4_dw3fh")]
-
-[node name="Hall2" parent="Visuals/InfiniteHall/HallRoot" instance=ExtResource("4_dw3fh")]
-transform = Transform3D(0.999848, 0, 0.0174526, 0, 1, 0, -0.0174524, 0, 0.999858, 0, 0, -87)
-
-[node name="Hall3" parent="Visuals/InfiniteHall/HallRoot/Hall2" instance=ExtResource("4_dw3fh")]
-transform = Transform3D(0.999848, 0, 0.0174524, 0, 1, 0, -0.0174524, 0, 0.999848, 0, 0, -87)
-
-[node name="Hall4" parent="Visuals/InfiniteHall/HallRoot/Hall2/Hall3" instance=ExtResource("4_dw3fh")]
-transform = Transform3D(0.999849, 0, 0.0174512, 0, 1, 0, -0.0174515, 0, 0.999829, 0, 0, -87)
-
-[node name="Hall5" parent="Visuals/InfiniteHall/HallRoot/Hall2/Hall3/Hall4" instance=ExtResource("4_dw3fh")]
-transform = Transform3D(0.999848, 0, 0.0174524, 0, 1, 0, -0.0174524, 0, 0.999848, -6.67572e-06, 0, -87)
-
-[node name="Hall6" parent="Visuals/InfiniteHall/HallRoot/Hall2/Hall3/Hall4/Hall5" instance=ExtResource("4_dw3fh")]
-transform = Transform3D(0.999848, 0, 0.0174524, 0, 1, 0, -0.0174524, 0, 0.999848, 0, 0, -87)
-
-[node name="LOD1" parent="Visuals/InfiniteHall/HallRoot/Hall2/Hall3/Hall4/Hall5/Hall6" instance=ExtResource("5_h1u78")]
-transform = Transform3D(0.999848, 0, 0.0174524, 0, 1, 0, -0.0174524, 0, 0.999848, 9.53674e-06, 0, -87)
-
-[node name="LOD2" parent="Visuals/InfiniteHall/HallRoot/Hall2/Hall3/Hall4/Hall5/Hall6/LOD1" instance=ExtResource("5_h1u78")]
-transform = Transform3D(0.999848, 0, 0.0174524, 0, 1, 0, -0.0174524, 0, 0.999848, -5.72205e-06, 0, -87.0001)
-
-[node name="LOD3" parent="Visuals/InfiniteHall/HallRoot/Hall2/Hall3/Hall4/Hall5/Hall6/LOD1/LOD2" instance=ExtResource("6_wn7b0")]
-transform = Transform3D(0.999848, 0, 0.0174524, 0, 1, 0, -0.0174524, 0, 0.999848, -3.8147e-06, 0, -87)
-
-[node name="LOD4" parent="Visuals/InfiniteHall/HallRoot/Hall2/Hall3/Hall4/Hall5/Hall6/LOD1/LOD2/LOD3" instance=ExtResource("5_h1u78")]
-transform = Transform3D(0.999848, 0, 0.0174524, 0, 1, 0, -0.0174524, 0, 0.999848, 0, 0, -87.0001)
-
-[node name="AdvanceTrigger" parent="Visuals/InfiniteHall/HallRoot/Hall2" instance=ExtResource("7_xov83")]
-transform = Transform3D(1, 0, -1.49012e-08, 0, 1, 0, 1.49012e-08, 0, 1, -0.628286, -1, -36.0057)
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Visuals/InfiniteHall/HallRoot/Hall2/AdvanceTrigger"]
-transform = Transform3D(1, 0, -5.58794e-09, 0, 1, 0, 5.58794e-09, 0, 1, 0, 15, 0)
-shape = SubResource("10")
+[node name="bouncelight" type="DirectionalLight3D" parent="Visuals"]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0)
+layers = 1024
+light_color = Color(0.45, 0.45, 1, 1)
+light_energy = 0.5
+light_cull_mask = 4293918722
 
 [node name="Skybox" parent="Visuals" instance=ExtResource("9_aohgx")]
 metadata/_edit_lock_ = true
 
-[node name="Moonlight" type="DirectionalLight3D" parent="Visuals"]
-transform = Transform3D(2.54519e-06, -0.548177, 0.836362, -3.01604e-07, 0.836362, 0.548177, -1, -1.64747e-06, 1.96337e-06, 12.4917, 3, -7.73828)
+[node name="MoonMesh" parent="Visuals/Skybox/SkyRoot/Skeleton3D" index="5"]
+surface_material_override/0 = SubResource("StandardMaterial3D_ca2n2")
+
+[node name="moonlight" type="Node3D" parent="Visuals/Skybox"]
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="Visuals/Skybox/moonlight"]
+transform = Transform3D(0.7582935, -0.15555832, 0.63308156, -6.7525194e-09, 0.9711134, 0.23861818, -0.651913, -0.18094265, 0.73638904, 0, 0.7781255, 0)
 layers = 1024
+light_color = Color(0.7, 0.765, 1, 1)
 light_energy = 1.2
-light_cull_mask = 4293918786
+light_specular = 2.0
+light_cull_mask = 4293918787
 shadow_enabled = true
-directional_shadow_blend_splits = true
-directional_shadow_max_distance = 50.0
+directional_shadow_split_1 = 0.15
+directional_shadow_split_2 = 0.3
+directional_shadow_max_distance = 80.0
 
-[node name="Collision" type="Node3D" parent="."]
-visible = false
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Visuals/Skybox/moonlight"]
+libraries = {
+&"": SubResource("AnimationLibrary_iowwo")
+}
+autoplay = "why do i have to do this"
 
-[node name="PrimaryCollision" parent="Collision" instance=ExtResource("9_tnd5i")]
-
-[node name="AdvanceTrigger" parent="Collision/PrimaryCollision" instance=ExtResource("7_xov83")]
-transform = Transform3D(0.999848, 0, 0.0174524, 0, 1, 0, -0.0174524, 0, 0.999848, 0, -1, -97)
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Collision/PrimaryCollision/AdvanceTrigger"]
-transform = Transform3D(1, 0, -5.58794e-09, 0, 1, 0, 5.58794e-09, 0, 1, 0, 15, 0)
-shape = SubResource("10")
-
-[node name="SecondaryCollision" parent="Collision" instance=ExtResource("9_tnd5i")]
-transform = Transform3D(0.999847, 0, 0.0174524, 0, 1, 0, -0.0174524, 0, 0.999847, 0, 0, -87)
-
-[node name="AdvanceTrigger" parent="Collision/SecondaryCollision" instance=ExtResource("7_xov83")]
-transform = Transform3D(1, 0, -1.67638e-08, 0, 1, 0, 1.67638e-08, 0, 1, 0.867561, -1, -107.001)
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Collision/SecondaryCollision/AdvanceTrigger"]
-transform = Transform3D(1, 0, -5.58794e-09, 0, 1, 0, 5.58794e-09, 0, 1, 0, 15, 0)
-shape = SubResource("10")
+[node name="InfiniteHall" parent="Visuals" node_paths=PackedStringArray("sky") instance=ExtResource("10_jhood")]
+sky = NodePath("../Skybox")
 
 [node name="Path" type="Node3D" parent="."]
 
@@ -159,22 +484,17 @@ reflectionMaterials = [ExtResource("15_48h34")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.35, 0)
 reflectionMaterials = [ExtResource("16_gcw3n")]
 
-[node name="BGM" parent="." instance=ExtResource("11_s0jtr")]
-bus = &"BGM"
-
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
-environment = ExtResource("8_metfr")
+environment = SubResource("Environment_gk03j")
 
-[connection signal="RespawnItemBundle" from="Visuals/InfiniteHall" to="Visuals/InfiniteHall/ItemBundle/RichRing" method="Respawn"]
-[connection signal="RespawnItemBundle" from="Visuals/InfiniteHall" to="Visuals/InfiniteHall/ItemBundle/Rings/Ring1" method="Respawn"]
-[connection signal="RespawnItemBundle" from="Visuals/InfiniteHall" to="Visuals/InfiniteHall/ItemBundle/Rings/Ring2" method="Respawn"]
-[connection signal="RespawnItemBundle" from="Visuals/InfiniteHall" to="Visuals/InfiniteHall/ItemBundle/Rings/Ring3" method="Respawn"]
-[connection signal="RespawnItemBundle" from="Visuals/InfiniteHall" to="Visuals/InfiniteHall/ItemBundle/Rings/Ring4" method="Respawn"]
-[connection signal="RespawnItemBundle" from="Visuals/InfiniteHall" to="Visuals/InfiniteHall/ItemBundle/Pearls/RichPearl1" method="Respawn"]
-[connection signal="RespawnItemBundle" from="Visuals/InfiniteHall" to="Visuals/InfiniteHall/ItemBundle/Pearls/RichPearl2" method="Respawn"]
-[connection signal="RespawnItemBundle" from="Visuals/InfiniteHall" to="Visuals/InfiniteHall/ItemBundle/Pearls/RichPearl3" method="Respawn"]
-[connection signal="RespawnItemBundle" from="Visuals/InfiniteHall" to="Visuals/InfiniteHall/ItemBundle/Pearls/RichPearl4" method="Respawn"]
-[connection signal="RespawnItemBundle" from="Visuals/InfiniteHall" to="Visuals/InfiniteHall/ItemBundle/Pearls/RichPearl5" method="Respawn"]
-[connection signal="Activated" from="Visuals/InfiniteHall/HallRoot/Hall2/AdvanceTrigger" to="Visuals/InfiniteHall" method="AdvanceHall"]
-[connection signal="Activated" from="Collision/PrimaryCollision/AdvanceTrigger" to="Visuals/InfiniteHall" method="AdvanceCollision" binds= [true]]
-[connection signal="Activated" from="Collision/SecondaryCollision/AdvanceTrigger" to="Visuals/InfiniteHall" method="AdvanceCollision" binds= [false]]
+[node name="DemoCamera" type="Node3D" parent="."]
+
+[node name="Camera" type="Camera3D" parent="DemoCamera"]
+cull_mask = 1086
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="DemoCamera"]
+libraries = {
+&"": SubResource("AnimationLibrary_njf43")
+}
+
+[editable path="Visuals/Skybox"]

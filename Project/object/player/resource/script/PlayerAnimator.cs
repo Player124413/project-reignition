@@ -27,12 +27,9 @@ public partial class PlayerAnimator : Node3D
 		oneShotTransition = oneShotTree.GetNode("oneshot_transition") as AnimationNodeTransition;
 	}
 
-	[Export]
-	private AnimationTree animationTree;
-	[Export]
-	private AnimationPlayer eventAnimationPlayer;
-	[Export]
-	private MeshInstance3D bodyMesh;
+	[Export] private AnimationTree animationTree;
+	[Export] private AnimationPlayer eventAnimationPlayer;
+	[Export] private MeshInstance3D bodyMesh;
 
 	/// <summary> Reference to the root blend tree of the animation tree. </summary>
 	private AnimationNodeBlendTree animationRoot;
@@ -63,18 +60,21 @@ public partial class PlayerAnimator : Node3D
 	{
 		AirAnimations();
 		UpdateVisualRotation();
-		UpdateShaderVariables();
 	}
+
+	public override void _Process(double _delta) => CallDeferred(MethodName.UpdateShaderVariables);
 
 	#region Oneshot Animations
 	private AnimationNodeTransition oneShotTransition;
 	private AnimationNodeOneShot oneShotTrigger;
 	/// <summary> Animation index for countdown animation. </summary>
 	private readonly string CountdownAnimation = "countdown";
+	private readonly string CountdownShortAnimation = "countdown_short";
+	private readonly string SpeedbreakAnimation = "speedbreak_windup";
 
 	public void PlayCountdown()
 	{
-		PlayOneshotAnimation(CountdownAnimation);
+		PlayOneshotAnimation(SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.QuickStart) ? CountdownShortAnimation : CountdownAnimation);
 
 		// Prevent sluggish transitions into gameplay
 		DisabledSpeedSmoothing = true;
@@ -86,9 +86,10 @@ public partial class PlayerAnimator : Node3D
 	private readonly string OneshotActive = "parameters/oneshot_trigger/active";
 	private readonly string OneshotCurrent = "parameters/oneshot_tree/oneshot_transition/current_state";
 	private readonly string OneshotTransition = "parameters/oneshot_tree/oneshot_transition/transition_request";
-	public void PlayOneshotAnimation(string animation, float fadein = 0) // Play a specific one-shot animation
+	public void PlayOneshotAnimation(string animation, float fadein = 0, float fadeout = 0) // Play a specific one-shot animation
 	{
 		oneShotTrigger.FadeInTime = fadein;
+		oneShotTrigger.FadeOutTime = fadeout;
 		animationTree.Set(OneshotTrigger, (int)AnimationNodeOneShot.OneShotRequest.Fire);
 		animationTree.Set(OneshotSeek, 0);
 		animationTree.Set(OneshotTransition, animation);
@@ -175,10 +176,7 @@ public partial class PlayerAnimator : Node3D
 	private readonly string ReversePathTrigger = "parameters/ground_tree/reverse_path_trigger/request";
 	private readonly string ReversePathActive = "parameters/ground_tree/reverse_path_trigger/active";
 
-	private readonly string SpeedBreakTrigger = "parameters/ground_tree/speedbreak_trigger/request";
-
-	[Export]
-	private Curve movementAnimationSpeedCurve;
+	[Export] private Curve movementAnimationSpeedCurve;
 	/// <summary> Disables speed smoothing. </summary>
 	public bool DisabledSpeedSmoothing { get; set; }
 	private float idleBlendVelocity;
@@ -227,7 +225,7 @@ public partial class PlayerAnimator : Node3D
 	public void SpeedBreak()
 	{
 		animationTree.Set(ForwardSeek, .5f);
-		animationTree.Set(SpeedBreakTrigger, (int)AnimationNodeOneShot.OneShotRequest.Fire);
+		PlayOneshotAnimation(SpeedbreakAnimation, 0f, 0.1f);
 		animationTree.Set(LandTrigger, (int)AnimationNodeOneShot.OneShotRequest.Abort);
 	}
 
@@ -383,8 +381,28 @@ public partial class PlayerAnimator : Node3D
 	private readonly string QuickStepSpeed = "parameters/ground_tree/quick_step_speed/scale";
 	public void StartQuickStep(bool isSteppingRight)
 	{
+		animationTree.Set(QuickSlideTransition, DisabledConstant);
 		animationTree.Set(QuickStepTrigger, (int)AnimationNodeOneShot.OneShotRequest.Fire);
 		animationTree.Set(QuickStepTransition, isSteppingRight ? RightConstant : LeftConstant);
+		animationTree.Set(QuickStepSpeed, 1.5f);
+	}
+
+	private AnimationNodeStateMachinePlayback QuickSlideStatePlayback => animationTree.Get(QuickSlidePlayback).Obj as AnimationNodeStateMachinePlayback;
+	private readonly string QuickSlidePlayback = "parameters/ground_tree/quick_slide_state/playback";
+	private readonly string QuickSlideTransition = "parameters/ground_tree/quick_slide_transition/transition_request";
+	private readonly string QuickSlideStartState = "-start";
+	private readonly string QuickSlideStopState = "-stop";
+	public void StartQuickSlide(bool isSteppingRight)
+	{
+		animationTree.Set(QuickSlideTransition, EnabledConstant);
+		animationTree.Set(QuickStepTrigger, (int)AnimationNodeOneShot.OneShotRequest.Fire);
+		QuickSlideStatePlayback.Start(isSteppingRight ? "r" + QuickSlideStartState : "l" + QuickSlideStartState);
+		animationTree.Set(QuickStepSpeed, 1.2f);
+	}
+
+	public void StopQuickSlide(bool isSteppingRight)
+	{
+		QuickSlideStatePlayback.Travel(isSteppingRight ? "r" + QuickSlideStopState : "l" + QuickSlideStopState);
 		animationTree.Set(QuickStepSpeed, 1.5f);
 	}
 
@@ -618,6 +636,12 @@ public partial class PlayerAnimator : Node3D
 		eventAnimationPlayer.Play("teleport-end");
 		eventAnimationPlayer.Seek(0.0, true);
 	}
+
+	public void CancelTeleport()
+	{
+		eventAnimationPlayer.Play("teleport-end");
+		eventAnimationPlayer.Seek(eventAnimationPlayer.CurrentAnimationLength, true);
+	}
 	#endregion
 
 	#region Visual Rotation
@@ -651,20 +675,7 @@ public partial class PlayerAnimator : Node3D
 		if (Player.IsLaunching)
 			return;
 
-		float targetRotation = Player.MovementAngle;
-		if (Player.ExternalController != null)
-			targetRotation = ExternalAngle;
-		else if (Player.IsHomingAttacking) // Face target
-			targetRotation = ExtensionMethods.CalculateForwardAngle(Player.Lockon.HomingAttackDirection);
-		else if (Player.IsReversePath && Player.IsOnGround)
-			targetRotation = Player.PathFollower.ForwardAngle;
-		else if (Player.IsMovingBackward) // Backstepping
-			targetRotation = Player.PathFollower.ForwardAngle + (groundTurnRatio * Mathf.Pi * .15f);
-		else if (Player.IsLockoutActive && Player.ActiveLockoutData.recenterPlayer)
-			targetRotation = Player.PathFollower.ForwardAngle + Player.PathTurnInfluence;
-		else if (SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.Autorun) && Mathf.IsZeroApprox(Player.MoveSpeed))
-			targetRotation = VisualAngle;
-
+		float targetRotation = CalculateTargetVisualRotation();
 		if (Player.ExternalController == null &&
 			(Player.Skills.IsSpeedBreakActive ||
 			Player.IsLockoutOverridingMovementAngle))
@@ -673,9 +684,43 @@ public partial class PlayerAnimator : Node3D
 			VisualAngle += Player.PathFollower.DeltaAngle;
 		}
 
-		VisualAngle = ExtensionMethods.ClampAngleRange(VisualAngle, Player.PathFollower.ForwardAngle, Mathf.Pi);
+		if (!SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.FreeRoam))
+			VisualAngle = ExtensionMethods.ClampAngleRange(VisualAngle, Player.PathFollower.ForwardAngle, Mathf.Pi);
+
 		VisualAngle = ExtensionMethods.SmoothDampAngle(VisualAngle, targetRotation, ref rotationVelocity, MovementRotationSmoothing);
 		Rotation = Vector3.Up * VisualAngle;
+	}
+
+	private float CalculateTargetVisualRotation()
+	{
+		if (Player.ExternalController != null)
+			return ExternalAngle;
+
+		if (Player.IsHomingAttacking) // Face target
+			return ExtensionMethods.CalculateForwardAngle(Player.Lockon.HomingAttackDirection);
+
+		if (Player.IsReversePath && Player.IsOnGround)
+			return Player.PathFollower.ForwardAngle;
+
+		if (Player.IsMovingBackward) // Backstepping
+		{
+			if (!SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.FreeRoam))
+				return Player.PathFollower.ForwardAngle + (groundTurnRatio * Mathf.Pi * .15f);
+
+			if (Player.IsBackflipping)
+				return Player.MovementAngle + Mathf.Pi + (groundTurnRatio * Mathf.Pi * .15f);
+		}
+
+		if (Player.IsLockoutActive && Player.ActiveLockoutData.recenterPlayer)
+		{
+			if (!SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.FreeRoam))
+				return Player.PathFollower.ForwardAngle + Player.PathTurnInfluence;
+		}
+
+		if (SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.Autorun) && Mathf.IsZeroApprox(Player.MoveSpeed))
+			return VisualAngle;
+
+		return Player.MovementAngle;
 	}
 	#endregion
 
