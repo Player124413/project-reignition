@@ -81,17 +81,22 @@ public partial class EventPlayer : Node
 
 	private void LoadAudioTrack(string targetLocale)
 	{
-		// Load audio
-		string targetAudio = englishAudioPath.Replace("/en/", $"/{targetLocale}/");
-		if (!ResourceLoader.Exists(targetAudio))
+		string targetAudio = englishAudioPath;
+		if (targetAudio.Contains("/en/")) // localizable audio
 		{
-			GD.PushError($"Couldn't find audio at {targetAudio}!");
-			targetAudio = englishAudioPath;
+			targetAudio = targetAudio.Replace("/en/", $"/{targetLocale}/");
+
+			if (!ResourceLoader.Exists(targetAudio)) // Revert to english
+			{
+				GD.PushError($"Couldn't find audio at {targetAudio}!");
+				targetAudio = englishAudioPath;
+			}
 		}
 
 		if (audioPlayer.Stream != null && audioPlayer.Stream.ResourcePath.Equals(targetAudio))
 			return;
 
+		// Load audio
 		audioPlayer.Stream = ResourceLoader.Load<AudioStreamOggVorbis>(targetAudio);
 	}
 
@@ -118,7 +123,10 @@ public partial class EventPlayer : Node
 		while (eventNumber.Length < 2)
 			eventNumber = $"0{eventNumber}";
 
-		englishAudioPath = $"res://video/event/en/{name}.ogg";
+		string targetAudioPath = $"res://video/event/en/{name}.ogg";
+		if (ResourceLoader.Exists(targetAudioPath))
+			englishAudioPath = targetAudioPath;
+
 		localizationKeyPrefix = $"event{eventNumber}_";
 
 		videoPlayer.SetVideoFilePath($"res://video/event/stream/E00{eventNumber}.mp4");

@@ -1,0 +1,48 @@
+[gd_scene load_steps=4 format=3 uid="uid://drgvlieo6ccu7"]
+
+[ext_resource type="PackedScene" uid="uid://ct1tmuno23lj2" path="res://video/Event.tscn" id="1_cohdu"]
+
+[sub_resource type="Animation" id="Animation_cohdu"]
+length = 12.0
+step = 0.1
+tracks/0/type = "method"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0.4, 5, 10),
+"transitions": PackedFloat32Array(1, 1, 1),
+"values": [{
+"args": [],
+"method": &"ShowSubtitles"
+}, {
+"args": [],
+"method": &"ShowSubtitles"
+}, {
+"args": [],
+"method": &"HideSubtitles"
+}]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_lpo6r"]
+_data = {
+&"en": SubResource("Animation_cohdu")
+}
+
+[node name="Event30" node_paths=PackedStringArray("animator") instance=ExtResource("1_cohdu")]
+englishAudioPath = "res://video/event/ending.ogg"
+localizationKeyPrefix = "event30_"
+animator = NodePath("AnimationPlayer")
+
+[node name="Video" parent="Resizer" index="0"]
+videoFilePath = "res://video/event/stream/E0030.mp4"
+
+[node name="Subtitles" parent="SubtitleLetterbox" index="0"]
+text = "event30_2"
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." index="3"]
+libraries = {
+&"": SubResource("AnimationLibrary_lpo6r")
+}
