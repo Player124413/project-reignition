@@ -13,7 +13,7 @@ public partial class Runtime : Node
 	public static readonly Vector2I HalfScreenSize = (Vector2I)((Vector2)ScreenSize * .5f);
 
 	private readonly StringName AchievementTimeKey = "bookworm";
-	private readonly float AchievementTimeRequirement = 360f * 24f;
+	private readonly int AchievementTimeRequirement = 86400; // Number of seconds in 24 hours
 
 	public override void _EnterTree()
 	{
