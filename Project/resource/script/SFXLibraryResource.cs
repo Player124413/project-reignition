@@ -10,7 +10,7 @@ namespace Project.Gameplay;
 /// Important note: DO NOT reorder keys, otherwise stream data will become desynced
 /// </summary>
 [Tool]
-
+[GlobalClass]
 public partial class SFXLibraryResource : Resource
 {
 	#region Editor
@@ -50,6 +50,9 @@ public partial class SFXLibraryResource : Resource
 			case "Editing/Channel":
 				return channelEditingIndex;
 			case "Editing/Streams":
+				if (isLocalizedVoiceLines)
+					return GetLocalizationStreams(channelEditingIndex - 1, keyEditingIndex);
+
 				return streams[channelEditingIndex - 1][keyEditingIndex];
 		}
 
@@ -84,6 +87,12 @@ public partial class SFXLibraryResource : Resource
 				NotifyPropertyListChanged();
 				break;
 			case "Editing/Streams":
+				if (isLocalizedVoiceLines)
+				{
+					localizedStreamPaths[channelEditingIndex - 1][keyEditingIndex] = SetLocalizationStreams((Array<AudioStream>)value);
+					break;
+				}
+
 				streams[channelEditingIndex - 1][keyEditingIndex] = (Array<AudioStream>)value;
 				break;
 			default:
@@ -91,6 +100,36 @@ public partial class SFXLibraryResource : Resource
 		}
 
 		return true;
+	}
+
+	private Array<AudioStream> GetLocalizationStreams(int channelIndex, int keyIndex)
+	{
+		Array<AudioStream> returnArr = [];
+		for (int i = 0; i < localizedStreamPaths[channelIndex][keyIndex].Count; i++)
+		{
+			string targetFile = localizedStreamPaths[channelIndex][keyIndex][i];
+
+			if (!ResourceLoader.Exists(targetFile))
+				returnArr.Add(null);
+			else
+				returnArr.Add(ResourceLoader.Load<AudioStream>(targetFile));
+		}
+
+		return returnArr;
+	}
+
+	private Array<string> SetLocalizationStreams(Array<AudioStream> streams)
+	{
+		Array<string> returnArr = [];
+		for (int i = 0; i < streams.Count; i++)
+		{
+			if (streams[i] == null)
+				returnArr.Add(string.Empty);
+			else
+				returnArr.Add(streams[i].ResourcePath);
+		}
+
+		return returnArr;
 	}
 
 	private void ReorderKey()
@@ -104,6 +143,63 @@ public partial class SFXLibraryResource : Resource
 			return;
 		}
 
+		if (isLocalizedVoiceLines)
+			ReorderLocalizationKey();
+		else
+			ReorderAudioStream();
+	}
+
+	private void ReorderLocalizationKey()
+	{
+		string key = keys[keyEditingIndex];
+		Array<Array<string>> stream = [];
+		for (int i = 0; i < channelCount; i++)
+			stream.Add(localizedStreamPaths[i][keyEditingIndex]);
+
+		if (reorderMode == ReorderModeEnum.Swap)
+		{
+			keys[keyEditingIndex] = keys[reorderIndex];
+			for (int i = 0; i < channelCount; i++)
+				streams[i][keyEditingIndex] = streams[i][reorderIndex];
+
+			keys[reorderIndex] = key;
+			for (int i = 0; i < channelCount; i++)
+				localizedStreamPaths[i][reorderIndex] = stream[i];
+
+			keyEditingIndex = reorderIndex;
+			GD.Print($"Swapped positions of {keys[reorderIndex]} and {keys[keyEditingIndex]}.");
+			return;
+		}
+
+		keys.RemoveAt(keyEditingIndex); // Remove the data at the current index
+		for (int i = 0; i < channelCount; i++)
+			streams[i].RemoveAt(keyEditingIndex);
+
+		int insertionPoint = reorderIndex;
+		if (reorderMode == ReorderModeEnum.After)
+			insertionPoint = reorderIndex + 1;
+		if (keyEditingIndex < reorderIndex) // Take deletions into account
+			insertionPoint--;
+
+		if (insertionPoint >= KeyCount)
+		{
+			keys.Add(key);
+			for (int i = 0; i < channelCount; i++)
+				localizedStreamPaths[i].Add(stream[i]);
+		}
+		else
+		{
+			keys.Insert(insertionPoint, key);
+			for (int i = 0; i < channelCount; i++)
+				localizedStreamPaths[i].Insert(insertionPoint, stream[i]);
+		}
+
+		keyEditingIndex = insertionPoint;
+		GD.Print($"Moved {key}.");
+	}
+
+	private void ReorderAudioStream()
+	{
 		string key = keys[keyEditingIndex];
 		Array<Array<AudioStream>> stream = [];
 		for (int i = 0; i < channelCount; i++)
@@ -170,23 +266,49 @@ public partial class SFXLibraryResource : Resource
 	private void ValidateArrays()
 	{
 		keys ??= [];
-		streams ??= [];
 
-		if (streams.Count != channelCount)
-			streams.Resize(channelCount);
-
-		for (int i = 0; i < channelCount; i++)
+		if (isLocalizedVoiceLines)
 		{
-			if (streams[i] == null || streams[i].Count == 0)
-				streams[i] = [];
+			localizedStreamPaths ??= [];
 
-			if (streams[i].Count != KeyCount)
-				streams[i].Resize(KeyCount);
+			if (localizedStreamPaths.Count != channelCount)
+				localizedStreamPaths.Resize(channelCount);
 
-			for (int j = 0; j < KeyCount; j++)
+			for (int i = 0; i < channelCount; i++)
 			{
-				if (streams[i][j] == null || streams[i][j].Count == 0)
-					streams[i][j] = [];
+				if (localizedStreamPaths[i] == null || localizedStreamPaths[i].Count == 0)
+					localizedStreamPaths[i] = [];
+
+				if (localizedStreamPaths[i].Count != KeyCount)
+					localizedStreamPaths[i].Resize(KeyCount);
+
+				for (int j = 0; j < KeyCount; j++)
+				{
+					if (localizedStreamPaths[i][j] == null || localizedStreamPaths[i][j].Count == 0)
+						localizedStreamPaths[i][j] = [];
+				}
+			}
+		}
+		else
+		{
+			streams ??= [];
+
+			if (streams.Count != channelCount)
+				streams.Resize(channelCount);
+
+			for (int i = 0; i < channelCount; i++)
+			{
+				if (streams[i] == null || streams[i].Count == 0)
+					streams[i] = [];
+
+				if (streams[i].Count != KeyCount)
+					streams[i].Resize(KeyCount);
+
+				for (int j = 0; j < KeyCount; j++)
+				{
+					if (streams[i][j] == null || streams[i][j].Count == 0)
+						streams[i][j] = [];
+				}
 			}
 		}
 	}
@@ -219,6 +341,9 @@ public partial class SFXLibraryResource : Resource
 	public int KeyCount => keys.Count;
 	/// <summary> Arrays are ordered in Channel -> Key -> Index. </summary>
 	[Export] private Array<Array<Array<AudioStream>>> streams;
+	/// <summary> Used for localized audio, that way we don't have to load excess audio streams for no reason. </summary>
+	[Export] private Array<Array<Array<string>>> localizedStreamPaths;
+	[Export] private bool isLocalizedVoiceLines;
 
 	/// <summary>
 	/// How many channels does this library contain?
@@ -244,36 +369,67 @@ public partial class SFXLibraryResource : Resource
 	/// <summary> Automatically set up localized audio streams. Do NOT use this for unlocalized sound effects. </summary>
 	private void LocalizeAudioStreams()
 	{
-		Array<Array<Array<AudioStream>>> tempStreams = [];
-		tempStreams.Add(streams[0]);
-
-		for (int i = 1; i < (int)SaveManager.VoiceLanguage.Count; i++)
+		if (!isLocalizedVoiceLines)
 		{
-			tempStreams.Add([]); // Add a language slot
-			string lang = SaveManager.VoiceLanguageToGodotLocale((SaveManager.VoiceLanguage)i);
+			GD.PrintErr("Given resource is not configured as a localizable audio pack.");
+			return;
+		}
 
-			for (int j = 0; j < tempStreams[0].Count; j++)
+		channelCount = (int)SaveManager.VoiceLanguage.Count;
+		Array<Array<Array<string>>> tempStreamPaths = [];
+
+		if (streams == null || streams.Count == 0)
+		{
+			// Keep existing en tracks
+			tempStreamPaths.Add(localizedStreamPaths[0]);
+		}
+		else
+		{
+			// Convert from audio streams to file paths
+			tempStreamPaths.Add([]);
+
+			for (int i = 0; i < streams[0].Count; i++)
 			{
-				tempStreams[i].Add([]); // Add a dialog slot
+				tempStreamPaths[0].Add([]); // Add a dialog slot
 
-				for (int k = 0; k < streams[0][j].Count; k++)
+				for (int j = 0; j < streams[0][i].Count; j++)
 				{
-					// Add the actual audio files.
-					string targetAudioFile = streams[0][j][k].ResourcePath;
-					targetAudioFile = targetAudioFile.Replace("/en/", $"/{lang}/");
-					if (ResourceLoader.Exists(targetAudioFile, "AudioStream"))
+					// Copy audio file paths
+					if (streams[0][i][j] == null)
 					{
-						tempStreams[i][j].Add(ResourceLoader.Load<AudioStream>(targetAudioFile));
+						tempStreamPaths[0][i].Add(string.Empty);
 						continue;
 					}
 
-					GD.PrintErr($"Couldn't load audio file at '{targetAudioFile}.'");
-					tempStreams[i][j].Add(null); // Add a dialog slot
+					string targetAudioFile = streams[0][i][j].ResourcePath;
+					tempStreamPaths[0][i].Add(targetAudioFile);
 				}
 			}
 		}
 
-		streams = tempStreams;
+		for (int i = 1; i < (int)SaveManager.VoiceLanguage.Count; i++)
+		{
+			tempStreamPaths.Add([]); // Add a language slot
+			string lang = SaveManager.VoiceLanguageToGodotLocale((SaveManager.VoiceLanguage)i);
+
+			for (int j = 0; j < tempStreamPaths[0].Count; j++)
+			{
+				tempStreamPaths[i].Add([]); // Add a dialog slot
+
+				for (int k = 0; k < tempStreamPaths[0][j].Count; k++)
+				{
+					// Add the actual audio files
+					string targetAudioFile = tempStreamPaths[0][j][k];
+					targetAudioFile = targetAudioFile.Replace("/en/", $"/{lang}/");
+					tempStreamPaths[i][j].Add(targetAudioFile);
+				}
+			}
+		}
+
+		// Clear streams to prevent loading audio streams when loading the resource.
+		streams = null;
+		localizedStreamPaths = tempStreamPaths;
+		NotifyPropertyListChanged();
 	}
 
 	/// <summary>
@@ -294,7 +450,8 @@ public partial class SFXLibraryResource : Resource
 			return null;
 		}
 
-		int maxIndex = streams[channel][keyIndex].Count; // Get max random index
+		// Get max random index
+		int maxIndex = isLocalizedVoiceLines ? localizedStreamPaths[channel][keyIndex].Count : streams[channel][keyIndex].Count;
 
 		if (maxIndex == 0) // No sound effect found
 		{
@@ -309,6 +466,21 @@ public partial class SFXLibraryResource : Resource
 			sfxIndex = 0;
 		else if (sfxIndex == -1) // Randomize sfx
 			sfxIndex = Runtime.randomNumberGenerator.RandiRange(0, maxIndex - 1);
+
+		if (isLocalizedVoiceLines)
+		{
+			if (string.IsNullOrEmpty(localizedStreamPaths[channel][keyIndex][sfxIndex])) // No dialog clip
+				return null;
+
+			if (!ResourceLoader.Exists(localizedStreamPaths[channel][keyIndex][sfxIndex]))
+			{
+				GD.PushError($"{localizedStreamPaths[channel][keyIndex][sfxIndex]} doesn't exist!");
+				return null;
+			}
+
+			// TODO Load this asyncronously?
+			return ResourceLoader.Load<AudioStream>(localizedStreamPaths[channel][keyIndex][sfxIndex]);
+		}
 
 		return streams[channel][keyIndex][sfxIndex];
 	}
@@ -332,8 +504,14 @@ public partial class SFXLibraryResource : Resource
 		if (channel > channelCount - 1) // Fallback to English
 			channel = 0;
 
-		if (channel != 0 && streams[channel][keyIndex].Count != 0)
-			return GetStream(key, channel);
+		if (channel != 0)
+		{
+			if (isLocalizedVoiceLines && localizedStreamPaths[channel][keyIndex].Count != 0)
+				return GetStream(key, channel);
+
+			if (!isLocalizedVoiceLines && streams[channel][keyIndex].Count != 0)
+				return GetStream(key, channel);
+		}
 
 		return GetStream(key, 0); // English fallback
 	}
