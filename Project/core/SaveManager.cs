@@ -273,6 +273,8 @@ public partial class SaveManager : Node
 		public bool isActionPromptsEnabled = true;
 
 		public bool useQuickLoad;
+		/// <summary> Should cutscenes repeat when missions are selected from the level select menu? </summary>
+		public bool repeatCutscenes;
 
 		/// <summary> Creates a dictionary based on config data. </summary>
 		public Dictionary ToDictionary()

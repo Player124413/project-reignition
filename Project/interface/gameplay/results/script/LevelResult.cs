@@ -80,14 +80,27 @@ public partial class LevelResult : Control
 			SetInputProcessing(false);
 
 			// Determine which scene to load without connecting it
-			if (Runtime.Instance.IsActionJustPressed("sys_cancel", "ui_cancel", "escape") && !TimeAttackManager.Instance.IsRunActive) // Retry stage
-				TransitionManager.Instance.QueuedScene = string.Empty;
-			else if (TimeAttackManager.Instance.IsRunActive)
+			if (TimeAttackManager.Instance.IsRunActive)
+			{
 				TimeAttackManager.Instance.IncreaseLevel();
-			else if (StageSettings.Instance.Data.PostStoryEventIndex == -1) // Load main menu
+			}
+			else if (Runtime.Instance.IsActionJustPressed("sys_cancel", "ui_cancel", "escape")) // Retry stage
+			{
+				TransitionManager.Instance.QueuedScene = string.Empty;
+			}
+			else
+			{
+				// Adventure mode; Process events
 				TransitionManager.Instance.QueuedScene = TransitionManager.MenuScenePath;
-			else // Load event
-				TransitionManager.Instance.QueuedScene = $"{TransitionManager.EventScenePath}{StageSettings.Instance.Data.PostStoryEventIndex}.tscn";
+
+				if (StageSettings.Instance.LevelState == StageSettings.LevelStateEnum.Success && StageSettings.Instance.Data.PostStoryEventIndex != -1 &&
+					(SaveManager.ActiveGameData.LevelData.GetClearStatus(StageSettings.Instance.Data.LevelID) != SaveManager.LevelSaveData.LevelStatus.Cleared ||
+					SaveManager.Config.repeatCutscenes))
+				{
+					TransitionManager.Instance.QueuedScene = $"{TransitionManager.EventScenePath}{StageSettings.Instance.Data.PostStoryEventIndex}.tscn";
+				}
+			}
+
 
 			// Actual scene transition is handled by the experience results screen (which is connected via this signal)
 			if (!TimeAttackManager.Instance.IsRunActive)

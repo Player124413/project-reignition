@@ -112,7 +112,9 @@ public partial class ReadyMenu : Menu
 		if (!TimeAttackManager.Instance.IsRunActive)
 		{
 			// Handle Pre Event Indexes
-			if (LevelData.PreStoryEventIndex != -1)
+			if (LevelData.PreStoryEventIndex != -1 &&
+				(SaveManager.ActiveGameData.LevelData.GetClearStatus(LevelData.LevelID) == SaveManager.LevelSaveData.LevelStatus.New ||
+				SaveManager.Config.repeatCutscenes))
 			{
 				TransitionManager.QueueSceneChange($"{TransitionManager.EventScenePath}{LevelData.PreStoryEventIndex}.tscn");
 				TransitionManager.StartTransition(new()
