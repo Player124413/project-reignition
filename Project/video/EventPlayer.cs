@@ -1,6 +1,7 @@
 using Godot;
 using Godot.Collections;
 using Project.Core;
+using Project.Gameplay;
 
 namespace Project.Interface.Menus;
 
@@ -13,8 +14,10 @@ public partial class EventPlayer : Node
 	[ExportToolButton("Auto Setup")] public Callable AutoSetupCallable => new(this, MethodName.AutoSetup);
 
 	[ExportGroup("Cutscene Settings")]
-	/// <summary> Automatically load the given scene when the event finishes in Adventure Mode. Leave empty to return to the main menu. </summary>
-	[Export(PropertyHint.File, "*.tscn")] private string adventureModeAutoload;
+	/// <summary> Automatically load the given level when in Adventure Mode. Leave empty to return to the main menu. </summary>
+	[Export(PropertyHint.File, "*.tres")] private LevelDataResource adventureLevelAutoload;
+	/// <summary> Automatically load the given event when in Adventure Mode. Leave empty to return to the main menu. </summary>
+	[Export(PropertyHint.File, "*.tscn")] private string adventureEventAutoload;
 	[Export(PropertyHint.FilePath, "*.ogg")] private string englishAudioPath;
 	[Export] private string localizationKeyPrefix;
 	/// <summary> Optional key for unlocking a world ring. Use Lost Prologue for no world ring. </summary>
@@ -52,8 +55,19 @@ public partial class EventPlayer : Node
 		CreateSubtitles();
 		CallDeferred(MethodName.StartCutscene);
 
-		if (Menu.menuMemory[Menu.MemoryKeys.ActiveMenu] != (int)Menu.MemoryKeys.SpecialBook &&
-			worldRing != SaveManager.WorldEnum.LostPrologue &&
+		if (IsSpecialBook)
+			return;
+
+		// Set up menu memory to match level data (Adventure Mode only)
+		if (adventureLevelAutoload != null)
+		{
+			Menu.menuMemory[Menu.MemoryKeys.ActiveMenu] = (int)Menu.MemoryKeys.LevelSelect;
+			Menu.menuMemory[Menu.MemoryKeys.WorldSelect] = (int)adventureLevelAutoload.AreaKey;
+			Menu.menuMemory[Menu.MemoryKeys.LevelSelect] = adventureLevelAutoload.LevelIndex - 1;
+		}
+
+		// Unlock World Rings, if necessary
+		if (worldRing != SaveManager.WorldEnum.LostPrologue &&
 			!SaveManager.ActiveGameData.IsWorldRingObtained(worldRing))
 		{
 			SaveManager.ActiveGameData.UnlockWorldRing(worldRing);
@@ -247,11 +261,13 @@ public partial class EventPlayer : Node
 	/// <summary> Called after the cutscene has finished playing. </summary>
 	public void OnEventFinished()
 	{
-		string targetScene = adventureModeAutoload;
+		string targetScene = TransitionManager.MenuScenePath;
 		if (IsSpecialBook)
 			targetScene = TransitionManager.SpecialBookScenePath;
-		else if (string.IsNullOrEmpty(adventureModeAutoload))
-			targetScene = TransitionManager.MenuScenePath;
+		else if (adventureLevelAutoload != null)
+			targetScene = adventureLevelAutoload.LevelPath;
+		else if (!string.IsNullOrEmpty(adventureEventAutoload))
+			targetScene = adventureEventAutoload;
 
 		TransitionManager.QueueSceneChange(targetScene);
 		TransitionManager.StartTransition(new TransitionData()

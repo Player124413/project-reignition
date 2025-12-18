@@ -125,7 +125,7 @@ public partial class ReadyMenu : Menu
 	///<summary> Sets up the ready menu for time attack
 	public void SetupReadyMenu(LevelDataResource level)
 	{
-		SetMapText(level.AreaKey);
+		SetMapText(level.AreaKey.ToString().ToCamelCase());
 		SetMissionText(level.MissionTypeKey);
 		LevelPath = level.LevelPath;
 	}

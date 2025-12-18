@@ -39,7 +39,7 @@ public partial class LevelDataResource : Resource
 	{
 		Array<Dictionary> properties =
 		[
-			ExtensionMethods.CreateProperty("Area Key", Variant.Type.String),
+			ExtensionMethods.CreateProperty("Area Key", Variant.Type.Int, PropertyHint.Enum, AreaKey.EnumToString()),
 			ExtensionMethods.CreateProperty("Level ID", Variant.Type.StringName),
 			ExtensionMethods.CreateProperty("Level Index", Variant.Type.Int),
 			ExtensionMethods.CreateProperty("Level Path", Variant.Type.String, PropertyHint.FilePath, "*.tscn"),
@@ -90,7 +90,7 @@ public partial class LevelDataResource : Resource
 		switch ((string)property)
 		{
 			case "Area Key":
-				return AreaKey;
+				return (int)AreaKey;
 			case "Level ID":
 				return LevelID;
 			case "Level Index":
@@ -157,7 +157,7 @@ public partial class LevelDataResource : Resource
 		switch ((string)property)
 		{
 			case "Area Key":
-				AreaKey = (string)value;
+				AreaKey = (SaveManager.WorldEnum)(int)value;
 				break;
 			case "Level ID":
 				LevelID = (StringName)value;
@@ -250,8 +250,8 @@ public partial class LevelDataResource : Resource
 		return true;
 	}
 	#endregion
-	/// <summary> Level's world - used for the ready menu
-	public string AreaKey { get; private set; }
+	/// <summary> Level's world - used for the ready menu and setting up menu memory from cutscenes.
+	public SaveManager.WorldEnum AreaKey { get; private set; }
 	/// <summary> Level's id - used for save data. </summary>
 	public StringName LevelID { get; private set; }
 	/// <summary> The index of the level in the mission select screen. Used by the Special Book. </summary>

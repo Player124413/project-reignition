@@ -1,3 +1,4 @@
+using System;
 using Godot;
 using Project.Core;
 using Project.Gameplay;
@@ -141,8 +142,6 @@ public partial class LevelOption : Control
 
 		timeAttackLevelOption.Visible = true;
 		missionLabelTA.Text = data.MissionTypeKey;
-		areaLabelTA.Text = data.AreaKey;
-
-
+		areaLabelTA.Text = data.AreaKey.ToString().ToCamelCase();
 	}
 }
