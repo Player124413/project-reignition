@@ -261,11 +261,26 @@ public partial class EventPlayer : Node
 	/// <summary> Called after the cutscene has finished playing. </summary>
 	public void OnEventFinished()
 	{
+		if (!IsSpecialBook && adventureLevelAutoload != null)
+		{
+			// Load to level
+			TransitionManager.QueueSceneChange(adventureLevelAutoload.LevelPath);
+			TransitionManager.StartTransition(new()
+			{
+				inSpeed = 1f,
+				color = Colors.Black,
+				loadAsynchronously = true,
+				disableAutoTransition = true,
+				showMissionDescription = true
+			});
+			TransitionManager.instance.SetMissionDescriptionText(adventureLevelAutoload.MissionTypeKey, adventureLevelAutoload.MissionDescriptionKey);
+			TransitionManager.instance.UpdateLoadingText("load_level");
+			return;
+		}
+
 		string targetScene = TransitionManager.MenuScenePath;
 		if (IsSpecialBook)
 			targetScene = TransitionManager.SpecialBookScenePath;
-		else if (adventureLevelAutoload != null)
-			targetScene = adventureLevelAutoload.LevelPath;
 		else if (!string.IsNullOrEmpty(adventureEventAutoload))
 			targetScene = adventureEventAutoload;
 
