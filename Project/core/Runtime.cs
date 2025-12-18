@@ -269,12 +269,26 @@ public partial class Runtime : Node
 	public bool IsActionJustPressed(StringName actionId, StringName builtInId, StringName fallbackId = null)
 	{
 		bool pressed = Input.IsActionJustPressed(actionId) ||
-			(Input.IsActionJustPressed(builtInId) && Runtime.Instance.IsActionUnmapped(actionId));
+			(Input.IsActionJustPressed(builtInId) && Instance.IsActionUnmapped(actionId));
 
 		if (pressed || fallbackId == null)
 			return pressed;
 
 		return Input.IsActionJustPressed(fallbackId);
+	}
+
+	/// <summary>
+	/// Same as IsActionJustPressed, except checks for Holds instead of Presses.
+	/// </summary>
+	public bool IsActionPressed(StringName actionId, StringName builtInId, StringName fallbackId = null)
+	{
+		bool pressed = Input.IsActionPressed(actionId) ||
+			(Input.IsActionPressed(builtInId) && Instance.IsActionUnmapped(actionId));
+
+		if (pressed || fallbackId == null)
+			return pressed;
+
+		return Input.IsActionPressed(fallbackId);
 	}
 
 	public bool IsActionUnmapped(StringName action)

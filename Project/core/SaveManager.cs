@@ -1183,10 +1183,9 @@ public partial class SaveManager : Node
 				levelData = new()
 			};
 
-			// TODO Replace this with the tutorial key
-			data.UnlockStage("so_a1_main");
+			// Unlock the tutorial
+			data.UnlockStage("lp_tutorial");
 			data.UnlockWorld(WorldEnum.LostPrologue);
-			data.UnlockWorld(WorldEnum.SandOasis); // Lock this in the final build
 
 			for (int i = 0; i < PresetCount; i++)
 			{

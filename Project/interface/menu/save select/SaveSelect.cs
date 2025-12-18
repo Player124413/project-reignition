@@ -151,7 +151,7 @@ public partial class SaveSelect : Menu
 			SaveManager.ResetSaveData(SaveManager.ActiveSaveSlotIndex, false);
 			SaveManager.SaveGameData();
 
-			if (menuMemory[MemoryKeys.ActiveMenu] != (int)MemoryKeys.TimeAttack)// Don't load a scene if we are in the time attack menu
+			if (menuMemory[MemoryKeys.ActiveMenu] != (int)MemoryKeys.TimeAttack) // Only load a scene if we aren't in Time Attack
 			{
 				if (!DebugManager.Instance.UseDemoSave) // Don't load into cutscenes in the demo
 				{
@@ -162,6 +162,7 @@ public partial class SaveSelect : Menu
 						color = Colors.Black,
 						inSpeed = 1f,
 					});
+					return;
 				}
 			}
 		}

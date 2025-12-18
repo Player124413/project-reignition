@@ -1,4 +1,3 @@
-using System.Numerics;
 using Godot;
 using Godot.Collections;
 using Project.Core;
@@ -14,6 +13,8 @@ public partial class EventPlayer : Node
 	[ExportToolButton("Auto Setup")] public Callable AutoSetupCallable => new(this, MethodName.AutoSetup);
 
 	[ExportGroup("Cutscene Settings")]
+	/// <summary> Automatically load the given scene when the event finishes in Adventure Mode. Leave empty to return to the main menu. </summary>
+	[Export(PropertyHint.File, "*.tscn")] private string adventureModeAutoload;
 	[Export(PropertyHint.FilePath, "*.ogg")] private string englishAudioPath;
 	[Export] private string localizationKeyPrefix;
 	/// <summary> Optional key for unlocking a world ring. Use Lost Prologue for no world ring. </summary>
@@ -179,7 +180,7 @@ public partial class EventPlayer : Node
 		if (Menu.menuMemory[Menu.MemoryKeys.ActiveMenu] != (int)Menu.MemoryKeys.SpecialBook)
 		{
 			// Process skipping story cutscene
-			if (Runtime.Instance.IsActionJustPressed("sys_pause", "ui_accept") && !Input.IsActionJustPressed("toggle_fullscreen"))
+			if (Runtime.Instance.IsActionPressed("sys_pause", "ui_accept") && !Input.IsActionJustPressed("toggle_fullscreen"))
 			{
 				skipTimer = Mathf.MoveToward(skipTimer, SkipLength, PhysicsManager.physicsDelta);
 				if (Mathf.IsEqualApprox(skipTimer, SkipLength))
@@ -246,7 +247,13 @@ public partial class EventPlayer : Node
 	/// <summary> Called after the cutscene has finished playing. </summary>
 	public void OnEventFinished()
 	{
-		TransitionManager.QueueSceneChange(IsSpecialBook ? TransitionManager.SpecialBookScenePath : TransitionManager.MenuScenePath);
+		string targetScene = adventureModeAutoload;
+		if (IsSpecialBook)
+			targetScene = TransitionManager.SpecialBookScenePath;
+		else if (string.IsNullOrEmpty(adventureModeAutoload))
+			targetScene = TransitionManager.MenuScenePath;
+
+		TransitionManager.QueueSceneChange(targetScene);
 		TransitionManager.StartTransition(new TransitionData()
 		{
 			color = Colors.Black,
