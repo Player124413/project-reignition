@@ -25,12 +25,13 @@
 [node name="Core" type="Node"]
 process_mode = 3
 
-[node name="DebugManager" type="Control" parent="." node_paths=PackedStringArray("debugMenuRoot", "skillSelectButton", "skillToggleButton", "skillAugmentSlider", "freeCamData")]
+[node name="DebugManager" type="Control" parent="." node_paths=PackedStringArray("debugMenuRoot", "unlockStageToggleButton", "skillSelectButton", "skillToggleButton", "skillAugmentSlider", "freeCamData")]
 top_level = true
 layout_mode = 3
 anchors_preset = 0
 script = ExtResource("3_exwps")
 debugMenuRoot = NodePath("CanvasLayer/Menu")
+unlockStageToggleButton = NodePath("CanvasLayer/Menu/Tabs/Debug/Options/UnlockAllStages")
 skillSelectButton = NodePath("CanvasLayer/Menu/Tabs/Gameplay/Options/SkillSelect")
 skillToggleButton = NodePath("CanvasLayer/Menu/Tabs/Gameplay/Options/SkillToggle")
 skillAugmentSlider = NodePath("CanvasLayer/Menu/Tabs/Gameplay/Options/SkillAugment")
@@ -89,6 +90,13 @@ focus_mode = 0
 theme_override_font_sizes/font_size = 36
 toggle_mode = true
 text = "Draw Rays"
+
+[node name="DemoSave" type="Button" parent="DebugManager/CanvasLayer/Menu/Tabs/Debug/Options"]
+layout_mode = 2
+focus_mode = 0
+theme_override_font_sizes/font_size = 36
+toggle_mode = true
+text = "Use Demo Save"
 
 [node name="StageCulling" type="Button" parent="DebugManager/CanvasLayer/Menu/Tabs/Debug/Options"]
 layout_mode = 2
@@ -351,6 +359,7 @@ Levels_GoalPercent = Array[Object]([ExtResource("10_2rtsi"), ExtResource("11_630
 Levels_BossRush = Array[Object]([ExtResource("17_8h4rm"), ExtResource("18_ct33p"), ExtResource("19_22yhn"), ExtResource("20_heklj"), ExtResource("21_7sego")])
 
 [connection signal="toggled" from="DebugManager/CanvasLayer/Menu/Tabs/Debug/Options/DebugRays" to="DebugManager" method="ToggleRays"]
+[connection signal="toggled" from="DebugManager/CanvasLayer/Menu/Tabs/Debug/Options/DemoSave" to="DebugManager" method="ToggleDemoSave"]
 [connection signal="toggled" from="DebugManager/CanvasLayer/Menu/Tabs/Debug/Options/StageCulling" to="DebugManager" method="ToggleStageCulling"]
 [connection signal="toggled" from="DebugManager/CanvasLayer/Menu/Tabs/Debug/Options/UnlockAllStages" to="DebugManager" method="ToggleUnlockStages"]
 [connection signal="toggled" from="DebugManager/CanvasLayer/Menu/Tabs/Debug/Options/CameraPosition" to="DebugManager" method="ToggleCamera"]

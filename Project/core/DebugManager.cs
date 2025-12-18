@@ -33,9 +33,7 @@ public partial class DebugManager : Control
 		Instance = this;
 		ProcessMode = ProcessModeEnum.Always;
 
-		UseDemoSave = false; // Be sure to DISABLE this in the FINAL version of the game
 		IsStageCullingEnabled = true;
-		UnlockAllStages = UseDemoSave;
 
 		if (OS.IsDebugBuild()) // Editor Debug
 			SkipCountdown = true;
@@ -237,6 +235,8 @@ public partial class DebugManager : Control
 		EmitSignal(SignalName.StageCullingToggled);
 	}
 
+	[Export]
+	private Button unlockStageToggleButton;
 	/// <summary> Have all worlds/stages unlocked. </summary>
 	public bool UnlockAllStages { get; private set; }
 	[Signal]
@@ -245,6 +245,16 @@ public partial class DebugManager : Control
 	{
 		UnlockAllStages = UseDemoSave || enabled;
 		EmitSignal(SignalName.UnlockStagesToggled);
+	}
+
+	public void ToggleDemoSave(bool value)
+	{
+		UseDemoSave = value;
+		if (value && !UnlockAllStages)
+		{
+			unlockStageToggleButton.ButtonPressed = true;
+			ToggleUnlockStages(true);
+		}
 	}
 
 	public bool DrawDebugCam { get; private set; }
