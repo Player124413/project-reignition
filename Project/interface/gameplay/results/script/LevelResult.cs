@@ -23,12 +23,16 @@ public partial class LevelResult : Control
 	[Export] private AudioStreamPlayer resultsVoicePlayer;
 	[Export] private SFXLibraryResource resultsVoiceLibrary;
 
+	/// <summary> Tracks whether the stage was already cleared when starting; Used to skip repeat cutscenes. </summary>
+	private bool wasStageClearedWhenLoaded;
 	private bool isProcessing;
 	private bool isFadingBgm;
 	private StageSettings Stage => StageSettings.Instance;
 
 	public override void _Ready()
 	{
+		wasStageClearedWhenLoaded = SaveManager.ActiveGameData.LevelData.GetClearStatus(Stage.Data.LevelID) == SaveManager.LevelSaveData.LevelStatus.Cleared;
+
 		if (IsInstanceValid(Stage))
 		{
 			Stage.Connect(StageSettings.SignalName.LevelCompleted, new Callable(this, MethodName.StartResults), (uint)ConnectFlags.Deferred);
@@ -93,11 +97,10 @@ public partial class LevelResult : Control
 				// Adventure mode; Process events
 				TransitionManager.Instance.QueuedScene = TransitionManager.MenuScenePath;
 
-				if (StageSettings.Instance.LevelState == StageSettings.LevelStateEnum.Success && StageSettings.Instance.Data.PostStoryEventIndex != -1 &&
-					(SaveManager.ActiveGameData.LevelData.GetClearStatus(StageSettings.Instance.Data.LevelID) != SaveManager.LevelSaveData.LevelStatus.Cleared ||
-					SaveManager.Config.repeatCutscenes))
+				if (Stage.LevelState == StageSettings.LevelStateEnum.Success && Stage.Data.PostStoryEventIndex != -1 &&
+					(!wasStageClearedWhenLoaded || SaveManager.Config.repeatCutscenes))
 				{
-					TransitionManager.Instance.QueuedScene = $"{TransitionManager.EventScenePath}{StageSettings.Instance.Data.PostStoryEventIndex}.tscn";
+					TransitionManager.Instance.QueuedScene = $"{TransitionManager.EventScenePath}{Stage.Data.PostStoryEventIndex}.tscn";
 				}
 			}
 
@@ -174,7 +177,7 @@ public partial class LevelResult : Control
 
 	public void PlayRankQuote()
 	{
-		int voiceIndex = StageSettings.Instance.CalculateRank() + 1;
+		int voiceIndex = Stage.CalculateRank() + 1;
 		resultsVoicePlayer.Stream = resultsVoiceLibrary.GetStream(voiceIndex, (int)SaveManager.Config.voiceLanguage);
 		resultsVoicePlayer.Play();
 	}

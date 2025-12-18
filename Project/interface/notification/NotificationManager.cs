@@ -69,6 +69,19 @@ public partial class NotificationManager : Control
 
 	public void StartNotifications()
 	{
+		if (TransitionManager.Instance.QueuedScene.StartsWith(TransitionManager.EventScenePath))
+		{
+			// An event has been queued -- skip notifications for now.
+			TransitionManager.QueueSceneChange(TransitionManager.Instance.QueuedScene);
+			TransitionManager.StartTransition(new()
+			{
+				inSpeed = 0.5f,
+				outSpeed = 0.5f,
+				color = Colors.Black,
+			});
+			return;
+		}
+
 		animator.Play("RESET");
 		animator.Advance(0.0);
 		ProcessMode = ProcessModeEnum.Inherit;

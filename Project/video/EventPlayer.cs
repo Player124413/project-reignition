@@ -40,6 +40,7 @@ public partial class EventPlayer : Node
 
 	private bool IsSpecialBook => Menu.menuMemory[Menu.MemoryKeys.ActiveMenu] == (int)Menu.MemoryKeys.SpecialBook;
 
+	private bool isCutsceneFinished;
 	private float skipTimer;
 	/// <summary> How long the pause button needs to be held to skip the cutscene. </summary>
 	private readonly float SkipLength = 1f;
@@ -188,6 +189,12 @@ public partial class EventPlayer : Node
 			return;
 		}
 
+		if (isCutsceneFinished)
+		{
+			SoundManager.FadeAudioPlayer(audioPlayer, 0.5f);
+			return;
+		}
+
 		if (TransitionManager.IsTransitionActive)
 			return;
 
@@ -261,6 +268,7 @@ public partial class EventPlayer : Node
 	/// <summary> Called after the cutscene has finished playing. </summary>
 	public void OnEventFinished()
 	{
+		isCutsceneFinished = true;
 		if (!IsSpecialBook && adventureLevelAutoload != null)
 		{
 			// Load to level
@@ -283,6 +291,13 @@ public partial class EventPlayer : Node
 			targetScene = TransitionManager.SpecialBookScenePath;
 		else if (!string.IsNullOrEmpty(adventureEventAutoload))
 			targetScene = adventureEventAutoload;
+
+		if (targetScene.Equals(TransitionManager.MenuScenePath))
+		{
+			TransitionManager.Instance.QueuedScene = targetScene;
+			NotificationManager.Instance.StartNotifications();
+			return;
+		}
 
 		TransitionManager.QueueSceneChange(targetScene);
 		TransitionManager.StartTransition(new TransitionData()
