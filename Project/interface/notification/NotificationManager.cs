@@ -27,10 +27,10 @@ public partial class NotificationManager : Control
 	public enum NotificationType
 	{
 		Skill,
+		World,
 		Mission,
 		Page,
 		Party,
-		World,
 		WorldRing,
 	}
 	public struct NotificationData

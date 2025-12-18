@@ -689,14 +689,12 @@ public partial class StageSettings : Node3D
 
 	private void UpdateUnlockNotifications()
 	{
-		// It's redundant saying that a new world AND a new mission is unlocked, so we'll just do one or the other.
 		if (Data.UnlockWorld != SaveManager.WorldEnum.LostPrologue &&
 			!SaveManager.ActiveGameData.IsWorldUnlocked(Data.UnlockWorld))
 		{
 			SaveManager.ActiveGameData.UnlockWorld(Data.UnlockWorld);
 			StringName descriptionString = Tr($"unlock_world").Replace("[AREA]", Tr(Data.UnlockWorld.ToString().ToSnakeCase()));
 			NotificationManager.Instance.AddNotification(NotificationManager.NotificationType.World, descriptionString);
-			return;
 		}
 
 		int missionsUnlocked = 0;
