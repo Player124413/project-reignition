@@ -256,7 +256,7 @@ public partial class PauseMenu : Node
 		else if (currentSelection == 1) // Restart
 		{
 			// Resume
-			TransitionManager.instance.QueuedScene = string.Empty;
+			TransitionManager.Instance.QueuedScene = string.Empty;
 			SoundManager.instance.StageMusicPlayer.Stop();
 			EmitSignal(SignalName.OnSceneChangeSelected);
 		}
@@ -270,7 +270,7 @@ public partial class PauseMenu : Node
 		else if (currentSelection == 4) // Quit by opening the EXP menu
 		{
 			SaveManager.SaveGameData();
-			TransitionManager.instance.QueuedScene = TransitionManager.MenuScenePath;
+			TransitionManager.Instance.QueuedScene = TransitionManager.MenuScenePath;
 			SoundManager.instance.StageMusicPlayer.Stop();
 			EmitSignal(SignalName.OnSceneChangeSelected);
 		}

@@ -9,7 +9,7 @@ namespace Project.Core;
 /// </summary>
 public partial class TransitionManager : Node
 {
-	public static TransitionManager instance;
+	public static TransitionManager Instance;
 	/// <summary> Path to the main menu scene. </summary>
 	public const string MenuScenePath = "res://interface/menu/Menu.tscn";
 	/// <summary> Path to story events. </summary>
@@ -27,7 +27,7 @@ public partial class TransitionManager : Node
 	[Export] private Control missionDescriptionRoot;
 	[Export] private Label missionDescriptionLabel;
 
-	public override void _EnterTree() => instance = this;
+	public override void _EnterTree() => Instance = this;
 
 	#region Transition Types
 	// Simple cut transition. During loading, everything will freeze temporarily.
@@ -55,7 +55,7 @@ public partial class TransitionManager : Node
 		else
 		{
 			animator.SpeedScale = 1.0f / CurrentTransitionData.inSpeed;
-			animator.Connect(AnimationPlayer.SignalName.AnimationFinished, new(instance, MethodName.TransitionLoading), (uint)ConnectFlags.OneShot);
+			animator.Connect(AnimationPlayer.SignalName.AnimationFinished, new(Instance, MethodName.TransitionLoading), (uint)ConnectFlags.OneShot);
 		}
 
 		EmitSignal(SignalName.TransitionStarted);
@@ -72,8 +72,8 @@ public partial class TransitionManager : Node
 		else
 			animator.SpeedScale = 1.0f / CurrentTransitionData.outSpeed;
 
-		if (!animator.IsConnected(AnimationPlayer.SignalName.AnimationFinished, new(instance, MethodName.TransitionFinished)))
-			animator.Connect(AnimationPlayer.SignalName.AnimationFinished, new(instance, MethodName.TransitionFinished), (uint)ConnectFlags.OneShot);
+		if (!animator.IsConnected(AnimationPlayer.SignalName.AnimationFinished, new(Instance, MethodName.TransitionFinished)))
+			animator.Connect(AnimationPlayer.SignalName.AnimationFinished, new(Instance, MethodName.TransitionFinished), (uint)ConnectFlags.OneShot);
 	}
 	#endregion
 
@@ -96,32 +96,32 @@ public partial class TransitionManager : Node
 
 	public static void StartTransition(TransitionData data)
 	{
-		instance.animator.Play("RESET"); // Reset animator, just in case
-		instance.animator.Advance(0);
-		instance.UpdateLoadingText(null);
+		Instance.animator.Play("RESET"); // Reset animator, just in case
+		Instance.animator.Advance(0);
+		Instance.UpdateLoadingText(null);
 
-		instance.CurrentTransitionData = data;
-		instance.missionDescriptionRoot.Visible = data.showMissionDescription;
+		Instance.CurrentTransitionData = data;
+		Instance.missionDescriptionRoot.Visible = data.showMissionDescription;
 
 		if (data.loadAsynchronously) // Start loading immediately
 		{
 			GD.Print("Async loading started.");
-			ResourceLoader.LoadThreadedRequest(instance.QueuedScene, string.Empty, SaveManager.Config.useQuickLoad);
+			ResourceLoader.LoadThreadedRequest(Instance.QueuedScene, string.Empty, SaveManager.Config.useQuickLoad);
 		}
 
 		if (data.inSpeed == 0 && data.outSpeed == 0)
 		{
-			instance.StartCut(); // Cut transition
+			Instance.StartCut(); // Cut transition
 			return;
 		}
 
-		instance.StartFade();
+		Instance.StartFade();
 	}
 
 	public static void FinishTransition()
 	{
-		instance.UpdateLoadingText(null);
-		instance.FinishFade();
+		Instance.UpdateLoadingText(null);
+		Instance.FinishFade();
 	}
 
 	/// <summary> The scene to load. Note that the scene only gets applied if queued using QueueSceneChange(). </summary>
@@ -129,11 +129,11 @@ public partial class TransitionManager : Node
 	/// <summary> Queues a scene to load and connects the TransitionProcess signal. Be sure to call StartTransition to actually transition to the scene. </summary>
 	public static void QueueSceneChange(string scene)
 	{
-		instance.QueuedScene = scene;
+		Instance.QueuedScene = scene;
 
-		var call = new Callable(instance, MethodName.ApplySceneChange);
-		if (!instance.IsConnected(SignalName.TransitionProcess, call))
-			instance.Connect(SignalName.TransitionProcess, call, (uint)ConnectFlags.OneShot);
+		var call = new Callable(Instance, MethodName.ApplySceneChange);
+		if (!Instance.IsConnected(SignalName.TransitionProcess, call))
+			Instance.Connect(SignalName.TransitionProcess, call, (uint)ConnectFlags.OneShot);
 	}
 
 	private async void ApplySceneChange()

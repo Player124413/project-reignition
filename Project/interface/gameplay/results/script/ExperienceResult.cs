@@ -282,7 +282,7 @@ public partial class ExperienceResult : Control
 
 	private void StartExperienceResults()
 	{
-		if (string.IsNullOrEmpty(TransitionManager.instance.QueuedScene))
+		if (string.IsNullOrEmpty(TransitionManager.Instance.QueuedScene))
 		{
 			// Player is restarting a level -- accumulate exp and skip experience screen
 			AccumulatedExp += Mathf.FloorToInt((Stage.TotalScore + Stage.CurrentEXP) * 0.5f);
@@ -310,8 +310,8 @@ public partial class ExperienceResult : Control
 		RedrawData();
 
 		// Fade to black
-		TransitionManager.instance.Connect(TransitionManager.SignalName.TransitionProcess, new Callable(this, MethodName.InitializeMenu), (uint)ConnectFlags.OneShot);
-		TransitionManager.instance.Connect(TransitionManager.SignalName.TransitionFinish, new Callable(this, MethodName.ShowMenu), (uint)ConnectFlags.OneShot);
+		TransitionManager.Instance.Connect(TransitionManager.SignalName.TransitionProcess, new Callable(this, MethodName.InitializeMenu), (uint)ConnectFlags.OneShot);
+		TransitionManager.Instance.Connect(TransitionManager.SignalName.TransitionFinish, new Callable(this, MethodName.ShowMenu), (uint)ConnectFlags.OneShot);
 		TransitionManager.StartTransition(new()
 		{
 			color = Colors.Black,

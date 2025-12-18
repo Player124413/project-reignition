@@ -1150,7 +1150,7 @@ public partial class PlayerController : CharacterBody3D
 			color = Colors.Black // Use Colors.Transparent for debugging
 		});
 
-		TransitionManager.instance.TransitionProcess += ProcessRespawn;
+		TransitionManager.Instance.TransitionProcess += ProcessRespawn;
 	}
 
 	private void ProcessRespawn()
@@ -1179,7 +1179,7 @@ public partial class PlayerController : CharacterBody3D
 		foreach (Node exception in GetCollisionExceptions())
 			RemoveCollisionExceptionWith(exception);
 
-		TransitionManager.instance.TransitionProcess -= ProcessRespawn;
+		TransitionManager.Instance.TransitionProcess -= ProcessRespawn;
 		FinishRespawn();
 	}
 

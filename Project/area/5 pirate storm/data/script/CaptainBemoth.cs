@@ -90,7 +90,7 @@ public partial class CaptainBemoth : PathFollow3D
 			color = Colors.Black
 		});
 
-		TransitionManager.instance.TransitionProcess += StartBattle;
+		TransitionManager.Instance.TransitionProcess += StartBattle;
 		SaveManager.ActiveGameData.AllowSkippingCutscene(IntroCutsceneID);
 		eventAnimator.Play("finish-intro");
 		eventAnimator.Advance(0.0);
@@ -98,7 +98,7 @@ public partial class CaptainBemoth : PathFollow3D
 
 	private void StartBattle()
 	{
-		TransitionManager.instance.TransitionProcess -= StartBattle;
+		TransitionManager.Instance.TransitionProcess -= StartBattle;
 		animator.Set(IntroTrigger, (int)AnimationNodeOneShot.OneShotRequest.Abort);
 
 		Respawn();

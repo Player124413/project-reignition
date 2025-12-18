@@ -72,8 +72,8 @@ public partial class StageSettings : Node3D
 		{
 			GetQualityNodesRecursively(this);
 			LevelState = LevelStateEnum.Probes;
-			if (!TransitionManager.instance.IsReloadingScene)
-				TransitionManager.instance.UpdateLoadingText("load_probes");
+			if (!TransitionManager.Instance.IsReloadingScene)
+				TransitionManager.Instance.UpdateLoadingText("load_probes");
 		}
 	}
 

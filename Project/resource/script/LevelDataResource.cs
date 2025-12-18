@@ -43,7 +43,8 @@ public partial class LevelDataResource : Resource
 			ExtensionMethods.CreateProperty("Level ID", Variant.Type.StringName),
 			ExtensionMethods.CreateProperty("Level Index", Variant.Type.Int),
 			ExtensionMethods.CreateProperty("Level Path", Variant.Type.String, PropertyHint.FilePath, "*.tscn"),
-			ExtensionMethods.CreateProperty("Story Event Index", Variant.Type.Int, PropertyHint.Range, "-1,31"),
+			ExtensionMethods.CreateProperty("Pre Story Event Index", Variant.Type.Int, PropertyHint.Range, "-1,30"),
+			ExtensionMethods.CreateProperty("Post Story Event Index", Variant.Type.Int, PropertyHint.Range, "-1,30"),
 
 			ExtensionMethods.CreateProperty("Mission Category", Variant.Type.Int, PropertyHint.Enum, MissionCategory.EnumToString()),
 			ExtensionMethods.CreateProperty("Has Fire Souls", Variant.Type.Bool),
@@ -97,8 +98,10 @@ public partial class LevelDataResource : Resource
 				return LevelIndex;
 			case "Level Path":
 				return LevelPath;
-			case "Story Event Index":
-				return StoryEventIndex;
+			case "Pre Story Event Index":
+				return PreStoryEventIndex;
+			case "Post Story Event Index":
+				return PostStoryEventIndex;
 
 			case "Mission Category":
 				return (int)MissionCategory;
@@ -168,8 +171,11 @@ public partial class LevelDataResource : Resource
 			case "Level Path":
 				LevelPath = (string)value;
 				break;
-			case "Story Event Index":
-				StoryEventIndex = (int)value;
+			case "Pre Story Event Index":
+				PreStoryEventIndex = (int)value;
+				break;
+			case "Post Story Event Index":
+				PostStoryEventIndex = (int)value;
 				break;
 
 			case "Mission Category":
@@ -258,8 +264,10 @@ public partial class LevelDataResource : Resource
 	public int LevelIndex { get; private set; }
 	/// <summary> Path to the level's scene. </summary>
 	public string LevelPath { get; private set; }
-	/// <summary> Story event index to play after completing the stage. Set to -1 if no story event is meant to be played. </summary>
-	public int StoryEventIndex = -1;
+	/// <summary> Event index to play when starting the stage. Set to -1 if no story event is meant to be played. </summary>
+	public int PreStoryEventIndex = -1;
+	/// <summary> Event index to play after completing the stage. Set to -1 if no story event is meant to be played. </summary>
+	public int PostStoryEventIndex = -1;
 
 	/// <summary> Does this mission contain fire souls? </summary>
 	public bool HasFireSouls { get; private set; }

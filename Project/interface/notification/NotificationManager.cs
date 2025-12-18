@@ -92,7 +92,7 @@ public partial class NotificationManager : Control
 			NotificationList.Sort(new NotificationData.Sorter());
 
 		// Connect transition signal
-		TransitionManager.instance.Connect(TransitionManager.SignalName.TransitionProcess, new Callable(this, MethodName.InitializeMenu), (uint)ConnectFlags.OneShot);
+		TransitionManager.Instance.Connect(TransitionManager.SignalName.TransitionProcess, new Callable(this, MethodName.InitializeMenu), (uint)ConnectFlags.OneShot);
 		TransitionManager.StartTransition(new()
 		{
 			color = Colors.Black,
@@ -106,7 +106,7 @@ public partial class NotificationManager : Control
 		animator.Play("init");
 		animator.Advance(0);
 
-		TransitionManager.instance.Connect(TransitionManager.SignalName.TransitionFinish, new Callable(this, MethodName.ShowUnlock), (uint)ConnectFlags.OneShot);
+		TransitionManager.Instance.Connect(TransitionManager.SignalName.TransitionFinish, new Callable(this, MethodName.ShowUnlock), (uint)ConnectFlags.OneShot);
 		TransitionManager.FinishTransition();
 	}
 
@@ -123,10 +123,10 @@ public partial class NotificationManager : Control
 
 		if (NotificationList.Count == 0) // Finished showing all notifications
 		{
-			TransitionManager.instance.Connect(TransitionManager.SignalName.TransitionProcess, new Callable(this, MethodName.HideMenu), (uint)ConnectFlags.OneShot);
+			TransitionManager.Instance.Connect(TransitionManager.SignalName.TransitionProcess, new Callable(this, MethodName.HideMenu), (uint)ConnectFlags.OneShot);
 
 			// Connect the queued scene to transition signals
-			TransitionManager.QueueSceneChange(TransitionManager.instance.QueuedScene);
+			TransitionManager.QueueSceneChange(TransitionManager.Instance.QueuedScene);
 			TransitionManager.StartTransition(new()
 			{
 				inSpeed = 0.5f,

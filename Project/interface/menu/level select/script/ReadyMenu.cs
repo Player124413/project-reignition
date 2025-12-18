@@ -118,8 +118,8 @@ public partial class ReadyMenu : Menu
 			disableAutoTransition = true,
 			showMissionDescription = true
 		});
-		TransitionManager.instance.SetMissionDescriptionText(missionLabel.Text, description.Text);
-		TransitionManager.instance.UpdateLoadingText("load_level");
+		TransitionManager.Instance.SetMissionDescriptionText(missionLabel.Text, description.Text);
+		TransitionManager.Instance.UpdateLoadingText("load_level");
 	}
 
 	///<summary> Sets up the ready menu for time attack

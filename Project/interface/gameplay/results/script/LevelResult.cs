@@ -81,15 +81,13 @@ public partial class LevelResult : Control
 
 			// Determine which scene to load without connecting it
 			if (Runtime.Instance.IsActionJustPressed("sys_cancel", "ui_cancel", "escape") && !TimeAttackManager.Instance.IsRunActive) // Retry stage
-				TransitionManager.instance.QueuedScene = string.Empty;
+				TransitionManager.Instance.QueuedScene = string.Empty;
 			else if (TimeAttackManager.Instance.IsRunActive)
 				TimeAttackManager.Instance.IncreaseLevel();
-
-			else// if (Level.storyEventIndex == 0) // Load main menu
-				TransitionManager.instance.QueuedScene = TransitionManager.MenuScenePath;
-
-			// TODO Load story event
-			//TransitionManager.QueueSceneChange($"{TransitionManager.EVENT_SCENE_PATH}{Level.storyEventIndex}.tscn");
+			else if (StageSettings.Instance.Data.PostStoryEventIndex == -1) // Load main menu
+				TransitionManager.Instance.QueuedScene = TransitionManager.MenuScenePath;
+			else // Load event
+				TransitionManager.Instance.QueuedScene = $"{TransitionManager.EventScenePath}{StageSettings.Instance.Data.PostStoryEventIndex}.tscn";
 
 			// Actual scene transition is handled by the experience results screen (which is connected via this signal)
 			if (!TimeAttackManager.Instance.IsRunActive)

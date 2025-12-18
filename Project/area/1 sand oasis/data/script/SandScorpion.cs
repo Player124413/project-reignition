@@ -184,7 +184,7 @@ public partial class SandScorpion : Node3D
 			outSpeed = .5f,
 			color = Colors.Black
 		});
-		TransitionManager.instance.Connect(TransitionManager.SignalName.TransitionProcess, new Callable(this, MethodName.StartBattle), (uint)ConnectFlags.OneShot);
+		TransitionManager.Instance.Connect(TransitionManager.SignalName.TransitionProcess, new Callable(this, MethodName.StartBattle), (uint)ConnectFlags.OneShot);
 		SaveManager.ActiveGameData.AllowSkippingCutscene(IntroCutsceneID);
 	}
 

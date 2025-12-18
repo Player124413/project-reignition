@@ -273,8 +273,8 @@ public partial class EventPlayer : Node
 				disableAutoTransition = true,
 				showMissionDescription = true
 			});
-			TransitionManager.instance.SetMissionDescriptionText(adventureLevelAutoload.MissionTypeKey, adventureLevelAutoload.MissionDescriptionKey);
-			TransitionManager.instance.UpdateLoadingText("load_level");
+			TransitionManager.Instance.SetMissionDescriptionText(adventureLevelAutoload.MissionTypeKey, adventureLevelAutoload.MissionDescriptionKey);
+			TransitionManager.Instance.UpdateLoadingText("load_level");
 			return;
 		}
 

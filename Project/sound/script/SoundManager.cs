@@ -29,7 +29,7 @@ public partial class SoundManager : Node
 		InitializePearlSFX();
 
 		// Cancel Dialog when switching to a new scene
-		TransitionManager.instance.Connect(TransitionManager.SignalName.SceneChanged, new(this, MethodName.CancelDialog));
+		TransitionManager.Instance.Connect(TransitionManager.SignalName.SceneChanged, new(this, MethodName.CancelDialog));
 	}
 
 	public override void _PhysicsProcess(double _)

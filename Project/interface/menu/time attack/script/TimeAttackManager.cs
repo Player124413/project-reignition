@@ -101,7 +101,7 @@ public partial class TimeAttackManager : Node
 			disableAutoTransition = true,
 			showMissionDescription = true
 		});
-		TransitionManager.instance.SetMissionDescriptionText(level.MissionTypeKey, level.MissionDescriptionKey);
-		TransitionManager.instance.UpdateLoadingText("load_level");
+		TransitionManager.Instance.SetMissionDescriptionText(level.MissionTypeKey, level.MissionDescriptionKey);
+		TransitionManager.Instance.UpdateLoadingText("load_level");
 	}
 }
