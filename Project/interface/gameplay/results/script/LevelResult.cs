@@ -97,7 +97,7 @@ public partial class LevelResult : Control
 				// Adventure mode; Process events
 				TransitionManager.Instance.QueuedScene = TransitionManager.MenuScenePath;
 
-				if (Stage.LevelState == StageSettings.LevelStateEnum.Success && Stage.Data.PostStoryEventIndex != 0 &&
+				if (Stage.LevelState == StageSettings.LevelStateEnum.Success && Stage.Data.PostStoryEventIndex >= 0 &&
 					(!wasStageClearedWhenLoaded || SaveManager.Config.repeatCutscenes))
 				{
 					TransitionManager.Instance.QueuedScene = $"{TransitionManager.EventScenePath}{Stage.Data.PostStoryEventIndex}.tscn";

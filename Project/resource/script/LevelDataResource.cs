@@ -43,8 +43,8 @@ public partial class LevelDataResource : Resource
 			ExtensionMethods.CreateProperty("Level ID", Variant.Type.StringName),
 			ExtensionMethods.CreateProperty("Level Index", Variant.Type.Int),
 			ExtensionMethods.CreateProperty("Level Path", Variant.Type.String, PropertyHint.FilePath, "*.tscn"),
-			ExtensionMethods.CreateProperty("Pre Story Event Index", Variant.Type.Int, PropertyHint.Range, "0,30"),
-			ExtensionMethods.CreateProperty("Post Story Event Index", Variant.Type.Int, PropertyHint.Range, "0,30"),
+			ExtensionMethods.CreateProperty("Pre Story Event Index", Variant.Type.Int, PropertyHint.Range, "-1,30"),
+			ExtensionMethods.CreateProperty("Post Story Event Index", Variant.Type.Int, PropertyHint.Range, "-1,30"),
 
 			ExtensionMethods.CreateProperty("Mission Category", Variant.Type.Int, PropertyHint.Enum, MissionCategory.EnumToString()),
 			ExtensionMethods.CreateProperty("Has Fire Souls", Variant.Type.Bool),
