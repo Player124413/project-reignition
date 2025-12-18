@@ -254,7 +254,7 @@ public partial class Menu : Control
 
 	public void PlayBgm()
 	{
-		if (bgm == null || bgm.Playing) return;
+		if (bgm == null || bgm.GetBgmResource() == null || bgm.Playing) return;
 
 		bgmFadeTime = 0f; // Stops any active fading
 		bgm.VolumeDb = 0f; // Reset volume

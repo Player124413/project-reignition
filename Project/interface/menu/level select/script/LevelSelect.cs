@@ -76,6 +76,7 @@ public partial class LevelSelect : Menu
 		initialCursorPosition = cursor.Position.Y;
 		base.SetUp();
 	}
+
 	protected override void ProcessMenu()
 	{
 		base.ProcessMenu();
@@ -89,7 +90,6 @@ public partial class LevelSelect : Menu
 			menuMemory[MemoryKeys.LevelSelect] = 0;
 			SetUp();
 		}
-
 
 		VerticalSelection = menuMemory[MemoryKeys.LevelSelect];
 		RecalculateListPosition();
@@ -121,10 +121,7 @@ public partial class LevelSelect : Menu
 		else
 		{
 			for (int i = 0; i < levelOptions.Count; i++)
-			{
 				levelOptions[i].EnableTAInfo();
-			}
-
 		}
 	}
 
@@ -136,41 +133,33 @@ public partial class LevelSelect : Menu
 
 	protected override void Confirm()
 	{
-		if (menuMemory[MemoryKeys.ActiveMenu] != (int)MemoryKeys.TimeAttack)
-		{
-			if (!levelOptions[VerticalSelection].IsUnlocked)
-				return;
+		if (menuMemory[MemoryKeys.ActiveMenu] != (int)MemoryKeys.TimeAttack && !levelOptions[VerticalSelection].IsUnlocked)
+			return;
 
-			base.Confirm();
-		}
-		else
-		{
-			base.Confirm();
-		}
+		base.Confirm();
 	}
 
 	protected override void Cancel()
 	{
-		// Revert bgm music
-		if (bgm?.Playing == true && menuMemory[MemoryKeys.ActiveMenu] != (int)MemoryKeys.TimeAttack)
+		base.Cancel();
+
+		if (menuMemory[MemoryKeys.ActiveMenu] == (int)MemoryKeys.TimeAttack)
 		{
-			FadeBgm(.5f); // Fade out bgm
-			parentMenu.FadeBgm(.5f, true, .5f); // Fade in parent bgm
-			parentMenu.CurrentBgmTime = CurrentBgmTime; // Sync bgm
-			base.Cancel();
-		}
-		else if (menuMemory[MemoryKeys.ActiveMenu] == (int)MemoryKeys.TimeAttack)
-		{
-			base.Cancel();
 			HideMenu();
 			cursorPosition = 0;
 			levelOptions.Clear();
 
 			parentMenu.OpenParentMenu();
-
+			return;
 		}
 
-
+		// Revert bgm music
+		if (bgm?.Playing == true)
+		{
+			FadeBgm(.5f); // Fade out bgm
+			parentMenu.FadeBgm(.5f, true, .5f); // Fade in parent bgm
+			parentMenu.CurrentBgmTime = CurrentBgmTime; // Sync bgm
+		}
 	}
 
 	/// <summary> Shows the "Are you ready?" screen. </summary>
