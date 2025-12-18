@@ -168,7 +168,7 @@ public partial class LevelSelect : Menu
 		readyMenu.SetMapText(areaKey);
 		readyMenu.SetMissionText(levelOptions[VerticalSelection].data.MissionTypeKey);
 		readyMenu.parentMenu = this;
-		readyMenu.LevelPath = levelOptions[VerticalSelection].data.LevelPath;
+		readyMenu.LevelData = levelOptions[VerticalSelection].data;
 		readyMenu.ShowMenu();
 	}
 

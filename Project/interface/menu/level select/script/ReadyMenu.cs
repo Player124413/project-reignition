@@ -104,12 +104,27 @@ public partial class ReadyMenu : Menu
 
 	public void SetBgmPlayer(BGMPlayer audioStreamPlayer) => bgm = audioStreamPlayer;
 
-	/// <summary> Path to the level scene. </summary>
-	public string LevelPath { get; set; }
+	/// <summary> The current Level Data. </summary>
+	public LevelDataResource LevelData { get; set; }
 	/// <summary> Loads the level. </summary>
 	public void LoadLevel()
 	{
-		TransitionManager.QueueSceneChange(LevelPath);
+		if (!TimeAttackManager.Instance.IsRunActive)
+		{
+			// Handle Pre Event Indexes
+			if (LevelData.PreStoryEventIndex != -1)
+			{
+				TransitionManager.QueueSceneChange($"{TransitionManager.EventScenePath}{LevelData.PreStoryEventIndex}.tscn");
+				TransitionManager.StartTransition(new()
+				{
+					inSpeed = 0.5f,
+					color = Colors.Black,
+				});
+				return;
+			}
+		}
+
+		TransitionManager.QueueSceneChange(LevelData.LevelPath);
 		TransitionManager.StartTransition(new()
 		{
 			inSpeed = 1f,
@@ -127,6 +142,6 @@ public partial class ReadyMenu : Menu
 	{
 		SetMapText(level.AreaKey.ToString().ToCamelCase());
 		SetMissionText(level.MissionTypeKey);
-		LevelPath = level.LevelPath;
+		LevelData = level;
 	}
 }
