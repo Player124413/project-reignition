@@ -25,15 +25,15 @@ public partial class Objectives : Control
 		}
 
 		Visible = Stage.Data.MissionObjectiveCount != 0 &&
-			(Stage.Data.MissionType == LevelDataResource.MissionTypes.Objective ||
-			Stage.Data.MissionType == LevelDataResource.MissionTypes.Enemy ||
-			Stage.Data.MissionType == LevelDataResource.MissionTypes.Chain);
+			(Stage.Data.MissionType == LevelDataResource.MissionTypeEnum.Objective ||
+			Stage.Data.MissionType == LevelDataResource.MissionTypeEnum.Enemy ||
+			Stage.Data.MissionType == LevelDataResource.MissionTypeEnum.Chain);
 
 		if (!Visible) return; // Don't do anything when objective counter isn't visible
 
-		if (Stage.Data.MissionType == LevelDataResource.MissionTypes.Enemy)
+		if (Stage.Data.MissionType == LevelDataResource.MissionTypeEnum.Enemy)
 			PlayObjectiveAnimation("enemy");
-		else if (Stage.Data.MissionType == LevelDataResource.MissionTypes.Chain)
+		else if (Stage.Data.MissionType == LevelDataResource.MissionTypeEnum.Chain)
 			PlayObjectiveAnimation("ring_chain");
 
 		objectiveValue.Text = Stage.CurrentObjectiveCount.ToString("00");
@@ -52,9 +52,9 @@ public partial class Objectives : Control
 
 	public void UpdateObjective()
 	{
-		if (Stage.Data.MissionType == LevelDataResource.MissionTypes.Objective ||
-			Stage.Data.MissionType == LevelDataResource.MissionTypes.Enemy ||
-			Stage.Data.MissionType == LevelDataResource.MissionTypes.Chain)
+		if (Stage.Data.MissionType == LevelDataResource.MissionTypeEnum.Objective ||
+			Stage.Data.MissionType == LevelDataResource.MissionTypeEnum.Enemy ||
+			Stage.Data.MissionType == LevelDataResource.MissionTypeEnum.Chain)
 		{
 			objectiveSfx.Play();
 		}

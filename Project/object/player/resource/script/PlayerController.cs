@@ -1001,7 +1001,7 @@ public partial class PlayerController : CharacterBody3D
 		EmitSignal(SignalName.Damaged);
 
 		// Level failed
-		if (Stage.Data.MissionType == LevelDataResource.MissionTypes.Perfect)
+		if (Stage.Data.MissionType == LevelDataResource.MissionTypeEnum.Perfect)
 		{
 			DefeatPlayer();
 			Stage.FinishLevel(false);
@@ -1134,8 +1134,8 @@ public partial class PlayerController : CharacterBody3D
 		DefeatPlayer();
 
 		if (!IsDebugRespawn &&
-			(Stage.Data.MissionType == LevelDataResource.MissionTypes.Deathless
-			|| Stage.Data.MissionType == LevelDataResource.MissionTypes.Perfect))
+			(Stage.Data.MissionType == LevelDataResource.MissionTypeEnum.Deathless
+			|| Stage.Data.MissionType == LevelDataResource.MissionTypeEnum.Perfect))
 		{
 			// Level failed
 			Stage.FinishLevel(false);

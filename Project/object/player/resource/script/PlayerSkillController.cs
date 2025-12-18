@@ -80,12 +80,12 @@ public partial class PlayerSkillController : Node3D
 	{
 		// Expand hitbox if skills is equipped
 		bool isPearlRangeEquipped = SkillRing.IsSkillEquipped(SkillKey.PearlRange) &&
-			(StageSettings.Instance.Data.MissionType != LevelDataResource.MissionTypes.Pearl || StageSettings.Instance.Data.MissionObjectiveCount != 0);
+			(StageSettings.Instance.Data.MissionType != LevelDataResource.MissionTypeEnum.Pearl || StageSettings.Instance.Data.MissionObjectiveCount != 0);
 		bool isRingRangeEquipped = SkillRing.IsSkillEquipped(SkillKey.RingRange) &&
-			(StageSettings.Instance.Data.MissionType != LevelDataResource.MissionTypes.Ring || StageSettings.Instance.Data.MissionObjectiveCount != 0);
+			(StageSettings.Instance.Data.MissionType != LevelDataResource.MissionTypeEnum.Ring || StageSettings.Instance.Data.MissionObjectiveCount != 0);
 
 		IsRingExchangeEquipped = SkillRing.IsSkillEquipped(SkillKey.RingPearlConvert) &&
-			(StageSettings.Instance.Data.MissionType != LevelDataResource.MissionTypes.Ring || StageSettings.Instance.Data.MissionObjectiveCount == 0);
+			(StageSettings.Instance.Data.MissionType != LevelDataResource.MissionTypeEnum.Ring || StageSettings.Instance.Data.MissionObjectiveCount == 0);
 
 		Runtime.Instance.UpdatePearlCollisionShapes(isPearlRangeEquipped ? 5 : 1);
 		Runtime.Instance.UpdateRingCollisionShapes(isRingRangeEquipped ? 5 : 1);

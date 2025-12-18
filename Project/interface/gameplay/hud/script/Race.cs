@@ -19,7 +19,7 @@ public partial class Race : Control
 		if (Stage == null)
 			return;
 
-		Visible = Stage.Data.MissionType == LevelDataResource.MissionTypes.Race;
+		Visible = Stage.Data.MissionType == LevelDataResource.MissionTypeEnum.Race;
 		raceEndPoint = raceBarSize.Size.X - raceUhu.Size.X;
 		raceUhu.Position = new Vector2(0, raceUhu.Position.Y);
 		racePlayer.Position = new Vector2(0, racePlayer.Position.Y);

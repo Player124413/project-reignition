@@ -223,7 +223,7 @@ public partial class Enemy : Node3D
 		StageSettings.Instance.UpdateScore(50 * maxHealth, StageSettings.MathModeEnum.Add); // Add points based on max health
 
 		// Automatically increment objective count
-		if (StageSettings.Instance.Data.MissionType == LevelDataResource.MissionTypes.Enemy)
+		if (StageSettings.Instance.Data.MissionType == LevelDataResource.MissionTypeEnum.Enemy)
 			StageSettings.Instance.CallDeferred(StageSettings.MethodName.IncrementObjective);
 
 		EmitSignal(SignalName.Defeated);

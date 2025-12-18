@@ -37,7 +37,7 @@ public partial class Rings : Control
 		}
 
 		// Show/Hide max ring count
-		bool isRingLimited = Stage.Data.MissionType == LevelDataResource.MissionTypes.Ring && Stage.Data.MissionObjectiveCount != 0;
+		bool isRingLimited = Stage.Data.MissionType == LevelDataResource.MissionTypeEnum.Ring && Stage.Data.MissionObjectiveCount != 0;
 		styleAnimator.Play(isRingLimited ? "ring-limit" : "ring-no-limit");
 
 		if (isRingLimited)

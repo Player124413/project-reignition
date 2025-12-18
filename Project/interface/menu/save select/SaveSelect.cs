@@ -151,7 +151,7 @@ public partial class SaveSelect : Menu
 			SaveManager.ResetSaveData(SaveManager.ActiveSaveSlotIndex, false);
 			SaveManager.SaveGameData();
 
-			if (menuMemory[MemoryKeys.ActiveMenu] != (int)MemoryKeys.TimeAttack)//Don't load a scene if we are in the time attack menu
+			if (menuMemory[MemoryKeys.ActiveMenu] != (int)MemoryKeys.TimeAttack)// Don't load a scene if we are in the time attack menu
 			{
 				if (!DebugManager.Instance.UseDemoSave) // Don't load into cutscenes in the demo
 				{
@@ -163,9 +163,7 @@ public partial class SaveSelect : Menu
 						inSpeed = 1f,
 					});
 				}
-
 			}
-
 		}
 
 		if (DebugManager.Instance.UseDemoSave || OS.IsDebugBuild()) // Unlock all worlds in the demo

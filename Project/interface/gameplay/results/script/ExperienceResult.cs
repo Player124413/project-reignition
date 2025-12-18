@@ -177,14 +177,17 @@ public partial class ExperienceResult : Control
 		int addedExp = interpolatedExp - startingExp;
 		scoreExp = Math.Clamp(Stage.TotalScore - addedExp, 0, Stage.TotalScore);
 		skillExp = Math.Clamp(Stage.CurrentEXP + Stage.TotalScore - addedExp, 0, Stage.CurrentEXP);
+
+		int firstClearBonus = Stage.Data.GetFirstClearBonus();
+
 		if (useMissionExp)
-			missionExp = Math.Clamp(Stage.CurrentEXP + Stage.TotalScore + Stage.Data.FirstClearBonus - addedExp, 0, Stage.Data.FirstClearBonus);
+			missionExp = Math.Clamp(Stage.CurrentEXP + Stage.TotalScore + firstClearBonus - addedExp, 0, firstClearBonus);
 
 		if (useAccumulatedExp)
 		{
 			int targetAccumulatedExp = Stage.CurrentEXP + Stage.TotalScore + AccumulatedExp - addedExp;
 			if (useMissionExp)
-				targetAccumulatedExp += Stage.Data.FirstClearBonus;
+				targetAccumulatedExp += firstClearBonus;
 			accumulatedExp = Math.Clamp(targetAccumulatedExp, 0, AccumulatedExp);
 		}
 
@@ -332,7 +335,7 @@ public partial class ExperienceResult : Control
 			if (Stage.LevelState != StageSettings.LevelStateEnum.Success) // Only add mission exp if the stage was completed 
 				useMissionExp = false;
 			else
-				targetExp += Stage.Data.FirstClearBonus;
+				targetExp += Stage.Data.GetFirstClearBonus();
 		}
 		missionLabel.GetParent<Control>().Visible = useMissionExp;
 

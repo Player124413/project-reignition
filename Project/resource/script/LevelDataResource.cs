@@ -8,7 +8,7 @@ namespace Project.Gameplay;
 [GlobalClass]
 public partial class LevelDataResource : Resource
 {
-	public enum MissionTypes
+	public enum MissionTypeEnum
 	{
 		None, // Add a goal node or a boss so the player doesn't get stuck!
 		Objective, // Add custom nodes that call IncrementObjective()
@@ -19,6 +19,13 @@ public partial class LevelDataResource : Resource
 		Deathless, // Don't die
 		Perfect, // Don't take any damage or die
 		Chain, // Chain rings together
+	}
+
+	public enum MissionCategoryEnum
+	{
+		Side, // Option side mission mission
+		Story, // Mandatory story mission
+		Boss, // Boss battle
 	}
 
 	public enum CompletionAnimationType
@@ -37,9 +44,8 @@ public partial class LevelDataResource : Resource
 			ExtensionMethods.CreateProperty("Level Index", Variant.Type.Int),
 			ExtensionMethods.CreateProperty("Level Path", Variant.Type.String, PropertyHint.FilePath, "*.tscn"),
 			ExtensionMethods.CreateProperty("Story Event Index", Variant.Type.Int, PropertyHint.Range, "-1,31"),
-			ExtensionMethods.CreateProperty("First Clear Bonus", Variant.Type.Int, PropertyHint.Range, "0,10000"),
 
-			ExtensionMethods.CreateProperty("Is Side Mission", Variant.Type.Bool),
+			ExtensionMethods.CreateProperty("Mission Category", Variant.Type.Int, PropertyHint.Enum, MissionCategory.EnumToString()),
 			ExtensionMethods.CreateProperty("Has Fire Souls", Variant.Type.Bool),
 
 			ExtensionMethods.CreateProperty("Mission/Type", Variant.Type.Int, PropertyHint.Enum, MissionType.EnumToString()),
@@ -49,8 +55,8 @@ public partial class LevelDataResource : Resource
 			ExtensionMethods.CreateProperty("Mission/Time Limit", Variant.Type.Int, PropertyHint.Range, "0,640"),
 		];
 
-		if (MissionType != MissionTypes.None && MissionType != MissionTypes.Race
-			&& MissionType != MissionTypes.Deathless && MissionType != MissionTypes.Perfect)
+		if (MissionType != MissionTypeEnum.None && MissionType != MissionTypeEnum.Race
+			&& MissionType != MissionTypeEnum.Deathless && MissionType != MissionTypeEnum.Perfect)
 		{
 			properties.Add(ExtensionMethods.CreateProperty("Mission/Objective Count", Variant.Type.Int, PropertyHint.Range, "0,256"));
 		}
@@ -93,11 +99,9 @@ public partial class LevelDataResource : Resource
 				return LevelPath;
 			case "Story Event Index":
 				return StoryEventIndex;
-			case "First Clear Bonus":
-				return FirstClearBonus;
 
-			case "Is Side Mission":
-				return IsSideMission;
+			case "Mission Category":
+				return (int)MissionCategory;
 			case "Has Fire Souls":
 				return HasFireSouls;
 
@@ -167,19 +171,16 @@ public partial class LevelDataResource : Resource
 			case "Story Event Index":
 				StoryEventIndex = (int)value;
 				break;
-			case "First Clear Bonus":
-				FirstClearBonus = (int)value;
-				break;
 
-			case "Is Side Mission":
-				IsSideMission = (bool)value;
+			case "Mission Category":
+				MissionCategory = (MissionCategoryEnum)(int)value;
 				break;
 			case "Has Fire Souls":
 				HasFireSouls = (bool)value;
 				break;
 
 			case "Mission/Type":
-				MissionType = (MissionTypes)(int)value;
+				MissionType = (MissionTypeEnum)(int)value;
 				NotifyPropertyListChanged();
 				break;
 			case "Mission/Type Key":
@@ -263,12 +264,10 @@ public partial class LevelDataResource : Resource
 	/// <summary> Does this mission contain fire souls? </summary>
 	public bool HasFireSouls { get; private set; }
 	/// <summary> Should this mission be shown as optional? </summary>
-	public bool IsSideMission { get; private set; }
-	/// <summary> Amount of extra experience to grant when the player first clears the level. </summary>
-	public int FirstClearBonus { get; private set; }
+	public MissionCategoryEnum MissionCategory { get; private set; }
 
 	/// <summary> Type of mission. </summary>
-	public MissionTypes MissionType { get; private set; }
+	public MissionTypeEnum MissionType { get; private set; }
 	/// <summary> Localization key for the type of mission (Goal, Rampage, Rings, etc.). </summary>
 	public string MissionTypeKey { get; private set; }
 	/// <summary> Localization key for the more specific description. </summary>
@@ -307,4 +306,14 @@ public partial class LevelDataResource : Resource
 	public Array<LevelDataResource> UnlockStage { get; private set; }
 	/// <summary> World to unlock when the level is completed. </summary>
 	public SaveManager.WorldEnum UnlockWorld { get; private set; }
+
+	public int GetFirstClearBonus()
+	{
+		return MissionCategory switch
+		{
+			MissionCategoryEnum.Story => 4000,
+			MissionCategoryEnum.Boss => 5000,
+			_ => 2000,
+		};
+	}
 }
