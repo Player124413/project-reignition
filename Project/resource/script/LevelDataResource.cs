@@ -43,8 +43,8 @@ public partial class LevelDataResource : Resource
 			ExtensionMethods.CreateProperty("Level ID", Variant.Type.StringName),
 			ExtensionMethods.CreateProperty("Level Index", Variant.Type.Int),
 			ExtensionMethods.CreateProperty("Level Path", Variant.Type.String, PropertyHint.FilePath, "*.tscn"),
-			ExtensionMethods.CreateProperty("Pre Story Event Index", Variant.Type.Int, PropertyHint.Range, "-1,30"),
-			ExtensionMethods.CreateProperty("Post Story Event Index", Variant.Type.Int, PropertyHint.Range, "-1,30"),
+			ExtensionMethods.CreateProperty("Pre Story Event Index", Variant.Type.String),
+			ExtensionMethods.CreateProperty("Post Story Event Index", Variant.Type.String),
 
 			ExtensionMethods.CreateProperty("Mission Category", Variant.Type.Int, PropertyHint.Enum, MissionCategory.EnumToString()),
 			ExtensionMethods.CreateProperty("Has Fire Souls", Variant.Type.Bool),
@@ -99,9 +99,9 @@ public partial class LevelDataResource : Resource
 			case "Level Path":
 				return LevelPath;
 			case "Pre Story Event Index":
-				return PreStoryEventIndex;
+				return PreStoryEvent;
 			case "Post Story Event Index":
-				return PostStoryEventIndex;
+				return PostStoryEvent;
 
 			case "Mission Category":
 				return (int)MissionCategory;
@@ -172,10 +172,10 @@ public partial class LevelDataResource : Resource
 				LevelPath = (string)value;
 				break;
 			case "Pre Story Event Index":
-				PreStoryEventIndex = (int)value;
+				PreStoryEvent = (string)value;
 				break;
 			case "Post Story Event Index":
-				PostStoryEventIndex = (int)value;
+				PostStoryEvent = (string)value;
 				break;
 
 			case "Mission Category":
@@ -265,9 +265,9 @@ public partial class LevelDataResource : Resource
 	/// <summary> Path to the level's scene. </summary>
 	public string LevelPath { get; private set; }
 	/// <summary> Event index to play when starting the stage. Set to 0 if no story event is meant to be played. </summary>
-	public int PreStoryEventIndex;
+	public string PreStoryEvent;
 	/// <summary> Event index to play after completing the stage. Set to 0 if no story event is meant to be played. </summary>
-	public int PostStoryEventIndex;
+	public string PostStoryEvent;
 
 	/// <summary> Does this mission contain fire souls? </summary>
 	public bool HasFireSouls { get; private set; }
