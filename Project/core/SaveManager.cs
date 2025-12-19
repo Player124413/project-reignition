@@ -120,6 +120,7 @@ public partial class SaveManager : Node
 		Italian,
 		French,
 		Spanish,
+		LatinAmericanSpanish,
 		BrazilianPortuguese,
 		Polish,
 		Chinese,
@@ -651,6 +652,9 @@ public partial class SaveManager : Node
 				break;
 			case TextLanguage.Spanish:
 				TranslationServer.SetLocale("es");
+				break;
+			case TextLanguage.LatinAmericanSpanish:
+				TranslationServer.SetLocale("es_US");
 				break;
 			case TextLanguage.French:
 				TranslationServer.SetLocale("fr");
