@@ -958,7 +958,8 @@ public partial class SaveManager : Node
 		public float CalculateSoulGaugeLevelRatio() => Mathf.Clamp(level, 0, 50) / (float)50;
 
 		/// <summary> Checks if a stage has been unlocked. </summary>
-		public bool IsStageUnlocked(string levelID) => stagesUnlocked.Contains(levelID);
+		public bool IsStageUnlocked(string levelID) => stagesUnlocked.Contains(levelID) ||
+			levelData.GetClearStatus(levelID) != LevelSaveData.LevelStatus.New || NextStoryLevel?.LevelID == levelID; // Demo save compatability
 		/// <summary> Unlocks a stage. </summary>
 		public void UnlockStage(string levelID)
 		{
