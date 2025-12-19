@@ -288,8 +288,15 @@ public partial class PauseMenu : Node
 		}
 		else if (currentSelection == 4) // Quit by opening the EXP menu
 		{
+
 			SaveManager.SaveGameData();
-			TransitionManager.Instance.QueuedScene = TransitionManager.MenuScenePath;
+			if (TimeAttackManager.Instance.IsRunActive)
+			{
+				TimeAttackManager.Instance.SetRunActive(false);
+				TransitionManager.Instance.QueuedScene = TransitionManager.TimeAttackScenePath;
+			}
+			else
+				TransitionManager.Instance.QueuedScene = TransitionManager.MenuScenePath;
 			SoundManager.instance.StageMusicPlayer.Stop();
 			EmitSignal(SignalName.OnSceneChangeSelected);
 		}
