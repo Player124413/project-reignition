@@ -151,8 +151,6 @@ public partial class MainMenu : Menu
 			return;
 		}
 
-		// Ignore unimplemented menus (PARTY MODE).
-		//if (currentSelection == 1) return;
 		animator.Play("confirm");
 	}
 

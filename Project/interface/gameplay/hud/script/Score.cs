@@ -20,13 +20,30 @@ public partial class Score : Control
 
 	public void InitializeRankPreviewer()
 	{
-		switch (SaveManager.Config.hudStyle)
+		if (TimeAttackManager.Instance.IsRunActive)
 		{
-			case SaveManager.HudStyle.Reignition:
-				styleAnimator.Play("reignited");
-				styleAnimator.Advance(0.0);
-				break;
+			styleAnimator.Play("default-timeattack");
+			styleAnimator.Advance(0.0);
+			switch (SaveManager.Config.hudStyle)
+			{
+				case SaveManager.HudStyle.Reignition:
+					styleAnimator.Play("reignited-timeattack");
+					styleAnimator.Advance(0.0);
+					break;
+			}
 		}
+		else
+		{
+			switch (SaveManager.Config.hudStyle)
+			{
+				case SaveManager.HudStyle.Reignition:
+					styleAnimator.Play("reignited");
+					styleAnimator.Advance(0.0);
+					break;
+			}
+		}
+
+
 
 		isRankPreviewShown = SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.RankPreview);
 		styleAnimator.Play(isRankPreviewShown ? "show-rank-preview" : "hide-rank-preview");
