@@ -1,7 +1,6 @@
 using Godot;
 using Godot.Collections;
 using Project.Core;
-using Project.Gameplay;
 
 namespace Project.Interface.Menus;
 
@@ -14,6 +13,8 @@ public partial class WorldSelect : Menu
 	private VideoStreamPlayer[] videoPlayers;
 	private VideoStreamPlayer ActiveVideoPlayer { get; set; }
 	private VideoStreamPlayer PreviousVideoPlayer { get; set; }
+	[Export]
+	private AnimationPlayer storyIndicationAnimator;
 
 	private Color crossfadeColor;
 	private float videoFadeFactor;
@@ -96,9 +97,7 @@ public partial class WorldSelect : Menu
 
 		PreviousVideoPlayer = null;
 		UpdateActiveVideoPlayer();
-
-		// TODO Show the next Story World
-		GD.Print(SaveManager.ActiveGameData.NextStoryLevel?.LevelID);
+		UpdateStoryIndicator(false);
 	}
 
 	public override void _Process(double _)
@@ -134,7 +133,19 @@ public partial class WorldSelect : Menu
 			animator.Play(isScrollingUp ? ScrollUpAnimation : ScrollDownAnimation);
 			animator.Seek(0.0, true);
 			DisableProcessing();
+			UpdateStoryIndicator(false);
 		}
+	}
+
+	private void UpdateStoryIndicator(bool forceClose)
+	{
+		if (!forceClose && (int)SaveManager.ActiveGameData.NextStoryLevel?.AreaKey == VerticalSelection)
+		{
+			storyIndicationAnimator.Play("show");
+			return;
+		}
+
+		storyIndicationAnimator.Play(storyIndicationAnimator.AssignedAnimation.Equals("show") ? "hide" : "RESET");
 	}
 
 	protected override void Confirm()
@@ -142,6 +153,7 @@ public partial class WorldSelect : Menu
 		// World hasn't been unlocked
 		if (!SaveManager.ActiveGameData.IsWorldUnlocked((SaveManager.WorldEnum)VerticalSelection)) return;
 
+		UpdateStoryIndicator(true);
 		base.Confirm();
 	}
 
@@ -154,6 +166,7 @@ public partial class WorldSelect : Menu
 
 		SaveManager.SaveGameData();
 		SaveManager.ActiveSaveSlotIndex = -1;
+		UpdateStoryIndicator(true);
 	}
 
 	public override void OpenSubmenu()
