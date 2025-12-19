@@ -170,7 +170,7 @@ public partial class SaveSelect : Menu
 			}
 		}
 
-		if (DebugManager.Instance.UseDemoSave || OS.IsDebugBuild()) // Unlock all worlds in the demo
+		if (DebugManager.Instance.UseDemoSave) // Unlock all worlds in the demo
 			SaveManager.ActiveGameData.UnlockAllWorlds();
 
 		menuMemory[MemoryKeys.WorldSelect] = (int)SaveManager.ActiveGameData.lastPlayedWorld; // Set the world selection to the last played world
