@@ -104,6 +104,8 @@ public partial class NotificationManager : Control
 		if (NotificationList.Count != 0)
 			NotificationList.Sort(new NotificationData.Sorter());
 
+		SaveManager.ActiveGameData.GetNextStoryLevel(SaveManager.ActiveGameData.NextStoryLevel); // Update story level
+
 		// Connect transition signal
 		TransitionManager.Instance.Connect(TransitionManager.SignalName.TransitionProcess, new Callable(this, MethodName.InitializeMenu), (uint)ConnectFlags.OneShot);
 		TransitionManager.StartTransition(new()
