@@ -38,7 +38,7 @@ public partial class Options : Menu
 				maxSelection = 4;
 				break;
 			case Submenus.Control:
-				maxSelection = 7;
+				maxSelection = 6; // TODO Add 1 here if we ever add party mode;
 				break;
 			case Submenus.Interface:
 				maxSelection = 6;
@@ -1144,13 +1144,16 @@ public partial class Options : Menu
 			case 3:
 				FlipBook(Submenus.Mapping, false, 0);
 				break;
+			/*
+			TODO Shift options by one and uncomment this if we ever add party mode
 			case 4:
 				FlipBook(Submenus.PartyMapping, false, 0);
 				break;
-			case 5:
+			*/
+			case 4:
 				FlipBook(Submenus.Test, false, VerticalSelection);
 				break;
-			case 6:
+			case 5:
 				currentSubmenu = Submenus.ResetControls;
 				ShowResetMenu();
 				return;
