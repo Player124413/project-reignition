@@ -146,6 +146,9 @@ public partial class SaveSelect : Menu
 		SaveManager.ActiveSaveSlotIndex = _saveOptions[ActiveSaveOptionIndex].SaveIndex;
 		SaveManager.ActiveSkillRing.LoadFromActiveData();
 
+		// Update next story level
+		SaveManager.ActiveGameData.LoadNextStoryLevelFromSaveData();
+
 		if (SaveManager.ActiveGameData.IsNewFile() || Mathf.IsZeroApprox(SaveManager.ActiveGameData.playTime))
 		{
 			SaveManager.ResetSaveData(SaveManager.ActiveSaveSlotIndex, false);

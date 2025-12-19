@@ -1,6 +1,7 @@
 using Godot;
 using Godot.Collections;
 using Project.Core;
+using Project.Gameplay;
 
 namespace Project.Interface.Menus;
 
@@ -95,6 +96,9 @@ public partial class WorldSelect : Menu
 
 		PreviousVideoPlayer = null;
 		UpdateActiveVideoPlayer();
+
+		// TODO Show the next Story World
+		GD.Print(SaveManager.ActiveGameData.NextStoryLevel?.LevelID);
 	}
 
 	public override void _Process(double _)
@@ -209,6 +213,5 @@ public partial class WorldSelect : Menu
 			description.ShowDescription();
 			description.Text = levelDescriptionKeys[selectionIndex];
 		}
-
 	}
 }

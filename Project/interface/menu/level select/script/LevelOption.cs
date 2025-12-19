@@ -40,6 +40,7 @@ public partial class LevelOption : Control
 	private readonly string ClearAnimation = "clear";
 	private readonly string AttemptAnimation = "attempt";
 	private readonly string LoopAnimation = "-loop";
+	private readonly string StoryAnimation = "story";
 
 	public bool IsUnlocked
 	{
@@ -83,20 +84,28 @@ public partial class LevelOption : Control
 	{
 		if (IsUnlocked)
 		{
-			ClearState = SaveManager.ActiveGameData.LevelData.GetClearStatus(data.LevelID);
-			switch (ClearState)
+			if (SaveManager.ActiveGameData.NextStoryLevel == data)
 			{
-				case SaveManager.LevelSaveData.LevelStatus.New:
-					EmitSignal(SignalName.NewLevel);
-					animator.Play(NewAnimation);
-					break;
-				case SaveManager.LevelSaveData.LevelStatus.Attempted:
-					animator.Play(AttemptAnimation);
-					break;
-				case SaveManager.LevelSaveData.LevelStatus.Cleared:
-					animator.Play(ClearAnimation);
-					animator.AnimationSetNext(ShowAnimation, ClearAnimation + LoopAnimation);
-					break;
+				animator.Play(StoryAnimation);
+				animator.AnimationSetNext(ShowAnimation, ClearAnimation + LoopAnimation);
+			}
+			else
+			{
+				ClearState = SaveManager.ActiveGameData.LevelData.GetClearStatus(data.LevelID);
+				switch (ClearState)
+				{
+					case SaveManager.LevelSaveData.LevelStatus.New:
+						EmitSignal(SignalName.NewLevel);
+						animator.Play(NewAnimation);
+						break;
+					case SaveManager.LevelSaveData.LevelStatus.Attempted:
+						animator.Play(AttemptAnimation);
+						break;
+					case SaveManager.LevelSaveData.LevelStatus.Cleared:
+						animator.Play(ClearAnimation);
+						animator.AnimationSetNext(ShowAnimation, ClearAnimation + LoopAnimation);
+						break;
+				}
 			}
 		}
 		else

@@ -11,6 +11,8 @@ public partial class SaveManager : Node
 	public static SaveManager Instance;
 
 	[Signal] public delegate void ConfigAppliedEventHandler();
+	/// <summary> The first level loaded when a new game is started. </summary>
+	[Export] private LevelDataResource initialLevelData;
 
 	private static string SaveDirectory;
 	private static string SaveLocationFile => OS.GetExecutablePath().GetBaseDir() + "/saveLocation.txt";
@@ -1182,7 +1184,8 @@ public partial class SaveManager : Node
 				equippedAugments = [],
 				level = 0,
 				lastPlayedWorld = WorldEnum.LostPrologue,
-				levelData = new()
+				levelData = new(),
+				NextStoryLevel = Instance.initialLevelData,
 			};
 
 			// Unlock the tutorial
@@ -1198,6 +1201,38 @@ public partial class SaveManager : Node
 
 			return data;
 		}
+
+		public LevelDataResource NextStoryLevel { get; private set; }
+		public LevelDataResource GetNextStoryLevel(LevelDataResource currentLevelData)
+		{
+			if (currentLevelData == null) // Already beat the game
+			{
+				NextStoryLevel = null;
+				return NextStoryLevel;
+			}
+
+			LevelSaveData.LevelStatus clearStatus = LevelData.GetClearStatus(currentLevelData.LevelID);
+			if (clearStatus != LevelSaveData.LevelStatus.Cleared) // Player is still working on the current stage
+			{
+				NextStoryLevel = currentLevelData;
+				return NextStoryLevel;
+			}
+
+			LevelDataResource targetNextStage = null;
+			foreach (LevelDataResource stage in currentLevelData.UnlockStage)
+			{
+				if (stage.MissionCategory == LevelDataResource.MissionCategoryEnum.Side)
+					continue;
+
+				targetNextStage = stage;
+				break;
+			}
+
+			return GetNextStoryLevel(targetNextStage);
+		}
+
+		/// <summary> Called from Save Select. Updates the Next Story Level from the beginning. </summary>
+		public void LoadNextStoryLevelFromSaveData() => NextStoryLevel = GetNextStoryLevel(Instance.initialLevelData);
 	}
 	#endregion
 
