@@ -139,7 +139,7 @@ public partial class WorldSelect : Menu
 
 	private void UpdateStoryIndicator(bool forceClose)
 	{
-		if (!forceClose && (int)SaveManager.ActiveGameData.NextStoryLevel?.AreaKey == VerticalSelection)
+		if (!forceClose && (int)SaveManager.ActiveGameData.CurrentStoryLevel?.AreaKey == VerticalSelection)
 		{
 			storyIndicationAnimator.Play("show");
 			return;

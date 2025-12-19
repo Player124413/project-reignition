@@ -147,7 +147,7 @@ public partial class SaveSelect : Menu
 		SaveManager.ActiveSkillRing.LoadFromActiveData();
 
 		// Update next story level
-		SaveManager.ActiveGameData.LoadNextStoryLevelFromSaveData();
+		SaveManager.ActiveGameData.LoadCurrentStoryLevelFromSaveData();
 
 		if (SaveManager.ActiveGameData.IsNewFile() || Mathf.IsZeroApprox(SaveManager.ActiveGameData.playTime))
 		{

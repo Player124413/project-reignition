@@ -9,6 +9,7 @@ public partial class LevelResult : Control
 {
 	[Signal] public delegate void ContinuePressedEventHandler();
 
+	[Export] private Control retryButton;
 	[Export] private Label score;
 	[Export] private Label time;
 	[Export] private Label ring;
@@ -54,8 +55,12 @@ public partial class LevelResult : Control
 		{
 			if (isFadingBgm)
 				isFadingBgm = SoundManager.FadeAudioPlayer(bgm[bgmIndex], 2.0f);
+
 			return;
 		}
+
+		bool isButtonPressed = Runtime.Instance.IsActionJustPressed("sys_select", "ui_select") ||
+			(Runtime.Instance.IsActionJustPressed("sys_cancel", "ui_cancel", "escape") && retryButton.IsVisibleInTree());
 
 		if (animator.IsPlaying())
 		{
@@ -63,8 +68,7 @@ public partial class LevelResult : Control
 			if (animator.CurrentAnimationPosition < 1f)
 				return;
 
-			if (Runtime.Instance.IsActionJustPressed("sys_select", "ui_select") ||
-				Runtime.Instance.IsActionJustPressed("sys_cancel", "ui_cancel", "escape")) // Skip animation
+			if (isButtonPressed) // Skip animation
 			{
 				StringName nextAnimation = animator.AnimationGetNext(animator.CurrentAnimation);
 				animator.Advance(animator.CurrentAnimationLength);
@@ -76,45 +80,54 @@ public partial class LevelResult : Control
 					Stage.StartCompletionDemo();
 				}
 			}
+
+			return;
 		}
-		else if (Runtime.Instance.IsActionJustPressed("sys_select", "ui_select") ||
-			Runtime.Instance.IsActionJustPressed("sys_cancel", "ui_cancel", "escape"))
+
+		if (isButtonPressed)
+			ProcessMenuButtons();
+	}
+
+	private void ProcessMenuButtons()
+	{
+		// Determine which scene to load without connecting it
+		if (TimeAttackManager.Instance.IsRunActive)
 		{
-			isFadingBgm = true; // Start fading bgm
-			SetInputProcessing(false);
-
-			// Determine which scene to load without connecting it
-			if (TimeAttackManager.Instance.IsRunActive)
-			{
-				TimeAttackManager.Instance.IncreaseLevel();
-			}
-			else if (Runtime.Instance.IsActionJustPressed("sys_cancel", "ui_cancel", "escape")) // Retry stage
-			{
-				TransitionManager.Instance.QueuedScene = string.Empty;
-			}
-			else
-			{
-				// Adventure mode; Process events
-				TransitionManager.Instance.QueuedScene = TransitionManager.MenuScenePath;
-
-				if (Stage.LevelState == StageSettings.LevelStateEnum.Success && !string.IsNullOrEmpty(Stage.Data.PostStoryEvent) &&
-					(!wasStageClearedWhenLoaded || SaveManager.Config.repeatCutscenes))
-				{
-					TransitionManager.Instance.QueuedScene = $"{TransitionManager.EventScenePath}{Stage.Data.PostStoryEvent}.tscn";
-				}
-			}
-
-
-			// Actual scene transition is handled by the experience results screen (which is connected via this signal)
-			if (!TimeAttackManager.Instance.IsRunActive)
-				EmitSignal(SignalName.ContinuePressed);
-			else
-				TimeAttackManager.Instance.LoadLevel(TimeAttackManager.Instance.GetCurrentLevel());
+			TimeAttackManager.Instance.IncreaseLevel();
 		}
+		else if (Runtime.Instance.IsActionJustPressed("sys_cancel", "ui_cancel", "escape")) // Retry stage
+		{
+			TransitionManager.Instance.QueuedScene = string.Empty;
+		}
+		else
+		{
+			// Adventure mode; Process events
+			TransitionManager.Instance.QueuedScene = TransitionManager.MenuScenePath;
+
+			if (Stage.LevelState == StageSettings.LevelStateEnum.Success &&
+				!string.IsNullOrEmpty(Stage.Data.PostStoryEvent) &&
+				!wasStageClearedWhenLoaded)
+			{
+				TransitionManager.Instance.QueuedScene = $"{TransitionManager.EventScenePath}{Stage.Data.PostStoryEvent}.tscn";
+			}
+		}
+
+		if (TimeAttackManager.Instance.IsRunActive)
+			TimeAttackManager.Instance.LoadLevel(TimeAttackManager.Instance.GetCurrentLevel());
+		else // Actual scene transition is handled by the experience results screen (which is connected via this signal)
+			EmitSignal(SignalName.ContinuePressed);
+
+		isFadingBgm = true; // Start fading bgm
+		SetInputProcessing(false);
 	}
 
 	public void StartResults()
 	{
+		bool isRetryButtonDisabled = StageSettings.Instance.Data == SaveManager.ActiveGameData.CurrentStoryLevel &&
+			Stage.LevelState == StageSettings.LevelStateEnum.Success &&
+			!TimeAttackManager.Instance.IsRunActive;
+		retryButton.Visible = !isRetryButtonDisabled;
+
 		score.Text = Stage.DisplayScore;
 		time.Text = Stage.DisplayTime;
 

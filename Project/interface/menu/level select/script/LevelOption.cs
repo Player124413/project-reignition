@@ -84,7 +84,7 @@ public partial class LevelOption : Control
 	{
 		if (IsUnlocked)
 		{
-			if (SaveManager.ActiveGameData.NextStoryLevel == data)
+			if (SaveManager.ActiveGameData.CurrentStoryLevel == data)
 			{
 				animator.Play(StoryAnimation);
 				animator.AnimationSetNext(ShowAnimation, StoryAnimation + LoopAnimation);

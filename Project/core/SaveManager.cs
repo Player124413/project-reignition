@@ -275,8 +275,6 @@ public partial class SaveManager : Node
 		public bool isActionPromptsEnabled = true;
 
 		public bool useQuickLoad;
-		/// <summary> Should cutscenes repeat when missions are selected from the level select menu? </summary>
-		public bool repeatCutscenes;
 
 		/// <summary> Creates a dictionary based on config data. </summary>
 		public Dictionary ToDictionary()
@@ -959,7 +957,7 @@ public partial class SaveManager : Node
 
 		/// <summary> Checks if a stage has been unlocked. </summary>
 		public bool IsStageUnlocked(string levelID) => stagesUnlocked.Contains(levelID) ||
-			levelData.GetClearStatus(levelID) != LevelSaveData.LevelStatus.New || NextStoryLevel?.LevelID == levelID; // Demo save compatability
+			levelData.GetClearStatus(levelID) != LevelSaveData.LevelStatus.New || CurrentStoryLevel?.LevelID == levelID; // Demo save compatability
 		/// <summary> Unlocks a stage. </summary>
 		public void UnlockStage(string levelID)
 		{
@@ -1186,7 +1184,7 @@ public partial class SaveManager : Node
 				level = 0,
 				lastPlayedWorld = WorldEnum.LostPrologue,
 				levelData = new(),
-				NextStoryLevel = Instance.initialLevelData,
+				CurrentStoryLevel = Instance.initialLevelData,
 			};
 
 			// Unlock the tutorial
@@ -1203,20 +1201,20 @@ public partial class SaveManager : Node
 			return data;
 		}
 
-		public LevelDataResource NextStoryLevel { get; private set; }
-		public LevelDataResource GetNextStoryLevel(LevelDataResource currentLevelData)
+		public LevelDataResource CurrentStoryLevel { get; private set; }
+		public LevelDataResource UpdateCurrentStoryLevel(LevelDataResource currentLevelData)
 		{
 			if (currentLevelData == null) // Already beat the game
 			{
-				NextStoryLevel = null;
-				return NextStoryLevel;
+				CurrentStoryLevel = null;
+				return CurrentStoryLevel;
 			}
 
 			LevelSaveData.LevelStatus clearStatus = LevelData.GetClearStatus(currentLevelData.LevelID);
 			if (clearStatus != LevelSaveData.LevelStatus.Cleared) // Player is still working on the current stage
 			{
-				NextStoryLevel = currentLevelData;
-				return NextStoryLevel;
+				CurrentStoryLevel = currentLevelData;
+				return CurrentStoryLevel;
 			}
 
 			LevelDataResource targetNextStage = null;
@@ -1229,11 +1227,11 @@ public partial class SaveManager : Node
 				break;
 			}
 
-			return GetNextStoryLevel(targetNextStage);
+			return UpdateCurrentStoryLevel(targetNextStage);
 		}
 
-		/// <summary> Called from Save Select. Updates the Next Story Level from the beginning. </summary>
-		public void LoadNextStoryLevelFromSaveData() => NextStoryLevel = GetNextStoryLevel(Instance.initialLevelData);
+		/// <summary> Called from Save Select. Recalculates the Current Story Level from the beginning. </summary>
+		public void LoadCurrentStoryLevelFromSaveData() => CurrentStoryLevel = UpdateCurrentStoryLevel(Instance.initialLevelData);
 	}
 	#endregion
 

@@ -113,8 +113,7 @@ public partial class ReadyMenu : Menu
 		{
 			// Handle Pre Event Indexes
 			if (!string.IsNullOrEmpty(LevelData.PreStoryEvent) &&
-				(SaveManager.ActiveGameData.LevelData.GetClearStatus(LevelData.LevelID) == SaveManager.LevelSaveData.LevelStatus.New ||
-				SaveManager.Config.repeatCutscenes))
+				SaveManager.ActiveGameData.LevelData.GetClearStatus(LevelData.LevelID) == SaveManager.LevelSaveData.LevelStatus.New)
 			{
 				TransitionManager.QueueSceneChange($"{TransitionManager.EventScenePath}{LevelData.PreStoryEvent}.tscn");
 				TransitionManager.StartTransition(new()
