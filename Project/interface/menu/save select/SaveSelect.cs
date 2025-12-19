@@ -156,7 +156,7 @@ public partial class SaveSelect : Menu
 				if (!DebugManager.Instance.UseDemoSave) // Don't load into cutscenes in the demo
 				{
 					// Load directly into the first cutscene
-					TransitionManager.QueueSceneChange($"{TransitionManager.EventScenePath}1.tscn");
+					TransitionManager.QueueSceneChange($"{TransitionManager.EventScenePath}Event1.tscn");
 					TransitionManager.StartTransition(new()
 					{
 						color = Colors.Black,
