@@ -437,6 +437,7 @@ public partial class Options : Menu
 	private readonly string MuteString = "option_mute";
 	private readonly string RetailStyle = "option_retail";
 	private readonly string ReignitedStyle = "option_reignited";
+	private readonly string E3Style = "option_hud_e3";
 	private readonly string HorizontalStyle = "option_horizontal";
 	private readonly string VerticalStyle = "option_vertical";
 	private readonly string FullscreenString = "option_fullscreen";
@@ -540,6 +541,18 @@ public partial class Options : Menu
 
 		// Update interface labels
 		interfaceLabels[0].Text = SaveManager.Config.useProjectReignitionBranding ? ReignitedStyle : RetailStyle;
+		switch (SaveManager.Config.brandingStyle)
+		{
+			case SaveManager.HudStyle.Retail:
+				interfaceLabels[0].Text = RetailStyle;
+				break;
+			case SaveManager.HudStyle.Reignition:
+				interfaceLabels[0].Text = ReignitedStyle;
+				break;
+			case SaveManager.HudStyle.E3:
+				interfaceLabels[0].Text = E3Style;
+				break;
+		}
 		switch (SaveManager.Config.hudStyle)
 		{
 			case SaveManager.HudStyle.Retail:
@@ -984,7 +997,8 @@ public partial class Options : Menu
 	{
 		if (VerticalSelection == 0)
 		{
-			SaveManager.Config.useProjectReignitionBranding = !SaveManager.Config.useProjectReignitionBranding;
+			int brandingStyle = WrapSelection((int)SaveManager.Config.brandingStyle + direction, (int)SaveManager.HudStyle.Count);
+			SaveManager.Config.brandingStyle = (SaveManager.HudStyle)brandingStyle;
 			return true;
 		}
 		else if (VerticalSelection == 1)

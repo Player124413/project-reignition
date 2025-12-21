@@ -65,10 +65,16 @@ namespace Project.Interface.Menus
 			animator.Play("RESET");
 			animator.Seek(0, true);
 
-			if (SaveManager.Config.useProjectReignitionBranding)
+			switch (SaveManager.Config.brandingStyle)
 			{
-				animator.Play("pr-logo");
-				animator.Advance(0.0);
+				case SaveManager.HudStyle.Reignition:
+					animator.Play("pr-logo");
+					animator.Advance(0.0);
+					break;
+				case SaveManager.HudStyle.E3:
+					animator.Play("wf-logo");
+					animator.Advance(0.0);
+					break;
 			}
 
 			animator.Play(ShowAnimation);

@@ -270,6 +270,7 @@ public partial class SaveManager : Node
 
 		// Interface
 		public bool useProjectReignitionBranding = true;
+		public HudStyle brandingStyle = HudStyle.Reignition;
 		public HudStyle hudStyle = HudStyle.Retail;
 		public ButtonStyle buttonStyle = ButtonStyle.Style2;
 		public bool isUsingHorizontalSoulGauge;
@@ -329,6 +330,7 @@ public partial class SaveManager : Node
 
 				// Interface
 				{ nameof(useProjectReignitionBranding), useProjectReignitionBranding },
+				{ nameof(brandingStyle), (int)brandingStyle},
 				{ nameof(hudStyle), (int)hudStyle },
 				{ nameof(buttonStyle), (int)buttonStyle },
 				{ nameof(isUsingHorizontalSoulGauge), (bool)isUsingHorizontalSoulGauge },
@@ -426,6 +428,8 @@ public partial class SaveManager : Node
 			// Interface
 			if (dictionary.TryGetValue(nameof(useProjectReignitionBranding), out var))
 				useProjectReignitionBranding = (bool)var;
+			if (dictionary.TryGetValue(nameof(brandingStyle), out var))
+				brandingStyle = (HudStyle)(int)var;
 			if (dictionary.TryGetValue(nameof(hudStyle), out var))
 				hudStyle = (HudStyle)(int)var;
 			if (dictionary.TryGetValue(nameof(buttonStyle), out var))
