@@ -106,7 +106,7 @@ public partial class LevelResult : Control
 
 			if (Stage.LevelState == StageSettings.LevelStateEnum.Success &&
 				!string.IsNullOrEmpty(Stage.Data.PostStoryEvent) &&
-				!wasStageClearedWhenLoaded)
+				(!SaveManager.Config.skipRepeatCutscenes || !wasStageClearedWhenLoaded))
 			{
 				TransitionManager.Instance.QueuedScene = $"{TransitionManager.EventScenePath}{Stage.Data.PostStoryEvent}.tscn";
 			}

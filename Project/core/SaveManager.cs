@@ -276,6 +276,7 @@ public partial class SaveManager : Node
 		public bool isActionPromptsEnabled = true;
 
 		public bool useQuickLoad;
+		public bool skipRepeatCutscenes; // Enable this to skip cutscenes when replaying missions
 
 		/// <summary> Creates a dictionary based on config data. </summary>
 		public Dictionary ToDictionary()
