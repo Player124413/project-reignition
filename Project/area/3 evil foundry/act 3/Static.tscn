@@ -1,4 +1,4 @@
-[gd_scene load_steps=40 format=3 uid="uid://sap50uvjitma"]
+[gd_scene load_steps=38 format=3 uid="uid://sap50uvjitma"]
 
 [ext_resource type="Script" uid="uid://dtkbvehtmy3em" path="res://object/stage/StageSettings.cs" id="1_y3xwh"]
 [ext_resource type="Resource" uid="uid://dmv3a7tioyyl6" path="res://area/3 evil foundry/data/DialogLibrary.tres" id="2_s1lnd"]
@@ -541,19 +541,14 @@ _data = {
 &"demo3": SubResource("Animation_yw6bd")
 }
 
-[sub_resource type="Gradient" id="Gradient_uhv47"]
-interpolation_color_space = 2
-offsets = PackedFloat32Array(0, 0.29235, 0.551913, 1)
-colors = PackedColorArray(0, 0, 0, 1, 0.282817, 0.282817, 0.282817, 1, 0.589574, 0.589573, 0.589574, 1, 1, 1, 1, 1)
-
-[sub_resource type="GradientTexture1D" id="GradientTexture1D_ldi0c"]
-gradient = SubResource("Gradient_uhv47")
-
 [sub_resource type="Environment" id="Environment_mhcig"]
 ambient_light_source = 2
 ambient_light_color = Color(0.345087, 0.619548, 0.619592, 1)
 ambient_light_energy = 1.2
+reflected_light_source = 1
+tonemap_mode = 1
 tonemap_exposure = 1.2
+tonemap_white = 2.0
 ssao_radius = 4.31
 ssil_enabled = true
 ssil_radius = 10.0
@@ -563,16 +558,20 @@ glow_levels/3 = 0.3
 glow_levels/5 = 0.0
 glow_levels/7 = 0.01
 glow_normalized = true
-glow_bloom = 0.1
+glow_bloom = 0.15
 glow_blend_mode = 1
 glow_hdr_threshold = 1.5
 glow_hdr_scale = 2.5
 fog_enabled = true
-fog_light_color = Color(0.44, 0.44, 1, 1)
+fog_mode = 1
+fog_light_color = Color(0.32999998, 0.41933322, 1, 1)
 fog_light_energy = 0.4
-fog_density = 0.006
+fog_density = 0.6
 fog_sky_affect = 0.0
 fog_height = -59.54
+fog_depth_curve = 0.5
+fog_depth_begin = 0.0
+fog_depth_end = 120.0
 volumetric_fog_density = 0.0294
 volumetric_fog_anisotropy = 0.11
 volumetric_fog_length = 200.0
@@ -580,9 +579,8 @@ volumetric_fog_sky_affect = 0.0
 volumetric_fog_temporal_reprojection_enabled = false
 adjustment_enabled = true
 adjustment_brightness = 1.2
-adjustment_contrast = 1.05
-adjustment_saturation = 0.5
-adjustment_color_correction = SubResource("GradientTexture1D_ldi0c")
+adjustment_contrast = 1.2
+adjustment_saturation = 0.6
 
 [node name="Static" type="Node3D" node_paths=PackedStringArray("pathParent", "completionAnimator", "Environment")]
 script = ExtResource("1_y3xwh")
@@ -614,20 +612,6 @@ light_energy = 0.5
 light_cull_mask = 4293918726
 shadow_enabled = true
 directional_shadow_max_distance = 20.0
-
-[node name="LavaLight" type="DirectionalLight3D" parent="Lighting"]
-transform = Transform3D(1, 0, 0, 0, 1.31134e-07, -1, 0, 1, 1.31134e-07, 0, 0, 0)
-layers = 1024
-light_color = Color(0.819608, 0.584314, 0, 1)
-light_cull_mask = 4293918722
-directional_shadow_max_distance = 10.0
-
-[node name="LavaGlowLight" type="DirectionalLight3D" parent="Lighting"]
-transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0, 0)
-layers = 1024
-light_color = Color(0.6, 0.42, 0, 1)
-light_cull_mask = 4293918728
-directional_shadow_max_distance = 10.0
 
 [node name="Trigger" type="Node3D" parent="."]
 
