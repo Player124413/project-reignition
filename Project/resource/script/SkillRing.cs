@@ -230,7 +230,7 @@ public class SkillRing
 		if (DebugManager.Instance.UseDemoSave)
 			return true;
 
-		if (IsSkillEquipped(skill.Key)) // Equipped skills should be unlocked automatically to allow the player to unequip them...
+		if (IsSkillEquipped(skill.Key) && GetAugmentIndex(skill.Key) == skill.AugmentIndex) // Equipped skills should be unlocked automatically to allow the player to unequip them...
 			return true;
 
 		if (SaveManager.ActiveGameData.level < skill.LevelRequirement) // Under-leveled
