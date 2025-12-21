@@ -45,6 +45,7 @@ public partial class LevelDataResource : Resource
 			ExtensionMethods.CreateProperty("Level Path", Variant.Type.String, PropertyHint.FilePath, "*.tscn"),
 			ExtensionMethods.CreateProperty("Pre Story Event Index", Variant.Type.String),
 			ExtensionMethods.CreateProperty("Post Story Event Index", Variant.Type.String),
+			ExtensionMethods.CreateProperty("World Ring", Variant.Type.Int, PropertyHint.Enum, WorldRing.EnumToString()),
 
 			ExtensionMethods.CreateProperty("Mission Category", Variant.Type.Int, PropertyHint.Enum, MissionCategory.EnumToString()),
 			ExtensionMethods.CreateProperty("Has Fire Souls", Variant.Type.Bool),
@@ -102,6 +103,8 @@ public partial class LevelDataResource : Resource
 				return PreStoryEvent;
 			case "Post Story Event Index":
 				return PostStoryEvent;
+			case "World Ring":
+				return (int)WorldRing;
 
 			case "Mission Category":
 				return (int)MissionCategory;
@@ -176,6 +179,9 @@ public partial class LevelDataResource : Resource
 				break;
 			case "Post Story Event Index":
 				PostStoryEvent = (string)value;
+				break;
+			case "World Ring":
+				WorldRing = (SaveManager.WorldEnum)(int)value;
 				break;
 
 			case "Mission Category":
@@ -268,6 +274,8 @@ public partial class LevelDataResource : Resource
 	public string PreStoryEvent;
 	/// <summary> Event index to play after completing the stage. Set to 0 if no story event is meant to be played. </summary>
 	public string PostStoryEvent;
+	/// <summary> Optional key for unlocking a world ring. Use Lost Prologue for no world ring. </summary>
+	public SaveManager.WorldEnum WorldRing { get; private set; }
 
 	/// <summary> Does this mission contain fire souls? </summary>
 	public bool HasFireSouls { get; private set; }

@@ -685,6 +685,14 @@ public partial class StageSettings : Node3D
 
 		SaveManager.SharedData.LevelData.SetHighScore(Data.LevelID, TotalScore);
 		SaveManager.SharedData.LevelData.SetBestTime(Data.LevelID, CurrentTime);
+
+		// Unlock World Rings, if necessary
+		if (Data.WorldRing != SaveManager.WorldEnum.LostPrologue &&
+			!SaveManager.ActiveGameData.IsWorldRingObtained(Data.WorldRing))
+		{
+			SaveManager.ActiveGameData.UnlockWorldRing(Data.WorldRing);
+			NotificationManager.Instance.AddNotification(NotificationManager.NotificationType.WorldRing, $"unlock_ring_{Data.WorldRing.ToString().ToSnakeCase()}");
+		}
 	}
 
 	private void UpdateUnlockNotifications()

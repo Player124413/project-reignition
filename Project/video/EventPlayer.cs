@@ -20,8 +20,6 @@ public partial class EventPlayer : Node
 	[Export(PropertyHint.File, "*.tscn")] private string adventureEventAutoload;
 	[Export(PropertyHint.FilePath, "*.ogg")] private string englishAudioPath;
 	[Export] private string localizationKeyPrefix;
-	/// <summary> Optional key for unlocking a world ring. Use Lost Prologue for no world ring. </summary>
-	[Export] private SaveManager.WorldEnum worldRing = SaveManager.WorldEnum.LostPrologue;
 	private Gameplay.Triggers.DialogTrigger subtitles;
 
 	[ExportGroup("Components")]
@@ -65,14 +63,6 @@ public partial class EventPlayer : Node
 			Menu.menuMemory[Menu.MemoryKeys.ActiveMenu] = (int)Menu.MemoryKeys.LevelSelect;
 			Menu.menuMemory[Menu.MemoryKeys.WorldSelect] = (int)adventureLevelAutoload.AreaKey;
 			Menu.menuMemory[Menu.MemoryKeys.LevelSelect] = adventureLevelAutoload.LevelIndex - 1;
-		}
-
-		// Unlock World Rings, if necessary
-		if (worldRing != SaveManager.WorldEnum.LostPrologue &&
-			!SaveManager.ActiveGameData.IsWorldRingObtained(worldRing))
-		{
-			SaveManager.ActiveGameData.UnlockWorldRing(worldRing);
-			NotificationManager.Instance.AddNotification(NotificationManager.NotificationType.WorldRing, $"unlock_ring_{worldRing.ToString().ToSnakeCase()}");
 		}
 	}
 
