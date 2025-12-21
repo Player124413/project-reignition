@@ -78,6 +78,9 @@ public partial class EventPlayer : Node
 
 	private void LoadLocalization()
 	{
+		if (animator == null)
+			return;
+
 		StringName targetLocale = SaveManager.VoiceLanguageToGodotLocale(SaveManager.Config.voiceLanguage);
 		LoadAudioTrack(targetLocale);
 
@@ -175,8 +178,12 @@ public partial class EventPlayer : Node
 	{
 		videoPlayer.Play();
 		audioPlayer.Play();
-		animator.Seek(0.0);
-		animator.Play();
+
+		if (animator != null)
+		{
+			animator.Seek(0.0);
+			animator.Play();
+		}
 
 		subtitles?.Activate();
 	}
@@ -222,6 +229,9 @@ public partial class EventPlayer : Node
 	/// <summary> Creates a dialog trigger based on the keyframes in an animation. </summary>
 	private void CreateSubtitles()
 	{
+		if (animator == null) // No subtitles, apparently
+			return;
+
 		subtitles = new Gameplay.Triggers.DialogTrigger()
 		{
 			IsCutscene = true,
