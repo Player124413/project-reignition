@@ -41,6 +41,7 @@ public partial class CaptainBemoth : PathFollow3D
 		WaveAttack,
 		ChargeAttack,
 		ShockAttack,
+		Stunned,
 		Defeated
 	}
 
@@ -246,6 +247,7 @@ public partial class CaptainBemoth : PathFollow3D
 	}
 
 	private bool isFacingForward;
+	private bool isWrappingAround;
 	private float currentRotation;
 	private float rotationVelocity;
 	private readonly float RotationSmoothing = 20f;
@@ -293,9 +295,12 @@ public partial class CaptainBemoth : PathFollow3D
 	private readonly float DamageSpeedSmoothing = 30f;
 	private readonly float BaseMoveSpeed = 20f;
 	private readonly float ChargeSpeed = -100f;
+	private readonly float WraparoundSpeed = -150f;
 	private readonly float MinimumDistance = 2f;
 	private readonly float MinimumDistanceSmoothingStart = 10f;
 	private readonly float StopDistance = 40f;
+	private readonly float WraparoundDistance = 50f;
+	private readonly float WraparoundDistanceSmoothingStart = 50f;
 	private readonly float StopDistanceSmoothingStart = 35f;
 	private readonly float WaveAttackDistance = 20f;
 
@@ -317,10 +322,24 @@ public partial class CaptainBemoth : PathFollow3D
 
 		float deltaProgress = GetDeltaProgress();
 		float speedSmoothing = MoveSpeedSmoothing;
-		float speedRatio = 1f - Mathf.Clamp(deltaProgress / StopDistance, 0f, 1f);
+		float speedRatio = 1f - Mathf.Clamp(Mathf.Abs(deltaProgress) / StopDistance, 0f, 1f);
 		float targetMoveSpeed = BaseMoveSpeed * speedRatio;
 
-		if (!Player.IsHomingAttacking)
+		isWrappingAround = deltaProgress < 0 || deltaProgress > WraparoundDistance;
+
+		if (isWrappingAround)
+		{
+			if (deltaProgress < 0)
+			{
+				targetMoveSpeed = WraparoundSpeed;
+			}
+			else
+			{
+				speedRatio = Mathf.Clamp(deltaProgress - WraparoundDistanceSmoothingStart / WraparoundDistance + WraparoundDistanceSmoothingStart, 0f, 1f);
+				targetMoveSpeed = Mathf.Lerp(0f, WraparoundSpeed, speedRatio);
+			}
+		}
+		else if (!Player.IsHomingAttacking && !Player.Skills.IsSpeedBreakActive)
 		{
 			if (currentState == BemothState.WaveAttack)
 			{
@@ -437,6 +456,9 @@ public partial class CaptainBemoth : PathFollow3D
 
 	private void StartAttack()
 	{
+		if (isWrappingAround)
+			return;
+
 		if (hintDialogIndex < hintDialogs.Length && !SoundManager.instance.IsDialogActive)
 		{
 			if (hintDialogIndex >= 0) // Give some room from the start of the fight and the first hint
