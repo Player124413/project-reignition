@@ -392,6 +392,9 @@ public partial class PauseMenu : Node
 	private void UpdateSkillDescription()
 	{
 		PauseSkill pauseSkill = skillContainer.GetChild<PauseSkill>(currentSelection);
+		if (pauseSkill == null)
+			return;
+
 		description.Text = pauseSkill.Skill.DescriptionKey;
 		description.ShowDescription();
 	}

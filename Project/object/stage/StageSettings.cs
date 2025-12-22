@@ -95,7 +95,7 @@ public partial class StageSettings : Node3D
 			SaveManager.ActiveSkillRing.ForceUnequipSkill(conflictingSkill, conflictingSkillIndex);
 		}
 
-		SaveManager.ActiveSkillRing.EquipSkill(Data.RequiredSkill.Key, Data.RequiredSkill.AugmentIndex);
+		GD.Print(SaveManager.ActiveSkillRing.EquipSkill(Data.RequiredSkill.Key, Data.RequiredSkill.AugmentIndex, true));
 	}
 
 	/// <summary> Restores skills back to whatever we started with. </summary>

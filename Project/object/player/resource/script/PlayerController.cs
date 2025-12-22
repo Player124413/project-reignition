@@ -648,6 +648,7 @@ public partial class PlayerController : CharacterBody3D
 	public bool IsAccelerationJumping { get; set; }
 	public bool IsBackflipping { get; set; }
 	public bool IsStomping { get; set; }
+	public bool IsSliding { get; set; }
 	public bool ForceAccelerationJump { get; set; }
 	public bool DisableAccelerationJump { get; set; }
 	public bool DisableDamage { get; set; }

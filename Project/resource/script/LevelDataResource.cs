@@ -159,11 +159,11 @@ public partial class LevelDataResource : Resource
 				return BronzeTime;
 			case "Ranking/Score Requirement":
 				return Score;
-			case "Ranking/Gold Time Attack":
+			case "Ranking/Gold - Time Attack":
 				return GoldTimeTA;
-			case "Ranking/Silver Time Attack":
+			case "Ranking/Silver - Time Attack":
 				return SilverTimeTA;
-			case "Ranking/Bronze Time Attack":
+			case "Ranking/Bronze - Time Attack":
 				return BronzeTimeTA;
 
 			case "Completion/Disable Object Cull":

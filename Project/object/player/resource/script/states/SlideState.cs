@@ -26,6 +26,7 @@ public partial class SlideState : PlayerState
 			Player.Effect.PlayActionSFX(Player.Effect.SlideSfx);
 		}
 
+		Player.IsSliding = true;
 		Player.DisableSidle = true;
 		Player.Animator.StartSliding();
 		Player.Effect.StartDust();
@@ -55,6 +56,7 @@ public partial class SlideState : PlayerState
 
 	public override void ExitState()
 	{
+		Player.IsSliding = false;
 		Player.DisableSidle = false;
 		Player.ChangeHitbox("RESET");
 		Player.Effect.StopDust();

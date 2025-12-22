@@ -175,6 +175,7 @@ public partial class BonusManager : VBoxContainer
 		if (Player.AllowLandingGrind || Player.IsGrinding) return true; // Ignore Grindrails
 		if (Player.ExternalController != null) return true; // Chains only end during normal movement
 		if (Player.IsBouncing) return true;
+		if (Player.AttackState != PlayerController.AttackStates.None) return true; // Attacks extend chains
 
 		return false;
 	}

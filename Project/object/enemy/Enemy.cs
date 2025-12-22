@@ -222,11 +222,25 @@ public partial class Enemy : Node3D
 		BonusManager.instance.AddEnemyChain();
 		StageSettings.Instance.UpdateScore(50 * maxHealth, StageSettings.MathModeEnum.Add); // Add points based on max health
 
-		// Automatically increment objective count
-		if (StageSettings.Instance.Data.MissionType == LevelDataResource.MissionTypeEnum.Enemy)
-			StageSettings.Instance.CallDeferred(StageSettings.MethodName.IncrementObjective);
+		ProcessObjectiveIncrement();
 
 		EmitSignal(SignalName.Defeated);
+	}
+
+	/// <summary> Automatically increment objective count as needed based on StageSettings. </summary>
+	private void ProcessObjectiveIncrement()
+	{
+		LevelDataResource data = StageSettings.Instance.Data;
+		if (data.MissionType != LevelDataResource.MissionTypeEnum.Enemy)
+			return;
+
+		if (data.RequiredSkill != null)
+		{
+			if (data.RequiredSkill.Key == SkillKey.SlideAttack && !Player.IsSliding)
+				return;
+		}
+
+		StageSettings.Instance.CallDeferred(StageSettings.MethodName.IncrementObjective);
 	}
 
 	/// <summary>

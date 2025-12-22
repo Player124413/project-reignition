@@ -108,7 +108,7 @@ public class SkillRing
 	}
 
 	/// <summary> Equips a skill onto the skill ring. </summary>
-	public SkillEquipStatusEnum EquipSkill(SkillKey key, int augmentIndex = 0, bool isDebugToggle = false)
+	public SkillEquipStatusEnum EquipSkill(SkillKey key, int augmentIndex = 0, bool isForceToggled = false)
 	{
 		if (EquippedSkills.Contains(key) && augmentIndex == GetAugmentIndex(key))
 			return SkillEquipStatusEnum.Equipped; // Already equipped
@@ -135,7 +135,7 @@ public class SkillRing
 			}
 
 			int currentCost = IsSkillEquipped(key) ? baseSkill.GetAugment(GetAugmentIndex(key)).Cost : 0;
-			if (!isDebugToggle) // Check for total cost
+			if (!isForceToggled) // Check for total cost
 			{
 				int targetTotalCost = TotalCost - currentCost + augment.Cost;
 				if (targetTotalCost > MaxSkillPoints)
@@ -158,7 +158,7 @@ public class SkillRing
 		}
 
 		// Not an augment skill
-		if (!isDebugToggle) // Check for total cost
+		if (!isForceToggled) // Check for total cost
 		{
 			int targetTotalCost = TotalCost + baseSkill.Cost;
 			if (targetTotalCost > MaxSkillPoints)
@@ -166,7 +166,7 @@ public class SkillRing
 		}
 
 		int skillCount = SaveManager.ActiveSkillRing.GetSkillCountByElement(baseSkill.Element);
-		if (skillCount < baseSkill.ElementRequirement && !isDebugToggle)
+		if (skillCount < baseSkill.ElementRequirement && !isForceToggled)
 			return SkillEquipStatusEnum.ElementRequirement;
 
 		if (!EquippedSkills.Contains(key))
