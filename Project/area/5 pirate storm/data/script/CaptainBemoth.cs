@@ -277,8 +277,7 @@ public partial class CaptainBemoth : PathFollow3D
 		if (!IsClosed)
 			Close();
 
-		if (currentState == BemothState.Stunned)
-			animator.Set(StunTrigger, (int)AnimationNodeOneShot.OneShotRequest.FadeOut);
+		ExitStunState();
 
 		currentState = BemothState.Idle;
 		isFacingForward = currentHealth == 1; // Only face the player when almost dead
@@ -482,7 +481,10 @@ public partial class CaptainBemoth : PathFollow3D
 		if (isAttackQueued) // Queued attacks are always waves
 		{
 			isAttackQueued = false;
-			EnterWaveAttackState();
+			if (currentHealth == 1) // Perform at least 1 charge attack...
+				EnterChargeAttackState();
+			else
+				EnterWaveAttackState();
 			return;
 		}
 
@@ -502,7 +504,7 @@ public partial class CaptainBemoth : PathFollow3D
 			return;
 		}
 
-		if (Runtime.randomNumberGenerator.Randf() > 0.7f)
+		if (Runtime.randomNumberGenerator.Randf() > 0.5f)
 			EnterWaveAttackState();
 		else
 			EnterChargeAttackState();
@@ -692,6 +694,7 @@ public partial class CaptainBemoth : PathFollow3D
 	private void EnterShockAttackState()
 	{
 		CancelBombAttacks();
+		ExitStunState();
 
 		attackTimer = 0;
 		isAttackActive = false;
@@ -734,15 +737,24 @@ public partial class CaptainBemoth : PathFollow3D
 	private readonly float MaxStunTime = 5.0f;
 	private readonly float MinStunTime = 1f;
 	private readonly string StunTrigger = "parameters/stun_trigger/request";
-	private void StartStunState()
+	private void EnterStunState()
 	{
 		CancelBombAttacks();
+		StopChargeAttack();
 
 		stunTimer = 0;
 		startStunProgress = Progress;
 		endStunProgress = startStunProgress + StunDistance;
 		currentState = BemothState.Stunned;
 		animator.Set(StunTrigger, (int)AnimationNodeOneShot.OneShotRequest.Fire);
+	}
+
+	private void ExitStunState()
+	{
+		if (currentState != BemothState.Stunned)
+			return;
+
+		animator.Set(StunTrigger, (int)AnimationNodeOneShot.OneShotRequest.FadeOut);
 	}
 
 	private void ProcessStunState()
@@ -754,7 +766,7 @@ public partial class CaptainBemoth : PathFollow3D
 			return;
 
 		if (GetDeltaProgress() < MinimumDistance || stunTimer >= MaxStunTime)
-			EnterIdleState();
+			ExitStunState();
 	}
 
 	private void CancelShockAttack()
@@ -934,7 +946,7 @@ public partial class CaptainBemoth : PathFollow3D
 	private void OnHitboxEntered(Area3D a)
 	{
 		if (a.IsInGroup("player") && Player.Skills.IsSpeedBreakActive)
-			StartStunState();
+			EnterStunState();
 
 		if (!a.IsInGroup("no attack zone"))
 			return;

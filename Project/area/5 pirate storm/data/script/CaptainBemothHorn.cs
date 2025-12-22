@@ -137,6 +137,7 @@ public partial class CaptainBemothHorn : Node3D
 		StageSettings.Player.Camera.StartCameraShake(new()
 		{
 			magnitude = Vector3.One.RemoveDepth() * 2f,
+			intensity = Vector3.One * 50f,
 			duration = .5f
 		});
 
