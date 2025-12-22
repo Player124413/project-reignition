@@ -75,6 +75,39 @@ public partial class StageSettings : Node3D
 			if (!TransitionManager.Instance.IsReloadingScene)
 				TransitionManager.Instance.UpdateLoadingText("load_probes");
 		}
+
+		EquipRequiredSkill();
+	}
+
+	private SkillKey conflictingSkill = SkillKey.Count;
+	private int conflictingSkillIndex = 0;
+	/// <summary> For Lost Prologue: Force equip skills needed for tutorials. </summary>
+	private void EquipRequiredSkill()
+	{
+		if (Data.RequiredSkill == null || SaveManager.ActiveSkillRing.IsSkillEquipped(Data.RequiredSkill))
+			return;
+
+		conflictingSkill = SaveManager.ActiveSkillRing.IsConflictingSkillEquipped(Data.RequiredSkill.Key);
+
+		if (conflictingSkill != SkillKey.Count)
+		{
+			conflictingSkillIndex = SaveManager.ActiveSkillRing.GetAugmentIndex(conflictingSkill);
+			SaveManager.ActiveSkillRing.ForceUnequipSkill(conflictingSkill, conflictingSkillIndex);
+		}
+
+		SaveManager.ActiveSkillRing.EquipSkill(Data.RequiredSkill.Key, Data.RequiredSkill.AugmentIndex);
+	}
+
+	/// <summary> Restores skills back to whatever we started with. </summary>
+	private void RevertRequiredSkill()
+	{
+		if (conflictingSkill == SkillKey.Count) // Nothing to revert to.
+			return;
+
+		SaveManager.ActiveSkillRing.UnequipSkill(Data.RequiredSkill.Key, Data.RequiredSkill.AugmentIndex);
+
+		if (conflictingSkill != SkillKey.Count)
+			SaveManager.ActiveSkillRing.EquipSkill(conflictingSkill, conflictingSkillIndex);
 	}
 
 	public override void _Ready()
@@ -602,6 +635,8 @@ public partial class StageSettings : Node3D
 		EmitSignal(SignalName.LevelCompleted);
 		EmitSignal(wasSuccessful ? SignalName.LevelSuccess : SignalName.LevelFailed);
 
+		RevertRequiredSkill();
+
 		// Process save data after emitting level completion
 		CalculateTechnicalBonus(); // Recalculate technical bonus
 		UpdateSaveData();
@@ -705,7 +740,7 @@ public partial class StageSettings : Node3D
 			NotificationManager.Instance.AddNotification(NotificationManager.NotificationType.World, descriptionString);
 		}
 
-		int missionsUnlocked = 0;
+		int missionsUnlocked = NotificationManager.Instance.CalculateUnlockedSpecialLevelData();
 		foreach (LevelDataResource stage in Data.UnlockStage)
 		{
 			if (SaveManager.ActiveGameData.IsStageUnlocked(stage.LevelID))

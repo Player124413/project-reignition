@@ -64,6 +64,10 @@ public partial class CountdownState : PlayerState
 				speedRatio = Player.Skills.countdownBoostSpeed,
 				resetFlags = LockoutResource.ResetFlags.OnJump,
 			});
+
+			if (SaveManager.ActiveSkillRing.GetAugmentIndex(SkillKey.RocketStart) == 1) // Fill the soul gauge
+				Player.Skills.ModifySoulGauge(Player.Skills.MaxSoulPower);
+
 			return runState;
 		}
 

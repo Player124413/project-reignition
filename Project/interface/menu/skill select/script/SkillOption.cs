@@ -134,8 +134,7 @@ public partial class SkillOption : Control
 			return;
 
 		// Redraw equip status
-		if (SaveManager.ActiveSkillRing.IsSkillEquipped(Skill.Key) &&
-		SaveManager.ActiveSkillRing.GetAugmentIndex(Skill.Key) == Skill.AugmentIndex)
+		if (SaveManager.ActiveSkillRing.IsSkillEquipped(Skill))
 		{
 			animator.Play("equipped");
 		}

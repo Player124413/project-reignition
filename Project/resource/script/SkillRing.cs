@@ -11,7 +11,12 @@ public class SkillRing
 	public Array<SkillKey> EquippedSkills => SaveManager.ActiveGameData.equippedSkills;
 	/// <summary> List of equipped Augments. </summary>
 	public Dictionary<SkillKey, int> EquippedAugments => SaveManager.ActiveGameData.equippedAugments;
+
+	/// <summary> Checks whether a skill is equipped and has the correct augment index. </summary>
+	public bool IsSkillEquipped(SkillResource skill) => IsSkillEquipped(skill.Key) && GetAugmentIndex(skill.Key) == skill.AugmentIndex;
+	/// <summary> Checks whether a skill's key is equipped. </summary>
 	public bool IsSkillEquipped(SkillKey key) => EquippedSkills.Contains(key);
+	/// <summary> Returns the augment of a particular skill. </summary>
 	public int GetAugmentIndex(SkillKey key) => EquippedAugments.TryGetValue(key, out int currentAugmentIndex) ? currentAugmentIndex : 0;
 
 	/// <summary> Cost of all equipped skills. </summary>
@@ -230,7 +235,7 @@ public class SkillRing
 		if (DebugManager.Instance.UseDemoSave)
 			return true;
 
-		if (IsSkillEquipped(skill.Key) && GetAugmentIndex(skill.Key) == skill.AugmentIndex) // Equipped skills should be unlocked automatically to allow the player to unequip them...
+		if (IsSkillEquipped(skill)) // Equipped skills should be unlocked automatically to allow the player to unequip them...
 			return true;
 
 		if (SaveManager.ActiveGameData.level < skill.LevelRequirement) // Under-leveled

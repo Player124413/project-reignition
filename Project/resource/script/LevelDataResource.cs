@@ -42,8 +42,7 @@ public partial class LevelDataResource : Resource
 	{
 		Gold,
 		Silver,
-		Bronze,
-		Completed
+		Bronze
 	}
 
 	#region Editor

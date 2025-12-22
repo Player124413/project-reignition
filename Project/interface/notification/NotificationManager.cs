@@ -46,6 +46,8 @@ public partial class NotificationManager : Control
 	}
 
 	[Export] private SpecialBookPage[] specialBookPages = [];
+	/// <summary> Array of LevelDataResources that are unlocked through special means. </summary>
+	[Export] private LevelDataResource[] specialLevelData = [];
 
 	private bool isProcessing;
 
@@ -197,11 +199,49 @@ public partial class NotificationManager : Control
 		int count = 0;
 		foreach (SpecialBookPage page in specialBookPages)
 		{
-			if (page.PageType == Menus.SpecialBookPage.PageTypeEnum.Achievement)
+			if (page.PageType == SpecialBookPage.PageTypeEnum.Achievement)
 				continue; // Don't count achievements
 			if (!page.IsUnlocked())
 				continue;
 
+			count++;
+		}
+
+		return count;
+	}
+
+	/// <summary> Returns the number of levels that have just been unlocked through unorthodox means. </summary>
+	/// <returns></returns>
+	public int CalculateUnlockedSpecialLevelData()
+	{
+		int count = 0;
+		foreach (LevelDataResource stage in specialLevelData)
+		{
+			if (SaveManager.ActiveGameData.IsStageUnlocked(stage.LevelID))
+				continue;
+
+			if (stage.RequiredLevel != 0 && SaveManager.ActiveGameData.level < stage.RequiredLevel)
+				continue;
+
+			if (stage.RequiredSkill != null && !SaveManager.ActiveSkillRing.IsSkillUnlocked(stage.RequiredSkill))
+				continue;
+
+			if (stage.RequiredMedals != 0)
+			{
+				if (stage.RequiredRank == LevelDataResource.RankEnum.Gold && SaveManager.ActiveGameData.LevelData.GoldMedalCount < stage.RequiredMedals)
+					continue;
+
+				if (stage.RequiredRank == LevelDataResource.RankEnum.Silver && SaveManager.ActiveGameData.LevelData.SilverMedalCount < stage.RequiredMedals)
+					continue;
+
+				if (stage.RequiredRank == LevelDataResource.RankEnum.Bronze && SaveManager.ActiveGameData.LevelData.BronzeMedalCount < stage.RequiredMedals)
+					continue;
+			}
+
+			if (DebugManager.Instance.UseDemoSave)
+				continue;
+
+			SaveManager.ActiveGameData.UnlockStage(stage.LevelID);
 			count++;
 		}
 
