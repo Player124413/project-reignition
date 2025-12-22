@@ -606,7 +606,7 @@ public partial class IfritGolem : Node3D
 
 		Player.StartKnockback(new()
 		{
-			knockForward = true,
+			knockbackType = KnockbackSettings.KnockbackAnimation.Forward,
 			ignoreInvincibility = true,
 			disableDamage = Player.IsInvincible
 		});

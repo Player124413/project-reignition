@@ -696,6 +696,7 @@ public partial class SandScorpion : Node3D
 		StageSettings.Player.Camera.StartCameraShake(new()
 		{
 			magnitude = Vector3.One.RemoveDepth() * magnitude,
+			intensity = Vector3.One * 50.0f,
 		});
 	}
 
@@ -959,21 +960,28 @@ public partial class SandScorpion : Node3D
 
 	public void ProcessHitboxCollision()
 	{
-		if (Player.IsHomingAttacking || Player.IsBouncing) return; // Player's homing attack always takes priority
+		if (Player.IsHomingAttacking || Player.IsBouncing || Player.IsKnockback) return; // Player's homing attack always takes priority
 		if (damageState == DamageState.Knockback) return; // Boss is in knockback and can't damage the player
 
-		if (Player.Skills.IsSpeedBreakActive)
-		{
-			Player.Skills.ToggleSpeedBreak();
-			Player.StartKnockback(new()
-			{
-				disableDamage = true
-			});
-		}
-		else
+		if (!Player.Skills.IsSpeedBreakActive)
 		{
 			Player.StartKnockback();
+			return;
 		}
+
+		// Clash
+		Player.Skills.ToggleSpeedBreak();
+		Player.StartKnockback(new()
+		{
+			disableDamage = true,
+			stayOnGround = true,
+			ignoreInvincibility = true,
+			disableInvincibility = true,
+			knockbackType = KnockbackSettings.KnockbackAnimation.Block,
+		});
+
+		PlayScreenShake(1f);
+		StartKnockback();
 	}
 
 	/// <summary> Is the player currently colliding with the flying eye? </summary>
@@ -1078,7 +1086,10 @@ public partial class SandScorpion : Node3D
 
 		if (Player.IsHomingAttacking)
 			Player.StartBounce(); // Bounce the player
+	}
 
+	private void StartKnockback()
+	{
 		MoveSpeed = KnockbackStrength; // Start knockback
 		damageState = DamageState.Knockback;
 	}

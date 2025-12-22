@@ -941,19 +941,35 @@ public partial class PlayerAnimator : Node3D
 	private readonly string HurtPlayback = "parameters/hurt_state/playback";
 	private AnimationNodeStateMachinePlayback HurtStatePlayback => animationTree.Get(HurtPlayback).Obj as AnimationNodeStateMachinePlayback;
 
-	public void StartHurt(bool forwardLaunch)
+	public void StartHurt(KnockbackSettings.KnockbackAnimation animation)
 	{
 		IsFallTransitionEnabled = false;
-		HurtStatePlayback.Start(forwardLaunch ? HurtForwardStartState : HurtBackwardState);
+		if (animation == KnockbackSettings.KnockbackAnimation.Block)
+		{
+			StartBrake(); // Just reuse the brake animation as a block
+			return;
+		}
+
+		if (animation == KnockbackSettings.KnockbackAnimation.Normal)
+			HurtStatePlayback.Start(HurtBackwardState);
+		else if (animation == KnockbackSettings.KnockbackAnimation.Forward)
+			HurtStatePlayback.Start(HurtForwardStartState);
+
 		animationTree.Set(HurtTrigger, (int)AnimationNodeOneShot.OneShotRequest.Fire);
 	}
 
-	public void StopHurt(bool useTransition)
+	public void StopHurt(KnockbackSettings.KnockbackAnimation animation)
 	{
-		if (useTransition)
-			HurtStatePlayback.Travel(HurtForwardStopState);
-		else
+		if (animation == KnockbackSettings.KnockbackAnimation.Block)
+		{
+			StopBrake();
+			return;
+		}
+
+		if (animation == KnockbackSettings.KnockbackAnimation.Normal)
 			animationTree.Set(HurtTrigger, (int)AnimationNodeOneShot.OneShotRequest.FadeOut);
+		else if (animation == KnockbackSettings.KnockbackAnimation.Forward)
+			HurtStatePlayback.Travel(HurtForwardStopState);
 	}
 	#endregion
 

@@ -203,7 +203,7 @@ public partial class DinoTrio : PathFollow3D
 
 				Player.StartKnockback(new()
 				{
-					knockForward = true, // Always knock forward
+					knockbackType = KnockbackSettings.KnockbackAnimation.Forward, // Always knock forward
 					ignoreInvincibility = true, // Always knockback the player
 					overrideKnockbackSpeed = true,
 					knockbackSpeed = 40f,
@@ -215,7 +215,7 @@ public partial class DinoTrio : PathFollow3D
 			default: // Normal knockback
 				Player.StartKnockback(new()
 				{
-					knockForward = true,
+					knockbackType = KnockbackSettings.KnockbackAnimation.Forward,
 					ignoreInvincibility = true,
 					overrideKnockbackSpeed = true,
 					knockbackSpeed = Mathf.Max(TotalMoveSpeed, 20f),
