@@ -1,0 +1,195 @@
+[gd_scene load_steps=10 format=3 uid="uid://ifvgnwxmp3dh"]
+
+[ext_resource type="PackedScene" uid="uid://dax0mun2bjm1v" path="res://area/0 lost prologue/act/Static.tscn" id="1_sey6t"]
+[ext_resource type="Resource" uid="uid://q1qxp10ju62a" path="res://resource/level data/lost prologue/Classic15.tres" id="2_sey6t"]
+[ext_resource type="Resource" uid="uid://daxieud5p230c" path="res://area/0 lost prologue/act/camera/BackstepCamera.tres" id="3_oms5g"]
+[ext_resource type="PackedScene" uid="uid://cjupypih0myxo" path="res://object/player/CharacterSpawn.tscn" id="4_fn6mb"]
+[ext_resource type="Script" uid="uid://dd24u7rlj0dwl" path="res://addons/custom_nodes/script/ObjectGenerator.cs" id="5_y712n"]
+[ext_resource type="PackedScene" uid="uid://c7l8mr7ubn848" path="res://object/stage/pickups/Ring.tscn" id="6_56o07"]
+[ext_resource type="PackedScene" uid="uid://dxepb172kmp8n" path="res://object/stage/common/Goal.tscn" id="7_iwo1a"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_lau7f"]
+size = Vector3(20, 30, 5)
+
+[sub_resource type="Curve" id="Curve_sey6t"]
+_limits = [0.0, 2.0, 0.0, 1.0]
+_data = [Vector2(0, 0), 0.0, 8.43778, 0, 0, Vector2(0.5, 2), 0.0, 0.0, 0, 0, Vector2(1, 1.2), -2.98086, 0.0, 0, 0]
+point_count = 3
+
+[node name="Stage" type="Node"]
+
+[node name="Static" parent="." instance=ExtResource("1_sey6t")]
+Data = ExtResource("2_sey6t")
+InitialCameraSettings = ExtResource("3_oms5g")
+
+[node name="Classic15" type="Node3D" parent="."]
+
+[node name="SpawnPosition" type="Node3D" parent="Classic15"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -3)
+
+[node name="CharacterSpawn" parent="Classic15/SpawnPosition" instance=ExtResource("4_fn6mb")]
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Classic15" groups=["wall"]]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -8)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Classic15/StaticBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
+shape = SubResource("BoxShape3D_lau7f")
+
+[node name="Rings1" type="Node3D" parent="Classic15"]
+transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, -3.5843348e-06, 0.6, 0)
+script = ExtResource("5_y712n")
+Source = ExtResource("6_56o07")
+Amount = 5
+Shape = 0
+Orientation = 0
+Spacing = 1.5
+"Horizontal Offset" = null
+"Vertical Offset" = SubResource("Curve_sey6t")
+
+[node name="Child01" parent="Classic15/Rings1" instance=ExtResource("6_56o07")]
+
+[node name="Child02" parent="Classic15/Rings1" instance=ExtResource("6_56o07")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.52736, -1.5)
+
+[node name="Child03" parent="Classic15/Rings1" instance=ExtResource("6_56o07")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, -3)
+
+[node name="Child04" parent="Classic15/Rings1" instance=ExtResource("6_56o07")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.7863, -4.5)
+
+[node name="Child05" parent="Classic15/Rings1" instance=ExtResource("6_56o07")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, -6)
+
+[node name="Rings2" type="Node3D" parent="Classic15"]
+transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 1.9999975, 0.6, 12)
+script = ExtResource("5_y712n")
+Source = ExtResource("6_56o07")
+Amount = 5
+Shape = 0
+Orientation = 0
+Spacing = 1.5
+"Horizontal Offset" = null
+"Vertical Offset" = SubResource("Curve_sey6t")
+
+[node name="Child01" parent="Classic15/Rings2" instance=ExtResource("6_56o07")]
+
+[node name="Child02" parent="Classic15/Rings2" instance=ExtResource("6_56o07")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.52736, -1.5)
+
+[node name="Child03" parent="Classic15/Rings2" instance=ExtResource("6_56o07")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, -3)
+
+[node name="Child04" parent="Classic15/Rings2" instance=ExtResource("6_56o07")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.7863, -4.5)
+
+[node name="Child05" parent="Classic15/Rings2" instance=ExtResource("6_56o07")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, -6)
+
+[node name="Rings3" type="Node3D" parent="Classic15"]
+transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, -2.0000017, 0.6, 21)
+script = ExtResource("5_y712n")
+Source = ExtResource("6_56o07")
+Amount = 5
+Shape = 0
+Orientation = 0
+Spacing = 1.5
+"Horizontal Offset" = null
+"Vertical Offset" = SubResource("Curve_sey6t")
+
+[node name="Child01" parent="Classic15/Rings3" instance=ExtResource("6_56o07")]
+
+[node name="Child02" parent="Classic15/Rings3" instance=ExtResource("6_56o07")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.52736, -1.5)
+
+[node name="Child03" parent="Classic15/Rings3" instance=ExtResource("6_56o07")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, -3)
+
+[node name="Child04" parent="Classic15/Rings3" instance=ExtResource("6_56o07")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.7863, -4.5)
+
+[node name="Child05" parent="Classic15/Rings3" instance=ExtResource("6_56o07")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, -6)
+
+[node name="Rings4" type="Node3D" parent="Classic15"]
+transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 0.6, 29)
+script = ExtResource("5_y712n")
+Source = ExtResource("6_56o07")
+Amount = 5
+Shape = 0
+Orientation = 0
+Spacing = 1.5
+"Horizontal Offset" = null
+"Vertical Offset" = SubResource("Curve_sey6t")
+
+[node name="Child01" parent="Classic15/Rings4" instance=ExtResource("6_56o07")]
+
+[node name="Child02" parent="Classic15/Rings4" instance=ExtResource("6_56o07")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.52736, -1.5)
+
+[node name="Child03" parent="Classic15/Rings4" instance=ExtResource("6_56o07")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, -3)
+
+[node name="Child04" parent="Classic15/Rings4" instance=ExtResource("6_56o07")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.7863, -4.5)
+
+[node name="Child05" parent="Classic15/Rings4" instance=ExtResource("6_56o07")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, -6)
+
+[node name="Rings5" type="Node3D" parent="Classic15"]
+transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 2, 0.6, 39)
+script = ExtResource("5_y712n")
+Source = ExtResource("6_56o07")
+Amount = 5
+Shape = 0
+Orientation = 0
+Spacing = 1.5
+"Horizontal Offset" = null
+"Vertical Offset" = SubResource("Curve_sey6t")
+
+[node name="Child01" parent="Classic15/Rings5" instance=ExtResource("6_56o07")]
+
+[node name="Child02" parent="Classic15/Rings5" instance=ExtResource("6_56o07")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.52736, -1.5)
+
+[node name="Child03" parent="Classic15/Rings5" instance=ExtResource("6_56o07")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, -3)
+
+[node name="Child04" parent="Classic15/Rings5" instance=ExtResource("6_56o07")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.7863, -4.5)
+
+[node name="Child05" parent="Classic15/Rings5" instance=ExtResource("6_56o07")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, -6)
+
+[node name="Rings6" type="Node3D" parent="Classic15"]
+transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, -1.9999994, 0.6, 46)
+script = ExtResource("5_y712n")
+Source = ExtResource("6_56o07")
+Amount = 5
+Shape = 0
+Orientation = 0
+Spacing = 1.5
+"Horizontal Offset" = null
+"Vertical Offset" = SubResource("Curve_sey6t")
+
+[node name="Child01" parent="Classic15/Rings6" instance=ExtResource("6_56o07")]
+
+[node name="Child02" parent="Classic15/Rings6" instance=ExtResource("6_56o07")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.52736, -1.5)
+
+[node name="Child03" parent="Classic15/Rings6" instance=ExtResource("6_56o07")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, -3)
+
+[node name="Child04" parent="Classic15/Rings6" instance=ExtResource("6_56o07")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.7863, -4.5)
+
+[node name="Child05" parent="Classic15/Rings6" instance=ExtResource("6_56o07")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, -6)
+
+[node name="Goal" parent="Classic15" instance=ExtResource("7_iwo1a")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 0, 8, 60)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Classic15/Goal"]
+shape = SubResource("BoxShape3D_lau7f")
+
+[editable path="Static"]
