@@ -422,6 +422,9 @@ public partial class StageSettings : Node3D
 	public delegate void ObjectiveResetEventHandler(); // Progress towards the objective has changed
 	public void IncrementObjective()
 	{
+		if (!IsObjectiveIncrementValid())
+			return;
+
 		CurrentObjectiveCount++;
 		CurrentObjectiveCount = Mathf.Clamp(CurrentObjectiveCount, 0, Data.MissionObjectiveCount);
 		HeadsUpDisplay.Instance.PlayObjectiveAnimation("good");
@@ -439,6 +442,29 @@ public partial class StageSettings : Node3D
 		{
 			FinishLevel(true);
 		}
+	}
+
+	/// <summary> Check if the object should actually be incremented. </summary>
+	private bool IsObjectiveIncrementValid()
+	{
+		if (Data.RequiredSkill == null)
+			return true;
+
+		if (Data.MissionType == LevelDataResource.MissionTypeEnum.Enemy) // Validate enemy defeats
+		{
+			if (Data.RequiredSkill.Key == SkillKey.SlideAttack && !Player.IsSliding)
+				return false;
+
+			if (Data.RequiredSkill.Key == SkillKey.PerfectHomingAttack && !Player.IsPerfectHomingAttacking)
+				return false;
+
+			return true;
+		}
+
+		if (Data.RequiredSkill.Key == SkillKey.StompAttack && !Player.IsStomping)
+			return false;
+
+		return true;
 	}
 
 	public void ResetObjective(int progress = 0)

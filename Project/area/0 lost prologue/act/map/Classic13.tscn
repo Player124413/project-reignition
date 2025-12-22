@@ -1,0 +1,275 @@
+[gd_scene load_steps=9 format=3 uid="uid://36j4ssobh4k4"]
+
+[ext_resource type="PackedScene" uid="uid://dax0mun2bjm1v" path="res://area/0 lost prologue/act/Static.tscn" id="1_yhnww"]
+[ext_resource type="Resource" uid="uid://6wuwl40kx3bk" path="res://resource/level data/lost prologue/Classic13.tres" id="2_yhnww"]
+[ext_resource type="PackedScene" uid="uid://cjupypih0myxo" path="res://object/player/CharacterSpawn.tscn" id="3_qypp8"]
+[ext_resource type="PackedScene" uid="uid://bhnh1as6xgpiy" path="res://object/stage/common/DashPanel.tscn" id="4_54xls"]
+[ext_resource type="Script" uid="uid://bssd28yqn1cxg" path="res://object/trigger/modules/PathTrigger.cs" id="5_ux3jx"]
+[ext_resource type="Script" uid="uid://kvlmbv66orqt" path="res://object/trigger/modules/CullingTrigger.cs" id="6_ntfjr"]
+[ext_resource type="PackedScene" uid="uid://cbpudluma1oux" path="res://object/stage/destructable/Crate.tscn" id="7_fu5x7"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_e5om0"]
+size = Vector3(10, 20, 5)
+
+[node name="Stage" type="Node"]
+
+[node name="Static" parent="." instance=ExtResource("1_yhnww")]
+Data = ExtResource("2_yhnww")
+
+[node name="Classic13" type="Node3D" parent="."]
+
+[node name="SpawnPosition" type="Node3D" parent="Classic13"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 144)
+
+[node name="CharacterSpawn" parent="Classic13/SpawnPosition" instance=ExtResource("3_qypp8")]
+
+[node name="DashPanelGroup1" type="Node3D" parent="Classic13"]
+transform = Transform3D(-0.80670726, 0.14224426, -0.57357645, 0.1736482, 0.9848077, 0, 0.5648625, -0.09960051, -0.81915206, 9.838658, 0.03472964, 193.11298)
+
+[node name="DashPanel1" parent="Classic13/DashPanelGroup1" instance=ExtResource("4_54xls")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0, 0)
+
+[node name="DashPanel2" parent="Classic13/DashPanelGroup1" instance=ExtResource("4_54xls")]
+
+[node name="DashPanel3" parent="Classic13/DashPanelGroup1" instance=ExtResource("4_54xls")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0, 0)
+
+[node name="PathForward" type="Node3D" parent="Classic13/DashPanelGroup1" node_paths=PackedStringArray("path")]
+script = ExtResource("5_ux3jx")
+path = NodePath("../../../Static/Path/MainPath")
+cameraPathBlendTime = 0.5
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Classic13/DashPanelGroup1" groups=["wall"]]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -4)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Classic13/DashPanelGroup1/StaticBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
+shape = SubResource("BoxShape3D_e5om0")
+
+[node name="CrateGroup" type="Node3D" parent="Classic13"]
+script = ExtResource("6_ntfjr")
+startEnabled = true
+respawnOnActivation = true
+
+[node name="CrateGroup1" type="Node3D" parent="Classic13/CrateGroup"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 121)
+
+[node name="Crate1" parent="Classic13/CrateGroup/CrateGroup1" instance=ExtResource("7_fu5x7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+
+[node name="Crate2" parent="Classic13/CrateGroup/CrateGroup1" instance=ExtResource("7_fu5x7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0.5, 0)
+
+[node name="Crate3" parent="Classic13/CrateGroup/CrateGroup1" instance=ExtResource("7_fu5x7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0.5, 0)
+
+[node name="CrateGroup2" type="Node3D" parent="Classic13/CrateGroup"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 81)
+
+[node name="Crate1" parent="Classic13/CrateGroup/CrateGroup2" instance=ExtResource("7_fu5x7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+
+[node name="Crate2" parent="Classic13/CrateGroup/CrateGroup2" instance=ExtResource("7_fu5x7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0.5, 0)
+
+[node name="Crate3" parent="Classic13/CrateGroup/CrateGroup2" instance=ExtResource("7_fu5x7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0.5, 0)
+
+[node name="CrateGroup3" type="Node3D" parent="Classic13/CrateGroup"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5, 0, 22)
+
+[node name="Crate1" parent="Classic13/CrateGroup/CrateGroup3" instance=ExtResource("7_fu5x7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, -1)
+
+[node name="Crate2" parent="Classic13/CrateGroup/CrateGroup3" instance=ExtResource("7_fu5x7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 0.5, 0)
+
+[node name="Crate3" parent="Classic13/CrateGroup/CrateGroup3" instance=ExtResource("7_fu5x7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.5, 0.5, 0)
+
+[node name="CrateGroup4" type="Node3D" parent="Classic13/CrateGroup"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, 0, -11)
+
+[node name="Crate1" parent="Classic13/CrateGroup/CrateGroup4" instance=ExtResource("7_fu5x7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, -1)
+
+[node name="Crate2" parent="Classic13/CrateGroup/CrateGroup4" instance=ExtResource("7_fu5x7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 0.5, 0)
+
+[node name="Crate3" parent="Classic13/CrateGroup/CrateGroup4" instance=ExtResource("7_fu5x7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.5, 0.5, 0)
+
+[node name="CrateGroup5" type="Node3D" parent="Classic13/CrateGroup"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 0, -60)
+
+[node name="Crate1" parent="Classic13/CrateGroup/CrateGroup5" instance=ExtResource("7_fu5x7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+
+[node name="Crate2" parent="Classic13/CrateGroup/CrateGroup5" instance=ExtResource("7_fu5x7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0.5, 0)
+
+[node name="Crate3" parent="Classic13/CrateGroup/CrateGroup5" instance=ExtResource("7_fu5x7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0.5, 0)
+
+[node name="CrateGroup6" type="Node3D" parent="Classic13/CrateGroup"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 0, -65)
+
+[node name="Crate1" parent="Classic13/CrateGroup/CrateGroup6" instance=ExtResource("7_fu5x7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+
+[node name="Crate2" parent="Classic13/CrateGroup/CrateGroup6" instance=ExtResource("7_fu5x7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0.5, 0)
+
+[node name="Crate3" parent="Classic13/CrateGroup/CrateGroup6" instance=ExtResource("7_fu5x7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0.5, 0)
+
+[node name="CrateGroup7" type="Node3D" parent="Classic13/CrateGroup"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 0, -70)
+
+[node name="Crate1" parent="Classic13/CrateGroup/CrateGroup7" instance=ExtResource("7_fu5x7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+
+[node name="Crate2" parent="Classic13/CrateGroup/CrateGroup7" instance=ExtResource("7_fu5x7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0.5, 0)
+
+[node name="Crate3" parent="Classic13/CrateGroup/CrateGroup7" instance=ExtResource("7_fu5x7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0.5, 0)
+
+[node name="CrateGroup8" type="Node3D" parent="Classic13/CrateGroup"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -106)
+
+[node name="Crate1" parent="Classic13/CrateGroup/CrateGroup8" instance=ExtResource("7_fu5x7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 0.5, 0.5)
+
+[node name="Crate2" parent="Classic13/CrateGroup/CrateGroup8" instance=ExtResource("7_fu5x7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5, 0.5, 0.5)
+
+[node name="Crate3" parent="Classic13/CrateGroup/CrateGroup8" instance=ExtResource("7_fu5x7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.5, 0.5, 0.5)
+
+[node name="Crate4" parent="Classic13/CrateGroup/CrateGroup8" instance=ExtResource("7_fu5x7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, 0.5, 0.5)
+
+[node name="Crate5" parent="Classic13/CrateGroup/CrateGroup8" instance=ExtResource("7_fu5x7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 0.5, -0.5)
+
+[node name="Crate6" parent="Classic13/CrateGroup/CrateGroup8" instance=ExtResource("7_fu5x7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5, 0.5, -0.5)
+
+[node name="Crate7" parent="Classic13/CrateGroup/CrateGroup8" instance=ExtResource("7_fu5x7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.5, 0.5, -0.5)
+
+[node name="Crate8" parent="Classic13/CrateGroup/CrateGroup8" instance=ExtResource("7_fu5x7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, 0.5, -0.5)
+
+[node name="CrateGroup9" type="Node3D" parent="Classic13/CrateGroup"]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 0, 0, -133)
+
+[node name="Crate1" parent="Classic13/CrateGroup/CrateGroup9" instance=ExtResource("7_fu5x7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0.5)
+
+[node name="Crate2" parent="Classic13/CrateGroup/CrateGroup9" instance=ExtResource("7_fu5x7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0.5, 0.5)
+
+[node name="Crate3" parent="Classic13/CrateGroup/CrateGroup9" instance=ExtResource("7_fu5x7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0.5, 0.5)
+
+[node name="Crate4" parent="Classic13/CrateGroup/CrateGroup9" instance=ExtResource("7_fu5x7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0.5, 0.5)
+
+[node name="Crate5" parent="Classic13/CrateGroup/CrateGroup9" instance=ExtResource("7_fu5x7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0.5, 0.5)
+
+[node name="Crate6" parent="Classic13/CrateGroup/CrateGroup9" instance=ExtResource("7_fu5x7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, -0.5)
+
+[node name="Crate7" parent="Classic13/CrateGroup/CrateGroup9" instance=ExtResource("7_fu5x7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0.5, -0.5)
+
+[node name="Crate8" parent="Classic13/CrateGroup/CrateGroup9" instance=ExtResource("7_fu5x7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0.5, -0.5)
+
+[node name="Crate9" parent="Classic13/CrateGroup/CrateGroup9" instance=ExtResource("7_fu5x7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0.5, -0.5)
+
+[node name="Crate10" parent="Classic13/CrateGroup/CrateGroup9" instance=ExtResource("7_fu5x7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0.5, -0.5)
+
+[node name="DashPanelGroup2" type="Node3D" parent="Classic13"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -157)
+
+[node name="DashPanel1" parent="Classic13/DashPanelGroup2" instance=ExtResource("4_54xls")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0, 0)
+
+[node name="DashPanel2" parent="Classic13/DashPanelGroup2" instance=ExtResource("4_54xls")]
+
+[node name="DashPanel3" parent="Classic13/DashPanelGroup2" instance=ExtResource("4_54xls")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0, 0)
+
+[node name="PathReverse" type="Node3D" parent="Classic13/DashPanelGroup2" node_paths=PackedStringArray("path")]
+script = ExtResource("5_ux3jx")
+path = NodePath("../../../Static/Path/MainPath")
+pathMode = 1
+cameraPathBlendTime = 0.5
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Classic13/DashPanelGroup2" groups=["wall"]]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -4)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Classic13/DashPanelGroup2/StaticBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
+shape = SubResource("BoxShape3D_e5om0")
+
+[connection signal="LevelStarted" from="Static" to="Classic13/SpawnPosition/CharacterSpawn/HeadsUpDisplay" method="PlayObjectiveAnimation" binds= [&"crate"]]
+[connection signal="Activated" from="Classic13/DashPanelGroup1/DashPanel1" to="Classic13/DashPanelGroup1/PathForward" method="Activate"]
+[connection signal="Activated" from="Classic13/DashPanelGroup1/DashPanel1" to="Classic13/CrateGroup" method="Activate"]
+[connection signal="Activated" from="Classic13/DashPanelGroup1/DashPanel2" to="Classic13/DashPanelGroup1/PathForward" method="Activate"]
+[connection signal="Activated" from="Classic13/DashPanelGroup1/DashPanel2" to="Classic13/CrateGroup" method="Activate"]
+[connection signal="Activated" from="Classic13/DashPanelGroup1/DashPanel3" to="Classic13/DashPanelGroup1/PathForward" method="Activate"]
+[connection signal="Activated" from="Classic13/DashPanelGroup1/DashPanel3" to="Classic13/CrateGroup" method="Activate"]
+[connection signal="Shattered" from="Classic13/CrateGroup/CrateGroup1/Crate1" to="Static" method="IncrementObjective"]
+[connection signal="Shattered" from="Classic13/CrateGroup/CrateGroup1/Crate2" to="Static" method="IncrementObjective"]
+[connection signal="Shattered" from="Classic13/CrateGroup/CrateGroup1/Crate3" to="Static" method="IncrementObjective"]
+[connection signal="Shattered" from="Classic13/CrateGroup/CrateGroup2/Crate1" to="Static" method="IncrementObjective"]
+[connection signal="Shattered" from="Classic13/CrateGroup/CrateGroup2/Crate2" to="Static" method="IncrementObjective"]
+[connection signal="Shattered" from="Classic13/CrateGroup/CrateGroup2/Crate3" to="Static" method="IncrementObjective"]
+[connection signal="Shattered" from="Classic13/CrateGroup/CrateGroup3/Crate1" to="Static" method="IncrementObjective"]
+[connection signal="Shattered" from="Classic13/CrateGroup/CrateGroup3/Crate2" to="Static" method="IncrementObjective"]
+[connection signal="Shattered" from="Classic13/CrateGroup/CrateGroup3/Crate3" to="Static" method="IncrementObjective"]
+[connection signal="Shattered" from="Classic13/CrateGroup/CrateGroup4/Crate1" to="Static" method="IncrementObjective"]
+[connection signal="Shattered" from="Classic13/CrateGroup/CrateGroup4/Crate2" to="Static" method="IncrementObjective"]
+[connection signal="Shattered" from="Classic13/CrateGroup/CrateGroup4/Crate3" to="Static" method="IncrementObjective"]
+[connection signal="Shattered" from="Classic13/CrateGroup/CrateGroup5/Crate1" to="Static" method="IncrementObjective"]
+[connection signal="Shattered" from="Classic13/CrateGroup/CrateGroup5/Crate2" to="Static" method="IncrementObjective"]
+[connection signal="Shattered" from="Classic13/CrateGroup/CrateGroup5/Crate3" to="Static" method="IncrementObjective"]
+[connection signal="Shattered" from="Classic13/CrateGroup/CrateGroup6/Crate1" to="Static" method="IncrementObjective"]
+[connection signal="Shattered" from="Classic13/CrateGroup/CrateGroup6/Crate2" to="Static" method="IncrementObjective"]
+[connection signal="Shattered" from="Classic13/CrateGroup/CrateGroup6/Crate3" to="Static" method="IncrementObjective"]
+[connection signal="Shattered" from="Classic13/CrateGroup/CrateGroup7/Crate1" to="Static" method="IncrementObjective"]
+[connection signal="Shattered" from="Classic13/CrateGroup/CrateGroup7/Crate2" to="Static" method="IncrementObjective"]
+[connection signal="Shattered" from="Classic13/CrateGroup/CrateGroup7/Crate3" to="Static" method="IncrementObjective"]
+[connection signal="Shattered" from="Classic13/CrateGroup/CrateGroup8/Crate1" to="Static" method="IncrementObjective"]
+[connection signal="Shattered" from="Classic13/CrateGroup/CrateGroup8/Crate2" to="Static" method="IncrementObjective"]
+[connection signal="Shattered" from="Classic13/CrateGroup/CrateGroup8/Crate3" to="Static" method="IncrementObjective"]
+[connection signal="Shattered" from="Classic13/CrateGroup/CrateGroup8/Crate4" to="Static" method="IncrementObjective"]
+[connection signal="Shattered" from="Classic13/CrateGroup/CrateGroup8/Crate5" to="Static" method="IncrementObjective"]
+[connection signal="Shattered" from="Classic13/CrateGroup/CrateGroup8/Crate6" to="Static" method="IncrementObjective"]
+[connection signal="Shattered" from="Classic13/CrateGroup/CrateGroup8/Crate7" to="Static" method="IncrementObjective"]
+[connection signal="Shattered" from="Classic13/CrateGroup/CrateGroup8/Crate8" to="Static" method="IncrementObjective"]
+[connection signal="Shattered" from="Classic13/CrateGroup/CrateGroup9/Crate1" to="Static" method="IncrementObjective"]
+[connection signal="Shattered" from="Classic13/CrateGroup/CrateGroup9/Crate2" to="Static" method="IncrementObjective"]
+[connection signal="Shattered" from="Classic13/CrateGroup/CrateGroup9/Crate3" to="Static" method="IncrementObjective"]
+[connection signal="Shattered" from="Classic13/CrateGroup/CrateGroup9/Crate4" to="Static" method="IncrementObjective"]
+[connection signal="Shattered" from="Classic13/CrateGroup/CrateGroup9/Crate5" to="Static" method="IncrementObjective"]
+[connection signal="Shattered" from="Classic13/CrateGroup/CrateGroup9/Crate6" to="Static" method="IncrementObjective"]
+[connection signal="Shattered" from="Classic13/CrateGroup/CrateGroup9/Crate7" to="Static" method="IncrementObjective"]
+[connection signal="Shattered" from="Classic13/CrateGroup/CrateGroup9/Crate8" to="Static" method="IncrementObjective"]
+[connection signal="Shattered" from="Classic13/CrateGroup/CrateGroup9/Crate9" to="Static" method="IncrementObjective"]
+[connection signal="Shattered" from="Classic13/CrateGroup/CrateGroup9/Crate10" to="Static" method="IncrementObjective"]
+[connection signal="Activated" from="Classic13/DashPanelGroup2/DashPanel1" to="Classic13/CrateGroup" method="Activate"]
+[connection signal="Activated" from="Classic13/DashPanelGroup2/DashPanel1" to="Classic13/DashPanelGroup2/PathReverse" method="Activate"]
+[connection signal="Activated" from="Classic13/DashPanelGroup2/DashPanel2" to="Classic13/CrateGroup" method="Activate"]
+[connection signal="Activated" from="Classic13/DashPanelGroup2/DashPanel2" to="Classic13/DashPanelGroup2/PathReverse" method="Activate"]
+[connection signal="Activated" from="Classic13/DashPanelGroup2/DashPanel3" to="Classic13/CrateGroup" method="Activate"]
+[connection signal="Activated" from="Classic13/DashPanelGroup2/DashPanel3" to="Classic13/DashPanelGroup2/PathReverse" method="Activate"]
+
+[editable path="Static"]

@@ -83,6 +83,7 @@ public partial class KnockbackState : PlayerState
 		{
 			Player.Controller.ResetJumpBuffer();
 			Player.ForceAccelerationJump = true;
+			Player.StartInvincibility(1f);
 			return jumpState;
 		}
 

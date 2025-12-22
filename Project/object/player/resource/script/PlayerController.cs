@@ -1077,7 +1077,7 @@ public partial class PlayerController : CharacterBody3D
 		invincibilityTimer = length;
 
 		if (enableFlickering)
-			Animator.StartInvincibility(length / InvincibilityLength);
+			Animator.StartInvincibility(InvincibilityLength / length);
 	}
 
 	private void UpdateInvincibility()
