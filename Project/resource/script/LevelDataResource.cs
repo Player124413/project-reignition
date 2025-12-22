@@ -34,6 +34,18 @@ public partial class LevelDataResource : Resource
 		ThumbsUp, // Thumbs up variation is determined by character's speed...
 	}
 
+	public SkillResource RequiredSkill { get; private set; }
+	public int RequiredMedals { get; private set; }
+	public int RequiredLevel { get; private set; }
+	public RankEnum RequiredRank { get; private set; }
+	public enum RankEnum
+	{
+		Gold,
+		Silver,
+		Bronze,
+		Completed
+	}
+
 	#region Editor
 	public override Array<Dictionary> _GetPropertyList()
 	{
@@ -49,6 +61,11 @@ public partial class LevelDataResource : Resource
 
 			ExtensionMethods.CreateProperty("Mission Category", Variant.Type.Int, PropertyHint.Enum, MissionCategory.EnumToString()),
 			ExtensionMethods.CreateProperty("Has Fire Souls", Variant.Type.Bool),
+
+			ExtensionMethods.CreateProperty("Unlock Requirements/Required Skill", Variant.Type.Object, PropertyHint.ResourceType, "SkillResource"),
+			ExtensionMethods.CreateProperty("Unlock Requirements/Required Level", Variant.Type.Int, PropertyHint.Range, "0,99"),
+			ExtensionMethods.CreateProperty("Unlock Requirements/Required Medals", Variant.Type.Int),
+			ExtensionMethods.CreateProperty("Unlock Requirements/Required Rank", Variant.Type.Int, PropertyHint.Enum, RequiredRank.EnumToString()),
 
 			ExtensionMethods.CreateProperty("Mission/Type", Variant.Type.Int, PropertyHint.Enum, MissionType.EnumToString()),
 			ExtensionMethods.CreateProperty("Mission/Type Key", Variant.Type.String),
@@ -105,6 +122,15 @@ public partial class LevelDataResource : Resource
 				return PostStoryEvent;
 			case "World Ring":
 				return (int)WorldRing;
+
+			case "Unlock Requirements/Required Skill":
+				return RequiredSkill;
+			case "Unlock Requirements/Required Level":
+				return RequiredLevel;
+			case "Unlock Requirements/Required Medals":
+				return RequiredMedals;
+			case "Unlock Requirements/Required Rank":
+				return (int)RequiredRank;
 
 			case "Mission Category":
 				return (int)MissionCategory;
@@ -182,6 +208,19 @@ public partial class LevelDataResource : Resource
 				break;
 			case "World Ring":
 				WorldRing = (SaveManager.WorldEnum)(int)value;
+				break;
+
+			case "Unlock Requirements/Required Skill":
+				RequiredSkill = (SkillResource)value;
+				break;
+			case "Unlock Requirements/Required Level":
+				RequiredLevel = (int)value;
+				break;
+			case "Unlock Requirements/Required Medals":
+				RequiredMedals = (int)value;
+				break;
+			case "Unlock Requirements/Required Rank":
+				RequiredRank = (RankEnum)(int)value;
 				break;
 
 			case "Mission Category":
