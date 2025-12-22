@@ -169,7 +169,7 @@ public partial class CaptainBemothHorn : Node3D
 
 	public void OnEntered(Area3D a)
 	{
-		if (!a.IsInGroup("player") || IsPopping || StageSettings.Player.IsLaunching)
+		if (!a.IsInGroup("player") || IsPopping || !StageSettings.Player.IsHomingAttacking)
 			return;
 
 		StageSettings.Player.StartHorn(this);
