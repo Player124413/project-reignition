@@ -340,11 +340,6 @@ public partial class GrindState : PlayerState
 			StartShuffle(true);
 			return;
 		}
-
-		if (!Mathf.IsZeroApprox(currentCharge))
-			return;
-
-		ActiveGrindRail.IsBonusDisabled = true;
 	}
 
 	private void UpdateChargeAnimations(bool isCharging)
@@ -374,12 +369,12 @@ public partial class GrindState : PlayerState
 		Player.Effect.StartGrindFX(false);
 		Player.Animator.StartGrindShuffle();
 		if (isPerfectCharge)
+		{
 			Player.Effect.PerfectGrindShuffleFX();
-		else
-			ActiveGrindRail.IsBonusDisabled = true;
 
-		if (!ActiveGrindRail.IsBonusDisabled)
-			BonusManager.instance.QueueBonus(new(BonusType.GrindShuffle));
+			if (!ActiveGrindRail.IsBonusDisabled)
+				BonusManager.instance.QueueBonus(new(BonusType.GrindShuffle));
+		}
 	}
 
 	private RaycastHit CheckWall(float length, GrindRail rail = null)
