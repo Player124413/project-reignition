@@ -65,6 +65,7 @@ public partial class BounceState : PlayerState
 	public override void ExitState()
 	{
 		Player.IsBouncing = false;
+		Player.IsPerfectHomingAttacking = false;
 		Player.RemoveLockoutData(LockoutSettings);
 	}
 

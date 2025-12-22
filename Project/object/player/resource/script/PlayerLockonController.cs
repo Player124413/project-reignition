@@ -16,8 +16,10 @@ public partial class PlayerLockonController : Area3D
 	{
 		Player = player;
 		IsMonitoring = SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.GroundedHomingAttack);
-	}
 
+		Player.Skills.TimeBreakStarted += UpdateLockonAnimationSpeedScale;
+		Player.Skills.TimeBreakStopped += UpdateLockonAnimationSpeedScale;
+	}
 
 	/// <summary> Active lockon target shown on the HUD. </summary>
 	public Node3D Target { get; private set; }
@@ -81,6 +83,8 @@ public partial class PlayerLockonController : Area3D
 		ValidateTarget(wasTargetChanged);
 		ValidateCameraLockonTarget();
 	}
+
+	private void UpdateLockonAnimationSpeedScale() => lockonAnimator.SpeedScale = 1f / (float)Engine.TimeScale;
 
 	private void ValidateCameraLockonTarget()
 	{

@@ -238,6 +238,9 @@ public partial class Enemy : Node3D
 		{
 			if (data.RequiredSkill.Key == SkillKey.SlideAttack && !Player.IsSliding)
 				return;
+
+			if (data.RequiredSkill.Key == SkillKey.PerfectHomingAttack && !Player.IsPerfectHomingAttacking)
+				return;
 		}
 
 		StageSettings.Instance.CallDeferred(StageSettings.MethodName.IncrementObjective);
