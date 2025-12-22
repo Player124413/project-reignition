@@ -282,6 +282,7 @@ public partial class CaptainBemoth : PathFollow3D
 		currentState = BemothState.Idle;
 		isFacingForward = currentHealth == 1; // Only face the player when almost dead
 		attackTimer = AttackTimerInterval;
+		EnableHornHurtboxes();
 	}
 
 	private void ProcessIdleState()
@@ -302,15 +303,16 @@ public partial class CaptainBemoth : PathFollow3D
 	private readonly float DamageSpeedSmoothing = 30f;
 	private readonly float BaseMoveSpeed = 20f;
 	private readonly float ChargeSpeed = -100f;
-	private readonly float WraparoundSpeed = -150f;
+	private readonly float WraparoundSpeed = -100f;
 	private readonly float MinimumDistance = 2f;
 	private readonly float MinimumDistanceSmoothingStart = 10f;
 	private readonly float StopDistance = 40f;
-	private readonly float WraparoundDistance = 50f;
+	private readonly float MaxWraparoundDistance = 50f;
+	private readonly float MinWraparoundDistance = -20f;
 	private readonly float WraparoundDistanceSmoothingStart = 50f;
 	private readonly float StopDistanceSmoothingStart = 35f;
 	private readonly float WaveAttackDistance = 20f;
-	private readonly float StunDistance = 100f;
+	private readonly float StunDistance = 60f;
 
 	/// <summary> Returns the progress difference between the player and the boss. </summary>
 	public float GetDeltaProgress()
@@ -333,7 +335,9 @@ public partial class CaptainBemoth : PathFollow3D
 		float speedRatio = 1f - Mathf.Clamp(Mathf.Abs(deltaProgress) / StopDistance, 0f, 1f);
 		float targetMoveSpeed = BaseMoveSpeed * speedRatio;
 
-		isWrappingAround = deltaProgress < 0 || deltaProgress > WraparoundDistance;
+		isWrappingAround = (deltaProgress < 0 && Player.Skills.IsSpeedBreakActive) ||
+			deltaProgress < MinWraparoundDistance ||
+			deltaProgress > MaxWraparoundDistance;
 		if (isWrappingAround)
 		{
 			if (deltaProgress < 0)
@@ -342,7 +346,7 @@ public partial class CaptainBemoth : PathFollow3D
 			}
 			else
 			{
-				speedRatio = Mathf.Clamp(deltaProgress - WraparoundDistanceSmoothingStart / WraparoundDistance + WraparoundDistanceSmoothingStart, 0f, 1f);
+				speedRatio = Mathf.Clamp(deltaProgress - WraparoundDistanceSmoothingStart / MaxWraparoundDistance + WraparoundDistanceSmoothingStart, 0f, 1f);
 				targetMoveSpeed = Mathf.Lerp(0f, WraparoundSpeed, speedRatio);
 			}
 		}
@@ -518,7 +522,6 @@ public partial class CaptainBemoth : PathFollow3D
 	{
 		bombAttackCounter = 0;
 		currentState = BemothState.BombAttack;
-		EnableHornHurtboxes();
 	}
 
 	private void ProcessBombState()
@@ -742,6 +745,9 @@ public partial class CaptainBemoth : PathFollow3D
 		CancelBombAttacks();
 		StopChargeAttack();
 
+		if (Player.Skills.IsSpeedBreakActive)
+			Player.Skills.ToggleSpeedBreak();
+
 		stunTimer = 0;
 		startStunProgress = Progress;
 		endStunProgress = startStunProgress + StunDistance;
@@ -754,6 +760,7 @@ public partial class CaptainBemoth : PathFollow3D
 		if (currentState != BemothState.Stunned)
 			return;
 
+		currentState = BemothState.Idle;
 		animator.Set(StunTrigger, (int)AnimationNodeOneShot.OneShotRequest.FadeOut);
 	}
 
@@ -909,6 +916,7 @@ public partial class CaptainBemoth : PathFollow3D
 		{
 			CancelShockAttack();
 			EnterIdleState();
+			DisableHornHurtboxes(); // Punish the player for chickening out
 		}
 
 		attackTimer = ShortAttackInterval;
