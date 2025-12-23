@@ -506,10 +506,23 @@ tracks/3/keys = {
 "update": 1,
 "values": [true]
 }
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("Root/Explosion/OmniLight3D:light_energy")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.0]
+}
 
 [sub_resource type="Animation" id="Animation_i6jhs"]
 resource_name = "explode"
 length = 0.333337
+step = 0.1
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
@@ -588,6 +601,18 @@ tracks/5/keys = {
 "method": &"Play"
 }]
 }
+tracks/6/type = "value"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("Root/Explosion/OmniLight3D:light_energy")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"times": PackedFloat32Array(0, 0.2, 0.3),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [1.0, 1.0, 0.0]
+}
 
 [sub_resource type="Animation" id="Animation_g2e5f"]
 resource_name = "fly"
@@ -663,6 +688,7 @@ tracks/3/keys = {
 [sub_resource type="Animation" id="Animation_wa5u3"]
 resource_name = "windup"
 length = 0.333337
+step = 0.1
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
@@ -726,6 +752,18 @@ tracks/4/keys = {
 "args": [0.0],
 "method": &"play"
 }]
+}
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("Root/Explosion/OmniLight3D:light_energy")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0, 0.1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [0.0, 1.0]
 }
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_ovd8r"]
@@ -847,6 +885,16 @@ interpolate = false
 transform_align = 2
 process_material = SubResource("ParticleProcessMaterial_mo8io")
 draw_pass_1 = SubResource("QuadMesh_xa85y")
+
+[node name="OmniLight3D" type="OmniLight3D" parent="Root/Explosion"]
+light_color = Color(1, 0.92200005, 0.61, 1)
+light_energy = 0.0
+light_specular = 1.0
+light_cull_mask = 4293918791
+distance_fade_enabled = true
+distance_fade_begin = 20.0
+distance_fade_length = 40.0
+omni_range = 20.0
 
 [node name="LaunchSFX" type="AudioStreamPlayer3D" parent="Root"]
 stream = ExtResource("12_1lvje")

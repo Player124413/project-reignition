@@ -481,19 +481,18 @@ tonemap_exposure = 1.2
 tonemap_white = 1.2
 glow_enabled = true
 glow_normalized = true
-glow_intensity = 0.05
-glow_bloom = 1.0
+glow_intensity = 0.2
+glow_bloom = 0.5
 glow_blend_mode = 1
 fog_enabled = true
 fog_mode = 1
-fog_light_color = Color(0.65999997, 0.83, 1, 1)
+fog_light_color = Color(0.6, 0.8, 1, 1)
 fog_sun_scatter = 0.12
-fog_density = 0.4
+fog_density = 0.5
 fog_aerial_perspective = 0.8
 fog_sky_affect = 0.75
 fog_depth_curve = 0.5
-fog_depth_begin = 5.0
-fog_depth_end = 300.0
+fog_depth_end = 500.0
 adjustment_enabled = true
 adjustment_saturation = 1.2
 adjustment_color_correction = SubResource("GradientTexture1D_j0cb7")
@@ -569,16 +568,6 @@ directional_shadow_blend_splits = true
 directional_shadow_fade_start = 0.5
 directional_shadow_max_distance = 25.0
 
-[node name="WaterLighting" type="DirectionalLight3D" parent="Visuals/Lighting"]
-transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0, 0)
-layers = 1024
-light_color = Color(0.39999998, 0.66, 1, 1)
-light_energy = 3.0
-light_indirect_energy = 0.0
-light_volumetric_fog_energy = 0.0
-light_cull_mask = 8
-shadow_caster_mask = 65
-
 [node name="ObjectLighting" type="DirectionalLight3D" parent="Visuals/Lighting"]
 transform = Transform3D(1, 0, 0, 0, 0.7071067, 0.7071068, 0, -0.7071068, 0.7071067, 0, 0, 0)
 layers = 1024
@@ -596,6 +585,16 @@ reflection_mask = 65
 ambient_mode = 2
 ambient_color = Color(0.69, 0.7623334, 1, 1)
 ambient_color_energy = 0.1
+
+[node name="water_probe" type="ReflectionProbe" parent="Visuals/Lighting"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.5200005, 100, 2.5529785)
+layers = 1024
+size = Vector3(1385.3867, 300, 1410.8848)
+cull_mask = 0
+reflection_mask = 8
+ambient_mode = 2
+ambient_color = Color(0.53, 0.78066665, 1, 1)
+ambient_color_energy = 2.5
 
 [node name="Trigger" type="Node3D" parent="."]
 
