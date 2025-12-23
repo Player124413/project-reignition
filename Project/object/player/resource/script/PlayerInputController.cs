@@ -253,14 +253,14 @@ public partial class PlayerInputController : Node
 
 		if (Player.IsLockoutActive && Player.ActiveLockoutData.allowGlobalForward)
 		{
-			bool isMovingBackwards = IsMovingBackwardsInLockout(nonZeroInput, Player.ActiveLockoutData.movementAngle + Player.PathFollower.BackAngle);
-			Vector2 referenceInput = isMovingBackwards ? Vector2.Down : Vector2.Up;
+			bool isHoldingBackwards = IsHoldingDirection(nonZeroInput, Player.ActiveLockoutData.movementAngle + Player.PathFollower.BackAngle, Mathf.Pi * 0.2f);
+			Vector2 referenceInput = isHoldingBackwards ? Vector2.Down : Vector2.Up;
 
 			if (!InputAxis.IsZeroApprox() && NonZeroInputAxis.AngleTo(referenceInput) < Mathf.Pi * 0.2f &&
 			Player.Stats.GroundSettings.GetSpeedRatioClamped(Player.MoveSpeed) > 0.2f)
 			{
 				// Allow moving forward by just holding up when moving quickly along certain lockouts
-				return isMovingBackwards ? Player.PathFollower.BackAngle : Player.PathFollower.ForwardAngle;
+				return isHoldingBackwards ? Player.PathFollower.BackAngle : Player.PathFollower.ForwardAngle;
 			}
 		}
 
