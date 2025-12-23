@@ -127,6 +127,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -4)
 [node name="ItemboxHorizontal" type="Node3D" parent="Classic12"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 1.5, 75)
 script = ExtResource("8_nxlx1")
+smoothPausing = true
 root = NodePath("ItemboxVertical")
 animator = NodePath("")
 Movement/Mode = 1
@@ -138,7 +139,8 @@ Movement/Angle = 90.0
 
 [node name="ItemboxVertical" type="Node3D" parent="Classic12/ItemboxHorizontal"]
 script = ExtResource("8_nxlx1")
-root = NodePath("../ItemBoxFlying")
+smoothPausing = true
+root = NodePath("ItemBoxFlying")
 animator = NodePath("")
 Movement/Mode = 1
 "Movement/Cycle Length" = 2.0
@@ -147,7 +149,7 @@ Movement/Distance = 2.0
 Movement/Angle = 0.0
 "Vertical Orientation" = true
 
-[node name="ItemBoxFlying" parent="Classic12/ItemboxHorizontal" instance=ExtResource("9_302hu")]
+[node name="ItemBoxFlying" parent="Classic12/ItemboxHorizontal/ItemboxVertical" instance=ExtResource("9_302hu")]
 "Spawn Settings/Spawn Pearls" = true
 "Spawn Settings/Amount" = 20
 
@@ -282,5 +284,8 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 11, 1)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Classic12/Goal"]
 shape = SubResource("BoxShape3D_rwhuv")
+
+[connection signal="Collected" from="Classic12/ItemboxHorizontal/ItemboxVertical/ItemBoxFlying" to="Classic12/ItemboxHorizontal" method="Pause"]
+[connection signal="Collected" from="Classic12/ItemboxHorizontal/ItemboxVertical/ItemBoxFlying" to="Classic12/ItemboxHorizontal/ItemboxVertical" method="Pause"]
 
 [editable path="Static"]
