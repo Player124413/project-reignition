@@ -1,5 +1,5 @@
 shader_type spatial;
-render_mode specular_disabled, unshaded, cull_disabled, fog_disabled;
+render_mode specular_disabled, unshaded, cull_disabled, blend_mul, fog_disabled;
 
 uniform sampler2D albedo : source_color;
 uniform int particles_anim_h_frames;
@@ -30,6 +30,5 @@ void fragment()
 {
 	vec4 color = texture(albedo, UV);
 	color *= COLOR;
-	ALBEDO = color.rgb;
-	ALPHA *= color.a;
+	ALBEDO = mix(vec3(1.0), color.rgb, color.a);
 }
