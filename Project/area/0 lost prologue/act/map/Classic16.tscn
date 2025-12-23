@@ -1,4 +1,4 @@
-[gd_scene load_steps=19 format=3 uid="uid://dkwmgaianad48"]
+[gd_scene load_steps=22 format=3 uid="uid://dkwmgaianad48"]
 
 [ext_resource type="PackedScene" uid="uid://dax0mun2bjm1v" path="res://area/0 lost prologue/act/Static.tscn" id="1_dlftb"]
 [ext_resource type="Resource" uid="uid://b7ifq6ljeav6q" path="res://resource/level data/lost prologue/Classic16.tres" id="2_ch146"]
@@ -14,6 +14,7 @@
 [ext_resource type="PackedScene" uid="uid://c7l8mr7ubn848" path="res://object/stage/pickups/Ring.tscn" id="10_a1h3n"]
 [ext_resource type="PackedScene" uid="uid://dxepb172kmp8n" path="res://object/stage/common/Goal.tscn" id="12_3epog"]
 [ext_resource type="PackedScene" uid="uid://68st06xyjgvp" path="res://object/stage/pickups/RichRing.tscn" id="14_ijblj"]
+[ext_resource type="PackedScene" uid="uid://gqxmlgiwtikn" path="res://object/trigger/BigTrigger.tscn" id="15_icqay"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_e5om0"]
 size = Vector3(20, 30, 5)
@@ -26,6 +27,12 @@ size = Vector3(10, 6, 2)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_d6b73"]
 size = Vector3(10, 6, 5)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_icqay"]
+size = Vector3(10, 20, 25)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_2prtk"]
+size = Vector3(10, 5, 5)
 
 [node name="Stage" type="Node"]
 
@@ -277,7 +284,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
 shape = SubResource("BoxShape3D_lddlj")
 
 [node name="TopCamera" parent="Classic16/WonderBlockGroup6" instance=ExtResource("4_icqay")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 10, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 16, -10)
 "Trigger Mode" = 2
 "Enter Mode" = 0
 "Exit Mode" = 0
@@ -288,7 +295,7 @@ settings = ExtResource("6_g30yw")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Classic16/WonderBlockGroup6/TopCamera"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
-shape = SubResource("BoxShape3D_eace3")
+shape = SubResource("BoxShape3D_icqay")
 
 [node name="Rings" type="Node3D" parent="Classic16/WonderBlockGroup6"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 15, -8.2)
@@ -316,4 +323,20 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -3.6000001)
 [node name="RichRing" parent="Classic16/WonderBlockGroup6" instance=ExtResource("14_ijblj")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 21, -20)
 
+[node name="BigTrigger" parent="." instance=ExtResource("15_icqay")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 82, 19, -278)
+bigAnimation = &"swim"
+
+[node name="Camera" parent="BigTrigger" index="1"]
+transform = Transform3D(0.64278764, 0.06676517, 0.7631294, 0, 0.9961947, -0.08715574, -0.76604444, 0.05602263, 0.64034164, 0, 1, 0)
+
+[node name="Cam" parent="BigTrigger/Camera" index="0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 60)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="BigTrigger"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 1, 38)
+shape = SubResource("BoxShape3D_2prtk")
+
 [editable path="Static"]
+[editable path="BigTrigger"]
+[editable path="BigTrigger/Big"]

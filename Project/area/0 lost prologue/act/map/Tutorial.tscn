@@ -1,4 +1,4 @@
-[gd_scene load_steps=40 format=3 uid="uid://dk7gl1lklyav3"]
+[gd_scene load_steps=38 format=3 uid="uid://dk7gl1lklyav3"]
 
 [ext_resource type="Resource" uid="uid://brbt2g8nig68o" path="res://resource/level data/lost prologue/Tutorial.tres" id="2_43bdp"]
 [ext_resource type="PackedScene" uid="uid://cjupypih0myxo" path="res://object/player/CharacterSpawn.tscn" id="3"]
@@ -29,7 +29,6 @@
 [ext_resource type="Resource" uid="uid://cmcksgatwxf5p" path="res://area/0 lost prologue/act/camera/OverheadPlatformingCamera.tres" id="25_314rx"]
 [ext_resource type="Resource" uid="uid://b6ynjki0mxqdh" path="res://area/0 lost prologue/act/camera/CloseCamera.tres" id="26_5q5x3"]
 [ext_resource type="PackedScene" uid="uid://5l5gkjoad6bq" path="res://area/0 lost prologue/object/wonder/WonderPillar2.tscn" id="28_5q5x3"]
-[ext_resource type="PackedScene" uid="uid://gqxmlgiwtikn" path="res://object/trigger/BigTrigger.tscn" id="30_pvq5s"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_y6kil"]
 size = Vector3(10, 10, 1)
@@ -58,9 +57,6 @@ size = Vector3(20, 20, 5)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_h6sva"]
 size = Vector3(10, 15, 6)
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_1iswf"]
-size = Vector3(10, 5, 5)
 
 [node name="Stage" type="Node"]
 
@@ -1810,20 +1806,6 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, -65)
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -3, 2)
 shape = SubResource("BoxShape3D_h6sva")
 
-[node name="BigTrigger" parent="." instance=ExtResource("30_pvq5s")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -23, 19, -143)
-bigAnimation = &"swim"
-
-[node name="Camera" parent="BigTrigger" index="1"]
-transform = Transform3D(0.64278764, 0.06676517, 0.7631294, 0, 0.9961947, -0.08715574, -0.76604444, 0.05602263, 0.64034164, 0, 1, 0)
-
-[node name="Cam" parent="BigTrigger/Camera" index="0"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 60)
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="BigTrigger"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 23, -11, 8)
-shape = SubResource("BoxShape3D_1iswf")
-
 [connection signal="Activated" from="Tutorial/GrindSection/GrindrailL1/Spring" to="Tutorial/GrindSection/GrindrailL1/Spring/Camera" method="Activate"]
 [connection signal="Deactivated" from="Tutorial/GrindSection/GrindrailL1/Spring" to="Tutorial/GrindSection/GrindrailL1/Spring/Camera" method="Deactivate"]
 [connection signal="Activated" from="Tutorial/GrindSection/GrindrailR1/Spring" to="Tutorial/GrindSection/GrindrailR1/Spring/Camera" method="Activate"]
@@ -1833,5 +1815,3 @@ shape = SubResource("BoxShape3D_1iswf")
 [connection signal="Activated" from="Tutorial/BrakeSection/TriggeredSpikeBalls/SpikeBallTrigger3" to="Tutorial/BrakeSection/TriggeredSpikeBalls/SpikeBall3" method="Unpause"]
 
 [editable path="Static"]
-[editable path="BigTrigger"]
-[editable path="BigTrigger/Big"]
