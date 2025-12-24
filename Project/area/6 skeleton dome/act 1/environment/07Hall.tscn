@@ -1,8 +1,18 @@
-[gd_scene load_steps=4 format=3 uid="uid://df7e32d20wm0s"]
+[gd_scene load_steps=7 format=3 uid="uid://df7e32d20wm0s"]
 
 [ext_resource type="PackedScene" uid="uid://pxga2ax1ntgf" path="res://area/6 skeleton dome/act 1/environment/model/07Hall.gltf" id="1_njumo"]
 [ext_resource type="Script" uid="uid://kvlmbv66orqt" path="res://object/trigger/modules/CullingTrigger.cs" id="2_m2lse"]
+[ext_resource type="Shader" uid="uid://bkpj5ro5hyp2e" path="res://area/6 skeleton dome/data/shader/WindowShadow.gdshader" id="3_a0wok"]
 [ext_resource type="PackedScene" uid="uid://wnnthoykndrj" path="res://effect/particle/Lantern.tscn" id="3_gp6tr"]
+[ext_resource type="Texture2D" uid="uid://k886fpv37l7k" path="res://area/6 skeleton dome/data/texture/shadow exterior window.png" id="4_am4yg"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_wmaou"]
+resource_name = "Shadow Exterior Window"
+render_priority = 0
+shader = ExtResource("3_a0wok")
+shader_parameter/albedo = ExtResource("4_am4yg")
+shader_parameter/emission_color = Color(0.89, 0.89, 0.89, 1)
+shader_parameter/emission_energy = 49.99999888240001
 
 [node name="07Hall" instance=ExtResource("1_njumo")]
 script = ExtResource("2_m2lse")
@@ -127,6 +137,7 @@ gi_mode = 1
 [node name="stg040_k24_Mesh_0001" parent="." index="23"]
 layers = 4
 cast_shadow = 0
+surface_material_override/0 = SubResource("ShaderMaterial_wmaou")
 
 [node name="OmniLight3D2" type="OmniLight3D" parent="." index="24"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 521.8786, 21.194088, -1147.4237)
