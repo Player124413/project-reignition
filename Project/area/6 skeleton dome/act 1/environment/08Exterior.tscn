@@ -1,7 +1,17 @@
-[gd_scene load_steps=3 format=3 uid="uid://cj0chvxs68t3y"]
+[gd_scene load_steps=6 format=3 uid="uid://cj0chvxs68t3y"]
 
 [ext_resource type="PackedScene" uid="uid://blo34qt205cdp" path="res://area/6 skeleton dome/act 1/environment/model/08Exterior.gltf" id="1_eijpf"]
 [ext_resource type="Script" uid="uid://kvlmbv66orqt" path="res://object/trigger/modules/CullingTrigger.cs" id="2_tyoq4"]
+[ext_resource type="Shader" uid="uid://bkpj5ro5hyp2e" path="res://area/6 skeleton dome/data/shader/WindowShadow.gdshader" id="3_tjk85"]
+[ext_resource type="Texture2D" uid="uid://k886fpv37l7k" path="res://area/6 skeleton dome/data/texture/shadow exterior window.png" id="4_qt03m"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_gkkxm"]
+resource_name = "Shadow Exterior Window"
+render_priority = 0
+shader = ExtResource("3_tjk85")
+shader_parameter/albedo = ExtResource("4_qt03m")
+shader_parameter/emission_color = Color(0.89, 0.89, 0.89, 1)
+shader_parameter/emission_energy = 49.99999888240001
 
 [node name="08Exterior" instance=ExtResource("1_eijpf")]
 script = ExtResource("2_tyoq4")
@@ -118,3 +128,6 @@ layers = 4
 transparency = 0.5
 cast_shadow = 0
 gi_mode = 1
+
+[node name="stg040_k24_Mesh_0000" parent="." index="22"]
+surface_material_override/0 = SubResource("ShaderMaterial_gkkxm")
