@@ -1086,6 +1086,8 @@ public partial class SandScorpion : Node3D
 
 		if (Player.IsHomingAttacking)
 			Player.StartBounce(); // Bounce the player
+
+		StartKnockback();
 	}
 
 	private void StartKnockback()
