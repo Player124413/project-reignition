@@ -31,7 +31,7 @@ void fragment() {
 	vec3 x_col = blur(uv, vec2(1.0) / iResolution.xy * strength);
 	vec3 y_col = blur(uv, vec2(-1.0) / iResolution.xy * strength);
 	vec3 col = min(x_col, y_col);
-	
+
 	// TODO Cut out objects based on depth buffer
 	vec4 obj_col = texture(object_texture, uv);
 	col += obj_col.a;
