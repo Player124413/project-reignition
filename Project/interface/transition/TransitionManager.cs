@@ -212,7 +212,13 @@ public partial class TransitionManager : Node
 
 	public void SetMissionDescriptionText(StringName typeKey, StringName descriptionKey)
 	{
-		missionDescriptionLabel.Text = $"{Tr(typeKey)}: {Tr(descriptionKey)}";
+		string missionText = Tr(descriptionKey);
+		if (SaveManager.Config.textLanguage != SaveManager.TextLanguage.Japanese)
+			missionText = missionText.Replace('\n', ' ');
+		else
+			missionText = missionText.Replace("\n", "");
+
+		missionDescriptionLabel.Text = $"{Tr(typeKey)}: {missionText}";
 	}
 }
 
