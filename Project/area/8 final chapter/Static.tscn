@@ -1,0 +1,51 @@
+[gd_scene load_steps=9 format=3 uid="uid://diuwy3gbbeiai"]
+
+[ext_resource type="Script" uid="uid://dtkbvehtmy3em" path="res://object/stage/StageSettings.cs" id="1_4l6fv"]
+[ext_resource type="PackedScene" uid="uid://c4s872fm07apt" path="res://area/8 final chapter/data/skybox/Skybox.tscn" id="2_b2shg"]
+[ext_resource type="PackedScene" uid="uid://d1y7tch5acj4t" path="res://area/8 final chapter/act/environment/collision/Collision.tscn" id="2_bpyw2"]
+[ext_resource type="Resource" uid="uid://ck0oqpkv1xiye" path="res://area/8 final chapter/act/camera/Hall Camera.tres" id="2_xckxc"]
+[ext_resource type="Script" uid="uid://ch4pb1qqwy5al" path="res://object/stage/common/resource/script/CameraFollower.cs" id="3_owrev"]
+[ext_resource type="PackedScene" uid="uid://co2akledxygt2" path="res://effect/sun/Sun.tscn" id="4_bpyw2"]
+[ext_resource type="Curve3D" uid="uid://dt07j1tal1ssm" path="res://area/8 final chapter/act/environment/path/MainPath.tres" id="5_owrev"]
+
+[sub_resource type="Environment" id="Environment_b2shg"]
+background_color = Color(0.3291606, 0.3327778, 0.37974724, 1)
+reflected_light_source = 1
+tonemap_mode = 2
+tonemap_exposure = 1.2
+glow_enabled = true
+glow_normalized = true
+glow_strength = 1.2
+glow_hdr_threshold = 1.5
+adjustment_enabled = true
+
+[node name="Static" type="Node3D" node_paths=PackedStringArray("pathParent", "Environment")]
+script = ExtResource("1_4l6fv")
+InitialCameraSettings = ExtResource("2_xckxc")
+pathParent = NodePath("Path")
+Environment = NodePath("WorldEnvironment")
+
+[node name="Collision" parent="." instance=ExtResource("2_bpyw2")]
+visible = false
+
+[node name="Visuals" type="Node3D" parent="."]
+
+[node name="SunLight" type="DirectionalLight3D" parent="Visuals"]
+layers = 1024
+light_color = Color(0.99999994, 0.69164294, 0.38124037, 1)
+light_cull_mask = 64
+
+[node name="Skybox" parent="Visuals" instance=ExtResource("2_b2shg")]
+script = ExtResource("3_owrev")
+
+[node name="Sun" parent="Visuals/Skybox" instance=ExtResource("4_bpyw2")]
+transform = Transform3D(-0.5, 0, -7.54979e-08, 0, 0.5, 0, 7.54979e-08, 0, -0.5, 0.00020290827, 0, 2321)
+
+[node name="Path" type="Node3D" parent="."]
+
+[node name="MainPath" type="Path3D" parent="Path"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -1000)
+curve = ExtResource("5_owrev")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_b2shg")
