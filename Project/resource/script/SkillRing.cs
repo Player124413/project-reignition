@@ -425,5 +425,7 @@ public enum SkillKey
 	CrestFire,
 	CrestDark,
 
+	Darkspine, // Completion reward
+
 	Count, // Number of skills
 }
