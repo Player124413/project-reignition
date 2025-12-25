@@ -10,10 +10,12 @@ public partial class PlayerAnimator : Node3D
 {
 	[Signal] public delegate void CountdownLandingEventHandler();
 
-	private PlayerController Player;
-	public void Initialize(PlayerController player)
+	private Node3D RotationRoot { get; set; }
+	private PlayerController Player { get; set; }
+	public void Initialize(PlayerController player, Node3D rotationRoot)
 	{
 		Player = player;
+		RotationRoot = rotationRoot;
 
 		animationTree.Active = true; // Activate animator
 
@@ -25,6 +27,8 @@ public partial class PlayerAnimator : Node3D
 
 		AnimationNodeBlendTree oneShotTree = animationRoot.GetNode("oneshot_tree") as AnimationNodeBlendTree;
 		oneShotTransition = oneShotTree.GetNode("oneshot_transition") as AnimationNodeTransition;
+
+		InitializeSpeedbreakMaterial();
 	}
 
 	[Export] private AnimationTree animationTree;
@@ -660,7 +664,7 @@ public partial class PlayerAnimator : Node3D
 	{
 		VisualAngle = angle;
 		rotationVelocity = 0;
-		Rotation = Vector3.Up * VisualAngle;
+		RotationRoot.Rotation = Vector3.Up * VisualAngle;
 	}
 
 	/// <summary>
@@ -687,7 +691,7 @@ public partial class PlayerAnimator : Node3D
 			VisualAngle = ExtensionMethods.ClampAngleRange(VisualAngle, Player.PathFollower.ForwardAngle, Mathf.Pi);
 
 		VisualAngle = ExtensionMethods.SmoothDampAngle(VisualAngle, targetRotation, ref rotationVelocity, MovementRotationSmoothing);
-		Rotation = Vector3.Up * VisualAngle;
+		RotationRoot.Rotation = Vector3.Up * VisualAngle;
 	}
 
 	private float CalculateTargetVisualRotation()
@@ -1095,4 +1099,20 @@ public partial class PlayerAnimator : Node3D
 		// Update player position for shaders
 		RenderingServer.GlobalShaderParameterSet(ShaderPlayerPositionParameter, GlobalPosition);
 	}
+
+
+
+	#region Speedbreak Materials
+	[Export] public ShaderMaterial speedbreakOverlayMaterial;
+	private readonly string SpeedbreakOverlayOpacityKey = "opacity";
+
+	private void InitializeSpeedbreakMaterial() => speedbreakOverlayMaterial.SetShaderParameter(SpeedbreakOverlayOpacityKey, 0);
+
+	public void UpdateSpeedbreakMaterial(bool isSpeedbreakActive)
+	{
+		float currentOpacity = (float)speedbreakOverlayMaterial.GetShaderParameter(SpeedbreakOverlayOpacityKey);
+		currentOpacity = Mathf.MoveToward(currentOpacity, isSpeedbreakActive ? 1 : 0, 5.0f * PhysicsManager.physicsDelta);
+		speedbreakOverlayMaterial.SetShaderParameter(SpeedbreakOverlayOpacityKey, currentOpacity);
+	}
+	#endregion
 }

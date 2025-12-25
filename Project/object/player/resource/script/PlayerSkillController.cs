@@ -96,7 +96,6 @@ public partial class PlayerSkillController : Node3D
 
 		// Update crest of flame's trail color
 		Player.Effect.UpdateTrailHueShift(AllowCrestSkill && SkillRing.IsSkillEquipped(SkillKey.CrestFire) ? CrestOfFlameHueOffset : DefaultHueOffset);
-		speedbreakOverlayMaterial.SetShaderParameter(SpeedbreakOverlayOpacityKey, 0);
 	}
 
 	private readonly float WindCrestSpeedMultiplier = 1.5f;
@@ -230,7 +229,6 @@ public partial class PlayerSkillController : Node3D
 	[Export] private AudioStreamPlayer timeBreakSFX;
 	[Export] private AudioStreamPlayer heartbeatSFX;
 
-	[Export] public ShaderMaterial speedbreakOverlayMaterial;
 	[Export] public float speedBreakSpeed; // Movement speed during speed break
 	public bool IsTimeBreakActive { get; private set; }
 	public bool IsSpeedBreakActive { get; private set; }
@@ -243,7 +241,6 @@ public partial class PlayerSkillController : Node3D
 	public const float TimebreakRatio = .6f; // Time scale
 	private const float SpeedBreakDelay = 0.2f; // Time to say SPEED BREAK!
 	private const float BreakSkillsCooldown = 0.4f; // Prevent skill spam
-	private readonly string SpeedbreakOverlayOpacityKey = "opacity";
 
 	public void ProcessPhysics()
 	{
@@ -322,9 +319,7 @@ public partial class PlayerSkillController : Node3D
 
 	private void UpdateSpeedBreak()
 	{
-		float currentOpacity = (float)speedbreakOverlayMaterial.GetShaderParameter(SpeedbreakOverlayOpacityKey);
-		currentOpacity = Mathf.MoveToward(currentOpacity, IsSpeedBreakActive ? 1 : 0, 5.0f * PhysicsManager.physicsDelta);
-		speedbreakOverlayMaterial.SetShaderParameter(SpeedbreakOverlayOpacityKey, currentOpacity);
+		Player.Animator.UpdateSpeedbreakMaterial(IsSpeedBreakActive);
 
 		if (IsSpeedBreakActive)
 		{

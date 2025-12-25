@@ -9,25 +9,22 @@ namespace Project.Gameplay;
 public partial class PlayerController : CharacterBody3D
 {
 	[ExportGroup("Components")]
-	[Export]
-	public PlayerStateMachine StateMachine { get; private set; }
-	[Export]
-	public PlayerInputController Controller { get; private set; }
-	[Export]
-	public PlayerStatsController Stats { get; private set; }
-	[Export]
-	public PlayerSkillController Skills { get; private set; }
-	[Export]
-	public PlayerLockonController Lockon { get; private set; }
-	[Export]
-	public PlayerAnimator Animator { get; private set; }
-	[Export]
-	public PlayerEffect Effect { get; private set; }
-	[Export]
-	public PlayerPathController PathFollower { get; private set; }
-	[Export]
-	public PlayerCameraController Camera { get; private set; }
+	[Export] public PlayerStateMachine StateMachine { get; private set; }
+	[Export] public PlayerInputController Controller { get; private set; }
+	[Export] public PlayerStatsController Stats { get; private set; }
+	[Export] public PlayerSkillController Skills { get; private set; }
+	[Export] public PlayerLockonController Lockon { get; private set; }
+	[Export] public Node3D AnimatorRoot { get; private set; }
+	[Export] public PlayerEffect Effect { get; private set; }
+	[Export] public PlayerPathController PathFollower { get; private set; }
+	[Export] public PlayerCameraController Camera { get; private set; }
 	private StageSettings Stage => StageSettings.Instance;
+	public PlayerAnimator Animator { get; private set; } // The animator is instanced in _Ready()
+
+	[Export(PropertyHint.File, "*.tscn")]
+	private StringName defaultModelPath;
+	[Export(PropertyHint.File, "*.tscn")]
+	private StringName darkspineModelPath;
 
 	public override void _Ready()
 	{
@@ -36,11 +33,11 @@ public partial class PlayerController : CharacterBody3D
 		Stage.LevelCompleted += OnLevelCompleted;
 		Stage.LevelDemoStarted += Deactivate;
 
+		InstancePlayerAnimator();
 		Controller.Initialize(this);
 		Stats.Initialize();
 		Skills.Initialize(this);
 		Lockon.Initialize(this);
-		Animator.Initialize(this);
 		Effect.Initialize(this);
 		PathFollower.Initialize(this);
 		Camera.Initialize(this);
@@ -73,6 +70,19 @@ public partial class PlayerController : CharacterBody3D
 		PathFollower.Resync();
 
 		ExternalVelocity = Vector3.Zero; // Reset external velocity after updating player
+	}
+
+	private void InstancePlayerAnimator()
+	{
+		StringName modelPath = defaultModelPath;
+
+		if (SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.Darkspine))
+			modelPath = darkspineModelPath;
+
+		Animator = ResourceLoader.Load<PackedScene>(modelPath).Instantiate<PlayerAnimator>();
+		Animator.Initialize(this, AnimatorRoot);
+		AnimatorRoot.AddChild(Animator);
+		Animator.CountdownLanding += Effect.PlayLandingFX;
 	}
 
 	/// <summary> Player's horizontal movespeed, ignoring slopes. </summary>
