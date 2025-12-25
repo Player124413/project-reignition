@@ -83,6 +83,8 @@ public partial class PlayerController : CharacterBody3D
 		Animator.Initialize(this, AnimatorRoot);
 		AnimatorRoot.AddChild(Animator);
 		Animator.CountdownLanding += Effect.PlayLandingFX;
+
+		AnimatorRoot.GetChild<Node3D>(0).Visible = false; // Hide the Editor Debug Sonic
 	}
 
 	/// <summary> Player's horizontal movespeed, ignoring slopes. </summary>

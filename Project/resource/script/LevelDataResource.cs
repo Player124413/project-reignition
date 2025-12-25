@@ -35,6 +35,8 @@ public partial class LevelDataResource : Resource
 	}
 
 	public SkillResource RequiredSkill { get; private set; }
+	/// <summary> Set this to True to ignore the required skill when unlocking the level. </summary>
+	public bool BypassSkillUnlockRequirement { get; private set; }
 	public int RequiredMedals { get; private set; }
 	public int RequiredLevel { get; private set; }
 	public RankEnum RequiredRank { get; private set; }
@@ -62,6 +64,7 @@ public partial class LevelDataResource : Resource
 			ExtensionMethods.CreateProperty("Has Fire Souls", Variant.Type.Bool),
 
 			ExtensionMethods.CreateProperty("Unlock Requirements/Required Skill", Variant.Type.Object, PropertyHint.ResourceType, "SkillResource"),
+			ExtensionMethods.CreateProperty("Unlock Requirements/Bypass Skill Unlock", Variant.Type.Bool),
 			ExtensionMethods.CreateProperty("Unlock Requirements/Required Level", Variant.Type.Int, PropertyHint.Range, "0,99"),
 			ExtensionMethods.CreateProperty("Unlock Requirements/Required Medals", Variant.Type.Int),
 			ExtensionMethods.CreateProperty("Unlock Requirements/Required Rank", Variant.Type.Int, PropertyHint.Enum, RequiredRank.EnumToString()),
@@ -124,6 +127,8 @@ public partial class LevelDataResource : Resource
 
 			case "Unlock Requirements/Required Skill":
 				return RequiredSkill;
+			case "Unlock Requirements/Bypass Skill Unlock":
+				return BypassSkillUnlockRequirement;
 			case "Unlock Requirements/Required Level":
 				return RequiredLevel;
 			case "Unlock Requirements/Required Medals":
@@ -211,6 +216,9 @@ public partial class LevelDataResource : Resource
 
 			case "Unlock Requirements/Required Skill":
 				RequiredSkill = (SkillResource)value;
+				break;
+			case "Unlock Requirements/Bypass Skill Unlock":
+				BypassSkillUnlockRequirement = (bool)value;
 				break;
 			case "Unlock Requirements/Required Level":
 				RequiredLevel = (int)value;
