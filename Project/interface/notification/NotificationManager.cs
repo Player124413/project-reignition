@@ -223,7 +223,7 @@ public partial class NotificationManager : Control
 			if (stage.RequiredLevel != 0 && SaveManager.ActiveGameData.level < stage.RequiredLevel)
 				continue;
 
-			if (stage.RequiredSkill != null && !SaveManager.ActiveSkillRing.IsSkillUnlocked(stage.RequiredSkill))
+			if (stage.RequiredSkill != null && !stage.BypassSkillUnlockRequirement && !SaveManager.ActiveSkillRing.IsSkillUnlocked(stage.RequiredSkill))
 				continue;
 
 			if (stage.RequiredMedals != 0)
