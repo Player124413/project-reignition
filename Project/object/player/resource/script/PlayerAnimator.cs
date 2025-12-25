@@ -29,7 +29,6 @@ public partial class PlayerAnimator : Node3D
 
 	[Export] private AnimationTree animationTree;
 	[Export] private AnimationPlayer eventAnimationPlayer;
-	[Export] private MeshInstance3D bodyMesh;
 
 	/// <summary> Reference to the root blend tree of the animation tree. </summary>
 	private AnimationNodeBlendTree animationRoot;
