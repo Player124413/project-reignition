@@ -1,4 +1,4 @@
-[gd_scene load_steps=28 format=3 uid="uid://cv14b3r1pov0q"]
+[gd_scene load_steps=29 format=3 uid="uid://cv14b3r1pov0q"]
 
 [ext_resource type="Script" uid="uid://byfnkkp3hy8ca" path="res://object/player/resource/script/PlayerAnimator.cs" id="1_l38yo"]
 [ext_resource type="AnimationLibrary" uid="uid://dhcxjlduawy8d" path="res://object/player/resource/model/animation/ActionLibrary.gltf" id="4_namdw"]
@@ -8,6 +8,7 @@
 [ext_resource type="AnimationLibrary" uid="uid://ql8twqq248an" path="res://object/player/resource/model/animation/SidleLibrary.gltf" id="8_h6me1"]
 [ext_resource type="PackedScene" uid="uid://clet3u3mrcb8g" path="res://object/player/resource/effect/countdown/CountdownBoostParticle.tscn" id="9_d1ipk"]
 [ext_resource type="PackedScene" uid="uid://c2bl1sk5cfyq3" path="res://object/player/resource/effect/countdown/CountdownFlameParticle.tscn" id="10_p6bek"]
+[ext_resource type="AnimationLibrary" uid="uid://q4oqwf6xeerw" path="res://object/player/resource/model/animation/DarkspineLibrary.gltf" id="10_sb2k4"]
 [ext_resource type="Material" uid="uid://cpvxjsa6vte37" path="res://effect/particle/material/Ember Orange.tres" id="11_niit6"]
 [ext_resource type="AudioStream" uid="uid://c5did7u4f8gq2" path="res://sound/sfx/player/flame countdown 1.wav" id="12_m0cgj"]
 [ext_resource type="Script" uid="uid://dx0a0rhyauccl" path="res://object/trigger/modules/CameraTrigger.cs" id="13_hosus"]
@@ -268,6 +269,7 @@ script = ExtResource("1_l38yo")
 animationTree = NodePath("AnimationTree")
 eventAnimationPlayer = NodePath("EventAnimationPlayer")
 movementAnimationSpeedCurve = SubResource("Curve_skwgn")
+darkspineTransitionParameterPaths = Array[StringName]([&"parameters/ground_tree/ds-backstep-transition/transition_request", &"parameters/ground_tree/ds-idle-transition/transition_request", &"parameters/ground_tree/ds-forward-transition/transition_request", &"parameters/air_tree/ds-jump-transition/transition_request", &"parameters/air_tree/ds-jump-accel-transition/transition_request", &"parameters/ground_tree/ds-turn-transition/transition_request"])
 
 [node name="PetrificationModel" type="Node3D" parent="."]
 visible = false
@@ -347,6 +349,7 @@ libraries = {
 &"": SubResource("AnimationLibrary_6smkh"),
 &"ActionLibrary": ExtResource("4_namdw"),
 &"BalanceLibrary": ExtResource("5_by6gm"),
+&"DarkspineLibrary": ExtResource("10_sb2k4"),
 &"EventLibrary": ExtResource("6_i74hg"),
 &"GimmickLibrary": ExtResource("7_17bir"),
 &"SidleLibrary": ExtResource("8_h6me1")
@@ -364,6 +367,7 @@ libraries = {
 &"": SubResource("AnimationLibrary_6smkh"),
 &"ActionLibrary": ExtResource("4_namdw"),
 &"BalanceLibrary": ExtResource("5_by6gm"),
+&"DarkspineLibrary": ExtResource("10_sb2k4"),
 &"EventLibrary": ExtResource("6_i74hg"),
 &"GimmickLibrary": ExtResource("7_17bir"),
 &"SidleLibrary": ExtResource("8_h6me1")
@@ -403,6 +407,12 @@ parameters/air_tree/state_transition/current_index = 0
 parameters/air_tree/stomp_trigger/active = false
 parameters/air_tree/stomp_trigger/internal_active = false
 parameters/air_tree/stomp_trigger/request = 0
+parameters/air_tree/ds-jump-accel-transition/current_state = ""
+parameters/air_tree/ds-jump-accel-transition/transition_request = "disabled"
+parameters/air_tree/ds-jump-accel-transition/current_index = -1
+parameters/air_tree/ds-jump-transition/current_state = ""
+parameters/air_tree/ds-jump-transition/transition_request = ""
+parameters/air_tree/ds-jump-transition/current_index = -1
 parameters/balance_tree/balance_speed/scale = 1.0
 parameters/balance_tree/balance_state/balance_left_blend/blend_position = 0.0
 parameters/balance_tree/balance_state/balance_right_blend/blend_position = 0.000741243
@@ -484,6 +494,20 @@ parameters/ground_tree/turn_blend/blend_position = Vector2(0, 0)
 parameters/ground_tree/quick_slide_transition/current_state = "disabled"
 parameters/ground_tree/quick_slide_transition/transition_request = ""
 parameters/ground_tree/quick_slide_transition/current_index = 0
+parameters/ground_tree/ds-backstep-transition/current_state = ""
+parameters/ground_tree/ds-backstep-transition/transition_request = ""
+parameters/ground_tree/ds-backstep-transition/current_index = -1
+parameters/ground_tree/ds-idle-transition/current_state = ""
+parameters/ground_tree/ds-idle-transition/transition_request = ""
+parameters/ground_tree/ds-idle-transition/current_index = -1
+parameters/ground_tree/ds_forward_blend/blend_position = 0.0
+parameters/ground_tree/ds-forward-transition/current_state = ""
+parameters/ground_tree/ds-forward-transition/transition_request = ""
+parameters/ground_tree/ds-forward-transition/current_index = -1
+parameters/ground_tree/ds-turn-transition/current_state = ""
+parameters/ground_tree/ds-turn-transition/transition_request = ""
+parameters/ground_tree/ds-turn-transition/current_index = -1
+parameters/ground_tree/ds_turn_blend/blend_position = 0.0
 parameters/hurt_trigger/active = false
 parameters/hurt_trigger/internal_active = false
 parameters/hurt_trigger/request = 0

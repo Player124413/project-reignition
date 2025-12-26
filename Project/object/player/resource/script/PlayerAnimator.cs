@@ -29,6 +29,7 @@ public partial class PlayerAnimator : Node3D
 		oneShotTransition = oneShotTree.GetNode("oneshot_transition") as AnimationNodeTransition;
 
 		InitializeSpeedbreakMaterial();
+		InitializeDarkspineAnimations();
 	}
 
 	[Export] private AnimationTree animationTree;
@@ -173,8 +174,10 @@ public partial class PlayerAnimator : Node3D
 	private readonly string GroundSpeed = "parameters/ground_tree/ground_speed/scale";
 	private readonly string GroundSeek = "parameters/ground_tree/ground_seek/seek_request";
 	private readonly string ForwardBlend = "parameters/ground_tree/forward_blend/blend_position";
+	private readonly string DSForwardBlend = "parameters/ground_tree/ds_forward_blend/blend_position";
 
 	private readonly string TurnBlend = "parameters/ground_tree/turn_blend/blend_position";
+	private readonly string DSTurnBlend = "parameters/ground_tree/ds_turn_blend/blend_position";
 	private readonly string LandTrigger = "parameters/ground_tree/land_trigger/request";
 	private readonly string ReversePathTrigger = "parameters/ground_tree/reverse_path_trigger/request";
 	private readonly string ReversePathActive = "parameters/ground_tree/reverse_path_trigger/active";
@@ -343,6 +346,7 @@ public partial class PlayerAnimator : Node3D
 
 		animationTree.Set(IdleBlend, idleBlend);
 		animationTree.Set(ForwardBlend, speedRatio);
+		animationTree.Set(DSForwardBlend, speedRatio);
 		if (DisabledSpeedSmoothing)
 		{
 			animationTree.Set(GroundSpeed, animationSpeed);
@@ -355,6 +359,7 @@ public partial class PlayerAnimator : Node3D
 
 		groundTurnRatio = Mathf.Lerp(((Vector2)animationTree.Get(TurnBlend)).X, groundTurnRatio, TurnSmoothing); // Blend from animator
 		animationTree.Set(TurnBlend, new Vector2(groundTurnRatio, Player.IsMovingBackward ? 0 : speedRatio));
+		animationTree.Set(DSTurnBlend, groundTurnRatio);
 	}
 
 	public bool IsBrakeAnimationActive { get; private set; }
@@ -498,7 +503,17 @@ public partial class PlayerAnimator : Node3D
 		IsFallTransitionEnabled = false;
 		animationTree.Set(AccelJumpTrigger, (int)AnimationNodeOneShot.OneShotRequest.Fire);
 	}
-	public void JumpDashAnimation() => UpdateAirState("launch", false);
+	public void JumpDashAnimation()
+	{
+		if (isDarkspineEnabled)
+		{
+			UpdateAirState("jump", false);
+			JumpAccelAnimation();
+			return;
+		}
+
+		UpdateAirState("launch", false);
+	}
 
 	private readonly string StompState = "stomp";
 	private readonly string StompTrigger = "parameters/air_tree/stomp_trigger/request";
@@ -1100,7 +1115,15 @@ public partial class PlayerAnimator : Node3D
 		RenderingServer.GlobalShaderParameterSet(ShaderPlayerPositionParameter, GlobalPosition);
 	}
 
-
+	[Export] private StringName[] darkspineTransitionParameterPaths;
+	private bool isDarkspineEnabled;
+	/// <summary> Updates whether animations should use Darkspine variants. </summary>
+	private void InitializeDarkspineAnimations()
+	{
+		isDarkspineEnabled = SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.Darkspine);
+		foreach (StringName param in darkspineTransitionParameterPaths)
+			animationTree.Set(param, isDarkspineEnabled ? EnabledConstant : DisabledConstant);
+	}
 
 	#region Speedbreak Materials
 	[Export] public ShaderMaterial speedbreakOverlayMaterial;
