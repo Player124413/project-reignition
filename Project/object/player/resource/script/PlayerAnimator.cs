@@ -177,7 +177,6 @@ public partial class PlayerAnimator : Node3D
 	private readonly string DSForwardBlend = "parameters/ground_tree/ds_forward_blend/blend_position";
 
 	private readonly string TurnBlend = "parameters/ground_tree/turn_blend/blend_position";
-	private readonly string DSTurnBlend = "parameters/ground_tree/ds_turn_blend/blend_position";
 	private readonly string LandTrigger = "parameters/ground_tree/land_trigger/request";
 	private readonly string ReversePathTrigger = "parameters/ground_tree/reverse_path_trigger/request";
 	private readonly string ReversePathActive = "parameters/ground_tree/reverse_path_trigger/active";
@@ -346,7 +345,7 @@ public partial class PlayerAnimator : Node3D
 
 		animationTree.Set(IdleBlend, idleBlend);
 		animationTree.Set(ForwardBlend, speedRatio);
-		animationTree.Set(DSForwardBlend, speedRatio);
+
 		if (DisabledSpeedSmoothing)
 		{
 			animationTree.Set(GroundSpeed, animationSpeed);
@@ -358,8 +357,9 @@ public partial class PlayerAnimator : Node3D
 		}
 
 		groundTurnRatio = Mathf.Lerp(((Vector2)animationTree.Get(TurnBlend)).X, groundTurnRatio, TurnSmoothing); // Blend from animator
-		animationTree.Set(TurnBlend, new Vector2(groundTurnRatio, Player.IsMovingBackward ? 0 : speedRatio));
-		animationTree.Set(DSTurnBlend, groundTurnRatio);
+		Vector2 turnBlend = new(groundTurnRatio, Player.IsMovingBackward ? 0 : speedRatio);
+		animationTree.Set(TurnBlend, turnBlend);
+		animationTree.Set(DSForwardBlend, turnBlend);
 	}
 
 	public bool IsBrakeAnimationActive { get; private set; }
