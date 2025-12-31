@@ -18,10 +18,15 @@
 [node name="Static" parent="." instance=ExtResource("1_xnbka")]
 Data = ExtResource("2_vxphy")
 
+[node name="PathFollower" type="PathFollow3D" parent="Static/Path/MainPath" index="0"]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, 0, 1080)
+progress = 1080.0
+
 [node name="BossAct" type="Node3D" parent="."]
 
-[node name="AlfLaylaWaLayla" parent="BossAct" instance=ExtResource("3_as6he")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 40)
+[node name="AlfLaylaWaLayla" parent="BossAct" node_paths=PackedStringArray("bossPathFollower") instance=ExtResource("3_as6he")]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, 0, 80)
+bossPathFollower = NodePath("../../Static/Path/MainPath/PathFollower")
 
 [node name="CharacterSpawn" parent="BossAct" instance=ExtResource("3_7op5d")]
 
