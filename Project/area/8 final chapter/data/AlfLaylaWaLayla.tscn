@@ -1,7 +1,18 @@
-[gd_scene load_steps=41 format=3 uid="uid://7p1mkbn0s276"]
+[gd_scene load_steps=45 format=3 uid="uid://7p1mkbn0s276"]
 
 [ext_resource type="PackedScene" uid="uid://bl4mwbfg117lh" path="res://area/8 final chapter/data/model/AlfLaylaWaLayla.gltf" id="1_8mof4"]
 [ext_resource type="Script" uid="uid://bpp2tmfxy4euf" path="res://area/8 final chapter/data/script/AlfLayla.cs" id="1_k6i6c"]
+[ext_resource type="Script" uid="uid://dx0a0rhyauccl" path="res://object/trigger/modules/CameraTrigger.cs" id="3_pt266"]
+[ext_resource type="Resource" uid="uid://ukcne4um86a6" path="res://resource/preset/camera/common/CutsceneCam.tres" id="4_g0203"]
+
+[sub_resource type="Curve" id="Curve_pt266"]
+_limits = [0.0, 1.0, 0.0, 0.8]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.71999997, 1), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="Curve" id="Curve_g0203"]
+_data = [Vector2(0.2, 0), 0.0, 0.0, 0, 0, Vector2(0.7, 1), 0.0, 0.0, 0, 0]
+point_count = 2
 
 [sub_resource type="Animation" id="Animation_bwbpg"]
 resource_name = "advance-start"
@@ -7538,7 +7549,7 @@ states/retreat-start/position = Vector2(345, 176)
 states/retreat-stop/node = SubResource("AnimationNodeAnimation_iw8yt")
 states/retreat-stop/position = Vector2(639, 176)
 transitions = ["Start", "idle", SubResource("AnimationNodeStateMachineTransition_k6i6c"), "idle", "advance-start", SubResource("AnimationNodeStateMachineTransition_wo4ob"), "advance-start", "advance", SubResource("AnimationNodeStateMachineTransition_dwysa"), "advance", "advance-stop", SubResource("AnimationNodeStateMachineTransition_gfhsj"), "retreat-stop", "idle", SubResource("AnimationNodeStateMachineTransition_h5w7x"), "advance-stop", "idle", SubResource("AnimationNodeStateMachineTransition_4hrx2"), "idle", "retreat-start", SubResource("AnimationNodeStateMachineTransition_knhd4"), "retreat-start", "retreat", SubResource("AnimationNodeStateMachineTransition_nm5i3"), "retreat", "retreat-stop", SubResource("AnimationNodeStateMachineTransition_g0q3n")]
-graph_offset = Vector2(-194, -9)
+graph_offset = Vector2(-203, -36)
 
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_wo4ob"]
 animation = &"six-orb"
@@ -7572,7 +7583,7 @@ fadein_time = 0.05
 fadeout_time = 0.15
 
 [sub_resource type="AnimationNodeBlendTree" id="AnimationNodeBlendTree_lg36t"]
-graph_offset = Vector2(-799.5257, 92.37857)
+graph_offset = Vector2(-882.30237, 50.728775)
 nodes/output/position = Vector2(460, 120)
 nodes/move-state/node = SubResource("AnimationNodeStateMachine_w08gm")
 nodes/move-state/position = Vector2(-480, 100)
@@ -7594,11 +7605,14 @@ nodes/six-orb-speed/node = SubResource("AnimationNodeTimeScale_dwysa")
 nodes/six-orb-speed/position = Vector2(-300, 320)
 node_connections = [&"output", 0, &"slash-trigger", &"slash-side-transition", 0, &"slash-l-anim", &"slash-side-transition", 1, &"slash-r-anim", &"slash-trigger", 0, &"six-orb-trigger", &"slash-trigger", 1, &"slash-speed", &"six-orb-trigger", 0, &"move-state", &"six-orb-trigger", 1, &"six-orb-speed", &"slash-speed", 0, &"slash-side-transition", &"six-orb-speed", 0, &"six-orb-anim"]
 
-[node name="AlfLaylaWaLayla" type="Node3D" node_paths=PackedStringArray("animationTree", "dialogTriggers")]
+[node name="AlfLaylaWaLayla" type="Node3D" node_paths=PackedStringArray("animationTree", "cutsceneCamera", "dialogTriggers")]
 script = ExtResource("1_k6i6c")
 animationTree = NodePath("AnimationTree")
+cutsceneCamera = NodePath("CutsceneCamera")
 dialogTriggers = []
-attackPatterns = PackedStringArray("F 6 C \\\\ // \\\\\\ /// F 6 C X B", "M 3 X F 6 C X # B", "M 3 3 C ||| _ X F 6 C # \\\\ // \\\\\\ /// ||| _ F 6 B")
+attackPatterns = PackedStringArray("F6C\\/><F6CXB", "M3XF6CX#B", "M33C|_XF6C#\\/><|_F6B")
+advanceMovementCurve = SubResource("Curve_pt266")
+retreatMovementCurve = SubResource("Curve_g0203")
 
 [node name="AlfLaylaWaLayla" parent="." instance=ExtResource("1_8mof4")]
 
@@ -7621,5 +7635,10 @@ parameters/six-orb-trigger/internal_active = false
 parameters/six-orb-trigger/request = 0
 parameters/slash-speed/scale = 1.2000000000000028
 parameters/six-orb-speed/scale = 1.5
+
+[node name="CutsceneCamera" type="Node3D" parent="."]
+script = ExtResource("3_pt266")
+transitionTime = 0.0
+settings = ExtResource("4_g0203")
 
 [editable path="AlfLaylaWaLayla"]
