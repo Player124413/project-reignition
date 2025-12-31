@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using Godot;
 using Project.Core;
 using Project.Gameplay.Triggers;
@@ -8,8 +9,8 @@ public partial class AlfLayla : Node3D
 {
 	[ExportGroup("Components")]
 	[Export] private AnimationTree animationTree;
-	[Export] private PathFollow3D bossPathFollower;
 	[Export] private CameraTrigger cutsceneCamera;
+	[Export] private LockoutTrigger autorunLockout;
 
 	[Export] private DialogTrigger[] dialogTriggers;
 	private int currentDialogIndex;
@@ -44,6 +45,7 @@ public partial class AlfLayla : Node3D
 		Defeated,
 	}
 
+	[ExportGroup("Movement Settings")]
 	/// <summary> Curve that determines how Alf advances. </summary>
 	[Export] private Curve advanceMovementCurve;
 	/// <summary> Curve that determines how Alf retreats. </summary>
@@ -68,7 +70,7 @@ public partial class AlfLayla : Node3D
 	private readonly string IntroCutsceneID = "last_boss_intro";
 	private readonly string DefeatCutsceneID = "last_boss_defeat";
 	private readonly string MovePlayback = "parameters/move-state/playback";
-	private readonly string SlashDirection = "parameters/slash-side-transition/transition_request";
+	private readonly string SlashType = "parameters/slash-type-transition/transition_request";
 	private readonly string SlashTrigger = "parameters/slash-trigger/request";
 	private readonly string SlashSpeed = "parameters/slash-speed/scale";
 	private readonly string SixOrbTrigger = "parameters/six-orb-trigger/request";
@@ -126,14 +128,12 @@ public partial class AlfLayla : Node3D
 					//FinishDefeat();
 				}
 
-				bossPathFollower.Progress = PlayerPathFollower.Progress;
-				GlobalTransform = bossPathFollower.GlobalTransform;
+				GlobalTransform = PlayerPathFollower.GlobalTransform;
 				ResetPhysicsInterpolation();
 				return;
 		}
 
-		SnapDistance();
-		GlobalTransform = bossPathFollower.GlobalTransform;
+		SnapPosition();
 	}
 
 	private void Respawn()
@@ -150,7 +150,7 @@ public partial class AlfLayla : Node3D
 
 		currentDistance = BombDistance;
 		targetDistance = BombDistance;
-		SnapDistance();
+		SnapPosition();
 
 		Player.Camera.LookaroundAmount = Vector2.Zero;
 
@@ -193,6 +193,7 @@ public partial class AlfLayla : Node3D
 	private void StartBattle()
 	{
 		cutsceneCamera.Deactivate();
+		autorunLockout.Activate();
 
 		Respawn();
 		Player.Skills.EnableBreakSkills();
@@ -201,8 +202,14 @@ public partial class AlfLayla : Node3D
 		HeadsUpDisplay.Instance.SetVisibility(true);
 	}
 
-	/// <summary> Snaps Alf's distance to currentDistance. </summary>
-	private void SnapDistance() => bossPathFollower.Progress = PlayerPathFollower.Progress + currentDistance;
+	private readonly Vector3 VisualOffset = Vector3.Down * 5f;
+	/// <summary> Snaps Alf's position to the correct position. </summary>
+	private void SnapPosition()
+	{
+		GlobalPosition = PlayerPathFollower.GlobalPosition + PlayerPathFollower.Forward() * currentDistance + VisualOffset;
+		GlobalRotation = Vector3.Zero;
+	}
+
 
 	private void ProcessAction()
 	{
@@ -212,14 +219,25 @@ public partial class AlfLayla : Node3D
 			return;
 		}
 
+		if (CurrentFightState == FightState.AttackWindup || CurrentFightState == FightState.AttackStrike)
+		{
+			ProcessAttack();
+			return;
+		}
+
 		if (CurrentFightState != FightState.Idle)
 			return;
 
-		actionTimer = Mathf.MoveToward(actionTimer, 0f, PhysicsManager.physicsDelta);
-		if (!Mathf.IsZeroApprox(actionTimer))
+		if (!ProcessActionTimer())
 			return;
 
 		StartNextAction();
+	}
+
+	private bool ProcessActionTimer()
+	{
+		actionTimer = Mathf.MoveToward(actionTimer, 0f, PhysicsManager.physicsDelta);
+		return Mathf.IsZeroApprox(actionTimer);
 	}
 
 	private void GetNextAction()
@@ -239,6 +257,8 @@ public partial class AlfLayla : Node3D
 
 		if (StartMove()) // Started movement pattern
 			return;
+
+		StartAttack();
 	}
 
 	private bool StartMove()
@@ -278,23 +298,98 @@ public partial class AlfLayla : Node3D
 
 	private void ProcessMovement()
 	{
-		GD.PrintT(movementSample, currentMovementCurve.MaxDomain);
-
 		if (Mathf.IsEqualApprox(movementSample, currentMovementCurve.MaxDomain))
-		{
-			CurrentFightState = FightState.Idle;
 			return;
-		}
 
 		movementSample = Mathf.MoveToward(movementSample, currentMovementCurve.MaxDomain, PhysicsManager.physicsDelta);
 		float t = currentMovementCurve.Sample(movementSample);
 
 		if (Mathf.IsEqualApprox(t, 1.0f))
-		{
 			MoveStatePlayback.Travel("idle");
-			actionTimer = 1f;
-		}
 
 		currentDistance = Mathf.Lerp(initialDistance, targetDistance, t);
+	}
+
+	private void FinishMovement()
+	{
+		CurrentFightState = FightState.Idle;
+		actionTimer = 1f;
+	}
+
+	private void StartAttack()
+	{
+		switch (currentActionCharacter)
+		{
+			case '6':
+				actionTimer = 0.5f;
+				break;
+			case '\\':
+			case '>':
+			case '|':
+				animationTree.Set(SlashType, "right");
+				actionTimer = 2f;
+				animationTree.Set(SlashSpeed, 1.2f);
+				break;
+			case '/':
+			case '<':
+			case '_':
+				animationTree.Set(SlashType, "left");
+				animationTree.Set(SlashSpeed, 1.2f);
+				actionTimer = 0.5f;
+				break;
+			case 'X':
+			case '#':
+				animationTree.Set(SlashType, "middle");
+				animationTree.Set(SlashSpeed, 1.5f);
+				actionTimer = 0.5f;
+				break;
+			default: // Unimplmented
+				return;
+		}
+
+		CurrentFightState = FightState.AttackWindup;
+	}
+
+	private void ProcessAttack()
+	{
+		if (CurrentFightState != FightState.AttackWindup || !ProcessActionTimer())
+			return;
+
+
+		CurrentFightState = FightState.AttackStrike;
+		switch (currentActionCharacter)
+		{
+			case '6':
+				animationTree.Set(SixOrbTrigger, (int)AnimationNodeOneShot.OneShotRequest.Fire);
+				break;
+			case '\\':
+			case '/':
+			case '>':
+			case '<':
+			case 'X':
+			case '#':
+			case '|':
+			case '_':
+				animationTree.Set(SlashTrigger, (int)AnimationNodeOneShot.OneShotRequest.Fire);
+				break;
+			default: // Unimplmented
+				FinishAttack();
+				return;
+		}
+	}
+
+	private void FinishAttack()
+	{
+		switch (currentActionCharacter)
+		{
+			case '6':
+				actionTimer = 2f;
+				break;
+			default:
+				actionTimer = 0.1f;
+				break;
+		}
+
+		CurrentFightState = FightState.Idle;
 	}
 }
