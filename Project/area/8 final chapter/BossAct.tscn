@@ -1,48 +1,24 @@
-[gd_scene load_steps=12 format=3 uid="uid://0rwulf35f5hy"]
+[gd_scene load_steps=8 format=3 uid="uid://0rwulf35f5hy"]
 
 [ext_resource type="PackedScene" uid="uid://diuwy3gbbeiai" path="res://area/8 final chapter/Static.tscn" id="1_xnbka"]
 [ext_resource type="Resource" uid="uid://qgffmsew5qjr" path="res://resource/level data/night palace/Last.tres" id="2_vxphy"]
 [ext_resource type="PackedScene" uid="uid://cjupypih0myxo" path="res://object/player/CharacterSpawn.tscn" id="3_7op5d"]
 [ext_resource type="PackedScene" uid="uid://7p1mkbn0s276" path="res://area/8 final chapter/data/AlfLaylaWaLayla.tscn" id="3_as6he"]
-[ext_resource type="PackedScene" uid="uid://bn6wr6l8s3qyt" path="res://object/trigger/StageTrigger.tscn" id="4_cicda"]
 [ext_resource type="Script" uid="uid://dd24u7rlj0dwl" path="res://addons/custom_nodes/script/ObjectGenerator.cs" id="4_lnc3l"]
-[ext_resource type="Script" uid="uid://bd2g6rmrn77eo" path="res://object/trigger/modules/LockoutTrigger.cs" id="5_as6he"]
 [ext_resource type="PackedScene" uid="uid://c7l8mr7ubn848" path="res://object/stage/pickups/Ring.tscn" id="5_o0uq4"]
-[ext_resource type="Resource" uid="uid://cmesyjx0jp6ur" path="res://resource/preset/lockout/run/AutorunLockout.tres" id="6_pf2ls"]
 [ext_resource type="PackedScene" uid="uid://68st06xyjgvp" path="res://object/stage/pickups/RichRing.tscn" id="6_qsw55"]
-
-[sub_resource type="SphereShape3D" id="SphereShape3D_18vta"]
 
 [node name="World" type="Node"]
 
 [node name="Static" parent="." instance=ExtResource("1_xnbka")]
 Data = ExtResource("2_vxphy")
 
-[node name="PathFollower" type="PathFollow3D" parent="Static/Path/MainPath" index="0"]
-transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, -3, 1080)
-progress = 1080.0
-v_offset = -3.0
-
 [node name="BossAct" type="Node3D" parent="."]
 
-[node name="AlfLaylaWaLayla" parent="BossAct" node_paths=PackedStringArray("bossPathFollower") instance=ExtResource("3_as6he")]
-transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, 0, 80)
-bossPathFollower = NodePath("../../Static/Path/MainPath/PathFollower")
+[node name="AlfLaylaWaLayla" parent="BossAct" instance=ExtResource("3_as6he")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -5, 0)
 
 [node name="CharacterSpawn" parent="BossAct" instance=ExtResource("3_7op5d")]
-
-[node name="AutorunTrigger" parent="BossAct/CharacterSpawn" instance=ExtResource("4_cicda")]
-OneShot = true
-"Respawn Mode" = 0
-"Enter Mode" = 0
-
-[node name="Autorun" type="Node3D" parent="BossAct/CharacterSpawn/AutorunTrigger"]
-script = ExtResource("5_as6he")
-lockoutData = ExtResource("6_pf2ls")
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="BossAct/CharacterSpawn/AutorunTrigger"]
-shape = SubResource("SphereShape3D_18vta")
-disabled = true
 
 [node name="Objects" type="Node3D" parent="BossAct"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 5)
