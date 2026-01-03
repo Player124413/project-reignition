@@ -1,4 +1,4 @@
-[gd_scene load_steps=71 format=3 uid="uid://bqck0hqdn3o8r"]
+[gd_scene load_steps=72 format=3 uid="uid://bqck0hqdn3o8r"]
 
 [ext_resource type="Script" uid="uid://cy7pw3hj351lp" path="res://object/player/resource/script/PlayerController.cs" id="1_wygja"]
 [ext_resource type="Script" uid="uid://72x88nalpw8i" path="res://object/player/resource/script/PlayerStateMachine.cs" id="2_ehi1f"]
@@ -49,6 +49,7 @@
 [ext_resource type="Script" uid="uid://chob23143e6b0" path="res://object/player/resource/script/states/LightSpeedAttackState.cs" id="41_8jpjm"]
 [ext_resource type="Script" uid="uid://cyxq45dgf674k" path="res://object/player/resource/script/states/LeverState.cs" id="42_51gfe"]
 [ext_resource type="Script" uid="uid://ijsj0mdgfygr" path="res://object/player/resource/script/states/BemothHornState.cs" id="43_wuphe"]
+[ext_resource type="Script" uid="uid://8ldpfwbop54h" path="res://object/player/resource/script/states/DarkspineSpinState.cs" id="44_3hunb"]
 [ext_resource type="Script" uid="uid://q4usvy665c22" path="res://object/player/resource/script/states/AirBoostState.cs" id="48_au4xk"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_hfii6"]
@@ -1238,7 +1239,7 @@ stateParents = Array[NodePath]([NodePath("Basic"), NodePath("Object"), NodePath(
 
 [node name="Basic" type="Node" parent="StateMachine"]
 
-[node name="Idle" type="Node" parent="StateMachine/Basic" node_paths=PackedStringArray("runState", "backstepState", "crouchState", "jumpState", "backflipState", "fallState", "homingAttackState")]
+[node name="Idle" type="Node" parent="StateMachine/Basic" node_paths=PackedStringArray("runState", "backstepState", "crouchState", "jumpState", "backflipState", "fallState", "homingAttackState", "darkspineSpinState")]
 script = ExtResource("3_7invc")
 runState = NodePath("../Run")
 backstepState = NodePath("../Backstep")
@@ -1247,8 +1248,9 @@ jumpState = NodePath("../Jump")
 backflipState = NodePath("../Backflip")
 fallState = NodePath("../Fall")
 homingAttackState = NodePath("../HomingAttack")
+darkspineSpinState = NodePath("../../Skill/DarkspineSpin")
 
-[node name="Run" type="Node" parent="StateMachine/Basic" node_paths=PackedStringArray("fallState", "idleState", "backstepState", "slideState", "jumpState", "backflipState", "homingAttackState")]
+[node name="Run" type="Node" parent="StateMachine/Basic" node_paths=PackedStringArray("fallState", "idleState", "backstepState", "slideState", "jumpState", "backflipState", "homingAttackState", "darkspineSpinState")]
 script = ExtResource("7_1ojgh")
 fallState = NodePath("../Fall")
 idleState = NodePath("../Idle")
@@ -1257,9 +1259,10 @@ slideState = NodePath("../Slide")
 jumpState = NodePath("../Jump")
 backflipState = NodePath("../Backflip")
 homingAttackState = NodePath("../HomingAttack")
+darkspineSpinState = NodePath("../../Skill/DarkspineSpin")
 turningSpeedLossCurve = SubResource("Curve_0y4at")
 
-[node name="Backstep" type="Node" parent="StateMachine/Basic" node_paths=PackedStringArray("fallState", "idleState", "runState", "crouchState", "jumpState", "backflipState", "homingAttackState")]
+[node name="Backstep" type="Node" parent="StateMachine/Basic" node_paths=PackedStringArray("fallState", "idleState", "runState", "crouchState", "jumpState", "backflipState", "homingAttackState", "darkspineSpinState")]
 script = ExtResource("8_0ksv7")
 fallState = NodePath("../Fall")
 idleState = NodePath("../Idle")
@@ -1268,21 +1271,24 @@ crouchState = NodePath("../Crouch")
 jumpState = NodePath("../Jump")
 backflipState = NodePath("../Backflip")
 homingAttackState = NodePath("../HomingAttack")
+darkspineSpinState = NodePath("../../Skill/DarkspineSpin")
 
-[node name="Jump" type="Node" parent="StateMachine/Basic" node_paths=PackedStringArray("fallState", "landState", "stompState", "jumpDashState", "homingAttackState")]
+[node name="Jump" type="Node" parent="StateMachine/Basic" node_paths=PackedStringArray("fallState", "landState", "stompState", "jumpDashState", "homingAttackState", "darkspineSpinState")]
 script = ExtResource("4_ufscl")
 fallState = NodePath("../Fall")
 landState = NodePath("../Land")
 stompState = NodePath("../Stomp")
 jumpDashState = NodePath("../JumpDash")
 homingAttackState = NodePath("../HomingAttack")
+darkspineSpinState = NodePath("../../Skill/DarkspineSpin")
 
-[node name="Backflip" type="Node" parent="StateMachine/Basic" node_paths=PackedStringArray("landState", "jumpDashState", "homingAttackState", "stompState")]
+[node name="Backflip" type="Node" parent="StateMachine/Basic" node_paths=PackedStringArray("landState", "jumpDashState", "homingAttackState", "stompState", "darkspineSpinState")]
 script = ExtResource("9_7wp0f")
 landState = NodePath("../Land")
 jumpDashState = NodePath("../JumpDash")
 homingAttackState = NodePath("../HomingAttack")
 stompState = NodePath("../Stomp")
+darkspineSpinState = NodePath("../../Skill/DarkspineSpin")
 backflipHeight = 2.4
 
 [node name="Stomp" type="Node" parent="StateMachine/Basic" node_paths=PackedStringArray("landState")]
@@ -1306,12 +1312,13 @@ backflipState = NodePath("../Backflip")
 fallState = NodePath("../Fall")
 homingAttackState = NodePath("../HomingAttack")
 
-[node name="Fall" type="Node" parent="StateMachine/Basic" node_paths=PackedStringArray("landState", "stompState", "jumpDashState", "homingAttackState")]
+[node name="Fall" type="Node" parent="StateMachine/Basic" node_paths=PackedStringArray("landState", "stompState", "jumpDashState", "homingAttackState", "darkspineSpinState")]
 script = ExtResource("5_niuke")
 landState = NodePath("../Land")
 stompState = NodePath("../Stomp")
 jumpDashState = NodePath("../JumpDash")
 homingAttackState = NodePath("../HomingAttack")
+darkspineSpinState = NodePath("../../Skill/DarkspineSpin")
 
 [node name="Land" type="Node" parent="StateMachine/Basic" node_paths=PackedStringArray("runState", "idleState", "fallState", "crouchState", "slideState", "backstepState")]
 script = ExtResource("6_ihvo7")
@@ -1457,12 +1464,13 @@ script = ExtResource("43_wuphe")
 
 [node name="Skill" type="Node" parent="StateMachine"]
 
-[node name="SpinJump" type="Node" parent="StateMachine/Skill" node_paths=PackedStringArray("stompState", "landState", "jumpDashState", "homingAttackState")]
+[node name="SpinJump" type="Node" parent="StateMachine/Skill" node_paths=PackedStringArray("stompState", "landState", "jumpDashState", "homingAttackState", "darkspineSpinState")]
 script = ExtResource("38_krfaq")
 stompState = NodePath("../../Basic/Stomp")
 landState = NodePath("../../Basic/Land")
 jumpDashState = NodePath("../../Basic/JumpDash")
 homingAttackState = NodePath("../../Basic/HomingAttack")
+darkspineSpinState = NodePath("../DarkspineSpin")
 
 [node name="QuickStep" type="Node" parent="StateMachine/Skill" node_paths=PackedStringArray("idleState", "runState", "fallState", "backflipState", "slideState", "jumpState")]
 script = ExtResource("39_iqbcj")
@@ -1493,6 +1501,11 @@ acceleration = 200.0
 
 [node name="AirBoost" type="Node" parent="StateMachine/Skill" node_paths=PackedStringArray("landState", "fallState")]
 script = ExtResource("48_au4xk")
+landState = NodePath("../../Basic/Land")
+fallState = NodePath("../../Basic/Fall")
+
+[node name="DarkspineSpin" type="Node" parent="StateMachine/Skill" node_paths=PackedStringArray("landState", "fallState")]
+script = ExtResource("44_3hunb")
 landState = NodePath("../../Basic/Land")
 fallState = NodePath("../../Basic/Fall")
 

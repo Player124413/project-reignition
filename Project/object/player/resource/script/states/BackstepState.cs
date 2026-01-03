@@ -12,6 +12,7 @@ public partial class BackstepState : PlayerState
 	[Export] private PlayerState jumpState;
 	[Export] private PlayerState backflipState;
 	[Export] private PlayerState homingAttackState;
+	[Export] private PlayerState darkspineSpinState;
 
 	public override void EnterState()
 	{
@@ -64,10 +65,15 @@ public partial class BackstepState : PlayerState
 			return crouchState;
 		}
 
-		if (Player.Controller.IsAttackBufferActive && Player.Lockon.IsTargetAttackable)
+		if (Player.Controller.IsAttackBufferActive)
 		{
 			Player.Controller.ResetAttackBuffer();
-			return homingAttackState;
+
+			if (Player.Lockon.IsTargetAttackable)
+				return homingAttackState;
+
+			if (Player.IsDarkspineSonic)
+				return darkspineSpinState;
 		}
 
 		Player.Animator.BackstepAnimation();
