@@ -26,6 +26,8 @@ public partial class PlayerSkillController : Node3D
 		timeBreakAnimator.Play("RESET");
 		speedBreakAnimator.Play("RESET");
 
+		darkspineSoulTimer = DarkspineSoulInterval;
+
 		StageSettings.Instance.LevelDemoStarted += CancelSpeedbreakFX;
 	}
 
@@ -242,6 +244,9 @@ public partial class PlayerSkillController : Node3D
 	private const float SpeedBreakDelay = 0.2f; // Time to say SPEED BREAK!
 	private const float BreakSkillsCooldown = 0.4f; // Prevent skill spam
 
+	private float darkspineSoulTimer;
+	private readonly float DarkspineSoulInterval = 1f;
+
 	public void ProcessPhysics()
 	{
 		if (DebugManager.Instance.InfiniteSoulGauge) // Max out the soul gauge
@@ -249,6 +254,16 @@ public partial class PlayerSkillController : Node3D
 
 		speedBreakTimer = Mathf.MoveToward(speedBreakTimer, 0, PhysicsManager.physicsDelta);
 		timeBreakTimer = Mathf.MoveToward(timeBreakTimer, 0, PhysicsManager.physicsDelta);
+
+		if (Player.IsDarkspineSonic)
+		{
+			darkspineSoulTimer = Mathf.MoveToward(darkspineSoulTimer, 0, PhysicsManager.physicsDelta);
+			if (Mathf.IsZeroApprox(darkspineSoulTimer)) // Add passive soul power over time
+			{
+				darkspineSoulTimer = DarkspineSoulInterval;
+				ModifySoulGauge(1);
+			}
+		}
 
 		UpdateTimeBreak();
 		UpdateSpeedBreak();

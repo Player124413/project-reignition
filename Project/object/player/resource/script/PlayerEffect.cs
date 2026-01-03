@@ -11,12 +11,10 @@ namespace Project.Gameplay;
 public partial class PlayerEffect : Node3D
 {
 	private PlayerController Player;
-	private bool isDarkspineEnabled;
 	public void Initialize(PlayerController player)
 	{
 		Player = player;
 		trailFX.Player = Player;
-		isDarkspineEnabled = SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.Darkspine);
 
 		SoundManager.instance.Connect(SoundManager.SignalName.SonicSpeechStart, new Callable(this, MethodName.MuteGameplayVoice));
 		SoundManager.instance.Connect(SoundManager.SignalName.SonicSpeechEnd, new Callable(this, MethodName.UnmuteGameplayVoice));
@@ -418,7 +416,7 @@ public partial class PlayerEffect : Node3D
 	/// <summary> Plays FXs that occur the moment a foot strikes the ground (i.e. SFX, Footprints, etc.). </summary>
 	public void PlayFootstepFX(bool isRightFoot)
 	{
-		if (isDarkspineEnabled && groundMaterial != MaterialEnum.Water) // No footsteps with Darkspine
+		if (Player.IsDarkspineSonic && groundMaterial != MaterialEnum.Water) // No footsteps with Darkspine
 			return;
 
 		if (Mathf.IsZeroApprox(Player.MoveSpeed)) // Probably called during a blend to idle state; Ignore.
@@ -477,7 +475,7 @@ public partial class PlayerEffect : Node3D
 	private GpuParticles3D waterStep;
 	private void CreateSplashFootFX(bool isRightFoot)
 	{
-		if (isDarkspineEnabled)
+		if (Player.IsDarkspineSonic)
 			waterStep.GlobalPosition = GlobalPosition;
 		else
 			waterStep.GlobalPosition = isRightFoot ? rightFoot.GlobalPosition : leftFoot.GlobalPosition;

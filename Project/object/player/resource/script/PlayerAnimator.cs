@@ -505,7 +505,7 @@ public partial class PlayerAnimator : Node3D
 	}
 	public void JumpDashAnimation()
 	{
-		if (isDarkspineEnabled)
+		if (Player.IsDarkspineSonic)
 		{
 			UpdateAirState("jump", false);
 			JumpAccelAnimation();
@@ -1127,13 +1127,11 @@ public partial class PlayerAnimator : Node3D
 	}
 
 	[Export] private StringName[] darkspineTransitionParameterPaths;
-	private bool isDarkspineEnabled;
 	/// <summary> Updates whether animations should use Darkspine variants. </summary>
 	private void InitializeDarkspineAnimations()
 	{
-		isDarkspineEnabled = SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.Darkspine);
 		foreach (StringName param in darkspineTransitionParameterPaths)
-			animationTree.Set(param, isDarkspineEnabled ? EnabledConstant : DisabledConstant);
+			animationTree.Set(param, Player.IsDarkspineSonic ? EnabledConstant : DisabledConstant);
 	}
 
 	#region Speedbreak Materials
@@ -1143,12 +1141,12 @@ public partial class PlayerAnimator : Node3D
 
 	private void InitializeSpeedbreakMaterial()
 	{
-		speedbreakOverlayMaterial.SetShaderParameter(SpeedbreakOverlayOpacityKey, isDarkspineEnabled ? BaseDarkspineSpeedbreakOpacity : 0f);
+		speedbreakOverlayMaterial.SetShaderParameter(SpeedbreakOverlayOpacityKey, Player.IsDarkspineSonic ? BaseDarkspineSpeedbreakOpacity : 0f);
 	}
 
 	public void UpdateSpeedbreakMaterial(bool isSpeedbreakActive)
 	{
-		float baseOpacity = isDarkspineEnabled ? BaseDarkspineSpeedbreakOpacity : 0f;
+		float baseOpacity = Player.IsDarkspineSonic ? BaseDarkspineSpeedbreakOpacity : 0f;
 		float currentOpacity = (float)speedbreakOverlayMaterial.GetShaderParameter(SpeedbreakOverlayOpacityKey);
 		currentOpacity = Mathf.MoveToward(currentOpacity, isSpeedbreakActive ? 1f : baseOpacity, 5.0f * PhysicsManager.physicsDelta);
 		speedbreakOverlayMaterial.SetShaderParameter(SpeedbreakOverlayOpacityKey, currentOpacity);

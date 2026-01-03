@@ -25,6 +25,8 @@ public partial class PlayerController : CharacterBody3D
 	private StringName defaultModelPath;
 	[Export(PropertyHint.File, "*.tscn")]
 	private StringName darkspineModelPath;
+	/// <summary> Tracks whether darkspine sonic is enabled or not. </summary>
+	public bool IsDarkspineSonic { get; private set; }
 
 	public override void _Ready()
 	{
@@ -74,10 +76,8 @@ public partial class PlayerController : CharacterBody3D
 
 	private void InstancePlayerAnimator()
 	{
-		StringName modelPath = defaultModelPath;
-
-		if (SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.Darkspine))
-			modelPath = darkspineModelPath;
+		IsDarkspineSonic = SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.Darkspine);
+		StringName modelPath = IsDarkspineSonic ? darkspineModelPath : defaultModelPath;
 
 		Animator = ResourceLoader.Load<PackedScene>(modelPath).Instantiate<PlayerAnimator>();
 		Animator.Initialize(this, AnimatorRoot);
