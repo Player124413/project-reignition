@@ -12,6 +12,7 @@ public partial class IdleState : PlayerState
 	[Export] private PlayerState backflipState;
 	[Export] private PlayerState fallState;
 	[Export] private PlayerState homingAttackState;
+	[Export] private PlayerState darkspineSpinState;
 
 	public override void EnterState()
 	{
@@ -58,10 +59,15 @@ public partial class IdleState : PlayerState
 			return null;
 		}
 
-		if (Player.Controller.IsAttackBufferActive && Player.Lockon.IsTargetAttackable)
+		if (Player.Controller.IsAttackBufferActive)
 		{
 			Player.Controller.ResetAttackBuffer();
-			return homingAttackState;
+
+			if (Player.Lockon.IsTargetAttackable)
+				return homingAttackState;
+
+			if (Player.IsDarkspineSonic)
+				return darkspineSpinState;
 		}
 
 		if (SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.Autorun) && !Player.Controller.IsBrakeHeld())

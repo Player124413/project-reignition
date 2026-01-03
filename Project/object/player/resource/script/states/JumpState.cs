@@ -10,6 +10,7 @@ public partial class JumpState : PlayerState
 	[Export] private PlayerState stompState;
 	[Export] private PlayerState jumpDashState;
 	[Export] private PlayerState homingAttackState;
+	[Export] private PlayerState darkspineSpinState;
 
 	[Export]
 	private float accelerationJumpSpeed = 25f;
@@ -162,7 +163,18 @@ public partial class JumpState : PlayerState
 		if (Player.Controller.IsAttackBufferActive)
 		{
 			Player.Controller.ResetAttackBuffer();
-			return Player.Lockon.IsTargetAttackable ? homingAttackState : jumpDashState;
+
+			if (Player.Lockon.IsTargetAttackable)
+				return homingAttackState;
+
+			if (Player.IsDarkspineSonic &&
+				(Player.Controller.InputAxis.IsZeroApprox() ||
+				!Player.Controller.IsHoldingDirection(Player.Controller.GetTargetInputAngle(), Player.MovementAngle)))
+			{
+				return darkspineSpinState;
+			}
+
+			return jumpDashState;
 		}
 
 		if (Player.Controller.IsActionBufferActive)

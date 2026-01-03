@@ -9,6 +9,7 @@ public partial class FallState : PlayerState
 	[Export] private PlayerState stompState;
 	[Export] private PlayerState jumpDashState;
 	[Export] private PlayerState homingAttackState;
+	[Export] private PlayerState darkspineSpinState;
 
 	public override void EnterState()
 	{
@@ -50,12 +51,12 @@ public partial class FallState : PlayerState
 				return attackState;
 		}
 
-		if (Player.Lockon.Monitoring && Player.Controller.IsAttackBufferActive)
+		if (Player.Controller.IsAttackBufferActive)
 		{
 			Player.Controller.ResetAttackBuffer();
 
 			PlayerState attackState = GetAttackTargetState();
-			if (GetAttackTargetState() != null)
+			if (attackState != null)
 				return attackState;
 		}
 
@@ -77,11 +78,18 @@ public partial class FallState : PlayerState
 
 	private PlayerState GetAttackTargetState()
 	{
+		if (Player.Lockon.Monitoring && Player.Lockon.IsTargetAttackable)
+			return homingAttackState;
+
+		if (Player.IsDarkspineSonic &&
+			(Player.Controller.InputAxis.IsZeroApprox() ||
+			!Player.Controller.IsHoldingDirection(Player.Controller.GetTargetInputAngle(), Player.MovementAngle)))
+		{
+			return darkspineSpinState;
+		}
+
 		if (!Player.Lockon.Monitoring)
 			return null;
-
-		if (Player.Lockon.IsTargetAttackable)
-			return homingAttackState;
 
 		if (Player.CanJumpDash)
 			return jumpDashState;
