@@ -5,7 +5,7 @@ uniform sampler2D albedo : source_color, hint_default_black;
 uniform sampler2D specular : hint_default_black;
 uniform float rim_bias : hint_range(0, 5) = .5;
 uniform vec4 rim_color : source_color;
-uniform float emission : hint_range(0, 10) = 1.0;
+uniform float emission : hint_range(0, 50) = 1.0;
 uniform float opacity : hint_range(0, 1) = 0;
 uniform float albedo_leak : hint_range(0, 1) = 0.2;
 uniform float growth : hint_range(0, .01) = 0.005;
