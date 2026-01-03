@@ -28,8 +28,8 @@ public partial class PlayerAnimator : Node3D
 		AnimationNodeBlendTree oneShotTree = animationRoot.GetNode("oneshot_tree") as AnimationNodeBlendTree;
 		oneShotTransition = oneShotTree.GetNode("oneshot_transition") as AnimationNodeTransition;
 
-		InitializeSpeedbreakMaterial();
 		InitializeDarkspineAnimations();
+		InitializeSpeedbreakMaterial();
 	}
 
 	[Export] private AnimationTree animationTree;
@@ -858,10 +858,14 @@ public partial class PlayerAnimator : Node3D
 	}
 
 	private float balanceTurnVelocity;
+	private float windRatioVelocity;
 	/// <summary> How much should the balancing animation be smoothed by? </summary>
 	private const float BalanceTurnSmoothing = .15f;
+	/// <summary> How much should wind ratio transitions be smoothed by? </summary>
+	private const float WindRatioSmoothing = 2f;
 	public void UpdateBalancing(float balanceRatio)
 	{
+		float targetWindRatio = 1f;
 		if (IsBalanceShuffleActive)
 		{
 			string currentNode = BalanceStatePlayback.GetCurrentNode();
@@ -872,20 +876,27 @@ public partial class PlayerAnimator : Node3D
 				animationTree.Set(BalanceDirectionTransition, isFacingRight ? RightConstant : LeftConstant);
 			}
 
-			balanceRatio = 0;
+			targetWindRatio = 0f;
 		}
 
 		balanceRatio = ExtensionMethods.SmoothDamp((float)animationTree.Get(BalanceRightLean), balanceRatio, ref balanceTurnVelocity, BalanceTurnSmoothing);
 		animationTree.Set(BalanceRightLean, balanceRatio);
 		animationTree.Set(BalanceLeftLean, -balanceRatio);
+
+		float windRatio = ExtensionMethods.SmoothDamp((float)animationTree.Get(BalanceWindBlend), targetWindRatio, ref windRatioVelocity, WindRatioSmoothing);
+		animationTree.Set(BalanceWindBlend, windRatio);
 	}
 
 	private readonly string BalanceSpeed = "parameters/balance_tree/balance_speed/scale";
 	private readonly string BalanceWindBlend = "parameters/balance_tree/wind_blend/blend_position";
+	private readonly string BalanceWindStrengthBlend = "parameters/balance_tree/wind_strength_blend/blend_amount";
+	private readonly string SecondaryBalanceWindStrengthBlend = "parameters/balance_tree/wind_strength_blend_2/blend_amount";
 	public void UpdateBalanceSpeed(float speedRatio, float overrideWindBlend = -1)
 	{
+		float targetWindStrength = Mathf.IsEqualApprox(overrideWindBlend, -1) ? speedRatio : overrideWindBlend;
+		animationTree.Set(BalanceWindStrengthBlend, targetWindStrength);
+		animationTree.Set(SecondaryBalanceWindStrengthBlend, targetWindStrength);
 		animationTree.Set(BalanceSpeed, speedRatio + .8f);
-		animationTree.Set(BalanceWindBlend, Mathf.IsEqualApprox(overrideWindBlend, -1) ? speedRatio : overrideWindBlend);
 	}
 	#endregion
 
@@ -1128,13 +1139,18 @@ public partial class PlayerAnimator : Node3D
 	#region Speedbreak Materials
 	[Export] public ShaderMaterial speedbreakOverlayMaterial;
 	private readonly string SpeedbreakOverlayOpacityKey = "opacity";
+	private readonly float BaseDarkspineSpeedbreakOpacity = 0.3f;
 
-	private void InitializeSpeedbreakMaterial() => speedbreakOverlayMaterial.SetShaderParameter(SpeedbreakOverlayOpacityKey, 0);
+	private void InitializeSpeedbreakMaterial()
+	{
+		speedbreakOverlayMaterial.SetShaderParameter(SpeedbreakOverlayOpacityKey, isDarkspineEnabled ? BaseDarkspineSpeedbreakOpacity : 0f);
+	}
 
 	public void UpdateSpeedbreakMaterial(bool isSpeedbreakActive)
 	{
+		float baseOpacity = isDarkspineEnabled ? BaseDarkspineSpeedbreakOpacity : 0f;
 		float currentOpacity = (float)speedbreakOverlayMaterial.GetShaderParameter(SpeedbreakOverlayOpacityKey);
-		currentOpacity = Mathf.MoveToward(currentOpacity, isSpeedbreakActive ? 1 : 0, 5.0f * PhysicsManager.physicsDelta);
+		currentOpacity = Mathf.MoveToward(currentOpacity, isSpeedbreakActive ? 1f : baseOpacity, 5.0f * PhysicsManager.physicsDelta);
 		speedbreakOverlayMaterial.SetShaderParameter(SpeedbreakOverlayOpacityKey, currentOpacity);
 	}
 	#endregion
