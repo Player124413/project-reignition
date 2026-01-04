@@ -66,6 +66,7 @@ public partial class KnockbackState : PlayerState
 			return;
 
 		Player.IsKnockback = false;
+		Player.FinishKnockback();
 		Player.Animator.StopHurt(Settings.knockbackType);
 		Player.Animator.ResetState();
 	}

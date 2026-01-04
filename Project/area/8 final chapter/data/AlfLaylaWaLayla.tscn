@@ -1,4 +1,4 @@
-[gd_scene load_steps=97 format=3 uid="uid://7p1mkbn0s276"]
+[gd_scene load_steps=99 format=3 uid="uid://7p1mkbn0s276"]
 
 [ext_resource type="PackedScene" uid="uid://bl4mwbfg117lh" path="res://area/8 final chapter/data/model/AlfLaylaWaLayla.gltf" id="1_8mof4"]
 [ext_resource type="Script" uid="uid://bpp2tmfxy4euf" path="res://area/8 final chapter/data/script/AlfLayla.cs" id="1_k6i6c"]
@@ -189,7 +189,7 @@ tracks/2/keys = {
 
 [sub_resource type="Animation" id="Animation_7f36k"]
 resource_name = "explode"
-length = 0.001
+length = 0.2
 step = 0.1
 tracks/0/type = "method"
 tracks/0/imported = false
@@ -216,6 +216,47 @@ tracks/1/keys = {
 "transitions": PackedFloat32Array(1),
 "update": 1,
 "values": [false]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("SpiritBomb:visible")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0.001, 0.1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [true, false]
+}
+
+[sub_resource type="Animation" id="Animation_4ltgr"]
+resource_name = "launch"
+length = 0.4
+step = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.2, 0.4),
+"transitions": PackedFloat32Array(2, 0.5, 1),
+"update": 0,
+"values": [Vector3(1, 1, 1), Vector3(1.5, 1.5, 1.5), Vector3(2, 2, 2)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath(".:monitoring")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
 }
 
 [sub_resource type="Animation" id="Animation_utrra"]
@@ -273,34 +314,6 @@ tracks/3/keys = {
 "values": [false]
 }
 
-[sub_resource type="Animation" id="Animation_4ltgr"]
-resource_name = "launch"
-step = 0.1
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath(".:scale")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0, 0.5, 1),
-"transitions": PackedFloat32Array(2, 0.5, 1),
-"update": 0,
-"values": [Vector3(1, 1, 1), Vector3(1.5, 1.5, 1.5), Vector3(2, 2, 2)]
-}
-tracks/1/type = "value"
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/path = NodePath(".:monitoring")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
-tracks/1/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [true]
-}
-
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_s1gny"]
 _data = {
 &"RESET": SubResource("Animation_86d2j"),
@@ -330,16 +343,6 @@ _data = {
 &"stun-stop": ExtResource("19_twpcs"),
 &"three-orb": ExtResource("20_l4bcq")
 }
-
-[sub_resource type="AnimationNodeTransition" id="AnimationNodeTransition_oj3ar"]
-input_0/name = "enabled"
-input_0/auto_advance = true
-input_0/break_loop_at_end = false
-input_0/reset = true
-input_1/name = "disabled"
-input_1/auto_advance = false
-input_1/break_loop_at_end = false
-input_1/reset = true
 
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_k6i6c"]
 animation = &"advance-start"
@@ -500,7 +503,17 @@ states/stun-start/position = Vector2(322, 100)
 states/stun-stop/node = SubResource("AnimationNodeAnimation_b1w0k")
 states/stun-stop/position = Vector2(322, 243)
 transitions = ["stun-stop", "End", SubResource("AnimationNodeStateMachineTransition_l4bcq"), "Start", "stun-start", SubResource("AnimationNodeStateMachineTransition_7f36k"), "stun-start", "stun", SubResource("AnimationNodeStateMachineTransition_86d2j"), "stun", "stun-stop", SubResource("AnimationNodeStateMachineTransition_4ltgr")]
-graph_offset = Vector2(-249, -55)
+graph_offset = Vector2(-320, 17)
+
+[sub_resource type="AnimationNodeTransition" id="AnimationNodeTransition_oj3ar"]
+input_0/name = "enabled"
+input_0/auto_advance = true
+input_0/break_loop_at_end = false
+input_0/reset = true
+input_1/name = "disabled"
+input_1/auto_advance = false
+input_1/break_loop_at_end = false
+input_1/reset = true
 
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_86d2j"]
 animation = &"three-orb"
@@ -510,7 +523,7 @@ fadein_time = 0.1
 fadeout_time = 0.2
 
 [sub_resource type="AnimationNodeBlendTree" id="AnimationNodeBlendTree_lg36t"]
-graph_offset = Vector2(-662.6758, 34.514847)
+graph_offset = Vector2(-1304.6694, -48.879536)
 nodes/output/position = Vector2(840, 120)
 nodes/move-state/node = SubResource("AnimationNodeStateMachine_w08gm")
 nodes/move-state/position = Vector2(-1400, 180)
@@ -540,15 +553,21 @@ nodes/three-orb-trigger/node = SubResource("AnimationNodeOneShot_f0c13")
 nodes/three-orb-trigger/position = Vector2(-80, 120)
 nodes/three-orb-anim/node = SubResource("AnimationNodeAnimation_86d2j")
 nodes/three-orb-anim/position = Vector2(-260, 320)
-nodes/hitstun-transition/node = SubResource("AnimationNodeTransition_oj3ar")
-nodes/hitstun-transition/position = Vector2(-1040, -20)
+nodes/stun-transition/node = SubResource("AnimationNodeTransition_oj3ar")
+nodes/stun-transition/position = Vector2(-1040, -20)
 nodes/stun-state/node = SubResource("AnimationNodeStateMachine_48yth")
 nodes/stun-state/position = Vector2(-1400, -20)
 nodes/stun-damage-trigger/node = SubResource("AnimationNodeOneShot_wa5i8")
 nodes/stun-damage-trigger/position = Vector2(-780, -60)
 nodes/stun-damage-anim/node = SubResource("AnimationNodeAnimation_oj3ar")
 nodes/stun-damage-anim/position = Vector2(-1040, 240)
-node_connections = [&"output", 0, &"spirit-bomb-trigger", &"slash-trigger", 0, &"three-orb-trigger", &"slash-trigger", 1, &"slash-speed", &"six-orb-trigger", 0, &"stun-damage-trigger", &"six-orb-trigger", 1, &"six-orb-speed", &"slash-speed", 0, &"slash-type-transition", &"six-orb-speed", 0, &"six-orb-anim", &"slash-type-transition", 0, &"slash-l-anim", &"slash-type-transition", 1, &"slash-x-anim", &"slash-type-transition", 2, &"slash-r-anim", &"spirit-bomb-trigger", 0, &"slash-trigger", &"spirit-bomb-trigger", 1, &"spirit-bomb-anim", &"three-orb-trigger", 0, &"six-orb-trigger", &"three-orb-trigger", 1, &"three-orb-anim", &"hitstun-transition", 0, &"stun-state", &"hitstun-transition", 1, &"move-state", &"stun-damage-trigger", 0, &"hitstun-transition", &"stun-damage-trigger", 1, &"stun-damage-anim"]
+node_connections = [&"output", 0, &"spirit-bomb-trigger", &"slash-trigger", 0, &"three-orb-trigger", &"slash-trigger", 1, &"slash-speed", &"six-orb-trigger", 0, &"stun-damage-trigger", &"six-orb-trigger", 1, &"six-orb-speed", &"slash-speed", 0, &"slash-type-transition", &"six-orb-speed", 0, &"six-orb-anim", &"slash-type-transition", 0, &"slash-l-anim", &"slash-type-transition", 1, &"slash-x-anim", &"slash-type-transition", 2, &"slash-r-anim", &"spirit-bomb-trigger", 0, &"slash-trigger", &"spirit-bomb-trigger", 1, &"spirit-bomb-anim", &"three-orb-trigger", 0, &"six-orb-trigger", &"three-orb-trigger", 1, &"three-orb-anim", &"stun-transition", 0, &"stun-state", &"stun-transition", 1, &"move-state", &"stun-damage-trigger", 0, &"stun-transition", &"stun-damage-trigger", 1, &"stun-damage-anim"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_7f36k"]
+size = Vector3(50, 50, 5)
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_86d2j"]
+radius = 1.5
 
 [node name="AlfLaylaWaLayla" type="Node3D" node_paths=PackedStringArray("animationTree", "cutsceneCamera", "autorunLockout", "spiritBomb", "dialogTriggers")]
 script = ExtResource("1_k6i6c")
@@ -574,6 +593,7 @@ monitoring = false
 monitorable = false
 script = ExtResource("3_7f36k")
 moveSpeed = 30.0
+returnSpeed = 60.0
 animator = NodePath("AnimationPlayer")
 
 [node name="SpiritBomb" parent="AlfLaylaWaLayla/SpiritBombPosition/SpiritBomb" instance=ExtResource("25_twpcs")]
@@ -690,12 +710,22 @@ parameters/spirit-bomb-trigger/request = 0
 parameters/three-orb-trigger/active = false
 parameters/three-orb-trigger/internal_active = false
 parameters/three-orb-trigger/request = 0
-parameters/hitstun-transition/current_state = "disabled"
-parameters/hitstun-transition/transition_request = ""
-parameters/hitstun-transition/current_index = 1
+parameters/stun-transition/current_state = "disabled"
+parameters/stun-transition/transition_request = ""
+parameters/stun-transition/current_index = 1
 parameters/stun-damage-trigger/active = false
 parameters/stun-damage-trigger/internal_active = false
 parameters/stun-damage-trigger/request = 0
+
+[node name="WallLimit" type="StaticBody3D" parent="." groups=["ignore lockon cast", "level wall", "wall"]]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="WallLimit"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 3)
+shape = SubResource("BoxShape3D_7f36k")
+
+[node name="CollisionShape3D2" type="CollisionShape3D" parent="WallLimit"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.5, 1.6)
+shape = SubResource("SphereShape3D_86d2j")
 
 [connection signal="area_entered" from="AlfLaylaWaLayla/SpiritBombPosition/SpiritBomb" to="AlfLaylaWaLayla/SpiritBombPosition/SpiritBomb" method="OnEntered"]
 [connection signal="area_exited" from="AlfLaylaWaLayla/SpiritBombPosition/SpiritBomb" to="AlfLaylaWaLayla/SpiritBombPosition/SpiritBomb" method="OnExited"]

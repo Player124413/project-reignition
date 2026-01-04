@@ -42,7 +42,7 @@ public partial class AlfLayla : Node3D
 		Movement,
 		AttackWindup,
 		AttackStrike,
-		Hitstun,
+		Stunned,
 		Defeated,
 	}
 
@@ -135,6 +135,9 @@ public partial class AlfLayla : Node3D
 				return;
 		}
 
+		if (CurrentFightState == FightState.Stunned)
+			return;
+
 		SnapPosition();
 	}
 
@@ -164,6 +167,9 @@ public partial class AlfLayla : Node3D
 
 	private void StartIntroduction()
 	{
+		StageSettings.Player.KnockbackFinished += FinishAttack; // Finish the spirit bomb attack after the player gets up
+		spiritBomb.AlfExploded += StartHitstun;
+
 		GlobalTransform = Player.GlobalTransform;
 		ResetPhysicsInterpolation();
 
@@ -218,6 +224,12 @@ public partial class AlfLayla : Node3D
 		if (CurrentFightState == FightState.Movement)
 		{
 			ProcessMovement();
+			return;
+		}
+
+		if (CurrentFightState == FightState.Stunned)
+		{
+			ProcessStun();
 			return;
 		}
 
@@ -347,6 +359,7 @@ public partial class AlfLayla : Node3D
 				break;
 			case 'B':
 				animationTree.Set(SpiritBombTrigger, (uint)AnimationNodeOneShot.OneShotRequest.Fire);
+				spiritBomb.Respawn();
 				break;
 			default: // Unimplmented
 				GD.Print($"Action {currentActionCharacter} is not implemented!");
@@ -402,4 +415,32 @@ public partial class AlfLayla : Node3D
 
 	/// <summary> Release the spirit bomb from Alf's hands and have it start flying. </summary>
 	private void LaunchSpiritBomb() => spiritBomb.StartTravelling();
+
+	private readonly string StunTransition = "parameters/stun-transition/transition_request";
+	private readonly string StunPlaybackPath = "parameters/stun-state/playback";
+	private AnimationNodeStateMachinePlayback StunPlayback => (AnimationNodeStateMachinePlayback)animationTree.Get(StunPlaybackPath);
+	/// <summary> Called when the spirit bomb explodes on Alf. </summary>
+	private void StartHitstun()
+	{
+		CurrentFightState = FightState.Stunned;
+		StunPlayback.Start("stun-start");
+		animationTree.Set(StunTransition, "enabled");
+		actionTimer = MaxStunLength;
+	}
+
+	private readonly float MaxStunLength = 20f;
+	private void ProcessStun()
+	{
+		actionTimer = Mathf.MoveToward(actionTimer, 0, PhysicsManager.physicsDelta);
+		if (Mathf.IsZeroApprox(actionTimer))
+			FinishStun();
+	}
+
+	private void FinishStun()
+	{
+		currentDistance = Mathf.Abs(Player.GlobalPosition.Z - GlobalPosition.Z);
+		actionTimer = 1f;
+		StunPlayback.Travel("stun-stop");
+		CurrentFightState = FightState.Idle;
+	}
 }
