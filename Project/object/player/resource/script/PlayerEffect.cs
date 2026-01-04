@@ -20,6 +20,9 @@ public partial class PlayerEffect : Node3D
 		SoundManager.instance.Connect(SoundManager.SignalName.SonicSpeechEnd, new Callable(this, MethodName.UnmuteGameplayVoice));
 
 		voiceChannel.Finished += DisableSonicVoiceSfx;
+
+		if (Player.IsDarkspineSonic) // Start darkspine FX
+			darkspineGroup.RestartGroup();
 	}
 
 	public override void _PhysicsProcess(double _)
@@ -40,10 +43,12 @@ public partial class PlayerEffect : Node3D
 	public readonly string DarkSfx = "dark";
 
 	#region Actions
+	[Export] private GroupGpuParticles3D darkspineGroup;
+
+
 	// Actions (Jumping, sliding, etc)
 	[ExportGroup("Skill Effects")]
-	[Export]
-	private SFXLibraryResource actionSFXLibrary;
+	[Export] private SFXLibraryResource actionSFXLibrary;
 	private readonly List<StringName> activeActionChannelKeys = [];
 	private readonly List<AudioStreamPlayer> actionChannels = []; // Audio channels for playing action sound effects
 	/// <summary> Plays a sound effect given an key (key names are based on actionSFXLibrary). </summary>
@@ -95,18 +100,15 @@ public partial class PlayerEffect : Node3D
 		}
 	}
 
-	[Export]
-	public Trail3D trailFX;
-	[Export]
-	public MeshInstance3D spinFX;
+	[Export] public Trail3D trailFX;
+	[Export] public MeshInstance3D spinFX;
 	public void UpdateTrailHueShift(float hueShift)
 	{
 		(trailFX.material as ShaderMaterial).SetShaderParameter("hue_shift", hueShift);
 		(spinFX.MaterialOverride as ShaderMaterial).SetShaderParameter("hue_shift", hueShift);
 	}
 
-	[Export]
-	private GroupGpuParticles3D teleportParticle;
+	[Export] private GroupGpuParticles3D teleportParticle;
 	public void StartTeleport()
 	{
 		teleportParticle.RestartGroup();
@@ -119,8 +121,7 @@ public partial class PlayerEffect : Node3D
 	}
 
 	/// <summary> VFX for drifting dust. </summary>
-	[Export]
-	private GpuParticles3D dustParticle;
+	[Export] private GpuParticles3D dustParticle;
 	public void StartDust() => dustParticle.Emitting = true;
 	public void StopDust() => dustParticle.Emitting = false;
 
@@ -138,28 +139,24 @@ public partial class PlayerEffect : Node3D
 		spinFXAnimator.Play("squish");
 	}
 
-	[Export]
-	public GpuParticles3D doubleJumpFx;
+	[Export] public GpuParticles3D doubleJumpFx;
 	public void PlayDoubleJumpFX() => doubleJumpFx.Restart();
 
-	[Export]
-	private GpuParticles3D windParticle;
+	[Export] private GpuParticles3D windParticle;
 	public void PlayWindFX()
 	{
 		windParticle.Restart();
 		PlayActionSFX(WindSfx);
 	}
 
-	[Export]
-	private GpuParticles3D fireParticle;
+	[Export] private GpuParticles3D fireParticle;
 	public void PlayFireFX()
 	{
 		fireParticle.Restart();
 		PlayActionSFX(FireSfx);
 	}
 
-	[Export]
-	private GroupGpuParticles3D stompParticle;
+	[Export] private GroupGpuParticles3D stompParticle;
 	public void StartStompFX()
 	{
 		stompParticle.SetEmitting(true);
@@ -167,12 +164,10 @@ public partial class PlayerEffect : Node3D
 	}
 	public void StopStompFX() => stompParticle.SetEmitting(false);
 
-	[Export]
-	private GroupGpuParticles3D splashJumpParticle;
+	[Export] private GroupGpuParticles3D splashJumpParticle;
 	public void PlaySplashJumpFX() => splashJumpParticle.RestartGroup();
 
-	[Export]
-	private GpuParticles3D quickStepParticle;
+	[Export] private GpuParticles3D quickStepParticle;
 	public void PlayQuickStepFX(bool isSteppingRight)
 	{
 		quickStepParticle.Rotation = isSteppingRight ? Vector3.Zero : Vector3.Up * Mathf.Pi;
@@ -180,8 +175,7 @@ public partial class PlayerEffect : Node3D
 		PlayActionSFX("quick step");
 	}
 
-	[Export]
-	private GpuParticles3D lightDashParticle;
+	[Export] private GpuParticles3D lightDashParticle;
 	public void StartLightDashFX()
 	{
 		lightDashParticle.Emitting = true;
@@ -190,43 +184,34 @@ public partial class PlayerEffect : Node3D
 
 	public void StopLightDashFX() => lightDashParticle.Emitting = false;
 
-	[Export]
-	private GroupGpuParticles3D aegisSlideParticle;
+	[Export] private GroupGpuParticles3D aegisSlideParticle;
 	public void StartAegisFX() => aegisSlideParticle.SetEmitting(true);
 	public void StopAegisFX() => aegisSlideParticle.SetEmitting(false);
-	[Export]
-	private GroupGpuParticles3D volcanoSlideParticle;
+	[Export] private GroupGpuParticles3D volcanoSlideParticle;
 	public void StartVolcanoFX() => volcanoSlideParticle.SetEmitting(true);
 	public void StopVolcanoFX() => volcanoSlideParticle.SetEmitting(false);
 
-	[Export]
-	private GroupGpuParticles3D soulSlideParticle;
+	[Export] private GroupGpuParticles3D soulSlideParticle;
 	public void StartSoulSlideFX() => soulSlideParticle.SetEmitting(true);
 	public void StopSoulSlideFX() => soulSlideParticle.SetEmitting(false);
 
-	[Export]
-	private GpuParticles3D darkSpiralParticle;
+	[Export] private GpuParticles3D darkSpiralParticle;
 	public void PlayDarkSpiralFX()
 	{
 		darkSpiralParticle.Restart();
 		PlayActionSFX(DarkSfx);
 	}
 
-	[Export]
-	private GroupGpuParticles3D darkCrestParticle;
+	[Export] private GroupGpuParticles3D darkCrestParticle;
 	public void PlayDarkCrestFX() => darkCrestParticle.RestartGroup();
-	[Export]
-	private GroupGpuParticles3D windCrestParticle;
+	[Export] private GroupGpuParticles3D windCrestParticle;
 	public void PlayWindCrestFX() => windCrestParticle.RestartGroup();
 
-	[Export]
-	private GroupGpuParticles3D fireCrestParticle;
+	[Export] private GroupGpuParticles3D fireCrestParticle;
 	public void PlayFireCrestFX() => fireCrestParticle.RestartGroup();
 
-	[Export]
-	private GpuParticles3D chargeParticle;
-	[Export]
-	private GpuParticles3D fullChargeParticle;
+	[Export] private GpuParticles3D chargeParticle;
+	[Export] private GpuParticles3D fullChargeParticle;
 	public void StartChargeFX()
 	{
 		chargeParticle.Emitting = true;
@@ -239,14 +224,10 @@ public partial class PlayerEffect : Node3D
 		fullChargeParticle.Emitting = false;
 	}
 
-	[Export]
-	private GpuParticles3D grindrailSparkParticle;
-	[Export]
-	private GpuParticles3D grindrailBurstParticle;
-	[Export]
-	private GpuParticles3D perfectShuffleParticle;
-	[Export]
-	private AudioStreamPlayer grindrailSfx;
+	[Export] private GpuParticles3D grindrailSparkParticle;
+	[Export] private GpuParticles3D grindrailBurstParticle;
+	[Export] private GpuParticles3D perfectShuffleParticle;
+	[Export] private AudioStreamPlayer grindrailSfx;
 	private bool isFadingRailSFX;
 	public void StartGrindFX(bool resetSFX)
 	{
@@ -296,8 +277,7 @@ public partial class PlayerEffect : Node3D
 		StopChargeFX();
 	}
 
-	[Export]
-	private GpuParticles3D petrifyParticle;
+	[Export] private GpuParticles3D petrifyParticle;
 	public void PetrifyShatterFX()
 	{
 		petrifyParticle.Restart();
@@ -308,8 +288,7 @@ public partial class PlayerEffect : Node3D
 	#region Ground
 	[ExportGroup("Material Effects")]
 	// SFX for different ground materials (footsteps, landing, etc)
-	[Export]
-	private SFXLibraryResource materialSFXLibrary;
+	[Export] private SFXLibraryResource materialSFXLibrary;
 	private enum MaterialEnum
 	{
 		Pavement,
@@ -324,20 +303,15 @@ public partial class PlayerEffect : Node3D
 		Count
 	}
 
-	[Export]
-	private Node3D rightFoot;
-	[Export]
-	private Node3D leftFoot;
-	[Export]
-	private AudioStreamPlayer3D footstepChannel;
-	[Export]
-	private AudioStreamPlayer3D landingChannel;
+	[Export] private Node3D rightFoot;
+	[Export] private Node3D leftFoot;
+	[Export] private AudioStreamPlayer3D footstepChannel;
+	[Export] private AudioStreamPlayer3D landingChannel;
 	/// <summary> Index of the current type of ground the player is walking on. </summary>
 	private MaterialEnum groundMaterial;
 	private int GroundMaterialIndex => (int)groundMaterial;
 
-	[Export]
-	private GpuParticles3D[] landingParticles;
+	[Export] private GpuParticles3D[] landingParticles;
 	/// <summary>
 	/// Plays landing sfx and vfx based on the current groundKeyIndex.
 	/// </summary>
@@ -371,9 +345,8 @@ public partial class PlayerEffect : Node3D
 		waterFx.RestartGroup();
 	}
 
-	[Export]
 	/// <summary> Emitters responsible for dust when moving on the ground. </summary>
-	private GpuParticles3D[] stepEmitters;
+	[Export] private GpuParticles3D[] stepEmitters;
 	/// <summary> Index of the current step emitter. </summary>
 	private int currentStepEmitter = -1;
 	/// <summary> Is step dust be emitted? </summary>
@@ -439,8 +412,7 @@ public partial class PlayerEffect : Node3D
 		}
 	}
 
-	[Export]
-	private PackedScene footprintDecal;
+	[Export] private PackedScene footprintDecal;
 	private readonly List<Node3D> footprintDecalList = [];
 	private void CreateSandFootFX(Transform3D spawnTransform)
 	{
@@ -471,8 +443,7 @@ public partial class PlayerEffect : Node3D
 		activeFootprintDecal.ResetPhysicsInterpolation();
 	}
 
-	[Export]
-	private GpuParticles3D waterStep;
+	[Export] private GpuParticles3D waterStep;
 	private void CreateSplashFootFX(bool isRightFoot)
 	{
 		if (Player.IsDarkspineSonic)
@@ -506,10 +477,8 @@ public partial class PlayerEffect : Node3D
 	#endregion
 
 	[ExportGroup("Voices")]
-	[Export]
-	public SFXLibraryResource voiceLibrary;
-	[Export]
-	private AudioStreamPlayer voiceChannel;
+	[Export] public SFXLibraryResource voiceLibrary;
+	[Export] private AudioStreamPlayer voiceChannel;
 	public void PlayVoice(StringName key)
 	{
 		// Don't play anything if someone is already talking

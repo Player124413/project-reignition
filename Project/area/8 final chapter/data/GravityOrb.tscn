@@ -1,0 +1,136 @@
+[gd_scene load_steps=19 format=3 uid="uid://vv8ysqa68nc1"]
+
+[ext_resource type="Material" uid="uid://bnk8skmt06lca" path="res://effect/particle/material/environment/Circular Glow.tres" id="1_snu67"]
+[ext_resource type="Material" uid="uid://bq1q3tp1cq76v" path="res://effect/particle/material/explosion/Explosion Smoke Add.tres" id="2_wnjru"]
+
+[sub_resource type="Curve" id="Curve_snu67"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.1, 1), 0.0, 0.0, 0, 0, Vector2(0.8, 0), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_wnjru"]
+width = 64
+texture_mode = 1
+curve = SubResource("Curve_snu67")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_snu67"]
+gravity = Vector3(0, 0, 0)
+scale_min = 1.5
+scale_max = 2.0
+color = Color(0, 0, 0.6, 1)
+alpha_curve = SubResource("CurveTexture_wnjru")
+
+[sub_resource type="QuadMesh" id="QuadMesh_wnjru"]
+material = ExtResource("1_snu67")
+
+[sub_resource type="Curve" id="Curve_wnjru"]
+_data = [Vector2(0, 0.1), 0.0, 0.0, 0, 0, Vector2(0.3, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_l0rdi"]
+width = 64
+texture_mode = 1
+curve = SubResource("Curve_wnjru")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_wnjru"]
+lifetime_randomness = 0.4
+angle_min = 1.0728836e-05
+angle_max = 360.00003
+gravity = Vector3(0, 0, 0)
+scale_min = 0.19999999
+scale_max = 0.39999998
+color = Color(0.9661522, 0.55235213, 1.353256, 1)
+alpha_curve = SubResource("CurveTexture_l0rdi")
+
+[sub_resource type="QuadMesh" id="QuadMesh_snu67"]
+material = ExtResource("2_wnjru")
+size = Vector2(0.1, 2)
+
+[sub_resource type="Curve" id="Curve_l0rdi"]
+_data = [Vector2(0, 0.1), 0.0, 0.0, 0, 0, Vector2(0.2, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_w0bvt"]
+width = 64
+texture_mode = 1
+curve = SubResource("Curve_l0rdi")
+
+[sub_resource type="Gradient" id="Gradient_wnjru"]
+offsets = PackedFloat32Array(0, 0.5, 1)
+colors = PackedColorArray(0.7833333, 0, 1, 1, 0.116666794, 0, 1, 1, 1, 1, 1, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_l0rdi"]
+gradient = SubResource("Gradient_wnjru")
+width = 64
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_l0rdi"]
+emission_shape = 2
+emission_sphere_radius = 2.0
+gravity = Vector3(0, 0, 0)
+radial_accel_min = -20.000002
+radial_accel_max = -10.000002
+tangential_accel_min = 9.999997
+tangential_accel_max = 9.999997
+scale_min = 0.099999994
+scale_max = 0.19999999
+color_initial_ramp = SubResource("GradientTexture1D_l0rdi")
+alpha_curve = SubResource("CurveTexture_w0bvt")
+
+[sub_resource type="QuadMesh" id="QuadMesh_l0rdi"]
+material = ExtResource("2_wnjru")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_w0bvt"]
+emission_shape = 1
+emission_sphere_radius = 1.0
+spread = 180.0
+initial_velocity_min = 15.0
+initial_velocity_max = 20.0
+gravity = Vector3(0, 0, 0)
+damping_min = 200.00002
+damping_max = 200.00002
+scale_max = 1.5
+color = Color(1, 0, 1, 1)
+alpha_curve = SubResource("CurveTexture_w0bvt")
+
+[sub_resource type="QuadMesh" id="QuadMesh_poxal"]
+material = ExtResource("2_wnjru")
+
+[node name="GravityOrb" type="Node3D"]
+
+[node name="BluePulse" type="GPUParticles3D" parent="."]
+layers = 32
+cast_shadow = 0
+amount = 2
+process_material = SubResource("ParticleProcessMaterial_snu67")
+draw_pass_1 = SubResource("QuadMesh_wnjru")
+
+[node name="CentralStreaks" type="GPUParticles3D" parent="."]
+layers = 32
+cast_shadow = 0
+lifetime = 0.5
+fixed_fps = 0
+interpolate = false
+process_material = SubResource("ParticleProcessMaterial_wnjru")
+draw_pass_1 = SubResource("QuadMesh_snu67")
+
+[node name="PurpleSparks" type="GPUParticles3D" parent="."]
+layers = 32
+cast_shadow = 0
+lifetime = 0.5
+fixed_fps = 0
+interpolate = false
+process_material = SubResource("ParticleProcessMaterial_l0rdi")
+draw_pass_1 = SubResource("QuadMesh_l0rdi")
+
+[node name="Explosion" type="GPUParticles3D" parent="."]
+layers = 32
+cast_shadow = 0
+emitting = false
+amount = 32
+lifetime = 0.2
+one_shot = true
+explosiveness = 0.7
+fixed_fps = 0
+interpolate = false
+transform_align = 2
+process_material = SubResource("ParticleProcessMaterial_w0bvt")
+draw_pass_1 = SubResource("QuadMesh_poxal")
