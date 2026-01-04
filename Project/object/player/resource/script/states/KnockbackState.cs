@@ -89,11 +89,14 @@ public partial class KnockbackState : PlayerState
 
 		if (Player.CheckGround())
 		{
-			if (!Settings.stayOnGround)
+			if (!Settings.stayOnGround && Settings.knockbackType != KnockbackSettings.KnockbackAnimation.Darkspine)
 			{
 				Player.Animator.StopHurt(Settings.knockbackType);
 				return landState;
 			}
+
+			if (Settings.knockbackType == KnockbackSettings.KnockbackAnimation.Darkspine && Player.Animator.IsDarkspineHurtFinished)
+				Player.MoveSpeed = 0;
 
 			if (Mathf.IsZeroApprox(Player.MoveSpeed))
 			{
@@ -115,7 +118,8 @@ public struct KnockbackSettings
 	{
 		Normal,
 		Forward,
-		Block
+		Block,
+		Darkspine, // Darkspine Knockback used in the final boss
 	}
 
 	/// <summary> Knock the player around without bouncing them into the air. </summary>

@@ -1,4 +1,4 @@
-[gd_scene load_steps=72 format=3 uid="uid://bqck0hqdn3o8r"]
+[gd_scene load_steps=74 format=3 uid="uid://bqck0hqdn3o8r"]
 
 [ext_resource type="Script" uid="uid://cy7pw3hj351lp" path="res://object/player/resource/script/PlayerController.cs" id="1_wygja"]
 [ext_resource type="Script" uid="uid://72x88nalpw8i" path="res://object/player/resource/script/PlayerStateMachine.cs" id="2_ehi1f"]
@@ -50,6 +50,8 @@
 [ext_resource type="Script" uid="uid://cyxq45dgf674k" path="res://object/player/resource/script/states/LeverState.cs" id="42_51gfe"]
 [ext_resource type="Script" uid="uid://ijsj0mdgfygr" path="res://object/player/resource/script/states/BemothHornState.cs" id="43_wuphe"]
 [ext_resource type="Script" uid="uid://8ldpfwbop54h" path="res://object/player/resource/script/states/DarkspineSpinState.cs" id="44_3hunb"]
+[ext_resource type="Script" uid="uid://dhbwvub3djc2l" path="res://object/player/resource/script/states/DarkspineSpiritBombState.cs" id="44_ekrfr"]
+[ext_resource type="Script" uid="uid://c26jjexru5xnj" path="res://object/player/resource/script/states/DarkspineMultiPunchState.cs" id="45_se1is"]
 [ext_resource type="Script" uid="uid://q4usvy665c22" path="res://object/player/resource/script/states/AirBoostState.cs" id="48_au4xk"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_hfii6"]
@@ -1282,13 +1284,12 @@ jumpDashState = NodePath("../JumpDash")
 homingAttackState = NodePath("../HomingAttack")
 darkspineSpinState = NodePath("../../Skill/DarkspineSpin")
 
-[node name="Backflip" type="Node" parent="StateMachine/Basic" node_paths=PackedStringArray("landState", "jumpDashState", "homingAttackState", "stompState", "darkspineSpinState")]
+[node name="Backflip" type="Node" parent="StateMachine/Basic" node_paths=PackedStringArray("landState", "jumpDashState", "homingAttackState", "stompState")]
 script = ExtResource("9_7wp0f")
 landState = NodePath("../Land")
 jumpDashState = NodePath("../JumpDash")
 homingAttackState = NodePath("../HomingAttack")
 stompState = NodePath("../Stomp")
-darkspineSpinState = NodePath("../../Skill/DarkspineSpin")
 backflipHeight = 2.4
 
 [node name="Stomp" type="Node" parent="StateMachine/Basic" node_paths=PackedStringArray("landState")]
@@ -1461,6 +1462,12 @@ script = ExtResource("42_51gfe")
 
 [node name="BemothHorn" type="Node" parent="StateMachine/Special"]
 script = ExtResource("43_wuphe")
+
+[node name="DarkspineSpiritBomb" type="Node" parent="StateMachine/Special"]
+script = ExtResource("44_ekrfr")
+
+[node name="DarkspineMultiPunch" type="Node" parent="StateMachine/Special"]
+script = ExtResource("45_se1is")
 
 [node name="Skill" type="Node" parent="StateMachine"]
 
