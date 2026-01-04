@@ -951,14 +951,21 @@ public partial class SaveManager : Node
 		public int CalculateMaxSoulPower(bool isLocked)
 		{
 			int maxSoulPower = 100; // Starting soul gauge size
-			if (!isLocked)
-				maxSoulPower += Mathf.FloorToInt(CalculateSoulGaugeLevelRatio() * 5f) * 20; // Soul Gauge size increases by 20 every 5 levels, so it caps at 300
+			if (isLocked)
+				return maxSoulPower;
 
+			maxSoulPower += Mathf.FloorToInt(CalculateSoulGaugeLevelRatio() * 5f) * 20; // Soul Gauge size increases by 20 every 5 levels, so it caps at 300
 			return maxSoulPower;
 		}
 
-		/// <summary> Current ratio (0 -> 1) compared to the soul gauge level cap (50). </summary>
-		public float CalculateSoulGaugeLevelRatio() => Mathf.Clamp(level, 0, 50) / (float)50;
+		/// <summary> Current ratio [0, 1] compared to the soul gauge level cap (50). </summary>
+		public float CalculateSoulGaugeLevelRatio()
+		{
+			if (ActiveSkillRing.IsSkillEquipped(SkillKey.Darkspine)) // Darkspine always has max soul gauge
+				return 1f;
+
+			return Mathf.Clamp(level, 0, 50) / (float)50;
+		}
 
 		/// <summary> Checks if a stage has been unlocked. </summary>
 		public bool IsStageUnlocked(string levelID) => stagesUnlocked.Contains(levelID) ||
