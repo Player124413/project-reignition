@@ -23,6 +23,13 @@ public partial class LandState : PlayerState
 			Player.RemoveLockoutData(Player.ActiveLockoutData);
 		}
 
+		if (Player.MoveSpeed < 0) // Fix negative movespeeds
+		{
+			Player.MoveSpeed *= -1;
+			Player.IsMovingBackward = true;
+			Player.MovementAngle += Mathf.Pi;
+		}
+
 		Player.ResetFallTimer();
 		Player.VerticalSpeed = 0;
 		Player.UpdateOrientation();

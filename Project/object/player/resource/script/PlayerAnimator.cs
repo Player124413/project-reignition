@@ -967,6 +967,7 @@ public partial class PlayerAnimator : Node3D
 	private readonly string HurtBackwardState = "hurt-backward-start";
 	private readonly string HurtForwardStartState = "hurt-forward-start";
 	private readonly string HurtForwardStopState = "hurt-forward-stop";
+	private readonly string HurtDarkspineState = "ds-damage-back";
 	private readonly string HurtPlayback = "parameters/hurt_state/playback";
 	private AnimationNodeStateMachinePlayback HurtStatePlayback => animationTree.Get(HurtPlayback).Obj as AnimationNodeStateMachinePlayback;
 
@@ -983,6 +984,8 @@ public partial class PlayerAnimator : Node3D
 			HurtStatePlayback.Start(HurtBackwardState);
 		else if (animation == KnockbackSettings.KnockbackAnimation.Forward)
 			HurtStatePlayback.Start(HurtForwardStartState);
+		else if (animation == KnockbackSettings.KnockbackAnimation.Darkspine)
+			HurtStatePlayback.Start(HurtDarkspineState);
 
 		animationTree.Set(HurtTrigger, (int)AnimationNodeOneShot.OneShotRequest.Fire);
 	}
@@ -999,7 +1002,15 @@ public partial class PlayerAnimator : Node3D
 			animationTree.Set(HurtTrigger, (int)AnimationNodeOneShot.OneShotRequest.FadeOut);
 		else if (animation == KnockbackSettings.KnockbackAnimation.Forward)
 			HurtStatePlayback.Travel(HurtForwardStopState);
+		else if (animation == KnockbackSettings.KnockbackAnimation.Darkspine)
+		{
+			SnapToGround();
+			DisabledSpeedSmoothing = true;
+		}
 	}
+
+	private readonly float DarkspineDamageAnimationLength = 1f;
+	public bool IsDarkspineHurtFinished => HurtStatePlayback.GetCurrentPlayPosition() >= DarkspineDamageAnimationLength;
 	#endregion
 
 	#region Spin

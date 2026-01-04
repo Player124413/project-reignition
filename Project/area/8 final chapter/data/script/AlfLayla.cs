@@ -1,4 +1,3 @@
-using System.ComponentModel;
 using Godot;
 using Project.Core;
 using Project.Gameplay.Triggers;
@@ -11,6 +10,8 @@ public partial class AlfLayla : Node3D
 	[Export] private AnimationTree animationTree;
 	[Export] private CameraTrigger cutsceneCamera;
 	[Export] private LockoutTrigger autorunLockout;
+
+	[Export] private SpiritBomb spiritBomb;
 
 	[Export] private DialogTrigger[] dialogTriggers;
 	private int currentDialogIndex;
@@ -75,6 +76,7 @@ public partial class AlfLayla : Node3D
 	private readonly string SlashSpeed = "parameters/slash-speed/scale";
 	private readonly string SixOrbTrigger = "parameters/six-orb-trigger/request";
 	private readonly string SixOrbSpeed = "parameters/six-orb-speed/scale";
+	private readonly string SpiritBombTrigger = "parameters/spirit-bomb-trigger/request";
 	private AnimationNodeStateMachinePlayback MoveStatePlayback => animationTree.Get(MovePlayback).Obj as AnimationNodeStateMachinePlayback;
 
 	/*
@@ -225,7 +227,7 @@ public partial class AlfLayla : Node3D
 			return;
 		}
 
-		if (CurrentFightState != FightState.Idle)
+		if (CurrentFightState != FightState.Idle || spiritBomb.IsTravelling)
 			return;
 
 		if (!ProcessActionTimer())
@@ -343,7 +345,11 @@ public partial class AlfLayla : Node3D
 				animationTree.Set(SlashSpeed, 1.5f);
 				actionTimer = 0.5f;
 				break;
+			case 'B':
+				animationTree.Set(SpiritBombTrigger, (uint)AnimationNodeOneShot.OneShotRequest.Fire);
+				break;
 			default: // Unimplmented
+				GD.Print($"Action {currentActionCharacter} is not implemented!");
 				return;
 		}
 
@@ -354,7 +360,6 @@ public partial class AlfLayla : Node3D
 	{
 		if (CurrentFightState != FightState.AttackWindup || !ProcessActionTimer())
 			return;
-
 
 		CurrentFightState = FightState.AttackStrike;
 		switch (currentActionCharacter)
@@ -371,6 +376,8 @@ public partial class AlfLayla : Node3D
 			case '|':
 			case '_':
 				animationTree.Set(SlashTrigger, (int)AnimationNodeOneShot.OneShotRequest.Fire);
+				break;
+			case 'B':
 				break;
 			default: // Unimplmented
 				FinishAttack();
@@ -392,4 +399,7 @@ public partial class AlfLayla : Node3D
 
 		CurrentFightState = FightState.Idle;
 	}
+
+	/// <summary> Release the spirit bomb from Alf's hands and have it start flying. </summary>
+	private void LaunchSpiritBomb() => spiritBomb.StartTravelling();
 }
