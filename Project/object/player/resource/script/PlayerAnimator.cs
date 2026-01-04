@@ -101,7 +101,6 @@ public partial class PlayerAnimator : Node3D
 		StopCrouching(0f);
 	}
 
-
 	public bool IsOneshotAnimationValid(string animation)
 	{
 		if (string.IsNullOrEmpty(animation))
@@ -110,7 +109,6 @@ public partial class PlayerAnimator : Node3D
 		bool isAnimationValid = false;
 		for (int i = 0; i < oneShotTransition.GetInputCount(); i++)
 		{
-			GD.Print(oneShotTransition.GetInputName(i));
 			if (!oneShotTransition.GetInputName(i).Equals(animation))
 				continue;
 
@@ -1127,6 +1125,23 @@ public partial class PlayerAnimator : Node3D
 	}
 
 	public void StartLeverTurn(bool isRightLever) => LeverStatePlayback.Travel(isRightLever ? RightConstant : LeftConstant);
+
+	private readonly string DarkspineFinalState = "ds-final";
+	private readonly string DarkspineFinalPlayback = "parameters/gimmick_tree/ds-final-boss/playback";
+	private AnimationNodeStateMachinePlayback DarkspineFinalStatePlayback => animationTree.Get(DarkspineFinalPlayback).Obj as AnimationNodeStateMachinePlayback;
+	public void StartSpiritBomb()
+	{
+		SetStateXfade(0.1f);
+		animationTree.Set(StateTransition, GimmickState);
+		animationTree.Set(GimmickTransition, DarkspineFinalState);
+		DarkspineFinalStatePlayback.Start("ds-spirit-bomb");
+	}
+
+	/// <summary> Emitted when the spirit bomb changes directions. Called from an animation. </summary>
+	[Signal] public delegate void SpiritBombKickedEventHandler();
+	public void KickSpiritBomb() => DarkspineFinalStatePlayback.Travel("ds-spirit-bomb-kick");
+
+	public bool IsDarkspineKickFinished => DarkspineFinalStatePlayback.GetCurrentPlayPosition() >= DarkspineFinalStatePlayback.GetCurrentLength() - 0.2f;
 	#endregion
 
 	// Shaders

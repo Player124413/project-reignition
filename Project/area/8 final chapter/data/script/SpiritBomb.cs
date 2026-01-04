@@ -5,6 +5,9 @@ namespace Project.Gameplay.Bosses;
 
 public partial class SpiritBomb : Area3D
 {
+	[Signal] public delegate void AlfExplodedEventHandler();
+	[Signal] public delegate void PlayerExplodedEventHandler();
+
 	private bool isInteractingWithPlayer;
 	private PlayerController Player => StageSettings.Player;
 
@@ -15,15 +18,11 @@ public partial class SpiritBomb : Area3D
 
 	public override void _PhysicsProcess(double _delta)
 	{
-		if (!isInteractingWithPlayer)
-		{
-			if (IsTravelling)
-				ProcessTravelling();
-
+		if (isInteractingWithPlayer)
 			return;
-		}
 
-		ProcessInteraction();
+		if (IsTravelling)
+			ProcessTravelling();
 	}
 
 	private void ProcessTravelling()
@@ -47,8 +46,10 @@ public partial class SpiritBomb : Area3D
 		animator.Play("launch");
 	}
 
-	public void ReturnToAlf()
+	/// <summary> Returns the spirit bomb to alf-layla. </summary>
+	public void KickSpiritBomb()
 	{
+		isInteractingWithPlayer = false;
 		IsTravelling = true;
 		TopLevel = false;
 	}
@@ -75,19 +76,12 @@ public partial class SpiritBomb : Area3D
 				overrideKnockbackSpeed = true,
 				knockbackSpeed = 40f,
 			});
-		}
-	}
 
-	private void ProcessInteraction()
-	{
-		if (Player.Skills.IsSpeedBreakActive)
-		{
-			IsTravelling = false;
-			// TODO Set Player State to SpiritBombState
+			EmitSignal(SignalName.PlayerExploded);
 			return;
 		}
 
-		Explode();
+		EmitSignal(SignalName.AlfExploded);
 	}
 
 	public void OnEntered(Area3D a)
@@ -96,7 +90,15 @@ public partial class SpiritBomb : Area3D
 			return;
 
 		isInteractingWithPlayer = true;
-		ProcessInteraction();
+
+		if (Player.Skills.IsSpeedBreakActive)
+		{
+			IsTravelling = false;
+			Player.StartSpiritBomb(this);
+			return;
+		}
+
+		Explode();
 	}
 
 	public void OnExited(Area3D a)

@@ -925,13 +925,29 @@ public partial class PlayerController : CharacterBody3D
 		StateMachine.ChangeState(hornState);
 	}
 
+	////////////////////////
+	/// DARKSPINE STATES ///
+	////////////////////////
+	public bool IsSpiritBombActive { get; set; }
+	[Export] private DarkspineSpiritBombState spiritBombState;
+	public void StartSpiritBomb(Bosses.SpiritBomb bomb)
+	{
+		spiritBombState.SpiritBomb = bomb;
+		StateMachine.ChangeState(spiritBombState);
+	}
+
+	[Export] private DarkspineMultiPunchState multiPunchState;
+	public void StartMultiPunch()
+	{
+		StateMachine.ChangeState(multiPunchState);
+	}
+
 	/// <summary> Updates whether the player can pull the horns of Pirate Storm's boss. </summary>
 	public void SetHornPullable(bool isPullable) => hornState.CanPullHorns = isPullable;
 	/// <summary> Updates whether the player can jump off the horns of Pirate Storm's boss. </summary>
 	public void SetHornJumpable(bool isJumpable) => hornState.CanJump = isJumpable;
 
-	[Signal]
-	public delegate void KnockbackEventHandler();
+	[Signal] public delegate void KnockbackEventHandler();
 	[Export] private KnockbackState knockbackState;
 	public bool IsKnockback { get; set; }
 	public bool StartKnockback(KnockbackSettings settings = new())
@@ -951,8 +967,10 @@ public partial class PlayerController : CharacterBody3D
 		return true;
 	}
 
-	[Signal]
-	public delegate void DamagedEventHandler();
+	[Signal] public delegate void KnockbackFinishedEventHandler();
+	public void FinishKnockback() => EmitSignal(SignalName.KnockbackFinished);
+
+	[Signal] public delegate void DamagedEventHandler();
 
 	public bool IsDamageDefeatingPlayer()
 	{

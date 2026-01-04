@@ -249,7 +249,7 @@ public partial class PlayerSkillController : Node3D
 
 	public void ProcessPhysics()
 	{
-		if (DebugManager.Instance.InfiniteSoulGauge) // Max out the soul gauge
+		if (DebugManager.Instance.InfiniteSoulGauge && !Player.IsSpiritBombActive) // Max out the soul gauge
 			ModifySoulGauge(MaxSoulPower);
 
 		speedBreakTimer = Mathf.MoveToward(speedBreakTimer, 0, PhysicsManager.physicsDelta);
@@ -357,7 +357,7 @@ public partial class PlayerSkillController : Node3D
 
 				bool disablingSpeedBreak = (SaveManager.Config.useHoldBreakMode && !Input.IsActionPressed("button_speedbreak")) ||
 					(!SaveManager.Config.useHoldBreakMode && Input.IsActionJustPressed("button_speedbreak"));
-				if (IsSoulGaugeEmpty || disablingSpeedBreak && !Player.IsAirBoosting)// Check whether we should cancel speed break
+				if (IsSoulGaugeEmpty || (disablingSpeedBreak && !Player.IsAirBoosting && !Player.IsSpiritBombActive)) // Check whether we should cancel speed break
 					ToggleSpeedBreak();
 
 				if (!IsSpeedBreakOverrideActive && (Player.IsOnGround || AllowExternalSpeedBreak)) // Speed is only applied while on the ground

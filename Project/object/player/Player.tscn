@@ -1110,7 +1110,7 @@ point_count = 4
 _data = [Vector2(0, 0), 0.0, 2.18969, 0, 0, Vector2(0.202422, 0.501805), 2.0, 2.0, 0, 0, Vector2(0.738754, 0.935018), -1.06758, -1.09074, 0, 0, Vector2(1, 0), -6.0, 0.0, 0, 0]
 point_count = 4
 
-[node name="Player" type="CharacterBody3D" node_paths=PackedStringArray("StateMachine", "Controller", "Stats", "Skills", "Lockon", "AnimatorRoot", "Effect", "PathFollower", "hitboxAnimator", "countdownState", "reversePathState", "launchState", "launchRingState", "catapultState", "flyingPotState", "pathTravellerState", "spinJumpState", "quickStepState", "airBoostState", "lightSpeedDashState", "lightSpeedAttackState", "grindState", "sidleState", "automationState", "eventState", "bounceState", "driftState", "ivyState", "ziplineState", "petrifyState", "leverState", "hornState", "knockbackState", "teleportState") groups=["player"]]
+[node name="Player" type="CharacterBody3D" node_paths=PackedStringArray("StateMachine", "Controller", "Stats", "Skills", "Lockon", "AnimatorRoot", "Effect", "PathFollower", "hitboxAnimator", "countdownState", "reversePathState", "launchState", "launchRingState", "catapultState", "flyingPotState", "pathTravellerState", "spinJumpState", "quickStepState", "airBoostState", "lightSpeedDashState", "lightSpeedAttackState", "grindState", "sidleState", "automationState", "eventState", "bounceState", "driftState", "ivyState", "ziplineState", "petrifyState", "leverState", "hornState", "spiritBombState", "multiPunchState", "knockbackState", "teleportState") groups=["player"]]
 collision_layer = 2
 collision_mask = 9
 floor_stop_on_slope = false
@@ -1152,6 +1152,8 @@ ziplineState = NodePath("StateMachine/Special/Zipline")
 petrifyState = NodePath("StateMachine/Special/Petrify")
 leverState = NodePath("StateMachine/Special/Lever")
 hornState = NodePath("StateMachine/Special/BemothHorn")
+spiritBombState = NodePath("StateMachine/Special/DarkspineSpiritBomb")
+multiPunchState = NodePath("StateMachine/Special/DarkspineMultiPunch")
 knockbackState = NodePath("StateMachine/Special/Knockback")
 teleportState = NodePath("StateMachine/Special/Teleport")
 
@@ -1463,8 +1465,9 @@ script = ExtResource("42_51gfe")
 [node name="BemothHorn" type="Node" parent="StateMachine/Special"]
 script = ExtResource("43_wuphe")
 
-[node name="DarkspineSpiritBomb" type="Node" parent="StateMachine/Special"]
+[node name="DarkspineSpiritBomb" type="Node" parent="StateMachine/Special" node_paths=PackedStringArray("idleState")]
 script = ExtResource("44_ekrfr")
+idleState = NodePath("../../Basic/Idle")
 
 [node name="DarkspineMultiPunch" type="Node" parent="StateMachine/Special"]
 script = ExtResource("45_se1is")
