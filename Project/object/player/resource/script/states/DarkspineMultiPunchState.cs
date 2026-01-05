@@ -6,7 +6,8 @@ namespace Project.Gameplay;
 /// <summary> Handles the darkspine multiple punches on Alf. </summary>
 public partial class DarkspineMultiPunchState : PlayerState
 {
-	[Export] private IdleState idle;
+	[Export] private IdleState idleState;
+
 	public AlfCore Core { get; set; }
 	private bool isAttackQueued;
 	private int currentAttackCount;
@@ -45,11 +46,16 @@ public partial class DarkspineMultiPunchState : PlayerState
 
 	public override PlayerState ProcessPhysics()
 	{
-		/*
-		TODO Limit Punches
-		if (currentAttackCount == MaxPunchCount)
+		if (currentAttackCount == MaxPunchCount) // Limit Punches
+		{
+			if (Player.Animator.CanPerformDarkspinePunch) // TODO Play a cool animation
+				Core.AlfLayla.FinishStun();
+
 			return null;
-		*/
+		}
+
+		if (!Core.AlfLayla.IsStunned)
+			return idleState;
 
 		Player.UpdateExternalControl();
 		if (Player.Controller.IsActionBufferActive || Player.Controller.IsAttackBufferActive)
@@ -78,12 +84,6 @@ public partial class DarkspineMultiPunchState : PlayerState
 		// Deal damage
 		currentAttackCount++;
 		Core.AlfLayla.TakeDamage();
-
-		/*
-		// TODO Play a cool animation
-		if (currentAttackCount == MaxPunchCount)
-			return null;
-		*/
 
 		// Throw hands
 		Player.Animator.PerformMultipunch((currentPunchStringIndex % MultiPunchStringLength) + 1);

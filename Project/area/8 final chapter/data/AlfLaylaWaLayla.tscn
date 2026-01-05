@@ -590,7 +590,7 @@ transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, 0
 [node name="SpiritBombPosition" type="Node3D" parent="AlfLaylaWaLayla"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.6226832e-07, 8, 3)
 
-[node name="SpiritBomb" type="Area3D" parent="AlfLaylaWaLayla/SpiritBombPosition" node_paths=PackedStringArray("animator")]
+[node name="SpiritBomb" type="Area3D" parent="AlfLaylaWaLayla/SpiritBombPosition" node_paths=PackedStringArray("PushPosition", "animator")]
 collision_layer = 0
 collision_mask = 10
 monitoring = false
@@ -598,6 +598,7 @@ monitorable = false
 script = ExtResource("3_7f36k")
 moveSpeed = 30.0
 returnSpeed = 60.0
+PushPosition = NodePath("PushPosition")
 animator = NodePath("AnimationPlayer")
 
 [node name="SpiritBomb" parent="AlfLaylaWaLayla/SpiritBombPosition/SpiritBomb" instance=ExtResource("25_twpcs")]
@@ -674,6 +675,9 @@ draw_pass_1 = SubResource("QuadMesh_r6jp0")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="AlfLaylaWaLayla/SpiritBombPosition/SpiritBomb"]
 shape = SubResource("SphereShape3D_utrra")
+
+[node name="PushPosition" type="Node3D" parent="AlfLaylaWaLayla/SpiritBombPosition/SpiritBomb"]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, 0, 5)
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="AlfLaylaWaLayla/SpiritBombPosition/SpiritBomb"]
 libraries = {

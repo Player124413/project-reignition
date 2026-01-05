@@ -34,6 +34,7 @@ public partial class DarkspineSpiritBombState : PlayerState
 		holdTimer = SpiritBombHoldLength;
 
 		Player.Animator.StartSpiritBomb();
+		Player.StartExternal(SpiritBomb, SpiritBomb.PushPosition, 0.5f);
 
 		slowChargeTimer = SlowChargeInterval;
 		Player.Skills.ModifySoulGauge(BurstChargeAmount);
@@ -43,6 +44,7 @@ public partial class DarkspineSpiritBombState : PlayerState
 	{
 		Player.IsSpiritBombActive = false;
 		Player.Animator.ResetState(0.2f);
+		Player.StopExternal();
 	}
 
 	public override PlayerState ProcessPhysics()
@@ -50,6 +52,7 @@ public partial class DarkspineSpiritBombState : PlayerState
 		if (isKickingSpiritBomb)
 			return Player.Animator.IsDarkspineKickFinished ? idleState : null;
 
+		Player.UpdateExternalControl();
 		holdTimer = Mathf.MoveToward(holdTimer, 0, PhysicsManager.physicsDelta);
 		if (Mathf.IsZeroApprox(holdTimer))
 		{
@@ -88,5 +91,6 @@ public partial class DarkspineSpiritBombState : PlayerState
 	{
 		SpiritBomb.KickSpiritBomb();
 		Player.Animator.SpiritBombKicked -= OnSpiritBombKicked;
+		Player.StopExternal();
 	}
 }

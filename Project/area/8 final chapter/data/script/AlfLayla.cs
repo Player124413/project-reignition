@@ -415,6 +415,7 @@ public partial class AlfLayla : Node3D
 	/// <summary> Release the spirit bomb from Alf's hands and have it start flying. </summary>
 	private void LaunchSpiritBomb() => spiritBomb.StartTravelling();
 
+	public bool IsStunned => CurrentFightState == FightState.Stunned;
 	private readonly string StunTransition = "parameters/stun-transition/transition_request";
 	private readonly string StunPlaybackPath = "parameters/stun-state/playback";
 	private readonly string StunDamageTrigger = "parameters/stun-damage-trigger/request";
@@ -436,7 +437,7 @@ public partial class AlfLayla : Node3D
 			FinishStun();
 	}
 
-	private void FinishStun()
+	public void FinishStun()
 	{
 		currentDistance = Mathf.Abs(Player.GlobalPosition.Z - GlobalPosition.Z);
 		actionTimer = 1f;
