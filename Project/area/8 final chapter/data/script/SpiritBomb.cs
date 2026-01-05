@@ -14,6 +14,7 @@ public partial class SpiritBomb : Area3D
 	public bool IsTravelling { get; private set; }
 	[Export] private float moveSpeed;
 	[Export] private float returnSpeed;
+	[Export] public Node3D PushPosition { get; set; }
 	[Export] private AnimationPlayer animator;
 
 	public override void _PhysicsProcess(double _delta)
