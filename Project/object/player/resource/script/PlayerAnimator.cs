@@ -1150,7 +1150,18 @@ public partial class PlayerAnimator : Node3D
 	public bool CanPerformDarkspinePunch => DarkspineFinalStatePlayback.GetCurrentPlayPosition() >= DarkspineFinalStatePlayback.GetCurrentLength() - 0.3f;
 	public bool IsDarkspinePunchFinished => DarkspineFinalStatePlayback.GetCurrentNode().Equals(DarkspineMultiPunchIdle) && DarkspineFinalStatePlayback.GetFadingFromNode().Equals(string.Empty);
 
-	public void PerformMultipunch(int punchIndex) => DarkspineFinalStatePlayback.Start(punchIndex == 0 ? "ds-combo-start" : $"ds-combo{punchIndex}");
+	public void PerformMultipunch(int punchIndex)
+	{
+		StringName targetPunch;
+		if (punchIndex == 0)
+			targetPunch = "ds-combo-start";
+		else if (punchIndex == -1)
+			targetPunch = "ds-combo-final";
+		else
+			targetPunch = $"ds-combo{punchIndex}";
+
+		DarkspineFinalStatePlayback.Start(targetPunch);
+	}
 
 	/// <summary> Emitted when the spirit bomb changes directions. Called from an animation. </summary>
 	[Signal] public delegate void SpiritBombKickedEventHandler();

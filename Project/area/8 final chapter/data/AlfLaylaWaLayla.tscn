@@ -1,4 +1,4 @@
-[gd_scene load_steps=102 format=3 uid="uid://7p1mkbn0s276"]
+[gd_scene load_steps=105 format=3 uid="uid://7p1mkbn0s276"]
 
 [ext_resource type="PackedScene" uid="uid://bl4mwbfg117lh" path="res://area/8 final chapter/data/model/AlfLaylaWaLayla.gltf" id="1_8mof4"]
 [ext_resource type="Script" uid="uid://bpp2tmfxy4euf" path="res://area/8 final chapter/data/script/AlfLayla.cs" id="1_k6i6c"]
@@ -18,6 +18,7 @@
 [ext_resource type="Animation" uid="uid://dy3uk46vclowy" path="res://area/8 final chapter/data/model/animation/slash-l.res" id="11_t16yu"]
 [ext_resource type="Animation" uid="uid://cnchngjimy1fc" path="res://area/8 final chapter/data/model/animation/slash-r.res" id="12_ordf7"]
 [ext_resource type="Animation" uid="uid://mmir4b2acc6j" path="res://area/8 final chapter/data/model/animation/advance.res" id="13_rwxr0"]
+[ext_resource type="Animation" uid="uid://by4ee1wvgwsrx" path="res://area/8 final chapter/data/model/animation/stun-damage-final.res" id="14_48yth"]
 [ext_resource type="Animation" uid="uid://dwhjk4k3u0q4h" path="res://area/8 final chapter/data/model/animation/idle.res" id="14_oj3ar"]
 [ext_resource type="Animation" uid="uid://bbjkl7v0lqb4s" path="res://area/8 final chapter/data/model/animation/retreat.res" id="15_wa5i8"]
 [ext_resource type="Animation" uid="uid://df3bp3fekgwiw" path="res://area/8 final chapter/data/model/animation/spirit-bomb.res" id="16_oj3ar"]
@@ -349,6 +350,7 @@ _data = {
 &"spirit-bomb": ExtResource("16_oj3ar"),
 &"stun": ExtResource("24_7f36k"),
 &"stun-damage": ExtResource("17_wa5i8"),
+&"stun-damage-final": ExtResource("14_48yth"),
 &"stun-start": ExtResource("18_b1w0k"),
 &"stun-stop": ExtResource("19_twpcs"),
 &"three-orb": ExtResource("20_l4bcq")
@@ -475,6 +477,12 @@ fadeout_time = 0.5
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_oj3ar"]
 animation = &"stun-damage"
 
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_48yth"]
+animation = &"stun-damage-final"
+
+[sub_resource type="AnimationNodeOneShot" id="AnimationNodeOneShot_jc0er"]
+fadein_time = 0.05
+
 [sub_resource type="AnimationNodeOneShot" id="AnimationNodeOneShot_wa5i8"]
 fadein_time = 0.05
 fadeout_time = 0.15
@@ -533,10 +541,10 @@ fadein_time = 0.1
 fadeout_time = 0.2
 
 [sub_resource type="AnimationNodeBlendTree" id="AnimationNodeBlendTree_lg36t"]
-graph_offset = Vector2(-1304.6694, -48.879536)
+graph_offset = Vector2(-1368.3025, -57.893265)
 nodes/output/position = Vector2(840, 120)
 nodes/move-state/node = SubResource("AnimationNodeStateMachine_w08gm")
-nodes/move-state/position = Vector2(-1400, 180)
+nodes/move-state/position = Vector2(-1720, 180)
 nodes/slash-x-anim/node = SubResource("AnimationNodeAnimation_yyje7")
 nodes/slash-x-anim/position = Vector2(-420, 580)
 nodes/slash-trigger/node = SubResource("AnimationNodeOneShot_g0q3n")
@@ -564,14 +572,18 @@ nodes/three-orb-trigger/position = Vector2(-80, 120)
 nodes/three-orb-anim/node = SubResource("AnimationNodeAnimation_86d2j")
 nodes/three-orb-anim/position = Vector2(-260, 320)
 nodes/stun-transition/node = SubResource("AnimationNodeTransition_oj3ar")
-nodes/stun-transition/position = Vector2(-1040, -20)
+nodes/stun-transition/position = Vector2(-1360, -20)
 nodes/stun-state/node = SubResource("AnimationNodeStateMachine_48yth")
-nodes/stun-state/position = Vector2(-1400, -20)
+nodes/stun-state/position = Vector2(-1720, -20)
 nodes/stun-damage-trigger/node = SubResource("AnimationNodeOneShot_wa5i8")
-nodes/stun-damage-trigger/position = Vector2(-780, -60)
+nodes/stun-damage-trigger/position = Vector2(-1100, -60)
 nodes/stun-damage-anim/node = SubResource("AnimationNodeAnimation_oj3ar")
-nodes/stun-damage-anim/position = Vector2(-1040, 240)
-node_connections = [&"output", 0, &"spirit-bomb-trigger", &"slash-trigger", 0, &"three-orb-trigger", &"slash-trigger", 1, &"slash-speed", &"six-orb-trigger", 0, &"stun-damage-trigger", &"six-orb-trigger", 1, &"six-orb-speed", &"slash-speed", 0, &"slash-type-transition", &"six-orb-speed", 0, &"six-orb-anim", &"slash-type-transition", 0, &"slash-l-anim", &"slash-type-transition", 1, &"slash-x-anim", &"slash-type-transition", 2, &"slash-r-anim", &"spirit-bomb-trigger", 0, &"slash-trigger", &"spirit-bomb-trigger", 1, &"spirit-bomb-anim", &"three-orb-trigger", 0, &"six-orb-trigger", &"three-orb-trigger", 1, &"three-orb-anim", &"stun-transition", 0, &"stun-state", &"stun-transition", 1, &"move-state", &"stun-damage-trigger", 0, &"stun-transition", &"stun-damage-trigger", 1, &"stun-damage-anim"]
+nodes/stun-damage-anim/position = Vector2(-1360, 240)
+nodes/stun-damage-final-anim/node = SubResource("AnimationNodeAnimation_48yth")
+nodes/stun-damage-final-anim/position = Vector2(-1100, 280)
+nodes/stun-damage-final-trigger/node = SubResource("AnimationNodeOneShot_jc0er")
+nodes/stun-damage-final-trigger/position = Vector2(-840, -40)
+node_connections = [&"output", 0, &"spirit-bomb-trigger", &"slash-trigger", 0, &"three-orb-trigger", &"slash-trigger", 1, &"slash-speed", &"six-orb-trigger", 0, &"stun-damage-final-trigger", &"six-orb-trigger", 1, &"six-orb-speed", &"slash-speed", 0, &"slash-type-transition", &"six-orb-speed", 0, &"six-orb-anim", &"slash-type-transition", 0, &"slash-l-anim", &"slash-type-transition", 1, &"slash-x-anim", &"slash-type-transition", 2, &"slash-r-anim", &"spirit-bomb-trigger", 0, &"slash-trigger", &"spirit-bomb-trigger", 1, &"spirit-bomb-anim", &"three-orb-trigger", 0, &"six-orb-trigger", &"three-orb-trigger", 1, &"three-orb-anim", &"stun-transition", 0, &"stun-state", &"stun-transition", 1, &"move-state", &"stun-damage-trigger", 0, &"stun-transition", &"stun-damage-trigger", 1, &"stun-damage-anim", &"stun-damage-final-trigger", 0, &"stun-damage-trigger", &"stun-damage-final-trigger", 1, &"stun-damage-final-anim"]
 
 [node name="AlfLaylaWaLayla" type="Node3D" node_paths=PackedStringArray("animationTree", "cutsceneCamera", "autorunLockout", "spiritBomb", "dialogTriggers")]
 script = ExtResource("1_k6i6c")
@@ -685,7 +697,7 @@ libraries = {
 }
 
 [node name="Core" type="Node3D" parent="AlfLaylaWaLayla"]
-transform = Transform3D(0.9999597, 6.7149385e-06, -1.4304915e-06, -6.7140445e-06, 0.999984, 0.0005097021, 1.433876e-06, -0.0005097011, 0.999986, 4.1639396e-08, 7.9300003, 0.9212787)
+transform = Transform3D(0.9998567, 6.714538e-06, -1.4304045e-06, -6.713353e-06, 0.99992436, 0.00050967117, 1.4337284e-06, -0.0005096707, 0.99992526, 4.1639396e-08, 7.9300003, 0.9212787)
 script = ExtResource("30_86d2j")
 skeleton = NodePath("../LaylaRoot/Skeleton3D")
 boneName = &"core"
@@ -756,6 +768,9 @@ parameters/stun-transition/current_index = 1
 parameters/stun-damage-trigger/active = false
 parameters/stun-damage-trigger/internal_active = false
 parameters/stun-damage-trigger/request = 0
+parameters/stun-damage-final-trigger/active = false
+parameters/stun-damage-final-trigger/internal_active = false
+parameters/stun-damage-final-trigger/request = 0
 
 [connection signal="area_entered" from="AlfLaylaWaLayla/SpiritBombPosition/SpiritBomb" to="AlfLaylaWaLayla/SpiritBombPosition/SpiritBomb" method="OnEntered"]
 [connection signal="area_exited" from="AlfLaylaWaLayla/SpiritBombPosition/SpiritBomb" to="AlfLaylaWaLayla/SpiritBombPosition/SpiritBomb" method="OnExited"]

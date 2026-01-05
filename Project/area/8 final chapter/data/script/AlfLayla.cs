@@ -63,7 +63,7 @@ public partial class AlfLayla : Node3D
 	private readonly float BombDistance = 80.0f;
 	private readonly float FarDistance = 50.0f;
 	private readonly float NormalDistance = 30.0f;
-	private readonly float CloseDistance = 15.0f;
+	private readonly float CloseDistance = 10.0f;
 
 	////////////////////////////////
 	///// ANIMATION PARAMETERS /////
@@ -216,7 +216,6 @@ public partial class AlfLayla : Node3D
 		GlobalPosition = PlayerPathFollower.GlobalPosition + PlayerPathFollower.Forward() * currentDistance + VisualOffset;
 		GlobalRotation = Vector3.Zero;
 	}
-
 
 	private void ProcessAction()
 	{
@@ -419,6 +418,7 @@ public partial class AlfLayla : Node3D
 	private readonly string StunTransition = "parameters/stun-transition/transition_request";
 	private readonly string StunPlaybackPath = "parameters/stun-state/playback";
 	private readonly string StunDamageTrigger = "parameters/stun-damage-trigger/request";
+	private readonly string StunDamageFinalTrigger = "parameters/stun-damage-final-trigger/request";
 	private AnimationNodeStateMachinePlayback StunPlayback => (AnimationNodeStateMachinePlayback)animationTree.Get(StunPlaybackPath);
 	/// <summary> Called when the spirit bomb explodes on Alf. </summary>
 	private void StartHitstun()
@@ -432,18 +432,34 @@ public partial class AlfLayla : Node3D
 	private readonly float MaxStunLength = 20f;
 	private void ProcessStun()
 	{
+		if (Player.IsMultiPunchActive) // Use timer in player state instead
+			return;
+
 		actionTimer = Mathf.MoveToward(actionTimer, 0, PhysicsManager.physicsDelta);
 		if (Mathf.IsZeroApprox(actionTimer))
 			FinishStun();
 	}
 
-	public void FinishStun()
+	private void FinishStun()
 	{
-		currentDistance = Mathf.Abs(Player.GlobalPosition.Z - GlobalPosition.Z);
+		// TODO Add a camera cut to hide this teleportation
+		currentDistance = CloseDistance;
+		SnapPosition();
+
 		actionTimer = 1f;
 		StunPlayback.Travel("stun-stop");
 		CurrentFightState = FightState.Idle;
 	}
+
+	public void FinishMultiPunch()
+	{
+		// TODO Check for world ring explosions
+		FinishStun();
+		GD.Print("Checking for explosions.");
+	}
+
+	// Play a super cool animation
+	public void StartFinalMultiPunch() => animationTree.Set(StunDamageFinalTrigger, (uint)AnimationNodeOneShot.OneShotRequest.Fire);
 
 	public void TakeDamage()
 	{
