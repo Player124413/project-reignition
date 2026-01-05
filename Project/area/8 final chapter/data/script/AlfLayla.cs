@@ -143,12 +143,12 @@ public partial class AlfLayla : Node3D
 
 	private void Respawn()
 	{
+		autorunLockout.Activate();
 		Player.Animator.CancelOneshot();
 
 		CurrentFightState = FightState.Idle;
 
 		currentHealth = MaxHealth;
-
 		currentPatternIndex = 0;
 		currentActionIndex = 0;
 		currentActionCharacter = '\0';
@@ -201,7 +201,6 @@ public partial class AlfLayla : Node3D
 	private void StartBattle()
 	{
 		cutsceneCamera.Deactivate();
-		autorunLockout.Activate();
 
 		Respawn();
 		Player.Skills.EnableBreakSkills();
@@ -418,6 +417,7 @@ public partial class AlfLayla : Node3D
 
 	private readonly string StunTransition = "parameters/stun-transition/transition_request";
 	private readonly string StunPlaybackPath = "parameters/stun-state/playback";
+	private readonly string StunDamageTrigger = "parameters/stun-damage-trigger/request";
 	private AnimationNodeStateMachinePlayback StunPlayback => (AnimationNodeStateMachinePlayback)animationTree.Get(StunPlaybackPath);
 	/// <summary> Called when the spirit bomb explodes on Alf. </summary>
 	private void StartHitstun()
@@ -442,5 +442,11 @@ public partial class AlfLayla : Node3D
 		actionTimer = 1f;
 		StunPlayback.Travel("stun-stop");
 		CurrentFightState = FightState.Idle;
+	}
+
+	public void TakeDamage()
+	{
+		currentHealth--;
+		animationTree.Set(StunDamageTrigger, (uint)AnimationNodeOneShot.OneShotRequest.Fire);
 	}
 }

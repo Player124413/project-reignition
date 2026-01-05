@@ -41,7 +41,9 @@ public partial class DarkspineSpinState : PlayerState
 		if (Input.IsActionJustPressed("button_attack")) // Provide more soul power when mashing
 		{
 			deactivateTimer = DeactivationLength;
-			Player.Skills.ModifySoulGauge(BurstChargeAmount);
+
+			if (!Player.Skills.IsSpeedBreakActive) // Only allow mash charging when speedbreak isn't active (prevent carpel tunnel)
+				Player.Skills.ModifySoulGauge(BurstChargeAmount);
 		}
 
 		ProcessGravity();

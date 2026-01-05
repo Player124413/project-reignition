@@ -1,4 +1,4 @@
-[gd_scene load_steps=99 format=3 uid="uid://7p1mkbn0s276"]
+[gd_scene load_steps=102 format=3 uid="uid://7p1mkbn0s276"]
 
 [ext_resource type="PackedScene" uid="uid://bl4mwbfg117lh" path="res://area/8 final chapter/data/model/AlfLaylaWaLayla.gltf" id="1_8mof4"]
 [ext_resource type="Script" uid="uid://bpp2tmfxy4euf" path="res://area/8 final chapter/data/script/AlfLayla.cs" id="1_k6i6c"]
@@ -12,6 +12,7 @@
 [ext_resource type="Animation" uid="uid://d3m5vjq7ldsio" path="res://area/8 final chapter/data/model/animation/advance-stop.res" id="6_yyje7"]
 [ext_resource type="Animation" uid="uid://civ38v6ht3hqe" path="res://area/8 final chapter/data/model/animation/RESET.res" id="7_yek7d"]
 [ext_resource type="Animation" uid="uid://d042od3kh4wrl" path="res://area/8 final chapter/data/model/animation/retreat-start.res" id="8_fmwwy"]
+[ext_resource type="Script" uid="uid://dj0dc1eeaydym" path="res://area/8 final chapter/data/script/AlfCore.cs" id="9_4ltgr"]
 [ext_resource type="Animation" uid="uid://r38ph0jvantt" path="res://area/8 final chapter/data/model/animation/retreat-stop.res" id="9_lngaj"]
 [ext_resource type="Animation" uid="uid://db4qwory5l6bu" path="res://area/8 final chapter/data/model/animation/six-orb.res" id="10_7ixpi"]
 [ext_resource type="Animation" uid="uid://dy3uk46vclowy" path="res://area/8 final chapter/data/model/animation/slash-l.res" id="11_t16yu"]
@@ -29,6 +30,7 @@
 [ext_resource type="Material" uid="uid://chrq2jlovey6c" path="res://object/enemy/majin/data/particle/material/Majin Spawn Letters.tres" id="26_l4bcq"]
 [ext_resource type="Material" uid="uid://41ul482823lb" path="res://area/1 sand oasis/boss/effect/material/Heavy Tail Attack.tres" id="27_7f36k"]
 [ext_resource type="Script" uid="uid://c65ffkknyq6gr" path="res://addons/custom_nodes/script/GroupGpuParticles3D.cs" id="27_l4bcq"]
+[ext_resource type="Script" uid="uid://bri007qdprrbf" path="res://addons/custom_nodes/script/BoneAttachment3DNoScale.cs" id="30_86d2j"]
 
 [sub_resource type="Curve" id="Curve_pt266"]
 _limits = [0.0, 1.0, 0.0, 0.8]
@@ -232,7 +234,7 @@ tracks/2/keys = {
 
 [sub_resource type="Animation" id="Animation_4ltgr"]
 resource_name = "launch"
-length = 0.4
+length = 0.8
 step = 0.1
 tracks/0/type = "value"
 tracks/0/imported = false
@@ -241,10 +243,10 @@ tracks/0/path = NodePath(".:scale")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
-"times": PackedFloat32Array(0, 0.2, 0.4),
-"transitions": PackedFloat32Array(2, 0.5, 1),
+"times": PackedFloat32Array(0, 0.8),
+"transitions": PackedFloat32Array(1, 1),
 "update": 0,
-"values": [Vector3(1, 1, 1), Vector3(1.5, 1.5, 1.5), Vector3(2, 2, 2)]
+"values": [Vector3(1, 1, 1), Vector3(2, 2, 2)]
 }
 tracks/1/type = "value"
 tracks/1/imported = false
@@ -321,6 +323,14 @@ _data = {
 &"launch": SubResource("Animation_4ltgr"),
 &"spawn": SubResource("Animation_utrra")
 }
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_4ltgr"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_7f36k"]
+size = Vector3(50, 50, 5)
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_86d2j"]
+radius = 1.5
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_6jvxt"]
 _data = {
@@ -563,12 +573,6 @@ nodes/stun-damage-anim/node = SubResource("AnimationNodeAnimation_oj3ar")
 nodes/stun-damage-anim/position = Vector2(-1040, 240)
 node_connections = [&"output", 0, &"spirit-bomb-trigger", &"slash-trigger", 0, &"three-orb-trigger", &"slash-trigger", 1, &"slash-speed", &"six-orb-trigger", 0, &"stun-damage-trigger", &"six-orb-trigger", 1, &"six-orb-speed", &"slash-speed", 0, &"slash-type-transition", &"six-orb-speed", 0, &"six-orb-anim", &"slash-type-transition", 0, &"slash-l-anim", &"slash-type-transition", 1, &"slash-x-anim", &"slash-type-transition", 2, &"slash-r-anim", &"spirit-bomb-trigger", 0, &"slash-trigger", &"spirit-bomb-trigger", 1, &"spirit-bomb-anim", &"three-orb-trigger", 0, &"six-orb-trigger", &"three-orb-trigger", 1, &"three-orb-anim", &"stun-transition", 0, &"stun-state", &"stun-transition", 1, &"move-state", &"stun-damage-trigger", 0, &"stun-transition", &"stun-damage-trigger", 1, &"stun-damage-anim"]
 
-[sub_resource type="BoxShape3D" id="BoxShape3D_7f36k"]
-size = Vector3(50, 50, 5)
-
-[sub_resource type="SphereShape3D" id="SphereShape3D_86d2j"]
-radius = 1.5
-
 [node name="AlfLaylaWaLayla" type="Node3D" node_paths=PackedStringArray("animationTree", "cutsceneCamera", "autorunLockout", "spiritBomb", "dialogTriggers")]
 script = ExtResource("1_k6i6c")
 animationTree = NodePath("AnimationTree")
@@ -676,6 +680,28 @@ libraries = {
 &"": SubResource("AnimationLibrary_s1gny")
 }
 
+[node name="Core" type="Node3D" parent="AlfLaylaWaLayla"]
+transform = Transform3D(0.9999597, 6.7149385e-06, -1.4304915e-06, -6.7140445e-06, 0.999984, 0.0005097021, 1.433876e-06, -0.0005097011, 0.999986, 4.1639396e-08, 7.9300003, 0.9212787)
+script = ExtResource("30_86d2j")
+skeleton = NodePath("../LaylaRoot/Skeleton3D")
+boneName = &"core"
+boneIndex = 61
+
+[node name="Core" type="Area3D" parent="AlfLaylaWaLayla/Core" node_paths=PackedStringArray("AlfLayla", "MultiPunchPosition")]
+collision_layer = 4
+collision_mask = 2
+monitoring = false
+monitorable = false
+script = ExtResource("9_4ltgr")
+AlfLayla = NodePath("../../..")
+MultiPunchPosition = NodePath("../../MultipunchPosition")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="AlfLaylaWaLayla/Core/Core"]
+shape = SubResource("SphereShape3D_4ltgr")
+
+[node name="MultipunchPosition" type="Node3D" parent="AlfLaylaWaLayla"]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, 5.4, 0.3)
+
 [node name="Autorun" type="Node3D" parent="."]
 script = ExtResource("3_fmwwy")
 lockoutData = ExtResource("4_lngaj")
@@ -684,6 +710,16 @@ lockoutData = ExtResource("4_lngaj")
 script = ExtResource("3_pt266")
 transitionTime = 0.0
 settings = ExtResource("4_g0203")
+
+[node name="WallLimit" type="StaticBody3D" parent="." groups=["ignore lockon cast", "level wall", "wall"]]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="WallLimit"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 3)
+shape = SubResource("BoxShape3D_7f36k")
+
+[node name="CollisionShape3D2" type="CollisionShape3D" parent="WallLimit"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.5, 1.6)
+shape = SubResource("SphereShape3D_86d2j")
 
 [node name="AnimationTree" type="AnimationTree" parent="."]
 active = false
@@ -717,18 +753,9 @@ parameters/stun-damage-trigger/active = false
 parameters/stun-damage-trigger/internal_active = false
 parameters/stun-damage-trigger/request = 0
 
-[node name="WallLimit" type="StaticBody3D" parent="." groups=["ignore lockon cast", "level wall", "wall"]]
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="WallLimit"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 3)
-shape = SubResource("BoxShape3D_7f36k")
-
-[node name="CollisionShape3D2" type="CollisionShape3D" parent="WallLimit"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.5, 1.6)
-shape = SubResource("SphereShape3D_86d2j")
-
 [connection signal="area_entered" from="AlfLaylaWaLayla/SpiritBombPosition/SpiritBomb" to="AlfLaylaWaLayla/SpiritBombPosition/SpiritBomb" method="OnEntered"]
 [connection signal="area_exited" from="AlfLaylaWaLayla/SpiritBombPosition/SpiritBomb" to="AlfLaylaWaLayla/SpiritBombPosition/SpiritBomb" method="OnExited"]
+[connection signal="area_entered" from="AlfLaylaWaLayla/Core/Core" to="AlfLaylaWaLayla/Core/Core" method="OnEntered"]
 
 [editable path="AlfLaylaWaLayla"]
 [editable path="AlfLaylaWaLayla/SpiritBombPosition/SpiritBomb/SpiritBomb"]
