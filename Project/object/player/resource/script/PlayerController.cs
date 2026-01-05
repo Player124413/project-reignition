@@ -936,6 +936,7 @@ public partial class PlayerController : CharacterBody3D
 		StateMachine.ChangeState(spiritBombState);
 	}
 
+	public bool IsMultiPunchActive { get; set; }
 	[Export] private DarkspineMultiPunchState multiPunchState;
 	public void StartMultiPunch(Bosses.AlfCore core)
 	{

@@ -56,7 +56,10 @@ public partial class SpiritBomb : Area3D
 
 	public void Respawn()
 	{
+		TopLevel = false;
 		Position = Vector3.Zero;
+		animator.Play("RESET");
+		animator.Advance(0.0);
 	}
 
 	/// <summary> Blow up. </summary>
@@ -74,7 +77,7 @@ public partial class SpiritBomb : Area3D
 				ignoreInvincibility = true,
 				disableInvincibility = true,
 				overrideKnockbackSpeed = true,
-				knockbackSpeed = 40f,
+				knockbackSpeed = 20f,
 			});
 
 			EmitSignal(SignalName.PlayerExploded);
