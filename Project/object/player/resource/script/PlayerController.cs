@@ -937,8 +937,9 @@ public partial class PlayerController : CharacterBody3D
 	}
 
 	[Export] private DarkspineMultiPunchState multiPunchState;
-	public void StartMultiPunch()
+	public void StartMultiPunch(Bosses.AlfCore core)
 	{
+		multiPunchState.Core = core;
 		StateMachine.ChangeState(multiPunchState);
 	}
 
