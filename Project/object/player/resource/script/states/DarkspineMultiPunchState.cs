@@ -1,4 +1,5 @@
 using Godot;
+using Project.Core;
 using Project.Gameplay.Bosses;
 
 namespace Project.Gameplay;
@@ -9,16 +10,22 @@ public partial class DarkspineMultiPunchState : PlayerState
 	[Export] private IdleState idleState;
 
 	public AlfCore Core { get; set; }
+
 	private bool isAttackQueued;
+	private bool isPerformingFinalPunch;
 	private int currentAttackCount;
 	private int currentPunchStringIndex;
 	private readonly int MaxPunchCount = 12;
 	private readonly int MultiPunchStringLength = 6;
 
+	private float alfStunTimer;
+	private readonly float AlfStunLength = 4.5f;
+
 	public override void EnterState()
 	{
 		currentAttackCount = 0;
 		currentPunchStringIndex = 0;
+		alfStunTimer = AlfStunLength;
 
 		Player.IsMultiPunchActive = true;
 		Player.MoveSpeed = 0;
@@ -38,24 +45,37 @@ public partial class DarkspineMultiPunchState : PlayerState
 
 	public override void ExitState()
 	{
-		Player.IsMultiPunchActive = false;
+		isPerformingFinalPunch = false;
 
+		Player.IsMultiPunchActive = false;
 		Player.StopExternal();
 		Player.Skills.EnableBreakSkills();
 	}
 
 	public override PlayerState ProcessPhysics()
 	{
-		if (currentAttackCount == MaxPunchCount) // Limit Punches
+		if (!Core.AlfLayla.IsStunned)
+			return idleState;
+
+		if (isPerformingFinalPunch)
+			return null;
+
+		alfStunTimer = Mathf.MoveToward(alfStunTimer, 0, PhysicsManager.physicsDelta);
+		if (Mathf.IsZeroApprox(alfStunTimer) || (currentAttackCount == MaxPunchCount && Player.Animator.CanPerformDarkspinePunch)) // Limit Punches
 		{
-			if (Player.Animator.CanPerformDarkspinePunch) // TODO Play a cool animation
-				Core.AlfLayla.FinishStun();
+			if (Player.Animator.IsDarkspinePunchFinished)
+			{
+				Core.AlfLayla.FinishMultiPunch();
+				return null;
+			}
+
+			// Play a cool animation
+			isPerformingFinalPunch = true;
+			Player.Animator.PerformMultipunch(-1);
+			Core.AlfLayla.StartFinalMultiPunch();
 
 			return null;
 		}
-
-		if (!Core.AlfLayla.IsStunned)
-			return idleState;
 
 		Player.UpdateExternalControl();
 		if (Player.Controller.IsActionBufferActive || Player.Controller.IsAttackBufferActive)
