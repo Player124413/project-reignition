@@ -328,7 +328,6 @@ public partial class AlfLayla : Node3D
 		currentMovementCurve = isAdvancing ? advanceMovementCurve : retreatMovementCurve;
 		CurrentFightState = FightState.Movement;
 		movementSample = 0f;
-
 		return true;
 	}
 
@@ -387,9 +386,6 @@ public partial class AlfLayla : Node3D
 				actionTimer = 0.5f;
 				animationTree.Set(SlashType, "middle");
 				animationTree.Set(SlashSpeed, slashSpeed * 1.5f);
-				break;
-			case 'B':
-				actionTimer = 0.2f;
 				break;
 			default: // No windup
 				actionTimer = 0f;
@@ -466,7 +462,7 @@ public partial class AlfLayla : Node3D
 
 	private void OnPlayerKnockbackFinished()
 	{
-		if (currentActionCharacter != 'B')
+		if (currentActionCharacter != 'B' || CurrentFightState == FightState.Movement)
 			return;
 
 		FinishAttack();
@@ -506,6 +502,7 @@ public partial class AlfLayla : Node3D
 		StunPlayback.Start("stun-start");
 		animationTree.Set(StunTransition, "enabled");
 		actionTimer = MaxStunLength;
+		currentActionIndex = 0; // Reset to the start of the phase
 	}
 
 	private readonly float MaxStunLength = 20f;
