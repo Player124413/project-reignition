@@ -1,4 +1,4 @@
-[gd_scene load_steps=105 format=3 uid="uid://7p1mkbn0s276"]
+[gd_scene load_steps=117 format=3 uid="uid://7p1mkbn0s276"]
 
 [ext_resource type="PackedScene" uid="uid://bl4mwbfg117lh" path="res://area/8 final chapter/data/model/AlfLaylaWaLayla.gltf" id="1_8mof4"]
 [ext_resource type="Script" uid="uid://bpp2tmfxy4euf" path="res://area/8 final chapter/data/script/AlfLayla.cs" id="1_k6i6c"]
@@ -32,6 +32,8 @@
 [ext_resource type="Material" uid="uid://41ul482823lb" path="res://area/1 sand oasis/boss/effect/material/Heavy Tail Attack.tres" id="27_7f36k"]
 [ext_resource type="Script" uid="uid://c65ffkknyq6gr" path="res://addons/custom_nodes/script/GroupGpuParticles3D.cs" id="27_l4bcq"]
 [ext_resource type="Script" uid="uid://bri007qdprrbf" path="res://addons/custom_nodes/script/BoneAttachment3DNoScale.cs" id="30_86d2j"]
+[ext_resource type="Material" uid="uid://bi78t1ox4k8gl" path="res://effect/particle/material/Ember Purple.tres" id="33_f0c13"]
+[ext_resource type="Material" uid="uid://m0d6jfnxdrwg" path="res://effect/particle/material/Teleport Dust.tres" id="34_jc0er"]
 
 [sub_resource type="Curve" id="Curve_pt266"]
 _limits = [0.0, 1.0, 0.0, 1.2]
@@ -327,6 +329,63 @@ _data = {
 }
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_4ltgr"]
+
+[sub_resource type="Curve" id="Curve_f0c13"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_jc0er"]
+width = 64
+texture_mode = 1
+curve = SubResource("Curve_f0c13")
+
+[sub_resource type="Curve" id="Curve_ajod2"]
+_data = [Vector2(0, 0), 0.0, 2.132326, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_7wf61"]
+width = 64
+curve = SubResource("Curve_ajod2")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_jc0er"]
+emission_shape = 1
+emission_sphere_radius = 5.0
+direction = Vector3(0, 0.5, -1)
+spread = 30.0
+initial_velocity_min = 20.0
+initial_velocity_max = 20.0
+scale_min = 5.0
+scale_max = 10.0
+scale_curve = SubResource("CurveTexture_7wf61")
+alpha_curve = SubResource("CurveTexture_jc0er")
+
+[sub_resource type="QuadMesh" id="QuadMesh_ajod2"]
+material = ExtResource("33_f0c13")
+
+[sub_resource type="Gradient" id="Gradient_jc0er"]
+offsets = PackedFloat32Array(0, 0.70681816)
+colors = PackedColorArray(0.7254902, 0, 1, 1, 0, 0, 1, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_ajod2"]
+gradient = SubResource("Gradient_jc0er")
+width = 64
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_ajod2"]
+emission_shape = 1
+emission_sphere_radius = 3.0
+angle_min = 1.0728836e-05
+angle_max = 360.00003
+spread = 180.0
+initial_velocity_min = 3.12
+initial_velocity_max = 5.0
+gravity = Vector3(0, 0, 0)
+scale_min = 8.0
+scale_max = 15.0
+color_ramp = SubResource("GradientTexture1D_ajod2")
+alpha_curve = SubResource("CurveTexture_jc0er")
+
+[sub_resource type="QuadMesh" id="QuadMesh_7wf61"]
+material = ExtResource("34_jc0er")
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_7f36k"]
 size = Vector3(50, 50, 5)
@@ -698,7 +757,7 @@ libraries = {
 }
 
 [node name="Core" type="Node3D" parent="AlfLaylaWaLayla"]
-transform = Transform3D(0.9998567, 6.714538e-06, -1.4304045e-06, -6.713353e-06, 0.99992436, 0.00050967117, 1.4337284e-06, -0.0005096707, 0.99992526, 4.1639396e-08, 7.9300003, 0.9212787)
+transform = Transform3D(0.99985474, 6.714526e-06, -1.4304015e-06, -6.7133396e-06, 0.99992263, 0.00050967006, 1.4337255e-06, -0.00050966983, 0.9999231, 4.1639396e-08, 7.9300003, 0.9212787)
 script = ExtResource("30_86d2j")
 skeleton = NodePath("../LaylaRoot/Skeleton3D")
 boneName = &"core"
@@ -727,6 +786,34 @@ lockoutData = ExtResource("4_lngaj")
 script = ExtResource("3_pt266")
 transitionTime = 0.0
 settings = ExtResource("4_g0203")
+
+[node name="VFX" type="Node3D" parent="."]
+
+[node name="Position" type="Node3D" parent="VFX"]
+
+[node name="MoveEmber" type="GPUParticles3D" parent="VFX/Position"]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 5.2453663e-07, 3, -4)
+layers = 32
+cast_shadow = 0
+emitting = false
+amount = 16
+lifetime = 0.6
+fixed_fps = 0
+interpolate = false
+process_material = SubResource("ParticleProcessMaterial_jc0er")
+draw_pass_1 = SubResource("QuadMesh_ajod2")
+
+[node name="MoveDust" type="GPUParticles3D" parent="VFX/Position"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, -2)
+layers = 32
+cast_shadow = 0
+emitting = false
+amount = 32
+lifetime = 0.6
+fixed_fps = 0
+interpolate = false
+process_material = SubResource("ParticleProcessMaterial_ajod2")
+draw_pass_1 = SubResource("QuadMesh_7wf61")
 
 [node name="WallLimit" type="StaticBody3D" parent="." groups=["ignore lockon cast", "level wall", "wall"]]
 
