@@ -1,4 +1,4 @@
-[gd_scene load_steps=252 format=3 uid="uid://gp7nom61rmtj"]
+[gd_scene load_steps=269 format=3 uid="uid://gp7nom61rmtj"]
 
 [ext_resource type="Script" uid="uid://b1jbgylbmqgrv" path="res://object/player/resource/script/PlayerEffect.cs" id="1_udd16"]
 [ext_resource type="Resource" uid="uid://dkaxxcf5mo3ow" path="res://resource/preset/sfx library/ActionSFXLibrary.tres" id="2_fxiha"]
@@ -46,7 +46,9 @@
 [ext_resource type="Texture2D" uid="uid://cn2jkjpa6m0ut" path="res://object/stage/common/resource/model/texture/goal flame detail atlas.png" id="34_ss1rs"]
 [ext_resource type="Material" uid="uid://weym4dxlabsq" path="res://effect/particle/material/environment/Snow Dust.tres" id="35_k45g7"]
 [ext_resource type="ArrayMesh" uid="uid://dvnvynbtfcbe6" path="res://area/4 levitated ruin/object/model/special/SonicStoneParticle.res" id="38_o21sv"]
+[ext_resource type="Material" uid="uid://yicltn6vqxo7" path="res://object/player/resource/effect/material/Darkspine Spin Charge.tres" id="47_bj5hu"]
 [ext_resource type="Material" uid="uid://7lvqh1a70ae4" path="res://effect/particle/material/explosion/Explosion Flame.tres" id="47_ldqlj"]
+[ext_resource type="Material" uid="uid://56jjteoj87qv" path="res://object/player/resource/effect/material/Darkspine Aura.tres" id="49_t1nvy"]
 
 [sub_resource type="Curve" id="Curve_4rxi1"]
 _data = [Vector2(0, 0), 0.0, 5.05237, 0, 0, Vector2(0.621993, 1), 0.0, 0.0, 0, 0, Vector2(0.99999, 0), -6.37551, 0.0, 0, 0]
@@ -1545,6 +1547,60 @@ anim_speed_min = 1.0
 anim_speed_max = 2.0
 anim_offset_max = 1.0
 
+[sub_resource type="Curve" id="Curve_urchc"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(0.7, 0), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_ql2do"]
+width = 64
+texture_mode = 1
+curve = SubResource("Curve_urchc")
+
+[sub_resource type="Gradient" id="Gradient_t1nvy"]
+offsets = PackedFloat32Array(0, 0.08913043, 0.24772727, 1)
+colors = PackedColorArray(1, 0.6307238, 0.9527748, 1, 1, 0, 1, 1, 1, 0.28235295, 0, 1, 0, 0, 0, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_urchc"]
+gradient = SubResource("Gradient_t1nvy")
+width = 64
+
+[sub_resource type="Curve" id="Curve_t1nvy"]
+_data = [Vector2(0, 1), 0.0, -2.528132, 0, 0, Vector2(1, 0.2), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_urchc"]
+width = 64
+curve = SubResource("Curve_t1nvy")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_ql2do"]
+angle_min = 1.0728836e-05
+angle_max = 360.00003
+gravity = Vector3(0, 0, 0)
+scale_min = 3.0
+scale_max = 4.0
+scale_curve = SubResource("CurveTexture_urchc")
+color = Color(1, 1, 1, 0.39215687)
+color_ramp = SubResource("GradientTexture1D_urchc")
+alpha_curve = SubResource("CurveTexture_ql2do")
+
+[sub_resource type="QuadMesh" id="QuadMesh_t1nvy"]
+material = ExtResource("47_bj5hu")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_ougmt"]
+lifetime_randomness = 0.3
+emission_shape = 1
+emission_sphere_radius = 1.0
+angle_min = -180.0
+angle_max = 180.0
+gravity = Vector3(0, 0, 0)
+scale_min = 3.0
+scale_max = 5.0
+scale_curve = SubResource("CurveTexture_7xdvp")
+color = Color(1, 0.4117647, 0, 0.5882353)
+alpha_curve = SubResource("CurveTexture_pxvjs")
+hue_variation_min = -2.2351742e-08
+hue_variation_max = 0.06999998
+
 [sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_t1nvy"]
 emission_shape_offset = Vector3(0, 0, 0.5)
 direction = Vector3(0, 0, -1)
@@ -1590,9 +1646,38 @@ alpha_curve = SubResource("CurveTexture_kwvbn")
 [sub_resource type="QuadMesh" id="QuadMesh_bj5hu"]
 material = ExtResource("47_ldqlj")
 
-[node name="Effect" type="Node3D" node_paths=PackedStringArray("darkspineGroup", "trailFX", "spinFX", "teleportParticle", "dustParticle", "spinFXAnimator", "doubleJumpFx", "windParticle", "fireParticle", "stompParticle", "splashJumpParticle", "quickStepParticle", "lightDashParticle", "aegisSlideParticle", "volcanoSlideParticle", "soulSlideParticle", "darkSpiralParticle", "darkCrestParticle", "windCrestParticle", "fireCrestParticle", "chargeParticle", "fullChargeParticle", "grindrailSparkParticle", "grindrailBurstParticle", "perfectShuffleParticle", "grindrailSfx", "petrifyParticle", "footstepChannel", "landingChannel", "landingParticles", "stepEmitters", "waterStep", "voiceChannel")]
+[sub_resource type="Curve" id="Curve_ql2do"]
+_data = [Vector2(0, 1), 0.0, -2.7948723, 0, 0, Vector2(0.7, 0), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_t1nvy"]
+width = 64
+texture_mode = 1
+curve = SubResource("Curve_ql2do")
+
+[sub_resource type="Curve" id="Curve_y312n"]
+_data = [Vector2(0, 0.5), 0.0, 1.5086296, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_ougmt"]
+width = 64
+curve = SubResource("Curve_y312n")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_y312n"]
+angle_min = 1.0728836e-05
+angle_max = 360.00003
+gravity = Vector3(0, 0, 0)
+scale_min = 5.0
+scale_max = 5.0
+scale_curve = SubResource("CurveTexture_ougmt")
+color = Color(1, 0.39215687, 0, 0.19607843)
+alpha_curve = SubResource("CurveTexture_t1nvy")
+
+[sub_resource type="QuadMesh" id="QuadMesh_ougmt"]
+material = ExtResource("49_t1nvy")
+
+[node name="Effect" type="Node3D" node_paths=PackedStringArray("trailFX", "spinFX", "teleportParticle", "dustParticle", "spinFXAnimator", "doubleJumpFx", "windParticle", "fireParticle", "stompParticle", "splashJumpParticle", "quickStepParticle", "lightDashParticle", "aegisSlideParticle", "volcanoSlideParticle", "soulSlideParticle", "darkSpiralParticle", "darkCrestParticle", "windCrestParticle", "fireCrestParticle", "chargeParticle", "fullChargeParticle", "grindrailSparkParticle", "grindrailBurstParticle", "perfectShuffleParticle", "grindrailSfx", "petrifyParticle", "darkspineGroup", "darkspineSpinFX", "footstepChannel", "landingChannel", "landingParticles", "stepEmitters", "waterStep", "voiceChannel")]
 script = ExtResource("1_udd16")
-darkspineGroup = NodePath("VFX/DarkspineFX/DarkspineGroupFX")
 actionSFXLibrary = ExtResource("2_fxiha")
 trailFX = NodePath("VFX/ActionFX/TrailMesh")
 spinFX = NodePath("VFX/ActionFX/SpinMesh")
@@ -1620,11 +1705,13 @@ grindrailBurstParticle = NodePath("VFX/RailFX/GrindrailBurst")
 perfectShuffleParticle = NodePath("VFX/RailFX/PerfectShuffle")
 grindrailSfx = NodePath("SFX/GrindrailSFX")
 petrifyParticle = NodePath("VFX/PetrifyFX")
+darkspineGroup = NodePath("VFX/DarkspineFX/DarkspineGroupFX")
+darkspineSpinFX = NodePath("VFX/DarkspineFX/DsSpinFX")
 materialSFXLibrary = ExtResource("5_h4i1s")
 footstepChannel = NodePath("SFX/FootstepChannel")
 landingChannel = NodePath("SFX/LandingChannel")
-landingParticles = [NodePath("VFX/LandingFX/LandingDust"), NodePath("VFX/LandingFX/LandingSand"), NodePath("VFX/LandingFX/LandingGrass"), null, NodePath("VFX/LandingFX/LandingSnow"), null, NodePath("VFX/LandingFX/LandingWater"), null, NodePath("VFX/LandingFX/LandingWet"), NodePath("VFX/LandingFX/LandingWet")]
-stepEmitters = [NodePath("VFX/StepFX/PavementStep"), NodePath("VFX/StepFX/SandStep"), NodePath("VFX/StepFX/GrassStep"), null, NodePath("VFX/StepFX/SnowStep"), null, NodePath("VFX/StepFX/WaterStep"), null, NodePath("VFX/StepFX/WetStep"), NodePath("VFX/StepFX/WetStep")]
+landingParticles = [NodePath("VFX/LandingFX/LandingDust"), NodePath("VFX/LandingFX/LandingSand"), NodePath("VFX/LandingFX/LandingGrass"), null, NodePath("VFX/LandingFX/LandingSnow"), null, NodePath("VFX/LandingFX/LandingWater"), null, NodePath("VFX/LandingFX/LandingWet"), NodePath("VFX/LandingFX/LandingWet"), null]
+stepEmitters = [NodePath("VFX/StepFX/PavementStep"), NodePath("VFX/StepFX/SandStep"), NodePath("VFX/StepFX/GrassStep"), null, NodePath("VFX/StepFX/SnowStep"), null, NodePath("VFX/StepFX/WaterStep"), null, NodePath("VFX/StepFX/WetStep"), NodePath("VFX/StepFX/WetStep"), null]
 footprintDecal = ExtResource("4_8hf43")
 waterStep = NodePath("VFX/StepFX/WaterStepRing")
 voiceLibrary = ExtResource("33_pyanb")
@@ -2513,6 +2600,36 @@ draw_pass_1 = SubResource("QuadMesh_dpw2b")
 
 [node name="DarkspineFX" type="Node3D" parent="VFX"]
 
+[node name="DsSpinFX" type="GPUParticles3D" parent="VFX/DarkspineFX" node_paths=PackedStringArray("subSystems")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 2.1855694e-08)
+layers = 32
+cast_shadow = 0
+emitting = false
+amount = 4
+lifetime = 0.3
+fixed_fps = 0
+interpolate = false
+local_coords = true
+process_material = SubResource("ParticleProcessMaterial_ql2do")
+draw_pass_1 = SubResource("QuadMesh_t1nvy")
+script = ExtResource("21_nenuf")
+subSystems = [NodePath("TeleportDust")]
+
+[node name="TeleportDust" type="GPUParticles3D" parent="VFX/DarkspineFX/DsSpinFX"]
+layers = 32
+cast_shadow = 0
+extra_cull_margin = 16384.0
+emitting = false
+lifetime = 0.4
+explosiveness = 0.3
+randomness = 0.2
+fixed_fps = 0
+interpolate = false
+visibility_aabb = AABB(0, 0, 0, 0, 0, 0)
+local_coords = true
+process_material = SubResource("ParticleProcessMaterial_ougmt")
+draw_pass_1 = SubResource("QuadMesh_dp2tk")
+
 [node name="DarkspineGroupFX" type="GPUParticles3D" parent="VFX/DarkspineFX" node_paths=PackedStringArray("subSystems")]
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0)
 layers = 32
@@ -2529,7 +2646,7 @@ transform_align = 2
 process_material = SubResource("ParticleProcessMaterial_t1nvy")
 draw_pass_1 = SubResource("QuadMesh_ldqlj")
 script = ExtResource("21_nenuf")
-subSystems = [NodePath("Ember")]
+subSystems = [NodePath("Ember"), NodePath("Aura"), NodePath("TeleportDust")]
 
 [node name="Ember" type="GPUParticles3D" parent="VFX/DarkspineFX/DarkspineGroupFX"]
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 0, -0.5)
@@ -2541,3 +2658,30 @@ fixed_fps = 0
 interpolate = false
 process_material = SubResource("ParticleProcessMaterial_urchc")
 draw_pass_1 = SubResource("QuadMesh_bj5hu")
+
+[node name="Aura" type="GPUParticles3D" parent="VFX/DarkspineFX/DarkspineGroupFX"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.5)
+layers = 32
+cast_shadow = 0
+emitting = false
+amount = 4
+lifetime = 0.4
+fixed_fps = 0
+interpolate = false
+local_coords = true
+process_material = SubResource("ParticleProcessMaterial_y312n")
+draw_pass_1 = SubResource("QuadMesh_ougmt")
+
+[node name="TeleportDust" type="GPUParticles3D" parent="VFX/DarkspineFX/DarkspineGroupFX"]
+layers = 32
+cast_shadow = 0
+extra_cull_margin = 16384.0
+emitting = false
+lifetime = 0.4
+explosiveness = 0.3
+randomness = 0.2
+fixed_fps = 0
+interpolate = false
+visibility_aabb = AABB(0, 0, 0, 0, 0, 0)
+process_material = SubResource("ParticleProcessMaterial_ougmt")
+draw_pass_1 = SubResource("QuadMesh_dp2tk")
