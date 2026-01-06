@@ -161,7 +161,7 @@ length = 0.001
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath(".:scale")
+tracks/0/path = NodePath("VisualRoot:scale")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
@@ -173,7 +173,7 @@ tracks/0/keys = {
 tracks/1/type = "value"
 tracks/1/imported = false
 tracks/1/enabled = true
-tracks/1/path = NodePath("SpiritBomb:visible")
+tracks/1/path = NodePath("VisualRoot/SpiritBomb:visible")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/keys = {
@@ -194,6 +194,18 @@ tracks/2/keys = {
 "update": 1,
 "values": [false]
 }
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("VisualRoot/SpiritBomb:scale")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(1, 1, 1)]
+}
 
 [sub_resource type="Animation" id="Animation_7f36k"]
 resource_name = "explode"
@@ -202,7 +214,7 @@ step = 0.1
 tracks/0/type = "method"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("SphereLetters")
+tracks/0/path = NodePath("VisualRoot/SphereLetters")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
@@ -228,7 +240,7 @@ tracks/1/keys = {
 tracks/2/type = "value"
 tracks/2/imported = false
 tracks/2/enabled = true
-tracks/2/path = NodePath("SpiritBomb:visible")
+tracks/2/path = NodePath("VisualRoot/SpiritBomb:visible")
 tracks/2/interp = 1
 tracks/2/loop_wrap = true
 tracks/2/keys = {
@@ -245,26 +257,26 @@ step = 0.1
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath(".:scale")
+tracks/0/path = NodePath(".:monitoring")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
-"times": PackedFloat32Array(0, 0.8),
-"transitions": PackedFloat32Array(1, 1),
-"update": 0,
-"values": [Vector3(1, 1, 1), Vector3(2, 2, 2)]
-}
-tracks/1/type = "value"
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/path = NodePath(".:monitoring")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
-tracks/1/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 1,
 "values": [true]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("VisualRoot:scale")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.8),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector3(1, 1, 1), Vector3(2, 2, 2)]
 }
 
 [sub_resource type="Animation" id="Animation_utrra"]
@@ -274,7 +286,7 @@ step = 0.1
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath(".:scale")
+tracks/0/path = NodePath("VisualRoot:scale")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
@@ -286,7 +298,7 @@ tracks/0/keys = {
 tracks/1/type = "method"
 tracks/1/imported = false
 tracks/1/enabled = true
-tracks/1/path = NodePath("SphereLetters")
+tracks/1/path = NodePath("VisualRoot/SphereLetters")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/keys = {
@@ -300,7 +312,7 @@ tracks/1/keys = {
 tracks/2/type = "value"
 tracks/2/imported = false
 tracks/2/enabled = true
-tracks/2/path = NodePath("SpiritBomb:visible")
+tracks/2/path = NodePath("VisualRoot/SpiritBomb:visible")
 tracks/2/interp = 1
 tracks/2/loop_wrap = true
 tracks/2/keys = {
@@ -677,13 +689,15 @@ returnSpeed = 60.0
 PushPosition = NodePath("PushPosition")
 animator = NodePath("AnimationPlayer")
 
-[node name="SpiritBomb" parent="AlfLaylaWaLayla/SpiritBombPosition/SpiritBomb" instance=ExtResource("25_twpcs")]
+[node name="VisualRoot" type="Node3D" parent="AlfLaylaWaLayla/SpiritBombPosition/SpiritBomb"]
+
+[node name="SpiritBomb" parent="AlfLaylaWaLayla/SpiritBombPosition/SpiritBomb/VisualRoot" instance=ExtResource("25_twpcs")]
 visible = false
 
-[node name="SpiritBombMesh" parent="AlfLaylaWaLayla/SpiritBombPosition/SpiritBomb/SpiritBomb" index="0"]
+[node name="SpiritBombMesh" parent="AlfLaylaWaLayla/SpiritBombPosition/SpiritBomb/VisualRoot/SpiritBomb" index="0"]
 cast_shadow = 0
 
-[node name="SphereLetters" type="GPUParticles3D" parent="AlfLaylaWaLayla/SpiritBombPosition/SpiritBomb" node_paths=PackedStringArray("subSystems")]
+[node name="SphereLetters" type="GPUParticles3D" parent="AlfLaylaWaLayla/SpiritBombPosition/SpiritBomb/VisualRoot" node_paths=PackedStringArray("subSystems")]
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0)
 layers = 32
 cast_shadow = 0
@@ -698,7 +712,7 @@ draw_pass_1 = SubResource("QuadMesh_r6jp0")
 script = ExtResource("27_l4bcq")
 subSystems = [NodePath("PurpleSmoke"), NodePath("BombLetters"), NodePath("BombLettersStationary"), NodePath("BombLettersTravel")]
 
-[node name="PurpleSmoke" type="GPUParticles3D" parent="AlfLaylaWaLayla/SpiritBombPosition/SpiritBomb/SphereLetters"]
+[node name="PurpleSmoke" type="GPUParticles3D" parent="AlfLaylaWaLayla/SpiritBombPosition/SpiritBomb/VisualRoot/SphereLetters"]
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 0, 0)
 layers = 32
 cast_shadow = 0
@@ -711,7 +725,7 @@ local_coords = true
 process_material = SubResource("ParticleProcessMaterial_r6jp0")
 draw_pass_1 = SubResource("QuadMesh_heuv1")
 
-[node name="BombLetters" type="GPUParticles3D" parent="AlfLaylaWaLayla/SpiritBombPosition/SpiritBomb/SphereLetters"]
+[node name="BombLetters" type="GPUParticles3D" parent="AlfLaylaWaLayla/SpiritBombPosition/SpiritBomb/VisualRoot/SphereLetters"]
 transform = Transform3D(1, 0, 4.2351647e-22, 0, 1, 0, 0, 0, 1, 0, 0, 0)
 layers = 32
 cast_shadow = 0
@@ -724,7 +738,7 @@ local_coords = true
 process_material = SubResource("ParticleProcessMaterial_s1gny")
 draw_pass_1 = SubResource("QuadMesh_r6jp0")
 
-[node name="BombLettersStationary" type="GPUParticles3D" parent="AlfLaylaWaLayla/SpiritBombPosition/SpiritBomb/SphereLetters"]
+[node name="BombLettersStationary" type="GPUParticles3D" parent="AlfLaylaWaLayla/SpiritBombPosition/SpiritBomb/VisualRoot/SphereLetters"]
 transform = Transform3D(1, 0, 4.2351647e-22, 0, 1, 0, 0, 0, 1, 0, 0, 0)
 layers = 32
 cast_shadow = 0
@@ -737,7 +751,7 @@ local_coords = true
 process_material = SubResource("ParticleProcessMaterial_s1gny")
 draw_pass_1 = SubResource("QuadMesh_r6jp0")
 
-[node name="BombLettersTravel" type="GPUParticles3D" parent="AlfLaylaWaLayla/SpiritBombPosition/SpiritBomb/SphereLetters"]
+[node name="BombLettersTravel" type="GPUParticles3D" parent="AlfLaylaWaLayla/SpiritBombPosition/SpiritBomb/VisualRoot/SphereLetters"]
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 0, 0)
 layers = 32
 cast_shadow = 0
@@ -948,4 +962,4 @@ visible = false
 [connection signal="area_entered" from="AlfLaylaWaLayla/Core/Core" to="AlfLaylaWaLayla/Core/Core" method="OnEntered"]
 
 [editable path="AlfLaylaWaLayla"]
-[editable path="AlfLaylaWaLayla/SpiritBombPosition/SpiritBomb/SpiritBomb"]
+[editable path="AlfLaylaWaLayla/SpiritBombPosition/SpiritBomb/VisualRoot/SpiritBomb"]
