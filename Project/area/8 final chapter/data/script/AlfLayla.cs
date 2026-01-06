@@ -219,6 +219,9 @@ public partial class AlfLayla : Node3D
 
 	private void ProcessAction()
 	{
+		if (spiritBomb.IsTravelling || Player.IsSpiritBombActive) // Idle when spirit bomb is active
+			return;
+
 		if (CurrentFightState == FightState.Movement)
 		{
 			ProcessMovement();
@@ -231,9 +234,9 @@ public partial class AlfLayla : Node3D
 			return;
 		}
 
-		if (CurrentFightState == FightState.AttackWindup || CurrentFightState == FightState.AttackStrike)
+		if (CurrentFightState == FightState.AttackWindup)
 		{
-			ProcessAttack();
+			ProcessAttackWindup();
 			return;
 		}
 
@@ -255,7 +258,17 @@ public partial class AlfLayla : Node3D
 	private void GetNextAction()
 	{
 		currentActionCharacter = attackPatterns[currentPatternIndex][currentActionIndex];
-		currentActionIndex = (currentActionIndex + 1) % attackPatterns[currentPatternIndex].Length;
+
+		// Allow the player to interupt movement patterns with a bomb
+		if (Player.Skills.IsSoulGaugeFilled &&
+			(currentActionCharacter == 'F' || currentActionCharacter == 'C' || currentActionCharacter == 'M'))
+		{
+			currentActionCharacter = 'B';
+		}
+		else // Otherwise, increment the action index
+		{
+			currentActionIndex = (currentActionIndex + 1) % attackPatterns[currentPatternIndex].Length;
+		}
 
 		GD.Print($"Alf's action was set to {currentActionCharacter}.");
 	}
@@ -270,7 +283,7 @@ public partial class AlfLayla : Node3D
 		if (StartMove()) // Started movement pattern
 			return;
 
-		StartAttack();
+		StartAttackWindup();
 	}
 
 	private bool StartMove()
@@ -324,55 +337,58 @@ public partial class AlfLayla : Node3D
 
 	private void FinishMovement()
 	{
+		if (currentActionCharacter == 'B') // Start bomb attack
+		{
+			StartAttackWindup();
+			actionTimer = 0.8f;
+			return;
+		}
+
+		actionTimer = 0.3f;
 		CurrentFightState = FightState.Idle;
-		actionTimer = 1f;
 	}
 
-	private void StartAttack()
+	private void StartAttackWindup()
 	{
+		// Update the delay for each attack as needed below
 		switch (currentActionCharacter)
 		{
-			case '6':
-				actionTimer = 0.5f;
-				break;
 			case '\\':
 			case '>':
 			case '|':
+				actionTimer = 1f;
 				animationTree.Set(SlashType, "right");
-				actionTimer = 2f;
 				animationTree.Set(SlashSpeed, 1.2f);
 				break;
 			case '/':
 			case '<':
 			case '_':
+				actionTimer = 0.2f;
 				animationTree.Set(SlashType, "left");
 				animationTree.Set(SlashSpeed, 1.2f);
-				actionTimer = 0.5f;
 				break;
 			case 'X':
 			case '#':
+				actionTimer = 0.5f;
 				animationTree.Set(SlashType, "middle");
 				animationTree.Set(SlashSpeed, 1.5f);
-				actionTimer = 0.5f;
 				break;
 			case 'B':
-				animationTree.Set(SpiritBombTrigger, (uint)AnimationNodeOneShot.OneShotRequest.Fire);
-				spiritBomb.Respawn();
+				actionTimer = 0.2f;
 				break;
-			default: // Unimplmented
-				GD.Print($"Action {currentActionCharacter} is not implemented!");
-				return;
+			default: // No windup
+				actionTimer = 0f;
+				break;
 		}
 
 		CurrentFightState = FightState.AttackWindup;
 	}
 
-	private void ProcessAttack()
+	private void ProcessAttackWindup()
 	{
-		if (CurrentFightState != FightState.AttackWindup || !ProcessActionTimer())
+		if (!ProcessActionTimer())
 			return;
 
-		CurrentFightState = FightState.AttackStrike;
 		switch (currentActionCharacter)
 		{
 			case '6':
@@ -389,11 +405,16 @@ public partial class AlfLayla : Node3D
 				animationTree.Set(SlashTrigger, (int)AnimationNodeOneShot.OneShotRequest.Fire);
 				break;
 			case 'B':
+				animationTree.Set(SpiritBombTrigger, (uint)AnimationNodeOneShot.OneShotRequest.Fire);
+				spiritBomb.Respawn();
 				break;
 			default: // Unimplmented
+				GD.Print($"Action {currentActionCharacter} is not implemented!");
 				FinishAttack();
 				return;
 		}
+
+		CurrentFightState = FightState.AttackStrike;
 	}
 
 	private void FinishAttack()
@@ -401,7 +422,10 @@ public partial class AlfLayla : Node3D
 		switch (currentActionCharacter)
 		{
 			case '6':
-				actionTimer = 2f;
+				actionTimer = 1f;
+				break;
+			case '<':
+				actionTimer = 1f;
 				break;
 			default:
 				actionTimer = 0.1f;

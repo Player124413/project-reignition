@@ -517,6 +517,7 @@ public partial class PlayerSkillController : Node3D
 
 	public bool IsSoulGaugeEmpty => !StageSettings.Instance.IsControlTest && SoulPower == 0;
 	public bool IsSoulGaugeCharged => StageSettings.Instance.IsControlTest || SoulPower >= MinimumSoulPower;
+	public bool IsSoulGaugeFilled => SoulPower >= MaxSoulPower;
 	public const int MinimumSoulPower = 50; // Minimum amount of soul power needed to use soul skills.
 	public void ModifySoulGauge(int amount)
 	{
