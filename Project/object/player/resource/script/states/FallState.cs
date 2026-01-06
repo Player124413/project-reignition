@@ -46,8 +46,8 @@ public partial class FallState : PlayerState
 			if (SaveManager.Config.useStompJumpButtonMode)
 				return stompState;
 
-			PlayerState attackState = GetAttackTargetState();
-			if (GetAttackTargetState() != null)
+			PlayerState attackState = GetAttackTargetState(false);
+			if (attackState != null)
 				return attackState;
 		}
 
@@ -55,7 +55,7 @@ public partial class FallState : PlayerState
 		{
 			Player.Controller.ResetAttackBuffer();
 
-			PlayerState attackState = GetAttackTargetState();
+			PlayerState attackState = GetAttackTargetState(true);
 			if (attackState != null)
 				return attackState;
 		}
@@ -76,12 +76,12 @@ public partial class FallState : PlayerState
 		return null;
 	}
 
-	private PlayerState GetAttackTargetState()
+	private PlayerState GetAttackTargetState(bool isAttackButton)
 	{
 		if (Player.Lockon.Monitoring && Player.Lockon.IsTargetAttackable)
 			return homingAttackState;
 
-		if (Player.IsDarkspineSonic &&
+		if (isAttackButton && Player.IsDarkspineSonic &&
 			(Player.Controller.InputAxis.IsZeroApprox() ||
 			!Player.Controller.IsHoldingDirection(Player.Controller.GetTargetInputAngle(), Player.MovementAngle)))
 		{
