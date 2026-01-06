@@ -26,6 +26,7 @@ public partial class DarkspineMultiPunchState : PlayerState
 		currentAttackCount = 0;
 		currentPunchStringIndex = 0;
 		alfStunTimer = AlfStunLength;
+		isAttackQueued = false;
 
 		Player.IsMultiPunchActive = true;
 		Player.MoveSpeed = 0;

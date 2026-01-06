@@ -1,4 +1,4 @@
-[gd_scene load_steps=117 format=3 uid="uid://7p1mkbn0s276"]
+[gd_scene load_steps=119 format=3 uid="uid://7p1mkbn0s276"]
 
 [ext_resource type="PackedScene" uid="uid://bl4mwbfg117lh" path="res://area/8 final chapter/data/model/AlfLaylaWaLayla.gltf" id="1_8mof4"]
 [ext_resource type="Script" uid="uid://bpp2tmfxy4euf" path="res://area/8 final chapter/data/script/AlfLayla.cs" id="1_k6i6c"]
@@ -6,7 +6,6 @@
 [ext_resource type="Script" uid="uid://bd2g6rmrn77eo" path="res://object/trigger/modules/LockoutTrigger.cs" id="3_fmwwy"]
 [ext_resource type="Script" uid="uid://dx0a0rhyauccl" path="res://object/trigger/modules/CameraTrigger.cs" id="3_pt266"]
 [ext_resource type="Resource" uid="uid://ukcne4um86a6" path="res://resource/preset/camera/common/CutsceneCam.tres" id="4_g0203"]
-[ext_resource type="Resource" uid="uid://cmesyjx0jp6ur" path="res://resource/preset/lockout/run/AutorunLockout.tres" id="4_lngaj"]
 [ext_resource type="Animation" uid="uid://dr2ec3v4u2cqc" path="res://area/8 final chapter/data/model/animation/advance-start.res" id="5_g0q3n"]
 [ext_resource type="Animation" uid="uid://niask33dpix8" path="res://area/8 final chapter/data/model/animation/slash-x.res" id="5_yyje7"]
 [ext_resource type="Animation" uid="uid://d3m5vjq7ldsio" path="res://area/8 final chapter/data/model/animation/advance-stop.res" id="6_yyje7"]
@@ -15,12 +14,14 @@
 [ext_resource type="Script" uid="uid://dj0dc1eeaydym" path="res://area/8 final chapter/data/script/AlfCore.cs" id="9_4ltgr"]
 [ext_resource type="Animation" uid="uid://r38ph0jvantt" path="res://area/8 final chapter/data/model/animation/retreat-stop.res" id="9_lngaj"]
 [ext_resource type="Animation" uid="uid://db4qwory5l6bu" path="res://area/8 final chapter/data/model/animation/six-orb.res" id="10_7ixpi"]
+[ext_resource type="Resource" uid="uid://dyxauo2fm7ux0" path="res://resource/preset/lockout/run/AutorunAlfLaylaLockout.tres" id="11_7wf61"]
 [ext_resource type="Animation" uid="uid://dy3uk46vclowy" path="res://area/8 final chapter/data/model/animation/slash-l.res" id="11_t16yu"]
 [ext_resource type="Animation" uid="uid://cnchngjimy1fc" path="res://area/8 final chapter/data/model/animation/slash-r.res" id="12_ordf7"]
 [ext_resource type="Animation" uid="uid://mmir4b2acc6j" path="res://area/8 final chapter/data/model/animation/advance.res" id="13_rwxr0"]
 [ext_resource type="Animation" uid="uid://c7t8ida3l15ia" path="res://area/8 final chapter/data/model/animation/stun-damage-final.res" id="14_48yth"]
 [ext_resource type="Animation" uid="uid://dwhjk4k3u0q4h" path="res://area/8 final chapter/data/model/animation/idle.res" id="14_oj3ar"]
 [ext_resource type="Animation" uid="uid://bbjkl7v0lqb4s" path="res://area/8 final chapter/data/model/animation/retreat.res" id="15_wa5i8"]
+[ext_resource type="PackedScene" uid="uid://po4sbijsn5gh" path="res://area/8 final chapter/data/Strike.tscn" id="16_ajod2"]
 [ext_resource type="Animation" uid="uid://df3bp3fekgwiw" path="res://area/8 final chapter/data/model/animation/spirit-bomb.res" id="16_oj3ar"]
 [ext_resource type="Animation" uid="uid://byegp6goi13g2" path="res://area/8 final chapter/data/model/animation/stun-damage.res" id="17_wa5i8"]
 [ext_resource type="Animation" uid="uid://cad5fihq8a1cf" path="res://area/8 final chapter/data/model/animation/stun-start.res" id="18_b1w0k"]
@@ -34,6 +35,7 @@
 [ext_resource type="Script" uid="uid://bri007qdprrbf" path="res://addons/custom_nodes/script/BoneAttachment3DNoScale.cs" id="30_86d2j"]
 [ext_resource type="Material" uid="uid://bi78t1ox4k8gl" path="res://effect/particle/material/Ember Purple.tres" id="33_f0c13"]
 [ext_resource type="Material" uid="uid://m0d6jfnxdrwg" path="res://effect/particle/material/Teleport Dust.tres" id="34_jc0er"]
+[ext_resource type="PackedScene" uid="uid://d1y7tch5acj4t" path="res://area/8 final chapter/act/environment/collision/Collision.tscn" id="36_7wf61"]
 
 [sub_resource type="Curve" id="Curve_pt266"]
 _limits = [0.0, 1.0, 0.0, 1.2]
@@ -601,7 +603,7 @@ fadein_time = 0.1
 fadeout_time = 0.2
 
 [sub_resource type="AnimationNodeBlendTree" id="AnimationNodeBlendTree_lg36t"]
-graph_offset = Vector2(-1368.3025, -57.893265)
+graph_offset = Vector2(-604.6017, 207.8638)
 nodes/output/position = Vector2(840, 120)
 nodes/move-state/node = SubResource("AnimationNodeStateMachine_w08gm")
 nodes/move-state/position = Vector2(-1720, 180)
@@ -645,13 +647,15 @@ nodes/stun-damage-final-trigger/node = SubResource("AnimationNodeOneShot_jc0er")
 nodes/stun-damage-final-trigger/position = Vector2(-840, -40)
 node_connections = [&"output", 0, &"spirit-bomb-trigger", &"slash-trigger", 0, &"three-orb-trigger", &"slash-trigger", 1, &"slash-speed", &"six-orb-trigger", 0, &"stun-damage-final-trigger", &"six-orb-trigger", 1, &"six-orb-speed", &"slash-speed", 0, &"slash-type-transition", &"six-orb-speed", 0, &"six-orb-anim", &"slash-type-transition", 0, &"slash-l-anim", &"slash-type-transition", 1, &"slash-x-anim", &"slash-type-transition", 2, &"slash-r-anim", &"spirit-bomb-trigger", 0, &"slash-trigger", &"spirit-bomb-trigger", 1, &"spirit-bomb-anim", &"three-orb-trigger", 0, &"six-orb-trigger", &"three-orb-trigger", 1, &"three-orb-anim", &"stun-transition", 0, &"stun-state", &"stun-transition", 1, &"move-state", &"stun-damage-trigger", 0, &"stun-transition", &"stun-damage-trigger", 1, &"stun-damage-anim", &"stun-damage-final-trigger", 0, &"stun-damage-trigger", &"stun-damage-final-trigger", 1, &"stun-damage-final-anim"]
 
-[node name="AlfLaylaWaLayla" type="Node3D" node_paths=PackedStringArray("animationTree", "cutsceneCamera", "autorunLockout", "spiritBomb", "dialogTriggers")]
+[node name="AlfLaylaWaLayla" type="Node3D" node_paths=PackedStringArray("animationTree", "cutsceneCamera", "autorunLockout", "strikeParent", "spiritBomb", "dialogTriggers", "slashControllers")]
 script = ExtResource("1_k6i6c")
 animationTree = NodePath("AnimationTree")
 cutsceneCamera = NodePath("CutsceneCamera")
 autorunLockout = NodePath("Autorun")
+strikeParent = NodePath("Strikes")
 spiritBomb = NodePath("AlfLaylaWaLayla/SpiritBombPosition/SpiritBomb")
 dialogTriggers = []
+slashControllers = [NodePath("Strikes/StrikeDoubleRight1"), NodePath("Strikes/StrikeDoubleLeft1"), NodePath("Strikes/StrikeTripleRight1"), NodePath("Strikes/StrikeTripleLeft1"), NodePath("Strikes/StrikeXL"), NodePath("Strikes/Strike#L1"), NodePath("Strikes/StrikeVerticalL"), NodePath("Strikes/StrikeHorizontal")]
 attackPatterns = PackedStringArray("F6C\\/><F6CXB", "M3XF6CX#B", "M33C|_XF6C#\\/><|_F6B")
 advanceMovementCurve = SubResource("Curve_pt266")
 retreatMovementCurve = SubResource("Curve_g0203")
@@ -780,7 +784,7 @@ transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, 5
 
 [node name="Autorun" type="Node3D" parent="."]
 script = ExtResource("3_fmwwy")
-lockoutData = ExtResource("4_lngaj")
+lockoutData = ExtResource("11_7wf61")
 
 [node name="CutsceneCamera" type="Node3D" parent="."]
 script = ExtResource("3_pt266")
@@ -816,6 +820,7 @@ process_material = SubResource("ParticleProcessMaterial_ajod2")
 draw_pass_1 = SubResource("QuadMesh_7wf61")
 
 [node name="WallLimit" type="StaticBody3D" parent="." groups=["ignore lockon cast", "level wall", "wall"]]
+visible = false
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="WallLimit"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 3)
@@ -824,6 +829,81 @@ shape = SubResource("BoxShape3D_7f36k")
 [node name="CollisionShape3D2" type="CollisionShape3D" parent="WallLimit"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.5, 1.6)
 shape = SubResource("SphereShape3D_86d2j")
+
+[node name="Strikes" type="Node3D" parent="."]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, 0, 0)
+
+[node name="StrikeDoubleRight1" parent="Strikes" node_paths=PackedStringArray("childSlashes") instance=ExtResource("16_ajod2")]
+transform = Transform3D(0.8660254, -0.5, 0, 0.5, 0.8660254, 0, 0, 0, 1, -3, 0, 0)
+childSlashes = [NodePath("../StrikeDoubleRight2")]
+
+[node name="StrikeDoubleRight2" parent="Strikes" instance=ExtResource("16_ajod2")]
+transform = Transform3D(0.8660254, -0.5, 0, 0.5, 0.8660254, 0, 0, 0, 1, 3, 0, 0)
+
+[node name="StrikeDoubleLeft1" parent="Strikes" node_paths=PackedStringArray("childSlashes") instance=ExtResource("16_ajod2")]
+transform = Transform3D(0.8660254, 0.5, 0, -0.5, 0.8660254, 0, 0, 0, 1, -3, 0, 0)
+childSlashes = [NodePath("../StrikeDoubleLeft2")]
+
+[node name="StrikeDoubleLeft2" parent="Strikes" instance=ExtResource("16_ajod2")]
+transform = Transform3D(0.8660254, 0.5, 0, -0.5, 0.8660254, 0, 0, 0, 1, 3, 0, 0)
+
+[node name="StrikeTripleRight1" parent="Strikes" node_paths=PackedStringArray("childSlashes") instance=ExtResource("16_ajod2")]
+transform = Transform3D(0.8660254, -0.5, 0, 0.5, 0.8660254, 0, 0, 0, 1, 5, 0, 0)
+childSlashes = [NodePath("../StrikeTripleRight2"), NodePath("../StrikeTripleRight3")]
+
+[node name="StrikeTripleRight2" parent="Strikes" instance=ExtResource("16_ajod2")]
+transform = Transform3D(0.8660254, -0.5, 0, 0.5, 0.8660254, 0, 0, 0, 1, 1.7484556e-06, 0, 1.5285485e-13)
+
+[node name="StrikeTripleRight3" parent="Strikes" instance=ExtResource("16_ajod2")]
+transform = Transform3D(0.8660254, -0.5, 0, 0.5, 0.8660254, 0, 0, 0, 1, -5, 0, 0)
+
+[node name="StrikeTripleLeft1" parent="Strikes" node_paths=PackedStringArray("childSlashes") instance=ExtResource("16_ajod2")]
+transform = Transform3D(0.8660254, 0.5, 0, -0.5, 0.8660254, 0, 0, 0, 1, 5, 0, 0)
+childSlashes = [NodePath("../StrikeTripleLeft2"), NodePath("../StrikeTripleLeft3")]
+
+[node name="StrikeTripleLeft2" parent="Strikes" instance=ExtResource("16_ajod2")]
+transform = Transform3D(0.8660254, 0.5, 0, -0.5, 0.8660254, 0, 0, 0, 1, 1.7484556e-06, 0, 1.5285485e-13)
+
+[node name="StrikeTripleLeft3" parent="Strikes" instance=ExtResource("16_ajod2")]
+transform = Transform3D(0.8660254, 0.5, 0, -0.5, 0.8660254, 0, 0, 0, 1, -5, 0, 0)
+
+[node name="StrikeXL" parent="Strikes" node_paths=PackedStringArray("childSlashes") instance=ExtResource("16_ajod2")]
+transform = Transform3D(0.8660254, -0.5, 0, 0.5, 0.8660254, 0, 0, 0, 1, 1.7484556e-06, 0, 1.5285485e-13)
+childSlashes = [NodePath("../StrikeXR")]
+
+[node name="StrikeXR" parent="Strikes" instance=ExtResource("16_ajod2")]
+transform = Transform3D(0.8660254, 0.5, 0, -0.5, 0.8660254, 0, 0, 0, 1, 1.7484556e-06, 0, 1.5285485e-13)
+
+[node name="Strike#L1" parent="Strikes" node_paths=PackedStringArray("childSlashes") instance=ExtResource("16_ajod2")]
+transform = Transform3D(0.8660254, -0.5, 0, 0.5, 0.8660254, 0, 0, 0, 1, -3, 1, 0)
+childSlashes = [NodePath("../Strike#R1"), NodePath("../Strike#L2"), NodePath("../Strike#R2"), NodePath("../Strike#L3"), NodePath("../Strike#R3")]
+
+[node name="Strike#R1" parent="Strikes" instance=ExtResource("16_ajod2")]
+transform = Transform3D(0.8660254, 0.5, 0, -0.5, 0.8660254, 0, 0, 0, 1, -3, 1, 0)
+
+[node name="Strike#L2" parent="Strikes" instance=ExtResource("16_ajod2")]
+transform = Transform3D(0.8660254, -0.5, 0, 0.5, 0.8660254, 0, 0, 0, 1, 1.7484556e-06, 1, 1.5285485e-13)
+
+[node name="Strike#R2" parent="Strikes" instance=ExtResource("16_ajod2")]
+transform = Transform3D(0.8660254, 0.5, 0, -0.5, 0.8660254, 0, 0, 0, 1, 1.7484556e-06, 1, 1.5285485e-13)
+
+[node name="Strike#L3" parent="Strikes" instance=ExtResource("16_ajod2")]
+transform = Transform3D(0.8660254, -0.5, 0, 0.5, 0.8660254, 0, 0, 0, 1, 3, 1, 0)
+
+[node name="Strike#R3" parent="Strikes" instance=ExtResource("16_ajod2")]
+transform = Transform3D(0.8660254, 0.5, 0, -0.5, 0.8660254, 0, 0, 0, 1, 3, 1, 0)
+
+[node name="StrikeVerticalL" parent="Strikes" node_paths=PackedStringArray("childSlashes") instance=ExtResource("16_ajod2")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 0, 0)
+childSlashes = [NodePath("../StrikeVerticalM"), NodePath("../StrikeVerticalR")]
+
+[node name="StrikeVerticalM" parent="Strikes" instance=ExtResource("16_ajod2")]
+
+[node name="StrikeVerticalR" parent="Strikes" instance=ExtResource("16_ajod2")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 0, 0)
+
+[node name="StrikeHorizontal" parent="Strikes" instance=ExtResource("16_ajod2")]
+transform = Transform3D(-4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 0, 0, 1, 0, 0.5, 0)
 
 [node name="AnimationTree" type="AnimationTree" parent="."]
 active = false
@@ -839,7 +919,7 @@ parameters/slash-trigger/request = 0
 parameters/six-orb-trigger/active = false
 parameters/six-orb-trigger/internal_active = false
 parameters/six-orb-trigger/request = 0
-parameters/slash-speed/scale = 1.2000000000000028
+parameters/slash-speed/scale = 1.3999999999999986
 parameters/six-orb-speed/scale = 1.5
 parameters/slash-type-transition/current_state = "middle"
 parameters/slash-type-transition/transition_request = ""
@@ -859,6 +939,9 @@ parameters/stun-damage-trigger/request = 0
 parameters/stun-damage-final-trigger/active = false
 parameters/stun-damage-final-trigger/internal_active = false
 parameters/stun-damage-final-trigger/request = 0
+
+[node name="Collision" parent="." instance=ExtResource("36_7wf61")]
+visible = false
 
 [connection signal="area_entered" from="AlfLaylaWaLayla/SpiritBombPosition/SpiritBomb" to="AlfLaylaWaLayla/SpiritBombPosition/SpiritBomb" method="OnEntered"]
 [connection signal="area_exited" from="AlfLaylaWaLayla/SpiritBombPosition/SpiritBomb" to="AlfLaylaWaLayla/SpiritBombPosition/SpiritBomb" method="OnExited"]

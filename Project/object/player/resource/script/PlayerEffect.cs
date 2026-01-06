@@ -330,7 +330,6 @@ public partial class PlayerEffect : Node3D
 	/// </summary>
 	public void PlayLandingFX()
 	{
-		GD.Print(groundMaterial);
 		if (groundMaterial == MaterialEnum.DustlessFloor)
 			return;
 

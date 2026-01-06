@@ -1,5 +1,6 @@
 using Godot;
 using Project.Core;
+using Project.Gameplay.Objects;
 using Project.Gameplay.Triggers;
 
 namespace Project.Gameplay.Bosses;
@@ -10,10 +11,14 @@ public partial class AlfLayla : Node3D
 	[Export] private AnimationTree animationTree;
 	[Export] private CameraTrigger cutsceneCamera;
 	[Export] private LockoutTrigger autorunLockout;
+	[Export] private Node3D strikeParent;
 
 	[Export] private SpiritBomb spiritBomb;
 
 	[Export] private DialogTrigger[] dialogTriggers;
+
+	[Export] private AlfSlash[] slashControllers;
+
 	private int currentDialogIndex;
 
 	private PlayerController Player => StageSettings.Player;
@@ -162,12 +167,14 @@ public partial class AlfLayla : Node3D
 		Transform = Transform3D.Identity;
 		ResetPhysicsInterpolation();
 
+		foreach (AlfSlash slash in slashControllers)
+			slash.Respawn();
 		// TODO Reset Animations
 	}
 
 	private void StartIntroduction()
 	{
-		StageSettings.Player.KnockbackFinished += FinishAttack; // Finish the spirit bomb attack after the player gets up
+		StageSettings.Player.KnockbackFinished += OnPlayerKnockbackFinished; // Finish the spirit bomb attack after the player gets up
 		spiritBomb.AlfExploded += StartHitstun;
 
 		GlobalTransform = Player.GlobalTransform;
@@ -215,6 +222,7 @@ public partial class AlfLayla : Node3D
 	{
 		GlobalPosition = PlayerPathFollower.GlobalPosition + PlayerPathFollower.Forward() * currentDistance + VisualOffset;
 		GlobalRotation = Vector3.Zero;
+		strikeParent.GlobalPosition = Vector3.Back * Player.PathFollower.GlobalPosition.Z;
 	}
 
 	private void ProcessAction()
@@ -239,6 +247,9 @@ public partial class AlfLayla : Node3D
 			ProcessAttackWindup();
 			return;
 		}
+
+		if (CurrentFightState == FightState.AttackStrike)
+			return;
 
 		if (CurrentFightState != FightState.Idle || spiritBomb.IsTravelling)
 			return;
@@ -350,6 +361,10 @@ public partial class AlfLayla : Node3D
 
 	private void StartAttackWindup()
 	{
+		float slashSpeed = 1.2f;
+		if (currentPatternIndex == 2)
+			slashSpeed = 1.5f;
+
 		// Update the delay for each attack as needed below
 		switch (currentActionCharacter)
 		{
@@ -358,20 +373,20 @@ public partial class AlfLayla : Node3D
 			case '|':
 				actionTimer = 1f;
 				animationTree.Set(SlashType, "right");
-				animationTree.Set(SlashSpeed, 1.2f);
+				animationTree.Set(SlashSpeed, slashSpeed);
 				break;
 			case '/':
 			case '<':
 			case '_':
 				actionTimer = 0.2f;
 				animationTree.Set(SlashType, "left");
-				animationTree.Set(SlashSpeed, 1.2f);
+				animationTree.Set(SlashSpeed, slashSpeed);
 				break;
 			case 'X':
 			case '#':
 				actionTimer = 0.5f;
 				animationTree.Set(SlashType, "middle");
-				animationTree.Set(SlashSpeed, 1.5f);
+				animationTree.Set(SlashSpeed, slashSpeed * 1.5f);
 				break;
 			case 'B':
 				actionTimer = 0.2f;
@@ -415,6 +430,46 @@ public partial class AlfLayla : Node3D
 		}
 
 		CurrentFightState = FightState.AttackStrike;
+	}
+
+	/// <summary> Activate the slashes. </summary>
+	public void StartSlashAttack()
+	{
+		switch (currentActionCharacter)
+		{
+			case '\\':
+				slashControllers[0].Activate();
+				break;
+			case '/':
+				slashControllers[1].Activate();
+				break;
+			case '>':
+				slashControllers[2].Activate();
+				break;
+			case '<':
+				slashControllers[3].Activate();
+				break;
+			case 'X':
+				slashControllers[4].Activate();
+				break;
+			case '#':
+				slashControllers[5].Activate();
+				break;
+			case '|':
+				slashControllers[6].Activate();
+				break;
+			case '_':
+				slashControllers[7].Activate();
+				break;
+		}
+	}
+
+	private void OnPlayerKnockbackFinished()
+	{
+		if (currentActionCharacter != 'B')
+			return;
+
+		FinishAttack();
 	}
 
 	private void FinishAttack()

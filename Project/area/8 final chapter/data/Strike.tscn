@@ -1,0 +1,338 @@
+[gd_scene load_steps=27 format=3 uid="uid://po4sbijsn5gh"]
+
+[ext_resource type="Script" uid="uid://r4h5dd86iox" path="res://area/8 final chapter/data/script/AlfSlash.cs" id="1_xw2y4"]
+[ext_resource type="Material" uid="uid://byyudgvby883r" path="res://effect/particle/material/environment/Circular Glow Add No Billboard.tres" id="2_hum1e"]
+[ext_resource type="Material" uid="uid://br3rof2cswaa1" path="res://effect/particle/material/explosion/Explosion Flame No Billboard.tres" id="3_xw2y4"]
+[ext_resource type="Material" uid="uid://b4c12p1fsec3b" path="res://effect/particle/material/Teleport Spark No Billboard.tres" id="4_c2wpm"]
+
+[sub_resource type="QuadMesh" id="QuadMesh_ioa7f"]
+material = ExtResource("2_hum1e")
+size = Vector2(1, 60)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_7wf61"]
+size = Vector3(0.5, 50, 100)
+
+[sub_resource type="Curve" id="Curve_xw2y4"]
+_data = [Vector2(0, 0.7), 0.0, 2.7690716, 0, 0, Vector2(0.2, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="Curve" id="Curve_c2wpm"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="Curve" id="Curve_vnurs"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveXYZTexture" id="CurveXYZTexture_utij8"]
+width = 64
+curve_x = SubResource("Curve_xw2y4")
+curve_y = SubResource("Curve_c2wpm")
+curve_z = SubResource("Curve_vnurs")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_llial"]
+gravity = Vector3(0, 0, 0)
+scale_max = 2.0
+scale_curve = SubResource("CurveXYZTexture_utij8")
+
+[sub_resource type="QuadMesh" id="QuadMesh_eqbou"]
+material = ExtResource("3_xw2y4")
+size = Vector2(1, 30)
+
+[sub_resource type="Curve" id="Curve_qmgod"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_xw2y4"]
+width = 64
+texture_mode = 1
+curve = SubResource("Curve_qmgod")
+
+[sub_resource type="Gradient" id="Gradient_xw2y4"]
+offsets = PackedFloat32Array(0, 0.17272727, 0.5409091)
+colors = PackedColorArray(4.415934, 3.0754433, 2.2196407, 1, 1, 0.5019608, 0, 1, 1, 0.007985741, 0, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_c2wpm"]
+gradient = SubResource("Gradient_xw2y4")
+width = 64
+
+[sub_resource type="Curve" id="Curve_llial"]
+_limits = [0.0, 5.0, 0.0, 1.0]
+_data = [Vector2(0, 0.5), 0.0, 14.101441, 0, 0, Vector2(1, 5), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="Curve" id="Curve_utij8"]
+_limits = [0.0, 5.0, 0.0, 1.0]
+_data = [Vector2(0, 1), 0.0, 12.012587, 0, 0, Vector2(1, 5), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="Curve" id="Curve_eqbou"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveXYZTexture" id="CurveXYZTexture_qmgod"]
+width = 64
+curve_x = SubResource("Curve_llial")
+curve_y = SubResource("Curve_utij8")
+curve_z = SubResource("Curve_eqbou")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_xw2y4"]
+lifetime_randomness = 0.4
+direction = Vector3(0, 1, 0)
+spread = 5.0
+initial_velocity_min = 1.0
+initial_velocity_max = 1.0
+gravity = Vector3(0, 0, 0)
+scale_curve = SubResource("CurveXYZTexture_qmgod")
+color_ramp = SubResource("GradientTexture1D_c2wpm")
+alpha_curve = SubResource("CurveTexture_xw2y4")
+
+[sub_resource type="QuadMesh" id="QuadMesh_vnurs"]
+material = ExtResource("4_c2wpm")
+size = Vector2(1.5, 10)
+center_offset = Vector3(0, 5, 0)
+
+[sub_resource type="Animation" id="Animation_rlt5j"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:isDisabled")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Warning:transparency")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.0]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("ExplosionVFX:position")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0, 30, 0)]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("ExplosionVFX:emitting")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("Warning:position")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0, 0, 0)]
+}
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("ExplosionVFX/TipVFX:emitting")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+
+[sub_resource type="Animation" id="Animation_xw2y4"]
+resource_name = "init"
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Warning:transparency")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [1.0]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath(".:isDisabled")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+
+[sub_resource type="Animation" id="Animation_hum1e"]
+resource_name = "strike"
+length = 1.0000033
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:isDisabled")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.53333336, 0.6),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 1,
+"values": [true, false, true]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Warning:transparency")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.06666667, 0.2, 0.33333334),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 0,
+"values": [1.0, 0.0, 0.0, 1.0]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("ExplosionVFX:position")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0.5, 0.6),
+"transitions": PackedFloat32Array(0.5, 1),
+"update": 0,
+"values": [Vector3(0, 30, 0), Vector3(0, 0, 0)]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("ExplosionVFX:emitting")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0, 0.5),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [false, true]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("Warning:position")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0, 0.33333334),
+"transitions": PackedFloat32Array(0.5, 1),
+"update": 0,
+"values": [Vector3(0, 10, 0), Vector3(0, -10, 0)]
+}
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("ExplosionVFX/TipVFX:emitting")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0, 0.5, 0.6333333),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 1,
+"values": [false, true, false]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_rlt5j"]
+_data = {
+&"RESET": SubResource("Animation_rlt5j"),
+&"init": SubResource("Animation_xw2y4"),
+&"strike": SubResource("Animation_hum1e")
+}
+
+[node name="Strike" type="Area3D" node_paths=PackedStringArray("animator", "childSlashes")]
+collision_layer = 0
+collision_mask = 2
+monitorable = false
+script = ExtResource("1_xw2y4")
+animator = NodePath("AnimationPlayer")
+childSlashes = []
+isDisabled = true
+
+[node name="Warning" type="MeshInstance3D" parent="."]
+layers = 32
+cast_shadow = 0
+extra_cull_margin = 16384.0
+mesh = SubResource("QuadMesh_ioa7f")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("BoxShape3D_7wf61")
+
+[node name="ExplosionVFX" type="GPUParticles3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 30, 0)
+layers = 32
+cast_shadow = 0
+extra_cull_margin = 16384.0
+emitting = false
+amount = 16
+lifetime = 0.4
+one_shot = true
+explosiveness = 0.8
+fixed_fps = 0
+interpolate = false
+visibility_aabb = AABB(0, 0, 0, 0, 0, 0)
+local_coords = true
+process_material = SubResource("ParticleProcessMaterial_llial")
+draw_pass_1 = SubResource("QuadMesh_eqbou")
+
+[node name="TipVFX" type="GPUParticles3D" parent="ExplosionVFX"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -15, 0)
+layers = 32
+cast_shadow = 0
+extra_cull_margin = 16384.0
+emitting = false
+amount = 32
+lifetime = 0.3
+fixed_fps = 0
+interpolate = false
+visibility_aabb = AABB(0, 0, 0, 0, 0, 0)
+transform_align = 2
+process_material = SubResource("ParticleProcessMaterial_xw2y4")
+draw_pass_1 = SubResource("QuadMesh_vnurs")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+&"": SubResource("AnimationLibrary_rlt5j")
+}
+autoplay = "init"
+
+[connection signal="area_entered" from="." to="." method="OnEntered"]
+[connection signal="area_exited" from="." to="." method="OnExited"]
