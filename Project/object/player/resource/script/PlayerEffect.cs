@@ -43,9 +43,6 @@ public partial class PlayerEffect : Node3D
 	public readonly string DarkSfx = "dark";
 
 	#region Actions
-	[Export] private GroupGpuParticles3D darkspineGroup;
-
-
 	// Actions (Jumping, sliding, etc)
 	[ExportGroup("Skill Effects")]
 	[Export] private SFXLibraryResource actionSFXLibrary;
@@ -283,6 +280,20 @@ public partial class PlayerEffect : Node3D
 		petrifyParticle.Restart();
 		PlayActionSFX("petrify shatter");
 	}
+
+	[Export] private GroupGpuParticles3D darkspineGroup;
+	[Export] private GroupGpuParticles3D darkspineSpinFX;
+	public void StartDarkspineSpinFX()
+	{
+		darkspineSpinFX.SetEmitting(true);
+		darkspineGroup.SetEmitting(false);
+	}
+	public void StopDarkspineSpinFX()
+	{
+		darkspineSpinFX.SetEmitting(false);
+		darkspineGroup.SetEmitting(true);
+	}
+
 	#endregion
 
 	#region Ground
@@ -300,6 +311,8 @@ public partial class PlayerEffect : Node3D
 		Water,
 		Rock,
 		WetWood,
+		WetRock,
+		DustlessFloor, // Used in the final boss fight
 		Count
 	}
 
@@ -317,6 +330,10 @@ public partial class PlayerEffect : Node3D
 	/// </summary>
 	public void PlayLandingFX()
 	{
+		GD.Print(groundMaterial);
+		if (groundMaterial == MaterialEnum.DustlessFloor)
+			return;
+
 		if (groundMaterial == MaterialEnum.Water) // Water is a special case because it can be called from a Water DeathTrigger
 		{
 			PlayLandingWaterFX();
