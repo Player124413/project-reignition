@@ -161,6 +161,7 @@ public partial class AlfLayla : Node3D
 		currentPatternIndex = 0;
 		currentActionIndex = 0;
 		currentActionCharacter = '\0';
+		currentGravityOrbIndex = 0;
 
 		currentDistance = BombDistance;
 		targetDistance = BombDistance;
@@ -173,7 +174,20 @@ public partial class AlfLayla : Node3D
 
 		foreach (AlfSlash slash in slashControllers)
 			slash.Respawn();
-		// TODO Reset Animations
+
+		foreach (GravityOrb orb in gravityOrbs)
+			orb.Respawn();
+
+		foreach (PurpleOrb orb in purpleOrbs)
+			orb.Respawn();
+
+		// Reset Animations
+		animationTree.Set(SixOrbTrigger, (int)AnimationNodeOneShot.OneShotRequest.Abort);
+		animationTree.Set(ThreeOrbTrigger, (int)AnimationNodeOneShot.OneShotRequest.Abort);
+		animationTree.Set(SlashTrigger, (int)AnimationNodeOneShot.OneShotRequest.Abort);
+		animationTree.Set(SpiritBombTrigger, (uint)AnimationNodeOneShot.OneShotRequest.Abort);
+		animationTree.Set(StunDamageFinalTrigger, (uint)AnimationNodeOneShot.OneShotRequest.Abort);
+		animationTree.Set(StunDamageTrigger, (uint)AnimationNodeOneShot.OneShotRequest.Abort);
 	}
 
 	private void StartIntroduction()
@@ -590,6 +604,7 @@ public partial class AlfLayla : Node3D
 
 	// Play a super cool animation
 	public void StartFinalMultiPunch() => animationTree.Set(StunDamageFinalTrigger, (uint)AnimationNodeOneShot.OneShotRequest.Fire);
+
 
 	public void TakeDamage()
 	{
