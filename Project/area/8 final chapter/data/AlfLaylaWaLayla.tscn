@@ -2,7 +2,6 @@
 
 [ext_resource type="PackedScene" uid="uid://bl4mwbfg117lh" path="res://area/8 final chapter/data/model/AlfLaylaWaLayla.gltf" id="1_8mof4"]
 [ext_resource type="Script" uid="uid://bpp2tmfxy4euf" path="res://area/8 final chapter/data/script/AlfLayla.cs" id="1_k6i6c"]
-[ext_resource type="Material" uid="uid://dm4cudcpafji2" path="res://area/8 final chapter/data/model/material/Gravity Orb.tres" id="2_ioa7f"]
 [ext_resource type="Script" uid="uid://cexdef7ti04e2" path="res://area/8 final chapter/data/script/SpiritBomb.cs" id="3_7f36k"]
 [ext_resource type="Script" uid="uid://bd2g6rmrn77eo" path="res://object/trigger/modules/LockoutTrigger.cs" id="3_fmwwy"]
 [ext_resource type="Script" uid="uid://dx0a0rhyauccl" path="res://object/trigger/modules/CameraTrigger.cs" id="3_pt266"]
@@ -24,6 +23,7 @@
 [ext_resource type="Animation" uid="uid://bbjkl7v0lqb4s" path="res://area/8 final chapter/data/model/animation/retreat.res" id="15_wa5i8"]
 [ext_resource type="PackedScene" uid="uid://po4sbijsn5gh" path="res://area/8 final chapter/data/Strike.tscn" id="16_ajod2"]
 [ext_resource type="Animation" uid="uid://df3bp3fekgwiw" path="res://area/8 final chapter/data/model/animation/spirit-bomb.res" id="16_oj3ar"]
+[ext_resource type="PackedScene" uid="uid://vv8ysqa68nc1" path="res://area/8 final chapter/data/GravityOrb.tscn" id="17_ioa7f"]
 [ext_resource type="Animation" uid="uid://byegp6goi13g2" path="res://area/8 final chapter/data/model/animation/stun-damage.res" id="17_wa5i8"]
 [ext_resource type="Animation" uid="uid://cad5fihq8a1cf" path="res://area/8 final chapter/data/model/animation/stun-start.res" id="18_b1w0k"]
 [ext_resource type="Animation" uid="uid://ljmtshwmn22t" path="res://area/8 final chapter/data/model/animation/stun-stop.res" id="19_twpcs"]
@@ -616,7 +616,6 @@ fadein_time = 0.1
 fadeout_time = 0.2
 
 [sub_resource type="AnimationNodeBlendTree" id="AnimationNodeBlendTree_lg36t"]
-graph_offset = Vector2(-875.26715, -28.653564)
 nodes/output/position = Vector2(840, 120)
 nodes/move-state/node = SubResource("AnimationNodeStateMachine_w08gm")
 nodes/move-state/position = Vector2(-1720, 180)
@@ -666,11 +665,10 @@ animationTree = NodePath("AnimationTree")
 cutsceneCamera = NodePath("CutsceneCamera")
 autorunLockout = NodePath("Autorun")
 strikeParent = NodePath("Strikes")
-gravityOrbMaterial = ExtResource("2_ioa7f")
 spiritBomb = NodePath("AlfLaylaWaLayla/SpiritBombPosition/SpiritBomb")
 dialogTriggers = []
 slashControllers = [NodePath("Strikes/StrikeDoubleRight1"), NodePath("Strikes/StrikeDoubleLeft1"), NodePath("Strikes/StrikeTripleRight1"), NodePath("Strikes/StrikeTripleLeft1"), NodePath("Strikes/StrikeXL"), NodePath("Strikes/Strike#L1"), NodePath("Strikes/StrikeVerticalL"), NodePath("Strikes/StrikeHorizontal")]
-gravityOrbs = []
+gravityOrbs = [NodePath("GravityOrbs/GravityOrb1"), NodePath("GravityOrbs/GravityOrb2"), NodePath("GravityOrbs/GravityOrb3"), NodePath("GravityOrbs/GravityOrb4"), NodePath("GravityOrbs/GravityOrb5"), NodePath("GravityOrbs/GravityOrb6")]
 attackPatterns = PackedStringArray("F6C\\/><F6CXB", "M3XF6CX#B", "M33C|_XF6C#\\/><|_F6B")
 advanceMovementCurve = SubResource("Curve_pt266")
 retreatMovementCurve = SubResource("Curve_g0203")
@@ -918,6 +916,21 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 0, 0)
 
 [node name="StrikeHorizontal" parent="Strikes" instance=ExtResource("16_ajod2")]
 transform = Transform3D(-4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 0, 0, 1, 0, 0.5, 0)
+
+[node name="GravityOrbs" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -100)
+
+[node name="GravityOrb1" parent="GravityOrbs" instance=ExtResource("17_ioa7f")]
+
+[node name="GravityOrb2" parent="GravityOrbs" instance=ExtResource("17_ioa7f")]
+
+[node name="GravityOrb3" parent="GravityOrbs" instance=ExtResource("17_ioa7f")]
+
+[node name="GravityOrb4" parent="GravityOrbs" instance=ExtResource("17_ioa7f")]
+
+[node name="GravityOrb5" parent="GravityOrbs" instance=ExtResource("17_ioa7f")]
+
+[node name="GravityOrb6" parent="GravityOrbs" instance=ExtResource("17_ioa7f")]
 
 [node name="AnimationTree" type="AnimationTree" parent="."]
 active = false
