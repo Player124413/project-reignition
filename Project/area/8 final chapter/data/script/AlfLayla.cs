@@ -369,6 +369,9 @@ public partial class AlfLayla : Node3D
 		// Update the delay for each attack as needed below
 		switch (currentActionCharacter)
 		{
+			case '3':
+				currentGravityOrbSide = -1; // Start on the left side
+				break;
 			case '\\':
 			case '>':
 			case '|':
@@ -408,7 +411,6 @@ public partial class AlfLayla : Node3D
 				animationTree.Set(SixOrbTrigger, (int)AnimationNodeOneShot.OneShotRequest.Fire);
 				break;
 			case '3':
-				currentGravityOrbSide = -1; // Start on the left side
 				animationTree.Set(ThreeOrbTrigger, (int)AnimationNodeOneShot.OneShotRequest.Fire);
 				break;
 			case '\\':
@@ -526,7 +528,9 @@ public partial class AlfLayla : Node3D
 			return;
 		}
 
-		animationTree.Set(ThreeOrbTrigger, (int)AnimationNodeOneShot.OneShotRequest.Fire);
+		// Give some space in between gravity orbs
+		actionTimer = 0.3f;
+		CurrentFightState = FightState.AttackWindup;
 	}
 
 	public bool IsStunned => CurrentFightState == FightState.Stunned;
