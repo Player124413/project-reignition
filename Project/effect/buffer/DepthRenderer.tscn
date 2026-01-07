@@ -1,22 +1,45 @@
-[gd_scene load_steps=5 format=3 uid="uid://dar74l2eiux2t"]
+[gd_scene load_steps=4 format=3 uid="uid://dar74l2eiux2t"]
 
 [ext_resource type="Script" uid="uid://2o7w04fafmsf" path="res://effect/buffer/script/DepthRenderer.cs" id="1_8ches"]
 [ext_resource type="Material" uid="uid://tma3nv6ewgck" path="res://effect/buffer/material/Depth Renderer Material.tres" id="2_jk5w5"]
-[ext_resource type="World3D" uid="uid://cenunrix6igno" path="res://effect/buffer/EffectRendererWorld.tres" id="3_ir7y8"]
 
 [sub_resource type="QuadMesh" id="QuadMesh_xgfr5"]
 flip_faces = true
 size = Vector2(2, 2)
 
-[node name="DepthRenderer" type="Node" node_paths=PackedStringArray("depthCamera", "depthViewport")]
+[node name="DepthRenderer" type="Node" node_paths=PackedStringArray("depthCamera", "depthViewport", "depthViewportContainer")]
 script = ExtResource("1_8ches")
-depthCamera = NodePath("DepthViewport/DepthCamera")
-depthViewport = NodePath("DepthViewport")
+depthCamera = NodePath("Viewport/DepthPreview/DepthViewport/DepthCamera")
+depthViewport = NodePath("Viewport/DepthPreview/DepthViewport")
 depthMaterial = ExtResource("2_jk5w5")
+depthViewportContainer = NodePath("Viewport")
 depthMaterials = []
 
-[node name="DepthViewport" type="SubViewport" parent="."]
-world_3d = ExtResource("3_ir7y8")
+[node name="Viewport" type="Control" parent="."]
+visible = false
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="DepthPreview" type="SubViewportContainer" parent="Viewport"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -480.0
+offset_top = -540.0
+offset_right = 480.0
+grow_horizontal = 0
+grow_vertical = 0
+scale = Vector2(0.5, 0.5)
+pivot_offset = Vector2(0, 540)
+
+[node name="DepthViewport" type="SubViewport" parent="Viewport/DepthPreview"]
 transparent_bg = true
 handle_input_locally = false
 scaling_3d_scale = 0.25
@@ -32,12 +55,12 @@ canvas_cull_mask = 0
 size = Vector2i(256, 256)
 render_target_update_mode = 0
 
-[node name="DepthCamera" type="Camera3D" parent="DepthViewport"]
+[node name="DepthCamera" type="Camera3D" parent="Viewport/DepthPreview/DepthViewport"]
 visible = false
 cull_mask = 262151
 current = true
 
-[node name="DepthRenderer" type="MeshInstance3D" parent="DepthViewport/DepthCamera"]
+[node name="DepthRenderer" type="MeshInstance3D" parent="Viewport/DepthPreview/DepthViewport/DepthCamera"]
 layers = 262144
 material_override = ExtResource("2_jk5w5")
 cast_shadow = 0
