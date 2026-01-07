@@ -12,7 +12,6 @@ public partial class AlfLayla : Node3D
 	[Export] private CameraTrigger cutsceneCamera;
 	[Export] private LockoutTrigger autorunLockout;
 	[Export] private Node3D strikeParent;
-	[Export] private ShaderMaterial gravityOrbMaterial;
 
 	[Export] private SpiritBomb spiritBomb;
 
@@ -147,7 +146,6 @@ public partial class AlfLayla : Node3D
 			return;
 
 		SnapPosition();
-		UpdateGravityOrbTexture();
 	}
 
 	private void Respawn()
@@ -529,11 +527,6 @@ public partial class AlfLayla : Node3D
 		}
 
 		animationTree.Set(ThreeOrbTrigger, (int)AnimationNodeOneShot.OneShotRequest.Fire);
-	}
-
-	private void UpdateGravityOrbTexture()
-	{
-		//gravityOrbMaterial.SetShaderParameter("screen_texture", GetViewport().GetTexture());
 	}
 
 	public bool IsStunned => CurrentFightState == FightState.Stunned;
