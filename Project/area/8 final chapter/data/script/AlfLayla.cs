@@ -19,6 +19,8 @@ public partial class AlfLayla : Node3D
 
 	[Export] private AlfSlash[] slashControllers;
 	[Export] private GravityOrb[] gravityOrbs;
+	[Export] private PurpleOrb[] purpleOrbs;
+	[Export] private BoneAttachment3D[] purpleOrbSpawnPoints;
 
 	private int currentDialogIndex;
 
@@ -67,8 +69,8 @@ public partial class AlfLayla : Node3D
 	/// <summary> The ending distance of a movement. </summary>
 	private float targetDistance;
 	private readonly float BombDistance = 80.0f;
-	private readonly float FarDistance = 60.0f;
-	private readonly float NormalDistance = 40.0f;
+	private readonly float FarDistance = 50.0f;
+	private readonly float NormalDistance = 30.0f;
 	private readonly float CloseDistance = 10.0f;
 
 	////////////////////////////////
@@ -408,6 +410,7 @@ public partial class AlfLayla : Node3D
 		switch (currentActionCharacter)
 		{
 			case '6':
+				currentPurpleOrbIndex = 0;
 				animationTree.Set(SixOrbTrigger, (int)AnimationNodeOneShot.OneShotRequest.Fire);
 				break;
 			case '3':
@@ -500,7 +503,6 @@ public partial class AlfLayla : Node3D
 	/// <summary> Release the spirit bomb from Alf's hands and have it start flying. </summary>
 	private void LaunchSpiritBomb() => spiritBomb.StartTravelling();
 
-
 	private int currentGravityOrbIndex;
 	private int currentGravityOrbSide;
 	private readonly float GravityOrbSpacing = 1.5f;
@@ -529,8 +531,16 @@ public partial class AlfLayla : Node3D
 		}
 
 		// Give some space in between gravity orbs
-		actionTimer = 0.3f;
+		actionTimer = 0.2f;
 		CurrentFightState = FightState.AttackWindup;
+	}
+
+	private int currentPurpleOrbIndex;
+	public void AdvanceSixOrb()
+	{
+		purpleOrbs[currentPurpleOrbIndex].GlobalPosition = purpleOrbSpawnPoints[currentPurpleOrbIndex].GlobalPosition;
+		purpleOrbs[currentPurpleOrbIndex].Activate();
+		currentPurpleOrbIndex++;
 	}
 
 	public bool IsStunned => CurrentFightState == FightState.Stunned;
