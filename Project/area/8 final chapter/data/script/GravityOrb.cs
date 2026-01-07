@@ -7,12 +7,18 @@ public partial class GravityOrb : Node3D
 {
 	[Export] private AnimationPlayer animator;
 	[Export] private float gravityPull;
+	[Export] private float moveSpeed;
 	[Export] private Curve gravityCurve;
+
+	private bool isSpawned;
 	private bool isInteractingWithPlayer;
 	private PlayerController Player => StageSettings.Player;
 
 	public override void _PhysicsProcess(double _delta)
 	{
+		if (isSpawned)
+			GlobalPosition += Vector3.Forward * moveSpeed * PhysicsManager.physicsDelta;
+
 		if (!isInteractingWithPlayer)
 			return;
 
@@ -48,11 +54,13 @@ public partial class GravityOrb : Node3D
 	public void Activate()
 	{
 		animator.Play("spawn");
+		isSpawned = true;
 	}
 
 	public void Respawn()
 	{
-		animator.Play("RESET");
+		animator.Play("init");
+		isSpawned = false;
 	}
 
 	public void Explode()
