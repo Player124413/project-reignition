@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3 uid="uid://0rwulf35f5hy"]
+[gd_scene load_steps=9 format=3 uid="uid://0rwulf35f5hy"]
 
 [ext_resource type="PackedScene" uid="uid://diuwy3gbbeiai" path="res://area/8 final chapter/Static.tscn" id="1_xnbka"]
 [ext_resource type="Resource" uid="uid://qgffmsew5qjr" path="res://resource/level data/night palace/Last.tres" id="2_vxphy"]
@@ -7,6 +7,7 @@
 [ext_resource type="Script" uid="uid://dd24u7rlj0dwl" path="res://addons/custom_nodes/script/ObjectGenerator.cs" id="4_lnc3l"]
 [ext_resource type="PackedScene" uid="uid://c7l8mr7ubn848" path="res://object/stage/pickups/Ring.tscn" id="5_o0uq4"]
 [ext_resource type="PackedScene" uid="uid://68st06xyjgvp" path="res://object/stage/pickups/RichRing.tscn" id="6_qsw55"]
+[ext_resource type="PackedScene" uid="uid://vv8ysqa68nc1" path="res://area/8 final chapter/data/GravityOrb.tscn" id="8_qsw55"]
 
 [node name="World" type="Node"]
 
@@ -17,8 +18,9 @@ Data = ExtResource("2_vxphy")
 
 [node name="CharacterSpawn" parent="BossAct" instance=ExtResource("3_7op5d")]
 
-[node name="AlfLaylaWaLayla" parent="BossAct" instance=ExtResource("3_as6he")]
+[node name="AlfLaylaWaLayla" parent="BossAct" node_paths=PackedStringArray("gravityOrbs") instance=ExtResource("3_as6he")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -5, 0)
+gravityOrbs = [NodePath("../GravityOrbs/GravityOrb1"), NodePath("../GravityOrbs/GravityOrb2"), NodePath("../GravityOrbs/GravityOrb3"), NodePath("../GravityOrbs/GravityOrb4"), NodePath("../GravityOrbs/GravityOrb5"), NodePath("../GravityOrbs/GravityOrb6")]
 attackPatterns = PackedStringArray("M3XF6CX#B", "F6C\\/><F6CXB", "M33C|_XF6C#\\/><|_F6B")
 
 [node name="Objects" type="Node3D" parent="BossAct"]
@@ -450,5 +452,20 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.5, 0, 0)
 
 [node name="RichRing2" parent="BossAct/Objects/RichRingPair" instance=ExtResource("6_qsw55")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.5, 0, 0)
+
+[node name="GravityOrbs" type="Node3D" parent="BossAct"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, -100)
+
+[node name="GravityOrb1" parent="BossAct/GravityOrbs" instance=ExtResource("8_qsw55")]
+
+[node name="GravityOrb2" parent="BossAct/GravityOrbs" instance=ExtResource("8_qsw55")]
+
+[node name="GravityOrb3" parent="BossAct/GravityOrbs" instance=ExtResource("8_qsw55")]
+
+[node name="GravityOrb4" parent="BossAct/GravityOrbs" instance=ExtResource("8_qsw55")]
+
+[node name="GravityOrb5" parent="BossAct/GravityOrbs" instance=ExtResource("8_qsw55")]
+
+[node name="GravityOrb6" parent="BossAct/GravityOrbs" instance=ExtResource("8_qsw55")]
 
 [editable path="Static"]

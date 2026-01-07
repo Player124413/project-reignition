@@ -213,15 +213,16 @@ public partial class LockoutResource : Resource
 	public enum ActionFlags
 	{
 		// Note that disabling actions works by disabling inputs first, then individual actions.
-		JumpButton = 1, // Includes jumping and backflips.
-		ActionButton = 2, // Includes sliding, braking, etc.
+		JumpButton = 1 << 0, // Includes jumping and backflips.
+		ActionButton = 1 << 1, // Includes sliding, braking, etc.
 
 		// Individual actions start here. Add more as needed.
-		Backflip = 4,
-		Attacks = 8,
-		Sidestep = 16,
-		Lightdash = 32,
-		SpeedBreak = 64,
+		Backflip = 1 << 2,
+		Attacks = 1 << 3,
+		Sidestep = 1 << 4,
+		Lightdash = 1 << 5,
+		SpeedBreak = 1 << 6,
+		FullJump = 1 << 8, // For some reason bit 7 (128) doesn't work...
 		GeneralActions = ActionButton + Attacks + Backflip + Sidestep + Lightdash,
 	}
 

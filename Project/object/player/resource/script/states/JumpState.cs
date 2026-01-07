@@ -47,7 +47,7 @@ public partial class JumpState : PlayerState
 		jumpTimer = 0;
 		isShortenedJump = false;
 		accelerationJumpHeight = Player.GlobalPosition.Y;
-		isAccelerationJumpQueued = Player.ForceAccelerationJump;
+		isAccelerationJumpQueued = Player.ForceAccelerationJump || Player.IsLockoutDisablingAction(LockoutResource.ActionFlags.FullJump);
 
 		// Decide accleration jump based on jump charge
 		if (!Player.ForceAccelerationJump && SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.ChargeJump))

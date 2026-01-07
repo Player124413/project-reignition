@@ -12,12 +12,14 @@ public partial class AlfLayla : Node3D
 	[Export] private CameraTrigger cutsceneCamera;
 	[Export] private LockoutTrigger autorunLockout;
 	[Export] private Node3D strikeParent;
+	[Export] private ShaderMaterial gravityOrbMaterial;
 
 	[Export] private SpiritBomb spiritBomb;
 
 	[Export] private DialogTrigger[] dialogTriggers;
 
 	[Export] private AlfSlash[] slashControllers;
+	[Export] private GravityOrb[] gravityOrbs;
 
 	private int currentDialogIndex;
 
@@ -66,8 +68,8 @@ public partial class AlfLayla : Node3D
 	/// <summary> The ending distance of a movement. </summary>
 	private float targetDistance;
 	private readonly float BombDistance = 80.0f;
-	private readonly float FarDistance = 50.0f;
-	private readonly float NormalDistance = 30.0f;
+	private readonly float FarDistance = 60.0f;
+	private readonly float NormalDistance = 40.0f;
 	private readonly float CloseDistance = 10.0f;
 
 	////////////////////////////////
@@ -80,6 +82,7 @@ public partial class AlfLayla : Node3D
 	private readonly string SlashTrigger = "parameters/slash-trigger/request";
 	private readonly string SlashSpeed = "parameters/slash-speed/scale";
 	private readonly string SixOrbTrigger = "parameters/six-orb-trigger/request";
+	private readonly string ThreeOrbTrigger = "parameters/three-orb-trigger/request";
 	private readonly string SixOrbSpeed = "parameters/six-orb-speed/scale";
 	private readonly string SpiritBombTrigger = "parameters/spirit-bomb-trigger/request";
 	private AnimationNodeStateMachinePlayback MoveStatePlayback => animationTree.Get(MovePlayback).Obj as AnimationNodeStateMachinePlayback;
@@ -144,6 +147,7 @@ public partial class AlfLayla : Node3D
 			return;
 
 		SnapPosition();
+		UpdateGravityOrbTexture();
 	}
 
 	private void Respawn()
@@ -405,6 +409,10 @@ public partial class AlfLayla : Node3D
 			case '6':
 				animationTree.Set(SixOrbTrigger, (int)AnimationNodeOneShot.OneShotRequest.Fire);
 				break;
+			case '3':
+				currentGravityOrbSide = -1; // Start on the left side
+				animationTree.Set(ThreeOrbTrigger, (int)AnimationNodeOneShot.OneShotRequest.Fire);
+				break;
 			case '\\':
 			case '/':
 			case '>':
@@ -475,6 +483,9 @@ public partial class AlfLayla : Node3D
 			case '6':
 				actionTimer = 1f;
 				break;
+			case '3':
+				actionTimer = 0.4f;
+				break;
 			case '<':
 				actionTimer = 1f;
 				break;
@@ -488,6 +499,42 @@ public partial class AlfLayla : Node3D
 
 	/// <summary> Release the spirit bomb from Alf's hands and have it start flying. </summary>
 	private void LaunchSpiritBomb() => spiritBomb.StartTravelling();
+
+
+	private int currentGravityOrbIndex;
+	private int currentGravityOrbSide;
+	private readonly float GravityOrbSpacing = 1.5f;
+	private readonly float GravitySpawnOffset = 8f;
+	public void LaunchGravityOrb()
+	{
+		Vector3 orbPosition = new()
+		{
+			X = GravityOrbSpacing * -currentGravityOrbSide,
+			Y = gravityOrbs[currentGravityOrbIndex].GlobalPosition.Y,
+			Z = GlobalPosition.Z - GravitySpawnOffset
+		};
+		gravityOrbs[currentGravityOrbIndex].GlobalPosition = orbPosition;
+		gravityOrbs[currentGravityOrbIndex].Activate();
+		currentGravityOrbIndex = (currentGravityOrbIndex + 1) % gravityOrbs.Length;
+		currentGravityOrbSide++;
+	}
+
+	public void AdvanceTripleOrb()
+	{
+		if (currentGravityOrbSide > 1) // Finished
+		{
+			currentGravityOrbSide = -1;
+			FinishAttack();
+			return;
+		}
+
+		animationTree.Set(ThreeOrbTrigger, (int)AnimationNodeOneShot.OneShotRequest.Fire);
+	}
+
+	private void UpdateGravityOrbTexture()
+	{
+		//gravityOrbMaterial.SetShaderParameter("screen_texture", GetViewport().GetTexture());
+	}
 
 	public bool IsStunned => CurrentFightState == FightState.Stunned;
 	private readonly string StunTransition = "parameters/stun-transition/transition_request";
