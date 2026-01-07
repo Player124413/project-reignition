@@ -510,7 +510,7 @@ public partial class AlfLayla : Node3D
 		Vector3 orbPosition = new()
 		{
 			X = GravityOrbSpacing * -currentGravityOrbSide,
-			Y = gravityOrbs[currentGravityOrbIndex].GlobalPosition.Y,
+			Y = 0,
 			Z = GlobalPosition.Z - GravitySpawnOffset
 		};
 		gravityOrbs[currentGravityOrbIndex].GlobalPosition = orbPosition;
