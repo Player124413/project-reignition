@@ -21,7 +21,7 @@ public partial class DarkspineSpiritBombState : PlayerState
 	/// <summary> How quickly to charge when held down. </summary>
 	private readonly float SlowChargeInterval = 0.1f;
 	/// <summary> How long to remain in the Spin State after the button is released (to allow for mashing). </summary>
-	private readonly float SpiritBombHoldLength = 1f;
+	private readonly float SpiritBombHoldLength = 4f;
 
 	public override void EnterState()
 	{

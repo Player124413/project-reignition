@@ -1,5 +1,6 @@
 using Godot;
 using Project.Core;
+using Project.CustomNodes;
 using Project.Gameplay.Objects;
 using Project.Gameplay.Triggers;
 
@@ -21,6 +22,8 @@ public partial class AlfLayla : Node3D
 	[Export] private GravityOrb[] gravityOrbs;
 	[Export] private PurpleOrb[] purpleOrbs;
 	[Export] private BoneAttachment3D[] purpleOrbSpawnPoints;
+	[Export] private GpuParticles3D[] smokeParticles;
+	[Export] private GroupGpuParticles3D[] explosionParticles;
 
 	private int currentDialogIndex;
 
@@ -39,6 +42,7 @@ public partial class AlfLayla : Node3D
 
 	/// <summary> Tracks Alf's current health. </summary>
 	private int currentHealth;
+	private int lastExplosionHealth;
 	private readonly int MaxHealth = 25;
 
 	/// <summary> Tracks Alf's current action. </summary>
@@ -51,6 +55,7 @@ public partial class AlfLayla : Node3D
 		AttackWindup,
 		AttackStrike,
 		Stunned,
+		Exploding,
 		Defeated,
 	}
 
@@ -136,7 +141,7 @@ public partial class AlfLayla : Node3D
 				if ((Input.IsActionJustPressed("sys_pause") || Input.IsActionJustPressed("button_jump")) &&
 					SaveManager.ActiveGameData.CanSkipCutscene(DefeatCutsceneID))
 				{
-					//FinishDefeat();
+					FinishDefeat();
 				}
 
 				GlobalTransform = PlayerPathFollower.GlobalTransform;
@@ -144,7 +149,7 @@ public partial class AlfLayla : Node3D
 				return;
 		}
 
-		if (CurrentFightState == FightState.Stunned)
+		if (IsStunned || IsExploding)
 			return;
 
 		SnapPosition();
@@ -154,10 +159,12 @@ public partial class AlfLayla : Node3D
 	{
 		autorunLockout.Activate();
 		Player.Animator.CancelOneshot();
+		Player.Skills.ModifySoulGauge(-Player.Skills.MaxSoulPower); // Reset soul to 0
 
 		CurrentFightState = FightState.Idle;
 
 		currentHealth = MaxHealth;
+		lastExplosionHealth = MaxHealth;
 		currentPatternIndex = 0;
 		currentActionIndex = 0;
 		currentActionCharacter = '\0';
@@ -180,6 +187,9 @@ public partial class AlfLayla : Node3D
 
 		foreach (PurpleOrb orb in purpleOrbs)
 			orb.Respawn();
+
+		foreach (GpuParticles3D particle in smokeParticles)
+			particle.SetEmitting(true);
 
 		// Reset Animations
 		animationTree.Set(SixOrbTrigger, (int)AnimationNodeOneShot.OneShotRequest.Abort);
@@ -234,6 +244,27 @@ public partial class AlfLayla : Node3D
 		HeadsUpDisplay.Instance.SetVisibility(true);
 	}
 
+	private void DefeatBoss()
+	{
+		cutsceneCamera.Activate();
+
+		// TODO Play super cool defeat animation
+
+		CurrentFightState = FightState.Defeated;
+		Player.Skills.CancelBreakSkills();
+		Player.Deactivate();
+	}
+
+	private void FinishDefeat()
+	{
+		cutsceneCamera.Deactivate();
+		// TODO Seek to end of defeat animation
+
+		Player.Activate();
+		StageSettings.Instance.FinishLevel(true);
+		SaveManager.ActiveGameData.AllowSkippingCutscene(DefeatCutsceneID);
+	}
+
 	private readonly Vector3 VisualOffset = Vector3.Down * 5f;
 	/// <summary> Snaps Alf's position to the correct position. </summary>
 	private void SnapPosition()
@@ -245,6 +276,9 @@ public partial class AlfLayla : Node3D
 
 	private void ProcessAction()
 	{
+		if (CurrentFightState == FightState.Exploding)
+			return;
+
 		if (spiritBomb.IsTravelling || Player.IsSpiritBombActive) // Idle when spirit bomb is active
 			return;
 
@@ -557,6 +591,20 @@ public partial class AlfLayla : Node3D
 		currentPurpleOrbIndex++;
 	}
 
+	private int currentExplosionParticleIndex;
+	public void AdvanceExplosionParticle()
+	{
+		if (currentExplosionParticleIndex >= explosionParticles.Length)
+		{
+			DefeatBoss();
+			return;
+		}
+
+		smokeParticles[currentExplosionParticleIndex].SetEmitting(false);
+		explosionParticles[currentExplosionParticleIndex].RestartGroup();
+		currentExplosionParticleIndex++;
+	}
+
 	public bool IsStunned => CurrentFightState == FightState.Stunned;
 	private readonly string StunTransition = "parameters/stun-transition/transition_request";
 	private readonly string StunPlaybackPath = "parameters/stun-state/playback";
@@ -584,7 +632,7 @@ public partial class AlfLayla : Node3D
 			FinishStun();
 	}
 
-	private void FinishStun()
+	public void FinishStun()
 	{
 		// TODO Add a camera cut to hide this teleportation
 		currentDistance = CloseDistance;
@@ -597,18 +645,56 @@ public partial class AlfLayla : Node3D
 
 	public void FinishMultiPunch()
 	{
-		// TODO Check for world ring explosions
-		FinishStun();
-		GD.Print("Checking for explosions.");
+		// Always do the explosion loop
+		Player.Visible = false;
+		Player.Deactivate();
+		StunPlayback.Start("explosion");
+		CurrentFightState = FightState.Exploding;
+	}
+
+	public bool IsExploding => CurrentFightState == FightState.Exploding;
+	public bool CheckRingExplosion()
+	{
+		if (currentHealth > 0)
+		{
+			int countAmount = Mathf.FloorToInt(MaxHealth / (explosionParticles.Length - 1));
+			if (lastExplosionHealth - currentHealth < countAmount) // No explosion
+			{
+				if (CurrentFightState == FightState.Exploding)
+				{
+					Player.Visible = true;
+					Player.Activate();
+					FinishStun();
+				}
+
+				return false;
+			}
+
+			lastExplosionHealth -= countAmount;
+		}
+		else
+		{
+			currentHealth = 0;
+		}
+
+		// Start explosion
+		StunPlayback.Start("explosion-damage");
+		CurrentFightState = FightState.Exploding;
+		return true;
 	}
 
 	// Play a super cool animation
 	public void StartFinalMultiPunch() => animationTree.Set(StunDamageFinalTrigger, (uint)AnimationNodeOneShot.OneShotRequest.Fire);
 
-
 	public void TakeDamage()
 	{
 		currentHealth--;
+
+		if (currentHealth < 15 && currentPatternIndex == 0)
+			currentPatternIndex = 1; // Phase 2
+		else if (currentHealth < 5 && currentPatternIndex == 1)
+			currentPatternIndex = 2; // Phase 3
+
 		animationTree.Set(StunDamageTrigger, (uint)AnimationNodeOneShot.OneShotRequest.Fire);
 	}
 }

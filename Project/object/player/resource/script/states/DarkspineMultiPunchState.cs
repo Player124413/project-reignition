@@ -58,6 +58,9 @@ public partial class DarkspineMultiPunchState : PlayerState
 		if (!Core.AlfLayla.IsStunned)
 			return idleState;
 
+		if (Core.AlfLayla.IsExploding)
+			return idleState;
+
 		if (isPerformingFinalPunch)
 			return null;
 
@@ -66,7 +69,8 @@ public partial class DarkspineMultiPunchState : PlayerState
 		{
 			if (Player.Animator.IsDarkspinePunchFinished)
 			{
-				Core.AlfLayla.FinishMultiPunch();
+				// No world ring explosions. Player goofed.
+				Core.AlfLayla.FinishStun();
 				return null;
 			}
 
