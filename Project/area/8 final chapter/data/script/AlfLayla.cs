@@ -18,6 +18,7 @@ public partial class AlfLayla : Node3D
 
 	[Export] private DialogTrigger[] dialogTriggers;
 	[Export] private CameraTrigger defaultCameraTrigger;
+	[Export] private CameraTrigger punchCameraTrigger;
 
 	[Export] private AlfSlash[] slashControllers;
 	[Export] private GravityOrb[] gravityOrbs;
@@ -646,6 +647,8 @@ public partial class AlfLayla : Node3D
 		CurrentFightState = FightState.Idle;
 	}
 
+	public void StartStunCamera() => punchCameraTrigger.Activate();
+
 	public void FinishMultiPunch()
 	{
 		// Always do the explosion loop
@@ -687,7 +690,17 @@ public partial class AlfLayla : Node3D
 	}
 
 	// Play a super cool animation
-	public void StartFinalMultiPunch() => animationTree.Set(StunDamageFinalTrigger, (uint)AnimationNodeOneShot.OneShotRequest.Fire);
+	public void StartFinalMultiPunch()
+	{
+		TransitionManager.StartTransition(new()
+		{
+			color = Colors.Black,
+			inSpeed = 0f,
+			outSpeed = 0.5f,
+		});
+		TransitionManager.FinishTransition();
+		animationTree.Set(StunDamageFinalTrigger, (uint)AnimationNodeOneShot.OneShotRequest.Fire);
+	}
 
 	public void TakeDamage()
 	{

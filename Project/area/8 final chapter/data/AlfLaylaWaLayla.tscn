@@ -1,4 +1,4 @@
-[gd_scene load_steps=157 format=3 uid="uid://7p1mkbn0s276"]
+[gd_scene load_steps=158 format=3 uid="uid://7p1mkbn0s276"]
 
 [ext_resource type="PackedScene" uid="uid://bl4mwbfg117lh" path="res://area/8 final chapter/data/model/AlfLaylaWaLayla.gltf" id="1_8mof4"]
 [ext_resource type="Script" uid="uid://bpp2tmfxy4euf" path="res://area/8 final chapter/data/script/AlfLayla.cs" id="1_k6i6c"]
@@ -30,6 +30,7 @@
 [ext_resource type="Material" uid="uid://d25c4cgicacvj" path="res://effect/particle/material/environment/Common Dust Add No Billboard.tres" id="16_gkjwp"]
 [ext_resource type="Animation" uid="uid://df3bp3fekgwiw" path="res://area/8 final chapter/data/model/animation/spirit-bomb.res" id="16_oj3ar"]
 [ext_resource type="PackedScene" uid="uid://vv8ysqa68nc1" path="res://area/8 final chapter/data/GravityOrb.tscn" id="17_ioa7f"]
+[ext_resource type="Resource" uid="uid://bku7n4ufln8ro" path="res://resource/preset/camera/common/StaticCam.tres" id="17_nuqfl"]
 [ext_resource type="Animation" uid="uid://byegp6goi13g2" path="res://area/8 final chapter/data/model/animation/stun-damage.res" id="17_wa5i8"]
 [ext_resource type="Animation" uid="uid://cad5fihq8a1cf" path="res://area/8 final chapter/data/model/animation/stun-start.res" id="18_b1w0k"]
 [ext_resource type="Animation" uid="uid://ljmtshwmn22t" path="res://area/8 final chapter/data/model/animation/stun-stop.res" id="19_twpcs"]
@@ -951,15 +952,16 @@ nodes/stun-damage-final-trigger/node = SubResource("AnimationNodeOneShot_jc0er")
 nodes/stun-damage-final-trigger/position = Vector2(-840, -40)
 node_connections = [&"output", 0, &"spirit-bomb-trigger", &"slash-trigger", 0, &"three-orb-trigger", &"slash-trigger", 1, &"slash-speed", &"six-orb-trigger", 0, &"stun-damage-final-trigger", &"six-orb-trigger", 1, &"six-orb-speed", &"slash-speed", 0, &"slash-type-transition", &"six-orb-speed", 0, &"six-orb-anim", &"slash-type-transition", 0, &"slash-l-anim", &"slash-type-transition", 1, &"slash-x-anim", &"slash-type-transition", 2, &"slash-r-anim", &"spirit-bomb-trigger", 0, &"slash-trigger", &"spirit-bomb-trigger", 1, &"spirit-bomb-anim", &"three-orb-trigger", 0, &"six-orb-trigger", &"three-orb-trigger", 1, &"three-orb-anim", &"stun-transition", 0, &"stun-state", &"stun-transition", 1, &"move-state", &"stun-damage-trigger", 0, &"stun-transition", &"stun-damage-trigger", 1, &"stun-damage-anim", &"stun-damage-final-trigger", 0, &"stun-damage-trigger", &"stun-damage-final-trigger", 1, &"stun-damage-final-anim"]
 
-[node name="AlfLaylaWaLayla" type="Node3D" node_paths=PackedStringArray("animationTree", "cutsceneCamera", "autorunLockout", "strikeParent", "spiritBomb", "dialogTriggers", "defaultCameraTrigger", "slashControllers", "gravityOrbs", "purpleOrbs", "purpleOrbSpawnPoints", "smokeParticles", "explosionParticles")]
+[node name="AlfLaylaWaLayla" type="Node3D" node_paths=PackedStringArray("animationTree", "cutsceneCamera", "autorunLockout", "strikeParent", "spiritBomb", "dialogTriggers", "defaultCameraTrigger", "punchCameraTrigger", "slashControllers", "gravityOrbs", "purpleOrbs", "purpleOrbSpawnPoints", "smokeParticles", "explosionParticles")]
 script = ExtResource("1_k6i6c")
 animationTree = NodePath("AnimationTree")
-cutsceneCamera = NodePath("Triggers/CutsceneCamera")
+cutsceneCamera = NodePath("Triggers/CutscenePositionRoot/CutsceneCamera")
 autorunLockout = NodePath("Triggers/Autorun")
 strikeParent = NodePath("Strikes")
 spiritBomb = NodePath("AlfLaylaWaLayla/SpiritBombPosition/SpiritBomb")
 dialogTriggers = []
 defaultCameraTrigger = NodePath("Triggers/DefaultCamera")
+punchCameraTrigger = NodePath("Triggers/PunchCamera")
 slashControllers = [NodePath("Strikes/StrikeDoubleRight1"), NodePath("Strikes/StrikeDoubleLeft1"), NodePath("Strikes/StrikeTripleRight1"), NodePath("Strikes/StrikeTripleLeft1"), NodePath("Strikes/StrikeXL"), NodePath("Strikes/Strike#L1"), NodePath("Strikes/StrikeVerticalL"), NodePath("Strikes/StrikeHorizontal")]
 gravityOrbs = [NodePath("GravityOrbs/GravityOrb1"), NodePath("GravityOrbs/GravityOrb2"), NodePath("GravityOrbs/GravityOrb3"), NodePath("GravityOrbs/GravityOrb4"), NodePath("GravityOrbs/GravityOrb5"), NodePath("GravityOrbs/GravityOrb6")]
 purpleOrbs = [NodePath("PurpleOrbs/PurpleOrb1"), NodePath("PurpleOrbs/PurpleOrb2"), NodePath("PurpleOrbs/PurpleOrb3"), NodePath("PurpleOrbs/PurpleOrb4"), NodePath("PurpleOrbs/PurpleOrb5"), NodePath("PurpleOrbs/PurpleOrb6")]
@@ -1081,7 +1083,7 @@ transitionTime = 6.0
 settings = ExtResource("10_03ukt")
 
 [node name="DamageCamera" type="Node3D" parent="AlfLaylaWaLayla/SpiritBombPosition/SpiritBomb"]
-transform = Transform3D(0.9063077, -0.14454395, 0.3971312, 0, 0.9396926, 0.34202006, -0.42261824, -0.3099755, 0.85165054, 2, 2, 12)
+transform = Transform3D(0.9063077, -0.14454395, 0.39713117, 0, 0.9396926, 0.34202003, -0.42261824, -0.3099755, 0.85165054, 2, 2, 12)
 script = ExtResource("3_pt266")
 transitionTime = 0.0
 settings = ExtResource("4_g0203")
@@ -1095,7 +1097,7 @@ libraries = {
 }
 
 [node name="Core" type="Node3D" parent="AlfLaylaWaLayla"]
-transform = Transform3D(0.9998282, 6.7140313e-06, -1.4303185e-06, -6.713162e-06, 0.99984896, 0.0005096405, 1.4336874e-06, -0.0005096322, 0.9998651, 4.1639396e-08, 7.9300003, 0.9212787)
+transform = Transform3D(0.99983084, 6.714102e-06, -1.4303163e-06, -6.713179e-06, 0.99985945, 0.0005096397, 1.4336912e-06, -0.0005096376, 0.9998635, 4.1639396e-08, 7.9300003, 0.9212787)
 script = ExtResource("30_86d2j")
 skeleton = NodePath("../LaylaRoot/Skeleton3D")
 boneName = &"core"
@@ -1128,10 +1130,24 @@ script = ExtResource("3_pt266")
 transitionTime = 0.0
 settings = ExtResource("14_wc6bw")
 
-[node name="CutsceneCamera" type="Node3D" parent="Triggers"]
+[node name="CutscenePositionRoot" type="Node3D" parent="Triggers"]
+transform = Transform3D(-0.3420201, 0, -0.93969256, 0, 1, 0, 0.93969256, 0, -0.3420201, 0, 5, 1)
+
+[node name="CutsceneCamera" type="Node3D" parent="Triggers/CutscenePositionRoot"]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, -0.5, 5, -1)
 script = ExtResource("3_pt266")
 transitionTime = 0.0
 settings = ExtResource("4_g0203")
+UpdateEveryFrame = true
+followObject = NodePath(".")
+
+[node name="PunchCamera" type="Node3D" parent="Triggers"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 6, 0)
+script = ExtResource("3_pt266")
+transitionTime = 0.0
+settings = ExtResource("17_nuqfl")
+UpdateEveryFrame = true
+followObject = NodePath(".")
 
 [node name="VFX" type="Node3D" parent="."]
 
