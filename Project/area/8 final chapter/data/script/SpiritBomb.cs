@@ -1,5 +1,6 @@
 using Godot;
 using Project.Core;
+using Project.Gameplay.Triggers;
 
 namespace Project.Gameplay.Bosses;
 
@@ -14,11 +15,17 @@ public partial class SpiritBomb : Area3D
 	public bool IsTravelling { get; private set; }
 	[Export] private float moveSpeed;
 	[Export] private float returnSpeed;
-	[Export] public Node3D PushPosition { get; set; }
+	[Export] public Node3D PushPosition { get; private set; }
+	[Export] public Node3D MeshRoot { get; private set; }
+	[Export] public CameraTrigger PushCamera { get; private set; }
+	[Export] public CameraTrigger KickCamera { get; private set; }
+	[Export] public CameraTrigger DamageCamera { get; private set; }
 	[Export] private AnimationPlayer animator;
+	[Export] public AlfLayla AlfLayla { get; private set; }
 
 	public override void _PhysicsProcess(double _delta)
 	{
+		MeshRoot.GlobalRotation = Player.Camera.Camera.GlobalRotation;
 		if (isInteractingWithPlayer)
 			return;
 
@@ -78,9 +85,11 @@ public partial class SpiritBomb : Area3D
 				ignoreInvincibility = true,
 				disableInvincibility = true,
 				overrideKnockbackSpeed = true,
+				ignoreMovementState = true,
 				knockbackSpeed = 20f,
 			});
 
+			DamageCamera.Activate();
 			EmitSignal(SignalName.PlayerExploded);
 			return;
 		}
