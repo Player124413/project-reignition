@@ -61,7 +61,7 @@ public partial class DarkspineSpiritBombState : PlayerState
 		{
 			if (Player.Animator.IsDarkspineKickFinished)
 			{
-				SpiritBomb.AlfLayla.ReceiveSpiritBombKick();
+				SpiritBomb.AlfLayla.FinishSpiritBombKick();
 				return idleState;
 			}
 
@@ -100,6 +100,7 @@ public partial class DarkspineSpiritBombState : PlayerState
 	{
 		isKickingSpiritBomb = true;
 		SpiritBomb.KickCamera.Activate();
+		SpiritBomb.AlfLayla.StartSpiritBombKick();
 		Player.Skills.ModifySoulGauge(-Player.Skills.MaxSoulPower);
 		Player.Animator.KickSpiritBomb();
 		Player.Animator.SpiritBombKicked += OnSpiritBombKicked;

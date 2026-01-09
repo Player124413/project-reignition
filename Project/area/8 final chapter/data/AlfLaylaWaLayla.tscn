@@ -889,7 +889,7 @@ states/stun-start/position = Vector2(322, 100)
 states/stun-stop/node = SubResource("AnimationNodeAnimation_b1w0k")
 states/stun-stop/position = Vector2(322, 243)
 transitions = ["stun-stop", "End", SubResource("AnimationNodeStateMachineTransition_l4bcq"), "Start", "stun-start", SubResource("AnimationNodeStateMachineTransition_7f36k"), "stun-start", "stun", SubResource("AnimationNodeStateMachineTransition_86d2j"), "stun", "stun-stop", SubResource("AnimationNodeStateMachineTransition_4ltgr"), "explosion-damage", "explosion", SubResource("AnimationNodeStateMachineTransition_03ukt"), "explosion", "stun-stop", SubResource("AnimationNodeStateMachineTransition_wc6bw"), "explosion", "explosion-damage", SubResource("AnimationNodeStateMachineTransition_nuqfl")]
-graph_offset = Vector2(-320, 17)
+graph_offset = Vector2(-196, 102)
 
 [sub_resource type="AnimationNodeTransition" id="AnimationNodeTransition_oj3ar"]
 input_0/name = "enabled"
@@ -909,6 +909,7 @@ fadein_time = 0.1
 fadeout_time = 0.2
 
 [sub_resource type="AnimationNodeBlendTree" id="AnimationNodeBlendTree_lg36t"]
+graph_offset = Vector2(-1427.3804, -35.283813)
 nodes/output/position = Vector2(840, 120)
 nodes/move-state/node = SubResource("AnimationNodeStateMachine_w08gm")
 nodes/move-state/position = Vector2(-1720, 180)
@@ -952,7 +953,7 @@ nodes/stun-damage-final-trigger/node = SubResource("AnimationNodeOneShot_jc0er")
 nodes/stun-damage-final-trigger/position = Vector2(-840, -40)
 node_connections = [&"output", 0, &"spirit-bomb-trigger", &"slash-trigger", 0, &"three-orb-trigger", &"slash-trigger", 1, &"slash-speed", &"six-orb-trigger", 0, &"stun-damage-final-trigger", &"six-orb-trigger", 1, &"six-orb-speed", &"slash-speed", 0, &"slash-type-transition", &"six-orb-speed", 0, &"six-orb-anim", &"slash-type-transition", 0, &"slash-l-anim", &"slash-type-transition", 1, &"slash-x-anim", &"slash-type-transition", 2, &"slash-r-anim", &"spirit-bomb-trigger", 0, &"slash-trigger", &"spirit-bomb-trigger", 1, &"spirit-bomb-anim", &"three-orb-trigger", 0, &"six-orb-trigger", &"three-orb-trigger", 1, &"three-orb-anim", &"stun-transition", 0, &"stun-state", &"stun-transition", 1, &"move-state", &"stun-damage-trigger", 0, &"stun-transition", &"stun-damage-trigger", 1, &"stun-damage-anim", &"stun-damage-final-trigger", 0, &"stun-damage-trigger", &"stun-damage-final-trigger", 1, &"stun-damage-final-anim"]
 
-[node name="AlfLaylaWaLayla" type="Node3D" node_paths=PackedStringArray("animationTree", "cutsceneCamera", "autorunLockout", "strikeParent", "spiritBomb", "dialogTriggers", "defaultCameraTrigger", "punchCameraTrigger", "slashControllers", "gravityOrbs", "purpleOrbs", "purpleOrbSpawnPoints", "smokeParticles", "explosionParticles")]
+[node name="AlfLaylaWaLayla" type="Node3D" node_paths=PackedStringArray("animationTree", "cutsceneCamera", "autorunLockout", "strikeParent", "spiritBomb", "dialogTriggers", "defaultCameraTrigger", "punchCameraTrigger", "slashControllers", "gravityOrbs", "purpleOrbs", "purpleOrbSpawnPoints", "smokeParticles", "explosionParticles", "explosionCameras")]
 script = ExtResource("1_k6i6c")
 animationTree = NodePath("AnimationTree")
 cutsceneCamera = NodePath("Triggers/CutscenePositionRoot/CutsceneCamera")
@@ -968,6 +969,7 @@ purpleOrbs = [NodePath("PurpleOrbs/PurpleOrb1"), NodePath("PurpleOrbs/PurpleOrb2
 purpleOrbSpawnPoints = [NodePath("VFX/HandR1"), NodePath("VFX/HandL1"), NodePath("VFX/HandR2"), NodePath("VFX/HandL2"), NodePath("VFX/HandR3"), NodePath("VFX/HandL3")]
 smokeParticles = [NodePath("VFX/SmokeBack/IdleSmoke"), NodePath("VFX/SmokeChestL/IdleSmoke"), NodePath("VFX/SmokeChestR/IdleSmoke"), NodePath("VFX/SmokeKneeL/IdleSmoke"), NodePath("VFX/SmokeKneeR/IdleSmoke"), NodePath("VFX/SmokeWaist/IdleSmoke"), NodePath("VFX/SmokeHead/IdleSmoke")]
 explosionParticles = [NodePath("VFX/SmokeBack/ExplosionBack"), NodePath("VFX/SmokeChestL/ExplosionChestL"), NodePath("VFX/SmokeChestR/ExplosionChestR"), NodePath("VFX/SmokeKneeL/ExplosionKneeL"), NodePath("VFX/SmokeKneeR/ExplosionKneeR"), NodePath("VFX/SmokeWaist/ExplosionWaist"), NodePath("VFX/SmokeHead/ExplosionHead")]
+explosionCameras = [NodePath("Triggers/BackCamera"), NodePath("Triggers/ChestLCamera"), NodePath("Triggers/ChestRCamera"), NodePath("Triggers/KneeLCamera"), NodePath("Triggers/KneeRCamera"), NodePath("Triggers/WaistCamera"), NodePath("Triggers/HeadCamera")]
 attackPatterns = PackedStringArray("F6C\\/><F6CXB", "M3XF6CX#B", "M33C|_XF6C#\\/><|_F6B")
 advanceMovementCurve = SubResource("Curve_pt266")
 retreatMovementCurve = SubResource("Curve_g0203")
@@ -984,8 +986,8 @@ collision_mask = 10
 monitoring = false
 monitorable = false
 script = ExtResource("3_7f36k")
-moveSpeed = 30.0
-returnSpeed = 30.0
+moveSpeed = 40.0
+returnSpeed = 40.0
 PushPosition = NodePath("PushPosition")
 MeshRoot = NodePath("VisualRoot/SpiritBomb")
 PushCamera = NodePath("PushCamera")
@@ -1097,7 +1099,7 @@ libraries = {
 }
 
 [node name="Core" type="Node3D" parent="AlfLaylaWaLayla"]
-transform = Transform3D(0.99983084, 6.714102e-06, -1.4303163e-06, -6.713179e-06, 0.99985945, 0.0005096397, 1.4336912e-06, -0.0005096376, 0.9998635, 4.1639396e-08, 7.9300003, 0.9212787)
+transform = Transform3D(0.99913317, -0.023882087, 0.028448645, -0.01588519, 0.41747046, 0.9084099, -0.033573937, -0.90823394, 0.41680327, 0.01694306, 5.2633486, -7.161788)
 script = ExtResource("30_86d2j")
 skeleton = NodePath("../LaylaRoot/Skeleton3D")
 boneName = &"core"
@@ -1142,11 +1144,60 @@ UpdateEveryFrame = true
 followObject = NodePath(".")
 
 [node name="PunchCamera" type="Node3D" parent="Triggers"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 6, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.5, 6, -0.5)
 script = ExtResource("3_pt266")
 transitionTime = 0.0
 settings = ExtResource("17_nuqfl")
 UpdateEveryFrame = true
+followObject = NodePath(".")
+
+[node name="BackCamera" type="Node3D" parent="Triggers"]
+transform = Transform3D(0.0019833148, 0.55683553, 0.8306202, -0.6033465, 0.6630692, -0.44307113, -0.7974766, -0.50027317, 0.33727986, 1.578, 2.601, 1.151)
+script = ExtResource("3_pt266")
+transitionTime = 0.0
+settings = ExtResource("4_g0203")
+followObject = NodePath(".")
+
+[node name="ChestLCamera" type="Node3D" parent="Triggers"]
+transform = Transform3D(-0.96592575, 0.06698732, -0.25000006, 0, 0.9659258, 0.258819, 0.2588191, 0.25, -0.9330126, -1, 7.5, -0.5)
+script = ExtResource("3_pt266")
+transitionTime = 0.0
+settings = ExtResource("4_g0203")
+followObject = NodePath(".")
+
+[node name="ChestRCamera" type="Node3D" parent="Triggers"]
+transform = Transform3D(-0.96592575, -0.06698731, 0.25000006, 0, 0.96592575, 0.258819, -0.2588191, 0.24999999, -0.9330126, 1, 7.5, -0.5)
+script = ExtResource("3_pt266")
+transitionTime = 0.0
+settings = ExtResource("4_g0203")
+followObject = NodePath(".")
+
+[node name="KneeLCamera" type="Node3D" parent="Triggers"]
+transform = Transform3D(-0.8660253, 0.28678823, -0.40957606, 0, 0.81915194, 0.5735764, 0.5, 0.4967317, -0.70940644, -1.5, 2.8, -4.5)
+script = ExtResource("3_pt266")
+transitionTime = 0.0
+settings = ExtResource("4_g0203")
+followObject = NodePath(".")
+
+[node name="KneeRCamera" type="Node3D" parent="Triggers"]
+transform = Transform3D(-0.8660253, -0.28678823, 0.40957606, 0, 0.81915194, 0.5735764, -0.5, 0.4967317, -0.70940644, 1.5, 2.8, -4.5)
+script = ExtResource("3_pt266")
+transitionTime = 0.0
+settings = ExtResource("4_g0203")
+followObject = NodePath(".")
+
+[node name="WaistCamera" type="Node3D" parent="Triggers"]
+transform = Transform3D(-0.76874363, -0.5749259, 0.28016654, -0.3461886, 0.7424038, 0.5735764, -0.5377607, 0.3439428, -0.7697511, 0.5, 4.5, -2)
+script = ExtResource("3_pt266")
+transitionTime = 0.0
+settings = ExtResource("4_g0203")
+followObject = NodePath(".")
+
+[node name="HeadCamera" type="Node3D" parent="Triggers"]
+transform = Transform3D(-0.9694665, -0.21834774, 0.11161897, -0.05602262, 0.6403416, 0.7660444, -0.23873834, 0.73640126, -0.6330222, 0.5, 8.5, 0.5)
+script = ExtResource("3_pt266")
+transitionTime = 0.0
+settings = ExtResource("4_g0203")
 followObject = NodePath(".")
 
 [node name="VFX" type="Node3D" parent="."]
