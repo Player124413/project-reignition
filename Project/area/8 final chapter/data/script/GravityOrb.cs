@@ -22,17 +22,14 @@ public partial class GravityOrb : Node3D
 		if (!isInteractingWithPlayer)
 			return;
 
-		if (!Player.IsOnGround)
-			return;
-
 		if (Player.Skills.IsUsingBreakSkills)
 			return;
 
 		Player.MoveSpeed *= 0.95f;
-		int pullDirection = Mathf.Sign(GlobalPosition.X - Player.GlobalPosition.X);
-		float pullAmount = Mathf.Abs(GlobalPosition.X - Player.GlobalPosition.X);
+		Vector3 pullDirection = GlobalPosition - Player.GlobalPosition;
+		float pullAmount = pullDirection.Length();
 		pullAmount = gravityCurve.Sample(pullAmount) * gravityPull;
-		Player.GlobalPosition += Vector3.Right * pullDirection * pullAmount * PhysicsManager.physicsDelta;
+		Player.GlobalPosition += pullDirection * pullAmount * PhysicsManager.physicsDelta;
 	}
 
 	public void OnEntered(Area3D a)

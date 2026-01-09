@@ -26,6 +26,7 @@ public partial class AlfLayla : Node3D
 	[Export] private BoneAttachment3D[] purpleOrbSpawnPoints;
 	[Export] private GpuParticles3D[] smokeParticles;
 	[Export] private GroupGpuParticles3D[] explosionParticles;
+	[Export] private CameraTrigger[] explosionCameras;
 
 	private int currentDialogIndex;
 
@@ -191,7 +192,11 @@ public partial class AlfLayla : Node3D
 			orb.Respawn();
 
 		foreach (GpuParticles3D particle in smokeParticles)
+		{
+			particle.Visible = true;
 			particle.SetEmitting(true);
+		}
+
 
 		// Reset Animations
 		animationTree.Set(SixOrbTrigger, (int)AnimationNodeOneShot.OneShotRequest.Abort);
@@ -605,6 +610,7 @@ public partial class AlfLayla : Node3D
 		}
 
 		smokeParticles[currentExplosionParticleIndex].SetEmitting(false);
+		smokeParticles[currentExplosionParticleIndex].Visible = true;
 		explosionParticles[currentExplosionParticleIndex].RestartGroup();
 		currentExplosionParticleIndex++;
 	}
@@ -645,6 +651,7 @@ public partial class AlfLayla : Node3D
 		actionTimer = 1f;
 		StunPlayback.Travel("stun-stop");
 		CurrentFightState = FightState.Idle;
+		HeadsUpDisplay.Instance.SetVisibility(true);
 	}
 
 	public void StartStunCamera() => punchCameraTrigger.Activate();
@@ -655,6 +662,7 @@ public partial class AlfLayla : Node3D
 		Player.Visible = false;
 		Player.Deactivate();
 		StunPlayback.Start("explosion");
+		animationTree.Set(StunDamageFinalTrigger, (uint)AnimationNodeOneShot.OneShotRequest.Abort);
 		CurrentFightState = FightState.Exploding;
 	}
 
@@ -678,14 +686,11 @@ public partial class AlfLayla : Node3D
 
 			lastExplosionHealth -= countAmount;
 		}
-		else
-		{
-			currentHealth = 0;
-		}
 
 		// Start explosion
+		if (currentExplosionParticleIndex < explosionCameras.Length)
+			explosionCameras[currentExplosionParticleIndex].Activate();
 		StunPlayback.Start("explosion-damage");
-		CurrentFightState = FightState.Exploding;
 		return true;
 	}
 
@@ -699,6 +704,7 @@ public partial class AlfLayla : Node3D
 			outSpeed = 0.5f,
 		});
 		TransitionManager.FinishTransition();
+		HeadsUpDisplay.Instance.SetVisibility(false);
 		animationTree.Set(StunDamageFinalTrigger, (uint)AnimationNodeOneShot.OneShotRequest.Fire);
 	}
 
@@ -714,11 +720,15 @@ public partial class AlfLayla : Node3D
 		animationTree.Set(StunDamageTrigger, (uint)AnimationNodeOneShot.OneShotRequest.Fire);
 	}
 
-	/// <summary> Reset the spirit bomb positions so we can see it hitting Alf. </summary>
-	public void ReceiveSpiritBombKick()
+	public void StartSpiritBombKick()
 	{
 		currentDistance = BombDistance;
 		SnapPosition();
+	}
+
+	/// <summary> Reset the spirit bomb positions so we can see it hitting Alf. </summary>
+	public void FinishSpiritBombKick()
+	{
 		ResetCamera();
 		spiritBomb.GlobalPosition = Player.GlobalPosition.Lerp(GlobalPosition, 0.5f);
 	}
