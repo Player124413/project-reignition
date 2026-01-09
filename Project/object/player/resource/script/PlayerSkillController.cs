@@ -288,16 +288,17 @@ public partial class PlayerSkillController : Node3D
 	private float breakDrainTimer;
 	private const float TimeBreakSoulDrainInterval = 3f / 60f; // Drain 1 point every x frames
 	private const float SpeedBreakSoulDrainInterval = 1.8f / 60f; // Drain 1 point every x frames
+	private const float SpiritBombSpeedBreakSoulDrainInterval = 2f / 60f; // Drain 1 point every x frames
 	private void UpdateTimeBreak()
 	{
 		if (IsTimeBreakActive)
 		{
-			if (Mathf.IsZeroApprox(breakDrainTimer))
+			if (breakDrainTimer <= 0)
 			{
 				ModifySoulGauge(-1);
-				breakDrainTimer = TimeBreakSoulDrainInterval;
+				breakDrainTimer += TimeBreakSoulDrainInterval;
 			}
-			breakDrainTimer = Mathf.MoveToward(breakDrainTimer, 0, PhysicsManager.physicsDelta);
+			breakDrainTimer -= PhysicsManager.physicsDelta;
 
 			bool disablingTimeBreak = (SaveManager.Config.useHoldBreakMode && !Input.IsActionPressed("button_timebreak")) ||
 				(!SaveManager.Config.useHoldBreakMode && Input.IsActionJustPressed("button_timebreak"));
@@ -348,13 +349,21 @@ public partial class PlayerSkillController : Node3D
 					Player.CollisionMask = Runtime.Instance.environmentMask; // Don't collide with any objects
 				}
 
-				if (Mathf.IsZeroApprox(breakDrainTimer))
+				if (breakDrainTimer <= 0)
 				{
-					ModifySoulGauge(-1);
-					breakDrainTimer = SpeedBreakSoulDrainInterval;
+					if (Player.IsSpiritBombActive) // Decrease slightly faster when pushing spirit bomb
+					{
+						ModifySoulGauge(-2);
+						breakDrainTimer += SpiritBombSpeedBreakSoulDrainInterval;
+					}
+					else
+					{
+						ModifySoulGauge(-1);
+						breakDrainTimer += SpeedBreakSoulDrainInterval;
+					}
 				}
-				breakDrainTimer = Mathf.MoveToward(breakDrainTimer, 0, PhysicsManager.physicsDelta);
 
+				breakDrainTimer -= PhysicsManager.physicsDelta;
 				bool disablingSpeedBreak = (SaveManager.Config.useHoldBreakMode && !Input.IsActionPressed("button_speedbreak")) ||
 					(!SaveManager.Config.useHoldBreakMode && Input.IsActionJustPressed("button_speedbreak"));
 				if (IsSoulGaugeEmpty || (disablingSpeedBreak && !Player.IsAirBoosting && !Player.IsSpiritBombActive)) // Check whether we should cancel speed break

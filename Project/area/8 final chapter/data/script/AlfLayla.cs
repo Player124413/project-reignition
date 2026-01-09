@@ -17,6 +17,7 @@ public partial class AlfLayla : Node3D
 	[Export] private SpiritBomb spiritBomb;
 
 	[Export] private DialogTrigger[] dialogTriggers;
+	[Export] private CameraTrigger defaultCameraTrigger;
 
 	[Export] private AlfSlash[] slashControllers;
 	[Export] private GravityOrb[] gravityOrbs;
@@ -74,8 +75,8 @@ public partial class AlfLayla : Node3D
 	/// <summary> The ending distance of a movement. </summary>
 	private float targetDistance;
 	private readonly float BombDistance = 80.0f;
-	private readonly float FarDistance = 50.0f;
-	private readonly float NormalDistance = 30.0f;
+	private readonly float FarDistance = 40.0f;
+	private readonly float NormalDistance = 20.0f;
 	private readonly float CloseDistance = 10.0f;
 
 	////////////////////////////////
@@ -203,7 +204,7 @@ public partial class AlfLayla : Node3D
 	private void StartIntroduction()
 	{
 		StageSettings.Player.KnockbackFinished += OnPlayerKnockbackFinished; // Finish the spirit bomb attack after the player gets up
-		spiritBomb.AlfExploded += StartHitstun;
+		spiritBomb.AlfExploded += StartStun;
 
 		GlobalTransform = Player.GlobalTransform;
 		ResetPhysicsInterpolation();
@@ -525,6 +526,8 @@ public partial class AlfLayla : Node3D
 			return;
 
 		FinishAttack();
+
+		ResetCamera();
 	}
 
 	private void FinishAttack()
@@ -612,7 +615,7 @@ public partial class AlfLayla : Node3D
 	private readonly string StunDamageFinalTrigger = "parameters/stun-damage-final-trigger/request";
 	private AnimationNodeStateMachinePlayback StunPlayback => (AnimationNodeStateMachinePlayback)animationTree.Get(StunPlaybackPath);
 	/// <summary> Called when the spirit bomb explodes on Alf. </summary>
-	private void StartHitstun()
+	private void StartStun()
 	{
 		CurrentFightState = FightState.Stunned;
 		StunPlayback.Start("stun-start");
@@ -634,9 +637,9 @@ public partial class AlfLayla : Node3D
 
 	public void FinishStun()
 	{
-		// TODO Add a camera cut to hide this teleportation
 		currentDistance = CloseDistance;
 		SnapPosition();
+		ResetCamera();
 
 		actionTimer = 1f;
 		StunPlayback.Travel("stun-stop");
@@ -696,5 +699,30 @@ public partial class AlfLayla : Node3D
 			currentPatternIndex = 2; // Phase 3
 
 		animationTree.Set(StunDamageTrigger, (uint)AnimationNodeOneShot.OneShotRequest.Fire);
+	}
+
+	/// <summary> Reset the spirit bomb positions so we can see it hitting Alf. </summary>
+	public void ReceiveSpiritBombKick()
+	{
+		currentDistance = BombDistance;
+		SnapPosition();
+		ResetCamera();
+		spiritBomb.GlobalPosition = Player.GlobalPosition.Lerp(GlobalPosition, 0.5f);
+	}
+
+	/// <summary> Reset camera to the hallway camera. </summary>
+	public void ResetCamera()
+	{
+		if (TransitionManager.IsTransitionActive)
+			return;
+
+		TransitionManager.StartTransition(new()
+		{
+			color = Colors.Black,
+			inSpeed = 0f,
+			outSpeed = 0.5f,
+		});
+		TransitionManager.FinishTransition();
+		defaultCameraTrigger.Activate();
 	}
 }

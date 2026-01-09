@@ -1285,7 +1285,7 @@ public partial class PlayerController : CharacterBody3D
 			if (ExternalParent is BoneAttachment3D) // Ensure BoneAttachments are updated
 				(ExternalParent as BoneAttachment3D).OnBonePoseUpdate((ExternalParent as BoneAttachment3D).BoneIdx);
 
-			GlobalTransform = ExternalParent.GlobalTransform;
+			GlobalTransform = ExternalParent.GlobalTransform.Orthonormalized();
 		}
 
 		ExternalOffset = ExternalOffset.Lerp(Vector3.Zero, externalSmoothing); // Smooth out entry
