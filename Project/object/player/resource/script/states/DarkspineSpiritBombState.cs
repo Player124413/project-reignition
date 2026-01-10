@@ -103,6 +103,7 @@ public partial class DarkspineSpiritBombState : PlayerState
 		SpiritBomb.KickCamera.Activate();
 		SpiritBomb.AlfLayla.StartSpiritBombKick();
 		Player.Skills.ModifySoulGauge(-Player.Skills.MaxSoulPower);
+		Player.Effect.PlayVoice("ds push");
 		Player.Animator.KickSpiritBomb();
 		Player.Animator.SpiritBombKicked += OnSpiritBombKicked;
 	}
