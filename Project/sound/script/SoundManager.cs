@@ -135,7 +135,7 @@ public partial class SoundManager : Node
 			return;
 		}
 
-		if (SaveManager.Config.isSubtitleDisabled)
+		if (SaveManager.Config.isSubtitleDisabled && !currentDialog.disableSubtitles)
 			return;
 
 		if (currentDialog.IsCutscene)
@@ -152,7 +152,7 @@ public partial class SoundManager : Node
 	private void DisableDialog()
 	{
 		IsSubtitlesActive = false;
-		if (!SaveManager.Config.isSubtitleDisabled)
+		if (!SaveManager.Config.isSubtitleDisabled && !currentDialog.disableSubtitles)
 			subtitleAnimator.Play("deactivate");
 
 		UpdateSonicDialog();
@@ -198,7 +198,7 @@ public partial class SoundManager : Node
 			return;
 		}
 
-		if (!SaveManager.Config.isSubtitleDisabled)
+		if (!SaveManager.Config.isSubtitleDisabled && !currentDialog.disableSubtitles)
 			subtitleAnimator.Play(currentDialogIndex == 0 ? "activate" : "activate-text");
 
 		string key = currentDialog.textKeys[currentDialogIndex];

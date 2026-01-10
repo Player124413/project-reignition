@@ -41,6 +41,7 @@ public partial class DarkspineSpiritBombState : PlayerState
 		Player.Skills.ModifySoulGauge(BurstChargeAmount);
 
 		SpiritBomb.PushCamera.Activate();
+		SpiritBomb.AlfLayla.HideObjects();
 	}
 
 	public override void ExitState()

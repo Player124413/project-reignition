@@ -35,6 +35,7 @@ public partial class DarkspineMultiPunchState : PlayerState
 		Player.Lockon.IsMonitoring = false;
 		Player.Animator.StartMultiPunch();
 		Core.AlfLayla.StartStunCamera();
+		Core.AlfLayla.HideObjects();
 
 		if (Player.Skills.IsSpeedBreakActive)
 		{

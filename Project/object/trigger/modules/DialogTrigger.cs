@@ -11,6 +11,7 @@ public partial class DialogTrigger : StageTriggerModule
 {
 	[Export] public bool isOneShot = true;
 	[Export] public bool allowRespawn;
+	[Export] public bool disableSubtitles;
 
 
 	[Export] private PlaybackMode playbackType;
