@@ -27,6 +27,7 @@ public partial class AlfLayla : Node3D
 	[Export] private GpuParticles3D[] smokeParticles;
 	[Export] private GroupGpuParticles3D[] explosionParticles;
 	[Export] private CameraTrigger[] explosionCameras;
+	[Export] private Node3D itemParent;
 
 	private int currentDialogIndex;
 
@@ -532,7 +533,9 @@ public partial class AlfLayla : Node3D
 			return;
 
 		FinishAttack();
-
+		ResetPositions();
+		currentDistance = CloseDistance;
+		SnapPosition();
 		ResetCamera();
 	}
 
@@ -644,6 +647,7 @@ public partial class AlfLayla : Node3D
 
 	public void FinishStun()
 	{
+		ResetPositions();
 		currentDistance = CloseDistance;
 		SnapPosition();
 		ResetCamera();
@@ -731,6 +735,14 @@ public partial class AlfLayla : Node3D
 	{
 		ResetCamera();
 		spiritBomb.GlobalPosition = Player.GlobalPosition.Lerp(GlobalPosition, 0.5f);
+	}
+
+	private void ResetPositions()
+	{
+		// Reset positions to prevent going out of bounds
+		float offsetPosition = Player.GlobalPosition.Z;
+		Player.GlobalPosition += Vector3.Forward * offsetPosition;
+		itemParent.GlobalPosition += Vector3.Forward * offsetPosition;
 	}
 
 	/// <summary> Reset camera to the hallway camera. </summary>
