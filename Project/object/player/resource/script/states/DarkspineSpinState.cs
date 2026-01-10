@@ -77,6 +77,14 @@ public partial class DarkspineSpinState : PlayerState
 			Player.MoveSpeed = Mathf.MoveToward(Player.MoveSpeed, 0, SpeedLoss * PhysicsManager.physicsDelta);
 	}
 
+	protected override void ProcessTurning()
+	{
+		if (Mathf.IsZeroApprox(Player.MoveSpeed))
+			return;
+
+		base.ProcessTurning();
+	}
+
 	private bool CheckExit()
 	{
 		if (Input.IsActionPressed("button_attack"))

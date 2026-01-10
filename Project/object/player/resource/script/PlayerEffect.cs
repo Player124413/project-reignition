@@ -22,7 +22,10 @@ public partial class PlayerEffect : Node3D
 		voiceChannel.Finished += DisableSonicVoiceSfx;
 
 		if (Player.IsDarkspineSonic) // Start darkspine FX
+		{
+			darkspineAuraSfx.Play();
 			darkspineGroup.RestartGroup();
+		}
 	}
 
 	public override void _PhysicsProcess(double _)
@@ -283,15 +286,24 @@ public partial class PlayerEffect : Node3D
 
 	[Export] private GroupGpuParticles3D darkspineGroup;
 	[Export] private GroupGpuParticles3D darkspineSpinFX;
+	[Export] private AudioStreamPlayer darkspineAuraSfx;
+	[Export] private AudioStreamPlayer darkspineChargeSfx;
 	public void StartDarkspineSpinFX()
 	{
 		darkspineSpinFX.SetEmitting(true);
 		darkspineGroup.SetEmitting(false);
+
+		darkspineAuraSfx.Stop();
+		darkspineChargeSfx.Play();
 	}
+
 	public void StopDarkspineSpinFX()
 	{
 		darkspineSpinFX.SetEmitting(false);
 		darkspineGroup.SetEmitting(true);
+
+		darkspineAuraSfx.Play();
+		darkspineChargeSfx.Stop();
 	}
 
 	#endregion
