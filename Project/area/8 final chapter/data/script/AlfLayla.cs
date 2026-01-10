@@ -177,6 +177,8 @@ public partial class AlfLayla : Node3D
 		currentDistance = BombDistance;
 		targetDistance = BombDistance;
 		SnapPosition();
+		itemParent.GlobalPosition = Vector3.Zero;
+		ShowObjects();
 
 		Player.Camera.LookaroundAmount = Vector2.Zero;
 
@@ -537,6 +539,7 @@ public partial class AlfLayla : Node3D
 		currentDistance = CloseDistance;
 		SnapPosition();
 		ResetCamera();
+		ShowObjects();
 	}
 
 	private void FinishAttack()
@@ -651,6 +654,7 @@ public partial class AlfLayla : Node3D
 		currentDistance = CloseDistance;
 		SnapPosition();
 		ResetCamera();
+		ShowObjects();
 
 		actionTimer = 1f;
 		StunPlayback.Travel("stun-stop");
@@ -760,4 +764,7 @@ public partial class AlfLayla : Node3D
 		TransitionManager.FinishTransition();
 		defaultCameraTrigger.Activate();
 	}
+
+	public void HideObjects() => itemParent.Visible = false;
+	public void ShowObjects() => itemParent.Visible = true;
 }

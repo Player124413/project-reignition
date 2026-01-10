@@ -89,6 +89,7 @@ public partial class SpiritBomb : Area3D
 				knockbackSpeed = 20f,
 			});
 
+			AlfLayla.HideObjects();
 			DamageCamera.Activate();
 			EmitSignal(SignalName.PlayerExploded);
 			return;
