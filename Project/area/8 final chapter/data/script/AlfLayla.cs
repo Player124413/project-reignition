@@ -737,8 +737,11 @@ public partial class AlfLayla : Node3D
 	/// <summary> Reset the spirit bomb positions so we can see it hitting Alf. </summary>
 	public void FinishSpiritBombKick()
 	{
+		currentDistance = BombDistance;
+		SnapPosition();
 		ResetCamera();
-		spiritBomb.GlobalPosition = Player.GlobalPosition.Lerp(GlobalPosition, 0.5f);
+		spiritBomb.IsTargetingAlf = true;
+		spiritBomb.GlobalPosition = Player.GlobalPosition.Lerp(GlobalPosition, 0.2f);
 	}
 
 	private void ResetPositions()

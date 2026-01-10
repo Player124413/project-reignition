@@ -9,6 +9,7 @@ public partial class SpiritBomb : Area3D
 	[Signal] public delegate void AlfExplodedEventHandler();
 	[Signal] public delegate void PlayerExplodedEventHandler();
 
+	public bool IsTargetingAlf { get; set; }
 	private bool isInteractingWithPlayer;
 	private PlayerController Player => StageSettings.Player;
 
@@ -42,7 +43,10 @@ public partial class SpiritBomb : Area3D
 			return;
 		}
 
-		Position = Position.MoveToward(Vector3.Zero, returnSpeed * PhysicsManager.physicsDelta);
+		if (IsTargetingAlf)
+			Position = Position.MoveToward(Vector3.Zero, moveSpeed * PhysicsManager.physicsDelta);
+		else
+			Position = Position.MoveToward(Vector3.Zero, returnSpeed * PhysicsManager.physicsDelta);
 		if (Position.IsZeroApprox())
 			Explode();
 	}
@@ -65,6 +69,7 @@ public partial class SpiritBomb : Area3D
 	public void Respawn()
 	{
 		TopLevel = false;
+		IsTargetingAlf = false;
 		Position = Vector3.Zero;
 		animator.Play("RESET");
 		animator.Advance(0.0);
@@ -73,6 +78,9 @@ public partial class SpiritBomb : Area3D
 	/// <summary> Blow up. </summary>
 	public void Explode()
 	{
+		if (!IsTargetingAlf && !isInteractingWithPlayer)
+			return;
+
 		IsTravelling = false;
 		animator.Play("explode");
 
