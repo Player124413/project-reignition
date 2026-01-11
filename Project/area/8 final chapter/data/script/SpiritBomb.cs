@@ -121,8 +121,9 @@ public partial class SpiritBomb : Area3D
 		if (Player.Skills.IsSpeedBreakActive)
 		{
 			IsTravelling = false;
-			Player.StartSpiritBomb(this);
 			PushSfx.Play();
+			Player.StartSpiritBomb(this);
+			AlfLayla.PlaySpiritBombPushDialog();
 			return;
 		}
 
