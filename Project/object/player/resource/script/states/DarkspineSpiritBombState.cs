@@ -22,6 +22,7 @@ public partial class DarkspineSpiritBombState : PlayerState
 	private readonly float SlowChargeInterval = 0.1f;
 	/// <summary> How long the spirit bomb must be pushed before it is kicked. </summary>
 	private readonly float SpiritBombHoldLength = 3f;
+	private readonly string ChargeAction = "action_charge";
 
 	public override void EnterState()
 	{
@@ -42,6 +43,8 @@ public partial class DarkspineSpiritBombState : PlayerState
 
 		SpiritBomb.PushCamera.Activate();
 		SpiritBomb.AlfLayla.HideObjects();
+		HeadsUpDisplay.Instance.SetPrompt(ChargeAction, 2);
+		HeadsUpDisplay.Instance.ShowPrompts();
 	}
 
 	public override void ExitState()
@@ -54,6 +57,7 @@ public partial class DarkspineSpiritBombState : PlayerState
 			return;
 
 		Player.Animator.ResetState(0.2f);
+		HeadsUpDisplay.Instance.HidePrompts();
 	}
 
 	public override PlayerState ProcessPhysics()
@@ -106,6 +110,7 @@ public partial class DarkspineSpiritBombState : PlayerState
 		Player.Effect.PlayVoice("ds push");
 		Player.Animator.KickSpiritBomb();
 		Player.Animator.SpiritBombKicked += OnSpiritBombKicked;
+		HeadsUpDisplay.Instance.HidePrompts();
 	}
 
 	private void OnSpiritBombKicked()
