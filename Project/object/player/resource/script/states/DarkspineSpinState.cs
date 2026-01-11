@@ -25,7 +25,7 @@ public partial class DarkspineSpinState : PlayerState
 		deactivateTimer = DeactivationLength;
 		slowChargeTimer = SlowChargeInterval;
 		Player.Animator.StartSpin(5f);
-		Player.Effect.StartDarkspineSpinFX();
+		Player.Effect.StartDarkspineSpinFX(true);
 		Player.Skills.ModifySoulGauge(BurstChargeAmount);
 	}
 

@@ -1,8 +1,73 @@
-[gd_scene load_steps=4 format=3 uid="uid://dptuidi8u81gt"]
+[gd_scene load_steps=18 format=3 uid="uid://dptuidi8u81gt"]
 
 [ext_resource type="PackedScene" uid="uid://cv14b3r1pov0q" path="res://object/player/resource/BaseModel.tscn" id="1_jhqf8"]
 [ext_resource type="PackedScene" uid="uid://duwx0ivxtnwka" path="res://object/player/resource/model/Darkspine.gltf" id="2_vyvmq"]
 [ext_resource type="Material" uid="uid://kbxjowusglnw" path="res://object/player/resource/model/material/Darkspine Speedbreak Overlay.tres" id="3_vyvmq"]
+[ext_resource type="Material" uid="uid://qm8ql8iysuye" path="res://area/1 sand oasis/boss/effect/material/Light Spark.tres" id="4_s61k3"]
+[ext_resource type="Material" uid="uid://m0d6jfnxdrwg" path="res://effect/particle/material/Teleport Dust.tres" id="5_6ie6c"]
+
+[sub_resource type="Curve" id="Curve_6ie6c"]
+_data = [Vector2(0, 0.11665356), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_dxuof"]
+width = 64
+curve = SubResource("Curve_6ie6c")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_6ie6c"]
+direction = Vector3(0, -0.5, 1)
+spread = 5.0
+initial_velocity_min = 0.5
+initial_velocity_max = 1.0
+gravity = Vector3(0, 0, 0)
+scale_min = 0.5
+scale_max = 0.79999995
+scale_curve = SubResource("CurveTexture_dxuof")
+color = Color(1.353256, 0.8177628, 0.24533898, 1)
+
+[sub_resource type="QuadMesh" id="QuadMesh_80myo"]
+material = ExtResource("4_s61k3")
+
+[sub_resource type="Curve" id="Curve_qiu5c"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.3, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_jr4gu"]
+width = 64
+texture_mode = 1
+curve = SubResource("Curve_qiu5c")
+
+[sub_resource type="Curve" id="Curve_dxuof"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="Curve" id="Curve_72bm3"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="Curve" id="Curve_1hw6u"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveXYZTexture" id="CurveXYZTexture_qiu5c"]
+curve_x = SubResource("Curve_dxuof")
+curve_y = SubResource("Curve_72bm3")
+curve_z = SubResource("Curve_1hw6u")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_dxuof"]
+lifetime_randomness = 0.3
+angle_min = 1.0728836e-05
+angle_max = 360.00003
+gravity = Vector3(0, 0, 0)
+scale_max = 2.0
+scale_curve = SubResource("CurveXYZTexture_qiu5c")
+color = Color(1.8247963, 0.93389755, 0, 1)
+alpha_curve = SubResource("CurveTexture_jr4gu")
+
+[sub_resource type="QuadMesh" id="QuadMesh_dxuof"]
+material = ExtResource("5_6ie6c")
+size = Vector2(1, 4)
+center_offset = Vector3(0, 1, 0)
 
 [node name="Model" instance=ExtResource("1_jhqf8")]
 speedbreakOverlayMaterial = ExtResource("3_vyvmq")
@@ -152,5 +217,100 @@ parameters/ground_tree/ds-idle-transition/current_state = "disabled"
 parameters/ground_tree/ds-idle-transition/current_index = 0
 parameters/ground_tree/ds-forward-transition/current_state = "enabled"
 parameters/ground_tree/ds-forward-transition/current_index = 1
+
+[node name="HandL" type="BoneAttachment3D" parent="." index="9"]
+transform = Transform3D(-1.1920771e-07, 0.9999969, -9.313154e-10, -0.012983023, -9.3131974e-10, 0.99990803, 0.9999024, 1.1920893e-07, 0.012983095, 0.30632782, 0.6121043, -0.0031499048)
+bone_name = "l_hand_ik"
+bone_idx = 3
+use_external_skeleton = true
+external_skeleton = NodePath("../Root/DSRoot/GeneralSkeleton")
+
+[node name="PunchTrail" type="GPUParticles3D" parent="HandL" index="0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.15, 0)
+layers = 32
+cast_shadow = 0
+emitting = false
+amount = 64
+lifetime = 0.1
+fixed_fps = 0
+interpolate = false
+transform_align = 3
+process_material = SubResource("ParticleProcessMaterial_6ie6c")
+draw_pass_1 = SubResource("QuadMesh_80myo")
+
+[node name="HandR" type="BoneAttachment3D" parent="." index="10"]
+transform = Transform3D(-1.192093e-07, -0.9999999, 9.31322e-10, 0.012983196, -9.313225e-10, 0.9999151, -0.9999158, 1.1920928e-07, 0.012983187, -0.30632782, 0.6121043, -0.0031499048)
+bone_name = "r_hand_ik"
+bone_idx = 4
+use_external_skeleton = true
+external_skeleton = NodePath("../Root/DSRoot/GeneralSkeleton")
+
+[node name="PunchTrail" type="GPUParticles3D" parent="HandR" index="0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.15, 0)
+layers = 32
+cast_shadow = 0
+emitting = false
+amount = 64
+lifetime = 0.1
+fixed_fps = 0
+interpolate = false
+transform_align = 3
+process_material = SubResource("ParticleProcessMaterial_6ie6c")
+draw_pass_1 = SubResource("QuadMesh_80myo")
+
+[node name="FootL" type="BoneAttachment3D" parent="." index="11"]
+transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, 0.03972758, 0.15546903, 0.0020561293)
+bone_name = "l_foot_ik"
+bone_idx = 7
+use_external_skeleton = true
+external_skeleton = NodePath("../Root/DSRoot/GeneralSkeleton")
+
+[node name="PunchTrail" type="GPUParticles3D" parent="FootL" index="0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.1, -0.1)
+layers = 32
+cast_shadow = 0
+emitting = false
+amount = 64
+lifetime = 0.1
+fixed_fps = 0
+interpolate = false
+transform_align = 3
+process_material = SubResource("ParticleProcessMaterial_6ie6c")
+draw_pass_1 = SubResource("QuadMesh_80myo")
+
+[node name="FootR" type="BoneAttachment3D" parent="." index="12"]
+transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, -0.03972758, 0.15546903, 0.0020561293)
+bone_name = "r_foot_ik"
+bone_idx = 8
+use_external_skeleton = true
+external_skeleton = NodePath("../Root/DSRoot/GeneralSkeleton")
+
+[node name="PunchTrail" type="GPUParticles3D" parent="FootR" index="0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.1, -0.1)
+layers = 32
+cast_shadow = 0
+emitting = false
+amount = 64
+lifetime = 0.1
+fixed_fps = 0
+interpolate = false
+transform_align = 3
+process_material = SubResource("ParticleProcessMaterial_6ie6c")
+draw_pass_1 = SubResource("QuadMesh_80myo")
+
+[node name="PunchPower" type="GPUParticles3D" parent="." index="13"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.55, 0)
+layers = 32
+cast_shadow = 0
+emitting = false
+amount = 64
+lifetime = 0.6
+one_shot = true
+explosiveness = 0.6
+fixed_fps = 0
+interpolate = false
+transform_align = 3
+process_material = SubResource("ParticleProcessMaterial_dxuof")
+draw_pass_1 = SubResource("QuadMesh_dxuof")
 
 [editable path="Root"]

@@ -125,8 +125,19 @@ public partial class PlayerEffect : Node3D
 	public void StartDust() => dustParticle.Emitting = true;
 	public void StopDust() => dustParticle.Emitting = false;
 
-	public void StartTrailFX() => trailFX.IsEmitting = true;
-	public void StopTrailFX() => trailFX.IsEmitting = false;
+	public void StartTrailFX()
+	{
+		trailFX.IsEmitting = true;
+		if (Player.IsDarkspineSonic)
+			darkspineTrailFx.Emitting = true;
+	}
+
+	public void StopTrailFX()
+	{
+		trailFX.IsEmitting = false;
+		if (Player.IsDarkspineSonic)
+			darkspineTrailFx.Emitting = false;
+	}
 
 	public void StartSpinFX() => CreateTween().TweenProperty(spinFX, "transparency", 0.0f, .1f);
 	public void StopSpinFX() => CreateTween().TweenProperty(spinFX, "transparency", 1.0f, .1f);
@@ -284,15 +295,20 @@ public partial class PlayerEffect : Node3D
 		PlayActionSFX("petrify shatter");
 	}
 
+	[Export] private GpuParticles3D darkspineTrailFx;
 	[Export] private GroupGpuParticles3D darkspineGroup;
 	[Export] private GroupGpuParticles3D darkspineSpinFX;
 	[Export] private GpuParticles3D darkspineSpiritBombBurstVfx;
 	[Export] private AudioStreamPlayer darkspineAuraSfx;
 	[Export] private AudioStreamPlayer darkspineChargeSfx;
-	public void StartDarkspineSpinFX()
+	public bool IsDarkspineSpinFxPlaying => darkspineSpinFX.IsGroupEmitting;
+
+	public void StartDarkspineSpinFX(bool disableDarkspineGroupFx)
 	{
 		darkspineSpinFX.SetEmitting(true);
-		darkspineGroup.SetEmitting(false);
+
+		if (disableDarkspineGroupFx)
+			darkspineGroup.SetEmitting(false);
 
 		darkspineAuraSfx.Stop();
 		darkspineChargeSfx.Play();

@@ -86,7 +86,6 @@ public partial class DarkspineMultiPunchState : PlayerState
 			isPerformingFinalPunch = true;
 			Player.Animator.PerformMultipunch(-1);
 			Core.AlfLayla.StartFinalMultiPunch();
-
 			return null;
 		}
 
@@ -105,6 +104,7 @@ public partial class DarkspineMultiPunchState : PlayerState
 		{
 			currentPunchStringIndex = 0;
 			Player.Animator.PerformMultipunch(currentPunchStringIndex);
+			Player.Effect.StartDarkspineSpinFX(true);
 			return null;
 		}
 
@@ -119,6 +119,8 @@ public partial class DarkspineMultiPunchState : PlayerState
 		Core.AlfLayla.TakeDamage();
 
 		// Throw hands
+		if (Player.Effect.IsDarkspineSpinFxPlaying)
+			Player.Effect.StopDarkspineSpinFX();
 		Player.Animator.PerformMultipunch((currentPunchStringIndex % MultiPunchStringLength) + 1);
 		currentPunchStringIndex++;
 

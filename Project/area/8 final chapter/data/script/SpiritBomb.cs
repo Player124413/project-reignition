@@ -22,9 +22,9 @@ public partial class SpiritBomb : Area3D
 	[Export] public CameraTrigger PushCamera { get; private set; }
 	[Export] public CameraTrigger KickCamera { get; private set; }
 	[Export] public CameraTrigger DamageCamera { get; private set; }
-	[Export] public GroupGpuParticles3D KickVfx { get; private set; }
 	[Export] private AudioStreamPlayer PushSfx { get; set; }
 	[Export] private AudioStreamPlayer KickSfx { get; set; }
+	[Export] private AudioStreamPlayer ReturnSfx { get; set; }
 	[Export] private AnimationPlayer animator;
 	[Export] public AlfLayla AlfLayla { get; private set; }
 
@@ -69,13 +69,13 @@ public partial class SpiritBomb : Area3D
 		IsTravelling = true;
 		TopLevel = false;
 		PushSfx.Stop();
-		KickSfx.Play();
+		ReturnSfx.Play();
 		Player.Camera.StartCameraShake(new PlayerCameraController.CameraShakeSettings()
 		{
 			fadeIn = 0,
 			fadeOut = 0.1f,
 			duration = 0.4f,
-			magnitude = Vector3.One * 4f,
+			magnitude = Vector3.One * 10f,
 		});
 	}
 
