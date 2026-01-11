@@ -1,4 +1,4 @@
-[gd_scene load_steps=271 format=3 uid="uid://gp7nom61rmtj"]
+[gd_scene load_steps=279 format=3 uid="uid://gp7nom61rmtj"]
 
 [ext_resource type="Script" uid="uid://b1jbgylbmqgrv" path="res://object/player/resource/script/PlayerEffect.cs" id="1_udd16"]
 [ext_resource type="Resource" uid="uid://dkaxxcf5mo3ow" path="res://resource/preset/sfx library/ActionSFXLibrary.tres" id="2_fxiha"]
@@ -1678,7 +1678,52 @@ alpha_curve = SubResource("CurveTexture_t1nvy")
 [sub_resource type="QuadMesh" id="QuadMesh_ougmt"]
 material = ExtResource("49_t1nvy")
 
-[node name="Effect" type="Node3D" node_paths=PackedStringArray("trailFX", "spinFX", "teleportParticle", "dustParticle", "spinFXAnimator", "doubleJumpFx", "windParticle", "fireParticle", "stompParticle", "splashJumpParticle", "quickStepParticle", "lightDashParticle", "aegisSlideParticle", "volcanoSlideParticle", "soulSlideParticle", "darkSpiralParticle", "darkCrestParticle", "windCrestParticle", "fireCrestParticle", "chargeParticle", "fullChargeParticle", "grindrailSparkParticle", "grindrailBurstParticle", "perfectShuffleParticle", "grindrailSfx", "petrifyParticle", "darkspineGroup", "darkspineSpinFX", "darkspineAuraSfx", "darkspineChargeSfx", "footstepChannel", "landingChannel", "landingParticles", "stepEmitters", "waterStep", "voiceChannel")]
+[sub_resource type="Curve" id="Curve_ougmt"]
+_data = [Vector2(0.158392, 0.00608158), 0.0, 0.0, 0, 0, Vector2(0.3, 1), 0.0, 0.0, 0, 0, Vector2(0.858156, 0.0173762), -3.83366, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_l17uv"]
+width = 64
+curve = SubResource("Curve_ougmt")
+
+[sub_resource type="Curve" id="Curve_5a4tv"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), -1.47709, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_c3ded"]
+width = 64
+curve = SubResource("Curve_5a4tv")
+
+[sub_resource type="Curve" id="Curve_qycqm"]
+_data = [Vector2(0, 0), 0.0, 3.17666, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_ub2br"]
+width = 64
+curve = SubResource("Curve_qycqm")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_432fq"]
+emission_shape_offset = Vector3(0, 0, 2)
+direction = Vector3(0, 0, -1)
+spread = 80.0
+initial_velocity_min = 4.0
+initial_velocity_max = 5.0
+gravity = Vector3(0, 0, 0)
+radial_accel_min = -40.0
+radial_accel_max = -40.0
+radial_accel_curve = SubResource("CurveTexture_c3ded")
+scale_max = 2.0
+scale_curve = SubResource("CurveTexture_ub2br")
+color = Color(1, 0.43333334, 0, 1)
+alpha_curve = SubResource("CurveTexture_l17uv")
+
+[sub_resource type="QuadMesh" id="QuadMesh_80gmj"]
+lightmap_size_hint = Vector2i(4, 27)
+material = ExtResource("20_rtch5")
+size = Vector2(1, 8)
+center_offset = Vector3(2, 3, 0)
+
+[node name="Effect" type="Node3D" node_paths=PackedStringArray("trailFX", "spinFX", "teleportParticle", "dustParticle", "spinFXAnimator", "doubleJumpFx", "windParticle", "fireParticle", "stompParticle", "splashJumpParticle", "quickStepParticle", "lightDashParticle", "aegisSlideParticle", "volcanoSlideParticle", "soulSlideParticle", "darkSpiralParticle", "darkCrestParticle", "windCrestParticle", "fireCrestParticle", "chargeParticle", "fullChargeParticle", "grindrailSparkParticle", "grindrailBurstParticle", "perfectShuffleParticle", "grindrailSfx", "petrifyParticle", "darkspineGroup", "darkspineSpinFX", "darkspineSpiritBombBurstVfx", "darkspineAuraSfx", "darkspineChargeSfx", "footstepChannel", "landingChannel", "landingParticles", "stepEmitters", "waterStep", "voiceChannel")]
 script = ExtResource("1_udd16")
 actionSFXLibrary = ExtResource("2_fxiha")
 trailFX = NodePath("VFX/ActionFX/TrailMesh")
@@ -1709,6 +1754,7 @@ grindrailSfx = NodePath("SFX/GrindrailSFX")
 petrifyParticle = NodePath("VFX/PetrifyFX")
 darkspineGroup = NodePath("VFX/DarkspineFX/DarkspineGroupFX")
 darkspineSpinFX = NodePath("VFX/DarkspineFX/DsSpinFX")
+darkspineSpiritBombBurstVfx = NodePath("VFX/DarkspineFX/SpiritBombBurstFX")
 darkspineAuraSfx = NodePath("SFX/DSAuraSFX")
 darkspineChargeSfx = NodePath("SFX/DSChargeSFX")
 materialSFXLibrary = ExtResource("5_h4i1s")
@@ -2699,3 +2745,21 @@ interpolate = false
 visibility_aabb = AABB(0, 0, 0, 0, 0, 0)
 process_material = SubResource("ParticleProcessMaterial_ougmt")
 draw_pass_1 = SubResource("QuadMesh_dp2tk")
+
+[node name="SpiritBombBurstFX" type="GPUParticles3D" parent="VFX/DarkspineFX"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -1)
+layers = 32
+cast_shadow = 0
+emitting = false
+amount = 256
+lifetime = 0.2
+one_shot = true
+explosiveness = 0.8
+randomness = 0.5
+fixed_fps = 0
+interpolate = false
+local_coords = true
+draw_order = 3
+transform_align = 2
+process_material = SubResource("ParticleProcessMaterial_432fq")
+draw_pass_1 = SubResource("QuadMesh_80gmj")
