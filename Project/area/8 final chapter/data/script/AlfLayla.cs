@@ -716,6 +716,17 @@ public partial class AlfLayla : Node3D
 
 	public void StartStunCamera() => punchCameraTrigger.Activate();
 
+	public void MultiPunchScreenShake()
+	{
+		Player.Camera.StartCameraShake(new()
+		{
+			fadeIn = 0f,
+			duration = 0.3f,
+			fadeOut = 0.05f,
+			magnitude = Vector3.One * 10f
+		});
+	}
+
 	public void FinishMultiPunch()
 	{
 		// Always do the explosion loop
@@ -771,11 +782,18 @@ public partial class AlfLayla : Node3D
 	public void TakeDamage()
 	{
 		currentHealth--;
-
 		if (currentHealth < 15 && currentPatternIndex == 0)
 			currentPatternIndex = 1; // Phase 2
 		else if (currentHealth < 5 && currentPatternIndex == 1)
 			currentPatternIndex = 2; // Phase 3
+
+		Player.Camera.StartCameraShake(new()
+		{
+			fadeIn = 0f,
+			duration = 0.2f,
+			fadeOut = 0.05f,
+			magnitude = Vector3.One * 4f
+		});
 
 		animationTree.Set(StunDamageTrigger, (uint)AnimationNodeOneShot.OneShotRequest.Fire);
 	}

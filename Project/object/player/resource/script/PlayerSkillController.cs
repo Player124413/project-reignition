@@ -76,6 +76,7 @@ public partial class PlayerSkillController : Node3D
 	public bool AllowCrestSkill { get; private set; }
 	private readonly float CrestOfFlameHueOffset = .45f;
 	private readonly float DefaultHueOffset = .02f;
+	private readonly float DarkspineHueOffset = 0.17f;
 
 	public bool IsRingExchangeEquipped { get; private set; }
 	private void SetUpSkills()
@@ -97,7 +98,10 @@ public partial class PlayerSkillController : Node3D
 			SkillRing.IsSkillEquipped(SkillKey.CrestDark);
 
 		// Update crest of flame's trail color
-		Player.Effect.UpdateTrailHueShift(AllowCrestSkill && SkillRing.IsSkillEquipped(SkillKey.CrestFire) ? CrestOfFlameHueOffset : DefaultHueOffset);
+		if (Player.IsDarkspineSonic)
+			Player.Effect.UpdateTrailHueShift(DarkspineHueOffset);
+		else
+			Player.Effect.UpdateTrailHueShift(AllowCrestSkill && SkillRing.IsSkillEquipped(SkillKey.CrestFire) ? CrestOfFlameHueOffset : DefaultHueOffset);
 	}
 
 	private readonly float WindCrestSpeedMultiplier = 1.5f;

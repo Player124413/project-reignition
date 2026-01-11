@@ -1167,7 +1167,7 @@ public partial class PlayerAnimator : Node3D
 	[Signal] public delegate void SpiritBombKickedEventHandler();
 	public void KickSpiritBomb() => DarkspineFinalStatePlayback.Travel("ds-spirit-bomb-kick");
 
-	public bool IsDarkspineKickFinished => DarkspineFinalStatePlayback.GetCurrentPlayPosition() >= DarkspineFinalStatePlayback.GetCurrentLength() - 0.2f;
+	public bool IsDarkspineKickFinished => DarkspineFinalStatePlayback.GetCurrentPlayPosition() >= 6f;
 	#endregion
 
 	// Shaders
