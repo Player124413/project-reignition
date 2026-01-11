@@ -16,7 +16,6 @@ public partial class AlfLayla : Node3D
 
 	[Export] private SpiritBomb spiritBomb;
 
-	[Export] private DialogTrigger[] dialogTriggers;
 	[Export] private CameraTrigger defaultCameraTrigger;
 	[Export] private CameraTrigger punchCameraTrigger;
 
@@ -29,7 +28,39 @@ public partial class AlfLayla : Node3D
 	[Export] private CameraTrigger[] explosionCameras;
 	[Export] private Node3D itemParent;
 
-	private int currentDialogIndex;
+	[Export] private DialogTrigger[] progressionDialogs;
+	[Export] private DialogTrigger[] spiritBombPushDialogs;
+	[Export] private DialogTrigger[] spiritBombDamageDialogs;
+	private int currentProgressionDialogIndex;
+	private int currentPushDialogIndex;
+	private int currentDamageDialogIndex;
+
+	private void PlayProgressionDialog()
+	{
+		if (currentProgressionDialogIndex >= progressionDialogs.Length)
+			return;
+
+		progressionDialogs[currentProgressionDialogIndex].Activate();
+		currentProgressionDialogIndex++;
+	}
+
+	public void PlaySpiritBombPushDialog()
+	{
+		if (currentPushDialogIndex >= spiritBombPushDialogs.Length)
+			return;
+
+		spiritBombPushDialogs[currentPushDialogIndex].Activate();
+		currentPushDialogIndex++;
+	}
+
+	public void PlaySpiritBombDamageDialog()
+	{
+		if (currentDamageDialogIndex >= spiritBombDamageDialogs.Length)
+			return;
+
+		spiritBombDamageDialogs[currentDamageDialogIndex].Activate();
+		currentDamageDialogIndex++;
+	}
 
 	private PlayerController Player => StageSettings.Player;
 	private PlayerPathController PlayerPathFollower => Player.PathFollower;
@@ -391,6 +422,10 @@ public partial class AlfLayla : Node3D
 		currentMovementCurve = isAdvancing ? advanceMovementCurve : retreatMovementCurve;
 		CurrentFightState = FightState.Movement;
 		movementSample = 0f;
+
+		if (currentProgressionDialogIndex == 0)
+			PlayProgressionDialog();
+
 		return true;
 	}
 
@@ -414,6 +449,9 @@ public partial class AlfLayla : Node3D
 		{
 			StartAttackWindup();
 			actionTimer = 0.8f;
+			if (currentProgressionDialogIndex == 2)
+				PlayProgressionDialog();
+
 			return;
 		}
 
@@ -432,6 +470,8 @@ public partial class AlfLayla : Node3D
 		{
 			case '3':
 				currentGravityOrbSide = -1; // Start on the left side
+				if (currentProgressionDialogIndex == 6)
+					PlayProgressionDialog();
 				break;
 			case '\\':
 			case '>':
@@ -439,6 +479,8 @@ public partial class AlfLayla : Node3D
 				actionTimer = 1f;
 				animationTree.Set(SlashType, "right");
 				animationTree.Set(SlashSpeed, slashSpeed);
+				if (currentProgressionDialogIndex == 1)
+					PlayProgressionDialog();
 				break;
 			case '/':
 			case '<':
@@ -541,6 +583,7 @@ public partial class AlfLayla : Node3D
 		SnapPosition();
 		ResetCamera();
 		ShowObjects();
+		PlaySpiritBombDamageDialog();
 	}
 
 	private void FinishAttack()
@@ -642,7 +685,12 @@ public partial class AlfLayla : Node3D
 	private void ProcessStun()
 	{
 		if (Player.IsMultiPunchActive) // Use timer in player state instead
+		{
+			if (currentProgressionDialogIndex == 4)
+				PlayProgressionDialog();
+
 			return;
+		}
 
 		actionTimer = Mathf.MoveToward(actionTimer, 0, PhysicsManager.physicsDelta);
 		if (Mathf.IsZeroApprox(actionTimer))
@@ -656,6 +704,9 @@ public partial class AlfLayla : Node3D
 		SnapPosition();
 		ResetCamera();
 		ShowObjects();
+
+		if (currentProgressionDialogIndex == 5 && currentHealth != MaxHealth)
+			PlayProgressionDialog();
 
 		actionTimer = 1f;
 		StunPlayback.Travel("stun-stop");
@@ -733,6 +784,8 @@ public partial class AlfLayla : Node3D
 	{
 		currentDistance = BombDistance;
 		SnapPosition();
+		if (currentProgressionDialogIndex == 3)
+			PlayProgressionDialog();
 	}
 
 	/// <summary> Reset the spirit bomb positions so we can see it hitting Alf. </summary>
