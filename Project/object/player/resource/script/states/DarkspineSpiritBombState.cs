@@ -11,6 +11,7 @@ public partial class DarkspineSpiritBombState : PlayerState
 
 	public SpiritBomb SpiritBomb { get; set; }
 	private float holdTimer;
+	private float shakeTimer;
 
 	/// Charging implementation is copied from DarkspineSpinState.cs
 	private float slowChargeTimer;
@@ -22,6 +23,7 @@ public partial class DarkspineSpiritBombState : PlayerState
 	private readonly float SlowChargeInterval = 0.1f;
 	/// <summary> How long the spirit bomb must be pushed before it is kicked. </summary>
 	private readonly float SpiritBombHoldLength = 3f;
+	private readonly float ShakeTimerInterval = 0.2f;
 	private readonly string ChargeAction = "action_charge";
 
 	public override void EnterState()
@@ -33,9 +35,19 @@ public partial class DarkspineSpiritBombState : PlayerState
 
 		isKickingSpiritBomb = false;
 		holdTimer = SpiritBombHoldLength;
+		shakeTimer = ShakeTimerInterval;
+
+		Player.Camera.StartCameraShake(new PlayerCameraController.CameraShakeSettings()
+		{
+			fadeIn = 0,
+			fadeOut = 0.1f,
+			duration = 0.5f,
+			magnitude = Vector3.One * 3,
+		});
 
 		Player.Skills.IsTimeBreakEnabled = false;
 		Player.Animator.StartSpiritBomb();
+		Player.Effect.PlayDarkspineSpiritBombBurst();
 		Player.StartExternal(SpiritBomb, SpiritBomb.PushPosition, 0.5f);
 
 		slowChargeTimer = SlowChargeInterval;
@@ -62,6 +74,19 @@ public partial class DarkspineSpiritBombState : PlayerState
 
 	public override PlayerState ProcessPhysics()
 	{
+		shakeTimer = Mathf.MoveToward(shakeTimer, 0, PhysicsManager.physicsDelta);
+		if (Mathf.IsZeroApprox(shakeTimer))
+		{
+			shakeTimer = ShakeTimerInterval;
+			Player.Camera.StartCameraShake(new PlayerCameraController.CameraShakeSettings()
+			{
+				fadeIn = 0,
+				fadeOut = 0.05f,
+				duration = 0.3f,
+				magnitude = Vector3.One,
+			});
+		}
+
 		if (isKickingSpiritBomb)
 		{
 			if (Player.Animator.IsDarkspineKickFinished)
@@ -84,7 +109,7 @@ public partial class DarkspineSpiritBombState : PlayerState
 		holdTimer = Mathf.MoveToward(holdTimer, 0, PhysicsManager.physicsDelta);
 		if (Mathf.IsZeroApprox(holdTimer))
 		{
-			ProcessHold();
+			StartSpiritBombKick();
 			return null;
 		}
 
@@ -101,13 +126,13 @@ public partial class DarkspineSpiritBombState : PlayerState
 		return null;
 	}
 
-	private void ProcessHold()
+	private void StartSpiritBombKick()
 	{
 		isKickingSpiritBomb = true;
-		SpiritBomb.KickCamera.Activate();
-		SpiritBomb.AlfLayla.StartSpiritBombKick();
+		SpiritBomb.StartSpiritBombKick();
 		Player.Skills.ModifySoulGauge(-Player.Skills.MaxSoulPower);
 		Player.Effect.PlayVoice("ds push");
+		Player.Effect.PlayDarkspineSpiritBombBurst();
 		Player.Animator.KickSpiritBomb();
 		Player.Animator.SpiritBombKicked += OnSpiritBombKicked;
 		HeadsUpDisplay.Instance.HidePrompts();

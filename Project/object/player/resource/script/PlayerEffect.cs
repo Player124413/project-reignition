@@ -286,6 +286,7 @@ public partial class PlayerEffect : Node3D
 
 	[Export] private GroupGpuParticles3D darkspineGroup;
 	[Export] private GroupGpuParticles3D darkspineSpinFX;
+	[Export] private GpuParticles3D darkspineSpiritBombBurstVfx;
 	[Export] private AudioStreamPlayer darkspineAuraSfx;
 	[Export] private AudioStreamPlayer darkspineChargeSfx;
 	public void StartDarkspineSpinFX()
@@ -305,6 +306,8 @@ public partial class PlayerEffect : Node3D
 		darkspineAuraSfx.Play();
 		darkspineChargeSfx.Stop();
 	}
+
+	public void PlayDarkspineSpiritBombBurst() => darkspineSpiritBombBurstVfx.Restart();
 
 	#endregion
 

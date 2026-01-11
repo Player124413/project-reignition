@@ -1,4 +1,4 @@
-[gd_scene load_steps=173 format=3 uid="uid://7p1mkbn0s276"]
+[gd_scene load_steps=209 format=3 uid="uid://7p1mkbn0s276"]
 
 [ext_resource type="PackedScene" uid="uid://bl4mwbfg117lh" path="res://area/8 final chapter/data/model/AlfLaylaWaLayla.gltf" id="1_8mof4"]
 [ext_resource type="Script" uid="uid://bpp2tmfxy4euf" path="res://area/8 final chapter/data/script/AlfLayla.cs" id="1_k6i6c"]
@@ -11,6 +11,7 @@
 [ext_resource type="Animation" uid="uid://d3m5vjq7ldsio" path="res://area/8 final chapter/data/model/animation/advance-stop.res" id="6_yyje7"]
 [ext_resource type="Animation" uid="uid://civ38v6ht3hqe" path="res://area/8 final chapter/data/model/animation/RESET.res" id="7_yek7d"]
 [ext_resource type="Animation" uid="uid://d042od3kh4wrl" path="res://area/8 final chapter/data/model/animation/retreat-start.res" id="8_fmwwy"]
+[ext_resource type="Material" uid="uid://c3isx5nygxkb6" path="res://effect/particle/material/environment/Water Dust No Billboard.tres" id="8_ia8iy"]
 [ext_resource type="Script" uid="uid://dj0dc1eeaydym" path="res://area/8 final chapter/data/script/AlfCore.cs" id="9_4ltgr"]
 [ext_resource type="Animation" uid="uid://r38ph0jvantt" path="res://area/8 final chapter/data/model/animation/retreat-stop.res" id="9_lngaj"]
 [ext_resource type="Resource" uid="uid://chwow5uhr8w4j" path="res://area/8 final chapter/act/camera/Spirit Bomb Push Camera.tres" id="9_r3jhb"]
@@ -20,8 +21,11 @@
 [ext_resource type="Animation" uid="uid://dy3uk46vclowy" path="res://area/8 final chapter/data/model/animation/slash-l.res" id="11_t16yu"]
 [ext_resource type="AudioStream" uid="uid://dj10w1gllyu02" path="res://sound/boss/alf layla/spirit bomb push.wav" id="12_i862f"]
 [ext_resource type="Animation" uid="uid://cnchngjimy1fc" path="res://area/8 final chapter/data/model/animation/slash-r.res" id="12_ordf7"]
+[ext_resource type="Material" uid="uid://ca62uiedbfw5x" path="res://effect/particle/material/Ember Blue.tres" id="12_sf2wq"]
 [ext_resource type="AudioStream" uid="uid://bexc8ogt4wt1r" path="res://sound/boss/alf layla/spirit bomb kick.wav" id="13_2b7eq"]
 [ext_resource type="Animation" uid="uid://mmir4b2acc6j" path="res://area/8 final chapter/data/model/animation/advance.res" id="13_rwxr0"]
+[ext_resource type="Material" uid="uid://bq1q3tp1cq76v" path="res://effect/particle/material/explosion/Explosion Smoke Add.tres" id="13_xqq47"]
+[ext_resource type="Texture2D" uid="uid://lh2pvow83eiy" path="res://area/8 final chapter/data/skybox/model/texture/dust.png" id="14_5me0x"]
 [ext_resource type="Animation" uid="uid://c7t8ida3l15ia" path="res://area/8 final chapter/data/model/animation/stun-damage-final.res" id="14_48yth"]
 [ext_resource type="Animation" uid="uid://dwhjk4k3u0q4h" path="res://area/8 final chapter/data/model/animation/idle.res" id="14_oj3ar"]
 [ext_resource type="Resource" uid="uid://ck0oqpkv1xiye" path="res://area/8 final chapter/act/camera/Hall Camera.tres" id="14_wc6bw"]
@@ -58,6 +62,7 @@
 [ext_resource type="Material" uid="uid://m0d6jfnxdrwg" path="res://effect/particle/material/Teleport Dust.tres" id="34_jc0er"]
 [ext_resource type="Animation" uid="uid://8m82qfnl70br" path="res://area/8 final chapter/data/model/animation/explosion.res" id="38_3khio"]
 [ext_resource type="Script" uid="uid://bitgnn108jmaa" path="res://object/trigger/modules/DialogTrigger.cs" id="47_qdlht"]
+[ext_resource type="Material" uid="uid://ctkxyqv6hyynk" path="res://area/1 sand oasis/boss/effect/material/Charge.tres" id="61_w04b2"]
 
 [sub_resource type="Curve" id="Curve_pt266"]
 _data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
@@ -68,60 +73,121 @@ _limits = [0.0, 1.0, 0.0, 1.2]
 _data = [Vector2(0.2, 0), 0.0, 0.0, 0, 0, Vector2(1.08, 1), 0.0, 0.0, 0, 0]
 point_count = 2
 
-[sub_resource type="Curve" id="Curve_s1gny"]
-_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.2, 0), 0.0, 0.0, 0, 0, Vector2(0.5, 1), 0.0, 0.0, 0, 0, Vector2(0.8, 0), 0.0, 0.0, 0, 0]
-point_count = 4
+[sub_resource type="Curve" id="Curve_dfuh3"]
+_data = [Vector2(0, 0), 0.0, 27.052158, 0, 0, Vector2(0.1, 1), 0.0, 0.0, 0, 0, Vector2(0.858156, 0.0173762), -3.83366, 0.0, 0, 0]
+point_count = 3
 
-[sub_resource type="CurveTexture" id="CurveTexture_micvt"]
+[sub_resource type="CurveTexture" id="CurveTexture_l17uv"]
 width = 64
-texture_mode = 1
-curve = SubResource("Curve_s1gny")
+curve = SubResource("Curve_dfuh3")
 
-[sub_resource type="Gradient" id="Gradient_utrra"]
-offsets = PackedFloat32Array(0.13636364, 0.5159091, 0.81136364)
-colors = PackedColorArray(1, 0.7, 0, 1, 0.7925845, 0.38048324, 0, 1, 1, 1, 1, 1)
+[sub_resource type="Gradient" id="Gradient_w04b2"]
+offsets = PackedFloat32Array(0.111363634, 0.7022727, 1)
+colors = PackedColorArray(0.9665958, 0.495663, 3.85046e-07, 1, 1, 0.3526971, 0.40701175, 1, 1, 1, 1, 1)
 
-[sub_resource type="GradientTexture1D" id="GradientTexture1D_s1gny"]
-gradient = SubResource("Gradient_utrra")
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_xqq47"]
+gradient = SubResource("Gradient_w04b2")
+width = 64
 
-[sub_resource type="Curve" id="Curve_utrra"]
-_data = [Vector2(0, 0.5), 0.0, 1.5583886, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+[sub_resource type="Curve" id="Curve_5p4at"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), -1.47709, 0.0, 0, 0]
 point_count = 2
 
-[sub_resource type="CurveTexture" id="CurveTexture_s1gny"]
+[sub_resource type="CurveTexture" id="CurveTexture_c3ded"]
 width = 64
-curve = SubResource("Curve_utrra")
+curve = SubResource("Curve_5p4at")
 
-[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_utrra"]
-angle_min = 1.0728836e-05
-angle_max = 360.00003
-spread = 180.0
-flatness = 0.8
-initial_velocity_min = 50.0
-initial_velocity_max = 50.0
-angular_velocity_min = -360.0
-angular_velocity_max = 359.99997
+[sub_resource type="Curve" id="Curve_xarnl"]
+_data = [Vector2(0, 0), 0.0, 3.1522222, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_ub2br"]
+width = 64
+curve = SubResource("Curve_xarnl")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_fhdlo"]
+direction = Vector3(0, 0, -1)
+spread = 80.0
+initial_velocity_min = 4.0
+initial_velocity_max = 5.0
 gravity = Vector3(0, 0, 0)
-damping_min = 100.00001
-damping_max = 150.0
-scale_min = 1.5
-scale_max = 3.0
-scale_curve = SubResource("CurveTexture_s1gny")
-color_ramp = SubResource("GradientTexture1D_s1gny")
-alpha_curve = SubResource("CurveTexture_micvt")
+radial_accel_min = -10.000002
+radial_accel_max = -2.2351742e-06
+radial_accel_curve = SubResource("CurveTexture_c3ded")
+scale_max = 2.0
+scale_curve = SubResource("CurveTexture_ub2br")
+color_initial_ramp = SubResource("GradientTexture1D_xqq47")
+alpha_curve = SubResource("CurveTexture_l17uv")
+
+[sub_resource type="QuadMesh" id="QuadMesh_xarnl"]
+lightmap_size_hint = Vector2i(4, 27)
+material = ExtResource("61_w04b2")
+size = Vector2(1, 5)
+center_offset = Vector3(0, 1.5, 0)
+
+[sub_resource type="Gradient" id="Gradient_xqq47"]
+offsets = PackedFloat32Array(0, 0.55, 1)
+colors = PackedColorArray(1, 0, 0, 1, 0.6340291, 0.32626912, 4.813075e-07, 1, 1, 1, 1, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_ia8iy"]
+gradient = SubResource("Gradient_xqq47")
+width = 64
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_w04b2"]
+direction = Vector3(0, 0, -1)
+spread = 80.0
+initial_velocity_min = 30.0
+initial_velocity_max = 60.0
+gravity = Vector3(0, 0, 0)
+scale_max = 1.5
+color_initial_ramp = SubResource("GradientTexture1D_ia8iy")
 anim_offset_max = 1.0
 
 [sub_resource type="QuadMesh" id="QuadMesh_r6jp0"]
 material = ExtResource("26_l4bcq")
 
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_ia8iy"]
+direction = Vector3(0, 0, -1)
+spread = 80.0
+initial_velocity_min = 5.0
+initial_velocity_max = 10.0
+gravity = Vector3(0, 0, 0)
+radial_accel_min = -10.000002
+radial_accel_max = -2.2351742e-06
+radial_accel_curve = SubResource("CurveTexture_c3ded")
+scale_min = 5.0
+scale_max = 5.0
+scale_curve = SubResource("CurveTexture_ub2br")
+color = Color(1, 0.8666667, 0, 1)
+alpha_curve = SubResource("CurveTexture_l17uv")
+
+[sub_resource type="QuadMesh" id="QuadMesh_dfuh3"]
+material = ExtResource("8_ia8iy")
+size = Vector2(1, 3)
+center_offset = Vector3(0.5, 0, 0)
+
 [sub_resource type="Curve" id="Curve_r6jp0"]
-_data = [Vector2(0, 0), 0.0, 30.451372, 0, 0, Vector2(0.1, 1), 0.0, 0.0, 0, 0, Vector2(0.8, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+_data = [Vector2(0, 0), 0.0, 11.504885, 0, 0, Vector2(0.2, 1), 0.0, 0.0, 0, 0, Vector2(0.8, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
 point_count = 4
 
 [sub_resource type="CurveTexture" id="CurveTexture_utrra"]
 width = 64
 texture_mode = 1
 curve = SubResource("Curve_r6jp0")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_s1gny"]
+emission_shape = 2
+emission_sphere_radius = 3.0
+angle_min = 1.0728836e-05
+angle_max = 360.00003
+gravity = Vector3(0, 0, 0)
+radial_accel_min = -400.0
+radial_accel_max = -400.0
+tangential_accel_min = 19.999998
+tangential_accel_max = 39.999996
+scale_min = 0.5
+alpha_curve = SubResource("CurveTexture_utrra")
+anim_offset_max = 1.0
 
 [sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_r6jp0"]
 emission_shape = 2
@@ -139,19 +205,31 @@ anim_offset_max = 1.0
 [sub_resource type="QuadMesh" id="QuadMesh_heuv1"]
 material = ExtResource("27_7f36k")
 
-[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_s1gny"]
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_xqq47"]
 emission_shape = 2
 emission_sphere_radius = 3.0
 angle_min = 1.0728836e-05
 angle_max = 360.00003
 gravity = Vector3(0, 0, 0)
-radial_accel_min = -400.0
-radial_accel_max = -400.0
-tangential_accel_min = 19.999998
-tangential_accel_max = 39.999996
-scale_max = 2.0
+scale_min = 2.0
+scale_max = 4.0
+color = Color(0.65380144, 0.4335003, 0.9461091, 1)
 alpha_curve = SubResource("CurveTexture_utrra")
+anim_speed_min = 1.0
+anim_speed_max = 2.0
 anim_offset_max = 1.0
+
+[sub_resource type="QuadMesh" id="QuadMesh_ia8iy"]
+material = ExtResource("13_xqq47")
+
+[sub_resource type="Curve" id="Curve_s1gny"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.2, 0), 0.0, 0.0, 0, 0, Vector2(0.5, 1), 0.0, 0.0, 0, 0, Vector2(0.8, 0), 0.0, 0.0, 0, 0]
+point_count = 4
+
+[sub_resource type="CurveTexture" id="CurveTexture_micvt"]
+width = 64
+texture_mode = 1
+curve = SubResource("Curve_s1gny")
 
 [sub_resource type="Gradient" id="Gradient_s1gny"]
 offsets = PackedFloat32Array(0, 0.26363635, 0.875)
@@ -174,18 +252,135 @@ scale_max = 2.0
 color_ramp = SubResource("GradientTexture1D_micvt")
 alpha_curve = SubResource("CurveTexture_micvt")
 
+[sub_resource type="Curve" id="Curve_ia8iy"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_dfuh3"]
+width = 64
+texture_mode = 1
+curve = SubResource("Curve_ia8iy")
+
+[sub_resource type="Curve" id="Curve_sf2wq"]
+_data = [Vector2(0, 0.1), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="Curve" id="Curve_w04b2"]
+_data = [Vector2(0, 0.2), 0.0, 2.690933, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="Curve" id="Curve_xqq47"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveXYZTexture" id="CurveXYZTexture_ia8iy"]
+width = 64
+curve_x = SubResource("Curve_sf2wq")
+curve_y = SubResource("Curve_w04b2")
+curve_z = SubResource("Curve_xqq47")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_5me0x"]
+lifetime_randomness = 0.3
+spread = 180.0
+initial_velocity_min = 1.0
+initial_velocity_max = 2.0
+gravity = Vector3(0, 0, 0)
+scale_min = 10.0
+scale_max = 20.0
+scale_curve = SubResource("CurveXYZTexture_ia8iy")
+color = Color(1.353256, 0.60574573, 1.0916275, 1)
+alpha_curve = SubResource("CurveTexture_dfuh3")
+
+[sub_resource type="QuadMesh" id="QuadMesh_sf2wq"]
+material = ExtResource("12_sf2wq")
+size = Vector2(0.5, 1)
+center_offset = Vector3(0, 0.4, 0)
+
 [sub_resource type="SphereShape3D" id="SphereShape3D_utrra"]
 radius = 5.0
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_r6xwq"]
 size = Vector3(20, 20, 5)
 
+[sub_resource type="Curve" id="Curve_5me0x"]
+_data = [Vector2(0, 0), 0.0, 6.3503876, 0, 0, Vector2(0.3, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_sf2wq"]
+width = 64
+texture_mode = 1
+curve = SubResource("Curve_5me0x")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_sf2wq"]
+lifetime_randomness = 0.2
+emission_shape = 2
+emission_sphere_radius = 30.0
+gravity = Vector3(0, 0, 0)
+scale_min = 0.5
+scale_max = 2.0
+alpha_curve = SubResource("CurveTexture_sf2wq")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_fe7vk"]
+transparency = 1
+blend_mode = 1
+shading_mode = 0
+specular_mode = 2
+disable_ambient_light = true
+disable_fog = true
+disable_specular_occlusion = true
+vertex_color_use_as_albedo = true
+albedo_texture = ExtResource("14_5me0x")
+billboard_mode = 3
+billboard_keep_scale = true
+particles_anim_h_frames = 2
+particles_anim_v_frames = 2
+particles_anim_loop = false
+
+[sub_resource type="QuadMesh" id="QuadMesh_fe7vk"]
+material = SubResource("StandardMaterial3D_fe7vk")
+
+[sub_resource type="Gradient" id="Gradient_utrra"]
+offsets = PackedFloat32Array(0.13636364, 0.5409091, 0.8090909)
+colors = PackedColorArray(1.353256, 0.95280397, 0, 1, 1.0729398, 0.5281026, 0, 1, 1, 1, 1, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_s1gny"]
+gradient = SubResource("Gradient_utrra")
+width = 64
+
+[sub_resource type="Curve" id="Curve_utrra"]
+_data = [Vector2(0, 0.5), 0.0, 1.5583886, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_s1gny"]
+width = 64
+curve = SubResource("Curve_utrra")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_utrra"]
+angle_min = 1.0728836e-05
+angle_max = 360.00003
+spread = 180.0
+flatness = 0.8
+initial_velocity_min = 40.0
+initial_velocity_max = 40.0
+angular_velocity_min = -360.0
+angular_velocity_max = 359.99997
+gravity = Vector3(0, 0, 0)
+damping_min = 100.00001
+damping_max = 150.0
+scale_min = 1.5
+scale_max = 2.0
+scale_curve = SubResource("CurveTexture_s1gny")
+color = Color(1.8247963, 1.8247963, 1.8247963, 1)
+color_ramp = SubResource("GradientTexture1D_s1gny")
+alpha_curve = SubResource("CurveTexture_micvt")
+anim_offset_max = 1.0
+
 [sub_resource type="Animation" id="Animation_86d2j"]
 length = 0.001
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath(".:scale")
+tracks/0/path = NodePath("VisualRoot:scale")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
@@ -221,19 +416,19 @@ tracks/2/keys = {
 tracks/3/type = "value"
 tracks/3/imported = false
 tracks/3/enabled = true
-tracks/3/path = NodePath("DamageCamera:position")
+tracks/3/path = NodePath("VisualRoot/DamageCamera:position")
 tracks/3/interp = 1
 tracks/3/loop_wrap = true
 tracks/3/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 0,
-"values": [Vector3(2, 2, 12)]
+"values": [Vector3(4, 4, 20)]
 }
 tracks/4/type = "value"
 tracks/4/imported = false
 tracks/4/enabled = true
-tracks/4/path = NodePath("DamageCamera:rotation")
+tracks/4/path = NodePath("VisualRoot/DamageCamera:rotation")
 tracks/4/interp = 1
 tracks/4/loop_wrap = true
 tracks/4/keys = {
@@ -242,17 +437,89 @@ tracks/4/keys = {
 "update": 0,
 "values": [Vector3(-0.34906584, 0.43633232, 0)]
 }
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("PurpleSmokeParticles:emitting")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/6/type = "value"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("ParticleAttractor:visible")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
 
 [sub_resource type="Animation" id="Animation_7f36k"]
 resource_name = "explode"
 step = 0.1
-tracks/0/type = "method"
+tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("VisualRoot/SphereLetters")
+tracks/0/path = NodePath(".:monitoring")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("VisualRoot/SpiritBomb:visible")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0.001, 0.1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [true, false]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("VisualRoot/DamageCamera:position")
+tracks/2/interp = 2
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector3(2, 3, 15), Vector3(4, 4, 20)]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("VisualRoot/DamageCamera:rotation")
+tracks/3/interp = 2
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0, 1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector3(-0.34906584, 0.17453292, 0), Vector3(-0.34906584, 0.43633232, 0)]
+}
+tracks/4/type = "method"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("VisualRoot/BombLettersFX")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "values": [{
@@ -260,53 +527,19 @@ tracks/0/keys = {
 "method": &"StopGroup"
 }]
 }
-tracks/1/type = "value"
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/path = NodePath(".:monitoring")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
-tracks/1/keys = {
+tracks/5/type = "method"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("VisualRoot/ExplosionFX")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [false]
-}
-tracks/2/type = "value"
-tracks/2/imported = false
-tracks/2/enabled = true
-tracks/2/path = NodePath("VisualRoot/SpiritBomb:visible")
-tracks/2/interp = 1
-tracks/2/loop_wrap = true
-tracks/2/keys = {
-"times": PackedFloat32Array(0.001, 0.1),
-"transitions": PackedFloat32Array(1, 1),
-"update": 1,
-"values": [true, false]
-}
-tracks/3/type = "value"
-tracks/3/imported = false
-tracks/3/enabled = true
-tracks/3/path = NodePath("DamageCamera:position")
-tracks/3/interp = 2
-tracks/3/loop_wrap = true
-tracks/3/keys = {
-"times": PackedFloat32Array(0, 1),
-"transitions": PackedFloat32Array(1, 1),
-"update": 0,
-"values": [Vector3(1, 1.5, 10), Vector3(2, 2, 12)]
-}
-tracks/4/type = "value"
-tracks/4/imported = false
-tracks/4/enabled = true
-tracks/4/path = NodePath("DamageCamera:rotation")
-tracks/4/interp = 2
-tracks/4/loop_wrap = true
-tracks/4/keys = {
-"times": PackedFloat32Array(0, 1),
-"transitions": PackedFloat32Array(1, 1),
-"update": 0,
-"values": [Vector3(-0.34906584, 0.17453292, 0), Vector3(-0.34906584, 0.43633232, 0)]
+"values": [{
+"args": [],
+"method": &"RestartGroup"
+}]
 }
 
 [sub_resource type="Animation" id="Animation_r6xwq"]
@@ -336,6 +569,30 @@ tracks/1/keys = {
 "update": 1,
 "values": [true]
 }
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("ParticleAttractor:visible")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0.001),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("PurpleSmokeParticles:emitting")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0.001),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
 
 [sub_resource type="Animation" id="Animation_utrra"]
 resource_name = "spawn"
@@ -344,7 +601,7 @@ step = 0.1
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath(".:scale")
+tracks/0/path = NodePath("VisualRoot:scale")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
@@ -356,7 +613,7 @@ tracks/0/keys = {
 tracks/1/type = "method"
 tracks/1/imported = false
 tracks/1/enabled = true
-tracks/1/path = NodePath("VisualRoot/SphereLetters")
+tracks/1/path = NodePath("VisualRoot/BombLettersFX")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/keys = {
@@ -379,11 +636,195 @@ tracks/2/keys = {
 "update": 1,
 "values": [true]
 }
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("PurpleSmokeParticles:emitting")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("ParticleAttractor:visible")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/5/type = "method"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("SphereLetters")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0.3),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [false],
+"method": &"restart"
+}]
+}
+
+[sub_resource type="Animation" id="Animation_w04b2"]
+resource_name = "kick"
+length = 6.5
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:monitoring")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("VisualRoot/SpiritBomb:visible")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("ParticleAttractor:visible")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0.001),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("PurpleSmokeParticles:emitting")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0.001),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/4/type = "method"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("VisualRoot/PushPosition/KickFX")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(1.4, 4.2000003),
+"transitions": PackedFloat32Array(1, 1),
+"values": [{
+"args": [true],
+"method": &"SetEmitting"
+}, {
+"args": [false],
+"method": &"SetEmitting"
+}]
+}
+tracks/5/type = "method"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath(".")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(1.5, 1.6666667, 1.8333334, 2, 2.1666667, 2.3333335, 2.5000002, 2.6666667, 2.8333335, 3, 3.1666667, 3.3333335, 3.5000002, 3.666667, 3.8333335, 4, 4.1666665),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
+"values": [{
+"args": [],
+"method": &"ApplyKickFX"
+}, {
+"args": [],
+"method": &"ApplyKickFX"
+}, {
+"args": [],
+"method": &"ApplyKickFX"
+}, {
+"args": [],
+"method": &"ApplyKickFX"
+}, {
+"args": [],
+"method": &"ApplyKickFX"
+}, {
+"args": [],
+"method": &"ApplyKickFX"
+}, {
+"args": [],
+"method": &"ApplyKickFX"
+}, {
+"args": [],
+"method": &"ApplyKickFX"
+}, {
+"args": [],
+"method": &"ApplyKickFX"
+}, {
+"args": [],
+"method": &"ApplyKickFX"
+}, {
+"args": [],
+"method": &"ApplyKickFX"
+}, {
+"args": [],
+"method": &"ApplyKickFX"
+}, {
+"args": [],
+"method": &"ApplyKickFX"
+}, {
+"args": [],
+"method": &"ApplyKickFX"
+}, {
+"args": [],
+"method": &"ApplyKickFX"
+}, {
+"args": [],
+"method": &"ApplyKickFX"
+}, {
+"args": [],
+"method": &"ApplyKickFX"
+}]
+}
+tracks/6/type = "method"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("VisualRoot/PushPosition/ReturnFX")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"times": PackedFloat32Array(4.6),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [false],
+"method": &"restart"
+}]
+}
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_s1gny"]
 _data = {
 &"RESET": SubResource("Animation_86d2j"),
 &"explode": SubResource("Animation_7f36k"),
+&"kick": SubResource("Animation_w04b2"),
 &"launch": SubResource("Animation_r6xwq"),
 &"spawn": SubResource("Animation_utrra")
 }
@@ -894,7 +1335,6 @@ fadein_time = 0.1
 fadeout_time = 0.2
 
 [sub_resource type="AnimationNodeBlendTree" id="AnimationNodeBlendTree_lg36t"]
-graph_offset = Vector2(-1111.736, 34.551636)
 nodes/output/position = Vector2(840, 120)
 nodes/move-state/node = SubResource("AnimationNodeStateMachine_w08gm")
 nodes/move-state/position = Vector2(-1720, 180)
@@ -975,11 +1415,11 @@ monitorable = false
 script = ExtResource("3_7f36k")
 moveSpeed = 60.0
 returnSpeed = 30.0
-PushPosition = NodePath("PushPosition")
+PushPosition = NodePath("VisualRoot/PushPosition")
 MeshRoot = NodePath("VisualRoot/SpiritBomb")
-PushCamera = NodePath("PushCamera")
-KickCamera = NodePath("KickCamera")
-DamageCamera = NodePath("DamageCamera")
+PushCamera = NodePath("VisualRoot/PushCamera")
+KickCamera = NodePath("VisualRoot/KickCamera")
+DamageCamera = NodePath("VisualRoot/DamageCamera")
 PushSfx = NodePath("SpiritBombPushSFX")
 KickSfx = NodePath("SpiritBombKickSFX")
 animator = NodePath("AnimationPlayer")
@@ -990,23 +1430,95 @@ AlfLayla = NodePath("../../..")
 [node name="SpiritBomb" parent="AlfLaylaWaLayla/SpiritBombPosition/SpiritBomb/VisualRoot" instance=ExtResource("25_twpcs")]
 visible = false
 
-[node name="SphereLetters" type="GPUParticles3D" parent="AlfLaylaWaLayla/SpiritBombPosition/SpiritBomb/VisualRoot" node_paths=PackedStringArray("subSystems")]
-transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0)
+[node name="PushPosition" type="Node3D" parent="AlfLaylaWaLayla/SpiritBombPosition/SpiritBomb/VisualRoot"]
+transform = Transform3D(-1, 0, -1.509958e-07, 0, 1, 0, 1.509958e-07, 0, -1, 0, 0, 5)
+
+[node name="KickFX" type="GPUParticles3D" parent="AlfLaylaWaLayla/SpiritBombPosition/SpiritBomb/VisualRoot/PushPosition" node_paths=PackedStringArray("subSystems")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.25, 0.2)
 layers = 32
 cast_shadow = 0
 emitting = false
 amount = 64
-lifetime = 0.5
-one_shot = true
+lifetime = 0.2
+randomness = 0.5
 fixed_fps = 0
 interpolate = false
-process_material = SubResource("ParticleProcessMaterial_utrra")
+local_coords = true
+draw_order = 3
+transform_align = 2
+process_material = SubResource("ParticleProcessMaterial_fhdlo")
+draw_pass_1 = SubResource("QuadMesh_xarnl")
+script = ExtResource("27_l4bcq")
+subSystems = [NodePath("KickLetterFX")]
+
+[node name="KickLetterFX" type="GPUParticles3D" parent="AlfLaylaWaLayla/SpiritBombPosition/SpiritBomb/VisualRoot/PushPosition/KickFX"]
+layers = 32
+cast_shadow = 0
+emitting = false
+lifetime = 0.2
+randomness = 0.5
+fixed_fps = 0
+interpolate = false
+local_coords = true
+draw_order = 3
+transform_align = 2
+process_material = SubResource("ParticleProcessMaterial_w04b2")
+draw_pass_1 = SubResource("QuadMesh_r6jp0")
+
+[node name="ReturnFX" type="GPUParticles3D" parent="AlfLaylaWaLayla/SpiritBombPosition/SpiritBomb/VisualRoot/PushPosition"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.25, 0.2)
+layers = 32
+cast_shadow = 0
+emitting = false
+amount = 64
+lifetime = 0.3
+one_shot = true
+explosiveness = 0.8
+randomness = 0.5
+fixed_fps = 0
+interpolate = false
+local_coords = true
+transform_align = 2
+process_material = SubResource("ParticleProcessMaterial_ia8iy")
+draw_pass_1 = SubResource("QuadMesh_dfuh3")
+
+[node name="PushCamera" type="Node3D" parent="AlfLaylaWaLayla/SpiritBombPosition/SpiritBomb/VisualRoot"]
+transform = Transform3D(100.0001, 0, 0, 0, 100.0001, 0, 0, 0, 100.0001, 0, 0, 0)
+script = ExtResource("3_pt266")
+transitionType = 1
+settings = ExtResource("9_r3jhb")
+
+[node name="KickCamera" type="Node3D" parent="AlfLaylaWaLayla/SpiritBombPosition/SpiritBomb/VisualRoot"]
+transform = Transform3D(-100.0001, 0, -1.5099596e-05, 0, 100.0001, 0, 1.5099596e-05, 0, -100.0001, 7.275958e-12, 0, 500.0005)
+script = ExtResource("3_pt266")
+transitionTime = 6.0
+settings = ExtResource("10_03ukt")
+
+[node name="DamageCamera" type="Node3D" parent="AlfLaylaWaLayla/SpiritBombPosition/SpiritBomb/VisualRoot"]
+transform = Transform3D(90.630844, -14.454408, 39.71315, 0, 93.969345, 34.202034, -42.26186, -30.99758, 85.16512, 4, 4, 20)
+script = ExtResource("3_pt266")
+transitionTime = 0.0
+settings = ExtResource("4_g0203")
+UpdateEveryFrame = true
+followObject = NodePath(".")
+
+[node name="BombLettersFX" type="GPUParticles3D" parent="AlfLaylaWaLayla/SpiritBombPosition/SpiritBomb/VisualRoot" node_paths=PackedStringArray("subSystems")]
+transform = Transform3D(1, 0, 4.2351647e-22, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0)
+layers = 32
+cast_shadow = 0
+emitting = false
+amount = 32
+lifetime = 1.2
+fixed_fps = 0
+interpolate = false
+local_coords = true
+process_material = SubResource("ParticleProcessMaterial_s1gny")
 draw_pass_1 = SubResource("QuadMesh_r6jp0")
 script = ExtResource("27_l4bcq")
-subSystems = [NodePath("PurpleSmoke"), NodePath("BombLetters"), NodePath("BombLettersStationary"), NodePath("BombLettersTravel")]
+subSystems = [NodePath("PurpleSmoke"), NodePath("ExplosionSmoke"), NodePath("BombLettersStationary"), NodePath("BombLettersTravel")]
 
-[node name="PurpleSmoke" type="GPUParticles3D" parent="AlfLaylaWaLayla/SpiritBombPosition/SpiritBomb/VisualRoot/SphereLetters"]
-transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 0, 0)
+[node name="PurpleSmoke" type="GPUParticles3D" parent="AlfLaylaWaLayla/SpiritBombPosition/SpiritBomb/VisualRoot/BombLettersFX"]
+transform = Transform3D(1, 4.2351647e-22, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 0, 0)
 layers = 32
 cast_shadow = 0
 emitting = false
@@ -1018,34 +1530,33 @@ local_coords = true
 process_material = SubResource("ParticleProcessMaterial_r6jp0")
 draw_pass_1 = SubResource("QuadMesh_heuv1")
 
-[node name="BombLetters" type="GPUParticles3D" parent="AlfLaylaWaLayla/SpiritBombPosition/SpiritBomb/VisualRoot/SphereLetters"]
-transform = Transform3D(1, 0, 4.2351647e-22, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+[node name="ExplosionSmoke" type="GPUParticles3D" parent="AlfLaylaWaLayla/SpiritBombPosition/SpiritBomb/VisualRoot/BombLettersFX"]
+transform = Transform3D(1, 4.2351647e-22, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 0, 0)
 layers = 32
 cast_shadow = 0
 emitting = false
 amount = 32
-lifetime = 1.2
+lifetime = 0.5
+fixed_fps = 0
+interpolate = false
+local_coords = true
+process_material = SubResource("ParticleProcessMaterial_xqq47")
+draw_pass_1 = SubResource("QuadMesh_ia8iy")
+
+[node name="BombLettersStationary" type="GPUParticles3D" parent="AlfLaylaWaLayla/SpiritBombPosition/SpiritBomb/VisualRoot/BombLettersFX"]
+layers = 32
+cast_shadow = 0
+emitting = false
+amount = 32
+lifetime = 0.8
 fixed_fps = 0
 interpolate = false
 local_coords = true
 process_material = SubResource("ParticleProcessMaterial_s1gny")
 draw_pass_1 = SubResource("QuadMesh_r6jp0")
 
-[node name="BombLettersStationary" type="GPUParticles3D" parent="AlfLaylaWaLayla/SpiritBombPosition/SpiritBomb/VisualRoot/SphereLetters"]
-transform = Transform3D(1, 0, 4.2351647e-22, 0, 1, 0, 0, 0, 1, 0, 0, 0)
-layers = 32
-cast_shadow = 0
-emitting = false
-amount = 32
-lifetime = 1.2
-fixed_fps = 0
-interpolate = false
-local_coords = true
-process_material = SubResource("ParticleProcessMaterial_s1gny")
-draw_pass_1 = SubResource("QuadMesh_r6jp0")
-
-[node name="BombLettersTravel" type="GPUParticles3D" parent="AlfLaylaWaLayla/SpiritBombPosition/SpiritBomb/VisualRoot/SphereLetters"]
-transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 0, 0)
+[node name="BombLettersTravel" type="GPUParticles3D" parent="AlfLaylaWaLayla/SpiritBombPosition/SpiritBomb/VisualRoot/BombLettersFX"]
+transform = Transform3D(1, 4.2351647e-22, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 0, 0)
 layers = 32
 cast_shadow = 0
 emitting = false
@@ -1056,33 +1567,29 @@ interpolate = false
 process_material = SubResource("ParticleProcessMaterial_micvt")
 draw_pass_1 = SubResource("QuadMesh_r6jp0")
 
+[node name="ExplosionFX" type="GPUParticles3D" parent="AlfLaylaWaLayla/SpiritBombPosition/SpiritBomb/VisualRoot" node_paths=PackedStringArray("subSystems")]
+transform = Transform3D(1, 0, 4.2351647e-22, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0)
+layers = 32
+cast_shadow = 0
+emitting = false
+amount = 256
+lifetime = 0.4
+one_shot = true
+explosiveness = 0.8
+fixed_fps = 0
+interpolate = false
+local_coords = true
+transform_align = 2
+process_material = SubResource("ParticleProcessMaterial_5me0x")
+draw_pass_1 = SubResource("QuadMesh_sf2wq")
+script = ExtResource("27_l4bcq")
+subSystems = []
+
 [node name="CollisionShape3D" type="CollisionShape3D" parent="AlfLaylaWaLayla/SpiritBombPosition/SpiritBomb"]
 shape = SubResource("SphereShape3D_utrra")
 
 [node name="CollisionShape3D2" type="CollisionShape3D" parent="AlfLaylaWaLayla/SpiritBombPosition/SpiritBomb"]
 shape = SubResource("BoxShape3D_r6xwq")
-
-[node name="PushPosition" type="Node3D" parent="AlfLaylaWaLayla/SpiritBombPosition/SpiritBomb"]
-transform = Transform3D(-1, 0, -1.509958e-07, 0, 1, 0, 1.509958e-07, 0, -1, 0, 0, 5)
-
-[node name="PushCamera" type="Node3D" parent="AlfLaylaWaLayla/SpiritBombPosition/SpiritBomb"]
-script = ExtResource("3_pt266")
-transitionType = 1
-settings = ExtResource("9_r3jhb")
-
-[node name="KickCamera" type="Node3D" parent="AlfLaylaWaLayla/SpiritBombPosition/SpiritBomb"]
-transform = Transform3D(-1, 0, -1.509958e-07, 0, 1, 0, 1.509958e-07, 0, -1, 0, 0, 5)
-script = ExtResource("3_pt266")
-transitionTime = 6.0
-settings = ExtResource("10_03ukt")
-
-[node name="DamageCamera" type="Node3D" parent="AlfLaylaWaLayla/SpiritBombPosition/SpiritBomb"]
-transform = Transform3D(0.9063077, -0.14454395, 0.39713117, 0, 0.9396926, 0.34202003, -0.42261824, -0.3099755, 0.85165054, 2, 2, 12)
-script = ExtResource("3_pt266")
-transitionTime = 0.0
-settings = ExtResource("4_g0203")
-UpdateEveryFrame = true
-followObject = NodePath(".")
 
 [node name="SpiritBombPushSFX" type="AudioStreamPlayer" parent="AlfLaylaWaLayla/SpiritBombPosition/SpiritBomb"]
 stream = ExtResource("12_i862f")
@@ -1093,6 +1600,39 @@ bus = &"GAME SFX"
 stream = ExtResource("13_2b7eq")
 volume_db = 3.0
 bus = &"GAME SFX"
+
+[node name="PurpleSmokeParticles" type="GPUParticles3D" parent="AlfLaylaWaLayla/SpiritBombPosition/SpiritBomb"]
+layers = 160
+cast_shadow = 0
+emitting = false
+amount = 256
+lifetime = 0.5
+fixed_fps = 0
+interpolate = false
+process_material = SubResource("ParticleProcessMaterial_sf2wq")
+draw_pass_1 = SubResource("QuadMesh_fe7vk")
+
+[node name="SphereLetters" type="GPUParticles3D" parent="AlfLaylaWaLayla/SpiritBombPosition/SpiritBomb"]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0)
+layers = 32
+cast_shadow = 0
+emitting = false
+amount = 64
+lifetime = 0.4
+one_shot = true
+explosiveness = 0.6
+fixed_fps = 0
+interpolate = false
+process_material = SubResource("ParticleProcessMaterial_utrra")
+draw_pass_1 = SubResource("QuadMesh_r6jp0")
+
+[node name="ParticleAttractor" type="GPUParticlesAttractorSphere3D" parent="AlfLaylaWaLayla/SpiritBombPosition/SpiritBomb"]
+visible = false
+layers = 128
+strength = 500.0
+attenuation = 0.5
+cull_mask = 128
+radius = 1000.0
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="AlfLaylaWaLayla/SpiritBombPosition/SpiritBomb"]
 deterministic = true

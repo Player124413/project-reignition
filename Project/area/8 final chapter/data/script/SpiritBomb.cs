@@ -1,5 +1,6 @@
 using Godot;
 using Project.Core;
+using Project.CustomNodes;
 using Project.Gameplay.Triggers;
 
 namespace Project.Gameplay.Bosses;
@@ -21,6 +22,7 @@ public partial class SpiritBomb : Area3D
 	[Export] public CameraTrigger PushCamera { get; private set; }
 	[Export] public CameraTrigger KickCamera { get; private set; }
 	[Export] public CameraTrigger DamageCamera { get; private set; }
+	[Export] public GroupGpuParticles3D KickVfx { get; private set; }
 	[Export] private AudioStreamPlayer PushSfx { get; set; }
 	[Export] private AudioStreamPlayer KickSfx { get; set; }
 	[Export] private AnimationPlayer animator;
@@ -68,6 +70,13 @@ public partial class SpiritBomb : Area3D
 		TopLevel = false;
 		PushSfx.Stop();
 		KickSfx.Play();
+		Player.Camera.StartCameraShake(new PlayerCameraController.CameraShakeSettings()
+		{
+			fadeIn = 0,
+			fadeOut = 0.1f,
+			duration = 0.4f,
+			magnitude = Vector3.One * 4f,
+		});
 	}
 
 	public void Respawn()
@@ -111,6 +120,13 @@ public partial class SpiritBomb : Area3D
 		EmitSignal(SignalName.AlfExploded);
 	}
 
+	public void StartSpiritBombKick()
+	{
+		KickCamera.Activate();
+		AlfLayla.StartSpiritBombKick();
+		animator.Play("kick");
+	}
+
 	public void OnEntered(Area3D a)
 	{
 		if (!a.IsInGroup("player"))
@@ -118,7 +134,7 @@ public partial class SpiritBomb : Area3D
 
 		isInteractingWithPlayer = true;
 
-		if (Player.Skills.IsSpeedBreakActive)
+		if (Player.Skills.IsSpeedBreakActive && !Player.Skills.IsSpeedBreakCharging)
 		{
 			IsTravelling = false;
 			PushSfx.Play();
@@ -128,6 +144,18 @@ public partial class SpiritBomb : Area3D
 		}
 
 		Explode();
+	}
+
+	public void ApplyKickFX()
+	{
+		KickSfx.Play();
+		Player.Camera.StartCameraShake(new PlayerCameraController.CameraShakeSettings()
+		{
+			fadeIn = 0,
+			fadeOut = 0.05f,
+			duration = 0.1f,
+			magnitude = Vector3.One * 2.5f,
+		});
 	}
 
 	public void OnExited(Area3D a)
