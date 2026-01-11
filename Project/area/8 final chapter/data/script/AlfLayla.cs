@@ -663,6 +663,12 @@ public partial class AlfLayla : Node3D
 		smokeParticles[currentExplosionParticleIndex].Visible = true;
 		explosionParticles[currentExplosionParticleIndex].RestartGroup();
 		currentExplosionParticleIndex++;
+		Player.Camera.StartCameraShake(new()
+		{
+			fadeIn = 0f,
+			duration = 0.2f,
+			fadeOut = 0.05f,
+		});
 	}
 
 	public bool IsStunned => CurrentFightState == FightState.Stunned;
@@ -723,7 +729,7 @@ public partial class AlfLayla : Node3D
 			fadeIn = 0f,
 			duration = 0.3f,
 			fadeOut = 0.05f,
-			magnitude = Vector3.One * 10f
+			magnitude = Vector3.One * 3f
 		});
 	}
 
@@ -792,7 +798,6 @@ public partial class AlfLayla : Node3D
 			fadeIn = 0f,
 			duration = 0.2f,
 			fadeOut = 0.05f,
-			magnitude = Vector3.One * 4f
 		});
 
 		animationTree.Set(StunDamageTrigger, (uint)AnimationNodeOneShot.OneShotRequest.Fire);

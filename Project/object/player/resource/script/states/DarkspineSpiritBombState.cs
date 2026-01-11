@@ -42,7 +42,6 @@ public partial class DarkspineSpiritBombState : PlayerState
 			fadeIn = 0,
 			fadeOut = 0.1f,
 			duration = 0.5f,
-			magnitude = Vector3.One * 3,
 		});
 
 		Player.Skills.IsTimeBreakEnabled = false;
@@ -83,7 +82,7 @@ public partial class DarkspineSpiritBombState : PlayerState
 				fadeIn = 0,
 				fadeOut = 0.05f,
 				duration = 0.3f,
-				magnitude = Vector3.One,
+				magnitude = Vector3.One * 0.5f,
 			});
 		}
 

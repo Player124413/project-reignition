@@ -75,7 +75,7 @@ public partial class SpiritBomb : Area3D
 			fadeIn = 0,
 			fadeOut = 0.1f,
 			duration = 0.4f,
-			magnitude = Vector3.One * 10f,
+			magnitude = Vector3.One * 3f,
 		});
 	}
 
@@ -154,7 +154,6 @@ public partial class SpiritBomb : Area3D
 			fadeIn = 0,
 			fadeOut = 0.05f,
 			duration = 0.1f,
-			magnitude = Vector3.One * 2.5f,
 		});
 	}
 
