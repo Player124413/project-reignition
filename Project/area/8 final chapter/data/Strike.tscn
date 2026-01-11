@@ -1,9 +1,12 @@
-[gd_scene load_steps=27 format=3 uid="uid://po4sbijsn5gh"]
+[gd_scene load_steps=31 format=3 uid="uid://po4sbijsn5gh"]
 
 [ext_resource type="Script" uid="uid://r4h5dd86iox" path="res://area/8 final chapter/data/script/AlfSlash.cs" id="1_xw2y4"]
 [ext_resource type="Material" uid="uid://byyudgvby883r" path="res://effect/particle/material/environment/Circular Glow Add No Billboard.tres" id="2_hum1e"]
 [ext_resource type="Material" uid="uid://br3rof2cswaa1" path="res://effect/particle/material/explosion/Explosion Flame No Billboard.tres" id="3_xw2y4"]
 [ext_resource type="Material" uid="uid://b4c12p1fsec3b" path="res://effect/particle/material/Teleport Spark No Billboard.tres" id="4_c2wpm"]
+[ext_resource type="AudioStream" uid="uid://egkqya235jvw" path="res://sound/boss/alf layla/slash glow.wav" id="5_vnurs"]
+[ext_resource type="AudioStream" uid="uid://dv24n2otbea0" path="res://sound/boss/alf layla/slash explosion.wav" id="6_utij8"]
+[ext_resource type="AudioStream" uid="uid://konkfubt2mvu" path="res://sound/boss/alf layla/slash windup.wav" id="7_utij8"]
 
 [sub_resource type="QuadMesh" id="QuadMesh_ioa7f"]
 material = ExtResource("2_hum1e")
@@ -166,6 +169,78 @@ tracks/5/keys = {
 "update": 1,
 "values": [false]
 }
+tracks/6/type = "value"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("SlashGlowSFX:volume_db")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.0]
+}
+tracks/7/type = "value"
+tracks/7/imported = false
+tracks/7/enabled = true
+tracks/7/path = NodePath("SlashExplosionSFX:volume_db")
+tracks/7/interp = 1
+tracks/7/loop_wrap = true
+tracks/7/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.0]
+}
+tracks/8/type = "value"
+tracks/8/imported = false
+tracks/8/enabled = true
+tracks/8/path = NodePath("SlashWindupSFX:volume_db")
+tracks/8/interp = 1
+tracks/8/loop_wrap = true
+tracks/8/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.0]
+}
+tracks/9/type = "value"
+tracks/9/imported = false
+tracks/9/enabled = true
+tracks/9/path = NodePath("SlashGlowSFX:playing")
+tracks/9/interp = 1
+tracks/9/loop_wrap = true
+tracks/9/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/10/type = "value"
+tracks/10/imported = false
+tracks/10/enabled = true
+tracks/10/path = NodePath("SlashExplosionSFX:playing")
+tracks/10/interp = 1
+tracks/10/loop_wrap = true
+tracks/10/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/11/type = "value"
+tracks/11/imported = false
+tracks/11/enabled = true
+tracks/11/path = NodePath("SlashWindupSFX:playing")
+tracks/11/interp = 1
+tracks/11/loop_wrap = true
+tracks/11/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
 
 [sub_resource type="Animation" id="Animation_xw2y4"]
 resource_name = "init"
@@ -229,7 +304,7 @@ tracks/2/path = NodePath("ExplosionVFX:position")
 tracks/2/interp = 1
 tracks/2/loop_wrap = true
 tracks/2/keys = {
-"times": PackedFloat32Array(0.5, 0.6),
+"times": PackedFloat32Array(0.6666667, 0.7666667),
 "transitions": PackedFloat32Array(0.5, 1),
 "update": 0,
 "values": [Vector3(0, 30, 0), Vector3(0, 0, 0)]
@@ -241,7 +316,7 @@ tracks/3/path = NodePath("ExplosionVFX:emitting")
 tracks/3/interp = 1
 tracks/3/loop_wrap = true
 tracks/3/keys = {
-"times": PackedFloat32Array(0, 0.5),
+"times": PackedFloat32Array(0, 0.6666667),
 "transitions": PackedFloat32Array(1, 1),
 "update": 1,
 "values": [false, true]
@@ -265,16 +340,93 @@ tracks/5/path = NodePath("ExplosionVFX/TipVFX:emitting")
 tracks/5/interp = 1
 tracks/5/loop_wrap = true
 tracks/5/keys = {
-"times": PackedFloat32Array(0, 0.5, 0.6333333),
+"times": PackedFloat32Array(0, 0.6666667, 0.8),
 "transitions": PackedFloat32Array(1, 1, 1),
 "update": 1,
 "values": [false, true, false]
+}
+tracks/6/type = "value"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("SlashGlowSFX:playing")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"times": PackedFloat32Array(0, 0.3),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [false, true]
+}
+tracks/7/type = "value"
+tracks/7/imported = false
+tracks/7/enabled = true
+tracks/7/path = NodePath("SlashExplosionSFX:playing")
+tracks/7/interp = 1
+tracks/7/loop_wrap = true
+tracks/7/keys = {
+"times": PackedFloat32Array(0, 0.6666667),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [false, true]
+}
+tracks/8/type = "value"
+tracks/8/imported = false
+tracks/8/enabled = true
+tracks/8/path = NodePath("SlashWindupSFX:playing")
+tracks/8/interp = 1
+tracks/8/loop_wrap = true
+tracks/8/keys = {
+"times": PackedFloat32Array(0, 0.1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [false, true]
+}
+
+[sub_resource type="Animation" id="Animation_utij8"]
+resource_name = "mute"
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("SlashGlowSFX:volume_db")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [-80.0]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("SlashExplosionSFX:volume_db")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [-80.0]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("SlashWindupSFX:volume_db")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [-80.0]
 }
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_rlt5j"]
 _data = {
 &"RESET": SubResource("Animation_rlt5j"),
 &"init": SubResource("Animation_xw2y4"),
+&"mute": SubResource("Animation_utij8"),
 &"strike": SubResource("Animation_hum1e")
 }
 
@@ -326,6 +478,18 @@ visibility_aabb = AABB(0, 0, 0, 0, 0, 0)
 transform_align = 2
 process_material = SubResource("ParticleProcessMaterial_xw2y4")
 draw_pass_1 = SubResource("QuadMesh_vnurs")
+
+[node name="SlashGlowSFX" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("5_vnurs")
+bus = &"GAME SFX"
+
+[node name="SlashExplosionSFX" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("6_utij8")
+bus = &"GAME SFX"
+
+[node name="SlashWindupSFX" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("7_utij8")
+bus = &"GAME SFX"
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 libraries = {

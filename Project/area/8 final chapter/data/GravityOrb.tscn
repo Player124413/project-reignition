@@ -1,4 +1,4 @@
-[gd_scene load_steps=31 format=3 uid="uid://vv8ysqa68nc1"]
+[gd_scene load_steps=33 format=3 uid="uid://vv8ysqa68nc1"]
 
 [ext_resource type="Script" uid="uid://ob7pwd04qme1" path="res://area/8 final chapter/data/script/GravityOrb.cs" id="1_poxal"]
 [ext_resource type="Material" uid="uid://bnk8skmt06lca" path="res://effect/particle/material/environment/Circular Glow.tres" id="1_snu67"]
@@ -6,6 +6,8 @@
 [ext_resource type="PackedScene" uid="uid://bi8fnvvbuythh" path="res://area/8 final chapter/data/model/GravityOrb.gltf" id="3_l0rdi"]
 [ext_resource type="Script" uid="uid://c65ffkknyq6gr" path="res://addons/custom_nodes/script/GroupGpuParticles3D.cs" id="4_fx7oj"]
 [ext_resource type="Script" uid="uid://pnh70abopq8e" path="res://object/stage/common/resource/script/Hazard.cs" id="4_w0bvt"]
+[ext_resource type="AudioStream" uid="uid://bgfbd0wb2eoem" path="res://sound/boss/alf layla/gravity orb pull.wav" id="7_pbnhl"]
+[ext_resource type="AudioStream" uid="uid://dtm3h5tbxpqym" path="res://sound/boss/alf layla/gravity orb spawn.wav" id="8_grstn"]
 
 [sub_resource type="Curve" id="Curve_fx7oj"]
 _limits = [0.0, 1.0, 0.0, 3.0]
@@ -364,6 +366,20 @@ tracks/4/keys = {
 "update": 1,
 "values": [false]
 }
+tracks/5/type = "method"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("Spawn")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [0.0],
+"method": &"play"
+}]
+}
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_w0bvt"]
 _data = {
@@ -373,12 +389,13 @@ _data = {
 &"spawn": SubResource("Animation_l0rdi")
 }
 
-[node name="GravityOrb" type="Node3D" node_paths=PackedStringArray("animator")]
+[node name="GravityOrb" type="Node3D" node_paths=PackedStringArray("animator", "pullSfx")]
 script = ExtResource("1_poxal")
 animator = NodePath("AnimationPlayer")
 gravityPull = 12.0
 moveSpeed = 15.0
 gravityCurve = SubResource("Curve_fx7oj")
+pullSfx = NodePath("Pull")
 
 [node name="VisualRoot" type="Node3D" parent="."]
 
@@ -453,6 +470,14 @@ ignoreSpeedbreakingCharacters = true
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="DamageZone"]
 shape = SubResource("SphereShape3D_fx7oj")
+
+[node name="Pull" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("7_pbnhl")
+bus = &"GAME SFX"
+
+[node name="Spawn" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("8_grstn")
+bus = &"GAME SFX"
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 libraries = {

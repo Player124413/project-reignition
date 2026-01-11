@@ -173,6 +173,7 @@ public partial class AlfLayla : Node3D
 		currentActionIndex = 0;
 		currentActionCharacter = '\0';
 		currentGravityOrbIndex = 0;
+		currentExplosionParticleIndex = 0;
 
 		currentDistance = BombDistance;
 		targetDistance = BombDistance;

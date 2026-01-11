@@ -21,6 +21,8 @@ public partial class SpiritBomb : Area3D
 	[Export] public CameraTrigger PushCamera { get; private set; }
 	[Export] public CameraTrigger KickCamera { get; private set; }
 	[Export] public CameraTrigger DamageCamera { get; private set; }
+	[Export] private AudioStreamPlayer PushSfx { get; set; }
+	[Export] private AudioStreamPlayer KickSfx { get; set; }
 	[Export] private AnimationPlayer animator;
 	[Export] public AlfLayla AlfLayla { get; private set; }
 
@@ -64,6 +66,8 @@ public partial class SpiritBomb : Area3D
 		isInteractingWithPlayer = false;
 		IsTravelling = true;
 		TopLevel = false;
+		PushSfx.Stop();
+		KickSfx.Play();
 	}
 
 	public void Respawn()
@@ -83,6 +87,7 @@ public partial class SpiritBomb : Area3D
 
 		IsTravelling = false;
 		animator.Play("explode");
+		PushSfx.Stop();
 
 		if (isInteractingWithPlayer)
 		{
@@ -117,6 +122,7 @@ public partial class SpiritBomb : Area3D
 		{
 			IsTravelling = false;
 			Player.StartSpiritBomb(this);
+			PushSfx.Play();
 			return;
 		}
 
