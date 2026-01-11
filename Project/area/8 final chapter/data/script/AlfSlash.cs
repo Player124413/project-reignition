@@ -17,12 +17,18 @@ public partial class AlfSlash : Hazard
 			childSlashes[i].Activate();
 	}
 
-	public void Respawn()
+	public void Respawn(bool muteAudio = false)
 	{
+		if (muteAudio)
+		{
+			animator.Play("mute");
+			animator.Advance(0.0);
+		}
+
 		animator.Play("init");
 		animator.Advance(0.0);
 
 		for (int i = 0; i < childSlashes.Length; i++)
-			childSlashes[i].Respawn();
+			childSlashes[i].Respawn(true);
 	}
 }

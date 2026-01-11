@@ -9,15 +9,23 @@ public partial class GravityOrb : Node3D
 	[Export] private float gravityPull;
 	[Export] private float moveSpeed;
 	[Export] private Curve gravityCurve;
+	[Export] private AudioStreamPlayer pullSfx;
 
 	private bool isSpawned;
 	private bool isInteractingWithPlayer;
 	private PlayerController Player => StageSettings.Player;
+	private readonly int ExplosionDistance = 3;
 
 	public override void _PhysicsProcess(double _delta)
 	{
 		if (isSpawned)
-			GlobalPosition += Vector3.Forward * moveSpeed * PhysicsManager.physicsDelta;
+		{
+			float playerFactor = ExtensionMethods.DotAngle(Player.MovementAngle, Player.PathFollower.ForwardAngle) * Player.MoveSpeed;
+			GlobalPosition += Vector3.Forward * (moveSpeed - playerFactor) * PhysicsManager.physicsDelta;
+
+			if (GlobalPosition.Z < StageSettings.Player.GlobalPosition.Z - ExplosionDistance)
+				Respawn();
+		}
 
 		if (!isInteractingWithPlayer)
 			return;
@@ -38,6 +46,7 @@ public partial class GravityOrb : Node3D
 			return;
 
 		isInteractingWithPlayer = true;
+		pullSfx.Play();
 	}
 
 	public void OnExited(Area3D a)
@@ -52,17 +61,20 @@ public partial class GravityOrb : Node3D
 	{
 		animator.Play("spawn");
 		isSpawned = true;
+		TopLevel = true;
 	}
 
 	public void Respawn()
 	{
 		animator.Play("init");
 		isSpawned = false;
+		TopLevel = false;
 	}
 
 	public void Explode()
 	{
 		animator.Play("explode");
 		isInteractingWithPlayer = false;
+		TopLevel = false;
 	}
 }

@@ -6,9 +6,9 @@ namespace Project.Gameplay.Bosses;
 public partial class PurpleOrb : Node3D
 {
 	[Export] private float moveSpeed;
-	[Export] private Timer timer;
 	[Export] private AnimationPlayer animator;
 	private bool isActive;
+	private readonly int ExplosionDistance = 3;
 
 	public override void _PhysicsProcess(double _)
 	{
@@ -16,6 +16,8 @@ public partial class PurpleOrb : Node3D
 			return;
 
 		GlobalPosition += this.Back() * moveSpeed * PhysicsManager.physicsDelta;
+		if (GlobalPosition.Z < StageSettings.Player.GlobalPosition.Z - ExplosionDistance)
+			Respawn();
 	}
 
 	public void Activate()
@@ -23,7 +25,6 @@ public partial class PurpleOrb : Node3D
 		animator.Play("spawn");
 		LookAt(StageSettings.Player.CenterPosition, Vector3.Up);
 		isActive = true;
-		timer.Start();
 	}
 
 	public void Respawn()
