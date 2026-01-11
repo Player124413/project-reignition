@@ -20,6 +20,7 @@ public partial class DarkspineMultiPunchState : PlayerState
 
 	private float alfStunTimer;
 	private readonly float AlfStunLength = 4.5f;
+	private readonly string AttackAction = "action_attack";
 
 	public override void EnterState()
 	{
@@ -44,6 +45,9 @@ public partial class DarkspineMultiPunchState : PlayerState
 		}
 
 		Player.Skills.DisableBreakSkills();
+
+		HeadsUpDisplay.Instance.SetPrompt(AttackAction, 2);
+		HeadsUpDisplay.Instance.ShowPrompts();
 	}
 
 	public override void ExitState()
@@ -53,6 +57,7 @@ public partial class DarkspineMultiPunchState : PlayerState
 		Player.IsMultiPunchActive = false;
 		Player.StopExternal();
 		Player.Skills.EnableBreakSkills();
+		HeadsUpDisplay.Instance.HidePrompts();
 	}
 
 	public override PlayerState ProcessPhysics()
@@ -69,6 +74,7 @@ public partial class DarkspineMultiPunchState : PlayerState
 		alfStunTimer = Mathf.MoveToward(alfStunTimer, 0, PhysicsManager.physicsDelta);
 		if (Mathf.IsZeroApprox(alfStunTimer) || (currentAttackCount == MaxPunchCount && Player.Animator.CanPerformDarkspinePunch)) // Limit Punches
 		{
+			HeadsUpDisplay.Instance.HidePrompts();
 			if (Player.Animator.IsDarkspinePunchFinished)
 			{
 				// No world ring explosions. Player goofed.
