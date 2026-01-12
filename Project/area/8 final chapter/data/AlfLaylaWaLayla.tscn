@@ -1,4 +1,4 @@
-[gd_scene load_steps=225 format=3 uid="uid://7p1mkbn0s276"]
+[gd_scene load_steps=230 format=3 uid="uid://7p1mkbn0s276"]
 
 [ext_resource type="PackedScene" uid="uid://bl4mwbfg117lh" path="res://area/8 final chapter/data/model/AlfLaylaWaLayla.gltf" id="1_8mof4"]
 [ext_resource type="Script" uid="uid://bpp2tmfxy4euf" path="res://area/8 final chapter/data/script/AlfLayla.cs" id="1_k6i6c"]
@@ -58,10 +58,13 @@
 [ext_resource type="Script" uid="uid://c65ffkknyq6gr" path="res://addons/custom_nodes/script/GroupGpuParticles3D.cs" id="27_l4bcq"]
 [ext_resource type="AudioStream" uid="uid://djdqnkwwahx5n" path="res://sound/boss/alf layla/purple orb windup.wav" id="27_r6xwq"]
 [ext_resource type="AudioStream" uid="uid://dwk4dv054lqjs" path="res://sound/boss/alf layla/purple orb charge.wav" id="28_mlh0r"]
+[ext_resource type="Resource" uid="uid://bxgjkovm2u880" path="res://resource/preset/lockout/run/StopLockout.tres" id="29_c3ded"]
 [ext_resource type="Script" uid="uid://bri007qdprrbf" path="res://addons/custom_nodes/script/BoneAttachment3DNoScale.cs" id="30_86d2j"]
 [ext_resource type="Material" uid="uid://bi78t1ox4k8gl" path="res://effect/particle/material/Ember Purple.tres" id="33_f0c13"]
+[ext_resource type="AudioStream" uid="uid://c60pdqksxjco8" path="res://sound/boss/alf layla/ev_01_stg080_ja.ogg" id="34_5p4at"]
 [ext_resource type="Material" uid="uid://m0d6jfnxdrwg" path="res://effect/particle/material/Teleport Dust.tres" id="34_jc0er"]
 [ext_resource type="Animation" uid="uid://8m82qfnl70br" path="res://area/8 final chapter/data/model/animation/explosion.res" id="38_3khio"]
+[ext_resource type="Animation" uid="uid://drn1qol557v1i" path="res://area/8 final chapter/data/model/animation/intro.res" id="44_l17uv"]
 [ext_resource type="Script" uid="uid://bitgnn108jmaa" path="res://object/trigger/modules/DialogTrigger.cs" id="47_qdlht"]
 [ext_resource type="Material" uid="uid://ctkxyqv6hyynk" path="res://area/1 sand oasis/boss/effect/material/Charge.tres" id="61_w04b2"]
 
@@ -1220,6 +1223,7 @@ _data = {
 &"explosion": ExtResource("38_3khio"),
 &"explosion-damage": ExtResource("23_oti6b"),
 &"idle": ExtResource("14_oj3ar"),
+&"intro": ExtResource("44_l17uv"),
 &"retreat": ExtResource("15_wa5i8"),
 &"retreat-start": ExtResource("8_fmwwy"),
 &"retreat-stop": ExtResource("9_lngaj"),
@@ -1235,6 +1239,11 @@ _data = {
 &"stun-stop": ExtResource("19_twpcs"),
 &"three-orb": ExtResource("20_l4bcq")
 }
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_5p4at"]
+animation = &"intro"
+
+[sub_resource type="AnimationNodeOneShot" id="AnimationNodeOneShot_c3ded"]
 
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_k6i6c"]
 animation = &"advance-start"
@@ -1439,7 +1448,8 @@ fadein_time = 0.1
 fadeout_time = 0.2
 
 [sub_resource type="AnimationNodeBlendTree" id="AnimationNodeBlendTree_lg36t"]
-nodes/output/position = Vector2(840, 120)
+graph_offset = Vector2(-143.13757, 54.441437)
+nodes/output/position = Vector2(1320, 120)
 nodes/move-state/node = SubResource("AnimationNodeStateMachine_w08gm")
 nodes/move-state/position = Vector2(-1720, 180)
 nodes/slash-x-anim/node = SubResource("AnimationNodeAnimation_yyje7")
@@ -1480,13 +1490,18 @@ nodes/stun-damage-final-anim/node = SubResource("AnimationNodeAnimation_48yth")
 nodes/stun-damage-final-anim/position = Vector2(-1100, 280)
 nodes/stun-damage-final-trigger/node = SubResource("AnimationNodeOneShot_jc0er")
 nodes/stun-damage-final-trigger/position = Vector2(-840, -40)
-node_connections = [&"output", 0, &"spirit-bomb-trigger", &"slash-trigger", 0, &"three-orb-trigger", &"slash-trigger", 1, &"slash-speed", &"six-orb-trigger", 0, &"stun-damage-final-trigger", &"six-orb-trigger", 1, &"six-orb-speed", &"slash-speed", 0, &"slash-type-transition", &"six-orb-speed", 0, &"six-orb-anim", &"slash-type-transition", 0, &"slash-l-anim", &"slash-type-transition", 1, &"slash-x-anim", &"slash-type-transition", 2, &"slash-r-anim", &"spirit-bomb-trigger", 0, &"slash-trigger", &"spirit-bomb-trigger", 1, &"spirit-bomb-anim", &"three-orb-trigger", 0, &"six-orb-trigger", &"three-orb-trigger", 1, &"three-orb-anim", &"stun-transition", 0, &"stun-state", &"stun-transition", 1, &"move-state", &"stun-damage-trigger", 0, &"stun-transition", &"stun-damage-trigger", 1, &"stun-damage-anim", &"stun-damage-final-trigger", 0, &"stun-damage-trigger", &"stun-damage-final-trigger", 1, &"stun-damage-final-anim"]
+nodes/intro-trigger/node = SubResource("AnimationNodeOneShot_c3ded")
+nodes/intro-trigger/position = Vector2(1020, 120)
+nodes/intro-anim/node = SubResource("AnimationNodeAnimation_5p4at")
+nodes/intro-anim/position = Vector2(840, 340)
+node_connections = [&"output", 0, &"intro-trigger", &"slash-trigger", 0, &"three-orb-trigger", &"slash-trigger", 1, &"slash-speed", &"six-orb-trigger", 0, &"stun-damage-final-trigger", &"six-orb-trigger", 1, &"six-orb-speed", &"slash-speed", 0, &"slash-type-transition", &"six-orb-speed", 0, &"six-orb-anim", &"slash-type-transition", 0, &"slash-l-anim", &"slash-type-transition", 1, &"slash-x-anim", &"slash-type-transition", 2, &"slash-r-anim", &"spirit-bomb-trigger", 0, &"slash-trigger", &"spirit-bomb-trigger", 1, &"spirit-bomb-anim", &"three-orb-trigger", 0, &"six-orb-trigger", &"three-orb-trigger", 1, &"three-orb-anim", &"stun-transition", 0, &"stun-state", &"stun-transition", 1, &"move-state", &"stun-damage-trigger", 0, &"stun-transition", &"stun-damage-trigger", 1, &"stun-damage-anim", &"stun-damage-final-trigger", 0, &"stun-damage-trigger", &"stun-damage-final-trigger", 1, &"stun-damage-final-anim", &"intro-trigger", 0, &"spirit-bomb-trigger", &"intro-trigger", 1, &"intro-anim"]
 
-[node name="AlfLaylaWaLayla" type="Node3D" node_paths=PackedStringArray("animationTree", "cutsceneCamera", "autorunLockout", "strikeParent", "spiritBomb", "defaultCameraTrigger", "punchCameraTrigger", "slashControllers", "gravityOrbs", "purpleOrbs", "purpleOrbSpawnPoints", "smokeParticles", "explosionParticles", "explosionCameras", "progressionDialogs", "spiritBombPushDialogs", "spiritBombDamageDialogs")]
+[node name="AlfLaylaWaLayla" type="Node3D" node_paths=PackedStringArray("animationTree", "cutsceneCamera", "autorunLockout", "stopLockout", "strikeParent", "spiritBomb", "defaultCameraTrigger", "punchCameraTrigger", "slashControllers", "gravityOrbs", "purpleOrbs", "purpleOrbSpawnPoints", "smokeParticles", "explosionParticles", "explosionCameras", "progressionDialogs", "spiritBombPushDialogs", "spiritBombDamageDialogs")]
 script = ExtResource("1_k6i6c")
 animationTree = NodePath("AnimationTree")
 cutsceneCamera = NodePath("Triggers/CutscenePositionRoot/CutsceneCamera")
 autorunLockout = NodePath("Triggers/Autorun")
+stopLockout = NodePath("Triggers/Stop")
 strikeParent = NodePath("Strikes")
 spiritBomb = NodePath("AlfLaylaWaLayla/SpiritBombPosition/SpiritBomb")
 defaultCameraTrigger = NodePath("Triggers/Cameras/DefaultCamera")
@@ -1751,7 +1766,7 @@ libraries = {
 }
 
 [node name="Core" type="Node3D" parent="AlfLaylaWaLayla"]
-transform = Transform3D(0.99982536, 6.714148e-06, -1.4303273e-06, -6.7131423e-06, 0.9998663, 0.0005096436, 1.4336835e-06, -0.0005096411, 0.9998712, 4.1639396e-08, 7.9300003, 0.9212787)
+transform = Transform3D(0.9998365, 6.7139486e-06, -1.4302788e-06, -6.7132173e-06, 0.9998366, 0.0005096263, 1.4336994e-06, -0.00050962594, 0.9998373, 4.1639396e-08, 7.9300003, 0.9212787)
 script = ExtResource("30_86d2j")
 skeleton = NodePath("../LaylaRoot/Skeleton3D")
 boneName = &"core"
@@ -1843,15 +1858,12 @@ bus = &"VOICE"
 script = ExtResource("16_mlh0r")
 audioPaths = PackedStringArray("res://sound/boss/alf layla/ev_02_stg080_en.ogg", "res://sound/boss/alf layla/ev_02_stg080_ja.ogg", "")
 
-[node name="IntroCutscene" type="AudioStreamPlayer" parent="Dialog"]
-bus = &"VOICE"
-script = ExtResource("16_mlh0r")
-audioPaths = PackedStringArray("res://sound/boss/alf layla/ev_01_stg080_en.ogg", "res://sound/boss/alf layla/ev_01_stg080_ja.ogg", "")
-
-[node name="DefeatCutscene" type="AudioStreamPlayer" parent="Dialog"]
-bus = &"VOICE"
-script = ExtResource("16_mlh0r")
-audioPaths = PackedStringArray("res://sound/boss/alf layla/ev_03_stg080_en.ogg", "res://sound/boss/alf layla/ev_03_stg080_ja.ogg", "")
+[node name="IntroDialog" type="Node3D" parent="Dialog" node_paths=PackedStringArray("randomizedDialogTriggers")]
+script = ExtResource("47_qdlht")
+delays = Array[float]([1.5, 0.0, 0.5])
+displayLength = Array[float]([5.0, 4.0, 7.19999999999709])
+textKeys = Array[String](["last_intro_er", "last_intro2_er", "last_intro_so"])
+randomizedDialogTriggers = []
 
 [node name="ShahraDialog" type="Node3D" parent="Dialog" node_paths=PackedStringArray("randomizedDialogTriggers")]
 script = ExtResource("47_qdlht")
@@ -1932,6 +1944,10 @@ randomizedDialogTriggers = []
 [node name="Autorun" type="Node3D" parent="Triggers"]
 script = ExtResource("3_fmwwy")
 lockoutData = ExtResource("11_7wf61")
+
+[node name="Stop" type="Node3D" parent="Triggers"]
+script = ExtResource("3_fmwwy")
+lockoutData = ExtResource("29_c3ded")
 
 [node name="CutscenePositionRoot" type="Node3D" parent="Triggers"]
 transform = Transform3D(-0.3420201, 0, -0.93969256, 0, 1, 0, 0.93969256, 0, -0.3420201, 0, 5, 1)
@@ -2561,6 +2577,17 @@ draw_pass_1 = SubResource("QuadMesh_03ukt")
 
 [node name="SFX" type="Node3D" parent="."]
 
+[node name="IntroCutscene" type="AudioStreamPlayer" parent="SFX"]
+stream = ExtResource("34_5p4at")
+bus = &"VOICE"
+script = ExtResource("16_mlh0r")
+audioPaths = PackedStringArray("res://sound/boss/alf layla/ev_01_stg080_en.ogg", "res://sound/boss/alf layla/ev_01_stg080_ja.ogg", "")
+
+[node name="DefeatCutscene" type="AudioStreamPlayer" parent="SFX"]
+bus = &"VOICE"
+script = ExtResource("16_mlh0r")
+audioPaths = PackedStringArray("res://sound/boss/alf layla/ev_03_stg080_en.ogg", "res://sound/boss/alf layla/ev_03_stg080_ja.ogg", "")
+
 [node name="GravityOrbSlashSFX" type="AudioStreamPlayer" parent="SFX"]
 stream = ExtResource("27_d8q4w")
 bus = &"GAME SFX"
@@ -2745,7 +2772,12 @@ parameters/stun-damage-trigger/request = 0
 parameters/stun-damage-final-trigger/active = false
 parameters/stun-damage-final-trigger/internal_active = false
 parameters/stun-damage-final-trigger/request = 0
+parameters/intro-trigger/active = false
+parameters/intro-trigger/internal_active = false
+parameters/intro-trigger/request = 0
 
+[connection signal="CutsceneFinished" from="." to="Dialog/IntroDialog" method="Deactivate"]
+[connection signal="CutsceneFinished" from="." to="SFX/IntroCutscene" method="stop"]
 [connection signal="area_entered" from="AlfLaylaWaLayla/SpiritBombPosition/SpiritBomb" to="AlfLaylaWaLayla/SpiritBombPosition/SpiritBomb" method="OnEntered"]
 [connection signal="area_exited" from="AlfLaylaWaLayla/SpiritBombPosition/SpiritBomb" to="AlfLaylaWaLayla/SpiritBombPosition/SpiritBomb" method="OnExited"]
 [connection signal="area_entered" from="AlfLaylaWaLayla/Core/Core" to="AlfLaylaWaLayla/Core/Core" method="OnEntered"]

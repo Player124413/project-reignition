@@ -8,10 +8,13 @@ namespace Project.Gameplay.Bosses;
 
 public partial class AlfLayla : Node3D
 {
+	[Signal] public delegate void CutsceneFinishedEventHandler();
+
 	[ExportGroup("Components")]
 	[Export] private AnimationTree animationTree;
 	[Export] private CameraTrigger cutsceneCamera;
 	[Export] private LockoutTrigger autorunLockout;
+	[Export] private LockoutTrigger stopLockout;
 	[Export] private Node3D strikeParent;
 
 	[Export] private SpiritBomb spiritBomb;
@@ -193,6 +196,7 @@ public partial class AlfLayla : Node3D
 	private void Respawn()
 	{
 		autorunLockout.Activate();
+		stopLockout.Deactivate();
 		Player.Animator.CancelOneshot();
 		Player.Skills.ModifySoulGauge(-Player.Skills.MaxSoulPower); // Reset soul to 0
 
@@ -242,17 +246,21 @@ public partial class AlfLayla : Node3D
 		animationTree.Set(StunDamageTrigger, (uint)AnimationNodeOneShot.OneShotRequest.Abort);
 	}
 
+	private readonly string IntroductionTrigger = "parameters/intro-trigger/request";
 	private void StartIntroduction()
 	{
 		StageSettings.Player.KnockbackFinished += OnPlayerKnockbackFinished; // Finish the spirit bomb attack after the player gets up
 		spiritBomb.AlfExploded += StartStun;
 
 		GlobalTransform = Player.GlobalTransform;
+		GlobalPosition += Vector3.Down * 5f;
 		ResetPhysicsInterpolation();
 
-		// TODO Import Boss Start Event
-		//animationTree.Set(IntroductionTrigger, (int)AnimationNodeOneShot.OneShotRequest.Fire);
+		HideObjects();
+
+		animationTree.Set(IntroductionTrigger, (int)AnimationNodeOneShot.OneShotRequest.Fire);
 		cutsceneCamera.Activate();
+		stopLockout.Activate();
 		Interface.PauseMenu.AllowInputs = false;
 		HeadsUpDisplay.Instance.SetVisibility(false);
 		Player.Skills.DisableBreakSkills();
@@ -271,13 +279,15 @@ public partial class AlfLayla : Node3D
 		});
 		TransitionManager.Instance.Connect(TransitionManager.SignalName.TransitionProcess, new Callable(this, MethodName.StartBattle), (uint)ConnectFlags.OneShot);
 		SaveManager.ActiveGameData.AllowSkippingCutscene(IntroCutsceneID);
-		//animationTree.Set(IntroductionTrigger, (int)AnimationNodeOneShot.OneShotRequest.Abort);
 		Player.Animator.CancelOneshot();
+		EmitSignal(SignalName.CutsceneFinished);
 	}
 
 	private void StartBattle()
 	{
 		cutsceneCamera.Deactivate();
+		animationTree.Set(IntroductionTrigger, (int)AnimationNodeOneShot.OneShotRequest.Abort);
+		GlobalPosition = Vector3.Down * -5f;
 
 		Respawn();
 		Player.Skills.EnableBreakSkills();
