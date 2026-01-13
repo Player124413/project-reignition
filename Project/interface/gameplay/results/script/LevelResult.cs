@@ -146,7 +146,13 @@ public partial class LevelResult : Control
 			requirementTime.Text = Stage.GetRequiredTime(rank);
 			requirementScore.Visible = !Stage.Data.SkipScore;
 			if (requirementScore.Visible)
-				requirementScore.Text = ExtensionMethods.FormatMenuNumber(Stage.GetRequiredScore());
+			{
+				int rankUpScore = Stage.Data.Score;
+				if (rank < 2)
+					rankUpScore = Stage.Data.SilverScore;
+
+				requirementScore.Text = ExtensionMethods.FormatMenuNumber(rankUpScore);
+			}
 		}
 		else
 		{

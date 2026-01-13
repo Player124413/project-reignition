@@ -284,9 +284,9 @@ public partial class StageSettings : Node3D
 
 			if (completionTime <= Data.GoldTime && score >= Data.Score) // Perfect run
 				rank = 3;
-			else if (completionTime <= Data.SilverTime && score >= 3 * (Data.Score / 4)) // Silver score reqs are always 3/4 of gold
+			else if (completionTime <= Data.SilverTime && score >= Data.SilverScore) // Silver score reqs are always 3/4 of gold
 				rank = 2;
-			else if (completionTime <= Data.BronzeTime) // Bronze is easy to get
+			else if (completionTime <= Data.BronzeTime || score >= Data.SilverScore) // Bronze is easy to get
 				rank = 1;
 		}
 
@@ -311,7 +311,6 @@ public partial class StageSettings : Node3D
 				return "00:00.00";
 		}
 	}
-	public int GetRequiredScore() => Data.Score;
 
 	#region Level Data
 	public enum MathModeEnum // List of ways the score can be modified

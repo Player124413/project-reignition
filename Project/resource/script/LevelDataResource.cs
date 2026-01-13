@@ -355,6 +355,7 @@ public partial class LevelDataResource : Resource
 	public int BronzeTimeTA { get; private set; }
 	// Requirement for score rank
 	public int Score { get; private set; }
+	public int SilverScore => 3 * (Score / 4);
 
 	/// <summary> Determines whether objects should be forcefully culled when starting the completion camera. </summary>
 	public bool DisableObjectCullOnCompletion { get; private set; }
