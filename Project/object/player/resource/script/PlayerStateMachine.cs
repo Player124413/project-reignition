@@ -26,6 +26,8 @@ public partial class PlayerStateMachine : Node
 		ResetStateMachine();
 	}
 
+	public void UnloadStateMachine() => CurrentState?.ExitState();
+
 	/// <summary> Resets the state machine to its initial state. </summary>
 	public void ResetStateMachine() => ChangeState(GetNode<PlayerState>(startingState));
 

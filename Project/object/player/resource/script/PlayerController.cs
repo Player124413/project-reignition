@@ -74,6 +74,8 @@ public partial class PlayerController : CharacterBody3D
 		ExternalVelocity = Vector3.Zero; // Reset external velocity after updating player
 	}
 
+	public override void _ExitTree() => StateMachine.UnloadStateMachine();
+
 	private void InstancePlayerAnimator()
 	{
 		IsDarkspineSonic = SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.Darkspine);
