@@ -384,8 +384,6 @@ public partial class AlfLayla : Node3D
 		{
 			currentActionIndex = (currentActionIndex + 1) % attackPatterns[currentPatternIndex].Length;
 		}
-
-		GD.Print($"Alf's action was set to {currentActionCharacter}.");
 	}
 
 	/// <summary>
@@ -715,6 +713,7 @@ public partial class AlfLayla : Node3D
 
 	public void FinishStun()
 	{
+		stopLockout.Deactivate();
 		ResetPositions();
 		currentDistance = CloseDistance;
 		SnapPosition();
@@ -747,7 +746,7 @@ public partial class AlfLayla : Node3D
 	{
 		// Always do the explosion loop
 		Player.Visible = false;
-		Player.Deactivate();
+		stopLockout.Activate();
 		StunPlayback.Start("explosion");
 		animationTree.Set(StunDamageFinalTrigger, (uint)AnimationNodeOneShot.OneShotRequest.Abort);
 		CurrentFightState = FightState.Exploding;

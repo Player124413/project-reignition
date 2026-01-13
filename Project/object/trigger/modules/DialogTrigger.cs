@@ -47,7 +47,6 @@ public partial class DialogTrigger : StageTriggerModule
 		{
 			SoundManager.instance.ClearQueue();
 			SoundManager.instance.PlayDialog(GetRandomDialogTrigger());
-			GD.Print("Playing Dialog");
 			return;
 		}
 
