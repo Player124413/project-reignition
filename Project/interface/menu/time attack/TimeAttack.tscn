@@ -14,9 +14,9 @@
 [ext_resource type="PackedScene" uid="uid://crwawg2ivy3xd" path="res://interface/menu/NavigationButton.tscn" id="12_depfi"]
 [ext_resource type="PackedScene" uid="uid://cufdusdk0inmc" path="res://interface/menu/save select/SaveSelect.tscn" id="13_jpw6d"]
 [ext_resource type="PackedScene" uid="uid://mpx28q1qmiyp" path="res://interface/menu/time attack/TimeAttackReady.tscn" id="14_khjqs"]
-[ext_resource type="AudioStream" uid="uid://vx6xk003rnh0" path="res://sound/ost/bonus disc/Time Attack Loop Fixed.mp3" id="14_xy5ec"]
 [ext_resource type="Script" uid="uid://cj76gvi7tbku6" path="res://sound/script/BGMPlayer.cs" id="15_khjqs"]
 [ext_resource type="PackedScene" uid="uid://dno4ayd56ben3" path="res://interface/menu/time attack/TimeAttackLevelList.tscn" id="17_f8140"]
+[ext_resource type="Resource" uid="uid://bk6m10jnm1xc1" path="res://resource/bgm/menu/time attack.tres" id="17_jqwre"]
 
 [sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_pyiyw"]
 blend_mode = 1
@@ -1679,10 +1679,9 @@ parentMenu = NodePath("../TimeAttackNewRun")
 bgm = NodePath("../BGM")
 isProcessing = false
 
-[node name="TimeAttackLevelList" parent="." node_paths=PackedStringArray("readyMenu") instance=ExtResource("17_f8140")]
+[node name="TimeAttackLevelList" parent="." instance=ExtResource("17_f8140")]
 visible = false
 layout_mode = 1
-readyMenu = NodePath("../TimeAttackReady")
 submenus = Array[NodePath]([NodePath("../TimeAttackReady")])
 
 [node name="TimeAttackAnimator" type="AnimationPlayer" parent="."]
@@ -1691,8 +1690,6 @@ libraries = {
 }
 
 [node name="BGM" type="AudioStreamPlayer" parent="."]
-stream = ExtResource("14_xy5ec")
 bus = &"BGM"
 script = ExtResource("15_khjqs")
-loopStartPosition = 81.6
-loopEndPosition = 249.05
+bgmResource = ExtResource("17_jqwre")
