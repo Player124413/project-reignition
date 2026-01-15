@@ -57,6 +57,19 @@ namespace Project.Interface.Menus
 			}
 		}
 
+		protected override void Confirm()
+		{
+			if (SaveManager.Config.brandingStyle == SaveManager.HudStyle.E3)
+			{
+				animator.Play("confirm-E3");
+				return;
+			}
+			else
+				animator.Play("confirm");
+
+
+		}
+
 		// Activate main menu (submenu 0);
 		public override void OpenSubmenu() => _submenus[0].ShowMenu();
 
@@ -67,17 +80,22 @@ namespace Project.Interface.Menus
 
 			switch (SaveManager.Config.brandingStyle)
 			{
+				case SaveManager.HudStyle.Retail:
+					animator.Play(ShowAnimation);
+					break;
 				case SaveManager.HudStyle.Reignition:
 					animator.Play("pr-logo");
 					animator.Advance(0.0);
+					animator.Play(ShowAnimation);
 					break;
 				case SaveManager.HudStyle.E3:
 					animator.Play("wf-logo");
 					animator.Advance(0.0);
+					animator.Play("show-wf");
 					break;
 			}
 
-			animator.Play(ShowAnimation);
+
 
 			cutsceneTimer = 0;
 		}
