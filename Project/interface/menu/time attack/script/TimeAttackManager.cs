@@ -1,7 +1,6 @@
 using Godot;
 using System;
 using Godot.Collections;
-using System.Collections.Generic;
 using Project.Gameplay;
 
 namespace Project.Core;
@@ -22,6 +21,8 @@ public partial class TimeAttackManager : Node
 
 	public RunType CurrentRunType { get; private set; }
 
+	private float[] CurrentRunTimes;
+
 	[Export]
 	private LevelDataResource[] Levels_AnyPercent;
 	[Export]
@@ -38,7 +39,11 @@ public partial class TimeAttackManager : Node
 	{
 		Instance = this;
 	}
-	public void SetRunType(RunType type) => CurrentRunType = type;
+	public void SetRunType(RunType type)
+	{
+		CurrentRunType = type;
+		CurrentRunTimes = new float[GetCurrentRun().Length];
+	}
 
 	public void SetCustomRun(LevelDataResource[] custom) => custom.CopyTo(Levels_Custom, 0);
 
@@ -104,4 +109,37 @@ public partial class TimeAttackManager : Node
 		TransitionManager.Instance.SetMissionDescriptionText(level.MissionTypeKey, level.MissionDescriptionKey);
 		TransitionManager.Instance.UpdateLoadingText("load_level");
 	}
+
+	public void RestartRun()
+	{
+		ResetRunTimes();
+		ResetLevelCount();
+		LoadLevel(GetCurrentLevel());
+	}
+
+	public void AddTime(float time)
+	{
+		CurrentRunTimes[CurrentLevel] = time;
+	}
+	public float GetTotalRunTime()
+	{
+		float results = 0;
+		foreach (float time in CurrentRunTimes)
+		{
+			//GD.Print("Time: " + time);
+			results += time;
+		}
+		//GD.Print("Total Run Time: " + results);
+		return results;
+	}
+
+	private void ResetRunTimes()
+	{
+		for (int i = 0; i < GetCurrentRun().Length; i++)
+		{
+			CurrentRunTimes[i] = 0;
+		}
+	}
+
+
 }
