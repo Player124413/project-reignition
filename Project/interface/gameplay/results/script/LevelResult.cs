@@ -11,6 +11,7 @@ public partial class LevelResult : Control
 
 	[Export] private Label score;
 	[Export] private Label time;
+	[Export] private Label timeTotal; //For time attack
 	[Export] private Label ring;
 	[Export] private Label technical;
 	[Export] private Label total;
@@ -83,7 +84,11 @@ public partial class LevelResult : Control
 			if (Runtime.Instance.IsActionJustPressed("sys_cancel", "ui_cancel", "escape") && !TimeAttackManager.Instance.IsRunActive) // Retry stage
 				TransitionManager.instance.QueuedScene = string.Empty;
 			else if (TimeAttackManager.Instance.IsRunActive)
+			{
+				TimeAttackManager.Instance.AddTime(Stage.CurrentTime);
 				TimeAttackManager.Instance.IncreaseLevel();
+			}
+
 
 			else// if (Level.storyEventIndex == 0) // Load main menu
 				TransitionManager.instance.QueuedScene = TransitionManager.MenuScenePath;
@@ -103,6 +108,9 @@ public partial class LevelResult : Control
 	{
 		score.Text = Stage.DisplayScore;
 		time.Text = Stage.DisplayTime;
+		if (TimeAttackManager.Instance.IsRunActive)
+			timeTotal.Text = ExtensionMethods.FormatTime(TimeAttackManager.Instance.GetTotalRunTime() + Stage.CurrentTime);
+
 
 		ring.Text = Stage.RingBonus.ToString();
 		technical.Text = "×" + Stage.TechnicalBonus.ToString("0.0", CultureInfo.InvariantCulture);
@@ -153,7 +161,11 @@ public partial class LevelResult : Control
 		bgm[bgmIndex].Play();
 
 		animator.Advance(0.0);
-		animator.Play(isStageCleared ? "success-start" : "fail-start");
+
+		if (TimeAttackManager.Instance.IsRunActive)
+			animator.Play(isStageCleared ? "success-start-timeattack" : "fail-start");
+		else
+			animator.Play(isStageCleared ? "success-start" : "fail-start");
 	}
 
 	public void SetInputProcessing(bool value) => isProcessing = value;
