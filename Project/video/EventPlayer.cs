@@ -210,33 +210,36 @@ public partial class EventPlayer : Node
 			return;
 		}
 
-		if (!IsSpecialBook)
+		if (IsSpecialBook)
 		{
-			// Process skipping story cutscene
-			if (Runtime.Instance.IsActionPressed("sys_pause", "ui_accept") && !Input.IsActionJustPressed("toggle_fullscreen"))
-			{
-				interfaceVisibilityTimer = InterfaceVisiblityLength;
-				if (interfaceAnimator.AssignedAnimation != "show_interface")
-					interfaceAnimator.Play("show_interface", 0.1f);
-
-				if (!skipAnimator.IsPlaying())
-					skipAnimator.Play("skip");
-			}
-			else
-			{
-				skipAnimator.Pause();
-
-				interfaceVisibilityTimer = Mathf.MoveToward(interfaceVisibilityTimer, 0f, PhysicsManager.physicsDelta);
-				if (Mathf.IsZeroApprox(interfaceVisibilityTimer))
-					interfaceAnimator.Play("hide_interface", 0.1f);
-			}
+			// Allow players to exit immediately when viewing from the special book
+			if (Runtime.Instance.IsActionJustPressed("sys_cancel", "ui_cancel", "escape"))
+				OnEventFinished();
 
 			return;
 		}
 
-		// Allow players to exit immediately when viewing from the special book
-		if (Runtime.Instance.IsActionJustPressed("sys_cancel", "ui_cancel", "escape"))
-			OnEventFinished();
+		// Process skipping story cutscene
+		if (Runtime.Instance.IsActionPressed("sys_pause", "ui_accept") && !Input.IsActionJustPressed("toggle_fullscreen"))
+		{
+			interfaceVisibilityTimer = InterfaceVisiblityLength;
+			if (interfaceAnimator.AssignedAnimation != "show_interface")
+				interfaceAnimator.Play("show_interface", 0.1f);
+
+			if (!skipAnimator.IsPlaying())
+				skipAnimator.Play("skip");
+
+			return;
+		}
+
+		skipAnimator.Pause();
+
+		if (Input.IsAnythingPressed())
+			return;
+
+		interfaceVisibilityTimer = Mathf.MoveToward(interfaceVisibilityTimer, 0f, PhysicsManager.physicsDelta);
+		if (Mathf.IsZeroApprox(interfaceVisibilityTimer))
+			interfaceAnimator.Play("hide_interface", 0.1f);
 	}
 
 	private void CheckInterfaceVisiblity()
