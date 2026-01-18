@@ -82,6 +82,7 @@ public partial class AlfLayla : Node3D
 	private int currentHealth;
 	private int lastExplosionHealth;
 	private readonly int MaxHealth = 25;
+	public bool IsDefeated => currentHealth == 0;
 
 	/// <summary> Tracks Alf's current action. </summary>
 	private FightState CurrentFightState;
@@ -317,6 +318,7 @@ public partial class AlfLayla : Node3D
 		Player.Animator.ResetState(0.0f);
 		Player.Animator.PlayOneshotAnimation(DefeatCutsceneID);
 		Player.AddLockoutData(Runtime.Instance.DefaultCompletionLockout);
+		Player.GlobalRotation = Vector3.Zero;
 		Interface.PauseMenu.AllowInputs = false;
 		HeadsUpDisplay.Instance.SetVisibility(false);
 
@@ -688,14 +690,6 @@ public partial class AlfLayla : Node3D
 	private int currentExplosionParticleIndex;
 	public void AdvanceExplosionParticle()
 	{
-		if (currentExplosionParticleIndex >= explosionParticles.Length)
-		{
-			Player.Visible = true;
-			Player.Activate();
-			DefeatBoss();
-			return;
-		}
-
 		smokeParticles[currentExplosionParticleIndex].SetEmitting(false);
 		smokeParticles[currentExplosionParticleIndex].Visible = true;
 		explosionParticles[currentExplosionParticleIndex].RestartGroup();
@@ -760,6 +754,29 @@ public partial class AlfLayla : Node3D
 
 	public void StartStunCamera() => punchCameraTrigger.Activate();
 
+	public void DefeatScreenShake()
+	{
+		Player.Camera.StartCameraShake(new()
+		{
+			fadeIn = 0f,
+			duration = 0.3f,
+			fadeOut = 0.05f,
+			magnitude = Vector3.One
+		});
+	}
+
+	public void StartDefeatScreenFlash()
+	{
+		TransitionManager.StartTransition(new TransitionData()
+		{
+			color = Colors.White,
+			inSpeed = 0.1f,
+			outSpeed = 0.5f,
+		});
+	}
+
+	public void FinishDefeatScreenFlash() => TransitionManager.FinishTransition();
+
 	public void MultiPunchScreenShake()
 	{
 		Player.Camera.StartCameraShake(new()
@@ -782,6 +799,17 @@ public partial class AlfLayla : Node3D
 	}
 
 	public bool IsExploding => CurrentFightState == FightState.Exploding;
+
+	public void CheckDefeat()
+	{
+		if (currentExplosionParticleIndex < explosionParticles.Length)
+			return;
+
+		Player.Visible = true;
+		Player.Activate();
+		DefeatBoss();
+	}
+
 	public bool CheckRingExplosion()
 	{
 		if (currentHealth > 0)
@@ -821,6 +849,7 @@ public partial class AlfLayla : Node3D
 		TransitionManager.FinishTransition();
 		HeadsUpDisplay.Instance.SetVisibility(false);
 		animationTree.Set(StunDamageFinalTrigger, (uint)AnimationNodeOneShot.OneShotRequest.Fire);
+		animationTree.Set(StunDamageTrigger, (uint)AnimationNodeOneShot.OneShotRequest.Abort);
 	}
 
 	public void TakeDamage()

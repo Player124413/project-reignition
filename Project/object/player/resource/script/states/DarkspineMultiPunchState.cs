@@ -72,7 +72,8 @@ public partial class DarkspineMultiPunchState : PlayerState
 			return null;
 
 		alfStunTimer = Mathf.MoveToward(alfStunTimer, 0, PhysicsManager.physicsDelta);
-		if (Mathf.IsZeroApprox(alfStunTimer) || (currentAttackCount == MaxPunchCount && Player.Animator.CanPerformDarkspinePunch)) // Limit Punches
+		if (Mathf.IsZeroApprox(alfStunTimer) || (currentAttackCount == MaxPunchCount && Player.Animator.CanPerformDarkspinePunch) ||
+			Core.AlfLayla.IsDefeated) // Limit Punches
 		{
 			HeadsUpDisplay.Instance.HidePrompts();
 			if (Player.Animator.IsDarkspinePunchFinished)

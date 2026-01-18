@@ -29,9 +29,6 @@ public partial class Shahra : Node3D
 
 	public override void _Ready()
 	{
-		if (StageSettings.Player.IsDarkspineSonic) // Don't have shahra appear when Darkspine is active.
-			return;
-
 		SoundManager.instance.Connect(SoundManager.SignalName.ShahraSpeechStart, new(this, MethodName.StartShahra));
 		SoundManager.instance.Connect(SoundManager.SignalName.ShahraSpeechEnd, new(this, MethodName.StopShahra));
 	}

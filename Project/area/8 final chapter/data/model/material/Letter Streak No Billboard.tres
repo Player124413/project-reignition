@@ -1,0 +1,25 @@
+[gd_resource type="ShaderMaterial" load_steps=5 format=3 uid="uid://bd8313yyi3kxk"]
+
+[ext_resource type="Shader" uid="uid://dgkjpigq6fb5e" path="res://area/8 final chapter/data/shader/Letter Streak.gdshader" id="1_gmf7j"]
+[ext_resource type="Texture2D" uid="uid://c7aw0ircm2al3" path="res://object/enemy/majin/data/particle/texture/majin spawn letters.png" id="2_rc1ke"]
+
+[sub_resource type="Curve" id="Curve_rc1ke"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.2, 1), 0.0, 0.0, 0, 0, Vector2(0.8, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 4
+
+[sub_resource type="CurveTexture" id="CurveTexture_2epwn"]
+width = 64
+texture_mode = 1
+curve = SubResource("Curve_rc1ke")
+
+[resource]
+render_priority = 0
+shader = ExtResource("1_gmf7j")
+shader_parameter/albedo = ExtResource("2_rc1ke")
+shader_parameter/transparency_lut = SubResource("CurveTexture_2epwn")
+shader_parameter/particles_anim_h_frames = 4
+shader_parameter/particles_anim_v_frames = 1
+shader_parameter/particles_anim_loop = true
+shader_parameter/uv_scale = Vector2(1, 10)
+shader_parameter/scroll_direction = Vector2(0, 1)
+shader_parameter/time_scale = 5.0
