@@ -278,6 +278,23 @@ public partial class Runtime : Node
 	}
 
 	/// <summary>
+	/// Checks whether an action has just been released, then checks the fallback if the actionId isn't mapped.
+	/// </summary>
+	/// <param name="actionId"> The primary inputId to use. </param>
+	/// <param name="builtInId"> The fallback used if actionId isn't assigned to anything. </param>
+	/// <returns></returns>
+	public bool IsActionJustReleased(StringName actionId, StringName builtInId, StringName fallbackId = null)
+	{
+		bool pressed = Input.IsActionJustReleased(actionId) ||
+			(Input.IsActionJustReleased(builtInId) && Instance.IsActionUnmapped(actionId));
+
+		if (pressed || fallbackId == null)
+			return pressed;
+
+		return Input.IsActionJustReleased(fallbackId);
+	}
+
+	/// <summary>
 	/// Same as IsActionJustPressed, except checks for Holds instead of Presses.
 	/// </summary>
 	public bool IsActionPressed(StringName actionId, StringName builtInId, StringName fallbackId = null)

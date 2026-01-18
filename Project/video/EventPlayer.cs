@@ -18,14 +18,18 @@ public partial class EventPlayer : Node
 	[Export(PropertyHint.File, "*.tres")] private LevelDataResource adventureLevelAutoload;
 	/// <summary> Automatically load the given event when in Adventure Mode. Leave empty to return to the main menu. </summary>
 	[Export(PropertyHint.File, "*.tscn")] private string adventureEventAutoload;
-	[Export(PropertyHint.FilePath, "*.ogg")] private string englishAudioPath;
+	[Export(PropertyHint.File, "*.ogg")] private string englishAudioPath;
 	[Export] private string localizationKeyPrefix;
+	[Export] private bool isCgCutscene;
 	private Gameplay.Triggers.DialogTrigger subtitles;
 
 	[ExportGroup("Components")]
 	[Export] private AnimationPlayer animator;
+	[Export] private AnimationPlayer interfaceAnimator;
+	[Export] private AnimationPlayer skipAnimator;
 	[Export] private AudioStreamPlayer audioPlayer;
 	[Export] private VideoStreamFileLoadPlayer videoPlayer;
+	private bool isInterfaceVisible;
 
 	[ExportGroup("Editor Only")]
 	/// <summary> Subtitles used to preview cutscene in the editor. </summary>
@@ -39,9 +43,9 @@ public partial class EventPlayer : Node
 	private bool IsSpecialBook => Menu.menuMemory[Menu.MemoryKeys.ActiveMenu] == (int)Menu.MemoryKeys.SpecialBook;
 
 	private bool isCutsceneFinished;
-	private float skipTimer;
+	private float interfaceVisibilityTimer;
 	/// <summary> How long the pause button needs to be held to skip the cutscene. </summary>
-	private readonly float SkipLength = 1f;
+	private readonly float InterfaceVisiblityLength = 1f;
 
 	public override void _Ready()
 	{
@@ -49,6 +53,11 @@ public partial class EventPlayer : Node
 
 		if (Engine.IsEditorHint())
 			return;
+
+		interfaceAnimator.Play(IsSpecialBook ? "special-book" : "cutscene");
+		interfaceAnimator.Advance(0.0);
+		interfaceAnimator.Play(isCgCutscene ? "cg" : "storybook");
+		interfaceAnimator.Advance(0.0);
 
 		LoadLocalization();
 		CreateSubtitles();
@@ -68,11 +77,11 @@ public partial class EventPlayer : Node
 
 	private void LoadLocalization()
 	{
-		if (animator == null)
-			return;
-
 		StringName targetLocale = SaveManager.VoiceLanguageToGodotLocale(SaveManager.Config.voiceLanguage);
 		LoadAudioTrack(targetLocale);
+
+		if (animator == null)
+			return;
 
 		// Load timing animation
 		if (!animator.HasAnimation(targetLocale))
@@ -83,23 +92,23 @@ public partial class EventPlayer : Node
 
 	private void LoadAudioTrack(string targetLocale)
 	{
-		string targetAudio = englishAudioPath;
-		if (targetAudio.Contains("/en/")) // localizable audio
+		string targetAudioPath = ResourceUid.UidToPath(englishAudioPath);
+		if (targetAudioPath.Contains("/en/")) // localizable audio
 		{
-			targetAudio = targetAudio.Replace("/en/", $"/{targetLocale}/");
+			targetAudioPath = targetAudioPath.Replace("/en/", $"/{targetLocale}/");
 
-			if (!ResourceLoader.Exists(targetAudio)) // Revert to english
+			if (!ResourceLoader.Exists(targetAudioPath)) // Revert to english
 			{
-				GD.PushError($"Couldn't find audio at {targetAudio}!");
-				targetAudio = englishAudioPath;
+				GD.PushError($"Couldn't find audio at {targetAudioPath}!");
+				targetAudioPath = englishAudioPath;
 			}
 		}
 
-		if (audioPlayer.Stream != null && audioPlayer.Stream.ResourcePath.Equals(targetAudio))
+		if (audioPlayer.Stream != null && audioPlayer.Stream.ResourcePath.Equals(targetAudioPath))
 			return;
 
 		// Load audio
-		audioPlayer.Stream = ResourceLoader.Load<AudioStreamOggVorbis>(targetAudio);
+		audioPlayer.Stream = ResourceLoader.Load<AudioStreamOggVorbis>(targetAudioPath);
 	}
 
 	private void AutoSetup()
@@ -195,25 +204,49 @@ public partial class EventPlayer : Node
 		if (TransitionManager.IsTransitionActive)
 			return;
 
-		if (Menu.menuMemory[Menu.MemoryKeys.ActiveMenu] != (int)Menu.MemoryKeys.SpecialBook)
+		if (!isInterfaceVisible)
+		{
+			CheckInterfaceVisiblity();
+			return;
+		}
+
+		if (!IsSpecialBook)
 		{
 			// Process skipping story cutscene
 			if (Runtime.Instance.IsActionPressed("sys_pause", "ui_accept") && !Input.IsActionJustPressed("toggle_fullscreen"))
 			{
-				skipTimer = Mathf.MoveToward(skipTimer, SkipLength, PhysicsManager.physicsDelta);
-				if (Mathf.IsEqualApprox(skipTimer, SkipLength))
-					OnEventFinished();
+				interfaceVisibilityTimer = InterfaceVisiblityLength;
+				if (interfaceAnimator.AssignedAnimation != "show_interface")
+					interfaceAnimator.Play("show_interface", 0.1f);
 
-				return;
+				if (!skipAnimator.IsPlaying())
+					skipAnimator.Play("skip");
+			}
+			else
+			{
+				skipAnimator.Pause();
+
+				interfaceVisibilityTimer = Mathf.MoveToward(interfaceVisibilityTimer, 0f, PhysicsManager.physicsDelta);
+				if (Mathf.IsZeroApprox(interfaceVisibilityTimer))
+					interfaceAnimator.Play("hide_interface", 0.1f);
 			}
 
-			skipTimer = Mathf.MoveToward(skipTimer, 0, PhysicsManager.physicsDelta);
 			return;
 		}
 
 		// Allow players to exit immediately when viewing from the special book
 		if (Runtime.Instance.IsActionJustPressed("sys_cancel", "ui_cancel", "escape"))
 			OnEventFinished();
+	}
+
+	private void CheckInterfaceVisiblity()
+	{
+		if (!Input.IsAnythingPressed())
+			return;
+
+		isInterfaceVisible = true;
+		interfaceVisibilityTimer = InterfaceVisiblityLength;
+		interfaceAnimator.Play("show_interface", 0f);
 	}
 
 	/// <summary> Creates a dialog trigger based on the keyframes in an animation. </summary>
@@ -307,6 +340,14 @@ public partial class EventPlayer : Node
 		});
 	}
 
+	public void ResetSkipProgress()
+	{
+		skipAnimator.Play("RESET");
+		skipAnimator.Advance(0.0);
+		isInterfaceVisible = false;
+	}
+
+	#region Editor
 	private void ShowSubtitles()
 	{
 		if (!Engine.IsEditorHint())
@@ -410,4 +451,5 @@ public partial class EventPlayer : Node
 		if (method.Equals(MethodName.HideSubtitles))
 			HideSubtitles();
 	}
+	#endregion
 }

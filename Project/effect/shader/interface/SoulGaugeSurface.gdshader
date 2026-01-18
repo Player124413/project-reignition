@@ -21,7 +21,8 @@ void vertex()
 
 void fragment()
 {
-	COLOR = texture(albedo, UV);
-	COLOR += texture(albedo, -UV);
-	COLOR.a *= intensity;
+	vec4 col = texture(albedo, UV);
+	col += texture(albedo, -UV);
+	COLOR.rgb = col.rgb;
+	COLOR.a *= col.a * intensity;
 }

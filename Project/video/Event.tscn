@@ -1,11 +1,391 @@
-[gd_scene load_steps=5 format=3 uid="uid://ct1tmuno23lj2"]
+[gd_scene load_steps=25 format=3 uid="uid://ct1tmuno23lj2"]
 
 [ext_resource type="Script" uid="uid://bjn5rtskut21d" path="res://video/EventPlayer.cs" id="1"]
 [ext_resource type="Script" uid="uid://bjs225yvpdim2" path="res://video/VideoStreamFileLoadPlayer.cs" id="2_k3sn5"]
 [ext_resource type="Script" uid="uid://df7uyhsm3g1ji" path="res://video/EventResizer.cs" id="2_oo0l5"]
 [ext_resource type="FontFile" uid="uid://bsoin3p4iygoo" path="res://interface/font/otf/Chiaro Std B.otf" id="4_56y11"]
+[ext_resource type="PackedScene" uid="uid://crwawg2ivy3xd" path="res://interface/menu/NavigationButton.tscn" id="5_ugif6"]
+[ext_resource type="Script" uid="uid://v0xr7h3y4olt" path="res://interface/menu/MenuAspectController.cs" id="6_u8y74"]
+[ext_resource type="Texture2D" uid="uid://cno436k6axxi5" path="res://interface/menu/main/texture/background.png" id="7_kfyiq"]
+[ext_resource type="Texture2D" uid="uid://k8exixourkta" path="res://interface/menu/main/texture/char.png" id="8_081yq"]
+[ext_resource type="Material" uid="uid://cnpwyeca0a1p3" path="res://video/event/texture/Skip Progress Base.tres" id="9_mvyii"]
+[ext_resource type="Texture2D" uid="uid://ic6efnruwhiy" path="res://video/event/texture/fill dimensions.png" id="10_wrcke"]
+[ext_resource type="Material" uid="uid://ccj0y61y76lli" path="res://video/event/texture/Skip Progress Surface.tres" id="11_mvyii"]
+[ext_resource type="Texture2D" uid="uid://bfpp6wa7clovs" path="res://interface/gameplay/hud/texture/soul gauge/surface dimensions.png" id="12_hb7wu"]
+[ext_resource type="Texture2D" uid="uid://otrkb28oybm8" path="res://video/event/texture/gradient.png" id="13_kosw4"]
 
-[node name="Event" type="Control" node_paths=PackedStringArray("audioPlayer", "videoPlayer", "editorSubtitleLabel", "editorSubtitleRoot")]
+[sub_resource type="Animation" id="Animation_u8y74"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Menu/Clip/Background:visible")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Menu/Clip/Char:visible")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("SkipInterface:modulate")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 0)]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("SkipInterface/NavigationButton:ActionKey")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [&"sys_return"]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("SkipInterface/NavigationButton:inputKey")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [&"sys_pause"]
+}
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("SkipInterface/NavigationButton:fallbackKey")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [&"ui_accept"]
+}
+
+[sub_resource type="Animation" id="Animation_ugif6"]
+resource_name = "cg"
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Menu/Clip/Background:visible")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Menu/Clip/Char:visible")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+
+[sub_resource type="Animation" id="Animation_bk4st"]
+resource_name = "cutscene"
+length = 0.03333667
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("SkipInterface/NavigationButton:ActionKey")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [&"sys_skip"]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("SkipInterface/NavigationButton:inputKey")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [&"sys_pause"]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("SkipInterface/NavigationButton:fallbackKey")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [&"ui_accept"]
+}
+tracks/3/type = "method"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("SkipInterface/NavigationButton")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [0],
+"method": &"Redraw"
+}]
+}
+
+[sub_resource type="Animation" id="Animation_wrcke"]
+resource_name = "hide_interface"
+length = 0.2
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("SkipInterface:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.2),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 1), Color(1, 1, 1, 0)]
+}
+tracks/1/type = "method"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath(".")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0.2),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"ResetSkipProgress"
+}]
+}
+
+[sub_resource type="Animation" id="Animation_mvyii"]
+resource_name = "show_interface"
+length = 0.2
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("SkipInterface:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.19999999),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 1)]
+}
+
+[sub_resource type="Animation" id="Animation_kgljb"]
+resource_name = "special-book"
+length = 0.03333667
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("SkipInterface/NavigationButton:ActionKey")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [&"sys_return"]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("SkipInterface/NavigationButton:inputKey")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [&"sys_cancel"]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("SkipInterface/NavigationButton:fallbackKey")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [&"ui_cancel"]
+}
+tracks/3/type = "method"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("SkipInterface/NavigationButton")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [0],
+"method": &"Redraw"
+}]
+}
+
+[sub_resource type="Animation" id="Animation_56y11"]
+resource_name = "storybook"
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Menu/Clip/Background:visible")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Menu/Clip/Char:visible")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_7qjnt"]
+_data = {
+&"RESET": SubResource("Animation_u8y74"),
+&"cg": SubResource("Animation_ugif6"),
+&"cutscene": SubResource("Animation_bk4st"),
+&"hide_interface": SubResource("Animation_wrcke"),
+&"show_interface": SubResource("Animation_mvyii"),
+&"special-book": SubResource("Animation_kgljb"),
+&"storybook": SubResource("Animation_56y11")
+}
+
+[sub_resource type="Animation" id="Animation_hb7wu"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Gradient/Fill:anchor_right")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.0]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Gradient:modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 0)]
+}
+
+[sub_resource type="Animation" id="Animation_kosw4"]
+resource_name = "skip"
+length = 1.0333368
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Gradient/Fill:anchor_right")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [0.0, 1.0]
+}
+tracks/1/type = "method"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("..")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(1),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"OnEventFinished"
+}]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Gradient:modulate")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 0.16666667),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 1)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_hb7wu"]
+_data = {
+&"RESET": SubResource("Animation_hb7wu"),
+&"skip": SubResource("Animation_kosw4")
+}
+
+[node name="Event" type="Control" node_paths=PackedStringArray("interfaceAnimator", "skipAnimator", "audioPlayer", "videoPlayer", "editorSubtitleLabel", "editorSubtitleRoot")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -13,10 +393,49 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1")
+interfaceAnimator = NodePath("InterfaceAnimationPlayer")
+skipAnimator = NodePath("SkipInterface/SkipAnimationPlayer")
 audioPlayer = NodePath("Audio")
 videoPlayer = NodePath("Resizer/Video")
 editorSubtitleLabel = NodePath("SubtitleLetterbox/Subtitles")
 editorSubtitleRoot = NodePath("SubtitleLetterbox")
+
+[node name="Menu" type="AspectRatioContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+ratio = 1.7777
+stretch_mode = 1
+alignment_horizontal = 0
+script = ExtResource("6_u8y74")
+
+[node name="Clip" type="ColorRect" parent="Menu"]
+clip_children = 2
+layout_mode = 2
+color = Color(0, 0, 0, 1)
+
+[node name="Background" type="TextureRect" parent="Menu/Clip"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("7_kfyiq")
+expand_mode = 2
+stretch_mode = 6
+
+[node name="Char" type="TextureRect" parent="Menu/Clip"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("8_081yq")
 
 [node name="Resizer" type="Control" parent="." node_paths=PackedStringArray("player")]
 layout_mode = 1
@@ -76,5 +495,88 @@ text = "Subtitles will be displayed here as you play animations."
 horizontal_alignment = 1
 vertical_alignment = 1
 autowrap_mode = 2
+
+[node name="InterfaceAnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+&"": SubResource("AnimationLibrary_7qjnt")
+}
+
+[node name="SkipInterface" type="Control" parent="."]
+modulate = Color(1, 1, 1, 0)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="NavigationButton" parent="SkipInterface" instance=ExtResource("5_ugif6")]
+layout_mode = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -264.0
+offset_top = 40.0
+offset_right = -48.0
+offset_bottom = 88.0
+grow_horizontal = 0
+grow_vertical = 0
+ActionKey = &"sys_return"
+inputKey = &"sys_pause"
+fallbackKey = &"ui_accept"
+
+[node name="Gradient" type="Control" parent="SkipInterface"]
+modulate = Color(1, 1, 1, 0)
+show_behind_parent = true
+clip_contents = true
+layout_mode = 1
+anchor_right = 1.0
+offset_bottom = 16.0
+grow_horizontal = 2
+
+[node name="Fill" type="TextureRect" parent="SkipInterface/Gradient"]
+material = ExtResource("9_mvyii")
+layout_mode = 1
+anchors_preset = 9
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("10_wrcke")
+stretch_mode = 1
+
+[node name="Surface" type="TextureRect" parent="SkipInterface/Gradient/Fill"]
+material = ExtResource("11_mvyii")
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -24.0
+offset_right = 24.0
+grow_horizontal = 0
+grow_vertical = 2
+rotation = 1.5707964
+pivot_offset = Vector2(24, 0)
+texture = ExtResource("12_hb7wu")
+expand_mode = 1
+stretch_mode = 3
+
+[node name="Gradient" type="TextureRect" parent="SkipInterface/Gradient"]
+show_behind_parent = true
+clip_contents = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("13_kosw4")
+expand_mode = 1
+flip_h = true
+
+[node name="SkipAnimationPlayer" type="AnimationPlayer" parent="SkipInterface"]
+libraries = {
+&"": SubResource("AnimationLibrary_hb7wu")
+}
 
 [connection signal="finished" from="Resizer/Video" to="." method="OnEventFinished"]
