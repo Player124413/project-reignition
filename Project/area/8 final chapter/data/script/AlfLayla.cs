@@ -183,7 +183,7 @@ public partial class AlfLayla : Node3D
 				}
 
 				GlobalTransform = PlayerPathFollower.GlobalTransform;
-				ResetPhysicsInterpolation();
+				GlobalPosition += VisualOffset;
 				return;
 		}
 
@@ -296,25 +296,52 @@ public partial class AlfLayla : Node3D
 		HeadsUpDisplay.Instance.SetVisibility(true);
 	}
 
+	private readonly string DefeatTrigger = "parameters/defeat-trigger/request";
+	private readonly string DefeatSeek = "parameters/defeat-seek/seek_request";
 	private void DefeatBoss()
 	{
-		cutsceneCamera.Activate();
+		TransitionManager.StartTransition(new()
+		{
+			inSpeed = 0f,
+			outSpeed = .5f,
+			color = Colors.Black
+		});
+		TransitionManager.FinishTransition();
 
-		// TODO Play super cool defeat animation
+		Player.Skills.CancelBreakSkills();
+		Player.Skills.DisableBreakSkills();
+		Player.MoveSpeed = 0;
+		Player.SnapToGround();
+		Player.Effect.CanelSpinFX();
+		Player.Effect.StopTrailFX();
+		Player.Animator.ResetState(0.0f);
+		Player.Animator.PlayOneshotAnimation(DefeatCutsceneID);
+		Player.AddLockoutData(Runtime.Instance.DefaultCompletionLockout);
+		Interface.PauseMenu.AllowInputs = false;
+		HeadsUpDisplay.Instance.SetVisibility(false);
+
+		cutsceneCamera.Activate();
+		animationTree.Set(DefeatTrigger, (int)AnimationNodeOneShot.OneShotRequest.Fire);
 
 		CurrentFightState = FightState.Defeated;
-		Player.Skills.CancelBreakSkills();
-		Player.Deactivate();
+
+		// Award 1000 points for defeating the boss
+		BonusManager.instance.QueueBonus(new(BonusType.Boss, 1000));
 	}
 
 	private void FinishDefeat()
 	{
 		cutsceneCamera.Deactivate();
-		// TODO Seek to end of defeat animation
+		defaultCameraTrigger.Activate();
 
-		Player.Activate();
+		animationTree.Set(DefeatSeek, 22f);
+		animationTree.SetDeferred("active", false);
+
+		Player.Animator.CancelOneshot();
+
 		StageSettings.Instance.FinishLevel(true);
 		SaveManager.ActiveGameData.AllowSkippingCutscene(DefeatCutsceneID);
+		EmitSignal(SignalName.CutsceneFinished);
 	}
 
 	private readonly Vector3 VisualOffset = Vector3.Down * 5f;
@@ -663,6 +690,8 @@ public partial class AlfLayla : Node3D
 	{
 		if (currentExplosionParticleIndex >= explosionParticles.Length)
 		{
+			Player.Visible = true;
+			Player.Activate();
 			DefeatBoss();
 			return;
 		}

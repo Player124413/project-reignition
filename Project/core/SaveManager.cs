@@ -104,6 +104,7 @@ public partial class SaveManager : Node
 		Count
 	}
 
+	/// <summary> Don't forget to update <see cref="VoiceLocaleToString"> when adding new dubs! </summary>
 	public enum VoiceLanguage
 	{
 		English,
@@ -441,6 +442,17 @@ public partial class SaveManager : Node
 			else
 				Instance.IsQuickLoadAlertEnabled = true;
 		}
+	}
+
+	/// <summary> Converts <paramref name="voiceLanguage"/> to a locale string. </summary>
+	public static string VoiceLocaleToString(VoiceLanguage voiceLanguage)
+	{
+		return voiceLanguage switch
+		{
+			VoiceLanguage.Japanese => "ja",
+			VoiceLanguage.Spanish => "es",
+			_ => "en",
+		};
 	}
 
 	private static TextLanguage AutoDetectTextLocale()

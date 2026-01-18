@@ -259,7 +259,7 @@ public partial class PlayerSkillController : Node3D
 		speedBreakTimer = Mathf.MoveToward(speedBreakTimer, 0, PhysicsManager.physicsDelta);
 		timeBreakTimer = Mathf.MoveToward(timeBreakTimer, 0, PhysicsManager.physicsDelta);
 
-		if (Player.IsDarkspineSonic)
+		if (Player.IsDarkspineSonic && IsTimeBreakEnabled && IsSpeedBreakEnabled)
 		{
 			darkspineSoulTimer = Mathf.MoveToward(darkspineSoulTimer, 0, PhysicsManager.physicsDelta);
 			if (Mathf.IsZeroApprox(darkspineSoulTimer)) // Add passive soul power over time
