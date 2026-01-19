@@ -10,6 +10,8 @@ public partial class PlayerAnimator : Node3D
 {
 	[Signal] public delegate void CountdownLandingEventHandler();
 
+	[Export] public Node3D RightFoot { get; private set; }
+	[Export] public Node3D LeftFoot { get; private set; }
 	private Node3D RotationRoot { get; set; }
 	private PlayerController Player { get; set; }
 	public void Initialize(PlayerController player, Node3D rotationRoot)

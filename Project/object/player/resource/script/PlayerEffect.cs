@@ -347,8 +347,6 @@ public partial class PlayerEffect : Node3D
 		Count
 	}
 
-	[Export] private Node3D rightFoot;
-	[Export] private Node3D leftFoot;
 	[Export] private AudioStreamPlayer3D footstepChannel;
 	[Export] private AudioStreamPlayer3D landingChannel;
 	/// <summary> Index of the current type of ground the player is walking on. </summary>
@@ -445,7 +443,7 @@ public partial class PlayerEffect : Node3D
 		footstepChannel.Stream = materialSFXLibrary.GetStream(materialSFXLibrary.GetKeyByIndex(GroundMaterialIndex), 0);
 		footstepChannel.Play();
 
-		Transform3D spawnTransform = isRightFoot ? rightFoot.GlobalTransform : leftFoot.GlobalTransform;
+		Transform3D spawnTransform = isRightFoot ? Player.Animator.RightFoot.GlobalTransform : Player.Animator.LeftFoot.GlobalTransform;
 		spawnTransform.Basis = GlobalTransform.Basis;
 
 		switch (groundMaterial)
@@ -496,7 +494,7 @@ public partial class PlayerEffect : Node3D
 		if (Player.IsDarkspineSonic)
 			waterStep.GlobalPosition = GlobalPosition;
 		else
-			waterStep.GlobalPosition = isRightFoot ? rightFoot.GlobalPosition : leftFoot.GlobalPosition;
+			waterStep.GlobalPosition = isRightFoot ? Player.Animator.RightFoot.GlobalPosition : Player.Animator.LeftFoot.GlobalPosition;
 
 		waterStep.ResetPhysicsInterpolation();
 
