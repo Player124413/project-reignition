@@ -149,15 +149,15 @@ public partial class GasTank : Area3D
 		EmitSignal(SignalName.OnStrike);
 
 		BonusManager.instance.RegisterEnemyComboExtender(this);
+
 		Launch();
+		AllowDoubleLaunch = false;
 	}
 
 	public void Launch()
 	{
 		if (CurrentState != TankStates.Idle && !AllowDoubleLaunch) // Already traveling
 			return;
-
-		AllowDoubleLaunch = false;
 
 		if (endTarget != null)
 			endPosition = endTarget.GlobalPosition - GlobalPosition;
