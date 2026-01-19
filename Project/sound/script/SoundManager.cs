@@ -470,8 +470,9 @@ public partial class SoundManager : Node
 		if (!sfxGroups.ContainsKey(key))
 			return true;
 
-		if (Mathf.Abs(sfxGroupTimer - sfxGroupTimers[key]) > groupSfxSpacing)
-			return true;
+		GD.PrintT(key, sfxGroups[key], maxPolyphony, Mathf.Abs(sfxGroupTimer - sfxGroupTimers[key]));
+		if (Mathf.Abs(sfxGroupTimer - sfxGroupTimers[key]) < groupSfxSpacing)
+			return false;
 
 		return sfxGroups[key] < maxPolyphony;
 	}
