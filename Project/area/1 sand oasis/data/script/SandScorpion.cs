@@ -936,6 +936,12 @@ public partial class SandScorpion : Node3D
 			return;
 		}
 
+		if (isInteractingWithTraversalHitbox)
+		{
+			ProcessTraversalCollision();
+			return;
+		}
+
 		if (IsCollidingWithBoss)
 			ProcessHitboxCollision();
 	}
@@ -1096,12 +1102,29 @@ public partial class SandScorpion : Node3D
 		damageState = DamageState.Knockback;
 	}
 
+	private bool isHittingFarEye;
+	private bool isInteractingWithTraversalHitbox;
+
 	/// <summary>
 	/// Called when the player hits one of the eyes on the tail. No damage is actually dealt.
 	/// </summary>
-	public void OnTraversalHurtboxCollision(Area3D a, bool hitFarEye)
+	public void OnTraversalHurtboxEntered(Area3D a, bool hitFarEye)
 	{
 		if (!a.IsInGroup("player")) return;
+
+		isHittingFarEye = hitFarEye;
+		isInteractingWithTraversalHitbox = true;
+		ProcessTraversalCollision();
+	}
+
+	public void OnTraversalHurtboxExited(Area3D a)
+	{
+		if (!a.IsInGroup("player")) return;
+		isInteractingWithTraversalHitbox = false;
+	}
+
+	private void ProcessTraversalCollision()
+	{
 		if (!Player.IsHomingAttacking) return; // Player isn't attacking
 
 		StartHitFX();
@@ -1117,7 +1140,7 @@ public partial class SandScorpion : Node3D
 			lTailAnimationTree.Set(HeavyAttackParameter, HeavyLoopState);
 
 		// Disable hurtboxes so the player can't just bounce on the same eye infinitely
-		string hitboxAnimation = hitFarEye ? "disable-hurtbox-01" : "disable-hurtbox-02";
+		string hitboxAnimation = isHittingFarEye ? "disable-hurtbox-01" : "disable-hurtbox-02";
 		hitboxAnimation = (attackSide == 1 ? "r-" : "l-") + hitboxAnimation;
 		eventAnimator.CallDeferred("play", hitboxAnimation, -1, -1, false);
 	}
