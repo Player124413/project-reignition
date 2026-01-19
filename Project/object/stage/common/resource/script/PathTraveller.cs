@@ -155,8 +155,7 @@ public partial class PathTraveller : Node3D
 		{
 			// Reset travel bounds on both sides, then update each side individually
 			SetHorizontalBounds(Mathf.Inf);
-			UpdateCollisions(1);
-			UpdateCollisions(-1);
+			UpdateCollisions();
 		}
 
 		ApplyMovement();
@@ -166,18 +165,20 @@ public partial class PathTraveller : Node3D
 	}
 
 	/// <summary> Check for walls. </summary>
-	private void UpdateCollisions(int direction)
+	private void UpdateCollisions()
 	{
 		float pathTravellerCollisionSize = Player.CollisionSize.X;
-		float castDistance = pathTravellerCollisionSize + CollisionSmoothingDistance;
+		float castDistance = Mathf.Abs(PathFollower.HOffset) + pathTravellerCollisionSize + CollisionSmoothingDistance;
+		int direction = PathFollower.HOffset > 0 ? 1 : -1;
 		if (Mathf.Sign(CurrentTurnAmount.X) == direction)
 			castDistance += Mathf.Abs(CurrentTurnAmount.X * PhysicsManager.physicsDelta);
 
-		Vector3 castVector = this.Left() * direction * castDistance;
-		RaycastHit wallCast = Player.CastRay(Player.GlobalPosition, castVector, Runtime.Instance.environmentMask);
-		DebugManager.DrawRay(Player.GlobalPosition, castVector, wallCast ? Colors.Green : Colors.White);
+		Vector3 castVector = this.Right() * direction * castDistance;
+		Vector3 castPosition = Player.PathFollower.GlobalPosition;
+		RaycastHit wallCast = Player.CastRay(castPosition, castVector, Runtime.Instance.environmentMask);
+		DebugManager.DrawRay(castPosition, castVector, wallCast ? Colors.Green : Colors.White);
 		if (wallCast)
-			SetHorizontalBounds(Mathf.Abs(PathFollower.HOffset) + (wallCast.distance - pathTravellerCollisionSize));
+			SetHorizontalBounds(wallCast.distance - pathTravellerCollisionSize);
 	}
 
 	/// <summary> Handles player input. </summary>
@@ -268,6 +269,7 @@ public partial class PathTraveller : Node3D
 		// Add offsets
 		PathFollower.HOffset -= CurrentTurnAmount.X * PhysicsManager.physicsDelta;
 		PathFollower.VOffset -= CurrentTurnAmount.Y * PhysicsManager.physicsDelta;
+
 		// Clamp offsets
 		PathFollower.HOffset = Mathf.Clamp(PathFollower.HOffset, -Bounds.X, Bounds.X);
 		PathFollower.VOffset = Mathf.Clamp(PathFollower.VOffset, -Bounds.Y, Bounds.Y);
