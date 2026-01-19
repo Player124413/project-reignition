@@ -13,9 +13,10 @@ namespace Project.Gameplay.Hazards
 		[Export] public bool IsSpawnedFromEditor { get; set; }
 		/// <summary> Is this spikeball currently spawned? </summary>
 		public bool IsSpawned { get; private set; }
-		/// <summary> Spikeball's animator. </summary>
 		[Export] private Vector3 startingVelocity;
+		/// <summary> Spikeball's animator. </summary>
 		[Export] private AnimationPlayer animator;
+		private SpawnData spawnData;
 
 		public override void _Ready()
 		{
@@ -25,6 +26,8 @@ namespace Project.Gameplay.Hazards
 			{
 				if (Sleeping)
 					Freeze = true;
+
+				spawnData = new(GetParent(), Transform);
 			}
 		}
 
@@ -45,10 +48,14 @@ namespace Project.Gameplay.Hazards
 
 		public void Spawn()
 		{
+			if (IsSpawnedFromEditor)
+				spawnData.Respawn(this);
+			else
+				GlobalRotation = Vector3.Zero;
+
 			Visible = true;
 			ProcessMode = ProcessModeEnum.Inherit;
 
-			GlobalRotation = Vector3.Zero;
 			LinearVelocity = GlobalBasis * startingVelocity;
 			AngularVelocity = Vector3.Zero;
 			animator.Play("spawn");
