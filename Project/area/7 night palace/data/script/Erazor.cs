@@ -559,6 +559,7 @@ public partial class Erazor : Node3D
 			StartAttackStrike();
 
 		Player.MoveSpeed = 0;
+		Player.VerticalSpeed = 0.0f;
 		Player.SnapToGround();
 
 		Player.Skills.CancelBreakSkills();
