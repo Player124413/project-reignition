@@ -245,6 +245,7 @@ public partial class AlfLayla : Node3D
 		animationTree.Set(SpiritBombTrigger, (uint)AnimationNodeOneShot.OneShotRequest.Abort);
 		animationTree.Set(StunDamageFinalTrigger, (uint)AnimationNodeOneShot.OneShotRequest.Abort);
 		animationTree.Set(StunDamageTrigger, (uint)AnimationNodeOneShot.OneShotRequest.Abort);
+		MoveStatePlayback.Start("idle");
 	}
 
 	private readonly string IntroductionTrigger = "parameters/intro-trigger/request";
