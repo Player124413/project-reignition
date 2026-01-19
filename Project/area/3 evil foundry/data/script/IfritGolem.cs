@@ -418,6 +418,7 @@ public partial class IfritGolem : Node3D
 	{
 		if (currentState != GolemState.Damaged && currentState != GolemState.Recovery)
 		{
+			Player.Animator.StopHurt(KnockbackSettings.KnockbackAnimation.Forward);
 			EmitSignal(SignalName.LavaLaunchEnded);
 			return;
 		}
