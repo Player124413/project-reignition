@@ -30,6 +30,7 @@ public partial class CaptainBemoth : PathFollow3D
 
 	private PlayerController Player => StageSettings.Player;
 
+	private bool IsPhaseTwo => currentHealth == 1;
 	private int currentHealth;
 	private readonly int MaxHealth = 4;
 	private BemothState currentState;
@@ -280,7 +281,7 @@ public partial class CaptainBemoth : PathFollow3D
 		ExitStunState();
 
 		currentState = BemothState.Idle;
-		isFacingForward = currentHealth == 1; // Only face the player when almost dead
+		isFacingForward = IsPhaseTwo; // Only face the player when almost dead
 		attackTimer = AttackTimerInterval;
 		EnableHornHurtboxes();
 	}
@@ -424,7 +425,7 @@ public partial class CaptainBemoth : PathFollow3D
 			horns[2].CallDeferred(CaptainBemothHorn.MethodName.EnableLockon);
 		}
 
-		if (currentHealth == 1)
+		if (IsPhaseTwo)
 			horns[3].CallDeferred(CaptainBemothHorn.MethodName.EnableLockon);
 	}
 
@@ -485,7 +486,7 @@ public partial class CaptainBemoth : PathFollow3D
 		if (isAttackQueued) // Queued attacks are always waves
 		{
 			isAttackQueued = false;
-			if (currentHealth == 1) // Perform at least 1 charge attack...
+			if (IsPhaseTwo) // Perform at least 1 charge attack...
 				EnterChargeAttackState();
 			else
 				EnterWaveAttackState();
@@ -707,7 +708,7 @@ public partial class CaptainBemoth : PathFollow3D
 		currentState = BemothState.ShockAttack;
 
 		// Delay shock to give time to one-cycle horns
-		shockTimer = currentHealth == MaxHealth || currentHealth == 1 ? -ShockAttackLongDelay : -ShockAttackShortDelay;
+		shockTimer = currentHealth == MaxHealth || IsPhaseTwo ? -ShockAttackLongDelay : -ShockAttackShortDelay;
 		shockAttackRoot.Scale = Vector3.One * 0.001f;
 	}
 
@@ -750,6 +751,7 @@ public partial class CaptainBemoth : PathFollow3D
 
 		stunTimer = 0;
 		startStunProgress = Progress;
+		isFacingForward = IsPhaseTwo;
 		endStunProgress = startStunProgress + StunDistance;
 		currentState = BemothState.Stunned;
 		animator.Set(StunTrigger, (int)AnimationNodeOneShot.OneShotRequest.Fire);
