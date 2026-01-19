@@ -400,7 +400,15 @@ public partial class SoundManager : Node
 	// Item pickups are played in the SoundManager to avoid volume increase when collecting more than one at a time.
 	[Export]
 	private AudioStreamPlayer ringSFX;
-	public void PlayRingSFX() => ringSFX.Play();
+	private bool canPlayRingSfx;
+	public void PlayRingSFX()
+	{
+		if (!canPlayRingSfx) // Prevent multiple ring sound effects playing on the same frame
+			return;
+
+		ringSFX.Play();
+		canPlayRingSfx = false;
+	}
 	[Export]
 	private AudioStreamPlayer richRingSFX;
 	public void PlayRichRingSFX() => richRingSFX.Play();
@@ -463,6 +471,8 @@ public partial class SoundManager : Node
 	{
 		if (sfxGroups.Count != 0)
 			sfxGroupTimer += PhysicsManager.physicsDelta;
+
+		canPlayRingSfx = true;
 	}
 
 	public bool CanPlaySfxInGroup(StringName key, int maxPolyphony)
@@ -470,7 +480,6 @@ public partial class SoundManager : Node
 		if (!sfxGroups.ContainsKey(key))
 			return true;
 
-		GD.PrintT(key, sfxGroups[key], maxPolyphony, Mathf.Abs(sfxGroupTimer - sfxGroupTimers[key]));
 		if (Mathf.Abs(sfxGroupTimer - sfxGroupTimers[key]) < groupSfxSpacing)
 			return false;
 
