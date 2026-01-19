@@ -94,6 +94,17 @@ public partial class PlayerController : CharacterBody3D
 	/// <summary> Player's vertical speed -- only effective when not on the ground. </summary>
 	public float VerticalSpeed { get; set; }
 	public bool IsMovingBackward { get; set; }
+	/// <summary> Returns whether the player is moving backwards or not, taking free roam into account. </summary>
+	public bool IsMovingBackwardFreeRoam
+	{
+		get
+		{
+			float movementDot = ExtensionMethods.DotAngle(MovementAngle, PathFollower.ForwardAngle);
+			return IsMovingBackward ||
+				(SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.FreeRoam) && movementDot < 0);
+		}
+	}
+
 	/// <summary> For movement that doesn't affect animations (e.x. wind). Reset every frame after it's applied. </summary>
 	public Vector3 ExternalVelocity { get; set; }
 
@@ -329,16 +340,7 @@ public partial class PlayerController : CharacterBody3D
 
 				if (!isCornerCollision && pathDelta >= Mathf.Pi * .25f) // Snap to path direction
 				{
-					if (SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.FreeRoam) &&
-						ExtensionMethods.DotAngle(MovementAngle, PathFollower.ForwardAngle) < 0)
-					{
-						MovementAngle = PathFollower.BackAngle;
-					}
-					else
-					{
-						MovementAngle = PathFollower.ForwardAngle;
-					}
-
+					MovementAngle = IsMovingBackwardFreeRoam ? PathFollower.BackAngle : PathFollower.ForwardAngle;
 					return;
 				}
 
@@ -394,7 +396,7 @@ public partial class PlayerController : CharacterBody3D
 		DebugManager.DrawRay(CollisionPosition, castDirection * castLength, wallHit ? Colors.Red : Colors.White);
 
 		if (ValidateWallCast(wallHit))
-			MovementAngle = IsMovingBackward ? PathFollower.BackAngle : PathFollower.ForwardAngle;
+			MovementAngle = IsMovingBackwardFreeRoam ? PathFollower.BackAngle : PathFollower.ForwardAngle;
 	}
 
 	private bool ValidateWallCast(RaycastHit hit) => hit && hit.collidedObject.IsInGroup("wall");

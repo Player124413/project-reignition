@@ -182,7 +182,6 @@ public partial class PlayerState : Node
 			return true;
 		}
 
-		// Check for turning around
 		if (Player.Controller.IsHoldingDirection(targetMovementAngle, Player.MovementAngle + Mathf.Pi) &&
 			!Player.Controller.IsStrafeModeActive)
 		{

@@ -238,7 +238,7 @@ public partial class PlayerInputController : Node
 	}
 
 	/// <summary> Returns whether the player is currently in strafing mode. </summary>
-	public bool IsStrafeModeActive => (Player.Skills.IsSpeedBreakActive && !SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.FreeRoam)) ||
+	public bool IsStrafeModeActive => Player.Skills.IsSpeedBreakActive ||
 			SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.Autorun) ||
 			(Player.IsLockoutActive &&
 			Player.ActiveLockoutData.movementMode == LockoutResource.MovementModes.Strafe);
@@ -306,7 +306,7 @@ public partial class PlayerInputController : Node
 			return GetStrafeAngle();
 
 		if (SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.Autorun))
-			return GetStrafeAngle(true);
+			return GetStrafeAngle();
 
 		if (Mathf.IsZeroApprox(GetInputStrength()))
 			return Player.MovementAngle;
@@ -334,7 +334,7 @@ public partial class PlayerInputController : Node
 		return false;
 	}
 
-	private float GetStrafeAngle(bool allowBackstep = false)
+	private float GetStrafeAngle()
 	{
 		CameraSettingsResource.ControlModeEnum controlMode = Player.Camera.ActiveSettings.controlMode;
 		Vector2 inputs = InputAxis;
@@ -357,12 +357,12 @@ public partial class PlayerInputController : Node
 			inputs *= sign >= 0 ? 1 : -1;
 		}
 
-		if (Player.IsMovingBackward)
-			baseAngle = Player.PathFollower.BackAngle;
-
 		float strafeAngle = inputs.X * TurningDampingRange;
-		if (Player.IsMovingBackward)
+		if (Player.IsMovingBackwardFreeRoam)
+		{
 			strafeAngle *= -1;
+			baseAngle = Player.PathFollower.BackAngle;
+		}
 
 		return baseAngle - strafeAngle;
 	}
