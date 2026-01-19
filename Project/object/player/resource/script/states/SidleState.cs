@@ -11,10 +11,8 @@ public partial class SidleState : PlayerState
 	public Node ActiveFoothold { get; set; }
 	private bool IsOverFoothold => ActiveFoothold != null;
 
-	[Export]
-	private PlayerState runState;
-	[Export]
-	private PlayerState backstepState;
+	[Export] private PlayerState runState;
+	[Export] private PlayerState backstepState;
 
 	private float velocity;
 	private float cycleTimer;
@@ -63,6 +61,7 @@ public partial class SidleState : PlayerState
 		Player.Animator.SnapRotation(Player.Animator.ExternalAngle);
 		Player.Animator.StartSidle(Trigger.IsFacingRight);
 		Player.Animator.UpdateSidle(cycleTimer);
+		Player.Lockon.IsMonitoring = false;
 
 		Player.Knockback += OnPlayerDamaged;
 	}
@@ -84,6 +83,7 @@ public partial class SidleState : PlayerState
 		Player.MovementAngle = Player.MoveSpeed > 0 ? Player.PathFollower.ForwardAngle : Player.PathFollower.BackAngle;
 		Player.MoveSpeed = Mathf.Abs(Player.MoveSpeed);
 		Player.Skills.IsSpeedBreakEnabled = true;
+		Player.Lockon.IsMonitoring = SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.GroundedHomingAttack);
 
 		Player.Animator.ResetState(Player.IsTeleporting ? 0f : .1f);
 		Player.Knockback -= OnPlayerDamaged;
@@ -162,7 +162,7 @@ public partial class SidleState : PlayerState
 	private void OnPlayerDamaged()
 	{
 		// Invincible/Damage routine has already started
-		if (Player.IsDefeated || Player.IsInvincible || damageState != DamageStates.Disabled) return;
+		if (Player.IsDefeated || Player.IsInvincible || damageState != DamageStates.Disabled || !Player.IsSidling) return;
 
 		velocity = 0;
 		cycleTimer = 0;

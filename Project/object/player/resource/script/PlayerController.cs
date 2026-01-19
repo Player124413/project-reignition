@@ -1010,6 +1010,7 @@ public partial class PlayerController : CharacterBody3D
 
 			// Lose soul power and continue
 			Skills.ModifySoulGauge(-PlayerSkillController.MinimumSoulPower);
+			Effect.PlayVoice("hurt");
 			return;
 		}
 
