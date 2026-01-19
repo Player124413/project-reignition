@@ -7,6 +7,8 @@ namespace Project.Interface.Menus;
 
 public partial class ExperienceResult : Control
 {
+	[Signal] public delegate void NotificationTransitionStartedEventHandler();
+
 	/// <summary> Amount of exp accumulated from repeat playthroughs of a level. </summary>
 	public static int AccumulatedExp { get; private set; }
 
@@ -99,7 +101,12 @@ public partial class ExperienceResult : Control
 		if (!isProcessing)
 		{
 			if (isFadingBgm)
+			{
 				isFadingBgm = SoundManager.FadeAudioPlayer(bgm, 2.0f);
+
+				if (!isFadingBgm) // Mute sound effects through a signal
+					EmitSignal(SignalName.NotificationTransitionStarted);
+			}
 			return;
 		}
 
