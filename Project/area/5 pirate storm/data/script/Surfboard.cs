@@ -51,7 +51,7 @@ public partial class Surfboard : PathTraveller
 
 		float speed = Mathf.Lerp(initialSpeed, MaxSpeed, SpeedFactor);
 		if (currentWave == null)
-			return MaxSpeed;
+			return speed;
 
 		if (!currentWave.IsWaveCleared)
 		{
