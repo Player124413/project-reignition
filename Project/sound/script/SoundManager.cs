@@ -289,8 +289,7 @@ public partial class SoundManager : Node
 		TextServer server = TextServerManager.GetPrimaryInterface();
 		TextParagraph paragraph = new();
 		paragraph.AddString(subtitleLabel.Text, subtitleFont, subtitleSize);
-		Vector2 buttonPromptOffset = new((spaceCharacterWidth - buttonPrompt.Size.X * buttonPrompt.Scale.X) * 0.5f,
-			subtitleSize * 0.5f);
+		Vector2 buttonPromptOffset = new((spaceCharacterWidth - buttonPrompt.Size.X * buttonPrompt.Scale.X) * 0.5f, subtitleSize * 0.5f);
 
 		int currentIndex = 0;
 		Vector2 glyphPosition = Vector2.Zero;
@@ -314,6 +313,8 @@ public partial class SoundManager : Node
 					return;
 				}
 			}
+
+			buttonPromptOffset.Y -= subtitleSize * 0.5f;
 		}
 	}
 
