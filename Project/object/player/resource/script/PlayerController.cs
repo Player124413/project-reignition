@@ -172,7 +172,7 @@ public partial class PlayerController : CharacterBody3D
 	/// <summary> Center of collision calculations </summary>
 	public Vector3 CenterPosition
 	{
-		get => GlobalPosition + (UpDirection * .4f);
+		get => GetGlobalTransformInterpolated().Origin + (UpDirection * .4f);
 		set
 		{
 			GlobalPosition = value - (UpDirection * .4f);
