@@ -15,6 +15,9 @@ public partial class GrindRail : Area3D
 	/// <summary> Reference to the grindrail's pathfollower. </summary>
 	public PathFollow3D PathFollower { get; private set; }
 
+	/// <summary> Tracks whether this grindrail should ignore player activation (Used for falling through grindrails). </summary>
+	public bool IsIgnoringPlayer { get; set; }
+
 	[ExportGroup("Components")]
 	[Export(PropertyHint.NodeType, "Path3D")]
 	private NodePath rail;
@@ -122,7 +125,12 @@ public partial class GrindRail : Area3D
 		}
 
 		if (IsInteractingWithPlayer)
+		{
 			CheckRailActivation();
+
+			if (IsIgnoringPlayer && Player.IsOnGround)
+				IsIgnoringPlayer = false;
+		}
 	}
 
 	private void Respawn()
@@ -169,5 +177,7 @@ public partial class GrindRail : Area3D
 
 		if (isInvisibleRail) // Hide rail model
 			_railModel.Visible = false;
+
+		IsIgnoringPlayer = false;
 	}
 }

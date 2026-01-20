@@ -128,7 +128,15 @@ public partial class GrindState : PlayerState
 
 		bool isGrindCompleted = Mathf.IsEqualApprox(ActiveGrindRail.PathFollower.ProgressRatio, 1);
 		if (isGrindCompleted || movementDelta <= 0) // Disconnect from the rail
+		{
+			if (movementDelta <= 0) // Prevent snapping to the current grindrail again
+			{
+				ActiveGrindRail.IsIgnoringPlayer = true;
+				Player.GlobalPosition += Vector3.Down * 0.05f;
+			}
+
 			return fallState;
+		}
 
 		SaveManager.SharedData.GrindDistance = Mathf.MoveToward(SaveManager.SharedData.GrindDistance, float.MaxValue,
 			Player.MoveSpeed * PhysicsManager.physicsDelta);
@@ -191,6 +199,9 @@ public partial class GrindState : PlayerState
 	public bool IsRailActivationValid(GrindRail grindRail)
 	{
 		if (!StageSettings.Instance.IsLevelIngame) // Not in-game
+			return false;
+
+		if (grindRail.IsIgnoringPlayer)
 			return false;
 
 		if (ActiveGrindRail == grindRail) // Already grinding on the target rail
