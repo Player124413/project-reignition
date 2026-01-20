@@ -791,7 +791,6 @@ public partial class Majin : Enemy
 			CallDeferred(MethodName.SetHitboxStatus, true); // Enable hurtbox instantly to allow for insta-speedbreak points
 			AnimationPlayer.Play("spawn");
 			AnimationTree.Set(SpawnTrigger, (int)AnimationNodeOneShot.OneShotRequest.Fire);
-			tweener.TweenCallback(new Callable(this, MethodName.FinishSpawning)).SetDelay(.5f); // Delay by length of teleport animation
 		}
 
 		// Reset flame attack
