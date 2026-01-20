@@ -770,8 +770,6 @@ public partial class Majin : Enemy
 		SetDeferred("visible", true);
 
 		tweener?.Kill();
-		tweener = CreateTween().SetProcessMode(Tween.TweenProcessMode.Physics);
-
 		AnimationTree.Set(StateRequestParameter, IdleState); // Idle
 
 		if (SpawnTravelEnabled && !isFinishedTraveling) // Travel
@@ -780,6 +778,7 @@ public partial class Majin : Enemy
 			Position = SpawnPosition;
 
 			AnimationPlayer.Play("travel");
+			tweener = CreateTween().SetProcessMode(Tween.TweenProcessMode.Physics);
 			tweener.TweenProperty(this, nameof(currentTravelRatio), 1, spawnTravelTime).SetTrans(Tween.TransitionType.Sine).SetEase(Tween.EaseType.InOut).SetDelay(spawnDelay);
 			tweener.TweenCallback(new Callable(this, MethodName.FinishSpawning));
 
