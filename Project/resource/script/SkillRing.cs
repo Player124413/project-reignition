@@ -352,6 +352,7 @@ public enum SkillKey
 	// Control skills
 	Autorun,
 	ChargeJump,
+	VariableJumpHeight, // Allows finer control of jump height (can mess up beginners)
 	FreeRoam, // Allows Sonic to turn around normally
 	QuickStart, // Reduces the length of the countdown
 	SlowTurn, // Decreases Sonic's turning sensitivity

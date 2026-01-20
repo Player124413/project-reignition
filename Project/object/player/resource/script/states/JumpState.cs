@@ -19,6 +19,7 @@ public partial class JumpState : PlayerState
 
 	private float jumpTimer;
 
+	private bool isVariableJumpHeightEnabled;
 	private bool isShortenedJump;
 	private bool isAccelerationJumpQueued;
 	/// <summary> Cached acceleration jump height. Used to determine when the acceleration jump should start slowing down. </summary>
@@ -85,7 +86,7 @@ public partial class JumpState : PlayerState
 			// Check for acceleration jump
 			if (jumpTimer <= AccelerationJumpLength)
 				isAccelerationJumpQueued = true;
-			else
+			else if (isVariableJumpHeightEnabled)
 				isShortenedJump = true;
 		}
 

@@ -889,7 +889,7 @@ public partial class PlayerAnimator : Node3D
 
 	private readonly string BalanceSpeed = "parameters/balance_tree/balance_speed/scale";
 	private readonly string BalanceWindBlend = "parameters/balance_tree/wind_blend/blend_position";
-	private readonly string BalanceWindStrengthBlend = "parameters/balance_tree/wind_strength_blend/blend_amount";
+	private readonly string BalanceWindStrengthBlend = "parameters/balance_tree/wind_strength_blend/blend_position";
 	private readonly string SecondaryBalanceWindStrengthBlend = "parameters/balance_tree/wind_strength_blend_2/blend_amount";
 	public void UpdateBalanceSpeed(float speedRatio, float overrideWindBlend = -1)
 	{
