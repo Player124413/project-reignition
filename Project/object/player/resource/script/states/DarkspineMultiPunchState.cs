@@ -57,11 +57,14 @@ public partial class DarkspineMultiPunchState : PlayerState
 		Player.IsMultiPunchActive = false;
 		Player.StopExternal();
 		Player.Skills.EnableBreakSkills();
+		Player.Animator.ResetState(0f);
 		HeadsUpDisplay.Instance.HidePrompts();
 	}
 
 	public override PlayerState ProcessPhysics()
 	{
+		Player.UpdateExternalControl();
+
 		if (!Core.AlfLayla.IsStunned)
 			return idleState;
 
@@ -90,7 +93,6 @@ public partial class DarkspineMultiPunchState : PlayerState
 			return null;
 		}
 
-		Player.UpdateExternalControl();
 		if (Player.Controller.IsActionBufferActive || Player.Controller.IsAttackBufferActive)
 		{
 			Player.Controller.ResetActionBuffer();

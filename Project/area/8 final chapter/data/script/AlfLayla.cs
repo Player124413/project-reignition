@@ -237,7 +237,6 @@ public partial class AlfLayla : Node3D
 			particle.SetEmitting(true);
 		}
 
-
 		// Reset Animations
 		animationTree.Set(SixOrbTrigger, (int)AnimationNodeOneShot.OneShotRequest.Abort);
 		animationTree.Set(ThreeOrbTrigger, (int)AnimationNodeOneShot.OneShotRequest.Abort);
@@ -566,8 +565,8 @@ public partial class AlfLayla : Node3D
 				animationTree.Set(SlashTrigger, (int)AnimationNodeOneShot.OneShotRequest.Fire);
 				break;
 			case 'B':
-				animationTree.Set(SpiritBombTrigger, (uint)AnimationNodeOneShot.OneShotRequest.Fire);
 				spiritBomb.Respawn();
+				animationTree.Set(SpiritBombTrigger, (uint)AnimationNodeOneShot.OneShotRequest.Fire);
 				break;
 			default: // Unimplmented
 				GD.Print($"Action {currentActionCharacter} is not implemented!");
