@@ -64,7 +64,7 @@ public partial class PlayerLockonController : Area3D
 		get => lockonReticle.Visible;
 		set => lockonReticle.Visible = value;
 	}
-
+	private bool isSideScrolling;
 	public bool IsMonitoringPerfectHomingAttack { get; private set; }
 	public void EnablePerfectHomingAttack() => IsMonitoringPerfectHomingAttack = true;
 	public void DisablePerfectHomingAttack() => IsMonitoringPerfectHomingAttack = false;
@@ -76,6 +76,10 @@ public partial class PlayerLockonController : Area3D
 	public void ProcessPhysics()
 	{
 		bool wasTargetChanged = false;
+
+		isSideScrolling = Player.IsLockoutOverridingMovementAngle &&
+			Player.ActiveLockoutData.recenterPlayer &&
+			Mathf.Abs(Player.PathFollower.Forward().Dot(Player.Camera.Camera.Forward())) < 0.6f;
 
 		if (IsMonitoring)
 			wasTargetChanged = ProcessMonitoring();
@@ -136,10 +140,10 @@ public partial class PlayerLockonController : Area3D
 					continue;
 
 				// Ignore lower targets when within priority distance
-				if (Mathf.Abs(closestDistance - potentialDistance) < PriorityDistance &&
+				if (activeState == TargetState.Valid &&
+					Mathf.Abs(closestDistance - potentialDistance) < PriorityDistance &&
 					(potentialTargets[i].GlobalPosition.Y <= activeTarget.GlobalPosition.Y ||
-					potentialState == TargetState.LowPriority) &&
-					activeState == TargetState.Valid)
+					potentialState == TargetState.LowPriority))
 				{
 					continue;
 				}
@@ -181,6 +185,8 @@ public partial class PlayerLockonController : Area3D
 		}
 
 		Vector2 screenPos = Player.Camera.ConvertToScreenSpace(Target.GlobalPosition);
+		screenPos.X = Mathf.Clamp(screenPos.X, LockonReticleRadius, GetTree().Root.GetViewport().GetVisibleRect().Size.X - LockonReticleRadius);
+		screenPos.Y = Mathf.Clamp(screenPos.Y, LockonReticleRadius, GetTree().Root.GetViewport().GetVisibleRect().Size.Y - LockonReticleRadius);
 		UpdateLockonReticle(screenPos, Player.IsHomingAttacking || targetState == TargetState.Valid, wasTargetChanged);
 	}
 
@@ -235,18 +241,26 @@ public partial class PlayerLockonController : Area3D
 		if (!target.IsVisibleInTree()) // Not visible
 			return false;
 
+		if (isSideScrolling) // Ignore vertical targeting when sidescrolling
+		{
+			if (target.GlobalPosition.Y > Player.CenterPosition.Y + (Player.CollisionSize.Y * 2.0f)) // To high
+				return false;
+
+			if (target.GlobalPosition.Y <= Player.CenterPosition.Y - 8f) // Too low
+				return false;
+
+			float dot = (target.GlobalPosition - Player.CenterPosition).Dot(Vector3.Up);
+			if (dot > .5f)
+				return false;
+		}
+
 		if (Player.Camera.IsOnScreen(target.GlobalPosition)) // Always allow targeting on-screen objects
 			return true;
 
 		if (Player.Camera.IsBehindCamera(target.GlobalPosition)) // Don't allow targeting behind the camera
 			return false;
 
-		if (!Player.IsBouncing || (Target != null && Target != target))
-			return false;
-
-		Vector2 screenPosition = Player.Camera.ConvertToScreenSpace(target.GlobalPosition) / Runtime.ScreenSize;
-		screenPosition = (screenPosition - (Vector2.One * .5f)) * 2f; // Remap values between -1 and 1.
-		if (Mathf.Abs(screenPosition.X) >= 1f) // Offscreen from the sides
+		if (Target != null && Target != target) // Already targeting something
 			return false;
 
 		return true;
@@ -315,6 +329,7 @@ public partial class PlayerLockonController : Area3D
 	private Node2D lockonReticle;
 	[Export]
 	private AnimationPlayer lockonAnimator;
+	private readonly float LockonReticleRadius = 100f;
 	public void DisableLockonReticle() => lockonAnimator.Play("disable");
 	public void UpdateLockonReticle(Vector2 screenPosition, bool isTargetAttackable, bool wasTargetChanged)
 	{
