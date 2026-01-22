@@ -227,6 +227,8 @@ public partial class PlayerCameraController : Node3D
 	public bool SnapFlag { get; set; }
 	/// <summary> Determines whether the camera's distance will be limited by its path. </summary>
 	public bool LimitToPathDistance { get; set; }
+	/// <summary> Jitter Fix: Determines whether camera rotation should be interpolated or not (on during static cameras). </summary>
+	private bool ResetRotationFlag { get; set; }
 
 	/// <summary> Default camera settings to use when nothing is set. </summary>
 	[Export] public CameraSettingsResource defaultSettings;
@@ -364,6 +366,8 @@ public partial class PlayerCameraController : Node3D
 
 		if (SnapFlag) // Reset flag after camera was updated
 			SnapFlag = false;
+
+		ResetRotationFlag = false;
 	}
 
 	private float inputCameraDistance;
@@ -519,7 +523,7 @@ public partial class PlayerCameraController : Node3D
 		{
 			cameraRoot.GlobalTransform = cameraTransform; // Update transform
 
-			if (SnapFlag || ActiveBlendData.ResetPhysicsInterpolation)
+			if (SnapFlag || ActiveBlendData.ResetPhysicsInterpolation || ResetRotationFlag)
 				cameraRoot.ResetPhysicsInterpolation();
 		}
 
@@ -633,6 +637,9 @@ public partial class PlayerCameraController : Node3D
 			return data;
 		}
 
+		// Fix: lazy jitter fix when on automated sections (bc I'm not about to rewrite the entire camera code)
+		Player.ResetPhysicsInterpolation();
+		ResetRotationFlag = true;
 		Vector3 delta = Player.CenterPosition - data.precalculatedPosition;
 		data.blendData.distance = delta.Length();
 		delta = delta.Normalized();
@@ -650,7 +657,6 @@ public partial class PlayerCameraController : Node3D
 		data.blendData.yawAngle = targetYawAngle;
 		data.blendData.pitchAngle = targetPitchAngle;
 		data.CalculateBasis();
-
 		return data;
 	}
 
