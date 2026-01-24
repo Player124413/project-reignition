@@ -155,7 +155,7 @@ public partial class JumpState : PlayerState
 				return null;
 			}
 
-			if (SaveManager.Config.useStompJumpButtonMode)
+			if (SaveManager.Config.jumpButtonMode == SaveManager.JumpButtonModeEnum.Stomp)
 				return stompState;
 
 			return Player.Lockon.IsTargetAttackable ? homingAttackState : jumpDashState;

@@ -43,7 +43,7 @@ public partial class FallState : PlayerState
 				return null;
 			}
 
-			if (SaveManager.Config.useStompJumpButtonMode)
+			if (SaveManager.Config.jumpButtonMode == SaveManager.JumpButtonModeEnum.Stomp)
 				return stompState;
 
 			PlayerState attackState = GetAttackTargetState(false);

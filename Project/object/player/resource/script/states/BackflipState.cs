@@ -74,7 +74,7 @@ public partial class BackflipState : PlayerState
 				return null;
 			}
 
-			if (SaveManager.Config.useStompJumpButtonMode)
+			if (SaveManager.Config.jumpButtonMode == SaveManager.JumpButtonModeEnum.Stomp)
 				return stompState;
 
 			if (Player.Lockon.IsTargetAttackable)

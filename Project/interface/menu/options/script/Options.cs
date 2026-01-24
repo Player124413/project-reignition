@@ -429,6 +429,7 @@ public partial class Options : Menu
 	private readonly string DisabledString = "option_disable";
 	private readonly string HoldString = "option_hold";
 	private readonly string ToggleString = "option_toggle";
+	private readonly string BothString = "option_both";
 	private readonly string AttackString = "option_attack";
 	private readonly string StompString = "option_stomp";
 	private readonly string LowString = "option_low";
@@ -531,7 +532,12 @@ public partial class Options : Menu
 
 		controlLabels[0].Text = $"{Mathf.RoundToInt(SaveManager.Config.deadZone * 100)}%";
 		controlLabels[1].Text = SaveManager.Config.useHoldBreakMode ? HoldString : ToggleString;
-		controlLabels[2].Text = SaveManager.Config.useStompJumpButtonMode ? StompString : AttackString;
+		controlLabels[2].Text = SaveManager.Config.jumpButtonMode switch
+		{
+			SaveManager.JumpButtonModeEnum.Attack => AttackString,
+			SaveManager.JumpButtonModeEnum.Stomp => StompString,
+			_ => BothString,
+		};
 
 		partyMappingLabels[0].Text = Tr(PlayerString).Replace("0", partyPlayerIndex.ToString());
 		partyMappingLabels[1].Text = partyMappingOptions[0].GetDevice();
@@ -973,7 +979,7 @@ public partial class Options : Menu
 		}
 		else if (VerticalSelection == 2)
 		{
-			SaveManager.Config.useStompJumpButtonMode = !SaveManager.Config.useStompJumpButtonMode;
+			SaveManager.Config.jumpButtonMode = (SaveManager.JumpButtonModeEnum)WrapSelection((int)SaveManager.Config.jumpButtonMode + direction, (int)SaveManager.JumpButtonModeEnum.Count);
 			return true;
 		}
 

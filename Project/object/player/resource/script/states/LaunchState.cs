@@ -135,7 +135,7 @@ public partial class LaunchState : PlayerState
 			if (Player.Controller.IsJumpBufferActive)
 			{
 				Player.Controller.ResetJumpBuffer();
-				if (SaveManager.Config.useStompJumpButtonMode)
+				if (SaveManager.Config.jumpButtonMode == SaveManager.JumpButtonModeEnum.Stomp)
 					return stompState;
 
 				return Player.Lockon.IsTargetAttackable ? homingAttackState : jumpDashState;

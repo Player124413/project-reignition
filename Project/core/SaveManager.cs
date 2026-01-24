@@ -97,6 +97,14 @@ public partial class SaveManager : Node
 		Count
 	}
 
+	public enum JumpButtonModeEnum
+	{
+		Both,
+		Attack,
+		Stomp,
+		Count
+	}
+
 	public enum ButtonStyle
 	{
 		Style1, // Standard controller theme
@@ -259,7 +267,7 @@ public partial class SaveManager : Node
 		public float deadZone = .2f;
 		public ControllerType controllerType = ControllerType.Automatic;
 		public bool useHoldBreakMode = true;
-		public bool useStompJumpButtonMode;
+		public JumpButtonModeEnum jumpButtonMode;
 		public int[] partyModeDevices = [0, 0, 0, 0];
 		public Dictionary inputConfiguration = [];
 
@@ -319,7 +327,7 @@ public partial class SaveManager : Node
 				{ nameof(deadZone), deadZone },
 				{ nameof(controllerType), (int)controllerType },
 				{ nameof(useHoldBreakMode), useHoldBreakMode },
-				{ nameof(useStompJumpButtonMode), useStompJumpButtonMode },
+				{ nameof(jumpButtonMode), (int)jumpButtonMode },
 				{ nameof(partyModeDevices), partyModeDevices },
 				{ nameof(inputConfiguration), inputConfiguration },
 
@@ -333,7 +341,7 @@ public partial class SaveManager : Node
 				{ nameof(useProjectReignitionBranding), useProjectReignitionBranding },
 				{ nameof(hudStyle), (int)hudStyle },
 				{ nameof(buttonStyle), (int)buttonStyle },
-				{ nameof(isUsingHorizontalSoulGauge), (bool)isUsingHorizontalSoulGauge },
+				{ nameof(isUsingHorizontalSoulGauge), isUsingHorizontalSoulGauge },
 				{ nameof(isActionPromptsEnabled), isActionPromptsEnabled },
 
 				{ nameof(useQuickLoad), useQuickLoad }
@@ -408,8 +416,8 @@ public partial class SaveManager : Node
 				controllerType = (ControllerType)(int)var;
 			if (dictionary.TryGetValue(nameof(useHoldBreakMode), out var))
 				useHoldBreakMode = (bool)var;
-			if (dictionary.TryGetValue(nameof(useStompJumpButtonMode), out var))
-				useStompJumpButtonMode = (bool)var;
+			if (dictionary.TryGetValue(nameof(jumpButtonMode), out var))
+				jumpButtonMode = (JumpButtonModeEnum)(int)var;
 			if (dictionary.TryGetValue(nameof(partyModeDevices), out var))
 				partyModeDevices = (int[])var;
 			if (dictionary.TryGetValue(nameof(inputConfiguration), out var))
