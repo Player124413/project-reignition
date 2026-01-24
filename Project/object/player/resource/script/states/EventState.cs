@@ -78,6 +78,7 @@ public partial class EventState : PlayerState
 			if (Trigger.PlayerStandin != null)
 			{
 				Player.CallDeferred(PlayerController.MethodName.UpdateExternalControl, true);
+				Player.CallDeferred(MethodName.ResetPhysicsInterpolation);
 				CheckLanding();
 			}
 
