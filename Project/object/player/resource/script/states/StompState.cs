@@ -90,7 +90,7 @@ public partial class StompState : PlayerState
 
 	private void UpdateVerticalSpeed()
 	{
-		if (SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.StompAttack))
+		if (SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.StompAttack) || SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.StompBounce))
 			Player.VerticalSpeed = Mathf.MoveToward(Player.VerticalSpeed, StompSpeed, StompGravity * PhysicsManager.physicsDelta);
 		else
 			Player.VerticalSpeed = Mathf.MoveToward(Player.VerticalSpeed, StompSpeed, JumpCancelGravity * PhysicsManager.physicsDelta);
