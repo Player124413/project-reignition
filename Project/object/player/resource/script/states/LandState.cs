@@ -148,7 +148,7 @@ public partial class LandState : PlayerState
 		if (SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.StompExp) && Player.IsStomping)
 		{
 			Player.Effect.PlayDarkSpiralFX();
-			StageSettings.Instance.CurrentEXP += 2;
+			StageSettings.Instance.CurrentEXP += 20;
 		}
 
 		// Increase soul gauge
