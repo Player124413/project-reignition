@@ -25,6 +25,8 @@ public partial class PlayerLockonController : Area3D
 	public Node3D Target { get; private set; }
 	/// <summary> can the current target be attacked? </summary>
 	public bool IsTargetAttackable { get; set; }
+	private float targetResetTimer;
+
 	private enum TargetState
 	{
 		Valid,
@@ -40,7 +42,7 @@ public partial class PlayerLockonController : Area3D
 	/// <summary> How close a target needs to be to auto-lockon after bouncing. </summary>
 	private readonly float AutotargetDistanceAmount = 4f;
 	/// <summary> How far ahead the player must be to ignore the active lockon target. </summary>
-	private readonly float IgnoreTargetDistance = 0.2f;
+	private readonly float IgnoreTargetDistance = 2f;
 	private readonly string LevelWallGroup = "level wall";
 	private readonly string IgnoreLockonCastGroup = "ignore lockon cast";
 	/// <summary> List of all possible targets. </summary>
@@ -177,7 +179,7 @@ public partial class PlayerLockonController : Area3D
 			return;
 		}
 
-		if (IsIgnoringTarget(Target))
+		if (targetState == TargetState.PlayerIgnored)
 		{
 			ResetLockonTarget();
 			Player.Camera.SetLockonTarget(null);
@@ -207,8 +209,8 @@ public partial class PlayerLockonController : Area3D
 		if (IsIgnoringTarget(target))
 			return TargetState.PlayerIgnored;
 
-		// Ignore height check if player is already homing attacking the target
-		if (IsTargetAttackable && target == Target && Player.IsHomingAttacking)
+		// Ignore height check if player is already homing attacking the target (or is moving upwards)
+		if (IsTargetAttackable && target == Target && (Player.IsHomingAttacking || Player.VerticalSpeed > 0))
 			return TargetState.Valid;
 
 		if (!IsTargetVisible(target))
@@ -216,7 +218,7 @@ public partial class PlayerLockonController : Area3D
 
 		// Check Height
 		float maxTargetHeight = Player.CenterPosition.Y + (Player.CollisionSize.Y * 2.0f);
-		if (Player.IsOnGround)
+		if (Player.IsOnGround) // Capture more lockon targets when on the ground 
 			maxTargetHeight += Player.Stats.JumpHeight;
 		bool isTargetAttackable = target.GlobalPosition.Y <= maxTargetHeight;
 		if (Player.IsBouncing && !Player.IsBounceInteruptable)
@@ -231,6 +233,8 @@ public partial class PlayerLockonController : Area3D
 					Player.Camera.SetLockonTarget(target);
 			}
 		}
+		else if (Player.IsOnGround && isTargetAttackable)
+			isTargetAttackable = SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.GroundedHomingAttack);
 
 		return isTargetAttackable ? TargetState.Valid : TargetState.LowPriority;
 	}
@@ -271,13 +275,21 @@ public partial class PlayerLockonController : Area3D
 		if (Target == target && Player.IsHomingAttacking)
 			return false;
 
+		if (Player.Camera.LockonTarget == target) // Always focus on camera lockon targets
+			return false;
+
 		float inputStrength = Player.Controller.GetInputStrength();
 		if (inputStrength < .8f) // Player isn't decisive enough
 			return false;
 
-		float targetProgress = Player.PathFollower.GetProgress(target.GlobalPosition);
+		Vector3 direction = Player.GlobalPosition - target.GlobalPosition;
+		float angle = ExtensionMethods.CalculateForwardAngle(direction);
+		if (ExtensionMethods.DotAngle(angle, Player.PathFollower.ForwardAngle) < 0) // Player is moving towards lockon-don't ignore it!
+			return false;
+
+		float distance = direction.Flatten().Length();
 		bool holdingForward = Player.Controller.IsHoldingDirection(Player.Controller.GetTargetInputAngle(), Player.PathFollower.ForwardAngle);
-		return (Player.PathFollower.Progress > targetProgress + IgnoreTargetDistance) && holdingForward;
+		return distance <= IgnoreTargetDistance && holdingForward;
 	}
 
 	private bool HitObstacle(Node3D target)
@@ -314,10 +326,18 @@ public partial class PlayerLockonController : Area3D
 		return false;
 	}
 
-	public void ResetLockonTarget()
+	public void ResetLockonTarget(bool useTimer = false)
 	{
 		if (Target == null)
 			return;
+
+		if (useTimer)
+		{
+			// TODO Implement this properly
+			targetResetTimer = Mathf.MoveToward(targetResetTimer, 0f, PhysicsManager.physicsDelta);
+			if (!Mathf.IsZeroApprox(targetResetTimer))
+				return;
+		}
 
 		// Reset Active Target
 		Target = null;

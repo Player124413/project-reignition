@@ -83,7 +83,7 @@ public partial class SidleState : PlayerState
 		Player.MovementAngle = Player.MoveSpeed > 0 ? Player.PathFollower.ForwardAngle : Player.PathFollower.BackAngle;
 		Player.MoveSpeed = Mathf.Abs(Player.MoveSpeed);
 		Player.Skills.IsSpeedBreakEnabled = true;
-		Player.Lockon.IsMonitoring = SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.GroundedHomingAttack);
+		Player.Lockon.IsMonitoring = true;
 
 		Player.Animator.ResetState(Player.IsTeleporting ? 0f : .1f);
 		Player.Knockback -= OnPlayerDamaged;

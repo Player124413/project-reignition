@@ -38,7 +38,7 @@ public partial class LandState : PlayerState
 		Player.CanJumpDash = false;
 		Player.CanDoubleJump = true;
 		Player.CanAirBoost = true;
-		Player.Lockon.IsMonitoring = SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.GroundedHomingAttack);
+		Player.Lockon.IsMonitoring = true;
 
 		if (Player.IsKnockback)
 		{
