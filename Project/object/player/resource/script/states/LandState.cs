@@ -8,6 +8,7 @@ public partial class LandState : PlayerState
 	[Export] private PlayerState runState;
 	[Export] private PlayerState idleState;
 	[Export] private PlayerState fallState;
+	[Export] private PlayerState jumpState;
 	[Export] private PlayerState crouchState;
 	[Export] private PlayerState slideState;
 	[Export] private PlayerState backstepState;
@@ -83,6 +84,12 @@ public partial class LandState : PlayerState
 
 		if (!Player.IsOnGround)
 			return fallState;
+
+		if (Player.IsBounceJumping) // Bounce Attack
+		{
+			Player.DisableAccelerationJump = true;
+			return jumpState;
+		}
 
 		if (Player.AllowLandingSkills)
 		{

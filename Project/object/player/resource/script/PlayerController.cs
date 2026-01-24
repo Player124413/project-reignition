@@ -664,6 +664,7 @@ public partial class PlayerController : CharacterBody3D
 	public bool IsPerfectHomingAttacking { get; set; }
 	public bool IsJumpDashOrHomingAttack => IsJumpDashing || IsHomingAttacking;
 	public bool IsJumping { get; set; }
+	public bool IsBounceJumping { get; set; }
 	public bool IsVariableJumpHeightEnabled => SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.VariableJumpHeight);
 	public bool IsAccelerationJumping { get; set; }
 	public bool IsBackflipping { get; set; }

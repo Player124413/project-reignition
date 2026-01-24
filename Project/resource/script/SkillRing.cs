@@ -376,6 +376,7 @@ public enum SkillKey
 	StompDash, // Gives a speed boost when stomping/jump canceling
 	StompExp, // Grants exp when landing
 	StompAttack, // Replace jump cancel with an attack
+	StompBounce, // Bounces the player when landing and holding the action button
 
 	// Jump skills
 	AccelJumpAttack, // Increases attack power of accel jump

@@ -72,6 +72,7 @@ public partial class JumpState : PlayerState
 	public override void ExitState()
 	{
 		Player.IsJumping = false;
+		Player.IsBounceJumping = false;
 		Player.IsAccelerationJumping = false;
 
 		// Reset attack state
@@ -131,7 +132,7 @@ public partial class JumpState : PlayerState
 				if (isAccelerationJumpQueued)
 					StartAccelerationJump();
 
-				if (!Player.IsAccelerationJumping && SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.SpinJump))
+				if (!Player.IsAccelerationJumping && (SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.SpinJump) || Player.IsBounceJumping))
 				{
 					Player.StartSpinJump(!SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.ChargeJump) && isShortenedJump);
 					return null;
