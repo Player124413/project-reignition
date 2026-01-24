@@ -58,13 +58,8 @@ public partial class GrindState : PlayerState
 		Player.IsOnGround = true;
 		Player.VerticalSpeed = 0f;
 
-		float targetMoveSpeed = Player.Stats.GrindSettings.Speed * Player.Stats.CalculateGrindSpeedRatio();
+		float targetMoveSpeed = Player.Stats.GrindSettings.Speed + Player.Stats.CalculateBonusGrindSpeed();
 		Player.MoveSpeed = Mathf.Max(targetMoveSpeed, Player.MoveSpeed);
-		if (SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.GrindUp) &&
-			SaveManager.ActiveSkillRing.GetAugmentIndex(SkillKey.GrindUp) == 3)
-		{
-			StageSettings.Instance.UpdateRingCount(5, StageSettings.MathModeEnum.Subtract, true);
-		}
 
 		Player.StartExternal(null, ActiveGrindRail.PathFollower, positionSmoothing);
 		Player.Skills.IsSpeedBreakEnabled = false;
@@ -307,6 +302,15 @@ public partial class GrindState : PlayerState
 			return;
 		}
 
+		if (SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.GrindUp) &&
+			SaveManager.ActiveSkillRing.GetAugmentIndex(SkillKey.GrindUp) == 3)
+		{
+			// Auto-grind
+			StageSettings.Instance.UpdateRingCount(5, StageSettings.MathModeEnum.Subtract, true);
+			StartShuffle(true);
+			return;
+		}
+
 		if (!Mathf.IsZeroApprox(currentCharge))
 		{
 			// Fail shuffle
@@ -377,6 +381,7 @@ public partial class GrindState : PlayerState
 		Player.Controller.ResetGimmickBuffer();
 
 		Player.MoveSpeed = isPerfectCharge ? Player.Stats.perfectShuffleSpeed : Player.Stats.GrindSettings.Speed;
+		Player.MoveSpeed += Player.Stats.CalculateBonusGrindSpeed();
 		Player.Effect.StartGrindFX(false);
 		Player.Animator.StartGrindShuffle();
 		if (isPerfectCharge)

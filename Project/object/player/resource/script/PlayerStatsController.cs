@@ -234,31 +234,33 @@ public partial class PlayerStatsController : Node
 	[Export]
 	private int baseGrindSpeed;
 	[Export]
+	private int maxBonusGrindSpeed;
+	[Export]
 	private int baseGrindFriction;
 	[Export]
 	private int baseGrindTurnaround;
-	[Export(PropertyHint.Range, "1,2,.1f")]
-	private float grindLowRatio = 1.1f;
-	[Export(PropertyHint.Range, "1,2,.1f")]
-	private float grindMediumRatio = 1.3f;
-	[Export(PropertyHint.Range, "1,2,.1f")]
-	private float grindHighRatio = 1.5f;
-	public float CalculateGrindSpeedRatio()
+	[Export(PropertyHint.Range, "0,1,.1f")]
+	private float grindLowRatio = 0.2f;
+	[Export(PropertyHint.Range, "0,1,.1f")]
+	private float grindMediumRatio = 0.5f;
+	[Export(PropertyHint.Range, "0,1,.1f")]
+	private float grindHighRatio = 1f;
+	public float CalculateBonusGrindSpeed()
 	{
 		if (SkillRing.IsSkillEquipped(SkillKey.GrindUp))
 		{
 			switch (SkillRing.GetAugmentIndex(SkillKey.GrindUp))
 			{
 				case 0:
-					return grindLowRatio;
+					return maxBonusGrindSpeed * grindLowRatio;
 				case 1:
-					return grindMediumRatio;
+					return maxBonusGrindSpeed * grindMediumRatio;
 				case 2:
-					return grindHighRatio;
+					return maxBonusGrindSpeed * grindHighRatio;
 			}
 		}
 
-		return 1.0f;
+		return 0f;
 	}
 
 	[ExportGroup("Sidle Settings")]
