@@ -32,7 +32,7 @@ public partial class PlayerStatsController : Node
 	[Export(PropertyHint.Range, "1,5,.1f")]
 	private float tractionHighRatio = 2f;
 	[Export(PropertyHint.Range, "1,5,.1f")]
-	private float turnaroundHighRatio = 2f;
+	private float turnaroundHighRatio = 3f;
 
 	public float GetBaseSpeedRatio()
 	{
