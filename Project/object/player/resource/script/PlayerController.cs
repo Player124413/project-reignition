@@ -437,13 +437,16 @@ public partial class PlayerController : CharacterBody3D
 		if (!ceilingHit.collidedObject.IsInGroup("ceiling"))
 			return false;
 
-		GlobalTranslate(ceilingHit.point - (CollisionPosition + (UpDirection * CollisionSize.Y)));
+		if (!IsBackflipping)
+			GlobalTranslate(ceilingHit.point - (CollisionPosition + (castVector * CollisionSize.Y)));
 
 		float maxVerticalSpeed = 0;
 		// Workaround for backflipping into slanted ceilings
 		if (IsBackflipping)
 		{
 			float ceilingAngle = ceilingHit.normal.AngleTo(Vector3.Down);
+			if (ceilingAngle > Mathf.Pi * .4f) // Vertical wall
+				return false;
 
 			if (ceilingAngle > Mathf.Pi * .1f) // Only slanted ceilings need this workaround
 			{
