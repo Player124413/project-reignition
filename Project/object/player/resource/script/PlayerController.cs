@@ -922,6 +922,7 @@ public partial class PlayerController : CharacterBody3D
 	}
 
 	[Export] private BemothHornState hornState;
+	public bool IsPullingHorns => hornState.Trigger != null;
 	public void StartHorn(Bosses.CaptainBemothHorn horn)
 	{
 		hornState.Trigger = horn;
@@ -929,6 +930,8 @@ public partial class PlayerController : CharacterBody3D
 		SetHornJumpable(true);
 		StateMachine.ChangeState(hornState);
 	}
+
+	public void ResetHorn() => hornState.Trigger = null;
 
 	////////////////////////
 	/// DARKSPINE STATES ///

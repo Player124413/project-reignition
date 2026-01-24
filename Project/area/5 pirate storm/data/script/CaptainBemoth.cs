@@ -1,6 +1,6 @@
-using System.Runtime.Serialization.Formatters;
 using Godot;
 using Project.Core;
+using Project.Gameplay.Objects;
 using Project.Gameplay.Triggers;
 
 namespace Project.Gameplay.Bosses;
@@ -19,6 +19,7 @@ public partial class CaptainBemoth : PathFollow3D
 	private int hintDialogIndex = -1;
 	[Export] private DialogTrigger[] damageDialogs;
 	[Export] private DialogTrigger[] hintDialogs;
+	[Export] private Hazard hitbox;
 
 	[Export] private CaptainBemothHorn[] horns;
 
@@ -181,6 +182,7 @@ public partial class CaptainBemoth : PathFollow3D
 
 		damageDialogIndex = 0;
 
+		isFacingForward = false;
 		isAttackActive = false;
 		isAttackQueued = false;
 		isShockAttackActive = false;
@@ -191,6 +193,7 @@ public partial class CaptainBemoth : PathFollow3D
 		// Reset local position
 		root.Position = Vector3.Zero;
 		root.Basis = Basis.Identity;
+		hitbox.isDisabled = false;
 
 		animator.Set(BombTrigger, (int)AnimationNodeOneShot.OneShotRequest.Abort);
 		animator.Set(WaveTrigger, (int)AnimationNodeOneShot.OneShotRequest.Abort);
@@ -206,6 +209,7 @@ public partial class CaptainBemoth : PathFollow3D
 			horn.Respawn();
 
 		DisableHornHurtboxes(); // Don't allow immediate attacks
+		Player.ResetHorn();
 	}
 
 	public override void _PhysicsProcess(double _)
@@ -279,10 +283,10 @@ public partial class CaptainBemoth : PathFollow3D
 			Close();
 
 		ExitStunState();
-
 		currentState = BemothState.Idle;
 		isFacingForward = IsPhaseTwo; // Only face the player when almost dead
 		attackTimer = AttackTimerInterval;
+		hitbox.isDisabled = false;
 		EnableHornHurtboxes();
 	}
 
@@ -392,6 +396,9 @@ public partial class CaptainBemoth : PathFollow3D
 
 		moveSpeed = ExtensionMethods.SmoothDamp(moveSpeed, targetMoveSpeed, ref moveSpeedVelocity, speedSmoothing * PhysicsManager.physicsDelta);
 		Progress += moveSpeed * PhysicsManager.physicsDelta;
+
+		if (Player.IsPullingHorns)
+			ResetPhysicsInterpolation();
 	}
 
 	private float CalculateChargingMoveSpeed(float deltaProgress)
@@ -611,6 +618,9 @@ public partial class CaptainBemoth : PathFollow3D
 	/// <summary> Activate the actual wave objects. -1 => left, 1 => right, 0 => both. </summary>
 	private void ActivateWave(int direction)
 	{
+		if (isAttackDisabled)
+			return;
+
 		// Activates depending on whether we're NOT activating the other side exclusively
 		if (direction != -1)
 			waveRight.Activate(Progress);
@@ -684,6 +694,7 @@ public partial class CaptainBemoth : PathFollow3D
 			return;
 
 		isAttackActive = false;
+		hitbox.isDisabled = true;
 		eventAnimator.Play("RESET");
 		EnableHornHurtboxes();
 	}
@@ -827,6 +838,9 @@ public partial class CaptainBemoth : PathFollow3D
 		if (Player.IsHomingAttacking) // Prevent unfair damage
 			return;
 
+		if (currentState == BemothState.ChargeAttack && !isAttackActive) // Prevent taking damage when player can't see bemoth
+			return;
+
 		// Shock attack
 		Player.StartKnockback(new()
 		{
@@ -896,6 +910,7 @@ public partial class CaptainBemoth : PathFollow3D
 			Player.GlobalPosition = jumpTrigger.GlobalPosition + Vector3.Up * LaunchFallHeight;
 			Player.ResetPhysicsInterpolation();
 			Player.PathFollower.Resync();
+			Player.ResetHorn();
 			mainCameraTrigger.Activate();
 
 			// Play dialog
@@ -918,7 +933,9 @@ public partial class CaptainBemoth : PathFollow3D
 		{
 			CancelShockAttack();
 			EnterIdleState();
-			DisableHornHurtboxes(); // Punish the player for chickening out
+
+			if (!isAttackDisabled)
+				DisableHornHurtboxes(); // Punish the player for chickening out
 		}
 
 		attackTimer = ShortAttackInterval;
@@ -960,6 +977,9 @@ public partial class CaptainBemoth : PathFollow3D
 
 		if (!a.IsInGroup("no attack zone"))
 			return;
+
+		if (currentState == BemothState.WaveAttack)
+			animator.Set(WaveTrigger, (int)AnimationNodeOneShot.OneShotRequest.FadeOut);
 
 		if (currentState != BemothState.ShockAttack)
 		{
