@@ -25,7 +25,6 @@ public partial class PlayerLockonController : Area3D
 	public Node3D Target { get; private set; }
 	/// <summary> can the current target be attacked? </summary>
 	public bool IsTargetAttackable { get; set; }
-	private float targetResetTimer;
 
 	private enum TargetState
 	{
@@ -326,18 +325,10 @@ public partial class PlayerLockonController : Area3D
 		return false;
 	}
 
-	public void ResetLockonTarget(bool useTimer = false)
+	public void ResetLockonTarget()
 	{
 		if (Target == null)
 			return;
-
-		if (useTimer)
-		{
-			// TODO Implement this properly
-			targetResetTimer = Mathf.MoveToward(targetResetTimer, 0f, PhysicsManager.physicsDelta);
-			if (!Mathf.IsZeroApprox(targetResetTimer))
-				return;
-		}
 
 		// Reset Active Target
 		Target = null;
