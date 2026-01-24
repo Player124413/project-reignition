@@ -269,10 +269,18 @@ public partial class PlayerInputController : Node
 
 	private float CalculateLockoutForwardAngle(float inputAngle)
 	{
-		if (Player.Skills.IsSpeedBreakCharging)
-			return Player.PathFollower.ForwardAngle;
-
 		LockoutResource resource = Player.ActiveLockoutData;
+		if (Player.Skills.IsSpeedBreakCharging)
+		{
+			if (SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.FreeRoam) &&
+				ExtensionMethods.DotAngle(Player.MovementAngle, Player.PathFollower.BackAngle) >= 0f)
+			{
+				return Player.PathFollower.ForwardAngle + Mathf.Pi;
+			}
+
+			return Player.PathFollower.ForwardAngle;
+		}
+
 		if (Player.IsLockoutOverridingMovementAngle)
 		{
 			if (Player.ActiveLockoutData.movementMode == LockoutResource.MovementModes.Strafe)
@@ -292,7 +300,7 @@ public partial class PlayerInputController : Node
 					break;
 			}
 
-			if (resource.allowReversing && !Player.Skills.IsSpeedBreakActive)
+			if (resource.allowReversing)
 			{
 				float backwardsAngle = forwardAngle + Mathf.Pi;
 				if (IsMovingBackwardsInLockout(inputAngle, backwardsAngle))
@@ -303,7 +311,10 @@ public partial class PlayerInputController : Node
 		}
 
 		if (Player.Skills.IsSpeedBreakActive)
+		{
+			GD.Print("Speedbreak Strafe");
 			return GetStrafeAngle();
+		}
 
 		if (SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.Autorun))
 			return GetStrafeAngle();
