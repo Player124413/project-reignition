@@ -243,12 +243,6 @@ Data = ExtResource("2_ybwun")
 InitialCameraSettings = ExtResource("3_yn75d")
 dialogLibrary = ExtResource("4_0imnq")
 
-[node name="DemoCamera" parent="Static" index="5"]
-transform = Transform3D(0.70710707, 0, 0.7071068, 0, 1, 0, -0.7071068, 0, 0.70710707, 0, 0, 0)
-
-[node name="Camera" parent="Static/DemoCamera" index="0"]
-transform = Transform3D(1, 0, 0, 0, 0.9396928, 0.34202036, 0, -0.34202036, 0.9396928, 0, 10, 35)
-
 [node name="BossAct" type="Node3D" parent="."]
 
 [node name="SpawnPosition" type="Node3D" parent="BossAct"]
@@ -3437,6 +3431,7 @@ shape = SubResource("BoxShape3D_n2677")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="BossAct/Boss/LapCenter/LapCycle"]
 shape = SubResource("BoxShape3D_n2677")
 
+[connection signal="Respawned" from="Static" to="BossAct/Boss/LapCenter/LapCycle/Cycle" method="RespawnToInitialState"]
 [connection signal="HitstunLaunchEnded" from="BossAct/Boss/IfritGolem" to="BossAct/Boss/MainPath" method="Activate"]
 [connection signal="LavaLaunchEnded" from="BossAct/Boss/IfritGolem" to="BossAct/Boss/RootBone/PathEvent" method="Activate"]
 [connection signal="LavaLaunchEnded" from="BossAct/Boss/IfritGolem" to="BossAct/Boss/RootBone/IfritGolemCollision/OneWay" method="Activate"]
