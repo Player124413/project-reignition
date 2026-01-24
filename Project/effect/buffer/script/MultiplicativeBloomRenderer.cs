@@ -77,5 +77,4 @@ public partial class MultiplicativeBloomRenderer : Node
 		multiplicativeBloomMaterial.SetShaderParameter(BloomTexture, bloomViewport.GetTexture());
 		multiplicativeBloomMaterial.SetShaderParameter(ObjectTexture, objectViewport.GetTexture());
 	}
-
 }

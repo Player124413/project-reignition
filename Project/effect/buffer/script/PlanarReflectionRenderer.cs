@@ -105,16 +105,17 @@ public partial class PlanarReflectionRenderer : Node3D
 
 		// Calculate reflection position
 		Vector3 reflectionPosition = CalculateReflectionPosition();
+		Transform3D gameplayTransform = GameplayCamera.GetGlobalTransformInterpolated();
 
 		// Update reflectionCamera's position
 		Vector3 reflectionAxis = this.Up();
-		Vector3 projection = reflectionAxis * reflectionAxis.Dot(GameplayCamera.GlobalPosition - reflectionPosition);
-		Vector3 targetPosition = GameplayCamera.GlobalPosition - (projection * 2f);
+		Vector3 projection = reflectionAxis * reflectionAxis.Dot(gameplayTransform.Origin - reflectionPosition);
+		Vector3 targetPosition = gameplayTransform.Origin - (projection * 2f);
 
 		// Update reflectionCamera's rotation
-		Vector3 upDirection = GameplayCamera.Up().Reflect(reflectionAxis.Normalized());
+		Vector3 upDirection = gameplayTransform.Basis.Y.Reflect(reflectionAxis.Normalized());
 
-		Vector3 forwardDirection = GameplayCamera.Forward().Reflect(reflectionAxis.Normalized());
+		Vector3 forwardDirection = gameplayTransform.Basis.Z.Reflect(reflectionAxis.Normalized());
 		reflectionCamera.LookAtFromPosition(targetPosition, targetPosition + forwardDirection, upDirection);
 
 		reflectionViewport.Size = Engine.IsEditorHint() ? (Vector2I)GameplayCamera.GetViewport().GetVisibleRect().Size : Runtime.HalfScreenSize;
@@ -133,10 +134,10 @@ public partial class PlanarReflectionRenderer : Node3D
 		}
 		else if (heightMode == HeightMode.MatchPlayer)
 		{
-			returnValue.Y = StageSettings.Player.GlobalPosition.Y;
+			returnValue.Y = StageSettings.Player.GetGlobalTransformInterpolated().Origin.Y;
 		}
 
-		return GlobalPosition;
+		return returnValue;
 	}
 
 	/// <summary> Applies reflection texture to associated shaders. </summary>

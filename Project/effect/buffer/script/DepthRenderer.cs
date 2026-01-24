@@ -47,7 +47,7 @@ namespace Project.Gameplay
 			depthCamera.Near = Camera.Near;
 
 			depthCamera.Far = Camera.Far;
-			depthCamera.GlobalTransform = Camera.GlobalTransform;
+			depthCamera.GlobalTransform = Camera.GetGlobalTransformInterpolated();
 
 			depthViewport.Size = Runtime.HalfScreenSize;
 			depthViewport.RenderTargetUpdateMode = SubViewport.UpdateMode.Once;
