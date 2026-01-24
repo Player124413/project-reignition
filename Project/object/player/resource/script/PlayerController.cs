@@ -94,16 +94,9 @@ public partial class PlayerController : CharacterBody3D
 	/// <summary> Player's vertical speed -- only effective when not on the ground. </summary>
 	public float VerticalSpeed { get; set; }
 	public bool IsMovingBackward { get; set; }
-	/// <summary> Returns whether the player is moving backwards or not, taking free roam into account. </summary>
-	public bool IsMovingBackwardFreeRoam
-	{
-		get
-		{
-			float movementDot = ExtensionMethods.DotAngle(MovementAngle, PathFollower.ForwardAngle);
-			return IsMovingBackward ||
-				(SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.FreeRoam) && movementDot < 0);
-		}
-	}
+	/// <summary> Returns whether the player is moving backwards or not, taking free roam into account (CHECK IsMovingBackward SEPARATELY!). </summary>
+	public bool IsMovingBackwardFreeRoam => SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.FreeRoam) &&
+		ExtensionMethods.DotAngle(MovementAngle, PathFollower.ForwardAngle) < 0;
 
 	/// <summary> For movement that doesn't affect animations (e.x. wind). Reset every frame after it's applied. </summary>
 	public Vector3 ExternalVelocity { get; set; }

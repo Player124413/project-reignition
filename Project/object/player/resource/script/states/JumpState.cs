@@ -257,27 +257,31 @@ public partial class JumpState : PlayerState
 			Player.AttackState = PlayerController.AttackStates.Weak;
 		}
 
+		float forwardAngle = Player.PathFollower.ForwardAngle;
+		if (Player.IsMovingBackwardFreeRoam)
+			forwardAngle = Player.PathFollower.BackAngle;
+
 		// Prevent speed boost depending on what the player is trying to do
 		float inputStrength = Player.Controller.GetInputStrength();
 		float inputAngle = Player.Controller.GetTargetInputAngle();
 		if (SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.ChargeJump) &&
-			Player.Controller.IsHoldingDirection(inputAngle, Player.PathFollower.BackAngle))
+			Player.Controller.IsHoldingDirection(inputAngle, forwardAngle + Mathf.Pi))
 		{
 			return;
 		}
 
 		if (!SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.ChargeJump) &&
 			!SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.Autorun) &&
-			(!Player.Controller.IsHoldingDirection(inputAngle, Player.PathFollower.ForwardAngle) ||
+			(!Player.Controller.IsHoldingDirection(inputAngle, forwardAngle) ||
 			inputStrength < .5f))
 		{
 			return;
 		}
 
-		if (ExtensionMethods.DeltaAngleRad(Player.MovementAngle, Player.PathFollower.ForwardAngle) > Mathf.Pi * .5f &&
-			!SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.FreeRoam))
+		if (!SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.FreeRoam) &&
+			ExtensionMethods.DeltaAngleRad(Player.MovementAngle, forwardAngle) > Mathf.Pi * .5f)
 		{
-			Player.MovementAngle = Player.PathFollower.ForwardAngle;
+			Player.MovementAngle = forwardAngle;
 		}
 
 		Player.MoveSpeed = Mathf.Max(accelerationJumpSpeed, Player.MoveSpeed);

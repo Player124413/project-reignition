@@ -272,11 +272,8 @@ public partial class PlayerInputController : Node
 		LockoutResource resource = Player.ActiveLockoutData;
 		if (Player.Skills.IsSpeedBreakCharging)
 		{
-			if (SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.FreeRoam) &&
-				ExtensionMethods.DotAngle(Player.MovementAngle, Player.PathFollower.BackAngle) >= 0f)
-			{
+			if (Player.IsMovingBackwardFreeRoam)
 				return Player.PathFollower.ForwardAngle + Mathf.Pi;
-			}
 
 			return Player.PathFollower.ForwardAngle;
 		}
@@ -335,11 +332,8 @@ public partial class PlayerInputController : Node
 			if (Player.IsMovingBackward)
 				return true;
 
-			if (SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.FreeRoam) &&
-				ExtensionMethods.DotAngle(Player.MovementAngle, Player.PathFollower.BackAngle) >= 0f)
-			{
+			if (Player.IsMovingBackwardFreeRoam)
 				return true;
-			}
 		}
 
 		return false;
