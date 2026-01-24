@@ -1453,8 +1453,8 @@ public partial class SaveManager : Node
 
 		private void IncrementFireSoulCounter()
 		{
-			FireSoulCount++;
 			// TODO Check soul collector achievement
+			FireSoulCount++;
 		}
 
 		private readonly string FireSoulKey = "fire_soul";
