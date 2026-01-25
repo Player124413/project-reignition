@@ -143,17 +143,14 @@ public partial class StageSettings : Node3D
 		{
 			case SaveManager.QualitySetting.Disabled:
 			case SaveManager.QualitySetting.Low:
-				targetDirectionalShadowDistance = 20;
 				targetDirectionalShadowMode = DirectionalLight3D.ShadowMode.Orthogonal;
 				break;
 			case SaveManager.QualitySetting.Medium:
 				targetBlendSplitMode = true;
-				targetDirectionalShadowDistance = 40;
 				targetDirectionalShadowMode = DirectionalLight3D.ShadowMode.Parallel2Splits;
 				break;
 			case SaveManager.QualitySetting.High:
 				targetBlendSplitMode = true;
-				targetDirectionalShadowDistance = 50;
 				targetDirectionalShadowMode = DirectionalLight3D.ShadowMode.Parallel2Splits;
 				break;
 		}
@@ -165,7 +162,6 @@ public partial class StageSettings : Node3D
 	private Queue<ReflectionProbe> probes = [];
 	private Queue<OmniLight3D> omniLights = [];
 	private Queue<DirectionalLight3D> directionalLights = [];
-	private int targetDirectionalShadowDistance = 30;
 	private bool targetBlendSplitMode = false;
 	private DirectionalLight3D.ShadowMode targetDirectionalShadowMode = DirectionalLight3D.ShadowMode.Parallel2Splits;
 	private OmniLight3D.ShadowMode targetOmniShadowMode = OmniLight3D.ShadowMode.DualParaboloid;
@@ -177,7 +173,6 @@ public partial class StageSettings : Node3D
 			if (directionalLights.TryDequeue(out DirectionalLight3D dirLight) && dirLight.ShadowEnabled)
 			{
 				dirLight.DirectionalShadowMode = targetDirectionalShadowMode;
-				dirLight.DirectionalShadowMaxDistance = targetDirectionalShadowDistance;
 				dirLight.DirectionalShadowBlendSplits = targetBlendSplitMode;
 				return;
 			}
@@ -185,7 +180,6 @@ public partial class StageSettings : Node3D
 			if (omniLights.TryDequeue(out OmniLight3D omniLight) && omniLight.ShadowEnabled)
 			{
 				omniLight.OmniShadowMode = targetOmniShadowMode;
-				omniLight.DistanceFadeBegin = targetDirectionalShadowDistance;
 				omniLight.DistanceFadeLength = 10;
 				omniLight.DistanceFadeEnabled = true;
 				return;
