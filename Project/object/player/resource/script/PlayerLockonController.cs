@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using Godot;
 using Project.Core;
@@ -281,14 +280,14 @@ public partial class PlayerLockonController : Area3D
 		if (inputStrength < .8f) // Player isn't decisive enough
 			return false;
 
-		Vector3 direction = Player.GlobalPosition - target.GlobalPosition;
+		Vector3 direction = (target.GlobalPosition - Player.GlobalPosition).RemoveVertical();
 		float angle = ExtensionMethods.CalculateForwardAngle(direction);
-		if (ExtensionMethods.DotAngle(angle, Player.PathFollower.ForwardAngle) < 0) // Player is moving towards lockon-don't ignore it!
+		if (ExtensionMethods.DotAngle(angle, Player.PathFollower.ForwardAngle) > 0) // Player is moving towards lockon-don't ignore it!
 			return false;
 
 		float distance = direction.Flatten().Length();
-		bool holdingForward = Player.Controller.IsHoldingDirection(Player.Controller.GetTargetInputAngle(), Player.PathFollower.ForwardAngle);
-		return distance <= IgnoreTargetDistance && holdingForward;
+		bool isHoldingForward = Player.Controller.IsHoldingDirection(Player.Controller.GetTargetInputAngle(), Player.PathFollower.ForwardAngle);
+		return distance <= IgnoreTargetDistance && isHoldingForward;
 	}
 
 	private bool HitObstacle(Node3D target)
