@@ -77,7 +77,7 @@ public partial class PlayerStatsController : Node
 	[Export] public float accelerationJumpSpeed;
 	[ExportSubgroup("Turn Settings")]
 	[Export] private float baseMinTurn = .1f;
-	[Export] private float baseMaxTurn = .4f;
+	[Export] private float baseMaxTurn = .3f;
 	[Export] private float baseTurnTurnaround = .25f;
 	[Export(PropertyHint.Range, "0,5,.1f")] private float quickTurnLowRatio = .9f;
 	[Export(PropertyHint.Range, "0,5,.1f")] private float quickTurnMediumRatio = .7f;
