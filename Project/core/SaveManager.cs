@@ -964,9 +964,20 @@ public partial class SaveManager : Node
 
 		public Array<SkillKey> equippedSkills;
 		public Dictionary<SkillKey, int> equippedAugments;
+		public Array<SkillKey> viewedSkills;
 		public LevelSaveData LevelData => levelData;
 		private LevelSaveData levelData = new();
 
+		/// <summary> Determines if a skill hasn't been viewed yet </summary>
+		public bool HasNewSkill()
+		{
+			for (int i = 0; i < (int)SkillKey.Count; i++)
+			{
+				if (!viewedSkills.Contains((SkillKey)i) && ActiveSkillRing.IsSkillUnlocked((SkillKey)i))
+					return true;
+			}
+			return false;
+		}
 		/// <summary> Calculates the player's soul gauge size based on the player's level. </summary>
 		public int CalculateMaxSoulPower(bool isLocked)
 		{
@@ -1061,6 +1072,7 @@ public partial class SaveManager : Node
 				{ nameof(playTime), Mathf.RoundToInt(playTime) },
 				{ nameof(equippedSkills), SaveSkills(equippedSkills) },
 				{ nameof(equippedAugments), SaveAugments(equippedAugments) },
+				{ nameof(viewedSkills), SaveSkills(viewedSkills)},
 				{ nameof(presetNames), presetNames},
 				{ nameof(presetSkills), presetDictionary},
 				{ nameof(presetSkillAugments), augmentDictionary},
@@ -1121,6 +1133,9 @@ public partial class SaveManager : Node
 
 			if (dictionary.TryGetValue(nameof(equippedAugments), out var))
 				equippedAugments = LoadAugments((Dictionary<string, int>)var);
+
+			if (dictionary.TryGetValue(nameof(viewedSkills), out var))
+				viewedSkills = LoadSkills((Array<string>)var);
 
 			// Load Presets
 			if (dictionary.TryGetValue(nameof(presetNames), out var))
@@ -1213,6 +1228,7 @@ public partial class SaveManager : Node
 				presetSkillAugments = [],
 				equippedSkills = [],
 				equippedAugments = [],
+				viewedSkills = [],
 				level = 0,
 				lastPlayedWorld = WorldEnum.LostPrologue,
 				levelData = new(),
