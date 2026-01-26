@@ -12,6 +12,8 @@ public partial class ReadyMenu : Menu
 	private Label missionLabel;
 	[Export]
 	private Description description;
+	[Export]
+	private AnimationPlayer notifAnimPlayer;
 	public void ShowDescription() => description.ShowDescription();
 	public void HideDescription() => description.HideDescription();
 
@@ -36,6 +38,11 @@ public partial class ReadyMenu : Menu
 			if (!TimeAttackManager.Instance.IsLastLevel())
 				SetupReadyMenu(TimeAttackManager.Instance.GetCurrentLevel());
 		}
+
+		if (SaveManager.ActiveGameData.HasNewSkill())
+			notifAnimPlayer.Play("show");
+		else
+			notifAnimPlayer.Play("hide");
 
 		menuMemory[MemoryKeys.SkillMenuOpen] = 0;
 	}

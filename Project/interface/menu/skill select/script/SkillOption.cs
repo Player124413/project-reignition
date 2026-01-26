@@ -100,6 +100,8 @@ public partial class SkillOption : Control
 			return;
 		}
 
+
+
 		RedrawStaticData();
 		Redraw();
 	}
@@ -192,5 +194,13 @@ public partial class SkillOption : Control
 		}
 
 		return offset;
+	}
+
+	public void EnableNewTag(bool enable)
+	{
+		if (enable == true)
+			animator.Play("new");
+		else
+			animator.Play("new-disable");
 	}
 }

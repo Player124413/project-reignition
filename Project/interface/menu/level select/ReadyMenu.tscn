@@ -1,15 +1,17 @@
-[gd_scene load_steps=41 format=3 uid="uid://byf372uaewx1u"]
+[gd_scene load_steps=50 format=3 uid="uid://byf372uaewx1u"]
 
 [ext_resource type="Script" uid="uid://ov6ixvow1c38" path="res://interface/menu/level select/script/ReadyMenu.cs" id="1_ldudh"]
 [ext_resource type="Texture2D" uid="uid://bgtxik1dsbu0u" path="res://interface/menu/level select/texture/ready text/ready en.png" id="2_eg5ps"]
 [ext_resource type="Texture2D" uid="uid://vbh7a47k4llw" path="res://interface/menu/title/texture/transition fade.png" id="3_kki8l"]
 [ext_resource type="Texture2D" uid="uid://k8exixourkta" path="res://interface/menu/main/texture/char.png" id="3_kwgm4"]
 [ext_resource type="Texture2D" uid="uid://cno436k6axxi5" path="res://interface/menu/main/texture/background.png" id="4_x0w6p"]
-[ext_resource type="Shader" uid="uid://dj2vtehay1fej" path="res://effect/shader/interface/InterfaceFlashAdd.gdshader" id="6_03cqa"]
+[ext_resource type="Shader" uid="uid://cywcr73eavwo2" path="res://effect/shader/interface/InterfaceFlashAdd.gdshader" id="6_03cqa"]
 [ext_resource type="SpriteFrames" uid="uid://blsqrm1eukmr2" path="res://effect/particle/sprite frames/Flame Menu Small.tres" id="6_kwgm4"]
 [ext_resource type="AudioStream" uid="uid://huxte6rhwx58" path="res://sound/sfx/system/menu selection.wav" id="7_5a0w1"]
 [ext_resource type="AudioStream" uid="uid://cl54rftw5aiyf" path="res://sound/sfx/system/menu cancel.wav" id="8_2da68"]
 [ext_resource type="AudioStream" uid="uid://qdl867d61tbh" path="res://sound/sfx/system/menu level confirm.wav" id="9_nayvs"]
+[ext_resource type="Texture2D" uid="uid://dmdck6tgfytub" path="res://interface/menu/level select/texture/story marker.png" id="18_jh7sy"]
+[ext_resource type="Texture2D" uid="uid://djw7xym2gtl60" path="res://interface/menu/level select/texture/story marker glow.png" id="19_o7x68"]
 [ext_resource type="Material" uid="uid://bhbsafmnnhtdb" path="res://effect/material/Canvas Item Add.tres" id="27_6mgb2"]
 [ext_resource type="AudioStream" uid="uid://bdykixhqk0n1m" path="res://sound/sfx/system/menu level transition.wav" id="28_1bnlw"]
 [ext_resource type="Texture2D" uid="uid://dx4vxnhtgd13t" path="res://interface/menu/common/common menu atlas.png" id="29_8rqww"]
@@ -266,6 +268,112 @@ _data = {
 &"RESET": SubResource("Animation_wu83y"),
 &"confirm": SubResource("Animation_1cvv4"),
 &"loop": SubResource("Animation_se451")
+}
+
+[sub_resource type="Animation" id="Animation_opc4q"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Glow:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 0)]
+}
+
+[sub_resource type="Animation" id="Animation_rcls3"]
+resource_name = "loop"
+loop_mode = 1
+step = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Glow:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.5, 1),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 1), Color(1, 1, 1, 0)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_6bt2l"]
+_data = {
+&"RESET": SubResource("Animation_opc4q"),
+&"loop": SubResource("Animation_rcls3")
+}
+
+[sub_resource type="Animation" id="Animation_nikdk"]
+resource_name = "show"
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+tracks/1/type = "method"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("StoryMarker/AnimationPlayer")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [&"loop", -1, 1.0, false],
+"method": &"play"
+}]
+}
+
+[sub_resource type="Animation" id="Animation_jh7sy"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+
+[sub_resource type="Animation" id="Animation_o7x68"]
+resource_name = "hide"
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 0)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_hh1da"]
+_data = {
+&"RESET": SubResource("Animation_jh7sy"),
+&"hide": SubResource("Animation_o7x68"),
+&"show": SubResource("Animation_nikdk")
 }
 
 [sub_resource type="Animation" id="Animation_fjqwi"]
@@ -1246,7 +1354,7 @@ _data = {
 &"show-from-skill": SubResource("Animation_sgy3m")
 }
 
-[node name="ReadyMenu" type="Control" node_paths=PackedStringArray("mapLabel", "missionLabel", "animator")]
+[node name="ReadyMenu" type="Control" node_paths=PackedStringArray("mapLabel", "missionLabel", "notifAnimPlayer", "animator")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -1256,6 +1364,7 @@ grow_vertical = 2
 script = ExtResource("1_ldudh")
 mapLabel = NodePath("Menu/Text/MapLabel")
 missionLabel = NodePath("Menu/Text/MissionLabel")
+notifAnimPlayer = NodePath("Menu/NavigationButtons/Skill/StoryMarker/AnimationPlayer")
 submenus = Array[NodePath]([])
 animator = NodePath("AnimationPlayer")
 
@@ -1951,6 +2060,46 @@ layout_mode = 2
 ActionKey = &"sys_skill"
 inputKey = &"button_pause"
 fallbackKey = &"ui_accept"
+
+[node name="StoryMarker" type="Control" parent="Menu/NavigationButtons/Skill"]
+layout_mode = 2
+
+[node name="StoryMarker" type="TextureRect" parent="Menu/NavigationButtons/Skill/StoryMarker"]
+layout_mode = 1
+anchors_preset = -1
+offset_left = -39.0
+offset_top = -49.0
+offset_right = 121.0
+offset_bottom = 111.0
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(0.6, 0.6)
+texture = ExtResource("18_jh7sy")
+expand_mode = 1
+
+[node name="Glow" type="TextureRect" parent="Menu/NavigationButtons/Skill/StoryMarker/StoryMarker"]
+modulate = Color(1, 1, 1, 0)
+self_modulate = Color(1, 1, 1, 0.39215687)
+material = ExtResource("27_6mgb2")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("19_o7x68")
+expand_mode = 1
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Menu/NavigationButtons/Skill/StoryMarker/StoryMarker"]
+libraries = {
+&"": SubResource("AnimationLibrary_6bt2l")
+}
+autoplay = "loop"
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Menu/NavigationButtons/Skill/StoryMarker"]
+libraries = {
+&"": SubResource("AnimationLibrary_hh1da")
+}
 
 [node name="Flames" parent="." instance=ExtResource("31_1njce")]
 modulate = Color(1, 1, 1, 0)

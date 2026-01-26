@@ -219,7 +219,6 @@ public partial class SkillSelect : Menu
 				AugmentSelection = WrapSelection(AugmentSelection + inputSign, SelectedSkill.AugmentMenuCount);
 				cursorPosition = VerticalSelection - scrollAmount + AugmentSelection + 1;
 			}
-
 			MoveCursor();
 			UpdateDescription();
 			return;
@@ -314,6 +313,11 @@ public partial class SkillSelect : Menu
 
 			// Process augments
 			UpdateAugmentHierarchy(skillOptionList[i]);
+
+			if (!SaveManager.ActiveGameData.viewedSkills.Contains(skillOptionList[i].Skill.Key))
+				skillOptionList[i].EnableNewTag(true);
+			else
+				skillOptionList[i].EnableNewTag(false);
 		}
 
 		if (menuMemory[MemoryKeys.PresetsOpen] == 1)
@@ -395,6 +399,15 @@ public partial class SkillSelect : Menu
 
 		UpdateDescription();
 		levelLabel.Text = Tr("skill_select_level").Replace("0", SaveManager.ActiveGameData.level.ToString("00"));
+	}
+
+	public void UpdateNewText()
+	{
+		if (!SaveManager.ActiveGameData.viewedSkills.Contains(SelectedSkill.Skill.Key))
+		{
+			SelectedSkill.EnableNewTag(false);
+			SaveManager.ActiveGameData.viewedSkills.Add(SelectedSkill.Skill.Key);
+		}
 	}
 
 	private void SwapConflictSkills()
