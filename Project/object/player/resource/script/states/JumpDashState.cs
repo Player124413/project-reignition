@@ -99,11 +99,11 @@ public partial class JumpDashState : PlayerState
 
 	protected override void ProcessMoveSpeed()
 	{
+		ProcessStrafeSpeed();
 		float inputStrength = Player.Controller.GetInputStrength();
 		if (Mathf.IsZeroApprox(inputStrength) || !Mathf.IsZeroApprox(Player.MoveSpeed))
 		{
 			Player.MoveSpeed = Player.Stats.AirSettings.UpdateInterpolate(Player.MoveSpeed, 0);
-			Player.StrafeSpeed = Player.Stats.StrafeSettings.UpdateInterpolate(Player.StrafeSpeed, 0f);
 			return;
 		}
 
@@ -112,11 +112,9 @@ public partial class JumpDashState : PlayerState
 		if (inputDot < -.75f || Player.Controller.IsBrakeHeld()) // Turning around
 		{
 			Player.MoveSpeed = Player.Stats.AirSettings.UpdateInterpolate(Player.MoveSpeed, -inputStrength);
-			Player.StrafeSpeed = Player.Stats.StrafeSettings.UpdateInterpolate(Player.StrafeSpeed, -1.0f); // Reset to 0 quickly
 			return;
 		}
 
-		Player.StrafeSpeed = Player.Stats.StrafeSettings.UpdateInterpolateSigned(Player.StrafeSpeed, Player.Controller.InputHorizontal);
 		Player.MoveSpeed = Mathf.MoveToward(Player.MoveSpeed, 0, Player.Stats.AirSettings.Friction * PhysicsManager.physicsDelta);
 	}
 

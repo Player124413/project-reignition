@@ -158,11 +158,7 @@ public partial class SlideState : PlayerState
 
 	protected override void ProcessMoveSpeed()
 	{
-		if (Player.Controller.IsStrafeModeActive && !Player.IsLockoutOverridingMovementAngle)
-			Player.StrafeSpeed = Player.Stats.StrafeSettings.UpdateInterpolateSigned(Player.StrafeSpeed, Player.Controller.InputHorizontal);
-		else
-			Player.StrafeSpeed = Player.Stats.StrafeSettings.UpdateInterpolate(Player.StrafeSpeed, -1.0f); // Reset to 0 quickly
-
+		ProcessStrafeSpeed();
 		Player.Stats.UpdateSlideSpeed(Player.SlopeRatio);
 
 		// Influence speed based on input strength

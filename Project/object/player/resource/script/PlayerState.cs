@@ -25,12 +25,8 @@ public partial class PlayerState : Node
 	protected MovementSetting ActiveMovementSettings => Player.IsOnGround ? Player.Stats.GroundSettings : Player.Stats.AirSettings;
 	protected virtual void ProcessMoveSpeed()
 	{
+		ProcessStrafeSpeed();
 		turnInstantly = Mathf.IsZeroApprox(Player.MoveSpeed) && !Player.Skills.IsSpeedBreakActive; // Store this for turning function
-
-		if (Player.Controller.IsStrafeModeActive && !Player.IsLockoutOverridingMovementAngle && !Player.Controller.IsBrakeHeld())
-			Player.StrafeSpeed = Player.Stats.StrafeSettings.UpdateInterpolateSigned(Player.StrafeSpeed, Player.Controller.InputHorizontal);
-		else
-			Player.StrafeSpeed = Player.Stats.StrafeSettings.UpdateInterpolate(Player.StrafeSpeed, -1.0f); // Reset to 0 quickly
 
 		if (Player.Skills.IsSpeedBreakActive)
 		{
@@ -87,6 +83,21 @@ public partial class PlayerState : Node
 		}
 
 		Accelerate(inputStrength);
+	}
+
+	protected virtual void ProcessStrafeSpeed()
+	{
+		if (!Player.Controller.IsStrafeModeActive || Player.Controller.IsBrakeHeld() ||
+			Player.IsLockoutOverridingMovementAngle && (Player.ActiveLockoutData.movementMode != LockoutResource.MovementModes.Strafe || Player.ActiveLockoutData.recenterPlayer))
+		{
+			Player.StrafeSpeed = Player.Stats.StrafeSettings.UpdateInterpolate(Player.StrafeSpeed, -1.0f); // Reset to 0 quickly
+			return;
+		}
+
+		float input = Player.Controller.InputHorizontal;
+		int sign = Mathf.Sign(ExtensionMethods.DotAngle(Player.PathFollower.ForwardAngle, Player.Controller.XformAngle));
+		input *= sign >= 0 ? 1 : -1; // Take camera direction into account
+		Player.StrafeSpeed = Player.Stats.StrafeSettings.UpdateInterpolateSigned(Player.StrafeSpeed, input);
 	}
 
 	private bool IsBraking(float inputAngle)

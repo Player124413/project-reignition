@@ -75,12 +75,6 @@ public partial class PlayerStatsController : Node
 	[Export] private int baseAirOverspeed;
 	[Export] private int baseAirTurnaround;
 	[Export] public float accelerationJumpSpeed;
-	// For strafe controls
-	[Export] private float baseAirStrafeSpeed;
-	[Export] private float baseAirStrafeTraction;
-	[Export] private float baseAirStrafeFriction;
-	[Export] private float baseAirStrafeOverspeed;
-	[Export] private float baseAirStrafeTurnaround;
 	[ExportSubgroup("Turn Settings")]
 	[Export] private float baseMinTurn = .1f;
 	[Export] private float baseMaxTurn = .4f;

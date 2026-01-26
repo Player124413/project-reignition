@@ -50,6 +50,7 @@ public partial class BounceState : PlayerState
 		Player.CanAirBoost = true;
 		Player.CanJumpDash = true;
 		Player.Lockon.IsMonitoring = true;
+		Player.StrafeSpeed = 0;
 		Player.VerticalSpeed = Runtime.CalculateJumpPower(bounceHeight * BounceHeightScale);
 		Player.MovementAngle = Player.PathFollower.ForwardAngle;
 
@@ -78,6 +79,7 @@ public partial class BounceState : PlayerState
 			return null;
 		}
 
+		Player.MovementAngle = Player.PathFollower.ForwardAngle;
 		Player.MoveSpeed = Mathf.MoveToward(Player.MoveSpeed, 0f, Player.Stats.GroundSettings.Friction * PhysicsManager.physicsDelta);
 		Player.VerticalSpeed -= Runtime.Gravity * PhysicsManager.physicsDelta;
 		Player.ApplyMovement();

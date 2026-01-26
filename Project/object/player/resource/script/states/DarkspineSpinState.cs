@@ -80,7 +80,7 @@ public partial class DarkspineSpinState : PlayerState
 			return;
 		}
 
-		Player.StrafeSpeed = Player.Stats.StrafeSettings.UpdateInterpolate(Player.StrafeSpeed, Player.Controller.InputHorizontal); // Reset to 0 quickly
+		ProcessStrafeSpeed();
 	}
 
 	protected override void ProcessTurning()
