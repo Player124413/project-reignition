@@ -35,6 +35,7 @@ public partial class KnockbackState : PlayerState
 		Player.Animator.ResetState();
 		PreviousSettings = Settings;
 
+		Player.StrafeSpeed = 0;
 		Player.MoveSpeed = Settings.overrideKnockbackSpeed ? Settings.knockbackSpeed : 8f;
 		if (Settings.knockbackType != KnockbackSettings.KnockbackAnimation.Forward)
 			Player.MoveSpeed *= -1;

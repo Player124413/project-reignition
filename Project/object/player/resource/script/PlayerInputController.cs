@@ -75,7 +75,7 @@ public partial class PlayerInputController : Node
 	/// <summary> Minimum angle from PathFollower.ForwardAngle that counts as backstepping/moving backwards. </summary>
 	private readonly float MinBackStepAngle = Mathf.Pi * .6f;
 	/// <summary> Maximum angle that counts as holding a direction. </summary>
-	private const float MaximumHoldDelta = Mathf.Pi * .4f;
+	private const float MaximumHoldDelta = Mathf.Pi * .35f;
 
 	/// <summary> Maximum amount the player can turn when running at full speed. </summary>
 	public readonly float TurningDampingRange = Mathf.Pi * .35f;

@@ -27,6 +27,13 @@ public partial class PlayerStatsController : Node
 	[Export(PropertyHint.Range, "1,5,.1f")] private float tractionMediumRatio = 1.5f;
 	[Export(PropertyHint.Range, "1,5,.1f")] private float tractionHighRatio = 2f;
 	[Export(PropertyHint.Range, "1,5,.1f")] private float turnaroundHighRatio = 3f;
+	// For Strafing
+	[Export(PropertyHint.Range, "0,5,.1f")] private float strafeQuickTurnLowRatio = 1.5f;
+	[Export(PropertyHint.Range, "0,5,.1f")] private float strafeQuickTurnMediumRatio = 2f;
+	[Export(PropertyHint.Range, "0,5,.1f")] private float strafeQuickTurnHighRatio = 3f;
+	[Export(PropertyHint.Range, "0,5,.1f")] private float strafeSlowTurnLowRatio = 0.9f;
+	[Export(PropertyHint.Range, "0,5,.1f")] private float strafeSlowTurnMediumRatio = 0.7f;
+	[Export(PropertyHint.Range, "0,5,.1f")] private float strafeSlowTurnHighRatio = 0.5f;
 
 	public float GetBaseSpeedRatio()
 	{
@@ -79,9 +86,9 @@ public partial class PlayerStatsController : Node
 	[Export] private float baseMinTurn = .1f;
 	[Export] private float baseMaxTurn = .3f;
 	[Export] private float baseTurnTurnaround = .25f;
-	[Export(PropertyHint.Range, "0,5,.1f")] private float quickTurnLowRatio = .9f;
-	[Export(PropertyHint.Range, "0,5,.1f")] private float quickTurnMediumRatio = .7f;
-	[Export(PropertyHint.Range, "0,5,.1f")] private float quickTurnHighRatio = .5f;
+	[Export(PropertyHint.Range, "0,5,.1f")] private float quickTurnLowRatio = .8f;
+	[Export(PropertyHint.Range, "0,5,.1f")] private float quickTurnMediumRatio = .5f;
+	[Export(PropertyHint.Range, "0,5,.1f")] private float quickTurnHighRatio = .3f;
 	[Export(PropertyHint.Range, "0,5,.1f")] private float slowTurnLowRatio = 1.2f;
 	[Export(PropertyHint.Range, "0,5,.1f")] private float slowTurnMediumRatio = 1.5f;
 	[Export(PropertyHint.Range, "0,5,.1f")] private float slowTurnHighRatio = 2f;
@@ -114,6 +121,30 @@ public partial class PlayerStatsController : Node
 			};
 		}
 
+		return 1.0f;
+	}
+
+	private float GetStrafeTurnRatio()
+	{
+		if (SkillRing.IsSkillEquipped(SkillKey.QuickTurn))
+		{
+			return SkillRing.GetAugmentIndex(SkillKey.QuickTurn) switch
+			{
+				1 => strafeQuickTurnMediumRatio,
+				2 => strafeQuickTurnHighRatio,
+				_ => strafeQuickTurnLowRatio,
+			};
+		}
+
+		if (SkillRing.IsSkillEquipped(SkillKey.SlowTurn))
+		{
+			return SkillRing.GetAugmentIndex(SkillKey.SlowTurn) switch
+			{
+				1 => strafeSlowTurnMediumRatio,
+				2 => strafeSlowTurnHighRatio,
+				_ => strafeSlowTurnLowRatio,
+			};
+		}
 		return 1.0f;
 	}
 
@@ -239,11 +270,11 @@ public partial class PlayerStatsController : Node
 
 		StrafeSettings = new()
 		{
-			Speed = baseStrafeSpeed * GetBaseSpeedRatio(),
-			Traction = baseStrafeTraction * GetTractionRatio(),
-			Friction = baseStrafeFriction,
+			Speed = baseStrafeSpeed * GetStrafeTurnRatio(),
+			Traction = baseStrafeTraction * GetStrafeTurnRatio(),
+			Friction = baseStrafeFriction * Mathf.Max(1f, GetStrafeTurnRatio()),
 			Overspeed = baseStrafeOverspeed,
-			Turnaround = baseStrafeTurnaround * GetTurnaroundRatio(),
+			Turnaround = baseStrafeTurnaround * Mathf.Max(1f, GetStrafeTurnRatio())
 		};
 
 		BackflipSettings = new()

@@ -111,8 +111,7 @@ public partial class PlayerState : Node
 		if (Player.Camera.IsCrossfading)
 			return false;
 
-		bool isHoldingBack = Player.Controller.IsHoldingDirection(inputAngle, Player.MovementAngle + Mathf.Pi) && Player.Controller.GetInputStrength() > 0.5f;
-		return isHoldingBack;
+		return Player.Controller.IsHoldingDirection(inputAngle, Player.MovementAngle + Mathf.Pi) && Player.Controller.GetInputStrength() > 0.5f;
 	}
 
 	protected virtual void Deccelerate()
