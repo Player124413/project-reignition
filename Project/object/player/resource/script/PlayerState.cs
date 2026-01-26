@@ -73,7 +73,7 @@ public partial class PlayerState : Node
 		}
 
 		// Always move at full power when autorun is enabled
-		if (SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.Autorun))
+		if (SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.Autorun) && !Player.IsMovingBackward)
 		{
 			Accelerate(1f);
 			return;

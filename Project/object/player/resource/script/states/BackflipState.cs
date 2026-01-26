@@ -120,7 +120,7 @@ public partial class BackflipState : PlayerState
 		float inputStrength = Player.Controller.GetInputStrength();
 
 		if (Player.Controller.IsStrafeModeActive && !Player.IsLockoutOverridingMovementAngle && !Player.Controller.IsBrakeHeld())
-			Player.StrafeSpeed = Player.Stats.StrafeSettings.UpdateInterpolateSigned(Player.StrafeSpeed, -Player.Controller.InputHorizontal);
+			Player.StrafeSpeed = Player.Stats.StrafeSettings.UpdateInterpolateSigned(Player.StrafeSpeed, Player.Controller.InputHorizontal);
 		else
 			Player.StrafeSpeed = Player.Stats.StrafeSettings.UpdateInterpolate(Player.StrafeSpeed, -1.0f); // Reset to 0 quickly
 

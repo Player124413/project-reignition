@@ -363,7 +363,7 @@ public partial class PlayerInputController : Node
 		}
 
 		float strafeAngle = inputs.X * TurningDampingRange;
-		if (Player.IsMovingBackwardFreeRoam)
+		if (Player.IsMovingBackwardFreeRoam || Player.IsMovingBackward)
 		{
 			strafeAngle *= -1;
 			baseAngle = Player.PathFollower.BackAngle;
