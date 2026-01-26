@@ -41,6 +41,7 @@ public partial class ReversePathState : PlayerState
 			return null;
 
 		Player.MoveSpeed = 0;
+		Player.StrafeSpeed = 0;
 
 		if (!playedTurnaroundAnimation)
 		{

@@ -312,6 +312,7 @@ public partial class AlfLayla : Node3D
 		Player.Skills.CancelBreakSkills();
 		Player.Skills.DisableBreakSkills();
 		Player.MoveSpeed = 0;
+		Player.StrafeSpeed = 0;
 		Player.SnapToGround();
 		Player.Effect.CanelSpinFX();
 		Player.Effect.StopTrailFX();

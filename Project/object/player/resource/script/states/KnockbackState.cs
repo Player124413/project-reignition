@@ -97,7 +97,10 @@ public partial class KnockbackState : PlayerState
 			}
 
 			if (Settings.knockbackType == KnockbackSettings.KnockbackAnimation.Darkspine && Player.Animator.IsDarkspineHurtFinished)
+			{
 				Player.MoveSpeed = 0;
+				Player.StrafeSpeed = 0;
+			}
 
 			if (Mathf.IsZeroApprox(Player.MoveSpeed))
 			{

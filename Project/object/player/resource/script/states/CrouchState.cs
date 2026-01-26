@@ -16,6 +16,7 @@ public partial class CrouchState : PlayerState
 	{
 		Player.Animator.StartCrouching();
 		Player.ChangeHitbox("crouch");
+		Player.StrafeSpeed = 0f;
 	}
 
 	public override void ExitState()

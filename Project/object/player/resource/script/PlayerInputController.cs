@@ -369,7 +369,10 @@ public partial class PlayerInputController : Node
 			baseAngle = Player.PathFollower.BackAngle;
 		}
 
-		return baseAngle - strafeAngle;
+		if (!IsStrafeModeActive || Player.IsBackflipping)
+			baseAngle -= strafeAngle;
+
+		return baseAngle;
 	}
 
 	/// <summary> Checks whether the player is holding a particular direction. </summary>

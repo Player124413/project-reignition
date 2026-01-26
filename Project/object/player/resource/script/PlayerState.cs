@@ -27,6 +27,11 @@ public partial class PlayerState : Node
 	{
 		turnInstantly = Mathf.IsZeroApprox(Player.MoveSpeed) && !Player.Skills.IsSpeedBreakActive; // Store this for turning function
 
+		if (Player.Controller.IsStrafeModeActive && !Player.IsLockoutOverridingMovementAngle && !Player.Controller.IsBrakeHeld())
+			Player.StrafeSpeed = Player.Stats.StrafeSettings.UpdateInterpolateSigned(Player.StrafeSpeed, Player.Controller.InputHorizontal);
+		else
+			Player.StrafeSpeed = Player.Stats.StrafeSettings.UpdateInterpolate(Player.StrafeSpeed, -1.0f); // Reset to 0 quickly
+
 		if (Player.Skills.IsSpeedBreakActive)
 		{
 			// Override to speedbreak speed
@@ -95,7 +100,7 @@ public partial class PlayerState : Node
 		if (Player.Camera.IsCrossfading)
 			return false;
 
-		bool isHoldingBack = Player.Controller.IsHoldingDirection(inputAngle, Player.MovementAngle + Mathf.Pi);
+		bool isHoldingBack = Player.Controller.IsHoldingDirection(inputAngle, Player.MovementAngle + Mathf.Pi) && Player.Controller.GetInputStrength() > 0.5f;
 		return isHoldingBack;
 	}
 

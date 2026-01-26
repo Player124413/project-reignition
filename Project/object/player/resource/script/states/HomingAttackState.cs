@@ -89,7 +89,7 @@ public partial class HomingAttackState : PlayerState
 		Player.MoveSpeed = Mathf.Min(Player.MoveSpeed, Player.CenterPosition.DistanceTo(Player.Lockon.Target.GlobalPosition) / PhysicsManager.physicsDelta);
 		Player.VerticalSpeed = Player.Lockon.HomingAttackDirection.Y;
 		Player.MovementAngle = ExtensionMethods.CalculateForwardAngle(Player.Lockon.HomingAttackDirection);
-		Player.ApplyMovement(Player.Lockon.HomingAttackDirection.Normalized());
+		Player.ApplyMovement(Player.Lockon.HomingAttackDirection.Normalized(), Vector3.Zero);
 
 		bool isColliding = Player.GetSlideCollisionCount() != 0;
 		if (isColliding && ProcessObstructions())

@@ -18,6 +18,7 @@ public partial class StompState : PlayerState
 	public override void EnterState()
 	{
 		Player.MoveSpeed = 0;
+		Player.StrafeSpeed = 0;
 		Player.IsStomping = true;
 		Player.Lockon.IsMonitoring = false;
 
@@ -67,6 +68,7 @@ public partial class StompState : PlayerState
 	public override PlayerState ProcessPhysics()
 	{
 		Player.MoveSpeed = 0; // Go STRAIGHT down
+		Player.StrafeSpeed = 0;
 		UpdateVerticalSpeed();
 		Player.ApplyMovement();
 		Player.CheckGround();

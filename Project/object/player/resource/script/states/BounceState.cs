@@ -133,7 +133,9 @@ public partial class BounceState : PlayerState
 			return;
 		}
 
-		Player.MoveSpeed = 0; // Reset speed
+		// Reset speed
+		Player.MoveSpeed = 0;
+		Player.StrafeSpeed = 0;
 
 		if (snapTarget == null) // Nothing to snap to
 			return;

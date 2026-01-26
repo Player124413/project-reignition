@@ -31,6 +31,7 @@ public partial class DarkspineSpiritBombState : PlayerState
 		Player.IsSpiritBombActive = true;
 
 		Player.MoveSpeed = 0;
+		Player.StrafeSpeed = 0;
 		Player.VerticalSpeed = 0;
 
 		isKickingSpiritBomb = false;

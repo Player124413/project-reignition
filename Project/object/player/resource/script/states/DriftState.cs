@@ -210,7 +210,9 @@ public partial class DriftState : PlayerState
 
 		driftStatus = DriftStatus.WaitFail;
 		driftAnimationTimer = PhysicsManager.physicsDelta;
-		Player.MoveSpeed = 0f; // Reset Movespeed
+		// Reset Movespeed
+		Player.MoveSpeed = 0f;
+		Player.StrafeSpeed = 0;
 		Trigger.FadeSfx();
 	}
 

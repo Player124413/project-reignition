@@ -216,6 +216,7 @@ public partial class SandScorpion : Node3D
 
 		Player.Skills.DisableBreakSkills();
 		Player.MoveSpeed = 0;
+		Player.StrafeSpeed = 0;
 
 		Player.Visible = false;
 		Player.AddLockoutData(Runtime.Instance.DefaultCompletionLockout);

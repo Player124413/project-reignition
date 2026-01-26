@@ -114,6 +114,7 @@ public partial class LightSpeedDashState : PlayerState
 					Player.Controller.IsHoldingDirection(inputAngle, Player.MovementAngle + Mathf.Pi))
 				{
 					Player.MoveSpeed = 0;
+					Player.StrafeSpeed = 0;
 				}
 
 				return jumpState;

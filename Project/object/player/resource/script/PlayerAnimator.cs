@@ -707,7 +707,10 @@ public partial class PlayerAnimator : Node3D
 
 		VisualAngle = ExtensionMethods.SmoothDampAngle(VisualAngle, targetRotation, ref rotationVelocity, MovementRotationSmoothing);
 		RotationRoot.Rotation = Vector3.Up * VisualAngle;
+		RotationRoot.Rotation += Vector3.Back * CalculateStrafeAngle();
 	}
+
+	private float CalculateStrafeAngle() => Player.Stats.StrafeSettings.GetSpeedRatio(Player.StrafeSpeed) * Mathf.Pi * 0.05f;
 
 	private float CalculateTargetVisualRotation()
 	{
@@ -717,7 +720,7 @@ public partial class PlayerAnimator : Node3D
 		if (Player.IsHomingAttacking) // Face target
 			return ExtensionMethods.CalculateForwardAngle(Player.Lockon.HomingAttackDirection);
 
-		if (Player.IsReversePath && Player.IsOnGround)
+		if (Player.IsReversingPath && Player.IsOnGround)
 			return Player.PathFollower.ForwardAngle;
 
 		if (Player.IsMovingBackward) // Backstepping
@@ -738,7 +741,9 @@ public partial class PlayerAnimator : Node3D
 		if (SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.Autorun) && Mathf.IsZeroApprox(Player.MoveSpeed))
 			return VisualAngle;
 
-		return Player.MovementAngle;
+		float strafeAngle = Player.Stats.StrafeSettings.GetSpeedRatio(Player.StrafeSpeed) * -Mathf.Pi * 0.5f;
+		strafeAngle *= 1f - Player.Stats.GroundSettings.GetSpeedRatioClamped(Player.MoveSpeed);
+		return Player.MovementAngle + strafeAngle;
 	}
 	#endregion
 

@@ -424,7 +424,8 @@ public partial class IfritGolem : Node3D
 		}
 
 		// Kill residue player speed
-		Player.MoveSpeed = 0.0f;
+		Player.MoveSpeed = 0;
+		Player.StrafeSpeed = 0;
 		Player.MovementAngle = Player.PathFollower.ForwardAngle;
 
 		// Play hit dialog

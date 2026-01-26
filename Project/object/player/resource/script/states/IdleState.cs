@@ -17,6 +17,7 @@ public partial class IdleState : PlayerState
 	public override void EnterState()
 	{
 		Player.MoveSpeed = 0;
+		Player.StrafeSpeed = 0;
 	}
 
 	public override PlayerState ProcessPhysics()

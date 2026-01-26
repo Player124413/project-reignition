@@ -45,6 +45,7 @@ public partial class LandState : PlayerState
 		{
 			knockbackTimer = KnockbackLandingLength;
 			Player.MoveSpeed = 0;
+			Player.StrafeSpeed = 0;
 			Player.IsKnockback = false;
 			Player.AllowLandingSkills = false;
 			Player.Animator.ResetState(0);

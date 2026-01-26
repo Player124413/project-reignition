@@ -382,6 +382,7 @@ public partial class PlayerSkillController : Node3D
 			else
 			{
 				Player.MoveSpeed = 0;
+				Player.StrafeSpeed = 0;
 			}
 
 			return;

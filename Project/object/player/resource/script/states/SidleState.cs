@@ -143,6 +143,7 @@ public partial class SidleState : PlayerState
 		if (Mathf.IsZeroApprox(velocity))
 		{
 			Player.MoveSpeed = 0;
+			Player.StrafeSpeed = 0;
 			return;
 		}
 
@@ -167,6 +168,7 @@ public partial class SidleState : PlayerState
 		velocity = 0;
 		cycleTimer = 0;
 		Player.MoveSpeed = 0;
+		Player.StrafeSpeed = 0;
 
 		if (Player.IsDamageDefeatingPlayer())
 		{

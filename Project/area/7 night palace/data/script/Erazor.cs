@@ -215,6 +215,7 @@ public partial class Erazor : Node3D
 		Player.Skills.CancelBreakSkills();
 		Player.Skills.DisableBreakSkills();
 		Player.MoveSpeed = 0;
+		Player.StrafeSpeed = 0;
 		Player.SnapToGround();
 		Player.Effect.CanelSpinFX();
 		Player.Effect.StopTrailFX();
@@ -559,6 +560,7 @@ public partial class Erazor : Node3D
 			StartAttackStrike();
 
 		Player.MoveSpeed = 0;
+		Player.StrafeSpeed = 0;
 		Player.VerticalSpeed = 0.0f;
 		Player.SnapToGround();
 

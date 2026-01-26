@@ -206,7 +206,10 @@ public partial class DestructableObject : Node3D
 		{
 			// Kill character's speed
 			if (Player.IsOnGround && stopPlayerOnShatter)
+			{
 				Player.MoveSpeed = 0f;
+				Player.StrafeSpeed = 0;
+			}
 
 			shatterPoint = Player.CenterPosition; // Shatter from player
 

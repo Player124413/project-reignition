@@ -173,6 +173,7 @@ public partial class GrindState : PlayerState
 		{
 			movementDelta = 0; // Limit movement distance
 			Player.MoveSpeed = 0f;
+			Player.StrafeSpeed = 0;
 		}
 		else // No walls, Check for crushers
 		{

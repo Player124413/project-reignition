@@ -19,6 +19,7 @@ public partial class PetrifyState : PlayerState
 		currentPetrificationStrength = MaxPetrificationStrength;
 
 		Player.MoveSpeed = 0;
+		Player.StrafeSpeed = 0;
 		Player.VerticalSpeed = 0;
 
 		Player.Animator.StartPetrify();

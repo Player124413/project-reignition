@@ -91,6 +91,8 @@ public partial class PlayerController : CharacterBody3D
 
 	/// <summary> Player's horizontal movespeed, ignoring slopes. </summary>
 	public float MoveSpeed { get; set; }
+	/// <summary> Player's strafe speed, used with Autorun. </summary>
+	public float StrafeSpeed { get; set; }
 	/// <summary> Player's vertical speed -- only effective when not on the ground. </summary>
 	public float VerticalSpeed { get; set; }
 	public bool IsMovingBackward { get; set; }
@@ -148,10 +150,11 @@ public partial class PlayerController : CharacterBody3D
 			MoveSpeed = Mathf.MoveToward(MoveSpeed, 0, Stats.GroundSettings.Friction * SlopeRatio * PhysicsManager.physicsDelta);
 	}
 
-	public void ApplyMovement() => ApplyMovement(GetMovementDirection());
-	public void ApplyMovement(Vector3 overrideDirection)
+	public void ApplyMovement() => ApplyMovement(GetMovementDirection(), -PathFollower.Right());
+	public void ApplyMovement(Vector3 overrideDirection, Vector3 rightDirection)
 	{
 		Velocity = (overrideDirection * MoveSpeed) + (UpDirection * VerticalSpeed) + ExternalVelocity;
+		Velocity += rightDirection * StrafeSpeed;
 		MoveAndSlide();
 	}
 
@@ -690,7 +693,7 @@ public partial class PlayerController : CharacterBody3D
 	public void StartCountdown() => StateMachine.ChangeState(countdownState);
 
 	[Export] private ReversePathState reversePathState;
-	public bool IsReversePath => StateMachine.CurrentState == reversePathState;
+	public bool IsReversingPath => StateMachine.CurrentState == reversePathState;
 	public void StartReversePath() => StateMachine.ChangeState(reversePathState);
 
 	[Signal]
