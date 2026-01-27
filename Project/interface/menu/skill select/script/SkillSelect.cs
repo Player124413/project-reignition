@@ -23,7 +23,7 @@ public partial class SkillSelect : Menu
 
 	private bool IsEditingAugment { get; set; }
 
-	private SkillOption SelectedSkill => visualSkillOptionList[VerticalSelection];
+	private SkillOption SelectedSkill => skillOptionList[VerticalSelection];
 
 	private SkillListResource SkillList => Runtime.Instance.SkillList;
 	private SkillRing ActiveSkillRing => SaveManager.ActiveSkillRing;
@@ -42,8 +42,11 @@ public partial class SkillSelect : Menu
 	/// <summary> Number of skills on a single page. </summary>
 	private readonly int PageSize = 8;
 
+	/// <summary> Tracks the number of unlocked skill (excluding augments). </summary>
+	private int unlockedSkillCount;
+	/// <summary> Tracks the number of unlocked wind skills (excluding augments). </summary>
+	private int unlockedWindSkillCount;
 	private readonly Array<SkillOption> skillOptionList = [];
-	private readonly Array<SkillOption> visualSkillOptionList = [];
 
 	[Export] private Label sortTypeLabel;
 	[Export] private TextureRect sortOrderCursor;
@@ -137,7 +140,7 @@ public partial class SkillSelect : Menu
 
 			if (Input.IsActionJustPressed("button_step_right"))
 			{
-				int targetSelection = Mathf.Min(VerticalSelection + PageSize, visualSkillOptionList.Count - 1);
+				int targetSelection = Mathf.Min(VerticalSelection + PageSize, unlockedSkillCount - 1);
 				ScrollSelection(targetSelection);
 				return;
 			}
@@ -153,7 +156,7 @@ public partial class SkillSelect : Menu
 			}
 
 			isDescendingSort = sortOrderCursor.Visible && !isDescendingSort;
-			sortOrderCursor.FlipV = isDescendingSort;
+			sortOrderCursor.FlipV = !isDescendingSort;
 			sortOrderCursor.Visible = currentSortType < SortEnum.Wind;
 
 			SortSkills();
@@ -226,7 +229,7 @@ public partial class SkillSelect : Menu
 
 		if (inputSign != 0)
 		{
-			VerticalSelection = WrapSelection(VerticalSelection + inputSign, visualSkillOptionList.Count);
+			VerticalSelection = WrapSelection(VerticalSelection + inputSign, unlockedSkillCount);
 			UpdateScrollAmount(inputSign);
 			MoveCursor();
 			UpdateDescription();
@@ -246,7 +249,7 @@ public partial class SkillSelect : Menu
 
 	private void UpdateScrollAmount(int amount)
 	{
-		int listSize = visualSkillOptionList.Count;
+		int listSize = unlockedSkillCount;
 		if (IsEditingAugment)
 			listSize += SelectedSkill.AugmentMenuCount;
 
@@ -295,30 +298,36 @@ public partial class SkillSelect : Menu
 			PlayBgm();
 		}
 
-		// Update visible skill list to account for multiple save files
-		visualSkillOptionList.Clear();
-		for (int i = 0; i < skillOptionList.Count; i++)
+		// Update unlocked skill count to account for multiple save files
+		unlockedSkillCount = 0;
+		unlockedWindSkillCount = 0;
+		for (int i = skillOptionList.Count - 1; i >= 0; i--)
 		{
 			if (skillOptionList[i] == null)
 				continue;
 
 			SkillKey key = (SkillKey)i;
-			skillOptionList[i].Visible = false;
+			skillOptionList[i].Visible = SaveManager.ActiveSkillRing.IsSkillUnlocked(key);
 
-			if (!SaveManager.ActiveSkillRing.IsSkillUnlocked(key))
+			if (!skillOptionList[i].Visible)
+			{
+				// Locked skills go to the bottom and are never processed
+				MoveSkillToBottom(i);
 				continue;
-
-			visualSkillOptionList.Add(skillOptionList[i]);
-			skillOptionList[i].Visible = true;
+			}
 
 			// Process augments
-			UpdateAugmentHierarchy(skillOptionList[i]);
+			unlockedSkillCount++;
 
-			if (!SaveManager.ActiveGameData.viewedSkills.Contains(skillOptionList[i].Skill.Key))
-				skillOptionList[i].EnableNewTag(true);
-			else
-				skillOptionList[i].EnableNewTag(false);
+			if (skillOptionList[i].Skill.Element == SkillResource.SkillElement.Wind)
+				unlockedWindSkillCount++;
+
+			UpdateAugmentHierarchy(skillOptionList[i]);
+			skillOptionList[i].EnableNewTag(!SaveManager.ActiveGameData.viewedSkills.Contains(skillOptionList[i].Skill.Key));
 		}
+
+		SortSkills();
+		Redraw();
 
 		if (menuMemory[MemoryKeys.PresetsOpen] == 1)
 			animator.Play("show-from-preset");
@@ -386,15 +395,16 @@ public partial class SkillSelect : Menu
 	{
 		skillPointLabel.Text = ActiveSkillRing.TotalCost.ToString("000") + "/" + ActiveSkillRing.MaxSkillPoints.ToString("000");
 		skillPointFill.Scale = new(ActiveSkillRing.TotalCost / (float)ActiveSkillRing.MaxSkillPoints, skillPointFill.Scale.Y);
-		foreach (SkillOption skillOption in visualSkillOptionList)
+
+		for (int i = 0; i < unlockedSkillCount; i++)
 		{
-			if (skillOption.HasUnlockedAugments())
+			if (skillOptionList[i].HasUnlockedAugments())
 			{
-				UpdateAugmentHierarchy(skillOption);
+				UpdateAugmentHierarchy(skillOptionList[i]);
 				continue;
 			}
 
-			skillOption.Redraw();
+			skillOptionList[i].Redraw();
 		}
 
 		UpdateDescription();
@@ -531,30 +541,40 @@ public partial class SkillSelect : Menu
 		alertAnimator.Play("show");
 	}
 
-	private void SortSkills()
+	/// <summary> Sorts the skill list. </summary>
+	private void SortSkills(SortEnum sortType = SortEnum.Count, int startIndex = 0)
 	{
+		// NOTE: Sorting is HIGHLY unoptimized, but I'm not going to worry about it unless we have performance issues
 		// Update label
 		sortTypeLabel.Text = "sys_sort_" + currentSortType.ToString().ToLower();
 		SkillOption currentSkill = SelectedSkill;
 
-		// Sort
-		if (currentSortType >= SortEnum.Wind && currentSortType <= SortEnum.Dark)
+		if (sortType == SortEnum.Count)
+			sortType = currentSortType;
+
+		if (isDescendingSort)
 		{
-			for (int i = skillOptionList.Count - 1; i > 0; i--) // Ensure skills are sorted somewhat logically first
+			// TODO Simply reverse the list.
+			ReverseSkillList();
+		}
+		else
+		{
+			// Basic bubble sort (Done twice)
+			for (int i = startIndex; i < unlockedSkillCount; i++) // Apply actual sorting
 			{
-				for (int j = 0; j < i; j++)
-					CalculateExchange(j, SortEnum.Default);
+				for (int j = unlockedSkillCount - 1; j > i; j--)
+					CalculateExchange(i, j, sortType);
 			}
+
+			// Sort again starting from the end of the wind elements to keep skills organized by element
+			// Since we're using bubble sort, the other elements are sorted for free
+			if (sortType == SortEnum.Wind)
+				SortSkills(SortEnum.Fire, unlockedWindSkillCount);
 		}
 
-		for (int i = skillOptionList.Count - 1; i > 0; i--) // Always start by reseting sorting to default
-		{
-			for (int j = 0; j < i; j++)
-				CalculateExchange(j, currentSortType);
-		}
 
 		// Maintain selection
-		int targetSelection = visualSkillOptionList.IndexOf(currentSkill);
+		int targetSelection = skillOptionList.IndexOf(currentSkill);
 		ScrollSelection(targetSelection);
 	}
 
@@ -568,7 +588,7 @@ public partial class SkillSelect : Menu
 		// Reupdate cursor since clamping is applied in UpdateScrollAmount()
 		cursorPosition = VerticalSelection - scrollAmount;
 
-		if (VerticalSelection != 0 && VerticalSelection != visualSkillOptionList.Count - 1)
+		if (VerticalSelection != 0 && VerticalSelection != unlockedSkillCount - 1)
 		{
 			// Ensure cursor doesn't get stuck on the edges of the list
 			if (cursorPosition == 0) // Top of the list
@@ -597,67 +617,91 @@ public partial class SkillSelect : Menu
 		return Tr(nameString);
 	}
 
-	private void CalculateExchange(int index, SortEnum sortType)
+	private void CalculateExchange(int i, int j, SortEnum sortType)
 	{
-		switch (sortType)
+		bool isNumberOutOfOrder = (!isDescendingSort && skillOptionList[i].Skill.Key > skillOptionList[j].Skill.Key) ||
+			(isDescendingSort && skillOptionList[i].Skill.Key < skillOptionList[j].Skill.Key);
+
+		if (sortType == SortEnum.Default)
 		{
-			case SortEnum.Default:
-				if ((!isDescendingSort && skillOptionList[index].Skill.Key > skillOptionList[index + 1].Skill.Key) ||
-					(isDescendingSort && skillOptionList[index].Skill.Key < skillOptionList[index + 1].Skill.Key))
-				{
-					PerformExchange(index);
-				}
-				break;
-			case SortEnum.Name:
-				string skill1 = GetSkillName(index);
-				string skill2 = GetSkillName(index + 1);
-				if ((!isDescendingSort && skill1.CompareTo(skill2) > 0) ||
-					(isDescendingSort && skill1.CompareTo(skill2) < 0))
-				{
-					PerformExchange(index);
-				}
-				break;
-			case SortEnum.Cost:
-				if ((!isDescendingSort && skillOptionList[index].Skill.Cost > skillOptionList[index + 1].Skill.Cost) ||
-					(isDescendingSort && skillOptionList[index].Skill.Cost < skillOptionList[index + 1].Skill.Cost))
-				{
-					PerformExchange(index);
-				}
-				break;
-			case SortEnum.Wind:
-				if (skillOptionList[index].Skill.Element != skillOptionList[index + 1].Skill.Element && skillOptionList[index + 1].Skill.Element == SkillResource.SkillElement.Wind)
-					PerformExchange(index);
-				break;
-			case SortEnum.Fire:
-				if (skillOptionList[index].Skill.Element != skillOptionList[index + 1].Skill.Element && skillOptionList[index + 1].Skill.Element == SkillResource.SkillElement.Fire)
-					PerformExchange(index);
-				break;
-			case SortEnum.Dark:
-				if (skillOptionList[index].Skill.Element != skillOptionList[index + 1].Skill.Element && skillOptionList[index + 1].Skill.Element == SkillResource.SkillElement.Dark)
-					PerformExchange(index);
-				break;
+			if (isNumberOutOfOrder)
+				PerformExchange(i, j);
+
+			return;
+		}
+
+		if (sortType == SortEnum.Name)
+		{
+			string skill1 = GetSkillName(i);
+			string skill2 = GetSkillName(j);
+			if ((!isDescendingSort && skill1.CompareTo(skill2) > 0) ||
+				(isDescendingSort && skill1.CompareTo(skill2) < 0))
+			{
+				PerformExchange(i, j);
+			}
+
+			return;
+		}
+
+		if (sortType == SortEnum.Cost)
+		{
+			if ((!isDescendingSort && skillOptionList[i].Skill.Cost > skillOptionList[j].Skill.Cost) ||
+				(isDescendingSort && skillOptionList[i].Skill.Cost < skillOptionList[j].Skill.Cost) ||
+				(isNumberOutOfOrder && skillOptionList[i].Skill.Cost == skillOptionList[j].Skill.Cost))
+			{
+				PerformExchange(i, j);
+			}
+
+			return;
+		}
+
+
+		// TODO Make this sort the excess elements nicely too
+		bool isElementDifferent = skillOptionList[i].Skill.Element != skillOptionList[j].Skill.Element;
+		bool isElementCorrect = skillOptionList[j].Skill.Element == ToSkillElement(sortType);
+		if ((isElementDifferent && isElementCorrect) ||
+			(!isElementDifferent && isNumberOutOfOrder))
+		{
+			PerformExchange(i, j);
 		}
 	}
 
-	private void PerformExchange(int i)
+	/// <summary> Converts a sorted skill list to a reverse sorted skill list. </summary>
+	private void ReverseSkillList()
 	{
-		ExchangeSkill(skillOptionList, i, i + 1);
-		ExchangeSkill(visualSkillOptionList, i, i + 1);
-		ExchangeOption(optionContainer, i, i + 1);
+		int endIndex = unlockedSkillCount - 1;
+		for (int i = 0; i <= (endIndex / 2) - 1; i++)
+			PerformExchange(i, endIndex - i);
 	}
 
-	private static void ExchangeSkill(Array<SkillOption> skill, int m, int n)
+	private SkillResource.SkillElement ToSkillElement(SortEnum sort)
 	{
-		SkillOption temporary = skill[m];
-		skill[m] = skill[n];
-		skill[n] = temporary;
+		return sort switch
+		{
+			SortEnum.Wind => SkillResource.SkillElement.Wind,
+			SortEnum.Fire => SkillResource.SkillElement.Fire,
+			SortEnum.Dark => SkillResource.SkillElement.Dark,
+			_ => SkillResource.SkillElement.Count,
+		};
 	}
 
-	private static void ExchangeOption(Node option, int m, int n)
+	private void PerformExchange(int i, int j)
 	{
-		Node temporary = option.GetChild(m);
-		option.MoveChild(option.GetChild(n), m);
-		option.MoveChild(temporary, n);
+		// Swap skills
+		(skillOptionList[j], skillOptionList[i]) = (skillOptionList[i], skillOptionList[j]);
+
+		// Swap the skills in the tree
+		Node temporary = optionContainer.GetChild(i);
+		optionContainer.MoveChild(optionContainer.GetChild(j), i);
+		optionContainer.MoveChild(temporary, j);
+	}
+
+	private void MoveSkillToBottom(int index)
+	{
+		// Unoptimized as we're removing a space [O(N)], but I don't think we have enough skills for this to matter
+		skillOptionList.Add(skillOptionList[index]);
+		skillOptionList.RemoveAt(index);
+		optionContainer.MoveChild(optionContainer.GetChild(index), optionContainer.GetChildCount());
 	}
 
 	public void AlertMenuClosed()
