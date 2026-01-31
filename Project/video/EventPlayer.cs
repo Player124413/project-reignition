@@ -239,7 +239,7 @@ public partial class EventPlayer : Node
 		{
 			// Allow players to exit immediately when viewing from the special book
 			if (Runtime.Instance.IsActionJustPressed("sys_cancel", "ui_cancel", "escape"))
-				OnEventFinished();
+				OnEventFinished(true);
 
 			return;
 		}
@@ -327,7 +327,8 @@ public partial class EventPlayer : Node
 	}
 
 	/// <summary> Called after the cutscene has finished playing. </summary>
-	public void OnEventFinished()
+	public void OnEventFinished() => OnEventFinished(false);
+	public void OnEventFinished(bool isCanceled)
 	{
 		if (isNestedCutscene) // Don't do anything for nested cutscenes
 			return;
@@ -368,8 +369,8 @@ public partial class EventPlayer : Node
 		TransitionManager.QueueSceneChange(targetScene);
 		TransitionManager.StartTransition(new TransitionData()
 		{
-			color = transitionColor,
-			inSpeed = transitionSpeed,
+			color = isCanceled ? Colors.Black : transitionColor,
+			inSpeed = isCanceled ? 0.5f : transitionSpeed,
 			outSpeed = 0.5f,
 		});
 	}
