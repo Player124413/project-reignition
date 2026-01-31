@@ -6,7 +6,7 @@ namespace Project;
 public partial class BGMResource : Resource
 {
 	/// <summary> The path to the audiostream that should be loaded. </summary>
-	[Export(PropertyHint.FilePath, "*.mp3, *.ogg,*.wav")]
+	[Export(PropertyHint.File, "*.mp3, *.ogg,*.wav")]
 	public string StreamPath { get; private set; }
 	[Export] public float StartPosition { get; private set; }
 	/// <summary> The time (in seconds) where the loop starts. </summary>
