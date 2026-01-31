@@ -18,10 +18,10 @@ public partial class SpecialBookPage : Resource
 		switch (PageType)
 		{
 			case PageTypeEnum.Music:
-				properties.Add(ExtensionMethods.CreateProperty("Audio Stream", Variant.Type.String, PropertyHint.FilePath, "*.mp3,*.wav"));
+				properties.Add(ExtensionMethods.CreateProperty("Audio Stream", Variant.Type.String, PropertyHint.File, "*.mp3,*.wav"));
 				break;
 			case PageTypeEnum.Video:
-				properties.Add(ExtensionMethods.CreateProperty("Event Path", Variant.Type.String, PropertyHint.FilePath, "*.tscn"));
+				properties.Add(ExtensionMethods.CreateProperty("Event Path", Variant.Type.String, PropertyHint.File, "*.tscn"));
 				break;
 			case PageTypeEnum.Achievement:
 				properties.Add(ExtensionMethods.CreateProperty("Achievement Key", Variant.Type.StringName));
