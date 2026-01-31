@@ -308,10 +308,7 @@ public partial class PlayerInputController : Node
 		}
 
 		if (Player.Skills.IsSpeedBreakActive)
-		{
-			GD.Print("Speedbreak Strafe");
 			return GetStrafeAngle();
-		}
 
 		if (SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.Autorun))
 			return GetStrafeAngle();

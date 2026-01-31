@@ -63,6 +63,7 @@ public partial class StageSettings : Node3D
 
 		// Update gameplay sfx audio channel
 		SoundManager.SetAudioBusVolume(SoundManager.AudioBuses.GameSfx, IsControlTest ? 100 : 0);
+		SoundManager.instance.SetStageMusicVolume(0f);
 
 		if (IsControlTest)
 		{

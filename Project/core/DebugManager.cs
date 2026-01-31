@@ -15,6 +15,9 @@ public partial class DebugManager : Control
 	[Export]
 	private Control debugMenuRoot;
 
+	/// <summary> Tracks whether we're in a cutscene (credits or story event). </summary>
+	public bool IsCutsceneActive { get; set; }
+
 	private bool isAdvancingFrame;
 	private bool isAttemptingPause;
 	private bool IsPaused => GetTree().Paused;
@@ -64,7 +67,7 @@ public partial class DebugManager : Control
 			debugMenuRoot.Visible = !debugMenuRoot.Visible;
 
 		if (Input.IsActionJustPressed("debug_turbo"))
-			Engine.TimeScale = 2.5f;
+			Engine.TimeScale = IsCutsceneActive ? 10f : 2.5f;
 		else if (Input.IsActionJustReleased("debug_turbo"))
 			Engine.TimeScale = 1f;
 

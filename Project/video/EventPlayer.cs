@@ -11,6 +11,8 @@ namespace Project.Interface.Menus;
 [Tool]
 public partial class EventPlayer : Node
 {
+	[Signal] public delegate void EventFinishedEventHandler();
+
 	[ExportToolButton("Auto Setup")] public Callable AutoSetupCallable => new(this, MethodName.AutoSetup);
 
 	[ExportGroup("Cutscene Settings")]
@@ -21,6 +23,10 @@ public partial class EventPlayer : Node
 	[Export(PropertyHint.File, "*.ogg")] private string englishAudioPath;
 	[Export] private string localizationKeyPrefix;
 	[Export] private bool isCgCutscene;
+	[Export] private bool isNestedCutscene;
+	[Export] public Color transitionColor = Colors.Black;
+	[Export] public float transitionSpeed = 0.5f;
+	[Export] public Resource musicResource;
 	private Gameplay.Triggers.DialogTrigger subtitles;
 
 	[ExportGroup("Components")]
@@ -43,6 +49,7 @@ public partial class EventPlayer : Node
 	private bool IsSpecialBook => Menu.menuMemory[Menu.MemoryKeys.ActiveMenu] == (int)Menu.MemoryKeys.SpecialBook;
 
 	private bool isCutsceneFinished;
+	private bool isFadingBgm;
 	private float interfaceVisibilityTimer;
 	/// <summary> How long the pause button needs to be held to skip the cutscene. </summary>
 	private readonly float InterfaceVisiblityLength = 1f;
@@ -61,7 +68,12 @@ public partial class EventPlayer : Node
 
 		LoadLocalization();
 		CreateSubtitles();
-		CallDeferred(MethodName.StartCutscene);
+
+		if (!isNestedCutscene && musicResource != null)
+			SoundManager.instance.UpdateBgmResource(musicResource as BGMResource);
+
+		if (!isNestedCutscene)
+			CallDeferred(MethodName.StartCutscene);
 
 		if (IsSpecialBook)
 			return;
@@ -74,6 +86,10 @@ public partial class EventPlayer : Node
 			Menu.menuMemory[Menu.MemoryKeys.LevelSelect] = adventureLevelAutoload.LevelIndex - 1;
 		}
 	}
+
+	public override void _EnterTree() => DebugManager.Instance.IsCutsceneActive = true;
+
+	public override void _ExitTree() => DebugManager.Instance.IsCutsceneActive = false;
 
 	private void LoadLocalization()
 	{
@@ -92,6 +108,9 @@ public partial class EventPlayer : Node
 
 	private void LoadAudioTrack(string targetLocale)
 	{
+		if (string.IsNullOrEmpty(englishAudioPath)) // No audio to load
+			return;
+
 		string targetAudioPath = ResourceUid.UidToPath(englishAudioPath);
 		if (targetAudioPath.Contains("/en/")) // localizable audio
 		{
@@ -194,6 +213,12 @@ public partial class EventPlayer : Node
 			ResyncEditorIndex();
 			return;
 		}
+
+		if (isNestedCutscene)
+			return;
+
+		if (isFadingBgm && !SoundManager.FadeAudioPlayer(SoundManager.instance.StageMusicPlayer, 0.5f))
+			SoundManager.instance.SetStageMusicVolume(0f);
 
 		if (isCutsceneFinished)
 		{
@@ -304,7 +329,12 @@ public partial class EventPlayer : Node
 	/// <summary> Called after the cutscene has finished playing. </summary>
 	public void OnEventFinished()
 	{
+		if (isNestedCutscene) // Don't do anything for nested cutscenes
+			return;
+
 		isCutsceneFinished = true;
+		EmitSignal(SignalName.EventFinished);
+
 		if (!IsSpecialBook && adventureLevelAutoload != null)
 		{
 			// Load to level
@@ -338,8 +368,9 @@ public partial class EventPlayer : Node
 		TransitionManager.QueueSceneChange(targetScene);
 		TransitionManager.StartTransition(new TransitionData()
 		{
-			color = Colors.Black,
-			inSpeed = .5f,
+			color = transitionColor,
+			inSpeed = transitionSpeed,
+			outSpeed = 0.5f,
 		});
 	}
 
@@ -454,5 +485,10 @@ public partial class EventPlayer : Node
 		if (method.Equals(MethodName.HideSubtitles))
 			HideSubtitles();
 	}
+
+	/// <summary> Called from a signal during the final cutscene. </summary>
+	private void PlayCreditsMusic() => SoundManager.instance.StartBgm(false);
+
+	private void FadeOutCreditsMusic() => isFadingBgm = true;
 	#endregion
 }
