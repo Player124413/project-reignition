@@ -21,17 +21,6 @@ public partial class StageSettings : Node3D
 	private readonly string ErazorLevelId = "np_boss";
 	private readonly string LastBossLevelId = "np_last";
 
-	private readonly string[] SkillQuintiAchievementRequirement = {
-		"lp_a1_main",
-		"so_a1_main",
-		"dj_a1_main",
-		"ef_a1_main",
-		"lr_a1_main",
-		"ps_a1_main",
-		"sd_a1_main",
-		"np_a1_main",
-	};
-
 	private int probeTimer;
 
 	private readonly int SkillSaverAchievementRequirement = 30;
@@ -707,13 +696,8 @@ public partial class StageSettings : Node3D
 				AchievementManager.Instance.UnlockAchievement(DarkMasterAchievementName);
 		}
 
-		for (int i = 0; i < SkillQuintiAchievementRequirement.Length; i++)
-		{
-			if (!SaveManager.SharedData.LevelData.GetSkillessGold(SkillQuintiAchievementRequirement[i]))
-				return;
-		}
-
-		AchievementManager.Instance.UnlockAchievement(SkillQuintiAchievementName);
+		if (SaveManager.SharedData.LevelData.GetSkillessGold(Data.LevelID))
+			AchievementManager.Instance.UnlockAchievement(SkillQuintiAchievementName);
 	}
 
 	private void UpdateSaveData()
