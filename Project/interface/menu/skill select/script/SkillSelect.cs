@@ -336,6 +336,7 @@ public partial class SkillSelect : Menu
 			skillOptionList[i].EnableNewTag(!SaveManager.ActiveGameData.viewedSkills.Contains(skillOptionList[i].Skill.Key));
 		}
 
+		ScrollSelection(menuMemory[MemoryKeys.SkillMenuSelection]);
 		SortSkills();
 		Redraw();
 
@@ -593,6 +594,7 @@ public partial class SkillSelect : Menu
 		int initialSelection = VerticalSelection;
 		scrollAmount += targetSelection - VerticalSelection;
 		VerticalSelection = targetSelection;
+		menuMemory[MemoryKeys.SkillMenuSelection] = VerticalSelection;
 		UpdateScrollAmount(0);
 
 		// Reupdate cursor since clamping is applied in UpdateScrollAmount()

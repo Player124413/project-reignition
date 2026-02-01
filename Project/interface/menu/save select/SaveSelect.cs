@@ -143,6 +143,8 @@ public partial class SaveSelect : Menu
 
 	public override void OpenSubmenu()
 	{
+		menuMemory[MemoryKeys.LevelSelect] = 0;
+		menuMemory[MemoryKeys.SkillMenuSelection] = 0;
 		SaveManager.ActiveSaveSlotIndex = _saveOptions[ActiveSaveOptionIndex].SaveIndex;
 		SaveManager.ActiveSkillRing.LoadFromActiveData();
 
