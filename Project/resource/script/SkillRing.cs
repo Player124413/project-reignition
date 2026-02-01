@@ -224,10 +224,10 @@ public class SkillRing
 	}
 
 	/// <summary> Checks whether a skill is unlocked on the active save file. </summary>
-	public bool IsSkillUnlocked(SkillKey key) => IsSkillUnlocked(Runtime.Instance.SkillList.GetSkill(key));
+	public bool IsSkillUnlocked(SkillKey key, bool countEquipAsUnlocked = true) => IsSkillUnlocked(Runtime.Instance.SkillList.GetSkill(key), countEquipAsUnlocked);
 
 	/// <summary> Overload method for checking a skill resource directly. </summary>
-	public bool IsSkillUnlocked(SkillResource skill)
+	public bool IsSkillUnlocked(SkillResource skill, bool countEquipAsUnlocked = true)
 	{
 		if (skill == null) // Skill hasn't been created yet...
 			return false;
@@ -235,7 +235,7 @@ public class SkillRing
 		if (DebugManager.Instance.UseDemoSave)
 			return true;
 
-		if (IsSkillEquipped(skill)) // Equipped skills should be unlocked automatically to allow the player to unequip them...
+		if (countEquipAsUnlocked && IsSkillEquipped(skill)) // Equipped skills should be unlocked automatically to allow the player to unequip them...
 			return true;
 
 		if (SaveManager.ActiveGameData.level < skill.LevelRequirement) // Under-leveled

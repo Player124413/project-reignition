@@ -149,22 +149,29 @@ public partial class SkillSelect : Menu
 
 		if (Runtime.Instance.IsActionJustPressed("sys_sort", "ui_focus_next") && !IsEditingAugment)
 		{
-			if (isDescendingSort || currentSortType >= SortEnum.Wind)
+			SortEnum targetSortType = currentSortType;
+			if (isDescendingSort || targetSortType >= SortEnum.Wind)
 			{
-				currentSortType++;
-				if (currentSortType >= SortEnum.Count)
-					currentSortType = SortEnum.Default;
+				targetSortType++;
+				if (targetSortType >= SortEnum.Count)
+					targetSortType = SortEnum.Default;
 			}
 
-			isDescendingSort = sortOrderCursor.Visible && !isDescendingSort;
-			sortOrderCursor.FlipV = !isDescendingSort;
-			sortOrderCursor.Visible = currentSortType < SortEnum.Wind;
-
-			SortSkills();
-			Redraw();
+			SetSortType(targetSortType, isDescendingSort = sortOrderCursor.Visible && !isDescendingSort);
 		}
 
 		base.ProcessMenu();
+	}
+
+	private void SetSortType(SortEnum sortType, bool isDecending)
+	{
+		currentSortType = sortType;
+		isDescendingSort = isDecending;
+		sortOrderCursor.FlipV = !isDescendingSort;
+		sortOrderCursor.Visible = currentSortType < SortEnum.Wind;
+
+		SortSkills();
+		Redraw();
 	}
 
 	protected override void Cancel()
@@ -292,6 +299,26 @@ public partial class SkillSelect : Menu
 
 	public override void ShowMenu()
 	{
+		if (menuMemory[MemoryKeys.PresetsOpen] == 1)
+		{
+			animator.Play("show-from-preset");
+			menuMemory[MemoryKeys.PresetsOpen] = 0; // Reset memory
+
+			// Check if the player loaded a preset with an unlocked skill (Backwards Compatability)
+			for (int i = 0; i < ActiveSkillRing.EquippedSkills.Count; i++)
+			{
+				if (!ActiveSkillRing.IsSkillUnlocked(ActiveSkillRing.EquippedSkills[i], false))
+				{
+					// Need to reinitialize skill select menu
+					menuMemory[MemoryKeys.SkillMenuInitialized] = 0;
+					break;
+				}
+			}
+
+			if (menuMemory[MemoryKeys.SkillMenuInitialized] != 0)
+				return;
+		}
+
 		if (bgm?.Playing == false)
 		{
 			// Start skill select music
@@ -299,9 +326,18 @@ public partial class SkillSelect : Menu
 			PlayBgm();
 		}
 
-		SkillOption[] oldSkillOptionList = skillOptionList.ToArray();
+		// If the skill menu has already been initialized, just show the menu
+		if (menuMemory[MemoryKeys.SkillMenuInitialized] != 0)
+		{
+			base.ShowMenu();
+			return;
+		}
 
-		// Reset the skill order
+		// Reset the skill list
+		unlockedSkillCount = skillOptionList.Count;
+		SetSortType(SortEnum.Default, false);
+
+		SkillOption[] oldSkillOptionList = skillOptionList.ToArray();
 		for (int i = oldSkillOptionList.Length - 1; i >= 0; i--)
 		{
 			skillOptionList[(int)oldSkillOptionList[i].Skill.Key] = oldSkillOptionList[i];
@@ -336,16 +372,13 @@ public partial class SkillSelect : Menu
 			skillOptionList[i].EnableNewTag(!SaveManager.ActiveGameData.viewedSkills.Contains(skillOptionList[i].Skill.Key));
 		}
 
-		ScrollSelection(menuMemory[MemoryKeys.SkillMenuSelection]);
 		SortSkills();
 		Redraw();
 
-		if (menuMemory[MemoryKeys.PresetsOpen] == 1)
-			animator.Play("show-from-preset");
-		else
-			base.ShowMenu();
+		ScrollSelection(0);
+		base.ShowMenu();
 
-		menuMemory[MemoryKeys.PresetsOpen] = 0; // Reset memory
+		menuMemory[MemoryKeys.SkillMenuInitialized] = 1;
 	}
 
 	public void ShowSkills()
@@ -565,7 +598,6 @@ public partial class SkillSelect : Menu
 
 		if (isDescendingSort)
 		{
-			// TODO Simply reverse the list.
 			ReverseSkillList();
 		}
 		else
@@ -594,7 +626,6 @@ public partial class SkillSelect : Menu
 		int initialSelection = VerticalSelection;
 		scrollAmount += targetSelection - VerticalSelection;
 		VerticalSelection = targetSelection;
-		menuMemory[MemoryKeys.SkillMenuSelection] = VerticalSelection;
 		UpdateScrollAmount(0);
 
 		// Reupdate cursor since clamping is applied in UpdateScrollAmount()
