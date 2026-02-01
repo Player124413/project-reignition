@@ -872,7 +872,7 @@ public partial class SandScorpion : Node3D
 
 	private void FinishEyeAttack()
 	{
-		if (currentHealth == 0)
+		if (currentHealth <= 0)
 		{
 			DefeatBoss();
 		}
@@ -976,7 +976,13 @@ public partial class SandScorpion : Node3D
 			return;
 		}
 
-		// Clash
+		StartClash();
+		StartKnockback();
+	}
+
+
+	private void StartClash()
+	{
 		Player.Skills.ToggleSpeedBreak();
 		Player.StartKnockback(new()
 		{
@@ -988,7 +994,6 @@ public partial class SandScorpion : Node3D
 		});
 
 		PlayScreenShake(1f);
-		StartKnockback();
 	}
 
 	/// <summary> Is the player currently colliding with the flying eye? </summary>
@@ -1017,13 +1022,17 @@ public partial class SandScorpion : Node3D
 
 		if (Player.Skills.IsSpeedBreakActive) // Special attack
 		{
-			if (attackState != AttackState.Recovery)
+			if (attackState == AttackState.Strike)
 			{
 				flyingEyeAnimationTree.Set(DamageParameter, (int)AnimationNodeOneShot.OneShotRequest.Fire);
 				rootAnimationTree.Set(PhaseTwoDamageParameter, (int)AnimationNodeOneShot.OneShotRequest.Fire);
 				StartHitFX();
 				RetreatEyeAttack();
 				TakeDamage(2);
+			}
+			else
+			{
+				StartClash();
 			}
 
 			return;
