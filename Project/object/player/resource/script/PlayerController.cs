@@ -346,7 +346,7 @@ public partial class PlayerController : CharacterBody3D
 			if (reduceSpeedDuringHeadonCollision)
 			{
 				if (WallRaycastHit.distance <= CollisionSize.X + CollisionPadding)
-					MoveSpeed = 0; // Kill speed
+					MoveSpeed = Controller.IsStrafeModeActive ? Mathf.Abs(StrafeSpeed) : 0; // Kill speed
 				else if (WallRaycastHit.distance <= CollisionSize.X + CollisionPadding + (MoveSpeed * PhysicsManager.physicsDelta))
 					MoveSpeed *= .9f; // Slow down drastically
 			}

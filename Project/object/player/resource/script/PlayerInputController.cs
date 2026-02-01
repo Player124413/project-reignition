@@ -238,10 +238,8 @@ public partial class PlayerInputController : Node
 	}
 
 	/// <summary> Returns whether the player is currently in strafing mode. </summary>
-	public bool IsStrafeModeActive => Player.Skills.IsSpeedBreakActive ||
-			SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.Autorun) ||
-			(Player.IsLockoutActive &&
-			Player.ActiveLockoutData.movementMode == LockoutResource.MovementModes.Strafe);
+	public bool IsStrafeModeActive => SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.Autorun) ||
+			(Player.IsLockoutActive && Player.ActiveLockoutData.movementMode == LockoutResource.MovementModes.Strafe);
 
 	/// <summary> Returns the automaticly calculated input angle based on the game's settings and skills. </summary>
 	public float GetTargetInputAngle()

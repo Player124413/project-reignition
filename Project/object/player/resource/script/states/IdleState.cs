@@ -96,9 +96,15 @@ public partial class IdleState : PlayerState
 
 				return runState;
 			}
+		}
 
-			if (!Mathf.IsZeroApprox(Player.MoveSpeed))
-				return runState;
+		if (Player.Controller.IsStrafeModeActive)
+			ProcessStrafeSpeed();
+
+		if (!Mathf.IsZeroApprox(Player.MoveSpeed) ||
+			(Player.Controller.IsStrafeModeActive && !Mathf.IsZeroApprox(Player.StrafeSpeed)))
+		{
+			return runState;
 		}
 
 		Player.Animator.IdleAnimation();
