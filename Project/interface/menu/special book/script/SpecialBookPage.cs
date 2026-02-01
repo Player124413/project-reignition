@@ -243,6 +243,9 @@ public partial class SpecialBookPage : Resource
 		return false;
 	}
 
+	/// <summary> Alt. Hint system used for Achievements. </summary>
+	public string GetLocalizedUnlockRequirements(string descriptionKey) => Tr(descriptionKey.Replace("desc_", "hint_"));
+
 	/// <summary> Constructs a localized string that describes the unlock requirements. </summary>
 	public string GetLocalizedUnlockRequirements()
 	{
@@ -250,9 +253,6 @@ public partial class SpecialBookPage : Resource
 		int number = 0;
 
 		if (IsInvalid())
-			return localizedString;
-
-		if (PageType == PageTypeEnum.Achievement)
 			return localizedString;
 
 		// NOTE: This switch statement only covers the retail game. Add more conditions as needed.
