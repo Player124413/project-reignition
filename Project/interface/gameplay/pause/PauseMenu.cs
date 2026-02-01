@@ -137,9 +137,6 @@ public partial class PauseMenu : Node
 
 	private bool IsQuickRestart()
 	{
-		if (SaveManager.ActiveGameData.LevelData.GetClearStatus(StageSettings.Instance.Data.LevelID) != SaveManager.LevelSaveData.LevelStatus.Cleared)
-			return false;
-
 		if (!Input.IsActionPressed("button_step_left") || !Input.IsActionPressed("button_step_right")) // Quick restart
 			return false;
 
