@@ -327,7 +327,7 @@ public partial class SkillSelect : Menu
 		}
 
 		// If the skill menu has already been initialized, just show the menu
-		if (menuMemory[MemoryKeys.SkillMenuInitialized] != 0)
+		if (menuMemory[MemoryKeys.SkillMenuInitialized] != 0 && unlockedSkillCount != 0)
 		{
 			base.ShowMenu();
 			return;
