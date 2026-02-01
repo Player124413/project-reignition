@@ -1,3 +1,4 @@
+using System.Linq;
 using Godot;
 using Godot.Collections;
 using Project.Core;
@@ -296,6 +297,15 @@ public partial class SkillSelect : Menu
 			// Start skill select music
 			parentMenu.FadeBgm(0.5f);
 			PlayBgm();
+		}
+
+		SkillOption[] oldSkillOptionList = skillOptionList.ToArray();
+
+		// Reset the skill order
+		for (int i = oldSkillOptionList.Length - 1; i >= 0; i--)
+		{
+			skillOptionList[(int)oldSkillOptionList[i].Skill.Key] = oldSkillOptionList[i];
+			optionContainer.MoveChild(oldSkillOptionList[i], (int)oldSkillOptionList[i].Skill.Key);
 		}
 
 		// Update unlocked skill count to account for multiple save files
