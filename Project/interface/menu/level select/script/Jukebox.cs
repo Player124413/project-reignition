@@ -79,6 +79,7 @@ public partial class Jukebox : Menu
 				SaveManager.ActiveGameData.selectedMusic.Add(selectedData.LevelID, ResourceUid.IdToText(ResourceLoader.GetResourceUid(songOptionList[cursorPosition].bgm.ResourcePath)));//Add the level ID to the dictionary with the selected song
 
 			SelectedSong.Equip();
+			animator.Play("equip");
 		}
 
 	}
@@ -161,9 +162,9 @@ public partial class Jukebox : Menu
 		BGMResource bgm;
 
 		animator.Play("show");
+		UnequipSongs();
 		for (int i = 0; i < songOptionList.Count; i++)
 		{
-			songOptionList[i].Unequip();
 
 			if (SaveManager.ActiveGameData.selectedMusic.TryGetValue(selectedData.LevelID, out bgmID))
 			{
