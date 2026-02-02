@@ -27,6 +27,7 @@ public partial class LevelSelect : Menu
 	private Vector2 scrollVelocity;
 	private const float ScrollSmoothing = .05f;
 	private readonly List<LevelOption> levelOptions = [];
+	[Export] private Jukebox jukebox;
 
 	public bool HasNewLevel()
 	{
@@ -79,6 +80,10 @@ public partial class LevelSelect : Menu
 
 	protected override void ProcessMenu()
 	{
+		if (Runtime.Instance.IsActionJustPressed("sys_pause", "ui_accept"))
+		{
+			OpenBGMMenu();
+		}
 		base.ProcessMenu();
 		UpdateListPosition(ScrollSmoothing);
 	}
@@ -170,6 +175,12 @@ public partial class LevelSelect : Menu
 		readyMenu.parentMenu = this;
 		readyMenu.LevelData = levelOptions[VerticalSelection].data;
 		readyMenu.ShowMenu();
+	}
+
+	private void OpenBGMMenu()
+	{
+		jukebox.selectedData = levelOptions[VerticalSelection].data;
+		jukebox.ShowMenu();
 	}
 
 	protected override void UpdateSelection()

@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Text.Json.Serialization;
 using Godot;
 using Godot.Collections;
 using Project.Gameplay;
@@ -965,6 +966,7 @@ public partial class SaveManager : Node
 		public Array<SkillKey> equippedSkills;
 		public Dictionary<SkillKey, int> equippedAugments;
 		public Array<SkillKey> viewedSkills;
+		public Dictionary<string, BGMResource> selectedMusic; //Ties the selected BGM resource to the currently selected stageID. Any stageID not found can be presumed to be default music.
 		public LevelSaveData LevelData => levelData;
 		private LevelSaveData levelData = new();
 
@@ -1076,6 +1078,7 @@ public partial class SaveManager : Node
 				{ nameof(presetNames), presetNames},
 				{ nameof(presetSkills), presetDictionary},
 				{ nameof(presetSkillAugments), augmentDictionary},
+				{ nameof(selectedMusic), selectedMusic},
 			};
 		}
 
@@ -1158,6 +1161,8 @@ public partial class SaveManager : Node
 				for (int i = 0; i < presetSkillAugments.Count; i++)
 					presetSkillAugments[i] = LoadAugments(presetAugments[i]);
 			}
+			if (dictionary.TryGetValue(nameof(selectedMusic), out var))
+				selectedMusic = (Dictionary<string, BGMResource>)var;
 		}
 
 		/// <summary> Converts an array of SkillKeys to an array of strings for index-agnostic saving. </summary>
@@ -1229,6 +1234,7 @@ public partial class SaveManager : Node
 				equippedSkills = [],
 				equippedAugments = [],
 				viewedSkills = [],
+				selectedMusic = [],
 				level = 0,
 				lastPlayedWorld = WorldEnum.LostPrologue,
 				levelData = new(),

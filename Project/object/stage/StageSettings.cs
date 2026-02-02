@@ -117,7 +117,15 @@ public partial class StageSettings : Node3D
 		}
 
 		SetEnvironmentFxFactor(environmentFxFactor, 0);
-		SoundManager.instance.UpdateBgmResource(DefaultBgm); // TODO Update with player-selected value
+
+		currentBGM = null;
+		if (SaveManager.ActiveGameData.selectedMusic.ContainsKey(Data.LevelID))
+			SaveManager.ActiveGameData.selectedMusic.TryGetValue(Data.LevelID, out currentBGM);
+
+		if (currentBGM == null)
+			SoundManager.instance.UpdateBgmResource(DefaultBgm); // TODO Update with player-selected value
+		else
+			SoundManager.instance.UpdateBgmResource(currentBGM);
 	}
 
 	public override void _ExitTree() => EmitSignal(SignalName.Unloaded);
@@ -236,6 +244,7 @@ public partial class StageSettings : Node3D
 	/// <summary> Reference to the level's data. </summary>
 	[Export] public LevelDataResource Data { get; private set; }
 	[Export] public BGMResource DefaultBgm { get; private set; }
+	[Export] public BGMResource currentBGM;
 	[Export] private bool disableObjectiveAutocompletion;
 	[Export] public CameraSettingsResource InitialCameraSettings { get; private set; }
 	[Export] public SFXLibraryResource dialogLibrary;
