@@ -67,39 +67,51 @@ public partial class Jukebox : Menu
 
 	protected override void Confirm()
 	{
-		//If our dictionary already contains the ID for the selected level
-		if (SaveManager.ActiveGameData.selectedMusic.ContainsKey(selectedData.LevelID))
+
+		if (menuMemory[MemoryKeys.ActiveMenu] == (int)MemoryKeys.Jukebox)
 		{
-			//Remove the level ID from the dictionary
-			SaveManager.ActiveGameData.selectedMusic.Remove(selectedData.LevelID);
+			UnequipSongs();
+
+			if (SaveManager.ActiveGameData.selectedMusic.ContainsKey(selectedData.LevelID)) //If our dictionary already contains the ID for the selected level
+				SaveManager.ActiveGameData.selectedMusic.Remove(selectedData.LevelID); //Remove the level ID from the dictionary
 
 			if (cursorPosition != 0) //If we haven't selected the default option
-				SaveManager.ActiveGameData.selectedMusic.Add(selectedData.LevelID, songOptionList[cursorPosition].bgm); //Add the level ID to the dictionary with the selected song
+				SaveManager.ActiveGameData.selectedMusic.Add(selectedData.LevelID, ResourceUid.IdToText(ResourceLoader.GetResourceUid(songOptionList[cursorPosition].bgm.ResourcePath)));//Add the level ID to the dictionary with the selected song
 
+			SelectedSong.Equip();
 		}
+
 	}
 
 	protected override void Cancel()
 	{
-		SaveManager.SaveGameData();
-		animator.Play("hide");
+		if (menuMemory[MemoryKeys.ActiveMenu] == (int)MemoryKeys.Jukebox)
+		{
+			SaveManager.SaveGameData();
+			animator.Play("hide");
+			menuMemory[MemoryKeys.ActiveMenu] = (int)MemoryKeys.LevelSelect;
 
-		// Return to level select music
-		FadeBgm(.5f);
-		parentMenu.PlayBgm();
+			// Return to level select music
+			FadeBgm(.5f);
+			parentMenu.PlayBgm();
+		}
 	}
 
 	protected override void UpdateSelection()
 	{
 
-		int inputSign = Mathf.Sign(Input.GetAxis("ui_up", "ui_down"));
-
-		if (inputSign != 0)
+		if (menuMemory[MemoryKeys.ActiveMenu] == (int)MemoryKeys.Jukebox)
 		{
-			VerticalSelection = WrapSelection(VerticalSelection + inputSign, songOptionList.Count);
-			UpdateScrollAmount(inputSign);
-			MoveCursor();
+			int inputSign = Mathf.Sign(Input.GetAxis("ui_up", "ui_down"));
+
+			if (inputSign != 0)
+			{
+				VerticalSelection = WrapSelection(VerticalSelection + inputSign, songOptionList.Count);
+				UpdateScrollAmount(inputSign);
+				MoveCursor();
+			}
 		}
+
 	}
 
 	private void UpdateScrollAmount(int amount)
@@ -145,26 +157,27 @@ public partial class Jukebox : Menu
 
 	public override void ShowMenu()
 	{
+		string bgmID;
 		BGMResource bgm;
-
 
 		animator.Play("show");
 		for (int i = 0; i < songOptionList.Count; i++)
 		{
 			songOptionList[i].Unequip();
 
-			if (SaveManager.ActiveGameData.selectedMusic.TryGetValue(selectedData.LevelID, out bgm))
+			if (SaveManager.ActiveGameData.selectedMusic.TryGetValue(selectedData.LevelID, out bgmID))
 			{
+				bgm = (BGMResource)ResourceLoader.Load(ResourceUid.GetIdPath(ResourceUid.TextToId(bgmID)));
 				if (songOptionList[i].bgm.SongName == bgm.SongName)
 				{
 					songOptionList[i].Equip();
-					break;
+					return;
 				}
 
 			}
 		}
 
-		if (!SaveManager.ActiveGameData.selectedMusic.TryGetValue(selectedData.LevelID, out bgm)) //If we have selected the default song
+		if (!SaveManager.ActiveGameData.selectedMusic.TryGetValue(selectedData.LevelID, out bgmID)) //If we have selected the default song
 			songOptionList[0].Equip();
 
 
@@ -174,6 +187,18 @@ public partial class Jukebox : Menu
 	{
 		for (int i = 0; i < songOptionList.Count; i++)
 			songOptionList[i].Visible = true;
+	}
+
+	public void HideSongs()
+	{
+		for (int i = 0; i < songOptionList.Count; i++)
+			songOptionList[i].Visible = false;
+	}
+
+	private void UnequipSongs()
+	{
+		for (int i = 0; i < songOptionList.Count; i++)
+			songOptionList[i].Unequip();
 	}
 
 	private void ScrollSelection(int targetSelection)

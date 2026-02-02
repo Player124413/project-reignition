@@ -80,8 +80,9 @@ public partial class LevelSelect : Menu
 
 	protected override void ProcessMenu()
 	{
-		if (Runtime.Instance.IsActionJustPressed("sys_pause", "ui_accept"))
+		if (Runtime.Instance.IsActionJustPressed("sys_pause", "ui_accept") && menuMemory[MemoryKeys.ActiveMenu] != (int)MemoryKeys.TimeAttack)
 		{
+			menuMemory[MemoryKeys.ActiveMenu] = (int)MemoryKeys.Jukebox;
 			OpenBGMMenu();
 		}
 		base.ProcessMenu();
@@ -90,6 +91,7 @@ public partial class LevelSelect : Menu
 
 	public override void ShowMenu()
 	{
+		GD.Print(SaveManager.ActiveGameData.selectedMusic);
 		if (menuMemory[MemoryKeys.ActiveMenu] == (int)MemoryKeys.TimeAttack)
 		{
 			menuMemory[MemoryKeys.LevelSelect] = 0;
@@ -141,11 +143,16 @@ public partial class LevelSelect : Menu
 		if (menuMemory[MemoryKeys.ActiveMenu] != (int)MemoryKeys.TimeAttack && !levelOptions[VerticalSelection].IsUnlocked)
 			return;
 
+		if (menuMemory[MemoryKeys.ActiveMenu] == (int)MemoryKeys.Jukebox)
+			return;
+
 		base.Confirm();
 	}
 
 	protected override void Cancel()
 	{
+		if (menuMemory[MemoryKeys.ActiveMenu] == (int)MemoryKeys.Jukebox)
+			return;
 		base.Cancel();
 
 		if (menuMemory[MemoryKeys.ActiveMenu] == (int)MemoryKeys.TimeAttack)
@@ -185,18 +192,22 @@ public partial class LevelSelect : Menu
 
 	protected override void UpdateSelection()
 	{
-		if (Mathf.IsZeroApprox(Input.GetAxis("ui_up", "ui_down"))) return;
+		if (menuMemory[MemoryKeys.ActiveMenu] != (int)MemoryKeys.Jukebox)
+		{
+			if (Mathf.IsZeroApprox(Input.GetAxis("ui_up", "ui_down"))) return;
 
-		VerticalSelection = WrapSelection(VerticalSelection + Mathf.Sign(Input.GetAxis("ui_up", "ui_down")), levelOptions.Count);
+			VerticalSelection = WrapSelection(VerticalSelection + Mathf.Sign(Input.GetAxis("ui_up", "ui_down")), levelOptions.Count);
 
-		menuMemory[MemoryKeys.LevelSelect] = VerticalSelection;
-		animator.Play("select");
-		animator.Seek(0, true);
+			menuMemory[MemoryKeys.LevelSelect] = VerticalSelection;
+			animator.Play("select");
+			animator.Seek(0, true);
 
-		if (menuMemory[MemoryKeys.ActiveMenu] != (int)MemoryKeys.TimeAttack)
-			UpdateDescription();
-		StartSelectionTimer();
-		RecalculateListPosition();
+			if (menuMemory[MemoryKeys.ActiveMenu] != (int)MemoryKeys.TimeAttack)
+				UpdateDescription();
+			StartSelectionTimer();
+			RecalculateListPosition();
+		}
+
 	}
 
 	private void UpdateDescription()

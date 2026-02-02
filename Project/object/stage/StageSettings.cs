@@ -118,14 +118,22 @@ public partial class StageSettings : Node3D
 
 		SetEnvironmentFxFactor(environmentFxFactor, 0);
 
+		string bgmID;
 		currentBGM = null;
 		if (SaveManager.ActiveGameData.selectedMusic.ContainsKey(Data.LevelID))
-			SaveManager.ActiveGameData.selectedMusic.TryGetValue(Data.LevelID, out currentBGM);
+		{
+			SaveManager.ActiveGameData.selectedMusic.TryGetValue(Data.LevelID, out bgmID);
+			currentBGM = (BGMResource)ResourceLoader.Load(ResourceUid.GetIdPath(ResourceUid.TextToId(bgmID)));
+		}
 
 		if (currentBGM == null)
 			SoundManager.instance.UpdateBgmResource(DefaultBgm); // TODO Update with player-selected value
 		else
 			SoundManager.instance.UpdateBgmResource(currentBGM);
+
+		GD.Print("current level: " + Data.LevelID);
+		GD.Print("selected music: " + SaveManager.ActiveGameData.selectedMusic);
+		GD.Print("current BGM: " + currentBGM);
 	}
 
 	public override void _ExitTree() => EmitSignal(SignalName.Unloaded);

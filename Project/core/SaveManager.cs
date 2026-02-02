@@ -966,7 +966,7 @@ public partial class SaveManager : Node
 		public Array<SkillKey> equippedSkills;
 		public Dictionary<SkillKey, int> equippedAugments;
 		public Array<SkillKey> viewedSkills;
-		public Dictionary<string, BGMResource> selectedMusic; //Ties the selected BGM resource to the currently selected stageID. Any stageID not found can be presumed to be default music.
+		public Dictionary<string, string> selectedMusic; //Ties the selected BGM resource to the currently selected stageID. Any stageID not found can be presumed to be default music.
 		public LevelSaveData LevelData => levelData;
 		private LevelSaveData levelData = new();
 
@@ -1162,7 +1162,7 @@ public partial class SaveManager : Node
 					presetSkillAugments[i] = LoadAugments(presetAugments[i]);
 			}
 			if (dictionary.TryGetValue(nameof(selectedMusic), out var))
-				selectedMusic = (Dictionary<string, BGMResource>)var;
+				selectedMusic = (Dictionary<string, string>)var;
 		}
 
 		/// <summary> Converts an array of SkillKeys to an array of strings for index-agnostic saving. </summary>
