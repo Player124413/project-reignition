@@ -79,6 +79,8 @@ public partial class PlayerInputController : Node
 
 	/// <summary> Maximum amount the player can turn when running at full speed. </summary>
 	public readonly float TurningDampingRange = Mathf.Pi * .35f;
+	/// <summary> Maximum amount the player can turn when in an autorun lockout at minimum speed. </summary>
+	public readonly float AutorunLockoutTurningDampingRange = Mathf.Pi * 0.45f;
 	/// <summary> Rotation amount to just flat-out ignore player input. </summary>
 	public readonly float TurningDeadzone = Mathf.Pi * .08f;
 
@@ -358,7 +360,15 @@ public partial class PlayerInputController : Node
 			inputs *= sign >= 0 ? 1 : -1;
 		}
 
-		float strafeAngle = inputs.X * TurningDampingRange;
+		float strafeAngle = TurningDampingRange;
+		if (Player.IsLockoutActive && Player.ActiveLockoutData.overrideSpeed)
+		{
+			float t = Player.Stats.GroundSettings.GetSpeedRatioClamped(Player.MoveSpeed);
+			strafeAngle = Mathf.Lerp(AutorunLockoutTurningDampingRange, TurningDampingRange, t);
+		}
+
+		strafeAngle *= inputs.X;
+
 		if (Player.IsMovingBackwardFreeRoam || Player.IsMovingBackward)
 		{
 			strafeAngle *= -1;
