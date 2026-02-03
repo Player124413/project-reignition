@@ -69,6 +69,7 @@ public partial class StageSettings : Node3D
 		EquipRequiredSkill();
 	}
 
+	private bool wasSkillForceEquipped;
 	private SkillKey conflictingSkill = SkillKey.Count;
 	private int conflictingSkillIndex = 0;
 	/// <summary> For Lost Prologue: Force equip skills needed for tutorials. </summary>
@@ -85,13 +86,14 @@ public partial class StageSettings : Node3D
 			SaveManager.ActiveSkillRing.ForceUnequipSkill(conflictingSkill, conflictingSkillIndex);
 		}
 
-		GD.Print(SaveManager.ActiveSkillRing.EquipSkill(Data.RequiredSkill.Key, Data.RequiredSkill.AugmentIndex, true));
+		wasSkillForceEquipped = true;
+		SaveManager.ActiveSkillRing.EquipSkill(Data.RequiredSkill.Key, Data.RequiredSkill.AugmentIndex, true);
 	}
 
 	/// <summary> Restores skills back to whatever we started with. </summary>
 	private void RevertRequiredSkill()
 	{
-		if (conflictingSkill == SkillKey.Count) // Nothing to revert to.
+		if (!wasSkillForceEquipped) // Nothing to revert to.
 			return;
 
 		SaveManager.ActiveSkillRing.UnequipSkill(Data.RequiredSkill.Key, Data.RequiredSkill.AugmentIndex);
@@ -120,7 +122,11 @@ public partial class StageSettings : Node3D
 		SoundManager.instance.UpdateBgmResource(DefaultBgm); // TODO Update with player-selected value
 	}
 
-	public override void _ExitTree() => EmitSignal(SignalName.Unloaded);
+	public override void _ExitTree()
+	{
+		RevertRequiredSkill();
+		EmitSignal(SignalName.Unloaded);
+	}
 
 	public void UpdateQualitySettings()
 	{
@@ -643,8 +649,6 @@ public partial class StageSettings : Node3D
 
 		EmitSignal(SignalName.LevelCompleted);
 		EmitSignal(wasSuccessful ? SignalName.LevelSuccess : SignalName.LevelFailed);
-
-		RevertRequiredSkill();
 
 		// Process save data after emitting level completion
 		CalculateTechnicalBonus(); // Recalculate technical bonus
