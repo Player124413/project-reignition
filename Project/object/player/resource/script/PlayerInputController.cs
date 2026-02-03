@@ -233,7 +233,7 @@ public partial class PlayerInputController : Node
 
 	public float CalculatePathControlAmount()
 	{
-		if (IsStrafeModeActive || Player.IsLockoutActive)
+		if (SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.Autorun) || Player.IsLockoutActive)
 			return 0; // Don't use path influence during speedbreak/autorun
 
 		return Player.PathTurnInfluence;
