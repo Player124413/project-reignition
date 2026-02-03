@@ -77,7 +77,7 @@ public partial class PlayerLockonController : Area3D
 	{
 		bool wasTargetChanged = false;
 
-		if (Player.Controller.IsStrafeModeActive)
+		if (SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.Autorun))
 			GlobalRotation = Vector3.Up * Player.PathFollower.ForwardAngle;
 
 		isSideScrolling = Player.IsLockoutOverridingMovementAngle &&

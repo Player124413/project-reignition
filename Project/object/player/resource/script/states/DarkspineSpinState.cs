@@ -81,7 +81,7 @@ public partial class DarkspineSpinState : PlayerState
 			return;
 		}
 
-		ProcessStrafeSpeed();
+		ProcessAutorunStrafeSpeed();
 	}
 
 	protected override void ProcessTurning()

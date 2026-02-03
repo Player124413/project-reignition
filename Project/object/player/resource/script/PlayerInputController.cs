@@ -238,7 +238,8 @@ public partial class PlayerInputController : Node
 	}
 
 	/// <summary> Returns whether the player is currently in strafing mode. </summary>
-	public bool IsStrafeModeActive => SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.Autorun) ||
+	public bool IsStrafeModeActive => Player.Skills.IsSpeedBreakActive ||
+			SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.Autorun) ||
 			(Player.IsLockoutActive && Player.ActiveLockoutData.movementMode == LockoutResource.MovementModes.Strafe);
 
 	/// <summary> Returns the automaticly calculated input angle based on the game's settings and skills. </summary>
@@ -364,7 +365,7 @@ public partial class PlayerInputController : Node
 			baseAngle = Player.PathFollower.BackAngle;
 		}
 
-		if (!IsStrafeModeActive || Player.IsBackflipping)
+		if (!SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.Autorun) || Player.IsBackflipping)
 			baseAngle -= strafeAngle;
 
 		return baseAngle;

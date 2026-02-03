@@ -25,7 +25,7 @@ public partial class PlayerState : Node
 	protected MovementSetting ActiveMovementSettings => Player.IsOnGround ? Player.Stats.GroundSettings : Player.Stats.AirSettings;
 	protected virtual void ProcessMoveSpeed()
 	{
-		ProcessStrafeSpeed();
+		ProcessAutorunStrafeSpeed();
 		turnInstantly = Mathf.IsZeroApprox(Player.MoveSpeed) && !Player.Skills.IsSpeedBreakActive; // Store this for turning function
 
 		if (Player.Skills.IsSpeedBreakActive)
@@ -85,9 +85,12 @@ public partial class PlayerState : Node
 		Accelerate(inputStrength);
 	}
 
-	protected virtual void ProcessStrafeSpeed()
+	protected virtual void ProcessAutorunStrafeSpeed()
 	{
-		if (!Player.Controller.IsStrafeModeActive || Player.Controller.IsBrakeHeld() ||
+		if (!SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.Autorun))
+			return;
+
+		if (Player.Controller.IsBrakeHeld() ||
 			Player.IsLockoutOverridingMovementAngle && (Player.ActiveLockoutData.movementMode != LockoutResource.MovementModes.Strafe || Player.ActiveLockoutData.recenterPlayer))
 		{
 			Player.StrafeSpeed = Player.Stats.StrafeSettings.UpdateInterpolate(Player.StrafeSpeed, -1.0f); // Reset to 0 quickly
@@ -175,8 +178,7 @@ public partial class PlayerState : Node
 		Turn(targetMovementAngle, turnSmoothing);
 
 		// Strafe implementation
-		if (Player.Controller.IsStrafeModeActive)
-			ProcessStrafe(targetMovementAngle);
+		ProcessAutorunStrafe(targetMovementAngle);
 	}
 
 	protected virtual bool DisableTurning(float targetMovementAngle)
@@ -206,8 +208,11 @@ public partial class PlayerState : Node
 		return false;
 	}
 
-	protected virtual void ProcessStrafe(float targetMovementAngle)
+	protected virtual void ProcessAutorunStrafe(float targetMovementAngle)
 	{
+		if (!SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.Autorun))
+			return;
+
 		if (Mathf.IsZeroApprox(Player.Controller.GetInputStrength()))
 			strafeBlend = Mathf.MoveToward(strafeBlend, 1.0f, PhysicsManager.physicsDelta);
 		else

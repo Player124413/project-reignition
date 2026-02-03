@@ -85,9 +85,9 @@ public partial class BackstepState : PlayerState
 	protected override void Accelerate(float inputStrength) => Player.MoveSpeed = Player.Stats.BackstepSettings.UpdateInterpolate(Player.MoveSpeed, inputStrength);
 	protected override void Brake() => Player.MoveSpeed = Player.Stats.BackstepSettings.UpdateInterpolate(Player.MoveSpeed, -1);
 
-	protected override void ProcessStrafeSpeed()
+	protected override void ProcessAutorunStrafeSpeed()
 	{
-		base.ProcessStrafeSpeed();
+		base.ProcessAutorunStrafeSpeed();
 		Player.StrafeSpeed = Mathf.Clamp(Player.StrafeSpeed, -Player.Stats.BackstepSettings.Speed, Player.Stats.BackstepSettings.Speed);
 	}
 

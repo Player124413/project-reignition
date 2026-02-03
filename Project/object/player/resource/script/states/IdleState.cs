@@ -99,7 +99,7 @@ public partial class IdleState : PlayerState
 		}
 
 		if (Player.Controller.IsStrafeModeActive)
-			ProcessStrafeSpeed();
+			ProcessAutorunStrafeSpeed();
 
 		if (!Mathf.IsZeroApprox(Player.MoveSpeed) ||
 			(Player.Controller.IsStrafeModeActive && !Mathf.IsZeroApprox(Player.StrafeSpeed)))

@@ -158,7 +158,7 @@ public partial class SlideState : PlayerState
 
 	protected override void ProcessMoveSpeed()
 	{
-		ProcessStrafeSpeed();
+		ProcessAutorunStrafeSpeed();
 		Player.Stats.UpdateSlideSpeed(Player.SlopeRatio);
 
 		// Influence speed based on input strength
