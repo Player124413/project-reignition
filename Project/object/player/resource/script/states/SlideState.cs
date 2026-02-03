@@ -149,7 +149,6 @@ public partial class SlideState : PlayerState
 		if (Mathf.IsZeroApprox(Player.MoveSpeed))
 		{
 			Player.Animator.SlideToCrouch();
-			Player.ChangeHitbox("crouch");
 			return crouchState;
 		}
 
