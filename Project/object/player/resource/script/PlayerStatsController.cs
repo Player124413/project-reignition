@@ -72,7 +72,7 @@ public partial class PlayerStatsController : Node
 	[ExportSubgroup("Turn Settings")]
 	[Export] private float baseMinTurn = .1f;
 	[Export] private float baseMaxTurn = .4f;
-	[Export] private float baseTurnTurnaround = .25f;
+	[Export] private float baseRecenterTurn = .25f;
 	[Export(PropertyHint.Range, "0,5,.1f")] private float quickTurnLowRatio = .9f;
 	[Export(PropertyHint.Range, "0,5,.1f")] private float quickTurnMediumRatio = .7f;
 	[Export(PropertyHint.Range, "0,5,.1f")] private float quickTurnHighRatio = .5f;
@@ -314,7 +314,7 @@ public partial class PlayerStatsController : Node
 
 		MinTurnAmount = baseMinTurn;
 		MaxTurnAmount = baseMaxTurn * GetTurnRatio();
-		RecenterTurnAmount = baseTurnTurnaround * Mathf.Min(GetTurnRatio(), 1f);
+		RecenterTurnAmount = baseRecenterTurn * Mathf.Max(GetTurnRatio(), 1f);
 	}
 }
 
