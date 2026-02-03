@@ -67,7 +67,6 @@ public partial class Jukebox : Menu
 
 	protected override void Confirm()
 	{
-
 		if (menuMemory[MemoryKeys.ActiveMenu] == (int)MemoryKeys.Jukebox)
 		{
 			UnequipSongs();
@@ -76,10 +75,34 @@ public partial class Jukebox : Menu
 				SaveManager.ActiveGameData.selectedMusic.Remove(selectedData.LevelID); //Remove the level ID from the dictionary
 
 			if (cursorPosition != 0) //If we haven't selected the default option
+			{
 				SaveManager.ActiveGameData.selectedMusic.Add(selectedData.LevelID, ResourceUid.IdToText(ResourceLoader.GetResourceUid(songOptionList[cursorPosition].bgm.ResourcePath)));//Add the level ID to the dictionary with the selected song
+
+				bgm.SetBgmResource(songOptionList[cursorPosition].bgm);
+				bgm.LoadBgmResource();
+
+				if (parentMenu.bgm.GetBgmResource() != null)
+					parentMenu.bgm.Stop();
+				else
+					parentMenu.parentMenu.bgm.Stop();//This is for lost prologue, since it doesn't have a level select BGM
+
+				bgm.Play();
+			}
+			else
+			{
+
+				if (bgm.Playing)
+					bgm.Stop();
+				if (parentMenu.bgm.GetBgmResource() != null && !parentMenu.bgm.Playing)
+					parentMenu.bgm.Play();
+				else if (!parentMenu.parentMenu.bgm.Playing)
+					parentMenu.parentMenu.bgm.Play();
+			}
+
 
 			SelectedSong.Equip();
 			animator.Play("equip");
+
 		}
 
 	}
@@ -88,13 +111,19 @@ public partial class Jukebox : Menu
 	{
 		if (menuMemory[MemoryKeys.ActiveMenu] == (int)MemoryKeys.Jukebox)
 		{
-			SaveManager.SaveGameData();
-			animator.Play("hide");
 			menuMemory[MemoryKeys.ActiveMenu] = (int)MemoryKeys.LevelSelect;
+			animator.Play("hide");
+			SaveManager.SaveGameData();
 
-			// Return to level select music
-			FadeBgm(.5f);
-			parentMenu.PlayBgm();
+			if (bgm.Playing)
+			{
+				bgm.Stop();
+				if (parentMenu.bgm.GetBgmResource() != null)
+					parentMenu.bgm.Play();
+				else
+					parentMenu.parentMenu.bgm.Play();
+			}
+
 		}
 	}
 

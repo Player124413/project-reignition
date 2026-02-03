@@ -80,7 +80,7 @@ public partial class LevelSelect : Menu
 
 	protected override void ProcessMenu()
 	{
-		if (Runtime.Instance.IsActionJustPressed("sys_pause", "ui_accept") && menuMemory[MemoryKeys.ActiveMenu] != (int)MemoryKeys.TimeAttack)
+		if (Runtime.Instance.IsActionJustPressed("sys_pause", "ui_accept") && menuMemory[MemoryKeys.ActiveMenu] != (int)MemoryKeys.TimeAttack && menuMemory[MemoryKeys.ActiveMenu] != (int)MemoryKeys.Jukebox)
 		{
 			menuMemory[MemoryKeys.ActiveMenu] = (int)MemoryKeys.Jukebox;
 			OpenBGMMenu();

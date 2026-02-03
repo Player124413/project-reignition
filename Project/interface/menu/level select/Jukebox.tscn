@@ -129,6 +129,24 @@ tracks/2/keys = {
 "values": [Color(1, 1, 1, 0)]
 }
 
+[sub_resource type="Animation" id="Animation_h0btr"]
+resource_name = "equip"
+length = 0.01
+tracks/0/type = "method"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("SFX/Equip")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0.033333335),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [0.0],
+"method": &"play"
+}]
+}
+
 [sub_resource type="Animation" id="Animation_k8x75"]
 resource_name = "hide"
 length = 0.2667
@@ -163,14 +181,11 @@ tracks/2/path = NodePath(".")
 tracks/2/interp = 1
 tracks/2/loop_wrap = true
 tracks/2/keys = {
-"times": PackedFloat32Array(0, 0.26666668),
-"transitions": PackedFloat32Array(1, 1),
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
 "values": [{
 "args": [],
 "method": &"DisableProcessing"
-}, {
-"args": [],
-"method": &"EnableProcessing"
 }]
 }
 tracks/3/type = "value"
@@ -338,24 +353,6 @@ tracks/5/keys = {
 }]
 }
 
-[sub_resource type="Animation" id="Animation_h0btr"]
-resource_name = "equip"
-length = 0.01
-tracks/0/type = "method"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("SFX/Equip")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0.033333335),
-"transitions": PackedFloat32Array(1),
-"values": [{
-"args": [0.0],
-"method": &"play"
-}]
-}
-
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_oj0xe"]
 _data = {
 &"RESET": SubResource("Animation_oj0xe"),
@@ -365,7 +362,7 @@ _data = {
 &"show": SubResource("Animation_nlil1")
 }
 
-[node name="Jukebox" type="Control" node_paths=PackedStringArray("optionContainer", "cursor", "scrollbar", "animator")]
+[node name="Jukebox" type="Control" node_paths=PackedStringArray("optionContainer", "cursor", "scrollbar", "bgm", "animator")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -378,6 +375,7 @@ optionContainer = NodePath("Content/Clip/Options")
 cursor = NodePath("Content/CursorOrigin/Cursor")
 scrollbar = NodePath("Content/Window/Scrollbar/ScrollPosition")
 songList = Array[Object]([ExtResource("3_d1at2"), ExtResource("4_13j40"), ExtResource("5_k8x75"), ExtResource("6_h0btr"), ExtResource("7_ovap0")])
+bgm = NodePath("BGM")
 animator = NodePath("AnimationPlayer")
 
 [node name="Content" type="Control" parent="."]

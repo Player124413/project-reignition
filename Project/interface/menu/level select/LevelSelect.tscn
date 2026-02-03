@@ -863,7 +863,7 @@ _data = {
 &"show": SubResource("Animation_8vhjs")
 }
 
-[node name="LevelSelect" type="Control" node_paths=PackedStringArray("cursor", "options", "scrollbar", "jukebox", "bgm", "animator")]
+[node name="LevelSelect" type="Control" node_paths=PackedStringArray("cursor", "options", "scrollbar", "jukebox", "parentMenu", "bgm", "animator")]
 visible = false
 layout_mode = 3
 anchors_preset = 15
@@ -876,6 +876,7 @@ cursor = NodePath("Cursor")
 options = NodePath("Clip/Options")
 scrollbar = NodePath("Scrollbar/ScrollPosition")
 jukebox = NodePath("Jukebox")
+parentMenu = NodePath("Jukebox")
 submenus = []
 bgm = NodePath("BGM")
 animator = NodePath("AnimationPlayer")
@@ -1178,5 +1179,6 @@ bus = &"BGM"
 script = ExtResource("14_f6v0v")
 loadAsyncronously = true
 
-[node name="Jukebox" parent="." instance=ExtResource("14_yvgri")]
+[node name="Jukebox" parent="." node_paths=PackedStringArray("parentMenu") instance=ExtResource("14_yvgri")]
 layout_mode = 1
+parentMenu = NodePath("..")
