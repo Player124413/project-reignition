@@ -210,7 +210,7 @@ public partial class PlayerState : Node
 
 	protected virtual void ProcessAutorunStrafe(float targetMovementAngle)
 	{
-		if (!SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.Autorun))
+		if (!Player.Controller.IsStrafeModeActive)
 			return;
 
 		if (Mathf.IsZeroApprox(Player.Controller.GetInputStrength()))
