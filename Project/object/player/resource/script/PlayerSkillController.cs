@@ -438,7 +438,7 @@ public partial class PlayerSkillController : Node3D
 			timeBreakAnimator.Play(isTimeBreakEnabled ? "stop" : "RESET");
 			timeBreakAnimator.Advance(0.0);
 
-			speedBreakTimer = BreakSkillsCooldown;
+			timeBreakTimer = BreakSkillsCooldown;
 			SoundManager.instance.SetStageMusicVolume(0f);
 			HeadsUpDisplay.Instance?.ActiveSoulGauge.UpdateSoulGaugeColor(IsSoulGaugeCharged);
 			EmitSignal(SignalName.TimeBreakStopped);
