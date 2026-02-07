@@ -165,14 +165,6 @@ public partial class SaveManager : Node
 		Count
 	}
 
-	public enum SubtitleOpacity
-	{
-		Zero,
-		TwentyFive,
-		SeventyFive,
-		OneHundred,
-		Count
-	}
 
 	public static readonly Vector2I[] WindowSizes =
 	[
@@ -296,6 +288,7 @@ public partial class SaveManager : Node
 		public bool useQuickLoad;
 		public bool skipRepeatCutscenes; // Enable this to skip cutscenes when replaying missions
 		public int subtitleOpacity = 20;
+		public int cutsceneOpacity = 20;
 
 		/// <summary> Creates a dictionary based on config data. </summary>
 		public Dictionary ToDictionary()
@@ -356,6 +349,7 @@ public partial class SaveManager : Node
 
 				{ nameof(useQuickLoad), useQuickLoad },
 				{ nameof(subtitleOpacity), subtitleOpacity},
+				{ nameof(cutsceneOpacity), cutsceneOpacity},
 			};
 		}
 
@@ -462,6 +456,8 @@ public partial class SaveManager : Node
 				Instance.IsQuickLoadAlertEnabled = true;
 			if (dictionary.TryGetValue(nameof(subtitleOpacity), out var))
 				subtitleOpacity = (int)var;
+			if (dictionary.TryGetValue(nameof(cutsceneOpacity), out var))
+				cutsceneOpacity = (int)var;
 
 		}
 	}

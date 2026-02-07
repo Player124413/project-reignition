@@ -283,7 +283,10 @@ public partial class SoundManager : Node
 
 	private void InitializeSubtitleOpacity()
 	{
-		subtitleLetterbox.Color = new Color(0.0f, 0.0f, 0.0f, SaveManager.Config.subtitleOpacity * 0.01f);
+		if (!currentDialog.IsCutscene)
+			subtitleLetterbox.Color = new Color(0.0f, 0.0f, 0.0f, SaveManager.Config.subtitleOpacity * 0.01f);
+		else
+			subtitleLetterbox.Color = new Color(0.0f, 0.0f, 0.0f, SaveManager.Config.cutsceneOpacity * 0.01f);
 	}
 
 	private void UpdateButtonPromptPosition()
