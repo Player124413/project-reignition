@@ -1,4 +1,4 @@
-[gd_scene load_steps=38 format=3 uid="uid://7kcasi6v1odv"]
+[gd_scene load_steps=37 format=3 uid="uid://7kcasi6v1odv"]
 
 [ext_resource type="Script" uid="uid://dtkbvehtmy3em" path="res://object/stage/StageSettings.cs" id="1_fxxlg"]
 [ext_resource type="PackedScene" uid="uid://ctpgc4qaiar68" path="res://area/1 sand oasis/act 3/environment/collision/Collision.tscn" id="1_wbafh"]
@@ -18,7 +18,6 @@
 [ext_resource type="PackedScene" uid="uid://dj37itfdjb74j" path="res://area/1 sand oasis/act 3/environment/02Descent.tscn" id="7_dg1ex"]
 [ext_resource type="Curve3D" uid="uid://27uwgglqp1g6" path="res://area/1 sand oasis/act 3/environment/path/MainPath.tres" id="8_5ae3c"]
 [ext_resource type="Script" uid="uid://coiui4qvdxbqe" path="res://object/trigger/modules/EventTrigger.cs" id="17_2ednf"]
-[ext_resource type="PackedScene" uid="uid://dxbw8ov7aco18" path="res://area/1 sand oasis/act 3/fire_lights.tscn" id="18_ccpm0"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_kh3tl"]
 size = Vector3(15, 20, 66)
@@ -843,171 +842,847 @@ transform = Transform3D(0.9063077, 0, -0.42261824, 0, 0.99999994, 0, 0.42261824,
 transform = Transform3D(1.0000021, 1.8626453e-07, 1.4901161e-07, -7.450581e-09, 1, -8.940697e-08, -4.172325e-07, 4.2632564e-14, 1.000002, 13.153963, 6.055977, 15.02512)
 shape = SubResource("BoxShape3D_ccpm0")
 
-[node name="FireLights" parent="Lighting" instance=ExtResource("18_ccpm0")]
+[node name="FireLights" type="Node3D" parent="Lighting"]
 
-[node name="OmniLight3D" parent="Lighting/FireLights" index="0"]
+[node name="OmniLight3D" type="OmniLight3D" parent="Lighting/FireLights"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -23.783892, 2.394293, -45.865692)
+layers = 1024
 light_color = Color(0.8670524, 0.4466123, 0.16859916, 1)
 light_energy = 3.35
+light_indirect_energy = 2.586
+light_volumetric_fog_energy = 0.712
+light_size = 0.059
+light_cull_mask = 71
 omni_range = 7.168
 omni_attenuation = -1.133
 omni_shadow_mode = 0
 
-[node name="OmniLight3D2" parent="Lighting/FireLights" index="1"]
+[node name="SpotLight3D" type="SpotLight3D" parent="Lighting/FireLights/OmniLight3D"]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, -0.08133793, 0)
+layers = 1024
+light_color = Color(0.66443497, 0.39580986, 0.15515873, 1)
+light_energy = 2.946
+light_indirect_energy = 0.783
+light_volumetric_fog_energy = 1.721
+light_cull_mask = 71
+shadow_enabled = true
+spot_range = 5.506735
+
+[node name="SpotLight3D" type="SpotLight3D" parent="Lighting/FireLights/OmniLight3D/SpotLight3D"]
+transform = Transform3D(1, 0, 0, 0, 0.9998437, 0.017679248, 0, -0.017679248, 0.9998437, 0, -0.081336975, 0)
+layers = 1024
+light_color = Color(0.66443497, 0.39580986, 0.15515873, 1)
+light_energy = 1.865
+light_indirect_energy = 1.432
+light_volumetric_fog_energy = 1.721
+light_negative = true
+light_cull_mask = 71
+spot_range = 8.494562
+
+[node name="OmniLight3D2" type="OmniLight3D" parent="Lighting/FireLights"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12.92378, 2.1898947, -50.00839)
+layers = 1024
 light_color = Color(0.8670524, 0.4466123, 0.16859916, 1)
+light_energy = 5.334
+light_indirect_energy = 2.586
+light_volumetric_fog_energy = 0.712
+light_size = 0.059
+light_cull_mask = 71
 omni_range = 7.168
 omni_attenuation = -1.133
 omni_shadow_mode = 0
 
-[node name="OmniLight3D3" parent="Lighting/FireLights" index="2"]
+[node name="SpotLight3D" type="SpotLight3D" parent="Lighting/FireLights/OmniLight3D2"]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, -0.08133793, 0)
+layers = 1024
+light_color = Color(0.66443497, 0.39580986, 0.15515873, 1)
+light_energy = 2.946
+light_indirect_energy = 0.783
+light_volumetric_fog_energy = 1.721
+light_cull_mask = 71
+shadow_enabled = true
+spot_range = 5.506735
+
+[node name="SpotLight3D" type="SpotLight3D" parent="Lighting/FireLights/OmniLight3D2/SpotLight3D"]
+transform = Transform3D(1, 0, 0, 0, 0.9998437, 0.017679248, 0, -0.017679248, 0.9998437, 0, -0.081336975, 0)
+layers = 1024
+light_color = Color(0.66443497, 0.39580986, 0.15515873, 1)
+light_energy = 1.865
+light_indirect_energy = 1.432
+light_volumetric_fog_energy = 1.721
+light_negative = true
+light_cull_mask = 71
+spot_range = 8.494562
+
+[node name="OmniLight3D3" type="OmniLight3D" parent="Lighting/FireLights"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -28.54031, -1.2618876, -58.333096)
+layers = 1024
 light_color = Color(0.8670524, 0.4466123, 0.16859916, 1)
+light_energy = 5.334
+light_indirect_energy = 2.586
+light_volumetric_fog_energy = 0.712
+light_size = 0.059
+light_cull_mask = 71
 omni_range = 7.168
 omni_attenuation = -1.133
 omni_shadow_mode = 0
 
-[node name="OmniLight3D4" parent="Lighting/FireLights" index="3"]
+[node name="SpotLight3D" type="SpotLight3D" parent="Lighting/FireLights/OmniLight3D3"]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, -0.08133793, 0)
+layers = 1024
+light_color = Color(0.66443497, 0.39580986, 0.15515873, 1)
+light_energy = 2.946
+light_indirect_energy = 0.783
+light_volumetric_fog_energy = 1.721
+light_cull_mask = 71
+shadow_enabled = true
+spot_range = 5.506735
+
+[node name="SpotLight3D" type="SpotLight3D" parent="Lighting/FireLights/OmniLight3D3/SpotLight3D"]
+transform = Transform3D(1, 0, 0, 0, 0.9998437, 0.017679248, 0, -0.017679248, 0.9998437, 0, -0.081336975, 0)
+layers = 1024
+light_color = Color(0.66443497, 0.39580986, 0.15515873, 1)
+light_energy = 1.865
+light_indirect_energy = 1.432
+light_volumetric_fog_energy = 1.721
+light_negative = true
+light_cull_mask = 71
+spot_range = 8.494562
+
+[node name="OmniLight3D4" type="OmniLight3D" parent="Lighting/FireLights"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -17.743107, -1.166631, -62.516506)
+layers = 1024
 light_color = Color(0.8670524, 0.4466123, 0.16859916, 1)
+light_energy = 5.334
+light_indirect_energy = 2.586
+light_volumetric_fog_energy = 0.712
+light_size = 0.059
+light_cull_mask = 71
 omni_range = 7.168
 omni_attenuation = -1.133
 omni_shadow_mode = 0
 
-[node name="OmniLight3D5" parent="Lighting/FireLights" index="4"]
+[node name="SpotLight3D" type="SpotLight3D" parent="Lighting/FireLights/OmniLight3D4"]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, -0.08133793, 0)
+layers = 1024
+light_color = Color(0.66443497, 0.39580986, 0.15515873, 1)
+light_energy = 2.946
+light_indirect_energy = 0.783
+light_volumetric_fog_energy = 1.721
+light_cull_mask = 71
+shadow_enabled = true
+spot_range = 5.506735
+
+[node name="SpotLight3D" type="SpotLight3D" parent="Lighting/FireLights/OmniLight3D4/SpotLight3D"]
+transform = Transform3D(1, 0, 0, 0, 0.9998437, 0.017679248, 0, -0.017679248, 0.9998437, 0, -0.081336975, 0)
+layers = 1024
+light_color = Color(0.66443497, 0.39580986, 0.15515873, 1)
+light_energy = 1.865
+light_indirect_energy = 1.432
+light_volumetric_fog_energy = 1.721
+light_negative = true
+light_cull_mask = 71
+spot_range = 8.494562
+
+[node name="OmniLight3D5" type="OmniLight3D" parent="Lighting/FireLights"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12.978098, 2.4608498, 50.050446)
+layers = 1024
 light_color = Color(0.8670524, 0.4466123, 0.16859916, 1)
+light_energy = 5.334
 light_indirect_energy = 1.306
 light_volumetric_fog_energy = 1.16
 light_size = 0.087
+light_cull_mask = 71
 omni_range = 7.168
 omni_attenuation = -1.133
 omni_shadow_mode = 0
 
-[node name="OmniLight3D6" parent="Lighting/FireLights" index="5"]
+[node name="SpotLight3D" type="SpotLight3D" parent="Lighting/FireLights/OmniLight3D5"]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, -0.08133793, 0)
+layers = 1024
+light_color = Color(0.66443497, 0.39580986, 0.15515873, 1)
+light_energy = 2.946
+light_indirect_energy = 0.783
+light_volumetric_fog_energy = 1.721
+light_cull_mask = 71
+shadow_enabled = true
+spot_range = 5.506735
+
+[node name="SpotLight3D" type="SpotLight3D" parent="Lighting/FireLights/OmniLight3D5/SpotLight3D"]
+transform = Transform3D(1, 0, 0, 0, 0.9998437, 0.017679248, 0, -0.017679248, 0.9998437, 0, -0.081336975, 0)
+layers = 1024
+light_color = Color(0.66443497, 0.39580986, 0.15515873, 1)
+light_energy = 1.865
+light_indirect_energy = 1.432
+light_volumetric_fog_energy = 1.721
+light_negative = true
+light_cull_mask = 71
+spot_range = 8.494562
+
+[node name="OmniLight3D6" type="OmniLight3D" parent="Lighting/FireLights"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 23.725904, 2.6058884, 45.783127)
+layers = 1024
 light_color = Color(0.8670524, 0.4466123, 0.16859916, 1)
+light_energy = 5.334
+light_indirect_energy = 2.586
+light_volumetric_fog_energy = 0.712
+light_size = 0.059
+light_cull_mask = 71
 omni_range = 7.168
 omni_attenuation = -1.133
 omni_shadow_mode = 0
 
-[node name="OmniLight3D7" parent="Lighting/FireLights" index="6"]
+[node name="SpotLight3D" type="SpotLight3D" parent="Lighting/FireLights/OmniLight3D6"]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, -0.08133793, 0)
+layers = 1024
+light_color = Color(0.66443497, 0.39580986, 0.15515873, 1)
+light_energy = 2.946
+light_indirect_energy = 0.783
+light_volumetric_fog_energy = 1.721
+light_cull_mask = 71
+shadow_enabled = true
+spot_range = 5.506735
+
+[node name="SpotLight3D" type="SpotLight3D" parent="Lighting/FireLights/OmniLight3D6/SpotLight3D"]
+transform = Transform3D(1, 0, 0, 0, 0.9998437, 0.017679248, 0, -0.017679248, 0.9998437, 0, -0.081336975, 0)
+layers = 1024
+light_color = Color(0.66443497, 0.39580986, 0.15515873, 1)
+light_energy = 1.865
+light_indirect_energy = 1.432
+light_volumetric_fog_energy = 1.721
+light_negative = true
+light_cull_mask = 71
+spot_range = 8.494562
+
+[node name="OmniLight3D7" type="OmniLight3D" parent="Lighting/FireLights"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 17.6937, -0.6073797, 62.617477)
+layers = 1024
 light_color = Color(0.8670524, 0.4466123, 0.16859916, 1)
+light_energy = 5.334
+light_indirect_energy = 2.586
+light_volumetric_fog_energy = 0.712
+light_size = 0.059
+light_cull_mask = 71
 omni_range = 7.168
 omni_attenuation = -1.133
 omni_shadow_mode = 0
 
-[node name="OmniLight3D8" parent="Lighting/FireLights" index="7"]
+[node name="SpotLight3D" type="SpotLight3D" parent="Lighting/FireLights/OmniLight3D7"]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, -0.08133793, 0)
+layers = 1024
+light_color = Color(0.66443497, 0.39580986, 0.15515873, 1)
+light_energy = 2.946
+light_indirect_energy = 0.783
+light_volumetric_fog_energy = 1.721
+light_cull_mask = 71
+shadow_enabled = true
+spot_range = 5.506735
+
+[node name="SpotLight3D" type="SpotLight3D" parent="Lighting/FireLights/OmniLight3D7/SpotLight3D"]
+transform = Transform3D(1, 0, 0, 0, 0.9998437, 0.017679248, 0, -0.017679248, 0.9998437, 0, -0.081336975, 0)
+layers = 1024
+light_color = Color(0.66443497, 0.39580986, 0.15515873, 1)
+light_energy = 1.865
+light_indirect_energy = 1.432
+light_volumetric_fog_energy = 1.721
+light_negative = true
+light_cull_mask = 71
+spot_range = 8.494562
+
+[node name="OmniLight3D8" type="OmniLight3D" parent="Lighting/FireLights"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 28.701414, -1.2018299, 58.406006)
+layers = 1024
 light_color = Color(0.8670524, 0.4466123, 0.16859916, 1)
+light_energy = 5.334
+light_indirect_energy = 2.586
+light_volumetric_fog_energy = 0.712
+light_size = 0.059
+light_cull_mask = 71
 omni_range = 7.168
 omni_attenuation = -1.133
 omni_shadow_mode = 0
 
-[node name="OmniLight3D9" parent="Lighting/FireLights" index="8"]
+[node name="SpotLight3D" type="SpotLight3D" parent="Lighting/FireLights/OmniLight3D8"]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, -0.08133793, 0)
+layers = 1024
+light_color = Color(0.66443497, 0.39580986, 0.15515873, 1)
+light_energy = 2.946
+light_indirect_energy = 0.783
+light_volumetric_fog_energy = 1.721
+light_cull_mask = 71
+shadow_enabled = true
+spot_range = 5.506735
+
+[node name="SpotLight3D" type="SpotLight3D" parent="Lighting/FireLights/OmniLight3D8/SpotLight3D"]
+transform = Transform3D(1, 0, 0, 0, 0.9998437, 0.017679248, 0, -0.017679248, 0.9998437, 0, -0.081336975, 0)
+layers = 1024
+light_color = Color(0.66443497, 0.39580986, 0.15515873, 1)
+light_energy = 1.865
+light_indirect_energy = 1.432
+light_volumetric_fog_energy = 1.721
+light_negative = true
+light_cull_mask = 71
+spot_range = 8.494562
+
+[node name="OmniLight3D9" type="OmniLight3D" parent="Lighting/FireLights"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.2799759, -44.658737, 29.351341)
+layers = 1024
 light_color = Color(0.8670524, 0.4466123, 0.16859916, 1)
 light_energy = 2.262
+light_indirect_energy = 2.586
+light_volumetric_fog_energy = 0.712
+light_size = 0.059
+light_cull_mask = 71
 omni_range = 7.168
 omni_attenuation = -1.133
 omni_shadow_mode = 0
 
-[node name="OmniLight3D10" parent="Lighting/FireLights" index="9"]
+[node name="SpotLight3D" type="SpotLight3D" parent="Lighting/FireLights/OmniLight3D9"]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, -0.08133793, 0)
+layers = 1024
+light_color = Color(0.66443497, 0.39580986, 0.15515873, 1)
+light_energy = 2.946
+light_indirect_energy = 0.783
+light_volumetric_fog_energy = 1.721
+light_cull_mask = 71
+shadow_enabled = true
+spot_range = 5.506735
+
+[node name="SpotLight3D" type="SpotLight3D" parent="Lighting/FireLights/OmniLight3D9/SpotLight3D"]
+transform = Transform3D(1, 0, 0, 0, 0.9998437, 0.017679248, 0, -0.017679248, 0.9998437, 0, -0.081336975, 0)
+layers = 1024
+light_color = Color(0.66443497, 0.39580986, 0.15515873, 1)
+light_energy = 1.865
+light_indirect_energy = 1.432
+light_volumetric_fog_energy = 1.721
+light_negative = true
+light_cull_mask = 71
+spot_range = 8.494562
+
+[node name="OmniLight3D10" type="OmniLight3D" parent="Lighting/FireLights"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -18.908386, -44.658737, 22.624496)
+layers = 1024
 light_color = Color(0.8670524, 0.4466123, 0.16859916, 1)
 light_energy = 2.262
+light_indirect_energy = 2.586
+light_volumetric_fog_energy = 0.712
+light_size = 0.059
+light_cull_mask = 71
 omni_range = 7.168
 omni_attenuation = -1.133
 omni_shadow_mode = 0
 
-[node name="OmniLight3D11" parent="Lighting/FireLights" index="10"]
+[node name="SpotLight3D" type="SpotLight3D" parent="Lighting/FireLights/OmniLight3D10"]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, -0.08133793, 0)
+layers = 1024
+light_color = Color(0.66443497, 0.39580986, 0.15515873, 1)
+light_energy = 2.946
+light_indirect_energy = 0.783
+light_volumetric_fog_energy = 1.721
+light_cull_mask = 71
+shadow_enabled = true
+spot_range = 5.506735
+
+[node name="SpotLight3D" type="SpotLight3D" parent="Lighting/FireLights/OmniLight3D10/SpotLight3D"]
+transform = Transform3D(1, 0, 0, 0, 0.9998437, 0.017679248, 0, -0.017679248, 0.9998437, 0, -0.081336975, 0)
+layers = 1024
+light_color = Color(0.66443497, 0.39580986, 0.15515873, 1)
+light_energy = 1.865
+light_indirect_energy = 1.432
+light_volumetric_fog_energy = 1.721
+light_negative = true
+light_cull_mask = 71
+spot_range = 8.494562
+
+[node name="OmniLight3D11" type="OmniLight3D" parent="Lighting/FireLights"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -36.30006, -44.57502, 15.854877)
+layers = 1024
 light_color = Color(0.8670524, 0.4466123, 0.16859916, 1)
 light_energy = 2.262
+light_indirect_energy = 2.586
+light_volumetric_fog_energy = 0.712
+light_size = 0.059
+light_cull_mask = 71
 omni_range = 7.168
 omni_attenuation = -1.133
 omni_shadow_mode = 0
 
-[node name="OmniLight3D12" parent="Lighting/FireLights" index="11"]
+[node name="SpotLight3D" type="SpotLight3D" parent="Lighting/FireLights/OmniLight3D11"]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, -0.08133793, 0)
+layers = 1024
+light_color = Color(0.66443497, 0.39580986, 0.15515873, 1)
+light_energy = 2.946
+light_indirect_energy = 0.783
+light_volumetric_fog_energy = 1.721
+light_cull_mask = 71
+shadow_enabled = true
+spot_range = 5.506735
+
+[node name="SpotLight3D" type="SpotLight3D" parent="Lighting/FireLights/OmniLight3D11/SpotLight3D"]
+transform = Transform3D(1, 0, 0, 0, 0.9998437, 0.017679248, 0, -0.017679248, 0.9998437, 0, -0.081336975, 0)
+layers = 1024
+light_color = Color(0.66443497, 0.39580986, 0.15515873, 1)
+light_energy = 1.865
+light_indirect_energy = 1.432
+light_volumetric_fog_energy = 1.721
+light_negative = true
+light_cull_mask = 71
+spot_range = 8.494562
+
+[node name="OmniLight3D12" type="OmniLight3D" parent="Lighting/FireLights"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16.199575, -44.504913, 35.974426)
+layers = 1024
 light_color = Color(0.8670524, 0.4466123, 0.16859916, 1)
 light_energy = 2.262
+light_indirect_energy = 2.586
+light_volumetric_fog_energy = 0.712
+light_size = 0.059
+light_cull_mask = 71
 omni_range = 7.168
 omni_attenuation = -1.133
 omni_shadow_mode = 0
 
-[node name="OmniLight3D13" parent="Lighting/FireLights" index="12"]
+[node name="SpotLight3D" type="SpotLight3D" parent="Lighting/FireLights/OmniLight3D12"]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, -0.08133793, 0)
+layers = 1024
+light_color = Color(0.66443497, 0.39580986, 0.15515873, 1)
+light_energy = 2.946
+light_indirect_energy = 0.783
+light_volumetric_fog_energy = 1.721
+light_cull_mask = 71
+shadow_enabled = true
+spot_range = 5.506735
+
+[node name="SpotLight3D" type="SpotLight3D" parent="Lighting/FireLights/OmniLight3D12/SpotLight3D"]
+transform = Transform3D(1, 0, 0, 0, 0.9998437, 0.017679248, 0, -0.017679248, 0.9998437, 0, -0.081336975, 0)
+layers = 1024
+light_color = Color(0.66443497, 0.39580986, 0.15515873, 1)
+light_energy = 1.865
+light_indirect_energy = 1.432
+light_volumetric_fog_energy = 1.721
+light_negative = true
+light_cull_mask = 71
+spot_range = 8.494562
+
+[node name="OmniLight3D13" type="OmniLight3D" parent="Lighting/FireLights"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -29.445803, -44.440018, -1.6777153)
+layers = 1024
 light_color = Color(0.8670524, 0.4466123, 0.16859916, 1)
 light_energy = 2.262
+light_indirect_energy = 2.586
+light_volumetric_fog_energy = 0.712
+light_size = 0.059
+light_cull_mask = 71
 omni_range = 7.168
 omni_attenuation = -1.133
 omni_shadow_mode = 0
 
-[node name="OmniLight3D14" parent="Lighting/FireLights" index="13"]
+[node name="SpotLight3D" type="SpotLight3D" parent="Lighting/FireLights/OmniLight3D13"]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, -0.08133793, 0)
+layers = 1024
+light_color = Color(0.66443497, 0.39580986, 0.15515873, 1)
+light_energy = 2.946
+light_indirect_energy = 0.783
+light_volumetric_fog_energy = 1.721
+light_cull_mask = 71
+shadow_enabled = true
+spot_range = 5.506735
+
+[node name="SpotLight3D" type="SpotLight3D" parent="Lighting/FireLights/OmniLight3D13/SpotLight3D"]
+transform = Transform3D(1, 0, 0, 0, 0.9998437, 0.017679248, 0, -0.017679248, 0.9998437, 0, -0.081336975, 0)
+layers = 1024
+light_color = Color(0.66443497, 0.39580986, 0.15515873, 1)
+light_energy = 1.865
+light_indirect_energy = 1.432
+light_volumetric_fog_energy = 1.721
+light_negative = true
+light_cull_mask = 71
+spot_range = 8.494562
+
+[node name="OmniLight3D14" type="OmniLight3D" parent="Lighting/FireLights"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11.952242, -44.15105, 5.1767197)
+layers = 1024
 light_color = Color(0.8670524, 0.4466123, 0.16859916, 1)
 light_energy = 2.262
+light_indirect_energy = 3.667
+light_volumetric_fog_energy = 1.649
+light_size = 0.181
+light_cull_mask = 71
 omni_range = 7.168
 omni_attenuation = -1.133
 omni_shadow_mode = 0
 
-[node name="OmniLight3D15" parent="Lighting/FireLights" index="14"]
+[node name="SpotLight3D" type="SpotLight3D" parent="Lighting/FireLights/OmniLight3D14"]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, -0.08133793, 0)
+layers = 1024
+light_color = Color(0.66443497, 0.39580986, 0.15515873, 1)
+light_energy = 2.946
+light_indirect_energy = 0.783
+light_volumetric_fog_energy = 1.721
+light_cull_mask = 71
+shadow_enabled = true
+spot_range = 5.506735
+
+[node name="SpotLight3D" type="SpotLight3D" parent="Lighting/FireLights/OmniLight3D14/SpotLight3D"]
+transform = Transform3D(1, 0, 0, 0, 0.9998437, 0.017679248, 0, -0.017679248, 0.9998437, 0, -0.081336975, 0)
+layers = 1024
+light_color = Color(0.66443497, 0.39580986, 0.15515873, 1)
+light_energy = 1.865
+light_indirect_energy = 1.432
+light_volumetric_fog_energy = 1.721
+light_negative = true
+light_cull_mask = 71
+spot_range = 8.494562
+
+[node name="OmniLight3D15" type="OmniLight3D" parent="Lighting/FireLights"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.730337, -44.7339, 12.030563)
+layers = 1024
 light_color = Color(0.8670524, 0.4466123, 0.16859916, 1)
 light_energy = 2.262
+light_indirect_energy = 3.667
+light_volumetric_fog_energy = 1.649
+light_size = 0.181
+light_cull_mask = 71
 omni_range = 7.168
 omni_attenuation = -1.133
 omni_shadow_mode = 0
 
-[node name="OmniLight3D16" parent="Lighting/FireLights" index="15"]
+[node name="SpotLight3D" type="SpotLight3D" parent="Lighting/FireLights/OmniLight3D15"]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, -0.08133793, 0)
+layers = 1024
+light_color = Color(0.66443497, 0.39580986, 0.15515873, 1)
+light_energy = 2.946
+light_indirect_energy = 0.783
+light_volumetric_fog_energy = 1.721
+light_cull_mask = 71
+shadow_enabled = true
+spot_range = 5.506735
+
+[node name="SpotLight3D" type="SpotLight3D" parent="Lighting/FireLights/OmniLight3D15/SpotLight3D"]
+transform = Transform3D(1, 0, 0, 0, 0.9998437, 0.017679248, 0, -0.017679248, 0.9998437, 0, -0.081336975, 0)
+layers = 1024
+light_color = Color(0.66443497, 0.39580986, 0.15515873, 1)
+light_energy = 1.865
+light_indirect_energy = 1.432
+light_volumetric_fog_energy = 1.721
+light_negative = true
+light_cull_mask = 71
+spot_range = 8.494562
+
+[node name="OmniLight3D16" type="OmniLight3D" parent="Lighting/FireLights"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 23.207464, -44.7339, 18.483665)
+layers = 1024
 light_color = Color(0.8670524, 0.4466123, 0.16859916, 1)
 light_energy = 2.262
+light_indirect_energy = 3.667
+light_volumetric_fog_energy = 1.649
+light_size = 0.181
+light_cull_mask = 71
 omni_range = 7.168
 omni_attenuation = -1.133
 omni_shadow_mode = 0
 
-[node name="OmniLight3D17" parent="Lighting/FireLights" index="16"]
+[node name="SpotLight3D" type="SpotLight3D" parent="Lighting/FireLights/OmniLight3D16"]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, -0.08133793, 0)
+layers = 1024
+light_color = Color(0.66443497, 0.39580986, 0.15515873, 1)
+light_energy = 2.946
+light_indirect_energy = 0.783
+light_volumetric_fog_energy = 1.721
+light_cull_mask = 71
+shadow_enabled = true
+spot_range = 5.506735
+
+[node name="SpotLight3D" type="SpotLight3D" parent="Lighting/FireLights/OmniLight3D16/SpotLight3D"]
+transform = Transform3D(1, 0, 0, 0, 0.9998437, 0.017679248, 0, -0.017679248, 0.9998437, 0, -0.081336975, 0)
+layers = 1024
+light_color = Color(0.66443497, 0.39580986, 0.15515873, 1)
+light_energy = 1.865
+light_indirect_energy = 1.432
+light_volumetric_fog_energy = 1.721
+light_negative = true
+light_cull_mask = 71
+spot_range = 8.494562
+
+[node name="OmniLight3D17" type="OmniLight3D" parent="Lighting/FireLights"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 29.75276, -44.569687, 1.3439407)
+layers = 1024
 light_color = Color(0.8670524, 0.4466123, 0.16859916, 1)
 light_energy = 2.262
+light_indirect_energy = 3.667
+light_volumetric_fog_energy = 1.649
+light_size = 0.181
+light_cull_mask = 71
 omni_range = 7.168
 omni_attenuation = -1.133
 omni_shadow_mode = 0
 
-[node name="OmniLight3D18" parent="Lighting/FireLights" index="17"]
+[node name="SpotLight3D" type="SpotLight3D" parent="Lighting/FireLights/OmniLight3D17"]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, -0.08133793, 0)
+layers = 1024
+light_color = Color(0.66443497, 0.39580986, 0.15515873, 1)
+light_energy = 2.946
+light_indirect_energy = 0.783
+light_volumetric_fog_energy = 1.721
+light_cull_mask = 71
+shadow_enabled = true
+spot_range = 5.506735
+
+[node name="SpotLight3D" type="SpotLight3D" parent="Lighting/FireLights/OmniLight3D17/SpotLight3D"]
+transform = Transform3D(1, 0, 0, 0, 0.9998437, 0.017679248, 0, -0.017679248, 0.9998437, 0, -0.081336975, 0)
+layers = 1024
+light_color = Color(0.66443497, 0.39580986, 0.15515873, 1)
+light_energy = 1.865
+light_indirect_energy = 1.432
+light_volumetric_fog_energy = 1.721
+light_negative = true
+light_cull_mask = 71
+spot_range = 8.494562
+
+[node name="OmniLight3D18" type="OmniLight3D" parent="Lighting/FireLights"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12.254812, -44.569687, -5.282707)
+layers = 1024
 light_color = Color(0.8670524, 0.4466123, 0.16859916, 1)
 light_energy = 2.262
+light_indirect_energy = 3.667
+light_volumetric_fog_energy = 1.649
+light_size = 0.181
+light_cull_mask = 71
 omni_range = 7.168
 omni_attenuation = -1.133
 omni_shadow_mode = 0
 
-[node name="OmniLight3D19" parent="Lighting/FireLights" index="18"]
+[node name="SpotLight3D" type="SpotLight3D" parent="Lighting/FireLights/OmniLight3D18"]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, -0.08133793, 0)
+layers = 1024
+light_color = Color(0.66443497, 0.39580986, 0.15515873, 1)
+light_energy = 2.946
+light_indirect_energy = 0.783
+light_volumetric_fog_energy = 1.721
+light_cull_mask = 71
+shadow_enabled = true
+spot_range = 5.506735
+
+[node name="SpotLight3D" type="SpotLight3D" parent="Lighting/FireLights/OmniLight3D18/SpotLight3D"]
+transform = Transform3D(1, 0, 0, 0, 0.9998437, 0.017679248, 0, -0.017679248, 0.9998437, 0, -0.081336975, 0)
+layers = 1024
+light_color = Color(0.66443497, 0.39580986, 0.15515873, 1)
+light_energy = 1.865
+light_indirect_energy = 1.432
+light_volumetric_fog_energy = 1.721
+light_negative = true
+light_cull_mask = 71
+spot_range = 8.494562
+
+[node name="OmniLight3D19" type="OmniLight3D" parent="Lighting/FireLights"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.4132423, -44.569687, -12.016644)
+layers = 1024
 light_color = Color(0.8670524, 0.4466123, 0.16859916, 1)
 light_energy = 2.262
+light_indirect_energy = 3.667
+light_volumetric_fog_energy = 1.649
+light_size = 0.181
+light_cull_mask = 71
 omni_range = 7.168
 omni_attenuation = -1.133
 omni_shadow_mode = 0
 
-[node name="OmniLight3D20" parent="Lighting/FireLights" index="19"]
+[node name="SpotLight3D" type="SpotLight3D" parent="Lighting/FireLights/OmniLight3D19"]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, -0.08133793, 0)
+layers = 1024
+light_color = Color(0.66443497, 0.39580986, 0.15515873, 1)
+light_energy = 2.946
+light_indirect_energy = 0.783
+light_volumetric_fog_energy = 1.721
+light_cull_mask = 71
+shadow_enabled = true
+spot_range = 5.506735
+
+[node name="SpotLight3D" type="SpotLight3D" parent="Lighting/FireLights/OmniLight3D19/SpotLight3D"]
+transform = Transform3D(1, 0, 0, 0, 0.9998437, 0.017679248, 0, -0.017679248, 0.9998437, 0, -0.081336975, 0)
+layers = 1024
+light_color = Color(0.66443497, 0.39580986, 0.15515873, 1)
+light_energy = 1.865
+light_indirect_energy = 1.432
+light_volumetric_fog_energy = 1.721
+light_negative = true
+light_cull_mask = 71
+spot_range = 8.494562
+
+[node name="OmniLight3D20" type="OmniLight3D" parent="Lighting/FireLights"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -22.714575, -44.569687, -18.741081)
+layers = 1024
 light_color = Color(0.8670524, 0.4466123, 0.16859916, 1)
 light_energy = 2.262
+light_indirect_energy = 3.667
+light_volumetric_fog_energy = 1.649
+light_size = 0.181
+light_cull_mask = 71
 omni_range = 7.168
 omni_attenuation = -1.133
 omni_shadow_mode = 0
 
-[node name="OmniLight3D21" parent="Lighting/FireLights" index="20"]
+[node name="SpotLight3D" type="SpotLight3D" parent="Lighting/FireLights/OmniLight3D20"]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, -0.08133793, 0)
+layers = 1024
+light_color = Color(0.66443497, 0.39580986, 0.15515873, 1)
+light_energy = 2.946
+light_indirect_energy = 0.783
+light_volumetric_fog_energy = 1.721
+light_cull_mask = 71
+shadow_enabled = true
+spot_range = 5.506735
+
+[node name="SpotLight3D" type="SpotLight3D" parent="Lighting/FireLights/OmniLight3D20/SpotLight3D"]
+transform = Transform3D(1, 0, 0, 0, 0.9998437, 0.017679248, 0, -0.017679248, 0.9998437, 0, -0.081336975, 0)
+layers = 1024
+light_color = Color(0.66443497, 0.39580986, 0.15515873, 1)
+light_energy = 1.865
+light_indirect_energy = 1.432
+light_volumetric_fog_energy = 1.721
+light_negative = true
+light_cull_mask = 71
+spot_range = 8.494562
+
+[node name="OmniLight3D21" type="OmniLight3D" parent="Lighting/FireLights"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16.248608, -44.569687, -36.488663)
+layers = 1024
 light_color = Color(0.8670524, 0.4466123, 0.16859916, 1)
 light_energy = 2.262
+light_indirect_energy = 3.667
+light_volumetric_fog_energy = 1.649
+light_size = 0.181
+light_cull_mask = 71
 omni_range = 7.168
 omni_attenuation = -1.133
 omni_shadow_mode = 0
 
-[node name="OmniLight3D22" parent="Lighting/FireLights" index="21"]
+[node name="SpotLight3D" type="SpotLight3D" parent="Lighting/FireLights/OmniLight3D21"]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, -0.08133793, 0)
+layers = 1024
+light_color = Color(0.66443497, 0.39580986, 0.15515873, 1)
+light_energy = 2.946
+light_indirect_energy = 0.783
+light_volumetric_fog_energy = 1.721
+light_cull_mask = 71
+shadow_enabled = true
+spot_range = 5.506735
+
+[node name="SpotLight3D" type="SpotLight3D" parent="Lighting/FireLights/OmniLight3D21/SpotLight3D"]
+transform = Transform3D(1, 0, 0, 0, 0.9998437, 0.017679248, 0, -0.017679248, 0.9998437, 0, -0.081336975, 0)
+layers = 1024
+light_color = Color(0.66443497, 0.39580986, 0.15515873, 1)
+light_energy = 1.865
+light_indirect_energy = 1.432
+light_volumetric_fog_energy = 1.721
+light_negative = true
+light_cull_mask = 71
+spot_range = 8.494562
+
+[node name="OmniLight3D22" type="OmniLight3D" parent="Lighting/FireLights"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.3719196, -44.569687, -29.564491)
+layers = 1024
 light_color = Color(0.8670524, 0.4466123, 0.16859916, 1)
 light_energy = 2.262
+light_indirect_energy = 3.667
+light_volumetric_fog_energy = 1.649
+light_size = 0.181
+light_cull_mask = 71
 omni_range = 7.168
 omni_attenuation = -1.133
 omni_shadow_mode = 0
 
-[node name="OmniLight3D23" parent="Lighting/FireLights" index="22"]
+[node name="SpotLight3D" type="SpotLight3D" parent="Lighting/FireLights/OmniLight3D22"]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, -0.08133793, 0)
+layers = 1024
+light_color = Color(0.66443497, 0.39580986, 0.15515873, 1)
+light_energy = 2.946
+light_indirect_energy = 0.783
+light_volumetric_fog_energy = 1.721
+light_cull_mask = 71
+shadow_enabled = true
+spot_range = 5.506735
+
+[node name="SpotLight3D" type="SpotLight3D" parent="Lighting/FireLights/OmniLight3D22/SpotLight3D"]
+transform = Transform3D(1, 0, 0, 0, 0.9998437, 0.017679248, 0, -0.017679248, 0.9998437, 0, -0.081336975, 0)
+layers = 1024
+light_color = Color(0.66443497, 0.39580986, 0.15515873, 1)
+light_energy = 1.865
+light_indirect_energy = 1.432
+light_volumetric_fog_energy = 1.721
+light_negative = true
+light_cull_mask = 71
+spot_range = 8.494562
+
+[node name="OmniLight3D23" type="OmniLight3D" parent="Lighting/FireLights"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 18.937529, -44.743565, -22.6961)
+layers = 1024
 light_color = Color(0.8670524, 0.4466123, 0.16859916, 1)
 light_energy = 2.262
+light_indirect_energy = 3.667
+light_volumetric_fog_energy = 1.649
+light_size = 0.181
+light_cull_mask = 71
 omni_range = 7.168
 omni_attenuation = -1.133
 omni_shadow_mode = 0
 
-[node name="OmniLight3D24" parent="Lighting/FireLights" index="23"]
+[node name="SpotLight3D" type="SpotLight3D" parent="Lighting/FireLights/OmniLight3D23"]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, -0.08133793, 0)
+layers = 1024
+light_color = Color(0.66443497, 0.39580986, 0.15515873, 1)
+light_energy = 2.946
+light_indirect_energy = 0.783
+light_volumetric_fog_energy = 1.721
+light_cull_mask = 71
+shadow_enabled = true
+spot_range = 5.506735
+
+[node name="SpotLight3D" type="SpotLight3D" parent="Lighting/FireLights/OmniLight3D23/SpotLight3D"]
+transform = Transform3D(1, 0, 0, 0, 0.9998437, 0.017679248, 0, -0.017679248, 0.9998437, 0, -0.081336975, 0)
+layers = 1024
+light_color = Color(0.66443497, 0.39580986, 0.15515873, 1)
+light_energy = 1.865
+light_indirect_energy = 1.432
+light_volumetric_fog_energy = 1.721
+light_negative = true
+light_cull_mask = 71
+spot_range = 8.494562
+
+[node name="OmniLight3D24" type="OmniLight3D" parent="Lighting/FireLights"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 36.60743, -44.743565, -16.232952)
+layers = 1024
 light_color = Color(0.8670524, 0.4466123, 0.16859916, 1)
 light_energy = 2.262
+light_indirect_energy = 3.667
+light_volumetric_fog_energy = 1.649
+light_size = 0.181
+light_cull_mask = 71
 omni_range = 7.168
 omni_attenuation = -1.133
 omni_shadow_mode = 0
+
+[node name="SpotLight3D" type="SpotLight3D" parent="Lighting/FireLights/OmniLight3D24"]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, -0.08133793, 0)
+layers = 1024
+light_color = Color(0.66443497, 0.39580986, 0.15515873, 1)
+light_energy = 2.946
+light_indirect_energy = 0.783
+light_volumetric_fog_energy = 1.721
+light_cull_mask = 71
+shadow_enabled = true
+spot_range = 5.506735
+
+[node name="SpotLight3D" type="SpotLight3D" parent="Lighting/FireLights/OmniLight3D24/SpotLight3D"]
+transform = Transform3D(1, 0, 0, 0, 0.9998437, 0.017679248, 0, -0.017679248, 0.9998437, 0, -0.081336975, 0)
+layers = 1024
+light_color = Color(0.66443497, 0.39580986, 0.15515873, 1)
+light_energy = 1.865
+light_indirect_energy = 1.432
+light_volumetric_fog_energy = 1.721
+light_negative = true
+light_cull_mask = 71
+spot_range = 8.494562
 
 [node name="Path" type="Node3D" parent="."]
 
@@ -1053,5 +1728,3 @@ environment = SubResource("Environment_i2jqx")
 [connection signal="Deactivated" from="Lighting/FireLightTrigger2" to="Lighting/fire_lighting_event" method="Deactivate"]
 [connection signal="Activated" from="Lighting/FireLightTrigger3" to="Lighting/fire_lighting_event" method="Activate"]
 [connection signal="Deactivated" from="Lighting/FireLightTrigger3" to="Lighting/fire_lighting_event" method="Deactivate"]
-
-[editable path="Lighting/FireLights"]
