@@ -283,21 +283,7 @@ public partial class SoundManager : Node
 
 	private void InitializeSubtitleOpacity()
 	{
-		switch (SaveManager.Config.subtitleOpacity)
-		{
-			case SaveManager.SubtitleOpacity.Zero:
-				subtitleLetterbox.Color = new Color(0.0f, 0.0f, 0.0f, 0.0f);
-				break;
-			case SaveManager.SubtitleOpacity.TwentyFive:
-				subtitleLetterbox.Color = new Color(0.0f, 0.0f, 0.0f, 0.392f);
-				break;
-			case SaveManager.SubtitleOpacity.SeventyFive:
-				subtitleLetterbox.Color = new Color(0.0f, 0.0f, 0.0f, 0.612f);
-				break;
-			case SaveManager.SubtitleOpacity.OneHundred:
-				subtitleLetterbox.Color = new Color(0.0f, 0.0f, 0.0f, 1f);
-				break;
-		}
+		subtitleLetterbox.Color = new Color(0.0f, 0.0f, 0.0f, SaveManager.Config.subtitleOpacity * 0.01f);
 	}
 
 	private void UpdateButtonPromptPosition()

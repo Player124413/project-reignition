@@ -588,21 +588,7 @@ public partial class Options : Menu
 		interfaceLabels[4].Text = SaveManager.Config.isUsingHorizontalSoulGauge ? HorizontalStyle : VerticalStyle;
 		interfaceLabels[5].Text = SaveManager.Config.isActionPromptsEnabled ? EnabledString : DisabledString;
 
-		switch (SaveManager.Config.subtitleOpacity)
-		{
-			case SaveManager.SubtitleOpacity.Zero:
-				interfaceLabels[6].Text = "0%";
-				break;
-			case SaveManager.SubtitleOpacity.TwentyFive:
-				interfaceLabels[6].Text = "25%";
-				break;
-			case SaveManager.SubtitleOpacity.SeventyFive:
-				interfaceLabels[6].Text = "75%";
-				break;
-			case SaveManager.SubtitleOpacity.OneHundred:
-				interfaceLabels[6].Text = "100%";
-				break;
-		}
+		interfaceLabels[6].Text = $"{SaveManager.Config.subtitleOpacity}%";
 	}
 
 	private string GetVoiceLanguageKey(SaveManager.VoiceLanguage voiceLanguage)
@@ -1042,8 +1028,7 @@ public partial class Options : Menu
 		}
 		else if (VerticalSelection == 6)
 		{
-			int opacity = WrapSelection((int)SaveManager.Config.subtitleOpacity + direction, (int)SaveManager.SubtitleOpacity.Count);
-			SaveManager.Config.subtitleOpacity = (SaveManager.SubtitleOpacity)opacity;
+			SaveManager.Config.subtitleOpacity = SlideVolume(SaveManager.Config.subtitleOpacity, direction);
 			return true;
 		}
 

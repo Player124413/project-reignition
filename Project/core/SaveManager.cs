@@ -295,7 +295,7 @@ public partial class SaveManager : Node
 
 		public bool useQuickLoad;
 		public bool skipRepeatCutscenes; // Enable this to skip cutscenes when replaying missions
-		public SubtitleOpacity subtitleOpacity = SubtitleOpacity.TwentyFive;
+		public int subtitleOpacity = 20;
 
 		/// <summary> Creates a dictionary based on config data. </summary>
 		public Dictionary ToDictionary()
@@ -355,7 +355,7 @@ public partial class SaveManager : Node
 				{ nameof(isActionPromptsEnabled), isActionPromptsEnabled },
 
 				{ nameof(useQuickLoad), useQuickLoad },
-				{ nameof(subtitleOpacity), (int)subtitleOpacity},
+				{ nameof(subtitleOpacity), subtitleOpacity},
 			};
 		}
 
@@ -461,7 +461,7 @@ public partial class SaveManager : Node
 			else
 				Instance.IsQuickLoadAlertEnabled = true;
 			if (dictionary.TryGetValue(nameof(subtitleOpacity), out var))
-				subtitleOpacity = (SubtitleOpacity)(int)var;
+				subtitleOpacity = (int)var;
 
 		}
 	}
