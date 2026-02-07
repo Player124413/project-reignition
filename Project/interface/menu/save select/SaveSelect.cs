@@ -147,6 +147,7 @@ public partial class SaveSelect : Menu
 		menuMemory[MemoryKeys.SkillMenuInitialized] = 0;
 		SaveManager.ActiveSaveSlotIndex = _saveOptions[ActiveSaveOptionIndex].SaveIndex;
 		SaveManager.ActiveSkillRing.LoadFromActiveData();
+		NotificationManager.Instance.UpdateCounters();
 
 		// Update next story level
 		SaveManager.ActiveGameData.LoadCurrentStoryLevelFromSaveData();
