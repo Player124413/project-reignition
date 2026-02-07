@@ -27,7 +27,6 @@ public partial class SoundManager : Node
 	{
 		instance = this;
 		subtitleAnimator.Play("RESET");
-
 		InitializePearlSFX();
 		InitializeButtonPromptValues();
 
@@ -184,6 +183,7 @@ public partial class SoundManager : Node
 
 	private void UpdateDialog(bool processDelay)
 	{
+		InitializeSubtitleOpacity();
 		// Must have been interrupted
 		if (dialogChannel.IsConnected(AudioStreamPlayer.SignalName.Finished, new Callable(this, MethodName.OnDialogFinished)))
 			dialogChannel.Disconnect(AudioStreamPlayer.SignalName.Finished, new Callable(this, MethodName.OnDialogFinished));
@@ -279,6 +279,14 @@ public partial class SoundManager : Node
 		Rid lineRid = spaceWidth.GetLineRid(0);
 		var glyphs = server.ShapedTextGetGlyphs(lineRid);
 		spaceCharacterWidth += (float)glyphs[0]["advance"] * 5;
+	}
+
+	private void InitializeSubtitleOpacity()
+	{
+		if (!currentDialog.IsCutscene)
+			subtitleLetterbox.Color = new Color(0.0f, 0.0f, 0.0f, SaveManager.Config.subtitleOpacity * 0.01f);
+		else
+			subtitleLetterbox.Color = new Color(0.0f, 0.0f, 0.0f, SaveManager.Config.cutsceneOpacity * 0.01f);
 	}
 
 	private void UpdateButtonPromptPosition()

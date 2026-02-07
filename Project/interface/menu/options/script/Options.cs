@@ -41,7 +41,7 @@ public partial class Options : Menu
 				maxSelection = 6; // TODO Add 1 here if we ever add party mode;
 				break;
 			case Submenus.Interface:
-				maxSelection = 6;
+				maxSelection = 8;
 				break;
 			case Submenus.Mapping:
 				maxSelection = controlMappingOptions.Length;
@@ -587,6 +587,9 @@ public partial class Options : Menu
 
 		interfaceLabels[4].Text = SaveManager.Config.isUsingHorizontalSoulGauge ? HorizontalStyle : VerticalStyle;
 		interfaceLabels[5].Text = SaveManager.Config.isActionPromptsEnabled ? EnabledString : DisabledString;
+
+		interfaceLabels[6].Text = $"{SaveManager.Config.subtitleOpacity}%";
+		interfaceLabels[7].Text = $"{SaveManager.Config.cutsceneOpacity}%";
 	}
 
 	private string GetVoiceLanguageKey(SaveManager.VoiceLanguage voiceLanguage)
@@ -1022,6 +1025,16 @@ public partial class Options : Menu
 		else if (VerticalSelection == 5)
 		{
 			SaveManager.Config.isActionPromptsEnabled = !SaveManager.Config.isActionPromptsEnabled;
+			return true;
+		}
+		else if (VerticalSelection == 6)
+		{
+			SaveManager.Config.subtitleOpacity = SlideVolume(SaveManager.Config.subtitleOpacity, direction);
+			return true;
+		}
+		else if (VerticalSelection == 7)
+		{
+			SaveManager.Config.cutsceneOpacity = SlideVolume(SaveManager.Config.cutsceneOpacity, direction);
 			return true;
 		}
 
