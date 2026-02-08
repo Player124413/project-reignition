@@ -1020,6 +1020,21 @@ public partial class SaveManager : Node
 			stagesUnlocked.Add(levelID);
 		}
 
+		/// <summary> Updates the game data to ensure levels are unlocked properly, even with old save files. </summary>
+		public void UnlockStagesRecursively(LevelDataResource level)
+		{
+			// Base case--level was not cleared; don't do anything
+			if (levelData.GetClearStatus(level.LevelID) != LevelSaveData.LevelStatus.Cleared)
+				return;
+
+			// Recursive case; unlock child stages
+			for (int i = 0; i < level.UnlockStage.Count; i++)
+			{
+				UnlockStage(level.UnlockStage[i].LevelID);
+				UnlockStagesRecursively(level.UnlockStage[i]);
+			}
+		}
+
 		/// <summary> Checks if a world is unlocked. </summary>
 		public bool IsWorldUnlocked(WorldEnum world) => worldsUnlocked.Contains(world);
 		/// <summary> Checks if a world ring was obtained. </summary>

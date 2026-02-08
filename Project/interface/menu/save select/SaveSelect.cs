@@ -1,32 +1,29 @@
 using Godot;
 using Godot.Collections;
 using Project.Core;
+using Project.Gameplay;
 
 namespace Project.Interface.Menus;
 
 public partial class SaveSelect : Menu
 {
-	[Export]
-	private Sprite2D scrollbar;
+	[Export] private LevelDataResource initialLevelData;
+	[Export] private Sprite2D scrollbar;
 	private Vector2 scrollbarVelocity;
 	private float scrollRatio;
 	private const int ScrollbarHeight = 625;
 	private const float ScrollSmoothing = .05f;
 
-	[Export]
-	private Array<NodePath> saveOptions = [];
+	[Export] private Array<NodePath> saveOptions = [];
 	private readonly Array<SaveOption> _saveOptions = [];
 	private const int ActiveSaveOptionIndex = 3; // Corresponds to the center save option
 
-	[Export]
-	private AnimationPlayer deleteAnimator;
+	[Export] private AnimationPlayer deleteAnimator;
 	private bool isDeleteMenuActive;
 	private bool isDeleteSelected;
 
-	[Export]
-	private string descriptionText;
-	[Export]
-	private Description description;
+	[Export] private string descriptionText;
+	[Export] private Description description;
 
 	protected override void SetUp()
 	{
@@ -146,6 +143,7 @@ public partial class SaveSelect : Menu
 		menuMemory[MemoryKeys.LevelSelect] = 0;
 		menuMemory[MemoryKeys.SkillMenuInitialized] = 0;
 		SaveManager.ActiveSaveSlotIndex = _saveOptions[ActiveSaveOptionIndex].SaveIndex;
+		SaveManager.ActiveGameData.UnlockStagesRecursively(initialLevelData);
 		SaveManager.ActiveSkillRing.LoadFromActiveData();
 		NotificationManager.Instance.UpdateCounters();
 
