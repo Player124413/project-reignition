@@ -15,8 +15,7 @@ public partial class PlayerInputController : Node
 	public float GetInputStrength()
 	{
 		float inputLength = InputAxis.Length();
-		if (inputLength <= DeadZone)
-			inputLength = 0;
+		GD.PrintT(inputLength, DeadZone);
 
 		if (Player.IsLockoutActive && Player.ActiveLockoutData.movementMode == LockoutResource.MovementModes.Replace)
 		{
@@ -107,6 +106,8 @@ public partial class PlayerInputController : Node
 		UpdateLightDashBuffer();
 	}
 
+	/// <summary> Constant to convert floats ratios to int percentages.  </summary>
+	private readonly float MouseConversionFactor = 100f;
 	private void ProcessMouseMovement()
 	{
 		if (!SaveManager.Config.enableMouseControls || Runtime.Instance.IsUsingController)
@@ -116,8 +117,8 @@ public partial class PlayerInputController : Node
 			return;
 		}
 
-		// Convert input ranges to [-1, 1]
-		Vector2 inputRatio = (Runtime.Instance.MousePositionRatio - Vector2.One * 0.5f) * 2f;
+		// Convert input ranges to [-100f, 100f]
+		Vector2 inputRatio = (Runtime.Instance.MousePositionRatio - Vector2.One * 0.5f) * 2f * MouseConversionFactor;
 		inputRatio.Y += SaveManager.Config.mouseVerticalOffset;
 		if (Mathf.Abs(inputRatio.X) < SaveManager.Config.mouseDeadzone)
 		{
@@ -138,6 +139,7 @@ public partial class PlayerInputController : Node
 			mouseInput.Y = (inputRatio.Y - SaveManager.Config.mouseDeadzone) / (SaveManager.Config.mouseVerticalRange - SaveManager.Config.mouseDeadzone);
 			mouseInput.Y = Mathf.Clamp(mouseInput.Y, -1f, 1f);
 		}
+		GD.Print(mouseInput);
 	}
 
 	private void UpdateJumpBuffer()

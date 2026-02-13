@@ -270,13 +270,13 @@ public partial class SaveManager : Node
 		public bool useHoldBreakMode = true;
 		public bool enableMouseControls = true;
 		/// <summary> How much to ignore mouse controls in the center of the screen. </summary>
-		public float mouseDeadzone = 0.05f;
+		public int mouseDeadzone = 15;
 		/// <summary> How much counts as "max mouse movement." </summary>
-		public float mouseHorizontalRange = 0.5f;
+		public int mouseHorizontalRange = 80;
 		/// <summary> How much counts as "max mouse movement." </summary>
-		public float mouseVerticalRange = 0.5f;
+		public int mouseVerticalRange = 80;
 		/// <summary> How much to offset the mouse inputs vertically. </summary>
-		public float mouseVerticalOffset = 0.1f;
+		public int mouseVerticalOffset = -10;
 		public JumpButtonModeEnum jumpButtonMode;
 		public int[] partyModeDevices = [0, 0, 0, 0];
 		public Dictionary inputConfiguration = [];
@@ -340,6 +340,13 @@ public partial class SaveManager : Node
 				{ nameof(controllerType), (int)controllerType },
 				{ nameof(useHoldBreakMode), useHoldBreakMode },
 				{ nameof(jumpButtonMode), (int)jumpButtonMode },
+
+				{ nameof(enableMouseControls), enableMouseControls },
+				{ nameof(mouseDeadzone), mouseDeadzone },
+				{ nameof(mouseHorizontalRange), mouseHorizontalRange },
+				{ nameof(mouseVerticalRange), mouseVerticalRange },
+				{ nameof(mouseVerticalOffset), mouseVerticalOffset },
+
 				{ nameof(partyModeDevices), partyModeDevices },
 				{ nameof(inputConfiguration), inputConfiguration },
 
@@ -432,6 +439,18 @@ public partial class SaveManager : Node
 				useHoldBreakMode = (bool)var;
 			if (dictionary.TryGetValue(nameof(jumpButtonMode), out var))
 				jumpButtonMode = (JumpButtonModeEnum)(int)var;
+
+			if (dictionary.TryGetValue(nameof(enableMouseControls), out var))
+				enableMouseControls = (bool)var;
+			if (dictionary.TryGetValue(nameof(mouseDeadzone), out var))
+				mouseDeadzone = (int)var;
+			if (dictionary.TryGetValue(nameof(mouseHorizontalRange), out var))
+				mouseHorizontalRange = (int)var;
+			if (dictionary.TryGetValue(nameof(mouseVerticalRange), out var))
+				mouseVerticalRange = (int)var;
+			if (dictionary.TryGetValue(nameof(mouseVerticalOffset), out var))
+				mouseVerticalOffset = (int)var;
+
 			if (dictionary.TryGetValue(nameof(partyModeDevices), out var))
 				partyModeDevices = (int[])var;
 			if (dictionary.TryGetValue(nameof(inputConfiguration), out var))
