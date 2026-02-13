@@ -27,7 +27,6 @@ public partial class NavigationButton : Control
 		return controllerResourcesStyle2[controllerIndex];
 	}
 
-
 	[ExportCategory("Components")]
 	[Export(PropertyHint.NodePathValidTypes, "Label")]
 	private NodePath buttonLabel;
@@ -61,7 +60,8 @@ public partial class NavigationButton : Control
 	private void Redraw(int _) => Redraw();
 	private void Redraw()
 	{
-		ActionLabel.Text = Tr(ActionKey);
+		if (ActionLabel != null)
+			ActionLabel.Text = Tr(ActionKey);
 
 		if (overrideKey != Key.None)
 		{
@@ -76,7 +76,13 @@ public partial class NavigationButton : Control
 		RedrawAs(fallbackKey);
 	}
 
-	private bool RedrawAs(StringName eventKey)
+	public void SetInputKey(StringName key)
+	{
+		inputKey = key;
+		Redraw();
+	}
+
+	public bool RedrawAs(StringName eventKey)
 	{
 		Array<InputEvent> eventList = InputMap.ActionGetEvents(eventKey);
 

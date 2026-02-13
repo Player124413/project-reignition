@@ -2,15 +2,17 @@
 
 [ext_resource type="Script" uid="uid://coiui4qvdxbqe" path="res://object/trigger/modules/EventTrigger.cs" id="1_2v7tl"]
 [ext_resource type="AudioStream" uid="uid://dvv2n20oc5bp5" path="res://sound/sfx/stage/lost prologue/wonderblock.wav" id="3_aqfi5"]
+[ext_resource type="Shader" uid="uid://coksfkx81rsip" path="res://effect/shader/particle/AnimatedNonbillboardMultiply.gdshader" id="4_7kigq"]
 [ext_resource type="Script" uid="uid://dnrfeyqvx8aq" path="res://addons/custom_nodes/script/GroupAudioStreamPlayer3D.cs" id="4_vdbax"]
-[ext_resource type="Shader" uid="uid://d2yo05epeqsp3" path="res://effect/shader/particle/AnimatedNonbillboard.gdshader" id="5_7yp50"]
 [ext_resource type="Texture2D" uid="uid://bsyxjugr7ja5v" path="res://effect/particle/texture/flame/flame countdown.png" id="6_4h02c"]
 
-[sub_resource type="SphereShape3D" id="SphereShape3D_lr523"]
-radius = 50.0
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_7kigq"]
+height = 50.0
+radius = 80.0
 
-[sub_resource type="SphereShape3D" id="SphereShape3D_708rf"]
-radius = 20.0
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_2v7tl"]
+height = 50.0
+radius = 50.0
 
 [sub_resource type="Curve" id="Curve_sc0h6"]
 _data = [Vector2(0, 0), 0.0, 14.355853, 0, 0, Vector2(0.2, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
@@ -42,8 +44,8 @@ angle_min = 1.0728836e-05
 angle_max = 360.00003
 direction = Vector3(0, 1, 0)
 spread = 20.0
-initial_velocity_min = 2.0
-initial_velocity_max = 4.0
+initial_velocity_min = 4.0
+initial_velocity_max = 8.0
 gravity = Vector3(0, 0, 0)
 scale_min = 0.79999995
 scale_max = 1.5
@@ -55,8 +57,8 @@ anim_speed_max = 1.0
 anim_offset_max = 1.0
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_0iybe"]
-render_priority = 0
-shader = ExtResource("5_7yp50")
+render_priority = 35
+shader = ExtResource("4_7kigq")
 shader_parameter/albedo = ExtResource("6_4h02c")
 shader_parameter/particles_anim_h_frames = 8
 shader_parameter/particles_anim_v_frames = 8
@@ -330,7 +332,7 @@ monitoring = false
 monitorable = false
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="DeactivateTrigger"]
-shape = SubResource("SphereShape3D_lr523")
+shape = SubResource("CylinderShape3D_7kigq")
 
 [node name="ActivateTrigger" type="Area3D" parent="."]
 collision_layer = 0
@@ -338,7 +340,7 @@ collision_mask = 2
 monitorable = false
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="ActivateTrigger"]
-shape = SubResource("SphereShape3D_708rf")
+shape = SubResource("CylinderShape3D_2v7tl")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
@@ -365,6 +367,7 @@ explosiveness = 0.8
 fixed_fps = 0
 interpolate = false
 visibility_aabb = AABB(0, 0, 0, 0, 0, 0)
+local_coords = true
 transform_align = 3
 process_material = SubResource("ParticleProcessMaterial_0iybe")
 draw_pass_1 = SubResource("QuadMesh_utsff")

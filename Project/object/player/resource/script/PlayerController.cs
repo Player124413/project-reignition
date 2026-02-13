@@ -9,25 +9,24 @@ namespace Project.Gameplay;
 public partial class PlayerController : CharacterBody3D
 {
 	[ExportGroup("Components")]
-	[Export]
-	public PlayerStateMachine StateMachine { get; private set; }
-	[Export]
-	public PlayerInputController Controller { get; private set; }
-	[Export]
-	public PlayerStatsController Stats { get; private set; }
-	[Export]
-	public PlayerSkillController Skills { get; private set; }
-	[Export]
-	public PlayerLockonController Lockon { get; private set; }
-	[Export]
-	public PlayerAnimator Animator { get; private set; }
-	[Export]
-	public PlayerEffect Effect { get; private set; }
-	[Export]
-	public PlayerPathController PathFollower { get; private set; }
-	[Export]
-	public PlayerCameraController Camera { get; private set; }
+	[Export] public PlayerStateMachine StateMachine { get; private set; }
+	[Export] public PlayerInputController Controller { get; private set; }
+	[Export] public PlayerStatsController Stats { get; private set; }
+	[Export] public PlayerSkillController Skills { get; private set; }
+	[Export] public PlayerLockonController Lockon { get; private set; }
+	[Export] public Node3D AnimatorRoot { get; private set; }
+	[Export] public PlayerEffect Effect { get; private set; }
+	[Export] public PlayerPathController PathFollower { get; private set; }
+	[Export] public PlayerCameraController Camera { get; private set; }
 	private StageSettings Stage => StageSettings.Instance;
+	public PlayerAnimator Animator { get; private set; } // The animator is instanced in _Ready()
+
+	[Export(PropertyHint.File, "*.tscn")]
+	private StringName defaultModelPath;
+	[Export(PropertyHint.File, "*.tscn")]
+	private StringName darkspineModelPath;
+	/// <summary> Tracks whether darkspine sonic is enabled or not. </summary>
+	public bool IsDarkspineSonic { get; private set; }
 
 	public override void _Ready()
 	{
@@ -36,11 +35,11 @@ public partial class PlayerController : CharacterBody3D
 		Stage.LevelCompleted += OnLevelCompleted;
 		Stage.LevelDemoStarted += Deactivate;
 
+		InstancePlayerAnimator();
 		Controller.Initialize(this);
 		Stats.Initialize();
 		Skills.Initialize(this);
 		Lockon.Initialize(this);
-		Animator.Initialize(this);
 		Effect.Initialize(this);
 		PathFollower.Initialize(this);
 		Camera.Initialize(this);
@@ -75,11 +74,32 @@ public partial class PlayerController : CharacterBody3D
 		ExternalVelocity = Vector3.Zero; // Reset external velocity after updating player
 	}
 
+	public override void _ExitTree() => StateMachine.UnloadStateMachine();
+
+	private void InstancePlayerAnimator()
+	{
+		IsDarkspineSonic = SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.Darkspine);
+		StringName modelPath = IsDarkspineSonic ? darkspineModelPath : defaultModelPath;
+
+		Animator = ResourceLoader.Load<PackedScene>(modelPath).Instantiate<PlayerAnimator>();
+		Animator.Initialize(this, AnimatorRoot);
+		AnimatorRoot.AddChild(Animator);
+		Animator.CountdownLanding += Effect.PlayLandingFX;
+
+		AnimatorRoot.GetChild<Node3D>(0).Visible = false; // Hide the Editor Debug Sonic
+	}
+
 	/// <summary> Player's horizontal movespeed, ignoring slopes. </summary>
 	public float MoveSpeed { get; set; }
+	/// <summary> Player's strafe speed, used with Autorun. </summary>
+	public float StrafeSpeed { get; set; }
 	/// <summary> Player's vertical speed -- only effective when not on the ground. </summary>
 	public float VerticalSpeed { get; set; }
 	public bool IsMovingBackward { get; set; }
+	/// <summary> Returns whether the player is moving backwards or not, taking free roam into account (CHECK IsMovingBackward SEPARATELY!). </summary>
+	public bool IsMovingBackwardFreeRoam => SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.FreeRoam) &&
+		ExtensionMethods.DotAngle(MovementAngle, PathFollower.ForwardAngle) < 0;
+
 	/// <summary> For movement that doesn't affect animations (e.x. wind). Reset every frame after it's applied. </summary>
 	public Vector3 ExternalVelocity { get; set; }
 
@@ -130,10 +150,11 @@ public partial class PlayerController : CharacterBody3D
 			MoveSpeed = Mathf.MoveToward(MoveSpeed, 0, Stats.GroundSettings.Friction * SlopeRatio * PhysicsManager.physicsDelta);
 	}
 
-	public void ApplyMovement() => ApplyMovement(GetMovementDirection());
-	public void ApplyMovement(Vector3 overrideDirection)
+	public void ApplyMovement() => ApplyMovement(GetMovementDirection(), -PathFollower.Right());
+	public void ApplyMovement(Vector3 overrideDirection, Vector3 rightDirection)
 	{
 		Velocity = (overrideDirection * MoveSpeed) + (UpDirection * VerticalSpeed) + ExternalVelocity;
+		Velocity += rightDirection * StrafeSpeed;
 		MoveAndSlide();
 	}
 
@@ -315,16 +336,7 @@ public partial class PlayerController : CharacterBody3D
 
 				if (!isCornerCollision && pathDelta >= Mathf.Pi * .25f) // Snap to path direction
 				{
-					if (SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.FreeRoam) &&
-						ExtensionMethods.DotAngle(MovementAngle, PathFollower.ForwardAngle) < 0)
-					{
-						MovementAngle = PathFollower.BackAngle;
-					}
-					else
-					{
-						MovementAngle = PathFollower.ForwardAngle;
-					}
-
+					MovementAngle = IsMovingBackwardFreeRoam ? PathFollower.BackAngle : PathFollower.ForwardAngle;
 					return;
 				}
 
@@ -334,7 +346,7 @@ public partial class PlayerController : CharacterBody3D
 			if (reduceSpeedDuringHeadonCollision)
 			{
 				if (WallRaycastHit.distance <= CollisionSize.X + CollisionPadding)
-					MoveSpeed = 0; // Kill speed
+					MoveSpeed = SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.Autorun) ? Mathf.Abs(StrafeSpeed) : 0; // Kill speed
 				else if (WallRaycastHit.distance <= CollisionSize.X + CollisionPadding + (MoveSpeed * PhysicsManager.physicsDelta))
 					MoveSpeed *= .9f; // Slow down drastically
 			}
@@ -380,7 +392,7 @@ public partial class PlayerController : CharacterBody3D
 		DebugManager.DrawRay(CollisionPosition, castDirection * castLength, wallHit ? Colors.Red : Colors.White);
 
 		if (ValidateWallCast(wallHit))
-			MovementAngle = IsMovingBackward ? PathFollower.BackAngle : PathFollower.ForwardAngle;
+			MovementAngle = (IsMovingBackwardFreeRoam || IsMovingBackward) ? PathFollower.BackAngle : PathFollower.ForwardAngle;
 	}
 
 	private bool ValidateWallCast(RaycastHit hit) => hit && hit.collidedObject.IsInGroup("wall");
@@ -421,13 +433,16 @@ public partial class PlayerController : CharacterBody3D
 		if (!ceilingHit.collidedObject.IsInGroup("ceiling"))
 			return false;
 
-		GlobalTranslate(ceilingHit.point - (CollisionPosition + (UpDirection * CollisionSize.Y)));
+		if (!IsBackflipping)
+			GlobalTranslate(ceilingHit.point - (CollisionPosition + (castVector * CollisionSize.Y)));
 
 		float maxVerticalSpeed = 0;
 		// Workaround for backflipping into slanted ceilings
 		if (IsBackflipping)
 		{
 			float ceilingAngle = ceilingHit.normal.AngleTo(Vector3.Down);
+			if (ceilingAngle > Mathf.Pi * .4f) // Vertical wall
+				return false;
 
 			if (ceilingAngle > Mathf.Pi * .1f) // Only slanted ceilings need this workaround
 			{
@@ -645,9 +660,12 @@ public partial class PlayerController : CharacterBody3D
 	public bool IsPerfectHomingAttacking { get; set; }
 	public bool IsJumpDashOrHomingAttack => IsJumpDashing || IsHomingAttacking;
 	public bool IsJumping { get; set; }
+	public bool IsBounceJumping { get; set; }
+	public bool IsVariableJumpHeightEnabled => SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.VariableJumpHeight);
 	public bool IsAccelerationJumping { get; set; }
 	public bool IsBackflipping { get; set; }
 	public bool IsStomping { get; set; }
+	public bool IsSliding { get; set; }
 	public bool ForceAccelerationJump { get; set; }
 	public bool DisableAccelerationJump { get; set; }
 	public bool DisableDamage { get; set; }
@@ -675,7 +693,7 @@ public partial class PlayerController : CharacterBody3D
 	public void StartCountdown() => StateMachine.ChangeState(countdownState);
 
 	[Export] private ReversePathState reversePathState;
-	public bool IsReversePath => StateMachine.CurrentState == reversePathState;
+	public bool IsReversingPath => StateMachine.CurrentState == reversePathState;
 	public void StartReversePath() => StateMachine.ChangeState(reversePathState);
 
 	[Signal]
@@ -904,6 +922,7 @@ public partial class PlayerController : CharacterBody3D
 	}
 
 	[Export] private BemothHornState hornState;
+	public bool IsPullingHorns => hornState.Trigger != null;
 	public void StartHorn(Bosses.CaptainBemothHorn horn)
 	{
 		hornState.Trigger = horn;
@@ -912,13 +931,33 @@ public partial class PlayerController : CharacterBody3D
 		StateMachine.ChangeState(hornState);
 	}
 
+	public void ResetHorn() => hornState.Trigger = null;
+
+	////////////////////////
+	/// DARKSPINE STATES ///
+	////////////////////////
+	public bool IsSpiritBombActive { get; set; }
+	[Export] private DarkspineSpiritBombState spiritBombState;
+	public void StartSpiritBomb(Bosses.SpiritBomb bomb)
+	{
+		spiritBombState.SpiritBomb = bomb;
+		StateMachine.ChangeState(spiritBombState);
+	}
+
+	public bool IsMultiPunchActive { get; set; }
+	[Export] private DarkspineMultiPunchState multiPunchState;
+	public void StartMultiPunch(Bosses.AlfCore core)
+	{
+		multiPunchState.Core = core;
+		StateMachine.ChangeState(multiPunchState);
+	}
+
 	/// <summary> Updates whether the player can pull the horns of Pirate Storm's boss. </summary>
 	public void SetHornPullable(bool isPullable) => hornState.CanPullHorns = isPullable;
 	/// <summary> Updates whether the player can jump off the horns of Pirate Storm's boss. </summary>
 	public void SetHornJumpable(bool isJumpable) => hornState.CanJump = isJumpable;
 
-	[Signal]
-	public delegate void KnockbackEventHandler();
+	[Signal] public delegate void KnockbackEventHandler();
 	[Export] private KnockbackState knockbackState;
 	public bool IsKnockback { get; set; }
 	public bool StartKnockback(KnockbackSettings settings = new())
@@ -938,8 +977,10 @@ public partial class PlayerController : CharacterBody3D
 		return true;
 	}
 
-	[Signal]
-	public delegate void DamagedEventHandler();
+	[Signal] public delegate void KnockbackFinishedEventHandler();
+	public void FinishKnockback() => EmitSignal(SignalName.KnockbackFinished);
+
+	[Signal] public delegate void DamagedEventHandler();
 
 	public bool IsDamageDefeatingPlayer()
 	{
@@ -973,6 +1014,7 @@ public partial class PlayerController : CharacterBody3D
 
 			// Lose soul power and continue
 			Skills.ModifySoulGauge(-PlayerSkillController.MinimumSoulPower);
+			Effect.PlayVoice("hurt");
 			return;
 		}
 
@@ -1001,7 +1043,7 @@ public partial class PlayerController : CharacterBody3D
 		EmitSignal(SignalName.Damaged);
 
 		// Level failed
-		if (Stage.Data.MissionType == LevelDataResource.MissionTypes.Perfect)
+		if (Stage.Data.MissionType == LevelDataResource.MissionTypeEnum.Perfect)
 		{
 			DefeatPlayer();
 			Stage.FinishLevel(false);
@@ -1076,7 +1118,7 @@ public partial class PlayerController : CharacterBody3D
 		invincibilityTimer = length;
 
 		if (enableFlickering)
-			Animator.StartInvincibility(length / InvincibilityLength);
+			Animator.StartInvincibility(InvincibilityLength / length);
 	}
 
 	private void UpdateInvincibility()
@@ -1134,8 +1176,8 @@ public partial class PlayerController : CharacterBody3D
 		DefeatPlayer();
 
 		if (!IsDebugRespawn &&
-			(Stage.Data.MissionType == LevelDataResource.MissionTypes.Deathless
-			|| Stage.Data.MissionType == LevelDataResource.MissionTypes.Perfect))
+			(Stage.Data.MissionType == LevelDataResource.MissionTypeEnum.Deathless
+			|| Stage.Data.MissionType == LevelDataResource.MissionTypeEnum.Perfect))
 		{
 			// Level failed
 			Stage.FinishLevel(false);
@@ -1150,7 +1192,7 @@ public partial class PlayerController : CharacterBody3D
 			color = Colors.Black // Use Colors.Transparent for debugging
 		});
 
-		TransitionManager.instance.TransitionProcess += ProcessRespawn;
+		TransitionManager.Instance.TransitionProcess += ProcessRespawn;
 	}
 
 	private void ProcessRespawn()
@@ -1179,7 +1221,7 @@ public partial class PlayerController : CharacterBody3D
 		foreach (Node exception in GetCollisionExceptions())
 			RemoveCollisionExceptionWith(exception);
 
-		TransitionManager.instance.TransitionProcess -= ProcessRespawn;
+		TransitionManager.Instance.TransitionProcess -= ProcessRespawn;
 		FinishRespawn();
 	}
 
@@ -1252,7 +1294,7 @@ public partial class PlayerController : CharacterBody3D
 			if (ExternalParent is BoneAttachment3D) // Ensure BoneAttachments are updated
 				(ExternalParent as BoneAttachment3D).OnBonePoseUpdate((ExternalParent as BoneAttachment3D).BoneIdx);
 
-			GlobalTransform = ExternalParent.GlobalTransform;
+			GlobalTransform = ExternalParent.GlobalTransform.Orthonormalized();
 		}
 
 		ExternalOffset = ExternalOffset.Lerp(Vector3.Zero, externalSmoothing); // Smooth out entry

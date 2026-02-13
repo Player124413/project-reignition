@@ -14,6 +14,8 @@ public partial class FireSoul : Pickup
 	private bool isCollectedInSaveFile;
 	[Export(PropertyHint.NodePathValidTypes, "AnimationPlayer")] private NodePath animator;
 	private AnimationPlayer Animator;
+	private readonly StringName AchievementFireSoulKey = "soul collector";
+	private readonly int AchievementFireSoulRequirement = 129; // Total number of fire souls in the entire game
 
 	protected override void SetUp()
 	{
@@ -128,6 +130,9 @@ public partial class FireSoul : Pickup
 	{
 		if (isCollected && Stage.LevelState == StageSettings.LevelStateEnum.Success) // Write save data
 			SaveManager.ActiveGameData.LevelData.SetFireSoulCollected(Stage.Data.LevelID, fireSoulIndex);
+
+		if (SaveManager.ActiveGameData.LevelData.FireSoulCount == AchievementFireSoulRequirement)
+			AchievementManager.Instance.UnlockAchievement(AchievementFireSoulKey);
 
 		base.Unload();
 	}

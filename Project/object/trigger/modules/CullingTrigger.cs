@@ -12,7 +12,8 @@ public partial class CullingTrigger : StageTriggerModule
 	[Export] private bool startEnabled; // Generally things should start culled
 	[Export] private bool saveVisibilityOnCheckpoint;
 	[Export] private bool isStageVisuals;
-	private bool isActive;
+	public bool StartEnabled => startEnabled;
+	public bool IsActivated { get; private set; }
 	private StageSettings Stage => StageSettings.Instance;
 	/// <summary> Determines whether children respawn methods should be called when activating culling trigger. </summary>
 	[Export] private bool respawnOnActivation;
@@ -86,10 +87,10 @@ public partial class CullingTrigger : StageTriggerModule
 		if (StageSettings.Instance.IsLevelLoading)
 			visibleOnCheckpoint = startEnabled;
 		else
-			visibleOnCheckpoint = isActive;
+			visibleOnCheckpoint = IsActivated;
 	}
 
-	private void ProcessDebugCheckpoint() => visibleOnDebugCheckpoint = isActive;
+	private void ProcessDebugCheckpoint() => visibleOnDebugCheckpoint = IsActivated;
 
 	public override void Respawn()
 	{
@@ -123,7 +124,7 @@ public partial class CullingTrigger : StageTriggerModule
 
 	public override void Activate()
 	{
-		isActive = true;
+		IsActivated = true;
 		UpdateCullingState();
 
 		// Respawn everything
@@ -135,7 +136,7 @@ public partial class CullingTrigger : StageTriggerModule
 
 	public override void Deactivate()
 	{
-		isActive = false;
+		IsActivated = false;
 		UpdateCullingState();
 		EmitSignal(SignalName.Deactivated);
 	}
@@ -151,8 +152,8 @@ public partial class CullingTrigger : StageTriggerModule
 
 		GetTree().CreateTimer(PhysicsManager.physicsDelta, false, true).Timeout += () =>
 		{
-			SetDeferred("visible", isActive);
-			SetDeferred("process_mode", (long)(isActive ? ProcessModeEnum.Inherit : ProcessModeEnum.Disabled));
+			SetDeferred("visible", IsActivated);
+			SetDeferred("process_mode", (long)(IsActivated ? ProcessModeEnum.Inherit : ProcessModeEnum.Disabled));
 		};
 	}
 }

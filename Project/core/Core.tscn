@@ -1,4 +1,4 @@
-[gd_scene load_steps=22 format=3 uid="uid://cx75joue8tyuv"]
+[gd_scene load_steps=23 format=3 uid="uid://cx75joue8tyuv"]
 
 [ext_resource type="Script" uid="uid://b4w7ai3qipkcv" path="res://core/PhysicsManager.cs" id="2_phpky"]
 [ext_resource type="Script" uid="uid://cfkidvm0npvcm" path="res://core/DebugManager.cs" id="3_exwps"]
@@ -6,6 +6,7 @@
 [ext_resource type="Script" uid="uid://dnwuwjerthod4" path="res://core/Runtime.cs" id="4_15wji"]
 [ext_resource type="Script" uid="uid://b77s0r1vqdnfq" path="res://core/SaveManager.cs" id="4_au3sm"]
 [ext_resource type="Resource" uid="uid://xatl072kgtjs" path="res://resource/skills/_SkillList.tres" id="5_32mxc"]
+[ext_resource type="Resource" uid="uid://brbt2g8nig68o" path="res://resource/level data/lost prologue/Tutorial.tres" id="7_ct33p"]
 [ext_resource type="PackedScene" uid="uid://d0b2gvx7s6s8u" path="res://object/stage/pickups/Pearl.tscn" id="7_wy237"]
 [ext_resource type="PackedScene" uid="uid://ci04gau0040rg" path="res://interface/notification/NotificationManager.tscn" id="8_xhui5"]
 [ext_resource type="Script" uid="uid://de1pei417wugd" path="res://interface/menu/time attack/script/TimeAttackManager.cs" id="9_6gaxu"]
@@ -25,12 +26,13 @@
 [node name="Core" type="Node"]
 process_mode = 3
 
-[node name="DebugManager" type="Control" parent="." node_paths=PackedStringArray("debugMenuRoot", "skillSelectButton", "skillToggleButton", "skillAugmentSlider", "freeCamData")]
+[node name="DebugManager" type="Control" parent="." node_paths=PackedStringArray("debugMenuRoot", "unlockStageToggleButton", "skillSelectButton", "skillToggleButton", "skillAugmentSlider", "freeCamData")]
 top_level = true
 layout_mode = 3
 anchors_preset = 0
 script = ExtResource("3_exwps")
 debugMenuRoot = NodePath("CanvasLayer/Menu")
+unlockStageToggleButton = NodePath("CanvasLayer/Menu/Tabs/Debug/Options/UnlockAllStages")
 skillSelectButton = NodePath("CanvasLayer/Menu/Tabs/Gameplay/Options/SkillSelect")
 skillToggleButton = NodePath("CanvasLayer/Menu/Tabs/Gameplay/Options/SkillToggle")
 skillAugmentSlider = NodePath("CanvasLayer/Menu/Tabs/Gameplay/Options/SkillAugment")
@@ -89,6 +91,13 @@ focus_mode = 0
 theme_override_font_sizes/font_size = 36
 toggle_mode = true
 text = "Draw Rays"
+
+[node name="DemoSave" type="Button" parent="DebugManager/CanvasLayer/Menu/Tabs/Debug/Options"]
+layout_mode = 2
+focus_mode = 0
+theme_override_font_sizes/font_size = 36
+toggle_mode = true
+text = "Use Demo Save"
 
 [node name="StageCulling" type="Button" parent="DebugManager/CanvasLayer/Menu/Tabs/Debug/Options"]
 layout_mode = 2
@@ -338,6 +347,7 @@ pearlScene = ExtResource("7_wy237")
 
 [node name="SaveManager" type="Node" parent="."]
 script = ExtResource("4_au3sm")
+initialLevelData = ExtResource("7_ct33p")
 
 [node name="PhysicsManager" type="Node3D" parent="."]
 script = ExtResource("2_phpky")
@@ -351,6 +361,7 @@ Levels_GoalPercent = Array[Object]([ExtResource("10_2rtsi"), ExtResource("11_630
 Levels_BossRush = Array[Object]([ExtResource("17_8h4rm"), ExtResource("18_ct33p"), ExtResource("19_22yhn"), ExtResource("20_heklj"), ExtResource("21_7sego")])
 
 [connection signal="toggled" from="DebugManager/CanvasLayer/Menu/Tabs/Debug/Options/DebugRays" to="DebugManager" method="ToggleRays"]
+[connection signal="toggled" from="DebugManager/CanvasLayer/Menu/Tabs/Debug/Options/DemoSave" to="DebugManager" method="ToggleDemoSave"]
 [connection signal="toggled" from="DebugManager/CanvasLayer/Menu/Tabs/Debug/Options/StageCulling" to="DebugManager" method="ToggleStageCulling"]
 [connection signal="toggled" from="DebugManager/CanvasLayer/Menu/Tabs/Debug/Options/UnlockAllStages" to="DebugManager" method="ToggleUnlockStages"]
 [connection signal="toggled" from="DebugManager/CanvasLayer/Menu/Tabs/Debug/Options/CameraPosition" to="DebugManager" method="ToggleCamera"]

@@ -11,15 +11,12 @@ namespace Project.Gameplay
 		public static readonly string DEPTH_PARAMETER = "depth_texture"; //All shaders that use depth must have this parameter
 		public static readonly string FAR_CLIP_PARAMETER = "far_clip_distance";
 
-		[Export]
-		private Camera3D depthCamera; //Used to get the depth texture to determine whether the sun is occluded
-		[Export]
-		private SubViewport depthViewport;
-		[Export]
-		private ShaderMaterial depthMaterial;
+		[Export] private Camera3D depthCamera; // Used to get the depth texture to determine whether the sun is occluded
+		[Export] private SubViewport depthViewport;
+		[Export] private ShaderMaterial depthMaterial;
+		[Export] private Control depthViewportContainer;
 
-		[Export]
-		public Array<ShaderMaterial> depthMaterials; //List of materials that use depth_texture
+		[Export] public Array<ShaderMaterial> depthMaterials; //List of materials that use depth_texture
 
 		private Camera3D Camera => GetViewport().GetCamera3D();
 		private Callable ApplyTextureCallable => new(this, MethodName.ApplyTexture);
@@ -50,7 +47,7 @@ namespace Project.Gameplay
 			depthCamera.Near = Camera.Near;
 
 			depthCamera.Far = Camera.Far;
-			depthCamera.GlobalTransform = Camera.GlobalTransform;
+			depthCamera.GlobalTransform = Camera.GetGlobalTransformInterpolated();
 
 			depthViewport.Size = Runtime.HalfScreenSize;
 			depthViewport.RenderTargetUpdateMode = SubViewport.UpdateMode.Once;
@@ -58,17 +55,23 @@ namespace Project.Gameplay
 			depthMaterial.Set(FAR_CLIP_PARAMETER, depthCamera.Far);
 		}
 
+		public override void _Input(InputEvent e)
+		{
+			if (!OS.IsDebugBuild())
+				return;
+
+			if (Input.IsActionJustPressed("debug_reflection"))
+				depthViewportContainer.Visible = !depthViewportContainer.Visible;
+		}
+
 		private void ApplyTexture()
 		{
 			DepthTexture = depthViewport.GetTexture();
+			if (depthMaterials == null)
+				return;
 
-			if (depthMaterials != null)
-			{
-				for (int i = 0; i < depthMaterials.Count; i++)
-				{
-					depthMaterials[i].SetShaderParameter(DEPTH_PARAMETER, DepthTexture);
-				}
-			}
+			for (int i = 0; i < depthMaterials.Count; i++)
+				depthMaterials[i].SetShaderParameter(DEPTH_PARAMETER, DepthTexture);
 		}
 	}
 }

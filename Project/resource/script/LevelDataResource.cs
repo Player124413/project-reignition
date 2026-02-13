@@ -8,7 +8,7 @@ namespace Project.Gameplay;
 [GlobalClass]
 public partial class LevelDataResource : Resource
 {
-	public enum MissionTypes
+	public enum MissionTypeEnum
 	{
 		None, // Add a goal node or a boss so the player doesn't get stuck!
 		Objective, // Add custom nodes that call IncrementObjective()
@@ -21,10 +21,30 @@ public partial class LevelDataResource : Resource
 		Chain, // Chain rings together
 	}
 
+	public enum MissionCategoryEnum
+	{
+		Side, // Option side mission mission
+		Story, // Mandatory story mission
+		Boss, // Boss battle
+	}
+
 	public enum CompletionAnimationType
 	{
 		None, // Sonic just stands there
 		ThumbsUp, // Thumbs up variation is determined by character's speed...
+	}
+
+	public SkillResource RequiredSkill { get; private set; }
+	/// <summary> Set this to True to ignore the required skill when unlocking the level. </summary>
+	public bool BypassSkillUnlockRequirement { get; private set; }
+	public int RequiredMedals { get; private set; }
+	public int RequiredLevel { get; private set; }
+	public RankEnum RequiredRank { get; private set; }
+	public enum RankEnum
+	{
+		Gold,
+		Silver,
+		Bronze
 	}
 
 	#region Editor
@@ -32,15 +52,22 @@ public partial class LevelDataResource : Resource
 	{
 		Array<Dictionary> properties =
 		[
-			ExtensionMethods.CreateProperty("Area Key", Variant.Type.String),
+			ExtensionMethods.CreateProperty("Area Key", Variant.Type.Int, PropertyHint.Enum, AreaKey.EnumToString()),
 			ExtensionMethods.CreateProperty("Level ID", Variant.Type.StringName),
 			ExtensionMethods.CreateProperty("Level Index", Variant.Type.Int),
 			ExtensionMethods.CreateProperty("Level Path", Variant.Type.String, PropertyHint.FilePath, "*.tscn"),
-			ExtensionMethods.CreateProperty("Story Event Index", Variant.Type.Int, PropertyHint.Range, "-1,31"),
-			ExtensionMethods.CreateProperty("First Clear Bonus", Variant.Type.Int, PropertyHint.Range, "0,10000"),
+			ExtensionMethods.CreateProperty("Pre Story Event Index", Variant.Type.String),
+			ExtensionMethods.CreateProperty("Post Story Event Index", Variant.Type.String),
+			ExtensionMethods.CreateProperty("World Ring", Variant.Type.Int, PropertyHint.Enum, WorldRing.EnumToString()),
 
-			ExtensionMethods.CreateProperty("Is Side Mission", Variant.Type.Bool),
+			ExtensionMethods.CreateProperty("Mission Category", Variant.Type.Int, PropertyHint.Enum, MissionCategory.EnumToString()),
 			ExtensionMethods.CreateProperty("Has Fire Souls", Variant.Type.Bool),
+
+			ExtensionMethods.CreateProperty("Unlock Requirements/Required Skill", Variant.Type.Object, PropertyHint.ResourceType, "SkillResource"),
+			ExtensionMethods.CreateProperty("Unlock Requirements/Bypass Skill Unlock", Variant.Type.Bool),
+			ExtensionMethods.CreateProperty("Unlock Requirements/Required Level", Variant.Type.Int, PropertyHint.Range, "0,99"),
+			ExtensionMethods.CreateProperty("Unlock Requirements/Required Medals", Variant.Type.Int),
+			ExtensionMethods.CreateProperty("Unlock Requirements/Required Rank", Variant.Type.Int, PropertyHint.Enum, RequiredRank.EnumToString()),
 
 			ExtensionMethods.CreateProperty("Mission/Type", Variant.Type.Int, PropertyHint.Enum, MissionType.EnumToString()),
 			ExtensionMethods.CreateProperty("Mission/Type Key", Variant.Type.String),
@@ -49,8 +76,8 @@ public partial class LevelDataResource : Resource
 			ExtensionMethods.CreateProperty("Mission/Time Limit", Variant.Type.Int, PropertyHint.Range, "0,640"),
 		];
 
-		if (MissionType != MissionTypes.None && MissionType != MissionTypes.Race
-			&& MissionType != MissionTypes.Deathless && MissionType != MissionTypes.Perfect)
+		if (MissionType != MissionTypeEnum.None && MissionType != MissionTypeEnum.Race
+			&& MissionType != MissionTypeEnum.Deathless && MissionType != MissionTypeEnum.Perfect)
 		{
 			properties.Add(ExtensionMethods.CreateProperty("Mission/Objective Count", Variant.Type.Int, PropertyHint.Range, "0,256"));
 		}
@@ -84,20 +111,33 @@ public partial class LevelDataResource : Resource
 		switch ((string)property)
 		{
 			case "Area Key":
-				return AreaKey;
+				return (int)AreaKey;
 			case "Level ID":
 				return LevelID;
 			case "Level Index":
 				return LevelIndex;
 			case "Level Path":
 				return LevelPath;
-			case "Story Event Index":
-				return StoryEventIndex;
-			case "First Clear Bonus":
-				return FirstClearBonus;
+			case "Pre Story Event Index":
+				return PreStoryEvent;
+			case "Post Story Event Index":
+				return PostStoryEvent;
+			case "World Ring":
+				return (int)WorldRing;
 
-			case "Is Side Mission":
-				return IsSideMission;
+			case "Unlock Requirements/Required Skill":
+				return RequiredSkill;
+			case "Unlock Requirements/Bypass Skill Unlock":
+				return BypassSkillUnlockRequirement;
+			case "Unlock Requirements/Required Level":
+				return RequiredLevel;
+			case "Unlock Requirements/Required Medals":
+				return RequiredMedals;
+			case "Unlock Requirements/Required Rank":
+				return (int)RequiredRank;
+
+			case "Mission Category":
+				return (int)MissionCategory;
 			case "Has Fire Souls":
 				return HasFireSouls;
 
@@ -124,11 +164,11 @@ public partial class LevelDataResource : Resource
 				return BronzeTime;
 			case "Ranking/Score Requirement":
 				return Score;
-			case "Ranking/Gold Time Attack":
+			case "Ranking/Gold - Time Attack":
 				return GoldTimeTA;
-			case "Ranking/Silver Time Attack":
+			case "Ranking/Silver - Time Attack":
 				return SilverTimeTA;
-			case "Ranking/Bronze Time Attack":
+			case "Ranking/Bronze - Time Attack":
 				return BronzeTimeTA;
 
 			case "Completion/Disable Object Cull":
@@ -153,7 +193,7 @@ public partial class LevelDataResource : Resource
 		switch ((string)property)
 		{
 			case "Area Key":
-				AreaKey = (string)value;
+				AreaKey = (SaveManager.WorldEnum)(int)value;
 				break;
 			case "Level ID":
 				LevelID = (StringName)value;
@@ -164,22 +204,41 @@ public partial class LevelDataResource : Resource
 			case "Level Path":
 				LevelPath = (string)value;
 				break;
-			case "Story Event Index":
-				StoryEventIndex = (int)value;
+			case "Pre Story Event Index":
+				PreStoryEvent = (string)value;
 				break;
-			case "First Clear Bonus":
-				FirstClearBonus = (int)value;
+			case "Post Story Event Index":
+				PostStoryEvent = (string)value;
+				break;
+			case "World Ring":
+				WorldRing = (SaveManager.WorldEnum)(int)value;
 				break;
 
-			case "Is Side Mission":
-				IsSideMission = (bool)value;
+			case "Unlock Requirements/Required Skill":
+				RequiredSkill = (SkillResource)value;
+				break;
+			case "Unlock Requirements/Bypass Skill Unlock":
+				BypassSkillUnlockRequirement = (bool)value;
+				break;
+			case "Unlock Requirements/Required Level":
+				RequiredLevel = (int)value;
+				break;
+			case "Unlock Requirements/Required Medals":
+				RequiredMedals = (int)value;
+				break;
+			case "Unlock Requirements/Required Rank":
+				RequiredRank = (RankEnum)(int)value;
+				break;
+
+			case "Mission Category":
+				MissionCategory = (MissionCategoryEnum)(int)value;
 				break;
 			case "Has Fire Souls":
 				HasFireSouls = (bool)value;
 				break;
 
 			case "Mission/Type":
-				MissionType = (MissionTypes)(int)value;
+				MissionType = (MissionTypeEnum)(int)value;
 				NotifyPropertyListChanged();
 				break;
 			case "Mission/Type Key":
@@ -249,26 +308,28 @@ public partial class LevelDataResource : Resource
 		return true;
 	}
 	#endregion
-	/// <summary> Level's world - used for the ready menu
-	public string AreaKey { get; private set; }
+	/// <summary> Level's world - used for the ready menu and setting up menu memory from cutscenes.
+	public SaveManager.WorldEnum AreaKey { get; private set; }
 	/// <summary> Level's id - used for save data. </summary>
 	public StringName LevelID { get; private set; }
 	/// <summary> The index of the level in the mission select screen. Used by the Special Book. </summary>
 	public int LevelIndex { get; private set; }
 	/// <summary> Path to the level's scene. </summary>
 	public string LevelPath { get; private set; }
-	/// <summary> Story event index to play after completing the stage. Set to -1 if no story event is meant to be played. </summary>
-	public int StoryEventIndex = -1;
+	/// <summary> Event index to play when starting the stage. Set to 0 if no story event is meant to be played. </summary>
+	public string PreStoryEvent;
+	/// <summary> Event index to play after completing the stage. Set to 0 if no story event is meant to be played. </summary>
+	public string PostStoryEvent;
+	/// <summary> Optional key for unlocking a world ring. Use Lost Prologue for no world ring. </summary>
+	public SaveManager.WorldEnum WorldRing { get; private set; }
 
 	/// <summary> Does this mission contain fire souls? </summary>
 	public bool HasFireSouls { get; private set; }
 	/// <summary> Should this mission be shown as optional? </summary>
-	public bool IsSideMission { get; private set; }
-	/// <summary> Amount of extra experience to grant when the player first clears the level. </summary>
-	public int FirstClearBonus { get; private set; }
+	public MissionCategoryEnum MissionCategory { get; private set; }
 
 	/// <summary> Type of mission. </summary>
-	public MissionTypes MissionType { get; private set; }
+	public MissionTypeEnum MissionType { get; private set; }
 	/// <summary> Localization key for the type of mission (Goal, Rampage, Rings, etc.). </summary>
 	public string MissionTypeKey { get; private set; }
 	/// <summary> Localization key for the more specific description. </summary>
@@ -294,6 +355,7 @@ public partial class LevelDataResource : Resource
 	public int BronzeTimeTA { get; private set; }
 	// Requirement for score rank
 	public int Score { get; private set; }
+	public int SilverScore => 3 * (Score / 4);
 
 	/// <summary> Determines whether objects should be forcefully culled when starting the completion camera. </summary>
 	public bool DisableObjectCullOnCompletion { get; private set; }
@@ -307,4 +369,14 @@ public partial class LevelDataResource : Resource
 	public Array<LevelDataResource> UnlockStage { get; private set; }
 	/// <summary> World to unlock when the level is completed. </summary>
 	public SaveManager.WorldEnum UnlockWorld { get; private set; }
+
+	public int GetFirstClearBonus()
+	{
+		return MissionCategory switch
+		{
+			MissionCategoryEnum.Story => 4000,
+			MissionCategoryEnum.Boss => 5000,
+			_ => 2000,
+		};
+	}
 }

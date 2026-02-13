@@ -12,10 +12,12 @@ public partial class IdleState : PlayerState
 	[Export] private PlayerState backflipState;
 	[Export] private PlayerState fallState;
 	[Export] private PlayerState homingAttackState;
+	[Export] private PlayerState darkspineSpinState;
 
 	public override void EnterState()
 	{
 		Player.MoveSpeed = 0;
+		Player.StrafeSpeed = 0;
 	}
 
 	public override PlayerState ProcessPhysics()
@@ -39,8 +41,11 @@ public partial class IdleState : PlayerState
 			if (Player.IsBackflipInputValid())
 				return backflipState;
 
-			if (SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.ChargeJump))
+			if (SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.ChargeJump) &&
+				!Player.IsLockoutDisablingAction(LockoutResource.ActionFlags.FullJump))
+			{
 				return crouchState;
+			}
 
 			return jumpState;
 		}
@@ -58,10 +63,15 @@ public partial class IdleState : PlayerState
 			return null;
 		}
 
-		if (Player.Controller.IsAttackBufferActive && Player.Lockon.IsTargetAttackable)
+		if (Player.Controller.IsAttackBufferActive)
 		{
 			Player.Controller.ResetAttackBuffer();
-			return homingAttackState;
+
+			if (Player.Lockon.IsTargetAttackable)
+				return homingAttackState;
+
+			if (Player.IsDarkspineSonic)
+				return darkspineSpinState;
 		}
 
 		if (SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.Autorun) && !Player.Controller.IsBrakeHeld())
@@ -78,20 +88,24 @@ public partial class IdleState : PlayerState
 			if (Player.IsLockoutActive && Player.ActiveLockoutData.overrideSpeed && !Mathf.IsZeroApprox(Player.ActiveLockoutData.speedRatio))
 				return runState;
 
+			bool hasInputStrength = !Mathf.IsZeroApprox(Player.Controller.GetInputStrength());
 			if (!Player.Controller.IsBrakeHeld() &&
-				(SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.Autorun) || !Mathf.IsZeroApprox(Player.Controller.GetInputStrength())))
+				(SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.Autorun) || hasInputStrength))
 			{
 				if (Player.Controller.GetHoldingDistance(Player.Controller.GetTargetInputAngle(), Player.PathFollower.ForwardAngle) >= 1.0f &&
-					!SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.FreeRoam))
+					hasInputStrength && !SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.FreeRoam))
 				{
 					return backstepState;
 				}
 
 				return runState;
 			}
+		}
 
-			if (!Mathf.IsZeroApprox(Player.MoveSpeed))
-				return runState;
+		if (!Mathf.IsZeroApprox(Player.MoveSpeed) ||
+			(Player.Controller.IsStrafeModeActive && !Mathf.IsZeroApprox(Player.StrafeSpeed)))
+		{
+			return runState;
 		}
 
 		Player.Animator.IdleAnimation();

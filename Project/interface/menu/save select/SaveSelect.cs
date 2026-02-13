@@ -1,32 +1,29 @@
 using Godot;
 using Godot.Collections;
 using Project.Core;
+using Project.Gameplay;
 
 namespace Project.Interface.Menus;
 
 public partial class SaveSelect : Menu
 {
-	[Export]
-	private Sprite2D scrollbar;
+	[Export] private LevelDataResource initialLevelData;
+	[Export] private Sprite2D scrollbar;
 	private Vector2 scrollbarVelocity;
 	private float scrollRatio;
 	private const int ScrollbarHeight = 625;
 	private const float ScrollSmoothing = .05f;
 
-	[Export]
-	private Array<NodePath> saveOptions = [];
+	[Export] private Array<NodePath> saveOptions = [];
 	private readonly Array<SaveOption> _saveOptions = [];
 	private const int ActiveSaveOptionIndex = 3; // Corresponds to the center save option
 
-	[Export]
-	private AnimationPlayer deleteAnimator;
+	[Export] private AnimationPlayer deleteAnimator;
 	private bool isDeleteMenuActive;
 	private bool isDeleteSelected;
 
-	[Export]
-	private string descriptionText;
-	[Export]
-	private Description description;
+	[Export] private string descriptionText;
+	[Export] private Description description;
 
 	protected override void SetUp()
 	{
@@ -143,32 +140,38 @@ public partial class SaveSelect : Menu
 
 	public override void OpenSubmenu()
 	{
+		menuMemory[MemoryKeys.LevelSelect] = 0;
+		menuMemory[MemoryKeys.SkillMenuInitialized] = 0;
 		SaveManager.ActiveSaveSlotIndex = _saveOptions[ActiveSaveOptionIndex].SaveIndex;
+		SaveManager.ActiveGameData.UnlockStagesRecursively(initialLevelData);
 		SaveManager.ActiveSkillRing.LoadFromActiveData();
+		NotificationManager.Instance.UpdateCounters();
 
-		if (SaveManager.ActiveGameData.IsNewFile())
+		// Update next story level
+		SaveManager.ActiveGameData.LoadCurrentStoryLevelFromSaveData();
+
+		if (SaveManager.ActiveGameData.IsNewFile() || Mathf.IsZeroApprox(SaveManager.ActiveGameData.playTime))
 		{
 			SaveManager.ResetSaveData(SaveManager.ActiveSaveSlotIndex, false);
 			SaveManager.SaveGameData();
 
-			if (menuMemory[MemoryKeys.ActiveMenu] != (int)MemoryKeys.TimeAttack)//Don't load a scene if we are in the time attack menu
+			if (menuMemory[MemoryKeys.ActiveMenu] != (int)MemoryKeys.TimeAttack) // Only load a scene if we aren't in Time Attack
 			{
 				if (!DebugManager.Instance.UseDemoSave) // Don't load into cutscenes in the demo
 				{
 					// Load directly into the first cutscene
-					TransitionManager.QueueSceneChange($"{TransitionManager.EventScenePath}1.tscn");
+					TransitionManager.QueueSceneChange($"{TransitionManager.EventScenePath}Event1.tscn");
 					TransitionManager.StartTransition(new()
 					{
 						color = Colors.Black,
 						inSpeed = 1f,
 					});
+					return;
 				}
-
 			}
-
 		}
 
-		if (DebugManager.Instance.UseDemoSave || OS.IsDebugBuild()) // Unlock all worlds in the demo
+		if (DebugManager.Instance.UseDemoSave) // Unlock all worlds in the demo
 			SaveManager.ActiveGameData.UnlockAllWorlds();
 
 		menuMemory[MemoryKeys.WorldSelect] = (int)SaveManager.ActiveGameData.lastPlayedWorld; // Set the world selection to the last played world

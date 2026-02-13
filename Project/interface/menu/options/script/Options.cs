@@ -38,10 +38,13 @@ public partial class Options : Menu
 				maxSelection = 4;
 				break;
 			case Submenus.Control:
-				maxSelection = 7;
+				maxSelection = 7; // TODO Add 1 here if we ever add party mode;
 				break;
 			case Submenus.Interface:
-				maxSelection = 6;
+				maxSelection = 8;
+				break;
+			case Submenus.Mouse:
+				maxSelection = controlMouseLabels.Length;
 				break;
 			case Submenus.Mapping:
 				maxSelection = controlMappingOptions.Length;
@@ -69,6 +72,7 @@ public partial class Options : Menu
 		Interface, // Menu for configuring interface settings
 		ResetSettings, // Submenu for resetting the configuration settings
 		ResetControls, // Submenu for resetting the control settings
+		Mouse, // Control submenu for configuring mouse mappings
 		Mapping, // Control submenu for configuring adventure mode's input mappings
 		PartyMapping, // Control submenu for configuring party mode's input mappings
 		Unbind, // Control sub-submenu for unbinding inputs
@@ -182,6 +186,9 @@ public partial class Options : Menu
 			case Submenus.Interface:
 				ConfirmInterfaceOption();
 				break;
+			case Submenus.Mouse:
+				ConfirmMouseOption();
+				break;
 			case Submenus.Mapping:
 				ConfirmSFX();
 				controlMappingOptions[VerticalSelection].CallDeferred(ControlOption.MethodName.StartListening);
@@ -259,11 +266,15 @@ public partial class Options : Menu
 					inSpeed = .5f,
 				});
 				break;
+			case Submenus.Mouse:
+				CancelSFX();
+				FlipBook(Submenus.Control, true, 3);
+				break;
 			case Submenus.Mapping:
 				if (!controlMappingOptions[VerticalSelection].IsReady) return;
 
 				CancelSFX();
-				FlipBook(Submenus.Control, true, 3);
+				FlipBook(Submenus.Control, true, 4);
 				break;
 			case Submenus.PartyMapping:
 				if (VerticalSelection >= ExtraPartyModeOptionCount &&
@@ -273,7 +284,7 @@ public partial class Options : Menu
 				}
 
 				CancelSFX();
-				FlipBook(Submenus.Control, true, 4);
+				FlipBook(Submenus.Control, true, 5);
 				break;
 			case Submenus.Test:
 				return;
@@ -419,6 +430,7 @@ public partial class Options : Menu
 
 	[Export] private Label[] videoLabels;
 	[Export] private Label[] audioLabels;
+	[Export] private Label[] controlMouseLabels;
 	[Export] private Label[] languageLabels;
 	[Export] private Label[] controlLabels;
 	[Export] private Label[] interfaceLabels;
@@ -429,6 +441,7 @@ public partial class Options : Menu
 	private readonly string DisabledString = "option_disable";
 	private readonly string HoldString = "option_hold";
 	private readonly string ToggleString = "option_toggle";
+	private readonly string BothString = "option_both";
 	private readonly string AttackString = "option_attack";
 	private readonly string StompString = "option_stomp";
 	private readonly string LowString = "option_low";
@@ -529,9 +542,21 @@ public partial class Options : Menu
 		languageLabels[1].Text = SaveManager.Config.isDialogDisabled ? DisabledString : EnabledString;
 		languageLabels[3].Text = GetVoiceLanguageKey(SaveManager.Config.voiceLanguage);
 
+
+		controlMouseLabels[0].Text = SaveManager.Config.enableMouseControls ? EnabledString : DisabledString;
+		controlMouseLabels[1].Text = $"{SaveManager.Config.mouseDeadzone}%";
+		controlMouseLabels[2].Text = $"{SaveManager.Config.mouseHorizontalRange}%";
+		controlMouseLabels[3].Text = $"{SaveManager.Config.mouseVerticalRange}%";
+		controlMouseLabels[4].Text = $"{SaveManager.Config.mouseVerticalOffset}%";
+
 		controlLabels[0].Text = $"{Mathf.RoundToInt(SaveManager.Config.deadZone * 100)}%";
 		controlLabels[1].Text = SaveManager.Config.useHoldBreakMode ? HoldString : ToggleString;
-		controlLabels[2].Text = SaveManager.Config.useStompJumpButtonMode ? StompString : AttackString;
+		controlLabels[2].Text = SaveManager.Config.jumpButtonMode switch
+		{
+			SaveManager.JumpButtonModeEnum.Attack => AttackString,
+			SaveManager.JumpButtonModeEnum.Stomp => StompString,
+			_ => BothString,
+		};
 
 		partyMappingLabels[0].Text = Tr(PlayerString).Replace("0", partyPlayerIndex.ToString());
 		partyMappingLabels[1].Text = partyMappingOptions[0].GetDevice();
@@ -581,6 +606,9 @@ public partial class Options : Menu
 
 		interfaceLabels[4].Text = SaveManager.Config.isUsingHorizontalSoulGauge ? HorizontalStyle : VerticalStyle;
 		interfaceLabels[5].Text = SaveManager.Config.isActionPromptsEnabled ? EnabledString : DisabledString;
+
+		interfaceLabels[6].Text = $"{SaveManager.Config.subtitleOpacity}%";
+		interfaceLabels[7].Text = $"{SaveManager.Config.cutsceneOpacity}%";
 	}
 
 	private string GetVoiceLanguageKey(SaveManager.VoiceLanguage voiceLanguage)
@@ -671,6 +699,9 @@ public partial class Options : Menu
 				break;
 			case Submenus.Language:
 				settingUpdated = SlideLanguageOption(direction);
+				break;
+			case Submenus.Mouse:
+				settingUpdated = SlideMouseOption(direction);
 				break;
 			case Submenus.Control:
 				settingUpdated = SlideControlOption(direction);
@@ -799,7 +830,7 @@ public partial class Options : Menu
 				return false;
 
 			SaveManager.Config.useScreenShake = true;
-			SaveManager.Config.screenShake = SlideVolume(SaveManager.Config.screenShake, direction);
+			SaveManager.Config.screenShake = SlidePercentage(SaveManager.Config.screenShake, direction);
 		}
 
 		return true;
@@ -888,7 +919,7 @@ public partial class Options : Menu
 				return false;
 
 			SaveManager.Config.isMasterMuted = false;
-			SaveManager.Config.masterVolume = SlideVolume(SaveManager.Config.masterVolume, direction);
+			SaveManager.Config.masterVolume = SlidePercentage(SaveManager.Config.masterVolume, direction);
 		}
 		else if (VerticalSelection == 1)
 		{
@@ -896,7 +927,7 @@ public partial class Options : Menu
 				return false;
 
 			SaveManager.Config.isBgmMuted = false;
-			SaveManager.Config.bgmVolume = SlideVolume(SaveManager.Config.bgmVolume, direction);
+			SaveManager.Config.bgmVolume = SlidePercentage(SaveManager.Config.bgmVolume, direction);
 		}
 		else if (VerticalSelection == 2)
 		{
@@ -904,7 +935,7 @@ public partial class Options : Menu
 				return false;
 
 			SaveManager.Config.isSfxMuted = false;
-			SaveManager.Config.sfxVolume = SlideVolume(SaveManager.Config.sfxVolume, direction);
+			SaveManager.Config.sfxVolume = SlidePercentage(SaveManager.Config.sfxVolume, direction);
 		}
 		else if (VerticalSelection == 3)
 		{
@@ -912,7 +943,7 @@ public partial class Options : Menu
 				return false;
 
 			SaveManager.Config.isVoiceMuted = false;
-			SaveManager.Config.voiceVolume = SlideVolume(SaveManager.Config.voiceVolume, direction);
+			SaveManager.Config.voiceVolume = SlidePercentage(SaveManager.Config.voiceVolume, direction);
 		}
 		else
 		{
@@ -922,7 +953,7 @@ public partial class Options : Menu
 		return true;
 	}
 
-	private int SlideVolume(int current, int direction) => Mathf.Clamp(current + direction * 5, 0, 100);
+	private int SlidePercentage(int current, int direction, int min = 0, int max = 100) => Mathf.Clamp(current + direction * 5, min, max);
 	private bool IsSlideVolumeValid(int current, int direction) => (current > 0 && direction == -1) || (current < 100 && direction == 1);
 
 	private bool SlideLanguageOption(int direction)
@@ -973,7 +1004,7 @@ public partial class Options : Menu
 		}
 		else if (VerticalSelection == 2)
 		{
-			SaveManager.Config.useStompJumpButtonMode = !SaveManager.Config.useStompJumpButtonMode;
+			SaveManager.Config.jumpButtonMode = (SaveManager.JumpButtonModeEnum)WrapSelection((int)SaveManager.Config.jumpButtonMode + direction, (int)SaveManager.JumpButtonModeEnum.Count);
 			return true;
 		}
 
@@ -1018,6 +1049,50 @@ public partial class Options : Menu
 			SaveManager.Config.isActionPromptsEnabled = !SaveManager.Config.isActionPromptsEnabled;
 			return true;
 		}
+		else if (VerticalSelection == 6)
+		{
+			SaveManager.Config.subtitleOpacity = SlidePercentage(SaveManager.Config.subtitleOpacity, direction);
+			return true;
+		}
+		else if (VerticalSelection == 7)
+		{
+			SaveManager.Config.cutsceneOpacity = SlidePercentage(SaveManager.Config.cutsceneOpacity, direction);
+			return true;
+		}
+
+		return false;
+	}
+
+	private bool SlideMouseOption(int direction)
+	{
+		if (VerticalSelection == 0)
+		{
+			SaveManager.Config.enableMouseControls = !SaveManager.Config.enableMouseControls;
+			return true;
+		}
+		else if (VerticalSelection == 1)
+		{
+			SaveManager.Config.mouseDeadzone = SlidePercentage(SaveManager.Config.mouseDeadzone, direction);
+			SaveManager.Config.mouseHorizontalRange = Mathf.Max(SaveManager.Config.mouseHorizontalRange, SaveManager.Config.mouseDeadzone);
+			SaveManager.Config.mouseVerticalRange = Mathf.Max(SaveManager.Config.mouseVerticalRange, SaveManager.Config.mouseDeadzone);
+			return true;
+		}
+		else if (VerticalSelection == 2)
+		{
+			SaveManager.Config.mouseHorizontalRange = SlidePercentage(SaveManager.Config.mouseHorizontalRange, direction);
+			return true;
+		}
+		else if (VerticalSelection == 3)
+		{
+			SaveManager.Config.mouseVerticalRange = SlidePercentage(SaveManager.Config.mouseVerticalRange, direction);
+			return true;
+		}
+		else if (VerticalSelection == 4)
+		{
+			SaveManager.Config.mouseVerticalOffset = SlidePercentage(SaveManager.Config.mouseVerticalOffset, direction, -100);
+			return true;
+		}
+
 
 		return false;
 	}
@@ -1142,11 +1217,17 @@ public partial class Options : Menu
 		switch (VerticalSelection)
 		{
 			case 3:
-				FlipBook(Submenus.Mapping, false, 0);
+				FlipBook(Submenus.Mouse, false, 0);
 				break;
 			case 4:
+				FlipBook(Submenus.Mapping, false, 0);
+				break;
+			/*
+			TODO Shift options by one and uncomment this if we ever add party mode
+			case 5:
 				FlipBook(Submenus.PartyMapping, false, 0);
 				break;
+			*/
 			case 5:
 				FlipBook(Submenus.Test, false, VerticalSelection);
 				break;
@@ -1165,6 +1246,12 @@ public partial class Options : Menu
 	private void ConfirmInterfaceOption()
 	{
 		SlideInterfaceOption(1);
+		ConfirmSFX();
+	}
+
+	private void ConfirmMouseOption()
+	{
+		SlideMouseOption(1);
 		ConfirmSFX();
 	}
 

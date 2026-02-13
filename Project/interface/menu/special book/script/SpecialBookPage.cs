@@ -18,10 +18,10 @@ public partial class SpecialBookPage : Resource
 		switch (PageType)
 		{
 			case PageTypeEnum.Music:
-				properties.Add(ExtensionMethods.CreateProperty("Audio Stream", Variant.Type.String, PropertyHint.FilePath, "*.mp3,*.wav"));
+				properties.Add(ExtensionMethods.CreateProperty("Audio Stream", Variant.Type.String, PropertyHint.File, "*.mp3,*.wav"));
 				break;
 			case PageTypeEnum.Video:
-				properties.Add(ExtensionMethods.CreateProperty("Event Path", Variant.Type.String, PropertyHint.FilePath, "*.tscn"));
+				properties.Add(ExtensionMethods.CreateProperty("Event Path", Variant.Type.String, PropertyHint.File, "*.tscn"));
 				break;
 			case PageTypeEnum.Achievement:
 				properties.Add(ExtensionMethods.CreateProperty("Achievement Key", Variant.Type.StringName));
@@ -243,6 +243,9 @@ public partial class SpecialBookPage : Resource
 		return false;
 	}
 
+	/// <summary> Alt. Hint system used for Achievements. </summary>
+	public string GetLocalizedUnlockRequirements(string descriptionKey) => Tr(descriptionKey.Replace("desc_", "hint_"));
+
 	/// <summary> Constructs a localized string that describes the unlock requirements. </summary>
 	public string GetLocalizedUnlockRequirements()
 	{
@@ -250,9 +253,6 @@ public partial class SpecialBookPage : Resource
 		int number = 0;
 
 		if (IsInvalid())
-			return localizedString;
-
-		if (PageType == PageTypeEnum.Achievement)
 			return localizedString;
 
 		// NOTE: This switch statement only covers the retail game. Add more conditions as needed.

@@ -18,6 +18,7 @@ public partial class StompState : PlayerState
 	public override void EnterState()
 	{
 		Player.MoveSpeed = 0;
+		Player.StrafeSpeed = 0;
 		Player.IsStomping = true;
 		Player.Lockon.IsMonitoring = false;
 
@@ -28,7 +29,18 @@ public partial class StompState : PlayerState
 		Player.AllowLandingSkills = true;
 
 		bool isAttackStomp = SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.StompAttack);
-		Player.Animator.StompAnimation(isAttackStomp);
+
+		if (SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.StompBounce))
+		{
+			Player.Effect.StartSpinFX();
+			Player.Animator.StartSpin(4f);
+			Player.AttackState = PlayerController.AttackStates.Weak;
+		}
+		else
+		{
+			Player.Animator.StompAnimation(isAttackStomp);
+		}
+
 		if (isAttackStomp)
 		{
 			Player.AttackState = PlayerController.AttackStates.Weak;
@@ -42,6 +54,12 @@ public partial class StompState : PlayerState
 		if (!Player.IsOnGround && !Player.IsGrindRailActive)
 			Player.IsStomping = false;
 
+		if (SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.StompBounce))
+		{
+			Player.Effect.StopSpinFX();
+			Player.Animator.ResetState(0f);
+		}
+
 		Player.Effect.StopStompFX();
 		Player.ChangeHitbox("RESET");
 		Player.AttackState = PlayerController.AttackStates.None;
@@ -50,13 +68,23 @@ public partial class StompState : PlayerState
 	public override PlayerState ProcessPhysics()
 	{
 		Player.MoveSpeed = 0; // Go STRAIGHT down
+		Player.StrafeSpeed = 0;
 		UpdateVerticalSpeed();
 		Player.ApplyMovement();
 		Player.CheckGround();
 		Player.UpdateUpDirection(true);
 
 		if (Player.IsOnGround)
+		{
+			if (SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.StompBounce) &&
+				(Input.IsActionPressed("button_action") ||
+				(Input.IsActionPressed("button_jump") && SaveManager.Config.jumpButtonMode != SaveManager.JumpButtonModeEnum.Attack)))
+			{
+				Player.IsBounceJumping = true;
+			}
+
 			return landState;
+		}
 
 		Player.AttemptFallIntoTheVoid();
 		return null;
@@ -64,7 +92,7 @@ public partial class StompState : PlayerState
 
 	private void UpdateVerticalSpeed()
 	{
-		if (SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.StompAttack))
+		if (SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.StompAttack) || SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.StompBounce))
 			Player.VerticalSpeed = Mathf.MoveToward(Player.VerticalSpeed, StompSpeed, StompGravity * PhysicsManager.physicsDelta);
 		else
 			Player.VerticalSpeed = Mathf.MoveToward(Player.VerticalSpeed, StompSpeed, JumpCancelGravity * PhysicsManager.physicsDelta);

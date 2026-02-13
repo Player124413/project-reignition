@@ -153,6 +153,7 @@ public partial class SFXLibraryResource : Resource
 	{
 		string key = keys[keyEditingIndex];
 		Array<Array<string>> stream = [];
+		GD.PrintT(keys.Count, keyEditingIndex);
 		for (int i = 0; i < channelCount; i++)
 			stream.Add(localizedStreamPaths[i][keyEditingIndex]);
 
@@ -160,7 +161,7 @@ public partial class SFXLibraryResource : Resource
 		{
 			keys[keyEditingIndex] = keys[reorderIndex];
 			for (int i = 0; i < channelCount; i++)
-				streams[i][keyEditingIndex] = streams[i][reorderIndex];
+				localizedStreamPaths[i][keyEditingIndex] = localizedStreamPaths[i][reorderIndex];
 
 			keys[reorderIndex] = key;
 			for (int i = 0; i < channelCount; i++)
@@ -173,7 +174,7 @@ public partial class SFXLibraryResource : Resource
 
 		keys.RemoveAt(keyEditingIndex); // Remove the data at the current index
 		for (int i = 0; i < channelCount; i++)
-			streams[i].RemoveAt(keyEditingIndex);
+			localizedStreamPaths[i].RemoveAt(keyEditingIndex);
 
 		int insertionPoint = reorderIndex;
 		if (reorderMode == ReorderModeEnum.After)

@@ -25,6 +25,7 @@ public partial class PlayerState : Node
 	protected MovementSetting ActiveMovementSettings => Player.IsOnGround ? Player.Stats.GroundSettings : Player.Stats.AirSettings;
 	protected virtual void ProcessMoveSpeed()
 	{
+		ProcessAutorunStrafeSpeed();
 		turnInstantly = Mathf.IsZeroApprox(Player.MoveSpeed) && !Player.Skills.IsSpeedBreakActive; // Store this for turning function
 
 		if (Player.Skills.IsSpeedBreakActive)
@@ -52,7 +53,7 @@ public partial class PlayerState : Node
 			}
 		}
 
-		if (!SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.Autorun) &&
+		if ((!SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.Autorun) || Player.IsMovingBackward) &&
 			Mathf.IsZeroApprox(inputStrength)) // Basic slow down
 		{
 			Deccelerate();
@@ -68,7 +69,7 @@ public partial class PlayerState : Node
 		}
 
 		// Always move at full power when autorun is enabled
-		if (SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.Autorun))
+		if (SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.Autorun) && !Player.IsMovingBackward)
 		{
 			Accelerate(1f);
 			return;
@@ -81,7 +82,28 @@ public partial class PlayerState : Node
 			inputStrength *= Mathf.Clamp(inputDot + .5f, 0, 1f);
 		}
 
+		if (Mathf.IsZeroApprox(inputStrength))
+			return;
+
 		Accelerate(inputStrength);
+	}
+
+	protected virtual void ProcessAutorunStrafeSpeed()
+	{
+		if (!SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.Autorun))
+			return;
+
+		if (Player.Controller.IsBrakeHeld() ||
+			Player.IsLockoutOverridingMovementAngle && (Player.ActiveLockoutData.movementMode != LockoutResource.MovementModes.Strafe || Player.ActiveLockoutData.recenterPlayer))
+		{
+			Player.StrafeSpeed = Player.Stats.StrafeSettings.UpdateInterpolate(Player.StrafeSpeed, -1.0f); // Reset to 0 quickly
+			return;
+		}
+
+		float input = Player.Controller.InputHorizontal;
+		int sign = Mathf.Sign(ExtensionMethods.DotAngle(Player.PathFollower.ForwardAngle, Player.Controller.XformAngle));
+		input *= sign >= 0 ? 1 : -1; // Take camera direction into account
+		Player.StrafeSpeed = Player.Stats.StrafeSettings.UpdateInterpolateSigned(Player.StrafeSpeed, input);
 	}
 
 	private bool IsBraking(float inputAngle)
@@ -95,8 +117,7 @@ public partial class PlayerState : Node
 		if (Player.Camera.IsCrossfading)
 			return false;
 
-		bool isHoldingBack = Player.Controller.IsHoldingDirection(inputAngle, Player.MovementAngle + Mathf.Pi);
-		return isHoldingBack;
+		return Player.Controller.IsHoldingDirection(inputAngle, Player.MovementAngle + Mathf.Pi) && Player.Controller.GetInputStrength() > 0.5f;
 	}
 
 	protected virtual void Deccelerate()
@@ -160,8 +181,7 @@ public partial class PlayerState : Node
 		Turn(targetMovementAngle, turnSmoothing);
 
 		// Strafe implementation
-		if (Player.Controller.IsStrafeModeActive)
-			ProcessStrafe(targetMovementAngle);
+		ProcessAutorunStrafe(targetMovementAngle);
 	}
 
 	protected virtual bool DisableTurning(float targetMovementAngle)
@@ -182,7 +202,6 @@ public partial class PlayerState : Node
 			return true;
 		}
 
-		// Check for turning around
 		if (Player.Controller.IsHoldingDirection(targetMovementAngle, Player.MovementAngle + Mathf.Pi) &&
 			!Player.Controller.IsStrafeModeActive)
 		{
@@ -192,8 +211,11 @@ public partial class PlayerState : Node
 		return false;
 	}
 
-	protected virtual void ProcessStrafe(float targetMovementAngle)
+	protected virtual void ProcessAutorunStrafe(float targetMovementAngle)
 	{
+		if (!SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.Autorun))
+			return;
+
 		if (Mathf.IsZeroApprox(Player.Controller.GetInputStrength()))
 			strafeBlend = Mathf.MoveToward(strafeBlend, 1.0f, PhysicsManager.physicsDelta);
 		else

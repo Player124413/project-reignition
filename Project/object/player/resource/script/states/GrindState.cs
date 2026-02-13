@@ -58,13 +58,8 @@ public partial class GrindState : PlayerState
 		Player.IsOnGround = true;
 		Player.VerticalSpeed = 0f;
 
-		float targetMoveSpeed = Player.Stats.GrindSettings.Speed * Player.Stats.CalculateGrindSpeedRatio();
+		float targetMoveSpeed = Player.Stats.GrindSettings.Speed + Player.Stats.CalculateBonusGrindSpeed();
 		Player.MoveSpeed = Mathf.Max(targetMoveSpeed, Player.MoveSpeed);
-		if (SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.GrindUp) &&
-			SaveManager.ActiveSkillRing.GetAugmentIndex(SkillKey.GrindUp) == 3)
-		{
-			StageSettings.Instance.UpdateRingCount(5, StageSettings.MathModeEnum.Subtract, true);
-		}
 
 		Player.StartExternal(null, ActiveGrindRail.PathFollower, positionSmoothing);
 		Player.Skills.IsSpeedBreakEnabled = false;
@@ -128,7 +123,15 @@ public partial class GrindState : PlayerState
 
 		bool isGrindCompleted = Mathf.IsEqualApprox(ActiveGrindRail.PathFollower.ProgressRatio, 1);
 		if (isGrindCompleted || movementDelta <= 0) // Disconnect from the rail
+		{
+			if (movementDelta <= 0) // Prevent snapping to the current grindrail again
+			{
+				ActiveGrindRail.IsIgnoringPlayer = true;
+				Player.GlobalPosition += Vector3.Down * 0.05f;
+			}
+
 			return fallState;
+		}
 
 		SaveManager.SharedData.GrindDistance = Mathf.MoveToward(SaveManager.SharedData.GrindDistance, float.MaxValue,
 			Player.MoveSpeed * PhysicsManager.physicsDelta);
@@ -170,6 +173,7 @@ public partial class GrindState : PlayerState
 		{
 			movementDelta = 0; // Limit movement distance
 			Player.MoveSpeed = 0f;
+			Player.StrafeSpeed = 0;
 		}
 		else // No walls, Check for crushers
 		{
@@ -191,6 +195,9 @@ public partial class GrindState : PlayerState
 	public bool IsRailActivationValid(GrindRail grindRail)
 	{
 		if (!StageSettings.Instance.IsLevelIngame) // Not in-game
+			return false;
+
+		if (grindRail.IsIgnoringPlayer)
 			return false;
 
 		if (ActiveGrindRail == grindRail) // Already grinding on the target rail
@@ -296,6 +303,15 @@ public partial class GrindState : PlayerState
 			return;
 		}
 
+		if (SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.GrindUp) &&
+			SaveManager.ActiveSkillRing.GetAugmentIndex(SkillKey.GrindUp) == 3)
+		{
+			// Auto-grind
+			StageSettings.Instance.UpdateRingCount(5, StageSettings.MathModeEnum.Subtract, true);
+			StartShuffle(true);
+			return;
+		}
+
 		if (!Mathf.IsZeroApprox(currentCharge))
 		{
 			// Fail shuffle
@@ -340,11 +356,6 @@ public partial class GrindState : PlayerState
 			StartShuffle(true);
 			return;
 		}
-
-		if (!Mathf.IsZeroApprox(currentCharge))
-			return;
-
-		ActiveGrindRail.IsBonusDisabled = true;
 	}
 
 	private void UpdateChargeAnimations(bool isCharging)
@@ -371,15 +382,16 @@ public partial class GrindState : PlayerState
 		Player.Controller.ResetGimmickBuffer();
 
 		Player.MoveSpeed = isPerfectCharge ? Player.Stats.perfectShuffleSpeed : Player.Stats.GrindSettings.Speed;
+		Player.MoveSpeed += Player.Stats.CalculateBonusGrindSpeed();
 		Player.Effect.StartGrindFX(false);
 		Player.Animator.StartGrindShuffle();
 		if (isPerfectCharge)
+		{
 			Player.Effect.PerfectGrindShuffleFX();
-		else
-			ActiveGrindRail.IsBonusDisabled = true;
 
-		if (!ActiveGrindRail.IsBonusDisabled)
-			BonusManager.instance.QueueBonus(new(BonusType.GrindShuffle));
+			if (!ActiveGrindRail.IsBonusDisabled)
+				BonusManager.instance.QueueBonus(new(BonusType.GrindShuffle));
+		}
 	}
 
 	private RaycastHit CheckWall(float length, GrindRail rail = null)

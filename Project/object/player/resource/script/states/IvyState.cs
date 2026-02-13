@@ -38,6 +38,7 @@ public partial class IvyState : PlayerState
 		Trigger.AddImpulseForce(initialForce, true);
 
 		Player.MoveSpeed = 0;
+		Player.StrafeSpeed = 0;
 		Player.StartExternal(Trigger, Trigger.LaunchPoint, 0.2f);
 
 		Player.Controller.ResetActionBuffer();

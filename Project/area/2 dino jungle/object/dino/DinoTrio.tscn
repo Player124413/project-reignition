@@ -1,11 +1,18 @@
-[gd_scene load_steps=31 format=3 uid="uid://cc1ft0jnv1sql"]
+[gd_scene load_steps=39 format=3 uid="uid://cc1ft0jnv1sql"]
 
 [ext_resource type="Script" uid="uid://dtuhegx3a6q0r" path="res://area/2 dino jungle/data/script/DinoTrio.cs" id="1_6nsvh"]
 [ext_resource type="PackedScene" uid="uid://ctbsi13u4rad0" path="res://area/2 dino jungle/object/model/dino/DinoTrio.gltf" id="1_57frd"]
 [ext_resource type="Material" uid="uid://4batii1hel0b" path="res://effect/particle/material/explosion/Explosion Smoke.tres" id="3_p4v8a"]
 [ext_resource type="AudioStream" uid="uid://bcm370ah8g7gf" path="res://sound/sfx/stage/dinosaur jungle/dino trio step.wav" id="4_0q1g7"]
+[ext_resource type="Animation" uid="uid://b35l8jmvwhggs" path="res://area/2 dino jungle/object/model/animation/trio/trio-attack.res" id="4_hpsyo"]
+[ext_resource type="Animation" uid="uid://dihftewai7ebt" path="res://area/2 dino jungle/object/model/animation/trio/trio-fidget-paw.res" id="5_ai0ph"]
 [ext_resource type="Script" uid="uid://dnrfeyqvx8aq" path="res://addons/custom_nodes/script/GroupAudioStreamPlayer3D.cs" id="5_dyp8x"]
+[ext_resource type="Animation" uid="uid://b8qq4ni6sldpi" path="res://area/2 dino jungle/object/model/animation/trio/trio-fidget-shake.res" id="6_6mbgu"]
 [ext_resource type="AudioStream" uid="uid://dy0q7366tmdiq" path="res://sound/sfx/stage/dinosaur jungle/dino trio windup.wav" id="6_dfbdg"]
+[ext_resource type="Animation" uid="uid://d0mntblo3suki" path="res://area/2 dino jungle/object/model/animation/trio/trio-idle.res" id="7_odv4r"]
+[ext_resource type="Animation" uid="uid://ct8c1mx7eqjwg" path="res://area/2 dino jungle/object/model/animation/trio/RESET.res" id="8_jmvbd"]
+[ext_resource type="Animation" uid="uid://3oohcwkgcvkk" path="res://area/2 dino jungle/object/model/animation/trio/trio-run.res" id="9_0xevo"]
+[ext_resource type="Animation" uid="uid://t40b2n0f4jai" path="res://area/2 dino jungle/object/model/animation/trio/trio-walk.res" id="10_e2ffm"]
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_wqtdo"]
 radius = 1.5
@@ -47,6 +54,17 @@ alpha_curve = SubResource("CurveTexture_tr11d")
 
 [sub_resource type="QuadMesh" id="QuadMesh_c01v3"]
 material = ExtResource("3_p4v8a")
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_bhtgt"]
+_data = {
+&"RESET": ExtResource("8_jmvbd"),
+&"trio-attack": ExtResource("4_hpsyo"),
+&"trio-fidget-paw": ExtResource("5_ai0ph"),
+&"trio-fidget-shake": ExtResource("6_6mbgu"),
+&"trio-idle": ExtResource("7_odv4r"),
+&"trio-run": ExtResource("9_0xevo"),
+&"trio-walk": ExtResource("10_e2ffm")
+}
 
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_8caol"]
 animation = &"trio-attack"
@@ -139,7 +157,7 @@ nodes/paw_anim/node = SubResource("AnimationNodeAnimation_sj3dp")
 nodes/paw_anim/position = Vector2(-1020, 160)
 nodes/shake_anim/node = SubResource("AnimationNodeAnimation_0226d")
 nodes/shake_anim/position = Vector2(-1020, 280)
-node_connections = [&"attack_speed", 0, &"attack", &"attack_trigger", 0, &"movement_transition", &"attack_trigger", 1, &"attack_speed", &"fidget", 0, &"paw_anim", &"fidget", 1, &"shake_anim", &"fidget_trigger", 0, &"idle_seek", &"fidget_trigger", 1, &"fidget", &"idle_seek", 0, &"idle_anim", &"movement_seek", 0, &"movement_speed", &"movement_speed", 0, &"movement_blend", &"movement_transition", 0, &"fidget_trigger", &"movement_transition", 1, &"movement_seek", &"output", 0, &"attack_trigger"]
+node_connections = [&"output", 0, &"attack_trigger", &"attack_speed", 0, &"attack", &"attack_trigger", 0, &"movement_transition", &"attack_trigger", 1, &"attack_speed", &"fidget", 0, &"paw_anim", &"fidget", 1, &"shake_anim", &"fidget_trigger", 0, &"idle_seek", &"fidget_trigger", 1, &"fidget", &"idle_seek", 0, &"idle_anim", &"movement_seek", 0, &"movement_speed", &"movement_speed", 0, &"movement_blend", &"movement_transition", 0, &"fidget_trigger", &"movement_transition", 1, &"movement_seek"]
 
 [node name="DinoTrio" type="PathFollow3D" node_paths=PackedStringArray("stepSfx", "windupSfx", "animationTree")]
 use_model_front = true
@@ -165,8 +183,11 @@ bones/17/scale = Vector3(1, 1, 1)
 bones/19/scale = Vector3(1, 1, 1)
 bones/21/scale = Vector3(1, 1, 1)
 
+[node name="DinoTrioMesh" parent="DinoTrio/DinoTrioRoot/Skeleton3D" index="0"]
+layers = 64
+
 [node name="Head" type="BoneAttachment3D" parent="."]
-transform = Transform3D(1, 1.6355e-07, 5.00357e-07, 5.00378e-07, -0.590619, -0.806948, 1.63551e-07, 0.80695, -0.590619, 1.71783e-06, 2.72624, 1.92318)
+transform = Transform3D(1, 1.6354954e-07, 5.0035715e-07, 5.0037806e-07, -0.59061915, -0.8069482, 1.6355136e-07, 0.80695033, -0.59061897, 1.71783e-06, 2.7262402, 1.9231759)
 bone_name = "head"
 bone_idx = 3
 use_external_skeleton = true
@@ -187,7 +208,7 @@ transform = Transform3D(1, 1.27898e-13, -4.26326e-14, 0, 0.984808, -0.173648, 7.
 shape = SubResource("CapsuleShape3D_hkr6g")
 
 [node name="Hip" type="BoneAttachment3D" parent="."]
-transform = Transform3D(1, -2.41637e-08, 0, 0, 0, 1, -2.41637e-08, -1, 0, -1.84096e-09, 3.04308, 0.0421269)
+transform = Transform3D(1, -2.4163677e-08, 0, 0, 0, 1, -2.4163677e-08, -1, 0, -1.8409558e-09, 3.0430758, 0.042126894)
 bone_name = "hip"
 bone_idx = 1
 use_external_skeleton = true
@@ -224,6 +245,9 @@ draw_pass_1 = SubResource("QuadMesh_c01v3")
 active = false
 root_node = NodePath("../DinoTrio")
 callback_mode_discrete = 0
+libraries = {
+&"": SubResource("AnimationLibrary_bhtgt")
+}
 tree_root = SubResource("AnimationNodeBlendTree_dcn5s")
 anim_player = NodePath("../DinoTrio/AnimationPlayer")
 parameters/attack_speed/scale = 1.2

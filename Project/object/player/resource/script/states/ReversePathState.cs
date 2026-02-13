@@ -41,6 +41,7 @@ public partial class ReversePathState : PlayerState
 			return null;
 
 		Player.MoveSpeed = 0;
+		Player.StrafeSpeed = 0;
 
 		if (!playedTurnaroundAnimation)
 		{
@@ -67,8 +68,11 @@ public partial class ReversePathState : PlayerState
 				if (Player.IsBackflipInputValid())
 					return backflipState;
 
-				if (SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.ChargeJump))
+				if (SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.ChargeJump) &&
+					!Player.IsLockoutDisablingAction(LockoutResource.ActionFlags.FullJump))
+				{
 					return crouchState;
+				}
 
 				return jumpState;
 			}

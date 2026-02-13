@@ -11,7 +11,12 @@ public class SkillRing
 	public Array<SkillKey> EquippedSkills => SaveManager.ActiveGameData.equippedSkills;
 	/// <summary> List of equipped Augments. </summary>
 	public Dictionary<SkillKey, int> EquippedAugments => SaveManager.ActiveGameData.equippedAugments;
+
+	/// <summary> Checks whether a skill is equipped and has the correct augment index. </summary>
+	public bool IsSkillEquipped(SkillResource skill) => IsSkillEquipped(skill.Key) && GetAugmentIndex(skill.Key) == skill.AugmentIndex;
+	/// <summary> Checks whether a skill's key is equipped. </summary>
 	public bool IsSkillEquipped(SkillKey key) => EquippedSkills.Contains(key);
+	/// <summary> Returns the augment of a particular skill. </summary>
 	public int GetAugmentIndex(SkillKey key) => EquippedAugments.TryGetValue(key, out int currentAugmentIndex) ? currentAugmentIndex : 0;
 
 	/// <summary> Cost of all equipped skills. </summary>
@@ -103,7 +108,7 @@ public class SkillRing
 	}
 
 	/// <summary> Equips a skill onto the skill ring. </summary>
-	public SkillEquipStatusEnum EquipSkill(SkillKey key, int augmentIndex = 0, bool isDebugToggle = false)
+	public SkillEquipStatusEnum EquipSkill(SkillKey key, int augmentIndex = 0, bool isForceToggled = false)
 	{
 		if (EquippedSkills.Contains(key) && augmentIndex == GetAugmentIndex(key))
 			return SkillEquipStatusEnum.Equipped; // Already equipped
@@ -130,7 +135,7 @@ public class SkillRing
 			}
 
 			int currentCost = IsSkillEquipped(key) ? baseSkill.GetAugment(GetAugmentIndex(key)).Cost : 0;
-			if (!isDebugToggle) // Check for total cost
+			if (!isForceToggled) // Check for total cost
 			{
 				int targetTotalCost = TotalCost - currentCost + augment.Cost;
 				if (targetTotalCost > MaxSkillPoints)
@@ -153,7 +158,7 @@ public class SkillRing
 		}
 
 		// Not an augment skill
-		if (!isDebugToggle) // Check for total cost
+		if (!isForceToggled) // Check for total cost
 		{
 			int targetTotalCost = TotalCost + baseSkill.Cost;
 			if (targetTotalCost > MaxSkillPoints)
@@ -161,7 +166,7 @@ public class SkillRing
 		}
 
 		int skillCount = SaveManager.ActiveSkillRing.GetSkillCountByElement(baseSkill.Element);
-		if (skillCount < baseSkill.ElementRequirement && !isDebugToggle)
+		if (skillCount < baseSkill.ElementRequirement && !isForceToggled)
 			return SkillEquipStatusEnum.ElementRequirement;
 
 		if (!EquippedSkills.Contains(key))
@@ -219,10 +224,10 @@ public class SkillRing
 	}
 
 	/// <summary> Checks whether a skill is unlocked on the active save file. </summary>
-	public bool IsSkillUnlocked(SkillKey key) => IsSkillUnlocked(Runtime.Instance.SkillList.GetSkill(key));
+	public bool IsSkillUnlocked(SkillKey key, bool countEquipAsUnlocked = true) => IsSkillUnlocked(Runtime.Instance.SkillList.GetSkill(key), countEquipAsUnlocked);
 
 	/// <summary> Overload method for checking a skill resource directly. </summary>
-	public bool IsSkillUnlocked(SkillResource skill)
+	public bool IsSkillUnlocked(SkillResource skill, bool countEquipAsUnlocked = true)
 	{
 		if (skill == null) // Skill hasn't been created yet...
 			return false;
@@ -230,7 +235,7 @@ public class SkillRing
 		if (DebugManager.Instance.UseDemoSave)
 			return true;
 
-		if (IsSkillEquipped(skill.Key)) // Equipped skills should be unlocked automatically to allow the player to unequip them...
+		if (countEquipAsUnlocked && IsSkillEquipped(skill)) // Equipped skills should be unlocked automatically to allow the player to unequip them...
 			return true;
 
 		if (SaveManager.ActiveGameData.level < skill.LevelRequirement) // Under-leveled
@@ -347,6 +352,7 @@ public enum SkillKey
 	// Control skills
 	Autorun,
 	ChargeJump,
+	VariableJumpHeight, // Allows finer control of jump height (can mess up beginners)
 	FreeRoam, // Allows Sonic to turn around normally
 	QuickStart, // Reduces the length of the countdown
 	SlowTurn, // Decreases Sonic's turning sensitivity
@@ -370,6 +376,7 @@ public enum SkillKey
 	StompDash, // Gives a speed boost when stomping/jump canceling
 	StompExp, // Grants exp when landing
 	StompAttack, // Replace jump cancel with an attack
+	StompBounce, // Bounces the player when landing and holding the action button
 
 	// Jump skills
 	AccelJumpAttack, // Increases attack power of accel jump
@@ -419,6 +426,8 @@ public enum SkillKey
 	CrestWind,
 	CrestFire,
 	CrestDark,
+
+	Darkspine, // Completion reward
 
 	Count, // Number of skills
 }

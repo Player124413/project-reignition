@@ -28,8 +28,8 @@
 [ext_resource type="Script" uid="uid://np5vcxq01ii8" path="res://object/trigger/modules/CheckpointTrigger.cs" id="25_vay8w"]
 [ext_resource type="Resource" uid="uid://dthe1vju4bxlo" path="res://area/6 skeleton dome/act 3/camera/ArenaCam.tres" id="26_q2jct"]
 [ext_resource type="Resource" uid="uid://bu377gi4d8wv5" path="res://area/6 skeleton dome/act 3/camera/SpiralCam.tres" id="27_vvehx"]
+[ext_resource type="CompressedTexture3D" uid="uid://jwvwg5eooakq" path="res://area/6 skeleton dome/data/texture/LUT test 8.png" id="30_a6mka"]
 [ext_resource type="Resource" uid="uid://daw4lsoelbt73" path="res://resource/bgm/bgm sd act3.tres" id="31_454hl"]
-[ext_resource type="CompressedTexture3D" uid="uid://cv8b0l2np7ud0" path="res://area/6 skeleton dome/data/texture/LUT test 7.png" id="31_vxxf3"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_n6xm6"]
 size = Vector3(150, 5, 150)
@@ -459,10 +459,9 @@ _data = {
 [sub_resource type="Environment" id="Environment_454hl"]
 background_mode = 1
 ambient_light_source = 2
-ambient_light_color = Color(0.56133336, 1, 0.44, 1)
+ambient_light_color = Color(0.44, 1, 0.74800014, 1)
 ambient_light_energy = 0.06
 tonemap_mode = 1
-tonemap_exposure = 1.1
 tonemap_white = 2.0
 glow_enabled = true
 glow_levels/2 = 1.0
@@ -479,9 +478,7 @@ fog_light_color = Color(1, 0, 0, 1)
 fog_light_energy = 0.01
 adjustment_enabled = true
 adjustment_brightness = 1.1
-adjustment_contrast = 1.2
-adjustment_saturation = 1.2
-adjustment_color_correction = ExtResource("31_vxxf3")
+adjustment_color_correction = ExtResource("30_a6mka")
 
 [node name="Static" type="Node3D" node_paths=PackedStringArray("pathParent", "completionAnimator", "Environment")]
 script = ExtResource("1_drnsg")
@@ -702,10 +699,29 @@ ambient_color_energy = 0.2
 [node name="ObjectLighting" type="DirectionalLight3D" parent="Lighting"]
 transform = Transform3D(0.9659258, 1.1313343e-08, -0.25881904, 0.25881904, -4.222197e-08, 0.9659258, 2.3798672e-16, -1, -4.37114e-08, 0, 0, 0)
 layers = 1024
-light_color = Color(0.7607843, 1, 0.93333334, 1)
-light_energy = 0.2
+light_energy = 0.15
 light_specular = 5.0
 light_cull_mask = 4293918785
+shadow_caster_mask = 65
+directional_shadow_blend_splits = true
+
+[node name="DropShadows1" type="DirectionalLight3D" parent="Lighting"]
+transform = Transform3D(0.99999994, 0, 0, 0, -4.371139e-08, 0.99999994, 0, -1, -4.3711385e-08, 0, 0, 0)
+layers = 1024
+light_energy = 0.5
+light_specular = 0.0
+light_cull_mask = 4293918726
+shadow_enabled = true
+shadow_caster_mask = 65
+directional_shadow_blend_splits = true
+
+[node name="DropShadows2" type="DirectionalLight3D" parent="Lighting"]
+transform = Transform3D(0.99999994, 0, 0, 0, -4.371139e-08, 0.99999994, 0, -1, -4.3711385e-08, 0, 0, 0)
+layers = 1024
+light_energy = 0.5
+light_negative = true
+light_specular = 0.0
+light_cull_mask = 4293918726
 shadow_caster_mask = 65
 directional_shadow_blend_splits = true
 

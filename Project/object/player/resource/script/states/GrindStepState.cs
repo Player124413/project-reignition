@@ -82,7 +82,7 @@ public partial class GrindStepState : PlayerState
 			return landState;
 
 		if (Player.Controller.IsActionBufferActive ||
-			(Player.Controller.IsJumpBufferActive && SaveManager.Config.useStompJumpButtonMode))
+			(Player.Controller.IsJumpBufferActive && SaveManager.Config.jumpButtonMode == SaveManager.JumpButtonModeEnum.Stomp))
 		{
 			Player.Controller.ResetJumpBuffer();
 			Player.Controller.ResetActionBuffer();

@@ -10,10 +10,14 @@ public partial class PlayerAnimator : Node3D
 {
 	[Signal] public delegate void CountdownLandingEventHandler();
 
-	private PlayerController Player;
-	public void Initialize(PlayerController player)
+	[Export] public Node3D RightFoot { get; private set; }
+	[Export] public Node3D LeftFoot { get; private set; }
+	private Node3D RotationRoot { get; set; }
+	private PlayerController Player { get; set; }
+	public void Initialize(PlayerController player, Node3D rotationRoot)
 	{
 		Player = player;
+		RotationRoot = rotationRoot;
 
 		animationTree.Active = true; // Activate animator
 
@@ -25,11 +29,13 @@ public partial class PlayerAnimator : Node3D
 
 		AnimationNodeBlendTree oneShotTree = animationRoot.GetNode("oneshot_tree") as AnimationNodeBlendTree;
 		oneShotTransition = oneShotTree.GetNode("oneshot_transition") as AnimationNodeTransition;
+
+		InitializeDarkspineAnimations();
+		InitializeSpeedbreakMaterial();
 	}
 
 	[Export] private AnimationTree animationTree;
 	[Export] private AnimationPlayer eventAnimationPlayer;
-	[Export] private MeshInstance3D bodyMesh;
 
 	/// <summary> Reference to the root blend tree of the animation tree. </summary>
 	private AnimationNodeBlendTree animationRoot;
@@ -97,7 +103,6 @@ public partial class PlayerAnimator : Node3D
 		StopCrouching(0f);
 	}
 
-
 	public bool IsOneshotAnimationValid(string animation)
 	{
 		if (string.IsNullOrEmpty(animation))
@@ -106,7 +111,6 @@ public partial class PlayerAnimator : Node3D
 		bool isAnimationValid = false;
 		for (int i = 0; i < oneShotTransition.GetInputCount(); i++)
 		{
-			GD.Print(oneShotTransition.GetInputName(i));
 			if (!oneShotTransition.GetInputName(i).Equals(animation))
 				continue;
 
@@ -170,6 +174,7 @@ public partial class PlayerAnimator : Node3D
 	private readonly string GroundSpeed = "parameters/ground_tree/ground_speed/scale";
 	private readonly string GroundSeek = "parameters/ground_tree/ground_seek/seek_request";
 	private readonly string ForwardBlend = "parameters/ground_tree/forward_blend/blend_position";
+	private readonly string DSForwardBlend = "parameters/ground_tree/ds_forward_blend/blend_position";
 
 	private readonly string TurnBlend = "parameters/ground_tree/turn_blend/blend_position";
 	private readonly string LandTrigger = "parameters/ground_tree/land_trigger/request";
@@ -340,6 +345,7 @@ public partial class PlayerAnimator : Node3D
 
 		animationTree.Set(IdleBlend, idleBlend);
 		animationTree.Set(ForwardBlend, speedRatio);
+
 		if (DisabledSpeedSmoothing)
 		{
 			animationTree.Set(GroundSpeed, animationSpeed);
@@ -351,7 +357,9 @@ public partial class PlayerAnimator : Node3D
 		}
 
 		groundTurnRatio = Mathf.Lerp(((Vector2)animationTree.Get(TurnBlend)).X, groundTurnRatio, TurnSmoothing); // Blend from animator
-		animationTree.Set(TurnBlend, new Vector2(groundTurnRatio, Player.IsMovingBackward ? 0 : speedRatio));
+		Vector2 turnBlend = new(groundTurnRatio, Player.IsMovingBackward ? 0 : speedRatio);
+		animationTree.Set(TurnBlend, turnBlend);
+		animationTree.Set(DSForwardBlend, turnBlend);
 	}
 
 	public bool IsBrakeAnimationActive { get; private set; }
@@ -495,7 +503,17 @@ public partial class PlayerAnimator : Node3D
 		IsFallTransitionEnabled = false;
 		animationTree.Set(AccelJumpTrigger, (int)AnimationNodeOneShot.OneShotRequest.Fire);
 	}
-	public void JumpDashAnimation() => UpdateAirState("launch", false);
+	public void JumpDashAnimation()
+	{
+		if (Player.IsDarkspineSonic)
+		{
+			UpdateAirState("jump", false);
+			JumpAccelAnimation();
+			return;
+		}
+
+		UpdateAirState("launch", false);
+	}
 
 	private readonly string StompState = "stomp";
 	private readonly string StompTrigger = "parameters/air_tree/stomp_trigger/request";
@@ -661,7 +679,7 @@ public partial class PlayerAnimator : Node3D
 	{
 		VisualAngle = angle;
 		rotationVelocity = 0;
-		Rotation = Vector3.Up * VisualAngle;
+		RotationRoot.Rotation = Vector3.Up * VisualAngle;
 	}
 
 	/// <summary>
@@ -676,20 +694,21 @@ public partial class PlayerAnimator : Node3D
 			return;
 
 		float targetRotation = CalculateTargetVisualRotation();
-		if (Player.ExternalController == null &&
-			(Player.Skills.IsSpeedBreakActive ||
-			Player.IsLockoutOverridingMovementAngle))
+		if (Player.ExternalController == null)
 		{
-			// Fix sluggish angle changes during lockout overrides
-			VisualAngle += Player.PathFollower.DeltaAngle;
+			// Fix sluggish visual angle changes when turning
+			VisualAngle += Player.PathFollower.DeltaAngle * 1.5f;
 		}
 
 		if (!SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.FreeRoam))
 			VisualAngle = ExtensionMethods.ClampAngleRange(VisualAngle, Player.PathFollower.ForwardAngle, Mathf.Pi);
 
 		VisualAngle = ExtensionMethods.SmoothDampAngle(VisualAngle, targetRotation, ref rotationVelocity, MovementRotationSmoothing);
-		Rotation = Vector3.Up * VisualAngle;
+		RotationRoot.Rotation = Vector3.Up * VisualAngle;
+		RotationRoot.Rotation += Vector3.Back * CalculateStrafeAngle();
 	}
+
+	private float CalculateStrafeAngle() => Player.Stats.StrafeSettings.GetSpeedRatio(Player.StrafeSpeed) * Mathf.Pi * 0.05f;
 
 	private float CalculateTargetVisualRotation()
 	{
@@ -699,7 +718,7 @@ public partial class PlayerAnimator : Node3D
 		if (Player.IsHomingAttacking) // Face target
 			return ExtensionMethods.CalculateForwardAngle(Player.Lockon.HomingAttackDirection);
 
-		if (Player.IsReversePath && Player.IsOnGround)
+		if (Player.IsReversingPath && Player.IsOnGround)
 			return Player.PathFollower.ForwardAngle;
 
 		if (Player.IsMovingBackward) // Backstepping
@@ -720,7 +739,9 @@ public partial class PlayerAnimator : Node3D
 		if (SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.Autorun) && Mathf.IsZeroApprox(Player.MoveSpeed))
 			return VisualAngle;
 
-		return Player.MovementAngle;
+		float strafeAngle = Player.Stats.StrafeSettings.GetSpeedRatio(Player.StrafeSpeed) * -Mathf.Pi * 0.5f;
+		strafeAngle *= 1f - Player.Stats.GroundSettings.GetSpeedRatioClamped(Player.MoveSpeed) * 0.8f;
+		return Player.MovementAngle + strafeAngle;
 	}
 	#endregion
 
@@ -840,10 +861,14 @@ public partial class PlayerAnimator : Node3D
 	}
 
 	private float balanceTurnVelocity;
+	private float windRatioVelocity;
 	/// <summary> How much should the balancing animation be smoothed by? </summary>
 	private const float BalanceTurnSmoothing = .15f;
+	/// <summary> How much should wind ratio transitions be smoothed by? </summary>
+	private const float WindRatioSmoothing = 2f;
 	public void UpdateBalancing(float balanceRatio)
 	{
+		float targetWindRatio = 1f;
 		if (IsBalanceShuffleActive)
 		{
 			string currentNode = BalanceStatePlayback.GetCurrentNode();
@@ -854,20 +879,27 @@ public partial class PlayerAnimator : Node3D
 				animationTree.Set(BalanceDirectionTransition, isFacingRight ? RightConstant : LeftConstant);
 			}
 
-			balanceRatio = 0;
+			targetWindRatio = 0f;
 		}
 
 		balanceRatio = ExtensionMethods.SmoothDamp((float)animationTree.Get(BalanceRightLean), balanceRatio, ref balanceTurnVelocity, BalanceTurnSmoothing);
 		animationTree.Set(BalanceRightLean, balanceRatio);
 		animationTree.Set(BalanceLeftLean, -balanceRatio);
+
+		float windRatio = ExtensionMethods.SmoothDamp((float)animationTree.Get(BalanceWindBlend), targetWindRatio, ref windRatioVelocity, WindRatioSmoothing);
+		animationTree.Set(BalanceWindBlend, windRatio);
 	}
 
 	private readonly string BalanceSpeed = "parameters/balance_tree/balance_speed/scale";
 	private readonly string BalanceWindBlend = "parameters/balance_tree/wind_blend/blend_position";
+	private readonly string BalanceWindStrengthBlend = "parameters/balance_tree/wind_strength_blend/blend_position";
+	private readonly string SecondaryBalanceWindStrengthBlend = "parameters/balance_tree/wind_strength_blend_2/blend_amount";
 	public void UpdateBalanceSpeed(float speedRatio, float overrideWindBlend = -1)
 	{
+		float targetWindStrength = Mathf.IsEqualApprox(overrideWindBlend, -1) ? speedRatio : overrideWindBlend;
+		animationTree.Set(BalanceWindStrengthBlend, targetWindStrength);
+		animationTree.Set(SecondaryBalanceWindStrengthBlend, targetWindStrength);
 		animationTree.Set(BalanceSpeed, speedRatio + .8f);
-		animationTree.Set(BalanceWindBlend, Mathf.IsEqualApprox(overrideWindBlend, -1) ? speedRatio : overrideWindBlend);
 	}
 	#endregion
 
@@ -938,23 +970,50 @@ public partial class PlayerAnimator : Node3D
 	private readonly string HurtBackwardState = "hurt-backward-start";
 	private readonly string HurtForwardStartState = "hurt-forward-start";
 	private readonly string HurtForwardStopState = "hurt-forward-stop";
+	private readonly string HurtDarkspineState = "ds-damage-back";
 	private readonly string HurtPlayback = "parameters/hurt_state/playback";
 	private AnimationNodeStateMachinePlayback HurtStatePlayback => animationTree.Get(HurtPlayback).Obj as AnimationNodeStateMachinePlayback;
 
-	public void StartHurt(bool forwardLaunch)
+	public void StartHurt(KnockbackSettings.KnockbackAnimation animation)
 	{
 		IsFallTransitionEnabled = false;
-		HurtStatePlayback.Start(forwardLaunch ? HurtForwardStartState : HurtBackwardState);
+		if (animation == KnockbackSettings.KnockbackAnimation.Block)
+		{
+			StartBrake(); // Just reuse the brake animation as a block
+			return;
+		}
+
+		if (animation == KnockbackSettings.KnockbackAnimation.Normal)
+			HurtStatePlayback.Start(HurtBackwardState);
+		else if (animation == KnockbackSettings.KnockbackAnimation.Forward)
+			HurtStatePlayback.Start(HurtForwardStartState);
+		else if (animation == KnockbackSettings.KnockbackAnimation.Darkspine)
+			HurtStatePlayback.Start(HurtDarkspineState);
+
 		animationTree.Set(HurtTrigger, (int)AnimationNodeOneShot.OneShotRequest.Fire);
 	}
 
-	public void StopHurt(bool useTransition)
+	public void StopHurt(KnockbackSettings.KnockbackAnimation animation)
 	{
-		if (useTransition)
-			HurtStatePlayback.Travel(HurtForwardStopState);
-		else
+		if (animation == KnockbackSettings.KnockbackAnimation.Block)
+		{
+			StopBrake();
+			return;
+		}
+
+		if (animation == KnockbackSettings.KnockbackAnimation.Normal)
 			animationTree.Set(HurtTrigger, (int)AnimationNodeOneShot.OneShotRequest.FadeOut);
+		else if (animation == KnockbackSettings.KnockbackAnimation.Forward)
+			HurtStatePlayback.Travel(HurtForwardStopState);
+		else if (animation == KnockbackSettings.KnockbackAnimation.Darkspine)
+		{
+			SnapToGround();
+			DisabledSpeedSmoothing = true;
+		}
 	}
+
+	private readonly float DarkspineDamageAnimationLength = 1f;
+	public bool IsDarkspineHurtFinished => HurtStatePlayback.GetCurrentPlayPosition() >= DarkspineDamageAnimationLength;
 	#endregion
 
 	#region Spin
@@ -1071,6 +1130,49 @@ public partial class PlayerAnimator : Node3D
 	}
 
 	public void StartLeverTurn(bool isRightLever) => LeverStatePlayback.Travel(isRightLever ? RightConstant : LeftConstant);
+
+	private readonly string DarkspineFinalState = "ds-final";
+	private readonly string DarkspineFinalPlayback = "parameters/gimmick_tree/ds-final-boss/playback";
+	private AnimationNodeStateMachinePlayback DarkspineFinalStatePlayback => animationTree.Get(DarkspineFinalPlayback).Obj as AnimationNodeStateMachinePlayback;
+	public void StartSpiritBomb()
+	{
+		SetStateXfade(0.1f);
+		animationTree.Set(StateTransition, GimmickState);
+		animationTree.Set(GimmickTransition, DarkspineFinalState);
+		DarkspineFinalStatePlayback.Start("ds-spirit-bomb");
+	}
+
+	private readonly StringName DarkspineMultiPunchIdle = "ds-idle";
+
+	public void StartMultiPunch()
+	{
+		SetStateXfade(0.1f);
+		animationTree.Set(StateTransition, GimmickState);
+		animationTree.Set(GimmickTransition, DarkspineFinalState);
+		DarkspineFinalStatePlayback.Start(DarkspineMultiPunchIdle);
+	}
+
+	public bool CanPerformDarkspinePunch => DarkspineFinalStatePlayback.GetCurrentPlayPosition() >= DarkspineFinalStatePlayback.GetCurrentLength() - 0.3f;
+	public bool IsDarkspinePunchFinished => DarkspineFinalStatePlayback.GetCurrentNode().Equals(DarkspineMultiPunchIdle) && DarkspineFinalStatePlayback.GetFadingFromNode().Equals(string.Empty);
+
+	public void PerformMultipunch(int punchIndex)
+	{
+		StringName targetPunch;
+		if (punchIndex == 0)
+			targetPunch = "ds-combo-start";
+		else if (punchIndex == -1)
+			targetPunch = "ds-combo-final";
+		else
+			targetPunch = $"ds-combo{punchIndex}";
+
+		DarkspineFinalStatePlayback.Start(targetPunch);
+	}
+
+	/// <summary> Emitted when the spirit bomb changes directions. Called from an animation. </summary>
+	[Signal] public delegate void SpiritBombKickedEventHandler();
+	public void KickSpiritBomb() => DarkspineFinalStatePlayback.Travel("ds-spirit-bomb-kick");
+
+	public bool IsDarkspineKickFinished => DarkspineFinalStatePlayback.GetCurrentPlayPosition() >= 6f;
 	#endregion
 
 	// Shaders
@@ -1080,4 +1182,31 @@ public partial class PlayerAnimator : Node3D
 		// Update player position for shaders
 		RenderingServer.GlobalShaderParameterSet(ShaderPlayerPositionParameter, GlobalPosition);
 	}
+
+	[Export] private StringName[] darkspineTransitionParameterPaths;
+	/// <summary> Updates whether animations should use Darkspine variants. </summary>
+	private void InitializeDarkspineAnimations()
+	{
+		foreach (StringName param in darkspineTransitionParameterPaths)
+			animationTree.Set(param, Player.IsDarkspineSonic ? EnabledConstant : DisabledConstant);
+	}
+
+	#region Speedbreak Materials
+	[Export] public ShaderMaterial speedbreakOverlayMaterial;
+	private readonly string SpeedbreakOverlayOpacityKey = "opacity";
+	private readonly float BaseDarkspineSpeedbreakOpacity = 0.3f;
+
+	private void InitializeSpeedbreakMaterial()
+	{
+		speedbreakOverlayMaterial.SetShaderParameter(SpeedbreakOverlayOpacityKey, Player.IsDarkspineSonic ? BaseDarkspineSpeedbreakOpacity : 0f);
+	}
+
+	public void UpdateSpeedbreakMaterial(bool isSpeedbreakActive)
+	{
+		float baseOpacity = Player.IsDarkspineSonic ? BaseDarkspineSpeedbreakOpacity : 0f;
+		float currentOpacity = (float)speedbreakOverlayMaterial.GetShaderParameter(SpeedbreakOverlayOpacityKey);
+		currentOpacity = Mathf.MoveToward(currentOpacity, isSpeedbreakActive ? 1f : baseOpacity, 5.0f * PhysicsManager.physicsDelta);
+		speedbreakOverlayMaterial.SetShaderParameter(SpeedbreakOverlayOpacityKey, currentOpacity);
+	}
+	#endregion
 }

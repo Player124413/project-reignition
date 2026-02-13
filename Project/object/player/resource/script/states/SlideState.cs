@@ -26,6 +26,7 @@ public partial class SlideState : PlayerState
 			Player.Effect.PlayActionSFX(Player.Effect.SlideSfx);
 		}
 
+		Player.IsSliding = true;
 		Player.DisableSidle = true;
 		Player.Animator.StartSliding();
 		Player.Effect.StartDust();
@@ -55,6 +56,7 @@ public partial class SlideState : PlayerState
 
 	public override void ExitState()
 	{
+		Player.IsSliding = false;
 		Player.DisableSidle = false;
 		Player.ChangeHitbox("RESET");
 		Player.Effect.StopDust();
@@ -147,7 +149,6 @@ public partial class SlideState : PlayerState
 		if (Mathf.IsZeroApprox(Player.MoveSpeed))
 		{
 			Player.Animator.SlideToCrouch();
-			Player.ChangeHitbox("crouch");
 			return crouchState;
 		}
 
@@ -156,6 +157,7 @@ public partial class SlideState : PlayerState
 
 	protected override void ProcessMoveSpeed()
 	{
+		ProcessAutorunStrafeSpeed();
 		Player.Stats.UpdateSlideSpeed(Player.SlopeRatio);
 
 		// Influence speed based on input strength

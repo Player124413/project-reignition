@@ -88,16 +88,15 @@ public partial class FlyingPot : Node3D
 			return;
 		}
 
-
 		if (isSleeping) return;
 
-		if (!interactingWithPlayer && !lockonArea.Monitorable) // Re-enable lockon
+		if (!Player.IsFlyingPotActive && !lockonArea.Monitorable) // Re-enable lockon
 			lockonArea.SetDeferred("monitorable", Player.VerticalSpeed < 0f);
 
 		if (Player.IsFlyingPotActive)
 			return;
 
-		if (interactingWithPlayer && !Player.IsOnGround && !environmentCollider.Disabled)
+		if (interactingWithPlayer && !Player.IsOnGround && (Player.VerticalSpeed <= 0f || !environmentCollider.Disabled))
 			StartJump();
 
 		UpdateAngle(0);

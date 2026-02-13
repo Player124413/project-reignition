@@ -18,13 +18,13 @@ public partial class Goal : Area3D
 
 	public void Activate()
 	{
-		if (Stage.Data.MissionType == LevelDataResource.MissionTypes.None)
+		if (Stage.Data.MissionType == LevelDataResource.MissionTypeEnum.None)
 		{
 			Stage.FinishLevel(true); // Mission was simply to reach the goal
 			return;
 		}
 
-		if (Stage.Data.MissionType == LevelDataResource.MissionTypes.Race)
+		if (Stage.Data.MissionType == LevelDataResource.MissionTypeEnum.Race)
 		{
 			Stage.FinishLevel(Stage.IsRaceActive); // Mission was simply to reach the goal
 			return;
@@ -32,7 +32,7 @@ public partial class Goal : Area3D
 
 		if (Stage.Data.MissionObjectiveCount == 0) // For ringless, stealth, etc.
 		{
-			if (Stage.Data.MissionType == LevelDataResource.MissionTypes.Ring)
+			if (Stage.Data.MissionType == LevelDataResource.MissionTypeEnum.Ring)
 				Stage.FinishLevel(Stage.CurrentRingCount == 0);
 			else
 				Stage.FinishLevel(Stage.CurrentObjectiveCount == 0);
@@ -40,13 +40,13 @@ public partial class Goal : Area3D
 			return;
 		}
 
-		if (Stage.Data.MissionType == LevelDataResource.MissionTypes.Chain)
+		if (Stage.Data.MissionType == LevelDataResource.MissionTypeEnum.Chain)
 		{
 			Stage.FinishLevel(Stage.CurrentObjectiveCount >= Stage.Data.MissionObjectiveCount);
 			return;
 		}
 
-		if (Stage.Data.MissionType == LevelDataResource.MissionTypes.Objective)
+		if (Stage.Data.MissionType == LevelDataResource.MissionTypeEnum.Objective)
 		{
 			Stage.FinishLevel(Stage.CurrentObjectiveCount == Stage.Data.MissionObjectiveCount);
 			return;

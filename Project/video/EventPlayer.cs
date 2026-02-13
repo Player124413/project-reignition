@@ -1,7 +1,7 @@
-using System.Numerics;
 using Godot;
 using Godot.Collections;
 using Project.Core;
+using Project.Gameplay;
 
 namespace Project.Interface.Menus;
 
@@ -11,19 +11,31 @@ namespace Project.Interface.Menus;
 [Tool]
 public partial class EventPlayer : Node
 {
+	[Signal] public delegate void EventFinishedEventHandler();
+
 	[ExportToolButton("Auto Setup")] public Callable AutoSetupCallable => new(this, MethodName.AutoSetup);
 
 	[ExportGroup("Cutscene Settings")]
-	[Export(PropertyHint.FilePath, "*.ogg")] private string englishAudioPath;
+	/// <summary> Automatically load the given level when in Adventure Mode. Leave empty to return to the main menu. </summary>
+	[Export(PropertyHint.File, "*.tres")] private LevelDataResource adventureLevelAutoload;
+	/// <summary> Automatically load the given event when in Adventure Mode. Leave empty to return to the main menu. </summary>
+	[Export(PropertyHint.File, "*.tscn")] private string adventureEventAutoload;
+	[Export(PropertyHint.File, "*.ogg")] private string englishAudioPath;
 	[Export] private string localizationKeyPrefix;
-	/// <summary> Optional key for unlocking a world ring. Use Lost Prologue for no world ring. </summary>
-	[Export] private SaveManager.WorldEnum worldRing = SaveManager.WorldEnum.LostPrologue;
+	[Export] private bool isCgCutscene;
+	[Export] private bool isNestedCutscene;
+	[Export] public Color transitionColor = Colors.Black;
+	[Export] public float transitionSpeed = 0.5f;
+	[Export] public Resource musicResource;
 	private Gameplay.Triggers.DialogTrigger subtitles;
 
 	[ExportGroup("Components")]
 	[Export] private AnimationPlayer animator;
+	[Export] private AnimationPlayer interfaceAnimator;
+	[Export] private AnimationPlayer skipAnimator;
 	[Export] private AudioStreamPlayer audioPlayer;
 	[Export] private VideoStreamFileLoadPlayer videoPlayer;
+	private bool isInterfaceVisible;
 
 	[ExportGroup("Editor Only")]
 	/// <summary> Subtitles used to preview cutscene in the editor. </summary>
@@ -36,9 +48,11 @@ public partial class EventPlayer : Node
 
 	private bool IsSpecialBook => Menu.menuMemory[Menu.MemoryKeys.ActiveMenu] == (int)Menu.MemoryKeys.SpecialBook;
 
-	private float skipTimer;
+	private bool isCutsceneFinished;
+	private bool isFadingBgm;
+	private float interfaceVisibilityTimer;
 	/// <summary> How long the pause button needs to be held to skip the cutscene. </summary>
-	private readonly float SkipLength = 1f;
+	private readonly float InterfaceVisiblityLength = 1f;
 
 	public override void _Ready()
 	{
@@ -47,23 +61,43 @@ public partial class EventPlayer : Node
 		if (Engine.IsEditorHint())
 			return;
 
+		interfaceAnimator.Play(IsSpecialBook ? "special-book" : "cutscene");
+		interfaceAnimator.Advance(0.0);
+		interfaceAnimator.Play(isCgCutscene ? "cg" : "storybook");
+		interfaceAnimator.Advance(0.0);
+
 		LoadLocalization();
 		CreateSubtitles();
-		CallDeferred(MethodName.StartCutscene);
 
-		if (Menu.menuMemory[Menu.MemoryKeys.ActiveMenu] != (int)Menu.MemoryKeys.SpecialBook &&
-			worldRing != SaveManager.WorldEnum.LostPrologue &&
-			!SaveManager.ActiveGameData.IsWorldRingObtained(worldRing))
+		if (!isNestedCutscene && musicResource != null)
+			SoundManager.instance.UpdateBgmResource(musicResource as BGMResource);
+
+		if (!isNestedCutscene)
+			CallDeferred(MethodName.StartCutscene);
+
+		if (IsSpecialBook)
+			return;
+
+		// Set up menu memory to match level data (Adventure Mode only)
+		if (adventureLevelAutoload != null)
 		{
-			SaveManager.ActiveGameData.UnlockWorldRing(worldRing);
-			NotificationManager.Instance.AddNotification(NotificationManager.NotificationType.WorldRing, $"unlock_ring_{worldRing.ToString().ToSnakeCase()}");
+			Menu.menuMemory[Menu.MemoryKeys.ActiveMenu] = (int)Menu.MemoryKeys.LevelSelect;
+			Menu.menuMemory[Menu.MemoryKeys.WorldSelect] = (int)adventureLevelAutoload.AreaKey;
+			Menu.menuMemory[Menu.MemoryKeys.LevelSelect] = adventureLevelAutoload.LevelIndex - 1;
 		}
 	}
+
+	public override void _EnterTree() => DebugManager.Instance.IsCutsceneActive = true;
+
+	public override void _ExitTree() => DebugManager.Instance.IsCutsceneActive = false;
 
 	private void LoadLocalization()
 	{
 		StringName targetLocale = SaveManager.VoiceLanguageToGodotLocale(SaveManager.Config.voiceLanguage);
 		LoadAudioTrack(targetLocale);
+
+		if (animator == null)
+			return;
 
 		// Load timing animation
 		if (!animator.HasAnimation(targetLocale))
@@ -74,23 +108,26 @@ public partial class EventPlayer : Node
 
 	private void LoadAudioTrack(string targetLocale)
 	{
-		string targetAudio = englishAudioPath;
-		if (targetAudio.Contains("/en/")) // localizable audio
-		{
-			targetAudio = targetAudio.Replace("/en/", $"/{targetLocale}/");
+		if (string.IsNullOrEmpty(englishAudioPath)) // No audio to load
+			return;
 
-			if (!ResourceLoader.Exists(targetAudio)) // Revert to english
+		string targetAudioPath = ResourceUid.UidToPath(englishAudioPath);
+		if (targetAudioPath.Contains("/en/")) // localizable audio
+		{
+			targetAudioPath = targetAudioPath.Replace("/en/", $"/{targetLocale}/");
+
+			if (!ResourceLoader.Exists(targetAudioPath)) // Revert to english
 			{
-				GD.PushError($"Couldn't find audio at {targetAudio}!");
-				targetAudio = englishAudioPath;
+				GD.PushError($"Couldn't find audio at {targetAudioPath}!");
+				targetAudioPath = englishAudioPath;
 			}
 		}
 
-		if (audioPlayer.Stream != null && audioPlayer.Stream.ResourcePath.Equals(targetAudio))
+		if (audioPlayer.Stream != null && audioPlayer.Stream.ResourcePath.Equals(targetAudioPath))
 			return;
 
 		// Load audio
-		audioPlayer.Stream = ResourceLoader.Load<AudioStreamOggVorbis>(targetAudio);
+		audioPlayer.Stream = ResourceLoader.Load<AudioStreamOggVorbis>(targetAudioPath);
 	}
 
 	private void AutoSetup()
@@ -159,8 +196,12 @@ public partial class EventPlayer : Node
 	{
 		videoPlayer.Play();
 		audioPlayer.Play();
-		animator.Seek(0.0);
-		animator.Play();
+
+		if (animator != null)
+		{
+			animator.Seek(0.0);
+			animator.Play();
+		}
 
 		subtitles?.Activate();
 	}
@@ -173,33 +214,75 @@ public partial class EventPlayer : Node
 			return;
 		}
 
-		if (TransitionManager.IsTransitionActive)
+		if (isNestedCutscene)
 			return;
 
-		if (Menu.menuMemory[Menu.MemoryKeys.ActiveMenu] != (int)Menu.MemoryKeys.SpecialBook)
+		if (isFadingBgm && !SoundManager.FadeAudioPlayer(SoundManager.instance.StageMusicPlayer, 0.5f))
+			SoundManager.instance.SetStageMusicVolume(0f);
+
+		if (isCutsceneFinished)
 		{
-			// Process skipping story cutscene
-			if (Runtime.Instance.IsActionJustPressed("sys_pause", "ui_accept") && !Input.IsActionJustPressed("toggle_fullscreen"))
-			{
-				skipTimer = Mathf.MoveToward(skipTimer, SkipLength, PhysicsManager.physicsDelta);
-				if (Mathf.IsEqualApprox(skipTimer, SkipLength))
-					OnEventFinished();
-
-				return;
-			}
-
-			skipTimer = Mathf.MoveToward(skipTimer, 0, PhysicsManager.physicsDelta);
+			SoundManager.FadeAudioPlayer(audioPlayer, 0.5f);
 			return;
 		}
 
-		// Allow players to exit immediately when viewing from the special book
-		if (Runtime.Instance.IsActionJustPressed("sys_cancel", "ui_cancel", "escape"))
-			OnEventFinished();
+		if (TransitionManager.IsTransitionActive)
+			return;
+
+		if (!isInterfaceVisible)
+		{
+			CheckInterfaceVisiblity();
+			return;
+		}
+
+		if (IsSpecialBook)
+		{
+			// Allow players to exit immediately when viewing from the special book
+			if (Runtime.Instance.IsActionJustPressed("sys_cancel", "ui_cancel", "escape"))
+				OnEventFinished(true);
+
+			return;
+		}
+
+		// Process skipping story cutscene
+		if (Runtime.Instance.IsActionPressed("sys_pause", "ui_accept") && !Input.IsActionJustPressed("toggle_fullscreen"))
+		{
+			interfaceVisibilityTimer = InterfaceVisiblityLength;
+			if (interfaceAnimator.AssignedAnimation != "show_interface")
+				interfaceAnimator.Play("show_interface", 0.1f);
+
+			if (!skipAnimator.IsPlaying())
+				skipAnimator.Play("skip");
+
+			return;
+		}
+
+		skipAnimator.Pause();
+
+		if (Input.IsAnythingPressed())
+			return;
+
+		interfaceVisibilityTimer = Mathf.MoveToward(interfaceVisibilityTimer, 0f, PhysicsManager.physicsDelta);
+		if (Mathf.IsZeroApprox(interfaceVisibilityTimer))
+			interfaceAnimator.Play("hide_interface", 0.1f);
+	}
+
+	private void CheckInterfaceVisiblity()
+	{
+		if (!Input.IsAnythingPressed())
+			return;
+
+		isInterfaceVisible = true;
+		interfaceVisibilityTimer = InterfaceVisiblityLength;
+		interfaceAnimator.Play("show_interface", 0f);
 	}
 
 	/// <summary> Creates a dialog trigger based on the keyframes in an animation. </summary>
 	private void CreateSubtitles()
 	{
+		if (animator == null) // No subtitles, apparently
+			return;
+
 		subtitles = new Gameplay.Triggers.DialogTrigger()
 		{
 			IsCutscene = true,
@@ -244,16 +327,62 @@ public partial class EventPlayer : Node
 	}
 
 	/// <summary> Called after the cutscene has finished playing. </summary>
-	public void OnEventFinished()
+	public void OnEventFinished() => OnEventFinished(false);
+	public void OnEventFinished(bool isCanceled)
 	{
-		TransitionManager.QueueSceneChange(IsSpecialBook ? TransitionManager.SpecialBookScenePath : TransitionManager.MenuScenePath);
+		if (isNestedCutscene) // Don't do anything for nested cutscenes
+			return;
+
+		isCutsceneFinished = true;
+		EmitSignal(SignalName.EventFinished);
+
+		if (!IsSpecialBook && adventureLevelAutoload != null)
+		{
+			// Load to level
+			TransitionManager.QueueSceneChange(adventureLevelAutoload.LevelPath);
+			TransitionManager.StartTransition(new()
+			{
+				inSpeed = 1f,
+				color = Colors.Black,
+				loadAsynchronously = true,
+				disableAutoTransition = true,
+				showMissionDescription = true
+			});
+			TransitionManager.Instance.SetMissionDescriptionText(adventureLevelAutoload.MissionTypeKey, adventureLevelAutoload.MissionDescriptionKey);
+			TransitionManager.Instance.UpdateLoadingText("load_level");
+			return;
+		}
+
+		string targetScene = TransitionManager.MenuScenePath;
+		if (IsSpecialBook)
+			targetScene = TransitionManager.SpecialBookScenePath;
+		else if (!string.IsNullOrEmpty(adventureEventAutoload))
+			targetScene = adventureEventAutoload;
+
+		if (targetScene.Equals(TransitionManager.MenuScenePath))
+		{
+			TransitionManager.Instance.QueuedScene = targetScene;
+			NotificationManager.Instance.StartNotifications();
+			return;
+		}
+
+		TransitionManager.QueueSceneChange(targetScene);
 		TransitionManager.StartTransition(new TransitionData()
 		{
-			color = Colors.Black,
-			inSpeed = .5f,
+			color = isCanceled ? Colors.Black : transitionColor,
+			inSpeed = isCanceled ? 0.5f : transitionSpeed,
+			outSpeed = 0.5f,
 		});
 	}
 
+	public void ResetSkipProgress()
+	{
+		skipAnimator.Play("RESET");
+		skipAnimator.Advance(0.0);
+		isInterfaceVisible = false;
+	}
+
+	#region Editor
 	private void ShowSubtitles()
 	{
 		if (!Engine.IsEditorHint())
@@ -357,4 +486,10 @@ public partial class EventPlayer : Node
 		if (method.Equals(MethodName.HideSubtitles))
 			HideSubtitles();
 	}
+
+	/// <summary> Called from a signal during the final cutscene. </summary>
+	private void PlayCreditsMusic() => SoundManager.instance.StartBgm(false);
+
+	private void FadeOutCreditsMusic() => isFadingBgm = true;
+	#endregion
 }

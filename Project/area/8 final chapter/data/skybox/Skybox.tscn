@@ -1,0 +1,94 @@
+[gd_scene load_steps=10 format=3 uid="uid://c4s872fm07apt"]
+
+[ext_resource type="PackedScene" uid="uid://vgr4q7o5tprg" path="res://area/8 final chapter/data/skybox/model/Skybox.gltf" id="1_s0jkd"]
+[ext_resource type="Texture2D" uid="uid://lh2pvow83eiy" path="res://area/8 final chapter/data/skybox/model/texture/dust.png" id="2_834pf"]
+
+[sub_resource type="Curve" id="Curve_834pf"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.2, 1), 0.0, 0.0, 0, 0, Vector2(0.8, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 4
+
+[sub_resource type="CurveTexture" id="CurveTexture_834pf"]
+width = 64
+texture_mode = 1
+curve = SubResource("Curve_834pf")
+
+[sub_resource type="Gradient" id="Gradient_834pf"]
+offsets = PackedFloat32Array(0.18362282, 0.83870965)
+colors = PackedColorArray(0.19793725, 0.19793722, 0.19793722, 1, 1, 1, 1, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_1brr8"]
+gradient = SubResource("Gradient_834pf")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_834pf"]
+emission_shape_offset = Vector3(0, 0, 100)
+emission_shape = 3
+emission_box_extents = Vector3(50, 50, 0)
+direction = Vector3(0, 0, -1)
+spread = 0.0
+initial_velocity_min = 136.5
+initial_velocity_max = 136.5
+scale_min = 0.5
+scale_max = 2.0
+color_initial_ramp = SubResource("GradientTexture1D_1brr8")
+alpha_curve = SubResource("CurveTexture_834pf")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_fe7vk"]
+transparency = 1
+blend_mode = 1
+shading_mode = 0
+specular_mode = 2
+disable_ambient_light = true
+disable_fog = true
+disable_specular_occlusion = true
+vertex_color_use_as_albedo = true
+albedo_texture = ExtResource("2_834pf")
+billboard_mode = 3
+billboard_keep_scale = true
+particles_anim_h_frames = 2
+particles_anim_v_frames = 2
+particles_anim_loop = false
+
+[sub_resource type="QuadMesh" id="QuadMesh_fe7vk"]
+material = SubResource("StandardMaterial3D_fe7vk")
+
+[node name="Skybox" instance=ExtResource("1_s0jkd")]
+
+[node name="Skeleton3D" parent="SkyboxRoot" index="0"]
+bones/5/rotation = Quaternion(-2.3841858e-07, -3.5527137e-14, 1, -1.5178826e-20)
+bones/8/rotation = Quaternion(0.5000001, 0.5, 0.49999994, -0.49999994)
+
+[node name="SkyboxBaseFadeMesh" parent="SkyboxRoot/Skeleton3D" index="0"]
+layers = 16
+cast_shadow = 0
+
+[node name="SkyboxBaseMesh" parent="SkyboxRoot/Skeleton3D" index="1"]
+layers = 16
+cast_shadow = 0
+
+[node name="SkyboxRipple1Mesh" parent="SkyboxRoot/Skeleton3D" index="2"]
+layers = 16
+cast_shadow = 0
+
+[node name="SkyboxRipple2Mesh" parent="SkyboxRoot/Skeleton3D" index="3"]
+layers = 16
+cast_shadow = 0
+
+[node name="SkyboxRipple3Mesh" parent="SkyboxRoot/Skeleton3D" index="4"]
+layers = 16
+cast_shadow = 0
+
+[node name="AnimationPlayer" parent="." index="1"]
+autoplay = "skybox"
+speed_scale = 0.1
+
+[node name="Dust" type="GPUParticles3D" parent="." index="2"]
+layers = 160
+cast_shadow = 0
+extra_cull_margin = 16384.0
+amount = 256
+fixed_fps = 0
+interpolate = false
+visibility_aabb = AABB(0, 0, 0, 0, 0, 0)
+local_coords = true
+process_material = SubResource("ParticleProcessMaterial_834pf")
+draw_pass_1 = SubResource("QuadMesh_fe7vk")

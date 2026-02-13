@@ -12,6 +12,8 @@ public partial class ReadyMenu : Menu
 	private Label missionLabel;
 	[Export]
 	private Description description;
+	[Export]
+	private AnimationPlayer notifAnimPlayer;
 	public void ShowDescription() => description.ShowDescription();
 	public void HideDescription() => description.HideDescription();
 
@@ -36,6 +38,11 @@ public partial class ReadyMenu : Menu
 			if (!TimeAttackManager.Instance.IsLastLevel())
 				SetupReadyMenu(TimeAttackManager.Instance.GetCurrentLevel());
 		}
+
+		if (SaveManager.ActiveGameData.HasNewSkill())
+			notifAnimPlayer.Play("show");
+		else
+			notifAnimPlayer.Play("hide");
 
 		menuMemory[MemoryKeys.SkillMenuOpen] = 0;
 	}
@@ -104,12 +111,28 @@ public partial class ReadyMenu : Menu
 
 	public void SetBgmPlayer(BGMPlayer audioStreamPlayer) => bgm = audioStreamPlayer;
 
-	/// <summary> Path to the level scene. </summary>
-	public string LevelPath { get; set; }
+	/// <summary> The current Level Data. </summary>
+	public LevelDataResource LevelData { get; set; }
 	/// <summary> Loads the level. </summary>
 	public void LoadLevel()
 	{
-		TransitionManager.QueueSceneChange(LevelPath);
+		if (!TimeAttackManager.Instance.IsRunActive)
+		{
+			// Handle Pre Event Indexes
+			if (!string.IsNullOrEmpty(LevelData.PreStoryEvent) &&
+				SaveManager.ActiveGameData.LevelData.GetClearStatus(LevelData.LevelID) == SaveManager.LevelSaveData.LevelStatus.New)
+			{
+				TransitionManager.QueueSceneChange($"{TransitionManager.EventScenePath}{LevelData.PreStoryEvent}.tscn");
+				TransitionManager.StartTransition(new()
+				{
+					inSpeed = 0.5f,
+					color = Colors.Black,
+				});
+				return;
+			}
+		}
+
+		TransitionManager.QueueSceneChange(LevelData.LevelPath);
 		TransitionManager.StartTransition(new()
 		{
 			inSpeed = 1f,
@@ -118,15 +141,15 @@ public partial class ReadyMenu : Menu
 			disableAutoTransition = true,
 			showMissionDescription = true
 		});
-		TransitionManager.instance.SetMissionDescriptionText(missionLabel.Text, description.Text);
-		TransitionManager.instance.UpdateLoadingText("load_level");
+		TransitionManager.Instance.SetMissionDescriptionText(missionLabel.Text, description.Text);
+		TransitionManager.Instance.UpdateLoadingText("load_level");
 	}
 
 	///<summary> Sets up the ready menu for time attack
 	public void SetupReadyMenu(LevelDataResource level)
 	{
-		SetMapText(level.AreaKey);
+		SetMapText(level.AreaKey.ToString().ToCamelCase());
 		SetMissionText(level.MissionTypeKey);
-		LevelPath = level.LevelPath;
+		LevelData = level;
 	}
 }

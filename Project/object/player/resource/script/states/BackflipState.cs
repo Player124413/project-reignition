@@ -74,7 +74,7 @@ public partial class BackflipState : PlayerState
 				return null;
 			}
 
-			if (SaveManager.Config.useStompJumpButtonMode)
+			if (SaveManager.Config.jumpButtonMode == SaveManager.JumpButtonModeEnum.Stomp)
 				return stompState;
 
 			if (Player.Lockon.IsTargetAttackable)
@@ -116,6 +116,7 @@ public partial class BackflipState : PlayerState
 
 	protected override void ProcessMoveSpeed()
 	{
+		ProcessAutorunStrafeSpeed();
 		float inputAngle = Player.Controller.GetTargetInputAngle();
 		float inputStrength = Player.Controller.GetInputStrength();
 

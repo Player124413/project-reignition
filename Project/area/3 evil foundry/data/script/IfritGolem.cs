@@ -251,13 +251,13 @@ public partial class IfritGolem : Node3D
 			color = Colors.Black
 		});
 
-		TransitionManager.instance.TransitionProcess += StartBattle;
+		TransitionManager.Instance.TransitionProcess += StartBattle;
 		SaveManager.ActiveGameData.AllowSkippingCutscene(IntroCutsceneID);
 	}
 
 	private void StartBattle()
 	{
-		TransitionManager.instance.TransitionProcess -= StartBattle;
+		TransitionManager.Instance.TransitionProcess -= StartBattle;
 		cutsceneCamera.Deactivate();
 		EventAnimator.Play("finish-intro");
 		EventAnimator.Advance(0.0);
@@ -418,12 +418,14 @@ public partial class IfritGolem : Node3D
 	{
 		if (currentState != GolemState.Damaged && currentState != GolemState.Recovery)
 		{
+			Player.Animator.StopHurt(KnockbackSettings.KnockbackAnimation.Forward);
 			EmitSignal(SignalName.LavaLaunchEnded);
 			return;
 		}
 
 		// Kill residue player speed
-		Player.MoveSpeed = 0.0f;
+		Player.MoveSpeed = 0;
+		Player.StrafeSpeed = 0;
 		Player.MovementAngle = Player.PathFollower.ForwardAngle;
 
 		// Play hit dialog
@@ -606,7 +608,7 @@ public partial class IfritGolem : Node3D
 
 		Player.StartKnockback(new()
 		{
-			knockForward = true,
+			knockbackType = KnockbackSettings.KnockbackAnimation.Forward,
 			ignoreInvincibility = true,
 			disableDamage = Player.IsInvincible
 		});

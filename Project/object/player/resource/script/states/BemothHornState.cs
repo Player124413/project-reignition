@@ -32,6 +32,7 @@ public partial class BemothHornState : PlayerState
 	public override void EnterState()
 	{
 		pullChargeTimer = 0f;
+		Player.CanAirBoost = false;
 		Player.Lockon.IsMonitoring = false;
 
 		// Prevent accidental inputs

@@ -1,4 +1,4 @@
-[gd_scene load_steps=122 format=3 uid="uid://bm61nw4o1jcrb"]
+[gd_scene load_steps=130 format=3 uid="uid://bm61nw4o1jcrb"]
 
 [ext_resource type="PackedScene" uid="uid://c1htg25bw2rso" path="res://area/4 levitated ruin/act 1/environment/Rukh1.tscn" id="1_3akmk"]
 [ext_resource type="Script" uid="uid://dtkbvehtmy3em" path="res://object/stage/StageSettings.cs" id="1_sruem"]
@@ -41,6 +41,7 @@
 [ext_resource type="Resource" uid="uid://cqb8i042q3bsb" path="res://area/4 levitated ruin/act 1/camera/StartCam.tres" id="26_vi4uj"]
 [ext_resource type="Script" uid="uid://np5vcxq01ii8" path="res://object/trigger/modules/CheckpointTrigger.cs" id="27_474uf"]
 [ext_resource type="Resource" uid="uid://bmrvsw8winllx" path="res://area/4 levitated ruin/act 1/camera/Rukh1JumpCam.tres" id="27_a3nc6"]
+[ext_resource type="Script" uid="uid://coiui4qvdxbqe" path="res://object/trigger/modules/EventTrigger.cs" id="28_yhoer"]
 [ext_resource type="PackedScene" uid="uid://bsdebv0cjpq2x" path="res://area/4 levitated ruin/act 1/environment/SkyRoad01.tscn" id="29_3lidu"]
 [ext_resource type="Resource" uid="uid://dxlu45yb8brdp" path="res://area/4 levitated ruin/act 1/camera/TreeOverheadCam.tres" id="29_e4jrv"]
 [ext_resource type="PackedScene" uid="uid://id850ax8r86w" path="res://area/4 levitated ruin/act 1/environment/SkyRoad02.tscn" id="30_7j1qt"]
@@ -127,6 +128,73 @@ shader = ExtResource("23_31kfv")
 shader_parameter/detail = ExtResource("25_m10gh")
 shader_parameter/clip_mask = ExtResource("24_yhoer")
 shader_parameter/scroll_speed = 0.02
+
+[sub_resource type="Animation" id="Animation_yhoer"]
+resource_name = "event"
+length = 0.5
+step = 0.5
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("MainLight:light_energy")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.5),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [1.0, 0.4]
+}
+
+[sub_resource type="Animation" id="Animation_m10gh"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("MainLight:light_energy")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [1.0]
+}
+
+[sub_resource type="Animation" id="Animation_hfxvw"]
+resource_name = "event-deactivate"
+length = 0.5
+step = 0.5
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("MainLight:light_energy")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.5),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [0.4, 1.0]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_whbvg"]
+_data = {
+&"RESET": SubResource("Animation_m10gh"),
+&"event": SubResource("Animation_yhoer"),
+&"event-deactivate": SubResource("Animation_hfxvw")
+}
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_yhoer"]
+height = 10.25
+radius = 20.0
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_y4i83"]
+size = Vector3(19, 33, 24)
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_m10gh"]
+height = 22.28125
+radius = 12.0
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_a746d"]
 size = Vector3(5000, 10, 5000)
@@ -937,13 +1005,56 @@ transform = Transform3D(0.671318, 0.0125417, -0.179442, -0.0899399, 0.623826, -0
 
 [node name="Lighting" type="Node3D" parent="."]
 
-[node name="MainLight" type="DirectionalLight3D" parent="Lighting"]
-transform = Transform3D(-0.814705, 0.482963, 0.320941, 0.578729, 0.642402, 0.502387, 0.0364615, 0.595035, -0.802873, 0, 1.5169, 0)
+[node name="DimLightEvent" type="Node3D" parent="Lighting" node_paths=PackedStringArray("animator")]
+script = ExtResource("28_yhoer")
+animator = NodePath("AnimationPlayer")
+"Trigger Settings/Automatically Respawn" = false
+"Trigger Settings/Is One Shot" = false
+"Trigger Settings/Animation Blending" = 0.0
+"Trigger Settings/Player Stand-in" = null
+
+[node name="MainLight" type="DirectionalLight3D" parent="Lighting/DimLightEvent"]
+transform = Transform3D(-0.8147046, 0.48296306, 0.32094088, 0.5787287, 0.6424018, 0.5023873, 0.03646148, 0.59503496, -0.80287236, 0, 1.5169, 0)
 layers = 1024
 light_color = Color(1, 0.866667, 0.6, 1)
-light_specular = 3.0
+light_specular = 1.5
 light_cull_mask = 4293918787
 shadow_enabled = true
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Lighting/DimLightEvent"]
+libraries = {
+&"": SubResource("AnimationLibrary_whbvg")
+}
+
+[node name="StageTrigger" parent="Lighting" instance=ExtResource("19_fp3yh")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -40, -70, -925)
+"Trigger Mode" = 2
+"Enter Mode" = 0
+"Exit Mode" = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Lighting/StageTrigger"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -14.375, 1.5)
+shape = SubResource("CylinderShape3D_yhoer")
+
+[node name="StageTrigger2" parent="Lighting" instance=ExtResource("19_fp3yh")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -100, 25, -1580)
+"Trigger Mode" = 2
+"Enter Mode" = 0
+"Exit Mode" = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Lighting/StageTrigger2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -4, 5.5)
+shape = SubResource("BoxShape3D_y4i83")
+
+[node name="StageTrigger3" parent="Lighting" instance=ExtResource("19_fp3yh")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 250, -21, -1376.04)
+"Trigger Mode" = 2
+"Enter Mode" = 0
+"Exit Mode" = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Lighting/StageTrigger3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.640625, 0.5)
+shape = SubResource("CylinderShape3D_m10gh")
 
 [node name="object_probe" type="ReflectionProbe" parent="Lighting"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 303, 8.46065, -826)
@@ -966,10 +1077,10 @@ ambient_color = Color(1, 1, 1, 1)
 ambient_color_energy = 0.06
 
 [node name="Tower3" type="ReflectionProbe" parent="Lighting"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -40, -70, -925)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -40, -70, -920)
 layers = 1024
 blend_distance = 8.0
-size = Vector3(35, 50, 60)
+size = Vector3(35, 50, 50)
 interior = true
 cull_mask = 0
 reflection_mask = 4
@@ -2393,6 +2504,12 @@ external_skeleton = NodePath("../PrisonDoorRoot/Skeleton3D")
 [connection signal="Activated" from="Visuals/CullingTriggers/L6" to="Visuals/Rukh6Event" method="Deactivate"]
 [connection signal="Activated" from="Visuals/CullingTriggers/L5" to="Visuals/Rukh5" method="Activate"]
 [connection signal="Activated" from="Visuals/CullingTriggers/L5" to="Visuals/Rukh5LOD" method="Deactivate"]
+[connection signal="Activated" from="Lighting/StageTrigger" to="Lighting/DimLightEvent" method="Activate"]
+[connection signal="Deactivated" from="Lighting/StageTrigger" to="Lighting/DimLightEvent" method="Deactivate"]
+[connection signal="Activated" from="Lighting/StageTrigger2" to="Lighting/DimLightEvent" method="Activate"]
+[connection signal="Deactivated" from="Lighting/StageTrigger2" to="Lighting/DimLightEvent" method="Deactivate"]
+[connection signal="Activated" from="Lighting/StageTrigger3" to="Lighting/DimLightEvent" method="Activate"]
+[connection signal="Deactivated" from="Lighting/StageTrigger3" to="Lighting/DimLightEvent" method="Deactivate"]
 [connection signal="Activated" from="Triggers/Object/Rukh2" to="Visuals/Rukh2Event" method="Activate"]
 [connection signal="Activated" from="Triggers/Object/Rukh2Finish" to="Visuals/Rukh2" method="Activate"]
 [connection signal="Activated" from="Triggers/Object/Rukh2Finish" to="Visuals/Rukh2Event" method="Deactivate"]

@@ -7,6 +7,8 @@ namespace Project.Interface.Menus;
 
 public partial class ExperienceResult : Control
 {
+	[Signal] public delegate void NotificationTransitionStartedEventHandler();
+
 	/// <summary> Amount of exp accumulated from repeat playthroughs of a level. </summary>
 	public static int AccumulatedExp { get; private set; }
 
@@ -99,7 +101,12 @@ public partial class ExperienceResult : Control
 		if (!isProcessing)
 		{
 			if (isFadingBgm)
+			{
 				isFadingBgm = SoundManager.FadeAudioPlayer(bgm, 2.0f);
+
+				if (!isFadingBgm) // Mute sound effects through a signal
+					EmitSignal(SignalName.NotificationTransitionStarted);
+			}
 			return;
 		}
 
@@ -177,14 +184,17 @@ public partial class ExperienceResult : Control
 		int addedExp = interpolatedExp - startingExp;
 		scoreExp = Math.Clamp(Stage.TotalScore - addedExp, 0, Stage.TotalScore);
 		skillExp = Math.Clamp(Stage.CurrentEXP + Stage.TotalScore - addedExp, 0, Stage.CurrentEXP);
+
+		int firstClearBonus = Stage.Data.GetFirstClearBonus();
+
 		if (useMissionExp)
-			missionExp = Math.Clamp(Stage.CurrentEXP + Stage.TotalScore + Stage.Data.FirstClearBonus - addedExp, 0, Stage.Data.FirstClearBonus);
+			missionExp = Math.Clamp(Stage.CurrentEXP + Stage.TotalScore + firstClearBonus - addedExp, 0, firstClearBonus);
 
 		if (useAccumulatedExp)
 		{
 			int targetAccumulatedExp = Stage.CurrentEXP + Stage.TotalScore + AccumulatedExp - addedExp;
 			if (useMissionExp)
-				targetAccumulatedExp += Stage.Data.FirstClearBonus;
+				targetAccumulatedExp += firstClearBonus;
 			accumulatedExp = Math.Clamp(targetAccumulatedExp, 0, AccumulatedExp);
 		}
 
@@ -279,7 +289,7 @@ public partial class ExperienceResult : Control
 
 	private void StartExperienceResults()
 	{
-		if (string.IsNullOrEmpty(TransitionManager.instance.QueuedScene))
+		if (string.IsNullOrEmpty(TransitionManager.Instance.QueuedScene))
 		{
 			// Player is restarting a level -- accumulate exp and skip experience screen
 			AccumulatedExp += Mathf.FloorToInt((Stage.TotalScore + Stage.CurrentEXP) * 0.5f);
@@ -307,8 +317,8 @@ public partial class ExperienceResult : Control
 		RedrawData();
 
 		// Fade to black
-		TransitionManager.instance.Connect(TransitionManager.SignalName.TransitionProcess, new Callable(this, MethodName.InitializeMenu), (uint)ConnectFlags.OneShot);
-		TransitionManager.instance.Connect(TransitionManager.SignalName.TransitionFinish, new Callable(this, MethodName.ShowMenu), (uint)ConnectFlags.OneShot);
+		TransitionManager.Instance.Connect(TransitionManager.SignalName.TransitionProcess, new Callable(this, MethodName.InitializeMenu), (uint)ConnectFlags.OneShot);
+		TransitionManager.Instance.Connect(TransitionManager.SignalName.TransitionFinish, new Callable(this, MethodName.ShowMenu), (uint)ConnectFlags.OneShot);
 		TransitionManager.StartTransition(new()
 		{
 			color = Colors.Black,
@@ -332,7 +342,7 @@ public partial class ExperienceResult : Control
 			if (Stage.LevelState != StageSettings.LevelStateEnum.Success) // Only add mission exp if the stage was completed 
 				useMissionExp = false;
 			else
-				targetExp += Stage.Data.FirstClearBonus;
+				targetExp += Stage.Data.GetFirstClearBonus();
 		}
 		missionLabel.GetParent<Control>().Visible = useMissionExp;
 

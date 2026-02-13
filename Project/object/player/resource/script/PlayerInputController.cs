@@ -8,13 +8,13 @@ public partial class PlayerInputController : Node
 	private PlayerController Player { get; set; }
 	public void Initialize(PlayerController player) => Player = player;
 
+	private Vector2 mouseInput;
+
 	[Export]
 	private Curve InputCurve { get; set; }
 	public float GetInputStrength()
 	{
 		float inputLength = InputAxis.Length();
-		if (inputLength <= DeadZone)
-			inputLength = 0;
 
 		if (Player.IsLockoutActive && Player.ActiveLockoutData.movementMode == LockoutResource.MovementModes.Replace)
 		{
@@ -75,18 +75,24 @@ public partial class PlayerInputController : Node
 	/// <summary> Minimum angle from PathFollower.ForwardAngle that counts as backstepping/moving backwards. </summary>
 	private readonly float MinBackStepAngle = Mathf.Pi * .6f;
 	/// <summary> Maximum angle that counts as holding a direction. </summary>
-	private const float MaximumHoldDelta = Mathf.Pi * .4f;
+	private const float MaximumHoldDelta = Mathf.Pi * .35f;
 
 	/// <summary> Maximum amount the player can turn when running at full speed. </summary>
 	public readonly float TurningDampingRange = Mathf.Pi * .35f;
+	/// <summary> Maximum amount the player can turn when in an autorun lockout at minimum speed. </summary>
+	public readonly float AutorunLockoutTurningDampingRange = Mathf.Pi * 0.45f;
 	/// <summary> Rotation amount to just flat-out ignore player input. </summary>
 	public readonly float TurningDeadzone = Mathf.Pi * .08f;
 
 	public void ProcessInputs()
 	{
+		ProcessMouseMovement();
 		InputAxis = Input.GetVector("move_left", "move_right", "move_up", "move_down", DeadZone);
+		InputAxis = (InputAxis + mouseInput).LimitLength(1f);
 		InputHorizontal = Input.GetAxis("move_left", "move_right");
+		InputHorizontal = Mathf.Clamp(InputHorizontal + mouseInput.X, -1f, 1f);
 		InputVertical = Input.GetAxis("move_up", "move_down");
+		InputVertical = Mathf.Clamp(InputVertical + mouseInput.Y, -1f, 1f);
 		if (!InputAxis.IsZeroApprox())
 			NonZeroInputAxis = InputAxis;
 
@@ -97,6 +103,41 @@ public partial class PlayerInputController : Node
 		UpdateAttackBuffer();
 		UpdateStepBuffer();
 		UpdateLightDashBuffer();
+	}
+
+	/// <summary> Constant to convert floats ratios to int percentages.  </summary>
+	private readonly float MouseConversionFactor = 100f;
+	private void ProcessMouseMovement()
+	{
+		if (!SaveManager.Config.enableMouseControls || Runtime.Instance.IsUsingController)
+		{
+			// Disable mouse inputs
+			mouseInput = Vector2.Zero;
+			return;
+		}
+
+		// Convert input ranges to [-100f, 100f]
+		Vector2 inputRatio = (Runtime.Instance.MousePositionRatio - Vector2.One * 0.5f) * 2f * MouseConversionFactor;
+		inputRatio.Y += SaveManager.Config.mouseVerticalOffset;
+		if (Mathf.Abs(inputRatio.X) < SaveManager.Config.mouseDeadzone)
+		{
+			mouseInput.X = 0f;
+		}
+		else
+		{
+			mouseInput.X = (inputRatio.X - SaveManager.Config.mouseDeadzone) / (SaveManager.Config.mouseHorizontalRange - SaveManager.Config.mouseDeadzone);
+			mouseInput.X = Mathf.Clamp(mouseInput.X, -1f, 1f);
+		}
+
+		if (Mathf.Abs(inputRatio.Y) < SaveManager.Config.mouseDeadzone)
+		{
+			mouseInput.Y = 0f;
+		}
+		else
+		{
+			mouseInput.Y = (inputRatio.Y - SaveManager.Config.mouseDeadzone) / (SaveManager.Config.mouseVerticalRange - SaveManager.Config.mouseDeadzone);
+			mouseInput.Y = Mathf.Clamp(mouseInput.Y, -1f, 1f);
+		}
 	}
 
 	private void UpdateJumpBuffer()
@@ -231,17 +272,16 @@ public partial class PlayerInputController : Node
 
 	public float CalculatePathControlAmount()
 	{
-		if (IsStrafeModeActive || Player.IsLockoutActive)
-			return 0; // Don't use path influence during speedbreak/autorun
+		if (SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.Autorun))
+			return 0; // Don't use path influence during autorun
 
 		return Player.PathTurnInfluence;
 	}
 
 	/// <summary> Returns whether the player is currently in strafing mode. </summary>
-	public bool IsStrafeModeActive => (Player.Skills.IsSpeedBreakActive && !SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.FreeRoam)) ||
+	public bool IsStrafeModeActive => Player.Skills.IsSpeedBreakActive ||
 			SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.Autorun) ||
-			(Player.IsLockoutActive &&
-			Player.ActiveLockoutData.movementMode == LockoutResource.MovementModes.Strafe);
+			(Player.IsLockoutActive && Player.ActiveLockoutData.movementMode == LockoutResource.MovementModes.Strafe);
 
 	/// <summary> Returns the automaticly calculated input angle based on the game's settings and skills. </summary>
 	public float GetTargetInputAngle()
@@ -253,14 +293,14 @@ public partial class PlayerInputController : Node
 
 		if (Player.IsLockoutActive && Player.ActiveLockoutData.allowGlobalForward)
 		{
-			bool isMovingBackwards = IsMovingBackwardsInLockout(nonZeroInput, Player.ActiveLockoutData.movementAngle + Player.PathFollower.BackAngle);
-			Vector2 referenceInput = isMovingBackwards ? Vector2.Down : Vector2.Up;
+			bool isHoldingBackwards = IsHoldingDirection(nonZeroInput, Player.ActiveLockoutData.movementAngle + Player.PathFollower.BackAngle, Mathf.Pi * 0.2f);
+			Vector2 referenceInput = isHoldingBackwards ? Vector2.Down : Vector2.Up;
 
 			if (!InputAxis.IsZeroApprox() && NonZeroInputAxis.AngleTo(referenceInput) < Mathf.Pi * 0.2f &&
 			Player.Stats.GroundSettings.GetSpeedRatioClamped(Player.MoveSpeed) > 0.2f)
 			{
 				// Allow moving forward by just holding up when moving quickly along certain lockouts
-				return isMovingBackwards ? Player.PathFollower.BackAngle : Player.PathFollower.ForwardAngle;
+				return isHoldingBackwards ? Player.PathFollower.BackAngle : Player.PathFollower.ForwardAngle;
 			}
 		}
 
@@ -269,10 +309,15 @@ public partial class PlayerInputController : Node
 
 	private float CalculateLockoutForwardAngle(float inputAngle)
 	{
-		if (Player.Skills.IsSpeedBreakCharging)
-			return Player.PathFollower.ForwardAngle;
-
 		LockoutResource resource = Player.ActiveLockoutData;
+		if (Player.Skills.IsSpeedBreakCharging)
+		{
+			if (Player.IsMovingBackwardFreeRoam)
+				return Player.PathFollower.ForwardAngle + Mathf.Pi;
+
+			return Player.PathFollower.ForwardAngle;
+		}
+
 		if (Player.IsLockoutOverridingMovementAngle)
 		{
 			if (Player.ActiveLockoutData.movementMode == LockoutResource.MovementModes.Strafe)
@@ -292,7 +337,7 @@ public partial class PlayerInputController : Node
 					break;
 			}
 
-			if (resource.allowReversing && !Player.Skills.IsSpeedBreakActive)
+			if (resource.allowReversing)
 			{
 				float backwardsAngle = forwardAngle + Mathf.Pi;
 				if (IsMovingBackwardsInLockout(inputAngle, backwardsAngle))
@@ -306,7 +351,7 @@ public partial class PlayerInputController : Node
 			return GetStrafeAngle();
 
 		if (SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.Autorun))
-			return GetStrafeAngle(true);
+			return GetStrafeAngle();
 
 		if (Mathf.IsZeroApprox(GetInputStrength()))
 			return Player.MovementAngle;
@@ -324,17 +369,14 @@ public partial class PlayerInputController : Node
 			if (Player.IsMovingBackward)
 				return true;
 
-			if (SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.FreeRoam) &&
-				ExtensionMethods.DotAngle(Player.MovementAngle, Player.PathFollower.BackAngle) >= 0f)
-			{
+			if (Player.IsMovingBackwardFreeRoam)
 				return true;
-			}
 		}
 
 		return false;
 	}
 
-	private float GetStrafeAngle(bool allowBackstep = false)
+	private float GetStrafeAngle()
 	{
 		CameraSettingsResource.ControlModeEnum controlMode = Player.Camera.ActiveSettings.controlMode;
 		Vector2 inputs = InputAxis;
@@ -357,14 +399,25 @@ public partial class PlayerInputController : Node
 			inputs *= sign >= 0 ? 1 : -1;
 		}
 
-		if (Player.IsMovingBackward)
-			baseAngle = Player.PathFollower.BackAngle;
+		float strafeAngle = TurningDampingRange;
+		if (Player.IsLockoutActive && Player.ActiveLockoutData.overrideSpeed)
+		{
+			float t = Player.Stats.GroundSettings.GetSpeedRatioClamped(Player.MoveSpeed);
+			strafeAngle = Mathf.Lerp(AutorunLockoutTurningDampingRange, TurningDampingRange, t);
+		}
 
-		float strafeAngle = inputs.X * TurningDampingRange;
-		if (Player.IsMovingBackward)
+		strafeAngle *= inputs.X;
+
+		if (Player.IsMovingBackwardFreeRoam || Player.IsMovingBackward)
+		{
 			strafeAngle *= -1;
+			baseAngle = Player.PathFollower.BackAngle;
+		}
 
-		return baseAngle - strafeAngle;
+		if (!SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.Autorun) || Player.IsBackflipping)
+			baseAngle -= strafeAngle;
+
+		return baseAngle;
 	}
 
 	/// <summary> Checks whether the player is holding a particular direction. </summary>

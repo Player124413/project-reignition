@@ -8,6 +8,7 @@ public partial class CrouchState : PlayerState
 	[Export] private PlayerState idleState;
 	[Export] private PlayerState runState;
 	[Export] private PlayerState jumpState;
+	[Export] private PlayerState backflipState;
 	[Export] private PlayerState fallState;
 	[Export] private PlayerState homingAttackState;
 
@@ -15,6 +16,7 @@ public partial class CrouchState : PlayerState
 	{
 		Player.Animator.StartCrouching();
 		Player.ChangeHitbox("crouch");
+		Player.StrafeSpeed = 0f;
 	}
 
 	public override void ExitState()
@@ -63,6 +65,10 @@ public partial class CrouchState : PlayerState
 		else if (Player.Controller.IsJumpBufferActive)
 		{
 			Player.Controller.ResetJumpBuffer();
+
+			if (Player.IsBackflipInputValid())
+				return backflipState;
+
 			return jumpState;
 		}
 		else if (!Input.IsActionPressed("button_action") && !Player.Animator.IsCrouchTransitionActive)

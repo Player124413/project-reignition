@@ -1,0 +1,529 @@
+[gd_scene load_steps=29 format=3 uid="uid://cv14b3r1pov0q"]
+
+[ext_resource type="Script" uid="uid://byfnkkp3hy8ca" path="res://object/player/resource/script/PlayerAnimator.cs" id="1_l38yo"]
+[ext_resource type="AnimationLibrary" uid="uid://dhcxjlduawy8d" path="res://object/player/resource/model/animation/ActionLibrary.gltf" id="4_namdw"]
+[ext_resource type="AnimationLibrary" uid="uid://dck4cudd7a66a" path="res://object/player/resource/model/animation/BalanceLibrary.gltf" id="5_by6gm"]
+[ext_resource type="AnimationLibrary" uid="uid://bo26mw8v8m0eh" path="res://object/player/resource/model/animation/EventLibrary.gltf" id="6_i74hg"]
+[ext_resource type="AnimationLibrary" uid="uid://dpd4w3nuuvybs" path="res://object/player/resource/model/animation/GimmickLibrary.gltf" id="7_17bir"]
+[ext_resource type="AnimationLibrary" uid="uid://ql8twqq248an" path="res://object/player/resource/model/animation/SidleLibrary.gltf" id="8_h6me1"]
+[ext_resource type="PackedScene" uid="uid://clet3u3mrcb8g" path="res://object/player/resource/effect/countdown/CountdownBoostParticle.tscn" id="9_d1ipk"]
+[ext_resource type="PackedScene" uid="uid://c2bl1sk5cfyq3" path="res://object/player/resource/effect/countdown/CountdownFlameParticle.tscn" id="10_p6bek"]
+[ext_resource type="AnimationLibrary" uid="uid://q4oqwf6xeerw" path="res://object/player/resource/model/animation/DarkspineLibrary.gltf" id="10_sb2k4"]
+[ext_resource type="Material" uid="uid://cpvxjsa6vte37" path="res://effect/particle/material/Ember Orange.tres" id="11_niit6"]
+[ext_resource type="AudioStream" uid="uid://c5did7u4f8gq2" path="res://sound/sfx/player/flame countdown 1.wav" id="12_m0cgj"]
+[ext_resource type="Script" uid="uid://dx0a0rhyauccl" path="res://object/trigger/modules/CameraTrigger.cs" id="13_hosus"]
+[ext_resource type="Resource" uid="uid://ukcne4um86a6" path="res://resource/preset/camera/common/CutsceneCam.tres" id="14_fi8xb"]
+[ext_resource type="AnimationNodeBlendTree" uid="uid://biwe75w273iq7" path="res://object/player/resource/model/animation/animation tree/Root.tres" id="16_cttwl"]
+
+[sub_resource type="Curve" id="Curve_skwgn"]
+_limits = [0.0, 2.5, 0.0, 1.0]
+_data = [Vector2(0, 0), 0.0, 10.0, 0, 1, Vector2(0.1, 1), 10.0, 3.64959, 1, 0, Vector2(1, 2.5), 0.147263, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="Curve" id="Curve_2rxkn"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_j53km"]
+width = 64
+curve = SubResource("Curve_2rxkn")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_ny081"]
+lifetime_randomness = 0.5
+direction = Vector3(0, 1, 0)
+spread = 80.0
+initial_velocity_min = 0.1
+initial_velocity_max = 0.5
+gravity = Vector3(0, -1, 0)
+damping_min = 0.1
+damping_max = 0.5
+scale_min = 0.1
+scale_curve = SubResource("CurveTexture_j53km")
+
+[sub_resource type="QuadMesh" id="QuadMesh_vcbic"]
+material = ExtResource("11_niit6")
+size = Vector2(0.1, 0.1)
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_6smkh"]
+
+[sub_resource type="Animation" id="Animation_tuy1q"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Root:visible")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("ChestAttachment/FlameOffset/CountdownBoostParticle:visible")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("ChestAttachment/FlameOffset/CountdownFlameParticle:visible")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("ChestAttachment/FlameOffset/CountdownFlameParticle:scale")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0.1, 0.1, 0.1)]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("CountdownRoot/CountdownPosition:position")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0, 0, 0)]
+}
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("PetrificationModel:visible")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/6/type = "value"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("PetrificationModel:rotation")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0, 0, 0)]
+}
+
+[sub_resource type="Animation" id="Animation_3gene"]
+resource_name = "invincibility"
+length = 3.0
+step = 0.0416667
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Root:visible")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.14, 0.28, 0.42, 0.56, 0.7, 0.84, 0.98, 1.12, 1.26, 1.4, 1.54, 1.68, 1.82, 1.96, 2.1, 2.24, 2.38, 2.52, 2.66, 2.8, 2.94),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
+"update": 1,
+"values": [false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true]
+}
+
+[sub_resource type="Animation" id="Animation_s0wax"]
+resource_name = "petrify-shake"
+length = 0.5
+step = 0.0333333
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("PetrificationModel:rotation")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.0666667, 0.1, 0.2, 0.333333),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"update": 0,
+"values": [Vector3(0, 0, 0), Vector3(0, 0, 0.0872665), Vector3(0, 0, -0.0349066), Vector3(0, 0, 0.0523599), Vector3(0, 0, 0)]
+}
+
+[sub_resource type="Animation" id="Animation_c4tcg"]
+resource_name = "petrify-start"
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Root:visible")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("PetrificationModel:visible")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+
+[sub_resource type="Animation" id="Animation_3mom7"]
+resource_name = "petrify-stop"
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("PetrificationModel:visible")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Root:visible")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+
+[sub_resource type="Animation" id="Animation_ju8e7"]
+resource_name = "teleport-end"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Root:visible")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.5),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [false, true]
+}
+
+[sub_resource type="Animation" id="Animation_jxy1t"]
+resource_name = "teleport-start"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Root:visible")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_r0udk"]
+_data = {
+&"RESET": SubResource("Animation_tuy1q"),
+&"invincibility": SubResource("Animation_3gene"),
+&"petrify-shake": SubResource("Animation_s0wax"),
+&"petrify-start": SubResource("Animation_c4tcg"),
+&"petrify-stop": SubResource("Animation_3mom7"),
+&"teleport-end": SubResource("Animation_ju8e7"),
+&"teleport-start": SubResource("Animation_jxy1t")
+}
+
+[node name="Model" type="Node3D" node_paths=PackedStringArray("RightFoot", "LeftFoot", "animationTree", "eventAnimationPlayer")]
+script = ExtResource("1_l38yo")
+RightFoot = NodePath("RFoot/SoleOffset")
+LeftFoot = NodePath("LFoot/SoleOffset")
+animationTree = NodePath("AnimationTree")
+eventAnimationPlayer = NodePath("EventAnimationPlayer")
+movementAnimationSpeedCurve = SubResource("Curve_skwgn")
+darkspineTransitionParameterPaths = Array[StringName]([&"parameters/ground_tree/ds-backstep-transition/transition_request", &"parameters/ground_tree/ds-idle-transition/transition_request", &"parameters/ground_tree/ds-forward-transition/transition_request", &"parameters/air_tree/ds-jump-transition/transition_request", &"parameters/air_tree/ds-jump-accel-transition/transition_request"])
+
+[node name="PetrificationModel" type="Node3D" parent="."]
+visible = false
+
+[node name="ChestAttachment" type="BoneAttachment3D" parent="."]
+transform = Transform3D(1, 7.926857e-07, -7.926858e-07, -7.9268574e-07, 0.99999994, 1.5925401e-08, 7.926858e-07, -1.592499e-08, 1, 5.8068064e-08, 0.55418926, -2.2351742e-08)
+bone_name = "chest"
+bone_idx = 14
+use_external_skeleton = true
+external_skeleton = NodePath("")
+
+[node name="FlameOffset" type="Node3D" parent="ChestAttachment"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.02, -1.49012e-07, 0.1)
+
+[node name="CountdownBoostParticle" parent="ChestAttachment/FlameOffset" instance=ExtResource("9_d1ipk")]
+visible = false
+
+[node name="CountdownFlameParticle" parent="ChestAttachment/FlameOffset" instance=ExtResource("10_p6bek")]
+transform = Transform3D(0.1, 0, 0, 0, 0.1, 0, 0, 0, 0.1, 0, 0, 0)
+visible = false
+emitting = false
+
+[node name="Embers" type="GPUParticles3D" parent="ChestAttachment/FlameOffset"]
+transform = Transform3D(1, -2.79123e-13, 2.84217e-13, -1.33353e-14, 1, 0, -2.84217e-13, -2.22045e-15, 1, -3.1665e-08, 0.040546, 0)
+visible = false
+layers = 32
+cast_shadow = 0
+gi_mode = 0
+emitting = false
+amount = 16
+lifetime = 0.8
+one_shot = true
+explosiveness = 1.0
+fixed_fps = 0
+interpolate = false
+process_material = SubResource("ParticleProcessMaterial_ny081")
+draw_pass_1 = SubResource("QuadMesh_vcbic")
+
+[node name="RFoot" type="BoneAttachment3D" parent="."]
+transform = Transform3D(1, 1.5987212e-14, 3.733125e-15, -1.7902346e-14, -7.683411e-08, 0.99999976, 8.881784e-15, -0.9999997, -7.683411e-08, -0.039727584, 0.15546933, 0.0020561325)
+bone_name = "r_foot"
+bone_idx = 67
+use_external_skeleton = true
+external_skeleton = NodePath("")
+
+[node name="SoleOffset" type="Node3D" parent="RFoot"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.01, -0.085, -0.15)
+
+[node name="LFoot" type="BoneAttachment3D" parent="."]
+transform = Transform3D(1, 2.6645353e-14, -1.2918833e-13, 4.465872e-14, 3.259629e-09, 0.99999976, 7.1054274e-15, -0.9999997, 3.259629e-09, 0.03972758, 0.15546928, 0.0020561311)
+bone_name = "l_foot"
+bone_idx = 12
+use_external_skeleton = true
+external_skeleton = NodePath("")
+
+[node name="SoleOffset" type="Node3D" parent="LFoot"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.01, -0.085, -0.15)
+
+[node name="CountdownRoot" type="Node3D" parent="."]
+transform = Transform3D(0.9999988, 0, 0, 0, 1, 0, 0, 0, 0.9999988, 0, 0, 0)
+
+[node name="FlameBurstSFX" type="AudioStreamPlayer" parent="CountdownRoot"]
+process_mode = 1
+stream = ExtResource("12_m0cgj")
+bus = &"GAME SFX"
+
+[node name="CountdownPosition" type="Camera3D" parent="CountdownRoot"]
+cull_mask = 64
+script = ExtResource("13_hosus")
+transitionTime = 0.0
+settings = ExtResource("14_fi8xb")
+UpdateEveryFrame = true
+followObject = NodePath(".")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+&"": SubResource("AnimationLibrary_6smkh"),
+&"ActionLibrary": ExtResource("4_namdw"),
+&"BalanceLibrary": ExtResource("5_by6gm"),
+&"DarkspineLibrary": ExtResource("10_sb2k4"),
+&"EventLibrary": ExtResource("6_i74hg"),
+&"GimmickLibrary": ExtResource("7_17bir"),
+&"SidleLibrary": ExtResource("8_h6me1")
+}
+
+[node name="EventAnimationPlayer" type="AnimationPlayer" parent="."]
+callback_mode_process = 0
+libraries = {
+&"": SubResource("AnimationLibrary_r0udk")
+}
+
+[node name="AnimationTree" type="AnimationTree" parent="."]
+libraries = {
+&"": SubResource("AnimationLibrary_6smkh"),
+&"ActionLibrary": ExtResource("4_namdw"),
+&"BalanceLibrary": ExtResource("5_by6gm"),
+&"DarkspineLibrary": ExtResource("10_sb2k4"),
+&"EventLibrary": ExtResource("6_i74hg"),
+&"GimmickLibrary": ExtResource("7_17bir"),
+&"SidleLibrary": ExtResource("8_h6me1")
+}
+tree_root = ExtResource("16_cttwl")
+anim_player = NodePath("../AnimationPlayer")
+parameters/air_tree/TimeScale/scale = 1.2
+parameters/air_tree/autojump_trigger/active = false
+parameters/air_tree/autojump_trigger/internal_active = false
+parameters/air_tree/autojump_trigger/request = 0
+parameters/air_tree/backflip_trigger/active = false
+parameters/air_tree/backflip_trigger/internal_active = false
+parameters/air_tree/backflip_trigger/request = 0
+parameters/air_tree/bounce_transition/current_state = ""
+parameters/air_tree/bounce_transition/transition_request = ""
+parameters/air_tree/bounce_transition/current_index = -1
+parameters/air_tree/bounce_trigger/active = false
+parameters/air_tree/bounce_trigger/internal_active = false
+parameters/air_tree/bounce_trigger/request = 0
+parameters/air_tree/fall_speed/scale = 1.0
+parameters/air_tree/fall_trigger/active = false
+parameters/air_tree/fall_trigger/internal_active = false
+parameters/air_tree/fall_trigger/request = 0
+parameters/air_tree/jump_accel_trigger/active = false
+parameters/air_tree/jump_accel_trigger/internal_active = false
+parameters/air_tree/jump_accel_trigger/request = 0
+parameters/air_tree/light_dash_speed/scale = 1.0
+parameters/air_tree/light_dash_trigger/active = false
+parameters/air_tree/light_dash_trigger/internal_active = false
+parameters/air_tree/light_dash_trigger/request = 0
+parameters/air_tree/splash_jump_trigger/active = false
+parameters/air_tree/splash_jump_trigger/internal_active = false
+parameters/air_tree/splash_jump_trigger/request = 0
+parameters/air_tree/state_transition/current_state = "fall"
+parameters/air_tree/state_transition/transition_request = ""
+parameters/air_tree/state_transition/current_index = 0
+parameters/air_tree/stomp_trigger/active = false
+parameters/air_tree/stomp_trigger/internal_active = false
+parameters/air_tree/stomp_trigger/request = 0
+parameters/air_tree/ds-jump-accel-transition/current_state = ""
+parameters/air_tree/ds-jump-accel-transition/transition_request = "disabled"
+parameters/air_tree/ds-jump-accel-transition/current_index = -1
+parameters/air_tree/ds-jump-transition/current_state = ""
+parameters/air_tree/ds-jump-transition/transition_request = ""
+parameters/air_tree/ds-jump-transition/current_index = -1
+parameters/balance_tree/balance_speed/scale = 1.0
+parameters/balance_tree/balance_state/balance_left_blend/blend_position = 0.0
+parameters/balance_tree/balance_state/balance_right_blend/blend_position = 0.000741243
+parameters/balance_tree/crouch_add/add_amount = 0.0
+parameters/balance_tree/direction_transition/current_state = "right"
+parameters/balance_tree/direction_transition/transition_request = ""
+parameters/balance_tree/direction_transition/current_index = 0
+parameters/balance_tree/grindstep_speed/scale = 1.5
+parameters/balance_tree/grindstep_trigger/active = false
+parameters/balance_tree/grindstep_trigger/internal_active = false
+parameters/balance_tree/grindstep_trigger/request = 0
+parameters/balance_tree/stagger_trigger/active = false
+parameters/balance_tree/stagger_trigger/internal_active = false
+parameters/balance_tree/stagger_trigger/request = 0
+parameters/balance_tree/trick_transition/current_state = ""
+parameters/balance_tree/trick_transition/transition_request = ""
+parameters/balance_tree/trick_transition/current_index = -1
+parameters/balance_tree/trick_trigger/active = false
+parameters/balance_tree/trick_trigger/internal_active = false
+parameters/balance_tree/trick_trigger/request = 0
+parameters/balance_tree/wind_blend/blend_amount = 1.0
+parameters/balance_tree/wind_strength_blend/blend_position = 0.0
+parameters/balance_tree/wind-fingers-blend/add_amount = 1.0
+parameters/balance_tree/wind_strength_blend_2/blend_position = 0.0
+parameters/drift_tree/direction_transition/current_state = "left"
+parameters/drift_tree/direction_transition/transition_request = ""
+parameters/drift_tree/direction_transition/current_index = 0
+parameters/gimmick_tree/ivy_blend/blend_position = 0.0
+parameters/gimmick_tree/ivy_start_trigger/active = false
+parameters/gimmick_tree/ivy_start_trigger/internal_active = false
+parameters/gimmick_tree/ivy_start_trigger/request = 0
+parameters/gimmick_tree/ivy_swing_trigger/active = false
+parameters/gimmick_tree/ivy_swing_trigger/internal_active = false
+parameters/gimmick_tree/ivy_swing_trigger/request = 0
+parameters/gimmick_tree/petrify_stop_trigger/active = false
+parameters/gimmick_tree/petrify_stop_trigger/internal_active = false
+parameters/gimmick_tree/petrify_stop_trigger/request = 0
+parameters/gimmick_tree/state_transition/current_state = "ivy"
+parameters/gimmick_tree/state_transition/transition_request = ""
+parameters/gimmick_tree/state_transition/current_index = 0
+parameters/gimmick_tree/zipline_blend/blend_position = 0.0
+parameters/gimmick_tree/zipline_direction/current_state = ""
+parameters/gimmick_tree/zipline_direction/transition_request = ""
+parameters/gimmick_tree/zipline_direction/current_index = -1
+parameters/gimmick_tree/zipline_tap_speed/scale = 1.0
+parameters/gimmick_tree/zipline_tap_trigger/active = false
+parameters/gimmick_tree/zipline_tap_trigger/internal_active = false
+parameters/gimmick_tree/zipline_tap_trigger/request = 0
+parameters/gimmick_tree/ivy_swing_speed/scale = 1.5
+parameters/ground_transition/current_state = "enabled"
+parameters/ground_transition/transition_request = ""
+parameters/ground_transition/current_index = 0
+parameters/ground_tree/backstep_seek/seek_request = -1.0
+parameters/ground_tree/brake_trigger/active = false
+parameters/ground_tree/brake_trigger/internal_active = false
+parameters/ground_tree/brake_trigger/request = 0
+parameters/ground_tree/crouch_transition/current_state = "disabled"
+parameters/ground_tree/crouch_transition/transition_request = ""
+parameters/ground_tree/crouch_transition/current_index = 0
+parameters/ground_tree/forward_blend/blend_position = 0.0
+parameters/ground_tree/forward_seek/seek_request = -1.0
+parameters/ground_tree/ground_seek/seek_request = -1.0
+parameters/ground_tree/ground_speed/scale = 1.0
+parameters/ground_tree/idle_blend/blend_amount = 0.0
+parameters/ground_tree/land_speed/scale = 1.5
+parameters/ground_tree/land_trigger/active = false
+parameters/ground_tree/land_trigger/internal_active = false
+parameters/ground_tree/land_trigger/request = 0
+parameters/ground_tree/quick_step_speed/scale = 1.5
+parameters/ground_tree/quick_step_transition/current_state = "left"
+parameters/ground_tree/quick_step_transition/transition_request = ""
+parameters/ground_tree/quick_step_transition/current_index = 0
+parameters/ground_tree/quick_step_trigger/active = false
+parameters/ground_tree/quick_step_trigger/internal_active = false
+parameters/ground_tree/quick_step_trigger/request = 0
+parameters/ground_tree/reverse_path_trigger/active = false
+parameters/ground_tree/reverse_path_trigger/internal_active = false
+parameters/ground_tree/reverse_path_trigger/request = 0
+parameters/ground_tree/turn_add/add_amount = 1.0
+parameters/ground_tree/turn_blend/blend_position = Vector2(0, 0)
+parameters/ground_tree/quick_slide_transition/current_state = "disabled"
+parameters/ground_tree/quick_slide_transition/transition_request = ""
+parameters/ground_tree/quick_slide_transition/current_index = 0
+parameters/ground_tree/ds-backstep-transition/current_state = ""
+parameters/ground_tree/ds-backstep-transition/transition_request = ""
+parameters/ground_tree/ds-backstep-transition/current_index = -1
+parameters/ground_tree/ds-idle-transition/current_state = ""
+parameters/ground_tree/ds-idle-transition/transition_request = ""
+parameters/ground_tree/ds-idle-transition/current_index = -1
+parameters/ground_tree/ds_forward_blend/blend_position = Vector2(0, 0)
+parameters/ground_tree/ds-forward-transition/current_state = ""
+parameters/ground_tree/ds-forward-transition/transition_request = ""
+parameters/ground_tree/ds-forward-transition/current_index = -1
+parameters/hurt_trigger/active = false
+parameters/hurt_trigger/internal_active = false
+parameters/hurt_trigger/request = 0
+parameters/oneshot_tree/oneshot_seek/seek_request = -1.0
+parameters/oneshot_tree/oneshot_transition/current_state = "countdown"
+parameters/oneshot_tree/oneshot_transition/transition_request = ""
+parameters/oneshot_tree/oneshot_transition/current_index = 0
+parameters/oneshot_tree/speedbreak_timescale/scale = 1.2000000000000028
+parameters/oneshot_trigger/active = false
+parameters/oneshot_trigger/internal_active = false
+parameters/oneshot_trigger/request = 0
+parameters/sidle_tree/direction_transition/current_state = "right"
+parameters/sidle_tree/direction_transition/transition_request = ""
+parameters/sidle_tree/direction_transition/current_index = 0
+parameters/sidle_tree/sidle_seek/seek_request = -1.0
+parameters/sidle_tree/sidle_speed/scale = 0.0
+parameters/spin_speed/scale = 1.0
+parameters/state_transition/current_state = "normal"
+parameters/state_transition/transition_request = ""
+parameters/state_transition/current_index = 0

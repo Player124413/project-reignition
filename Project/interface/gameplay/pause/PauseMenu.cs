@@ -137,9 +137,6 @@ public partial class PauseMenu : Node
 
 	private bool IsQuickRestart()
 	{
-		if (SaveManager.ActiveGameData.LevelData.GetClearStatus(StageSettings.Instance.Data.LevelID) != SaveManager.LevelSaveData.LevelStatus.Cleared)
-			return false;
-
 		if (!Input.IsActionPressed("button_step_left") || !Input.IsActionPressed("button_step_right")) // Quick restart
 			return false;
 
@@ -256,7 +253,7 @@ public partial class PauseMenu : Node
 		else if (currentSelection == 1) // Restart
 		{
 			// Resume
-			TransitionManager.instance.QueuedScene = string.Empty;
+			TransitionManager.Instance.QueuedScene = string.Empty;
 			SoundManager.instance.StageMusicPlayer.Stop();
 			EmitSignal(SignalName.OnSceneChangeSelected);
 		}
@@ -274,10 +271,10 @@ public partial class PauseMenu : Node
 			if (TimeAttackManager.Instance.IsRunActive)
 			{
 				TimeAttackManager.Instance.SetRunActive(false);
-				TransitionManager.instance.QueuedScene = TransitionManager.TimeAttackScenePath;
+				TransitionManager.Instance.QueuedScene = TransitionManager.TimeAttackScenePath;
 			}
 			else
-				TransitionManager.instance.QueuedScene = TransitionManager.MenuScenePath;
+				TransitionManager.Instance.QueuedScene = TransitionManager.MenuScenePath;
 			SoundManager.instance.StageMusicPlayer.Stop();
 			EmitSignal(SignalName.OnSceneChangeSelected);
 		}
@@ -399,6 +396,9 @@ public partial class PauseMenu : Node
 	private void UpdateSkillDescription()
 	{
 		PauseSkill pauseSkill = skillContainer.GetChild<PauseSkill>(currentSelection);
+		if (pauseSkill == null)
+			return;
+
 		description.Text = pauseSkill.Skill.DescriptionKey;
 		description.ShowDescription();
 	}

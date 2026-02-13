@@ -200,7 +200,7 @@ public partial class MainMenu : Menu
 
 	private void StartQuitTransition()
 	{
-		TransitionManager.instance.Connect(TransitionManager.SignalName.TransitionProcess, new(this, MethodName.QuitGame));
+		TransitionManager.Instance.Connect(TransitionManager.SignalName.TransitionProcess, new(this, MethodName.QuitGame));
 		TransitionManager.StartTransition(new()
 		{
 			color = Colors.Black,

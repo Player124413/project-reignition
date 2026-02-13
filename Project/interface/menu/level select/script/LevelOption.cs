@@ -1,3 +1,4 @@
+using System;
 using Godot;
 using Project.Core;
 using Project.Gameplay;
@@ -39,6 +40,7 @@ public partial class LevelOption : Control
 	private readonly string ClearAnimation = "clear";
 	private readonly string AttemptAnimation = "attempt";
 	private readonly string LoopAnimation = "-loop";
+	private readonly string StoryAnimation = "story";
 
 	public bool IsUnlocked
 	{
@@ -82,20 +84,28 @@ public partial class LevelOption : Control
 	{
 		if (IsUnlocked)
 		{
-			ClearState = SaveManager.ActiveGameData.LevelData.GetClearStatus(data.LevelID);
-			switch (ClearState)
+			if (SaveManager.ActiveGameData.CurrentStoryLevel == data)
 			{
-				case SaveManager.LevelSaveData.LevelStatus.New:
-					EmitSignal(SignalName.NewLevel);
-					animator.Play(NewAnimation);
-					break;
-				case SaveManager.LevelSaveData.LevelStatus.Attempted:
-					animator.Play(AttemptAnimation);
-					break;
-				case SaveManager.LevelSaveData.LevelStatus.Cleared:
-					animator.Play(ClearAnimation);
-					animator.AnimationSetNext(ShowAnimation, ClearAnimation + LoopAnimation);
-					break;
+				animator.Play(StoryAnimation);
+				animator.AnimationSetNext(ShowAnimation, StoryAnimation + LoopAnimation);
+			}
+			else
+			{
+				ClearState = SaveManager.ActiveGameData.LevelData.GetClearStatus(data.LevelID);
+				switch (ClearState)
+				{
+					case SaveManager.LevelSaveData.LevelStatus.New:
+						EmitSignal(SignalName.NewLevel);
+						animator.Play(NewAnimation);
+						break;
+					case SaveManager.LevelSaveData.LevelStatus.Attempted:
+						animator.Play(AttemptAnimation);
+						break;
+					case SaveManager.LevelSaveData.LevelStatus.Cleared:
+						animator.Play(ClearAnimation);
+						animator.AnimationSetNext(ShowAnimation, ClearAnimation + LoopAnimation);
+						break;
+				}
 			}
 		}
 		else
@@ -141,8 +151,6 @@ public partial class LevelOption : Control
 
 		timeAttackLevelOption.Visible = true;
 		missionLabelTA.Text = data.MissionTypeKey;
-		areaLabelTA.Text = data.AreaKey;
-
-
+		areaLabelTA.Text = data.AreaKey.ToString().ToCamelCase();
 	}
 }

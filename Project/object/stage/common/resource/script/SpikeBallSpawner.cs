@@ -17,7 +17,6 @@ public partial class SpikeBallSpawner : Node3D
 	[Export] private bool isPaused;
 	/// <summary> The spikeball to make copies of. </summary>
 	[Export] private PackedScene spikeBallScene;
-
 	private readonly List<SpikeBallPhysics> spikeBallPool = [];
 
 	/// <summary> How many spike balls can be pooled. </summary>
@@ -41,6 +40,7 @@ public partial class SpikeBallSpawner : Node3D
 		{
 			SpikeBallPhysics spikeBall = spikeBallScene.Instantiate<SpikeBallPhysics>();
 			spikeBall.MaxLifetime = lifetime;
+			spikeBall.IsSpawnedFromEditor = false;
 			spikeBallPool.Add(spikeBall);
 
 			spikeBallPool[i].Despawn();

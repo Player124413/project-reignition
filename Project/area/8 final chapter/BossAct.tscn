@@ -1,0 +1,455 @@
+[gd_scene load_steps=8 format=3 uid="uid://0rwulf35f5hy"]
+
+[ext_resource type="PackedScene" uid="uid://diuwy3gbbeiai" path="res://area/8 final chapter/Static.tscn" id="1_xnbka"]
+[ext_resource type="Resource" uid="uid://qgffmsew5qjr" path="res://resource/level data/night palace/Last.tres" id="2_vxphy"]
+[ext_resource type="PackedScene" uid="uid://cjupypih0myxo" path="res://object/player/CharacterSpawn.tscn" id="3_7op5d"]
+[ext_resource type="PackedScene" uid="uid://7p1mkbn0s276" path="res://area/8 final chapter/data/AlfLaylaWaLayla.tscn" id="3_as6he"]
+[ext_resource type="Script" uid="uid://dd24u7rlj0dwl" path="res://addons/custom_nodes/script/ObjectGenerator.cs" id="4_lnc3l"]
+[ext_resource type="PackedScene" uid="uid://c7l8mr7ubn848" path="res://object/stage/pickups/Ring.tscn" id="5_o0uq4"]
+[ext_resource type="PackedScene" uid="uid://68st06xyjgvp" path="res://object/stage/pickups/RichRing.tscn" id="6_qsw55"]
+
+[node name="World" type="Node"]
+
+[node name="Static" parent="." instance=ExtResource("1_xnbka")]
+Data = ExtResource("2_vxphy")
+
+[node name="BossAct" type="Node3D" parent="."]
+
+[node name="CharacterSpawn" parent="BossAct" instance=ExtResource("3_7op5d")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -15)
+
+[node name="AlfLaylaWaLayla" parent="BossAct" node_paths=PackedStringArray("itemParent") instance=ExtResource("3_as6he")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -5, -15)
+itemParent = NodePath("../Objects")
+
+[node name="Objects" type="Node3D" parent="BossAct"]
+
+[node name="RingPair1" type="Node3D" parent="BossAct/Objects"]
+transform = Transform3D(-1, 0, -8.940697e-08, 0, 1, 0, 8.940697e-08, 0, -1, 0, 0.6, 0)
+
+[node name="RingsL" type="Node3D" parent="BossAct/Objects/RingPair1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.5, 0, -2.2351742e-07)
+script = ExtResource("4_lnc3l")
+Source = ExtResource("5_o0uq4")
+Amount = 5
+Shape = 0
+Orientation = 0
+Spacing = 2.0
+"Horizontal Offset" = null
+"Vertical Offset" = null
+metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
+
+[node name="Child01" parent="BossAct/Objects/RingPair1/RingsL" instance=ExtResource("5_o0uq4")]
+
+[node name="Child02" parent="BossAct/Objects/RingPair1/RingsL" instance=ExtResource("5_o0uq4")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2)
+
+[node name="Child03" parent="BossAct/Objects/RingPair1/RingsL" instance=ExtResource("5_o0uq4")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -4)
+
+[node name="Child04" parent="BossAct/Objects/RingPair1/RingsL" instance=ExtResource("5_o0uq4")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -6)
+
+[node name="Child05" parent="BossAct/Objects/RingPair1/RingsL" instance=ExtResource("5_o0uq4")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -8)
+
+[node name="RingsR" type="Node3D" parent="BossAct/Objects/RingPair1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.5, 0, 2.2351742e-07)
+script = ExtResource("4_lnc3l")
+Source = ExtResource("5_o0uq4")
+Amount = 5
+Shape = 0
+Orientation = 0
+Spacing = 2.0
+"Horizontal Offset" = null
+"Vertical Offset" = null
+metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
+
+[node name="Child01" parent="BossAct/Objects/RingPair1/RingsR" instance=ExtResource("5_o0uq4")]
+
+[node name="Child02" parent="BossAct/Objects/RingPair1/RingsR" instance=ExtResource("5_o0uq4")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2)
+
+[node name="Child03" parent="BossAct/Objects/RingPair1/RingsR" instance=ExtResource("5_o0uq4")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -4)
+
+[node name="Child04" parent="BossAct/Objects/RingPair1/RingsR" instance=ExtResource("5_o0uq4")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -6)
+
+[node name="Child05" parent="BossAct/Objects/RingPair1/RingsR" instance=ExtResource("5_o0uq4")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -8)
+
+[node name="RichRing1" parent="BossAct/Objects" instance=ExtResource("6_qsw55")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.5, 2.5, 100)
+
+[node name="RichRing2" parent="BossAct/Objects" instance=ExtResource("6_qsw55")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.5, 2.5, 200)
+
+[node name="RichRing3" parent="BossAct/Objects" instance=ExtResource("6_qsw55")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.5, 2.5, 300)
+
+[node name="RingPair2" type="Node3D" parent="BossAct/Objects"]
+transform = Transform3D(-1, 0, -8.940697e-08, 0, 1, 0, 8.940697e-08, 0, -1, 0, 0.6, 400)
+
+[node name="RingsL" type="Node3D" parent="BossAct/Objects/RingPair2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.5, 0, -2.2351742e-07)
+script = ExtResource("4_lnc3l")
+Source = ExtResource("5_o0uq4")
+Amount = 5
+Shape = 0
+Orientation = 0
+Spacing = 2.0
+"Horizontal Offset" = null
+"Vertical Offset" = null
+metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
+
+[node name="Child01" parent="BossAct/Objects/RingPair2/RingsL" instance=ExtResource("5_o0uq4")]
+
+[node name="Child02" parent="BossAct/Objects/RingPair2/RingsL" instance=ExtResource("5_o0uq4")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2)
+
+[node name="Child03" parent="BossAct/Objects/RingPair2/RingsL" instance=ExtResource("5_o0uq4")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -4)
+
+[node name="Child04" parent="BossAct/Objects/RingPair2/RingsL" instance=ExtResource("5_o0uq4")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -6)
+
+[node name="Child05" parent="BossAct/Objects/RingPair2/RingsL" instance=ExtResource("5_o0uq4")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -8)
+
+[node name="RingsR" type="Node3D" parent="BossAct/Objects/RingPair2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.5, 0, 2.2351742e-07)
+script = ExtResource("4_lnc3l")
+Source = ExtResource("5_o0uq4")
+Amount = 5
+Shape = 0
+Orientation = 0
+Spacing = 2.0
+"Horizontal Offset" = null
+"Vertical Offset" = null
+metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
+
+[node name="Child01" parent="BossAct/Objects/RingPair2/RingsR" instance=ExtResource("5_o0uq4")]
+
+[node name="Child02" parent="BossAct/Objects/RingPair2/RingsR" instance=ExtResource("5_o0uq4")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2)
+
+[node name="Child03" parent="BossAct/Objects/RingPair2/RingsR" instance=ExtResource("5_o0uq4")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -4)
+
+[node name="Child04" parent="BossAct/Objects/RingPair2/RingsR" instance=ExtResource("5_o0uq4")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -6)
+
+[node name="Child05" parent="BossAct/Objects/RingPair2/RingsR" instance=ExtResource("5_o0uq4")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -8)
+
+[node name="RingPair3" type="Node3D" parent="BossAct/Objects"]
+transform = Transform3D(-1, 0, -8.940697e-08, 0, 1, 0, 8.940697e-08, 0, -1, 0, 0.6, 800)
+
+[node name="RingsL" type="Node3D" parent="BossAct/Objects/RingPair3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.5, 0, -2.2351742e-07)
+script = ExtResource("4_lnc3l")
+Source = ExtResource("5_o0uq4")
+Amount = 5
+Shape = 0
+Orientation = 0
+Spacing = 2.0
+"Horizontal Offset" = null
+"Vertical Offset" = null
+metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
+
+[node name="Child01" parent="BossAct/Objects/RingPair3/RingsL" instance=ExtResource("5_o0uq4")]
+
+[node name="Child02" parent="BossAct/Objects/RingPair3/RingsL" instance=ExtResource("5_o0uq4")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2)
+
+[node name="Child03" parent="BossAct/Objects/RingPair3/RingsL" instance=ExtResource("5_o0uq4")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -4)
+
+[node name="Child04" parent="BossAct/Objects/RingPair3/RingsL" instance=ExtResource("5_o0uq4")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -6)
+
+[node name="Child05" parent="BossAct/Objects/RingPair3/RingsL" instance=ExtResource("5_o0uq4")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -8)
+
+[node name="RingsR" type="Node3D" parent="BossAct/Objects/RingPair3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.5, 0, 2.2351742e-07)
+script = ExtResource("4_lnc3l")
+Source = ExtResource("5_o0uq4")
+Amount = 5
+Shape = 0
+Orientation = 0
+Spacing = 2.0
+"Horizontal Offset" = null
+"Vertical Offset" = null
+metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
+
+[node name="Child01" parent="BossAct/Objects/RingPair3/RingsR" instance=ExtResource("5_o0uq4")]
+
+[node name="Child02" parent="BossAct/Objects/RingPair3/RingsR" instance=ExtResource("5_o0uq4")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2)
+
+[node name="Child03" parent="BossAct/Objects/RingPair3/RingsR" instance=ExtResource("5_o0uq4")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -4)
+
+[node name="Child04" parent="BossAct/Objects/RingPair3/RingsR" instance=ExtResource("5_o0uq4")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -6)
+
+[node name="Child05" parent="BossAct/Objects/RingPair3/RingsR" instance=ExtResource("5_o0uq4")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -8)
+
+[node name="RichRing4" parent="BossAct/Objects" instance=ExtResource("6_qsw55")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.5, 2.5, 900)
+
+[node name="RichRing5" parent="BossAct/Objects" instance=ExtResource("6_qsw55")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.5, 2.5, 1000)
+
+[node name="RingPair4" type="Node3D" parent="BossAct/Objects"]
+transform = Transform3D(-1, 0, -8.940697e-08, 0, 1, 0, 8.940697e-08, 0, -1, 0, 0.6, 1200)
+
+[node name="RingsL" type="Node3D" parent="BossAct/Objects/RingPair4"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.5, 0, -2.2351742e-07)
+script = ExtResource("4_lnc3l")
+Source = ExtResource("5_o0uq4")
+Amount = 5
+Shape = 0
+Orientation = 0
+Spacing = 2.0
+"Horizontal Offset" = null
+"Vertical Offset" = null
+metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
+
+[node name="Child01" parent="BossAct/Objects/RingPair4/RingsL" instance=ExtResource("5_o0uq4")]
+
+[node name="Child02" parent="BossAct/Objects/RingPair4/RingsL" instance=ExtResource("5_o0uq4")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2)
+
+[node name="Child03" parent="BossAct/Objects/RingPair4/RingsL" instance=ExtResource("5_o0uq4")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -4)
+
+[node name="Child04" parent="BossAct/Objects/RingPair4/RingsL" instance=ExtResource("5_o0uq4")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -6)
+
+[node name="Child05" parent="BossAct/Objects/RingPair4/RingsL" instance=ExtResource("5_o0uq4")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -8)
+
+[node name="RingsR" type="Node3D" parent="BossAct/Objects/RingPair4"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.5, 0, 2.2351742e-07)
+script = ExtResource("4_lnc3l")
+Source = ExtResource("5_o0uq4")
+Amount = 5
+Shape = 0
+Orientation = 0
+Spacing = 2.0
+"Horizontal Offset" = null
+"Vertical Offset" = null
+metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
+
+[node name="Child01" parent="BossAct/Objects/RingPair4/RingsR" instance=ExtResource("5_o0uq4")]
+
+[node name="Child02" parent="BossAct/Objects/RingPair4/RingsR" instance=ExtResource("5_o0uq4")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2)
+
+[node name="Child03" parent="BossAct/Objects/RingPair4/RingsR" instance=ExtResource("5_o0uq4")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -4)
+
+[node name="Child04" parent="BossAct/Objects/RingPair4/RingsR" instance=ExtResource("5_o0uq4")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -6)
+
+[node name="Child05" parent="BossAct/Objects/RingPair4/RingsR" instance=ExtResource("5_o0uq4")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -8)
+
+[node name="RichRing6" parent="BossAct/Objects" instance=ExtResource("6_qsw55")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.5, 2.5, 1400)
+
+[node name="RichRing7" parent="BossAct/Objects" instance=ExtResource("6_qsw55")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.5, 2.5, 1500)
+
+[node name="RingPair5" type="Node3D" parent="BossAct/Objects"]
+transform = Transform3D(-1, 0, -8.940697e-08, 0, 1, 0, 8.940697e-08, 0, -1, 0, 0.6, 1600)
+
+[node name="RingsL" type="Node3D" parent="BossAct/Objects/RingPair5"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.5, 0, -2.2351742e-07)
+script = ExtResource("4_lnc3l")
+Source = ExtResource("5_o0uq4")
+Amount = 5
+Shape = 0
+Orientation = 0
+Spacing = 2.0
+"Horizontal Offset" = null
+"Vertical Offset" = null
+metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
+
+[node name="Child01" parent="BossAct/Objects/RingPair5/RingsL" instance=ExtResource("5_o0uq4")]
+
+[node name="Child02" parent="BossAct/Objects/RingPair5/RingsL" instance=ExtResource("5_o0uq4")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2)
+
+[node name="Child03" parent="BossAct/Objects/RingPair5/RingsL" instance=ExtResource("5_o0uq4")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -4)
+
+[node name="Child04" parent="BossAct/Objects/RingPair5/RingsL" instance=ExtResource("5_o0uq4")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -6)
+
+[node name="Child05" parent="BossAct/Objects/RingPair5/RingsL" instance=ExtResource("5_o0uq4")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -8)
+
+[node name="RingsR" type="Node3D" parent="BossAct/Objects/RingPair5"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.5, 0, 2.2351742e-07)
+script = ExtResource("4_lnc3l")
+Source = ExtResource("5_o0uq4")
+Amount = 5
+Shape = 0
+Orientation = 0
+Spacing = 2.0
+"Horizontal Offset" = null
+"Vertical Offset" = null
+metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
+
+[node name="Child01" parent="BossAct/Objects/RingPair5/RingsR" instance=ExtResource("5_o0uq4")]
+
+[node name="Child02" parent="BossAct/Objects/RingPair5/RingsR" instance=ExtResource("5_o0uq4")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2)
+
+[node name="Child03" parent="BossAct/Objects/RingPair5/RingsR" instance=ExtResource("5_o0uq4")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -4)
+
+[node name="Child04" parent="BossAct/Objects/RingPair5/RingsR" instance=ExtResource("5_o0uq4")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -6)
+
+[node name="Child05" parent="BossAct/Objects/RingPair5/RingsR" instance=ExtResource("5_o0uq4")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -8)
+
+[node name="RichRing8" parent="BossAct/Objects" instance=ExtResource("6_qsw55")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.5, 2.5, 1700)
+
+[node name="RichRing9" parent="BossAct/Objects" instance=ExtResource("6_qsw55")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.5, 2.5, 1800)
+
+[node name="RingPair6" type="Node3D" parent="BossAct/Objects"]
+transform = Transform3D(-1, 0, -8.940697e-08, 0, 1, 0, 8.940697e-08, 0, -1, 0, 0.6, 2000)
+
+[node name="RingsL" type="Node3D" parent="BossAct/Objects/RingPair6"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.5, 0, -2.2351742e-07)
+script = ExtResource("4_lnc3l")
+Source = ExtResource("5_o0uq4")
+Amount = 5
+Shape = 0
+Orientation = 0
+Spacing = 2.0
+"Horizontal Offset" = null
+"Vertical Offset" = null
+metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
+
+[node name="Child01" parent="BossAct/Objects/RingPair6/RingsL" instance=ExtResource("5_o0uq4")]
+
+[node name="Child02" parent="BossAct/Objects/RingPair6/RingsL" instance=ExtResource("5_o0uq4")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2)
+
+[node name="Child03" parent="BossAct/Objects/RingPair6/RingsL" instance=ExtResource("5_o0uq4")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -4)
+
+[node name="Child04" parent="BossAct/Objects/RingPair6/RingsL" instance=ExtResource("5_o0uq4")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -6)
+
+[node name="Child05" parent="BossAct/Objects/RingPair6/RingsL" instance=ExtResource("5_o0uq4")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -8)
+
+[node name="RingsR" type="Node3D" parent="BossAct/Objects/RingPair6"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.5, 0, 2.2351742e-07)
+script = ExtResource("4_lnc3l")
+Source = ExtResource("5_o0uq4")
+Amount = 5
+Shape = 0
+Orientation = 0
+Spacing = 2.0
+"Horizontal Offset" = null
+"Vertical Offset" = null
+metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
+
+[node name="Child01" parent="BossAct/Objects/RingPair6/RingsR" instance=ExtResource("5_o0uq4")]
+
+[node name="Child02" parent="BossAct/Objects/RingPair6/RingsR" instance=ExtResource("5_o0uq4")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2)
+
+[node name="Child03" parent="BossAct/Objects/RingPair6/RingsR" instance=ExtResource("5_o0uq4")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -4)
+
+[node name="Child04" parent="BossAct/Objects/RingPair6/RingsR" instance=ExtResource("5_o0uq4")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -6)
+
+[node name="Child05" parent="BossAct/Objects/RingPair6/RingsR" instance=ExtResource("5_o0uq4")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -8)
+
+[node name="RichRing10" parent="BossAct/Objects" instance=ExtResource("6_qsw55")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.5, 2.5, 2100)
+
+[node name="RichRing11" parent="BossAct/Objects" instance=ExtResource("6_qsw55")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.5, 2.5, 2200)
+
+[node name="RingPair7" type="Node3D" parent="BossAct/Objects"]
+transform = Transform3D(-1, 0, -8.940697e-08, 0, 1, 0, 8.940697e-08, 0, -1, 0, 0.6, 2400)
+
+[node name="RingsL" type="Node3D" parent="BossAct/Objects/RingPair7"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.5, 0, -2.2351742e-07)
+script = ExtResource("4_lnc3l")
+Source = ExtResource("5_o0uq4")
+Amount = 5
+Shape = 0
+Orientation = 0
+Spacing = 2.0
+"Horizontal Offset" = null
+"Vertical Offset" = null
+metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
+
+[node name="Child01" parent="BossAct/Objects/RingPair7/RingsL" instance=ExtResource("5_o0uq4")]
+
+[node name="Child02" parent="BossAct/Objects/RingPair7/RingsL" instance=ExtResource("5_o0uq4")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2)
+
+[node name="Child03" parent="BossAct/Objects/RingPair7/RingsL" instance=ExtResource("5_o0uq4")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -4)
+
+[node name="Child04" parent="BossAct/Objects/RingPair7/RingsL" instance=ExtResource("5_o0uq4")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -6)
+
+[node name="Child05" parent="BossAct/Objects/RingPair7/RingsL" instance=ExtResource("5_o0uq4")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -8)
+
+[node name="RingsR" type="Node3D" parent="BossAct/Objects/RingPair7"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.5, 0, 2.2351742e-07)
+script = ExtResource("4_lnc3l")
+Source = ExtResource("5_o0uq4")
+Amount = 5
+Shape = 0
+Orientation = 0
+Spacing = 2.0
+"Horizontal Offset" = null
+"Vertical Offset" = null
+metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
+
+[node name="Child01" parent="BossAct/Objects/RingPair7/RingsR" instance=ExtResource("5_o0uq4")]
+
+[node name="Child02" parent="BossAct/Objects/RingPair7/RingsR" instance=ExtResource("5_o0uq4")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2)
+
+[node name="Child03" parent="BossAct/Objects/RingPair7/RingsR" instance=ExtResource("5_o0uq4")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -4)
+
+[node name="Child04" parent="BossAct/Objects/RingPair7/RingsR" instance=ExtResource("5_o0uq4")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -6)
+
+[node name="Child05" parent="BossAct/Objects/RingPair7/RingsR" instance=ExtResource("5_o0uq4")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -8)
+
+[node name="RichRingPair" type="Node3D" parent="BossAct/Objects"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5, 2800)
+
+[node name="RichRing1" parent="BossAct/Objects/RichRingPair" instance=ExtResource("6_qsw55")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.5, 0, 0)
+
+[node name="RichRing2" parent="BossAct/Objects/RichRingPair" instance=ExtResource("6_qsw55")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.5, 0, 0)
+
+[editable path="Static"]
+[editable path="Static/Visuals/Skybox/Sun"]

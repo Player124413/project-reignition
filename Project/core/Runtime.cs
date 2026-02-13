@@ -8,6 +8,9 @@ public partial class Runtime : Node
 {
 	public static Runtime Instance;
 
+	/// <summary> Stores the mouse's current position in a ratio from [0, 1]. </summary>
+	public Vector2 MousePositionRatio { get; private set; }
+
 	public static readonly RandomNumberGenerator randomNumberGenerator = new();
 	public static readonly Vector2I ScreenSize = new(1920, 1080); // Working resolution is 1080p
 	public static readonly Vector2I HalfScreenSize = (Vector2I)((Vector2)ScreenSize * .5f);
@@ -22,7 +25,7 @@ public partial class Runtime : Node
 		Interface.Menus.Menu.SetUpMemory();
 	}
 
-	public override void _Ready() => TransitionManager.instance.Connect(TransitionManager.SignalName.TransitionProcess, Callable.From(ClearPearls));
+	public override void _Ready() => TransitionManager.Instance.Connect(TransitionManager.SignalName.TransitionProcess, Callable.From(ClearPearls));
 
 	public override void _Process(double _)
 	{
@@ -235,6 +238,12 @@ public partial class Runtime : Node
 	{
 		EmitSignal(SignalName.EventInputed, e);
 
+		if (e is InputEventMouseMotion)
+		{
+			MousePositionRatio = (e as InputEventMouseMotion).GlobalPosition / GetTree().Root.GetViewport().GetVisibleRect().Size;
+			return;
+		}
+
 		if (e is not InputEventKey && e is not InputEventJoypadButton && e is not InputEventJoypadMotion) return;
 
 		var targetController = -1;
@@ -269,12 +278,43 @@ public partial class Runtime : Node
 	public bool IsActionJustPressed(StringName actionId, StringName builtInId, StringName fallbackId = null)
 	{
 		bool pressed = Input.IsActionJustPressed(actionId) ||
-			(Input.IsActionJustPressed(builtInId) && Runtime.Instance.IsActionUnmapped(actionId));
+			(Input.IsActionJustPressed(builtInId) && Instance.IsActionUnmapped(actionId));
 
 		if (pressed || fallbackId == null)
 			return pressed;
 
 		return Input.IsActionJustPressed(fallbackId);
+	}
+
+	/// <summary>
+	/// Checks whether an action has just been released, then checks the fallback if the actionId isn't mapped.
+	/// </summary>
+	/// <param name="actionId"> The primary inputId to use. </param>
+	/// <param name="builtInId"> The fallback used if actionId isn't assigned to anything. </param>
+	/// <returns></returns>
+	public bool IsActionJustReleased(StringName actionId, StringName builtInId, StringName fallbackId = null)
+	{
+		bool pressed = Input.IsActionJustReleased(actionId) ||
+			(Input.IsActionJustReleased(builtInId) && Instance.IsActionUnmapped(actionId));
+
+		if (pressed || fallbackId == null)
+			return pressed;
+
+		return Input.IsActionJustReleased(fallbackId);
+	}
+
+	/// <summary>
+	/// Same as IsActionJustPressed, except checks for Holds instead of Presses.
+	/// </summary>
+	public bool IsActionPressed(StringName actionId, StringName builtInId, StringName fallbackId = null)
+	{
+		bool pressed = Input.IsActionPressed(actionId) ||
+			(Input.IsActionPressed(builtInId) && Instance.IsActionUnmapped(actionId));
+
+		if (pressed || fallbackId == null)
+			return pressed;
+
+		return Input.IsActionPressed(fallbackId);
 	}
 
 	public bool IsActionUnmapped(StringName action)

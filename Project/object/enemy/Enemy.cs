@@ -222,8 +222,7 @@ public partial class Enemy : Node3D
 		BonusManager.instance.AddEnemyChain();
 		StageSettings.Instance.UpdateScore(50 * maxHealth, StageSettings.MathModeEnum.Add); // Add points based on max health
 
-		// Automatically increment objective count
-		if (StageSettings.Instance.Data.MissionType == LevelDataResource.MissionTypes.Enemy)
+		if (StageSettings.Instance.Data.MissionType == LevelDataResource.MissionTypeEnum.Enemy)
 			StageSettings.Instance.CallDeferred(StageSettings.MethodName.IncrementObjective);
 
 		EmitSignal(SignalName.Defeated);
@@ -308,7 +307,7 @@ public partial class Enemy : Node3D
 		{
 			UpdateLockon();
 			IsLightSpeedAttackValid = IsDefeated && SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.LightSpeedAttack) &&
-				(Input.IsActionPressed("button_attack") || (Input.IsActionPressed("button_jump") && !SaveManager.Config.useStompJumpButtonMode));
+				(Input.IsActionPressed("button_attack") || (Input.IsActionPressed("button_jump") && SaveManager.Config.jumpButtonMode != SaveManager.JumpButtonModeEnum.Stomp));
 
 			// If the player is trying to perform a light speed attack, only do the bounce AFTER checking the next target
 			if (!IsLightSpeedAttackValid)

@@ -373,10 +373,12 @@ glow_blend_mode = 1
 glow_hdr_threshold = 1.5
 fog_enabled = true
 fog_mode = 1
-fog_light_color = Color(0.1824, 0.235147, 0.32, 1)
+fog_light_color = Color(0.20799999, 0.28159997, 0.4, 1)
+fog_light_energy = 0.34
 fog_density = 1.0
+fog_depth_curve = 0.5
 fog_depth_begin = 50.0
-fog_depth_end = 600.0
+fog_depth_end = 1500.0
 volumetric_fog_albedo = Color(0.154876, 0.154876, 0.154876, 1)
 adjustment_enabled = true
 adjustment_saturation = 1.2
@@ -2022,7 +2024,6 @@ light_specular = 10.0
 light_cull_mask = 4293918785
 shadow_opacity = 0.4
 shadow_blur = 10.0
-directional_shadow_max_distance = 25.0
 
 [node name="InteriorPlayerLight" type="DirectionalLight3D" parent="Lighting/CaveLightEvent"]
 transform = Transform3D(0.5, 3.78552e-08, 0.866025, 0.866025, -2.18557e-08, -0.5, -2.11758e-22, 1, -4.37114e-08, 0, 0, 0)
@@ -2043,8 +2044,6 @@ shadow_enabled = true
 shadow_blur = 3.0
 shadow_caster_mask = 4293918785
 directional_shadow_blend_splits = true
-directional_shadow_fade_start = 0.0
-directional_shadow_max_distance = 50.0
 
 [node name="InteriorEnvironmentLight" type="DirectionalLight3D" parent="Lighting/CaveLightEvent"]
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0, 0)
@@ -2091,8 +2090,8 @@ interior = true
 cull_mask = 0
 reflection_mask = 1
 ambient_mode = 2
-ambient_color = Color(1, 1, 1, 1)
-ambient_color_energy = 0.4
+ambient_color = Color(0.76, 0.85599995, 1, 1)
+ambient_color_energy = 0.2
 
 [node name="ExteriorLighting" type="ReflectionProbe" parent="Lighting"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -521.864, 114.307, 1543.12)
@@ -2114,7 +2113,7 @@ cull_mask = 0
 reflection_mask = 64
 ambient_mode = 2
 ambient_color = Color(0.6873, 0.87, 0.860865, 1)
-ambient_color_energy = 0.5
+ambient_color_energy = 0.2
 
 [node name="InteriorObjectLighting" type="ReflectionProbe" parent="Lighting"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -295.383, 39.0278, 1574.26)
@@ -2126,6 +2125,7 @@ cull_mask = 0
 reflection_mask = 1
 ambient_mode = 2
 ambient_color = Color(0.6873, 0.87, 0.860865, 1)
+ambient_color_energy = 0.5
 
 [node name="InteriorLighting" type="ReflectionProbe" parent="Lighting"]
 transform = Transform3D(0.866025, 0, 0.5, 0, 1, 0, -0.5, 0, 0.866025, -392.829, 59.4995, 1617.83)

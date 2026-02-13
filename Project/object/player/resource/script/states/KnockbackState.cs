@@ -7,6 +7,8 @@ public partial class KnockbackState : PlayerState
 {
 	[Export] private PlayerState landState;
 	[Export] private PlayerState jumpState;
+	[Export] private PlayerState idleState;
+
 	public KnockbackSettings Settings { get; set; }
 	public KnockbackSettings PreviousSettings { get; set; }
 	private readonly float DamageFriction = 20f;
@@ -29,12 +31,13 @@ public partial class KnockbackState : PlayerState
 		if (!SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.FreeRoam))
 			Player.MovementAngle = Player.PathFollower.ForwardAngle; // Prevent being knocked sideways
 
-		Player.Animator.StartHurt(Settings.knockForward);
+		Player.Animator.StartHurt(Settings.knockbackType);
 		Player.Animator.ResetState();
 		PreviousSettings = Settings;
 
+		Player.StrafeSpeed = 0;
 		Player.MoveSpeed = Settings.overrideKnockbackSpeed ? Settings.knockbackSpeed : 8f;
-		if (!Settings.knockForward)
+		if (Settings.knockbackType != KnockbackSettings.KnockbackAnimation.Forward)
 			Player.MoveSpeed *= -1;
 
 		if (!Settings.stayOnGround)
@@ -48,7 +51,9 @@ public partial class KnockbackState : PlayerState
 
 		if (Player.IsInvincible)
 			return;
-		Player.StartInvincibility();
+
+		if (!Settings.disableInvincibility)
+			Player.StartInvincibility();
 
 		if (Settings.disableDamage)
 			return;
@@ -58,11 +63,12 @@ public partial class KnockbackState : PlayerState
 
 	public override void ExitState()
 	{
-		if (Settings.knockForward) // NOTE: This is handled in LandState if we're being knocked forward
+		if (Settings.knockbackType == KnockbackSettings.KnockbackAnimation.Forward) // NOTE: This is handled in LandState if we're being knocked forward
 			return;
 
 		Player.IsKnockback = false;
-		Player.Animator.StopHurt(Settings.knockForward);
+		Player.FinishKnockback();
+		Player.Animator.StopHurt(Settings.knockbackType);
 		Player.Animator.ResetState();
 	}
 
@@ -79,11 +85,30 @@ public partial class KnockbackState : PlayerState
 		{
 			Player.Controller.ResetJumpBuffer();
 			Player.ForceAccelerationJump = true;
+			Player.StartInvincibility(1f);
 			return jumpState;
 		}
 
-		if (!Settings.stayOnGround && Player.CheckGround())
-			return landState;
+		if (Player.CheckGround())
+		{
+			if (!Settings.stayOnGround && Settings.knockbackType != KnockbackSettings.KnockbackAnimation.Darkspine)
+			{
+				Player.Animator.StopHurt(Settings.knockbackType);
+				return landState;
+			}
+
+			if (Settings.knockbackType == KnockbackSettings.KnockbackAnimation.Darkspine && Player.Animator.IsDarkspineHurtFinished)
+			{
+				Player.MoveSpeed = 0;
+				Player.StrafeSpeed = 0;
+			}
+
+			if (Mathf.IsZeroApprox(Player.MoveSpeed))
+			{
+				Player.Animator.StopHurt(Settings.knockbackType);
+				return idleState;
+			}
+		}
 
 		Player.AttemptFallIntoTheVoid();
 		return null;
@@ -93,11 +118,21 @@ public partial class KnockbackState : PlayerState
 public struct KnockbackSettings
 {
 	/// <summary> Should the player be knocked forward? Default is false. </summary>
-	public bool knockForward;
+	public KnockbackAnimation knockbackType;
+	public enum KnockbackAnimation
+	{
+		Normal,
+		Forward,
+		Block,
+		Darkspine, // Darkspine Knockback used in the final boss
+	}
+
 	/// <summary> Knock the player around without bouncing them into the air. </summary>
 	public bool stayOnGround;
 	/// <summary> Apply knockback even when invincible? </summary>
 	public bool ignoreInvincibility;
+	/// <summary> Don't apply invincibility? </summary>
+	public bool disableInvincibility;
 	/// <summary> Don't damage the player? </summary>
 	public bool disableDamage;
 	/// <summary> Always apply knockback, regardless of state. </summary>

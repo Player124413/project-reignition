@@ -10,6 +10,7 @@ public partial class JumpState : PlayerState
 	[Export] private PlayerState stompState;
 	[Export] private PlayerState jumpDashState;
 	[Export] private PlayerState homingAttackState;
+	[Export] private PlayerState darkspineSpinState;
 
 	[Export]
 	private float accelerationJumpSpeed = 25f;
@@ -46,7 +47,7 @@ public partial class JumpState : PlayerState
 		jumpTimer = 0;
 		isShortenedJump = false;
 		accelerationJumpHeight = Player.GlobalPosition.Y;
-		isAccelerationJumpQueued = Player.ForceAccelerationJump;
+		isAccelerationJumpQueued = Player.ForceAccelerationJump || Player.IsLockoutDisablingAction(LockoutResource.ActionFlags.FullJump);
 
 		// Decide accleration jump based on jump charge
 		if (!Player.ForceAccelerationJump && SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.ChargeJump))
@@ -57,7 +58,10 @@ public partial class JumpState : PlayerState
 		Player.IsOnGround = false;
 		Player.CanJumpDash = true;
 		if (Player.IsMovingBackward) // Kill speed when jumping backwards
+		{
 			Player.MoveSpeed = 0;
+			Player.StrafeSpeed = 0;
+		}
 		Player.VerticalSpeed = Runtime.CalculateJumpPower(Player.Stats.JumpHeight);
 		Player.ApplyMovement();
 
@@ -70,6 +74,7 @@ public partial class JumpState : PlayerState
 	public override void ExitState()
 	{
 		Player.IsJumping = false;
+		Player.IsBounceJumping = false;
 		Player.IsAccelerationJumping = false;
 
 		// Reset attack state
@@ -129,7 +134,7 @@ public partial class JumpState : PlayerState
 				if (isAccelerationJumpQueued)
 					StartAccelerationJump();
 
-				if (!Player.IsAccelerationJumping && SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.SpinJump))
+				if (!Player.IsAccelerationJumping && (SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.SpinJump) || Player.IsBounceJumping))
 				{
 					Player.StartSpinJump(!SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.ChargeJump) && isShortenedJump);
 					return null;
@@ -153,7 +158,7 @@ public partial class JumpState : PlayerState
 				return null;
 			}
 
-			if (SaveManager.Config.useStompJumpButtonMode)
+			if (SaveManager.Config.jumpButtonMode == SaveManager.JumpButtonModeEnum.Stomp)
 				return stompState;
 
 			return Player.Lockon.IsTargetAttackable ? homingAttackState : jumpDashState;
@@ -162,7 +167,18 @@ public partial class JumpState : PlayerState
 		if (Player.Controller.IsAttackBufferActive)
 		{
 			Player.Controller.ResetAttackBuffer();
-			return Player.Lockon.IsTargetAttackable ? homingAttackState : jumpDashState;
+
+			if (Player.Lockon.IsTargetAttackable)
+				return homingAttackState;
+
+			if (Player.IsDarkspineSonic &&
+				(Player.Controller.InputAxis.IsZeroApprox() ||
+				!Player.Controller.IsHoldingDirection(Player.Controller.GetTargetInputAngle(), Player.MovementAngle)))
+			{
+				return darkspineSpinState;
+			}
+
+			return jumpDashState;
 		}
 
 		if (Player.Controller.IsActionBufferActive)
@@ -243,27 +259,31 @@ public partial class JumpState : PlayerState
 			Player.AttackState = PlayerController.AttackStates.Weak;
 		}
 
+		float forwardAngle = Player.PathFollower.ForwardAngle;
+		if (Player.IsMovingBackwardFreeRoam)
+			forwardAngle = Player.PathFollower.BackAngle;
+
 		// Prevent speed boost depending on what the player is trying to do
 		float inputStrength = Player.Controller.GetInputStrength();
 		float inputAngle = Player.Controller.GetTargetInputAngle();
 		if (SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.ChargeJump) &&
-			Player.Controller.IsHoldingDirection(inputAngle, Player.PathFollower.BackAngle))
+			Player.Controller.IsHoldingDirection(inputAngle, forwardAngle + Mathf.Pi))
 		{
 			return;
 		}
 
 		if (!SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.ChargeJump) &&
 			!SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.Autorun) &&
-			(!Player.Controller.IsHoldingDirection(inputAngle, Player.PathFollower.ForwardAngle) ||
+			(!Player.Controller.IsHoldingDirection(inputAngle, forwardAngle) ||
 			inputStrength < .5f))
 		{
 			return;
 		}
 
-		if (ExtensionMethods.DeltaAngleRad(Player.MovementAngle, Player.PathFollower.ForwardAngle) > Mathf.Pi * .5f &&
-			!SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.FreeRoam))
+		if (!SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.FreeRoam) &&
+			ExtensionMethods.DeltaAngleRad(Player.MovementAngle, forwardAngle) > Mathf.Pi * .5f)
 		{
-			Player.MovementAngle = Player.PathFollower.ForwardAngle;
+			Player.MovementAngle = forwardAngle;
 		}
 
 		Player.MoveSpeed = Mathf.Max(accelerationJumpSpeed, Player.MoveSpeed);

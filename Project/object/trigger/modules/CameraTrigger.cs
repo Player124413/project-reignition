@@ -48,6 +48,9 @@ public partial class CameraTrigger : StageTriggerModule
 
 		_followObject = followObject?.IsEmpty == false ? GetNode<Node3D>(followObject) : this;
 
+		if (UpdateEveryFrame)
+			PhysicsInterpolationMode = PhysicsInterpolationModeEnum.Off;
+
 		if (_followObject is Camera3D)
 			_referenceCamera = _followObject as Camera3D;
 	}

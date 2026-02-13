@@ -1,0 +1,493 @@
+[gd_scene load_steps=33 format=3 uid="uid://vv8ysqa68nc1"]
+
+[ext_resource type="Script" uid="uid://ob7pwd04qme1" path="res://area/8 final chapter/data/script/GravityOrb.cs" id="1_poxal"]
+[ext_resource type="Material" uid="uid://bnk8skmt06lca" path="res://effect/particle/material/environment/Circular Glow.tres" id="1_snu67"]
+[ext_resource type="Material" uid="uid://bq1q3tp1cq76v" path="res://effect/particle/material/explosion/Explosion Smoke Add.tres" id="2_wnjru"]
+[ext_resource type="PackedScene" uid="uid://bi8fnvvbuythh" path="res://area/8 final chapter/data/model/GravityOrb.gltf" id="3_l0rdi"]
+[ext_resource type="Script" uid="uid://c65ffkknyq6gr" path="res://addons/custom_nodes/script/GroupGpuParticles3D.cs" id="4_fx7oj"]
+[ext_resource type="Script" uid="uid://pnh70abopq8e" path="res://object/stage/common/resource/script/Hazard.cs" id="4_w0bvt"]
+[ext_resource type="AudioStream" uid="uid://bgfbd0wb2eoem" path="res://sound/boss/alf layla/gravity orb pull.wav" id="7_pbnhl"]
+[ext_resource type="AudioStream" uid="uid://dtm3h5tbxpqym" path="res://sound/boss/alf layla/gravity orb spawn.wav" id="8_grstn"]
+
+[sub_resource type="Curve" id="Curve_fx7oj"]
+_limits = [0.0, 1.0, 0.0, 3.0]
+_data = [Vector2(1.0042919, 1), 0.0, 0.0, 0, 0, Vector2(3, 0), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="Curve" id="Curve_snu67"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.1, 1), 0.0, 0.0, 0, 0, Vector2(0.8, 0), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_wnjru"]
+width = 64
+texture_mode = 1
+curve = SubResource("Curve_snu67")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_snu67"]
+gravity = Vector3(0, 0, 0)
+scale_min = 4.0
+scale_max = 5.0
+color = Color(0, 0, 0.6, 1)
+alpha_curve = SubResource("CurveTexture_wnjru")
+
+[sub_resource type="QuadMesh" id="QuadMesh_wnjru"]
+material = ExtResource("1_snu67")
+
+[sub_resource type="Curve" id="Curve_wnjru"]
+_data = [Vector2(0, 0), 0.0, 5.760698, 0, 0, Vector2(0.3, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_l0rdi"]
+width = 64
+texture_mode = 1
+curve = SubResource("Curve_wnjru")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_wnjru"]
+lifetime_randomness = 0.4
+angle_min = 1.0728836e-05
+angle_max = 360.00003
+gravity = Vector3(0, 0, 0)
+scale_min = 0.5
+scale_max = 1.1999999
+color = Color(1.3845875, 0.9653411, 1.8247963, 1)
+alpha_curve = SubResource("CurveTexture_l0rdi")
+
+[sub_resource type="QuadMesh" id="QuadMesh_snu67"]
+material = ExtResource("2_wnjru")
+size = Vector2(0.1, 2)
+
+[sub_resource type="Curve" id="Curve_l0rdi"]
+_data = [Vector2(0, 0.1), 0.0, 0.0, 0, 0, Vector2(0.2, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_w0bvt"]
+width = 64
+texture_mode = 1
+curve = SubResource("Curve_l0rdi")
+
+[sub_resource type="Gradient" id="Gradient_wnjru"]
+offsets = PackedFloat32Array(0, 0.5, 1)
+colors = PackedColorArray(0.7833333, 0, 1, 1, 0.116666794, 0, 1, 1, 1, 0.5019608, 0.7490196, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_l0rdi"]
+gradient = SubResource("Gradient_wnjru")
+width = 64
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_l0rdi"]
+lifetime_randomness = 0.4
+emission_shape = 2
+emission_sphere_radius = 2.0
+gravity = Vector3(0, 0, 0)
+radial_accel_min = -20.000002
+radial_accel_max = -10.000002
+tangential_accel_min = 9.999997
+tangential_accel_max = 9.999997
+scale_min = 0.099999994
+scale_max = 0.39999998
+color = Color(1, 0.6901961, 1, 1)
+color_initial_ramp = SubResource("GradientTexture1D_l0rdi")
+alpha_curve = SubResource("CurveTexture_w0bvt")
+
+[sub_resource type="QuadMesh" id="QuadMesh_l0rdi"]
+material = ExtResource("2_wnjru")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_w0bvt"]
+lifetime_randomness = 0.4
+emission_shape = 1
+emission_sphere_radius = 3.0
+spread = 180.0
+initial_velocity_min = 15.0
+initial_velocity_max = 20.0
+gravity = Vector3(0, 0, 0)
+damping_min = 200.00002
+damping_max = 200.00002
+scale_min = 2.0
+scale_max = 3.0
+color = Color(1, 0, 1, 1)
+alpha_curve = SubResource("CurveTexture_w0bvt")
+
+[sub_resource type="QuadMesh" id="QuadMesh_poxal"]
+material = ExtResource("2_wnjru")
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_fx7oj"]
+height = 4.0
+radius = 3.0
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_fx7oj"]
+
+[sub_resource type="Animation" id="Animation_pbnhl"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("VisualRoot:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(1, 1, 1)]
+}
+tracks/1/type = "method"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("VisualRoot/BluePulse")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"StopGroup"
+}]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("VisualRoot/GravityOrb:visible")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("GravityZone:monitoring")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("DamageZone:isDisabled")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+
+[sub_resource type="Animation" id="Animation_fx7oj"]
+resource_name = "explode"
+length = 0.001
+tracks/0/type = "method"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("VisualRoot/BluePulse")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"StopGroup"
+}]
+}
+tracks/1/type = "method"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("VisualRoot/Explosion")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [false],
+"method": &"restart"
+}]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("VisualRoot/GravityOrb:visible")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("DamageZone:isDisabled")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("GravityZone:monitoring")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+
+[sub_resource type="Animation" id="Animation_grstn"]
+resource_name = "init"
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("VisualRoot/GravityOrb:visible")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/1/type = "method"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("VisualRoot/BluePulse")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"StopGroup"
+}]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("GravityZone:monitoring")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("DamageZone:isDisabled")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+
+[sub_resource type="Animation" id="Animation_l0rdi"]
+resource_name = "spawn"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("VisualRoot:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.26666668),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector3(0, 0, 0), Vector3(1.2, 1.2, 1.2), Vector3(1, 1, 1)]
+}
+tracks/1/type = "method"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("VisualRoot/BluePulse")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"RestartGroup"
+}]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("VisualRoot/GravityOrb:visible")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("GravityZone:monitoring")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("DamageZone:isDisabled")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/5/type = "method"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("Spawn")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [0.0],
+"method": &"play"
+}]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_w0bvt"]
+_data = {
+&"RESET": SubResource("Animation_pbnhl"),
+&"explode": SubResource("Animation_fx7oj"),
+&"init": SubResource("Animation_grstn"),
+&"spawn": SubResource("Animation_l0rdi")
+}
+
+[node name="GravityOrb" type="Node3D" node_paths=PackedStringArray("animator", "pullSfx")]
+script = ExtResource("1_poxal")
+animator = NodePath("AnimationPlayer")
+gravityPull = 12.0
+moveSpeed = 15.0
+gravityCurve = SubResource("Curve_fx7oj")
+pullSfx = NodePath("Pull")
+
+[node name="VisualRoot" type="Node3D" parent="."]
+
+[node name="GravityOrb" parent="VisualRoot" instance=ExtResource("3_l0rdi")]
+
+[node name="BluePulse" type="GPUParticles3D" parent="VisualRoot" node_paths=PackedStringArray("subSystems")]
+layers = 32
+cast_shadow = 0
+amount = 2
+fixed_fps = 0
+interpolate = false
+local_coords = true
+process_material = SubResource("ParticleProcessMaterial_snu67")
+draw_pass_1 = SubResource("QuadMesh_wnjru")
+script = ExtResource("4_fx7oj")
+subSystems = [NodePath("CentralStreaks"), NodePath("PurpleSparks")]
+
+[node name="CentralStreaks" type="GPUParticles3D" parent="VisualRoot/BluePulse"]
+layers = 32
+cast_shadow = 0
+lifetime = 0.5
+fixed_fps = 0
+interpolate = false
+local_coords = true
+process_material = SubResource("ParticleProcessMaterial_wnjru")
+draw_pass_1 = SubResource("QuadMesh_snu67")
+
+[node name="PurpleSparks" type="GPUParticles3D" parent="VisualRoot/BluePulse"]
+layers = 32
+cast_shadow = 0
+amount = 32
+lifetime = 0.5
+speed_scale = 1.5
+fixed_fps = 0
+interpolate = false
+local_coords = true
+process_material = SubResource("ParticleProcessMaterial_l0rdi")
+draw_pass_1 = SubResource("QuadMesh_l0rdi")
+
+[node name="Explosion" type="GPUParticles3D" parent="VisualRoot"]
+layers = 32
+cast_shadow = 0
+emitting = false
+amount = 32
+lifetime = 0.4
+one_shot = true
+explosiveness = 0.7
+fixed_fps = 0
+interpolate = false
+local_coords = true
+transform_align = 2
+process_material = SubResource("ParticleProcessMaterial_w0bvt")
+draw_pass_1 = SubResource("QuadMesh_poxal")
+
+[node name="GravityZone" type="Area3D" parent="."]
+collision_layer = 0
+collision_mask = 2
+monitoring = false
+monitorable = false
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="GravityZone"]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, -4.371139e-08, -1)
+shape = SubResource("CylinderShape3D_fx7oj")
+
+[node name="DamageZone" type="Area3D" parent="."]
+collision_layer = 0
+collision_mask = 2
+monitorable = false
+script = ExtResource("4_w0bvt")
+isDisabled = true
+ignoreSpeedbreakingCharacters = true
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="DamageZone"]
+shape = SubResource("SphereShape3D_fx7oj")
+
+[node name="Pull" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("7_pbnhl")
+bus = &"GAME SFX"
+
+[node name="Spawn" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("8_grstn")
+bus = &"GAME SFX"
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+&"": SubResource("AnimationLibrary_w0bvt")
+}
+autoplay = "init"
+
+[connection signal="area_entered" from="GravityZone" to="." method="OnEntered"]
+[connection signal="area_exited" from="GravityZone" to="." method="OnExited"]
+[connection signal="DamagedPlayer" from="DamageZone" to="." method="Explode"]
+[connection signal="KnockbackFailed" from="DamageZone" to="." method="Explode"]
+[connection signal="area_entered" from="DamageZone" to="DamageZone" method="OnEntered"]
+[connection signal="area_exited" from="DamageZone" to="DamageZone" method="OnExited"]

@@ -48,6 +48,7 @@ public partial class DriftState : PlayerState
 	{
 		Trigger.Activate();
 
+		Player.StrafeSpeed = 0;
 		driftAnimationTimer = 0;
 		entrySpeed = Player.MoveSpeed;
 		driftVelocity = Vector3.Zero;
@@ -210,7 +211,9 @@ public partial class DriftState : PlayerState
 
 		driftStatus = DriftStatus.WaitFail;
 		driftAnimationTimer = PhysicsManager.physicsDelta;
-		Player.MoveSpeed = 0f; // Reset Movespeed
+		// Reset Movespeed
+		Player.MoveSpeed = 0f;
+		Player.StrafeSpeed = 0;
 		Trigger.FadeSfx();
 	}
 

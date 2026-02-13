@@ -1,7 +1,15 @@
-[gd_scene load_steps=4 format=3 uid="uid://dpdmwi0k3jhd1"]
+[gd_scene load_steps=6 format=3 uid="uid://dpdmwi0k3jhd1"]
 
 [ext_resource type="PackedScene" uid="uid://523smjugvmxt" path="res://area/0 lost prologue/object/wonder/WonderBlockBase.tscn" id="1_708rf"]
 [ext_resource type="PackedScene" uid="uid://cors2o1hy2b2i" path="res://area/0 lost prologue/object/model/wonder/WonderBlock1.gltf" id="1_uc4a2"]
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_708rf"]
+height = 50.0
+radius = 50.0
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_lr523"]
+height = 50.0
+radius = 20.0
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_708rf"]
 
@@ -16,6 +24,12 @@ cast_shadow = 0
 [node name="WonderBlock1BloomMesh" parent="Root/WonderBlock1" index="1"]
 layers = 131072
 cast_shadow = 0
+
+[node name="CollisionShape3D" parent="DeactivateTrigger" index="0"]
+shape = SubResource("CylinderShape3D_708rf")
+
+[node name="CollisionShape3D" parent="ActivateTrigger" index="0"]
+shape = SubResource("CylinderShape3D_lr523")
 
 [node name="CollisionShape3D" parent="." index="3"]
 shape = SubResource("BoxShape3D_708rf")

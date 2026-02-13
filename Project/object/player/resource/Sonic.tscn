@@ -1,0 +1,65 @@
+[gd_scene load_steps=5 format=3 uid="uid://wfh54hnc028k"]
+
+[ext_resource type="PackedScene" uid="uid://b5jl3vv1j1fck" path="res://object/player/resource/model/Sonic.gltf" id="1_ea3e1"]
+[ext_resource type="PackedScene" uid="uid://cv14b3r1pov0q" path="res://object/player/resource/BaseModel.tscn" id="1_qi8cv"]
+[ext_resource type="Material" uid="uid://ddgjkiecp1ppu" path="res://object/player/resource/model/material/Sonic Speedbreak Overlay.tres" id="3_djfyb"]
+[ext_resource type="PackedScene" uid="uid://nvbpiay8inap" path="res://area/4 levitated ruin/object/model/special/SonicStone.gltf" id="8_r3bdb"]
+
+[node name="Model" instance=ExtResource("1_qi8cv")]
+speedbreakOverlayMaterial = ExtResource("3_djfyb")
+
+[node name="Root" parent="." index="0" instance=ExtResource("1_ea3e1")]
+
+[node name="GeneralSkeleton" parent="Root/SonicRoot" index="0"]
+bones/9/position = Vector3(-2.5138171e-14, 0.0020561665, 0.45743164)
+bones/9/rotation = Quaternion(0.7071068, 8.42937e-08, -3.4006925e-07, 0.7071068)
+bones/14/rotation = Quaternion(-7.962551e-09, -2.1548229e-07, -9.627296e-08, 1)
+
+[node name="BodyMesh" parent="Root/SonicRoot/GeneralSkeleton" index="0"]
+layers = 64
+material_overlay = ExtResource("3_djfyb")
+
+[node name="LEye" parent="Root/SonicRoot/GeneralSkeleton" index="1"]
+layers = 64
+cast_shadow = 0
+instance_shader_parameters/uv_offset = Vector2(0.225, 0)
+
+[node name="MouthlessMesh" parent="Root/SonicRoot/GeneralSkeleton" index="2"]
+layers = 64
+material_overlay = ExtResource("3_djfyb")
+
+[node name="REye" parent="Root/SonicRoot/GeneralSkeleton" index="3"]
+layers = 64
+cast_shadow = 0
+instance_shader_parameters/uv_offset = Vector2(-0.225, 0)
+
+[node name="RingMesh" parent="Root/SonicRoot/GeneralSkeleton" index="4"]
+layers = 64
+
+[node name="PetrificationModel" parent="PetrificationModel" index="0" instance=ExtResource("8_r3bdb")]
+
+[node name="SonicStoneMesh" parent="PetrificationModel/PetrificationModel" index="0"]
+layers = 64
+
+[node name="ChestAttachment" parent="." index="2"]
+external_skeleton = NodePath("../Root/SonicRoot/GeneralSkeleton")
+
+[node name="FlameOffset" parent="ChestAttachment" index="0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+
+[node name="RFoot" parent="." index="3"]
+transform = Transform3D(1, 1.4210855e-13, 4.773959e-15, 6.4392935e-14, -1.17812306e-07, 0.99999994, 9.947598e-14, -0.9999999, -1.17812306e-07, -0.03972758, 0.15546903, 0.0020457616)
+external_skeleton = NodePath("../Root/SonicRoot/GeneralSkeleton")
+
+[node name="LFoot" parent="." index="4"]
+transform = Transform3D(1, -1.2221335e-12, 1.1923795e-13, -9.392487e-14, -1.17812306e-07, 0.99999994, -1.2789769e-12, -0.9999999, -1.17812306e-07, 0.03972758, 0.15546903, 0.002045761)
+external_skeleton = NodePath("../Root/SonicRoot/GeneralSkeleton")
+
+[node name="AnimationPlayer" parent="." index="6"]
+root_node = NodePath("../Root/SonicRoot")
+
+[node name="AnimationTree" parent="." index="8"]
+root_node = NodePath("../Root/SonicRoot")
+
+[editable path="Root"]
+[editable path="PetrificationModel/PetrificationModel"]

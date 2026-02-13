@@ -27,10 +27,10 @@ public partial class NotificationManager : Control
 	public enum NotificationType
 	{
 		Skill,
+		World,
 		Mission,
 		Page,
 		Party,
-		World,
 		WorldRing,
 	}
 	public struct NotificationData
@@ -46,6 +46,8 @@ public partial class NotificationManager : Control
 	}
 
 	[Export] private SpecialBookPage[] specialBookPages = [];
+	/// <summary> Array of LevelDataResources that are unlocked through special means. </summary>
+	[Export] private LevelDataResource[] specialLevelData = [];
 
 	private bool isProcessing;
 
@@ -69,6 +71,19 @@ public partial class NotificationManager : Control
 
 	public void StartNotifications()
 	{
+		if (TransitionManager.Instance.QueuedScene.StartsWith(TransitionManager.EventScenePath))
+		{
+			// An event has been queued -- skip notifications for now.
+			TransitionManager.QueueSceneChange(TransitionManager.Instance.QueuedScene);
+			TransitionManager.StartTransition(new()
+			{
+				inSpeed = 0.5f,
+				outSpeed = 0.5f,
+				color = Colors.Black,
+			});
+			return;
+		}
+
 		animator.Play("RESET");
 		animator.Advance(0.0);
 		ProcessMode = ProcessModeEnum.Inherit;
@@ -91,8 +106,10 @@ public partial class NotificationManager : Control
 		if (NotificationList.Count != 0)
 			NotificationList.Sort(new NotificationData.Sorter());
 
+		SaveManager.ActiveGameData.UpdateCurrentStoryLevel(SaveManager.ActiveGameData.CurrentStoryLevel); // Update story level
+
 		// Connect transition signal
-		TransitionManager.instance.Connect(TransitionManager.SignalName.TransitionProcess, new Callable(this, MethodName.InitializeMenu), (uint)ConnectFlags.OneShot);
+		TransitionManager.Instance.Connect(TransitionManager.SignalName.TransitionProcess, new Callable(this, MethodName.InitializeMenu), (uint)ConnectFlags.OneShot);
 		TransitionManager.StartTransition(new()
 		{
 			color = Colors.Black,
@@ -106,7 +123,7 @@ public partial class NotificationManager : Control
 		animator.Play("init");
 		animator.Advance(0);
 
-		TransitionManager.instance.Connect(TransitionManager.SignalName.TransitionFinish, new Callable(this, MethodName.ShowUnlock), (uint)ConnectFlags.OneShot);
+		TransitionManager.Instance.Connect(TransitionManager.SignalName.TransitionFinish, new Callable(this, MethodName.ShowUnlock), (uint)ConnectFlags.OneShot);
 		TransitionManager.FinishTransition();
 	}
 
@@ -123,10 +140,10 @@ public partial class NotificationManager : Control
 
 		if (NotificationList.Count == 0) // Finished showing all notifications
 		{
-			TransitionManager.instance.Connect(TransitionManager.SignalName.TransitionProcess, new Callable(this, MethodName.HideMenu), (uint)ConnectFlags.OneShot);
+			TransitionManager.Instance.Connect(TransitionManager.SignalName.TransitionProcess, new Callable(this, MethodName.HideMenu), (uint)ConnectFlags.OneShot);
 
 			// Connect the queued scene to transition signals
-			TransitionManager.QueueSceneChange(TransitionManager.instance.QueuedScene);
+			TransitionManager.QueueSceneChange(TransitionManager.Instance.QueuedScene);
 			TransitionManager.StartTransition(new()
 			{
 				inSpeed = 0.5f,
@@ -159,7 +176,7 @@ public partial class NotificationManager : Control
 
 	private void EnableProcessing() => isProcessing = true;
 
-	private void UpdateCounters()
+	public void UpdateCounters()
 	{
 		startingSkillCount = CalculateUnlockedSkillCount();
 		startingUnlockedPageCount = CalculateUnlockedSpecialBookPages();
@@ -182,11 +199,48 @@ public partial class NotificationManager : Control
 		int count = 0;
 		foreach (SpecialBookPage page in specialBookPages)
 		{
-			if (page.PageType == Menus.SpecialBookPage.PageTypeEnum.Achievement)
+			if (page.PageType == SpecialBookPage.PageTypeEnum.Achievement)
 				continue; // Don't count achievements
 			if (!page.IsUnlocked())
 				continue;
 
+			count++;
+		}
+
+		return count;
+	}
+
+	/// <summary> Returns the number of levels that have just been unlocked through unorthodox means. </summary>
+	public int CalculateUnlockedSpecialLevelData()
+	{
+		int count = 0;
+		foreach (LevelDataResource stage in specialLevelData)
+		{
+			if (SaveManager.ActiveGameData.IsStageUnlocked(stage.LevelID))
+				continue;
+
+			if (stage.RequiredLevel != 0 && SaveManager.ActiveGameData.level < stage.RequiredLevel)
+				continue;
+
+			if (stage.RequiredSkill != null && !stage.BypassSkillUnlockRequirement && !SaveManager.ActiveSkillRing.IsSkillUnlocked(stage.RequiredSkill))
+				continue;
+
+			if (stage.RequiredMedals != 0)
+			{
+				if (stage.RequiredRank == LevelDataResource.RankEnum.Gold && SaveManager.ActiveGameData.LevelData.GoldMedalCount < stage.RequiredMedals)
+					continue;
+
+				if (stage.RequiredRank == LevelDataResource.RankEnum.Silver && SaveManager.ActiveGameData.LevelData.SilverMedalCount < stage.RequiredMedals)
+					continue;
+
+				if (stage.RequiredRank == LevelDataResource.RankEnum.Bronze && SaveManager.ActiveGameData.LevelData.BronzeMedalCount < stage.RequiredMedals)
+					continue;
+			}
+
+			if (DebugManager.Instance.UseDemoSave)
+				continue;
+
+			SaveManager.ActiveGameData.UnlockStage(stage.LevelID);
 			count++;
 		}
 

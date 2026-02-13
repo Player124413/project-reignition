@@ -183,7 +183,7 @@ public partial class Erazor : Node3D
 			outSpeed = .5f,
 			color = Colors.Black
 		});
-		TransitionManager.instance.Connect(TransitionManager.SignalName.TransitionProcess, new Callable(this, MethodName.StartBattle), (uint)ConnectFlags.OneShot);
+		TransitionManager.Instance.Connect(TransitionManager.SignalName.TransitionProcess, new Callable(this, MethodName.StartBattle), (uint)ConnectFlags.OneShot);
 		SaveManager.ActiveGameData.AllowSkippingCutscene(IntroCutsceneID);
 		animationTree.Set(IntroductionTrigger, (int)AnimationNodeOneShot.OneShotRequest.Abort);
 		Player.Animator.CancelOneshot();
@@ -215,6 +215,7 @@ public partial class Erazor : Node3D
 		Player.Skills.CancelBreakSkills();
 		Player.Skills.DisableBreakSkills();
 		Player.MoveSpeed = 0;
+		Player.StrafeSpeed = 0;
 		Player.SnapToGround();
 		Player.Effect.CanelSpinFX();
 		Player.Effect.StopTrailFX();
@@ -559,6 +560,8 @@ public partial class Erazor : Node3D
 			StartAttackStrike();
 
 		Player.MoveSpeed = 0;
+		Player.StrafeSpeed = 0;
+		Player.VerticalSpeed = 0.0f;
 		Player.SnapToGround();
 
 		Player.Skills.CancelBreakSkills();

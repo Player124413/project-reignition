@@ -184,7 +184,7 @@ public partial class SandScorpion : Node3D
 			outSpeed = .5f,
 			color = Colors.Black
 		});
-		TransitionManager.instance.Connect(TransitionManager.SignalName.TransitionProcess, new Callable(this, MethodName.StartBattle), (uint)ConnectFlags.OneShot);
+		TransitionManager.Instance.Connect(TransitionManager.SignalName.TransitionProcess, new Callable(this, MethodName.StartBattle), (uint)ConnectFlags.OneShot);
 		SaveManager.ActiveGameData.AllowSkippingCutscene(IntroCutsceneID);
 	}
 
@@ -216,6 +216,7 @@ public partial class SandScorpion : Node3D
 
 		Player.Skills.DisableBreakSkills();
 		Player.MoveSpeed = 0;
+		Player.StrafeSpeed = 0;
 
 		Player.Visible = false;
 		Player.AddLockoutData(Runtime.Instance.DefaultCompletionLockout);
@@ -696,6 +697,7 @@ public partial class SandScorpion : Node3D
 		StageSettings.Player.Camera.StartCameraShake(new()
 		{
 			magnitude = Vector3.One.RemoveDepth() * magnitude,
+			intensity = Vector3.One * 50.0f,
 		});
 	}
 
@@ -870,7 +872,7 @@ public partial class SandScorpion : Node3D
 
 	private void FinishEyeAttack()
 	{
-		if (currentHealth == 0)
+		if (currentHealth <= 0)
 		{
 			DefeatBoss();
 		}
@@ -935,6 +937,12 @@ public partial class SandScorpion : Node3D
 			return;
 		}
 
+		if (isInteractingWithTraversalHitbox)
+		{
+			ProcessTraversalCollision();
+			return;
+		}
+
 		if (IsCollidingWithBoss)
 			ProcessHitboxCollision();
 	}
@@ -959,21 +967,33 @@ public partial class SandScorpion : Node3D
 
 	public void ProcessHitboxCollision()
 	{
-		if (Player.IsHomingAttacking || Player.IsBouncing) return; // Player's homing attack always takes priority
+		if (Player.IsHomingAttacking || Player.IsBouncing || Player.IsKnockback) return; // Player's homing attack always takes priority
 		if (damageState == DamageState.Knockback) return; // Boss is in knockback and can't damage the player
 
-		if (Player.Skills.IsSpeedBreakActive)
-		{
-			Player.Skills.ToggleSpeedBreak();
-			Player.StartKnockback(new()
-			{
-				disableDamage = true
-			});
-		}
-		else
+		if (!Player.Skills.IsSpeedBreakActive)
 		{
 			Player.StartKnockback();
+			return;
 		}
+
+		StartClash();
+		StartKnockback();
+	}
+
+
+	private void StartClash()
+	{
+		Player.Skills.ToggleSpeedBreak();
+		Player.StartKnockback(new()
+		{
+			disableDamage = true,
+			stayOnGround = true,
+			ignoreInvincibility = true,
+			disableInvincibility = true,
+			knockbackType = KnockbackSettings.KnockbackAnimation.Block,
+		});
+
+		PlayScreenShake(1f);
 	}
 
 	/// <summary> Is the player currently colliding with the flying eye? </summary>
@@ -1002,13 +1022,17 @@ public partial class SandScorpion : Node3D
 
 		if (Player.Skills.IsSpeedBreakActive) // Special attack
 		{
-			if (attackState != AttackState.Recovery)
+			if (attackState == AttackState.Strike)
 			{
 				flyingEyeAnimationTree.Set(DamageParameter, (int)AnimationNodeOneShot.OneShotRequest.Fire);
 				rootAnimationTree.Set(PhaseTwoDamageParameter, (int)AnimationNodeOneShot.OneShotRequest.Fire);
 				StartHitFX();
 				RetreatEyeAttack();
 				TakeDamage(2);
+			}
+			else
+			{
+				StartClash();
 			}
 
 			return;
@@ -1079,16 +1103,38 @@ public partial class SandScorpion : Node3D
 		if (Player.IsHomingAttacking)
 			Player.StartBounce(); // Bounce the player
 
+		StartKnockback();
+	}
+
+	private void StartKnockback()
+	{
 		MoveSpeed = KnockbackStrength; // Start knockback
 		damageState = DamageState.Knockback;
 	}
 
+	private bool isHittingFarEye;
+	private bool isInteractingWithTraversalHitbox;
+
 	/// <summary>
 	/// Called when the player hits one of the eyes on the tail. No damage is actually dealt.
 	/// </summary>
-	public void OnTraversalHurtboxCollision(Area3D a, bool hitFarEye)
+	public void OnTraversalHurtboxEntered(Area3D a, bool hitFarEye)
 	{
 		if (!a.IsInGroup("player")) return;
+
+		isHittingFarEye = hitFarEye;
+		isInteractingWithTraversalHitbox = true;
+		ProcessTraversalCollision();
+	}
+
+	public void OnTraversalHurtboxExited(Area3D a)
+	{
+		if (!a.IsInGroup("player")) return;
+		isInteractingWithTraversalHitbox = false;
+	}
+
+	private void ProcessTraversalCollision()
+	{
 		if (!Player.IsHomingAttacking) return; // Player isn't attacking
 
 		StartHitFX();
@@ -1104,7 +1150,7 @@ public partial class SandScorpion : Node3D
 			lTailAnimationTree.Set(HeavyAttackParameter, HeavyLoopState);
 
 		// Disable hurtboxes so the player can't just bounce on the same eye infinitely
-		string hitboxAnimation = hitFarEye ? "disable-hurtbox-01" : "disable-hurtbox-02";
+		string hitboxAnimation = isHittingFarEye ? "disable-hurtbox-01" : "disable-hurtbox-02";
 		hitboxAnimation = (attackSide == 1 ? "r-" : "l-") + hitboxAnimation;
 		eventAnimator.CallDeferred("play", hitboxAnimation, -1, -1, false);
 	}

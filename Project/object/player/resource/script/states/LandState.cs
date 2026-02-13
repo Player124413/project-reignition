@@ -8,6 +8,7 @@ public partial class LandState : PlayerState
 	[Export] private PlayerState runState;
 	[Export] private PlayerState idleState;
 	[Export] private PlayerState fallState;
+	[Export] private PlayerState jumpState;
 	[Export] private PlayerState crouchState;
 	[Export] private PlayerState slideState;
 	[Export] private PlayerState backstepState;
@@ -23,6 +24,13 @@ public partial class LandState : PlayerState
 			Player.RemoveLockoutData(Player.ActiveLockoutData);
 		}
 
+		if (Player.MoveSpeed < 0) // Fix negative movespeeds
+		{
+			Player.MoveSpeed *= -1;
+			Player.IsMovingBackward = true;
+			Player.MovementAngle += Mathf.Pi;
+		}
+
 		Player.ResetFallTimer();
 		Player.VerticalSpeed = 0;
 		Player.UpdateOrientation();
@@ -31,15 +39,15 @@ public partial class LandState : PlayerState
 		Player.CanJumpDash = false;
 		Player.CanDoubleJump = true;
 		Player.CanAirBoost = true;
-		Player.Lockon.IsMonitoring = SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.GroundedHomingAttack);
+		Player.Lockon.IsMonitoring = true;
 
 		if (Player.IsKnockback)
 		{
 			knockbackTimer = KnockbackLandingLength;
 			Player.MoveSpeed = 0;
+			Player.StrafeSpeed = 0;
 			Player.IsKnockback = false;
 			Player.AllowLandingSkills = false;
-			Player.Animator.StopHurt(true);
 			Player.Animator.ResetState(0);
 		}
 		else
@@ -77,6 +85,12 @@ public partial class LandState : PlayerState
 
 		if (!Player.IsOnGround)
 			return fallState;
+
+		if (Player.IsBounceJumping) // Bounce Attack
+		{
+			Player.DisableAccelerationJump = true;
+			return jumpState;
+		}
 
 		if (Player.AllowLandingSkills)
 		{
@@ -135,7 +149,7 @@ public partial class LandState : PlayerState
 		if (SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.StompExp) && Player.IsStomping)
 		{
 			Player.Effect.PlayDarkSpiralFX();
-			StageSettings.Instance.CurrentEXP += 2;
+			StageSettings.Instance.CurrentEXP += 20;
 		}
 
 		// Increase soul gauge

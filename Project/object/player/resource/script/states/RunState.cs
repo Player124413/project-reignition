@@ -12,6 +12,7 @@ public partial class RunState : PlayerState
 	[Export] private PlayerState jumpState;
 	[Export] private PlayerState backflipState;
 	[Export] private PlayerState homingAttackState;
+	[Export] private PlayerState darkspineSpinState;
 
 	[Export] private Curve turningSpeedLossCurve;
 
@@ -65,8 +66,11 @@ public partial class RunState : PlayerState
 				if (Player.IsBackflipInputValid())
 					return backflipState;
 
-				if (SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.ChargeJump))
+				if (SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.ChargeJump) &&
+					!Player.IsLockoutDisablingAction(LockoutResource.ActionFlags.FullJump))
+				{
 					return slideState;
+				}
 
 				return jumpState;
 			}
@@ -91,10 +95,15 @@ public partial class RunState : PlayerState
 			}
 		}
 
-		if (Player.Controller.IsAttackBufferActive && Player.Lockon.IsTargetAttackable)
+		if (Player.Controller.IsAttackBufferActive)
 		{
 			Player.Controller.ResetAttackBuffer();
-			return homingAttackState;
+
+			if (Player.Lockon.IsTargetAttackable)
+				return homingAttackState;
+
+			if (Player.IsDarkspineSonic)
+				return darkspineSpinState;
 		}
 
 		if (SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.QuickStep) &&

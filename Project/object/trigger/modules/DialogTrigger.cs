@@ -11,6 +11,7 @@ public partial class DialogTrigger : StageTriggerModule
 {
 	[Export] public bool isOneShot = true;
 	[Export] public bool allowRespawn;
+	[Export] public bool disableSubtitles;
 
 
 	[Export] private PlaybackMode playbackType;
@@ -31,6 +32,9 @@ public partial class DialogTrigger : StageTriggerModule
 
 	public override void Activate()
 	{
+		if (Player != null && Player.IsDarkspineSonic && StageSettings.Instance.Data.LevelID != "np_last" && !DebugManager.Instance.IsCutsceneActive) // Disable dialog when Darkspine Sonic is active
+			return;
+
 		if (isTriggered)
 			return;
 
@@ -43,7 +47,6 @@ public partial class DialogTrigger : StageTriggerModule
 		{
 			SoundManager.instance.ClearQueue();
 			SoundManager.instance.PlayDialog(GetRandomDialogTrigger());
-			GD.Print("Playing Dialog");
 			return;
 		}
 

@@ -50,6 +50,7 @@ public partial class BounceState : PlayerState
 		Player.CanAirBoost = true;
 		Player.CanJumpDash = true;
 		Player.Lockon.IsMonitoring = true;
+		Player.StrafeSpeed = 0;
 		Player.VerticalSpeed = Runtime.CalculateJumpPower(bounceHeight * BounceHeightScale);
 		Player.MovementAngle = Player.PathFollower.ForwardAngle;
 
@@ -65,6 +66,7 @@ public partial class BounceState : PlayerState
 	public override void ExitState()
 	{
 		Player.IsBouncing = false;
+		Player.IsPerfectHomingAttacking = false;
 		Player.RemoveLockoutData(LockoutSettings);
 	}
 
@@ -77,6 +79,7 @@ public partial class BounceState : PlayerState
 			return null;
 		}
 
+		Player.MovementAngle = Player.PathFollower.ForwardAngle;
 		Player.MoveSpeed = Mathf.MoveToward(Player.MoveSpeed, 0f, Player.Stats.GroundSettings.Friction * PhysicsManager.physicsDelta);
 		Player.VerticalSpeed -= Runtime.Gravity * PhysicsManager.physicsDelta;
 		Player.ApplyMovement();
@@ -101,7 +104,7 @@ public partial class BounceState : PlayerState
 				return null;
 			}
 
-			if (SaveManager.Config.useStompJumpButtonMode)
+			if (SaveManager.Config.jumpButtonMode == SaveManager.JumpButtonModeEnum.Stomp)
 				return stompState;
 
 			return Player.Lockon.IsTargetAttackable ? homingAttackState : jumpDashState;
@@ -132,7 +135,9 @@ public partial class BounceState : PlayerState
 			return;
 		}
 
-		Player.MoveSpeed = 0; // Reset speed
+		// Reset speed
+		Player.MoveSpeed = 0;
+		Player.StrafeSpeed = 0;
 
 		if (snapTarget == null) // Nothing to snap to
 			return;

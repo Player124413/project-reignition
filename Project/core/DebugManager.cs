@@ -15,6 +15,9 @@ public partial class DebugManager : Control
 	[Export]
 	private Control debugMenuRoot;
 
+	/// <summary> Tracks whether we're in a cutscene (credits or story event). </summary>
+	public bool IsCutsceneActive { get; set; }
+
 	private bool isAdvancingFrame;
 	private bool isAttemptingPause;
 	private bool IsPaused => GetTree().Paused;
@@ -33,9 +36,7 @@ public partial class DebugManager : Control
 		Instance = this;
 		ProcessMode = ProcessModeEnum.Always;
 
-		UseDemoSave = true; // Be sure to DISABLE this in the FINAL version of the game
 		IsStageCullingEnabled = true;
-		UnlockAllStages = UseDemoSave;
 
 		if (OS.IsDebugBuild()) // Editor Debug
 			SkipCountdown = true;
@@ -66,7 +67,7 @@ public partial class DebugManager : Control
 			debugMenuRoot.Visible = !debugMenuRoot.Visible;
 
 		if (Input.IsActionJustPressed("debug_turbo"))
-			Engine.TimeScale = 2.5f;
+			Engine.TimeScale = IsCutsceneActive ? 10f : 2.5f;
 		else if (Input.IsActionJustReleased("debug_turbo"))
 			Engine.TimeScale = 1f;
 
@@ -237,6 +238,8 @@ public partial class DebugManager : Control
 		EmitSignal(SignalName.StageCullingToggled);
 	}
 
+	[Export]
+	private Button unlockStageToggleButton;
 	/// <summary> Have all worlds/stages unlocked. </summary>
 	public bool UnlockAllStages { get; private set; }
 	[Signal]
@@ -245,6 +248,16 @@ public partial class DebugManager : Control
 	{
 		UnlockAllStages = UseDemoSave || enabled;
 		EmitSignal(SignalName.UnlockStagesToggled);
+	}
+
+	public void ToggleDemoSave(bool value)
+	{
+		UseDemoSave = value;
+		if (value && !UnlockAllStages)
+		{
+			unlockStageToggleButton.ButtonPressed = true;
+			ToggleUnlockStages(true);
+		}
 	}
 
 	public bool DrawDebugCam { get; private set; }

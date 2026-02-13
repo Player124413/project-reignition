@@ -17,7 +17,7 @@ warnings/check_angle_interpolation_type_conflicting=false
 
 config/name="Sonic and the Secret Rings Remake"
 config/description="A fan-remake of the 2007 Nintendo Wii title \"Sonic and the Secret Rings.\""
-config/version="0.4.2"
+config/version="0.5.0.12.19.2025"
 config/tags=PackedStringArray("active", "c#")
 run/main_scene="res://interface/boot/Boot.tscn"
 config/features=PackedStringArray("4.5", "C#")
@@ -38,6 +38,7 @@ default_bus_layout="res://sound/AudioLayout.tres"
 Core="*res://core/Core.tscn"
 TransitionManager="*res://interface/transition/TransitionManager.tscn"
 SoundManager="*res://sound/SoundManager.tscn"
+DebugMenu="*res://addons/debug_menu/debug_menu.tscn"
 
 [debug]
 
@@ -61,7 +62,7 @@ project/assembly_name="Sonic Remake Project"
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/curve_edit/plugin.cfg", "res://addons/custom_nodes/plugin.cfg", "res://addons/stage_object_previewer/plugin.cfg")
+enabled=PackedStringArray("res://addons/curve_edit/plugin.cfg", "res://addons/custom_nodes/plugin.cfg", "res://addons/debug_menu/plugin.cfg", "res://addons/stage_object_previewer/plugin.cfg")
 
 [filesystem]
 
@@ -101,6 +102,7 @@ snow="Sfx group for snow."
 "force lockon bounce"="Forces the player to perform a bounce when colliding with objects in this group."
 "pathtraveller stagger"="Objects in this group stagger the player when on a pathtraveller."
 "light dashable"=""
+"dustless floor"=""
 
 [gui]
 
@@ -526,6 +528,11 @@ camera_right={
 , Object(InputEventJoypadMotion,"resource_local_to_scene":false,"resource_name":"","device":-1,"axis":2,"axis_value":1.0,"script":null)
 ]
 }
+cycle_debug_menu={
+"deadzone": 0.2,
+"events": [Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":0,"physical_keycode":4194340,"key_label":0,"unicode":0,"location":0,"echo":false,"script":null)
+]
+}
 
 [internationalization]
 
@@ -541,7 +548,7 @@ locale/translation_remaps={
 "res://interface/menu/save select/texture/text/save en.png": PackedStringArray("res://interface/menu/save select/texture/text/save de.png:de", "res://interface/menu/save select/texture/text/save es.png:es", "res://interface/menu/save select/texture/text/save fr.png:fr", "res://interface/menu/save select/texture/text/save it.png:it", "res://interface/menu/save select/texture/text/save ja.png:ja"),
 "res://interface/menu/title/texture/logos/logo en.png": PackedStringArray("res://interface/menu/title/texture/logos/logo de.png:de", "res://interface/menu/title/texture/logos/logo es.png:es", "res://interface/menu/title/texture/logos/logo it.png:it", "res://interface/menu/title/texture/logos/logo ja.png:ja", "res://interface/menu/title/texture/logos/logo ru.png:ru")
 }
-locale/translations=PackedStringArray("res://locale/Locale.de.translation", "res://locale/Locale.en.translation", "res://locale/Locale.en_US.translation", "res://locale/Locale.es.translation", "res://locale/Locale.fr.translation", "res://locale/Locale.it.translation", "res://locale/Locale.ja.translation", "res://locale/Locale.pl.translation", "res://locale/Locale.pt_BR.translation", "res://locale/Locale.ru.translation", "res://locale/Locale.se.translation", "res://locale/Locale.tr.translation", "res://locale/Locale.zh.translation")
+locale/translations=PackedStringArray("res://locale/Locale.de.translation", "res://locale/Locale.en.translation", "res://locale/Locale.en_US.translation", "res://locale/Locale.es.translation", "res://locale/Locale.fr.translation", "res://locale/Locale.it.translation", "res://locale/Locale.ja.translation", "res://locale/Locale.pl.translation", "res://locale/Locale.pt_BR.translation", "res://locale/Locale.ru.translation", "res://locale/Locale.se.translation", "res://locale/Locale.tr.translation", "res://locale/Locale.zh.translation", "res://locale/Locale.es_US.translation")
 locale/locale_filter_mode=1
 locale/language_filter=["de", "en", "es", "fr", "it", "ja"]
 
@@ -554,6 +561,7 @@ locale/language_filter=["de", "en", "es", "fr", "it", "ja"]
 3d_render/layer_5="Skybox"
 3d_render/layer_6="Particles"
 3d_render/layer_7="Player"
+3d_render/layer_8="Particles Attractable"
 3d_render/layer_11="Lights"
 3d_render/layer_12="UnrenderedFx"
 3d_render/layer_18="Multiplicative Bloom Depth Buffer"
@@ -591,6 +599,7 @@ jolt_3d/collisions/areas_detect_static_bodies=true
 
 [rendering]
 
+textures/vram_compression/import_etc2_astc=true
 lights_and_shadows/directional_shadow/soft_shadow_filter_quality=0
 lights_and_shadows/positional_shadow/soft_shadow_filter_quality=0
 reflections/sky_reflections/roughness_layers=4

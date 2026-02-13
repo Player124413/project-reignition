@@ -511,7 +511,11 @@ public partial class SpecialBook : Menu
 
 		if (!page.IsUnlocked())
 		{
-			textboxTitle.Text = page.GetLocalizedUnlockRequirements();
+			if (page.PageType == SpecialBookPage.PageTypeEnum.Achievement)
+				textboxTitle.Text = page.GetLocalizedUnlockRequirements($"spb_desc_ch{tabSelection + 1}_{pageSelection + 1}");
+			else
+				textboxTitle.Text = page.GetLocalizedUnlockRequirements();
+
 			return;
 		}
 

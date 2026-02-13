@@ -75,11 +75,21 @@ public partial class Ivy : Launcher
 			return;
 		}
 
+		if (isInteractingWithPlayer && Player.IsHomingAttacking)
+			StartIvy();
+
 		if (IsSleeping)
 			return;
 
 		UpdateSwing();
 		CallDeferred(MethodName.UpdateAreaPosition);
+		ResetPhysicsInterpolation();
+	}
+
+	private void StartIvy()
+	{
+		Player.StartIvy(this);
+		EmitSignal(SignalName.IvyStarted);
 	}
 
 	public void OnEntered(Area3D a)
@@ -90,9 +100,8 @@ public partial class Ivy : Launcher
 		if (Player.IsLaunching && Player.ActiveLauncher == this)
 			return;
 
-		Player.StartIvy(this);
 		isInteractingWithPlayer = true;
-		EmitSignal(SignalName.IvyStarted);
+		StartIvy();
 	}
 
 	public void OnExited(Area3D a)

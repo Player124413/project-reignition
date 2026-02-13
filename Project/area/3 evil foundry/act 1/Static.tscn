@@ -672,8 +672,8 @@ _data = {
 
 [sub_resource type="Gradient" id="Gradient_b08sy"]
 interpolation_color_space = 2
-offsets = PackedFloat32Array(0, 0.0340909, 0.503788, 0.897727, 1)
-colors = PackedColorArray(0, 0.00392157, 0, 1, 0.00884778, 0.0219422, 0.0080423, 1, 0.41, 0.41, 0.41, 1, 0.904192, 0.855356, 0.812669, 1, 1, 0.941333, 0.89, 1)
+offsets = PackedFloat32Array(0, 0.0340909, 0.897727, 1)
+colors = PackedColorArray(0, 0.00392157, 0, 1, 0.022875002, 0.03, 0.022499999, 1, 0.904192, 0.855356, 0.812669, 1, 1, 0.941333, 0.89, 1)
 
 [sub_resource type="GradientTexture1D" id="GradientTexture1D_et1ty"]
 gradient = SubResource("Gradient_b08sy")
@@ -688,10 +688,10 @@ gradient = SubResource("Gradient_663e5")
 
 [sub_resource type="Environment" id="Environment_8qchy"]
 ambient_light_source = 2
-ambient_light_color = Color(0.619608, 0.466667, 0.258824, 1)
+ambient_light_color = Color(0.75, 0.625, 0.45000002, 1)
+ambient_light_energy = 0.4
 tonemap_exposure = 1.4
 tonemap_white = 1.2
-ssil_enabled = true
 ssil_radius = 10.0
 ssil_intensity = 1.5
 glow_enabled = true
@@ -1889,27 +1889,17 @@ startEnabled = true
 
 [node name="Lighting" type="Node3D" parent="."]
 
-[node name="Light" type="DirectionalLight3D" parent="Lighting"]
+[node name="EnvironmentLight" type="DirectionalLight3D" parent="Lighting"]
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 6.68, -3.52118)
 layers = 1024
-light_cull_mask = 4294967199
+light_energy = 0.7
+light_cull_mask = 4294967198
 shadow_enabled = true
-shadow_opacity = 0.8
 directional_shadow_mode = 1
 directional_shadow_split_1 = 0.225
 directional_shadow_blend_splits = true
 directional_shadow_fade_start = 0.418
 directional_shadow_max_distance = 20.0
-
-[node name="BounceLight" type="DirectionalLight3D" parent="Lighting"]
-transform = Transform3D(0.92456, 0.252439, 0.285419, -0.0395726, -0.681394, 0.730847, 0.378977, -0.687006, -0.62, 0, 6.68, -3.52118)
-layers = 1024
-light_color = Color(0.85098, 1, 0.839216, 1)
-light_energy = 0.5
-light_cull_mask = 4294967199
-shadow_opacity = 0.5
-directional_shadow_blend_splits = true
-directional_shadow_max_distance = 200.0
 
 [node name="LavaLightEvent" type="Node3D" parent="Lighting" node_paths=PackedStringArray("animator")]
 script = ExtResource("26_rgyb4")
@@ -1922,8 +1912,8 @@ animator = NodePath("AnimationPlayer")
 [node name="DownLight" type="DirectionalLight3D" parent="Lighting/LavaLightEvent"]
 transform = Transform3D(1, 0, 0, 0, -0.20658, 0.97843, 0, -0.97843, -0.20658, 0, 0, 0)
 layers = 1024
-light_color = Color(0.733333, 0.572549, 0.454902, 1)
-light_cull_mask = 4293918784
+light_color = Color(0.73, 0.51708335, 0.365, 1)
+light_cull_mask = 4293918785
 shadow_blur = 10.0
 directional_shadow_mode = 0
 
@@ -1932,7 +1922,7 @@ transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 
 layers = 1024
 light_color = Color(1, 0.968627, 0.533333, 1)
 light_energy = 0.0
-light_cull_mask = 4293918784
+light_cull_mask = 4293918785
 shadow_blur = 10.0
 directional_shadow_mode = 0
 
@@ -1948,7 +1938,7 @@ transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, -618.4
 "Exit Mode" = 0
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Lighting/MineATrigger"]
-transform = Transform3D(0.99999, 0, 5.96044e-08, 0, 1, 0, -5.96044e-08, 0, 0.99999, -2, 10, 10)
+transform = Transform3D(1, 0, 5.9605e-08, 0, 1, 0, -5.9605e-08, 0, 1, -2, 10, 10)
 shape = SubResource("BoxShape3D_8f5p5")
 
 [node name="MineBTrigger" parent="Lighting" instance=ExtResource("33_1wgtf")]
@@ -2026,6 +2016,15 @@ transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, 180, 4
 shape = SubResource("BoxShape3D_8m6ew")
 
 [node name="ReflectionProbes" type="Node3D" parent="."]
+
+[node name="EnvironmentProbe" type="ReflectionProbe" parent="ReflectionProbes"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -235.23795, 44.1102, -221.27835)
+size = Vector3(1017.53156, 259.50195, 734.8789)
+cull_mask = 0
+reflection_mask = 6
+ambient_mode = 2
+ambient_color = Color(1, 0.78999996, 0.64, 1)
+ambient_color_energy = 0.5
 
 [node name="PipeHallObjectProbe" type="ReflectionProbe" parent="ReflectionProbes"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 70.2244, 44.1102, -449.835)

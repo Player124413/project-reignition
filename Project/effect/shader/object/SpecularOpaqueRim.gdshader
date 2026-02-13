@@ -8,6 +8,7 @@ uniform float roughness : hint_range(0, 1) = .8;
 uniform float rim_bias : hint_range(0, 1) = .5;
 uniform vec3 rim_color : source_color;
 uniform float rim_albedo_influence : hint_range(0, 1) = .5;
+uniform float vertical_rim_bias : hint_range(0, 1) = 1.0;
 
 
 void fragment()
@@ -24,11 +25,12 @@ void fragment()
 	float spec = spec_col.r * spec_col.a;
 	float rim = spec * (rim_bias - view);
 	rim = clamp(rim, 0, 1);
+	float rim_ratio = mix(1.0, NORMAL.g, vertical_rim_bias);
 	
 	//Calculate specularity
 	spec *= view;
 	ROUGHNESS = roughness;
 	SPECULAR = clamp(spec * specular_multiplier, 0, 1);
 	ALBEDO = col.rgb;
-	EMISSION = clamp(vec3(rim) * rim * rim_color * NORMAL.g * ((ALBEDO * rim_albedo_influence) + (1.0 - rim_albedo_influence)), vec3(0.0), vec3(1.0));
+	EMISSION = clamp(vec3(rim) * rim * rim_color * rim_ratio * ((ALBEDO * rim_albedo_influence) + (1.0 - rim_albedo_influence)), vec3(0.0), vec3(1.0));
 }

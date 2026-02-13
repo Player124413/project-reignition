@@ -1,6 +1,8 @@
 using Godot;
 using System.Collections.Generic;
 using Project.Gameplay.Triggers;
+using Project.Interface;
+using System.Text.RegularExpressions;
 
 namespace Project.Core;
 
@@ -25,11 +27,11 @@ public partial class SoundManager : Node
 	{
 		instance = this;
 		subtitleAnimator.Play("RESET");
-
 		InitializePearlSFX();
+		InitializeButtonPromptValues();
 
 		// Cancel Dialog when switching to a new scene
-		TransitionManager.instance.Connect(TransitionManager.SignalName.SceneChanged, new(this, MethodName.CancelDialog));
+		TransitionManager.Instance.Connect(TransitionManager.SignalName.SceneChanged, new(this, MethodName.CancelDialog));
 	}
 
 	public override void _PhysicsProcess(double _)
@@ -58,16 +60,13 @@ public partial class SoundManager : Node
 	#region Dialog
 	public bool IsSubtitlesActive { get; private set; }
 	public bool IsDialogActive => IsSubtitlesActive && (isSonicSpeaking || isShahraSpeaking);
-	[Export]
-	private Label subtitleLabel;
-	[Export]
-	private ColorRect subtitleLetterbox;
-	[Export]
-	private AnimationPlayer subtitleAnimator;
-	[Export]
-	private AudioStreamPlayer dialogChannel;
-	[Export]
-	private Timer delayTimer;
+	[Export] private Label subtitleLabel;
+	[Export] private NavigationButton buttonPrompt;
+	private int buttonPromptIndex;
+	[Export] private ColorRect subtitleLetterbox;
+	[Export] private AnimationPlayer subtitleAnimator;
+	[Export] private AudioStreamPlayer dialogChannel;
+	[Export] private Timer delayTimer;
 	private int currentDialogIndex;
 	private DialogTrigger currentDialog;
 	private Queue<DialogTrigger> dialogQueue = [];
@@ -135,7 +134,7 @@ public partial class SoundManager : Node
 			return;
 		}
 
-		if (SaveManager.Config.isSubtitleDisabled)
+		if (SaveManager.Config.isSubtitleDisabled && !currentDialog.disableSubtitles)
 			return;
 
 		if (currentDialog.IsCutscene)
@@ -152,7 +151,7 @@ public partial class SoundManager : Node
 	private void DisableDialog()
 	{
 		IsSubtitlesActive = false;
-		if (!SaveManager.Config.isSubtitleDisabled)
+		if (!SaveManager.Config.isSubtitleDisabled && !currentDialog.disableSubtitles)
 			subtitleAnimator.Play("deactivate");
 
 		UpdateSonicDialog();
@@ -184,6 +183,7 @@ public partial class SoundManager : Node
 
 	private void UpdateDialog(bool processDelay)
 	{
+		InitializeSubtitleOpacity();
 		// Must have been interrupted
 		if (dialogChannel.IsConnected(AudioStreamPlayer.SignalName.Finished, new Callable(this, MethodName.OnDialogFinished)))
 			dialogChannel.Disconnect(AudioStreamPlayer.SignalName.Finished, new Callable(this, MethodName.OnDialogFinished));
@@ -198,7 +198,7 @@ public partial class SoundManager : Node
 			return;
 		}
 
-		if (!SaveManager.Config.isSubtitleDisabled)
+		if (!SaveManager.Config.isSubtitleDisabled && !currentDialog.disableSubtitles)
 			subtitleAnimator.Play(currentDialogIndex == 0 ? "activate" : "activate-text");
 
 		string key = currentDialog.textKeys[currentDialogIndex];
@@ -210,6 +210,7 @@ public partial class SoundManager : Node
 		{
 			dialogChannel.Stream = targetStream;
 			subtitleLabel.Text = FormatText(Tr(currentDialog.textKeys[currentDialogIndex]));
+			CallDeferred(MethodName.UpdateButtonPromptPosition);
 			dialogChannel.Play();
 			if (!currentDialog.HasLength(currentDialogIndex))// Use audio length
 			{
@@ -232,7 +233,9 @@ public partial class SoundManager : Node
 			if (string.IsNullOrEmpty(key) || key.EndsWith("*")) // Cutscene Support - To avoid busywork in editor
 				key = currentDialog.textKeys[0].Replace("*", (currentDialogIndex + 1).ToString());
 			subtitleLabel.Text = FormatText(Tr(key)); // Update subtitles
+			CallDeferred(MethodName.UpdateButtonPromptPosition);
 		}
+
 
 		// If we've made it this far, we're using the custom specified time
 		if (!delayTimer.IsConnected(Timer.SignalName.Timeout, new Callable(this, MethodName.OnDialogFinished)))
@@ -245,7 +248,82 @@ public partial class SoundManager : Node
 	{
 		text = text.Replace('{', '"');
 		text = text.Replace('}', '"');
+
+		Match regexMatch = ButtonPromptRegex().Match(text);
+		buttonPrompt.Visible = regexMatch.Success;
+		if (regexMatch.Success)
+		{
+			buttonPrompt.SetInputKey(regexMatch.Groups[0].Value.Substring(1, regexMatch.Groups[0].Length - 2));
+			text = text.Replace(regexMatch.Captures[0].Value, ButtonSpaceReplacement); // 5 Spaces
+			buttonPromptIndex = regexMatch.Captures[0].Index;
+		}
+
 		return text;
+	}
+
+	[GeneratedRegex("\\[(.*?)\\]")]
+	private static partial Regex ButtonPromptRegex();
+	private Font subtitleFont;
+	private int subtitleSize;
+	private float spaceCharacterWidth;
+	private readonly string ButtonSpaceReplacement = "     ";
+	private void InitializeButtonPromptValues()
+	{
+		subtitleFont = (Font)subtitleLabel.Get("theme_override_fonts/font");
+		subtitleSize = (int)subtitleLabel.Get("theme_override_font_sizes/font_size");
+
+		TextServer server = TextServerManager.GetPrimaryInterface();
+
+		TextParagraph spaceWidth = new();
+		spaceWidth.AddString(" ", subtitleFont, subtitleSize);
+		Rid lineRid = spaceWidth.GetLineRid(0);
+		var glyphs = server.ShapedTextGetGlyphs(lineRid);
+		spaceCharacterWidth += (float)glyphs[0]["advance"] * 5;
+	}
+
+	private void InitializeSubtitleOpacity()
+	{
+		if (!currentDialog.IsCutscene)
+			subtitleLetterbox.Color = new Color(0.0f, 0.0f, 0.0f, SaveManager.Config.subtitleOpacity * 0.01f);
+		else
+			subtitleLetterbox.Color = new Color(0.0f, 0.0f, 0.0f, SaveManager.Config.cutsceneOpacity * 0.01f);
+	}
+
+	private void UpdateButtonPromptPosition()
+	{
+		if (!buttonPrompt.Visible)
+			return;
+
+		TextServer server = TextServerManager.GetPrimaryInterface();
+		TextParagraph paragraph = new();
+		paragraph.AddString(subtitleLabel.Text, subtitleFont, subtitleSize);
+		Vector2 buttonPromptOffset = new((spaceCharacterWidth - buttonPrompt.Size.X * buttonPrompt.Scale.X) * 0.5f, subtitleSize * 0.5f);
+
+		int currentIndex = 0;
+		Vector2 glyphPosition = Vector2.Zero;
+
+		for (int i = 0; i < paragraph.GetLineCount(); i++)
+		{
+			glyphPosition.X = 0f;
+			glyphPosition.Y += paragraph.GetLineAscent(i) + paragraph.GetLineDescent(i);
+
+			Rid lineRid = paragraph.GetLineRid(i);
+			var glyphs = server.ShapedTextGetGlyphs(lineRid);
+
+			for (int j = 0; j < glyphs.Count; j++)
+			{
+				glyphPosition.X += (float)glyphs[j]["advance"];
+				currentIndex++;
+
+				if (currentIndex == buttonPromptIndex)
+				{
+					buttonPrompt.GlobalPosition = subtitleLabel.GlobalPosition + glyphPosition + buttonPromptOffset;
+					return;
+				}
+			}
+
+			buttonPromptOffset.Y -= subtitleSize * 0.5f;
+		}
 	}
 
 	public bool IsSonicSfxVoiceChannelActive { get; set; }
@@ -330,7 +408,15 @@ public partial class SoundManager : Node
 	// Item pickups are played in the SoundManager to avoid volume increase when collecting more than one at a time.
 	[Export]
 	private AudioStreamPlayer ringSFX;
-	public void PlayRingSFX() => ringSFX.Play();
+	private bool canPlayRingSfx;
+	public void PlayRingSFX()
+	{
+		if (!canPlayRingSfx) // Prevent multiple ring sound effects playing on the same frame
+			return;
+
+		ringSFX.Play();
+		canPlayRingSfx = false;
+	}
 	[Export]
 	private AudioStreamPlayer richRingSFX;
 	public void PlayRichRingSFX() => richRingSFX.Play();
@@ -393,6 +479,8 @@ public partial class SoundManager : Node
 	{
 		if (sfxGroups.Count != 0)
 			sfxGroupTimer += PhysicsManager.physicsDelta;
+
+		canPlayRingSfx = true;
 	}
 
 	public bool CanPlaySfxInGroup(StringName key, int maxPolyphony)
@@ -400,8 +488,8 @@ public partial class SoundManager : Node
 		if (!sfxGroups.ContainsKey(key))
 			return true;
 
-		if (Mathf.Abs(sfxGroupTimer - sfxGroupTimers[key]) > groupSfxSpacing)
-			return true;
+		if (Mathf.Abs(sfxGroupTimer - sfxGroupTimers[key]) < groupSfxSpacing)
+			return false;
 
 		return sfxGroups[key] < maxPolyphony;
 	}

@@ -1,54 +1,37 @@
 shader_type spatial;
 render_mode blend_mul, unshaded, fog_disabled, depth_draw_never;
 
-#define pow2(x) (x * x)
 #define iResolution 1.0 / VIEWPORT_SIZE
-
-global uniform float render_distance;
 
 uniform sampler2D bloom_texture : hint_default_white;
 uniform sampler2D object_texture : hint_default_white;
 
 uniform float strength : hint_range(0.0, 20.0, 0.1) = 1.0;
-const int samples = 16;
-const float sigma = float(samples) * 0.25;
-
-float gaussian(vec2 i) {
-    return 1.0 / (2.0 * PI * pow2(sigma)) * exp(-((pow2(i.x) + pow2(i.y)) / (2.0 * pow2(sigma))));
-}
-
-vec3 sample_texture(vec2 uv) {
-	vec4 col = texture(bloom_texture, uv);
-	return col.rgb;
-}
-
-vec3 blur(vec2 uv, vec2 scale) {
-	vec3 col = vec3(0.0);
-	float accum = 0.0;
-	float weight;
-	vec2 offset;
-    
-	for (int x = -samples / 2; x < samples / 2; ++x) {
-		for (int y = -samples / 2; y < samples / 2; ++y) {
-			offset = vec2(float(x), float(y));
-			weight = gaussian(offset);
-			col += sample_texture(uv + scale * offset) * weight;
-			accum += weight;
-		}
-	}
-	
-	return col / accum;
-}
 
 void vertex() {
 	POSITION = vec4(VERTEX.xy, 1.0, 1.0);
 }
 
+vec3 blur(vec2 uv, vec2 s) {
+	return 0.011194727 * texture(bloom_texture, uv - 10.000000000 * s).rgb +
+		0.039368696 * texture(bloom_texture, uv - 8.415809477 * s).rgb +
+		0.071308558 * texture(bloom_texture, uv - 6.435363708 * s).rgb +
+		0.110237219 * texture(bloom_texture, uv - 4.455121108 * s).rgb +
+		0.145451038 * texture(bloom_texture, uv - 2.475020813 * s).rgb +
+		0.163798995 * texture(bloom_texture, uv - 0.495000167 * s).rgb +
+		0.157439298 * texture(bloom_texture, uv + 1.485004498 * s).rgb +
+		0.129158204 * texture(bloom_texture, uv + 3.465057055 * s).rgb +
+		0.090434685 * texture(bloom_texture, uv + 5.445220765 * s).rgb +
+		0.054043977 * texture(bloom_texture, uv + 7.425557483 * s).rgb +
+		0.027564604 * texture(bloom_texture, uv + 9.406126897 * s).rgb;
+}
+
 void fragment() {
-	vec2 ps = vec2(1.0) / iResolution.xy * strength;
 	vec2 uv = SCREEN_UV;
-	vec3 col = blur(uv, ps);
-	
+	vec3 x_col = blur(uv, vec2(1.0) / iResolution.xy * strength);
+	vec3 y_col = blur(uv, vec2(-1.0) / iResolution.xy * strength);
+	vec3 col = min(x_col, y_col);
+
 	// TODO Cut out objects based on depth buffer
 	vec4 obj_col = texture(object_texture, uv);
 	col += obj_col.a;

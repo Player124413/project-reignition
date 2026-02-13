@@ -10,12 +10,11 @@ public partial class ItemCycleTrigger : StageTriggerModule
 	private int itemCycleIndex; // Active item set
 
 	// Make sure itemCycle triggers are monitoring and collide with the player
-	[Export]
-	private Array<NodePath> itemCycles = [];
-	[Export]
-	private Array<NodePath> transitionNodes = [];
+	[Export] private Array<NodePath> itemCycles = [];
+	[Export] private Array<NodePath> transitionNodes = [];
 	private readonly Array<CullingTrigger> ItemCycles = [];
 	private readonly Array<CullingTrigger> Transitions = [];
+	private readonly Array<CullingTrigger> InitialTriggers = [];
 	public override void _Ready()
 	{
 		for (int i = 0; i < itemCycles.Count; i++)
@@ -28,6 +27,11 @@ public partial class ItemCycleTrigger : StageTriggerModule
 			}
 
 			ItemCycles.Add(trigger);
+
+			if (!trigger.StartEnabled)
+				continue;
+
+			InitialTriggers.Add(trigger);
 		}
 
 		for (int i = 0; i < transitionNodes.Count; i++)
@@ -40,7 +44,34 @@ public partial class ItemCycleTrigger : StageTriggerModule
 			}
 
 			Transitions.Add(trigger);
+
+			if (!trigger.StartEnabled)
+				continue;
+
+			InitialTriggers.Add(trigger);
 		}
+	}
+
+	/// <summary>Respawn item cycles to the initial state from when the level started. </summary>
+	public void RespawnToInitialState()
+	{
+		DespawnItemCycle();
+		foreach (CullingTrigger trigger in Transitions)
+		{
+			if (InitialTriggers.Contains(trigger) || !trigger.IsActivated)
+				continue;
+
+			trigger.Deactivate();
+		}
+
+		foreach (CullingTrigger trigger in InitialTriggers)
+		{
+			trigger.Respawn();
+			trigger.Activate();
+		}
+
+		itemCycleIndex = 0;
+		isCycleFlagSet = false;
 	}
 
 	public override void Respawn()

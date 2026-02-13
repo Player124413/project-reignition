@@ -5,14 +5,11 @@ namespace Project.Gameplay;
 
 public partial class SpinJumpState : PlayerState
 {
-	[Export]
-	private PlayerState stompState;
-	[Export]
-	private PlayerState landState;
-	[Export]
-	private PlayerState jumpDashState;
-	[Export]
-	private PlayerState homingAttackState;
+	[Export] private PlayerState stompState;
+	[Export] private PlayerState landState;
+	[Export] private PlayerState jumpDashState;
+	[Export] private PlayerState homingAttackState;
+	[Export] private PlayerState darkspineSpinState;
 
 	public bool IsShortenedJump { get; set; }
 	private readonly float JumpCurve = .95f;
@@ -36,7 +33,7 @@ public partial class SpinJumpState : PlayerState
 
 	public override PlayerState ProcessPhysics()
 	{
-		if (!SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.ChargeJump) && !Input.IsActionPressed("button_jump"))
+		if (!SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.ChargeJump) && !Input.IsActionPressed("button_jump") && Player.IsVariableJumpHeightEnabled)
 			IsShortenedJump = true;
 
 		ProcessMoveSpeed();
@@ -63,7 +60,7 @@ public partial class SpinJumpState : PlayerState
 				return null;
 			}
 
-			if (SaveManager.Config.useStompJumpButtonMode)
+			if (SaveManager.Config.jumpButtonMode == SaveManager.JumpButtonModeEnum.Stomp)
 				return stompState;
 
 			return Player.Lockon.IsTargetAttackable ? homingAttackState : jumpDashState;
@@ -72,7 +69,18 @@ public partial class SpinJumpState : PlayerState
 		if (Player.Controller.IsAttackBufferActive)
 		{
 			Player.Controller.ResetAttackBuffer();
-			return Player.Lockon.IsTargetAttackable ? homingAttackState : jumpDashState;
+
+			if (Player.Lockon.IsTargetAttackable)
+				return homingAttackState;
+
+			if (Player.IsDarkspineSonic &&
+				(Player.Controller.InputAxis.IsZeroApprox() ||
+				!Player.Controller.IsHoldingDirection(Player.Controller.GetTargetInputAngle(), Player.MovementAngle)))
+			{
+				return darkspineSpinState;
+			}
+
+			return jumpDashState;
 		}
 
 		if (Player.Controller.IsActionBufferActive)

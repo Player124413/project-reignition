@@ -85,7 +85,7 @@ public partial class SkillOption : Control
 			augment.Initialize(); // Redraw
 		}
 
-		animator.Play(AugmentMenuCount == 0 ? "disable-augment" : "enable-augment");
+		animator.Play(AugmentMenuCount <= 1 ? "disable-augment" : "enable-augment");
 		animator.Advance(0);
 	}
 
@@ -99,6 +99,8 @@ public partial class SkillOption : Control
 			animator.Play("no-skill");
 			return;
 		}
+
+
 
 		RedrawStaticData();
 		Redraw();
@@ -134,8 +136,7 @@ public partial class SkillOption : Control
 			return;
 
 		// Redraw equip status
-		if (SaveManager.ActiveSkillRing.IsSkillEquipped(Skill.Key) &&
-		SaveManager.ActiveSkillRing.GetAugmentIndex(Skill.Key) == Skill.AugmentIndex)
+		if (SaveManager.ActiveSkillRing.IsSkillEquipped(Skill))
 		{
 			animator.Play("equipped");
 		}
@@ -174,9 +175,9 @@ public partial class SkillOption : Control
 
 	public bool HasUnlockedAugments()
 	{
-		for (int i = 0; i < augments.Count; i++)
+		for (int i = 1; i < augments.Count; i++)
 		{
-			if (SaveManager.ActiveSkillRing.IsSkillUnlocked(augments[i].Skill))
+			if (SaveManager.ActiveSkillRing.IsSkillUnlocked(GetAugmentSkill(i)))
 				return true;
 		}
 
@@ -193,5 +194,13 @@ public partial class SkillOption : Control
 		}
 
 		return offset;
+	}
+
+	public void EnableNewTag(bool enable)
+	{
+		if (enable == true)
+			animator.Play("new");
+		else
+			animator.Play("new-disable");
 	}
 }

@@ -1,4 +1,5 @@
 using Godot;
+using Project.Core;
 
 /// <summary> Loops an audio stream seamlessly. </summary>
 namespace Project;
@@ -12,14 +13,19 @@ public partial class BGMPlayer : AudioStreamPlayer
 	[Export] public bool loadAsyncronously;
 
 	private bool canLoop;
+	private bool isFadingBgm;
 	private float LoopLength => bgmResource.LoopEnd - bgmResource.LoopStart;
 
 	public override void _EnterTree() => LoadBgmResource();
 
 	public override void _Process(double _)
 	{
-		if (!canLoop) return;
 		if (!Playing) return;
+
+		if (isFadingBgm && !SoundManager.FadeAudioPlayer(this, 0.5f))
+			isFadingBgm = false;
+
+		if (!canLoop) return;
 
 		float currentPosition = GetPlaybackPosition() + (float)AudioServer.GetTimeSinceLastMix();
 		if (currentPosition >= bgmResource.LoopEnd)
@@ -33,9 +39,8 @@ public partial class BGMPlayer : AudioStreamPlayer
 			return;
 
 		canLoop = bgmResource.LoopEnd > bgmResource.LoopStart;
-		if (!canLoop)
+		if (!canLoop && !Mathf.IsEqualApprox(bgmResource.LoopEnd, -1.0f))
 			GD.PrintErr("BGM loop points are set up incorrectly. Looping is disabled.");
-
 
 		if (loadAsyncronously)
 		{
@@ -77,4 +82,6 @@ public partial class BGMPlayer : AudioStreamPlayer
 
 		Play(bgmResource.StartPosition);
 	}
+
+	public void QueueBgmFade() => isFadingBgm = true;
 }

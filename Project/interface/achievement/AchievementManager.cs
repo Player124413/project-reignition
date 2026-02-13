@@ -21,7 +21,7 @@ public partial class AchievementManager : Control
 	public override void _EnterTree()
 	{
 		Instance = this;
-		animator.AnimationFinished += ((_) => isActive = false);
+		animator.AnimationFinished += (_) => isActive = false;
 		SetDeferred("process_mode", (int)ProcessModeEnum.Disabled); // No need to process when no achievements are active
 	}
 

@@ -26,6 +26,8 @@ public partial class PlayerSkillController : Node3D
 		timeBreakAnimator.Play("RESET");
 		speedBreakAnimator.Play("RESET");
 
+		darkspineSoulTimer = DarkspineSoulInterval;
+
 		StageSettings.Instance.LevelDemoStarted += CancelSpeedbreakFX;
 	}
 
@@ -74,18 +76,19 @@ public partial class PlayerSkillController : Node3D
 	public bool AllowCrestSkill { get; private set; }
 	private readonly float CrestOfFlameHueOffset = .45f;
 	private readonly float DefaultHueOffset = .02f;
+	private readonly float DarkspineHueOffset = 0.17f;
 
 	public bool IsRingExchangeEquipped { get; private set; }
 	private void SetUpSkills()
 	{
 		// Expand hitbox if skills is equipped
 		bool isPearlRangeEquipped = SkillRing.IsSkillEquipped(SkillKey.PearlRange) &&
-			(StageSettings.Instance.Data.MissionType != LevelDataResource.MissionTypes.Pearl || StageSettings.Instance.Data.MissionObjectiveCount != 0);
+			(StageSettings.Instance.Data.MissionType != LevelDataResource.MissionTypeEnum.Pearl || StageSettings.Instance.Data.MissionObjectiveCount != 0);
 		bool isRingRangeEquipped = SkillRing.IsSkillEquipped(SkillKey.RingRange) &&
-			(StageSettings.Instance.Data.MissionType != LevelDataResource.MissionTypes.Ring || StageSettings.Instance.Data.MissionObjectiveCount != 0);
+			(StageSettings.Instance.Data.MissionType != LevelDataResource.MissionTypeEnum.Ring || StageSettings.Instance.Data.MissionObjectiveCount != 0);
 
 		IsRingExchangeEquipped = SkillRing.IsSkillEquipped(SkillKey.RingPearlConvert) &&
-			(StageSettings.Instance.Data.MissionType != LevelDataResource.MissionTypes.Ring || StageSettings.Instance.Data.MissionObjectiveCount == 0);
+			(StageSettings.Instance.Data.MissionType != LevelDataResource.MissionTypeEnum.Ring || StageSettings.Instance.Data.MissionObjectiveCount == 0);
 
 		Runtime.Instance.UpdatePearlCollisionShapes(isPearlRangeEquipped ? 5 : 1);
 		Runtime.Instance.UpdateRingCollisionShapes(isRingRangeEquipped ? 5 : 1);
@@ -95,8 +98,10 @@ public partial class PlayerSkillController : Node3D
 			SkillRing.IsSkillEquipped(SkillKey.CrestDark);
 
 		// Update crest of flame's trail color
-		Player.Effect.UpdateTrailHueShift(AllowCrestSkill && SkillRing.IsSkillEquipped(SkillKey.CrestFire) ? CrestOfFlameHueOffset : DefaultHueOffset);
-		speedbreakOverlayMaterial.SetShaderParameter(SpeedbreakOverlayOpacityKey, 0);
+		if (Player.IsDarkspineSonic)
+			Player.Effect.UpdateTrailHueShift(DarkspineHueOffset);
+		else
+			Player.Effect.UpdateTrailHueShift(AllowCrestSkill && SkillRing.IsSkillEquipped(SkillKey.CrestFire) ? CrestOfFlameHueOffset : DefaultHueOffset);
 	}
 
 	private readonly float WindCrestSpeedMultiplier = 1.5f;
@@ -230,7 +235,6 @@ public partial class PlayerSkillController : Node3D
 	[Export] private AudioStreamPlayer timeBreakSFX;
 	[Export] private AudioStreamPlayer heartbeatSFX;
 
-	[Export] public ShaderMaterial speedbreakOverlayMaterial;
 	[Export] public float speedBreakSpeed; // Movement speed during speed break
 	public bool IsTimeBreakActive { get; private set; }
 	public bool IsSpeedBreakActive { get; private set; }
@@ -243,15 +247,27 @@ public partial class PlayerSkillController : Node3D
 	public const float TimebreakRatio = .6f; // Time scale
 	private const float SpeedBreakDelay = 0.2f; // Time to say SPEED BREAK!
 	private const float BreakSkillsCooldown = 0.4f; // Prevent skill spam
-	private readonly string SpeedbreakOverlayOpacityKey = "opacity";
+
+	private float darkspineSoulTimer;
+	private readonly float DarkspineSoulInterval = 1f;
 
 	public void ProcessPhysics()
 	{
-		if (DebugManager.Instance.InfiniteSoulGauge) // Max out the soul gauge
+		if (DebugManager.Instance.InfiniteSoulGauge && !Player.IsSpiritBombActive) // Max out the soul gauge
 			ModifySoulGauge(MaxSoulPower);
 
 		speedBreakTimer = Mathf.MoveToward(speedBreakTimer, 0, PhysicsManager.physicsDelta);
 		timeBreakTimer = Mathf.MoveToward(timeBreakTimer, 0, PhysicsManager.physicsDelta);
+
+		if (Player.IsDarkspineSonic && IsTimeBreakEnabled && IsSpeedBreakEnabled)
+		{
+			darkspineSoulTimer = Mathf.MoveToward(darkspineSoulTimer, 0, PhysicsManager.physicsDelta);
+			if (Mathf.IsZeroApprox(darkspineSoulTimer)) // Add passive soul power over time
+			{
+				darkspineSoulTimer = DarkspineSoulInterval;
+				ModifySoulGauge(1);
+			}
+		}
 
 		UpdateTimeBreak();
 		UpdateSpeedBreak();
@@ -276,16 +292,17 @@ public partial class PlayerSkillController : Node3D
 	private float breakDrainTimer;
 	private const float TimeBreakSoulDrainInterval = 3f / 60f; // Drain 1 point every x frames
 	private const float SpeedBreakSoulDrainInterval = 1.8f / 60f; // Drain 1 point every x frames
+	private const float SpiritBombSpeedBreakSoulDrainInterval = 2f / 60f; // Drain 1 point every x frames
 	private void UpdateTimeBreak()
 	{
 		if (IsTimeBreakActive)
 		{
-			if (Mathf.IsZeroApprox(breakDrainTimer))
+			if (breakDrainTimer <= 0)
 			{
 				ModifySoulGauge(-1);
-				breakDrainTimer = TimeBreakSoulDrainInterval;
+				breakDrainTimer += TimeBreakSoulDrainInterval;
 			}
-			breakDrainTimer = Mathf.MoveToward(breakDrainTimer, 0, PhysicsManager.physicsDelta);
+			breakDrainTimer -= PhysicsManager.physicsDelta;
 
 			bool disablingTimeBreak = (SaveManager.Config.useHoldBreakMode && !Input.IsActionPressed("button_timebreak")) ||
 				(!SaveManager.Config.useHoldBreakMode && Input.IsActionJustPressed("button_timebreak"));
@@ -322,9 +339,7 @@ public partial class PlayerSkillController : Node3D
 
 	private void UpdateSpeedBreak()
 	{
-		float currentOpacity = (float)speedbreakOverlayMaterial.GetShaderParameter(SpeedbreakOverlayOpacityKey);
-		currentOpacity = Mathf.MoveToward(currentOpacity, IsSpeedBreakActive ? 1 : 0, 5.0f * PhysicsManager.physicsDelta);
-		speedbreakOverlayMaterial.SetShaderParameter(SpeedbreakOverlayOpacityKey, currentOpacity);
+		Player.Animator.UpdateSpeedbreakMaterial(IsSpeedBreakActive);
 
 		if (IsSpeedBreakActive)
 		{
@@ -338,16 +353,24 @@ public partial class PlayerSkillController : Node3D
 					Player.CollisionMask = Runtime.Instance.environmentMask; // Don't collide with any objects
 				}
 
-				if (Mathf.IsZeroApprox(breakDrainTimer))
+				if (breakDrainTimer <= 0)
 				{
-					ModifySoulGauge(-1);
-					breakDrainTimer = SpeedBreakSoulDrainInterval;
+					if (Player.IsSpiritBombActive) // Decrease slightly faster when pushing spirit bomb
+					{
+						ModifySoulGauge(-2);
+						breakDrainTimer += SpiritBombSpeedBreakSoulDrainInterval;
+					}
+					else
+					{
+						ModifySoulGauge(-1);
+						breakDrainTimer += SpeedBreakSoulDrainInterval;
+					}
 				}
-				breakDrainTimer = Mathf.MoveToward(breakDrainTimer, 0, PhysicsManager.physicsDelta);
 
+				breakDrainTimer -= PhysicsManager.physicsDelta;
 				bool disablingSpeedBreak = (SaveManager.Config.useHoldBreakMode && !Input.IsActionPressed("button_speedbreak")) ||
 					(!SaveManager.Config.useHoldBreakMode && Input.IsActionJustPressed("button_speedbreak"));
-				if (IsSoulGaugeEmpty || disablingSpeedBreak && !Player.IsAirBoosting)// Check whether we should cancel speed break
+				if (IsSoulGaugeEmpty || (disablingSpeedBreak && !Player.IsAirBoosting && !Player.IsSpiritBombActive)) // Check whether we should cancel speed break
 					ToggleSpeedBreak();
 
 				if (!IsSpeedBreakOverrideActive && (Player.IsOnGround || AllowExternalSpeedBreak)) // Speed is only applied while on the ground
@@ -359,6 +382,7 @@ public partial class PlayerSkillController : Node3D
 			else
 			{
 				Player.MoveSpeed = 0;
+				Player.StrafeSpeed = 0;
 			}
 
 			return;
@@ -414,7 +438,7 @@ public partial class PlayerSkillController : Node3D
 			timeBreakAnimator.Play(isTimeBreakEnabled ? "stop" : "RESET");
 			timeBreakAnimator.Advance(0.0);
 
-			speedBreakTimer = BreakSkillsCooldown;
+			timeBreakTimer = BreakSkillsCooldown;
 			SoundManager.instance.SetStageMusicVolume(0f);
 			HeadsUpDisplay.Instance?.ActiveSoulGauge.UpdateSoulGaugeColor(IsSoulGaugeCharged);
 			EmitSignal(SignalName.TimeBreakStopped);
@@ -507,6 +531,7 @@ public partial class PlayerSkillController : Node3D
 
 	public bool IsSoulGaugeEmpty => !StageSettings.Instance.IsControlTest && SoulPower == 0;
 	public bool IsSoulGaugeCharged => StageSettings.Instance.IsControlTest || SoulPower >= MinimumSoulPower;
+	public bool IsSoulGaugeFilled => SoulPower >= MaxSoulPower;
 	public const int MinimumSoulPower = 50; // Minimum amount of soul power needed to use soul skills.
 	public void ModifySoulGauge(int amount)
 	{

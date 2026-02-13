@@ -21,17 +21,6 @@ public partial class StageSettings : Node3D
 	private readonly string ErazorLevelId = "np_boss";
 	private readonly string LastBossLevelId = "np_last";
 
-	private readonly string[] SkillQuintiAchievementRequirement = {
-		"lp_a1_main",
-		"so_a1_main",
-		"dj_a1_main",
-		"ef_a1_main",
-		"lr_a1_main",
-		"ps_a1_main",
-		"sd_a1_main",
-		"np_a1_main",
-	};
-
 	private int probeTimer;
 
 	private readonly int SkillSaverAchievementRequirement = 30;
@@ -63,6 +52,7 @@ public partial class StageSettings : Node3D
 
 		// Update gameplay sfx audio channel
 		SoundManager.SetAudioBusVolume(SoundManager.AudioBuses.GameSfx, IsControlTest ? 100 : 0);
+		SoundManager.instance?.SetStageMusicVolume(0f);
 
 		if (IsControlTest)
 		{
@@ -72,9 +62,44 @@ public partial class StageSettings : Node3D
 		{
 			GetQualityNodesRecursively(this);
 			LevelState = LevelStateEnum.Probes;
-			if (!TransitionManager.instance.IsReloadingScene)
-				TransitionManager.instance.UpdateLoadingText("load_probes");
+			if (!TransitionManager.Instance.IsReloadingScene)
+				TransitionManager.Instance.UpdateLoadingText("load_probes");
 		}
+
+		EquipRequiredSkill();
+	}
+
+	private bool wasSkillForceEquipped;
+	private SkillKey conflictingSkill = SkillKey.Count;
+	private int conflictingSkillIndex = 0;
+	/// <summary> For Lost Prologue: Force equip skills needed for tutorials. </summary>
+	private void EquipRequiredSkill()
+	{
+		if (Data.RequiredSkill == null || SaveManager.ActiveSkillRing.IsSkillEquipped(Data.RequiredSkill))
+			return;
+
+		conflictingSkill = SaveManager.ActiveSkillRing.IsConflictingSkillEquipped(Data.RequiredSkill.Key);
+
+		if (conflictingSkill != SkillKey.Count)
+		{
+			conflictingSkillIndex = SaveManager.ActiveSkillRing.GetAugmentIndex(conflictingSkill);
+			SaveManager.ActiveSkillRing.ForceUnequipSkill(conflictingSkill, conflictingSkillIndex);
+		}
+
+		wasSkillForceEquipped = true;
+		SaveManager.ActiveSkillRing.EquipSkill(Data.RequiredSkill.Key, Data.RequiredSkill.AugmentIndex, true);
+	}
+
+	/// <summary> Restores skills back to whatever we started with. </summary>
+	private void RevertRequiredSkill()
+	{
+		if (!wasSkillForceEquipped) // Nothing to revert to.
+			return;
+
+		SaveManager.ActiveSkillRing.UnequipSkill(Data.RequiredSkill.Key, Data.RequiredSkill.AugmentIndex);
+
+		if (conflictingSkill != SkillKey.Count)
+			SaveManager.ActiveSkillRing.EquipSkill(conflictingSkill, conflictingSkillIndex);
 	}
 
 	public override void _Ready()
@@ -97,7 +122,11 @@ public partial class StageSettings : Node3D
 		SoundManager.instance.UpdateBgmResource(DefaultBgm); // TODO Update with player-selected value
 	}
 
-	public override void _ExitTree() => EmitSignal(SignalName.Unloaded);
+	public override void _ExitTree()
+	{
+		RevertRequiredSkill();
+		EmitSignal(SignalName.Unloaded);
+	}
 
 	public void UpdateQualitySettings()
 	{
@@ -110,17 +139,14 @@ public partial class StageSettings : Node3D
 		{
 			case SaveManager.QualitySetting.Disabled:
 			case SaveManager.QualitySetting.Low:
-				targetDirectionalShadowDistance = 20;
 				targetDirectionalShadowMode = DirectionalLight3D.ShadowMode.Orthogonal;
 				break;
 			case SaveManager.QualitySetting.Medium:
 				targetBlendSplitMode = true;
-				targetDirectionalShadowDistance = 40;
 				targetDirectionalShadowMode = DirectionalLight3D.ShadowMode.Parallel2Splits;
 				break;
 			case SaveManager.QualitySetting.High:
 				targetBlendSplitMode = true;
-				targetDirectionalShadowDistance = 50;
 				targetDirectionalShadowMode = DirectionalLight3D.ShadowMode.Parallel2Splits;
 				break;
 		}
@@ -132,7 +158,6 @@ public partial class StageSettings : Node3D
 	private Queue<ReflectionProbe> probes = [];
 	private Queue<OmniLight3D> omniLights = [];
 	private Queue<DirectionalLight3D> directionalLights = [];
-	private int targetDirectionalShadowDistance = 30;
 	private bool targetBlendSplitMode = false;
 	private DirectionalLight3D.ShadowMode targetDirectionalShadowMode = DirectionalLight3D.ShadowMode.Parallel2Splits;
 	private OmniLight3D.ShadowMode targetOmniShadowMode = OmniLight3D.ShadowMode.DualParaboloid;
@@ -144,7 +169,6 @@ public partial class StageSettings : Node3D
 			if (directionalLights.TryDequeue(out DirectionalLight3D dirLight) && dirLight.ShadowEnabled)
 			{
 				dirLight.DirectionalShadowMode = targetDirectionalShadowMode;
-				dirLight.DirectionalShadowMaxDistance = targetDirectionalShadowDistance;
 				dirLight.DirectionalShadowBlendSplits = targetBlendSplitMode;
 				return;
 			}
@@ -152,7 +176,6 @@ public partial class StageSettings : Node3D
 			if (omniLights.TryDequeue(out OmniLight3D omniLight) && omniLight.ShadowEnabled)
 			{
 				omniLight.OmniShadowMode = targetOmniShadowMode;
-				omniLight.DistanceFadeBegin = targetDirectionalShadowDistance;
 				omniLight.DistanceFadeLength = 10;
 				omniLight.DistanceFadeEnabled = true;
 				return;
@@ -251,9 +274,9 @@ public partial class StageSettings : Node3D
 
 			if (completionTime <= Data.GoldTime && score >= Data.Score) // Perfect run
 				rank = 3;
-			else if (completionTime <= Data.SilverTime && score >= 3 * (Data.Score / 4)) // Silver score reqs are always 3/4 of gold
+			else if (completionTime <= Data.SilverTime && score >= Data.SilverScore) // Silver score reqs are always 3/4 of gold
 				rank = 2;
-			else if (completionTime <= Data.BronzeTime) // Bronze is easy to get
+			else if (completionTime <= Data.BronzeTime || score >= Data.SilverScore) // Bronze is easy to get
 				rank = 1;
 		}
 
@@ -278,7 +301,6 @@ public partial class StageSettings : Node3D
 				return "00:00.00";
 		}
 	}
-	public int GetRequiredScore() => Data.Score;
 
 	#region Level Data
 	public enum MathModeEnum // List of ways the score can be modified
@@ -389,6 +411,9 @@ public partial class StageSettings : Node3D
 	public delegate void ObjectiveResetEventHandler(); // Progress towards the objective has changed
 	public void IncrementObjective()
 	{
+		if (!IsObjectiveIncrementValid())
+			return;
+
 		CurrentObjectiveCount++;
 		CurrentObjectiveCount = Mathf.Clamp(CurrentObjectiveCount, 0, Data.MissionObjectiveCount);
 		HeadsUpDisplay.Instance.PlayObjectiveAnimation("good");
@@ -402,10 +427,33 @@ public partial class StageSettings : Node3D
 			FinishLevel(false);
 		}
 		else if (CurrentObjectiveCount >= Data.MissionObjectiveCount &&
-				Data.MissionType != LevelDataResource.MissionTypes.Chain)
+				Data.MissionType != LevelDataResource.MissionTypeEnum.Chain)
 		{
 			FinishLevel(true);
 		}
+	}
+
+	/// <summary> Check if the object should actually be incremented. </summary>
+	private bool IsObjectiveIncrementValid()
+	{
+		if (Data.RequiredSkill == null)
+			return true;
+
+		if (Data.MissionType == LevelDataResource.MissionTypeEnum.Enemy) // Validate enemy defeats
+		{
+			if (Data.RequiredSkill.Key == SkillKey.SlideAttack && !Player.IsSliding)
+				return false;
+
+			if (Data.RequiredSkill.Key == SkillKey.PerfectHomingAttack && !Player.IsPerfectHomingAttacking)
+				return false;
+
+			return true;
+		}
+
+		if (Data.RequiredSkill.Key == SkillKey.StompAttack && !Player.IsStomping)
+			return false;
+
+		return true;
 	}
 
 	public void ResetObjective(int progress = 0)
@@ -428,7 +476,7 @@ public partial class StageSettings : Node3D
 		int previousAmount = CurrentRingCount;
 		CurrentRingCount = CalculateMath(CurrentRingCount, amount, mode);
 		RingBonus = CurrentRingCount * 10;
-		if (Data.MissionType == LevelDataResource.MissionTypes.Ring &&
+		if (Data.MissionType == LevelDataResource.MissionTypeEnum.Ring &&
 			CurrentRingCount >= Data.MissionObjectiveCount &&
 			Data.MissionObjectiveCount != 0) // For ring based missions
 		{
@@ -652,13 +700,8 @@ public partial class StageSettings : Node3D
 				AchievementManager.Instance.UnlockAchievement(DarkMasterAchievementName);
 		}
 
-		for (int i = 0; i < SkillQuintiAchievementRequirement.Length; i++)
-		{
-			if (!SaveManager.SharedData.LevelData.GetSkillessGold(SkillQuintiAchievementRequirement[i]))
-				return;
-		}
-
-		AchievementManager.Instance.UnlockAchievement(SkillQuintiAchievementName);
+		if (SaveManager.SharedData.LevelData.GetSkillessGold(Data.LevelID))
+			AchievementManager.Instance.UnlockAchievement(SkillQuintiAchievementName);
 	}
 
 	private void UpdateSaveData()
@@ -685,21 +728,27 @@ public partial class StageSettings : Node3D
 
 		SaveManager.SharedData.LevelData.SetHighScore(Data.LevelID, TotalScore);
 		SaveManager.SharedData.LevelData.SetBestTime(Data.LevelID, CurrentTime);
+
+		// Unlock World Rings, if necessary
+		if (Data.WorldRing != SaveManager.WorldEnum.LostPrologue &&
+			!SaveManager.ActiveGameData.IsWorldRingObtained(Data.WorldRing))
+		{
+			SaveManager.ActiveGameData.UnlockWorldRing(Data.WorldRing);
+			NotificationManager.Instance.AddNotification(NotificationManager.NotificationType.WorldRing, $"unlock_ring_{Data.WorldRing.ToString().ToSnakeCase()}");
+		}
 	}
 
 	private void UpdateUnlockNotifications()
 	{
-		// It's redundant saying that a new world AND a new mission is unlocked, so we'll just do one or the other.
 		if (Data.UnlockWorld != SaveManager.WorldEnum.LostPrologue &&
 			!SaveManager.ActiveGameData.IsWorldUnlocked(Data.UnlockWorld))
 		{
 			SaveManager.ActiveGameData.UnlockWorld(Data.UnlockWorld);
 			StringName descriptionString = Tr($"unlock_world").Replace("[AREA]", Tr(Data.UnlockWorld.ToString().ToSnakeCase()));
 			NotificationManager.Instance.AddNotification(NotificationManager.NotificationType.World, descriptionString);
-			return;
 		}
 
-		int missionsUnlocked = 0;
+		int missionsUnlocked = NotificationManager.Instance.CalculateUnlockedSpecialLevelData();
 		foreach (LevelDataResource stage in Data.UnlockStage)
 		{
 			if (SaveManager.ActiveGameData.IsStageUnlocked(stage.LevelID))

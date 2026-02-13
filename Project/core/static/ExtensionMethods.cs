@@ -206,7 +206,7 @@ namespace Project
 		//Smooth damp functions
 		public static float SmoothDamp(float current, float target, ref float currentVelocity, float smoothTime, float maxSpeed = Mathf.Inf)
 		{
-			float deltaTime = PhysicsManager.physicsDelta;
+			float deltaTime = Engine.IsInPhysicsFrame() ? PhysicsManager.physicsDelta : PhysicsManager.normalDelta;
 			smoothTime = Mathf.Max(0.0001f, smoothTime);
 			float omega = 2f / smoothTime;
 

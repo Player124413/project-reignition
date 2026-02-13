@@ -206,7 +206,10 @@ public partial class DestructableObject : Node3D
 		{
 			// Kill character's speed
 			if (Player.IsOnGround && stopPlayerOnShatter)
+			{
 				Player.MoveSpeed = 0f;
+				Player.StrafeSpeed = 0;
+			}
 
 			shatterPoint = Player.CenterPosition; // Shatter from player
 
@@ -311,7 +314,7 @@ public partial class DestructableObject : Node3D
 			return;
 		}
 
-		if (FlagSetting.HasFlag(ShatterFlags.SpeedBreak) && Player.Skills.IsSpeedBreakActive && !Player.Skills.IsSpeedBreakCharging)
+		if (FlagSetting.HasFlag(ShatterFlags.SpeedBreak) && Player.Skills.IsSpeedBreakActive)
 		{
 			Shatter();
 			return;

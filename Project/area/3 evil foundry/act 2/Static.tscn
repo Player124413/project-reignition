@@ -1,4 +1,4 @@
-[gd_scene load_steps=53 format=3 uid="uid://2npi4fgvupgn"]
+[gd_scene load_steps=61 format=3 uid="uid://2npi4fgvupgn"]
 
 [ext_resource type="PackedScene" uid="uid://etu2s6i547gb" path="res://object/trigger/state trigger/DriftTrigger.tscn" id="1_6j3jw"]
 [ext_resource type="Script" uid="uid://dtkbvehtmy3em" path="res://object/stage/StageSettings.cs" id="1_ur5y1"]
@@ -35,6 +35,7 @@
 [ext_resource type="Curve3D" uid="uid://2r81kn85banm" path="res://area/3 evil foundry/act 2/environment/path/EndingPath.tres" id="28_dca3m"]
 [ext_resource type="Curve3D" uid="uid://dg2yphtncc2gj" path="res://area/3 evil foundry/act 2/environment/path/ElevatorPath.tres" id="28_mg2bk"]
 [ext_resource type="PackedScene" uid="uid://cs7ogaqrx3sn5" path="res://area/3 evil foundry/data/shader/ScreenWarp.tscn" id="29_vht2p"]
+[ext_resource type="Script" uid="uid://coiui4qvdxbqe" path="res://object/trigger/modules/EventTrigger.cs" id="32_x8oaf"]
 [ext_resource type="Resource" uid="uid://exe3134bde8n" path="res://resource/bgm/bgm ef act2.tres" id="37_7ania"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_c5gu7"]
@@ -60,6 +61,73 @@ size = Vector3(20, 20, 5)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_007vp"]
 size = Vector3(15, 20, 5)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_3eg40"]
+shading_mode = 0
+disable_fog = true
+albedo_color = Color(1.8247963, 0.4587516, 0, 1)
+
+[sub_resource type="Animation" id="Animation_20cxh"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("LavaLight:light_energy")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [1.0]
+}
+
+[sub_resource type="Animation" id="Animation_7ania"]
+resource_name = "event"
+length = 0.5
+step = 0.5
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("LavaLight:light_energy")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.5),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [0.0, 1.0]
+}
+
+[sub_resource type="Animation" id="Animation_x8oaf"]
+resource_name = "event-deactivate"
+length = 0.5
+step = 0.5
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("LavaLight:light_energy")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.5),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [1.0, 0.0]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_w1wjq"]
+_data = {
+&"RESET": SubResource("Animation_20cxh"),
+&"event": SubResource("Animation_7ania"),
+&"event-deactivate": SubResource("Animation_x8oaf")
+}
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_7ania"]
+size = Vector3(96.2168, 108.56836, 96.187195)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_20cxh"]
+size = Vector3(91.8667, 108.56836, 300.84882)
 
 [sub_resource type="Animation" id="Animation_hknyw"]
 length = 0.001
@@ -657,40 +725,46 @@ _data = {
 &"demo3": SubResource("Animation_820jq")
 }
 
-[sub_resource type="Gradient" id="Gradient_4ej6d"]
-offsets = PackedFloat32Array(0, 0.0955631, 0.505119, 1)
-colors = PackedColorArray(0.0784314, 0, 0, 1, 0.188235, 0.0784314, 0.0941176, 1, 0.74, 0.484947, 0.4144, 1, 1, 1, 1, 1)
+[sub_resource type="Gradient" id="Gradient_3eg40"]
+offsets = PackedFloat32Array(0, 0.48809522, 1)
+colors = PackedColorArray(0, 0, 0, 1, 0.54, 0.38340002, 0.38340002, 1, 1, 1, 1, 1)
 
-[sub_resource type="GradientTexture1D" id="GradientTexture1D_isgk5"]
-gradient = SubResource("Gradient_4ej6d")
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_x8oaf"]
+gradient = SubResource("Gradient_3eg40")
 
 [sub_resource type="Environment" id="Environment_qpgxq"]
 background_mode = 1
 ambient_light_source = 2
-ambient_light_color = Color(0.504134, 0.33814, 0.297606, 1)
+ambient_light_color = Color(1, 0.58000004, 0.58000004, 1)
 ambient_light_energy = 1.2
-tonemap_mode = 2
-tonemap_exposure = 1.3
-tonemap_white = 1.2
-ssil_enabled = true
+reflected_light_source = 1
+tonemap_mode = 1
+tonemap_exposure = 4.0
+tonemap_white = 3.0
 ssil_radius = 10.0
 ssil_intensity = 1.5
 glow_enabled = true
+glow_levels/2 = 0.5
+glow_levels/4 = 0.5
+glow_levels/5 = 0.0
 glow_normalized = true
-glow_intensity = 0.4
-glow_strength = 0.95
-glow_blend_mode = 1
-glow_hdr_threshold = 1.5
-glow_hdr_scale = 2.5
+glow_mix = 0.224
+glow_bloom = 1.0
+glow_blend_mode = 4
+glow_hdr_scale = 0.0
 fog_enabled = true
-fog_light_color = Color(0.544, 0.795733, 0.8, 1)
-fog_light_energy = 0.1
-fog_density = 0.005
+fog_mode = 1
+fog_light_color = Color(0.086, 0.1, 0.1, 1)
+fog_density = 0.95
 fog_sky_affect = 0.0
+fog_depth_curve = 0.5743491
+fog_depth_begin = 2.0
+fog_depth_end = 60.0
 volumetric_fog_density = 0.0
 adjustment_enabled = true
-adjustment_saturation = 1.2
-adjustment_color_correction = SubResource("GradientTexture1D_isgk5")
+adjustment_brightness = 1.2
+adjustment_contrast = 1.2
+adjustment_color_correction = SubResource("GradientTexture1D_x8oaf")
 
 [node name="Static" type="Node3D" node_paths=PackedStringArray("pathParent", "completionAnimator", "Environment")]
 script = ExtResource("1_ur5y1")
@@ -1276,71 +1350,147 @@ startEnabled = true
 
 [node name="10Spiral" parent="Visuals" instance=ExtResource("15_xd5yw")]
 
+[node name="stg031_g36_Mesh_0000" parent="Visuals/10Spiral" index="36"]
+visible = false
+
+[node name="stg031_lighting_36_Mesh_0000" parent="Visuals/10Spiral" index="37"]
+visible = false
+
+[node name="stg031_o36_Mesh_0000" parent="Visuals/10Spiral" index="39"]
+surface_material_override/0 = SubResource("StandardMaterial3D_3eg40")
+
 [node name="11Hall" parent="Visuals" instance=ExtResource("16_ll6ca")]
+
+[node name="stg031_g37_Mesh_0000" parent="Visuals/11Hall" index="27"]
+visible = false
+
+[node name="stg031_lighting_37_Mesh_0000" parent="Visuals/11Hall" index="29"]
+visible = false
 
 [node name="12End" parent="Visuals" instance=ExtResource("17_h4u1h")]
 
-[node name="Lighting" type="Node3D" parent="."]
+[node name="stg031_g02_Mesh_0001" parent="Visuals/12End" index="30"]
+visible = false
 
-[node name="ObjectLight" type="DirectionalLight3D" parent="Lighting"]
-transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0, 0)
-layers = 1024
-light_color = Color(0.92549, 0.8, 0.466667, 1)
-light_cull_mask = 4293918785
-directional_shadow_max_distance = 10.0
+[node name="stg031_g02_Mesh_0002" parent="Visuals/12End" index="31"]
+visible = false
+
+[node name="stg031_lighting_01_Mesh_0000" parent="Visuals/12End" index="32"]
+visible = false
+
+[node name="Lighting" type="Node3D" parent="."]
 
 [node name="DropShadows" type="DirectionalLight3D" parent="Lighting"]
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0, 0)
 layers = 1024
+light_energy = 0.5
 light_cull_mask = 4293918726
 shadow_enabled = true
+directional_shadow_max_distance = 65.0
 
-[node name="LavaLight" type="DirectionalLight3D" parent="Lighting"]
-transform = Transform3D(1, 0, 0, 0, 1.31134e-07, -1, 0, 1, 1.31134e-07, 0, 0, 0)
+[node name="LavaLightEvent" type="Node3D" parent="Lighting" node_paths=PackedStringArray("animator")]
+script = ExtResource("32_x8oaf")
+animator = NodePath("AnimationPlayer")
+"Trigger Settings/Automatically Respawn" = false
+"Trigger Settings/Is One Shot" = false
+"Trigger Settings/Animation Blending" = 0.0
+"Trigger Settings/Player Stand-in" = NodePath("")
+
+[node name="LavaLight" type="DirectionalLight3D" parent="Lighting/LavaLightEvent"]
+transform = Transform3D(1, 0, 0, 0, 0.25881916, -0.96592575, 0, 0.96592575, 0.25881916, 0, 0, 0)
 layers = 1024
-light_color = Color(0.819608, 0.584314, 0, 1)
-light_cull_mask = 4293918722
+light_color = Color(0.2, 0.171, 0.14, 1)
+light_cull_mask = 4293918787
 directional_shadow_max_distance = 10.0
 
-[node name="LavaGlowLight" type="DirectionalLight3D" parent="Lighting"]
-transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0, 0)
-layers = 1024
-light_color = Color(0.6, 0.42, 0, 1)
-light_cull_mask = 4293918728
-directional_shadow_max_distance = 10.0
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Lighting/LavaLightEvent"]
+libraries = {
+&"": SubResource("AnimationLibrary_w1wjq")
+}
 
-[node name="ReflectionProbe" type="Node3D" parent="."]
-
-[node name="PipeHallObjectProbe" type="ReflectionProbe" parent="ReflectionProbe"]
+[node name="PipeHallObjectProbe" type="ReflectionProbe" parent="Lighting"]
 transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 120.224, 44.1102, -219.538)
 layers = 1024
 size = Vector3(32, 20, 8)
+interior = true
 cull_mask = 0
 reflection_mask = 65
 ambient_mode = 2
 ambient_color = Color(1, 0, 0, 1)
 ambient_color_energy = 0.7
 
-[node name="PipeHallObjectProbe2" type="ReflectionProbe" parent="ReflectionProbe"]
+[node name="PipeHallObjectProbe2" type="ReflectionProbe" parent="Lighting"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 70.2244, 44.1102, -449.835)
 layers = 1024
 size = Vector3(80, 20, 20)
+interior = true
 cull_mask = 0
 reflection_mask = 65
 ambient_mode = 2
 ambient_color = Color(1, 0, 0, 1)
 ambient_color_energy = 0.7
 
-[node name="ExitEnvironmentProbe" type="ReflectionProbe" parent="ReflectionProbe"]
+[node name="ExitEnvironmentProbe" type="ReflectionProbe" parent="Lighting"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -56.0155, -2.42235, -50.5402)
 layers = 1024
 size = Vector3(222.344, 113.048, 121.08)
 interior = true
-cull_mask = 4
+cull_mask = 0
 reflection_mask = 4
 ambient_mode = 2
 ambient_color = Color(1, 1, 1, 1)
 ambient_color_energy = 0.5
+
+[node name="ObjectProve" type="ReflectionProbe" parent="Lighting"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16.402836, 41.222286, -301.6347)
+layers = 1024
+size = Vector3(491.16113, 272.47635, 623.269)
+interior = true
+cull_mask = 0
+reflection_mask = 65
+ambient_mode = 2
+ambient_color = Color(1, 0.39999998, 0.39999998, 1)
+ambient_color_energy = 0.2
+
+[node name="LavaLightTrigger" parent="Lighting" instance=ExtResource("2_tyjcn")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 173.54568, 11.702955, -185.49995)
+"Trigger Mode" = 2
+"Enter Mode" = 0
+"Exit Mode" = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Lighting/LavaLightTrigger"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.169922, 7.2812366, -7.7424927)
+shape = SubResource("BoxShape3D_7ania")
+
+[node name="LavaLightTrigger2" parent="Lighting" instance=ExtResource("2_tyjcn")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 115.48213, 11.702955, -283.04675)
+"Trigger Mode" = 2
+"Enter Mode" = 0
+"Exit Mode" = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Lighting/LavaLightTrigger2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.169922, 7.2812366, -7.7424927)
+shape = SubResource("BoxShape3D_7ania")
+
+[node name="LavaLightTrigger3" parent="Lighting" instance=ExtResource("2_tyjcn")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 113.740234, 11.702955, -382.91608)
+"Trigger Mode" = 2
+"Enter Mode" = 0
+"Exit Mode" = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Lighting/LavaLightTrigger3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.169922, 7.2812366, -7.7424927)
+shape = SubResource("BoxShape3D_7ania")
+
+[node name="LavaLightTrigger4" parent="Lighting" instance=ExtResource("2_tyjcn")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14.078217, 11.702955, -382.91608)
+"Trigger Mode" = 2
+"Enter Mode" = 0
+"Exit Mode" = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Lighting/LavaLightTrigger4"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.344971, 7.2812366, 94.58832)
+shape = SubResource("BoxShape3D_20cxh")
 
 [node name="Path" type="Node3D" parent="."]
 
@@ -1440,3 +1590,15 @@ environment = SubResource("Environment_qpgxq")
 [connection signal="Deactivated" from="Visuals/CullingMap/12Load-10Unload" to="Visuals/12End" method="Deactivate"]
 [connection signal="Activated" from="Visuals/CullingMap/11Unload" to="Visuals/11Hall" method="Deactivate"]
 [connection signal="Deactivated" from="Visuals/CullingMap/11Unload" to="Visuals/11Hall" method="Activate"]
+[connection signal="Activated" from="Lighting/LavaLightTrigger" to="Lighting/LavaLightEvent" method="Activate"]
+[connection signal="Deactivated" from="Lighting/LavaLightTrigger" to="Lighting/LavaLightEvent" method="Deactivate"]
+[connection signal="Activated" from="Lighting/LavaLightTrigger2" to="Lighting/LavaLightEvent" method="Activate"]
+[connection signal="Deactivated" from="Lighting/LavaLightTrigger2" to="Lighting/LavaLightEvent" method="Deactivate"]
+[connection signal="Activated" from="Lighting/LavaLightTrigger3" to="Lighting/LavaLightEvent" method="Activate"]
+[connection signal="Deactivated" from="Lighting/LavaLightTrigger3" to="Lighting/LavaLightEvent" method="Deactivate"]
+[connection signal="Activated" from="Lighting/LavaLightTrigger4" to="Lighting/LavaLightEvent" method="Activate"]
+[connection signal="Deactivated" from="Lighting/LavaLightTrigger4" to="Lighting/LavaLightEvent" method="Deactivate"]
+
+[editable path="Visuals/10Spiral"]
+[editable path="Visuals/11Hall"]
+[editable path="Visuals/12End"]

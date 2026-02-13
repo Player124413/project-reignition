@@ -11,6 +11,8 @@ public partial class SaveManager : Node
 	public static SaveManager Instance;
 
 	[Signal] public delegate void ConfigAppliedEventHandler();
+	/// <summary> The first level loaded when a new game is started. </summary>
+	[Export] private LevelDataResource initialLevelData;
 
 	private static string SaveDirectory;
 	private static string SaveLocationFile => OS.GetExecutablePath().GetBaseDir() + "/saveLocation.txt";
@@ -95,6 +97,14 @@ public partial class SaveManager : Node
 		Count
 	}
 
+	public enum JumpButtonModeEnum
+	{
+		Both,
+		Attack,
+		Stomp,
+		Count
+	}
+
 	public enum ButtonStyle
 	{
 		Style1, // Standard controller theme
@@ -102,6 +112,7 @@ public partial class SaveManager : Node
 		Count
 	}
 
+	/// <summary> Don't forget to update <see cref="VoiceLocaleToString"> when adding new dubs! </summary>
 	public enum VoiceLanguage
 	{
 		English,
@@ -118,6 +129,7 @@ public partial class SaveManager : Node
 		Italian,
 		French,
 		Spanish,
+		LatinAmericanSpanish,
 		BrazilianPortuguese,
 		Polish,
 		Chinese,
@@ -152,6 +164,7 @@ public partial class SaveManager : Node
 		E3,
 		Count
 	}
+
 
 	public static readonly Vector2I[] WindowSizes =
 	[
@@ -255,7 +268,16 @@ public partial class SaveManager : Node
 		public float deadZone = .2f;
 		public ControllerType controllerType = ControllerType.Automatic;
 		public bool useHoldBreakMode = true;
-		public bool useStompJumpButtonMode;
+		public bool enableMouseControls = true;
+		/// <summary> How much to ignore mouse controls in the center of the screen. </summary>
+		public int mouseDeadzone = 15;
+		/// <summary> How much counts as "max mouse movement." </summary>
+		public int mouseHorizontalRange = 80;
+		/// <summary> How much counts as "max mouse movement." </summary>
+		public int mouseVerticalRange = 80;
+		/// <summary> How much to offset the mouse inputs vertically. </summary>
+		public int mouseVerticalOffset = -10;
+		public JumpButtonModeEnum jumpButtonMode;
 		public int[] partyModeDevices = [0, 0, 0, 0];
 		public Dictionary inputConfiguration = [];
 
@@ -273,6 +295,9 @@ public partial class SaveManager : Node
 		public bool isActionPromptsEnabled = true;
 
 		public bool useQuickLoad;
+		public bool skipRepeatCutscenes; // Enable this to skip cutscenes when replaying missions
+		public int subtitleOpacity = 20;
+		public int cutsceneOpacity = 20;
 
 		/// <summary> Creates a dictionary based on config data. </summary>
 		public Dictionary ToDictionary()
@@ -314,7 +339,14 @@ public partial class SaveManager : Node
 				{ nameof(deadZone), deadZone },
 				{ nameof(controllerType), (int)controllerType },
 				{ nameof(useHoldBreakMode), useHoldBreakMode },
-				{ nameof(useStompJumpButtonMode), useStompJumpButtonMode },
+				{ nameof(jumpButtonMode), (int)jumpButtonMode },
+
+				{ nameof(enableMouseControls), enableMouseControls },
+				{ nameof(mouseDeadzone), mouseDeadzone },
+				{ nameof(mouseHorizontalRange), mouseHorizontalRange },
+				{ nameof(mouseVerticalRange), mouseVerticalRange },
+				{ nameof(mouseVerticalOffset), mouseVerticalOffset },
+
 				{ nameof(partyModeDevices), partyModeDevices },
 				{ nameof(inputConfiguration), inputConfiguration },
 
@@ -328,10 +360,12 @@ public partial class SaveManager : Node
 				{ nameof(useProjectReignitionBranding), useProjectReignitionBranding },
 				{ nameof(hudStyle), (int)hudStyle },
 				{ nameof(buttonStyle), (int)buttonStyle },
-				{ nameof(isUsingHorizontalSoulGauge), (bool)isUsingHorizontalSoulGauge },
+				{ nameof(isUsingHorizontalSoulGauge), isUsingHorizontalSoulGauge },
 				{ nameof(isActionPromptsEnabled), isActionPromptsEnabled },
 
-				{ nameof(useQuickLoad), useQuickLoad }
+				{ nameof(useQuickLoad), useQuickLoad },
+				{ nameof(subtitleOpacity), subtitleOpacity},
+				{ nameof(cutsceneOpacity), cutsceneOpacity},
 			};
 		}
 
@@ -403,8 +437,20 @@ public partial class SaveManager : Node
 				controllerType = (ControllerType)(int)var;
 			if (dictionary.TryGetValue(nameof(useHoldBreakMode), out var))
 				useHoldBreakMode = (bool)var;
-			if (dictionary.TryGetValue(nameof(useStompJumpButtonMode), out var))
-				useStompJumpButtonMode = (bool)var;
+			if (dictionary.TryGetValue(nameof(jumpButtonMode), out var))
+				jumpButtonMode = (JumpButtonModeEnum)(int)var;
+
+			if (dictionary.TryGetValue(nameof(enableMouseControls), out var))
+				enableMouseControls = (bool)var;
+			if (dictionary.TryGetValue(nameof(mouseDeadzone), out var))
+				mouseDeadzone = (int)var;
+			if (dictionary.TryGetValue(nameof(mouseHorizontalRange), out var))
+				mouseHorizontalRange = (int)var;
+			if (dictionary.TryGetValue(nameof(mouseVerticalRange), out var))
+				mouseVerticalRange = (int)var;
+			if (dictionary.TryGetValue(nameof(mouseVerticalOffset), out var))
+				mouseVerticalOffset = (int)var;
+
 			if (dictionary.TryGetValue(nameof(partyModeDevices), out var))
 				partyModeDevices = (int[])var;
 			if (dictionary.TryGetValue(nameof(inputConfiguration), out var))
@@ -436,7 +482,23 @@ public partial class SaveManager : Node
 				useQuickLoad = (bool)var;
 			else
 				Instance.IsQuickLoadAlertEnabled = true;
+			if (dictionary.TryGetValue(nameof(subtitleOpacity), out var))
+				subtitleOpacity = (int)var;
+			if (dictionary.TryGetValue(nameof(cutsceneOpacity), out var))
+				cutsceneOpacity = (int)var;
+
 		}
+	}
+
+	/// <summary> Converts <paramref name="voiceLanguage"/> to a locale string. </summary>
+	public static string VoiceLocaleToString(VoiceLanguage voiceLanguage)
+	{
+		return voiceLanguage switch
+		{
+			VoiceLanguage.Japanese => "ja",
+			VoiceLanguage.Spanish => "es",
+			_ => "en",
+		};
 	}
 
 	private static TextLanguage AutoDetectTextLocale()
@@ -649,6 +711,9 @@ public partial class SaveManager : Node
 				break;
 			case TextLanguage.Spanish:
 				TranslationServer.SetLocale("es");
+				break;
+			case TextLanguage.LatinAmericanSpanish:
+				TranslationServer.SetLocale("es_US");
 				break;
 			case TextLanguage.French:
 				TranslationServer.SetLocale("fr");
@@ -937,24 +1002,43 @@ public partial class SaveManager : Node
 
 		public Array<SkillKey> equippedSkills;
 		public Dictionary<SkillKey, int> equippedAugments;
+		public Array<SkillKey> viewedSkills;
 		public LevelSaveData LevelData => levelData;
 		private LevelSaveData levelData = new();
 
+		/// <summary> Determines if a skill hasn't been viewed yet </summary>
+		public bool HasNewSkill()
+		{
+			for (int i = 0; i < (int)SkillKey.Count; i++)
+			{
+				if (!viewedSkills.Contains((SkillKey)i) && ActiveSkillRing.IsSkillUnlocked((SkillKey)i))
+					return true;
+			}
+			return false;
+		}
 		/// <summary> Calculates the player's soul gauge size based on the player's level. </summary>
 		public int CalculateMaxSoulPower(bool isLocked)
 		{
 			int maxSoulPower = 100; // Starting soul gauge size
-			if (!isLocked)
-				maxSoulPower += Mathf.FloorToInt(CalculateSoulGaugeLevelRatio() * 5f) * 20; // Soul Gauge size increases by 20 every 5 levels, so it caps at 300
+			if (isLocked)
+				return maxSoulPower;
 
+			maxSoulPower += Mathf.FloorToInt(CalculateSoulGaugeLevelRatio() * 5f) * 20; // Soul Gauge size increases by 20 every 5 levels, so it caps at 300
 			return maxSoulPower;
 		}
 
-		/// <summary> Current ratio (0 -> 1) compared to the soul gauge level cap (50). </summary>
-		public float CalculateSoulGaugeLevelRatio() => Mathf.Clamp(level, 0, 50) / (float)50;
+		/// <summary> Current ratio [0, 1] compared to the soul gauge level cap (50). </summary>
+		public float CalculateSoulGaugeLevelRatio()
+		{
+			if (ActiveSkillRing.IsSkillEquipped(SkillKey.Darkspine)) // Darkspine always has max soul gauge
+				return 1f;
+
+			return Mathf.Clamp(level, 0, 50) / (float)50;
+		}
 
 		/// <summary> Checks if a stage has been unlocked. </summary>
-		public bool IsStageUnlocked(string levelID) => stagesUnlocked.Contains(levelID);
+		public bool IsStageUnlocked(string levelID) => stagesUnlocked.Contains(levelID) ||
+			levelData.GetClearStatus(levelID) != LevelSaveData.LevelStatus.New || CurrentStoryLevel?.LevelID == levelID; // Demo save compatability
 		/// <summary> Unlocks a stage. </summary>
 		public void UnlockStage(string levelID)
 		{
@@ -962,6 +1046,21 @@ public partial class SaveManager : Node
 				return;
 
 			stagesUnlocked.Add(levelID);
+		}
+
+		/// <summary> Updates the game data to ensure levels are unlocked properly, even with old save files. </summary>
+		public void UnlockStagesRecursively(LevelDataResource level)
+		{
+			// Base case--level was not cleared; don't do anything
+			if (levelData.GetClearStatus(level.LevelID) != LevelSaveData.LevelStatus.Cleared)
+				return;
+
+			// Recursive case; unlock child stages
+			for (int i = 0; i < level.UnlockStage.Count; i++)
+			{
+				UnlockStage(level.UnlockStage[i].LevelID);
+				UnlockStagesRecursively(level.UnlockStage[i]);
+			}
 		}
 
 		/// <summary> Checks if a world is unlocked. </summary>
@@ -1026,6 +1125,7 @@ public partial class SaveManager : Node
 				{ nameof(playTime), Mathf.RoundToInt(playTime) },
 				{ nameof(equippedSkills), SaveSkills(equippedSkills) },
 				{ nameof(equippedAugments), SaveAugments(equippedAugments) },
+				{ nameof(viewedSkills), SaveSkills(viewedSkills)},
 				{ nameof(presetNames), presetNames},
 				{ nameof(presetSkills), presetDictionary},
 				{ nameof(presetSkillAugments), augmentDictionary},
@@ -1086,6 +1186,9 @@ public partial class SaveManager : Node
 
 			if (dictionary.TryGetValue(nameof(equippedAugments), out var))
 				equippedAugments = LoadAugments((Dictionary<string, int>)var);
+
+			if (dictionary.TryGetValue(nameof(viewedSkills), out var))
+				viewedSkills = LoadSkills((Array<string>)var);
 
 			// Load Presets
 			if (dictionary.TryGetValue(nameof(presetNames), out var))
@@ -1178,15 +1281,16 @@ public partial class SaveManager : Node
 				presetSkillAugments = [],
 				equippedSkills = [],
 				equippedAugments = [],
+				viewedSkills = [],
 				level = 0,
 				lastPlayedWorld = WorldEnum.LostPrologue,
-				levelData = new()
+				levelData = new(),
+				CurrentStoryLevel = Instance.initialLevelData,
 			};
 
-			// TODO Replace this with the tutorial key
-			data.UnlockStage("so_a1_main");
+			// Unlock the tutorial
+			data.UnlockStage("lp_tutorial");
 			data.UnlockWorld(WorldEnum.LostPrologue);
-			data.UnlockWorld(WorldEnum.SandOasis); // Lock this in the final build
 
 			for (int i = 0; i < PresetCount; i++)
 			{
@@ -1197,6 +1301,38 @@ public partial class SaveManager : Node
 
 			return data;
 		}
+
+		public LevelDataResource CurrentStoryLevel { get; private set; }
+		public LevelDataResource UpdateCurrentStoryLevel(LevelDataResource currentLevelData)
+		{
+			if (currentLevelData == null) // Already beat the game
+			{
+				CurrentStoryLevel = null;
+				return CurrentStoryLevel;
+			}
+
+			LevelSaveData.LevelStatus clearStatus = LevelData.GetClearStatus(currentLevelData.LevelID);
+			if (clearStatus != LevelSaveData.LevelStatus.Cleared) // Player is still working on the current stage
+			{
+				CurrentStoryLevel = currentLevelData;
+				return CurrentStoryLevel;
+			}
+
+			LevelDataResource targetNextStage = null;
+			foreach (LevelDataResource stage in currentLevelData.UnlockStage)
+			{
+				if (stage.MissionCategory == LevelDataResource.MissionCategoryEnum.Side)
+					continue;
+
+				targetNextStage = stage;
+				break;
+			}
+
+			return UpdateCurrentStoryLevel(targetNextStage);
+		}
+
+		/// <summary> Called from Save Select. Recalculates the Current Story Level from the beginning. </summary>
+		public void LoadCurrentStoryLevelFromSaveData() => CurrentStoryLevel = UpdateCurrentStoryLevel(Instance.initialLevelData);
 	}
 	#endregion
 
@@ -1386,8 +1522,8 @@ public partial class SaveManager : Node
 
 		private void IncrementFireSoulCounter()
 		{
-			FireSoulCount++;
 			// TODO Check soul collector achievement
+			FireSoulCount++;
 		}
 
 		private readonly string FireSoulKey = "fire_soul";

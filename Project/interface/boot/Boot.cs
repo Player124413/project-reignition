@@ -5,7 +5,7 @@ namespace Project.Interface;
 
 public partial class Boot : Node
 {
-	public override void _Ready() => TransitionManager.instance.LoadCommonResources();
+	public override void _Ready() => TransitionManager.Instance.LoadCommonResources();
 
 	private void StartTitleTransition()
 	{

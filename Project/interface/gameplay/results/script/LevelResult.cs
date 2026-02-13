@@ -9,6 +9,7 @@ public partial class LevelResult : Control
 {
 	[Signal] public delegate void ContinuePressedEventHandler();
 
+	[Export] private Control retryButton;
 	[Export] private Label score;
 	[Export] private Label time;
 	[Export] private Label timeTotal; //For time attack
@@ -24,12 +25,16 @@ public partial class LevelResult : Control
 	[Export] private AudioStreamPlayer resultsVoicePlayer;
 	[Export] private SFXLibraryResource resultsVoiceLibrary;
 
+	/// <summary> Tracks whether the stage was already cleared when starting; Used to skip repeat cutscenes. </summary>
+	private bool wasStageClearedWhenLoaded;
 	private bool isProcessing;
 	private bool isFadingBgm;
 	private StageSettings Stage => StageSettings.Instance;
 
 	public override void _Ready()
 	{
+		wasStageClearedWhenLoaded = SaveManager.ActiveGameData.LevelData.GetClearStatus(Stage.Data.LevelID) == SaveManager.LevelSaveData.LevelStatus.Cleared;
+
 		if (IsInstanceValid(Stage))
 		{
 			Stage.Connect(StageSettings.SignalName.LevelCompleted, new Callable(this, MethodName.StartResults), (uint)ConnectFlags.Deferred);
@@ -51,8 +56,12 @@ public partial class LevelResult : Control
 		{
 			if (isFadingBgm)
 				isFadingBgm = SoundManager.FadeAudioPlayer(bgm[bgmIndex], 2.0f);
+
 			return;
 		}
+
+		bool isButtonPressed = Runtime.Instance.IsActionJustPressed("sys_select", "ui_select") ||
+			(Runtime.Instance.IsActionJustPressed("sys_cancel", "ui_cancel", "escape") && retryButton.IsVisibleInTree());
 
 		if (animator.IsPlaying())
 		{
@@ -60,8 +69,7 @@ public partial class LevelResult : Control
 			if (animator.CurrentAnimationPosition < 1f)
 				return;
 
-			if (Runtime.Instance.IsActionJustPressed("sys_select", "ui_select") ||
-				Runtime.Instance.IsActionJustPressed("sys_cancel", "ui_cancel", "escape")) // Skip animation
+			if (isButtonPressed) // Skip animation
 			{
 				StringName nextAnimation = animator.AnimationGetNext(animator.CurrentAnimation);
 				animator.Advance(animator.CurrentAnimationLength);
@@ -73,39 +81,55 @@ public partial class LevelResult : Control
 					Stage.StartCompletionDemo();
 				}
 			}
+
+			return;
 		}
-		else if (Runtime.Instance.IsActionJustPressed("sys_select", "ui_select") ||
-			Runtime.Instance.IsActionJustPressed("sys_cancel", "ui_cancel", "escape"))
+
+		if (isButtonPressed)
+			ProcessMenuButtons();
+	}
+
+	private void ProcessMenuButtons()
+	{
+		// Determine which scene to load without connecting it
+		if (TimeAttackManager.Instance.IsRunActive)
 		{
-			isFadingBgm = true; // Start fading bgm
-			SetInputProcessing(false);
-
-			// Determine which scene to load without connecting it
-			if (Runtime.Instance.IsActionJustPressed("sys_cancel", "ui_cancel", "escape") && !TimeAttackManager.Instance.IsRunActive) // Retry stage
-				TransitionManager.instance.QueuedScene = string.Empty;
-			else if (TimeAttackManager.Instance.IsRunActive)
-			{
-				TimeAttackManager.Instance.AddTime(Stage.CurrentTime);
-				TimeAttackManager.Instance.IncreaseLevel();
-			}
-
-
-			else// if (Level.storyEventIndex == 0) // Load main menu
-				TransitionManager.instance.QueuedScene = TransitionManager.MenuScenePath;
-
-			// TODO Load story event
-			//TransitionManager.QueueSceneChange($"{TransitionManager.EVENT_SCENE_PATH}{Level.storyEventIndex}.tscn");
-
-			// Actual scene transition is handled by the experience results screen (which is connected via this signal)
-			if (!TimeAttackManager.Instance.IsRunActive)
-				EmitSignal(SignalName.ContinuePressed);
-			else
-				TimeAttackManager.Instance.LoadLevel(TimeAttackManager.Instance.GetCurrentLevel());
+			TimeAttackManager.Instance.AddTime(Stage.CurrentTime);
+			TimeAttackManager.Instance.IncreaseLevel();
 		}
+		else if (Runtime.Instance.IsActionJustPressed("sys_cancel", "ui_cancel", "escape")) // Retry stage
+		{
+			TransitionManager.Instance.QueuedScene = string.Empty;
+		}
+		else
+		{
+			// Adventure mode; Process events
+			TransitionManager.Instance.QueuedScene = TransitionManager.MenuScenePath;
+
+			if (Stage.LevelState == StageSettings.LevelStateEnum.Success &&
+				!string.IsNullOrEmpty(Stage.Data.PostStoryEvent) &&
+				(!SaveManager.Config.skipRepeatCutscenes || !wasStageClearedWhenLoaded))
+			{
+				TransitionManager.Instance.QueuedScene = $"{TransitionManager.EventScenePath}{Stage.Data.PostStoryEvent}.tscn";
+			}
+		}
+
+		if (TimeAttackManager.Instance.IsRunActive)
+			TimeAttackManager.Instance.LoadLevel(TimeAttackManager.Instance.GetCurrentLevel());
+		else // Actual scene transition is handled by the experience results screen (which is connected via this signal)
+			EmitSignal(SignalName.ContinuePressed);
+
+		isFadingBgm = true; // Start fading bgm
+		SetInputProcessing(false);
 	}
 
 	public void StartResults()
 	{
+		bool isRetryButtonDisabled = StageSettings.Instance.Data == SaveManager.ActiveGameData.CurrentStoryLevel &&
+			Stage.LevelState == StageSettings.LevelStateEnum.Success &&
+			!TimeAttackManager.Instance.IsRunActive;
+		retryButton.Visible = !isRetryButtonDisabled;
+
 		score.Text = Stage.DisplayScore;
 		time.Text = Stage.DisplayTime;
 		if (TimeAttackManager.Instance.IsRunActive)
@@ -127,7 +151,13 @@ public partial class LevelResult : Control
 			requirementTime.Text = Stage.GetRequiredTime(rank);
 			requirementScore.Visible = !Stage.Data.SkipScore;
 			if (requirementScore.Visible)
-				requirementScore.Text = ExtensionMethods.FormatMenuNumber(Stage.GetRequiredScore());
+			{
+				int rankUpScore = Stage.Data.Score;
+				if (rank < 2)
+					rankUpScore = Stage.Data.SilverScore;
+
+				requirementScore.Text = ExtensionMethods.FormatMenuNumber(rankUpScore);
+			}
 		}
 		else
 		{
@@ -175,7 +205,7 @@ public partial class LevelResult : Control
 
 	public void PlayRankQuote()
 	{
-		int voiceIndex = StageSettings.Instance.CalculateRank() + 1;
+		int voiceIndex = Stage.CalculateRank() + 1;
 		resultsVoicePlayer.Stream = resultsVoiceLibrary.GetStream(voiceIndex, (int)SaveManager.Config.voiceLanguage);
 		resultsVoicePlayer.Play();
 	}

@@ -1,7 +1,39 @@
-[gd_scene load_steps=3 format=3 uid="uid://dhmabb07vg2by"]
+[gd_scene load_steps=8 format=3 uid="uid://dhmabb07vg2by"]
 
 [ext_resource type="PackedScene" uid="uid://dc4ne8o8nckhr" path="res://area/5 pirate storm/boss/environment/model/PSBoss.gltf" id="1_85w2r"]
 [ext_resource type="AudioStream" uid="uid://dd317mrtxf1l8" path="res://sound/sfx/stage/pirate storm/stg050_area_00.ogg" id="2_4cyur"]
+[ext_resource type="Texture2D" uid="uid://dy10qv14r3h15" path="res://area/5 pirate storm/data/texture/flower purple.png" id="2_017a8"]
+[ext_resource type="Texture2D" uid="uid://c5b82eyehjydx" path="res://effect/sun/texture/glow.png" id="3_amca7"]
+[ext_resource type="Texture2D" uid="uid://dvxct0a0bsphp" path="res://area/5 pirate storm/data/texture/flower glow.png" id="4_amca7"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_din6h"]
+resource_name = "Flower Purple"
+transparency = 2
+alpha_scissor_threshold = 0.5
+alpha_antialiasing_mode = 0
+cull_mode = 2
+specular_mode = 2
+vertex_color_use_as_albedo = true
+albedo_color = Color(1, 0.85, 0, 1)
+albedo_texture = ExtResource("2_017a8")
+metallic_specular = 0.0
+emission_enabled = true
+emission_energy_multiplier = 15.0
+emission_texture = ExtResource("3_amca7")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_gtwrt"]
+resource_name = "Flower Glow"
+transparency = 4
+cull_mode = 2
+specular_mode = 2
+vertex_color_use_as_albedo = true
+albedo_texture = ExtResource("4_amca7")
+metallic_specular = 0.0
+emission_enabled = true
+emission = Color(1, 0.9213333, 0.41000003, 1)
+emission_energy_multiplier = 16.0
+emission_operator = 1
+emission_texture = ExtResource("4_amca7")
 
 [node name="PSBoss" instance=ExtResource("1_85w2r")]
 
@@ -116,6 +148,7 @@ cast_shadow = 0
 [node name="stg052_k_Mesh_0035" parent="." index="27"]
 layers = 2
 cast_shadow = 0
+surface_material_override/0 = SubResource("StandardMaterial3D_din6h")
 
 [node name="stg052_p_Mesh_0045" parent="." index="28"]
 layers = 2
@@ -152,6 +185,7 @@ cast_shadow = 0
 [node name="stg052_p_Mesh_0032" parent="." index="36"]
 layers = 2
 cast_shadow = 0
+surface_material_override/0 = SubResource("StandardMaterial3D_gtwrt")
 
 [node name="stg052_p03_Mesh_0008" parent="." index="37"]
 layers = 2

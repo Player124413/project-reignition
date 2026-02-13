@@ -1,0 +1,310 @@
+[gd_scene load_steps=20 format=3 uid="uid://d1rhnes3eagu"]
+
+[ext_resource type="Script" uid="uid://brremmesah202" path="res://area/8 final chapter/data/script/PurpleOrb.cs" id="1_7yvr5"]
+[ext_resource type="Script" uid="uid://pnh70abopq8e" path="res://object/stage/common/resource/script/Hazard.cs" id="1_pnkon"]
+[ext_resource type="Material" uid="uid://b4847susbcf6p" path="res://effect/particle/material/Ember Purple Billboard.tres" id="2_pnkon"]
+[ext_resource type="Material" uid="uid://by3udeso1h66x" path="res://effect/particle/material/Alf Lightning.tres" id="3_1yshn"]
+[ext_resource type="AudioStream" uid="uid://dci4vlr25jlpu" path="res://sound/boss/alf layla/purple orb throw.wav" id="5_4647h"]
+[ext_resource type="AudioStream" uid="uid://jbdwl3v36c38" path="res://sound/boss/alf layla/purple orb explosion.wav" id="6_gvvo1"]
+
+[sub_resource type="Curve" id="Curve_1yshn"]
+_data = [Vector2(0, 0), 0.0, 15.149443, 0, 0, Vector2(0.2, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_7yvr5"]
+width = 64
+texture_mode = 1
+curve = SubResource("Curve_1yshn")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_4647h"]
+emission_shape = 1
+emission_sphere_radius = 0.1
+gravity = Vector3(0, 0, 0)
+scale_min = 3.0
+scale_max = 5.0
+alpha_curve = SubResource("CurveTexture_7yvr5")
+
+[sub_resource type="QuadMesh" id="QuadMesh_7yvr5"]
+material = ExtResource("2_pnkon")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_1yshn"]
+direction = Vector3(0, 0, 1)
+spread = 30.0
+initial_velocity_min = 2.0
+initial_velocity_max = 5.0
+gravity = Vector3(0, 0, 0)
+scale_min = 2.0
+scale_max = 4.0
+color = Color(0.6333332, 0, 1, 1)
+alpha_curve = SubResource("CurveTexture_7yvr5")
+anim_speed_min = 1.0
+anim_speed_max = 1.0
+anim_offset_max = 1.0
+
+[sub_resource type="QuadMesh" id="QuadMesh_pnkon"]
+material = ExtResource("3_1yshn")
+center_offset = Vector3(0, 0.3, 0)
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_gvvo1"]
+radius = 0.2
+
+[sub_resource type="Animation" id="Animation_4647h"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Hitbox:isDisabled")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Base:emitting")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Lightning:emitting")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+
+[sub_resource type="Animation" id="Animation_xeqdn"]
+resource_name = "explode"
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Hitbox:isDisabled")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Base:emitting")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Lightning:emitting")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/3/type = "method"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("PurpleOrbExplosion")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [0.0],
+"method": &"play"
+}]
+}
+
+[sub_resource type="Animation" id="Animation_gvvo1"]
+resource_name = "init"
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Hitbox:isDisabled")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Base:emitting")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Lightning:emitting")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+
+[sub_resource type="Animation" id="Animation_7yvr5"]
+resource_name = "spawn"
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Hitbox:isDisabled")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Base:emitting")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Lightning:emitting")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+
+[sub_resource type="Animation" id="Animation_su5gj"]
+resource_name = "travel"
+length = 0.2
+loop_mode = 1
+tracks/0/type = "method"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("PurpleOrbThrowSFX")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [0.0],
+"method": &"play"
+}]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_xeqdn"]
+_data = {
+&"RESET": SubResource("Animation_4647h"),
+&"explode": SubResource("Animation_xeqdn"),
+&"init": SubResource("Animation_gvvo1"),
+&"spawn": SubResource("Animation_7yvr5"),
+&"travel": SubResource("Animation_su5gj")
+}
+
+[node name="PurpleOrb" type="Node3D" node_paths=PackedStringArray("animator")]
+script = ExtResource("1_7yvr5")
+moveSpeed = 80.0
+animator = NodePath("AnimationPlayer")
+
+[node name="Base" type="GPUParticles3D" parent="."]
+layers = 32
+cast_shadow = 0
+emitting = false
+amount = 2
+lifetime = 0.2
+fixed_fps = 0
+interpolate = false
+local_coords = true
+process_material = SubResource("ParticleProcessMaterial_4647h")
+draw_pass_1 = SubResource("QuadMesh_7yvr5")
+
+[node name="Lightning" type="GPUParticles3D" parent="."]
+layers = 32
+cast_shadow = 0
+emitting = false
+lifetime = 0.4
+fixed_fps = 0
+interpolate = false
+transform_align = 2
+process_material = SubResource("ParticleProcessMaterial_1yshn")
+draw_pass_1 = SubResource("QuadMesh_pnkon")
+
+[node name="Hitbox" type="Area3D" parent="."]
+collision_layer = 0
+collision_mask = 2
+monitorable = false
+script = ExtResource("1_pnkon")
+isDisabled = true
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Hitbox"]
+shape = SubResource("SphereShape3D_gvvo1")
+
+[node name="PurpleOrbThrowSFX" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("5_4647h")
+volume_db = -6.0
+max_polyphony = 4
+bus = &"GAME SFX"
+
+[node name="PurpleOrbExplosion" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("6_gvvo1")
+bus = &"GAME SFX"
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+&"": SubResource("AnimationLibrary_xeqdn")
+}
+autoplay = "init"
+next/spawn = &"travel"
+
+[connection signal="DamagedPlayer" from="Hitbox" to="." method="Explode"]
+[connection signal="KnockbackFailed" from="Hitbox" to="." method="Explode"]
+[connection signal="area_entered" from="Hitbox" to="Hitbox" method="OnEntered"]
+[connection signal="area_exited" from="Hitbox" to="Hitbox" method="OnExited"]

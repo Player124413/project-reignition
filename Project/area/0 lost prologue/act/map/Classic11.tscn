@@ -1,0 +1,132 @@
+[gd_scene load_steps=16 format=3 uid="uid://wgjchaxij8xv"]
+
+[ext_resource type="PackedScene" uid="uid://dax0mun2bjm1v" path="res://area/0 lost prologue/act/Static.tscn" id="1_d116g"]
+[ext_resource type="Resource" uid="uid://cfrk5fx6sfpp5" path="res://resource/level data/lost prologue/Classic11.tres" id="2_d116g"]
+[ext_resource type="PackedScene" uid="uid://cjupypih0myxo" path="res://object/player/CharacterSpawn.tscn" id="3_y0li4"]
+[ext_resource type="PackedScene" uid="uid://bqvtcp8tkbfyt" path="res://object/stage/common/SpikeBall.tscn" id="4_rx851"]
+[ext_resource type="PackedScene" uid="uid://bn6wr6l8s3qyt" path="res://object/trigger/StageTrigger.tscn" id="5_5f4qq"]
+[ext_resource type="Script" uid="uid://dx0a0rhyauccl" path="res://object/trigger/modules/CameraTrigger.cs" id="5_31gwq"]
+[ext_resource type="Script" uid="uid://kvlmbv66orqt" path="res://object/trigger/modules/CullingTrigger.cs" id="5_y0li4"]
+[ext_resource type="PackedScene" uid="uid://dxepb172kmp8n" path="res://object/stage/common/Goal.tscn" id="6_c675n"]
+[ext_resource type="Resource" uid="uid://7fh17f1uaotj" path="res://area/0 lost prologue/act/camera/MediumCamera.tres" id="6_j5r7u"]
+[ext_resource type="PackedScene" uid="uid://bmgmok3n82tte" path="res://area/0 lost prologue/object/wonder/WonderBlock4.tscn" id="6_rx851"]
+[ext_resource type="PackedScene" uid="uid://ckhdnrnb1sf1i" path="res://object/enemy/majin/data/lost prologue/BlueMajin.tscn" id="9_rx851"]
+[ext_resource type="PackedScene" uid="uid://djstbs2wsu3ak" path="res://object/enemy/majin/data/lost prologue/RedMajin.tscn" id="10_5f4qq"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_5f4qq"]
+size = Vector3(10, 10, 10)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_c675n"]
+size = Vector3(10, 20, 5)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_e5om0"]
+size = Vector3(20, 30, 5)
+
+[node name="Stage" type="Node"]
+
+[node name="Static" parent="." instance=ExtResource("1_d116g")]
+Data = ExtResource("2_d116g")
+
+[node name="Classic11" type="Node3D" parent="."]
+
+[node name="SpawnPosition" type="Node3D" parent="Classic11"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 100, 0, -320)
+
+[node name="CharacterSpawn" parent="Classic11/SpawnPosition" instance=ExtResource("3_y0li4")]
+
+[node name="ObstructionCuller" parent="Classic11" instance=ExtResource("5_5f4qq")]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 140, 1, -320)
+"Trigger Mode" = 2
+"Enter Mode" = 0
+"Exit Mode" = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Classic11/ObstructionCuller"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3, -3)
+shape = SubResource("BoxShape3D_5f4qq")
+
+[node name="Camera" parent="Classic11" instance=ExtResource("5_5f4qq")]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 108, 0, -320)
+"Trigger Mode" = 2
+"Exit Mode" = 2
+
+[node name="Camera" type="Node3D" parent="Classic11/Camera"]
+script = ExtResource("5_31gwq")
+settings = ExtResource("6_j5r7u")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Classic11/Camera"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
+shape = SubResource("BoxShape3D_c675n")
+
+[node name="CullingTrigger" type="Node3D" parent="Classic11"]
+transform = Transform3D(-6.556708e-08, 0, -1, 0, 1, 0, 1.5, 0, -4.371139e-08, 137, 1, -320)
+script = ExtResource("5_y0li4")
+startEnabled = true
+
+[node name="WonderBlock1" parent="Classic11/CullingTrigger" instance=ExtResource("6_rx851")]
+
+[node name="WonderBlock2" parent="Classic11/CullingTrigger" instance=ExtResource("6_rx851")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4, 0)
+
+[node name="WonderBlock3" parent="Classic11/CullingTrigger" instance=ExtResource("6_rx851")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Classic11" groups=["wall"]]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 95, 0, -320)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Classic11/StaticBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
+shape = SubResource("BoxShape3D_e5om0")
+
+[node name="SpikeBallGroup" type="Node3D" parent="Classic11"]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 100, 0, -320)
+
+[node name="SpikeBall4" parent="Classic11/SpikeBallGroup" instance=ExtResource("4_rx851")]
+transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 6, 67.323)
+Movement/Mode = 0
+
+[node name="SpikeBall5" parent="Classic11/SpikeBallGroup" instance=ExtResource("4_rx851")]
+transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 6, 72)
+Movement/Mode = 0
+
+[node name="BlueMajin1" parent="Classic11" instance=ExtResource("9_rx851")]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 138, 0, -320)
+"Spawn Settings/Spawn Travel Time" = 0.6
+"Spawn Settings/Spawn Delay" = 0.0
+"Spawn Settings/Spawn Offset" = Vector3(0, 15, 0)
+"Spawn Settings/Spawn In Offset" = Vector3(0, 0, 0)
+"Spawn Settings/Spawn Out Offset" = Vector3(0, 0, 0)
+rangeOverride = 30
+
+[node name="BlueMajin2" parent="Classic11" instance=ExtResource("9_rx851")]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 172, 0.2, -320)
+"Spawn Settings/Spawn Travel Time" = 0.6
+"Spawn Settings/Spawn Delay" = 0.0
+"Spawn Settings/Spawn Offset" = Vector3(0, 15, 0)
+"Spawn Settings/Spawn In Offset" = Vector3(0, 0, 0)
+"Spawn Settings/Spawn Out Offset" = Vector3(0, 0, 0)
+rangeOverride = 30
+
+[node name="Goal" parent="Classic11" instance=ExtResource("6_c675n")]
+transform = Transform3D(-2.1855695e-07, 0, -1, 0, 1, 0, 1, 0, -2.1855695e-07, 204, 8, -320)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Classic11/Goal"]
+shape = SubResource("BoxShape3D_e5om0")
+
+[node name="RedMajin" parent="Classic11" instance=ExtResource("10_5f4qq")]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 168, 0, -320)
+"Spawn Settings/Spawn Travel Time" = 0.6
+"Spawn Settings/Spawn Delay" = 0.0
+"Spawn Settings/Spawn Offset" = Vector3(0, 15, 0)
+"Spawn Settings/Spawn In Offset" = Vector3(0, 0, 0)
+"Spawn Settings/Spawn Out Offset" = Vector3(0, 0, 0)
+"Attack Settings/Flame Active Time" = 3.0
+"Attack Settings/Flame Inactive Time" = 1.0
+"Attack Settings/Flame Aggression Radius" = 15
+rangeOverride = 30
+maxHealth = 1
+
+[connection signal="Activated" from="Classic11/ObstructionCuller" to="Classic11/CullingTrigger" method="Deactivate"]
+[connection signal="Deactivated" from="Classic11/ObstructionCuller" to="Classic11/CullingTrigger" method="Activate"]
+[connection signal="Respawned" from="Classic11/ObstructionCuller" to="Classic11/CullingTrigger" method="Activate"]
+
+[editable path="Static"]

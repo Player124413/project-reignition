@@ -95,7 +95,7 @@ public partial class BonusManager : VBoxContainer
 		if (ringChain >= 50)
 			FinishRingChain(true); // Force ring chains to finish when going over 50
 
-		if (Stage.Data.MissionType == LevelDataResource.MissionTypes.Chain)
+		if (Stage.Data.MissionType == LevelDataResource.MissionTypeEnum.Chain)
 			Stage.IncrementObjective();
 
 		UpdateQueuedScore();
@@ -119,7 +119,7 @@ public partial class BonusManager : VBoxContainer
 		if (forceFinish) // Don't check for level completion when comboing more than 50 rings
 			return;
 
-		if (Stage.Data.MissionType == LevelDataResource.MissionTypes.Chain &&
+		if (Stage.Data.MissionType == LevelDataResource.MissionTypeEnum.Chain &&
 			Stage.LevelState == StageSettings.LevelStateEnum.Ingame)
 		{
 			if (Stage.CurrentObjectiveCount >= Stage.Data.MissionObjectiveCount)
@@ -175,6 +175,7 @@ public partial class BonusManager : VBoxContainer
 		if (Player.AllowLandingGrind || Player.IsGrinding) return true; // Ignore Grindrails
 		if (Player.ExternalController != null) return true; // Chains only end during normal movement
 		if (Player.IsBouncing) return true;
+		if (Player.AttackState != PlayerController.AttackStates.None) return true; // Attacks extend chains
 
 		return false;
 	}

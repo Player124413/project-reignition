@@ -35,7 +35,7 @@ public partial class TeleportState : PlayerState
 		if (Player.IsKnockback)
 		{
 			Player.IsKnockback = false;
-			Player.Animator.StopHurt(false);
+			Player.Animator.StopHurt(KnockbackSettings.KnockbackAnimation.Normal);
 		}
 
 		Player.ChangeHitbox("disable");

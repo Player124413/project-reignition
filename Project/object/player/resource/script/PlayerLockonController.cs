@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using Godot;
 using Project.Core;
@@ -16,13 +15,16 @@ public partial class PlayerLockonController : Area3D
 	{
 		Player = player;
 		IsMonitoring = SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.GroundedHomingAttack);
-	}
 
+		Player.Skills.TimeBreakStarted += UpdateLockonAnimationSpeedScale;
+		Player.Skills.TimeBreakStopped += UpdateLockonAnimationSpeedScale;
+	}
 
 	/// <summary> Active lockon target shown on the HUD. </summary>
 	public Node3D Target { get; private set; }
 	/// <summary> can the current target be attacked? </summary>
 	public bool IsTargetAttackable { get; set; }
+
 	private enum TargetState
 	{
 		Valid,
@@ -38,7 +40,7 @@ public partial class PlayerLockonController : Area3D
 	/// <summary> How close a target needs to be to auto-lockon after bouncing. </summary>
 	private readonly float AutotargetDistanceAmount = 4f;
 	/// <summary> How far ahead the player must be to ignore the active lockon target. </summary>
-	private readonly float IgnoreTargetDistance = 0.2f;
+	private readonly float IgnoreTargetDistance = 2f;
 	private readonly string LevelWallGroup = "level wall";
 	private readonly string IgnoreLockonCastGroup = "ignore lockon cast";
 	/// <summary> List of all possible targets. </summary>
@@ -62,7 +64,7 @@ public partial class PlayerLockonController : Area3D
 		get => lockonReticle.Visible;
 		set => lockonReticle.Visible = value;
 	}
-
+	private bool isSideScrolling;
 	public bool IsMonitoringPerfectHomingAttack { get; private set; }
 	public void EnablePerfectHomingAttack() => IsMonitoringPerfectHomingAttack = true;
 	public void DisablePerfectHomingAttack() => IsMonitoringPerfectHomingAttack = false;
@@ -75,12 +77,21 @@ public partial class PlayerLockonController : Area3D
 	{
 		bool wasTargetChanged = false;
 
+		if (SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.Autorun))
+			GlobalRotation = Vector3.Up * Player.PathFollower.ForwardAngle;
+
+		isSideScrolling = Player.IsLockoutOverridingMovementAngle &&
+			Player.ActiveLockoutData.recenterPlayer &&
+			Mathf.Abs(Player.PathFollower.Forward().Dot(Player.Camera.Camera.Forward())) < 0.6f;
+
 		if (IsMonitoring)
 			wasTargetChanged = ProcessMonitoring();
 
 		ValidateTarget(wasTargetChanged);
 		ValidateCameraLockonTarget();
 	}
+
+	private void UpdateLockonAnimationSpeedScale() => lockonAnimator.SpeedScale = 1f / (float)Engine.TimeScale;
 
 	private void ValidateCameraLockonTarget()
 	{
@@ -132,10 +143,10 @@ public partial class PlayerLockonController : Area3D
 					continue;
 
 				// Ignore lower targets when within priority distance
-				if (Mathf.Abs(closestDistance - potentialDistance) < PriorityDistance &&
+				if (activeState == TargetState.Valid &&
+					Mathf.Abs(closestDistance - potentialDistance) < PriorityDistance &&
 					(potentialTargets[i].GlobalPosition.Y <= activeTarget.GlobalPosition.Y ||
-					potentialState == TargetState.LowPriority) &&
-					activeState == TargetState.Valid)
+					potentialState == TargetState.LowPriority))
 				{
 					continue;
 				}
@@ -169,7 +180,7 @@ public partial class PlayerLockonController : Area3D
 			return;
 		}
 
-		if (IsIgnoringTarget(Target))
+		if (targetState == TargetState.PlayerIgnored)
 		{
 			ResetLockonTarget();
 			Player.Camera.SetLockonTarget(null);
@@ -177,6 +188,8 @@ public partial class PlayerLockonController : Area3D
 		}
 
 		Vector2 screenPos = Player.Camera.ConvertToScreenSpace(Target.GlobalPosition);
+		screenPos.X = Mathf.Clamp(screenPos.X, LockonReticleRadius, GetTree().Root.GetViewport().GetVisibleRect().Size.X - LockonReticleRadius);
+		screenPos.Y = Mathf.Clamp(screenPos.Y, LockonReticleRadius, GetTree().Root.GetViewport().GetVisibleRect().Size.Y - LockonReticleRadius);
 		UpdateLockonReticle(screenPos, Player.IsHomingAttacking || targetState == TargetState.Valid, wasTargetChanged);
 	}
 
@@ -197,8 +210,8 @@ public partial class PlayerLockonController : Area3D
 		if (IsIgnoringTarget(target))
 			return TargetState.PlayerIgnored;
 
-		// Ignore height check if player is already homing attacking the target
-		if (IsTargetAttackable && target == Target && Player.IsHomingAttacking)
+		// Ignore height check if player is already homing attacking the target (or is moving upwards)
+		if (IsTargetAttackable && target == Target && (Player.IsHomingAttacking || Player.VerticalSpeed > 0))
 			return TargetState.Valid;
 
 		if (!IsTargetVisible(target))
@@ -206,7 +219,7 @@ public partial class PlayerLockonController : Area3D
 
 		// Check Height
 		float maxTargetHeight = Player.CenterPosition.Y + (Player.CollisionSize.Y * 2.0f);
-		if (Player.IsOnGround)
+		if (Player.IsOnGround) // Capture more lockon targets when on the ground 
 			maxTargetHeight += Player.Stats.JumpHeight;
 		bool isTargetAttackable = target.GlobalPosition.Y <= maxTargetHeight;
 		if (Player.IsBouncing && !Player.IsBounceInteruptable)
@@ -221,6 +234,8 @@ public partial class PlayerLockonController : Area3D
 					Player.Camera.SetLockonTarget(target);
 			}
 		}
+		else if (Player.IsOnGround && isTargetAttackable)
+			isTargetAttackable = SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.GroundedHomingAttack);
 
 		return isTargetAttackable ? TargetState.Valid : TargetState.LowPriority;
 	}
@@ -231,18 +246,26 @@ public partial class PlayerLockonController : Area3D
 		if (!target.IsVisibleInTree()) // Not visible
 			return false;
 
+		if (isSideScrolling) // Ignore vertical targeting when sidescrolling
+		{
+			if (target.GlobalPosition.Y > Player.CenterPosition.Y + (Player.CollisionSize.Y * 2.0f)) // To high
+				return false;
+
+			if (target.GlobalPosition.Y <= Player.CenterPosition.Y - 8f) // Too low
+				return false;
+
+			float dot = (target.GlobalPosition - Player.CenterPosition).Dot(Vector3.Up);
+			if (dot > .5f)
+				return false;
+		}
+
 		if (Player.Camera.IsOnScreen(target.GlobalPosition)) // Always allow targeting on-screen objects
 			return true;
 
 		if (Player.Camera.IsBehindCamera(target.GlobalPosition)) // Don't allow targeting behind the camera
 			return false;
 
-		if (!Player.IsBouncing || (Target != null && Target != target))
-			return false;
-
-		Vector2 screenPosition = Player.Camera.ConvertToScreenSpace(target.GlobalPosition) / Runtime.ScreenSize;
-		screenPosition = (screenPosition - (Vector2.One * .5f)) * 2f; // Remap values between -1 and 1.
-		if (Mathf.Abs(screenPosition.X) >= 1f) // Offscreen from the sides
+		if (Target != null && Target != target) // Already targeting something
 			return false;
 
 		return true;
@@ -253,13 +276,21 @@ public partial class PlayerLockonController : Area3D
 		if (Target == target && Player.IsHomingAttacking)
 			return false;
 
+		if (Player.Camera.LockonTarget == target) // Always focus on camera lockon targets
+			return false;
+
 		float inputStrength = Player.Controller.GetInputStrength();
 		if (inputStrength < .8f) // Player isn't decisive enough
 			return false;
 
-		float targetProgress = Player.PathFollower.GetProgress(target.GlobalPosition);
-		bool holdingForward = Player.Controller.IsHoldingDirection(Player.Controller.GetTargetInputAngle(), Player.PathFollower.ForwardAngle);
-		return (Player.PathFollower.Progress > targetProgress + IgnoreTargetDistance) && holdingForward;
+		Vector3 direction = (target.GlobalPosition - Player.GlobalPosition).RemoveVertical();
+		float angle = ExtensionMethods.CalculateForwardAngle(direction);
+		if (ExtensionMethods.DotAngle(angle, Player.PathFollower.ForwardAngle) > 0) // Player is moving towards lockon-don't ignore it!
+			return false;
+
+		float distance = direction.Flatten().Length();
+		bool isHoldingForward = Player.Controller.IsHoldingDirection(Player.Controller.GetTargetInputAngle(), Player.PathFollower.ForwardAngle);
+		return distance <= IgnoreTargetDistance && isHoldingForward;
 	}
 
 	private bool HitObstacle(Node3D target)
@@ -311,6 +342,7 @@ public partial class PlayerLockonController : Area3D
 	private Node2D lockonReticle;
 	[Export]
 	private AnimationPlayer lockonAnimator;
+	private readonly float LockonReticleRadius = 100f;
 	public void DisableLockonReticle() => lockonAnimator.Play("disable");
 	public void UpdateLockonReticle(Vector2 screenPosition, bool isTargetAttackable, bool wasTargetChanged)
 	{

@@ -486,12 +486,12 @@ _data = {
 &"demo3": SubResource("Animation_5u6dt")
 }
 
-[sub_resource type="Gradient" id="Gradient_5u6dt"]
-offsets = PackedFloat32Array(0, 0.849265, 1)
-colors = PackedColorArray(0, 0.007, 0.01, 1, 0.6885, 0.699267, 0.85, 1, 1, 0.91, 0.997, 1)
+[sub_resource type="Gradient" id="Gradient_bd1ok"]
+offsets = PackedFloat32Array(0, 0.5, 1)
+colors = PackedColorArray(0, 0, 0, 1, 0.48450002, 0.5301, 0.57, 1, 1, 1, 1, 1)
 
-[sub_resource type="GradientTexture1D" id="GradientTexture1D_id76q"]
-gradient = SubResource("Gradient_5u6dt")
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_xc0tm"]
+gradient = SubResource("Gradient_bd1ok")
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_5u6dt"]
 sky_top_color = Color(0.489622, 0.489622, 0.489622, 1)
@@ -500,40 +500,38 @@ sky_horizon_color = Color(0.617463, 0.5893, 0.71, 1)
 [sub_resource type="Sky" id="Sky_bd1ok"]
 sky_material = SubResource("ProceduralSkyMaterial_5u6dt")
 
-[sub_resource type="Environment" id="Environment_id76q"]
+[sub_resource type="Environment" id="Environment_hoppa"]
 background_mode = 1
+background_color = Color(1, 1, 1, 1)
 sky = SubResource("Sky_bd1ok")
 ambient_light_source = 2
-ambient_light_color = Color(0.472, 0.432, 0.48, 1)
+ambient_light_color = Color(0.43549997, 0.5856499, 0.65, 1)
 ambient_light_sky_contribution = 0.2
-tonemap_mode = 2
-tonemap_exposure = 0.8
-tonemap_white = 1.4
+tonemap_mode = 1
+tonemap_exposure = 0.9
+tonemap_white = 1.5
 ssao_radius = 3.19
 ssao_intensity = 3.36
 ssao_detail = 0.0
 ssil_sharpness = 0.9
 ssil_normal_rejection = 0.8
-glow_levels/2 = 3.7
-glow_levels/3 = 0.0
-glow_levels/4 = 1.0
-glow_levels/7 = 1.0
+glow_enabled = true
 glow_normalized = true
-glow_strength = 0.6
-glow_bloom = 0.05
-glow_blend_mode = 1
-glow_hdr_threshold = 1.2
+glow_mix = 0.2
+glow_bloom = 1.0
+glow_blend_mode = 4
 glow_map_strength = 0.79
 fog_enabled = true
 fog_mode = 1
-fog_light_color = Color(0.337255, 0.305882, 0.341176, 1)
+fog_light_color = Color(0.44, 0.77599996, 1, 1)
+fog_light_energy = 1.5
 fog_density = 1.0
-fog_depth_curve = 1.31951
-fog_depth_begin = 0.0
-fog_depth_end = 2041.0
+fog_depth_curve = 0.5
+fog_depth_end = 600.0
 adjustment_enabled = true
 adjustment_brightness = 1.2
-adjustment_color_correction = SubResource("GradientTexture1D_id76q")
+adjustment_saturation = 0.8
+adjustment_color_correction = SubResource("GradientTexture1D_xc0tm")
 
 [node name="Static" type="Node3D" node_paths=PackedStringArray("pathParent", "completionAnimator", "Environment")]
 script = ExtResource("1_ul5kf")
@@ -550,6 +548,7 @@ visible = false
 [node name="Visuals" type="Node3D" parent="."]
 
 [node name="LRSky" parent="Visuals" instance=ExtResource("4_jkq8a")]
+visible = false
 
 [node name="stg060_tsky_obj_Mesh_0002" parent="Visuals/LRSky/SkyRoot/Skeleton3D" index="2"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -21.7119, 0)
@@ -587,9 +586,9 @@ surface_material_override/0 = SubResource("StandardMaterial3D_hoppa")
 [node name="ObjectLight" type="DirectionalLight3D" parent="Lighting"]
 transform = Transform3D(-0.360314, 0.748527, 0.556671, -0.125952, -0.630327, 0.766045, 0.924289, 0.205903, 0.321394, 250, -37, -1213)
 layers = 1024
-light_color = Color(0.82, 1, 0.949, 1)
+light_color = Color(0.82, 0.982, 1, 1)
 light_energy = 0.6
-light_specular = 2.0
+light_specular = 0.0
 light_cull_mask = 4293918785
 
 [node name="EnvironmentLight" type="DirectionalLight3D" parent="Lighting"]
@@ -649,7 +648,7 @@ interior = true
 cull_mask = 0
 reflection_mask = 97
 ambient_mode = 2
-ambient_color = Color(0.4185, 0.74245, 0.93, 1)
+ambient_color = Color(0.4185, 0.8106501, 0.93, 1)
 
 [node name="ExteriorPlayer" type="ReflectionProbe" parent="ReflectionProbes"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 248, -50, -1285.5)
@@ -658,18 +657,8 @@ size = Vector3(100, 200, 500)
 cull_mask = 0
 reflection_mask = 64
 ambient_mode = 2
-ambient_color = Color(0.759333, 0.62, 1, 1)
+ambient_color = Color(0.62, 0.7593334, 1, 1)
 ambient_color_energy = 0.2
-
-[node name="ExteriorEnvironment" type="ReflectionProbe" parent="ReflectionProbes"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 248, -50, -1285.5)
-layers = 1024
-size = Vector3(100, 200, 500)
-cull_mask = 0
-reflection_mask = 2
-ambient_mode = 2
-ambient_color = Color(0.3478, 0.400093, 0.74, 1)
-ambient_color_energy = 0.8
 
 [node name="Triggers" type="Node3D" parent="."]
 
@@ -1135,7 +1124,7 @@ libraries = {
 }
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
-environment = SubResource("Environment_id76q")
+environment = SubResource("Environment_hoppa")
 
 [connection signal="Activated" from="Triggers/Tower2Triggers/Layer1" to="Triggers/TowerLockout" method="Activate"]
 [connection signal="Activated" from="Paths/ZiplinePath/Zipline" to="Paths/ZiplinePath/Zipline/Cam" method="Activate"]

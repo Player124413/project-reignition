@@ -66,6 +66,7 @@ public partial class HomingAttackState : PlayerState
 		}
 		else
 		{
+			Player.IsPerfectHomingAttacking = false;
 			Player.Lockon.ResetLockonTarget();
 			Player.Skills.DeactivateFireCrest();
 		}
@@ -88,7 +89,7 @@ public partial class HomingAttackState : PlayerState
 		Player.MoveSpeed = Mathf.Min(Player.MoveSpeed, Player.CenterPosition.DistanceTo(Player.Lockon.Target.GlobalPosition) / PhysicsManager.physicsDelta);
 		Player.VerticalSpeed = Player.Lockon.HomingAttackDirection.Y;
 		Player.MovementAngle = ExtensionMethods.CalculateForwardAngle(Player.Lockon.HomingAttackDirection);
-		Player.ApplyMovement(Player.Lockon.HomingAttackDirection.Normalized());
+		Player.ApplyMovement(Player.Lockon.HomingAttackDirection.Normalized(), Vector3.Zero);
 
 		bool isColliding = Player.GetSlideCollisionCount() != 0;
 		if (isColliding && ProcessObstructions())
@@ -104,7 +105,7 @@ public partial class HomingAttackState : PlayerState
 		Player.PathFollower.Resync();
 
 		if (Player.Controller.IsActionBufferActive ||
-			(Player.Controller.IsJumpBufferActive && SaveManager.Config.useStompJumpButtonMode))
+			(Player.Controller.IsJumpBufferActive && SaveManager.Config.jumpButtonMode != SaveManager.JumpButtonModeEnum.Attack))
 		{
 			Player.Controller.ResetJumpBuffer();
 			Player.Controller.ResetActionBuffer();

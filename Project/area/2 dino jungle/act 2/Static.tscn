@@ -1,4 +1,4 @@
-[gd_scene load_steps=117 format=3 uid="uid://r2f87qdkkpvm"]
+[gd_scene load_steps=134 format=3 uid="uid://r2f87qdkkpvm"]
 
 [ext_resource type="Script" uid="uid://dtkbvehtmy3em" path="res://object/stage/StageSettings.cs" id="1_ahfub"]
 [ext_resource type="Resource" uid="uid://dgl1qo3c2ocum" path="res://area/2 dino jungle/data/DialogLibrary.tres" id="2_fu16f"]
@@ -48,10 +48,18 @@
 [ext_resource type="Script" uid="uid://dkoc3m26hjclk" path="res://object/trigger/state trigger/script/SidleTrigger.cs" id="52_dlwoj"]
 [ext_resource type="Resource" uid="uid://duxi5ucuhx7qa" path="res://resource/preset/lockout/action/SidleLockout.tres" id="53_qcyeu"]
 [ext_resource type="Material" uid="uid://d2xmkmseav3mh" path="res://area/2 dino jungle/data/material/Imposter Mountain Orange.tres" id="55_p4him"]
+[ext_resource type="Shader" uid="uid://ck7yr3yq85s0h" path="res://area/2 dino jungle/data/shader/Falls.gdshader" id="55_pvdxp"]
+[ext_resource type="Texture2D" uid="uid://djrv2lmi8jb56" path="res://area/2 dino jungle/data/texture/falls water orange.png" id="56_p4him"]
+[ext_resource type="Texture2D" uid="uid://bdmlf6x26xomb" path="res://area/2 dino jungle/data/texture/falls displacement.png" id="57_efxct"]
+[ext_resource type="Texture2D" uid="uid://bwn01qsk1u20a" path="res://area/2 dino jungle/data/texture/falls mask.png" id="58_ausk7"]
 [ext_resource type="Resource" uid="uid://dtu8pc2uwaej1" path="res://area/2 dino jungle/act 1/camera/CaveLeftCam.tres" id="59_4p7iq"]
 [ext_resource type="Resource" uid="uid://cvgf6u6m7ckcs" path="res://area/2 dino jungle/act 1/camera/CaveRightCam.tres" id="60_c02lc"]
+[ext_resource type="Shader" uid="uid://cuiykvcb3ng1k" path="res://effect/shader/environment/GodRay.gdshader" id="61_0h6wt"]
+[ext_resource type="Shader" uid="uid://yfp53idccr4u" path="res://area/2 dino jungle/data/shader/Cactus Wall Glow.gdshader" id="61_efxct"]
 [ext_resource type="Resource" uid="uid://bdivp7ogd7b3y" path="res://area/2 dino jungle/act 1/camera/SpiralCamEnd.tres" id="61_ltl21"]
 [ext_resource type="Resource" uid="uid://cyl5n3t0uk2fh" path="res://area/2 dino jungle/act 1/camera/LogWallCam.tres" id="62_1iosu"]
+[ext_resource type="Texture2D" uid="uid://2jum14d2pin5" path="res://area/2 dino jungle/data/texture/cactus tall.png" id="62_ausk7"]
+[ext_resource type="Texture2D" uid="uid://cmi21nccpehlv" path="res://area/2 dino jungle/data/texture/god ray orange.png" id="62_fwu1r"]
 [ext_resource type="Resource" uid="uid://77eiif6gvg8g" path="res://area/2 dino jungle/act 1/camera/DinoCrossingCam.tres" id="63_sm3kh"]
 [ext_resource type="Resource" uid="uid://b5xjurtovabtm" path="res://area/2 dino jungle/act 1/camera/LogCam.tres" id="64_ov7kj"]
 [ext_resource type="Resource" uid="uid://u1ajlm54dtyt" path="res://area/2 dino jungle/act 1/camera/DinoCrossingFlyingPotCam.tres" id="65_xm8iw"]
@@ -241,7 +249,7 @@ size = Vector3(25, 80, 15)
 [sub_resource type="BoxShape3D" id="BoxShape3D_c5pbm"]
 size = Vector3(5, 20, 5)
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_glchr"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_mgkth"]
 resource_name = "Effect Bloom"
 render_priority = 127
 depth_draw_mode = 2
@@ -249,8 +257,44 @@ specular_mode = 2
 vertex_color_use_as_albedo = true
 albedo_color = Color(0, 0, 0, 1)
 emission_enabled = true
-emission = Color(0.66, 0.47575, 0.2178, 1)
-emission_energy_multiplier = 6.23
+emission = Color(1, 0.4933334, 0.24000001, 1)
+emission_energy_multiplier = 2.0
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_tp8dn"]
+resource_name = "Effect Bloom"
+render_priority = 127
+depth_draw_mode = 2
+shading_mode = 0
+specular_mode = 2
+disable_ambient_light = true
+disable_fog = true
+disable_specular_occlusion = true
+vertex_color_use_as_albedo = true
+albedo_color = Color(3.8147569, 3.145344, 1.1371052, 1)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_0h6wt"]
+render_priority = -1
+shader = ExtResource("55_pvdxp")
+shader_parameter/flowSpeed = 0.4
+shader_parameter/displacementFlowSpeed = 0.2
+shader_parameter/displacementScale = 1.6
+shader_parameter/albedo = ExtResource("56_p4him")
+shader_parameter/displacement = ExtResource("57_efxct")
+shader_parameter/mask = ExtResource("58_ausk7")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_crqnt"]
+render_priority = 2
+shader = ExtResource("61_0h6wt")
+shader_parameter/albedo = ExtResource("62_fwu1r")
+shader_parameter/scroll_vector = Vector2(1, 0)
+shader_parameter/scroll_speed = 0.1
+shader_parameter/intensity = 1.0
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_fwu1r"]
+render_priority = 0
+shader = ExtResource("61_efxct")
+shader_parameter/albedo = ExtResource("62_ausk7")
+shader_parameter/emission_strength = 0.3000000000029104
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_drhlu"]
 render_priority = -120
@@ -293,11 +337,13 @@ tracks/0/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 0,
-"values": [0.1]
+"values": [0.2]
 }
 
 [sub_resource type="Animation" id="Animation_m17ve"]
 resource_name = "event"
+length = 0.1
+step = 0.1
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
@@ -305,14 +351,16 @@ tracks/0/path = NodePath("../CaveLightEvent/PlayerLight:light_energy")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
-"times": PackedFloat32Array(0, 1),
+"times": PackedFloat32Array(0, 0.100000024),
 "transitions": PackedFloat32Array(1, 1),
 "update": 0,
-"values": [0.1, 0.0]
+"values": [0.2, 0.03]
 }
 
 [sub_resource type="Animation" id="Animation_avq68"]
 resource_name = "event-deactivate"
+length = 0.1
+step = 0.1
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
@@ -320,10 +368,10 @@ tracks/0/path = NodePath("../CaveLightEvent/PlayerLight:light_energy")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
-"times": PackedFloat32Array(0, 1),
+"times": PackedFloat32Array(0, 0.099999994),
 "transitions": PackedFloat32Array(1, 1),
 "update": 0,
-"values": [0.0, 0.1]
+"values": [0.03, 0.2]
 }
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_c8ckv"]
@@ -335,6 +383,21 @@ _data = {
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_c6wh8"]
 size = Vector3(66, 44, 143)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_crqnt"]
+size = Vector3(14.942261, 17.335815, 24.523926)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_lo2bj"]
+size = Vector3(17.509323, 17.335815, 19.244995)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_5vf8g"]
+size = Vector3(32.367138, 17.335815, 24.605415)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_blcup"]
+size = Vector3(21.294212, 17.335815, 19.244995)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_a43nb"]
+size = Vector3(13.03125, 31.001404, 6.4631042)
 
 [sub_resource type="Animation" id="Animation_b7tc5"]
 length = 0.001
@@ -818,20 +881,20 @@ _data = {
 [sub_resource type="Gradient" id="Gradient_nbp5c"]
 interpolation_color_space = 2
 offsets = PackedFloat32Array(0, 0.161202, 0.497268, 1)
-colors = PackedColorArray(0, 0, 0, 1, 0.169275, 0.154728, 0.0965371, 1, 0.5, 0.464, 0.32, 1, 1, 1, 1, 1)
+colors = PackedColorArray(0, 0, 0, 1, 0.22, 0.17585333, 0.12539999, 1, 0.48, 0.47424, 0.30719998, 1, 1, 1, 1, 1)
 
 [sub_resource type="GradientTexture1D" id="GradientTexture1D_dce1u"]
 gradient = SubResource("Gradient_nbp5c")
 
-[sub_resource type="Environment" id="Environment_h4l33"]
+[sub_resource type="Environment" id="Environment_mgkth"]
 background_mode = 1
-ambient_light_source = 3
-ambient_light_color = Color(1, 1, 1, 1)
+ambient_light_source = 2
+ambient_light_color = Color(1, 0.8833333, 0.75, 1)
 ambient_light_sky_contribution = 0.0
-ambient_light_energy = 0.15
+ambient_light_energy = 0.1
 reflected_light_source = 1
-tonemap_exposure = 1.4
-tonemap_white = 1.5
+tonemap_mode = 1
+tonemap_exposure = 1.6
 ssao_intensity = 1.59
 ssao_power = 2.89781
 glow_enabled = true
@@ -840,18 +903,18 @@ glow_levels/2 = 9.19
 glow_levels/4 = 0.5
 glow_levels/5 = 0.0
 glow_normalized = true
-glow_strength = 1.04
-glow_bloom = 0.01
+glow_bloom = 0.1
 glow_blend_mode = 1
 glow_hdr_threshold = 1.2
-glow_map_strength = 1.0
 fog_enabled = true
-fog_light_color = Color(0.57, 0, 0, 1)
-fog_density = 0.0002
+fog_mode = 1
+fog_light_color = Color(1, 0.56666666, 0, 1)
+fog_density = 0.05
 fog_sky_affect = 0.0
+fog_depth_begin = 50.0
+fog_depth_end = 500.0
 adjustment_enabled = true
-adjustment_brightness = 1.4
-adjustment_contrast = 0.9
+adjustment_brightness = 1.3
 adjustment_saturation = 0.9
 adjustment_color_correction = SubResource("GradientTexture1D_dce1u")
 
@@ -1117,8 +1180,6 @@ transform = Transform3D(0.984808, 0, 0.173648, 0, 1, 0, -0.173648, 0, 0.984808, 
 
 [node name="ActivateTrigger" parent="Trigger/Object/Apatos1" instance=ExtResource("4_ko444")]
 transform = Transform3D(-0.984808, 0, 0.173648, 0, 1, 0, -0.173648, 0, -0.984808, -4.77853, 38.2302, 41.1746)
-OneShot = true
-"Respawn Mode" = 0
 "Trigger Mode" = 2
 "Exit Mode" = 2
 
@@ -1960,36 +2021,120 @@ surface_material_override/0 = ExtResource("47_p4him")
 [node name="stg020_a03_Mesh_0002" parent="Visuals/03Cave" index="1"]
 surface_material_override/0 = ExtResource("48_p4him")
 
-[node name="SpotLight3D" parent="Visuals/03Cave" index="18"]
-light_color = Color(1, 0.720167, 0.27, 1)
-
-[node name="SpotLight3D2" parent="Visuals/03Cave" index="19"]
-light_color = Color(1, 0.720167, 0.27, 1)
-
-[node name="SpotLight3D3" parent="Visuals/03Cave" index="20"]
-light_color = Color(1, 0.720167, 0.27, 1)
-
 [node name="03CaveSky" parent="Visuals" instance=ExtResource("9_p15kj")]
 startEnabled = true
 
 [node name="stg020_g08_Mesh_0000" parent="Visuals/03CaveSky" index="0"]
-surface_material_override/0 = SubResource("StandardMaterial3D_glchr")
+surface_material_override/0 = SubResource("StandardMaterial3D_mgkth")
 
 [node name="03CaveReverse" parent="Visuals" instance=ExtResource("10_q3pap")]
 
 [node name="04Spiral" parent="Visuals" instance=ExtResource("11_4xcu3")]
+
+[node name="stg020_g16_Mesh_0000" parent="Visuals/04Spiral" index="19"]
+material_override = SubResource("StandardMaterial3D_tp8dn")
 
 [node name="05Crossing" parent="Visuals" instance=ExtResource("12_m4xj3")]
 
 [node name="stg020_p21_Mesh_52" parent="Visuals/05Crossing" index="10"]
 surface_material_override/0 = ExtResource("55_p4him")
 
+[node name="stg020_falls_w_22_Mesh_0" parent="Visuals/05Crossing" index="28"]
+surface_material_override/0 = SubResource("ShaderMaterial_0h6wt")
+
 [node name="06CavernEntrance" parent="Visuals" instance=ExtResource("13_vc0wq")]
 
 [node name="stg020_p21_Mesh_52_001" parent="Visuals/06CavernEntrance" index="8"]
 surface_material_override/0 = ExtResource("55_p4him")
 
+[node name="stg020_a05_Mesh_0_001" parent="Visuals/06CavernEntrance" index="25"]
+visible = false
+
 [node name="07Cavern" parent="Visuals" instance=ExtResource("14_mw2ws")]
+
+[node name="stg020_a05_Mesh_2" parent="Visuals/07Cavern" index="1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 7.3779793, 0)
+surface_material_override/0 = SubResource("ShaderMaterial_crqnt")
+
+[node name="stg020_a05_Mesh_0" parent="Visuals/07Cavern" index="3"]
+visible = false
+
+[node name="stg020_o05_Mesh_4_001" parent="Visuals/07Cavern" index="5"]
+transparency = 0.96
+surface_material_override/0 = SubResource("ShaderMaterial_fwu1r")
+
+[node name="OmniLight3D" parent="Visuals/07Cavern" index="10"]
+visible = false
+
+[node name="OmniLight3D2" parent="Visuals/07Cavern" index="11"]
+visible = false
+
+[node name="OmniLight3D3" parent="Visuals/07Cavern" index="12"]
+visible = false
+
+[node name="OmniLight3D4" parent="Visuals/07Cavern" index="13"]
+visible = false
+
+[node name="OmniLight3D5" parent="Visuals/07Cavern" index="14"]
+visible = false
+
+[node name="OmniLight3D6" type="OmniLight3D" parent="Visuals/07Cavern"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -553.4435, -251.51483, -1079.7607)
+light_color = Color(1, 0.6, 0.19999999, 1)
+light_specular = 0.0
+distance_fade_enabled = true
+distance_fade_begin = 50.0
+distance_fade_length = 20.0
+omni_range = 38.465
+omni_attenuation = 0.0
+
+[node name="OmniLight3D7" type="OmniLight3D" parent="Visuals/07Cavern"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -540.164, -266.5468, -1065.6721)
+light_color = Color(0.19999999, 1, 0.96000004, 1)
+light_energy = 0.5
+light_specular = 1.0
+light_cull_mask = 4293918789
+distance_fade_enabled = true
+distance_fade_begin = 50.0
+distance_fade_length = 20.0
+omni_range = 12.0
+omni_attenuation = 0.5
+
+[node name="OmniLight3D10" type="OmniLight3D" parent="Visuals/07Cavern"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -620.9919, -263.4848, -1088.0663)
+light_color = Color(0.19999999, 1, 0.96000004, 1)
+light_energy = 0.5
+light_specular = 1.0
+light_cull_mask = 4293918789
+distance_fade_enabled = true
+distance_fade_begin = 50.0
+distance_fade_length = 20.0
+omni_range = 12.0
+omni_attenuation = 0.5
+
+[node name="OmniLight3D8" type="OmniLight3D" parent="Visuals/07Cavern"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -531.7328, -265.26328, -1075.4795)
+light_color = Color(0.19999999, 1, 0.96000004, 1)
+light_energy = 0.3
+light_specular = 1.0
+light_cull_mask = 4293918789
+distance_fade_enabled = true
+distance_fade_begin = 50.0
+distance_fade_length = 20.0
+omni_range = 12.0
+omni_attenuation = 0.5
+
+[node name="OmniLight3D9" type="OmniLight3D" parent="Visuals/07Cavern"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -548.5507, -265.26328, -1124.2047)
+light_color = Color(0.19999999, 1, 0.96000004, 1)
+light_energy = 0.3
+light_specular = 1.0
+light_cull_mask = 4293918789
+distance_fade_enabled = true
+distance_fade_begin = 50.0
+distance_fade_length = 20.0
+omni_range = 12.0
+omni_attenuation = 0.5
 
 [node name="08FeedingTunnel" parent="Visuals" instance=ExtResource("15_gp3p4")]
 
@@ -2021,9 +2166,10 @@ animator = NodePath("AnimationPlayer")
 [node name="PlayerLight" type="DirectionalLight3D" parent="Lighting/CaveLightEvent"]
 transform = Transform3D(1, 0, 0, 0, -0.20658, 0.97843, 0, -0.97843, -0.20658, 0, 0, 0)
 layers = 1024
-light_color = Color(0.992, 1, 0.76, 1)
-light_energy = 0.1
-light_cull_mask = 4293918784
+light_color = Color(1, 0.73749995, 0.25, 1)
+light_energy = 0.2
+light_specular = 0.1
+light_cull_mask = 4293918785
 shadow_blur = 10.0
 directional_shadow_mode = 0
 
@@ -2043,23 +2189,39 @@ transform = Transform3D(-0.212945, 0, 0.977064, 0, 1, 0, -0.977064, 0, -0.212945
 transform = Transform3D(0.999998, 0, 5.96046e-08, 0, 1, 0, -5.96046e-08, 0, 0.999998, -2.00049, 20, -11.75)
 shape = SubResource("BoxShape3D_c6wh8")
 
-[node name="ObjectLight" type="DirectionalLight3D" parent="Lighting"]
-transform = Transform3D(1, 0, 0, 0, -0.20658, 0.97843, 0, -0.97843, -0.20658, 0, 0, 0)
-layers = 1024
-light_color = Color(0.97, 0.96418, 0.7954, 1)
-light_energy = 0.7
-light_cull_mask = 4293918721
-shadow_blur = 10.0
-directional_shadow_mode = 0
+[node name="ShadowTrigger" parent="Lighting" instance=ExtResource("4_ko444")]
+transform = Transform3D(-0.212945, 0, 0.977064, 0, 1, 0, -0.977064, 0, -0.212945, -364.67673, -221.93979, -625.60583)
+"Trigger Mode" = 2
+"Enter Mode" = 0
+"Exit Mode" = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Lighting/ShadowTrigger"]
+transform = Transform3D(0.999998, 0, 5.9604645e-08, 0, 1, 0, -5.9604645e-08, 0, 0.999998, -3.5895386, 5.150818, 3.2446594)
+shape = SubResource("BoxShape3D_crqnt")
+
+[node name="CollisionShape3D2" type="CollisionShape3D" parent="Lighting/ShadowTrigger"]
+transform = Transform3D(0.8715291, 0, -0.49034, 0, 1, 0, 0.49034, 0, 0.8715291, 78.605774, 5.150818, -5.6194305)
+shape = SubResource("BoxShape3D_lo2bj")
+
+[node name="CollisionShape3D3" type="CollisionShape3D" parent="Lighting/ShadowTrigger"]
+transform = Transform3D(0.9136432, 0, -0.4065125, 0, 1, 0, 0.4065125, 0, 0.9136432, 161.41937, 10.305435, 34.903137)
+shape = SubResource("BoxShape3D_5vf8g")
+
+[node name="CollisionShape3D4" type="CollisionShape3D" parent="Lighting/ShadowTrigger"]
+transform = Transform3D(0.9964311, 0, -0.08439052, 0, 1, 0, 0.08439052, 0, 0.9964311, 215.55023, 5.150818, -33.83162)
+shape = SubResource("BoxShape3D_blcup")
+
+[node name="CollisionShape3D5" type="CollisionShape3D" parent="Lighting/ShadowTrigger"]
+transform = Transform3D(0.9964311, 0, -0.08439052, 0, 1, 0, 0.08439052, 0, 0.9964311, 247.17752, -9.383209, -31.93362)
+shape = SubResource("BoxShape3D_a43nb")
 
 [node name="EnvironmentLightOutside" type="DirectionalLight3D" parent="Lighting"]
 transform = Transform3D(-1, 0, 8.74228e-08, 8.74228e-08, -4.37114e-08, 1, 3.82137e-15, 1, 4.37114e-08, 0, 0, 0)
 layers = 1024
-light_color = Color(1, 0.7095, 0.17, 1)
+light_color = Color(1, 0.7786667, 0.17000002, 1)
 light_energy = 0.2
-light_cull_mask = 4293918722
+light_cull_mask = 4293918726
 shadow_enabled = true
-shadow_opacity = 0.9
 directional_shadow_mode = 1
 directional_shadow_blend_splits = true
 directional_shadow_fade_start = 0.9
@@ -2067,16 +2229,16 @@ directional_shadow_max_distance = 75.0
 
 [node name="ReflectionProbes" type="Node3D" parent="."]
 
-[node name="OpeningEnvironmentProbe" type="ReflectionProbe" parent="ReflectionProbes"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -353.986, -194.291, -553.42)
+[node name="EnvironmentProbe" type="ReflectionProbe" parent="ReflectionProbes"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -354.0357, -222.67096, -944.81366)
 layers = 1024
-size = Vector3(173.78, 141.82, 160.182)
+size = Vector3(836.7711, 198.57993, 933.8712)
 interior = true
-cull_mask = 20
-reflection_mask = 4
+cull_mask = 0
+reflection_mask = 6
 ambient_mode = 2
-ambient_color = Color(1, 1, 1, 1)
-ambient_color_energy = 0.5
+ambient_color = Color(1, 0.85899997, 0.53, 1)
+ambient_color_energy = 0.4
 
 [node name="Path" type="Node3D" parent="."]
 
@@ -2149,7 +2311,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -366, -281, -1077)
 reflectionMaterials = [ExtResource("100_3sdt7")]
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
-environment = SubResource("Environment_h4l33")
+environment = SubResource("Environment_mgkth")
 
 [connection signal="Activated" from="Trigger/Checkpoints/DinoCheckpoint" to="Collision/LSideWall" method="Deactivate"]
 [connection signal="Activated" from="Trigger/Checkpoints/DinoCheckpoint" to="Collision/RSideWall" method="Deactivate"]
@@ -2227,6 +2389,8 @@ environment = SubResource("Environment_h4l33")
 [connection signal="Deactivated" from="Visuals/CullingMap/08-L" to="Visuals/08FeedingTunnel" method="Deactivate"]
 [connection signal="Activated" from="Lighting/CaveTrigger" to="Lighting/CaveLightEvent" method="Activate"]
 [connection signal="Deactivated" from="Lighting/CaveTrigger" to="Lighting/CaveLightEvent" method="Deactivate"]
+[connection signal="Activated" from="Lighting/ShadowTrigger" to="Lighting/CaveLightEvent" method="Activate"]
+[connection signal="Deactivated" from="Lighting/ShadowTrigger" to="Lighting/CaveLightEvent" method="Deactivate"]
 
 [editable path="Trigger/Object/DinoParaGroup/DinoPara1"]
 [editable path="Trigger/Object/DinoParaGroup/DinoPara2"]
@@ -2236,4 +2400,5 @@ environment = SubResource("Environment_h4l33")
 [editable path="Visuals/04Spiral"]
 [editable path="Visuals/05Crossing"]
 [editable path="Visuals/06CavernEntrance"]
+[editable path="Visuals/07Cavern"]
 [editable path="Visuals/Skybox"]

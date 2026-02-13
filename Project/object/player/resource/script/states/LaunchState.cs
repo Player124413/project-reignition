@@ -127,6 +127,7 @@ public partial class LaunchState : PlayerState
 		if (heightDelta < 0 && Player.CheckGround()) // Only check ground when falling
 		{
 			Player.MoveSpeed = 0;
+			Player.StrafeSpeed = 0;
 			return landState;
 		}
 
@@ -135,7 +136,7 @@ public partial class LaunchState : PlayerState
 			if (Player.Controller.IsJumpBufferActive)
 			{
 				Player.Controller.ResetJumpBuffer();
-				if (SaveManager.Config.useStompJumpButtonMode)
+				if (SaveManager.Config.jumpButtonMode == SaveManager.JumpButtonModeEnum.Stomp)
 					return stompState;
 
 				return Player.Lockon.IsTargetAttackable ? homingAttackState : jumpDashState;
@@ -195,6 +196,7 @@ public partial class LaunchState : PlayerState
 
 		wallHit = hit;
 		Player.MoveSpeed = 0;
+		Player.StrafeSpeed = 0;
 		Player.GlobalPosition = wallHit.point - (wallHit.direction * Player.CollisionSize.X);
 	}
 }
