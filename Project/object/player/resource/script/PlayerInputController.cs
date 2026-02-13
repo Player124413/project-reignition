@@ -8,6 +8,8 @@ public partial class PlayerInputController : Node
 	private PlayerController Player { get; set; }
 	public void Initialize(PlayerController player) => Player = player;
 
+	private Vector2 mouseInput;
+
 	[Export]
 	private Curve InputCurve { get; set; }
 	public float GetInputStrength()
@@ -86,9 +88,13 @@ public partial class PlayerInputController : Node
 
 	public void ProcessInputs()
 	{
+		ProcessMouseMovement();
 		InputAxis = Input.GetVector("move_left", "move_right", "move_up", "move_down", DeadZone);
+		InputAxis = (InputAxis + mouseInput).LimitLength(1f);
 		InputHorizontal = Input.GetAxis("move_left", "move_right");
+		InputHorizontal = Mathf.Clamp(InputHorizontal + mouseInput.X, -1f, 1f);
 		InputVertical = Input.GetAxis("move_up", "move_down");
+		InputVertical = Mathf.Clamp(InputVertical + mouseInput.Y, -1f, 1f);
 		if (!InputAxis.IsZeroApprox())
 			NonZeroInputAxis = InputAxis;
 
@@ -99,6 +105,39 @@ public partial class PlayerInputController : Node
 		UpdateAttackBuffer();
 		UpdateStepBuffer();
 		UpdateLightDashBuffer();
+	}
+
+	private void ProcessMouseMovement()
+	{
+		if (!SaveManager.Config.enableMouseControls || Runtime.Instance.IsUsingController)
+		{
+			// Disable mouse inputs
+			mouseInput = Vector2.Zero;
+			return;
+		}
+
+		// Convert input ranges to [-1, 1]
+		Vector2 inputRatio = (Runtime.Instance.MousePositionRatio - Vector2.One * 0.5f) * 2f;
+		inputRatio.Y += SaveManager.Config.mouseVerticalOffset;
+		if (Mathf.Abs(inputRatio.X) < SaveManager.Config.mouseDeadzone)
+		{
+			mouseInput.X = 0f;
+		}
+		else
+		{
+			mouseInput.X = (inputRatio.X - SaveManager.Config.mouseDeadzone) / (SaveManager.Config.mouseHorizontalRange - SaveManager.Config.mouseDeadzone);
+			mouseInput.X = Mathf.Clamp(mouseInput.X, -1f, 1f);
+		}
+
+		if (Mathf.Abs(inputRatio.Y) < SaveManager.Config.mouseDeadzone)
+		{
+			mouseInput.Y = 0f;
+		}
+		else
+		{
+			mouseInput.Y = (inputRatio.Y - SaveManager.Config.mouseDeadzone) / (SaveManager.Config.mouseVerticalRange - SaveManager.Config.mouseDeadzone);
+			mouseInput.Y = Mathf.Clamp(mouseInput.Y, -1f, 1f);
+		}
 	}
 
 	private void UpdateJumpBuffer()

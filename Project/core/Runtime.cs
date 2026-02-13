@@ -8,6 +8,9 @@ public partial class Runtime : Node
 {
 	public static Runtime Instance;
 
+	/// <summary> Stores the mouse's current position in a ratio from [0, 1]. </summary>
+	public Vector2 MousePositionRatio { get; private set; }
+
 	public static readonly RandomNumberGenerator randomNumberGenerator = new();
 	public static readonly Vector2I ScreenSize = new(1920, 1080); // Working resolution is 1080p
 	public static readonly Vector2I HalfScreenSize = (Vector2I)((Vector2)ScreenSize * .5f);
@@ -234,6 +237,12 @@ public partial class Runtime : Node
 	public override void _Input(InputEvent e)
 	{
 		EmitSignal(SignalName.EventInputed, e);
+
+		if (e is InputEventMouseMotion)
+		{
+			MousePositionRatio = (e as InputEventMouseMotion).GlobalPosition / GetTree().Root.GetViewport().GetVisibleRect().Size;
+			return;
+		}
 
 		if (e is not InputEventKey && e is not InputEventJoypadButton && e is not InputEventJoypadMotion) return;
 

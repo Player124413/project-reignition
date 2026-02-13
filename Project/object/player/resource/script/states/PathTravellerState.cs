@@ -51,11 +51,11 @@ public partial class PathTravellerState : PlayerState
 		Traveller.ProcessPathTraveller();
 		Player.CallDeferred(PlayerController.MethodName.UpdateExternalControl, true);
 
-		float targetBalanceDirection = Player.Controller.InputAxis.X - (Player.PathFollower.DeltaAngle * 5.0f);
+		float targetBalanceDirection = Player.Controller.InputHorizontal - (Player.PathFollower.DeltaAngle * 5.0f);
 		float targetBalanceSpeed = 1f;
 		if (!isSpeedBreaking)
 		{
-			targetBalanceDirection = Player.Controller.InputAxis.X - (Player.PathFollower.DeltaAngle * 20.0f);
+			targetBalanceDirection = Player.Controller.InputHorizontal - (Player.PathFollower.DeltaAngle * 20.0f);
 			targetBalanceSpeed += Player.Stats.GroundSettings.GetSpeedRatio(Traveller.CurrentSpeed);
 		}
 

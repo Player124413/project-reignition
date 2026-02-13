@@ -53,7 +53,7 @@ public partial class PlayerState : Node
 			}
 		}
 
-		if (!SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.Autorun) &&
+		if ((!SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.Autorun) || Player.IsMovingBackward) &&
 			Mathf.IsZeroApprox(inputStrength)) // Basic slow down
 		{
 			Deccelerate();
@@ -81,6 +81,9 @@ public partial class PlayerState : Node
 			float inputDot = Mathf.Abs(ExtensionMethods.DotAngle(Player.MovementAngle, targetInputAngle));
 			inputStrength *= Mathf.Clamp(inputDot + .5f, 0, 1f);
 		}
+
+		if (Mathf.IsZeroApprox(inputStrength))
+			return;
 
 		Accelerate(inputStrength);
 	}

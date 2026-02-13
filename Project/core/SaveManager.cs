@@ -268,6 +268,15 @@ public partial class SaveManager : Node
 		public float deadZone = .2f;
 		public ControllerType controllerType = ControllerType.Automatic;
 		public bool useHoldBreakMode = true;
+		public bool enableMouseControls = true;
+		/// <summary> How much to ignore mouse controls in the center of the screen. </summary>
+		public float mouseDeadzone = 0.05f;
+		/// <summary> How much counts as "max mouse movement." </summary>
+		public float mouseHorizontalRange = 0.5f;
+		/// <summary> How much counts as "max mouse movement." </summary>
+		public float mouseVerticalRange = 0.5f;
+		/// <summary> How much to offset the mouse inputs vertically. </summary>
+		public float mouseVerticalOffset = 0.1f;
 		public JumpButtonModeEnum jumpButtonMode;
 		public int[] partyModeDevices = [0, 0, 0, 0];
 		public Dictionary inputConfiguration = [];
