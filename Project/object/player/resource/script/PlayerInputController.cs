@@ -15,7 +15,6 @@ public partial class PlayerInputController : Node
 	public float GetInputStrength()
 	{
 		float inputLength = InputAxis.Length();
-		GD.PrintT(inputLength, DeadZone);
 
 		if (Player.IsLockoutActive && Player.ActiveLockoutData.movementMode == LockoutResource.MovementModes.Replace)
 		{
@@ -139,7 +138,6 @@ public partial class PlayerInputController : Node
 			mouseInput.Y = (inputRatio.Y - SaveManager.Config.mouseDeadzone) / (SaveManager.Config.mouseVerticalRange - SaveManager.Config.mouseDeadzone);
 			mouseInput.Y = Mathf.Clamp(mouseInput.Y, -1f, 1f);
 		}
-		GD.Print(mouseInput);
 	}
 
 	private void UpdateJumpBuffer()
