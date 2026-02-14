@@ -9,6 +9,9 @@ public partial class TimeAttack : Menu
 	[Export] AnimationPlayer timeAttackAnimator;
 	[Export] private Description description;
 	[Export] private TimeAttackReady readyMenu;
+	[Export] private TextureRect buttonImage;
+	[Export] private AnimationPlayer buttonImageAnimator;
+	[Export] Array<TimeAttackButton> buttonList;
 	private bool isActive;
 	private int currentSelection;
 	private int maxSelection = 4;
@@ -22,7 +25,9 @@ public partial class TimeAttack : Menu
 	{
 		base.ShowMenu();
 		currentSelection = 1;
+		description.Text = buttonList[0].description;
 		menuMemory[MemoryKeys.ActiveMenu] = (int)MemoryKeys.TimeAttack;
+		bgm.Play();
 
 	}
 
@@ -62,8 +67,18 @@ public partial class TimeAttack : Menu
 				currentSelection = WrapSelection(currentSelection, maxSelection, 1);
 
 			if (input.X == 0)
+			{
+				description.Text = buttonList[currentSelection - 1].description;
 				description.ShowDescription();
-			timeAttackAnimator.Play("select-" + currentSelection);
+			}
+
+			//timeAttackAnimator.Play("select-" + currentSelection);
+			for (int i = 0; i < buttonList.Count; i++)
+			{
+				buttonList[i].DeselectButton();
+			}
+			buttonImageAnimator.Play("show");
+			buttonList[currentSelection - 1].SelectButton();
 		}
 		else
 			return;
@@ -73,7 +88,7 @@ public partial class TimeAttack : Menu
 	{
 		if (isActive)
 			if (currentSelection != 2)//custom runs aren't going to be in this version
-				timeAttackAnimator.Play("confirm-" + currentSelection);
+				buttonList[currentSelection - 1].ConfirmButton();
 	}
 
 	protected override void Cancel()
@@ -86,6 +101,6 @@ public partial class TimeAttack : Menu
 	public void SetActive() => isActive = true;
 	public void SetInactive() => isActive = false;
 
-
+	public void ChangeButtonImage() => buttonImage.Texture = buttonList[currentSelection - 1].image;
 
 }
