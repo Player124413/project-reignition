@@ -222,6 +222,8 @@ public partial class Runtime : Node
 	public delegate void EventInputedEventHandler(InputEvent e);
 
 	public bool IsUsingController => ActiveController != -1;
+	/// <summary> Set this to track whether we're using the mouse in a menu. </summary>
+	public bool IsUsingMouse { get; set; }
 	public int ActiveController { get; private set; }
 
 	/// <summary> Gets the ControllerType of the active controller. </summary>

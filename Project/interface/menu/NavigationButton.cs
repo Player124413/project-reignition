@@ -39,6 +39,7 @@ public partial class NavigationButton : Control
 	private Label ActionLabel { get; set; }
 
 	[Export] private LabelSettings[] keyboardLabelSettings;
+	private readonly int MouseSpriteIndexOffset = 1;
 
 	public override void _Ready()
 	{
@@ -89,6 +90,7 @@ public partial class NavigationButton : Control
 		InputEventKey key = null;
 		InputEventJoypadButton button = null;
 		InputEventJoypadMotion motion = null;
+		InputEventMouseButton mouse = null;
 
 		for (int i = 0; i < eventList.Count; i++)
 		{
@@ -98,6 +100,8 @@ public partial class NavigationButton : Control
 				button = eventList[i] as InputEventJoypadButton;
 			else if (eventList[i] is InputEventJoypadMotion)
 				motion = eventList[i] as InputEventJoypadMotion;
+			else if (eventList[i] is InputEventMouseButton)
+				mouse = eventList[i] as InputEventMouseButton;
 		}
 
 		if (Runtime.Instance.IsUsingController)
@@ -116,6 +120,13 @@ public partial class NavigationButton : Control
 
 			int axis = Runtime.Instance.ControllerAxisToIndex(motion);
 			ButtonTextureRect.Texture = GetActiveSpriteResource(controllerIndex).axis[axis];
+			return true;
+		}
+
+		if (mouse != null && Runtime.Instance.IsUsingMouse)
+		{
+			ButtonLabel.Visible = false;
+			ButtonTextureRect.Texture = GetActiveSpriteResource(controllerResources.Length - 1).buttons[(int)mouse.ButtonIndex + MouseSpriteIndexOffset];
 			return true;
 		}
 
