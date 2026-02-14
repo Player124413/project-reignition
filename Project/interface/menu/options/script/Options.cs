@@ -9,9 +9,10 @@ public partial class Options : Menu
 	[Export] private Control cursor;
 	[Export] private AnimationPlayer cursorAnimator;
 	[Export] private Control contentContainer;
+	private bool isCursorHidden;
 
 	[Export] private AnimationPlayer resetAnimator;
-	private bool isResetSelected;
+	private int resetSelection;
 
 	private int maxSelection;
 	private int scrollOffset;
@@ -38,7 +39,7 @@ public partial class Options : Menu
 				maxSelection = 4;
 				break;
 			case Submenus.Control:
-				maxSelection = 7; // TODO Add 1 here if we ever add party mode;
+				maxSelection = 8;
 				break;
 			case Submenus.Interface:
 				maxSelection = 8;
@@ -89,6 +90,7 @@ public partial class Options : Menu
 
 		cursorBasePosition = cursor.Position.Y;
 		SetUpControlOptions();
+		ConnectMouseSignals();
 		UpdateLabels();
 		CalculateMaxSelection();
 		UpdatePartyModeDevice(0);
@@ -165,6 +167,14 @@ public partial class Options : Menu
 
 	protected override void Confirm()
 	{
+		if (isCursorHidden)
+		{
+			if (!Runtime.Instance.IsUsingMouse)
+				UpdateVerticalSelection();
+
+			return;
+		}
+
 		switch (currentSubmenu)
 		{
 			case Submenus.Options:
@@ -211,7 +221,10 @@ public partial class Options : Menu
 				return;
 			case Submenus.ResetSettings:
 			case Submenus.ResetControls:
-				if (!isResetSelected)
+				if (resetSelection == -1)
+					return;
+
+				if (resetSelection == 1)
 				{
 					CancelResetMenu();
 					return;
@@ -301,13 +314,13 @@ public partial class Options : Menu
 
 	private void CancelResetMenu()
 	{
-		if (isResetSelected)
+		if (resetSelection != 1)
 		{
 			resetAnimator.Play("select-no");
 			resetAnimator.Advance(0.0);
 		}
 
-		isResetSelected = false;
+		resetSelection = 1;
 		resetAnimator.Play("hide");
 		currentSubmenu = currentSubmenu == Submenus.ResetSettings ? Submenus.Options : Submenus.Control;
 	}
@@ -357,10 +370,19 @@ public partial class Options : Menu
 			return;
 		}
 
-		StartSelectionTimer();
-		int targetSelection = VerticalSelection + Mathf.Sign(Input.GetAxis("ui_up", "ui_down"));
-		VerticalSelection = WrapSelection(targetSelection, maxSelection);
+		if (!isCursorHidden)
+		{
+			int targetSelection = VerticalSelection + Mathf.Sign(Input.GetAxis("ui_up", "ui_down"));
+			VerticalSelection = WrapSelection(targetSelection, maxSelection);
+		}
 
+		StartSelectionTimer();
+		UpdateVerticalSelection();
+	}
+
+	private void UpdateVerticalSelection()
+	{
+		isCursorHidden = false;
 		animator.Play("select");
 		animator.Seek(0, true);
 		cursorAnimator.Play("show");
@@ -428,6 +450,7 @@ public partial class Options : Menu
 		CallDeferred(MethodName.UpdateCursor);
 	}
 
+	[Export] private Control[] mouseInputParents;
 	[Export] private Label[] videoLabels;
 	[Export] private Label[] audioLabels;
 	[Export] private Label[] controlMouseLabels;
@@ -689,12 +712,11 @@ public partial class Options : Menu
 
 		if (currentSubmenu == Submenus.ResetSettings || currentSubmenu == Submenus.ResetControls)
 		{
-			if ((direction > 0 && isResetSelected) || (direction < 0 && !isResetSelected))
+			if ((direction > 0 && resetSelection != 1) || (direction < 0 && resetSelection != 0))
 			{
-				isResetSelected = !isResetSelected;
-				resetAnimator.Play(isResetSelected ? "select-yes" : "select-no");
+				resetSelection = direction > 0 ? 1 : 0;
+				UpdateResetMenuVisuals();
 			}
-
 			return;
 		}
 
@@ -792,8 +814,7 @@ public partial class Options : Menu
 		}
 		else if (VerticalSelection == 6)
 		{
-			SaveManager.Config.renderScale += direction * 10;
-			SaveManager.Config.renderScale = Mathf.Clamp(SaveManager.Config.renderScale, 10, 150);
+			SaveManager.Config.renderScale = WrapSelection(SaveManager.Config.renderScale + direction * 10, 150, 10);
 		}
 		else if (VerticalSelection == 7)
 		{
@@ -802,7 +823,7 @@ public partial class Options : Menu
 			resizeMode = WrapSelection(resizeMode + direction, (int)RenderingServer.ViewportScaling3DMode.Fsr2 + 1);
 			SaveManager.Config.resizeMode = (RenderingServer.ViewportScaling3DMode)resizeMode;
 		}
-		else if (VerticalSelection == 8) // TODO Change this to 6 when upgrading to godot v4.3
+		else if (VerticalSelection == 8)
 		{
 			SaveManager.Config.antiAliasing = WrapSelection(SaveManager.Config.antiAliasing + direction, 3);
 		}
@@ -966,7 +987,7 @@ public partial class Options : Menu
 		return true;
 	}
 
-	private int SlidePercentage(int current, int direction, int min = 0, int max = 100) => Mathf.Clamp(current + direction * 5, min, max);
+	private int SlidePercentage(int current, int direction, int min = 0, int max = 100) => WrapSelection(current + direction * 5, max, min);
 	private bool IsSlideVolumeValid(int current, int direction) => (current > 0 && direction == -1) || (current < 100 && direction == 1);
 
 	private bool SlideLanguageOption(int direction)
@@ -1005,7 +1026,7 @@ public partial class Options : Menu
 		if (VerticalSelection == 0)
 		{
 			float deadZone = SaveManager.Config.deadZone;
-			deadZone = Mathf.Clamp(deadZone + (.1f * direction), .1f, .9f);
+			deadZone = WrapSelection(deadZone + (direction * .1f), .9f, .1f);
 			SaveManager.Config.deadZone = deadZone;
 			SaveManager.ApplyInputMap();
 			return true;
@@ -1196,10 +1217,21 @@ public partial class Options : Menu
 
 	private void ShowResetMenu()
 	{
+		if (Runtime.Instance.IsUsingMouse)
+		{
+			resetAnimator.Play("select-none");
+			resetSelection = -1;
+		}
+		else
+		{
+			resetAnimator.Play("select-no");
+			resetSelection = 1;
+		}
+		resetAnimator.Advance(0.0);
+
 		resetAnimator.Play(currentSubmenu == Submenus.ResetSettings ? "text-settings" : "text-controls");
 		resetAnimator.Advance(0.0);
 		resetAnimator.Play("show");
-		isResetSelected = false;
 	}
 
 	private void ConfirmVideoOption()
@@ -1247,16 +1279,13 @@ public partial class Options : Menu
 			case 4:
 				FlipBook(Submenus.Mapping, false, 0);
 				break;
-			/*
-			TODO Shift options by one and uncomment this if we ever add party mode
 			case 5:
 				FlipBook(Submenus.PartyMapping, false, 0);
 				break;
-			*/
-			case 5:
+			case 6:
 				FlipBook(Submenus.Test, false, VerticalSelection);
 				break;
-			case 6:
+			case 7:
 				currentSubmenu = Submenus.ResetControls;
 				ShowResetMenu();
 				return;
@@ -1290,5 +1319,74 @@ public partial class Options : Menu
 	{
 		animator.Play("cancel");
 		animator.Advance(0.0);
+	}
+
+	protected override void ReceiveMouseHorizontalInput(int selection)
+	{
+		if (!isProcessing)
+			return;
+
+		if (currentSubmenu == Submenus.ResetSettings || currentSubmenu == Submenus.ResetControls)
+		{
+			resetSelection = selection;
+			UpdateResetMenuVisuals();
+			Runtime.Instance.IsUsingMouse = true;
+			return;
+		}
+
+		base.ReceiveMouseHorizontalInput(selection);
+	}
+
+	protected override void ReceiveMouseInput(Node selection)
+	{
+		if (!isProcessing)
+			return;
+
+		if (currentSubmenu == Submenus.ResetSettings || currentSubmenu == Submenus.ResetControls)
+			return;
+
+		if (selection == null)
+		{
+			isCursorHidden = true;
+			cursorAnimator.Play("hide");
+			return;
+		}
+
+		Runtime.Instance.IsUsingMouse = true;
+		VerticalSelection = selection.GetIndex();
+		UpdateVerticalSelection();
+	}
+
+	private void UpdateResetMenuVisuals()
+	{
+		if (resetSelection == -1)
+		{
+			resetAnimator.Play("select-none");
+			return;
+		}
+
+		resetAnimator.Play(resetSelection == 0 ? "select-yes" : "select-no");
+	}
+
+	/// <summary> Connects all the mouse signals programmatically. </summary>
+	private void ConnectMouseSignals()
+	{
+		foreach (Control node in mouseInputParents)
+			ConnectMouseSignals(node);
+	}
+
+	private void ConnectMouseSignals(Node parentNode)
+	{
+		for (int i = 0; i < parentNode.GetChildCount(); i++)
+		{
+			Control node = parentNode.GetChildOrNull<Control>(i);
+
+			if (node == null)
+				continue;
+
+			node.MouseFilter = MouseFilterEnum.Stop;
+			node.MouseEntered += () => ReceiveMouseInput(node);
+			node.MouseExited += () => ReceiveMouseInput(null);
+		}
 	}
 }

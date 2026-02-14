@@ -166,7 +166,8 @@ public partial class Menu : Control
 	protected readonly float SelectionScrollingInterval = .1f;
 	protected virtual void ProcessMenu()
 	{
-		if (Runtime.Instance.IsActionJustPressed("sys_select", "ui_select"))
+		if (Runtime.Instance.IsActionJustPressed("sys_select", "ui_select") ||
+			(Runtime.Instance.IsUsingMouse && Input.IsActionJustPressed("mouse_left")))
 		{
 			Confirm();
 			return;
@@ -180,6 +181,7 @@ public partial class Menu : Control
 
 		if (Input.GetVector("ui_left", "ui_right", "ui_up", "ui_down").Length() > SaveManager.Config.deadZone)
 		{
+			Runtime.Instance.IsUsingMouse = false;
 			if (Mathf.IsZeroApprox(cursorSelectionTimer))
 				UpdateSelection();
 			else
@@ -246,6 +248,17 @@ public partial class Menu : Control
 		return currentSelection;
 	}
 
+	/// <summary> Wraps a selection around max and min selection </summary>
+	protected float WrapSelection(float currentSelection, float maxSelection, float minSelection)
+	{
+		if (currentSelection < minSelection)
+			currentSelection = maxSelection;
+		else if (currentSelection > maxSelection)
+			currentSelection = minSelection;
+
+		return currentSelection;
+	}
+
 	private bool isFadingIn;
 	public float CurrentBgmTime
 	{
@@ -303,5 +316,15 @@ public partial class Menu : Control
 
 		if (!SoundManager.FadeAudioPlayer(bgm, bgmFadeTime))
 			bgmFadeTime = 0.0f; // Reset fade time
+	}
+
+	protected virtual void ReceiveMouseHorizontalInput(int selection)
+	{
+		GD.Print("Mouse Input Unimplemented.");
+	}
+
+	protected virtual void ReceiveMouseInput(Node selection)
+	{
+		GD.Print("Mouse Input Unimplemented.");
 	}
 }
