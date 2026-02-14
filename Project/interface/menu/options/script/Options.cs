@@ -543,11 +543,24 @@ public partial class Options : Menu
 		languageLabels[3].Text = GetVoiceLanguageKey(SaveManager.Config.voiceLanguage);
 
 
-		controlMouseLabels[0].Text = SaveManager.Config.enableMouseControls ? EnabledString : DisabledString;
-		controlMouseLabels[1].Text = $"{SaveManager.Config.mouseDeadzone}%";
-		controlMouseLabels[2].Text = $"{SaveManager.Config.mouseHorizontalRange}%";
-		controlMouseLabels[3].Text = $"{SaveManager.Config.mouseVerticalRange}%";
-		controlMouseLabels[4].Text = $"{SaveManager.Config.mouseVerticalOffset}%";
+		switch (SaveManager.Config.mouseControlMode)
+		{
+			case SaveManager.MouseControlModeEnum.Disabled:
+				controlMouseLabels[0].Text = DisabledString;
+				break;
+			case SaveManager.MouseControlModeEnum.Absolute:
+				controlMouseLabels[0].Text = "option_mouse_positional";
+				break;
+			case SaveManager.MouseControlModeEnum.Relative:
+				controlMouseLabels[0].Text = "option_mouse_motional";
+				break;
+		}
+		controlMouseLabels[1].Text = SaveManager.Config.isMouseVerticalEnabled ? EnabledString : DisabledString;
+		controlMouseLabels[2].Text = $"{SaveManager.Config.mouseSensitivity}%";
+		controlMouseLabels[3].Text = $"{SaveManager.Config.mouseDeadzone}%";
+		controlMouseLabels[4].Text = $"{SaveManager.Config.mouseHorizontalRange}%";
+		controlMouseLabels[5].Text = $"{SaveManager.Config.mouseVerticalRange}%";
+		controlMouseLabels[6].Text = $"{SaveManager.Config.mouseVerticalOffset}%";
 
 		controlLabels[0].Text = $"{Mathf.RoundToInt(SaveManager.Config.deadZone * 100)}%";
 		controlLabels[1].Text = SaveManager.Config.useHoldBreakMode ? HoldString : ToggleString;
@@ -1067,27 +1080,39 @@ public partial class Options : Menu
 	{
 		if (VerticalSelection == 0)
 		{
-			SaveManager.Config.enableMouseControls = !SaveManager.Config.enableMouseControls;
+			SaveManager.Config.mouseControlMode =
+				(SaveManager.MouseControlModeEnum)WrapSelection((int)SaveManager.Config.mouseControlMode + direction,
+				(int)SaveManager.MouseControlModeEnum.Count);
 			return true;
 		}
 		else if (VerticalSelection == 1)
+		{
+			SaveManager.Config.isMouseVerticalEnabled = !SaveManager.Config.isMouseVerticalEnabled;
+			return true;
+		}
+		else if (VerticalSelection == 2)
+		{
+			SaveManager.Config.mouseSensitivity = SlidePercentage(SaveManager.Config.mouseSensitivity, direction, 0, 200);
+			return true;
+		}
+		else if (VerticalSelection == 3)
 		{
 			SaveManager.Config.mouseDeadzone = SlidePercentage(SaveManager.Config.mouseDeadzone, direction);
 			SaveManager.Config.mouseHorizontalRange = Mathf.Max(SaveManager.Config.mouseHorizontalRange, SaveManager.Config.mouseDeadzone);
 			SaveManager.Config.mouseVerticalRange = Mathf.Max(SaveManager.Config.mouseVerticalRange, SaveManager.Config.mouseDeadzone);
 			return true;
 		}
-		else if (VerticalSelection == 2)
+		else if (VerticalSelection == 4)
 		{
 			SaveManager.Config.mouseHorizontalRange = SlidePercentage(SaveManager.Config.mouseHorizontalRange, direction);
 			return true;
 		}
-		else if (VerticalSelection == 3)
+		else if (VerticalSelection == 5)
 		{
 			SaveManager.Config.mouseVerticalRange = SlidePercentage(SaveManager.Config.mouseVerticalRange, direction);
 			return true;
 		}
-		else if (VerticalSelection == 4)
+		else if (VerticalSelection == 6)
 		{
 			SaveManager.Config.mouseVerticalOffset = SlidePercentage(SaveManager.Config.mouseVerticalOffset, direction, -100);
 			return true;

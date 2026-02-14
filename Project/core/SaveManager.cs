@@ -97,6 +97,14 @@ public partial class SaveManager : Node
 		Count
 	}
 
+	public enum MouseControlModeEnum
+	{
+		Disabled,
+		Absolute,
+		Relative,
+		Count
+	}
+
 	public enum JumpButtonModeEnum
 	{
 		Both,
@@ -268,7 +276,10 @@ public partial class SaveManager : Node
 		public float deadZone = .2f;
 		public ControllerType controllerType = ControllerType.Automatic;
 		public bool useHoldBreakMode = true;
-		public bool enableMouseControls = true;
+		public MouseControlModeEnum mouseControlMode = MouseControlModeEnum.Disabled;
+		public bool isMouseVerticalEnabled = true;
+		/// <summary> Mouse motion sensitivity. </summary>
+		public int mouseSensitivity = 100;
 		/// <summary> How much to ignore mouse controls in the center of the screen. </summary>
 		public int mouseDeadzone = 15;
 		/// <summary> How much counts as "max mouse movement." </summary>
@@ -341,7 +352,9 @@ public partial class SaveManager : Node
 				{ nameof(useHoldBreakMode), useHoldBreakMode },
 				{ nameof(jumpButtonMode), (int)jumpButtonMode },
 
-				{ nameof(enableMouseControls), enableMouseControls },
+				{ nameof(mouseControlMode), (int)mouseControlMode },
+				{ nameof(isMouseVerticalEnabled), isMouseVerticalEnabled },
+				{ nameof(mouseSensitivity), mouseSensitivity },
 				{ nameof(mouseDeadzone), mouseDeadzone },
 				{ nameof(mouseHorizontalRange), mouseHorizontalRange },
 				{ nameof(mouseVerticalRange), mouseVerticalRange },
@@ -440,8 +453,12 @@ public partial class SaveManager : Node
 			if (dictionary.TryGetValue(nameof(jumpButtonMode), out var))
 				jumpButtonMode = (JumpButtonModeEnum)(int)var;
 
-			if (dictionary.TryGetValue(nameof(enableMouseControls), out var))
-				enableMouseControls = (bool)var;
+			if (dictionary.TryGetValue(nameof(mouseControlMode), out var))
+				mouseControlMode = (MouseControlModeEnum)(int)var;
+			if (dictionary.TryGetValue(nameof(isMouseVerticalEnabled), out var))
+				isMouseVerticalEnabled = (bool)var;
+			if (dictionary.TryGetValue(nameof(mouseSensitivity), out var))
+				mouseSensitivity = (int)var;
 			if (dictionary.TryGetValue(nameof(mouseDeadzone), out var))
 				mouseDeadzone = (int)var;
 			if (dictionary.TryGetValue(nameof(mouseHorizontalRange), out var))

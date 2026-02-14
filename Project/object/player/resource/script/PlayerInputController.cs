@@ -107,15 +107,26 @@ public partial class PlayerInputController : Node
 
 	/// <summary> Constant to convert floats ratios to int percentages.  </summary>
 	private readonly float MouseConversionFactor = 100f;
+	private readonly float MouseMotionDenominator = 40f;
+	private readonly float MouseMotionDeadzone = 5f;
 	private void ProcessMouseMovement()
 	{
-		if (!SaveManager.Config.enableMouseControls || Runtime.Instance.IsUsingController)
+		if (SaveManager.Config.mouseControlMode == SaveManager.MouseControlModeEnum.Disabled || Runtime.Instance.IsUsingController)
 		{
 			// Disable mouse inputs
 			mouseInput = Vector2.Zero;
 			return;
 		}
 
+		if (SaveManager.Config.mouseControlMode == SaveManager.MouseControlModeEnum.Absolute)
+			ProcessPositionalMouseInputs();
+
+		if (SaveManager.Config.mouseControlMode == SaveManager.MouseControlModeEnum.Relative)
+			ProcessRelativeMouseInputs();
+	}
+
+	private void ProcessPositionalMouseInputs()
+	{
 		// Convert input ranges to [-100f, 100f]
 		Vector2 inputRatio = (Runtime.Instance.MousePositionRatio - Vector2.One * 0.5f) * 2f * MouseConversionFactor;
 		inputRatio.Y += SaveManager.Config.mouseVerticalOffset;
@@ -129,7 +140,7 @@ public partial class PlayerInputController : Node
 			mouseInput.X = Mathf.Clamp(mouseInput.X, -1f, 1f);
 		}
 
-		if (Mathf.Abs(inputRatio.Y) < SaveManager.Config.mouseDeadzone)
+		if (Mathf.Abs(inputRatio.Y) < SaveManager.Config.mouseDeadzone || !SaveManager.Config.isMouseVerticalEnabled)
 		{
 			mouseInput.Y = 0f;
 		}
@@ -138,6 +149,30 @@ public partial class PlayerInputController : Node
 			mouseInput.Y = (inputRatio.Y - SaveManager.Config.mouseDeadzone) / (SaveManager.Config.mouseVerticalRange - SaveManager.Config.mouseDeadzone);
 			mouseInput.Y = Mathf.Clamp(mouseInput.Y, -1f, 1f);
 		}
+	}
+
+	private void ProcessRelativeMouseInputs()
+	{
+		Vector2 inputRatio = Runtime.Instance.MouseMotionAmount;
+		float deadzone = MouseMotionDeadzone * SaveManager.Config.mouseSensitivity / MouseConversionFactor;
+		if (Mathf.Abs(inputRatio.X) < deadzone)
+		{
+			mouseInput.X = 0;
+		}
+		else
+		{
+			mouseInput.X = inputRatio.X / MouseMotionDenominator;
+			mouseInput.X = Mathf.Clamp(mouseInput.X, -1f, 1f);
+		}
+
+		if (Mathf.Abs(inputRatio.Y) < deadzone || !SaveManager.Config.isMouseVerticalEnabled)
+		{
+			mouseInput.Y = 0f;
+			return;
+		}
+
+		mouseInput.Y = inputRatio.Y / MouseMotionDenominator;
+		mouseInput.Y = Mathf.Clamp(mouseInput.Y, -1f, 1f);
 	}
 
 	private void UpdateJumpBuffer()

@@ -10,6 +10,8 @@ public partial class Runtime : Node
 
 	/// <summary> Stores the mouse's current position in a ratio from [0, 1]. </summary>
 	public Vector2 MousePositionRatio { get; private set; }
+	/// <summary> Stores the mouse's current position in a ratio from [0, 1]. </summary>
+	public Vector2 MouseMotionAmount { get; private set; }
 
 	public static readonly RandomNumberGenerator randomNumberGenerator = new();
 	public static readonly Vector2I ScreenSize = new(1920, 1080); // Working resolution is 1080p
@@ -30,6 +32,20 @@ public partial class Runtime : Node
 	public override void _Process(double _)
 	{
 		UpdateShaderTime();
+		SetDeferred("MouseMotionAmount", Vector2.Zero);
+
+		if (IsInstanceValid(StageSettings.Player) && !StageSettings.Player.Camera.IsFreeCamActive)
+		{
+			if (SaveManager.Config.mouseControlMode == SaveManager.MouseControlModeEnum.Relative &&
+				IsInstanceValid(StageSettings.Player) && !GetTree().Paused && StageSettings.Player.ProcessMode != ProcessModeEnum.Disabled)
+			{
+				Input.MouseMode = Input.MouseModeEnum.Captured;
+			}
+			else
+			{
+				Input.MouseMode = Input.MouseModeEnum.Visible;
+			}
+		}
 
 		SaveManager.SharedData.PlayTime = Mathf.MoveToward(SaveManager.SharedData.PlayTime,
 			SaveManager.MaxPlayTime, PhysicsManager.normalDelta);
@@ -241,6 +257,7 @@ public partial class Runtime : Node
 		if (e is InputEventMouseMotion)
 		{
 			MousePositionRatio = (e as InputEventMouseMotion).GlobalPosition / GetTree().Root.GetViewport().GetVisibleRect().Size;
+			MouseMotionAmount += (e as InputEventMouseMotion).ScreenRelative * SaveManager.Config.mouseSensitivity * 0.01f;
 			return;
 		}
 
