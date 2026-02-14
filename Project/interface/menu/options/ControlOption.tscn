@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://c1806dq45a0kr"]
+[gd_scene load_steps=13 format=3 uid="uid://c1806dq45a0kr"]
 
 [ext_resource type="Script" uid="uid://cj4q86y363rx1" path="res://interface/menu/options/script/ControlOption.cs" id="1_l770c"]
 [ext_resource type="Resource" uid="uid://dqn88r0wddcgn" path="res://resource/preset/controller/OptionsPS5.tres" id="4_2yyor"]
@@ -11,11 +11,11 @@
 [ext_resource type="Texture2D" uid="uid://de1iybk0pcbe1" path="res://resource/input sprites/options/stick/l_up.png" id="7_hmihf"]
 [ext_resource type="Texture2D" uid="uid://8emhmyf8wpl1" path="res://resource/input sprites/options/key_wide.png" id="8_qnsnd"]
 [ext_resource type="LabelSettings" uid="uid://btm3wgyx33lcg" path="res://interface/font/OptionKeyboardSettings.tres" id="9_kqp1m"]
+[ext_resource type="Texture2D" uid="uid://choia6fcsf4vm" path="res://resource/input sprites/options/mouse_left.png" id="10_ntmlp"]
 
 [node name="ControlOption" type="Control"]
 custom_minimum_size = Vector2(0, 48)
 layout_mode = 3
-anchors_preset = 0
 offset_right = 1920.0
 offset_bottom = 48.0
 script = ExtResource("1_l770c")
@@ -23,6 +23,7 @@ actionLabel = NodePath("ActionLabel")
 inputLabel = NodePath("Input/KeySprite/InputLabel")
 awaitingInput = NodePath("WaitingLabel")
 keyTextureRect = NodePath("Input/KeySprite")
+mouseTextureRect = NodePath("Input/MouseSprite")
 axisTextureRect = NodePath("Input/AxisSprite")
 buttonTextureRect = NodePath("Input/ButtonSprite")
 controllerResources = Array[Resource]([ExtResource("4_2yyor"), ExtResource("5_16qra"), ExtResource("4_7e2p2"), ExtResource("5_0cpl6"), ExtResource("4_17ddv")])
@@ -30,7 +31,7 @@ controllerResources = Array[Resource]([ExtResource("4_2yyor"), ExtResource("5_16
 [node name="ActionLabel" type="Label" parent="."]
 custom_minimum_size = Vector2(0, 48)
 layout_mode = 1
-anchors_preset = 9
+anchors_preset = -1
 anchor_bottom = 1.0
 offset_right = 261.0
 grow_vertical = 2
@@ -42,7 +43,7 @@ uppercase = true
 [node name="WaitingLabel" type="Label" parent="."]
 visible = false
 layout_mode = 1
-anchors_preset = 11
+anchors_preset = -1
 anchor_left = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -57,7 +58,7 @@ uppercase = true
 
 [node name="Input" type="HBoxContainer" parent="."]
 layout_mode = 1
-anchors_preset = 6
+anchors_preset = -1
 anchor_left = 1.0
 anchor_top = 0.5
 anchor_right = 1.0
@@ -82,7 +83,7 @@ stretch_mode = 3
 
 [node name="InputLabel" type="Label" parent="Input/KeySprite"]
 layout_mode = 1
-anchors_preset = 15
+anchors_preset = -1
 anchor_right = 1.0
 anchor_bottom = 1.0
 offset_top = -1.42857
@@ -97,16 +98,23 @@ horizontal_alignment = 1
 vertical_alignment = 1
 uppercase = true
 
+[node name="MouseSprite" type="TextureRect" parent="Input"]
+self_modulate = Color(0.6, 0, 0, 1)
+custom_minimum_size = Vector2(120, 100)
+layout_mode = 2
+texture = ExtResource("10_ntmlp")
+stretch_mode = 3
+
 [node name="AxisSprite" type="TextureRect" parent="Input"]
 self_modulate = Color(0.6, 0, 0, 1)
-custom_minimum_size = Vector2(192, 100)
+custom_minimum_size = Vector2(120, 100)
 layout_mode = 2
 texture = ExtResource("7_hmihf")
 stretch_mode = 3
 
 [node name="ButtonSprite" type="TextureRect" parent="Input"]
 self_modulate = Color(0.6, 0, 0, 1)
-custom_minimum_size = Vector2(192, 100)
+custom_minimum_size = Vector2(120, 100)
 layout_mode = 2
 texture = ExtResource("7_b4hlo")
 stretch_mode = 3

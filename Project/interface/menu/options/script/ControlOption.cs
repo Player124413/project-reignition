@@ -35,6 +35,9 @@ public partial class ControlOption : Control
 	private NodePath keyTextureRect;
 	private TextureRect KeyTextureRect { get; set; }
 	[Export(PropertyHint.NodePathValidTypes, "TextureRect")]
+	private NodePath mouseTextureRect;
+	private TextureRect MouseTextureRect { get; set; }
+	[Export(PropertyHint.NodePathValidTypes, "TextureRect")]
 	private NodePath axisTextureRect;
 	private TextureRect AxisTextureRect { get; set; }
 	[Export(PropertyHint.NodePathValidTypes, "TextureRect")]
@@ -42,6 +45,8 @@ public partial class ControlOption : Control
 	private TextureRect ButtonTextureRect { get; set; }
 	[Export(PropertyHint.ArrayType, "ControllerSpriteResource")]
 	private ControllerSpriteResource[] controllerResources;
+
+	private readonly int MouseSpriteIndexOffset = 1;
 
 	public bool IsReady => state == RemapState.Ready;
 
@@ -59,6 +64,7 @@ public partial class ControlOption : Control
 		InputLabel = GetNodeOrNull<Label>(inputLabel);
 		AwaitingInput = GetNodeOrNull<Control>(awaitingInput);
 		KeyTextureRect = GetNodeOrNull<TextureRect>(keyTextureRect);
+		MouseTextureRect = GetNodeOrNull<TextureRect>(mouseTextureRect);
 		AxisTextureRect = GetNodeOrNull<TextureRect>(axisTextureRect);
 		ButtonTextureRect = GetNodeOrNull<TextureRect>(buttonTextureRect);
 
@@ -105,7 +111,7 @@ public partial class ControlOption : Control
 		{
 			if (state != RemapState.Listening) return;
 			if (!e.IsPressed() || e.IsEcho()) return; // Only listen for press
-			if (e is not (InputEventKey or InputEventJoypadButton or InputEventJoypadMotion)) return; // Only listen for keys and button presses.
+			if (e is not (InputEventKey or InputEventMouseButton or InputEventJoypadButton or InputEventJoypadMotion)) return; // Only listen for keys and button presses.
 
 			// Allow user to cancel remapping if ESC is pressed or the action already has the target event
 			if ((e is InputEventKey && (e as InputEventKey).Keycode == Key.Escape) ||
@@ -197,7 +203,8 @@ public partial class ControlOption : Control
 
 			if ((e is InputEventKey key && key.Keycode == Key.None) ||
 				(e is InputEventJoypadMotion motion && motion.Axis == JoyAxis.Max) ||
-				(e is InputEventJoypadButton button && button.ButtonIndex == JoyButton.Max))
+				(e is InputEventJoypadButton button && button.ButtonIndex == JoyButton.Max) ||
+				(e is InputEventMouseButton mouse && mouse.ButtonIndex == MouseButton.None))
 			{
 				break;
 			}
@@ -217,6 +224,8 @@ public partial class ControlOption : Control
 			{
 				if (e is InputEventKey)
 					swapEvent = new InputEventKey() { Keycode = Key.None };
+				else if (e is InputEventMouseButton)
+					swapEvent = new InputEventMouseButton() { ButtonIndex = MouseButton.None };
 				else if (e is InputEventJoypadMotion)
 					swapEvent = new InputEventJoypadMotion() { Axis = JoyAxis.Max };
 				else if (e is InputEventJoypadButton)
@@ -234,6 +243,21 @@ public partial class ControlOption : Control
 	private bool FilterInput(InputEvent e)
 	{
 		bool isSystemInput = inputId.ToString().StartsWith("sys_");
+
+		if (e is InputEventMouseButton mouse)
+		{
+			switch (mouse.ButtonIndex)
+			{
+				case MouseButton.Left:
+					return true;
+				case MouseButton.Right:
+					return true;
+				case MouseButton.Middle:
+					return true;
+				default:
+					return false;
+			}
+		}
 
 		if (e is InputEventJoypadButton button) // Exclude certain buttons (such as guides)
 		{
@@ -308,6 +332,7 @@ public partial class ControlOption : Control
 		ActionLabel.Text = Tr(actionId);
 
 		KeyTextureRect.Modulate = Colors.Transparent;
+		MouseTextureRect.Modulate = Colors.Transparent;
 		ButtonTextureRect.Modulate = Colors.Transparent;
 		AxisTextureRect.Modulate = Colors.Transparent;
 		AwaitingInput.Visible = state == RemapState.Listening;
@@ -316,7 +341,6 @@ public partial class ControlOption : Control
 			return;
 
 		Array<InputEvent> eventList = InputMap.ActionGetEvents(ActionName);
-
 		for (int i = 0; i < eventList.Count; i++)
 		{
 			if (eventList[i] is InputEventJoypadButton button1)
@@ -341,10 +365,17 @@ public partial class ControlOption : Control
 				KeyTextureRect.Modulate = Colors.White;
 
 				InputLabel.Text = Runtime.Instance.GetKeyLabel(key.Keycode);
-				bool isShortButton = InputLabel.Text.Length <= 1;
+				bool isShortButton = InputLabel.Text.Length <= 2;
 				int keySpriteIndex = isShortButton ? 0 : 1;
 				InputLabel.Scale = isShortButton ? Vector2.One * 1.5f : Vector2.One;
 				KeyTextureRect.Texture = controllerResources[^1].buttons[keySpriteIndex]; // Last controller resource should be the keyboard sprites
+				continue;
+			}
+
+			if (eventList[i] is InputEventMouseButton mouse)
+			{
+				MouseTextureRect.Modulate = Colors.White;
+				MouseTextureRect.Texture = controllerResources[^1].buttons[(int)mouse.ButtonIndex + MouseSpriteIndexOffset]; // Mouse shares keyboard controller sprites
 			}
 		}
 	}

@@ -786,7 +786,7 @@ public partial class SaveManager : Node
 		Array<InputEvent> eventList = InputMap.ActionGetEvents(action); // Refresh event list
 
 		// Construct the mapping string
-		int[] mappingList = [(int)Key.None, (int)JoyAxis.Invalid, (int)JoyButton.Invalid];
+		int[] mappingList = [(int)Key.None, (int)JoyAxis.Invalid, (int)JoyButton.Invalid, (int)MouseButton.None];
 		int axisSign = 0;
 		foreach (var e in eventList)
 		{
@@ -803,9 +803,13 @@ public partial class SaveManager : Node
 			{
 				mappingList[2] = (int)button.ButtonIndex;
 			}
+			else if (e is InputEventMouseButton mouse)
+			{
+				mappingList[3] = (int)mouse.ButtonIndex;
+			}
 		}
 
-		return $"{mappingList[0]}, {mappingList[1]}, {mappingList[2]}, {axisSign}";
+		return $"{mappingList[0]}, {mappingList[1]}, {mappingList[2]}, {axisSign}, {mappingList[3]}";
 	}
 
 	public static void SaveInputAction(StringName action)
@@ -825,6 +829,14 @@ public partial class SaveManager : Node
 		ApplyInputMap();
 	}
 
+	private static int GetInputMap(string[] mappings, int index)
+	{
+		if (mappings.Length <= index || !mappings[index].IsValidInt())
+			return 0;
+
+		return mappings[index].ToInt();
+	}
+
 	/// <summary> Applies input map configuration. </summary>
 	public static void ApplyInputMap()
 	{
@@ -838,12 +850,13 @@ public partial class SaveManager : Node
 			if (!Config.inputConfiguration.ContainsKey(actions[i]))
 				continue;
 
-			// Mappings are ordered in a [key, axis, button] format.
+			// Mappings are ordered in a [key, axis, button, axisSign, mouseButton] format.
 			string[] mappings = ((string)Config.inputConfiguration[actions[i]]).Split(',');
-			Key key = (Key)mappings[0].ToInt();
-			JoyAxis axis = (JoyAxis)mappings[1].ToInt();
-			JoyButton button = (JoyButton)mappings[2].ToInt();
-			int axisSign = mappings[3].ToInt();
+			Key key = (Key)GetInputMap(mappings, 0);
+			JoyAxis axis = (JoyAxis)GetInputMap(mappings, 1);
+			JoyButton button = (JoyButton)GetInputMap(mappings, 2);
+			int axisSign = GetInputMap(mappings, 3);
+			MouseButton mouse = (MouseButton)GetInputMap(mappings, 4);
 
 			InputMap.ActionEraseEvents(actions[i]);
 			InputMap.ActionSetDeadzone(actions[i], Config.deadZone);
@@ -870,6 +883,14 @@ public partial class SaveManager : Node
 				InputMap.ActionAddEvent(actions[i], new InputEventJoypadButton()
 				{
 					ButtonIndex = button
+				});
+			}
+
+			if (mouse != MouseButton.None)
+			{
+				InputMap.ActionAddEvent(actions[i], new InputEventMouseButton()
+				{
+					ButtonIndex = mouse
 				});
 			}
 		}
