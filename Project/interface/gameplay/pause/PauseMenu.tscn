@@ -1,4 +1,4 @@
-[gd_scene load_steps=71 format=3 uid="uid://coshp5qmt1aq7"]
+[gd_scene load_steps=72 format=3 uid="uid://coshp5qmt1aq7"]
 
 [ext_resource type="Script" uid="uid://dyfvgibst7wnn" path="res://interface/gameplay/pause/PauseMenu.cs" id="1_1kq15"]
 [ext_resource type="Texture2D" uid="uid://b6eevqhlu5ymx" path="res://interface/menu/level select/texture/fire soul.png" id="2_5bjqt"]
@@ -2914,6 +2914,10 @@ tracks/3/keys = {
 "values": [225.0]
 }
 
+[sub_resource type="Animation" id="Animation_ggndo"]
+resource_name = "select-none"
+step = 0.5
+
 [sub_resource type="Animation" id="Animation_1advk"]
 resource_name = "show"
 length = 0.46667004
@@ -3214,11 +3218,12 @@ _data = {
 &"select-2": SubResource("Animation_4d1pj"),
 &"select-3": SubResource("Animation_m3d5t"),
 &"select-4": SubResource("Animation_8i3vw"),
+&"select-none": SubResource("Animation_ggndo"),
 &"show": SubResource("Animation_1advk"),
 &"show-skill": SubResource("Animation_ecgsa")
 }
 
-[node name="Pause" type="Control" node_paths=PackedStringArray("pageAnimator", "statusAnimator", "selectionAnimator", "pauseCursorAnimator", "selectSfx", "cancelSfx", "description", "values", "missionTypeLabel", "missionDescriptionLabel", "fireSoulParent", "fireSoulRects", "rankRect", "noSkillLabel", "skillContainer", "skillCursor", "skillCursorAnimator", "levelSprite", "skillScrollbar")]
+[node name="Pause" type="Control" node_paths=PackedStringArray("mouseOptionParent", "pageAnimator", "statusAnimator", "selectionAnimator", "pauseCursorAnimator", "selectSfx", "cancelSfx", "description", "values", "missionTypeLabel", "missionDescriptionLabel", "fireSoulParent", "fireSoulRects", "rankRect", "noSkillLabel", "skillContainer", "skillCursor", "skillCursorAnimator", "levelSprite", "skillScrollbar")]
 process_mode = 3
 z_index = 50
 z_as_relative = false
@@ -3228,7 +3233,9 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
 script = ExtResource("1_1kq15")
+mouseOptionParent = NodePath("Pause/Options")
 pageAnimator = NodePath("PageAnimator")
 statusAnimator = NodePath("StatusAnimator")
 selectionAnimator = NodePath("SelectionAnimator")
@@ -3261,6 +3268,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
 color = Color(0, 0, 0, 0.705882)
 
 [node name="Clip" type="Control" parent="Pause"]
@@ -3271,6 +3279,7 @@ anchor_right = 1.0
 anchor_bottom = 0.98
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
 
 [node name="Background" type="TextureRect" parent="Pause/Clip"]
 material = ExtResource("9_m3d5t")
@@ -3285,6 +3294,7 @@ offset_bottom = 21.0
 grow_horizontal = 2
 grow_vertical = 2
 pivot_offset = Vector2(960, 540)
+mouse_filter = 2
 texture = ExtResource("10_8i3vw")
 
 [node name="LeftPosition" type="Control" parent="Pause"]
@@ -3292,6 +3302,7 @@ layout_mode = 1
 anchors_preset = 9
 anchor_bottom = 1.0
 grow_vertical = 2
+mouse_filter = 2
 
 [node name="ScrollLeft" type="TextureRect" parent="Pause/LeftPosition"]
 layout_mode = 1
@@ -3302,6 +3313,7 @@ offset_left = -95.0
 offset_right = 95.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
 texture = ExtResource("11_ojmwq")
 
 [node name="RightPosition" type="Control" parent="Pause"]
@@ -3312,6 +3324,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 0
 grow_vertical = 2
+mouse_filter = 2
 
 [node name="ScrollRight" type="TextureRect" parent="Pause/RightPosition"]
 layout_mode = 1
@@ -3323,6 +3336,7 @@ offset_left = -95.0
 offset_right = 95.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
 texture = ExtResource("12_yduh5")
 
 [node name="PauseAnchor" type="Control" parent="Pause"]
@@ -3337,6 +3351,7 @@ offset_right = -320.0
 offset_bottom = -60.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
 
 [node name="PauseLabel" type="Label" parent="Pause/PauseAnchor"]
 visible = false
@@ -3364,26 +3379,7 @@ offset_left = 0.6399994
 offset_top = 720.0
 offset_right = 0.6399994
 offset_bottom = 720.0
-
-[node name="PauseCursorAnchor" type="Control" parent="Pause/Options"]
-layout_mode = 1
-offset_left = -64.0
-offset_top = 25.0
-offset_right = -64.0
-offset_bottom = 25.0
-scale = Vector2(2, 2)
-
-[node name="Cursor" type="AnimatedSprite2D" parent="Pause/Options/PauseCursorAnchor"]
-material = ExtResource("9_m3d5t")
-sprite_frames = SubResource("SpriteFrames_fkuxm")
-autoplay = "default"
-offset = Vector2(0, -20)
-metadata/_edit_use_anchors_ = true
-
-[node name="PauseCursorAnimator" type="AnimationPlayer" parent="Pause/Options/PauseCursorAnchor"]
-libraries = {
-&"": SubResource("AnimationLibrary_qllxi")
-}
+mouse_filter = 2
 
 [node name="Continue" type="Label" parent="Pause/Options"]
 self_modulate = Color(1, 1, 1, 0.588235)
@@ -3391,6 +3387,7 @@ layout_mode = 1
 anchors_preset = -1
 offset_right = 374.0
 offset_bottom = 48.0
+mouse_filter = 0
 text = "pause_continue"
 label_settings = ExtResource("16_4h0p5")
 uppercase = true
@@ -3415,6 +3412,7 @@ anchors_preset = -1
 offset_top = 50.0
 offset_right = 408.0
 offset_bottom = 80.0
+mouse_filter = 0
 text = "pause_restart"
 label_settings = ExtResource("16_4h0p5")
 uppercase = true
@@ -3439,6 +3437,7 @@ anchors_preset = -1
 offset_top = 100.0
 offset_right = 318.0
 offset_bottom = 112.0
+mouse_filter = 0
 text = "pause_status"
 label_settings = ExtResource("16_4h0p5")
 uppercase = true
@@ -3463,6 +3462,7 @@ anchors_preset = -1
 offset_top = 150.0
 offset_right = 273.0
 offset_bottom = 198.0
+mouse_filter = 0
 text = "pause_skill"
 label_settings = ExtResource("16_4h0p5")
 uppercase = true
@@ -3487,6 +3487,7 @@ anchors_preset = -1
 offset_top = 200.0
 offset_right = 309.0
 offset_bottom = 144.0
+mouse_filter = 0
 text = "pause_quit"
 label_settings = ExtResource("16_4h0p5")
 uppercase = true
@@ -3499,12 +3500,34 @@ text = "pause_quit"
 label_settings = ExtResource("16_4h0p5")
 uppercase = true
 
+[node name="PauseCursorAnchor" type="Control" parent="Pause/Options"]
+layout_mode = 1
+offset_left = -64.0
+offset_top = 25.0
+offset_right = -64.0
+offset_bottom = 25.0
+scale = Vector2(2, 2)
+mouse_filter = 2
+
+[node name="Cursor" type="AnimatedSprite2D" parent="Pause/Options/PauseCursorAnchor"]
+material = ExtResource("9_m3d5t")
+sprite_frames = SubResource("SpriteFrames_fkuxm")
+autoplay = "default"
+offset = Vector2(0, -20)
+metadata/_edit_use_anchors_ = true
+
+[node name="PauseCursorAnimator" type="AnimationPlayer" parent="Pause/Options/PauseCursorAnchor"]
+libraries = {
+&"": SubResource("AnimationLibrary_qllxi")
+}
+
 [node name="StatusMenu" type="Control" parent="Pause"]
 layout_mode = 1
 anchor_left = 0.86700004
 anchor_right = 0.86700004
 offset_left = -1384.6401
 offset_right = -1384.6401
+mouse_filter = 2
 
 [node name="ValueMenu" type="Node2D" parent="Pause/StatusMenu"]
 modulate = Color(1, 1, 1, 0)
@@ -3514,8 +3537,8 @@ position = Vector2(1000, 448)
 anchors_preset = -1
 offset_left = -368.0
 offset_top = -288.0
-offset_right = -304.0
-offset_bottom = -224.0
+offset_right = 368.0
+offset_bottom = 244.0
 pivot_offset = Vector2(368, 266)
 texture = ExtResource("17_pdwl1")
 region_rect = Rect2(128, 352, 96, 96)
@@ -3717,7 +3740,7 @@ metadata/_edit_use_anchors_ = true
 modulate = Color(0, 0, 0, 1)
 anchors_preset = -1
 offset_right = 420.0
-offset_bottom = 53.000046
+offset_bottom = 53.000023
 theme_override_fonts/font = ExtResource("20_637u3")
 theme_override_font_sizes/font_size = 64
 text = "pause_stage_exp"
@@ -3748,7 +3771,7 @@ metadata/_edit_use_anchors_ = true
 modulate = Color(0, 0, 0, 1)
 anchors_preset = -1
 offset_right = 420.0
-offset_bottom = 52.999985
+offset_bottom = 52.99997
 theme_override_fonts/font = ExtResource("20_637u3")
 theme_override_font_sizes/font_size = 64
 text = "pause_total_exp"
@@ -3779,7 +3802,7 @@ metadata/_edit_use_anchors_ = true
 modulate = Color(0, 0, 0, 1)
 anchors_preset = -1
 offset_right = 420.0
-offset_bottom = 52.999878
+offset_bottom = 52.999863
 theme_override_fonts/font = ExtResource("20_637u3")
 theme_override_font_sizes/font_size = 64
 text = "pause_gauge"
@@ -3859,6 +3882,7 @@ offset_left = -25.0
 offset_top = 72.0
 offset_right = 71.0
 offset_bottom = 168.0
+mouse_filter = 2
 texture = ExtResource("2_5bjqt")
 expand_mode = 1
 
@@ -3869,6 +3893,7 @@ offset_left = 71.0
 offset_top = 72.0
 offset_right = 167.0
 offset_bottom = 168.0
+mouse_filter = 2
 texture = ExtResource("2_5bjqt")
 expand_mode = 1
 
@@ -3879,6 +3904,7 @@ offset_left = 167.0
 offset_top = 72.0
 offset_right = 263.0
 offset_bottom = 168.0
+mouse_filter = 2
 texture = ExtResource("2_5bjqt")
 expand_mode = 1
 
@@ -3902,6 +3928,7 @@ offset_top = 48.0
 offset_right = 146.0
 offset_bottom = 106.0
 scale = Vector2(2.5, 2.5)
+mouse_filter = 2
 texture = ExtResource("7_6cr62")
 expand_mode = 1
 stretch_mode = 5
@@ -3910,7 +3937,6 @@ stretch_mode = 5
 modulate = Color(1, 1, 1, 0)
 
 [node name="Header" type="Label" parent="Pause/StatusMenu/ValueMenu/Skill"]
-self_modulate = Color(0, 0, 0, 1)
 anchors_preset = -1
 offset_left = -343.0
 offset_top = -280.0
@@ -3921,13 +3947,12 @@ vertical_alignment = 1
 uppercase = true
 
 [node name="CursorAnchor" type="Node2D" parent="Pause/StatusMenu/ValueMenu/Skill"]
-position = Vector2(-352, -200)
-metadata/_edit_lock_ = true
+position = Vector2(-360, -208)
 
 [node name="Cursor" type="NinePatchRect" parent="Pause/StatusMenu/ValueMenu/Skill/CursorAnchor"]
 anchors_preset = -1
-offset_right = 640.0
-offset_bottom = 54.0
+offset_right = 656.0
+offset_bottom = 72.0
 scale = Vector2(1, 1e-05)
 pivot_offset = Vector2(0, 25)
 texture = ExtResource("17_pdwl1")
@@ -3948,9 +3973,8 @@ blend_times = [&"show", &"loop", 0.1]
 anchors_preset = -1
 offset_left = -360.0
 offset_top = -232.0
-offset_right = -344.0
-offset_bottom = -232.0
-scale = Vector2(1e-05, 1e-05)
+offset_right = 360.0
+offset_bottom = -212.0
 texture = ExtResource("18_dyfn0")
 region_rect = Rect2(436, 136, 28, 12)
 patch_margin_left = 8
@@ -3973,17 +3997,20 @@ max_lines_visible = 7
 clip_contents = true
 layout_mode = 3
 offset_left = -340.0
-offset_top = -200.0
+offset_top = -216.0
 offset_right = 340.0
-offset_bottom = 220.0
+offset_bottom = 232.0
+mouse_filter = 2
 
 [node name="Options" type="VBoxContainer" parent="Pause/StatusMenu/ValueMenu/Skill/Clip"]
 layout_mode = 1
 anchors_preset = -1
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_top = 16.0
 offset_bottom = 808.0
 grow_horizontal = 2
+mouse_filter = 2
 theme_override_constants/separation = 4
 
 [node name="Scrollbar" type="NinePatchRect" parent="Pause/StatusMenu/ValueMenu/Skill"]
@@ -4007,7 +4034,6 @@ region_rect = Rect2(0, 448, 62, 64)
 
 [node name="Description" parent="Pause" instance=ExtResource("22_l4mbb")]
 layout_mode = 1
-anchors_preset = -1
 
 [node name="SFX" type="Node" parent="."]
 
