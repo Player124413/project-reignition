@@ -380,6 +380,7 @@ public partial class Options : Menu
 			return;
 		}
 
+		Runtime.Instance.IsUsingMouse = false;
 		if (currentSubmenu == Submenus.ResetSettings ||
 			currentSubmenu == Submenus.ResetControls ||
 			Mathf.IsZeroApprox(Input.GetAxis("ui_up", "ui_down")))

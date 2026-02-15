@@ -1,5 +1,4 @@
 using Godot;
-using Godot.Collections;
 using Project.Core;
 
 namespace Project.Interface.Menus;
@@ -7,33 +6,38 @@ namespace Project.Interface.Menus;
 public partial class MainMenu : Menu
 {
 	[Export] private Description description;
-	[Export] private Node optionParent;
+	[Export] private Control[] menuItemAnchorPoints;
 	[Export] private Node2D cursor;
 	private Vector2 cursorVelocity;
-	private readonly Array<Control> options = [];
 	private const float CursorSmoothing = .08f;
 
 	private int currentSelection;
+	private bool isNothingSelected;
+	private bool isMenuInitialized;
 
 	public override void ShowMenu()
 	{
 		base.ShowMenu();
+
 		cursorVelocity = Vector2.Zero;
-		cursor.Position = options[currentSelection].Position;
+		cursor.Position = menuItemAnchorPoints[currentSelection].Position;
 		menuMemory[MemoryKeys.ActiveMenu] = (int)MemoryKeys.MainMenu;
 	}
 
 	protected override void SetUp()
 	{
-		for (int i = 0; i < optionParent.GetChildCount(); i++)
-			options.Add(optionParent.GetChild<Control>(i));
-
 		currentSelection = menuMemory[MemoryKeys.MainMenu];
-		HorizontalSelection = currentSelection % 2;
-		VerticalSelection = currentSelection / 2;
+		HorizontalSelection = currentSelection % 3;
+		VerticalSelection = currentSelection / 3;
 
 		if (menuMemory[MemoryKeys.ActiveMenu] == (int)MemoryKeys.MainMenu)
 			CallDeferred(MethodName.ShowMenu);
+	}
+
+	public override void _PhysicsProcess(double delta)
+	{
+		cursor.GlobalPosition = cursor.GlobalPosition.SmoothDamp(menuItemAnchorPoints[currentSelection].GlobalPosition, ref cursorVelocity, CursorSmoothing);
+		base._PhysicsProcess(delta);
 	}
 
 	public override void EnableProcessing()
@@ -48,9 +52,19 @@ public partial class MainMenu : Menu
 		base.EnableProcessing();
 	}
 
+	private void FinishShowingMenu()
+	{
+		isMenuInitialized = true;
+
+		if (isQuitMenuActive)
+			return;
+
+		animator.Play($"select-{currentSelection}");
+	}
+
 	protected override void ProcessMenu()
 	{
-		if ((Runtime.Instance.IsActionJustPressed("sys_pause", "ui_accept", "escape") && !Input.IsActionJustPressed("toggle_fullscreen")))
+		if (Runtime.Instance.IsActionJustPressed("sys_pause", "ui_accept", "escape") && !Input.IsActionJustPressed("toggle_fullscreen"))
 		{
 			if (isQuitMenuActive)
 				CancelQuitMenu();
@@ -61,75 +75,103 @@ public partial class MainMenu : Menu
 		}
 
 		base.ProcessMenu();
-		cursor.Position = cursor.Position.SmoothDamp(options[currentSelection].Position, ref cursorVelocity, CursorSmoothing);
 	}
 
 	private void ShowQuitMenu()
 	{
 		isQuitMenuActive = true;
-		isQuitSelected = SaveManager.Instance.IsQuickLoadAlertEnabled;
-
-		quitAnimator.Play(SaveManager.Instance.IsQuickLoadAlertEnabled ? "load-text" : "quit-text");
+		if (Runtime.Instance.IsUsingMouse)
+		{
+			quitAnimator.Play("select-none");
+			quitSelection = -1;
+		}
+		else
+		{
+			quitAnimator.Play("select-no");
+			quitSelection = 1;
+		}
 		quitAnimator.Advance(0.0);
 
-		quitAnimator.Play(isQuitSelected ? "select-yes" : "select-no");
+		quitAnimator.Play(SaveManager.Instance.IsQuickLoadAlertEnabled ? "load-text" : "quit-text");
 		quitAnimator.Advance(0.0);
 
 		quitAnimator.Play("show");
 	}
 
-	[Export]
-	private AnimationPlayer quitAnimator;
+	[Export] private AnimationPlayer quitAnimator;
 	private bool isQuitMenuActive;
-	private bool isQuitSelected;
+	private int quitSelection;
 	private void CancelQuitMenu()
 	{
 		SaveManager.Instance.IsQuickLoadAlertEnabled = false;
 
-		if (isQuitSelected)
-		{
-			quitAnimator.Play("select-no");
-			quitAnimator.Advance(0.0);
-		}
+		quitSelection = 1;
+		quitAnimator.Play("select-no");
+		quitAnimator.Advance(0.0);
 
 		isQuitMenuActive = false;
 		quitAnimator.Play("hide");
 	}
 
+	private void UpdateQuitMenuVisuals()
+	{
+		if (quitSelection == -1)
+		{
+			quitAnimator.Play("select-none");
+			return;
+		}
+
+		quitAnimator.Play(quitSelection == 0 ? "select-yes" : "select-no");
+	}
+
 	protected override void UpdateSelection()
 	{
+		Runtime.Instance.IsUsingMouse = false;
 		if (isQuitMenuActive)
 		{
 			int input = Mathf.Sign(Input.GetAxis("ui_left", "ui_right"));
-			if ((input > 0 && isQuitSelected) || (input < 0 && !isQuitSelected))
+			if ((input > 0 && quitSelection != 1) || (input < 0 && quitSelection != 0))
 			{
-				isQuitSelected = !isQuitSelected;
-				quitAnimator.Play(isQuitSelected ? "select-yes" : "select-no");
+				quitSelection = input > 0 ? 1 : 0;
+				UpdateQuitMenuVisuals();
 			}
 
 			return;
 		}
 
-		HorizontalSelection = Mathf.Clamp(HorizontalSelection + Mathf.Sign(Input.GetAxis("ui_left", "ui_right")), 0, 1);
+		if (isNothingSelected)
+		{
+			ChangeSelection(currentSelection);
+			return;
+		}
+
+		HorizontalSelection = Mathf.Clamp(HorizontalSelection + Mathf.Sign(Input.GetAxis("ui_left", "ui_right")), 0, 2);
 		VerticalSelection = Mathf.Clamp(VerticalSelection + Mathf.Sign(Input.GetAxis("ui_up", "ui_down")), 0, 1);
 
-		int targetSelection = HorizontalSelection + (VerticalSelection * 2);
+		int targetSelection = HorizontalSelection + (VerticalSelection * 3);
 		if (targetSelection != currentSelection)
-		{
-			currentSelection = targetSelection;
-			description.ShowDescription();
-			menuMemory[MemoryKeys.MainMenu] = currentSelection;
-			animator.Play("select");
-			animator.Advance(0.0);
-			AnimateSelection();
-		}
+			ChangeSelection(targetSelection);
+	}
+
+	private void ChangeSelection(int newSelection)
+	{
+		isNothingSelected = false;
+		currentSelection = newSelection;
+		description.ShowDescription();
+		menuMemory[MemoryKeys.MainMenu] = currentSelection;
+		animator.Play("select");
+		animator.Advance(0.0);
+		animator.Play($"select-{currentSelection}");
 	}
 
 	protected override void Confirm()
 	{
 		if (isQuitMenuActive)
 		{
-			if (isQuitSelected)
+			if (quitSelection == -1)
+				return;
+
+			if (quitSelection == 0)
 			{
 				if (SaveManager.Instance.IsQuickLoadAlertEnabled)
 				{
@@ -151,8 +193,9 @@ public partial class MainMenu : Menu
 			return;
 		}
 
-		// Ignore unimplemented menus (PARTY MODE).
-		//if (currentSelection == 1) return;
+		if (isNothingSelected || currentSelection == 2) // Ignore unimplemented menus (PARTY MODE).
+			return;
+
 		animator.Play("confirm");
 	}
 
@@ -198,8 +241,6 @@ public partial class MainMenu : Menu
 		});
 	}
 
-	private void AnimateSelection() => animator.Play($"select-{currentSelection}");
-
 	private void StartQuitTransition()
 	{
 		TransitionManager.Instance.Connect(TransitionManager.SignalName.TransitionProcess, new(this, MethodName.QuitGame));
@@ -210,4 +251,28 @@ public partial class MainMenu : Menu
 		});
 	}
 	private void QuitGame() => GetTree().Quit();
+
+	private void ReceiveMouseInput(int index)
+	{
+		if (!isProcessing || !isMenuInitialized)
+			return;
+
+		Runtime.Instance.IsUsingMouse = true;
+
+		if (isQuitMenuActive)
+		{
+			quitSelection = index;
+			UpdateQuitMenuVisuals();
+			return;
+		}
+
+		if (index < 0)
+		{
+			isNothingSelected = true;
+			animator.Play("select-none");
+			return;
+		}
+
+		ChangeSelection(index);
+	}
 }
