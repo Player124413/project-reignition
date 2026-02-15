@@ -43,6 +43,9 @@ public partial class Menu : Control
 	public Array<NodePath> submenus;
 	public Array<Menu> _submenus = []; // Also ensure the order of submenus is correct in the inspector hierarchy
 
+	/// <summary> Tracks whether confirm was pressed via mouse. </summary>
+	protected bool isConfirmedWithMouse;
+
 	[Export]
 	public BGMPlayer bgm;
 	protected float bgmFadeTime;
@@ -166,8 +169,8 @@ public partial class Menu : Control
 	protected readonly float SelectionScrollingInterval = .1f;
 	protected virtual void ProcessMenu()
 	{
-		if (Runtime.Instance.IsActionJustPressed("sys_select", "ui_select") ||
-			(Runtime.Instance.IsUsingMouse && Input.IsActionJustPressed("mouse_left")))
+		isConfirmedWithMouse = Runtime.Instance.IsUsingMouse && Input.IsActionJustPressed("mouse_left");
+		if (Runtime.Instance.IsActionJustPressed("sys_select", "ui_select") || isConfirmedWithMouse)
 		{
 			Confirm();
 			return;
@@ -316,15 +319,5 @@ public partial class Menu : Control
 
 		if (!SoundManager.FadeAudioPlayer(bgm, bgmFadeTime))
 			bgmFadeTime = 0.0f; // Reset fade time
-	}
-
-	protected virtual void ReceiveMouseHorizontalInput(int selection)
-	{
-		GD.Print("Mouse Input Unimplemented.");
-	}
-
-	protected virtual void ReceiveMouseInput(Node selection)
-	{
-		GD.Print("Mouse Input Unimplemented.");
 	}
 }

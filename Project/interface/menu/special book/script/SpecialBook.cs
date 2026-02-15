@@ -8,8 +8,10 @@ public partial class SpecialBook : Menu
 {
 	private int tabSelection;
 	private int pageSelection;
+	/// <summary> For mouse input. Tracks if nothing is hovered over. </summary>
+	private bool isNothingSelected;
 
-	private SpecialBookPage GetActivePage => tabs[tabSelection].PageResources[pageSelection];
+	private SpecialBookPage ActivePage => tabs[tabSelection].PageResources[pageSelection];
 
 	/// <summary> Keeps track of the entry the player is currently focusing on. </summary>
 	private MenuStateEnum menuState;
@@ -63,11 +65,17 @@ public partial class SpecialBook : Menu
 		{
 			tab.PreviewTextureLoaded += OnPreviewTextureLoaded;
 			tab.FullTextureLoaded += OnFullTextureLoaded;
+			tab.MouseEntered += () => ReceiveMouseInput(tab, true);
+			tab.MouseExited += () => ReceiveMouseInput(null, true);
 			tab.Initialize();
 		}
 
 		foreach (SpecialBookWindow window in windows)
+		{
+			window.MouseEntered += () => ReceiveMouseInput(window, false);
+			window.MouseExited += () => ReceiveMouseInput(null, false);
 			window.Initialize();
+		}
 
 		// Populate the random page list with unlocked pages
 		foreach (SpecialBookTab tab in tabs)
@@ -106,7 +114,6 @@ public partial class SpecialBook : Menu
 		}
 
 		UpdateNewTags();
-
 
 		tabs[tabSelection].Select(); // Select chapter tab
 		base.ShowMenu();
@@ -161,6 +168,17 @@ public partial class SpecialBook : Menu
 
 	protected override void Confirm()
 	{
+		if (menuState == MenuStateEnum.Page)
+		{
+			if (ActivePage.IsUnlocked())
+				OpenEntry(false);
+
+			return;
+		}
+
+		if (isConfirmedWithMouse) // Don't process other menu states when using mouse
+			return;
+
 		if (menuState == MenuStateEnum.Chapter)
 		{
 			ProcessMenuInput(Vector2I.Down);
@@ -174,33 +192,23 @@ public partial class SpecialBook : Menu
 			return;
 		}
 
-		SpecialBookPage page = GetActivePage;
-
-		if (menuState == MenuStateEnum.Page)
-		{
-			if (page.IsUnlocked())
-				OpenEntry(false);
-
-			return;
-		}
-
-		if (!page.IsUnlocked())
+		if (!ActivePage.IsUnlocked())
 			return;
 
-		switch (page.PageType)
+		switch (ActivePage.PageType)
 		{
 			case SpecialBookPage.PageTypeEnum.Image:
 				StartImage();
 				break;
 			case SpecialBookPage.PageTypeEnum.Music:
 				bgm.Stop();
-				audioPlayer.Stream = ResourceLoader.Load<AudioStream>(page.AudioStreamPath);
+				audioPlayer.Stream = ResourceLoader.Load<AudioStream>(ActivePage.AudioStreamPath);
 				audioPlayer.Play();
 				break;
 			case SpecialBookPage.PageTypeEnum.Video:
 				bgm.Stop();
 
-				TransitionManager.QueueSceneChange(page.VideoEventPath);
+				TransitionManager.QueueSceneChange(ActivePage.VideoEventPath);
 				TransitionManager.StartTransition(new()
 				{
 					color = Colors.Black,
@@ -214,50 +222,50 @@ public partial class SpecialBook : Menu
 
 	protected override void Cancel()
 	{
-		if (menuState == MenuStateEnum.Chapter)
+		switch (menuState)
 		{
-			// Reset menu memory
-			menuMemory[MemoryKeys.SpecialBook] = 0;
+			case MenuStateEnum.Chapter:
+				// Reset menu memory
+				menuMemory[MemoryKeys.SpecialBook] = 0;
 
-			tabs[tabSelection].Deselect();
-			animator.Play("hide");
-			SaveManager.SaveSharedData();
-			return;
-		}
-
-		if (menuState == MenuStateEnum.Page)
-		{
-			tabs[tabSelection].SelectNoMove();
-			windows[pageSelection].Deselect();
-			menuState = MenuStateEnum.Chapter;
-
-			chapterName.Visible = true;
-			textboxTitle.Visible = false;
-			sfxCategorySelect.Play();
-		}
-
-		if (menuState == MenuStateEnum.Entry)
-		{
-			animator.Play("hide-entry");
-			menuState = MenuStateEnum.Page;
-		}
-
-		if (menuState == MenuStateEnum.Image)
-		{
-			if (!isPlayingSlideshow)
-			{
-				animator.Play("hide-image");
-				menuState = MenuStateEnum.Entry;
-			}
-			else
-			{
-				animator.Play("hide-random");
+				tabs[tabSelection].Deselect();
+				animator.Play("hide");
+				SaveManager.SaveSharedData();
+				break;
+			case MenuStateEnum.Page:
+				CancelPageToTab();
+				break;
+			case MenuStateEnum.Entry:
+				animator.Play("hide-entry");
 				menuState = MenuStateEnum.Page;
-				isPlayingSlideshow = false;
-				tabs[tabSelection].HideGlow();
-				windows[pageSelection].Select();
-			}
+				break;
+			case MenuStateEnum.Image:
+				if (!isPlayingSlideshow)
+				{
+					animator.Play("hide-image");
+					menuState = MenuStateEnum.Entry;
+				}
+				else
+				{
+					animator.Play("hide-random");
+					menuState = MenuStateEnum.Page;
+					isPlayingSlideshow = false;
+					tabs[tabSelection].HideGlow();
+					windows[pageSelection].Select();
+				}
+				break;
 		}
+	}
+
+	private void CancelPageToTab()
+	{
+		tabs[tabSelection].SelectNoMove();
+		windows[pageSelection].Deselect();
+		menuState = MenuStateEnum.Chapter;
+
+		chapterName.Visible = true;
+		textboxTitle.Visible = false;
+		sfxCategorySelect.Play();
 	}
 
 	private void StartImage()
@@ -310,6 +318,7 @@ public partial class SpecialBook : Menu
 		if (input.X == 0)
 			return;
 
+		Runtime.Instance.IsUsingMouse = false;
 		windows[pageSelection].Deselect();
 		int currentTab = tabSelection;
 		do
@@ -322,7 +331,7 @@ public partial class SpecialBook : Menu
 				sfxOpen.Play();
 			}
 
-		} while (!CanSelectPage(GetActivePage)); // Skips over every page we don't have unlocked. If we're on the full view, skips over movies and music too
+		} while (!CanSelectPage(ActivePage)); // Skips over every page we don't have unlocked. If we're on the full view, skips over movies and music too
 
 		if (currentTab != tabSelection)
 		{
@@ -344,48 +353,65 @@ public partial class SpecialBook : Menu
 	{
 		if (input.X != 0) // move left or right
 		{
-			tabs[tabSelection].Deselect();
-			tabSelection = WrapSelection(tabSelection + (int)input.X, tabs.Length);
-			tabs[tabSelection].Select();
-
-			LoadChapterData();
-			UpdateNewTags();
-			sfxCategorySelect.Play();
-
+			Runtime.Instance.IsUsingMouse = false;
+			SelectTab(WrapSelection(tabSelection + input.X, tabs.Length));
 			if (!autoSelect)
 				return;
 		}
 
 		if (input.Y > 0 || autoSelect) // Move down to the pages
 		{
-			if (autoSelect)
-				tabs[tabSelection].SelectNoGlow();
-			else
-				tabs[tabSelection].HideGlow();
+			Runtime.Instance.IsUsingMouse = false;
+			OpenChapter(autoSelect);
+		}
+	}
 
-			if (menuState != MenuStateEnum.Page)
+	private void SelectTab(int index)
+	{
+		if (index == tabSelection)
+			return;
+
+		tabs[tabSelection].Deselect();
+		tabSelection = index;
+		tabs[tabSelection].Select();
+
+		LoadChapterData();
+		UpdateNewTags();
+		sfxCategorySelect.Play();
+	}
+
+	private void OpenChapter(bool enableEffects)
+	{
+		if (enableEffects)
+			tabs[tabSelection].SelectNoGlow();
+		else
+			tabs[tabSelection].HideGlow();
+
+		if (menuState != MenuStateEnum.Page)
+		{
+			menuState = MenuStateEnum.Page;
+
+			if (!Runtime.Instance.IsUsingMouse)
 			{
-				menuState = MenuStateEnum.Page;
 				pageSelection = 0;
 				windows[pageSelection].Select();
 			}
-
-			chapterName.Visible = false;
-			textboxTitle.Visible = true;
-
-			LoadPageData();
-
-			if (!autoSelect)
-			{
-				sfxSelect.Play();
-			}
 		}
+
+		chapterName.Visible = false;
+		textboxTitle.Visible = true;
+
+		LoadPageData();
+
+		if (!enableEffects)
+			sfxSelect.Play();
 	}
 
 	private void ProcessWindowSelection(Vector2I input)
 	{
 		if (input.X != 0) // If we are going left or right
 		{
+			Runtime.Instance.IsUsingMouse = false;
 			windows[pageSelection].Deselect();
 
 			if (pageSelection <= 4) // row 1
@@ -395,13 +421,11 @@ public partial class SpecialBook : Menu
 			else if (pageSelection >= 10 && pageSelection <= 14) // row 3
 				pageSelection = WrapSelection(pageSelection + input.X, 14, 10);
 
-			windows[pageSelection].Select();
-			LoadPageData();
-
-			sfxSelect.Play();
+			SelectPage();
 		}
 		if (input.Y != 0)
 		{
+			Runtime.Instance.IsUsingMouse = false;
 			windows[pageSelection].Deselect();
 
 			if (input.Y < 0 && pageSelection <= 4) // If we are going up on the first row
@@ -415,11 +439,16 @@ public partial class SpecialBook : Menu
 			}
 
 			pageSelection = WrapSelection(pageSelection + (5 * input.Y), 14, pageSelection - 10); // Wraps the selection vertically
-			windows[pageSelection].Select();
-			LoadPageData();
-
-			sfxSelect.Play();
+			SelectPage();
 		}
+	}
+
+	private void SelectPage()
+	{
+		windows[pageSelection].Select();
+		LoadPageData();
+
+		sfxSelect.Play();
 	}
 
 	public void PlayRandomPage()
@@ -494,7 +523,7 @@ public partial class SpecialBook : Menu
 	private void LoadPageData(SpecialBookPage page = null)
 	{
 		if (page == null)
-			page = GetActivePage;
+			page = ActivePage;
 
 		menuMemory[MemoryKeys.SpecialBook] = (tabs[tabSelection].PageResources.Length * tabSelection) + pageSelection;
 		switch (page.PageType)
@@ -537,7 +566,7 @@ public partial class SpecialBook : Menu
 			// History is weird and requires using description data as-is for proper formatting
 			descriptionText = $"{titleText}\n" + descriptionText;
 
-			if (GetActivePage.PageType == SpecialBookPage.PageTypeEnum.Music)
+			if (ActivePage.PageType == SpecialBookPage.PageTypeEnum.Music)
 				descriptionText = Tr("spb_bgm") + $"\n{descriptionText}";
 		}
 
@@ -589,5 +618,42 @@ public partial class SpecialBook : Menu
 			tabs[i] = (SpecialBookTab)SpecialBookTabParent.GetChild(i);
 			tabs[i].GetResource(tabResources[i].chapterType, tabResources[i].PageThumbnail, tabResources[i].PageResources, tabResources[i].PageTexturePath);
 		}
+	}
+
+	/// <summary> Processes mouse inputs. </summary>
+	private void ReceiveMouseInput(Node node, bool isTab)
+	{
+		if (!isProcessing)
+			return;
+
+		if (menuState != MenuStateEnum.Chapter && menuState != MenuStateEnum.Page)
+			return;
+
+		Runtime.Instance.IsUsingMouse = true;
+
+		if (node == null)
+		{
+			if (isTab)
+				return;
+
+			isNothingSelected = true;
+			windows[pageSelection].Deselect();
+			return;
+		}
+
+		if (isTab)
+		{
+			if (menuState == MenuStateEnum.Page)
+				CancelPageToTab();
+			SelectTab(node.GetIndex());
+			return;
+		}
+
+		if (menuState == MenuStateEnum.Chapter)
+			OpenChapter(false);
+
+		windows[pageSelection].Deselect();
+		pageSelection = node.GetIndex();
+		SelectPage();
 	}
 }

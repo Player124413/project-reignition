@@ -1339,7 +1339,7 @@ public partial class Options : Menu
 		animator.Advance(0.0);
 	}
 
-	protected override void ReceiveMouseHorizontalInput(int selection)
+	private void ReceiveMouseHorizontalInput(int selection)
 	{
 		if (!isProcessing)
 			return;
@@ -1351,11 +1351,9 @@ public partial class Options : Menu
 			Runtime.Instance.IsUsingMouse = true;
 			return;
 		}
-
-		base.ReceiveMouseHorizontalInput(selection);
 	}
 
-	protected override void ReceiveMouseInput(Node selection)
+	private void ReceiveMouseInput(Node selection)
 	{
 		if (!isProcessing)
 			return;
