@@ -27,11 +27,28 @@ public partial class MainMenu : Menu
 	protected override void SetUp()
 	{
 		currentSelection = menuMemory[MemoryKeys.MainMenu];
-		HorizontalSelection = currentSelection % 3;
-		VerticalSelection = currentSelection / 3;
-
+		UpdateSelectionValues();
 		if (menuMemory[MemoryKeys.ActiveMenu] == (int)MemoryKeys.MainMenu)
 			CallDeferred(MethodName.ShowMenu);
+	}
+
+	private void UpdateSelectionValues()
+	{
+		if (currentSelection <= 2)
+		{
+			HorizontalSelection = currentSelection;
+			VerticalSelection = 0;
+		}
+		else if (currentSelection == 3)
+		{
+			HorizontalSelection = 0;
+			VerticalSelection = 1;
+		}
+		else
+		{
+			HorizontalSelection = currentSelection - 3;
+			VerticalSelection = 2;
+		}
 	}
 
 	public override void _PhysicsProcess(double delta)
@@ -142,15 +159,29 @@ public partial class MainMenu : Menu
 		if (isNothingSelected)
 		{
 			ChangeSelection(currentSelection);
+			StartSelectionTimer();
 			return;
 		}
 
-		HorizontalSelection = Mathf.Clamp(HorizontalSelection + Mathf.Sign(Input.GetAxis("ui_left", "ui_right")), 0, 2);
-		VerticalSelection = Mathf.Clamp(VerticalSelection + Mathf.Sign(Input.GetAxis("ui_up", "ui_down")), 0, 1);
+		VerticalSelection = Mathf.Clamp(VerticalSelection + Mathf.Sign(Input.GetAxis("ui_up", "ui_down")), 0, 2);
+		if (VerticalSelection == 1)
+			HorizontalSelection = 0;
+		else
+			HorizontalSelection = Mathf.Clamp(HorizontalSelection + Mathf.Sign(Input.GetAxis("ui_left", "ui_right")), 0, 1);
 
-		int targetSelection = HorizontalSelection + (VerticalSelection * 3);
+		int targetSelection;
+		if (VerticalSelection == 0)
+			targetSelection = HorizontalSelection;
+		else if (VerticalSelection == 1)
+			targetSelection = 2;
+		else
+			targetSelection = 3 + HorizontalSelection;
+
 		if (targetSelection != currentSelection)
+		{
 			ChangeSelection(targetSelection);
+			StartSelectionTimer();
+		}
 	}
 
 	private void ChangeSelection(int newSelection)
@@ -233,7 +264,7 @@ public partial class MainMenu : Menu
 
 		FadeBgm(.5f);
 		menuMemory[MemoryKeys.MainMenu] = currentSelection;
-		TransitionManager.QueueSceneChange(currentSelection == 2 ? TransitionManager.SpecialBookScenePath : TransitionManager.OptionsScenePath);
+		TransitionManager.QueueSceneChange(currentSelection == 3 ? TransitionManager.SpecialBookScenePath : TransitionManager.OptionsScenePath);
 		TransitionManager.StartTransition(new()
 		{
 			color = Colors.Black,
