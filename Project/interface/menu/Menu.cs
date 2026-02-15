@@ -193,6 +193,14 @@ public partial class Menu : Control
 			return;
 		}
 
+		if (Runtime.Instance.IsUsingMouse && Runtime.Instance.MouseScrollInput != 0)
+		{
+			if (Mathf.IsZeroApprox(cursorSelectionTimer))
+				UpdateSelection();
+			else
+				cursorSelectionTimer = Mathf.MoveToward(cursorSelectionTimer, 0, PhysicsManager.physicsDelta);
+		}
+
 		cursorSelectionTimer = 0;
 		isSelectionScrolling = false;
 	}

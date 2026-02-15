@@ -12,6 +12,8 @@ public partial class Runtime : Node
 	public Vector2 MousePositionRatio { get; private set; }
 	/// <summary> Stores the mouse's current position in a ratio from [0, 1]. </summary>
 	public Vector2 MouseMotionAmount { get; private set; }
+	/// <summary> Stores the direction of the mouse wheel's current scroll input. </summary>
+	public int MouseScrollInput { get; private set; }
 
 	public static readonly RandomNumberGenerator randomNumberGenerator = new();
 	public static readonly Vector2I ScreenSize = new(1920, 1080); // Working resolution is 1080p
@@ -32,7 +34,8 @@ public partial class Runtime : Node
 	public override void _Process(double _)
 	{
 		UpdateShaderTime();
-		SetDeferred("MouseMotionAmount", Vector2.Zero);
+		SetDeferred(nameof(MouseMotionAmount), Vector2.Zero);
+		SetDeferred(nameof(MouseScrollInput), 0);
 
 		if (IsInstanceValid(StageSettings.Player) && !StageSettings.Player.Camera.IsFreeCamActive)
 		{
@@ -260,6 +263,16 @@ public partial class Runtime : Node
 		{
 			MousePositionRatio = (e as InputEventMouseMotion).GlobalPosition / GetTree().Root.GetViewport().GetVisibleRect().Size;
 			MouseMotionAmount += (e as InputEventMouseMotion).ScreenRelative * SaveManager.Config.mouseSensitivity * 0.01f;
+			return;
+		}
+
+		if (e is InputEventMouseButton)
+		{
+			InputEventMouseButton mouseButton = e as InputEventMouseButton;
+			if (mouseButton.ButtonIndex == MouseButton.WheelUp)
+				MouseScrollInput = -1;
+			else if (mouseButton.ButtonIndex == MouseButton.WheelDown)
+				MouseScrollInput = 1;
 			return;
 		}
 

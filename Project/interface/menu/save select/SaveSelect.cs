@@ -58,6 +58,12 @@ public partial class SaveSelect : Menu
 			return;
 		}
 
+		if (Runtime.Instance.IsUsingMouse && Runtime.Instance.MouseScrollInput != 0)
+		{
+			ScrollSelection(Runtime.Instance.MouseScrollInput);
+			return;
+		}
+
 		base.ProcessMenu();
 	}
 
@@ -128,6 +134,13 @@ public partial class SaveSelect : Menu
 		// Only listen for vertical scrolling
 		int inputSign = Mathf.Sign(Input.GetAxis("ui_up", "ui_down"));
 		if (inputSign == 0) return;
+		ScrollSelection(inputSign);
+	}
+
+	private void ScrollSelection(int inputSign)
+	{
+		if (!Mathf.IsZeroApprox(cursorSelectionTimer))
+			return;
 
 		VerticalSelection = WrapSelection(VerticalSelection + inputSign, SaveManager.SaveSlotCount);
 		animator.Play(inputSign < 0 ? ScrollUpAnimation : ScrollDownAnimation);
@@ -221,4 +234,13 @@ public partial class SaveSelect : Menu
 	}
 
 	public void SetDescriptionText() => description.Text = descriptionText;
+
+	private void ReceiveMouseInput(int direction)
+	{
+		if (!isProcessing)
+			return;
+
+		ScrollSelection(direction);
+		Runtime.Instance.IsUsingMouse = true;
+	}
 }
