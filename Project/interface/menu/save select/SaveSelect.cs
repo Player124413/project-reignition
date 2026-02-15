@@ -20,7 +20,7 @@ public partial class SaveSelect : Menu
 
 	[Export] private AnimationPlayer deleteAnimator;
 	private bool isDeleteMenuActive;
-	private bool isDeleteSelected;
+	private int deleteSelection;
 
 	[Export] private string descriptionText;
 	[Export] private Description description;
@@ -71,7 +71,7 @@ public partial class SaveSelect : Menu
 	{
 		if (isDeleteMenuActive)
 		{
-			if (isDeleteSelected)
+			if (deleteSelection == 0)
 			{
 				deleteAnimator.Play("confirm");
 				DeleteSaveFile();
@@ -111,9 +111,20 @@ public partial class SaveSelect : Menu
 		if (SaveManager.GameSaveSlots[saveIndex].IsNewFile()) // Check if a save file is new
 			return;
 
+		if (Runtime.Instance.IsUsingMouse)
+		{
+			deleteSelection = -1;
+			deleteAnimator.Play("select-none");
+		}
+		else
+		{
+			deleteSelection = 1;
+			deleteAnimator.Play("select-no");
+		}
+		deleteAnimator.Advance(0.0);
+
 		deleteAnimator.Play("show");
 		isDeleteMenuActive = true;
-		isDeleteSelected = false;
 	}
 
 	protected override void UpdateSelection()
@@ -121,11 +132,10 @@ public partial class SaveSelect : Menu
 		if (isDeleteMenuActive)
 		{
 			int input = Mathf.Sign(Input.GetAxis("ui_left", "ui_right"));
-			if ((input > 0 && isDeleteSelected) ||
-				(input < 0 && !isDeleteSelected))
+			if ((input > 0 && deleteSelection != 1) || (input < 0 && deleteSelection != 0))
 			{
-				isDeleteSelected = !isDeleteSelected;
-				deleteAnimator.Play(isDeleteSelected ? "select-yes" : "select-no");
+				deleteSelection = input > 0 ? 1 : 0;
+				UpdateDeleteMenuVisuals();
 			}
 
 			return;
@@ -135,6 +145,17 @@ public partial class SaveSelect : Menu
 		int inputSign = Mathf.Sign(Input.GetAxis("ui_up", "ui_down"));
 		if (inputSign == 0) return;
 		ScrollSelection(inputSign);
+	}
+
+	private void UpdateDeleteMenuVisuals()
+	{
+		if (deleteSelection == -1)
+		{
+			deleteAnimator.Play("select-none");
+			return;
+		}
+
+		deleteAnimator.Play(deleteSelection == 0 ? "select-yes" : "select-no");
 	}
 
 	private void ScrollSelection(int inputSign)
@@ -201,11 +222,9 @@ public partial class SaveSelect : Menu
 
 	private void CancelDeleteMenu()
 	{
-		if (isDeleteSelected)
-		{
-			deleteAnimator.Play("select-no");
-			deleteAnimator.Advance(0.0);
-		}
+		deleteSelection = 1;
+		deleteAnimator.Play("select-no");
+		deleteAnimator.Advance(0.0);
 
 		isDeleteMenuActive = false;
 		deleteAnimator.Play("hide");
@@ -239,6 +258,13 @@ public partial class SaveSelect : Menu
 	{
 		if (!isProcessing)
 			return;
+
+		if (isDeleteMenuActive)
+		{
+			deleteSelection = direction;
+			UpdateDeleteMenuVisuals();
+			return;
+		}
 
 		ScrollSelection(direction);
 		Runtime.Instance.IsUsingMouse = true;
