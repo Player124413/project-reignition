@@ -58,7 +58,7 @@ public partial class SaveSelect : Menu
 			return;
 		}
 
-		if (Runtime.Instance.IsUsingMouse && Runtime.Instance.MouseScrollInput != 0)
+		if (Runtime.Instance.MouseScrollInput != 0)
 		{
 			ScrollSelection(Runtime.Instance.MouseScrollInput);
 			return;

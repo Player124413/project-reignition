@@ -576,6 +576,18 @@ tracks/26/keys = {
 "update": 0,
 "values": [Color(1, 1, 1, 1)]
 }
+tracks/27/type = "value"
+tracks/27/imported = false
+tracks/27/enabled = true
+tracks/27/path = NodePath(".:visible")
+tracks/27/interp = 1
+tracks/27/loop_wrap = true
+tracks/27/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
 
 [sub_resource type="Animation" id="Animation_1u7a5"]
 resource_name = "cancel"
@@ -747,6 +759,18 @@ tracks/12/keys = {
 "update": 0,
 "values": [Color(1, 1, 1, 1), Color(1, 1, 1, 1), Color(1, 1, 1, 0)]
 }
+tracks/13/type = "value"
+tracks/13/imported = false
+tracks/13/enabled = true
+tracks/13/path = NodePath(".:visible")
+tracks/13/interp = 1
+tracks/13/loop_wrap = true
+tracks/13/keys = {
+"times": PackedFloat32Array(0, 0.500003),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [true, false]
+}
 
 [sub_resource type="Animation" id="Animation_tn86n"]
 resource_name = "confirm"
@@ -891,6 +915,18 @@ tracks/1/path = NodePath("DemoVideo:visible")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath(".:visible")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 1,
@@ -1899,6 +1935,18 @@ tracks/18/keys = {
 "update": 0,
 "values": [Color(1, 1, 1, 1)]
 }
+tracks/19/type = "value"
+tracks/19/imported = false
+tracks/19/enabled = true
+tracks/19/path = NodePath(".:visible")
+tracks/19/interp = 1
+tracks/19/loop_wrap = true
+tracks/19/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
 
 [sub_resource type="Animation" id="Animation_cga70"]
 resource_name = "show-fade-video"
@@ -2166,6 +2214,18 @@ tracks/20/keys = {
 "transitions": PackedFloat32Array(1),
 "update": 0,
 "values": [Color(1, 1, 1, 1)]
+}
+tracks/21/type = "value"
+tracks/21/imported = false
+tracks/21/enabled = true
+tracks/21/path = NodePath(".:visible")
+tracks/21/interp = 1
+tracks/21/loop_wrap = true
+tracks/21/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
 }
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_rqnfw"]
@@ -2547,6 +2607,13 @@ libraries = {
 }
 autoplay = "loop"
 
+[node name="Center" type="Control" parent="AreaSelection/Text/Center"]
+layout_mode = 3
+offset_left = -199.1111
+offset_top = -39.99997
+offset_right = 199.11113
+offset_bottom = 40.0
+
 [node name="Bottom" type="Node2D" parent="AreaSelection/Text"]
 position = Vector2(0, 144)
 scale = Vector2(1.12, 1.12)
@@ -2689,6 +2756,13 @@ texture = ExtResource("11_0ayw4")
 region_enabled = true
 region_rect = Rect2(0, 240, 120, 80)
 
+[node name="Up" type="Control" parent="AreaSelection/Cursor/CursorTop"]
+layout_mode = 3
+offset_left = -60.0
+offset_top = -39.99997
+offset_right = 60.0
+offset_bottom = 40.0
+
 [node name="CursorBottom" type="Sprite2D" parent="AreaSelection/Cursor"]
 material = SubResource("ShaderMaterial_kgjem")
 position = Vector2(0, 240)
@@ -2696,6 +2770,13 @@ scale = Vector2(1.2, 1.2)
 texture = ExtResource("11_0ayw4")
 region_enabled = true
 region_rect = Rect2(0, 320, 120, 80)
+
+[node name="Down" type="Control" parent="AreaSelection/Cursor/CursorBottom"]
+layout_mode = 3
+offset_left = -60.0
+offset_top = -39.99997
+offset_right = 60.0
+offset_bottom = 40.0
 
 [node name="Submenus" type="Control" parent="."]
 z_index = 10
@@ -2869,3 +2950,10 @@ next/scroll-up = &"reset-scroll"
 next/show = &"loop"
 next/show-fade-video = &"loop"
 blend_times = [&"loop", &"scroll-down", 0.05, &"loop", &"scroll-up", 0.05, &"show", &"loop", 0.1, &"show-fade-video", &"loop", 0.1]
+
+[connection signal="mouse_entered" from="AreaSelection/Text/Center/Center" to="." method="ReceiveMouseInput" binds= [0]]
+[connection signal="mouse_exited" from="AreaSelection/Text/Center/Center" to="." method="ReceiveMouseInput" binds= [-100]]
+[connection signal="mouse_entered" from="AreaSelection/Cursor/CursorTop/Up" to="." method="ReceiveMouseInput" binds= [-1]]
+[connection signal="mouse_exited" from="AreaSelection/Cursor/CursorTop/Up" to="." method="ReceiveMouseInput" binds= [-100]]
+[connection signal="mouse_entered" from="AreaSelection/Cursor/CursorBottom/Down" to="." method="ReceiveMouseInput" binds= [1]]
+[connection signal="mouse_exited" from="AreaSelection/Cursor/CursorBottom/Down" to="." method="ReceiveMouseInput" binds= [-100]]

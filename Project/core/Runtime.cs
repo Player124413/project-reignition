@@ -270,9 +270,15 @@ public partial class Runtime : Node
 		{
 			InputEventMouseButton mouseButton = e as InputEventMouseButton;
 			if (mouseButton.ButtonIndex == MouseButton.WheelUp)
+			{
+				IsUsingMouse = true;
 				MouseScrollInput = -1;
+			}
 			else if (mouseButton.ButtonIndex == MouseButton.WheelDown)
+			{
+				IsUsingMouse = true;
 				MouseScrollInput = 1;
+			}
 			return;
 		}
 

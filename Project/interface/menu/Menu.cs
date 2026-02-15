@@ -193,7 +193,7 @@ public partial class Menu : Control
 			return;
 		}
 
-		if (Runtime.Instance.IsUsingMouse && Runtime.Instance.MouseScrollInput != 0)
+		if (Runtime.Instance.MouseScrollInput != 0)
 		{
 			if (Mathf.IsZeroApprox(cursorSelectionTimer))
 				UpdateSelection();
