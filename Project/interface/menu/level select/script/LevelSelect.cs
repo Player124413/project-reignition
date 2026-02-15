@@ -12,9 +12,11 @@ public partial class LevelSelect : Menu
 	[Export] private ReadyMenu readyMenu;
 
 	[Export] private Control cursor;
+	[Export] private AnimationPlayer cursorAnimator;
 	private float initialCursorPosition;
 	private int cursorPosition;
 	private Vector2 cursorWidthVelocity;
+	private bool isNothingSelected;
 
 	[Export] private Control options;
 	private Vector2 optionVelocity;
@@ -70,7 +72,11 @@ public partial class LevelSelect : Menu
 		foreach (Node node in options.GetChildren())
 		{
 			if (node is LevelOption levelOption)
+			{
+				levelOption.MouseEntered += () => ReceiveMouseInput(levelOption);
+				levelOption.MouseExited += () => ReceiveMouseInput(null);
 				levelOptions.Add(levelOption);
+			}
 		}
 
 		initialCursorPosition = cursor.Position.Y;
@@ -79,6 +85,14 @@ public partial class LevelSelect : Menu
 
 	protected override void ProcessMenu()
 	{
+		if (Runtime.Instance.MouseScrollInput != 0)
+		{
+			VerticalSelection = Mathf.Clamp(VerticalSelection + Runtime.Instance.MouseScrollInput, 0, levelOptions.Count - 1);
+			isNothingSelected = false;
+			cursorAnimator.Play("loop");
+			ChangeSelection();
+		}
+
 		base.ProcessMenu();
 		UpdateListPosition(ScrollSmoothing);
 	}
@@ -94,6 +108,18 @@ public partial class LevelSelect : Menu
 		VerticalSelection = menuMemory[MemoryKeys.LevelSelect];
 		RecalculateListPosition();
 		UpdateListPosition(0);
+
+		if (Runtime.Instance.IsUsingMouse)
+		{
+			isNothingSelected = true;
+			cursorAnimator.Play("hide");
+		}
+		else
+		{
+			isNothingSelected = false;
+			cursorAnimator.Play("show");
+		}
+		cursorAnimator.Advance(0.0);
 
 		animator.Play("show");
 		if (menuMemory[MemoryKeys.ActiveMenu] != (int)MemoryKeys.TimeAttack)
@@ -136,6 +162,9 @@ public partial class LevelSelect : Menu
 		if (menuMemory[MemoryKeys.ActiveMenu] != (int)MemoryKeys.TimeAttack && !levelOptions[VerticalSelection].IsUnlocked)
 			return;
 
+		if (isNothingSelected)
+			return;
+
 		base.Confirm();
 	}
 
@@ -176,8 +205,19 @@ public partial class LevelSelect : Menu
 	{
 		if (Mathf.IsZeroApprox(Input.GetAxis("ui_up", "ui_down"))) return;
 
-		VerticalSelection = WrapSelection(VerticalSelection + Mathf.Sign(Input.GetAxis("ui_up", "ui_down")), levelOptions.Count);
+		if (isNothingSelected)
+		{
+			isNothingSelected = false;
+			cursorAnimator.Play("loop");
+			return;
+		}
 
+		VerticalSelection = WrapSelection(VerticalSelection + Mathf.Sign(Input.GetAxis("ui_up", "ui_down")), levelOptions.Count);
+		ChangeSelection();
+	}
+
+	private void ChangeSelection()
+	{
 		menuMemory[MemoryKeys.LevelSelect] = VerticalSelection;
 		animator.Play("select");
 		animator.Seek(0, true);
@@ -226,5 +266,24 @@ public partial class LevelSelect : Menu
 
 		cursor.Position = cursor.Position.SmoothDamp(new(cursor.Position.X, initialCursorPosition + (96 * cursorPosition)), ref cursorWidthVelocity, smoothing);
 		options.Position = options.Position.SmoothDamp(Vector2.Up * ((96 * scrollAmount) - 32), ref optionVelocity, smoothing);
+	}
+
+	private void ReceiveMouseInput(LevelOption node)
+	{
+		if (!isProcessing)
+			return;
+
+		if (node == null)
+		{
+			isNothingSelected = true;
+			cursorAnimator.Play("hide");
+			return;
+		}
+
+		Runtime.Instance.IsUsingMouse = true;
+		cursorAnimator.Play("loop");
+		isNothingSelected = false;
+		VerticalSelection = levelOptions.IndexOf(node);
+		ChangeSelection();
 	}
 }

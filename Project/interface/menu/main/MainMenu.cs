@@ -8,6 +8,7 @@ public partial class MainMenu : Menu
 	[Export] private Description description;
 	[Export] private Control[] menuItemAnchorPoints;
 	[Export] private Node2D cursor;
+	[Export] private AnimationPlayer cursorAnimator;
 	private Vector2 cursorVelocity;
 	private const float CursorSmoothing = .08f;
 
@@ -18,6 +19,9 @@ public partial class MainMenu : Menu
 	public override void ShowMenu()
 	{
 		base.ShowMenu();
+
+		if (Runtime.Instance.IsUsingMouse)
+			isNothingSelected = true;
 
 		cursorVelocity = Vector2.Zero;
 		cursor.Position = menuItemAnchorPoints[currentSelection].Position;
@@ -76,7 +80,14 @@ public partial class MainMenu : Menu
 		if (isQuitMenuActive)
 			return;
 
+		if (isNothingSelected)
+		{
+			EnableProcessing();
+			return;
+		}
+
 		animator.Play($"select-{currentSelection}");
+		cursorAnimator.Play("show");
 	}
 
 	protected override void ProcessMenu()
