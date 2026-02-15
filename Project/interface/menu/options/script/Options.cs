@@ -106,13 +106,30 @@ public partial class Options : Menu
 		GetTree().CreateTimer(0.1, true, false, true).Connect(SceneTreeTimer.SignalName.Timeout, new(this, MethodName.EnableProcessing));
 	}
 
+	public override void EnableProcessing()
+	{
+		base.EnableProcessing();
+
+		if (Runtime.Instance.IsUsingMouse)
+		{
+			isCursorHidden = true;
+			cursorAnimator.Play("RESET");
+			return;
+		}
+
+		cursorAnimator.Play("show");
+	}
+
 	private void FlipBook(Submenus submenu, bool flipRight, int selection)
 	{
 		currentSubmenu = submenu;
+
 		animator.Play(flipRight ? "flip-right" : "flip-left");
 		animator.Seek(0.0, true);
 		VerticalSelection = selection;
 		disableCursorProcessing = true;
+		if (!isCursorHidden)
+			cursorAnimator.Play("hide");
 
 		if (submenu == Submenus.PartyMapping)
 			UpdateLabels();
@@ -300,6 +317,7 @@ public partial class Options : Menu
 				FlipBook(Submenus.Control, true, 5);
 				break;
 			case Submenus.Test:
+				Select();
 				return;
 			case Submenus.ResetSettings:
 			case Submenus.ResetControls:
