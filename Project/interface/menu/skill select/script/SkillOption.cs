@@ -12,8 +12,6 @@ public partial class SkillOption : Control
 
 	/// <summary> Reference to the target skill resource. </summary>
 	public SkillResource Skill { get; set; }
-	/// <summary> Is this skill a part of the augment submenu? </summary>
-	public bool IsAugmentOption { get; set; }
 
 	/// <summary> The skill option's menu number, or augment index. </summary>
 	public int Number { get; set; }

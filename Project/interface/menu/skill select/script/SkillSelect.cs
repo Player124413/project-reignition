@@ -11,6 +11,7 @@ public partial class SkillSelect : Menu
 	[Export] private PackedScene skillOption;
 	[Export] private VBoxContainer optionContainer;
 	[Export] private Node2D cursor;
+	[Export] private AnimationPlayer cursorAnimator;
 	[Export] private Description description;
 	[Export] private Sprite2D scrollbar;
 	[Export] private Sprite2D skillPointFill;
@@ -25,6 +26,7 @@ public partial class SkillSelect : Menu
 	private bool IsEditingAugment { get; set; }
 
 	private SkillOption SelectedSkill => skillOptionList[VerticalSelection];
+	private bool isNothingSelected;
 
 	private SkillListResource SkillList => Runtime.Instance.SkillList;
 	private SkillRing ActiveSkillRing => SaveManager.ActiveSkillRing;
@@ -85,6 +87,8 @@ public partial class SkillSelect : Menu
 			newSkill.Skill = skill;
 			newSkill.Number = i + 1;
 			newSkill.Initialize();
+			newSkill.MouseEntered += () => ReceiveMouseInput(newSkill, false);
+			newSkill.MouseExited += () => ReceiveMouseInput(null, false);
 
 			skillOptionList.Add(newSkill);
 			optionContainer.AddChild(newSkill);
@@ -92,17 +96,21 @@ public partial class SkillSelect : Menu
 			if (!newSkill.Skill.HasAugments) // Skip augments
 				continue;
 
-			// Create base skill option
 			for (int j = 0; j < newSkill.Skill.Augments.Count; j++)
 			{
 				SkillOption newAugment = skillOption.Instantiate<SkillOption>();
 				newAugment.Skill = newSkill.Skill.Augments[j];
 				newSkill.RegisterAugment(newAugment);
+				newAugment.MouseEntered += () => ReceiveMouseInput(newAugment, true);
+				newAugment.MouseExited += () => ReceiveMouseInput(null, true);
 			}
 
+			// Create base augment skill option
 			SkillOption baseAugment = skillOption.Instantiate<SkillOption>();
 			baseAugment.Skill = newSkill.Skill;
 			newSkill.RegisterAugment(baseAugment);
+			baseAugment.MouseEntered += () => ReceiveMouseInput(baseAugment, true);
+			baseAugment.MouseExited += () => ReceiveMouseInput(null, true);
 		}
 
 		base.SetUp();
@@ -131,6 +139,24 @@ public partial class SkillSelect : Menu
 
 		if (!IsEditingAugment && !IsAlertMenuActive)
 		{
+			if (Runtime.Instance.MouseScrollInput != 0)
+			{
+				int targetIndex = VerticalSelection + Runtime.Instance.MouseScrollInput;
+				targetIndex = Mathf.Clamp(targetIndex, 0, unlockedSkillCount);
+
+				int sign = targetIndex - VerticalSelection;
+				if (sign != 0)
+				{
+					VerticalSelection = targetIndex;
+					UpdateScrollAmount(sign);
+					MoveCursor();
+					UpdateDescription();
+					StartSelectionTimer();
+				}
+
+				return;
+			}
+
 			// Quick scrolling
 			if (Input.IsActionJustPressed("button_step_left"))
 			{
@@ -178,9 +204,9 @@ public partial class SkillSelect : Menu
 	{
 		if (IsAlertMenuActive)
 		{
-			if (AlertSelection == 1)
+			if (AlertSelection != 2)
 			{
-				AlertSelection = 0;
+				AlertSelection = 1;
 				alertAnimator.Play("select-no");
 				alertAnimator.Advance(0.0);
 			}
@@ -197,26 +223,42 @@ public partial class SkillSelect : Menu
 
 		SaveManager.SaveGameData();
 		animator.Play("hide");
+		cursorAnimator.Play("hide");
 
 		// Return to level select music
 		FadeBgm(.5f);
 		parentMenu.PlayBgm();
 	}
 
+	private void UpdateAlertMenuVisuals()
+	{
+		if (AlertSelection < 0)
+		{
+			alertAnimator.Play("select-none");
+			return;
+		}
+
+		if (AlertSelection == 2)
+		{
+			alertAnimator.Play("select-cancel");
+			return;
+		}
+
+		alertAnimator.Play(AlertSelection == 0 ? "select-yes" : "select-no");
+	}
+
 	protected override void UpdateSelection()
 	{
 		if (IsAlertMenuActive)
 		{
-			int input = Mathf.Sign(Input.GetAxis("ui_left", "ui_right"));
-			if (input < 0 && AlertSelection == 0)
+			if (Mathf.Abs(AlertSelection) != 2)
 			{
-				AlertSelection = 1;
-				alertAnimator.Play("select-yes");
-			}
-			else if (input > 0 && AlertSelection == 1)
-			{
-				AlertSelection = 0;
-				alertAnimator.Play("select-no");
+				int input = Mathf.Sign(Input.GetAxis("ui_left", "ui_right"));
+				if ((input > 0 && AlertSelection != 1) || (input < 0 && AlertSelection != 0))
+				{
+					AlertSelection = input > 0 ? 1 : 0;
+					UpdateAlertMenuVisuals();
+				}
 			}
 
 			return;
@@ -237,6 +279,13 @@ public partial class SkillSelect : Menu
 
 		if (inputSign != 0)
 		{
+			if (isNothingSelected)
+			{
+				cursorAnimator.Play("show");
+				isNothingSelected = false;
+				return;
+			}
+
 			VerticalSelection = WrapSelection(VerticalSelection + inputSign, unlockedSkillCount);
 			UpdateScrollAmount(inputSign);
 			MoveCursor();
@@ -288,6 +337,7 @@ public partial class SkillSelect : Menu
 	{
 		cursorVelocity = Vector2.Zero;
 		cursor.Position = Vector2.Up * -cursorPosition * ScrollInterval;
+		ShowCursor();
 	}
 
 	private void MoveCursor()
@@ -381,6 +431,15 @@ public partial class SkillSelect : Menu
 		menuMemory[MemoryKeys.SkillMenuInitialized] = 1;
 	}
 
+	private void ShowCursor()
+	{
+		if (isNothingSelected)
+			return;
+
+		cursorAnimator.Play("show");
+		cursorAnimator.Queue("loop");
+	}
+
 	public void ShowSkills()
 	{
 		for (int i = 0; i < skillOptionList.Count; i++)
@@ -396,13 +455,14 @@ public partial class SkillSelect : Menu
 
 		menuMemory[MemoryKeys.PresetsOpen] = 1; // Set flag so we can play the correct animation later
 		animator.Play("enter-skill-preset");
+		cursorAnimator.Play("hide");
 	}
 
 	protected override void Confirm()
 	{
 		if (IsAlertMenuActive)
 		{
-			if (AlertSelection == 1)
+			if (AlertSelection == 0)
 			{
 				if (AlertMenuTargetSkill != SkillKey.Count)
 				{
@@ -426,6 +486,9 @@ public partial class SkillSelect : Menu
 
 			return;
 		}
+
+		if (isNothingSelected)
+			return;
 
 		if (!ToggleSkill())
 			return;
@@ -543,7 +606,19 @@ public partial class SkillSelect : Menu
 			alertLabel.Text = Tr(isEquippingSkill ? "skill_equip_conflict" : "skill_unequip_conflict");
 			alertLabel.Text = alertLabel.Text.Replace("SKILL", Tr(skill.NameKey));
 			alertLabel.Text = alertLabel.Text.Replace("CONFLICT", Tr(conflictingSkill.NameKey));
-			AlertSelection = 0; // Set to "No"
+
+			alertAnimator.Play("select-no");
+			if (Runtime.Instance.IsUsingMouse)
+			{
+				AlertSelection = -1;
+				alertAnimator.Advance(0.0);
+				alertAnimator.Play("select-none");
+			}
+			else
+			{
+				AlertSelection = 1; // Set to "No"
+			}
+			alertAnimator.Advance(0.0);
 		}
 		else
 		{
@@ -577,8 +652,17 @@ public partial class SkillSelect : Menu
 				alertLabel.Text = Tr("skill_sp_shortage");
 			}
 
-			AlertSelection = -1; // Disable Selection
 			alertAnimator.Play("select-cancel");
+			if (Runtime.Instance.IsUsingMouse)
+			{
+				AlertSelection = -2;
+				alertAnimator.Advance(0.0);
+				alertAnimator.Play("select-none");
+			}
+			else
+			{
+				AlertSelection = 2;
+			}
 			alertAnimator.Advance(0.0);
 		}
 
@@ -759,6 +843,7 @@ public partial class SkillSelect : Menu
 		IsEditingAugment = true;
 		SelectedSkill.UpdateUnlockedAugments();
 		animator.Play("augment-show");
+		cursorAnimator.Play("hide");
 
 		// Frame augments to stay on screen
 		if (VerticalSelection + SelectedSkill.AugmentMenuCount - scrollAmount >= PageSize - 1)
@@ -770,12 +855,16 @@ public partial class SkillSelect : Menu
 		AugmentSelection = SaveManager.ActiveSkillRing.GetAugmentIndex(SelectedSkill.Skill.Key);
 		cursorPosition = VerticalSelection - scrollAmount + AugmentSelection + 1;
 		SelectedSkill.ShowAugmentMenu();
+
+		if (Runtime.Instance.IsUsingMouse)
+			isNothingSelected = true;
 	}
 
 	private void HideAugmentMenu()
 	{
 		IsEditingAugment = false;
 		animator.Play("augment-hide");
+		cursorAnimator.Play("hide");
 
 		// Revert to base skill if unequipped
 		if (!ActiveSkillRing.IsSkillEquipped(SelectedSkill.Skill.Key))
@@ -789,6 +878,9 @@ public partial class SkillSelect : Menu
 
 		UpdateScrollAmount(0);
 		SortSkills();
+
+		if (Runtime.Instance.IsUsingMouse)
+			isNothingSelected = true;
 	}
 
 	/// <summary> Updates a skill option so the correct augment appears on the skill select menu. </summary>
@@ -801,5 +893,50 @@ public partial class SkillSelect : Menu
 		skillOption.Skill = skillOption.GetAugmentSkill(augmentIndex);
 		skillOption.UpdateUnlockedAugments();
 		skillOption.Initialize();
+	}
+
+	private void ReceiveAlertMouseInput(int index)
+	{
+		if (!isProcessing || !IsAlertMenuActive)
+			return;
+
+		AlertSelection = index;
+		UpdateAlertMenuVisuals();
+	}
+
+	private void ReceiveMouseInput(SkillOption skill, bool isAugment)
+	{
+		if (!isProcessing)
+			return;
+
+		if (IsEditingAugment != isAugment)
+			return;
+
+		Runtime.Instance.IsUsingMouse = true;
+
+		if (skill == null)
+		{
+			isNothingSelected = true;
+			cursorAnimator.Play("hide");
+			return;
+		}
+
+		if (IsEditingAugment)
+		{
+			isNothingSelected = false;
+			AugmentSelection = skill.GetIndex();
+			cursorPosition = VerticalSelection - scrollAmount + AugmentSelection + 1;
+			MoveCursor();
+			UpdateDescription();
+			return;
+		}
+
+		isNothingSelected = false;
+		int targetIndex = skillOptionList.IndexOf(skill);
+		int sign = targetIndex - VerticalSelection;
+		VerticalSelection = targetIndex;
+		UpdateScrollAmount(sign);
+		MoveCursor();
+		UpdateDescription();
 	}
 }
