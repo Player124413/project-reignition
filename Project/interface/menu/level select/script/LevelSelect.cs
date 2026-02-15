@@ -117,7 +117,7 @@ public partial class LevelSelect : Menu
 		else
 		{
 			isNothingSelected = false;
-			cursorAnimator.Play("show");
+			cursorAnimator.Play("loop");
 		}
 		cursorAnimator.Advance(0.0);
 
