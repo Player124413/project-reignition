@@ -12,7 +12,6 @@ public partial class TimeAttackManager : Node
 	public enum RunType
 	{
 		AnyP,
-		AnyPercentPlus,
 		GoalPercent,
 		SingleRun,
 		BossRush,
@@ -52,8 +51,6 @@ public partial class TimeAttackManager : Node
 		switch (type)
 		{
 			case RunType.AnyP:
-				return Levels_AnyPercent;
-			case RunType.AnyPercentPlus:
 				return Levels_AnyPercent;
 			case RunType.GoalPercent:
 				return Levels_GoalPercent;

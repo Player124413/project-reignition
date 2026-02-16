@@ -1,21 +1,20 @@
 using Godot;
+using System;
 using Godot.Collections;
 using Project.Core;
-using Project.Gameplay;
 
 namespace Project.Interface.Menus;
 
-public partial class TimeAttack : Menu
+public partial class TimeAttackStartRun : Menu
 {
-	[Export] AnimationPlayer timeAttackAnimator;
 	[Export] private Description description;
-	[Export] private TimeAttackReady readyMenu;
-	[Export] private TextureRect buttonImage;
-	[Export] private AnimationPlayer buttonImageAnimator;
+	[Export] TimeAttackReady readyMenu;
+	[Export] TimeAttackLevelList levelList;
 	[Export] Array<TimeAttackButton> buttonList;
+
 	private bool isActive;
 	private int currentSelection;
-	private int maxSelection = 4;
+	private int maxSelection = 2;
 
 	protected override void SetUp()
 	{
@@ -27,37 +26,15 @@ public partial class TimeAttack : Menu
 		base.ShowMenu();
 		currentSelection = 1;
 		description.Text = buttonList[0].description;
-		menuMemory[MemoryKeys.ActiveMenu] = (int)MemoryKeys.TimeAttack;
-
-		if (!bgm.Playing)
-			bgm.Play();
-
-		SaveManager.ActiveSaveSlotIndex = -1;
-		SaveManager.ActiveGameData.level = 99;
-		SaveManager.ActiveSkillRing.UpdateTotalSkillPoints();
-		SaveManager.ActiveSkillRing.LoadFromActiveData();
-
-
-
-
 	}
 
 	public override void OpenParentMenu()
 	{
-		// Return to main menu
-		FadeBgm(.5f);
-		menuMemory[MemoryKeys.ActiveMenu] = (int)MemoryKeys.MainMenu;
-		TransitionManager.QueueSceneChange(TransitionManager.MenuScenePath);
-		TransitionManager.StartTransition(new()
-		{
-			color = Colors.Black,
-			inSpeed = .5f,
-		});
+		base.OpenParentMenu();
 	}
 
 	protected override void ProcessMenu()
 	{
-
 		base.ProcessMenu();
 	}
 
@@ -87,7 +64,6 @@ public partial class TimeAttack : Menu
 			{
 				buttonList[i].DeselectButton();
 			}
-			buttonImageAnimator.Play("show");
 			buttonList[currentSelection - 1].SelectButton();
 		}
 		else
@@ -98,27 +74,30 @@ public partial class TimeAttack : Menu
 	{
 		if (isActive)
 		{
-			timeAttackAnimator.Play("confirm-" + currentSelection);
+			if (currentSelection == 1)
+				readyMenu.SetupReadyMenu();
+			animator.Play("confirm-" + currentSelection);
 			currentSelection = 1;
 		}
-
 	}
 
 	protected override void Cancel()
 	{
 		if (isActive)
-		{
-			TimeAttackManager.Instance.SetRunActive(false);
-			OpenParentMenu();
-			currentSelection = 1;
-		}
-
+			animator.Play("hide");
 	}
 
-	public override void PlayReturnAnim() => timeAttackAnimator.Play("show");
+	private void OpenLevelList()
+	{
+		levelList.Visible = true;
+		levelList.parentMenu = this;
+		levelList.ShowMenu();
+	}
+	private void OpenReadyMenu()
+	{
+		readyMenu.ShowMenu();
+	}
+
 	public void SetActive() => isActive = true;
 	public void SetInactive() => isActive = false;
-
-	public void ChangeButtonImage() => buttonImage.Texture = buttonList[currentSelection - 1].image;
-
 }
