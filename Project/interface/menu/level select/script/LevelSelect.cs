@@ -109,7 +109,7 @@ public partial class LevelSelect : Menu
 
 	public override void ShowMenu()
 	{
-		if (menuMemory[MemoryKeys.ActiveMenu] == (int)MemoryKeys.TimeAttack)
+		if (TimeAttackManager.Instance.IsRunActive)
 		{
 			menuMemory[MemoryKeys.LevelSelect] = 0;
 			SetUp();
@@ -132,7 +132,7 @@ public partial class LevelSelect : Menu
 		cursorAnimator.Advance(0.0);
 
 		animator.Play("show");
-		if (menuMemory[MemoryKeys.ActiveMenu] != (int)MemoryKeys.TimeAttack)
+		if (!TimeAttackManager.Instance.IsRunActive)
 		{
 			UpdateDescription();
 			for (int i = 0; i < levelOptions.Count; i++)
@@ -169,7 +169,7 @@ public partial class LevelSelect : Menu
 
 	protected override void Confirm()
 	{
-		if (menuMemory[MemoryKeys.ActiveMenu] != (int)MemoryKeys.TimeAttack && !levelOptions[VerticalSelection].IsUnlocked)
+		if (TimeAttackManager.Instance.IsRunActive)
 			return;
 
 		if (isNothingSelected)
@@ -182,7 +182,7 @@ public partial class LevelSelect : Menu
 	{
 		base.Cancel();
 
-		if (menuMemory[MemoryKeys.ActiveMenu] == (int)MemoryKeys.TimeAttack)
+		if (TimeAttackManager.Instance.IsRunActive)
 		{
 			HideMenu();
 			cursorPosition = 0;

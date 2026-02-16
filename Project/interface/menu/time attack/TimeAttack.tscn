@@ -1,4 +1,4 @@
-[gd_scene load_steps=27 format=3 uid="uid://bihux6ieik30s"]
+[gd_scene load_steps=31 format=3 uid="uid://bihux6ieik30s"]
 
 [ext_resource type="Script" uid="uid://cae8orej62amb" path="res://interface/menu/time attack/script/TimeAttack.cs" id="1_vs7fe"]
 [ext_resource type="Texture2D" uid="uid://cno436k6axxi5" path="res://interface/menu/main/texture/background.png" id="1_w3q3t"]
@@ -14,11 +14,40 @@
 [ext_resource type="Texture2D" uid="uid://cdvy2bey8ba1h" path="res://interface/menu/time attack/texture/images/leaderboards.png" id="8_f4kkw"]
 [ext_resource type="PackedScene" uid="uid://c01rycxrq1ays" path="res://interface/menu/time attack/TimeAttackNewRun.tscn" id="11_pyiyw"]
 [ext_resource type="PackedScene" uid="uid://crwawg2ivy3xd" path="res://interface/menu/NavigationButton.tscn" id="12_depfi"]
-[ext_resource type="PackedScene" uid="uid://cufdusdk0inmc" path="res://interface/menu/save select/SaveSelect.tscn" id="13_jpw6d"]
 [ext_resource type="PackedScene" uid="uid://mpx28q1qmiyp" path="res://interface/menu/time attack/TimeAttackReady.tscn" id="14_khjqs"]
 [ext_resource type="Script" uid="uid://cj76gvi7tbku6" path="res://sound/script/BGMPlayer.cs" id="15_khjqs"]
 [ext_resource type="PackedScene" uid="uid://dno4ayd56ben3" path="res://interface/menu/time attack/TimeAttackLevelList.tscn" id="17_f8140"]
 [ext_resource type="Resource" uid="uid://bk6m10jnm1xc1" path="res://resource/bgm/menu/time attack.tres" id="17_jqwre"]
+[ext_resource type="PackedScene" uid="uid://c6lj28km76fwj" path="res://interface/menu/time attack/TimeAttackStartRun.tscn" id="18_mof37"]
+[ext_resource type="AudioStream" uid="uid://cl54rftw5aiyf" path="res://sound/sfx/system/menu cancel.wav" id="22_agld8"]
+[ext_resource type="AudioStream" uid="uid://dc6pp0ugxo4e3" path="res://sound/sfx/system/menu pause.wav" id="23_ooqst"]
+
+[sub_resource type="Animation" id="Animation_ltboc"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(931, 182)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath(".:modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 0)]
+}
 
 [sub_resource type="Animation" id="Animation_f4kkw"]
 resource_name = "show"
@@ -50,7 +79,7 @@ tracks/1/keys = {
 tracks/2/type = "method"
 tracks/2/imported = false
 tracks/2/enabled = true
-tracks/2/path = NodePath("..")
+tracks/2/path = NodePath("../..")
 tracks/2/interp = 1
 tracks/2/loop_wrap = true
 tracks/2/keys = {
@@ -62,19 +91,20 @@ tracks/2/keys = {
 }]
 }
 
-[sub_resource type="Animation" id="Animation_ltboc"]
-length = 0.001
+[sub_resource type="Animation" id="Animation_fgwyu"]
+resource_name = "hide"
+length = 0.1
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
 tracks/0/path = NodePath(".:position")
-tracks/0/interp = 1
+tracks/0/interp = 2
 tracks/0/loop_wrap = true
 tracks/0/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
+"times": PackedFloat32Array(0, 0.1),
+"transitions": PackedFloat32Array(1, 1),
 "update": 0,
-"values": [Vector2(931, 182)]
+"values": [Vector2(931, 182), Vector2(1196, 182)]
 }
 tracks/1/type = "value"
 tracks/1/imported = false
@@ -83,15 +113,30 @@ tracks/1/path = NodePath(".:modulate")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 1), Color(1, 1, 1, 0)]
+}
+tracks/2/type = "method"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("../..")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [Color(1, 1, 1, 0)]
+"values": [{
+"args": [],
+"method": &"ChangeButtonImage"
+}]
 }
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_fgwyu"]
 _data = {
 &"RESET": SubResource("Animation_ltboc"),
+&"hide": SubResource("Animation_fgwyu"),
 &"show": SubResource("Animation_f4kkw")
 }
 
@@ -201,7 +246,7 @@ tracks/5/keys = {
 tracks/6/type = "method"
 tracks/6/imported = false
 tracks/6/enabled = true
-tracks/6/path = NodePath("ButtonImage/AnimationPlayer")
+tracks/6/path = NodePath("Control/ButtonImage/AnimationPlayer")
 tracks/6/interp = 1
 tracks/6/loop_wrap = true
 tracks/6/keys = {
@@ -213,9 +258,136 @@ tracks/6/keys = {
 }]
 }
 
+[sub_resource type="Animation" id="Animation_mof37"]
+resource_name = "confirm-1"
+length = 3.0
+step = 0.01
+tracks/0/type = "method"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.05),
+"transitions": PackedFloat32Array(1, 1),
+"values": [{
+"args": [],
+"method": &"DisableProcessing"
+}, {
+"args": [],
+"method": &"SetInactive"
+}]
+}
+tracks/1/type = "method"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Buttons/NewRun")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 1.61, 3),
+"transitions": PackedFloat32Array(1, 1, 1),
+"values": [{
+"args": [],
+"method": &"ConfirmButton"
+}, {
+"args": [],
+"method": &"HideButton"
+}, {
+"args": [],
+"method": &"DeselectButton"
+}]
+}
+tracks/2/type = "method"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Buttons/CustomRun")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(1.41),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"HideButton"
+}]
+}
+tracks/3/type = "method"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("Buttons/SingleRun")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(1.21),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"HideButton"
+}]
+}
+tracks/4/type = "method"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("Buttons/Leaderboards")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(1.03),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"HideButton"
+}]
+}
+tracks/5/type = "method"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("Description/Description")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"HideDescription"
+}]
+}
+tracks/6/type = "method"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("TimeAttackNewRun")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"times": PackedFloat32Array(1.98),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"ShowMenu"
+}]
+}
+tracks/7/type = "method"
+tracks/7/imported = false
+tracks/7/enabled = true
+tracks/7/path = NodePath("Control/ButtonImage/AnimationPlayer")
+tracks/7/interp = 1
+tracks/7/loop_wrap = true
+tracks/7/keys = {
+"times": PackedFloat32Array(1.82),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [&"hide", -1, 1.0, false],
+"method": &"play"
+}]
+}
+
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_jqwre"]
 _data = {
 &"RESET": SubResource("Animation_khjqs"),
+&"confirm-1": SubResource("Animation_mof37"),
 &"show": SubResource("Animation_f8140")
 }
 
@@ -230,8 +402,8 @@ script = ExtResource("1_vs7fe")
 timeAttackAnimator = NodePath("TimeAttackAnimator")
 description = NodePath("Description/Description")
 readyMenu = NodePath("TimeAttackReady")
-buttonImage = NodePath("ButtonImage")
-buttonImageAnimator = NodePath("ButtonImage/AnimationPlayer")
+buttonImage = NodePath("Control/ButtonImage")
+buttonImageAnimator = NodePath("Control/ButtonImage/AnimationPlayer")
 buttonList = [NodePath("Buttons/NewRun"), NodePath("Buttons/CustomRun"), NodePath("Buttons/SingleRun"), NodePath("Buttons/Leaderboards")]
 submenus = Array[NodePath]([])
 bgm = NodePath("BGM")
@@ -278,12 +450,20 @@ inputKey = &"sys_cancel"
 fallbackKey = &"ui_cancel"
 
 [node name="Buttons" type="VBoxContainer" parent="."]
-layout_mode = 0
-offset_left = 130.0
-offset_top = 160.00002
-offset_right = 170.0
-offset_bottom = 712.0
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -1000.0
+offset_top = -436.0
+offset_right = 1135.5557
+offset_bottom = 758.44434
+grow_horizontal = 2
+grow_vertical = 2
 scale = Vector2(0.9, 0.9)
+pivot_offset = Vector2(1065.5557, 584.4445)
 theme_override_constants/separation = 184
 
 [node name="NewRun" parent="Buttons" instance=ExtResource("4_xy5ec")]
@@ -310,28 +490,55 @@ text = "ta_mode_leaderboards"
 description = "ta_mode_times_desc"
 image = ExtResource("8_f4kkw")
 
-[node name="ButtonImage" type="TextureRect" parent="."]
+[node name="Control" type="Control" parent="."]
+layout_mode = 1
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -963.0
+offset_top = -539.0
+offset_right = 958.0
+offset_bottom = 542.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ButtonImage" type="TextureRect" parent="Control"]
 modulate = Color(1, 1, 1, 0)
 z_index = 1
-layout_mode = 0
-offset_left = 931.0
-offset_top = 182.0
-offset_right = 1797.0005
-offset_bottom = 800.0
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 235.5
+offset_top = -358.5
+offset_right = 1101.5005
+offset_bottom = 259.5
+grow_horizontal = 2
+grow_vertical = 2
 texture = ExtResource("5_khjqs")
 
-[node name="Dropshadow" type="TextureRect" parent="ButtonImage"]
+[node name="Dropshadow" type="TextureRect" parent="Control/ButtonImage"]
 modulate = Color(0, 0, 0, 1)
 self_modulate = Color(1, 1, 1, 0.627451)
 show_behind_parent = true
-layout_mode = 0
-offset_left = 24.0
-offset_top = 25.0
-offset_right = 890.0
-offset_bottom = 643.0
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -414.0031
+offset_top = -288.0
+offset_right = 451.9969
+offset_bottom = 330.0
+grow_horizontal = 2
+grow_vertical = 2
 texture = ExtResource("5_khjqs")
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="ButtonImage"]
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Control/ButtonImage"]
 libraries = {
 &"": SubResource("AnimationLibrary_fgwyu")
 }
@@ -418,32 +625,35 @@ offset_top = 0.0
 offset_bottom = 256.0
 grow_vertical = 1
 
-[node name="TimeAttackNewRun" parent="." node_paths=PackedStringArray("thisParent", "saveSelect", "readyMenu", "levelList", "parentMenu", "bgm") instance=ExtResource("11_pyiyw")]
+[node name="TimeAttackNewRun" parent="." node_paths=PackedStringArray("thisParent", "saveSelect", "startRun", "levelList", "parentMenu", "bgm") instance=ExtResource("11_pyiyw")]
 layout_mode = 1
 thisParent = NodePath("..")
-saveSelect = NodePath("../SaveSelect")
-readyMenu = NodePath("../TimeAttackReady")
+saveSelect = NodePath("")
+startRun = NodePath("../TimeAttackStartRun")
 levelList = NodePath("../TimeAttackLevelList")
 parentMenu = NodePath("..")
-submenus = Array[NodePath]([NodePath("../SaveSelect")])
+submenus = Array[NodePath]([NodePath("../TimeAttackReady")])
 bgm = NodePath("../BGM")
-
-[node name="SaveSelect" parent="." instance=ExtResource("13_jpw6d")]
-visible = false
-layout_mode = 1
-descriptionText = "ta_warning_loadsave"
-submenus = Array[NodePath]([NodePath("../TimeAttackLevelList")])
+metadata/_edit_lock_ = true
 
 [node name="TimeAttackReady" parent="." node_paths=PackedStringArray("parentMenu", "bgm") instance=ExtResource("14_khjqs")]
 layout_mode = 1
-parentMenu = NodePath("../TimeAttackNewRun")
+parentMenu = NodePath("../TimeAttackStartRun")
 bgm = NodePath("../BGM")
 isProcessing = false
 
-[node name="TimeAttackLevelList" parent="." instance=ExtResource("17_f8140")]
+[node name="TimeAttackLevelList" parent="." node_paths=PackedStringArray("parentMenu") instance=ExtResource("17_f8140")]
 visible = false
 layout_mode = 1
+parentMenu = NodePath("../TimeAttackStartRun")
 submenus = Array[NodePath]([NodePath("../TimeAttackReady")])
+
+[node name="TimeAttackStartRun" parent="." node_paths=PackedStringArray("readyMenu", "levelList", "parentMenu") instance=ExtResource("18_mof37")]
+layout_mode = 1
+readyMenu = NodePath("../TimeAttackReady")
+levelList = NodePath("../TimeAttackLevelList")
+parentMenu = NodePath("../TimeAttackNewRun")
+submenus = Array[NodePath]([NodePath("../TimeAttackReady"), NodePath("../TimeAttackLevelList")])
 
 [node name="TimeAttackAnimator" type="AnimationPlayer" parent="."]
 libraries = {
@@ -454,3 +664,13 @@ libraries = {
 bus = &"BGM"
 script = ExtResource("15_khjqs")
 bgmResource = ExtResource("17_jqwre")
+
+[node name="SFX" type="Node" parent="."]
+
+[node name="Cancel" type="AudioStreamPlayer" parent="SFX"]
+stream = ExtResource("22_agld8")
+bus = &"SFX"
+
+[node name="QuitMenu" type="AudioStreamPlayer" parent="SFX"]
+stream = ExtResource("23_ooqst")
+bus = &"SFX"
