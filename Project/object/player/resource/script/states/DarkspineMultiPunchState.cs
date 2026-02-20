@@ -83,7 +83,7 @@ public partial class DarkspineMultiPunchState : PlayerState
 			if (Player.Animator.IsDarkspinePunchFinished)
 			{
 				// No world ring explosions. Player goofed.
-				Core.AlfLayla.FinishStun();
+				Core.AlfLayla.FinishStun(true);
 				return null;
 			}
 

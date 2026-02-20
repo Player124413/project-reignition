@@ -719,7 +719,7 @@ public partial class AlfLayla : Node3D
 		currentActionIndex = 0; // Reset to the start of the phase
 	}
 
-	private readonly float MaxStunLength = 20f;
+	private readonly float MaxStunLength = 10f;
 	private void ProcessStun()
 	{
 		if (Player.IsMultiPunchActive) // Use timer in player state instead
@@ -732,17 +732,24 @@ public partial class AlfLayla : Node3D
 
 		actionTimer = Mathf.MoveToward(actionTimer, 0, PhysicsManager.physicsDelta);
 		if (Mathf.IsZeroApprox(actionTimer))
-			FinishStun();
+			FinishStun(false);
 	}
 
-	public void FinishStun()
+	public void FinishStun(bool isFromMultipunch)
 	{
-		stopLockout.Deactivate();
-		ResetPositions();
-		currentDistance = CloseDistance;
-		SnapPosition();
-		ResetCamera();
-		ShowObjects();
+		if (isFromMultipunch)
+		{
+			stopLockout.Deactivate();
+			ResetPositions();
+			currentDistance = CloseDistance;
+			SnapPosition();
+			ResetCamera();
+			ShowObjects();
+		}
+		else
+		{
+			currentDistance = Player.GlobalPosition.RemoveVertical().DistanceTo(GlobalPosition.RemoveVertical());
+		}
 
 		if (currentProgressionDialogIndex == 5 && currentHealth != MaxHealth)
 			PlayProgressionDialog();
@@ -822,7 +829,7 @@ public partial class AlfLayla : Node3D
 				{
 					Player.Visible = true;
 					Player.Activate();
-					FinishStun();
+					FinishStun(true);
 				}
 
 				return false;
