@@ -1,4 +1,5 @@
 using System;
+//using System.Collections.Generic;
 using System.Linq;
 using Godot;
 using Godot.Collections;
@@ -25,6 +26,7 @@ public partial class SaveManager : Node
 		SaveDirectory = ProjectSettings.GlobalizePath(GetSaveDirectory());
 		MenuData = GameData.CreateDefaultData(); // Create a default game data object for the menu
 		SharedData = SharedGameData.CreateDefaultData();
+		TimeData = TimeAttackData.CreateDefaultData();
 
 		LoadConfig();
 		LoadGameData();
@@ -942,7 +944,7 @@ public partial class SaveManager : Node
 	/// <summary> Current skill ring. </summary>
 	public readonly static SkillRing ActiveSkillRing = new();
 	/// <summary> List of all saves created. </summary>
-	public readonly static GameData[] GameSaveSlots = new GameData[SaveSlotCount];
+	public readonly static GameData[] GameSaveSlots = new GameData[SaveSlotCount + 1]; //Creating a fake save slot for Time Attack
 	/// <summary> Maximum number of save slots that can be created. </summary>
 	public const int SaveSlotCount = 9;
 
@@ -1543,6 +1545,158 @@ public partial class SaveManager : Node
 		file.StoreString(SaveDirectory);
 		file.Close();
 	}
+	#endregion
+
+	#region Time Attack Data
+	public static TimeAttackData TimeData;
+	private const string timeAttackFileName = "timeAttack.dat";
+
+	public class TimeAttackData
+	{
+		///<summary>The times stored for Standard runs</summary>
+		public Array<Dictionary<string, float>> AnyP = [];
+		///<summary>The times stored for Main Mission runs</summary>
+		public Array<Dictionary<string, float>> GoalP = [];
+		///<summary>The times stored for Boss Rush runs</summary>
+		public Array<Dictionary<string, float>> BossRush = [];
+		///<summary>The times stored for single runs</summary>
+		public Dictionary<string, float> SingleRun;
+		///<summary>The times stored for the current run.</summary>
+		public Dictionary<string, float> RunInProgress;
+		///<summary>The current run type</summary>
+		public TimeAttackManager.RunType CurrentRunType;
+		///<summary>The player's spot in the current run</summary>
+		public int CurrentPlacement;
+
+		///<summary>Adds the current run to the saved runs</summary>
+		public void AddCurrentRun(TimeAttackManager.RunType type)
+		{
+			switch (type)
+			{
+				case TimeAttackManager.RunType.AnyP:
+					AnyP.Add(RunInProgress);
+					break;
+				case TimeAttackManager.RunType.GoalPercent:
+					GoalP.Add(RunInProgress);
+					break;
+				case TimeAttackManager.RunType.BossRush:
+					BossRush.Add(RunInProgress);
+					break;
+			}
+		}
+
+		public float CalculateTotalTime(Dictionary<string, float> times)
+		{
+			float total = 0f;
+
+			foreach (float time in times.Values)
+			{
+				total += time;
+			}
+
+			return total;
+		}
+		///<summary>Is Time Attack unlocked?</summary>
+		public bool CheckUnlocked()
+		{
+			return SharedData.achievements.Contains("true hero"); //Checking if Alf Layla is defeated
+		}
+		public void LoadTimeAttackSave()
+		{
+			GD.Print("Loading Time Attack Save");
+			ActiveSaveSlotIndex = SaveSlotCount;
+			ActiveGameData.level = 99;
+			ActiveSkillRing.UpdateTotalSkillPoints();
+			ActiveSkillRing.LoadFromActiveData();
+		}
+
+		public Dictionary ToDictionary()
+		{
+			return new()
+			{
+				{ nameof(AnyP), AnyP },
+				{ nameof(GoalP), GoalP},
+				{ nameof(BossRush), BossRush},
+				{ nameof(SingleRun), SingleRun},
+				{ nameof(RunInProgress), RunInProgress},
+				{ nameof(CurrentRunType), (int)CurrentRunType},
+				{ nameof(CurrentPlacement), CurrentPlacement}
+
+			};
+		}
+
+		public void FromDictionary(Dictionary dictionary)
+		{
+			if (dictionary.TryGetValue(nameof(AnyP), out Variant var))
+				AnyP = (Array<Dictionary<string, float>>)var;
+			if (dictionary.TryGetValue(nameof(GoalP), out var))
+				GoalP = (Array<Dictionary<string, float>>)var;
+			if (dictionary.TryGetValue(nameof(BossRush), out var))
+				BossRush = (Array<Dictionary<string, float>>)var;
+			if (dictionary.TryGetValue(nameof(SingleRun), out var))
+				SingleRun = (Dictionary<string, float>)var;
+			if (dictionary.TryGetValue(nameof(RunInProgress), out var))
+				RunInProgress = (Dictionary<string, float>)var;
+			if (dictionary.TryGetValue(nameof(CurrentRunType), out var))
+				CurrentRunType = (TimeAttackManager.RunType)(int)var;
+			if (dictionary.TryGetValue(nameof(CurrentPlacement), out var))
+				CurrentPlacement = (int)var;
+
+		}
+
+		public static TimeAttackData CreateDefaultData()
+		{
+			TimeAttackData data = new()
+			{
+				AnyP = [],
+				GoalP = [],
+				BossRush = [],
+				SingleRun = [],
+				RunInProgress = [],
+				CurrentRunType = TimeAttackManager.RunType.AnyP,
+				CurrentPlacement = -1
+			};
+			return data;
+		}
+	}
+
+	/// <summary> Attempts to load Time Attack data from file. </summary>
+	public static void LoadTimeAttackData()
+	{
+		string dataFile = SaveDirectory.PathJoin(timeAttackFileName);
+		FileAccess file = FileAccess.Open(dataFile, FileAccess.ModeFlags.Read);
+
+		try
+		{
+			if (file.GetError() == Error.Ok)
+			{
+				// Attempt to load.
+				Dictionary d = (Dictionary)Json.ParseString(file.GetAsText());
+				TimeData.FromDictionary(d);
+				file.Close();
+			}
+		}
+		catch // Load Default settings
+		{
+			TimeData = TimeAttackData.CreateDefaultData();
+		}
+	}
+
+	public static void SaveTimeAttackData()
+	{
+		if (!DirAccess.DirExistsAbsolute(SaveDirectory))
+			DirAccess.MakeDirRecursiveAbsolute(SaveDirectory);
+
+		string dataFile = SaveDirectory.PathJoin(timeAttackFileName);
+		FileAccess file = FileAccess.Open(dataFile, FileAccess.ModeFlags.Write);
+		file.StoreString(Json.Stringify(TimeData.ToDictionary(), "\t"));
+		file.Close();
+
+		file = FileAccess.Open(SaveLocationFile, FileAccess.ModeFlags.Write);
+		file.StoreString(SaveDirectory);
+		file.Close();
+	}
+
 	#endregion
 
 	public class LevelSaveData

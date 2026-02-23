@@ -32,14 +32,9 @@ public partial class TimeAttack : Menu
 		if (!bgm.Playing)
 			bgm.Play();
 
-		SaveManager.ActiveSaveSlotIndex = -1;
-		SaveManager.ActiveGameData.level = 99;
-		SaveManager.ActiveSkillRing.UpdateTotalSkillPoints();
-		SaveManager.ActiveSkillRing.LoadFromActiveData();
-
-
-
-
+		SaveManager.LoadTimeAttackData();
+		SaveManager.SaveTimeAttackData();
+		SaveManager.TimeData.LoadTimeAttackSave();
 	}
 
 	public override void OpenParentMenu()
@@ -108,6 +103,7 @@ public partial class TimeAttack : Menu
 	{
 		if (isActive)
 		{
+			SaveManager.SaveTimeAttackData();
 			TimeAttackManager.Instance.SetRunActive(false);
 			OpenParentMenu();
 			currentSelection = 1;
