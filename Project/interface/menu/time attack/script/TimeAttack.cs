@@ -35,6 +35,9 @@ public partial class TimeAttack : Menu
 		SaveManager.LoadTimeAttackData();
 		SaveManager.SaveTimeAttackData();
 		SaveManager.TimeData.LoadTimeAttackSave();
+		SaveManager.ActiveGameData.UnlockAllWorlds();
+
+
 	}
 
 	public override void OpenParentMenu()
