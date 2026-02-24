@@ -4,12 +4,10 @@ using System.Collections.Generic;
 
 namespace Project.Interface.Menus;
 
-public partial class LevelSelect : Menu
+public partial class TimeAttackLevelSelect : Menu
 {
 	[Export] private SaveManager.WorldEnum world;
-	[Export] private string areaKey;
 	[Export] private Description description;
-	[Export] private ReadyMenu readyMenu;
 
 	[Export] private Control cursor;
 	private float initialCursorPosition;
@@ -28,42 +26,6 @@ public partial class LevelSelect : Menu
 	private const float ScrollSmoothing = .05f;
 	private readonly List<LevelOption> levelOptions = [];
 
-	public bool HasNewLevel()
-	{
-		foreach (Node node in options.GetChildren())
-		{
-			if (node is LevelOption levelOption)
-			{
-				levelOption.UpdateLevelData();
-
-				if (levelOption.IsUnlocked && levelOption.ClearState == Core.SaveManager.LevelSaveData.LevelStatus.New)
-					return true;
-			}
-		}
-
-		return false;
-	}
-
-	public bool IsWorldUnlocked()
-	{
-		if (DebugManager.Instance.UseDemoSave)
-		{
-			/// For the demo, assume the world is unlocked if a stage is available to play.
-			foreach (Node node in options.GetChildren())
-			{
-				if (node is LevelOption levelOption)
-				{
-					if (levelOption.IsUnlocked)
-						return true;
-				}
-			}
-
-			return false;
-		}
-
-		// For the full release--use the actual save data
-		return SaveManager.ActiveGameData.IsWorldUnlocked(world);
-	}
 
 	protected override void SetUp()
 	{
@@ -85,6 +47,11 @@ public partial class LevelSelect : Menu
 
 	public override void ShowMenu()
 	{
+		if (TimeAttackManager.Instance.IsRunActive)
+		{
+			menuMemory[MemoryKeys.LevelSelect] = 0;
+			SetUp();
+		}
 
 		VerticalSelection = menuMemory[MemoryKeys.LevelSelect];
 		RecalculateListPosition();
@@ -92,30 +59,8 @@ public partial class LevelSelect : Menu
 
 		animator.Play("show");
 
-		UpdateDescription();
 		for (int i = 0; i < levelOptions.Count; i++)
-			levelOptions[i].ShowOption();
-
-		bool canPlayBgm = !SaveManager.Config.useRetailMenuMusic && IsWorldUnlocked() && bgm?.Stream != null;
-		if (canPlayBgm && bgm?.Playing == false)
-		{
-			// Change to world specific level select music
-			parentMenu.FadeBgm(.5f);
-			FadeBgm(.5f, true, .5f); // Fade in bgm
-			CurrentBgmTime = parentMenu.CurrentBgmTime; // Sync bgm
-			readyMenu.SetBgmPlayer(bgm); // Update readymenu's bgm player
-		}
-		else if (!canPlayBgm)
-		{
-			// As a fallback, play the parent menu's bgm (won't do anything if parent bgm is already playing)
-			parentMenu.PlayBgm();
-			readyMenu.SetBgmPlayer(parentMenu.bgm);
-		}
-		else
-		{
-			for (int i = 0; i < levelOptions.Count; i++)
-				levelOptions[i].EnableTAInfo();
-		}
+			levelOptions[i].EnableTAInfo();
 	}
 
 	public override void HideMenu()
@@ -126,30 +71,18 @@ public partial class LevelSelect : Menu
 
 	protected override void Confirm()
 	{
-		base.Confirm();
+		Cancel();
 	}
 
 	protected override void Cancel()
 	{
 		base.Cancel();
 
-		// Revert bgm music
-		if (bgm?.Playing == true)
-		{
-			FadeBgm(.5f); // Fade out bgm
-			parentMenu.FadeBgm(.5f, true, .5f); // Fade in parent bgm
-			parentMenu.CurrentBgmTime = CurrentBgmTime; // Sync bgm
-		}
-	}
+		HideMenu();
+		cursorPosition = 0;
+		levelOptions.Clear();
 
-	/// <summary> Shows the "Are you ready?" screen. </summary>
-	public override void OpenSubmenu()
-	{
-		readyMenu.SetMapText(areaKey);
-		readyMenu.SetMissionText(levelOptions[VerticalSelection].data.MissionTypeKey);
-		readyMenu.parentMenu = this;
-		readyMenu.LevelData = levelOptions[VerticalSelection].data;
-		readyMenu.ShowMenu();
+		parentMenu.OpenParentMenu();
 	}
 
 	protected override void UpdateSelection()
@@ -162,6 +95,8 @@ public partial class LevelSelect : Menu
 		animator.Play("select");
 		animator.Seek(0, true);
 
+		if (menuMemory[MemoryKeys.ActiveMenu] != (int)MemoryKeys.TimeAttack)
+			UpdateDescription();
 		StartSelectionTimer();
 		RecalculateListPosition();
 	}

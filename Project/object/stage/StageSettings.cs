@@ -756,7 +756,7 @@ public partial class StageSettings : Node3D
 
 			SaveManager.ActiveGameData.UnlockStage(stage.LevelID);
 
-			if (!DebugManager.Instance.UseDemoSave) // Only add notification when not using the demo save
+			if (!DebugManager.Instance.UseDemoSave || !TimeAttackManager.Instance.IsRunActive) // Only add notification when not using the demo save
 				missionsUnlocked++;
 		}
 

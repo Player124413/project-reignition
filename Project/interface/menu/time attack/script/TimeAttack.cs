@@ -35,7 +35,6 @@ public partial class TimeAttack : Menu
 		SaveManager.LoadTimeAttackData();
 		SaveManager.SaveTimeAttackData();
 		SaveManager.TimeData.LoadTimeAttackSave();
-		SaveManager.ActiveGameData.UnlockAllWorlds();
 
 
 	}
@@ -98,6 +97,7 @@ public partial class TimeAttack : Menu
 		{
 			timeAttackAnimator.Play("confirm-" + currentSelection);
 			currentSelection = 1;
+			TimeAttackManager.Instance.SetRunActive(true);
 		}
 
 	}

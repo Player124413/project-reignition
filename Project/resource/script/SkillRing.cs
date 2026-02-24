@@ -232,7 +232,7 @@ public class SkillRing
 		if (skill == null) // Skill hasn't been created yet...
 			return false;
 
-		if (DebugManager.Instance.UseDemoSave)
+		if (DebugManager.Instance.UseDemoSave || TimeAttackManager.Instance.IsRunActive)
 			return true;
 
 		if (countEquipAsUnlocked && IsSkillEquipped(skill)) // Equipped skills should be unlocked automatically to allow the player to unequip them...

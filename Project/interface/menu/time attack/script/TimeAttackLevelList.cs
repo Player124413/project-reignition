@@ -7,7 +7,7 @@ namespace Project.Interface.Menus;
 public partial class TimeAttackLevelList : Menu
 {
 	[Export]
-	private LevelSelect levelSelect;
+	private TimeAttackLevelSelect levelSelect;
 	[Export]
 	private Control optionsContainer;
 	[Export]
