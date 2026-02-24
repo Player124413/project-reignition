@@ -1,15 +1,20 @@
-[gd_scene load_steps=20 format=3 uid="uid://b5ww2daen23xt"]
+[gd_scene load_steps=23 format=3 uid="uid://b5ww2daen23xt"]
 
 [ext_resource type="Script" uid="uid://br3ha815vdqhy" path="res://interface/menu/time attack/script/TimeAttackButton.cs" id="1_8c78a"]
 [ext_resource type="Texture2D" uid="uid://dj5lexj84x3bq" path="res://interface/menu/time attack/texture/button.png" id="2_t4f77"]
 [ext_resource type="Texture2D" uid="uid://cbky5xfadj1x6" path="res://interface/menu/time attack/texture/light.png" id="3_788pk"]
+[ext_resource type="Texture2D" uid="uid://dtkjhbkei4y35" path="res://interface/menu/time attack/texture/select.png" id="3_b5v3o"]
 [ext_resource type="Texture2D" uid="uid://deino6g1pp5i" path="res://interface/menu/time attack/texture/light_on.png" id="4_xgrub"]
 [ext_resource type="Texture2D" uid="uid://ivq5ihkelvrw" path="res://interface/menu/time attack/texture/button_decal.png" id="5_fcaw1"]
 [ext_resource type="SpriteFrames" uid="uid://bp6kovr3qcq87" path="res://effect/particle/sprite frames/Flame Menu Button.tres" id="5_xgrub"]
+[ext_resource type="SpriteFrames" uid="uid://b2prr5sxgwb0n" path="res://effect/particle/sprite frames/Flame Menu Burst.tres" id="6_okj22"]
 [ext_resource type="FontFile" uid="uid://d4n14nh2uvt6u" path="res://interface/font/bitmap fonts/Sonic and The Secret Rings - Credits by Dark Sonic & Co..otf" id="7_fcaw1"]
 [ext_resource type="AudioStream" uid="uid://huxte6rhwx58" path="res://sound/sfx/system/menu selection.wav" id="9_6cnfa"]
 [ext_resource type="AudioStream" uid="uid://6c8swxoc7r2i" path="res://sound/sfx/system/page flip.wav" id="10_6cnfa"]
 [ext_resource type="AudioStream" uid="uid://cruu5h1jr78lr" path="res://sound/sfx/system/menu screen change.wav" id="10_okj22"]
+
+[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_b5v3o"]
+blend_mode = 1
 
 [sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_xgrub"]
 blend_mode = 1
@@ -110,14 +115,83 @@ tracks/6/keys = {
 tracks/7/type = "value"
 tracks/7/imported = false
 tracks/7/enabled = true
-tracks/7/path = NodePath("Button:scale")
+tracks/7/path = NodePath("Button:self_modulate")
 tracks/7/interp = 1
 tracks/7/loop_wrap = true
 tracks/7/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 0,
-"values": [Vector2(1, 1)]
+"values": [Color(1, 1, 1, 1)]
+}
+tracks/8/type = "value"
+tracks/8/imported = false
+tracks/8/enabled = true
+tracks/8/path = NodePath("Button/Label:self_modulate")
+tracks/8/interp = 1
+tracks/8/loop_wrap = true
+tracks/8/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+tracks/9/type = "value"
+tracks/9/imported = false
+tracks/9/enabled = true
+tracks/9/path = NodePath("Button/Border:self_modulate")
+tracks/9/interp = 1
+tracks/9/loop_wrap = true
+tracks/9/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 0)]
+}
+
+[sub_resource type="Animation" id="Animation_okj22"]
+resource_name = "confirm"
+length = 0.4
+step = 0.1
+tracks/0/type = "method"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("SFX/Confirm")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [0.0],
+"method": &"play"
+}]
+}
+tracks/1/type = "method"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Button/Light/FlamesBurst")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [&"default", 1.0, false],
+"method": &"play"
+}]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Button/Border:self_modulate")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 0.15, 0.3),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 0.46666667), Color(1, 1, 1, 0)]
 }
 
 [sub_resource type="Animation" id="Animation_6cnfa"]
@@ -147,6 +221,30 @@ tracks/1/keys = {
 "transitions": PackedFloat32Array(1),
 "update": 0,
 "values": [Vector2(0, 0)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Button:self_modulate")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(0.5931336, 0.59313357, 0.59313357, 1)]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("Button/Label:self_modulate")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(0.5931336, 0.59313357, 0.59313357, 1)]
 }
 
 [sub_resource type="Animation" id="Animation_fcaw1"]
@@ -271,6 +369,30 @@ tracks/3/keys = {
 "method": &"play"
 }]
 }
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("Button:self_modulate")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0, 0.07),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(0.5931336, 0.59313357, 0.59313357, 1), Color(1, 1, 1, 1)]
+}
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("Button/Label:self_modulate")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0, 0.07),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(0.5931336, 0.59313357, 0.59313357, 1), Color(1, 1, 1, 1)]
+}
 
 [sub_resource type="Animation" id="Animation_xgrub"]
 resource_name = "show"
@@ -351,48 +473,29 @@ tracks/5/keys = {
 "method": &"play"
 }]
 }
-
-[sub_resource type="Animation" id="Animation_okj22"]
-resource_name = "confirm"
-length = 0.9
-step = 0.1
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("Button:scale")
-tracks/0/interp = 2
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0, 0.3, 0.6),
-"transitions": PackedFloat32Array(1, 2.0705302, 1),
-"update": 0,
-"values": [Vector2(1, 1), Vector2(1.2, 1.2), Vector2(1, 1)]
-}
-tracks/1/type = "value"
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/path = NodePath("Button/Light/Flames:scale")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
-tracks/1/keys = {
-"times": PackedFloat32Array(0, 0.6, 0.8, 0.9),
-"transitions": PackedFloat32Array(1, 1, 2.0000002, 1),
-"update": 0,
-"values": [Vector2(0.2538731, 0.30265346), Vector2(0.2538731, 0.30265346), Vector2(0.254, 0.613), Vector2(0.2538731, 0.30265343)]
-}
-tracks/2/type = "method"
-tracks/2/imported = false
-tracks/2/enabled = true
-tracks/2/path = NodePath("SFX/Confirm")
-tracks/2/interp = 1
-tracks/2/loop_wrap = true
-tracks/2/keys = {
-"times": PackedFloat32Array(0.6),
+tracks/6/type = "value"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("Button:self_modulate")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
-"values": [{
-"args": [0.0],
-"method": &"play"
-}]
+"update": 0,
+"values": [Color(0.5931336, 0.59313357, 0.59313357, 1)]
+}
+tracks/7/type = "value"
+tracks/7/imported = false
+tracks/7/enabled = true
+tracks/7/path = NodePath("Button/Label:self_modulate")
+tracks/7/interp = 1
+tracks/7/loop_wrap = true
+tracks/7/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(0.5931336, 0.59313357, 0.59313357, 1)]
 }
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_hfl7s"]
@@ -406,6 +509,7 @@ _data = {
 }
 
 [node name="TimeAttackButton" type="Control" node_paths=PackedStringArray("label", "animator")]
+z_index = 2
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -424,6 +528,16 @@ offset_bottom = 184.0
 pivot_offset = Vector2(100, 88)
 texture = ExtResource("2_t4f77")
 expand_mode = 1
+
+[node name="Border" type="TextureRect" parent="Button"]
+self_modulate = Color(1, 1, 1, 0)
+z_index = 1
+material = SubResource("CanvasItemMaterial_b5v3o")
+layout_mode = 0
+offset_top = -6.0
+offset_right = 869.0
+offset_bottom = 191.0
+texture = ExtResource("3_b5v3o")
 
 [node name="Light" type="TextureRect" parent="Button"]
 layout_mode = 0
@@ -444,6 +558,14 @@ material = SubResource("CanvasItemMaterial_xgrub")
 position = Vector2(97, 129.00002)
 scale = Vector2(1e-05, 1e-05)
 sprite_frames = ExtResource("5_xgrub")
+frame_progress = 0.4196957
+offset = Vector2(-23.63382, -565.0027)
+
+[node name="FlamesBurst" type="AnimatedSprite2D" parent="Button/Light"]
+material = SubResource("CanvasItemMaterial_xgrub")
+position = Vector2(97, 129.00002)
+scale = Vector2(0.2538731, 0.30265346)
+sprite_frames = ExtResource("6_okj22")
 frame = 11
 frame_progress = 1.0
 offset = Vector2(-23.63382, -565.0027)
