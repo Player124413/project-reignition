@@ -109,11 +109,6 @@ public partial class LevelSelect : Menu
 
 	public override void ShowMenu()
 	{
-		if (TimeAttackManager.Instance.IsRunActive)
-		{
-			menuMemory[MemoryKeys.LevelSelect] = 0;
-			SetUp();
-		}
 
 		VerticalSelection = menuMemory[MemoryKeys.LevelSelect];
 		RecalculateListPosition();
@@ -132,27 +127,25 @@ public partial class LevelSelect : Menu
 		cursorAnimator.Advance(0.0);
 
 		animator.Play("show");
-		if (!TimeAttackManager.Instance.IsRunActive)
-		{
-			UpdateDescription();
-			for (int i = 0; i < levelOptions.Count; i++)
-				levelOptions[i].ShowOption();
 
-			bool canPlayBgm = !SaveManager.Config.useRetailMenuMusic && IsWorldUnlocked() && bgm?.Stream != null;
-			if (canPlayBgm && bgm?.Playing == false)
-			{
-				// Change to world specific level select music
-				parentMenu.FadeBgm(.5f);
-				FadeBgm(.5f, true, .5f); // Fade in bgm
-				CurrentBgmTime = parentMenu.CurrentBgmTime; // Sync bgm
-				readyMenu.SetBgmPlayer(bgm); // Update readymenu's bgm player
-			}
-			else if (!canPlayBgm)
-			{
-				// As a fallback, play the parent menu's bgm (won't do anything if parent bgm is already playing)
-				parentMenu.PlayBgm();
-				readyMenu.SetBgmPlayer(parentMenu.bgm);
-			}
+		UpdateDescription();
+		for (int i = 0; i < levelOptions.Count; i++)
+			levelOptions[i].ShowOption();
+
+		bool canPlayBgm = !SaveManager.Config.useRetailMenuMusic && IsWorldUnlocked() && bgm?.Stream != null;
+		if (canPlayBgm && bgm?.Playing == false)
+		{
+			// Change to world specific level select music
+			parentMenu.FadeBgm(.5f);
+			FadeBgm(.5f, true, .5f); // Fade in bgm
+			CurrentBgmTime = parentMenu.CurrentBgmTime; // Sync bgm
+			readyMenu.SetBgmPlayer(bgm); // Update readymenu's bgm player
+		}
+		else if (!canPlayBgm)
+		{
+			// As a fallback, play the parent menu's bgm (won't do anything if parent bgm is already playing)
+			parentMenu.PlayBgm();
+			readyMenu.SetBgmPlayer(parentMenu.bgm);
 		}
 		else
 		{
@@ -181,16 +174,6 @@ public partial class LevelSelect : Menu
 	protected override void Cancel()
 	{
 		base.Cancel();
-
-		if (TimeAttackManager.Instance.IsRunActive)
-		{
-			HideMenu();
-			cursorPosition = 0;
-			levelOptions.Clear();
-
-			parentMenu.OpenParentMenu();
-			return;
-		}
 
 		// Revert bgm music
 		if (bgm?.Playing == true)
@@ -232,8 +215,6 @@ public partial class LevelSelect : Menu
 		animator.Play("select");
 		animator.Seek(0, true);
 
-		if (menuMemory[MemoryKeys.ActiveMenu] != (int)MemoryKeys.TimeAttack)
-			UpdateDescription();
 		StartSelectionTimer();
 		RecalculateListPosition();
 	}
