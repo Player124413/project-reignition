@@ -1549,14 +1549,6 @@ public partial class SaveManager : Node
 		{
 			return SharedData.achievements.Contains("true hero"); //Checking if Alf Layla is defeated
 		}
-		public void LoadTimeAttackSave()
-		{
-			GD.Print("Loading Time Attack Save");
-			ActiveSaveSlotIndex = SaveSlotCount;
-			ActiveGameData.level = 99;
-			ActiveSkillRing.UpdateTotalSkillPoints();
-			ActiveSkillRing.LoadFromActiveData();
-		}
 
 		public Dictionary ToDictionary()
 		{

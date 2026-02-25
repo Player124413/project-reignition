@@ -66,8 +66,6 @@ public partial class ReadyMenu : Menu
 		if (HorizontalSelection == 0) // Load level
 		{
 			StopBgm(); // Stop bgm
-			if (menuMemory[MemoryKeys.ActiveMenu] == (int)MemoryKeys.TimeAttack)
-				TimeAttackManager.Instance.SetRunActive(true);
 
 			menuMemory[MemoryKeys.ActiveMenu] = (int)MemoryKeys.LevelSelect;
 			base.Confirm();
@@ -148,8 +146,8 @@ public partial class ReadyMenu : Menu
 	///<summary> Sets up the ready menu for time attack
 	public void SetupReadyMenu(LevelDataResource level)
 	{
-		SetMapText(level.AreaKey.ToString().ToCamelCase());
-		SetMissionText(level.MissionTypeKey);
+		SetMapText(Tr(level.AreaKey.ToString().ToCamelCase()));
+		SetMissionText(Tr(level.MissionTypeKey));
 		LevelData = level;
 	}
 }

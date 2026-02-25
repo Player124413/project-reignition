@@ -111,11 +111,6 @@ public partial class LevelSelect : Menu
 			parentMenu.PlayBgm();
 			readyMenu.SetBgmPlayer(parentMenu.bgm);
 		}
-		else
-		{
-			for (int i = 0; i < levelOptions.Count; i++)
-				levelOptions[i].EnableTAInfo();
-		}
 	}
 
 	public override void HideMenu()
@@ -126,6 +121,9 @@ public partial class LevelSelect : Menu
 
 	protected override void Confirm()
 	{
+		if (!levelOptions[VerticalSelection].IsUnlocked)
+			return;
+
 		base.Confirm();
 	}
 
@@ -145,6 +143,9 @@ public partial class LevelSelect : Menu
 	/// <summary> Shows the "Are you ready?" screen. </summary>
 	public override void OpenSubmenu()
 	{
+		if (TimeAttackManager.Instance.IsRunActive && TimeAttackManager.Instance.CurrentRunType == TimeAttackManager.RunType.SingleRun)
+			TimeAttackManager.Instance.Level_Single = levelOptions[VerticalSelection].data;
+
 		readyMenu.SetMapText(areaKey);
 		readyMenu.SetMissionText(levelOptions[VerticalSelection].data.MissionTypeKey);
 		readyMenu.parentMenu = this;

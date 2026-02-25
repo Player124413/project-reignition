@@ -92,12 +92,8 @@ public partial class LevelResult : Control
 	private void ProcessMenuButtons()
 	{
 		// Determine which scene to load without connecting it
-		if (TimeAttackManager.Instance.IsRunActive)
-		{
-			TimeAttackManager.Instance.AddTime(Stage.CurrentTime);
-			TimeAttackManager.Instance.IncreaseLevel();
-		}
-		else if (Runtime.Instance.IsActionJustPressed("sys_cancel", "ui_cancel", "escape")) // Retry stage
+
+		if (Runtime.Instance.IsActionJustPressed("sys_cancel", "ui_cancel", "escape")) // Retry stage
 		{
 			TransitionManager.Instance.QueuedScene = string.Empty;
 		}
@@ -114,8 +110,24 @@ public partial class LevelResult : Control
 			}
 		}
 
-		if (TimeAttackManager.Instance.IsRunActive)
+		if (TimeAttackManager.Instance.IsRunActive && !TimeAttackManager.Instance.IsLastLevel())
+		{
+			TimeAttackManager.Instance.IncreaseLevel();
 			TimeAttackManager.Instance.LoadLevel(TimeAttackManager.Instance.GetCurrentLevel());
+		}
+
+		else if (TimeAttackManager.Instance.IsRunActive && TimeAttackManager.Instance.IsLastLevel())
+		{
+			TransitionManager.QueueSceneChange(TransitionManager.TimeAttackScenePath);//TODO: Change to TA RESULTS screen
+			TransitionManager.StartTransition(new()
+			{
+				inSpeed = 0.2f,
+				outSpeed = 0.5f,
+				color = Colors.Black,
+				disableAutoTransition = false
+			});
+
+		}
 		else // Actual scene transition is handled by the experience results screen (which is connected via this signal)
 			EmitSignal(SignalName.ContinuePressed);
 
@@ -193,9 +205,15 @@ public partial class LevelResult : Control
 		animator.Advance(0.0);
 
 		if (TimeAttackManager.Instance.IsRunActive)
+		{
+			TimeAttackManager.Instance.AddTime(Stage.CurrentTime);
+
 			animator.Play(isStageCleared ? "success-start-timeattack" : "fail-start");
+		}
 		else
 			animator.Play(isStageCleared ? "success-start" : "fail-start");
+
+
 	}
 
 	public void SetInputProcessing(bool value) => isProcessing = value;
