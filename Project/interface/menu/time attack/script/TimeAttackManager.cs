@@ -2,6 +2,7 @@ using Godot;
 using System;
 using Godot.Collections;
 using Project.Gameplay;
+using System.Linq;
 
 namespace Project.Core;
 
@@ -29,6 +30,7 @@ public partial class TimeAttackManager : Node
 	[Export]
 	private LevelDataResource[] Levels_BossRush;
 	private LevelDataResource[] Levels_Custom;
+	public LevelDataResource Level_Single;
 
 	public int CurrentLevel { get; private set; }
 	public bool IsRunActive { get; private set; }
@@ -71,7 +73,10 @@ public partial class TimeAttackManager : Node
 	///<summary> Gets the current level of the run being played </summary>
 	public LevelDataResource GetCurrentLevel()
 	{
-		return GetCurrentRunLevels(CurrentRunType)[CurrentLevel];
+		if (CurrentRunType != RunType.SingleRun)
+			return GetCurrentRunLevels(CurrentRunType)[CurrentLevel];
+		else
+			return Level_Single;
 	}
 	///<summary> Gets the next level of the run being played </summary>
 	public LevelDataResource GetNextLevel()
@@ -82,8 +87,11 @@ public partial class TimeAttackManager : Node
 	///<summary> Are we on the last level? </summary>
 	public bool IsLastLevel()
 	{
-		if (GetCurrentRunLevels(CurrentRunType)[CurrentLevel + 1] == null)
+		if (GetCurrentLevel() == GetCurrentRunLevels(CurrentRunType).Last() || CurrentRunType == RunType.SingleRun)
+		{
+			GD.Print("WE ARE ON THE LAST LEVEL OF THE RUN");
 			return true;
+		}
 		else
 			return false;
 	}

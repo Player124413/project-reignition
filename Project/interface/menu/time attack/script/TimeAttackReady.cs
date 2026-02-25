@@ -24,13 +24,16 @@ public partial class TimeAttackReady : Menu
 			this.bgm.Play();
 		}
 
-		SetupReadyMenu(TimeAttackManager.Instance.CurrentLevel);
+		SetupReadyMenu();
 		readyMenu.ShowMenu();
 	}
 
 	public void SetupReadyMenu()
 	{
-		readyMenu.SetupReadyMenu(TimeAttackManager.Instance.GetCurrentRunLevels(TimeAttackManager.Instance.CurrentRunType)[0]);
+		if (TimeAttackManager.Instance.CurrentRunType != TimeAttackManager.RunType.SingleRun)
+			readyMenu.SetupReadyMenu(TimeAttackManager.Instance.GetCurrentRunLevels(TimeAttackManager.Instance.CurrentRunType)[0]);
+		else
+			readyMenu.SetupReadyMenu(TimeAttackManager.Instance.Level_Single);
 	}
 
 	public void SetupReadyMenu(int level)

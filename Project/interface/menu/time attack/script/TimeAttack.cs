@@ -32,9 +32,12 @@ public partial class TimeAttack : Menu
 		if (!bgm.Playing)
 			bgm.Play();
 
-		SaveManager.LoadTimeAttackData();
-		SaveManager.SaveTimeAttackData();
-		SaveManager.TimeData.LoadTimeAttackSave();
+
+		DebugManager.Instance.ToggleDemoSave(true);
+		SaveManager.ActiveSaveSlotIndex = SaveManager.SaveSlotCount; //Saves skills and presets on a hidden file
+		SaveManager.ActiveGameData.UnlockAllWorlds();
+		SaveManager.ActiveGameData.level = 99;
+		SaveManager.ActiveSkillRing.UpdateTotalSkillPoints();
 
 
 	}
@@ -93,11 +96,22 @@ public partial class TimeAttack : Menu
 
 	protected override void Confirm()
 	{
+		TimeAttackManager.Instance.SetRunActive(true);
 		if (isActive)
 		{
+			switch (currentSelection)
+			{
+				case 2:
+					TimeAttackManager.Instance.SetRunType(TimeAttackManager.RunType.Custom);
+					break;
+				case 3:
+					TimeAttackManager.Instance.SetRunType(TimeAttackManager.RunType.SingleRun);
+					GD.Print("Setting to single run");
+					break;
+			}
 			timeAttackAnimator.Play("confirm-" + currentSelection);
 			currentSelection = 1;
-			TimeAttackManager.Instance.SetRunActive(true);
+
 		}
 
 	}
@@ -106,8 +120,11 @@ public partial class TimeAttack : Menu
 	{
 		if (isActive)
 		{
+			DebugManager.Instance.ToggleDemoSave(false);
 			SaveManager.SaveTimeAttackData();
+			SaveManager.SaveGameData();
 			TimeAttackManager.Instance.SetRunActive(false);
+
 			OpenParentMenu();
 			currentSelection = 1;
 		}

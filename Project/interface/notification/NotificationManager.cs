@@ -237,7 +237,7 @@ public partial class NotificationManager : Control
 					continue;
 			}
 
-			if (DebugManager.Instance.UseDemoSave || TimeAttackManager.Instance.IsRunActive)
+			if (DebugManager.Instance.UseDemoSave)
 				continue;
 
 			SaveManager.ActiveGameData.UnlockStage(stage.LevelID);

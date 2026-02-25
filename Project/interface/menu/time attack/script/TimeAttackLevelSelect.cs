@@ -47,11 +47,8 @@ public partial class TimeAttackLevelSelect : Menu
 
 	public override void ShowMenu()
 	{
-		if (TimeAttackManager.Instance.IsRunActive)
-		{
-			menuMemory[MemoryKeys.LevelSelect] = 0;
-			SetUp();
-		}
+		menuMemory[MemoryKeys.LevelSelect] = 0;
+		SetUp();
 
 		VerticalSelection = menuMemory[MemoryKeys.LevelSelect];
 		RecalculateListPosition();

@@ -246,7 +246,7 @@ public partial class DebugManager : Control
 	public delegate void UnlockStagesToggledEventHandler();
 	private void ToggleUnlockStages(bool enabled)
 	{
-		UnlockAllStages = UseDemoSave || enabled || TimeAttackManager.Instance.IsRunActive;
+		UnlockAllStages = UseDemoSave || enabled;
 		EmitSignal(SignalName.UnlockStagesToggled);
 	}
 
