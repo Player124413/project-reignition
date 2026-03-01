@@ -385,6 +385,7 @@ public partial class PauseMenu : Node
 		{
 			pauseCursorAnimator.Play("move");
 			selectionAnimator.Play($"select-{selection}", 0.1);
+			selectionAnimator.Advance(0.0);
 
 			UpdateStatusMenu();
 			return;
@@ -435,6 +436,8 @@ public partial class PauseMenu : Node
 		{
 			// Reset cursors
 			skillCursorAnimator.Play("RESET");
+			selectionAnimator.Play("RESET");
+			selectionAnimator.Advance(0.0);
 			selectionAnimator.Play("show");
 
 			UpdateSelection(0);
