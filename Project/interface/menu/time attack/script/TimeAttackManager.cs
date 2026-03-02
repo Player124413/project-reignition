@@ -63,6 +63,21 @@ public partial class TimeAttackManager : Node
 		}
 		return Levels_AnyPercent;
 	}
+	public LevelDataResource[] GetCurrentRunLevels()
+	{
+		switch (CurrentRunType)
+		{
+			case RunType.AnyP:
+				return Levels_AnyPercent;
+			case RunType.GoalPercent:
+				return Levels_GoalPercent;
+			case RunType.BossRush:
+				return Levels_BossRush;
+			case RunType.Custom:
+				return Levels_Custom;
+		}
+		return Levels_AnyPercent;
+	}
 
 	///<summary> Gets all levels of the selected run </summary>
 	public LevelDataResource[] GetCurrentRun()
@@ -87,11 +102,8 @@ public partial class TimeAttackManager : Node
 	///<summary> Are we on the last level? </summary>
 	public bool IsLastLevel()
 	{
-		if (GetCurrentLevel() == GetCurrentRunLevels(CurrentRunType).Last() || CurrentRunType == RunType.SingleRun)
-		{
-			GD.Print("WE ARE ON THE LAST LEVEL OF THE RUN");
+		if (GetCurrentLevel() == GetCurrentRunLevels().Last() || CurrentRunType == RunType.SingleRun)
 			return true;
-		}
 		else
 			return false;
 	}
@@ -115,16 +127,61 @@ public partial class TimeAttackManager : Node
 		TransitionManager.Instance.UpdateLoadingText("load_level");
 	}
 
+	public void LoadResults()
+	{
+		TransitionManager.QueueSceneChange(TransitionManager.TimeAttackResultsPath);
+		TransitionManager.StartTransition(new()
+		{
+			inSpeed = 0.2f,
+			outSpeed = 0.5f,
+			color = Colors.Black,
+			disableAutoTransition = false
+		});
+		ClearCurrentSavedRun();
+	}
+
+	public void LoadTimeAttack()
+	{
+		TransitionManager.QueueSceneChange(TransitionManager.TimeAttackScenePath);
+		TransitionManager.StartTransition(new()
+		{
+			inSpeed = 0.2f,
+			outSpeed = 0.5f,
+			color = Colors.Black,
+			disableAutoTransition = false
+		});
+	}
+
 	public void RestartRun()
 	{
 		ResetRunTimes();
 		ResetLevelCount();
+		ClearCurrentSavedRun();
 		LoadLevel(GetCurrentLevel());
+	}
+
+	public void ClearCurrentSavedRun()
+	{
+		SaveManager.TimeData.CurrentPlacement = 0;
+		SaveManager.TimeData.RunInProgress = [];
+		SaveManager.SaveTimeAttackData();
+	}
+
+	public void ClearCurrentRun()
+	{
+		CurrentLevel = 0;
+
+
 	}
 
 	public void AddTime(float time)
 	{
 		CurrentRunTimes[CurrentLevel] = time;
+	}
+
+	public float[] GetCurrentRunTimes()
+	{
+		return CurrentRunTimes;
 	}
 	public float GetTotalRunTime()
 	{
@@ -140,10 +197,7 @@ public partial class TimeAttackManager : Node
 
 	private void ResetRunTimes()
 	{
-		for (int i = 0; i < GetCurrentRun().Length; i++)
-		{
-			CurrentRunTimes[i] = 0;
-		}
+		CurrentRunTimes = [];
 	}
 
 

@@ -112,22 +112,11 @@ public partial class LevelResult : Control
 
 		if (TimeAttackManager.Instance.IsRunActive && !TimeAttackManager.Instance.IsLastLevel())
 		{
+			TimeAttackManager.Instance.LoadLevel(TimeAttackManager.Instance.GetNextLevel());
 			TimeAttackManager.Instance.IncreaseLevel();
-			TimeAttackManager.Instance.LoadLevel(TimeAttackManager.Instance.GetCurrentLevel());
 		}
-
 		else if (TimeAttackManager.Instance.IsRunActive && TimeAttackManager.Instance.IsLastLevel())
-		{
-			TransitionManager.QueueSceneChange(TransitionManager.TimeAttackScenePath);//TODO: Change to TA RESULTS screen
-			TransitionManager.StartTransition(new()
-			{
-				inSpeed = 0.2f,
-				outSpeed = 0.5f,
-				color = Colors.Black,
-				disableAutoTransition = false
-			});
-
-		}
+			TimeAttackManager.Instance.LoadResults();
 		else // Actual scene transition is handled by the experience results screen (which is connected via this signal)
 			EmitSignal(SignalName.ContinuePressed);
 
@@ -145,7 +134,15 @@ public partial class LevelResult : Control
 		score.Text = Stage.DisplayScore;
 		time.Text = Stage.DisplayTime;
 		if (TimeAttackManager.Instance.IsRunActive)
+		{
 			timeTotal.Text = ExtensionMethods.FormatTime(TimeAttackManager.Instance.GetTotalRunTime() + Stage.CurrentTime);
+			TimeAttackManager.Instance.AddTime(Stage.CurrentTime);
+
+			SaveManager.TimeData.CurrentPlacement += 1;
+			SaveManager.TimeData.RunInProgress.Add(Stage.Data.LevelID, Stage.CurrentTime);
+			SaveManager.SaveTimeAttackData();
+		}
+
 
 
 		ring.Text = Stage.RingBonus.ToString();
@@ -205,11 +202,7 @@ public partial class LevelResult : Control
 		animator.Advance(0.0);
 
 		if (TimeAttackManager.Instance.IsRunActive)
-		{
-			TimeAttackManager.Instance.AddTime(Stage.CurrentTime);
-
 			animator.Play(isStageCleared ? "success-start-timeattack" : "fail-start");
-		}
 		else
 			animator.Play(isStageCleared ? "success-start" : "fail-start");
 

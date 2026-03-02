@@ -1,0 +1,485 @@
+[gd_scene load_steps=16 format=3 uid="uid://b4w2fkwhbjoqr"]
+
+[ext_resource type="Texture2D" uid="uid://bmwc4e25fnuqd" path="res://interface/gameplay/results/texture/result atlas.png" id="1_0o4mk"]
+[ext_resource type="Texture2D" uid="uid://cno436k6axxi5" path="res://interface/menu/main/texture/background.png" id="1_7udyn"]
+[ext_resource type="Script" uid="uid://cpll01nai5u1j" path="res://interface/menu/time attack/script/TimeAttackResults.cs" id="1_nvlrs"]
+[ext_resource type="FontFile" uid="uid://cislueb5bhi02" path="res://interface/font/bitmap fonts/Experience.fnt" id="2_ob4jm"]
+[ext_resource type="Texture2D" uid="uid://dx4vxnhtgd13t" path="res://interface/menu/common/common menu atlas.png" id="5_woix1"]
+[ext_resource type="PackedScene" uid="uid://du35wp1jyx40e" path="res://interface/menu/time attack/TimeAttackResultsOption.tscn" id="6_woix1"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_vcpj2"]
+font = ExtResource("2_ob4jm")
+font_size = 72
+
+[sub_resource type="Animation" id="Animation_8efxu"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:self_modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+
+[sub_resource type="Animation" id="Animation_e1b8a"]
+resource_name = "loop"
+length = 1.20001
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:self_modulate")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.6, 1.2),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 1), Color(1, 1, 1, 0), Color(1, 1, 1, 1)]
+}
+
+[sub_resource type="Animation" id="Animation_i84eb"]
+resource_name = "select"
+length = 1.60001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:self_modulate")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.3, 0.6, 1, 1.4),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 1), Color(1, 1, 1, 0), Color(1, 1, 1, 1), Color(1, 1, 1, 0), Color(1, 1, 1, 1)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_oqwnn"]
+_data = {
+&"RESET": SubResource("Animation_8efxu"),
+&"loop": SubResource("Animation_e1b8a"),
+&"select": SubResource("Animation_i84eb")
+}
+
+[sub_resource type="Animation" id="Animation_ob4jm"]
+resource_name = "RESET"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Decals/DecalTop:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(0, -241)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Decals/DecalBottom:position")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(0, 372)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Decals/DecalTop:modulate")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("Decals/DecalBottom:modulate")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("Decals/Results:scale")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(1, 1)]
+}
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("Decals/Results:modulate")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+tracks/6/type = "value"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("Scrollbar:modulate")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+tracks/7/type = "value"
+tracks/7/imported = false
+tracks/7/enabled = true
+tracks/7/path = NodePath("Cursor:modulate")
+tracks/7/interp = 1
+tracks/7/loop_wrap = true
+tracks/7/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+tracks/8/type = "value"
+tracks/8/imported = false
+tracks/8/enabled = true
+tracks/8/path = NodePath("HBoxContainer:modulate")
+tracks/8/interp = 1
+tracks/8/loop_wrap = true
+tracks/8/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+
+[sub_resource type="Animation" id="Animation_nvlrs"]
+resource_name = "select"
+step = 0.1
+
+[sub_resource type="Animation" id="Animation_vcpj2"]
+resource_name = "show"
+length = 2.4
+step = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Decals/DecalTop:position")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.6, 1),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector2(0, 0), Vector2(0, 0), Vector2(0, -241)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Decals/DecalBottom:position")
+tracks/1/interp = 2
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.6, 1),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector2(0, 0), Vector2(0, 0), Vector2(0, 372)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Decals/DecalTop:modulate")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0.6, 1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 1)]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("Decals/DecalBottom:modulate")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0.6, 1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 1)]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("Decals/Results:scale")
+tracks/4/interp = 2
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0, 0.4),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector2(0, 0), Vector2(1, 1)]
+}
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("Decals/Results:modulate")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0, 0.4),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 1)]
+}
+tracks/6/type = "value"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("Scrollbar:modulate")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"times": PackedFloat32Array(0, 0.6, 1),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 0), Color(1, 1, 1, 1)]
+}
+tracks/7/type = "method"
+tracks/7/imported = false
+tracks/7/enabled = true
+tracks/7/path = NodePath(".")
+tracks/7/interp = 1
+tracks/7/loop_wrap = true
+tracks/7/keys = {
+"times": PackedFloat32Array(0, 0.6, 2),
+"transitions": PackedFloat32Array(1, 1, 1),
+"values": [{
+"args": [],
+"method": &"DisableProcessing"
+}, {
+"args": [],
+"method": &"ShowAllOptions"
+}, {
+"args": [],
+"method": &"EnableProcessing"
+}]
+}
+tracks/8/type = "value"
+tracks/8/imported = false
+tracks/8/enabled = true
+tracks/8/path = NodePath("Cursor:modulate")
+tracks/8/interp = 1
+tracks/8/loop_wrap = true
+tracks/8/keys = {
+"times": PackedFloat32Array(0, 1.6, 2),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 0), Color(1, 1, 1, 1)]
+}
+tracks/9/type = "method"
+tracks/9/imported = false
+tracks/9/enabled = true
+tracks/9/path = NodePath("Cursor/AnimationPlayer")
+tracks/9/interp = 1
+tracks/9/loop_wrap = true
+tracks/9/keys = {
+"times": PackedFloat32Array(2),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [&"loop", -1, 1.0, false],
+"method": &"play"
+}]
+}
+tracks/10/type = "value"
+tracks/10/imported = false
+tracks/10/enabled = true
+tracks/10/path = NodePath("HBoxContainer:modulate")
+tracks/10/interp = 1
+tracks/10/loop_wrap = true
+tracks/10/keys = {
+"times": PackedFloat32Array(1, 1.6),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 1)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_7udyn"]
+_data = {
+&"RESET": SubResource("Animation_ob4jm"),
+&"select": SubResource("Animation_nvlrs"),
+&"show": SubResource("Animation_vcpj2")
+}
+
+[node name="TimeAttackResults" type="Control" node_paths=PackedStringArray("cursor", "options", "scrollbar", "totalTimeLabel", "animator")]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_nvlrs")
+cursor = NodePath("Cursor")
+options = NodePath("Options")
+scrollbar = NodePath("Scrollbar/ScrollPosition")
+totalTimeLabel = NodePath("HBoxContainer/TotalTime2")
+animator = NodePath("AnimationPlayer")
+isProcessing = true
+
+[node name="Background" type="TextureRect" parent="."]
+modulate = Color(0.5743278, 0.5743278, 0.5743278, 1)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("1_7udyn")
+expand_mode = 2
+stretch_mode = 6
+
+[node name="Decals" type="Node2D" parent="."]
+position = Vector2(950, 507)
+
+[node name="DecalTop" type="Sprite2D" parent="Decals"]
+position = Vector2(0, -241)
+scale = Vector2(1.1560078, 1.12)
+texture = ExtResource("1_0o4mk")
+region_enabled = true
+region_rect = Rect2(-8, 0, 1032, 64)
+
+[node name="DecalBottom" type="Sprite2D" parent="Decals"]
+position = Vector2(0, 372)
+scale = Vector2(1.1560078, 1.12)
+texture = ExtResource("1_0o4mk")
+region_enabled = true
+region_rect = Rect2(-8, 0, 1032, 64)
+
+[node name="Results" type="Label" parent="Decals"]
+anchors_preset = -1
+offset_left = -259.0
+offset_top = -363.0
+offset_right = 269.0
+offset_bottom = -275.0
+pivot_offset = Vector2(271, 45)
+text = "RESULTS"
+label_settings = SubResource("LabelSettings_vcpj2")
+horizontal_alignment = 1
+vertical_alignment = 1
+uppercase = true
+
+[node name="Cursor" type="NinePatchRect" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -587.0
+offset_top = 330.0
+offset_right = 588.0
+offset_bottom = 354.0
+texture = ExtResource("5_woix1")
+region_rect = Rect2(272, 192, 240, 32)
+patch_margin_left = 24
+patch_margin_right = 24
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Cursor"]
+libraries = {
+&"": SubResource("AnimationLibrary_oqwnn")
+}
+
+[node name="Options" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -623.5
+offset_top = 300.0
+offset_right = 623.5
+offset_bottom = 840.0
+grow_horizontal = 2
+theme_override_constants/separation = 73
+
+[node name="TimeAttackResultsOption" parent="Options" instance=ExtResource("6_woix1")]
+layout_mode = 2
+
+[node name="Scrollbar" type="NinePatchRect" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = 722.0
+offset_top = 311.0
+offset_right = 1219.0
+offset_bottom = 383.0
+rotation = 1.5708
+texture = ExtResource("5_woix1")
+region_rect = Rect2(64, 448, 448, 64)
+patch_margin_left = 56
+patch_margin_right = 56
+
+[node name="ScrollPosition" type="Sprite2D" parent="Scrollbar"]
+rotation = -1.5708
+texture = ExtResource("5_woix1")
+offset = Vector2(-32, 64)
+region_enabled = true
+region_rect = Rect2(0, 448, 62, 64)
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+layout_mode = 0
+offset_left = 402.0
+offset_top = 916.0
+offset_right = 1561.0
+offset_bottom = 992.0
+theme_override_constants/separation = 39
+
+[node name="TotalTime" type="Label" parent="HBoxContainer"]
+layout_mode = 2
+text = "ta_results_total"
+label_settings = SubResource("LabelSettings_vcpj2")
+vertical_alignment = 1
+uppercase = true
+
+[node name="Separator" type="Label" parent="HBoxContainer"]
+layout_mode = 2
+text = ":"
+label_settings = SubResource("LabelSettings_vcpj2")
+horizontal_alignment = 1
+vertical_alignment = 1
+uppercase = true
+
+[node name="TotalTime2" type="Label" parent="HBoxContainer"]
+layout_mode = 2
+text = "99:99:99"
+label_settings = SubResource("LabelSettings_vcpj2")
+horizontal_alignment = 2
+vertical_alignment = 1
+uppercase = true
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+&"": SubResource("AnimationLibrary_7udyn")
+}

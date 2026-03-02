@@ -17,6 +17,7 @@ public partial class TransitionManager : Node
 	public const string OptionsScenePath = "res://interface/menu/options/Options.tscn";
 	public const string SpecialBookScenePath = "res://interface/menu/special book/SpecialBook.tscn";
 	public const string TimeAttackScenePath = "res://interface/menu/time attack/TimeAttack.tscn";
+	public const string TimeAttackResultsPath = "res://interface/menu/time attack/TimeAttackResults.tscn";
 
 	public bool IsReloadingScene { get; private set; }
 

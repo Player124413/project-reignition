@@ -151,6 +151,6 @@ public partial class LevelOption : Control
 
 		timeAttackLevelOption.Visible = true;
 		missionLabelTA.Text = data.MissionTypeKey;
-		areaLabelTA.Text = data.AreaKey.ToString().ToCamelCase();
+		areaLabelTA.Text = Tr(data.AreaKey.ToString());
 	}
 }

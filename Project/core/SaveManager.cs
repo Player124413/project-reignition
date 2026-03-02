@@ -1511,6 +1511,8 @@ public partial class SaveManager : Node
 		public Dictionary<string, float> SingleRun;
 		///<summary>The times stored for the current run.</summary>
 		public Dictionary<string, float> RunInProgress;
+		///<summary>The current custom run in progress</summary>
+		public Array<LevelDataResource> CustomRunInProgress;
 		///<summary>The current run type</summary>
 		public TimeAttackManager.RunType CurrentRunType;
 		///<summary>The player's spot in the current run</summary>
@@ -1559,6 +1561,7 @@ public partial class SaveManager : Node
 				{ nameof(BossRush), BossRush},
 				{ nameof(SingleRun), SingleRun},
 				{ nameof(RunInProgress), RunInProgress},
+				{ nameof(CustomRunInProgress), CustomRunInProgress},
 				{ nameof(CurrentRunType), (int)CurrentRunType},
 				{ nameof(CurrentPlacement), CurrentPlacement}
 
@@ -1577,6 +1580,8 @@ public partial class SaveManager : Node
 				SingleRun = (Dictionary<string, float>)var;
 			if (dictionary.TryGetValue(nameof(RunInProgress), out var))
 				RunInProgress = (Dictionary<string, float>)var;
+			if (dictionary.TryGetValue(nameof(CustomRunInProgress), out var))
+				CustomRunInProgress = (Array<LevelDataResource>)var;
 			if (dictionary.TryGetValue(nameof(CurrentRunType), out var))
 				CurrentRunType = (TimeAttackManager.RunType)(int)var;
 			if (dictionary.TryGetValue(nameof(CurrentPlacement), out var))
@@ -1593,6 +1598,7 @@ public partial class SaveManager : Node
 				BossRush = [],
 				SingleRun = [],
 				RunInProgress = [],
+				CustomRunInProgress = [],
 				CurrentRunType = TimeAttackManager.RunType.AnyP,
 				CurrentPlacement = -1
 			};
