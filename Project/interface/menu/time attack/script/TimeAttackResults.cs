@@ -42,7 +42,7 @@ public partial class TimeAttackResults : Menu
 		}
 
 		initialCursorPosition = cursor.Position.Y;
-
+		totalTimeLabel.Text = ExtensionMethods.FormatTime(TimeAttackManager.Instance.GetTotalRunTime());
 		TimeAttackManager.Instance.ClearCurrentRun();
 		base.SetUp();
 	}
