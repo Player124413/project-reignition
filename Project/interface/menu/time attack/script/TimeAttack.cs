@@ -96,9 +96,10 @@ public partial class TimeAttack : Menu
 
 	protected override void Confirm()
 	{
-		TimeAttackManager.Instance.SetRunActive(true);
+
 		if (isActive)
 		{
+			TimeAttackManager.Instance.SetRunActive(true);
 			switch (currentSelection)
 			{
 				case 2:
@@ -111,6 +112,8 @@ public partial class TimeAttack : Menu
 			}
 			timeAttackAnimator.Play("confirm-" + currentSelection);
 			currentSelection = 1;
+			TimeAttackManager.Instance.ClearCurrentRun();
+			TimeAttackManager.Instance.ClearCurrentSavedRun();
 
 		}
 

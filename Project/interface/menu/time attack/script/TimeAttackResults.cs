@@ -4,10 +4,9 @@ using System.Collections.Generic;
 
 namespace Project.Interface.Menus;
 
-public partial class TimeAttackLevelSelect : Menu
-{
-	[Export] private Description description;
 
+public partial class TimeAttackResults : Menu
+{
 	[Export] private Control cursor;
 	private float initialCursorPosition;
 	private int cursorPosition;
@@ -21,18 +20,33 @@ public partial class TimeAttackLevelSelect : Menu
 	private float scrollRatio;
 	private Vector2 scrollVelocity;
 	private const float ScrollSmoothing = .05f;
-	private readonly List<LevelOption> levelOptions = [];
+	[Export] private Label totalTimeLabel;
+	private string resultOptionPath = "res://interface/menu/time attack/TimeAttackResultsOption.tscn";
+	private readonly List<TimeAttackResultsOption> resultsOption = [];
 
 
 	protected override void SetUp()
 	{
+		PackedScene option = GD.Load<PackedScene>(resultOptionPath);
+
+		for (int i = 0; i < TimeAttackManager.Instance.GetCurrentRunLevels().Length; i++)
+		{
+			TimeAttackResultsOption newOption = option.Instantiate() as TimeAttackResultsOption;
+			newOption.SetLevelLabel(Tr(TimeAttackManager.Instance.GetCurrentRunLevels()[i].MissionTypeKey));
+			newOption.SetWorldLabel(Tr(TimeAttackManager.Instance.GetCurrentRunLevels()[i].AreaKey.ToString()));
+			newOption.SetTimeLabel(ExtensionMethods.FormatTime(TimeAttackManager.Instance.GetCurrentRunTimes()[i]));
+
+			options.AddChild(newOption);
+		}
 		foreach (Node node in options.GetChildren())
 		{
-			if (node is LevelOption levelOption)
-				levelOptions.Add(levelOption);
+			if (node is TimeAttackResultsOption resultOption)
+				resultsOption.Add(resultOption);
 		}
 
 		initialCursorPosition = cursor.Position.Y;
+
+		TimeAttackManager.Instance.ClearCurrentRun();
 		base.SetUp();
 	}
 
@@ -44,23 +58,14 @@ public partial class TimeAttackLevelSelect : Menu
 
 	public override void ShowMenu()
 	{
-		menuMemory[MemoryKeys.LevelSelect] = 0;
-		SetUp();
+		//SetUp();
 
-		VerticalSelection = menuMemory[MemoryKeys.LevelSelect];
+		VerticalSelection = 0;
 		RecalculateListPosition();
 		UpdateListPosition(0);
 
 		animator.Play("show");
 
-		for (int i = 0; i < levelOptions.Count; i++)
-			levelOptions[i].EnableTAInfo();
-	}
-
-	public override void HideMenu()
-	{
-		for (int i = 0; i < levelOptions.Count; i++)
-			levelOptions[i].HideOption();
 	}
 
 	protected override void Confirm()
@@ -74,53 +79,44 @@ public partial class TimeAttackLevelSelect : Menu
 
 		HideMenu();
 		cursorPosition = 0;
-		levelOptions.Clear();
+		resultsOption.Clear();
 
-		parentMenu.OpenParentMenu();
+		TimeAttackManager.Instance.LoadTimeAttack();
 	}
 
 	protected override void UpdateSelection()
 	{
 		if (Mathf.IsZeroApprox(Input.GetAxis("ui_up", "ui_down"))) return;
 
-		VerticalSelection = WrapSelection(VerticalSelection + Mathf.Sign(Input.GetAxis("ui_up", "ui_down")), levelOptions.Count);
+		VerticalSelection = WrapSelection(VerticalSelection + Mathf.Sign(Input.GetAxis("ui_up", "ui_down")), resultsOption.Count);
 
-		menuMemory[MemoryKeys.LevelSelect] = VerticalSelection;
 		animator.Play("select");
 		animator.Seek(0, true);
 
-		if (menuMemory[MemoryKeys.ActiveMenu] != (int)MemoryKeys.TimeAttack)
-			UpdateDescription();
 		StartSelectionTimer();
 		RecalculateListPosition();
-	}
-
-	private void UpdateDescription()
-	{
-		description.ShowDescription();
-		description.Text = levelOptions[VerticalSelection].GetDescription();
 	}
 
 	private void RecalculateListPosition()
 	{
 		cursorPosition = VerticalSelection;
-		if (levelOptions.Count > 5)
+		if (resultsOption.Count > 5)
 		{
 			if (VerticalSelection < 3)
 			{
 				scrollRatio = 0;
 				scrollAmount = 0;
 			}
-			else if (VerticalSelection >= levelOptions.Count - 3)
+			else if (VerticalSelection >= resultsOption.Count - 3)
 			{
 				scrollRatio = 1;
-				scrollAmount = levelOptions.Count - 5;
-				cursorPosition = 4 - (levelOptions.Count - 1 - VerticalSelection);
+				scrollAmount = resultsOption.Count - 5;
+				cursorPosition = 4 - (resultsOption.Count - 1 - VerticalSelection);
 			}
 			else
 			{
 				scrollAmount = VerticalSelection - 2;
-				scrollRatio = (VerticalSelection - 2) / (levelOptions.Count - 5.0f);
+				scrollRatio = (VerticalSelection - 2) / (resultsOption.Count - 5.0f);
 				cursorPosition = 2;
 			}
 		}
@@ -128,10 +124,18 @@ public partial class TimeAttackLevelSelect : Menu
 
 	private void UpdateListPosition(float smoothing)
 	{
-		float targetScrollPosition = 360 * (VerticalSelection / (levelOptions.Count - 1f));
+		float targetScrollPosition = 360 * (VerticalSelection / (resultsOption.Count - 1f));
 		scrollbar.Position = scrollbar.Position.SmoothDamp(Vector2.Right * targetScrollPosition, ref scrollVelocity, smoothing);
 
 		cursor.Position = cursor.Position.SmoothDamp(new(cursor.Position.X, initialCursorPosition + (96 * cursorPosition)), ref cursorWidthVelocity, smoothing);
 		options.Position = options.Position.SmoothDamp(Vector2.Up * ((96 * scrollAmount) - 32), ref optionVelocity, smoothing);
+	}
+
+	public void ShowAllOptions()
+	{
+		for (int i = 0; i < resultsOption.Count; i++)
+		{
+			resultsOption[i].ShowOption();
+		}
 	}
 }
