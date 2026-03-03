@@ -78,7 +78,10 @@ public partial class ReadyMenu : Menu
 		{
 			StopBgm(); // Stop bgm
 
-			menuMemory[MemoryKeys.ActiveMenu] = (int)MemoryKeys.LevelSelect;
+			if (!TimeAttackManager.Instance.IsRunActive)
+				menuMemory[MemoryKeys.ActiveMenu] = (int)MemoryKeys.LevelSelect;
+			else
+				menuMemory[MemoryKeys.ActiveMenu] = (int)MemoryKeys.TimeAttack;
 			base.Confirm();
 		}
 		else
