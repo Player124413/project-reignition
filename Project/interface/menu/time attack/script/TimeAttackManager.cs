@@ -142,6 +142,7 @@ public partial class TimeAttackManager : Node
 
 	public void LoadTimeAttack()
 	{
+		TimeAttackManager.Instance.SetRunActive(false);
 		TransitionManager.QueueSceneChange(TransitionManager.TimeAttackScenePath);
 		TransitionManager.StartTransition(new()
 		{
@@ -194,7 +195,6 @@ public partial class TimeAttackManager : Node
 		//GD.Print("Total Run Time: " + results);
 		return results;
 	}
-
 	private void ResetRunTimes()
 	{
 		CurrentRunTimes = [];

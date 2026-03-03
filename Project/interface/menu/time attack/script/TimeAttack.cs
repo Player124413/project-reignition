@@ -20,6 +20,7 @@ public partial class TimeAttack : Menu
 	protected override void SetUp()
 	{
 		currentSelection = 1;
+
 	}
 
 	public override void ShowMenu()
@@ -27,6 +28,7 @@ public partial class TimeAttack : Menu
 		base.ShowMenu();
 		currentSelection = 1;
 		description.Text = buttonList[0].description;
+
 		menuMemory[MemoryKeys.ActiveMenu] = (int)MemoryKeys.TimeAttack;
 
 		if (!bgm.Playing)

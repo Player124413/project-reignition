@@ -29,9 +29,9 @@ public partial class TimeAttackResults : Menu
 		for (int i = 0; i < TimeAttackManager.Instance.GetCurrentRunLevels().Length; i++)
 		{
 			TimeAttackResultsOption newOption = resultOptionScene.Instantiate() as TimeAttackResultsOption;
-			newOption.SetLevelLabel(Tr(TimeAttackManager.Instance.GetCurrentRunLevels()[i].MissionTypeKey));
-			newOption.SetWorldLabel(Tr(TimeAttackManager.Instance.GetCurrentRunLevels()[i].AreaKey.ToString()));
-			newOption.SetTimeLabel(ExtensionMethods.FormatTime(TimeAttackManager.Instance.GetCurrentRunTimes()[i]));
+			newOption.SetLevelLabel(TimeAttackManager.Instance.GetCurrentRunLevels()[i].MissionTypeKey);
+			newOption.SetWorldLabel(TimeAttackManager.Instance.GetCurrentRunLevels()[i].AreaKey.ToString());
+			newOption.SetTimeLabel(TimeAttackManager.Instance.GetCurrentRunTimes()[i]);
 			options.AddChild(newOption);
 		}
 
@@ -55,14 +55,11 @@ public partial class TimeAttackResults : Menu
 
 	public override void ShowMenu()
 	{
-		//SetUp();
-
 		VerticalSelection = 0;
 		RecalculateListPosition();
 		UpdateListPosition(0);
 
 		animator.Play("show");
-
 	}
 
 	protected override void Confirm()
@@ -97,7 +94,7 @@ public partial class TimeAttackResults : Menu
 	private void RecalculateListPosition()
 	{
 		cursorPosition = VerticalSelection;
-		if (resultsOption.Count > 5)
+		if (resultsOption.Count > 1)
 		{
 			if (VerticalSelection < 3)
 			{
@@ -124,8 +121,8 @@ public partial class TimeAttackResults : Menu
 		float targetScrollPosition = 360 * (VerticalSelection / (resultsOption.Count - 1f));
 		scrollbar.Position = scrollbar.Position.SmoothDamp(Vector2.Right * targetScrollPosition, ref scrollVelocity, smoothing);
 
-		cursor.Position = cursor.Position.SmoothDamp(new(cursor.Position.X, initialCursorPosition + (72 * cursorPosition)), ref cursorWidthVelocity, smoothing);
-		options.Position = options.Position.SmoothDamp(Vector2.Up * (72 * scrollAmount), ref optionVelocity, smoothing);
+		cursor.Position = cursor.Position.SmoothDamp(new(cursor.Position.X, initialCursorPosition + (options.GetThemeConstant("separation") * cursorPosition)), ref cursorWidthVelocity, smoothing);
+		options.Position = options.Position.SmoothDamp(Vector2.Up * ((options.GetThemeConstant("separation") * scrollAmount)), ref optionVelocity, smoothing);
 	}
 
 	public void ShowAllOptions()
