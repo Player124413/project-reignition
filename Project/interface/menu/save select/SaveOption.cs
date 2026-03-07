@@ -6,31 +6,20 @@ namespace Project.Interface.Menus;
 
 public partial class SaveOption : Control
 {
-	[Export]
-	private TextureRect newData;
-	[Export]
-	private Control existingData;
+	[Export] private TextureRect newData;
+	[Export] private Control existingData;
 
-	[Export]
-	private Rect2 worldRingObtainedRegion;
-	[Export]
-	private Rect2 worldRingMissingRegion;
-	[Export]
-	private Sprite2D worldIcon;
-	[Export]
-	private Array<Rect2> worldIconRegions = [];
-	[Export]
-	private Label slotLabel;
-	[Export]
-	private Label slotShadowLabel;
-
-	[Export]
-	private Label levelLabel;
-	[Export]
-	private Label timeLabel;
-	[Export]
-	private Array<NodePath> worldRings = [];
+	[Export] private Sprite2D worldIcon;
+	[Export] private Rect2 worldRingObtainedRegion;
+	[Export] private Rect2 worldRingMissingRegion;
+	[Export] private Array<Rect2> worldIconRegions = [];
+	[Export] private Array<NodePath> worldRings = [];
 	private Array<Sprite2D> _worldRings = [];
+	[Export] private Label slotLabel;
+	[Export] private Label slotShadowLabel;
+
+	[Export] private Label levelLabel;
+	[Export] private Label timeLabel;
 
 	public void SetUp()
 	{

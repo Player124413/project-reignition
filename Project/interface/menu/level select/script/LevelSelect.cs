@@ -10,6 +10,7 @@ public partial class LevelSelect : Menu
 	[Export] private string areaKey;
 	[Export] private Description description;
 	[Export] private ReadyMenu readyMenu;
+	[Export] private StatusMenu statusMenu;
 
 	[Export] private Control cursor;
 	[Export] private AnimationPlayer cursorAnimator;
@@ -85,12 +86,21 @@ public partial class LevelSelect : Menu
 
 	protected override void ProcessMenu()
 	{
+		if (statusMenu != null && statusMenu.IsVisibleInTree())
+			return;
+
 		if (Runtime.Instance.MouseScrollInput != 0)
 		{
 			VerticalSelection = Mathf.Clamp(VerticalSelection + Runtime.Instance.MouseScrollInput, 0, levelOptions.Count - 1);
 			isNothingSelected = false;
 			cursorAnimator.Play("loop");
 			ChangeSelection();
+		}
+
+		if (Runtime.Instance.IsActionJustPressed("sys_pause", "ui_accept") && !Input.IsActionJustPressed("toggle_fullscreen"))
+		{
+			statusMenu?.ShowMenu();
+			return;
 		}
 
 		base.ProcessMenu();

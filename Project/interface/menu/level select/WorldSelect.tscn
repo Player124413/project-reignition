@@ -1,4 +1,4 @@
-[gd_scene load_steps=60 format=3 uid="uid://cumqwrsj6eqpd"]
+[gd_scene load_steps=61 format=3 uid="uid://cumqwrsj6eqpd"]
 
 [ext_resource type="Script" uid="uid://cb7uekm77nlag" path="res://interface/menu/level select/script/WorldSelect.cs" id="1_7vrge"]
 [ext_resource type="Script" uid="uid://bjs225yvpdim2" path="res://video/VideoStreamFileLoadPlayer.cs" id="2_rcls3"]
@@ -35,6 +35,7 @@
 [ext_resource type="PackedScene" uid="uid://bgsvifk5vld4y" path="res://interface/menu/skill select/SkillPresetSelect.tscn" id="22_go238"]
 [ext_resource type="Resource" uid="uid://ny663nd8wxoa" path="res://resource/bgm/menu/level select.tres" id="32_uuntt"]
 [ext_resource type="Resource" uid="uid://cmpl3pqub1vjr" path="res://resource/bgm/menu/retail level select.tres" id="33_uuntt"]
+[ext_resource type="PackedScene" uid="uid://bdxqnxi1i3dcr" path="res://interface/menu/level select/StatusMenu.tscn" id="36_54me0"]
 
 [sub_resource type="Animation" id="Animation_opc4q"]
 length = 0.001
@@ -2255,7 +2256,7 @@ _data = {
 &"show-fade-video": SubResource("Animation_cga70")
 }
 
-[node name="WorldSelect" type="Control" node_paths=PackedStringArray("retailBgm", "videoPlayers", "storyIndicationAnimator", "description", "bgm", "animator")]
+[node name="WorldSelect" type="Control" node_paths=PackedStringArray("retailBgm", "videoPlayers", "storyIndicationAnimator", "statusMenu", "description", "bgm", "animator")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -2267,6 +2268,7 @@ script = ExtResource("1_7vrge")
 retailBgm = NodePath("RetailBGM")
 videoPlayers = [NodePath("DemoVideo/LostPrologue"), NodePath("DemoVideo/SandOasis"), NodePath("DemoVideo/DinosaurJungle"), NodePath("DemoVideo/EvilFoundry"), NodePath("DemoVideo/LevitatedRuin"), NodePath("DemoVideo/PirateStorm"), NodePath("DemoVideo/SkeletonDome"), NodePath("DemoVideo/NightPalace")]
 storyIndicationAnimator = NodePath("AreaSelection/StoryMarker/AnimationPlayer")
+statusMenu = NodePath("StatusMenu")
 description = NodePath("Description/Description")
 levelSpriteRegions = Array[Rect2]([Rect2(0, 800, 1024, 120), Rect2(0, 0, 1024, 120), Rect2(0, 460, 1024, 120), Rect2(0, 580, 1024, 100), Rect2(0, 700, 1024, 100), Rect2(0, 240, 1024, 100), Rect2(0, 126, 1024, 100), Rect2(0, 360, 1024, 100), Rect2(0, 920, 1024, 100)])
 levelDescriptionKeys = Array[String](["lost_prologue_description", "sand_oasis_description", "dinosaur_jungle_description", "evil_foundry_description", "levitated_ruin_description", "pirate_storm_description", "skeleton_dome_description", "night_palace_description", "sys_world_locked"])
@@ -2802,52 +2804,60 @@ grow_vertical = 2
 mouse_filter = 2
 metadata/_edit_lock_ = true
 
-[node name="LostPrologue" parent="Submenus" node_paths=PackedStringArray("description", "readyMenu", "parentMenu") instance=ExtResource("17_xanqf")]
+[node name="LostPrologue" parent="Submenus" node_paths=PackedStringArray("description", "readyMenu", "statusMenu", "parentMenu") instance=ExtResource("17_xanqf")]
 layout_mode = 1
 description = NodePath("../../Description/Description")
 readyMenu = NodePath("../ReadyMenu")
+statusMenu = NodePath("../../StatusMenu")
 parentMenu = NodePath("../..")
 
-[node name="SandOasis" parent="Submenus" node_paths=PackedStringArray("description", "readyMenu", "parentMenu") instance=ExtResource("18_0kdsm")]
+[node name="SandOasis" parent="Submenus" node_paths=PackedStringArray("description", "readyMenu", "statusMenu", "parentMenu") instance=ExtResource("18_0kdsm")]
 layout_mode = 1
 description = NodePath("../../Description/Description")
 readyMenu = NodePath("../ReadyMenu")
+statusMenu = NodePath("../../StatusMenu")
 parentMenu = NodePath("../..")
 
-[node name="DinosaurJungle" parent="Submenus" node_paths=PackedStringArray("description", "readyMenu", "parentMenu") instance=ExtResource("15_3h61q")]
+[node name="DinosaurJungle" parent="Submenus" node_paths=PackedStringArray("description", "readyMenu", "statusMenu", "parentMenu") instance=ExtResource("15_3h61q")]
 layout_mode = 1
 description = NodePath("../../Description/Description")
 readyMenu = NodePath("../ReadyMenu")
+statusMenu = NodePath("../../StatusMenu")
 parentMenu = NodePath("../..")
 
-[node name="EvilFoundry" parent="Submenus" node_paths=PackedStringArray("description", "readyMenu", "parentMenu") instance=ExtResource("17_6ds0g")]
+[node name="EvilFoundry" parent="Submenus" node_paths=PackedStringArray("description", "readyMenu", "statusMenu", "parentMenu") instance=ExtResource("17_6ds0g")]
 layout_mode = 1
 description = NodePath("../../Description/Description")
 readyMenu = NodePath("../ReadyMenu")
+statusMenu = NodePath("../../StatusMenu")
 parentMenu = NodePath("../..")
 
-[node name="LevitatedRuin" parent="Submenus" node_paths=PackedStringArray("description", "readyMenu", "parentMenu") instance=ExtResource("18_7cmsq")]
+[node name="LevitatedRuin" parent="Submenus" node_paths=PackedStringArray("description", "readyMenu", "statusMenu", "parentMenu") instance=ExtResource("18_7cmsq")]
 layout_mode = 1
 description = NodePath("../../Description/Description")
 readyMenu = NodePath("../ReadyMenu")
+statusMenu = NodePath("../../StatusMenu")
 parentMenu = NodePath("../..")
 
-[node name="PirateStorm" parent="Submenus" node_paths=PackedStringArray("description", "readyMenu", "parentMenu") instance=ExtResource("18_dsf0x")]
+[node name="PirateStorm" parent="Submenus" node_paths=PackedStringArray("description", "readyMenu", "statusMenu", "parentMenu") instance=ExtResource("18_dsf0x")]
 layout_mode = 1
 description = NodePath("../../Description/Description")
 readyMenu = NodePath("../ReadyMenu")
+statusMenu = NodePath("../../StatusMenu")
 parentMenu = NodePath("../..")
 
-[node name="SkeletonDome" parent="Submenus" node_paths=PackedStringArray("description", "readyMenu", "parentMenu") instance=ExtResource("19_3xa6d")]
+[node name="SkeletonDome" parent="Submenus" node_paths=PackedStringArray("description", "readyMenu", "statusMenu", "parentMenu") instance=ExtResource("19_3xa6d")]
 layout_mode = 1
 description = NodePath("../../Description/Description")
 readyMenu = NodePath("../ReadyMenu")
+statusMenu = NodePath("../../StatusMenu")
 parentMenu = NodePath("../..")
 
-[node name="NightPalace" parent="Submenus" node_paths=PackedStringArray("description", "readyMenu", "parentMenu") instance=ExtResource("20_y3iyc")]
+[node name="NightPalace" parent="Submenus" node_paths=PackedStringArray("description", "readyMenu", "statusMenu", "parentMenu") instance=ExtResource("20_y3iyc")]
 layout_mode = 1
 description = NodePath("../../Description/Description")
 readyMenu = NodePath("../ReadyMenu")
+statusMenu = NodePath("../../StatusMenu")
 parentMenu = NodePath("../..")
 
 [node name="ReadyMenu" parent="Submenus" node_paths=PackedStringArray("description", "bgm") instance=ExtResource("17_c7rwi")]
@@ -2866,7 +2876,6 @@ parentMenu = NodePath("../ReadyMenu")
 submenus = Array[NodePath]([NodePath("../SkillPresetSelect")])
 
 [node name="SkillPresetSelect" parent="Submenus" node_paths=PackedStringArray("parentMenu") instance=ExtResource("22_go238")]
-visible = false
 z_index = 20
 layout_mode = 1
 parentMenu = NodePath("../SkillSelect")
@@ -2925,6 +2934,9 @@ offset_top = 0.0
 offset_right = 1152.0
 offset_bottom = 256.0
 
+[node name="StatusMenu" parent="." instance=ExtResource("36_54me0")]
+layout_mode = 1
+
 [node name="SFX" type="Node" parent="."]
 
 [node name="Select" type="AudioStreamPlayer" parent="SFX"]
@@ -2961,10 +2973,3 @@ next/scroll-up = &"reset-scroll"
 next/show = &"loop"
 next/show-fade-video = &"loop"
 blend_times = [&"loop", &"scroll-down", 0.05, &"loop", &"scroll-up", 0.05, &"show", &"loop", 0.1, &"show-fade-video", &"loop", 0.1]
-
-[connection signal="mouse_entered" from="AreaSelection/Text/Center/Center" to="." method="ReceiveMouseInput" binds= [0]]
-[connection signal="mouse_exited" from="AreaSelection/Text/Center/Center" to="." method="ReceiveMouseInput" binds= [-100]]
-[connection signal="mouse_entered" from="AreaSelection/Cursor/CursorTop/Up" to="." method="ReceiveMouseInput" binds= [-1]]
-[connection signal="mouse_exited" from="AreaSelection/Cursor/CursorTop/Up" to="." method="ReceiveMouseInput" binds= [-100]]
-[connection signal="mouse_entered" from="AreaSelection/Cursor/CursorBottom/Down" to="." method="ReceiveMouseInput" binds= [1]]
-[connection signal="mouse_exited" from="AreaSelection/Cursor/CursorBottom/Down" to="." method="ReceiveMouseInput" binds= [-100]]

@@ -7,14 +7,12 @@ namespace Project.Interface.Menus;
 public partial class WorldSelect : Menu
 {
 	[ExportGroup("Media Settings")]
-	[Export]
-	private BGMPlayer retailBgm;
-	[Export]
-	private VideoStreamPlayer[] videoPlayers;
+	[Export] private BGMPlayer retailBgm;
+	[Export] private VideoStreamPlayer[] videoPlayers;
 	private VideoStreamPlayer ActiveVideoPlayer { get; set; }
 	private VideoStreamPlayer PreviousVideoPlayer { get; set; }
-	[Export]
-	private AnimationPlayer storyIndicationAnimator;
+	[Export] private AnimationPlayer storyIndicationAnimator;
+	[Export] private StatusMenu statusMenu;
 
 	private Color crossfadeColor;
 	private float videoFadeFactor;
@@ -120,9 +118,18 @@ public partial class WorldSelect : Menu
 
 	protected override void ProcessMenu()
 	{
+		if (statusMenu != null && statusMenu.IsVisibleInTree())
+			return;
+
 		if (Runtime.Instance.MouseScrollInput != 0)
 		{
 			ScrollSelection(Runtime.Instance.MouseScrollInput);
+			return;
+		}
+
+		if (Runtime.Instance.IsActionJustPressed("sys_pause", "ui_accept") && !Input.IsActionJustPressed("toggle_fullscreen"))
+		{
+			statusMenu?.ShowMenu();
 			return;
 		}
 

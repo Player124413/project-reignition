@@ -113,6 +113,7 @@ namespace Project.Gameplay.Objects
 
 			isCollected = true;
 
+			SaveManager.ActiveGameData.ringCount = (int)Mathf.MoveToward(SaveManager.ActiveGameData.ringCount, int.MaxValue, isRichRing ? 20 : 1);
 			SaveManager.SharedData.RingCount = (int)Mathf.MoveToward(SaveManager.SharedData.RingCount, int.MaxValue, isRichRing ? 20 : 1);
 			if (SaveManager.SharedData.RingCount >= RingAchievementRequirement)
 				AchievementManager.Instance.UnlockAchievement(RingAchievementName);

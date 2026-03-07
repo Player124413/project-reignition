@@ -1031,6 +1031,8 @@ public partial class SaveManager : Node
 
 		/// <summary> How much exp the player currently has. </summary>
 		public int exp;
+		/// <summary> Number of rings collected on this particular save file. </summary>
+		public int ringCount;
 		/// <summary> Total playtime, in seconds. </summary>
 		public float playTime;
 
@@ -1160,6 +1162,7 @@ public partial class SaveManager : Node
 				// Player stats
 				{ nameof(level), level },
 				{ nameof(exp), exp },
+				{ nameof(ringCount), ringCount },
 				{ nameof(playTime), Mathf.RoundToInt(playTime) },
 				{ nameof(equippedSkills), SaveSkills(equippedSkills) },
 				{ nameof(equippedAugments), SaveAugments(equippedAugments) },
@@ -1212,6 +1215,8 @@ public partial class SaveManager : Node
 				level = (int)var;
 			if (dictionary.TryGetValue(nameof(exp), out var))
 				exp = (int)var;
+			if (dictionary.TryGetValue(nameof(ringCount), out var))
+				ringCount = (int)var;
 			if (dictionary.TryGetValue(nameof(playTime), out var))
 				playTime = (float)var;
 
@@ -1558,11 +1563,7 @@ public partial class SaveManager : Node
 				BronzeMedalCount++;
 		}
 
-		private void IncrementFireSoulCounter()
-		{
-			// TODO Check soul collector achievement
-			FireSoulCount++;
-		}
+		private void IncrementFireSoulCounter() => FireSoulCount++;
 
 		private readonly string FireSoulKey = "fire_soul";
 		/// <summary> Returns whether a particular fire soul has been collected or not. </summary>
