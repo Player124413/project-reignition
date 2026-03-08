@@ -11,12 +11,13 @@ public partial class StatusMenu : Menu
 	private Array<Sprite2D> _worldRings = [];
 
 	[Export] private Label levelLabel;
-	[Export] private Label expLabel;
-	[Export] private Label nextExpLabel;
 	[Export] private Label ringLabel;
 	[Export] private Label skillPointLabel;
 	[Export] private Label fireSoulLabel;
 	[Export] private Label soulGaugeLabel;
+	[Export] private Label expLabel;
+	[Export] private Label nextExpLabel;
+	[Export] private Label nextMissionLabel;
 
 	protected override void SetUp()
 	{
@@ -37,6 +38,11 @@ public partial class StatusMenu : Menu
 		skillPointLabel.Text = $"{SaveManager.ActiveSkillRing.TotalCost}/{SaveManager.ActiveSkillRing.MaxSkillPoints}";
 		fireSoulLabel.Text = $"{SaveManager.ActiveGameData.LevelData.FireSoulCount}/{Gameplay.Objects.FireSoul.AchievementFireSoulRequirement}";
 		soulGaugeLabel.Text = SaveManager.ActiveGameData.CalculateMaxSoulPower(false).ToString("000");
+
+		nextMissionLabel.Text = "-";
+		if (SaveManager.ActiveGameData.CurrentStoryLevel != null)
+			nextMissionLabel.Text = SaveManager.ActiveGameData.CurrentStoryLevel.AreaKey.ToString().ToSnakeCase();
+
 
 		for (int i = 0; i < _worldRings.Count; i++)
 		{
