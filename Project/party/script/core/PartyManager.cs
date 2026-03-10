@@ -2,7 +2,7 @@ using Godot;
 
 namespace Project.Party;
 
-/// <summary> Responsible for tracking game state and handling network connectivity  </summary>
+/// <summary> Responsible for tracking party game state.  </summary>
 public partial class PartyManager : Node
 {
 	public static PartyManager Instance { get; private set; }
