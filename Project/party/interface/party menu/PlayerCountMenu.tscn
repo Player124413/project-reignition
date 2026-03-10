@@ -1,0 +1,168 @@
+[gd_scene load_steps=9 format=3 uid="uid://dibv76i5shvaf"]
+
+[ext_resource type="Script" uid="uid://d1cxhj1lggen6" path="res://party/script/interface/PlayerCountMenu.cs" id="1_efbm4"]
+[ext_resource type="LabelSettings" uid="uid://bd74c653xatd0" path="res://interface/font/ExperienceLabelSettings.tres" id="1_ik8tt"]
+[ext_resource type="Texture2D" uid="uid://ctvrnvuok0m22" path="res://party/interface/party menu/texture/player count.png" id="2_efbm4"]
+[ext_resource type="PackedScene" uid="uid://bfljqv8ka17mu" path="res://party/interface/party menu/PlayerCountOption.tscn" id="3_2i075"]
+[ext_resource type="Texture2D" uid="uid://bl55adiu3p7cd" path="res://party/interface/party menu/texture/arrow cursor.png" id="4_hcy5q"]
+
+[sub_resource type="Animation" id="Animation_efbm4"]
+resource_name = "init"
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:visible")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+
+[sub_resource type="Animation" id="Animation_2i075"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:visible")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_2i075"]
+_data = {
+&"RESET": SubResource("Animation_2i075"),
+&"init": SubResource("Animation_efbm4")
+}
+
+[node name="PlayerCountMenu" type="Control" node_paths=PackedStringArray("animator")]
+custom_minimum_size = Vector2(1200, 0)
+layout_mode = 3
+anchors_preset = 13
+anchor_left = 0.5
+anchor_right = 0.5
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("1_efbm4")
+animator = NodePath("AnimationPlayer")
+
+[node name="Background" type="Control" parent="."]
+custom_minimum_size = Vector2(1200, 360)
+layout_mode = 1
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -600.0
+offset_top = -220.0
+offset_right = 600.0
+offset_bottom = 140.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Label" type="Label" parent="Background"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -74.0
+offset_top = -332.0
+offset_right = 74.0
+offset_bottom = -309.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "party_player_count"
+label_settings = ExtResource("1_ik8tt")
+uppercase = true
+
+[node name="Background" type="HBoxContainer" parent="Background"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 0
+alignment = 1
+
+[node name="Left" type="TextureRect" parent="Background/Background"]
+layout_mode = 2
+size_flags_horizontal = 3
+texture = ExtResource("2_efbm4")
+flip_h = true
+
+[node name="Right" type="TextureRect" parent="Background/Background"]
+layout_mode = 2
+size_flags_horizontal = 3
+texture = ExtResource("2_efbm4")
+
+[node name="Players" type="HBoxContainer" parent="Background"]
+layout_mode = 1
+anchors_preset = -1
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_top = -96.0
+offset_bottom = 96.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = -64
+alignment = 1
+
+[node name="Player1" parent="Background/Players" instance=ExtResource("3_2i075")]
+layout_mode = 2
+
+[node name="Player2" parent="Background/Players" instance=ExtResource("3_2i075")]
+layout_mode = 2
+
+[node name="Player3" parent="Background/Players" instance=ExtResource("3_2i075")]
+layout_mode = 2
+
+[node name="Player4" parent="Background/Players" instance=ExtResource("3_2i075")]
+layout_mode = 2
+
+[node name="Left" type="TextureRect" parent="Background"]
+layout_mode = 1
+anchors_preset = -1
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_top = -64.0
+offset_right = 128.0
+offset_bottom = 64.0
+grow_vertical = 2
+size_flags_horizontal = 3
+texture = ExtResource("4_hcy5q")
+flip_h = true
+
+[node name="Right" type="TextureRect" parent="Background"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -128.0
+offset_top = -64.0
+offset_bottom = 64.0
+grow_horizontal = 0
+grow_vertical = 2
+size_flags_horizontal = 3
+texture = ExtResource("4_hcy5q")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+&"": SubResource("AnimationLibrary_2i075")
+}
+autoplay = "init"

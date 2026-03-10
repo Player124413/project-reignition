@@ -1,0 +1,59 @@
+[gd_scene load_steps=9 format=3 uid="uid://dmkjjww7kn783"]
+
+[ext_resource type="Script" uid="uid://cj76gvi7tbku6" path="res://sound/script/BGMPlayer.cs" id="1_kuydi"]
+[ext_resource type="PackedScene" uid="uid://bvemr1pe3iwoa" path="res://party/interface/party menu/OnlineMenu.tscn" id="2_57rwm"]
+[ext_resource type="Resource" uid="uid://dw7wrw7hq47fr" path="res://party/resource/bgm/CharacterSelectBGM.tres" id="2_mtme2"]
+[ext_resource type="PackedScene" uid="uid://dibv76i5shvaf" path="res://party/interface/party menu/PlayerCountMenu.tscn" id="3_70dmd"]
+[ext_resource type="Texture2D" uid="uid://bajngtmriwojw" path="res://party/interface/party menu/texture/background.png" id="4_ewsja"]
+[ext_resource type="PackedScene" uid="uid://ba68kan8p43yr" path="res://interface/menu/DescriptionTall.tscn" id="9_57rwm"]
+
+[sub_resource type="Animation" id="Animation_j3de6"]
+resource_name = "show-online"
+length = 0.001
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_ewsja"]
+_data = {
+&"show-online": SubResource("Animation_j3de6")
+}
+
+[node name="PartyMenu" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Background" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("4_ewsja")
+
+[node name="OnlineMenu" parent="." node_paths=PackedStringArray("bgm") instance=ExtResource("2_57rwm")]
+layout_mode = 1
+submenus = Array[NodePath]([NodePath("../PlayerCount")])
+bgm = NodePath("../BGM")
+
+[node name="PlayerCount" parent="." instance=ExtResource("3_70dmd")]
+layout_mode = 1
+
+[node name="BGM" type="AudioStreamPlayer" parent="."]
+autoplay = true
+bus = &"BGM"
+script = ExtResource("1_kuydi")
+bgmResource = ExtResource("2_mtme2")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+&"": SubResource("AnimationLibrary_ewsja")
+}
+
+[node name="DescriptionTall" parent="." instance=ExtResource("9_57rwm")]
+layout_mode = 1
+
+[editable path="DescriptionTall"]
