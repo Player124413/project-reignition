@@ -235,7 +235,7 @@ public partial class MainMenu : Menu
 			return;
 		}
 
-		if (isNothingSelected || currentSelection == 2) // Ignore unimplemented menus (PARTY MODE).
+		if (isNothingSelected) // Ignore unimplemented menus (PARTY MODE).
 			return;
 
 		animator.Play("confirm");
@@ -275,7 +275,20 @@ public partial class MainMenu : Menu
 
 		FadeBgm(.5f);
 		menuMemory[MemoryKeys.MainMenu] = currentSelection;
-		TransitionManager.QueueSceneChange(currentSelection == 3 ? TransitionManager.SpecialBookScenePath : TransitionManager.OptionsScenePath);
+
+		switch (currentSelection)
+		{
+			case 2:
+				TransitionManager.QueueSceneChange(TransitionManager.PartyScenePath);
+				break;
+			case 3:
+				TransitionManager.QueueSceneChange(TransitionManager.SpecialBookScenePath);
+				break;
+			default:
+				TransitionManager.QueueSceneChange(TransitionManager.OptionsScenePath);
+				break;
+		}
+
 		TransitionManager.StartTransition(new()
 		{
 			color = Colors.Black,

@@ -15,6 +15,7 @@ public partial class TransitionManager : Node
 	/// <summary> Path to story events. </summary>
 	public const string EventScenePath = "res://video/event/scene/";
 	public const string OptionsScenePath = "res://interface/menu/options/Options.tscn";
+	public const string PartyScenePath = "res://party/scene/party menu/PartyMenu.tscn";
 	public const string SpecialBookScenePath = "res://interface/menu/special book/SpecialBook.tscn";
 	public const string TimeAttackScenePath = "res://interface/menu/time attack/TimeAttack.tscn";
 
