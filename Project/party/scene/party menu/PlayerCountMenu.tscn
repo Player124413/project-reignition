@@ -1,5 +1,6 @@
-[gd_scene load_steps=8 format=3 uid="uid://dibv76i5shvaf"]
+[gd_scene load_steps=10 format=3 uid="uid://dibv76i5shvaf"]
 
+[ext_resource type="Script" uid="uid://dd0qaqb4b7c1m" path="res://party/script/interface/player_count_menu.gd" id="1_7fypd"]
 [ext_resource type="LabelSettings" uid="uid://bd74c653xatd0" path="res://interface/font/ExperienceLabelSettings.tres" id="1_ik8tt"]
 [ext_resource type="Texture2D" uid="uid://ctvrnvuok0m22" path="res://party/scene/party menu/texture/player count.png" id="2_efbm4"]
 [ext_resource type="PackedScene" uid="uid://bfljqv8ka17mu" path="res://party/scene/party menu/PlayerCountOption.tscn" id="3_2i075"]
@@ -36,13 +37,99 @@ tracks/0/keys = {
 "values": [false]
 }
 
+[sub_resource type="Animation" id="Animation_7fypd"]
+resource_name = "show"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:visible")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/1/type = "method"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath(".")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0.96666664),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"enable_processing"
+}]
+}
+tracks/2/type = "method"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Background/Players/Player1")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0.33333334),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"show_option"
+}]
+}
+tracks/3/type = "method"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("Background/Players/Player2")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0.33333334),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"show_option"
+}]
+}
+tracks/4/type = "method"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("Background/Players/Player3")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0.33333334),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"show_option"
+}]
+}
+tracks/5/type = "method"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("Background/Players/Player4")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0.33333334),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"show_option"
+}]
+}
+
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_2i075"]
 _data = {
 &"RESET": SubResource("Animation_2i075"),
-&"init": SubResource("Animation_efbm4")
+&"init": SubResource("Animation_efbm4"),
+&"show": SubResource("Animation_7fypd")
 }
 
-[node name="PlayerCountMenu" type="Control"]
+[node name="PlayerCountMenu" type="Control" node_paths=PackedStringArray("player_count_options", "animator")]
 custom_minimum_size = Vector2(1200, 0)
 layout_mode = 3
 anchors_preset = 13
@@ -52,6 +139,9 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
+script = ExtResource("1_7fypd")
+player_count_options = [NodePath("Background/Players/Player1"), NodePath("Background/Players/Player2"), NodePath("Background/Players/Player3"), NodePath("Background/Players/Player4")]
+animator = NodePath("AnimationPlayer")
 
 [node name="Background" type="Control" parent="."]
 custom_minimum_size = Vector2(1200, 360)
@@ -61,9 +151,9 @@ anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
 offset_left = -600.0
-offset_top = -220.0
+offset_top = -244.0
 offset_right = 600.0
-offset_bottom = 140.0
+offset_bottom = 116.0
 grow_horizontal = 2
 grow_vertical = 2
 
@@ -74,10 +164,10 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -74.0
-offset_top = -332.0
-offset_right = 74.0
-offset_bottom = -309.0
+offset_left = -365.0
+offset_top = -356.0
+offset_right = 365.0
+offset_bottom = -279.29
 grow_horizontal = 2
 grow_vertical = 2
 text = "party_player_count"

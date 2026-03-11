@@ -53,10 +53,6 @@ func _register_with_noray():
 	Noray.register_host()
 	await Noray.on_pid
 	
-	# Capture room_id to display on host-peer for sharing with others
-	print("Noray oid/gameId: %s" % Noray.oid)
-	room_id = Noray.oid
-	
 	# Register remove address
 	err = await Noray.register_remote()
 	if err != OK:
@@ -75,6 +71,10 @@ func _start_noray_host():
 		print("Failed to listen on port %s with error: %s" % [Noray.local_port, err])
 		return
 	
+	# Capture room_id to display on host-peer for sharing with others
+	print("Noray oid/gameId: %s" % Noray.oid)
+	room_id = Noray.oid
+	
 	is_online = true
 	host_connected.emit()
 	print("SERVER: Started listening on port %s" % Noray.local_port)
@@ -88,8 +88,6 @@ func _handle_noray_client_connect(_address: String, _port: int) -> Error:
 		print("Noray packet handshake failed %s" % err)
 		return err
 	
-	print("SERVER: Client %s connected to the server" % peer.get_unique_id())
-	client_connected.emit()
 	return OK
 
 ## Client method for attempting a NAT Punchthrough.
@@ -117,19 +115,22 @@ func _handle_relay_connect(_address: String, _port: int) -> Error:
 func _handle_connect(_address: String, _port: int) -> Error:
 	print("Client handle connect to %s:%s, Noray.localport: %s" % [_address, _port, Noray.local_port])
 	
-	# Do a UDP handshake
+	# Do a handshake
 	var udp = PacketPeerUDP.new()
 	udp.bind(Noray.local_port)
 	udp.set_dest_address(_address, _port)
+	
 	var err = await PacketHandshake.over_packet_peer(udp, 8)
 	udp.close()
+	
 	if err != OK:
 		print("Client packet handshake failed %s" % err)
 		return err
-	
+		
 	# Connect to host
 	var peer = ENetMultiplayerPeer.new()
 	err = peer.create_client(_address, _port, 0, 0, 0, Noray.local_port)
+	
 	if err != OK:
 		print("Create client failed %s" % err)
 		return err
@@ -137,7 +138,6 @@ func _handle_connect(_address: String, _port: int) -> Error:
 	multiplayer.multiplayer_peer = peer
 	is_online = true
 	client_connected.emit()
-	print("CLIENT: Peer %s has connected." % multiplayer.get_unique_id())
 	return OK
 
 ## Noray host connections.

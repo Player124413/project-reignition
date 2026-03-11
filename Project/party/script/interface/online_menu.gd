@@ -8,14 +8,12 @@ extends Menu
 @export var selection_label : SyncedLabel
 @export var transition_label : SyncedLabel
 @export var cursor : Control
+@export var player_count_menu : Menu
 
 ## Is the player selection a connection option?
 var is_connection_menu_active : bool = true
 ## Tracks whether the player is trying to be the host, join, or play offline.
 var connection_mode_selection : int
-
-func get_max_vertical_selection() -> int:
-	return online_nodes.size() - 2
 
 ## Localization keys for connection selection options.
 var connection_values : Array[String] = [
@@ -52,11 +50,7 @@ func update_connection_selection() -> void:
 ## Updates selection for [address, port, connect] menu.
 func update_online_selection() -> void:
 	var previous_selection : Vector2i = current_selection
-	current_selection.y = clamp(current_selection.y + input_axis.y, 0, get_max_vertical_selection())
-	if current_selection.y == get_max_vertical_selection():
-		current_selection.x = clamp(current_selection.x + input_axis.x, 0, 1)
-	else:
-		current_selection.x = 0
+	current_selection.y = clamp(current_selection.y + input_axis.y, 0, online_nodes.size() - 1)
 	
 	room_edit.release_focus()
 	address_edit.release_focus()
@@ -75,7 +69,8 @@ func update_online_selection() -> void:
 func confirm() -> void:
 	if is_connection_menu_active:
 		if connection_mode_selection == 0:
-			# TODO Launch in offline mode
+			# Launch into offline mode
+			rpc("show_player_count_menu")
 			return
 		
 		# Open online menu
@@ -86,10 +81,40 @@ func confirm() -> void:
 		return
 	if room_edit.has_focus() || address_edit.has_focus():
 		return
+	
 	# Process connection requests
-	if current_selection.y == get_max_vertical_selection():
-		if current_selection.x == 1:
-			connect_noray()
+	if current_selection.y == 2:
+		process_copy_paste()
+	elif current_selection.y == 3:
+		connect_noray()
+	elif NetworkManager.is_hosting_game && current_selection.y == 4:
+		rpc("show_player_count_menu")
+
+## Processes the Copy/Paste button.
+func process_copy_paste() -> void:
+	if NetworkManager.is_hosting_game:
+		var room_data_text : String = room_edit.text
+		if !address_edit.text.is_empty():
+			room_data_text = address_edit.text + "\n" + room_data_text
+		DisplayServer.clipboard_set(room_data_text)
+	else:
+		var room_data : PackedStringArray = DisplayServer.clipboard_get().split('\n')
+		if room_data.size() == 1:
+			# Assume the player copied the room id if there's only 1 entry
+			room_edit.text = room_data[0]
+		elif room_data.size() == 2:
+			address_edit.text = room_data[0]
+			room_edit.text = room_data[1]
+
+@rpc("authority", "call_local", "reliable")
+func show_player_count_menu() -> void:
+	PartyManager.initialize_offline_player_data()
+	if NetworkManager.is_hosting_game && NetworkManager.is_online:
+		PartyManager.rpc("initialize_online_player_data")
+	print("Showing Player Count Menu on " + str(multiplayer.get_unique_id()))
+	player_count_menu.show_menu()
+	hide_menu()
+	disable_processing()
 
 ## Starts a connection to the Noray server.
 func connect_noray() -> void:
