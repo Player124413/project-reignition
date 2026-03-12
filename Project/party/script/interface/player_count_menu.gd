@@ -3,7 +3,6 @@ extends Menu
 
 @export var online_menu : Menu
 @export var player_count_options : Array[Control]
-var cpu_index : int = 3
 
 func show_menu() -> void:
 	super()
@@ -14,14 +13,21 @@ func update_selection() -> void:
 	if input_axis.x == 0:
 		return
 	# Add and remove players
-	if input_axis.x < 0 && cpu_index > 0:
-		remove_player()
+	var cpu_index : int = PartyManager.get_first_player_index_device(0)
+	if input_axis.x > 0 && cpu_index < player_count_options.size() && cpu_index != -1:
+		# Only add players if there's a cpu slot to replace
 		start_selection_timer()
-		redraw_players()
-	elif input_axis.x > 0 && cpu_index < player_count_options.size() - 1:
-		add_player()
+		if NetworkManager.is_hosting_game:
+			add_player(1)
+		else:
+			rpc("request_add_player", multiplayer.get_unique_id())
+	elif input_axis.x < 0 && PartyManager.get_player_count_device(multiplayer.get_unique_id()) > 1:
+		# Only remove players when there's at least one player left connected to this device
 		start_selection_timer()
-		redraw_players()
+		if NetworkManager.is_hosting_game:
+			remove_player(1)
+		else:
+			rpc("request_remove_player", multiplayer.get_unique_id())
 
 func cancel() -> void:
 	online_menu.show_menu()
@@ -29,17 +35,61 @@ func cancel() -> void:
 	disable_processing()
 
 # Adds a player for this device.
-func add_player() -> void:
-	cpu_index += 1
-	PartyManager.get_player_data(cpu_index).is_cpu_player = !PartyManager.get_player_data(cpu_index).is_cpu_player
-	player_count_options[cpu_index].switch_animation()
+@rpc("authority", "call_local", "reliable")
+func add_player(device : int) -> void:
+	var data_index : int = PartyManager.get_first_player_index_device(0)
+	var local_player_index : int = PartyManager.get_player_count_device(device)
+	var player_index : int
+	if NetworkManager.is_online:
+		player_index = PartyManager.get_first_player_index_device(device)
+		player_index = PartyManager.get_player_data(player_index).player_index
+	else:
+		player_index = PartyManager.get_first_player_index_device(0)
+	
+	if !NetworkManager.is_hosting_game:
+		return
+	
+	PartyManager.rpc("set_player_indexes", data_index, player_index, device, local_player_index)
+	for i in range(data_index + 1, PartyManager.MAX_PLAYER_COUNT):
+		var player_data : PlayerData = PartyManager.get_player_data(i)
+		PartyManager.rpc("set_player_indexes", i, player_data.player_index - 1, player_data.device, player_data.local_player_index)
+	player_count_options[data_index].rpc("switch_animation")
+	rpc("redraw_players")
 
 # Removes a player from this device.
-func remove_player() -> void:
-	PartyManager.get_player_data(cpu_index).is_cpu_player = !PartyManager.get_player_data(cpu_index).is_cpu_player
-	player_count_options[cpu_index].switch_animation()
-	cpu_index -= 1
+@rpc("authority", "call_local", "reliable")
+func remove_player(device : int) -> void:
+	if !NetworkManager.is_hosting_game:
+		return
+	
+	var player_index : int = PartyManager.get_last_player_index_device(device) # Select the last player
+	var cpu_count : int = PartyManager.get_player_count_device(0)
+	for i in range(player_index, PartyManager.MAX_PLAYER_COUNT - 1):
+		# Shift all players down by one 
+		var next_player_data : PlayerData = PartyManager.get_player_data(i + 1)
+		player_count_options[i].rpc("switch_animation")
+		PartyManager.rpc("set_player_indexes", i, next_player_data.player_index, next_player_data.device, next_player_data.local_player_index)
+	player_count_options[PartyManager.MAX_PLAYER_COUNT - 1].rpc("switch_animation")
+	PartyManager.rpc("set_player_indexes", PartyManager.MAX_PLAYER_COUNT - 1, cpu_count, 0, 0)
+	rpc("redraw_players")
 
+## RPC call for the host to add a player for a device.
+@rpc("any_peer", "call_local", "reliable")
+func request_add_player(device : int) -> void:
+	# Only allow the host to change players
+	if !NetworkManager.is_hosting_game:
+		return
+	rpc("add_player", device)
+
+## RPC call for the host to remove a player for a device.
+@rpc("any_peer", "call_local", "reliable")
+func request_remove_player(device : int) -> void:
+	# Only allow the host to change players
+	if !NetworkManager.is_hosting_game:
+		return
+	rpc("remove_player", device)
+
+@rpc("authority", "call_local", "reliable")
 func redraw_players() -> void:
 	for option in player_count_options:
 		option.update_text()

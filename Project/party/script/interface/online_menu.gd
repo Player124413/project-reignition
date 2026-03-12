@@ -69,8 +69,9 @@ func update_online_selection() -> void:
 func confirm() -> void:
 	if is_connection_menu_active:
 		if connection_mode_selection == 0:
-			# Launch into offline mode
-			rpc("show_player_count_menu")
+			# Offline is essentially a single host peer
+			NetworkManager.is_hosting_game = true
+			rpc("initialize_players")
 			return
 		
 		# Open online menu
@@ -88,7 +89,7 @@ func confirm() -> void:
 	elif current_selection.y == 3:
 		connect_noray()
 	elif NetworkManager.is_hosting_game && current_selection.y == 4:
-		rpc("show_player_count_menu")
+		rpc("initialize_players")
 
 ## Processes the Copy/Paste button.
 func process_copy_paste() -> void:
@@ -107,11 +108,17 @@ func process_copy_paste() -> void:
 			room_edit.text = room_data[1]
 
 @rpc("authority", "call_local", "reliable")
-func show_player_count_menu() -> void:
+func initialize_players() -> void:
 	PartyManager.initialize_offline_player_data()
-	if NetworkManager.is_hosting_game && NetworkManager.is_online:
-		PartyManager.rpc("initialize_online_player_data")
-	print("Showing Player Count Menu on " + str(multiplayer.get_unique_id()))
+	if NetworkManager.is_online:
+		PartyManager.connect("players_initialized", show_player_count_menu, CONNECT_ONE_SHOT)
+		if NetworkManager.is_hosting_game:
+			PartyManager.initialize_online_player_data()
+	else:
+		# Launch into offline mode
+		show_player_count_menu()
+
+func show_player_count_menu() -> void:
 	player_count_menu.show_menu()
 	hide_menu()
 	disable_processing()
