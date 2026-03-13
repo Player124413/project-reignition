@@ -64,7 +64,7 @@ func recieve_cursor_movement(direction : Vector2i, index : int) -> void:
 		cursors[index].set_deferred("scroll_timer", 0)
 	else:
 		var portrait : Control = get_portrait(cursor_selection)
-		cursors[index].rpc("set_cursor_position", portrait.get_cursor_position())
+		rpc("update_cursor_position", index, cursor_selection)
 		previews[cursors[index].port_index].rpc("set_character_text", "" if portrait.linked_character == null else portrait.linked_character.character_name)
 
 func recieve_cursor_confirm(index : int) -> void:
@@ -74,7 +74,7 @@ func recieve_cursor_cancel(index : int) -> void:
 	rpc("request_character_cancellation", index)
 
 ## Tries to confirm a player's selection.
-@rpc("authority", "call_local", "reliable")
+@rpc("any_peer", "call_local", "reliable")
 func request_character_selection(index : int) -> void:
 	if !NetworkManager.is_hosting_game:
 		return
@@ -100,7 +100,7 @@ func request_character_selection(index : int) -> void:
 	advance_cursor_port(index)
 
 ## Tries to cancel a player's selection.
-@rpc("authority", "call_local", "reliable")
+@rpc("any_peer", "call_local", "reliable")
 func request_character_cancellation(index : int) -> void:
 	if !NetworkManager.is_hosting_game:
 		return
@@ -111,16 +111,25 @@ func request_character_cancellation(index : int) -> void:
 		# Nothing was selected to begin with
 		if player_data.is_cpu_player():
 			unadvance_cursor_port(index)
-		elif port_index == 0 && NetworkManager.is_hosting_game:
-			rpc("show_player_count_menu") # Return to the previous menu
+		elif cursors[index].is_multiplayer_authority() && port_index == 0:
+			rpc("show_player_count_menu") # Return to the previous menu (only works on the host)
+			for i in PartyManager.MAX_PLAYER_COUNT:
+				# Reset all character data
+				PartyManager.rpc("set_character_data", i, "")
+		else:
+			cursors[index].rpc("request_enable_processing")
 		return
 	var selection : Vector2i = get_portrait_selection_from_data(player_data.character_data)
 	var portrait : Control = get_portrait(selection)
 	cursors[index].rpc("set_current_selection", selection)
-	cursors[index].rpc("set_cursor_position", portrait.get_cursor_position())
+	rpc("update_cursor_position", index, selection)
 	portrait.rpc("deselect")
 	previews[port_index].rpc("deselect")
 	PartyManager.rpc("set_character_data", port_index, "") # Clear player data
+
+@rpc("any_peer", "call_local", "reliable")
+func update_cursor_position(index : int, portrait_index : Vector2i) -> void:
+	cursors[index].set_cursor_position(get_portrait(portrait_index).get_cursor_position())
 
 ## Updates (or disables if no ports are left to configure) a cursor to select the next player's port.
 func advance_cursor_port(index : int) -> void:
@@ -133,7 +142,7 @@ func advance_cursor_port(index : int) -> void:
 	else:
 		var portrait : Control = get_portrait(cursors[index].current_selection)
 		cursors[index].rpc("set_player_tag", next_port)
-		cursors[index].rpc("set_cursor_position", portrait.get_cursor_position())
+		rpc("update_cursor_position", index, cursors[index].current_selection)
 		previews[next_port].rpc("set_character_text", "" if portrait.linked_character == null else portrait.linked_character.character_name)
 
 ## Moves a cursor back a port.
@@ -142,7 +151,7 @@ func unadvance_cursor_port(index : int) -> void:
 	var current_port_index : int = cursors[index].port_index - 1
 	while (current_port_index >= 0):
 		var player_data : PlayerData = PartyManager.get_player_data(current_port_index)
-		if player_data.is_cpu_player() || (player_data.device == multiplayer.get_unique_id() && player_data.local_player_index == cursors[index].controller_index):
+		if player_data.is_cpu_player() || (player_data.device == cursors[index].get_multiplayer_authority() && player_data.local_player_index == cursors[index].controller_index):
 			# Found the port to revert to
 			break
 		current_port_index -= 1
@@ -186,7 +195,7 @@ func show_cursors() -> void:
 		var selection : Vector2i = Vector2i.RIGHT * i
 		var portrait : Control = get_portrait(selection)
 		cursors[i].rpc("set_current_selection", selection)
-		cursors[i].rpc("set_cursor_position", portrait.get_cursor_position())
+		rpc("update_cursor_position", i, selection)
 		cursors[i].rpc("set_player_tag", i)
 		previews[i].rpc("set_character_text", "" if portrait.linked_character == null else portrait.linked_character.character_name)
 

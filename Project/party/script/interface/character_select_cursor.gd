@@ -105,7 +105,7 @@ func hide_cursor() -> void:
 	enable_processing() # Re-enable processing so player can cancel their selection
 	animator.play("hide")
 
-@rpc("authority", "call_local", "reliable")
+@rpc("any_peer", "call_local", "reliable")
 func set_player_tag(player_index : int):
 	port_index = player_index
 	var tag : String = PartyManager.get_player_data(port_index).player_tag
