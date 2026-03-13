@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=3 uid="uid://db3dkff1hlhxy"]
+[gd_scene load_steps=24 format=3 uid="uid://db3dkff1hlhxy"]
 
 [ext_resource type="Script" uid="uid://rvcfxqql1mkh" path="res://party/script/interface/character_select_preview.gd" id="1_qdnod"]
 [ext_resource type="Texture2D" uid="uid://b4tgfvuq4pgf4" path="res://party/scene/party menu/texture/cs background.png" id="1_qop0v"]
@@ -9,6 +9,49 @@
 [ext_resource type="LabelSettings" uid="uid://dkf56qrtqvrp1" path="res://party/font/PartyPlayerCountFill.tres" id="4_6m12f"]
 [ext_resource type="Texture2D" uid="uid://dpsxmm38mmh1d" path="res://party/font/GreenGradientFill.tres" id="5_qdnod"]
 [ext_resource type="Environment" uid="uid://ciga1lajfdftc" path="res://party/scene/party menu/resource/CharacterSelectEnvironment.tres" id="9_2mevm"]
+[ext_resource type="Texture2D" uid="uid://bfrvi8f0phspt" path="res://interface/menu/common/description border.png" id="10_2dwfq"]
+[ext_resource type="Texture2D" uid="uid://cmfbnrdapjnue" path="res://party/scene/party menu/texture/cursor hand.png" id="10_ttrlv"]
+[ext_resource type="Texture2D" uid="uid://2nhmu64hj08j" path="res://interface/menu/common/description border clip.png" id="11_lvsnf"]
+[ext_resource type="Texture2D" uid="uid://c5ktftaj3q71d" path="res://party/scene/party menu/resource/CharacterSelectDifficulty.tres" id="12_1k01o"]
+[ext_resource type="LabelSettings" uid="uid://df7y5egeshipf" path="res://party/font/PartyCharacterSelectDifficulty.tres" id="12_lvsnf"]
+
+[sub_resource type="Animation" id="Animation_ttrlv"]
+resource_name = "loop"
+length = 0.5
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Root:scale")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.20000002, 0.5),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector2(1, 1), Vector2(1.1, 1.1), Vector2(1, 1)]
+}
+
+[sub_resource type="Animation" id="Animation_eo2v2"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Root:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(1, 1)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_eo2v2"]
+_data = {
+&"RESET": SubResource("Animation_eo2v2"),
+&"loop": SubResource("Animation_ttrlv")
+}
 
 [sub_resource type="Animation" id="Animation_2mevm"]
 length = 0.001
@@ -71,6 +114,66 @@ tracks/4/keys = {
 "transitions": PackedFloat32Array(1),
 "update": 0,
 "values": [Color(1, 1, 1, 1)]
+}
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("DifficultySelect:visible")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/6/type = "value"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("DifficultySelect:modulate")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 0)]
+}
+tracks/7/type = "value"
+tracks/7/imported = false
+tracks/7/enabled = true
+tracks/7/path = NodePath("DifficultySelect:scale")
+tracks/7/interp = 1
+tracks/7/loop_wrap = true
+tracks/7/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(1, 1)]
+}
+tracks/8/type = "value"
+tracks/8/imported = false
+tracks/8/enabled = true
+tracks/8/path = NodePath("DifficultyCursor:modulate")
+tracks/8/interp = 1
+tracks/8/loop_wrap = true
+tracks/8/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+tracks/9/type = "value"
+tracks/9/imported = false
+tracks/9/enabled = true
+tracks/9/path = NodePath("DifficultyCursor:visible")
+tracks/9/interp = 1
+tracks/9/loop_wrap = true
+tracks/9/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
 }
 
 [sub_resource type="Animation" id="Animation_2dwfq"]
@@ -135,6 +238,54 @@ tracks/4/keys = {
 "transitions": PackedFloat32Array(1),
 "update": 0,
 "values": [Color(1, 1, 1, 0)]
+}
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("DifficultySelect:visible")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/6/type = "value"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("DifficultySelect:modulate")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 0)]
+}
+tracks/7/type = "value"
+tracks/7/imported = false
+tracks/7/enabled = true
+tracks/7/path = NodePath("DifficultyCursor:modulate")
+tracks/7/interp = 1
+tracks/7/loop_wrap = true
+tracks/7/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 0)]
+}
+tracks/8/type = "value"
+tracks/8/imported = false
+tracks/8/enabled = true
+tracks/8/path = NodePath("DifficultyCursor:visible")
+tracks/8/interp = 1
+tracks/8/loop_wrap = true
+tracks/8/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
 }
 
 [sub_resource type="Animation" id="Animation_rmcmv"]
@@ -201,14 +352,144 @@ tracks/4/keys = {
 "values": [Color(1, 1, 1, 0), Color(1, 1, 1, 1)]
 }
 
+[sub_resource type="Animation" id="Animation_1k01o"]
+resource_name = "show-cpu-difficulty"
+length = 0.2
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("DifficultySelect:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.13333334),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 1)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("DifficultySelect:scale")
+tracks/1/interp = 2
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.16666667),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector2(1, 0.5), Vector2(1, 1.2), Vector2(1, 1)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("DifficultySelect:visible")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("DifficultyCursor:visible")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0.1),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("DifficultyCursor:modulate")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0.1, 0.2),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 1)]
+}
+
+[sub_resource type="Animation" id="Animation_yxqjg"]
+resource_name = "hide-cpu-difficulty"
+length = 0.2
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("DifficultySelect:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.16666667),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 1), Color(1, 1, 1, 0)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("DifficultySelect:scale")
+tracks/1/interp = 2
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.06666667, 0.16666667),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector2(1, 1), Vector2(1, 1.2), Vector2(2, 0)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("DifficultySelect:visible")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 0.16666667),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [true, false]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("DifficultyCursor:visible")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0, 0.06666667),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [true, false]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("DifficultyCursor:modulate")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0, 0.06666667),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 1), Color(1, 1, 1, 0)]
+}
+
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_2mevm"]
 _data = {
 &"RESET": SubResource("Animation_2mevm"),
+&"hide-cpu-difficulty": SubResource("Animation_yxqjg"),
 &"init": SubResource("Animation_2dwfq"),
-&"show": SubResource("Animation_rmcmv")
+&"show": SubResource("Animation_rmcmv"),
+&"show-cpu-difficulty": SubResource("Animation_1k01o")
 }
 
-[node name="CharacterSelectPreview1" type="Control" node_paths=PackedStringArray("player_label", "character_label", "model_parent", "animator")]
+[node name="CharacterSelectPreview1" type="Control" node_paths=PackedStringArray("player_label", "character_label", "model_parent", "animator", "cursor", "difficulty_options")]
 custom_minimum_size = Vector2(384, 512)
 layout_mode = 3
 offset_right = 384.0
@@ -219,6 +500,8 @@ player_label = NodePath("Header/PlayerLabel")
 character_label = NodePath("CharacterLabel")
 model_parent = NodePath("PreviewContainer/CharacterViewport/CharacterPosition")
 animator = NodePath("AnimationPlayer")
+cursor = NodePath("DifficultyCursor")
+difficulty_options = [NodePath("DifficultySelect/DifficultyOptions/Easy"), NodePath("DifficultySelect/DifficultyOptions/Normal"), NodePath("DifficultySelect/DifficultyOptions/Hard"), NodePath("DifficultySelect/DifficultyOptions/Extreme")]
 
 [node name="Background" type="TextureRect" parent="."]
 layout_mode = 1
@@ -341,6 +624,125 @@ far = 100.0
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="PreviewContainer/CharacterViewport"]
 environment = ExtResource("9_2mevm")
+
+[node name="DifficultySelect" type="NinePatchRect" parent="."]
+modulate = Color(1, 1, 1, 0)
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -168.0
+offset_top = -152.0
+offset_right = 160.0
+offset_bottom = 224.0
+grow_horizontal = 2
+grow_vertical = 2
+pivot_offset = Vector2(164, 188)
+texture = ExtResource("10_2dwfq")
+patch_margin_left = 112
+patch_margin_top = 112
+patch_margin_right = 112
+patch_margin_bottom = 112
+
+[node name="BackgroundClip" type="NinePatchRect" parent="DifficultySelect"]
+show_behind_parent = true
+clip_children = 1
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("11_lvsnf")
+patch_margin_left = 112
+patch_margin_top = 112
+patch_margin_right = 112
+patch_margin_bottom = 112
+
+[node name="Gradient" type="TextureRect" parent="DifficultySelect/BackgroundClip"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("12_1k01o")
+
+[node name="DifficultyOptions" type="VBoxContainer" parent="DifficultySelect"]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 64.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 16
+alignment = 1
+
+[node name="Easy" type="Label" parent="DifficultySelect/DifficultyOptions"]
+layout_mode = 2
+text = "party_easy"
+label_settings = ExtResource("12_lvsnf")
+vertical_alignment = 1
+
+[node name="Normal" type="Label" parent="DifficultySelect/DifficultyOptions"]
+layout_mode = 2
+text = "party_normal"
+label_settings = ExtResource("12_lvsnf")
+vertical_alignment = 1
+
+[node name="Hard" type="Label" parent="DifficultySelect/DifficultyOptions"]
+layout_mode = 2
+text = "party_hard"
+label_settings = ExtResource("12_lvsnf")
+vertical_alignment = 1
+
+[node name="Extreme" type="Label" parent="DifficultySelect/DifficultyOptions"]
+layout_mode = 2
+text = "party_extreme"
+label_settings = ExtResource("12_lvsnf")
+vertical_alignment = 1
+
+[node name="DifficultyCursor" type="Control" parent="."]
+visible = false
+anchors_preset = 0
+offset_left = 88.0
+offset_top = 184.0
+offset_right = 88.0
+offset_bottom = 184.0
+mouse_filter = 2
+
+[node name="Root" type="Control" parent="DifficultyCursor"]
+layout_mode = 1
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = 24.0
+offset_bottom = 24.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Texture" type="TextureRect" parent="DifficultyCursor/Root"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -136.0
+offset_right = -8.0
+offset_bottom = 128.0
+grow_horizontal = 2
+grow_vertical = 2
+rotation = -0.7853982
+texture = ExtResource("10_ttrlv")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="DifficultyCursor"]
+libraries = {
+&"": SubResource("AnimationLibrary_eo2v2")
+}
+autoplay = "loop"
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 libraries = {

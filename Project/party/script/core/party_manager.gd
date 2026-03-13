@@ -117,6 +117,10 @@ func set_player_indexes(index : int, player_index : int, device : int, local_pla
 	_player_data[index].update_player_tag()
 
 @rpc("authority", "call_local", "reliable")
+func set_difficulty(index : int, difficulty : int) -> void:
+	_player_data[index].cpu_difficulty = difficulty as PlayerData.CPU_DIFFICULTY_ENUM
+
+@rpc("authority", "call_local", "reliable")
 func finish_initializing_players() -> void:
 	players_initialized.emit()
 

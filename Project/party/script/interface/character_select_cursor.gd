@@ -1,7 +1,7 @@
 extends Control
 
 ## Emitted when the cursor moves in a direction.
-signal moved(direction : Vector2i, index : int)
+signal moved(index : int, direction : Vector2i)
 ## Emitted when the cursor confirms a selection.
 signal confirmed(index : int)
 ## Emitted when the cursor cancels a selection.
@@ -41,7 +41,7 @@ func _process(delta: float) -> void:
 			scroll_timer = 0
 		elif is_zero_approx(scroll_timer):
 			# Emit a movement signal for the character select menu to handle
-			moved.emit(input_axis, get_index())
+			moved.emit(get_index(), input_axis)
 			scroll_timer = Menu.SELECTION_SCROLLING_INTERVAL if is_scrolling else Menu.SELECTION_INTERVAL
 			is_scrolling = true
 		else:

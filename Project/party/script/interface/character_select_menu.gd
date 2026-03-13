@@ -20,6 +20,10 @@ func _ready() -> void:
 		cursor.confirmed.connect(recieve_cursor_confirm)
 		cursor.cancelled.connect(recieve_cursor_cancel)
 	
+	for preview in previews:
+		preview.confirmed.connect(recieve_difficulty_confirm)
+		preview.cancelled.connect(recieve_difficulty_cancel)
+	
 	initialize_portraits()
 
 func initialize_portraits() -> void:
@@ -45,7 +49,7 @@ func create_portrait(character_data : PartyCharacterResource) -> Control:
 	portrait.linked_character = character_data
 	return portrait
 
-func recieve_cursor_movement(direction : Vector2i, index : int) -> void:
+func recieve_cursor_movement(index : int, direction : Vector2i) -> void:
 	var cursor_selection : Vector2i = cursors[index].current_selection + direction
 	# Wrap selection around portraits
 	var silent_movement : bool = false
@@ -97,6 +101,12 @@ func request_character_selection(index : int) -> void:
 	PartyManager.rpc("set_character_data", port_index, character_data.character_name)
 	portrait.rpc("select", port_index)
 	previews[port_index].rpc("select")
+	
+	var player_data : PlayerData = PartyManager.get_player_data(port_index)
+	if player_data.is_cpu_player():
+		# Show CPU difficulty selection
+		previews[port_index].rpc("show_difficulty", player_data.local_player_index, cursors[index].get_multiplayer_authority(), index)
+		return
 	advance_cursor_port(index)
 
 ## Tries to cancel a player's selection.
@@ -158,6 +168,21 @@ func unadvance_cursor_port(index : int) -> void:
 	
 	cursors[index].rpc("set_player_tag", current_port_index)
 	rpc("request_character_cancellation", index)
+
+## Handles CPU difficulty inputs
+func recieve_difficulty_confirm(index : int, difficulty : int, cursor_index : int) -> void:
+	rpc("request_difficulty_selection", index, difficulty, cursor_index)
+
+func recieve_difficulty_cancel(cursor_index : int) -> void:
+	rpc("request_character_cancellation", cursor_index)
+
+@rpc("any_peer", "call_local", "reliable")
+func request_difficulty_selection(index : int, difficulty : int, cursor_index : int) -> void:
+	if !NetworkManager.is_hosting_game:
+		return
+	PartyManager.rpc("set_difficulty", index, difficulty)
+	previews[index].rpc("set_player_text", "") # Empty string means use the current difficulty selection
+	advance_cursor_port(cursor_index)
 
 @rpc("authority", "call_local", "reliable")
 func show_player_count_menu() -> void:
