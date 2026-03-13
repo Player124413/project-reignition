@@ -1202,6 +1202,9 @@ public partial class Options : Menu
 			SaveManager.Config.partyModeDevices[partyPlayerIndex - 1] = deviceIndex;
 		}
 
+		foreach (ControlOption controlOption in controlMappingOptions)
+			controlOption.UpdateDevice();
+
 		foreach (ControlOption controlOption in partyMappingOptions)
 			controlOption.UpdateDevice();
 	}

@@ -858,6 +858,13 @@ public partial class SaveManager : Node
 			int axisSign = GetInputMap(mappings, 3);
 			MouseButton mouse = (MouseButton)GetInputMap(mappings, 4);
 
+			string actionString = actions[i].ToString();
+			actionString = actionString.Substring(actionString.Length - 1);
+			bool isPartyMapping = actionString.IsValidInt();
+			int device = isPartyMapping ? actionString.ToInt() - 1 : -1;
+			if (device != -1)
+				device = Config.partyModeDevices[device];
+
 			InputMap.ActionEraseEvents(actions[i]);
 			InputMap.ActionSetDeadzone(actions[i], Config.deadZone);
 
@@ -874,7 +881,8 @@ public partial class SaveManager : Node
 				InputMap.ActionAddEvent(actions[i], new InputEventJoypadMotion()
 				{
 					Axis = axis,
-					AxisValue = axisSign
+					AxisValue = axisSign,
+					Device = device,
 				});
 			}
 
@@ -882,7 +890,8 @@ public partial class SaveManager : Node
 			{
 				InputMap.ActionAddEvent(actions[i], new InputEventJoypadButton()
 				{
-					ButtonIndex = button
+					ButtonIndex = button,
+					Device = device,
 				});
 			}
 

@@ -122,8 +122,13 @@ public partial class ControlOption : Control
 			}
 
 			// Filter inputs to a specific joypad if editing party mode controls
-			if (IsPartyModeMapping && (e is not InputEventKey) && e.Device != DeviceIndex)
-				return;
+			if (IsPartyModeMapping)
+			{
+				if (e is not InputEventKey && e.Device != DeviceIndex)
+					return;
+			}
+			else
+				e.Device = -1;
 
 			if (!FilterInput(e)) return;
 		}
@@ -400,7 +405,7 @@ public partial class ControlOption : Control
 			if (e is not InputEventJoypadButton && e is not InputEventJoypadMotion)
 				continue;
 
-			e.Device = DeviceIndex;
+			e.Device = IsPartyModeMapping ? DeviceIndex : -1;
 			RemapEvent(e);
 		}
 	}
