@@ -1,22 +1,14 @@
-[gd_scene load_steps=19 format=3 uid="uid://bfljqv8ka17mu"]
+[gd_scene load_steps=18 format=3 uid="uid://bfljqv8ka17mu"]
 
-[ext_resource type="Texture2D" uid="uid://cjkycat15g70h" path="res://party/scene/party menu/texture/player count background.png" id="1_nyr7o"]
+[ext_resource type="Texture2D" uid="uid://cjkycat15g70h" path="res://party/scene/party menu/texture/pc background.png" id="1_nyr7o"]
 [ext_resource type="Script" uid="uid://hq50f1y2i4xf" path="res://party/script/interface/player_count_option.gd" id="2_fuucl"]
-[ext_resource type="Texture2D" uid="uid://bo02krn3peotk" path="res://party/scene/party menu/texture/player.png" id="2_xfk4d"]
-[ext_resource type="Texture2D" uid="uid://dgtbvmte684xq" path="res://party/scene/party menu/texture/player count frame.png" id="3_pjx43"]
+[ext_resource type="Texture2D" uid="uid://bo02krn3peotk" path="res://party/scene/party menu/texture/pc player.png" id="2_xfk4d"]
+[ext_resource type="Texture2D" uid="uid://dgtbvmte684xq" path="res://party/scene/party menu/texture/pc frame.png" id="3_pjx43"]
 [ext_resource type="LabelSettings" uid="uid://yal4xt438ctl" path="res://party/font/PartyPlayerCountOutline.tres" id="4_lytab"]
-[ext_resource type="Texture2D" uid="uid://dism3ausfvvmo" path="res://party/scene/party menu/texture/cpu.png" id="5_pjx43"]
+[ext_resource type="Texture2D" uid="uid://dism3ausfvvmo" path="res://party/scene/party menu/texture/pc cpu.png" id="5_pjx43"]
 [ext_resource type="Script" uid="uid://qvplfr0cibu5" path="res://party/script/interface/synced_label.gd" id="5_pjxy2"]
 [ext_resource type="LabelSettings" uid="uid://dkf56qrtqvrp1" path="res://party/font/PartyPlayerCountFill.tres" id="6_8wqou"]
-
-[sub_resource type="Gradient" id="Gradient_xfk4d"]
-offsets = PackedFloat32Array(0.32553956, 0.69244605, 1)
-colors = PackedColorArray(0.6392157, 0, 0.67058825, 1, 0.29803923, 0.5137255, 0.011764706, 1, 0.6500001, 1, 0, 1)
-
-[sub_resource type="GradientTexture2D" id="GradientTexture2D_pjx43"]
-gradient = SubResource("Gradient_xfk4d")
-fill_from = Vector2(0, 0.8333333)
-fill_to = Vector2(0, 0.1923077)
+[ext_resource type="Texture2D" uid="uid://dpsxmm38mmh1d" path="res://party/font/GreenGradientFill.tres" id="8_rxveb"]
 
 [sub_resource type="Animation" id="Animation_pjx43"]
 length = 0.001
@@ -144,58 +136,80 @@ _data = {
 &"player": SubResource("Animation_xfk4d")
 }
 
-[sub_resource type="Animation" id="Animation_fuucl"]
-resource_name = "switch"
-length = 0.40000334
+[sub_resource type="Animation" id="Animation_0sdm0"]
+resource_name = "init"
+length = 0.001
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath(".:scale")
-tracks/0/interp = 2
+tracks/0/path = NodePath("../PlayerLabel:modulate")
+tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
-"times": PackedFloat32Array(0, 0.06666666, 0.16666667),
-"transitions": PackedFloat32Array(1, 1, 1),
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
 "update": 0,
-"values": [Vector2(1, 1), Vector2(0, 1), Vector2(1, 1)]
+"values": [Color(1, 1, 1, 0)]
 }
-tracks/1/type = "method"
+tracks/1/type = "value"
 tracks/1/imported = false
 tracks/1/enabled = true
-tracks/1/path = NodePath("..")
+tracks/1/path = NodePath("../PlayerLabel:scale")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/keys = {
-"times": PackedFloat32Array(0.06666665),
+"times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
-"values": [{
-"args": [],
-"method": &"update_player_texture"
-}]
+"update": 0,
+"values": [Vector2(2, 2)]
 }
 tracks/2/type = "value"
 tracks/2/imported = false
 tracks/2/enabled = true
-tracks/2/path = NodePath(".:offset_top")
-tracks/2/interp = 2
+tracks/2/path = NodePath(".:modulate")
+tracks/2/interp = 1
 tracks/2/loop_wrap = true
 tracks/2/keys = {
-"times": PackedFloat32Array(0, 0.16666667, 0.2, 0.3, 0.4),
-"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
 "update": 0,
-"values": [0.0, 0.0, 32.0, -128.0, 0.0]
+"values": [Color(1, 1, 1, 0)]
 }
 tracks/3/type = "value"
 tracks/3/imported = false
 tracks/3/enabled = true
-tracks/3/path = NodePath(".:offset_bottom")
+tracks/3/path = NodePath(".:scale")
 tracks/3/interp = 2
 tracks/3/loop_wrap = true
 tracks/3/keys = {
-"times": PackedFloat32Array(0, 0.2, 0.3, 0.4),
-"transitions": PackedFloat32Array(1, 1, 1, 1),
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
 "update": 0,
-"values": [0.0, 0.0, -64.0, 0.0]
+"values": [Vector2(0.2, 0.2)]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath(".:offset_top")
+tracks/4/interp = 2
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.0]
+}
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath(".:offset_bottom")
+tracks/5/interp = 2
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.0]
 }
 
 [sub_resource type="Animation" id="Animation_rxveb"]
@@ -274,80 +288,58 @@ tracks/5/keys = {
 "values": [0.0, 0.0, -64.0, 0.0]
 }
 
-[sub_resource type="Animation" id="Animation_0sdm0"]
-resource_name = "init"
-length = 0.001
+[sub_resource type="Animation" id="Animation_fuucl"]
+resource_name = "switch"
+length = 0.40000334
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("../PlayerLabel:modulate")
-tracks/0/interp = 1
+tracks/0/path = NodePath(".:scale")
+tracks/0/interp = 2
 tracks/0/loop_wrap = true
 tracks/0/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
+"times": PackedFloat32Array(0, 0.06666666, 0.16666667),
+"transitions": PackedFloat32Array(1, 1, 1),
 "update": 0,
-"values": [Color(1, 1, 1, 0)]
+"values": [Vector2(1, 1), Vector2(0, 1), Vector2(1, 1)]
 }
-tracks/1/type = "value"
+tracks/1/type = "method"
 tracks/1/imported = false
 tracks/1/enabled = true
-tracks/1/path = NodePath("../PlayerLabel:scale")
+tracks/1/path = NodePath("..")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/keys = {
-"times": PackedFloat32Array(0),
+"times": PackedFloat32Array(0.06666665),
 "transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [Vector2(2, 2)]
+"values": [{
+"args": [],
+"method": &"update_player_texture"
+}]
 }
 tracks/2/type = "value"
 tracks/2/imported = false
 tracks/2/enabled = true
-tracks/2/path = NodePath(".:modulate")
-tracks/2/interp = 1
+tracks/2/path = NodePath(".:offset_top")
+tracks/2/interp = 2
 tracks/2/loop_wrap = true
 tracks/2/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
+"times": PackedFloat32Array(0, 0.16666667, 0.2, 0.3, 0.4),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
 "update": 0,
-"values": [Color(1, 1, 1, 0)]
+"values": [0.0, 0.0, 32.0, -128.0, 0.0]
 }
 tracks/3/type = "value"
 tracks/3/imported = false
 tracks/3/enabled = true
-tracks/3/path = NodePath(".:scale")
+tracks/3/path = NodePath(".:offset_bottom")
 tracks/3/interp = 2
 tracks/3/loop_wrap = true
 tracks/3/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
+"times": PackedFloat32Array(0, 0.2, 0.3, 0.4),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
 "update": 0,
-"values": [Vector2(0.2, 0.2)]
-}
-tracks/4/type = "value"
-tracks/4/imported = false
-tracks/4/enabled = true
-tracks/4/path = NodePath(".:offset_top")
-tracks/4/interp = 2
-tracks/4/loop_wrap = true
-tracks/4/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [0.0]
-}
-tracks/5/type = "value"
-tracks/5/imported = false
-tracks/5/enabled = true
-tracks/5/path = NodePath(".:offset_bottom")
-tracks/5/interp = 2
-tracks/5/loop_wrap = true
-tracks/5/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [0.0]
+"values": [0.0, 0.0, -64.0, 0.0]
 }
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_pjx43"]
@@ -439,7 +431,7 @@ offset_top = -7.5
 offset_bottom = 7.5
 grow_horizontal = 2
 grow_vertical = 2
-texture = SubResource("GradientTexture2D_pjx43")
+texture = ExtResource("8_rxveb")
 
 [node name="TextureAnimationPlayer" type="AnimationPlayer" parent="."]
 root_node = NodePath("../Background")

@@ -78,7 +78,6 @@ func cancel() -> void:
 ## Shows the menu.
 func show_menu() -> void:
 	if animator.has_animation(SHOW_ANIMATION):
-		print("showing menu")
 		animator.play(SHOW_ANIMATION)
 	else: # Fallback
 		visible = true

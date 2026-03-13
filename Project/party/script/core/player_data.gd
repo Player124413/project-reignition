@@ -15,11 +15,22 @@ var character_data : PartyCharacterResource
 ## The player's index in the interval [0, 3].
 var player_index : int
 
-## The local player index in the interval [0, 3] for multiple players on a single client.
+## The local player index in the interval [1, 4] for multiple players on a single client.
+## Also determines which controller to use.
 var local_player_index : int
 
 ## How well the player did in the previous mini-game from [0, 3]. Same numbers means a tie has occurred.
 var previous_minigame_placement : int
+
+## Determines how difficult the cpu should be.
+var cpu_difficulty : CPU_DIFFICULTY_ENUM
+enum CPU_DIFFICULTY_ENUM {
+	EASY,
+	NORMAL,
+	HARD,
+	EXTREME,
+	COUNT
+}
 
 ## The tag show to players for identification purposes.
 var player_tag : String
@@ -35,4 +46,4 @@ func update_player_tag() -> void:
 	else:
 		player_tag = tr(player_string).replace("0", str(player_index + 1))
 		if NetworkManager.is_online:
-			player_tag += "-" + str(local_player_index + 1)
+			player_tag += "-" + str(local_player_index)

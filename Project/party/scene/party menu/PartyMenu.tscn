@@ -1,20 +1,12 @@
-[gd_scene load_steps=9 format=3 uid="uid://dmkjjww7kn783"]
+[gd_scene load_steps=8 format=3 uid="uid://dmkjjww7kn783"]
 
 [ext_resource type="Script" uid="uid://cj76gvi7tbku6" path="res://sound/script/BGMPlayer.cs" id="1_kuydi"]
 [ext_resource type="PackedScene" uid="uid://bvemr1pe3iwoa" path="res://party/scene/party menu/OnlineMenu.tscn" id="2_57rwm"]
 [ext_resource type="Resource" uid="uid://dw7wrw7hq47fr" path="res://party/resource/bgm/CharacterSelectBGM.tres" id="2_mtme2"]
 [ext_resource type="PackedScene" uid="uid://dibv76i5shvaf" path="res://party/scene/party menu/PlayerCountMenu.tscn" id="3_70dmd"]
 [ext_resource type="Texture2D" uid="uid://bajngtmriwojw" path="res://party/scene/party menu/texture/background.png" id="4_ewsja"]
+[ext_resource type="PackedScene" uid="uid://vlltlk1c2de5" path="res://party/scene/party menu/CharacterSelectMenu.tscn" id="4_wfe3t"]
 [ext_resource type="PackedScene" uid="uid://ba68kan8p43yr" path="res://interface/menu/DescriptionTall.tscn" id="9_57rwm"]
-
-[sub_resource type="Animation" id="Animation_j3de6"]
-resource_name = "show-online"
-length = 0.001
-
-[sub_resource type="AnimationLibrary" id="AnimationLibrary_ewsja"]
-_data = {
-&"show-online": SubResource("Animation_j3de6")
-}
 
 [node name="PartyMenu" type="Control"]
 layout_mode = 3
@@ -36,22 +28,22 @@ texture = ExtResource("4_ewsja")
 
 [node name="OnlineMenu" parent="." node_paths=PackedStringArray("player_count_menu") instance=ExtResource("2_57rwm")]
 layout_mode = 1
-player_count_menu = NodePath("../PlayerCount")
+player_count_menu = NodePath("../PlayerCountMenu")
 
-[node name="PlayerCount" parent="." node_paths=PackedStringArray("online_menu") instance=ExtResource("3_70dmd")]
+[node name="PlayerCountMenu" parent="." node_paths=PackedStringArray("online_menu", "character_select_menu") instance=ExtResource("3_70dmd")]
 layout_mode = 1
 online_menu = NodePath("../OnlineMenu")
+character_select_menu = NodePath("../CharacterSelectMenu")
+
+[node name="CharacterSelectMenu" parent="." node_paths=PackedStringArray("player_count_menu") instance=ExtResource("4_wfe3t")]
+layout_mode = 1
+player_count_menu = NodePath("../PlayerCountMenu")
 
 [node name="BGM" type="AudioStreamPlayer" parent="."]
 autoplay = true
 bus = &"BGM"
 script = ExtResource("1_kuydi")
 bgmResource = ExtResource("2_mtme2")
-
-[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
-libraries = {
-&"": SubResource("AnimationLibrary_ewsja")
-}
 
 [node name="DescriptionTall" parent="." instance=ExtResource("9_57rwm")]
 layout_mode = 1

@@ -17,6 +17,69 @@ var current_mode : CURRENT_MODE_ENUM
 
 signal players_initialized
 
+## An array containing all possible character datas.
+var _character_data : Array[PartyCharacterResource]
+const CHARACTER_DATA_FOLDER = "res://party/resource/character/"
+
+func _init() -> void:
+	load_characters()
+	## TODO Load modded character data here
+
+func load_characters() -> void:
+	# Load character data from resource files
+	var char_files : PackedStringArray = ResourceLoader.list_directory(CHARACTER_DATA_FOLDER)
+	for char_file in char_files:
+		if !char_file.ends_with(".tres"):
+			# Only load .tres files
+			continue
+		var character = ResourceLoader.load(CHARACTER_DATA_FOLDER + char_file)
+		if character is not PartyCharacterResource:
+			continue
+		# Insert the character into the character list at the correct index
+		if _character_data.size() <= character.character_select_index:
+			_character_data.resize(character.character_select_index + 1)
+		if _character_data[character.character_select_index] == null:
+			_character_data[character.character_select_index] = character
+		else:
+			_character_data.insert(character.character_select_index, character)
+			printerr("DUPLICATE CHARACTER INDEX FOUND")
+		print("Loaded party character %s from %s into index %s" % [character.character_name, CHARACTER_DATA_FOLDER + char_file, character.character_select_index])
+	# Trim any extra entries
+	for i in range(_character_data.size(), 0):
+		if _character_data[i] == null:
+			_character_data.remove_at(i)
+
+## Identifies a character data's index based on its name.
+func find_character_index_by_name(character_name : String) -> int:
+	for i in _character_data.size():
+		if _character_data[i].character_name == character_name:
+			return i
+	return -1
+
+## Set's a player's character data to a given name.
+@rpc("authority", "call_local", "reliable")
+func set_character_data(index : int, character_name : String) -> void:
+	if character_name.is_empty():
+		# Set character data to null
+		_player_data[index].character_data = null
+		print("set character data to null at port " + str(index))
+		return
+	
+	var character_index : int = find_character_index_by_name(character_name)
+	if character_index == -1:
+		printerr("Couldn't find character " + character_name + " on client " + str(multiplayer.get_unique_id()))
+		return
+	
+	_player_data[index].character_data = _character_data[character_index]
+	print("set character data to %s at port %s" % [_character_data[character_index].character_name, index])
+
+## Returns whether a character is available for selection.
+func is_character_available(character_data : PartyCharacterResource) -> bool:
+	for player_data in _player_data:
+		if player_data.character_data == character_data:
+			return false
+	return true
+
 ## An array containing all the currently active players.
 var _player_data : Array[PlayerData]
 ## Maximum number of players in the party mode.
@@ -31,7 +94,7 @@ func initialize_offline_player_data() -> void:
 	_player_data.clear()
 	for i in MAX_PLAYER_COUNT:
 		_player_data.append(PlayerData.new())
-		set_player_indexes(i, i, 1, 0)
+		set_player_indexes(i, i, 1, i + 1)
 
 func initialize_online_player_data() -> void:
 	print("Adding online players to " + str(multiplayer.get_unique_id()))
@@ -39,9 +102,11 @@ func initialize_online_player_data() -> void:
 	peers.insert(0, 1) # Add the host to the list of peers
 	for i in MAX_PLAYER_COUNT:
 		if i < peers.size():
-			rpc("set_player_indexes", i, i, peers[i], 0)
+			# Add peer player
+			rpc("set_player_indexes", i, i, peers[i], 1)
 		else:
-			rpc("set_player_indexes", i, i - peers.size(), 0, 0)
+			# Add CPU player
+			rpc("set_player_indexes", i, i - peers.size(), 0, 1)
 	rpc("finish_initializing_players")
 
 @rpc("authority", "call_local", "reliable")
