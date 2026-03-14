@@ -27,7 +27,7 @@ var is_processing_inputs : bool
 var is_hidden : bool
 
 func _process(delta: float) -> void:
-	if !is_processing_inputs || !is_multiplayer_authority():
+	if !is_processing_inputs || (NetworkManager.is_online && !is_multiplayer_authority()):
 		return
 	
 	if !is_hidden:

@@ -100,12 +100,11 @@ func request_character_selection(index : int) -> void:
 	var port_index : int = cursors[index].port_index
 	PartyManager.rpc("set_character_data", port_index, character_data.character_name)
 	portrait.rpc("select", port_index)
-	previews[port_index].rpc("select")
 	
 	var player_data : PlayerData = PartyManager.get_player_data(port_index)
 	if player_data.is_cpu_player():
 		# Show CPU difficulty selection
-		previews[port_index].rpc("show_difficulty", player_data.local_player_index, cursors[index].get_multiplayer_authority(), index)
+		previews[port_index].rpc("show_difficulty", cursors[index].controller_index, cursors[index].get_multiplayer_authority(), index)
 		return
 	advance_cursor_port(index)
 
@@ -143,6 +142,8 @@ func update_cursor_position(index : int, portrait_index : Vector2i) -> void:
 
 ## Updates (or disables if no ports are left to configure) a cursor to select the next player's port.
 func advance_cursor_port(index : int) -> void:
+	## Show the character model on the current port's preview
+	previews[cursors[index].port_index].rpc("select")
 	var next_port : int = cursors[index].port_index + 1
 	for i in cursors.size():
 		if cursors[i].is_processing_inputs && cursors[i].port_index >= next_port:

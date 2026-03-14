@@ -19,11 +19,18 @@ var scroll_timer : float
 @export var cursor : Control
 @export var difficulty_options : Array[Label]
 
+## Reference to the currently instanced model.
 var instanced_model : Node3D
+## Path of the model currently being shown.
+var current_model_path : String
+## How far apart the models should be in the 3d world.
+const MODEL_POSITION_INCREMENT = 100
 
 func initialize() -> void:
 	animator.play("init")
 	animator.advance(0.0)
+	deselect()
+	model_parent.global_position = Vector3.RIGHT * get_index() * MODEL_POSITION_INCREMENT
 
 func show_preview() -> void:
 	animator.play("show")
@@ -32,6 +39,8 @@ func show_preview() -> void:
 	character_label.set_synced_text("")
 
 func _process(delta: float) -> void:
+	process_model_loading()
+	
 	if controller_index == -1 || !is_multiplayer_authority():
 		return
 	
@@ -57,6 +66,22 @@ func _process(delta: float) -> void:
 		controller_index = -1
 		rpc("hide_difficulty")
 		cancelled.emit(cursor_index)
+
+## Instances the model after it is loaded.
+func process_model_loading() -> void:
+	if current_model_path.is_empty() || is_instance_valid(instanced_model):
+		return
+	
+	printt("Loading model " + current_model_path, ResourceLoader.load_threaded_get_status(current_model_path))
+	if ResourceLoader.load_threaded_get_status(current_model_path) != ResourceLoader.THREAD_LOAD_LOADED:
+		return
+	
+	# Instance model
+	var model_scene : PackedScene = ResourceLoader.load_threaded_get(current_model_path) as PackedScene
+	instanced_model = model_scene.instantiate() as Node3D
+	model_parent.add_child(instanced_model)
+	# TODO Play animation/sfx
+
 
 ## Sets the selected difficulty and updates the cursor's position.
 @rpc("any_peer", "call_local", "reliable")
@@ -96,11 +121,15 @@ func set_character_text(text : String) -> void:
 ## Selects the character and loads the model
 @rpc("authority", "call_local", "reliable")
 func select() -> void:
-	## TODO Load character model and play animation/sfx
-	print("Model instancing in Character Select Menu isn't implemented yet!")
+	## Load character model
+	current_model_path = PartyManager.get_player_data(get_index()).character_data.model_file
+	print("Started loading model " + current_model_path)
+	if ResourceLoader.exists(current_model_path):
+		ResourceLoader.load_threaded_request(current_model_path)
 
 @rpc("authority", "call_local", "reliable")
 func deselect() -> void:
+	current_model_path = ""
 	var player_data : PlayerData = PartyManager.get_player_data(get_index())
 	set_player_text(player_data.player_tag)
 	if is_instance_valid(instanced_model):
