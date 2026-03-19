@@ -1,10 +1,11 @@
-[gd_scene load_steps=12 format=3 uid="uid://ba68kan8p43yr"]
+[gd_scene load_steps=15 format=3 uid="uid://ba68kan8p43yr"]
 
-[ext_resource type="Script" uid="uid://bbylksj5mchrs" path="res://interface/menu/Description.cs" id="1_aqg3o"]
+[ext_resource type="Script" uid="uid://bheef5pyjpb1a" path="res://party/script/interface/description_box.gd" id="1_frugd"]
 [ext_resource type="Texture2D" uid="uid://dx4vxnhtgd13t" path="res://interface/menu/common/common menu atlas.png" id="2_frugd"]
 [ext_resource type="FontFile" uid="uid://bsoin3p4iygoo" path="res://interface/font/otf/Chiaro Std B.otf" id="3_etdfr"]
 [ext_resource type="LabelSettings" uid="uid://dki35mj1oux2s" path="res://interface/font/DescriptionText.tres" id="4_4xpai"]
 [ext_resource type="Shader" uid="uid://bvyh6seeihpwy" path="res://effect/shader/interface/InterfaceFlash.gdshader" id="5_tghlg"]
+[ext_resource type="PackedScene" uid="uid://crwawg2ivy3xd" path="res://interface/menu/NavigationButton.tscn" id="6_etdfr"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_ss5tr"]
 shader = ExtResource("5_tghlg")
@@ -120,6 +121,18 @@ tracks/8/keys = {
 "transitions": PackedFloat32Array(1),
 "update": 0,
 "values": [Color(1, 1, 1, 0)]
+}
+tracks/9/type = "value"
+tracks/9/imported = false
+tracks/9/enabled = true
+tracks/9/path = NodePath("NavigationButton:visible")
+tracks/9/interp = 1
+tracks/9/loop_wrap = true
+tracks/9/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
 }
 
 [sub_resource type="Animation" id="Animation_qh8xd"]
@@ -267,15 +280,51 @@ tracks/8/keys = {
 "values": [Color(1, 1, 1, 1)]
 }
 
+[sub_resource type="Animation" id="Animation_frugd"]
+resource_name = "show-button"
+length = 0.001
+step = 0.0333333
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("NavigationButton:visible")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+
+[sub_resource type="Animation" id="Animation_etdfr"]
+resource_name = "hide-button"
+length = 0.001
+step = 0.0333333
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("NavigationButton:visible")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_4yfpo"]
 _data = {
 &"RESET": SubResource("Animation_e0sjp"),
 &"hide": SubResource("Animation_qh8xd"),
+&"hide-button": SubResource("Animation_etdfr"),
 &"init": SubResource("Animation_fr02q"),
-&"show": SubResource("Animation_v8y77")
+&"show": SubResource("Animation_v8y77"),
+&"show-button": SubResource("Animation_frugd")
 }
 
-[node name="DescriptionTall" type="Control" node_paths=PackedStringArray("descriptionLabel", "animator")]
+[node name="DescriptionTall" type="Control" node_paths=PackedStringArray("animator", "label")]
 modulate = Color(1, 1, 1, 0)
 custom_minimum_size = Vector2(1152, 256)
 layout_mode = 3
@@ -291,9 +340,9 @@ grow_horizontal = 2
 grow_vertical = 2
 pivot_offset = Vector2(576, 128)
 mouse_filter = 2
-script = ExtResource("1_aqg3o")
-descriptionLabel = NodePath("Background/Label")
+script = ExtResource("1_frugd")
 animator = NodePath("AnimationPlayer")
+label = NodePath("Background/Label")
 metadata/_edit_group_ = true
 
 [node name="Background" type="NinePatchRect" parent="."]
@@ -428,8 +477,27 @@ flip_h = true
 region_enabled = true
 region_rect = Rect2(0, 112, 112, 112)
 
+[node name="NavigationButton" parent="." instance=ExtResource("6_etdfr")]
+layout_mode = 1
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -264.0
+offset_top = -88.0
+offset_right = -48.0
+offset_bottom = -40.0
+grow_horizontal = 0
+grow_vertical = 0
+inputKey = &"sys_selec"
+
+[node name="Action" parent="NavigationButton" index="1"]
+visible = false
+
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 libraries = {
 &"": SubResource("AnimationLibrary_4yfpo")
 }
 autoplay = "init"
+
+[editable path="NavigationButton"]
