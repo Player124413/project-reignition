@@ -20,7 +20,7 @@ var scroll_timer : float
 @export var difficulty_options : Array[Label]
 
 ## Reference to the currently instanced model.
-var instanced_model : Node3D
+var instanced_model : CharacterAnimator
 ## Path of the model currently being shown.
 var current_model_path : String
 ## How far apart the models should be in the 3d world.
@@ -78,9 +78,10 @@ func process_model_loading() -> void:
 	
 	# Instance model
 	var model_scene : PackedScene = ResourceLoader.load_threaded_get(current_model_path) as PackedScene
-	instanced_model = model_scene.instantiate() as Node3D
+	instanced_model = model_scene.instantiate() as CharacterAnimator
 	model_parent.add_child(instanced_model)
-	# TODO Play animation/sfx
+	# TODO Play sfx
+	instanced_model.play_animation("select")
 
 
 ## Sets the selected difficulty and updates the cursor's position.

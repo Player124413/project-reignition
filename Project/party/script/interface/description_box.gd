@@ -4,6 +4,9 @@ class_name DescriptionBox extends Control
 @export var animator : AnimationPlayer
 @export var label : Label
 
+func get_text() -> String:
+	return label.text
+
 func set_text(text : String) -> void:
 	label.text = text
 

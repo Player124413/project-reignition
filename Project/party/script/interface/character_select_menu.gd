@@ -4,14 +4,17 @@ extends Menu
 @export var player_count_menu : Menu
 
 ## References
+@export var attraction_menu : Menu
 @export var cursors : Array[Control]
 @export var previews : Array[Control]
 @export var portrait_parent : HBoxContainer
 @export var portrait_scene : PackedScene
 var portraits : Array[Control]
+var active_cursor_count : int
 
 ## Number of rows for the portraits.
 const PORTRAIT_ROWS : int = 2
+const ATTRACTION_MENU_DELAY : float = 1.0
 
 func _ready() -> void:
 	super()
@@ -80,7 +83,7 @@ func recieve_cursor_cancel(index : int) -> void:
 ## Tries to confirm a player's selection.
 @rpc("any_peer", "call_local", "reliable")
 func request_character_selection(index : int) -> void:
-	if !NetworkManager.is_hosting_game:
+	if !NetworkManager.is_hosting_game || active_cursor_count == 0:
 		return
 	
 	var portrait : Control = get_portrait(cursors[index].current_selection)
@@ -111,8 +114,11 @@ func request_character_selection(index : int) -> void:
 ## Tries to cancel a player's selection.
 @rpc("any_peer", "call_local", "reliable")
 func request_character_cancellation(index : int) -> void:
-	if !NetworkManager.is_hosting_game:
+	if !NetworkManager.is_hosting_game || active_cursor_count == 0:
 		return
+	
+	if cursors[index].is_hidden:
+		active_cursor_count += 1
 	
 	var port_index : int = cursors[index].port_index
 	var player_data : PlayerData = PartyManager.get_player_data(port_index)
@@ -150,6 +156,9 @@ func advance_cursor_port(index : int) -> void:
 			next_port = cursors[i].port_index + 1
 	if next_port >= PartyManager.MAX_PLAYER_COUNT:
 		cursors[index].rpc("hide_cursor")
+		active_cursor_count -= 1
+		if active_cursor_count == 0:
+			rpc("queue_attraction_menu", NetworkTimeSynchronizer.get_time() + ATTRACTION_MENU_DELAY)
 	else:
 		var portrait : Control = get_portrait(cursors[index].current_selection)
 		cursors[index].rpc("set_player_tag", next_port)
@@ -191,6 +200,14 @@ func show_player_count_menu() -> void:
 	disable_processing()
 	player_count_menu.show_menu()
 
+@rpc("authority", "call_local", "reliable")
+func queue_attraction_menu(time_tick : float) -> void:
+	get_tree().create_timer(time_tick - NetworkTimeSynchronizer.get_time()).timeout.connect(show_attraction_menu)
+
+func show_attraction_menu() -> void:
+	hide_menu()
+	attraction_menu.show_menu()
+
 func show_menu() -> void:
 	for cursor in cursors:
 		cursor.initialize()
@@ -198,6 +215,8 @@ func show_menu() -> void:
 		portrait.initialize()
 	for preview in previews:
 		preview.initialize()
+	
+	active_cursor_count = -1
 	super()
 
 ## Shows all the character portraits
@@ -217,10 +236,12 @@ func show_cursors() -> void:
 		return
 	var cpu_index = PartyManager.get_first_player_index_device(0)
 	var last_index = cpu_index if cpu_index != -1 else PartyManager.MAX_PLAYER_COUNT
+	active_cursor_count = 0
 	for i in last_index:
 		var selection : Vector2i = Vector2i.RIGHT * i
 		var portrait : Control = get_portrait(selection)
 		cursors[i].rpc("set_current_selection", selection)
+		active_cursor_count += 1
 		rpc("update_cursor_position", i, selection)
 		cursors[i].rpc("set_player_tag", i)
 		previews[i].rpc("set_character_text", "" if portrait.linked_character == null else portrait.linked_character.character_name)

@@ -13,6 +13,7 @@ var omochao_turn_influence : float
 const OMOCHAO_SPEED : float = 1.0
 const OMOCHAO_TURN_SPEED : float = 10.0
 const OMOCHAO_RETURN_SPEED : float = 5.0
+var is_dialog_active : bool
 
 func _ready() -> void:
 	super()
@@ -30,8 +31,10 @@ func show_menu() -> void:
 	current_omochao_location = omochao_locations.size() - 1
 	omochao_move_ratio = 1.0
 	omochao.play_animation("select")
+	is_dialog_active = true
 	description.show_button()
-	description.set_text("Welcome to Party Mode!")
+	# TODO Add separate option for returning from a party game.
+	description.set_text("party_attract_menu1")
 
 func process_cursor() -> void:
 	# Process position
@@ -46,6 +49,23 @@ func process_cursor() -> void:
 		omochao_turn_influence = move_toward(omochao_turn_influence, 1.0, OMOCHAO_TURN_SPEED * get_physics_process_delta_time())
 	var look_at_basis : Basis = original_omochao_transform.looking_at(target_transform.origin, omochao.global_basis.y, true).basis
 	omochao.global_basis = omochao.global_basis.slerp(look_at_basis, omochao_turn_influence)
+
+func confirm() -> void:
+	if is_dialog_active:
+		# TODO Process dialog box
+		if description.get_text() == "party_attract_menu2":
+			is_dialog_active = false
+			description.hide_button()
+			update_cursor_position()
+		else:
+			description.set_text("party_attract_menu2")
+		return
+
+func cancel() -> void:
+	if is_dialog_active:
+		return
+	
+	description.set_text("party_attract_menu3")
 
 func update_selection() -> void:
 	var previous_selection : Vector2i = current_selection

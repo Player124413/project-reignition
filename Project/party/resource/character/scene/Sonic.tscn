@@ -1,13 +1,15 @@
 [gd_scene load_steps=3 format=3 uid="uid://cacdy75rk2056"]
 
-[sub_resource type="CapsuleMesh" id="CapsuleMesh_rbaks"]
+[ext_resource type="PackedScene" uid="uid://bch3nyv8gw1ba" path="res://party/resource/character/scene/PartyCharacter.tscn" id="1_svg8u"]
+[ext_resource type="PackedScene" uid="uid://cb51nbxatvkfr" path="res://party/resource/character/model/Sonic.glb" id="2_egifq"]
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_eua5a"]
-albedo_color = Color(0.19999981, 0, 1, 1)
+[node name="Sonic" node_paths=PackedStringArray("animator") instance=ExtResource("1_svg8u")]
+animator = NodePath("Sonic/AnimationPlayer")
 
-[node name="Sonic" type="Node3D"]
+[node name="Sonic" parent="." index="0" instance=ExtResource("2_egifq")]
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
-layers = 64
-mesh = SubResource("CapsuleMesh_rbaks")
-surface_material_override/0 = SubResource("StandardMaterial3D_eua5a")
+[node name="AnimationPlayer" parent="Sonic" index="1"]
+next/select = &"idle"
+blend_times = [&"select", &"idle", 0.2]
+
+[editable path="Sonic"]

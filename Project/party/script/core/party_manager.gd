@@ -13,7 +13,7 @@ enum CURRENT_MODE_ENUM {
 	COUNT
 }
 ## Represents the current game mode being played.
-var current_mode : CURRENT_MODE_ENUM
+var current_mode : CURRENT_MODE_ENUM = CURRENT_MODE_ENUM.COUNT
 
 signal players_initialized
 
