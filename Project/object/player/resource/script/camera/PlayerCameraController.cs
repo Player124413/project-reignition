@@ -1186,12 +1186,10 @@ public partial class PlayerCameraController : Node3D
 	{
 		bool wasFreeCamActive = IsFreeCamActive;
 
-
 		if (Input.IsActionJustPressed("debug_free_cam_reset"))
 			IsFreeCamActive = false;
 
-
-		if (IsFreeCamActive)
+		if (SaveManager.Config.mouseControlMode == SaveManager.MouseControlModeEnum.Disabled)
 		{
 			isFreeCamRotating = Input.IsMouseButtonPressed(MouseButton.Right);
 			isFreeCamTilting = Input.IsMouseButtonPressed(MouseButton.Middle);
