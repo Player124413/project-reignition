@@ -10,6 +10,7 @@ public partial class ReadyMenu : Menu
 	[Export] private Label missionLabel;
 	[Export] private Description description;
 	[Export] private AnimationPlayer notifAnimPlayer;
+	[Export] private AudioStreamPlayer selectSfx;
 	public void ShowDescription() => description.ShowDescription();
 	public void HideDescription() => description.HideDescription();
 
@@ -109,6 +110,7 @@ public partial class ReadyMenu : Menu
 		if ((sign > 0 && HorizontalSelection != 1) || sign < 0 && HorizontalSelection != 0)
 		{
 			HorizontalSelection = sign > 0 ? 1 : 0;
+			selectSfx.Play();
 			UpdateVisuals();
 		}
 	}
@@ -172,6 +174,9 @@ public partial class ReadyMenu : Menu
 	{
 		if (!isProcessing)
 			return;
+
+		if (HorizontalSelection != selection && selection != -1)
+			selectSfx.Play();
 
 		Runtime.Instance.IsUsingMouse = true;
 		HorizontalSelection = selection;
