@@ -249,6 +249,7 @@ public partial class JumpState : PlayerState
 		if (Player.DisableAccelerationJump)
 			return;
 
+		isShortenedJump = true;
 		Player.IsAccelerationJumping = true;
 		Player.VerticalSpeed = accelerationJumpHeightVelocity; // Keep acceleration jump heights consistent
 		Player.Animator.JumpAccelAnimation();
