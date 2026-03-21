@@ -6,7 +6,7 @@ using System.Text.RegularExpressions;
 
 namespace Project.Core;
 
-public partial class SoundManager : Node
+public partial class SoundManager : Control
 {
 	public static SoundManager instance;
 	public static int LanguageIndex => (int)SaveManager.Config.voiceLanguage;
@@ -78,6 +78,8 @@ public partial class SoundManager : Node
 	{
 		if (dialog.DialogCount == 0 || DebugManager.Instance.DisableDialog || SaveManager.Config.isDialogDisabled) return; // No dialog
 
+		Visible = !SaveManager.Config.isSubtitleDisabled && !currentDialog.disableSubtitles;
+
 		IsSubtitlesActive = true;
 		subtitleLabel.Text = string.Empty;
 
@@ -134,9 +136,6 @@ public partial class SoundManager : Node
 			return;
 		}
 
-		if (SaveManager.Config.isSubtitleDisabled && !currentDialog.disableSubtitles)
-			return;
-
 		if (currentDialog.IsCutscene)
 		{
 			if (currentDialog.HasDelay(currentDialogIndex))
@@ -151,8 +150,7 @@ public partial class SoundManager : Node
 	private void DisableDialog()
 	{
 		IsSubtitlesActive = false;
-		if (!SaveManager.Config.isSubtitleDisabled && !currentDialog.disableSubtitles)
-			subtitleAnimator.Play("deactivate");
+		subtitleAnimator.Play("deactivate");
 
 		UpdateSonicDialog();
 		UpdateShahraDialog();
@@ -198,8 +196,7 @@ public partial class SoundManager : Node
 			return;
 		}
 
-		if (!SaveManager.Config.isSubtitleDisabled && !currentDialog.disableSubtitles)
-			subtitleAnimator.Play(currentDialogIndex == 0 ? "activate" : "activate-text");
+		subtitleAnimator.Play(currentDialogIndex == 0 ? "activate" : "activate-text");
 
 		string key = currentDialog.textKeys[currentDialogIndex];
 		AudioStream targetStream = null;
