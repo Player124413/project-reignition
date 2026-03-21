@@ -38,14 +38,13 @@ public partial class MainMenu : Menu
 
 	private void UpdateSelectionValues()
 	{
-		if (currentSelection <= 2)
+		if (currentSelection <= 1)
 		{
 			HorizontalSelection = currentSelection;
 			VerticalSelection = 0;
 		}
-		else if (currentSelection == 3)
+		else if (currentSelection == 2)
 		{
-			HorizontalSelection = 0;
 			VerticalSelection = 1;
 		}
 		else
@@ -175,9 +174,7 @@ public partial class MainMenu : Menu
 		}
 
 		VerticalSelection = Mathf.Clamp(VerticalSelection + Mathf.Sign(Input.GetAxis("ui_up", "ui_down")), 0, 2);
-		if (VerticalSelection == 1)
-			HorizontalSelection = 0;
-		else
+		if (VerticalSelection != 1)
 			HorizontalSelection = Mathf.Clamp(HorizontalSelection + Mathf.Sign(Input.GetAxis("ui_left", "ui_right")), 0, 1);
 
 		int targetSelection;
@@ -235,7 +232,7 @@ public partial class MainMenu : Menu
 			return;
 		}
 
-		if (isNothingSelected) // Ignore unimplemented menus (PARTY MODE).
+		if (isNothingSelected)
 			return;
 
 		animator.Play("confirm");
