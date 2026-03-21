@@ -31,7 +31,8 @@ public partial class SoundManager : Node
 		InitializeButtonPromptValues();
 
 		// Cancel Dialog when switching to a new scene
-		TransitionManager.Instance.Connect(TransitionManager.SignalName.SceneChanged, new(this, MethodName.CancelDialog));
+		TransitionManager.Instance.SceneChanged += CancelDialog;
+		TransitionManager.Instance.TransitionFinish += CancelDialog;
 	}
 
 	public override void _PhysicsProcess(double _)
