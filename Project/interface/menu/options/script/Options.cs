@@ -36,13 +36,13 @@ public partial class Options : Menu
 				maxSelection = audioLabels.Length;
 				break;
 			case Submenus.Language:
-				maxSelection = 4;
+				maxSelection = languageLabels.Length;
 				break;
 			case Submenus.Control:
 				maxSelection = 8;
 				break;
 			case Submenus.Interface:
-				maxSelection = 8;
+				maxSelection = interfaceLabels.Length;
 				break;
 			case Submenus.Mouse:
 				maxSelection = controlMouseLabels.Length;
@@ -580,9 +580,11 @@ public partial class Options : Menu
 		audioLabels[3].Text = SaveManager.Config.isVoiceMuted ? MuteString : $"{SaveManager.Config.voiceVolume}%";
 		audioLabels[4].Text = SaveManager.Config.useRetailMenuMusic ? RetailStyle : ReignitedStyle;
 
-		languageLabels[0].Text = SaveManager.Config.isSubtitleDisabled ? DisabledString : EnabledString;
-		languageLabels[1].Text = SaveManager.Config.isDialogDisabled ? DisabledString : EnabledString;
-		languageLabels[3].Text = GetVoiceLanguageKey(SaveManager.Config.voiceLanguage);
+		languageLabels[1].Text = GetVoiceLanguageKey(SaveManager.Config.voiceLanguage);
+		languageLabels[3].Text = SaveManager.Config.isSubtitleDisabled ? DisabledString : EnabledString;
+		languageLabels[2].Text = SaveManager.Config.isDialogDisabled ? DisabledString : EnabledString;
+		languageLabels[4].Text = $"{SaveManager.Config.subtitleOpacity}%";
+		languageLabels[5].Text = $"{SaveManager.Config.cutsceneOpacity}%";
 
 
 		switch (SaveManager.Config.mouseControlMode)
@@ -661,9 +663,6 @@ public partial class Options : Menu
 
 		interfaceLabels[4].Text = SaveManager.Config.isUsingHorizontalSoulGauge ? HorizontalStyle : VerticalStyle;
 		interfaceLabels[5].Text = SaveManager.Config.isActionPromptsEnabled ? EnabledString : DisabledString;
-
-		interfaceLabels[6].Text = $"{SaveManager.Config.subtitleOpacity}%";
-		interfaceLabels[7].Text = $"{SaveManager.Config.cutsceneOpacity}%";
 	}
 
 	private string GetVoiceLanguageKey(SaveManager.VoiceLanguage voiceLanguage)
@@ -1013,27 +1012,45 @@ public partial class Options : Menu
 	{
 		if (VerticalSelection == 0)
 		{
-			SaveManager.Config.isSubtitleDisabled = !SaveManager.Config.isSubtitleDisabled;
-			return true;
-		}
-
-		if (VerticalSelection == 1)
-		{
-			SaveManager.Config.isDialogDisabled = !SaveManager.Config.isDialogDisabled;
-			return true;
-		}
-
-		if (VerticalSelection == 2)
-		{
 			int lang = WrapSelection((int)SaveManager.Config.textLanguage + direction, (int)SaveManager.TextLanguage.Count);
 			SaveManager.Config.textLanguage = (SaveManager.TextLanguage)lang;
 			return true;
 		}
 
-		if (VerticalSelection == 3)
+		if (VerticalSelection == 1)
 		{
 			int lang = WrapSelection((int)SaveManager.Config.voiceLanguage + direction, (int)SaveManager.VoiceLanguage.Count);
 			SaveManager.Config.voiceLanguage = (SaveManager.VoiceLanguage)lang;
+			return true;
+		}
+
+		if (VerticalSelection == 2)
+		{
+			SaveManager.Config.isDialogDisabled = !SaveManager.Config.isDialogDisabled;
+			return true;
+		}
+
+		if (VerticalSelection == 3)
+		{
+			SaveManager.Config.isSubtitleDisabled = !SaveManager.Config.isSubtitleDisabled;
+			return true;
+		}
+
+		if (VerticalSelection == 4)
+		{
+			if (!IsSlideVolumeValid(SaveManager.Config.subtitleOpacity, direction))
+				return false;
+
+			SaveManager.Config.subtitleOpacity = SlidePercentage(SaveManager.Config.subtitleOpacity, direction);
+			return true;
+		}
+
+		if (VerticalSelection == 5)
+		{
+			if (!IsSlideVolumeValid(SaveManager.Config.cutsceneOpacity, direction))
+				return false;
+
+			SaveManager.Config.cutsceneOpacity = SlidePercentage(SaveManager.Config.cutsceneOpacity, direction);
 			return true;
 		}
 
@@ -1100,16 +1117,6 @@ public partial class Options : Menu
 		else if (VerticalSelection == 5)
 		{
 			SaveManager.Config.isActionPromptsEnabled = !SaveManager.Config.isActionPromptsEnabled;
-			return true;
-		}
-		else if (VerticalSelection == 6)
-		{
-			SaveManager.Config.subtitleOpacity = SlidePercentage(SaveManager.Config.subtitleOpacity, direction);
-			return true;
-		}
-		else if (VerticalSelection == 7)
-		{
-			SaveManager.Config.cutsceneOpacity = SlidePercentage(SaveManager.Config.cutsceneOpacity, direction);
 			return true;
 		}
 
