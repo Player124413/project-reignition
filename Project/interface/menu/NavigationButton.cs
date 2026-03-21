@@ -1,6 +1,7 @@
 using Godot;
 using Godot.Collections;
 using Project.Core;
+using Project.Gameplay;
 
 namespace Project.Interface;
 
@@ -123,8 +124,10 @@ public partial class NavigationButton : Control
 			return true;
 		}
 
-		if (mouse != null && Runtime.Instance.IsUsingMouse)
+		if (mouse != null && Runtime.Instance.IsUsingMouse &&
+			(!IsInstanceValid(StageSettings.Instance) || SaveManager.Config.mouseControlMode != SaveManager.MouseControlModeEnum.Disabled))
 		{
+			// Only use mouse prompts in menus or when the mouse is enabled
 			ButtonLabel.Visible = false;
 			ButtonTextureRect.Texture = GetActiveSpriteResource(controllerResources.Length - 1).buttons[(int)mouse.ButtonIndex + MouseSpriteIndexOffset];
 			return true;
