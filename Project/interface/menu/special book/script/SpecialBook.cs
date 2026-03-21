@@ -320,29 +320,33 @@ public partial class SpecialBook : Menu
 
 		Runtime.Instance.IsUsingMouse = false;
 		windows[pageSelection].Deselect();
-		int currentTab = tabSelection;
+		int previousTab = tabSelection;
+		SpecialBookPage previousPage = ActivePage;
 		do
 		{
 			pageSelection += input.X;
-			if (pageSelection >= tabs[currentTab].PageResources.Length || pageSelection < 0)
+			if (pageSelection >= tabs[previousTab].PageResources.Length || pageSelection < 0)
 			{
-				pageSelection = WrapSelection(pageSelection, tabs[currentTab].PageResources.Length);
+				pageSelection = WrapSelection(pageSelection, tabs[previousTab].PageResources.Length);
 				tabSelection = WrapSelection(tabSelection + input.X, tabs.Length);
-				sfxOpen.Play();
 			}
 
 		} while (!CanSelectPage(ActivePage)); // Skips over every page we don't have unlocked. If we're on the full view, skips over movies and music too
 
-		if (currentTab != tabSelection)
+		if (previousTab != tabSelection)
 		{
-			tabs[currentTab].Deselect();
+			tabs[previousTab].Deselect();
 			tabs[tabSelection].SelectNoGlow();
+			sfxOpen.Play();
 		}
 
-		if (input.X > 0)
-			sfxConfirm.Play();
-		else if (input.X < 0)
-			sfxCancel.Play();
+		if (previousPage != ActivePage)
+		{
+			if (input.X > 0)
+				sfxConfirm.Play();
+			else if (input.X < 0)
+				sfxCancel.Play();
+		}
 
 		windows[pageSelection].Select();
 		LoadChapterData();
