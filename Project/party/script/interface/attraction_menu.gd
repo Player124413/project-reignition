@@ -52,53 +52,64 @@ func process_cursor() -> void:
 
 func confirm() -> void:
 	if is_dialog_active:
-		# TODO Process dialog box
-		if description.get_text() == "party_attract_menu2":
-			is_dialog_active = false
-			description.hide_button()
-			update_cursor_position()
-		else:
-			description.set_text("party_attract_menu2")
-		return
+		rpc("advance_dialog")
+
+@rpc("any_peer", "call_local", "reliable")
+func advance_dialog() -> void:
+	# TODO Process dialog box
+	if description.get_text() == "party_attract_menu2":
+		is_dialog_active = false
+		description.hide_button()
+		update_cursor_position(current_selection)
+	else:
+		description.set_text("party_attract_menu2")
 
 func cancel() -> void:
+	if !NetworkManager.is_hosting_game:
+		return
+	
 	if is_dialog_active:
 		return
 	
 	description.set_text("party_attract_menu3")
 
 func update_selection() -> void:
+	rpc("change_selection", input_axis)
+	start_selection_timer()
+
+@rpc("any_peer", "call_local", "reliable")
+func change_selection(input : Vector2i) -> void:
 	var previous_selection : Vector2i = current_selection
-	current_selection.x = clamp(current_selection.x + input_axis.x, 0, 2)
-	current_selection.y = clamp(current_selection.y + input_axis.y, 0, 2)
+	current_selection.x = clamp(current_selection.x + input.x, 0, 2)
+	current_selection.y = clamp(current_selection.y + input.y, 0, 2)
 	if current_selection.y >= 2:
 		current_selection.x = 0
 	elif previous_selection.y >= 2:
 		current_selection.x = 1 # Select the middle option when returning from exit
 	
 	if current_selection != previous_selection:
-		update_cursor_position()
-		start_selection_timer()
+		rpc("update_cursor_position", current_selection)
 
-func update_cursor_position() -> void:
+@rpc("any_peer", "call_local", "reliable")
+func update_cursor_position(selection : Vector2i) -> void:
 	# TODO Change Omochao's target position and play animation
 	var target_animation : StringName = "exit"
-	if current_selection == Vector2i(0, 0):
+	if selection == Vector2i(0, 0):
 		target_animation = "world-bazaar"
-	elif current_selection == Vector2i(1, 0):
+	elif selection == Vector2i(1, 0):
 		target_animation = "tournament-palace"
-	elif current_selection == Vector2i(2, 0):
+	elif selection == Vector2i(2, 0):
 		target_animation = "genie-lair"
-	elif current_selection == Vector2i(0, 1):
+	elif selection == Vector2i(0, 1):
 		target_animation = "world-library"
-	elif current_selection == Vector2i(1, 1):
+	elif selection == Vector2i(1, 1):
 		target_animation = "treasure-hunt"
-	elif current_selection == Vector2i(2, 1):
+	elif selection == Vector2i(2, 1):
 		target_animation = "pirate-coast"
 	
 	omochao_move_ratio = 0.0
 	omochao_turn_influence = 0.0
 	original_omochao_transform = omochao.global_transform
 	description.set_text("party_" + target_animation.replace("-", "_") + "_desc")
-	current_omochao_location = current_selection.x + current_selection.y * 3
+	current_omochao_location = selection.x + selection.y * 3
 	selection_animator.play(target_animation, 0.05)
