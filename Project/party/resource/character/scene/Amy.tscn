@@ -1,15 +1,13 @@
-[gd_scene load_steps=4 format=3 uid="uid://bdln8dht3adii"]
+[gd_scene load_steps=3 format=3 uid="uid://bdln8dht3adii"]
 
 [ext_resource type="PackedScene" uid="uid://bch3nyv8gw1ba" path="res://party/resource/character/scene/PartyCharacter.tscn" id="1_o6l5h"]
-
-[sub_resource type="CapsuleMesh" id="CapsuleMesh_0pspf"]
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_o6l5h"]
-albedo_color = Color(0.94083196, 0.39029312, 0.99999994, 1)
+[ext_resource type="PackedScene" uid="uid://b2bbdl6hmiffh" path="res://party/resource/character/model/Amy.glb" id="2_e2tdk"]
 
 [node name="Amy" instance=ExtResource("1_o6l5h")]
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="." index="0"]
-layers = 64
-mesh = SubResource("CapsuleMesh_0pspf")
-surface_material_override/0 = SubResource("StandardMaterial3D_o6l5h")
+[node name="Amy" parent="." index="0" instance=ExtResource("2_e2tdk")]
+
+[node name="AnimationPlayer" parent="Amy" index="1"]
+blend_times = [&"select", &"idle", 0.2]
+
+[editable path="Amy"]
