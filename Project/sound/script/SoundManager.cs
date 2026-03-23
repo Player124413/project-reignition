@@ -78,7 +78,7 @@ public partial class SoundManager : Control
 	{
 		if (dialog.DialogCount == 0 || DebugManager.Instance.DisableDialog || SaveManager.Config.isDialogDisabled) return; // No dialog
 
-		Visible = !SaveManager.Config.isSubtitleDisabled && !currentDialog.disableSubtitles;
+		Visible = !SaveManager.Config.isSubtitleDisabled && !dialog.disableSubtitles;
 
 		IsSubtitlesActive = true;
 		subtitleLabel.Text = string.Empty;

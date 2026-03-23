@@ -32,9 +32,6 @@ public partial class DialogTrigger : StageTriggerModule
 
 	public override void Activate()
 	{
-		if (TransitionManager.IsTransitionActive)
-			return;
-
 		if (Player != null && Player.IsDarkspineSonic && StageSettings.Instance.Data.LevelID != "np_last" && !DebugManager.Instance.IsCutsceneActive) // Disable dialog when Darkspine Sonic is active
 			return;
 
