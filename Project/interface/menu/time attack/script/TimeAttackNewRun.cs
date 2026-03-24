@@ -17,7 +17,7 @@ public partial class TimeAttackNewRun : Menu
 	[Export] Array<TimeAttackButton> buttonList;
 	private bool isActive;
 	private int currentSelection;
-	private int maxSelection = 3;
+	private int maxSelection = 4;
 
 	protected override void SetUp()
 	{
@@ -90,6 +90,9 @@ public partial class TimeAttackNewRun : Menu
 					break;
 				case 3:
 					TimeAttackManager.Instance.SetRunType(TimeAttackManager.RunType.BossRush);
+					break;
+				case 4:
+					TimeAttackManager.Instance.SetRunType(TimeAttackManager.RunType.Custom);
 					break;
 			}
 

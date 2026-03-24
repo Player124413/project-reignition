@@ -6,7 +6,9 @@ namespace Project.Interface;
 
 public partial class NavigationButton : Control
 {
+	///<summary>The image of the action</summary>
 	[Export] public StringName ActionKey { get; set; }
+	///<summary>The name of the action</summary>
 	[Export] private StringName inputKey;
 	[Export] private StringName fallbackKey; // Mostly used for menu navigation
 

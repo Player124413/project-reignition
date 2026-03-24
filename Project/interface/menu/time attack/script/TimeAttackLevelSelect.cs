@@ -7,6 +7,7 @@ namespace Project.Interface.Menus;
 public partial class TimeAttackLevelSelect : Menu
 {
 	[Export] private Description description;
+	[Export] private Control clip;
 
 	[Export] private Control cursor;
 	private float initialCursorPosition;
@@ -85,12 +86,12 @@ public partial class TimeAttackLevelSelect : Menu
 
 		VerticalSelection = WrapSelection(VerticalSelection + Mathf.Sign(Input.GetAxis("ui_up", "ui_down")), levelOptions.Count);
 
-		menuMemory[MemoryKeys.LevelSelect] = VerticalSelection;
+		//menuMemory[MemoryKeys.LevelSelect] = VerticalSelection;
 		animator.Play("select");
 		animator.Seek(0, true);
 
-		if (menuMemory[MemoryKeys.ActiveMenu] != (int)MemoryKeys.TimeAttack)
-			UpdateDescription();
+		//if (menuMemory[MemoryKeys.ActiveMenu] != (int)MemoryKeys.TimeAttack)
+		//UpdateDescription();
 		StartSelectionTimer();
 		RecalculateListPosition();
 	}
