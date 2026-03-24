@@ -15,7 +15,7 @@ public partial class TimeAttack : Menu
 	[Export] Array<TimeAttackButton> buttonList;
 	private bool isActive;
 	private int currentSelection;
-	private int maxSelection = 4;
+	private int maxSelection = 3;
 
 	protected override void SetUp()
 	{
@@ -40,6 +40,8 @@ public partial class TimeAttack : Menu
 		SaveManager.ActiveGameData.UnlockAllWorlds();
 		SaveManager.ActiveGameData.level = 99;
 		SaveManager.ActiveSkillRing.UpdateTotalSkillPoints();
+
+		TimeAttackManager.Instance.GenerateDailyRun();
 
 
 	}
@@ -105,11 +107,7 @@ public partial class TimeAttack : Menu
 			switch (currentSelection)
 			{
 				case 2:
-					TimeAttackManager.Instance.SetRunType(TimeAttackManager.RunType.Custom);
-					break;
-				case 3:
 					TimeAttackManager.Instance.SetRunType(TimeAttackManager.RunType.SingleRun);
-					GD.Print("Setting to single run");
 					break;
 			}
 			timeAttackAnimator.Play("confirm-" + currentSelection);

@@ -278,4 +278,9 @@ public partial class LevelSelect : Menu
 		VerticalSelection = levelOptions.IndexOf(node);
 		ChangeSelection();
 	}
+
+	public List<LevelOption> GetLevelOptions()
+	{
+		return levelOptions;
+	}
 }
