@@ -1,4 +1,4 @@
-[gd_resource type="AnimationNodeBlendTree" load_steps=413 format=3 uid="uid://biwe75w273iq7"]
+[gd_resource type="AnimationNodeBlendTree" load_steps=415 format=3 uid="uid://biwe75w273iq7"]
 
 [sub_resource type="AnimationNodeTimeScale" id="AnimationNodeTimeScale_hf2vv"]
 
@@ -257,7 +257,7 @@ animation = &"ActionLibrary/stomp-start"
 fadeout_time = 0.02
 
 [sub_resource type="AnimationNodeBlendTree" id="AnimationNodeBlendTree_2rvqt"]
-graph_offset = Vector2(-2763.7092, -43.149628)
+graph_offset = Vector2(-828.0891, -49.149628)
 nodes/output/position = Vector2(600, 100)
 nodes/TimeScale/node = SubResource("AnimationNodeTimeScale_hf2vv")
 nodes/TimeScale/position = Vector2(-980, 80)
@@ -735,7 +735,7 @@ transitions = ["drift-start", "drift-launch", SubResource("AnimationNodeStateMac
 graph_offset = Vector2(-17, 49)
 
 [sub_resource type="AnimationNodeBlendTree" id="AnimationNodeBlendTree_umbst"]
-graph_offset = Vector2(-573.85, 93.601)
+graph_offset = Vector2(-671.435, -13.738907)
 nodes/direction_transition/node = SubResource("AnimationNodeTransition_ktt7m")
 nodes/direction_transition/position = Vector2(96, 160)
 nodes/left_state/node = SubResource("AnimationNodeStateMachine_uwp2s")
@@ -1084,10 +1084,17 @@ input_1/auto_advance = false
 input_1/break_loop_at_end = false
 input_1/reset = true
 
+[sub_resource type="AnimationNodeBlend2" id="AnimationNodeBlend2_g25ih"]
+filter_enabled = true
+filters = ["%GeneralSkeleton:eyelid_shape", "%GeneralSkeleton:eyelids"]
+
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_0v11u"]
 animation = &"ActionLibrary/backstep"
 
 [sub_resource type="AnimationNodeTimeSeek" id="AnimationNodeTimeSeek_1yce3"]
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_2ftkw"]
+animation = &"ActionLibrary/blink"
 
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_esuas"]
 animation = &"ActionLibrary/brake-l"
@@ -1644,7 +1651,7 @@ min_space = Vector2(-1, 0)
 sync = true
 
 [sub_resource type="AnimationNodeBlendTree" id="AnimationNodeBlendTree_vw7yp"]
-graph_offset = Vector2(-2426.1052, -316.5537)
+graph_offset = Vector2(-4221.893, -298.86252)
 nodes/output/position = Vector2(480, 60)
 nodes/backstep_anim/node = SubResource("AnimationNodeAnimation_0v11u")
 nodes/backstep_anim/position = Vector2(-3460, -620)
@@ -1667,7 +1674,7 @@ nodes/ground_seek/position = Vector2(-1980, -160)
 nodes/ground_speed/node = SubResource("AnimationNodeTimeScale_pev3d")
 nodes/ground_speed/position = Vector2(-1820, -160)
 nodes/idle_anim/node = SubResource("AnimationNodeAnimation_4ig5s")
-nodes/idle_anim/position = Vector2(-3460, -240)
+nodes/idle_anim/position = Vector2(-4060, -240)
 nodes/idle_blend/node = SubResource("AnimationNodeBlend3_a0t15")
 nodes/idle_blend/position = Vector2(-2640, -220)
 nodes/land_anim/node = SubResource("AnimationNodeAnimation_me7fr")
@@ -1710,7 +1717,11 @@ nodes/ds_forward_blend/node = SubResource("AnimationNodeBlendSpace2D_wx07p")
 nodes/ds_forward_blend/position = Vector2(-3260, 320)
 nodes/ds-forward-transition/node = SubResource("AnimationNodeTransition_362oh")
 nodes/ds-forward-transition/position = Vector2(-3040, 120)
-node_connections = [&"output", 0, &"quick_step_trigger", &"backstep_seek", 0, &"ds-backstep-transition", &"brake_trigger", 0, &"land_trigger", &"brake_trigger", 1, &"brake_state", &"crouch_transition", 0, &"brake_trigger", &"crouch_transition", 1, &"crouch_state", &"forward_seek", 0, &"ds-forward-transition", &"ground_seek", 0, &"turn_add", &"ground_speed", 0, &"ground_seek", &"idle_blend", 0, &"backstep_seek", &"idle_blend", 1, &"ds-idle-transition", &"idle_blend", 2, &"forward_seek", &"land_speed", 0, &"land_anim", &"land_trigger", 0, &"reverse_path_trigger", &"land_trigger", 1, &"land_speed", &"quick_step_speed", 0, &"quick_slide_transition", &"quick_step_transition", 0, &"step_left_anim", &"quick_step_transition", 1, &"step_right_anim", &"quick_step_trigger", 0, &"crouch_transition", &"quick_step_trigger", 1, &"quick_step_speed", &"reverse_path_trigger", 0, &"ground_speed", &"reverse_path_trigger", 1, &"reverse_path_anim", &"turn_add", 0, &"idle_blend", &"turn_add", 1, &"turn_blend", &"quick_slide_transition", 0, &"quick_step_transition", &"quick_slide_transition", 1, &"quick_slide_state", &"ds-backstep-transition", 0, &"backstep_anim", &"ds-backstep-transition", 1, &"ds_backstep_anim", &"ds-idle-transition", 0, &"idle_anim", &"ds-idle-transition", 1, &"ds_idle_anim", &"ds-forward-transition", 0, &"forward_blend", &"ds-forward-transition", 1, &"ds_forward_blend"]
+nodes/blink_anim/node = SubResource("AnimationNodeAnimation_2ftkw")
+nodes/blink_anim/position = Vector2(-3940, -60)
+nodes/Blend2/node = SubResource("AnimationNodeBlend2_g25ih")
+nodes/Blend2/position = Vector2(-3660, -240)
+node_connections = [&"output", 0, &"quick_step_trigger", &"backstep_seek", 0, &"ds-backstep-transition", &"brake_trigger", 0, &"land_trigger", &"brake_trigger", 1, &"brake_state", &"crouch_transition", 0, &"brake_trigger", &"crouch_transition", 1, &"crouch_state", &"forward_seek", 0, &"ds-forward-transition", &"ground_seek", 0, &"turn_add", &"ground_speed", 0, &"ground_seek", &"idle_blend", 0, &"backstep_seek", &"idle_blend", 1, &"ds-idle-transition", &"idle_blend", 2, &"forward_seek", &"land_speed", 0, &"land_anim", &"land_trigger", 0, &"reverse_path_trigger", &"land_trigger", 1, &"land_speed", &"quick_step_speed", 0, &"quick_slide_transition", &"quick_step_transition", 0, &"step_left_anim", &"quick_step_transition", 1, &"step_right_anim", &"quick_step_trigger", 0, &"crouch_transition", &"quick_step_trigger", 1, &"quick_step_speed", &"reverse_path_trigger", 0, &"ground_speed", &"reverse_path_trigger", 1, &"reverse_path_anim", &"turn_add", 0, &"idle_blend", &"turn_add", 1, &"turn_blend", &"quick_slide_transition", 0, &"quick_step_transition", &"quick_slide_transition", 1, &"quick_slide_state", &"ds-backstep-transition", 0, &"backstep_anim", &"ds-backstep-transition", 1, &"ds_backstep_anim", &"ds-idle-transition", 0, &"Blend2", &"ds-idle-transition", 1, &"ds_idle_anim", &"ds-forward-transition", 0, &"forward_blend", &"ds-forward-transition", 1, &"ds_forward_blend", &"Blend2", 0, &"idle_anim", &"Blend2", 1, &"blink_anim"]
 
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_wx07p"]
 animation = &"DarkspineLibrary/ds-damage-back"
@@ -2181,7 +2192,7 @@ input_5/break_loop_at_end = false
 input_5/reset = true
 
 [resource]
-graph_offset = Vector2(-1677.3, -62.899994)
+graph_offset = Vector2(-1512.3523, -92.88139)
 nodes/air_tree/node = SubResource("AnimationNodeBlendTree_2rvqt")
 nodes/air_tree/position = Vector2(-1280, 60)
 nodes/balance_tree/node = SubResource("AnimationNodeBlendTree_gi378")
