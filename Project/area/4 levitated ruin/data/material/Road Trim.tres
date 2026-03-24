@@ -1,15 +1,30 @@
-[gd_resource type="StandardMaterial3D" load_steps=3 format=3 uid="uid://dvp7avmxjv0i7"]
+[gd_resource type="ShaderMaterial" load_steps=5 format=3 uid="uid://dvp7avmxjv0i7"]
 
-[ext_resource type="Texture2D" uid="uid://duq2jnad8vexd" path="res://area/4 levitated ruin/data/texture/road trim.png" id="1_57c28"]
-[ext_resource type="Texture2D" uid="uid://b30osbpp6brrk" path="res://area/4 levitated ruin/data/texture/road multiply.png" id="2_xcgiu"]
+[ext_resource type="Shader" uid="uid://c317thyokhc4w" path="res://resource/Shaders/SpecGlossyTerrain_Linear.gdshader" id="1_nhbsk"]
+[ext_resource type="Texture2D" uid="uid://dlumfn0ei03r5" path="res://area/4 levitated ruin/data/texture/upscales/road_trim_HD.png" id="2_dmoh5"]
+[ext_resource type="Texture2D" uid="uid://dwii1txck051" path="res://area/4 levitated ruin/data/texture/upscales/road_trim_HD_nrm.png" id="3_ibhv3"]
+[ext_resource type="Texture2D" uid="uid://d12g0a7daug01" path="res://area/4 levitated ruin/data/texture/upscales/road_trim_HD_spc.png" id="4_ts0mk"]
 
 [resource]
-resource_name = "Road Trim"
-specular_mode = 2
-vertex_color_use_as_albedo = true
-albedo_texture = ExtResource("1_57c28")
-metallic_specular = 0.0
-detail_enabled = true
-detail_blend_mode = 3
-detail_uv_layer = 1
-detail_albedo = ExtResource("2_xcgiu")
+render_priority = 0
+shader = ExtResource("1_nhbsk")
+shader_parameter/specular_color_multiplier = Color(1, 1, 1, 1)
+shader_parameter/diffuse_texture = ExtResource("2_dmoh5")
+shader_parameter/specular_texture = ExtResource("4_ts0mk")
+shader_parameter/normalmap_texture = ExtResource("3_ibhv3")
+shader_parameter/is_double_sided = false
+shader_parameter/enable_normal_map = true
+shader_parameter/enable_environment_map = false
+shader_parameter/use_albedo_as_emissive = false
+shader_parameter/use_alpha_scissor = false
+shader_parameter/power_gloss_level = Vector4(50, 0.424, 0.102, 0)
+shader_parameter/sonic_skin_falloff_param = Vector4(0, 0, 0, 0)
+shader_parameter/luminance_range = 1.0
+shader_parameter/alpha_scissor_threshold = 1.0
+shader_parameter/emission_power = 0.0
+shader_parameter/emission_clamp = 1.0
+shader_parameter/normalmap_depth = 2.0
+shader_parameter/uv_scale = Vector2(1, 1)
+shader_parameter/uv_offset = Vector2(0, 0)
+shader_parameter/uv_speed = Vector2(0, 0)
+shader_parameter/shadow_contrast = 3.0

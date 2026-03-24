@@ -1,13 +1,37 @@
-[gd_resource type="StandardMaterial3D" load_steps=2 format=3 uid="uid://dgaqh7piom5h1"]
+[gd_resource type="ShaderMaterial" load_steps=5 format=3 uid="uid://dgaqh7piom5h1"]
 
-[ext_resource type="Texture2D" uid="uid://bkq4rex7aibdf" path="res://area/6 skeleton dome/data/texture/flower blue.png" id="1_nvcnd"]
+[ext_resource type="Shader" uid="uid://c1gyoaq8letu7" path="res://resource/Shaders/SpecGlossyFoliageAnimatedWind_SRGB.gdshader" id="1_ar2jl"]
+[ext_resource type="Texture2D" uid="uid://1nalrh5ubl5t" path="res://area/6 skeleton dome/data/texture/upscales/flower_blue_HD.png" id="2_8o3mu"]
+[ext_resource type="Texture2D" uid="uid://dw1utfaclgdbn" path="res://area/6 skeleton dome/data/texture/upscales/flower_blue_HD_nrm.png" id="3_goe18"]
+[ext_resource type="Texture2D" uid="uid://chjs16e8etxcw" path="res://area/6 skeleton dome/data/texture/upscales/flower_orange_HD_msk.png" id="4_eylgy"]
 
 [resource]
-resource_name = "Flower Blue"
-transparency = 2
-alpha_scissor_threshold = 0.5
-alpha_antialiasing_mode = 0
-cull_mode = 2
-specular_mode = 2
-vertex_color_use_as_albedo = true
-albedo_texture = ExtResource("1_nvcnd")
+render_priority = 0
+shader = ExtResource("1_ar2jl")
+shader_parameter/sway_strength = 0.1
+shader_parameter/sway_speed = 1.5
+shader_parameter/sway_scale = 1.0
+shader_parameter/sway_min_y = -10000000000.0
+shader_parameter/sway_max_y = 10000000000.0
+shader_parameter/sway_direction = Vector2(15.475, 1)
+shader_parameter/trunk_mask = ExtResource("4_eylgy")
+shader_parameter/specular_color_multiplier = Color(1, 1, 1, 1)
+shader_parameter/diffuse_texture = ExtResource("2_8o3mu")
+shader_parameter/normalmap_texture = ExtResource("3_goe18")
+shader_parameter/sRGB_VC = false
+shader_parameter/is_double_sided = true
+shader_parameter/enable_normal_map = true
+shader_parameter/enable_environment_map = false
+shader_parameter/use_albedo_as_emissive = false
+shader_parameter/use_alpha_scissor = true
+shader_parameter/power_gloss_level = Vector4(50, 0.06, 0.004, 0)
+shader_parameter/sonic_skin_falloff_param = Vector4(0, 0, 0, 0)
+shader_parameter/luminance_range = 1.0
+shader_parameter/alpha_scissor_threshold = 0.8300000000017462
+shader_parameter/emission_power = 0.0
+shader_parameter/emission_clamp = 1.0
+shader_parameter/normalmap_depth = 1.0
+shader_parameter/uv_scale = Vector2(1, 1)
+shader_parameter/uv_offset = Vector2(0, 0)
+shader_parameter/uv_speed = Vector2(0, 0)
+shader_parameter/shadow_contrast = 3.0

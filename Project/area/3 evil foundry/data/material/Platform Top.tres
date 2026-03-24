@@ -1,12 +1,30 @@
-[gd_resource type="StandardMaterial3D" load_steps=2 format=3 uid="uid://cuw4qroxvfli8"]
+[gd_resource type="ShaderMaterial" load_steps=5 format=3 uid="uid://cuw4qroxvfli8"]
 
-[ext_resource type="Texture2D" uid="uid://bcvhvunpw3txe" path="res://area/3 evil foundry/data/texture/platform top.png" id="1_vggop"]
+[ext_resource type="Shader" uid="uid://c317thyokhc4w" path="res://resource/Shaders/SpecGlossyTerrain_Linear.gdshader" id="1_w0s7i"]
+[ext_resource type="Texture2D" uid="uid://udjvvejiymi1" path="res://area/3 evil foundry/data/texture/upscales/platform_top_HD.png" id="2_4yqgs"]
+[ext_resource type="Texture2D" uid="uid://b53n82i362h5w" path="res://area/3 evil foundry/data/texture/upscales/platform_top_HD_nrm.png" id="3_34g53"]
+[ext_resource type="Texture2D" uid="uid://cgvgalynpcc4d" path="res://area/3 evil foundry/data/texture/upscales/platform_top_HD_spc.png" id="4_s434n"]
 
 [resource]
-resource_name = "Platform Top"
-specular_mode = 2
-vertex_color_use_as_albedo = true
-albedo_texture = ExtResource("1_vggop")
-distance_fade_mode = 2
-distance_fade_min_distance = 0.5
-distance_fade_max_distance = 2.0
+render_priority = 0
+shader = ExtResource("1_w0s7i")
+shader_parameter/specular_color_multiplier = Color(1, 1, 1, 1)
+shader_parameter/diffuse_texture = ExtResource("2_4yqgs")
+shader_parameter/specular_texture = ExtResource("4_s434n")
+shader_parameter/normalmap_texture = ExtResource("3_34g53")
+shader_parameter/is_double_sided = false
+shader_parameter/enable_normal_map = true
+shader_parameter/enable_environment_map = false
+shader_parameter/use_albedo_as_emissive = false
+shader_parameter/use_alpha_scissor = false
+shader_parameter/power_gloss_level = Vector4(50, 0.034, 0.046, 0)
+shader_parameter/sonic_skin_falloff_param = Vector4(0, 0, 0, 0)
+shader_parameter/luminance_range = 1.0
+shader_parameter/alpha_scissor_threshold = 1.0
+shader_parameter/emission_power = 0.0
+shader_parameter/emission_clamp = 1.0
+shader_parameter/normalmap_depth = 1.0
+shader_parameter/uv_scale = Vector2(1, 1)
+shader_parameter/uv_offset = Vector2(0, 0)
+shader_parameter/uv_speed = Vector2(0, 0)
+shader_parameter/shadow_contrast = 3.0

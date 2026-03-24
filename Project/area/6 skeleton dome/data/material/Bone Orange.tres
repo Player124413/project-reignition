@@ -1,11 +1,30 @@
-[gd_resource type="StandardMaterial3D" load_steps=2 format=3 uid="uid://buriy6ge2oxxg"]
+[gd_resource type="ShaderMaterial" load_steps=5 format=3 uid="uid://buriy6ge2oxxg"]
 
-[ext_resource type="Texture2D" uid="uid://dwkkx2fhfgijm" path="res://area/6 skeleton dome/data/texture/bone orange.png" id="1_0wwa3"]
+[ext_resource type="Shader" uid="uid://c317thyokhc4w" path="res://resource/Shaders/SpecGlossyTerrain_Linear.gdshader" id="1_24mhr"]
+[ext_resource type="Texture2D" uid="uid://2mqpykqj6qef" path="res://area/6 skeleton dome/data/texture/upscales/bone_orange_HD.png" id="2_qjf0i"]
+[ext_resource type="Texture2D" uid="uid://ch0wdpo3dbbji" path="res://area/6 skeleton dome/data/texture/upscales/bone_orange_HD_nrm.png" id="3_1ea4e"]
+[ext_resource type="Texture2D" uid="uid://cahk8jq5y8oi0" path="res://area/6 skeleton dome/data/texture/upscales/bone_orange_HD_spc.png" id="4_hghgg"]
 
 [resource]
-resource_name = "Bone Orange"
-vertex_color_use_as_albedo = true
-albedo_texture = ExtResource("1_0wwa3")
-distance_fade_mode = 2
-distance_fade_min_distance = 0.5
-distance_fade_max_distance = 1.0
+render_priority = 0
+shader = ExtResource("1_24mhr")
+shader_parameter/specular_color_multiplier = Color(1, 1, 1, 1)
+shader_parameter/diffuse_texture = ExtResource("2_qjf0i")
+shader_parameter/specular_texture = ExtResource("4_hghgg")
+shader_parameter/normalmap_texture = ExtResource("3_1ea4e")
+shader_parameter/is_double_sided = false
+shader_parameter/enable_normal_map = true
+shader_parameter/enable_environment_map = false
+shader_parameter/use_albedo_as_emissive = false
+shader_parameter/use_alpha_scissor = false
+shader_parameter/power_gloss_level = Vector4(0, 0.1, 0.05, 0)
+shader_parameter/sonic_skin_falloff_param = Vector4(5, 0, 0, 0)
+shader_parameter/luminance_range = 1.0
+shader_parameter/alpha_scissor_threshold = 1.0
+shader_parameter/emission_power = 0.0
+shader_parameter/emission_clamp = 1.0
+shader_parameter/normalmap_depth = 2.0
+shader_parameter/uv_scale = Vector2(1, 1)
+shader_parameter/uv_offset = Vector2(0, 0)
+shader_parameter/uv_speed = Vector2(0, 0)
+shader_parameter/shadow_contrast = 3.0

@@ -1,14 +1,228 @@
-[gd_resource type="StandardMaterial3D" load_steps=3 format=3 uid="uid://bj2f64mceufxv"]
+[gd_resource type="ShaderMaterial" load_steps=6 format=3 uid="uid://bj2f64mceufxv"]
 
-[ext_resource type="Texture2D" uid="uid://bag307bf2jlyi" path="res://area/7 night palace/data/texture/marble.png" id="1_c250f"]
-[ext_resource type="Texture2D" uid="uid://byk7e1nwfebdu" path="res://area/7 night palace/data/texture/marble detail.png" id="1_tgkec"]
+[ext_resource type="Texture2D" uid="uid://d1h57e28ox0md" path="res://area/7 night palace/data/texture/upscales/marble_detail_HD.png" id="1_qhvjc"]
+[ext_resource type="Texture2D" uid="uid://dmkbjvy8rmfms" path="res://area/7 night palace/data/texture/upscales/marble_HD.png" id="2_068jq"]
+[ext_resource type="Texture2D" uid="uid://c20ddxdb71lk1" path="res://area/7 night palace/data/texture/upscales/marble_HD_nrm.png" id="3_vckrp"]
+[ext_resource type="Texture2D" uid="uid://b8rabhajqw2vs" path="res://area/7 night palace/data/texture/upscales/marble_HD_spc.png" id="4_v115e"]
+
+[sub_resource type="Shader" id="Shader_csfad"]
+code = "shader_type spatial;
+render_mode blend_mix, depth_draw_opaque, cull_disabled;
+
+/* ---- constants (Godot 4 safe) ---- */
+const float INV_PI = 1.0 / PI;
+
+uniform vec4 specular_color_multiplier : source_color = vec4(1.0);
+global uniform float time;
+
+uniform sampler2D diffuse_texture;
+uniform sampler2D specular_texture;
+uniform sampler2D normalmap_texture : hint_normal;
+uniform sampler2D falloff_texture;
+uniform sampler2D environment_texture;
+uniform sampler2D environment_mask;
+uniform sampler2D emissive_texture;
+uniform sampler2D shadow_map;
+
+/* ---- UV2 Multiply Detail ---- */
+uniform sampler2D detail_albedo_texture;
+uniform float detail_albedo_strength : hint_range(0.0, 4.0) = 1.0;
+
+uniform bool is_double_sided = false;
+uniform bool enable_normal_map = true;
+uniform bool enable_environment_map = true;
+uniform bool use_albedo_as_emissive = false;
+uniform bool use_alpha_scissor = false;
+
+uniform vec4 power_gloss_level;
+uniform vec4 sonic_skin_falloff_param;
+uniform float luminance_range = 1.0;
+uniform float alpha_scissor_threshold = 1.0;
+uniform float emission_power = 0.0;
+uniform float emission_clamp = 1.0;
+uniform float normalmap_depth = 2.0;
+
+uniform vec2 uv_scale = vec2(1.0);
+uniform vec2 uv_offset = vec2(0.0);
+uniform vec2 uv_speed = vec2(0.0);
+
+uniform float shadow_contrast = 3.0;
+
+varying vec2 specular_uv;
+varying vec2 shadow_uv;
+varying vec4 vColor;
+
+/* ---- vertex ---- */
+void vertex() {
+    UV = UV * uv_scale + uv_offset + uv_speed * time;
+    specular_uv = UV;
+    shadow_uv = UV2;
+    vColor = COLOR;
+}
+
+/* ---- helpers ---- */
+vec3 decode_normal_map(vec4 n) {
+    n.xy = n.xy * 2.0 - 1.0;
+    n.z = sqrt(max(1.0 - dot(n.xy, n.xy), 0.0));
+    return n.xyz;
+}
+
+float compute_falloff(float cos_theta) {
+    vec4 p = sonic_skin_falloff_param;
+    p.z = max(p.z, 0.1);
+    return pow(clamp(1.0 - cos_theta, 0.0, 1.0), p.z) * p.y + p.x;
+}
+
+float compute_fresnel(float cos_theta) {
+    return pow(clamp(1.0 - cos_theta, 0.0, 1.0), 5.0) * 0.7 + 0.3;
+}
+
+/* ---- fragment ---- */
+void fragment() {
+
+    if (!FRONT_FACING && !is_double_sided) {
+        discard;
+    }
+
+    vec3 vertex_color = vColor.rgb;
+
+    vec4 diffuse = texture(diffuse_texture, UV);
+    vec4 shadow = texture(shadow_map, shadow_uv);
+    shadow.rgb = pow(shadow.rgb, vec3(shadow_contrast));
+
+    vec4 specular = texture(specular_texture, UV);
+    vec3 emissive_sample = pow(texture(emissive_texture, UV).rgb, vec3(2.2));
+    float glow_mask = pow(diffuse.g, emission_clamp);
+
+    /* ---- Base Albedo ---- */
+    vec3 base_albedo = vertex_color * diffuse.rgb * diffuse.rgb;
+    base_albedo *= shadow.rgb;
+
+    /* ---- UV2 Multiply Detail ---- */
+    vec4 detail_sample = texture(detail_albedo_texture, UV);
+
+    float detail_mask = detail_sample.a * detail_albedo_strength;
+    vec3 detail_mix = mix(vec3(1.0), detail_sample.rgb, detail_mask);
+
+    ALBEDO = base_albedo * detail_mix;
+
+    /* ---- Emission ---- */
+    EMISSION = use_albedo_as_emissive
+        ? ALBEDO * glow_mask
+        : emissive_sample * glow_mask;
+
+    EMISSION *= emission_power;
+
+    /* ---- Normal Mapping ---- */
+    if (enable_normal_map) {
+        vec3 n = decode_normal_map(texture(normalmap_texture, UV));
+        n.xy *= normalmap_depth;
+        n = normalize(n);
+
+        NORMAL = normalize(
+            n.x * TANGENT +
+            n.y * BINORMAL +
+            n.z * NORMAL
+        );
+    }
+
+    float spec_fresnel = compute_fresnel(dot(NORMAL, VIEW));
+
+    /* ---- Environment ---- */
+    if (enable_environment_map) {
+        vec2 env_uv = NORMAL.xy * vec2(0.5, -0.5) + 0.5;
+        vec4 env = texture(environment_texture, env_uv);
+        vec4 env_mask = texture(environment_mask, UV);
+
+        env.rgb += env.rgb * env.a * luminance_range;
+        env.rgb *= specular.a * spec_fresnel;
+
+        EMISSION += env.rgb * env.rgb;
+        EMISSION *= env_mask.rgb;
+    }
+
+    /* ---- Fake Specular ---- */
+    float gloss = clamp(power_gloss_level.y * 500.0, 1.0, 1024.0);
+    float level = power_gloss_level.z * 5.0;
+
+    float cos_theta = pow(clamp(dot(NORMAL, VIEW), 0.0, 1.0), gloss);
+
+    vec4 fake_spec = texture(specular_texture, specular_uv);
+    fake_spec.rgb *= cos_theta * level * 0.2 * spec_fresnel;
+    fake_spec.rgb *= fake_spec.rgb;
+    fake_spec.rgb *= specular_color_multiplier.rgb;
+
+    EMISSION += fake_spec.rgb;
+
+    if (use_alpha_scissor && diffuse.a < alpha_scissor_threshold) {
+        discard;
+    }
+}
+
+/* ---- light ---- */
+void light() {
+
+    float cos_theta = dot(LIGHT, NORMAL);
+    cos_theta = (cos_theta - 0.05) / (1.0 - 0.05);
+    cos_theta = clamp(cos_theta, 0.0, 1.0);
+    cos_theta *= cos_theta;
+
+    vec4 shadow_tex = texture(shadow_map, shadow_uv);
+    shadow_tex.rgb = pow(shadow_tex.rgb, vec3(shadow_contrast));
+
+    vec4 falloff = texture(falloff_texture, specular_uv);
+
+    vec3 rim_light =
+        vColor.rgb *
+        falloff.rgb *
+        compute_falloff(dot(NORMAL, VIEW));
+
+    rim_light *= rim_light;
+    rim_light *= LIGHT_COLOR * INV_PI;
+
+    DIFFUSE_LIGHT +=
+        cos_theta * ALBEDO * LIGHT_COLOR * ATTENUATION +
+        rim_light * shadow_tex.rgb;
+
+    vec4 spec = texture(specular_texture, specular_uv);
+    float fresnel = compute_fresnel(dot(NORMAL, VIEW));
+    float gloss = clamp(power_gloss_level.y * 500.0, 1.0, 1024.0);
+    float level = power_gloss_level.z * 5.0;
+
+    vec3 half_dir = normalize(LIGHT + VIEW);
+    cos_theta = pow(clamp(dot(half_dir, NORMAL), 0.0, 1.0), gloss);
+
+    spec.rgb *= cos_theta * level * fresnel;
+    spec.rgb *= spec.rgb;
+
+    vec3 spec_col = spec.rgb * specular_color_multiplier.rgb;
+
+    SPECULAR_LIGHT +=
+        spec_col * LIGHT_COLOR * ATTENUATION * 100.0 * shadow_tex.rgb;
+}"
 
 [resource]
-resource_name = "Marble Detailed"
-render_priority = -1
-specular_mode = 2
-vertex_color_use_as_albedo = true
-albedo_texture = ExtResource("1_c250f")
-detail_enabled = true
-detail_blend_mode = 3
-detail_albedo = ExtResource("1_tgkec")
+render_priority = 0
+shader = SubResource("Shader_csfad")
+shader_parameter/specular_color_multiplier = Color(1, 1, 1, 1)
+shader_parameter/diffuse_texture = ExtResource("2_068jq")
+shader_parameter/specular_texture = ExtResource("4_v115e")
+shader_parameter/normalmap_texture = ExtResource("3_vckrp")
+shader_parameter/detail_albedo_texture = ExtResource("1_qhvjc")
+shader_parameter/detail_albedo_strength = 1.0
+shader_parameter/is_double_sided = false
+shader_parameter/enable_normal_map = true
+shader_parameter/enable_environment_map = false
+shader_parameter/use_albedo_as_emissive = false
+shader_parameter/use_alpha_scissor = false
+shader_parameter/power_gloss_level = Vector4(0, 0.273, 0.052, 0)
+shader_parameter/sonic_skin_falloff_param = Vector4(0, 0, 0, 0)
+shader_parameter/luminance_range = 1.0
+shader_parameter/alpha_scissor_threshold = 1.0
+shader_parameter/emission_power = 0.0
+shader_parameter/emission_clamp = 1.0
+shader_parameter/normalmap_depth = 0.0
+shader_parameter/uv_scale = Vector2(1, 1)
+shader_parameter/uv_offset = Vector2(0, 0)
+shader_parameter/uv_speed = Vector2(0, 0)
+shader_parameter/shadow_contrast = 3.0

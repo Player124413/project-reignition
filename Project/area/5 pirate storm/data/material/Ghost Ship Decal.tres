@@ -1,13 +1,30 @@
-[gd_resource type="StandardMaterial3D" load_steps=2 format=3 uid="uid://lh1m2w5vlcrh"]
+[gd_resource type="ShaderMaterial" load_steps=5 format=3 uid="uid://lh1m2w5vlcrh"]
 
-[ext_resource type="Texture2D" uid="uid://c6rohlpe8fdqu" path="res://area/5 pirate storm/data/texture/ghost ship decal.png" id="1_o534y"]
+[ext_resource type="Shader" uid="uid://c317thyokhc4w" path="res://resource/Shaders/SpecGlossyTerrain_Linear.gdshader" id="1_md6hk"]
+[ext_resource type="Texture2D" uid="uid://nkbew2bq2aui" path="res://area/5 pirate storm/data/texture/upscales/ghost_ship_decal_HD.png" id="2_kcdgd"]
+[ext_resource type="Texture2D" uid="uid://rqd6jua28iww" path="res://area/5 pirate storm/data/texture/upscales/ghost_ship_decal_HD_nrm.png" id="3_02hmr"]
+[ext_resource type="Texture2D" uid="uid://ccsmfj2hm13we" path="res://area/5 pirate storm/data/texture/upscales/ghost_ship_decal_HD_spc.png" id="4_4pwsd"]
 
 [resource]
-resource_name = "Ghost Ship Decal"
-transparency = 2
-alpha_scissor_threshold = 0.5
-alpha_antialiasing_mode = 0
-specular_mode = 2
-vertex_color_use_as_albedo = true
-albedo_texture = ExtResource("1_o534y")
-metallic_specular = 0.0
+render_priority = 0
+shader = ExtResource("1_md6hk")
+shader_parameter/specular_color_multiplier = Color(1, 1, 1, 1)
+shader_parameter/diffuse_texture = ExtResource("2_kcdgd")
+shader_parameter/specular_texture = ExtResource("4_4pwsd")
+shader_parameter/normalmap_texture = ExtResource("3_02hmr")
+shader_parameter/is_double_sided = true
+shader_parameter/enable_normal_map = true
+shader_parameter/enable_environment_map = false
+shader_parameter/use_albedo_as_emissive = false
+shader_parameter/use_alpha_scissor = true
+shader_parameter/power_gloss_level = Vector4(50, 0.1, 0.147, 0)
+shader_parameter/sonic_skin_falloff_param = Vector4(0, 0, 0, 0)
+shader_parameter/luminance_range = 1.0
+shader_parameter/alpha_scissor_threshold = 0.9000000000087311
+shader_parameter/emission_power = 0.0
+shader_parameter/emission_clamp = 1.0
+shader_parameter/normalmap_depth = 1.0
+shader_parameter/uv_scale = Vector2(1, 1)
+shader_parameter/uv_offset = Vector2(0, 0)
+shader_parameter/uv_speed = Vector2(0, 0)
+shader_parameter/shadow_contrast = 3.0

@@ -1,12 +1,30 @@
-[gd_resource type="StandardMaterial3D" load_steps=2 format=3 uid="uid://dkpyu8fm3ruyp"]
+[gd_resource type="ShaderMaterial" load_steps=5 format=3 uid="uid://dkpyu8fm3ruyp"]
 
-[ext_resource type="Texture2D" uid="uid://crk74aml4elnm" path="res://area/4 levitated ruin/data/texture/imposter leaves.png" id="1_1om20"]
+[ext_resource type="Shader" uid="uid://c317thyokhc4w" path="res://resource/Shaders/SpecGlossyTerrain_Linear.gdshader" id="1_k326d"]
+[ext_resource type="Texture2D" uid="uid://cf1hl5p88edpl" path="res://area/4 levitated ruin/data/texture/upscales/imposter_leaves_HD.png" id="2_inaps"]
+[ext_resource type="Texture2D" uid="uid://bvilx4jlqmfj3" path="res://area/4 levitated ruin/data/texture/upscales/imposter_leaves_HD_nrm.png" id="3_2xdqs"]
+[ext_resource type="Texture2D" uid="uid://b3qd2qdepdxlc" path="res://area/4 levitated ruin/data/texture/upscales/imposter_leaves_HD_spc.png" id="4_l2rnt"]
 
 [resource]
-resource_name = "Imposter Leaves"
-transparency = 4
-cull_mode = 2
-specular_mode = 2
-vertex_color_use_as_albedo = true
-albedo_texture = ExtResource("1_1om20")
-metallic_specular = 0.0
+render_priority = 0
+shader = ExtResource("1_k326d")
+shader_parameter/specular_color_multiplier = Color(1, 1, 1, 1)
+shader_parameter/diffuse_texture = ExtResource("2_inaps")
+shader_parameter/specular_texture = ExtResource("4_l2rnt")
+shader_parameter/normalmap_texture = ExtResource("3_2xdqs")
+shader_parameter/is_double_sided = true
+shader_parameter/enable_normal_map = true
+shader_parameter/enable_environment_map = false
+shader_parameter/use_albedo_as_emissive = false
+shader_parameter/use_alpha_scissor = true
+shader_parameter/power_gloss_level = Vector4(50, 0.068, 0.029, 0)
+shader_parameter/sonic_skin_falloff_param = Vector4(0, 0, 0, 0)
+shader_parameter/luminance_range = 1.0
+shader_parameter/alpha_scissor_threshold = 0.5
+shader_parameter/emission_power = 0.0
+shader_parameter/emission_clamp = 1.0
+shader_parameter/normalmap_depth = 0.8500000000058208
+shader_parameter/uv_scale = Vector2(1, 1)
+shader_parameter/uv_offset = Vector2(0, 0)
+shader_parameter/uv_speed = Vector2(0, 0)
+shader_parameter/shadow_contrast = 3.0
