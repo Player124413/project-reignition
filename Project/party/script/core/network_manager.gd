@@ -6,6 +6,12 @@ signal host_connected
 ## Emitted when a client successfully connects.
 signal client_connected
 
+@export var log_parent : Node
+@export var log_scene : PackedScene
+var loggers : Array[Control]
+const LOGGER_COUNT : int = 5
+var current_log_index : int
+
 ## Determines whether this device is acting as a host or a client.
 var is_hosting_game : bool
 ## The address to use for connections.
@@ -19,6 +25,20 @@ var is_online : bool
 ## Determines whether to attempt NAT Punchthrough or not. Enable this when exporting the project.
 var is_nat_enabled : bool = false
 
+func _ready() -> void:
+	initialize_loggers()
+
+func initialize_loggers() -> void:
+	for i in LOGGER_COUNT:
+		var new_log : Control = log_scene.instantiate()
+		loggers.append(new_log)
+		log_parent.add_child(new_log)
+
+func log_message(localization_key : StringName) -> void:
+	loggers[current_log_index].log_message(localization_key)
+	log_parent.move_child(loggers[current_log_index], 0)
+	current_log_index = current_log_index + 1 % LOGGER_COUNT
+
 func start_network_signals():
 	print("Noray network ready!")
 	if is_hosting_game:
@@ -28,7 +48,7 @@ func start_network_signals():
 
 ## Entry point for Host.
 func create_server_peer():
-	print("Creating Noray server peer")
+	NetworkManager.log_message("network_connecting")
 	await _register_with_noray()
 	_start_noray_host()
 
@@ -77,7 +97,7 @@ func _start_noray_host():
 	
 	is_online = true
 	host_connected.emit()
-	print("SERVER: Started listening on port %s" % Noray.local_port)
+	NetworkManager.log_message("network_connected")
 
 ## Server method for handling client connections.
 func _handle_noray_client_connect(_address: String, _port: int) -> Error:
@@ -134,7 +154,7 @@ func _handle_connect(_address: String, _port: int) -> Error:
 	if err != OK:
 		print("Create client failed %s" % err)
 		return err
-		
+	
 	multiplayer.multiplayer_peer = peer
 	is_online = true
 	client_connected.emit()
@@ -157,4 +177,4 @@ func setup_client_enet_connection_signals():
 ## Called when the client disconnects from the server.
 func _noray_server_disconnected():
 	is_online = false
-	print("Disconnected from Noray server.")
+	NetworkManager.log_message("network_disconnected")
