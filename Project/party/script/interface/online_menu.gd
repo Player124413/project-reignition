@@ -155,6 +155,7 @@ func cancel() -> void:
 	# Return to connection mode selection
 	is_connection_menu_active = true
 	animator.play("hide-online-menu")
+	NetworkManager.force_disconnect() # Force disconnect from online mode
 
 func return_to_main_menu() -> void:
 	get_tree().change_scene_to_file("res://interface/menu/Menu.tscn")
