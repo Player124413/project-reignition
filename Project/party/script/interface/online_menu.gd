@@ -134,7 +134,8 @@ func connect_noray() -> void:
 	
 	# Connect to server
 	if NetworkManager.is_hosting_game:
-		NetworkManager.host_connected.connect(_on_host_connected)
+		if !NetworkManager.host_connected.is_connected(_on_host_connected):
+			NetworkManager.host_connected.connect(_on_host_connected)
 		NetworkManager.create_server_peer()
 	else:
 		NetworkManager.create_client_peer()
