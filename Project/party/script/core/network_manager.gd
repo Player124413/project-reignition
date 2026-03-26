@@ -6,6 +6,9 @@ signal host_connected
 ## Emitted when a client successfully connects.
 signal client_connected
 
+## Emitted when a connection attempt either succeeds or fails.
+signal connection_attempt_finished(err : String)
+
 @export var log_parent : Node
 @export var log_scene : PackedScene
 var loggers : Array[Control]
@@ -87,7 +90,7 @@ func create_server_peer():
 
 ## Entry point for Client.
 func create_client_peer():
-	print("create Noray client peer")
+	NetworkManager.log_message("network_connecting")
 	await _register_with_noray()
 	setup_client_enet_connection_signals()
 	Noray.connect_nat(room_id)
@@ -100,6 +103,7 @@ func _register_with_noray():
 	err = await Noray.connect_to_host(address, port)
 	if err != OK:
 		print("Failed to connect to Noray for registration at %s:%s" % [address, port, err])
+		connection_attempt_finished.emit(err)
 		return err
 		
 	# Register host
@@ -110,6 +114,7 @@ func _register_with_noray():
 	err = await Noray.register_remote()
 	if err != OK:
 		print("Failed to register remote %s" % err)
+		connection_attempt_finished.emit(err)
 		return err
 	
 	print("Finished Noray registration")
@@ -121,6 +126,7 @@ func _start_noray_host():
 	multiplayer.multiplayer_peer = noray_network_peer
 	if err != OK:
 		print("Failed to listen on port %s with error: %s" % [Noray.local_port, err])
+		connection_attempt_finished.emit(err)
 		return
 	
 	# Capture room_id to display on host-peer for sharing with others
@@ -129,6 +135,7 @@ func _start_noray_host():
 	
 	is_online = true
 	host_connected.emit()
+	connection_attempt_finished.emit(OK)
 	NetworkManager.log_message("network_connected")
 
 ## Server method for handling client connections.
@@ -139,6 +146,7 @@ func _handle_noray_client_connect(_address: String, _port: int) -> Error:
 	var err = await PacketHandshake.over_enet(peer.host, _address, _port)
 	if err != OK:
 		print("Noray packet handshake failed %s" % err)
+		connection_attempt_finished.emit(err)
 		return err
 	
 	return OK
@@ -178,6 +186,7 @@ func _handle_connect(_address: String, _port: int) -> Error:
 	
 	if err != OK:
 		print("Client packet handshake failed %s" % err)
+		connection_attempt_finished.emit(err)
 		return err
 		
 	# Connect to host
@@ -186,11 +195,13 @@ func _handle_connect(_address: String, _port: int) -> Error:
 	
 	if err != OK:
 		print("Create client failed %s" % err)
+		connection_attempt_finished.emit(err)
 		return err
 	
 	multiplayer.multiplayer_peer = peer
 	is_online = true
 	client_connected.emit()
+	connection_attempt_finished.emit(OK)
 	return OK
 
 ## Noray host connections.

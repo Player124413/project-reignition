@@ -14,6 +14,8 @@ extends Menu
 var is_connection_menu_active : bool = true
 ## Tracks whether the player is trying to be the host, join, or play offline.
 var connection_mode_selection : int
+## Is the player currently trying to connect?
+var is_attempting_connection : bool
 
 ## Localization keys for connection selection options.
 var connection_values : Array[String] = [
@@ -26,6 +28,9 @@ func process_cursor() -> void:
 	cursor.global_position = online_nodes[current_selection.y + current_selection.x].global_position
 
 func update_selection() -> void:
+	if is_attempting_connection:
+		return
+	
 	if is_connection_menu_active:
 		update_connection_selection()
 	else:
@@ -67,6 +72,9 @@ func update_online_selection() -> void:
 		start_selection_timer()
 
 func confirm() -> void:
+	if is_attempting_connection:
+		return
+	
 	if is_connection_menu_active:
 		if connection_mode_selection == 0:
 			# Offline is essentially a single host peer
@@ -125,6 +133,7 @@ func show_player_count_menu() -> void:
 
 ## Starts a connection to the Noray server.
 func connect_noray() -> void:
+	is_attempting_connection = true # Lockout menu inputs
 	NetworkManager.is_hosting_game = connection_mode_selection == 1
 	NetworkManager.start_network_signals()
 	if !address_edit.text.is_empty():
@@ -145,6 +154,9 @@ func _on_host_connected() -> void:
 	room_edit.text = NetworkManager.room_id
 
 func cancel() -> void:
+	if is_attempting_connection:
+		return
+	
 	if is_connection_menu_active:
 		# Return to main menu
 		_is_menu_processing = false
@@ -160,3 +172,14 @@ func cancel() -> void:
 
 func return_to_main_menu() -> void:
 	get_tree().change_scene_to_file("res://interface/menu/Menu.tscn")
+
+func _enter_tree() -> void:
+	NetworkManager.connect("connection_attempt_finished", Callable.create(self, "finish_connection_attempt"))
+
+func _exit_tree() -> void:
+	NetworkManager.disconnect("connection_attempt_finished", Callable.create(self, "finish_connection_attempt"))
+
+func finish_connection_attempt(err : Error) -> void:
+	if err != OK:
+		NetworkManager.log_message(tr("network_error").replace("0", error_string(err)))
+	is_attempting_connection = false
