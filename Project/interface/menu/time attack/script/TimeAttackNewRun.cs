@@ -17,7 +17,7 @@ public partial class TimeAttackNewRun : Menu
 	[Export] Array<TimeAttackButton> buttonList;
 	private bool isActive;
 	private int currentSelection;
-	private int maxSelection = 4;
+	private int maxSelection = 3;
 
 	protected override void SetUp()
 	{
