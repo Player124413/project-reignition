@@ -15,7 +15,7 @@ public partial class TimeAttack : Menu
 	[Export] Array<TimeAttackButton> buttonList;
 	private bool isActive;
 	private int currentSelection;
-	private int maxSelection = 3;
+	private int maxSelection = 2;
 
 	protected override void SetUp()
 	{
@@ -41,17 +41,14 @@ public partial class TimeAttack : Menu
 		SaveManager.ActiveGameData.level = 99;
 		SaveManager.ActiveSkillRing.UpdateTotalSkillPoints();
 
-		TimeAttackManager.Instance.GenerateDailyRun();
-
-
 	}
 
 	public override void OpenParentMenu()
 	{
 		// Return to main menu
 		FadeBgm(.5f);
-		menuMemory[MemoryKeys.ActiveMenu] = (int)MemoryKeys.MainMenu;
-		TransitionManager.QueueSceneChange(TransitionManager.MenuScenePath);
+
+		// Return to main menuSceneChange(TransitionManager.MenuScenePath);
 		TransitionManager.StartTransition(new()
 		{
 			color = Colors.Black,

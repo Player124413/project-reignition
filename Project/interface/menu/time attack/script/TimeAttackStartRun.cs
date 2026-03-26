@@ -10,9 +10,11 @@ public partial class TimeAttackStartRun : Menu
 	[Export] private Description description;
 	[Export] TimeAttackReady readyMenu;
 	[Export] TimeAttackLevelList levelList;
+	[Export] TimeAttackLeaderboard leaderboard;
 	[Export] Array<TimeAttackButton> buttonList;
 
 	private bool isActive;
+	private bool isLeaderboardActive;
 	private int currentSelection;
 	private int maxSelection = 2;
 
@@ -26,6 +28,7 @@ public partial class TimeAttackStartRun : Menu
 		base.ShowMenu();
 		currentSelection = 1;
 		description.Text = buttonList[0].description;
+		isLeaderboardActive = false;
 	}
 
 	public override void OpenParentMenu()
@@ -48,7 +51,7 @@ public partial class TimeAttackStartRun : Menu
 
 	private void ProcessMenuInput(Vector2I input)
 	{
-		if (isActive)
+		if (isActive && !isLeaderboardActive)
 		{
 			currentSelection += input.Y;
 			if (currentSelection > maxSelection || currentSelection < 1)
@@ -59,6 +62,17 @@ public partial class TimeAttackStartRun : Menu
 				description.Text = buttonList[currentSelection - 1].description;
 				description.ShowDescription();
 			}
+			else
+			{
+				leaderboard.EnableProcessing();
+				isLeaderboardActive = true;
+				for (int i = 0; i < buttonList.Count; i++)
+				{
+					buttonList[i].DeselectButton();
+				}
+				leaderboard.ShowMenu();
+				return;
+			}
 
 			for (int i = 0; i < buttonList.Count; i++)
 			{
@@ -66,13 +80,23 @@ public partial class TimeAttackStartRun : Menu
 			}
 			buttonList[currentSelection - 1].SelectButton();
 		}
+		else if (isActive && isLeaderboardActive)
+		{
+			if (input.X != 0)
+			{
+				leaderboard.DisableProcessing();
+				buttonList[currentSelection - 1].SelectButton();
+				leaderboard.DeselectMenu();
+				isLeaderboardActive = false;
+			}
+		}
 		else
 			return;
 	}
 
 	protected override void Confirm()
 	{
-		if (isActive)
+		if (isActive && !isLeaderboardActive)
 		{
 			if (currentSelection == 1)
 				readyMenu.SetupReadyMenu();
@@ -83,7 +107,7 @@ public partial class TimeAttackStartRun : Menu
 
 	protected override void Cancel()
 	{
-		if (isActive)
+		if (isActive && !isLeaderboardActive)
 			animator.Play("hide");
 	}
 

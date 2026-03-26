@@ -4,17 +4,19 @@ using System.Collections.Generic;
 
 namespace Project.Interface.Menus;
 
-public partial class TimeAttackLevelSelect : Menu
+public partial class TimeAttackLeaderboard : Menu
 {
 	[Export] private Description description;
 	[Export] private Control clip;
 
 	[Export] private Control cursor;
+	[Export] private AnimationPlayer cursorAnimator;
 	private float initialCursorPosition;
 	private int cursorPosition;
 	private Vector2 cursorWidthVelocity;
 
 	[Export] private Control options;
+	[Export] private Control optionsSub;
 	private Vector2 optionVelocity;
 	[Export] private Sprite2D scrollbar;
 
@@ -22,15 +24,18 @@ public partial class TimeAttackLevelSelect : Menu
 	private float scrollRatio;
 	private Vector2 scrollVelocity;
 	private const float ScrollSmoothing = .05f;
-	private readonly List<LevelOption> levelOptions = [];
+	private readonly List<TimeAttackLeaderboardOptionMain> leaderboardOptionsMain = [];
+
+	private bool isActive;
+	private bool isSubActive;
 
 
 	protected override void SetUp()
 	{
 		foreach (Node node in options.GetChildren())
 		{
-			if (node is LevelOption levelOption)
-				levelOptions.Add(levelOption);
+			if (node is TimeAttackLeaderboardOptionMain optionMain)
+				leaderboardOptionsMain.Add(optionMain);
 		}
 
 		initialCursorPosition = cursor.Position.Y;
@@ -45,80 +50,66 @@ public partial class TimeAttackLevelSelect : Menu
 
 	public override void ShowMenu()
 	{
-		menuMemory[MemoryKeys.LevelSelect] = 0;
-		SetUp();
-
-		VerticalSelection = menuMemory[MemoryKeys.LevelSelect];
+		//SetUp();
+		cursor.Visible = true;
+		cursorAnimator.Seek(0);
+		VerticalSelection = 0;
+		isActive = true;
 		RecalculateListPosition();
 		UpdateListPosition(0);
 
-		animator.Play("show");
-
-		for (int i = 0; i < levelOptions.Count; i++)
-			levelOptions[i].EnableTAInfo();
 	}
 
-	public override void HideMenu()
+	public void DeselectMenu()
 	{
-		for (int i = 0; i < levelOptions.Count; i++)
-			levelOptions[i].HideOption();
+		cursor.Visible = false;
+		isActive = false;
 	}
 
 	protected override void Confirm()
 	{
-		Cancel();
+
 	}
 
 	protected override void Cancel()
 	{
-		base.Cancel();
 
-		HideMenu();
-		cursorPosition = 0;
-		levelOptions.Clear();
-
-		parentMenu.OpenParentMenu();
 	}
 
 	protected override void UpdateSelection()
 	{
 		if (Mathf.IsZeroApprox(Input.GetAxis("ui_up", "ui_down"))) return;
 
-		VerticalSelection = WrapSelection(VerticalSelection + Mathf.Sign(Input.GetAxis("ui_up", "ui_down")), levelOptions.Count);
+		VerticalSelection = WrapSelection(VerticalSelection + Mathf.Sign(Input.GetAxis("ui_up", "ui_down")), leaderboardOptionsMain.Count);
+		GD.Print("Moved Cursor");
 
-		animator.Play("select");
-		animator.Seek(0, true);
+		//animator.Play("select");
+		//animator.Seek(0, true);
 
 		StartSelectionTimer();
 		RecalculateListPosition();
 	}
 
-	private void UpdateDescription()
-	{
-		description.ShowDescription();
-		description.Text = levelOptions[VerticalSelection].GetDescription();
-	}
-
 	private void RecalculateListPosition()
 	{
 		cursorPosition = VerticalSelection;
-		if (levelOptions.Count > 5)
+		if (leaderboardOptionsMain.Count > 5)
 		{
 			if (VerticalSelection < 3)
 			{
 				scrollRatio = 0;
 				scrollAmount = 0;
 			}
-			else if (VerticalSelection >= levelOptions.Count - 3)
+			else if (VerticalSelection >= leaderboardOptionsMain.Count - 3)
 			{
 				scrollRatio = 1;
-				scrollAmount = levelOptions.Count - 5;
-				cursorPosition = 4 - (levelOptions.Count - 1 - VerticalSelection);
+				scrollAmount = leaderboardOptionsMain.Count - 5;
+				cursorPosition = 4 - (leaderboardOptionsMain.Count - 1 - VerticalSelection);
 			}
 			else
 			{
 				scrollAmount = VerticalSelection - 2;
-				scrollRatio = (VerticalSelection - 2) / (levelOptions.Count - 5.0f);
+				scrollRatio = (VerticalSelection - 2) / (leaderboardOptionsMain.Count - 5.0f);
 				cursorPosition = 2;
 			}
 		}
@@ -126,10 +117,10 @@ public partial class TimeAttackLevelSelect : Menu
 
 	private void UpdateListPosition(float smoothing)
 	{
-		float targetScrollPosition = 360 * (VerticalSelection / (levelOptions.Count - 1f));
+		float targetScrollPosition = 360 * (VerticalSelection / (leaderboardOptionsMain.Count - 1f));
 		scrollbar.Position = scrollbar.Position.SmoothDamp(Vector2.Right * targetScrollPosition, ref scrollVelocity, smoothing);
 
-		cursor.Position = cursor.Position.SmoothDamp(new(cursor.Position.X, initialCursorPosition + (96 * cursorPosition)), ref cursorWidthVelocity, smoothing);
-		options.Position = options.Position.SmoothDamp(Vector2.Up * ((96 * scrollAmount) - 32), ref optionVelocity, smoothing);
+		cursor.Position = cursor.Position.SmoothDamp(new(cursor.Position.X, initialCursorPosition + (119 * cursorPosition)), ref cursorWidthVelocity, smoothing);
+		options.Position = options.Position.SmoothDamp(Vector2.Up * ((119 * scrollAmount)), ref optionVelocity, smoothing);
 	}
 }
