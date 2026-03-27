@@ -1,5 +1,4 @@
 using System;
-using System.IO.Pipes;
 
 //using System.Collections.Generic;
 using System.Linq;
@@ -927,6 +926,7 @@ public partial class SaveManager : Node
 	public static void LoadGameData()
 	{
 		LoadSharedData();
+		LoadTimeAttackData();
 
 		for (int i = 0; i < GameSaveSlots.Length; i++)
 		{
