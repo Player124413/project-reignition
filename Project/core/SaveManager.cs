@@ -1,4 +1,6 @@
 using System;
+using System.IO.Pipes;
+
 //using System.Collections.Generic;
 using System.Linq;
 using Godot;
@@ -1502,26 +1504,24 @@ public partial class SaveManager : Node
 	public class TimeAttackData
 	{
 		///<summary>The times stored for Standard runs</summary>
-		public Array<Dictionary<string, float>> AnyP = [];
+		public Array<Array<float>> AnyP = [];
 		///<summary>The times stored for Main Mission runs</summary>
-		public Array<Dictionary<string, float>> GoalP = [];
+		public Array<Array<float>> GoalP = [];
 		///<summary>The times stored for Boss Rush runs</summary>
-		public Array<Dictionary<string, float>> BossRush = [];
+		public Array<Array<float>> BossRush = [];
 		///<summary>The times stored for single runs</summary>
 		public Dictionary<string, float> SingleRun;
 		///<summary>The times stored for the current run.</summary>
-		public Dictionary<string, float> RunInProgress;
-		///<summary>The current custom run in progress</summary>
-		public Array<LevelDataResource> CustomRunInProgress;
+		public Array<float> RunInProgress;
 		///<summary>The current run type</summary>
 		public TimeAttackManager.RunType CurrentRunType;
 		///<summary>The player's spot in the current run</summary>
 		public int CurrentPlacement;
 
 		///<summary>Adds the current run to the saved runs</summary>
-		public void AddCurrentRun(TimeAttackManager.RunType type)
+		public void AddCurrentRun()
 		{
-			switch (type)
+			switch (TimeAttackManager.Instance.CurrentRunType)
 			{
 				case TimeAttackManager.RunType.AnyP:
 					AnyP.Add(RunInProgress);
@@ -1546,6 +1546,7 @@ public partial class SaveManager : Node
 
 			return total;
 		}
+
 		///<summary>Is Time Attack unlocked?</summary>
 		public bool CheckUnlocked()
 		{
@@ -1561,7 +1562,6 @@ public partial class SaveManager : Node
 				{ nameof(BossRush), BossRush},
 				{ nameof(SingleRun), SingleRun},
 				{ nameof(RunInProgress), RunInProgress},
-				{ nameof(CustomRunInProgress), CustomRunInProgress},
 				{ nameof(CurrentRunType), (int)CurrentRunType},
 				{ nameof(CurrentPlacement), CurrentPlacement}
 
@@ -1571,17 +1571,15 @@ public partial class SaveManager : Node
 		public void FromDictionary(Dictionary dictionary)
 		{
 			if (dictionary.TryGetValue(nameof(AnyP), out Variant var))
-				AnyP = (Array<Dictionary<string, float>>)var;
+				AnyP = (Array<Array<float>>)var;
 			if (dictionary.TryGetValue(nameof(GoalP), out var))
-				GoalP = (Array<Dictionary<string, float>>)var;
+				GoalP = (Array<Array<float>>)var;
 			if (dictionary.TryGetValue(nameof(BossRush), out var))
-				BossRush = (Array<Dictionary<string, float>>)var;
+				BossRush = (Array<Array<float>>)var;
 			if (dictionary.TryGetValue(nameof(SingleRun), out var))
 				SingleRun = (Dictionary<string, float>)var;
 			if (dictionary.TryGetValue(nameof(RunInProgress), out var))
-				RunInProgress = (Dictionary<string, float>)var;
-			if (dictionary.TryGetValue(nameof(CustomRunInProgress), out var))
-				CustomRunInProgress = (Array<LevelDataResource>)var;
+				RunInProgress = (Array<float>)var;
 			if (dictionary.TryGetValue(nameof(CurrentRunType), out var))
 				CurrentRunType = (TimeAttackManager.RunType)(int)var;
 			if (dictionary.TryGetValue(nameof(CurrentPlacement), out var))
@@ -1591,17 +1589,7 @@ public partial class SaveManager : Node
 
 		public static TimeAttackData CreateDefaultData()
 		{
-			TimeAttackData data = new()
-			{
-				AnyP = [],
-				GoalP = [],
-				BossRush = [],
-				SingleRun = [],
-				RunInProgress = [],
-				CustomRunInProgress = [],
-				CurrentRunType = TimeAttackManager.RunType.AnyP,
-				CurrentPlacement = -1
-			};
+			TimeAttackData data = new();
 			return data;
 		}
 	}

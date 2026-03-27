@@ -55,6 +55,7 @@ public partial class TimeAttackResults : Menu
 
 	public override void ShowMenu()
 	{
+		SaveManager.SaveTimeAttackData();
 		VerticalSelection = 0;
 		RecalculateListPosition();
 		UpdateListPosition(0);

@@ -1,7 +1,9 @@
 using Godot;
 using System;
 using Godot.Collections;
+using System.Collections.Generic;
 using Project.Core;
+using System.Linq;
 
 namespace Project.Interface.Menus;
 
@@ -12,23 +14,29 @@ public partial class TimeAttackStartRun : Menu
 	[Export] TimeAttackLevelList levelList;
 	[Export] TimeAttackLeaderboard leaderboard;
 	[Export] Array<TimeAttackButton> buttonList;
+	[Export]
+	private PackedScene levelOption;
 
 	private bool isActive;
 	private bool isLeaderboardActive;
 	private int currentSelection;
 	private int maxSelection = 2;
 
+
 	protected override void SetUp()
 	{
 		currentSelection = 1;
+
 	}
 
 	public override void ShowMenu()
 	{
 		base.ShowMenu();
+		SaveManager.LoadTimeAttackData();
 		currentSelection = 1;
 		description.Text = buttonList[0].description;
 		isLeaderboardActive = false;
+		leaderboard.SpawnLeaderboardOptionsMain();
 	}
 
 	public override void OpenParentMenu()
@@ -122,6 +130,9 @@ public partial class TimeAttackStartRun : Menu
 		readyMenu.ShowMenu();
 	}
 
+
+
 	public void SetActive() => isActive = true;
 	public void SetInactive() => isActive = false;
+
 }
