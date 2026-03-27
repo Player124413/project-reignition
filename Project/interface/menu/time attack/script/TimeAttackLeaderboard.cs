@@ -39,6 +39,7 @@ public partial class TimeAttackLeaderboard : Menu
 
 	protected override void SetUp()
 	{
+		leaderboardOptionsMain.Clear();
 		foreach (Node node in options.GetChildren())
 		{
 			if (node is TimeAttackLeaderboardOptionMain optionMain)
@@ -57,14 +58,13 @@ public partial class TimeAttackLeaderboard : Menu
 
 	public override void ShowMenu()
 	{
-		//SetUp();
 		cursor.Visible = true;
 		cursorAnimator.Seek(0);
 		VerticalSelection = 0;
 		isActive = true;
 		RecalculateListPosition();
 		UpdateListPosition(0);
-
+		SetUp();
 	}
 
 	public void DeselectMenu()
@@ -146,32 +146,31 @@ public partial class TimeAttackLeaderboard : Menu
 		for (int i = 0; i < 5; i++)
 		{
 			TimeAttackLeaderboardOptionMain option = (TimeAttackLeaderboardOptionMain)leaderboardOptionMain.Instantiate();
+			option.SetPlacement(i + 1);
+			options.AddChild(option);
 
-			option.TimeVisible(true);
+		}
+		for (int i = 0; i < options.GetChildren().Count; i++)
+		{
+
+			TimeAttackLeaderboardOptionMain option = options.GetChildren()[i] as TimeAttackLeaderboardOptionMain;
 			switch (TimeAttackManager.Instance.CurrentRunType)
 			{
 				case TimeAttackManager.RunType.AnyP:
-					if (anyP[i] != null)
+					if (anyP[i].Count != 0)
 						option.SetTime(anyP[i].Sum());
-					else
-						option.TimeVisible(false);
 					break;
 				case TimeAttackManager.RunType.GoalPercent:
-					if (goalP[i] != null)
+					if (goalP[i].Count != 0)
 						option.SetTime(goalP[i].Sum());
-					else
-						option.TimeVisible(false);
 					break;
 				case TimeAttackManager.RunType.BossRush:
-					if (bossRush[i] != null)
+					if (bossRush[i].Count != 0)
 						option.SetTime(bossRush[i].Sum());
-					else
-						option.TimeVisible(false);
 					break;
 			}
 
-			option.SetPlacement(i + 1);
-			options.AddChild(option);
+
 		}
 	}
 
