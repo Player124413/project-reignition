@@ -1,9 +1,7 @@
 using Godot;
 using System;
 using Godot.Collections;
-using System.Collections.Generic;
 using Project.Core;
-using System.Linq;
 
 namespace Project.Interface.Menus;
 
