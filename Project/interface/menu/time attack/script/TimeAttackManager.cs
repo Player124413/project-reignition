@@ -16,7 +16,6 @@ public partial class TimeAttackManager : Node
 		GoalPercent,
 		SingleRun,
 		BossRush,
-		Custom
 	}
 
 	public RunType CurrentRunType { get; private set; }
@@ -29,7 +28,6 @@ public partial class TimeAttackManager : Node
 	private LevelDataResource[] Levels_GoalPercent;
 	[Export]
 	private LevelDataResource[] Levels_BossRush;
-	private LevelDataResource[] Levels_Custom;
 	public LevelDataResource Level_Single;
 	public int CurrentLevel { get; private set; }
 	public bool IsRunActive { get; private set; }
@@ -42,9 +40,8 @@ public partial class TimeAttackManager : Node
 	public void SetRunType(RunType type)
 	{
 		CurrentRunType = type;
+		SaveManager.TimeData.CurrentRunType = type;
 	}
-
-	public void SetCustomRun(LevelDataResource[] custom) => custom.CopyTo(Levels_Custom, 0);
 
 	public LevelDataResource[] GetCurrentRunLevels(RunType type)
 	{
@@ -56,8 +53,6 @@ public partial class TimeAttackManager : Node
 				return Levels_GoalPercent;
 			case RunType.BossRush:
 				return Levels_BossRush;
-			case RunType.Custom:
-				return Levels_Custom;
 		}
 		return Levels_AnyPercent;
 	}
@@ -71,8 +66,6 @@ public partial class TimeAttackManager : Node
 				return Levels_GoalPercent;
 			case RunType.BossRush:
 				return Levels_BossRush;
-			case RunType.Custom:
-				return Levels_Custom;
 		}
 		return Levels_AnyPercent;
 	}

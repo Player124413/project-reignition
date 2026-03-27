@@ -1,6 +1,7 @@
 using Godot;
 using Project.Core;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Project.Interface.Menus;
 
@@ -11,6 +12,8 @@ public partial class TimeAttackLeaderboard : Menu
 
 	[Export] private Control cursor;
 	[Export] private AnimationPlayer cursorAnimator;
+	[Export]
+	private PackedScene leaderboardOptionMain;
 	private float initialCursorPosition;
 	private int cursorPosition;
 	private Vector2 cursorWidthVelocity;
@@ -28,6 +31,10 @@ public partial class TimeAttackLeaderboard : Menu
 
 	private bool isActive;
 	private bool isSubActive;
+
+	List<List<float>> anyP;
+	List<List<float>> goalP;
+	List<List<float>> bossRush;
 
 
 	protected override void SetUp()
@@ -122,5 +129,89 @@ public partial class TimeAttackLeaderboard : Menu
 
 		cursor.Position = cursor.Position.SmoothDamp(new(cursor.Position.X, initialCursorPosition + (119 * cursorPosition)), ref cursorWidthVelocity, smoothing);
 		options.Position = options.Position.SmoothDamp(Vector2.Up * ((119 * scrollAmount)), ref optionVelocity, smoothing);
+	}
+
+	public void SpawnLeaderboardOptionsMain()
+	{
+		SortTimes();
+		if (options.GetChildren().Count != 0)
+		{
+			foreach (Node n in options.GetChildren())
+			{
+				options.RemoveChild(n);
+				n.QueueFree();
+			}
+		}
+
+		for (int i = 0; i < 5; i++)
+		{
+			TimeAttackLeaderboardOptionMain option = (TimeAttackLeaderboardOptionMain)leaderboardOptionMain.Instantiate();
+
+			option.TimeVisible(true);
+			switch (TimeAttackManager.Instance.CurrentRunType)
+			{
+				case TimeAttackManager.RunType.AnyP:
+					if (anyP[i] != null)
+						option.SetTime(anyP[i].Sum());
+					else
+						option.TimeVisible(false);
+					break;
+				case TimeAttackManager.RunType.GoalPercent:
+					if (goalP[i] != null)
+						option.SetTime(goalP[i].Sum());
+					else
+						option.TimeVisible(false);
+					break;
+				case TimeAttackManager.RunType.BossRush:
+					if (bossRush[i] != null)
+						option.SetTime(bossRush[i].Sum());
+					else
+						option.TimeVisible(false);
+					break;
+			}
+
+			option.SetPlacement(i + 1);
+			options.AddChild(option);
+		}
+	}
+
+	private void SortTimes()
+	{
+		anyP = new List<List<float>>();
+		goalP = new List<List<float>>();
+		bossRush = new List<List<float>>();
+
+		for (int i = 0; i < SaveManager.TimeData.AnyP.Count; i++)
+		{
+			anyP.Add(new List<float>());
+			for (int k = 0; k < SaveManager.TimeData.AnyP[i].Count; k++)
+			{
+				anyP[i].Add(SaveManager.TimeData.AnyP[i][k]);
+			}
+		}
+
+		for (int i = 0; i < SaveManager.TimeData.GoalP.Count; i++)
+		{
+			goalP.Add(new List<float>());
+			for (int k = 0; k < SaveManager.TimeData.GoalP[i].Count; k++)
+			{
+				goalP[i].Add(SaveManager.TimeData.GoalP[i][k]);
+			}
+		}
+
+		for (int i = 0; i < SaveManager.TimeData.BossRush.Count; i++)
+		{
+			bossRush.Add(new List<float>());
+			for (int k = 0; k < SaveManager.TimeData.BossRush[i].Count; k++)
+			{
+				bossRush[i].Add(SaveManager.TimeData.BossRush[i][k]);
+				GD.Print("Time " + i + ": " + bossRush[i][k]);
+			}
+		}
+
+		anyP = anyP.OrderBy(list => list.Sum()).ToList();
+		goalP = goalP.OrderBy(list => list.Sum()).ToList();
+		bossRush = bossRush.OrderBy(list => list.Sum()).ToList();
+
 	}
 }

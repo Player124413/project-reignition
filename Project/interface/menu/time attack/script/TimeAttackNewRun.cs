@@ -1,3 +1,6 @@
+using System.IO.Pipes;
+using System.Numerics;
+
 using Godot;
 using Godot.Collections;
 using Project.Core;
@@ -19,6 +22,7 @@ public partial class TimeAttackNewRun : Menu
 	private int currentSelection;
 	private int maxSelection = 3;
 
+
 	protected override void SetUp()
 	{
 		currentSelection = 1;
@@ -29,6 +33,7 @@ public partial class TimeAttackNewRun : Menu
 		base.ShowMenu();
 		currentSelection = 1;
 		description.Text = buttonList[0].description;
+		SaveManager.LoadTimeAttackData();
 	}
 
 	public override void OpenParentMenu()
@@ -91,9 +96,6 @@ public partial class TimeAttackNewRun : Menu
 				case 3:
 					TimeAttackManager.Instance.SetRunType(TimeAttackManager.RunType.BossRush);
 					break;
-				case 4:
-					TimeAttackManager.Instance.SetRunType(TimeAttackManager.RunType.Custom);
-					break;
 			}
 
 			TimeAttackManager.Instance.SetRunActive(true);
@@ -146,4 +148,6 @@ public partial class TimeAttackNewRun : Menu
 	}
 
 	public void ChangeButtonImage() => buttonImage.Texture = buttonList[currentSelection - 1].image;
+
+
 }
