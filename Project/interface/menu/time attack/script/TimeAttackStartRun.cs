@@ -34,7 +34,9 @@ public partial class TimeAttackStartRun : Menu
 		currentSelection = 1;
 		description.Text = buttonList[0].description;
 		isLeaderboardActive = false;
+		leaderboard.SpawnLeaderboardOptionsSub();
 		leaderboard.SpawnLeaderboardOptionsMain();
+
 	}
 
 	public override void OpenParentMenu()

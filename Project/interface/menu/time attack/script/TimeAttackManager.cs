@@ -22,12 +22,9 @@ public partial class TimeAttackManager : Node
 
 	private float[] CurrentRunTimes;
 
-	[Export]
-	private LevelDataResource[] Levels_AnyPercent;
-	[Export]
-	private LevelDataResource[] Levels_GoalPercent;
-	[Export]
-	private LevelDataResource[] Levels_BossRush;
+	[Export] private LevelDataResource[] Levels_AnyPercent;
+	[Export] private LevelDataResource[] Levels_GoalPercent;
+	[Export] private LevelDataResource[] Levels_BossRush;
 	public LevelDataResource Level_Single;
 	public int CurrentLevel { get; private set; }
 	public bool IsRunActive { get; private set; }
