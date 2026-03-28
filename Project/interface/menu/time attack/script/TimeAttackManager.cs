@@ -187,7 +187,6 @@ public partial class TimeAttackManager : Node
 
 	public void SetReturnTimes()
 	{
-		CurrentRunTimes = new Array<float>();
 		CurrentRunTimes = SaveManager.TimeData.RunInProgress;
 		CurrentLevel = SaveManager.TimeData.CurrentPlacement;
 	}
