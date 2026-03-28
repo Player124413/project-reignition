@@ -1,3 +1,4 @@
+using System.Linq;
 using Godot;
 using Godot.Collections;
 using Project.Core;
@@ -16,16 +17,31 @@ public partial class TimeAttack : Menu
 	private bool isActive;
 	private int currentSelection;
 	private int maxSelection = 2;
+	private bool isRunInProgress = false;
 
 	protected override void SetUp()
 	{
 		currentSelection = 1;
-
 	}
 
 	public override void ShowMenu()
 	{
-		base.ShowMenu();
+		if (SaveManager.TimeData.RunInProgress.Count > 0)
+		{
+			maxSelection = 3;
+			isRunInProgress = true;
+		}
+		else
+		{
+			maxSelection = 2;
+			isRunInProgress = false;
+		}
+
+		if (!isRunInProgress)
+			animator.Play("show");
+		else
+			animator.Play("showcontinue");
+
 		currentSelection = 1;
 		description.Text = buttonList[0].description;
 
@@ -40,6 +56,8 @@ public partial class TimeAttack : Menu
 		SaveManager.ActiveGameData.UnlockAllWorlds();
 		SaveManager.ActiveGameData.level = 99;
 		SaveManager.ActiveSkillRing.UpdateTotalSkillPoints();
+
+
 
 	}
 
@@ -64,6 +82,17 @@ public partial class TimeAttack : Menu
 
 	protected override void UpdateSelection()
 	{
+		if (isReturnMenuActive)
+		{
+			int inputReturn = Mathf.Sign(Input.GetAxis("ui_left", "ui_right"));
+			if ((inputReturn > 0 && isReturnSelected) || (inputReturn < 0 && !isReturnSelected))
+			{
+				isReturnSelected = !isReturnSelected;
+				returnAnimator.Play(isReturnSelected ? "select-yes" : "select-no");
+			}
+
+			return;
+		}
 		Vector2I input = new(Mathf.Sign(Input.GetAxis("ui_left", "ui_right")), Mathf.Sign(Input.GetAxis("ui_up", "ui_down")));
 		StartSelectionTimer();
 
@@ -74,6 +103,8 @@ public partial class TimeAttack : Menu
 	{
 		if (isActive)
 		{
+
+
 			currentSelection += input.Y;
 			if (currentSelection > maxSelection || currentSelection < 1)
 				currentSelection = WrapSelection(currentSelection, maxSelection, 1);
@@ -88,8 +119,24 @@ public partial class TimeAttack : Menu
 			{
 				buttonList[i].DeselectButton();
 			}
+
+
 			buttonImageAnimator.Play("show");
-			buttonList[currentSelection - 1].SelectButton();
+			if (isRunInProgress)
+				buttonList[currentSelection - 1].SelectButton();
+			else
+			{
+				switch (currentSelection)
+				{
+					case 1:
+						buttonList[0].SelectButton();
+						break;
+					case 2:
+						buttonList[2].SelectButton();
+						description.Text = buttonList[2].description;
+						break;
+				}
+			}
 		}
 		else
 			return;
@@ -100,17 +147,58 @@ public partial class TimeAttack : Menu
 
 		if (isActive)
 		{
-			TimeAttackManager.Instance.SetRunActive(true);
-			switch (currentSelection)
+			if (isReturnMenuActive)
 			{
-				case 2:
-					TimeAttackManager.Instance.SetRunType(TimeAttackManager.RunType.SingleRun);
-					break;
+				if (isReturnSelected)
+				{
+					ContinueRun();
+				}
+				else
+				{
+					isReturnMenuActive = false;
+					returnAnimator.Play("hide");
+					timeAttackAnimator.Play("confirm-1no");
+				}
 			}
-			timeAttackAnimator.Play("confirm-" + currentSelection);
-			currentSelection = 1;
-			TimeAttackManager.Instance.ClearCurrentRun();
-			TimeAttackManager.Instance.ClearCurrentSavedRun();
+			else
+			{
+				TimeAttackManager.Instance.SetRunActive(true);
+
+				if (!isRunInProgress)
+				{
+					switch (currentSelection)
+					{
+						case 2:
+							TimeAttackManager.Instance.SetRunType(TimeAttackManager.RunType.SingleRun);
+							TimeAttackManager.Instance.ClearCurrentRun();
+							TimeAttackManager.Instance.ClearCurrentSavedRun();
+							break;
+					}
+					timeAttackAnimator.Play("confirm-" + currentSelection);
+					currentSelection = 1;
+				}
+				else
+				{
+					switch (currentSelection)
+					{
+						case 1:
+							timeAttackAnimator.Play("confirm-1continue");
+							ShowReturnMenu();
+							break;
+						case 2:
+							timeAttackAnimator.Play("confirm-2continue");
+							ContinueRun();
+							break;
+						case 3:
+							timeAttackAnimator.Play("confirm-2");
+							currentSelection = 1;
+							TimeAttackManager.Instance.ClearCurrentRun();
+							TimeAttackManager.Instance.ClearCurrentSavedRun();
+							break;
+					}
+				}
+			}
+
 
 		}
 
@@ -120,15 +208,60 @@ public partial class TimeAttack : Menu
 	{
 		if (isActive)
 		{
-			DebugManager.Instance.ToggleDemoSave(false);
-			SaveManager.SaveTimeAttackData();
-			SaveManager.SaveGameData();
-			TimeAttackManager.Instance.SetRunActive(false);
+			if (!isReturnMenuActive)
+			{
+				DebugManager.Instance.ToggleDemoSave(false);
+				SaveManager.SaveTimeAttackData();
+				SaveManager.SaveGameData();
+				TimeAttackManager.Instance.SetRunActive(false);
 
-			OpenParentMenu();
-			currentSelection = 1;
+				OpenParentMenu();
+				currentSelection = 1;
+			}
+			else
+				CancelReturnMenu();
+
 		}
 
+	}
+
+	private void ContinueRun()
+	{
+		TimeAttackManager.Instance.SetRunActive(true);
+		TimeAttackManager.Instance.SetReturnTimes();
+		TimeAttackManager.Instance.SetRunType(SaveManager.TimeData.CurrentRunType);
+		TimeAttackManager.Instance.LoadLevel(TimeAttackManager.Instance.GetCurrentLevel());
+
+	}
+
+	[Export]
+	private AnimationPlayer returnAnimator;
+	private bool isReturnMenuActive = false;
+	private bool isReturnSelected;
+
+	private void ShowReturnMenu()
+	{
+		isReturnMenuActive = true;
+		isReturnSelected = true;
+
+		returnAnimator.Advance(0.0);
+
+		returnAnimator.Play("select-yes");
+		returnAnimator.Advance(0.0);
+
+		returnAnimator.Play("show");
+	}
+	private void CancelReturnMenu()
+	{
+
+		if (isReturnSelected)
+		{
+			returnAnimator.Play("select-no");
+			returnAnimator.Advance(0.0);
+		}
+
+		isReturnMenuActive = false;
+		returnAnimator.Play("hide");
 	}
 
 	public override void PlayReturnAnim() => timeAttackAnimator.Play("show");

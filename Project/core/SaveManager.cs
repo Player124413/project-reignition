@@ -1599,6 +1599,12 @@ public partial class SaveManager : Node
 			return total;
 		}
 
+		public void AddToRunInProgress(float time)
+		{
+			GD.Print("Adding time to run in progress");
+			RunInProgress.Add(time);
+		}
+
 		///<summary>Is Time Attack unlocked?</summary>
 		public bool CheckUnlocked()
 		{
