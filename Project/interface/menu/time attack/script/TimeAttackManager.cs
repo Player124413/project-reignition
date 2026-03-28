@@ -20,7 +20,7 @@ public partial class TimeAttackManager : Node
 
 	public RunType CurrentRunType { get; private set; }
 
-	private float[] CurrentRunTimes;
+	private Array<float> CurrentRunTimes;
 
 	[Export] private LevelDataResource[] Levels_AnyPercent;
 	[Export] private LevelDataResource[] Levels_GoalPercent;
@@ -160,16 +160,16 @@ public partial class TimeAttackManager : Node
 	{
 		CurrentLevel = 0;
 		if (GetCurrentRun() != null)
-			CurrentRunTimes = new float[GetCurrentRun().Length];
+			CurrentRunTimes = new Array<float>();
 
 	}
 
 	public void AddTime(float time)
 	{
-		CurrentRunTimes[CurrentLevel] = time;
+		CurrentRunTimes.Add(time);
 	}
 
-	public float[] GetCurrentRunTimes()
+	public Array<float> GetCurrentRunTimes()
 	{
 		return CurrentRunTimes;
 	}
@@ -184,10 +184,19 @@ public partial class TimeAttackManager : Node
 		//GD.Print("Total Run Time: " + results);
 		return results;
 	}
+
+	public void SetReturnTimes()
+	{
+		CurrentRunTimes = new Array<float>();
+		CurrentRunTimes = SaveManager.TimeData.RunInProgress;
+		CurrentLevel = SaveManager.TimeData.CurrentPlacement;
+	}
 	private void ResetRunTimes()
 	{
-		CurrentRunTimes = [];
+		CurrentRunTimes = new Array<float>();
 	}
+
+
 
 
 }
