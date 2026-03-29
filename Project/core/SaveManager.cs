@@ -1601,7 +1601,6 @@ public partial class SaveManager : Node
 
 		public void AddToRunInProgress(float time)
 		{
-			GD.Print("Adding time to run in progress");
 			RunInProgress.Add(time);
 		}
 
