@@ -20,6 +20,7 @@ public partial class PauseMenu : Node
 	[Export] private AudioStreamPlayer selectSfx;
 	[Export] private AudioStreamPlayer cancelSfx;
 	[Export] private Menus.Description description;
+	[Export] private Label restart;
 
 	[ExportGroup("Status Menu")]
 	[Export] private Label[] values;
@@ -102,6 +103,14 @@ public partial class PauseMenu : Node
 		}
 
 		isHidden = false;
+
+		if (TimeAttackManager.Instance.IsRunActive)
+		{
+			Label glow = restart.GetChild(0) as Label;
+			restart.Text = "ta_restartrun";
+			glow.Text = "ta_restartrun";
+
+		}
 	}
 
 	public override void _PhysicsProcess(double _)
@@ -274,10 +283,16 @@ public partial class PauseMenu : Node
 		}
 		else if (currentSelection == 1) // Restart
 		{
-			// Resume
-			TransitionManager.Instance.QueuedScene = string.Empty;
-			SoundManager.instance.StageMusicPlayer.Stop();
-			EmitSignal(SignalName.OnSceneChangeSelected);
+			if (TimeAttackManager.Instance.IsRunActive)
+				TimeAttackManager.Instance.RestartRun();
+			else
+			{
+				// Resume
+				TransitionManager.Instance.QueuedScene = string.Empty;
+				SoundManager.instance.StageMusicPlayer.Stop();
+				EmitSignal(SignalName.OnSceneChangeSelected);
+			}
+
 		}
 		else if (currentSelection == 3) // Open the Skill Menu
 		{
