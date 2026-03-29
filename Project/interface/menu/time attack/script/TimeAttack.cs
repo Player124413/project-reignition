@@ -62,9 +62,6 @@ public partial class TimeAttack : Menu
 		SaveManager.ActiveGameData.UnlockAllWorlds();
 		SaveManager.ActiveGameData.level = 99;
 		SaveManager.ActiveSkillRing.UpdateTotalSkillPoints();
-
-
-
 	}
 
 	public override void OpenParentMenu()
@@ -72,18 +69,13 @@ public partial class TimeAttack : Menu
 		// Return to main menu
 		FadeBgm(.5f);
 
-		// Return to main menuSceneChange(TransitionManager.MenuScenePath);
+		menuMemory[MemoryKeys.ActiveMenu] = (int)MemoryKeys.MainMenu; // Set up menu memory so the main menu loads after the scene transition
+		TransitionManager.QueueSceneChange(TransitionManager.MenuScenePath);
 		TransitionManager.StartTransition(new()
 		{
 			color = Colors.Black,
 			inSpeed = .5f,
 		});
-	}
-
-	protected override void ProcessMenu()
-	{
-
-		base.ProcessMenu();
 	}
 
 	protected override void UpdateSelection()
@@ -99,142 +91,125 @@ public partial class TimeAttack : Menu
 
 			return;
 		}
+
 		Vector2I input = new(Mathf.Sign(Input.GetAxis("ui_left", "ui_right")), Mathf.Sign(Input.GetAxis("ui_up", "ui_down")));
 		StartSelectionTimer();
-
 		ProcessMenuInput(input);
 	}
 
 	private void ProcessMenuInput(Vector2I input)
 	{
-		if (isActive)
-		{
-
-
-			currentSelection += input.Y;
-			if (currentSelection > maxSelection || currentSelection < 1)
-				currentSelection = WrapSelection(currentSelection, maxSelection, 1);
-
-			if (input.X == 0)
-			{
-				description.Text = buttonList[currentSelection - 1].description;
-				description.ShowDescription();
-			}
-
-			for (int i = 0; i < buttonList.Count; i++)
-			{
-				buttonList[i].DeselectButton();
-			}
-
-
-			buttonImageAnimator.Play("show");
-			if (isRunInProgress)
-				buttonList[currentSelection - 1].SelectButton();
-			else
-			{
-				switch (currentSelection)
-				{
-					case 1:
-						buttonList[0].SelectButton();
-						break;
-					case 2:
-						buttonList[2].SelectButton();
-						description.Text = buttonList[2].description;
-						break;
-				}
-			}
-		}
-		else
+		if (!isActive)
 			return;
+
+		currentSelection += input.Y;
+		if (currentSelection > maxSelection || currentSelection < 1)
+			currentSelection = WrapSelection(currentSelection, maxSelection, 1);
+
+		if (input.X == 0)
+		{
+			description.Text = buttonList[currentSelection - 1].description;
+			description.ShowDescription();
+		}
+
+		for (int i = 0; i < buttonList.Count; i++)
+			buttonList[i].DeselectButton();
+
+
+		buttonImageAnimator.Play("show");
+		if (isRunInProgress)
+		{
+			buttonList[currentSelection - 1].SelectButton();
+			return;
+		}
+
+		switch (currentSelection)
+		{
+			case 1:
+				buttonList[0].SelectButton();
+				break;
+			case 2:
+				buttonList[2].SelectButton();
+				description.Text = buttonList[2].description;
+				break;
+		}
 	}
 
 	protected override void Confirm()
 	{
+		if (!isActive)
+			return;
 
-		if (isActive)
+		if (isReturnMenuActive)
 		{
-			if (isReturnMenuActive)
+			if (isReturnSelected)
 			{
-				if (isReturnSelected)
-				{
-					ContinueRun();
-				}
-				else
-				{
-					isReturnMenuActive = false;
-					returnAnimator.Play("hide");
-					timeAttackAnimator.Play("confirm-1no");
-				}
+				ContinueRun();
 			}
 			else
 			{
-				TimeAttackManager.Instance.SetRunActive(true);
-
-				if (!isRunInProgress)
-				{
-					switch (currentSelection)
-					{
-						case 2:
-							TimeAttackManager.Instance.SetRunType(TimeAttackManager.RunType.SingleRun);
-							TimeAttackManager.Instance.ClearCurrentRun();
-							TimeAttackManager.Instance.ClearCurrentSavedRun();
-							break;
-					}
-					timeAttackAnimator.Play("confirm-" + currentSelection);
-					currentSelection = 1;
-				}
-				else
-				{
-					switch (currentSelection)
-					{
-						case 1:
-							timeAttackAnimator.Play("confirm-1continue");
-							ShowReturnMenu();
-							break;
-						case 2:
-							timeAttackAnimator.Play("confirm-2continue");
-							ContinueRun();
-							break;
-						case 3:
-							timeAttackAnimator.Play("confirm-3");
-							currentSelection = 1;
-							TimeAttackManager.Instance.ClearCurrentRun();
-							TimeAttackManager.Instance.ClearCurrentSavedRun();
-							break;
-					}
-				}
+				isReturnMenuActive = false;
+				returnAnimator.Play("hide");
+				timeAttackAnimator.Play("confirm-1no");
 			}
 
-
+			return;
 		}
 
+		TimeAttackManager.Instance.SetRunActive(true);
+
+		if (isRunInProgress)
+		{
+			switch (currentSelection)
+			{
+				case 1:
+					timeAttackAnimator.Play("confirm-1continue");
+					ShowReturnMenu();
+					break;
+				case 2:
+					timeAttackAnimator.Play("confirm-2continue");
+					ContinueRun();
+					break;
+				case 3:
+					timeAttackAnimator.Play("confirm-3");
+					currentSelection = 1;
+					TimeAttackManager.Instance.ClearCurrentRun();
+					TimeAttackManager.Instance.ClearCurrentSavedRun();
+					break;
+			}
+			return;
+		}
+
+		switch (currentSelection)
+		{
+			case 2:
+				TimeAttackManager.Instance.SetRunType(TimeAttackManager.RunType.SingleRun);
+				TimeAttackManager.Instance.ClearCurrentRun();
+				TimeAttackManager.Instance.ClearCurrentSavedRun();
+				break;
+		}
+		timeAttackAnimator.Play("confirm-" + currentSelection);
+		currentSelection = 1;
 	}
 
 	protected override void Cancel()
 	{
-		if (isActive)
+		if (!isActive)
+			return;
+
+		if (isReturnMenuActive)
 		{
-			if (!isReturnMenuActive)
-			{
-				DebugManager.Instance.ToggleDemoSave(false);
-				SaveManager.SaveTimeAttackData();
-				SaveManager.SaveGameData();
-				TimeAttackManager.Instance.SetRunActive(false);
-
-
-				currentSelection = 1;
-				TransitionManager.QueueSceneChange(TransitionManager.MenuScenePath);
-				TransitionManager.StartTransition(new()
-				{
-					color = Colors.Black,
-					inSpeed = .5f,
-				});
-			}
-			else
-				CancelReturnMenu();
-
+			CancelReturnMenu();
+			return;
 		}
 
+		DebugManager.Instance.ToggleDemoSave(false);
+		SaveManager.SaveTimeAttackData();
+		SaveManager.SaveGameData();
+		TimeAttackManager.Instance.SetRunActive(false);
+
+		currentSelection = 1;
+		OpenParentMenu();
 	}
 
 	private void ContinueRun()
@@ -243,7 +218,6 @@ public partial class TimeAttack : Menu
 		TimeAttackManager.Instance.SetReturnTimes();
 		TimeAttackManager.Instance.SetRunType(SaveManager.TimeData.CurrentRunType);
 		TimeAttackManager.Instance.LoadLevel(TimeAttackManager.Instance.GetCurrentLevel());
-
 	}
 
 	[Export]
