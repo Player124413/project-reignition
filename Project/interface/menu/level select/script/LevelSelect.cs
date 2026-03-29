@@ -163,12 +163,14 @@ public partial class LevelSelect : Menu
 		animator.Play("select");
 		animator.Seek(0, true);
 
+		UpdateDescription();
 		StartSelectionTimer();
 		RecalculateListPosition();
 	}
 
 	private void UpdateDescription()
 	{
+		GD.Print("Changing description");
 		description.ShowDescription();
 		description.Text = levelOptions[VerticalSelection].GetDescription();
 	}

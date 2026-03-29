@@ -1,5 +1,7 @@
 using System.Globalization;
+using System.Numerics;
 using Godot;
+using Godot.Collections;
 using Project.Core;
 using Project.Gameplay;
 
@@ -115,7 +117,7 @@ public partial class LevelResult : Control
 			TimeAttackManager.Instance.LoadLevel(TimeAttackManager.Instance.GetNextLevel());
 			TimeAttackManager.Instance.IncreaseLevel();
 		}
-		else if (TimeAttackManager.Instance.IsRunActive && TimeAttackManager.Instance.IsLastLevel())
+		else if (TimeAttackManager.Instance.IsRunActive && TimeAttackManager.Instance.IsLastLevel() && TimeAttackManager.Instance.CurrentRunType != TimeAttackManager.RunType.SingleRun)
 			TimeAttackManager.Instance.LoadResults();
 		else // Actual scene transition is handled by the experience results screen (which is connected via this signal)
 			EmitSignal(SignalName.ContinuePressed);
@@ -139,13 +141,29 @@ public partial class LevelResult : Control
 		{
 			timeTotal.Text = ExtensionMethods.FormatTime(TimeAttackManager.Instance.GetTotalRunTime() + Stage.CurrentTime);
 
-			TimeAttackManager.Instance.AddTime(Stage.CurrentTime);
-			SaveManager.SaveTimeAttackData();
+			if (TimeAttackManager.Instance.CurrentRunType != TimeAttackManager.RunType.SingleRun)
+			{
+				TimeAttackManager.Instance.AddTime(Stage.CurrentTime);
 
-			if (TimeAttackManager.Instance.IsLastLevel())
-				SaveManager.TimeData.AddCurrentRun();
+
+				if (TimeAttackManager.Instance.IsLastLevel())
+					SaveManager.TimeData.AddCurrentRun();
+				else
+					SaveManager.TimeData.CurrentPlacement += 1;
+				SaveManager.SaveTimeAttackData();
+			}
 			else
-				SaveManager.TimeData.CurrentPlacement += 1;
+			{
+				if (SaveManager.TimeData.SingleRun.ContainsKey(Stage.Data.LevelID))
+					SaveManager.TimeData.SingleRun[Stage.Data.LevelID].Add(Stage.CurrentTime);
+				else
+				{
+					SaveManager.TimeData.SingleRun.Add(Stage.Data.LevelID, []);
+					SaveManager.TimeData.SingleRun[Stage.Data.LevelID].Add(Stage.CurrentTime);
+				}
+				SaveManager.SaveTimeAttackData();
+			}
+
 
 
 
@@ -210,8 +228,11 @@ public partial class LevelResult : Control
 
 		animator.Advance(0.0);
 
-		if (TimeAttackManager.Instance.IsRunActive)
+		if (TimeAttackManager.Instance.IsRunActive && TimeAttackManager.Instance.CurrentRunType == TimeAttackManager.RunType.SingleRun)
+			animator.Play(isStageCleared ? "success-start-timeattack-single" : "fail-start");
+		else if (TimeAttackManager.Instance.IsRunActive)
 			animator.Play(isStageCleared ? "success-start-timeattack" : "fail-start");
+
 		else
 			animator.Play(isStageCleared ? "success-start" : "fail-start");
 

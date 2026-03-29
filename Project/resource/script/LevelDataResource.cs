@@ -91,8 +91,6 @@ public partial class LevelDataResource : Resource
 			properties.Add(ExtensionMethods.CreateProperty("Ranking/Score Requirement", Variant.Type.Int, PropertyHint.Range, "0,999999,10"));
 
 		properties.Add(ExtensionMethods.CreateProperty("Ranking/Gold - Time Attack", Variant.Type.Int));
-		properties.Add(ExtensionMethods.CreateProperty("Ranking/Silver - Time Attack", Variant.Type.Int));
-		properties.Add(ExtensionMethods.CreateProperty("Ranking/Bronze - Time Attack", Variant.Type.Int));
 
 		properties.Add(ExtensionMethods.CreateProperty("Completion/Disable Object Cull", Variant.Type.Bool));
 		properties.Add(ExtensionMethods.CreateProperty("Completion/Delay", Variant.Type.Float, PropertyHint.Range, "0,5,.1"));
@@ -166,10 +164,6 @@ public partial class LevelDataResource : Resource
 				return Score;
 			case "Ranking/Gold - Time Attack":
 				return GoldTimeTA;
-			case "Ranking/Silver - Time Attack":
-				return SilverTimeTA;
-			case "Ranking/Bronze - Time Attack":
-				return BronzeTimeTA;
 
 			case "Completion/Disable Object Cull":
 				return DisableObjectCullOnCompletion;
@@ -276,13 +270,6 @@ public partial class LevelDataResource : Resource
 			case "Ranking/Gold - Time Attack":
 				GoldTimeTA = (int)value;
 				break;
-			case "Ranking/Silver - Time Attack":
-				SilverTimeTA = (int)value;
-				break;
-			case "Ranking/Bronze - Time Attack":
-				BronzeTimeTA = (int)value;
-				break;
-
 			case "Completion/Disable Object Cull":
 				DisableObjectCullOnCompletion = (bool)value;
 				break;
@@ -351,8 +338,6 @@ public partial class LevelDataResource : Resource
 	public int BronzeTime { get; private set; }
 
 	public int GoldTimeTA { get; private set; }
-	public int SilverTimeTA { get; private set; }
-	public int BronzeTimeTA { get; private set; }
 	// Requirement for score rank
 	public int Score { get; private set; }
 	public int SilverScore => 3 * (Score / 4);

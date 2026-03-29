@@ -257,31 +257,42 @@ public partial class StageSettings : Node3D
 		int rank = 0; // DEFAULT - No rank
 		float completionTime = Mathf.RoundToInt(CurrentTime * 100f) * 0.01f; // Round to nearest millisecond
 
-		if (Data.SkipScore)
+		if (TimeAttackManager.Instance.IsRunActive)
 		{
-			if (completionTime <= Data.GoldTime)
+			if (completionTime <= Data.GoldTimeTA)
+			{
 				rank = 3;
-			else if (completionTime <= Data.SilverTime)
-				rank = 2;
-			else if (completionTime <= Data.BronzeTime)
-				rank = 1;
+			}
 		}
 		else
 		{
-			int score = TotalScore;
-			if (preCountBonuses)
-				score += BonusManager.instance.QueuedScore;
+			if (Data.SkipScore)
+			{
+				if (completionTime <= Data.GoldTime)
+					rank = 3;
+				else if (completionTime <= Data.SilverTime)
+					rank = 2;
+				else if (completionTime <= Data.BronzeTime)
+					rank = 1;
+			}
+			else
+			{
+				int score = TotalScore;
+				if (preCountBonuses)
+					score += BonusManager.instance.QueuedScore;
 
-			if (completionTime <= Data.GoldTime && score >= Data.Score) // Perfect run
-				rank = 3;
-			else if (completionTime <= Data.SilverTime && score >= Data.SilverScore) // Silver score reqs are always 3/4 of gold
+				if (completionTime <= Data.GoldTime && score >= Data.Score) // Perfect run
+					rank = 3;
+				else if (completionTime <= Data.SilverTime && score >= Data.SilverScore) // Silver score reqs are always 3/4 of gold
+					rank = 2;
+				else if (completionTime <= Data.BronzeTime || score >= Data.SilverScore) // Bronze is easy to get
+					rank = 1;
+			}
+
+			if (rank >= 3 && RespawnCount != 0) // Limit to silver if a respawn occured
 				rank = 2;
-			else if (completionTime <= Data.BronzeTime || score >= Data.SilverScore) // Bronze is easy to get
-				rank = 1;
 		}
 
-		if (rank >= 3 && RespawnCount != 0) // Limit to silver if a respawn occured
-			rank = 2;
 
 		return rank;
 	}
