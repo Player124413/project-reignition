@@ -167,6 +167,7 @@ public partial class TimeAttackManager : Node
 	public void AddTime(float time)
 	{
 		CurrentRunTimes.Add(time);
+		SaveManager.TimeData.RunInProgress = CurrentRunTimes;
 	}
 
 	public Array<float> GetCurrentRunTimes()
@@ -188,6 +189,7 @@ public partial class TimeAttackManager : Node
 	public void SetReturnTimes()
 	{
 		CurrentRunTimes = SaveManager.TimeData.RunInProgress;
+		GD.Print("Current Run Times: " + CurrentRunTimes.ToString());
 		CurrentLevel = SaveManager.TimeData.CurrentPlacement;
 	}
 	private void ResetRunTimes()

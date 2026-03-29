@@ -26,6 +26,7 @@ public partial class TimeAttackResults : Menu
 
 	protected override void SetUp()
 	{
+
 		for (int i = 0; i < TimeAttackManager.Instance.GetCurrentRunLevels().Length; i++)
 		{
 			TimeAttackResultsOption newOption = resultOptionScene.Instantiate() as TimeAttackResultsOption;

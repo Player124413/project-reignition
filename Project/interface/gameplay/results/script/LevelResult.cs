@@ -138,8 +138,9 @@ public partial class LevelResult : Control
 		if (TimeAttackManager.Instance.IsRunActive)
 		{
 			timeTotal.Text = ExtensionMethods.FormatTime(TimeAttackManager.Instance.GetTotalRunTime() + Stage.CurrentTime);
-			//TimeAttackManager.Instance.AddTime(Stage.CurrentTime);
-			SaveManager.TimeData.AddToRunInProgress(Stage.CurrentTime);
+
+			TimeAttackManager.Instance.AddTime(Stage.CurrentTime);
+			SaveManager.SaveTimeAttackData();
 
 			if (TimeAttackManager.Instance.IsLastLevel())
 				SaveManager.TimeData.AddCurrentRun();
@@ -147,7 +148,7 @@ public partial class LevelResult : Control
 				SaveManager.TimeData.CurrentPlacement += 1;
 
 
-			SaveManager.SaveTimeAttackData();
+
 
 		}
 
