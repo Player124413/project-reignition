@@ -107,6 +107,7 @@ public partial class TimeAttackManager : Node
 			inSpeed = 0.2f,
 			color = Colors.Black,
 			loadAsynchronously = true,
+			disableAutoTransition = true,
 			showMissionDescription = true
 		});
 		TransitionManager.Instance.SetMissionDescriptionText(level.MissionTypeKey, level.MissionDescriptionKey);
@@ -128,7 +129,7 @@ public partial class TimeAttackManager : Node
 
 	public void LoadTimeAttack()
 	{
-		TimeAttackManager.Instance.SetRunActive(false);
+		SetRunActive(false);
 		TransitionManager.QueueSceneChange(TransitionManager.TimeAttackScenePath);
 		TransitionManager.StartTransition(new()
 		{

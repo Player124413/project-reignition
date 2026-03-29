@@ -284,7 +284,11 @@ public partial class PauseMenu : Node
 		else if (currentSelection == 1) // Restart
 		{
 			if (TimeAttackManager.Instance.IsRunActive)
+			{
+				GetTree().Paused = false;
+				Engine.TimeScale = 1.0f;
 				TimeAttackManager.Instance.RestartRun();
+			}
 			else
 			{
 				// Resume
@@ -292,7 +296,6 @@ public partial class PauseMenu : Node
 				SoundManager.instance.StageMusicPlayer.Stop();
 				EmitSignal(SignalName.OnSceneChangeSelected);
 			}
-
 		}
 		else if (currentSelection == 3) // Open the Skill Menu
 		{
