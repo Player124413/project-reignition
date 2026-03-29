@@ -107,7 +107,6 @@ public partial class TimeAttackManager : Node
 			inSpeed = 0.2f,
 			color = Colors.Black,
 			loadAsynchronously = true,
-			disableAutoTransition = true,
 			showMissionDescription = true
 		});
 		TransitionManager.Instance.SetMissionDescriptionText(level.MissionTypeKey, level.MissionDescriptionKey);

@@ -127,8 +127,10 @@ public partial class LevelResult : Control
 	public void StartResults()
 	{
 		bool isRetryButtonDisabled = StageSettings.Instance.Data == SaveManager.ActiveGameData.CurrentStoryLevel &&
-			Stage.LevelState == StageSettings.LevelStateEnum.Success &&
-			!TimeAttackManager.Instance.IsRunActive;
+			Stage.LevelState == StageSettings.LevelStateEnum.Success;
+
+		if (TimeAttackManager.Instance.IsRunActive)
+			isRetryButtonDisabled = true;
 		retryButton.Visible = !isRetryButtonDisabled;
 
 		score.Text = Stage.DisplayScore;
