@@ -196,7 +196,7 @@ public partial class TimeAttack : Menu
 							ContinueRun();
 							break;
 						case 3:
-							timeAttackAnimator.Play("confirm-2");
+							timeAttackAnimator.Play("confirm-3");
 							currentSelection = 1;
 							TimeAttackManager.Instance.ClearCurrentRun();
 							TimeAttackManager.Instance.ClearCurrentSavedRun();
@@ -221,8 +221,14 @@ public partial class TimeAttack : Menu
 				SaveManager.SaveGameData();
 				TimeAttackManager.Instance.SetRunActive(false);
 
-				OpenParentMenu();
+
 				currentSelection = 1;
+				TransitionManager.QueueSceneChange(TransitionManager.MenuScenePath);
+				TransitionManager.StartTransition(new()
+				{
+					color = Colors.Black,
+					inSpeed = .5f,
+				});
 			}
 			else
 				CancelReturnMenu();
