@@ -104,7 +104,7 @@ public partial class PauseMenu : Node
 
 		isHidden = false;
 
-		if (TimeAttackManager.Instance.IsRunActive)
+		if (TimeAttackManager.Instance.IsRunActive && TimeAttackManager.Instance.CurrentRunType != TimeAttackManager.RunType.SingleRun)
 		{
 			Label glow = restart.GetChild(0) as Label;
 			restart.Text = "ta_restartrun";

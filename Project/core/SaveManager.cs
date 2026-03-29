@@ -1562,7 +1562,7 @@ public partial class SaveManager : Node
 		///<summary>The times stored for Boss Rush runs</summary>
 		public Array<Array<float>> BossRush = [];
 		///<summary>The times stored for single runs</summary>
-		public Dictionary<string, float> SingleRun;
+		public Dictionary<string, Array<float>> SingleRun;
 		///<summary>The times stored for the current run.</summary>
 		public Array<float> RunInProgress;
 		///<summary>The current run type</summary>
@@ -1610,6 +1610,26 @@ public partial class SaveManager : Node
 			return SharedData.achievements.Contains("true hero"); //Checking if Alf Layla is defeated
 		}
 
+		public float GetBestTimeForLevel(LevelDataResource level)
+		{
+			if (SingleRun.ContainsKey(level.LevelID))
+			{
+				SingleRun[level.LevelID].Sort();
+				return SingleRun[level.LevelID][0];
+			}
+			else
+				return -1;
+		}
+
+		public bool HasRank(LevelDataResource level)
+		{
+			float bestTime = GetBestTimeForLevel(level);
+			if (bestTime <= level.GoldTimeTA && bestTime != -1)
+				return true;
+			else
+				return false;
+		}
+
 		public Dictionary ToDictionary()
 		{
 			return new()
@@ -1634,7 +1654,7 @@ public partial class SaveManager : Node
 			if (dictionary.TryGetValue(nameof(BossRush), out var))
 				BossRush = (Array<Array<float>>)var;
 			if (dictionary.TryGetValue(nameof(SingleRun), out var))
-				SingleRun = (Dictionary<string, float>)var;
+				SingleRun = (Dictionary<string, Array<float>>)var;
 			if (dictionary.TryGetValue(nameof(RunInProgress), out var))
 				RunInProgress = (Array<float>)var;
 			if (dictionary.TryGetValue(nameof(CurrentRunType), out var))
@@ -1646,7 +1666,15 @@ public partial class SaveManager : Node
 
 		public static TimeAttackData CreateDefaultData()
 		{
-			TimeAttackData data = new();
+			TimeAttackData data = new()
+			{
+				AnyP = [],
+				GoalP = [],
+				BossRush = [],
+				SingleRun = [],
+				RunInProgress = []
+
+			};
 			return data;
 		}
 	}

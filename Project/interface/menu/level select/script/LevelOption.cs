@@ -28,6 +28,7 @@ public partial class LevelOption : Control
 	[Export] private Control timeAttackLevelOption;
 	[Export] private Label missionLabelTA;
 	[Export] private Label areaLabelTA;
+	[Export] private Label timeLabel;
 
 	private readonly string NoMedalAnimation = "no-medal";
 	private readonly string GoldAnimation = "gold";
@@ -35,6 +36,7 @@ public partial class LevelOption : Control
 	private readonly string BronzeAnimation = "bronze";
 
 	private readonly string ShowAnimation = "show";
+	private readonly string ShowTAAnimation = "show-ta";
 	private readonly string HideAnimation = "hide";
 	private readonly string NewAnimation = "new";
 	private readonly string ClearAnimation = "clear";
@@ -61,12 +63,18 @@ public partial class LevelOption : Control
 	{
 		ApplySettings();
 		UpdateLevelData();
-		animator.Play(ShowAnimation);
+		if (TimeAttackManager.Instance.IsRunActive && TimeAttackManager.Instance.CurrentRunType == TimeAttackManager.RunType.SingleRun)
+			animator.Play(ShowTAAnimation);
+		else
+			animator.Play(ShowAnimation);
 	}
 	public void HideOption() => animator.Play(HideAnimation);
 
 	private void ApplySettings()
 	{
+		if (TimeAttackManager.Instance.IsRunActive && TimeAttackManager.Instance.CurrentRunType == TimeAttackManager.RunType.SingleRun)
+			timeLabel.Text = ExtensionMethods.FormatTime(SaveManager.TimeData.GetBestTimeForLevel(data));
+
 		if (missionLabel != null)
 		{
 			if (!Engine.IsEditorHint() && !IsUnlocked)
@@ -122,22 +130,33 @@ public partial class LevelOption : Control
 				fireSoulRects[i].Texture = isCollected ? fireSoulSprite : noFireSoulSprite;
 			}
 		}
-
-		switch (SaveManager.ActiveGameData.LevelData.GetRankClamped(data.LevelID))
+		if (TimeAttackManager.Instance.IsRunActive && TimeAttackManager.Instance.CurrentRunType == TimeAttackManager.RunType.SingleRun)
 		{
-			case 1:
-				animator.Play(BronzeAnimation);
-				break;
-			case 2:
-				animator.Play(SilverAnimation);
-				break;
-			case 3:
+			if (SaveManager.TimeData.HasRank(data))
+			{
+				GD.Print("Has gold for " + data.LevelID);
 				animator.Play(GoldAnimation);
-				break;
-			default:
-				animator.Play(NoMedalAnimation);
-				break;
+			}
 		}
+		else
+		{
+			switch (SaveManager.ActiveGameData.LevelData.GetRankClamped(data.LevelID))
+			{
+				case 1:
+					animator.Play(BronzeAnimation);
+					break;
+				case 2:
+					animator.Play(SilverAnimation);
+					break;
+				case 3:
+					animator.Play(GoldAnimation);
+					break;
+				default:
+					animator.Play(NoMedalAnimation);
+					break;
+			}
+		}
+
 		animator.Advance(0.0);
 	}
 

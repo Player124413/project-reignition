@@ -26,16 +26,23 @@ public partial class TimeAttack : Menu
 
 	public override void ShowMenu()
 	{
-		if (SaveManager.TimeData.RunInProgress.Count > 0)
+		SaveManager.LoadTimeAttackData();
+		SaveManager.SaveTimeAttackData();
+
+		if (SaveManager.TimeData.RunInProgress != null)
 		{
-			maxSelection = 3;
-			isRunInProgress = true;
+			if (SaveManager.TimeData.RunInProgress.Count > 0)
+			{
+				maxSelection = 3;
+				isRunInProgress = true;
+			}
+			else
+			{
+				maxSelection = 2;
+				isRunInProgress = false;
+			}
 		}
-		else
-		{
-			maxSelection = 2;
-			isRunInProgress = false;
-		}
+
 
 		if (!isRunInProgress)
 			animator.Play("show");
@@ -49,7 +56,6 @@ public partial class TimeAttack : Menu
 
 		if (!bgm.Playing)
 			bgm.Play();
-
 
 		DebugManager.Instance.ToggleDemoSave(true);
 		SaveManager.ActiveSaveSlotIndex = SaveManager.SaveSlotCount; //Saves skills and presets on a hidden file
