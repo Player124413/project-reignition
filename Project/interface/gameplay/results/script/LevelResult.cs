@@ -11,6 +11,7 @@ public partial class LevelResult : Control
 {
 	[Signal] public delegate void ContinuePressedEventHandler();
 
+	[Export] private Control nextButton;
 	[Export] private Control retryButton;
 	[Export] private Label score;
 	[Export] private Label time;
@@ -98,9 +99,12 @@ public partial class LevelResult : Control
 		if (Runtime.Instance.IsActionJustPressed("sys_cancel", "ui_cancel", "escape")) // Retry stage
 		{
 			TransitionManager.Instance.QueuedScene = string.Empty;
+			EmitSignal(SignalName.ContinuePressed);
 		}
 		else
 		{
+			if (!nextButton.IsVisibleInTree())
+				return;
 			// Adventure mode; Process events
 			TransitionManager.Instance.QueuedScene = TransitionManager.MenuScenePath;
 
@@ -110,20 +114,21 @@ public partial class LevelResult : Control
 			{
 				TransitionManager.Instance.QueuedScene = $"{TransitionManager.EventScenePath}{Stage.Data.PostStoryEvent}.tscn";
 			}
+
+			if (TimeAttackManager.Instance.IsRunActive && !TimeAttackManager.Instance.IsLastLevel() && TimeAttackManager.Instance.CurrentRunType != TimeAttackManager.RunType.SingleRun)
+			{
+				TimeAttackManager.Instance.LoadLevel(TimeAttackManager.Instance.GetNextLevel());
+				TimeAttackManager.Instance.IncreaseLevel();
+			}
+			else if (TimeAttackManager.Instance.IsRunActive && TimeAttackManager.Instance.IsLastLevel() && TimeAttackManager.Instance.CurrentRunType != TimeAttackManager.RunType.SingleRun)
+				TimeAttackManager.Instance.LoadResults();
+			else if (TimeAttackManager.Instance.IsRunActive && TimeAttackManager.Instance.CurrentRunType == TimeAttackManager.RunType.SingleRun)
+				TimeAttackManager.Instance.LoadTimeAttack(true);
+			else // Actual scene transition is handled by the experience results screen (which is connected via this signal)
+				EmitSignal(SignalName.ContinuePressed);
 		}
 
 
-		if (TimeAttackManager.Instance.IsRunActive && !TimeAttackManager.Instance.IsLastLevel() && TimeAttackManager.Instance.CurrentRunType != TimeAttackManager.RunType.SingleRun)
-		{
-			TimeAttackManager.Instance.LoadLevel(TimeAttackManager.Instance.GetNextLevel());
-			TimeAttackManager.Instance.IncreaseLevel();
-		}
-		else if (TimeAttackManager.Instance.IsRunActive && TimeAttackManager.Instance.IsLastLevel() && TimeAttackManager.Instance.CurrentRunType != TimeAttackManager.RunType.SingleRun)
-			TimeAttackManager.Instance.LoadResults();
-		else if (TimeAttackManager.Instance.IsRunActive && TimeAttackManager.Instance.CurrentRunType == TimeAttackManager.RunType.SingleRun)
-			TimeAttackManager.Instance.LoadTimeAttack(true);
-		else // Actual scene transition is handled by the experience results screen (which is connected via this signal)
-			EmitSignal(SignalName.ContinuePressed);
 
 		isFadingBgm = true; // Start fading bgm
 		SetInputProcessing(false);
@@ -134,14 +139,27 @@ public partial class LevelResult : Control
 		bool isRetryButtonDisabled = StageSettings.Instance.Data == SaveManager.ActiveGameData.CurrentStoryLevel &&
 			Stage.LevelState == StageSettings.LevelStateEnum.Success;
 
-		if (TimeAttackManager.Instance.IsRunActive)
+		if (TimeAttackManager.Instance.IsRunActive && Stage.LevelState == StageSettings.LevelStateEnum.Success)
 			isRetryButtonDisabled = true;
+
+		if (TimeAttackManager.Instance.IsRunActive && Stage.LevelState == StageSettings.LevelStateEnum.Failed)
+		{
+			nextButton.Visible = false;
+			isRetryButtonDisabled = false;
+		}
+
+		if (TimeAttackManager.Instance.IsRunActive && TimeAttackManager.Instance.CurrentRunType == TimeAttackManager.RunType.SingleRun)
+		{
+			nextButton.Visible = true;
+			isRetryButtonDisabled = false;
+		}
+
 		retryButton.Visible = !isRetryButtonDisabled;
 
 		score.Text = Stage.DisplayScore;
 		time.Text = Stage.DisplayTime;
 
-		if (TimeAttackManager.Instance.IsRunActive)
+		if (TimeAttackManager.Instance.IsRunActive && Stage.LevelState != StageSettings.LevelStateEnum.Failed)
 		{
 			if (TimeAttackManager.Instance.CurrentRunType != TimeAttackManager.RunType.SingleRun)
 			{
@@ -226,9 +244,9 @@ public partial class LevelResult : Control
 		animator.Advance(0.0);
 
 		if (TimeAttackManager.Instance.IsRunActive && TimeAttackManager.Instance.CurrentRunType == TimeAttackManager.RunType.SingleRun)
-			animator.Play(isStageCleared ? "success-start-timeattack-single" : "fail-start");
+			animator.Play(isStageCleared ? "success-start-timeattack-single" : "fail-start-ta");
 		else if (TimeAttackManager.Instance.IsRunActive)
-			animator.Play(isStageCleared ? "success-start-timeattack" : "fail-start");
+			animator.Play(isStageCleared ? "success-start-timeattack" : "fail-start-ta");
 
 		else
 			animator.Play(isStageCleared ? "success-start" : "fail-start");
