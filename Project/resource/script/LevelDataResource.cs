@@ -364,4 +364,28 @@ public partial class LevelDataResource : Resource
 			_ => 2000,
 		};
 	}
+
+	public string GetAreaKey()
+	{
+		switch (AreaKey)
+		{
+			case SaveManager.WorldEnum.LostPrologue:
+				return "lost_prologue";
+			case SaveManager.WorldEnum.SandOasis:
+				return "sand_oasis";
+			case SaveManager.WorldEnum.DinosaurJungle:
+				return "dinosaur_jungle";
+			case SaveManager.WorldEnum.EvilFoundry:
+				return "evil_foundry";
+			case SaveManager.WorldEnum.LevitatedRuin:
+				return "levitated_ruin";
+			case SaveManager.WorldEnum.PirateStorm:
+				return "pirate_storm";
+			case SaveManager.WorldEnum.SkeletonDome:
+				return "skeleton_dome";
+			case SaveManager.WorldEnum.NightPalace:
+				return "night_palace";
+		}
+		return "";
+	}
 }
