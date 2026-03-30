@@ -119,6 +119,8 @@ public partial class LevelResult : Control
 		}
 		else if (TimeAttackManager.Instance.IsRunActive && TimeAttackManager.Instance.IsLastLevel() && TimeAttackManager.Instance.CurrentRunType != TimeAttackManager.RunType.SingleRun)
 			TimeAttackManager.Instance.LoadResults();
+		else if (TimeAttackManager.Instance.IsRunActive && TimeAttackManager.Instance.CurrentRunType == TimeAttackManager.RunType.SingleRun)
+			TimeAttackManager.Instance.LoadTimeAttack(true);
 		else // Actual scene transition is handled by the experience results screen (which is connected via this signal)
 			EmitSignal(SignalName.ContinuePressed);
 

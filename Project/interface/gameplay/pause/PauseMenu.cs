@@ -309,8 +309,8 @@ public partial class PauseMenu : Node
 			SaveManager.SaveGameData();
 			if (TimeAttackManager.Instance.IsRunActive)
 			{
-
-				TimeAttackManager.Instance.LoadTimeAttack();
+				SoundManager.instance.StageMusicPlayer.Stop();
+				TimeAttackManager.Instance.LoadTimeAttack(true);
 			}
 			else
 			{

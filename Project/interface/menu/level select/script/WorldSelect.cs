@@ -208,6 +208,7 @@ public partial class WorldSelect : Menu
 
 		if (!TimeAttackManager.Instance.IsRunActive)
 		{
+			GD.Print("Run is not active");
 			SaveManager.ActiveSaveSlotIndex = -1;
 			UpdateStoryIndicator(true);
 		}

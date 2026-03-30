@@ -26,6 +26,7 @@ public partial class TimeAttack : Menu
 
 	public override void ShowMenu()
 	{
+		TimeAttackManager.Instance.SetRunActive(true);
 		SaveManager.ActiveSaveSlotIndex = SaveManager.SaveSlotCount; //Saves skills and presets on a hidden file
 		SaveManager.ActiveGameData.level = 99;
 		SaveManager.ActiveGameData.UnlockAllWorlds();
@@ -52,10 +53,19 @@ public partial class TimeAttack : Menu
 		}
 
 
-		if (!isRunInProgress)
-			animator.Play("show");
+		if (!TimeAttackManager.Instance.LoadIntoSingle)
+		{
+			if (!isRunInProgress)
+				animator.Play("show");
+			else if (isRunInProgress)
+				animator.Play("showcontinue");
+		}
 		else
-			animator.Play("showcontinue");
+		{
+			TimeAttackManager.Instance.ShouldLoadIntoSingle(false);
+			animator.Play("show-single");
+		}
+
 
 		currentSelection = 1;
 		description.Text = buttonList[0].description;

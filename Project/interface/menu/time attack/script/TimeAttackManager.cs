@@ -28,6 +28,7 @@ public partial class TimeAttackManager : Node
 	public LevelDataResource Level_Single;
 	public int CurrentLevel { get; private set; }
 	public bool IsRunActive { get; private set; }
+	public bool LoadIntoSingle { get; private set; }
 
 
 	public override void _EnterTree()
@@ -129,7 +130,6 @@ public partial class TimeAttackManager : Node
 
 	public void LoadTimeAttack()
 	{
-		SetRunActive(false);
 		TransitionManager.QueueSceneChange(TransitionManager.TimeAttackScenePath);
 		TransitionManager.StartTransition(new()
 		{
@@ -138,6 +138,13 @@ public partial class TimeAttackManager : Node
 			color = Colors.Black,
 			disableAutoTransition = false
 		});
+	}
+
+	//<summary>Makes it so Time Attack immediately loads into Single Run mode</summary>
+	public void LoadTimeAttack(bool loadIntoSingle)
+	{
+		LoadIntoSingle = loadIntoSingle;
+		LoadTimeAttack();
 	}
 
 	public void RestartRun()
@@ -192,6 +199,8 @@ public partial class TimeAttackManager : Node
 		GD.Print("Current Run Times: " + CurrentRunTimes.ToString());
 		CurrentLevel = SaveManager.TimeData.CurrentPlacement;
 	}
+
+	public void ShouldLoadIntoSingle(bool single) => LoadIntoSingle = single;
 	private void ResetRunTimes()
 	{
 		CurrentRunTimes = new Array<float>();
