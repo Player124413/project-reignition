@@ -27,6 +27,7 @@ public partial class TimeAttackLevelSelect : Menu
 
 	protected override void SetUp()
 	{
+		levelOptions.Clear();
 		foreach (Node node in options.GetChildren())
 		{
 			if (node is LevelOption levelOption)
@@ -45,17 +46,17 @@ public partial class TimeAttackLevelSelect : Menu
 
 	public override void ShowMenu()
 	{
-		menuMemory[MemoryKeys.LevelSelect] = 0;
-		SetUp();
 
-		VerticalSelection = menuMemory[MemoryKeys.LevelSelect];
+
+		VerticalSelection = 0;
 		RecalculateListPosition();
 		UpdateListPosition(0);
-
+		SetUp();
 		animator.Play("show");
 
 		for (int i = 0; i < levelOptions.Count; i++)
 			levelOptions[i].EnableTAInfo();
+
 	}
 
 	public override void HideMenu()
@@ -72,10 +73,8 @@ public partial class TimeAttackLevelSelect : Menu
 	protected override void Cancel()
 	{
 		base.Cancel();
-
 		HideMenu();
-		cursorPosition = 0;
-		levelOptions.Clear();
+
 
 		parentMenu.OpenParentMenu();
 	}
