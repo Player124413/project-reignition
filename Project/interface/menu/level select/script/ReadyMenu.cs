@@ -47,7 +47,7 @@ public partial class ReadyMenu : Menu
 				SetupReadyMenu(TimeAttackManager.Instance.GetCurrentLevel());
 		}
 
-		if (SaveManager.ActiveGameData.HasNewSkill())
+		if (SaveManager.ActiveGameData.HasNewSkill() && !TimeAttackManager.Instance.IsRunActive)
 			notifAnimPlayer.Play("show");
 		else
 			notifAnimPlayer.Play("hide");
