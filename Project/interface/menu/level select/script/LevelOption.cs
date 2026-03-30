@@ -72,8 +72,12 @@ public partial class LevelOption : Control
 
 	private void ApplySettings()
 	{
+		float best = SaveManager.TimeData.GetBestTimeForLevel(data);
+		if (best == -1)
+			best = 0;
+
 		if (TimeAttackManager.Instance.IsRunActive && TimeAttackManager.Instance.CurrentRunType == TimeAttackManager.RunType.SingleRun)
-			timeLabel.Text = ExtensionMethods.FormatTime(SaveManager.TimeData.GetBestTimeForLevel(data));
+			timeLabel.Text = ExtensionMethods.FormatTime(best);
 
 		if (missionLabel != null)
 		{
