@@ -112,7 +112,8 @@ public partial class LevelResult : Control
 			}
 		}
 
-		if (TimeAttackManager.Instance.IsRunActive && !TimeAttackManager.Instance.IsLastLevel())
+
+		if (TimeAttackManager.Instance.IsRunActive && !TimeAttackManager.Instance.IsLastLevel() && TimeAttackManager.Instance.CurrentRunType != TimeAttackManager.RunType.SingleRun)
 		{
 			TimeAttackManager.Instance.LoadLevel(TimeAttackManager.Instance.GetNextLevel());
 			TimeAttackManager.Instance.IncreaseLevel();
@@ -139,14 +140,13 @@ public partial class LevelResult : Control
 
 		score.Text = Stage.DisplayScore;
 		time.Text = Stage.DisplayTime;
+
 		if (TimeAttackManager.Instance.IsRunActive)
 		{
-			timeTotal.Text = ExtensionMethods.FormatTime(TimeAttackManager.Instance.GetTotalRunTime() + Stage.CurrentTime);
-
 			if (TimeAttackManager.Instance.CurrentRunType != TimeAttackManager.RunType.SingleRun)
 			{
 				TimeAttackManager.Instance.AddTime(Stage.CurrentTime);
-
+				timeTotal.Text = ExtensionMethods.FormatTime(TimeAttackManager.Instance.GetTotalRunTime() + Stage.CurrentTime);
 
 				if (TimeAttackManager.Instance.IsLastLevel())
 					SaveManager.TimeData.AddCurrentRun();
@@ -165,11 +165,6 @@ public partial class LevelResult : Control
 				}
 				SaveManager.SaveTimeAttackData();
 			}
-
-
-
-
-
 		}
 
 

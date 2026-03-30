@@ -38,7 +38,6 @@ public partial class TimeAttackManager : Node
 	public void SetRunType(RunType type)
 	{
 		CurrentRunType = type;
-		SaveManager.TimeData.CurrentRunType = type;
 	}
 
 	public LevelDataResource[] GetCurrentRunLevels(RunType type)
@@ -196,7 +195,7 @@ public partial class TimeAttackManager : Node
 	public void SetReturnTimes()
 	{
 		CurrentRunTimes = SaveManager.TimeData.RunInProgress;
-		GD.Print("Current Run Times: " + CurrentRunTimes.ToString());
+		CurrentRunType = SaveManager.TimeData.CurrentRunType;
 		CurrentLevel = SaveManager.TimeData.CurrentPlacement;
 	}
 

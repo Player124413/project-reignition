@@ -81,7 +81,20 @@ public partial class ReadyMenu : Menu
 			if (!TimeAttackManager.Instance.IsRunActive)
 				menuMemory[MemoryKeys.ActiveMenu] = (int)MemoryKeys.LevelSelect;
 			else
+			{
+
+				if (TimeAttackManager.Instance.CurrentRunType != TimeAttackManager.RunType.SingleRun)
+				{
+					TimeAttackManager.Instance.ClearCurrentRun();
+					TimeAttackManager.Instance.ClearCurrentSavedRun();
+
+					SaveManager.TimeData.CurrentRunType = TimeAttackManager.Instance.CurrentRunType;
+					SaveManager.SaveTimeAttackData(); //Overwrites currently saved run
+				}
+				TransitionManager.Instance.SetMissionDescriptionText(TimeAttackManager.Instance.GetCurrentLevel().MissionTypeKey, TimeAttackManager.Instance.GetCurrentLevel().MissionDescriptionKey);
+
 				menuMemory[MemoryKeys.ActiveMenu] = (int)MemoryKeys.TimeAttack;
+			}
 			base.Confirm();
 		}
 		else
@@ -166,7 +179,7 @@ public partial class ReadyMenu : Menu
 	/// <summary> Sets up the ready menu for time attack. </summary>
 	public void SetupReadyMenu(LevelDataResource level)
 	{
-		SetMapText(Tr(level.AreaKey.ToString().ToCamelCase()));
+		SetMapText(Tr(level.AreaKey.ToString()));
 		SetMissionText(Tr(level.MissionTypeKey));
 		LevelData = level;
 	}

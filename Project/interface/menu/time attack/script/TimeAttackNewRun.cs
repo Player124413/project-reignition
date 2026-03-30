@@ -89,20 +89,14 @@ public partial class TimeAttackNewRun : Menu
 			{
 				case 1:
 					TimeAttackManager.Instance.SetRunType(TimeAttackManager.RunType.AnyP);
-					SaveManager.TimeData.CurrentRunType = TimeAttackManager.RunType.AnyP;
 					break;
 				case 2:
 					TimeAttackManager.Instance.SetRunType(TimeAttackManager.RunType.GoalPercent);
-					SaveManager.TimeData.CurrentRunType = TimeAttackManager.RunType.GoalPercent;
 					break;
 				case 3:
 					TimeAttackManager.Instance.SetRunType(TimeAttackManager.RunType.BossRush);
-					SaveManager.TimeData.CurrentRunType = TimeAttackManager.RunType.BossRush;
 					break;
 			}
-			TimeAttackManager.Instance.ClearCurrentRun();
-			TimeAttackManager.Instance.ClearCurrentSavedRun();
-			SaveManager.SaveTimeAttackData();
 			TimeAttackManager.Instance.SetRunActive(true);
 			levelList.parentMenu = this;
 

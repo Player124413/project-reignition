@@ -157,15 +157,16 @@ public partial class TimeAttack : Menu
 
 		if (isReturnMenuActive)
 		{
-			if (isReturnSelected)
+			if (isReturnSelected) //Yes
 			{
-				ContinueRun();
+				isReturnMenuActive = false;
+				returnAnimator.Play("confirm");
+				timeAttackAnimator.Play("confirm-1yes");
 			}
-			else
+			else //No
 			{
 				isReturnMenuActive = false;
 				returnAnimator.Play("hide");
-				timeAttackAnimator.Play("confirm-1no");
 			}
 
 			return;
@@ -189,8 +190,6 @@ public partial class TimeAttack : Menu
 					TimeAttackManager.Instance.SetRunType(TimeAttackManager.RunType.SingleRun);
 					timeAttackAnimator.Play("confirm-3");
 					currentSelection = 1;
-					TimeAttackManager.Instance.ClearCurrentRun();
-					TimeAttackManager.Instance.ClearCurrentSavedRun();
 					break;
 			}
 			return;
@@ -200,8 +199,6 @@ public partial class TimeAttack : Menu
 		{
 			case 2://Single Run
 				TimeAttackManager.Instance.SetRunType(TimeAttackManager.RunType.SingleRun);
-				TimeAttackManager.Instance.ClearCurrentRun();
-				TimeAttackManager.Instance.ClearCurrentSavedRun();
 				break;
 		}
 		timeAttackAnimator.Play("confirm-" + currentSelection);
@@ -232,7 +229,6 @@ public partial class TimeAttack : Menu
 	{
 		TimeAttackManager.Instance.SetRunActive(true);
 		TimeAttackManager.Instance.SetReturnTimes();
-		TimeAttackManager.Instance.SetRunType(SaveManager.TimeData.CurrentRunType);
 		TimeAttackManager.Instance.LoadLevel(TimeAttackManager.Instance.GetCurrentLevel());
 	}
 
@@ -264,6 +260,12 @@ public partial class TimeAttack : Menu
 
 		isReturnMenuActive = false;
 		returnAnimator.Play("hide");
+	}
+
+	private void AlertMenuClosed()
+	{
+		isReturnMenuActive = false;
+		EnableProcessing();
 	}
 
 	public override void PlayReturnAnim() => timeAttackAnimator.Play("show");
