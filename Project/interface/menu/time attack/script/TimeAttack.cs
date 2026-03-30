@@ -26,8 +26,16 @@ public partial class TimeAttack : Menu
 
 	public override void ShowMenu()
 	{
-		SaveManager.LoadTimeAttackData();
+		SaveManager.ActiveSaveSlotIndex = SaveManager.SaveSlotCount; //Saves skills and presets on a hidden file
+		SaveManager.ActiveGameData.level = 99;
+		SaveManager.ActiveGameData.UnlockAllWorlds();
+		SaveManager.ActiveSkillRing.UpdateTotalSkillPoints();
+		DebugManager.Instance.ToggleDemoSave(true);
+
+
+		SaveManager.LoadTimeAttackData();//Creates a new timeattack file if there isn't one
 		SaveManager.SaveTimeAttackData();
+		SaveManager.SaveGameData();
 
 		if (SaveManager.TimeData.RunInProgress != null)
 		{
@@ -57,11 +65,8 @@ public partial class TimeAttack : Menu
 		if (!bgm.Playing)
 			bgm.Play();
 
-		DebugManager.Instance.ToggleDemoSave(true);
-		SaveManager.ActiveSaveSlotIndex = SaveManager.SaveSlotCount; //Saves skills and presets on a hidden file
-		SaveManager.ActiveGameData.UnlockAllWorlds();
-		SaveManager.ActiveGameData.level = 99;
-		SaveManager.ActiveSkillRing.UpdateTotalSkillPoints();
+
+
 	}
 
 	public override void OpenParentMenu()
@@ -162,15 +167,16 @@ public partial class TimeAttack : Menu
 		{
 			switch (currentSelection)
 			{
-				case 1:
+				case 1://New Run
 					timeAttackAnimator.Play("confirm-1continue");
 					ShowReturnMenu();
 					break;
-				case 2:
+				case 2://Continue Run
 					timeAttackAnimator.Play("confirm-2continue");
 					ContinueRun();
 					break;
-				case 3:
+				case 3://Single Run
+					TimeAttackManager.Instance.SetRunType(TimeAttackManager.RunType.SingleRun);
 					timeAttackAnimator.Play("confirm-3");
 					currentSelection = 1;
 					TimeAttackManager.Instance.ClearCurrentRun();
@@ -182,7 +188,7 @@ public partial class TimeAttack : Menu
 
 		switch (currentSelection)
 		{
-			case 2:
+			case 2://Single Run
 				TimeAttackManager.Instance.SetRunType(TimeAttackManager.RunType.SingleRun);
 				TimeAttackManager.Instance.ClearCurrentRun();
 				TimeAttackManager.Instance.ClearCurrentSavedRun();

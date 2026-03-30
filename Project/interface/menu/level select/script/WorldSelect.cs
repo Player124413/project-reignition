@@ -205,8 +205,12 @@ public partial class WorldSelect : Menu
 			player.Stop();
 
 		SaveManager.SaveGameData();
-		SaveManager.ActiveSaveSlotIndex = -1;
-		UpdateStoryIndicator(true);
+
+		if (!TimeAttackManager.Instance.IsRunActive)
+		{
+			SaveManager.ActiveSaveSlotIndex = -1;
+			UpdateStoryIndicator(true);
+		}
 	}
 
 	public override void OpenSubmenu()

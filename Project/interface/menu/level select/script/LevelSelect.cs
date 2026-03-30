@@ -157,7 +157,7 @@ public partial class LevelSelect : Menu
 
 	protected override void Confirm()
 	{
-		if (TimeAttackManager.Instance.IsRunActive)
+		if (TimeAttackManager.Instance.IsRunActive && TimeAttackManager.Instance.CurrentRunType != TimeAttackManager.RunType.SingleRun)
 			return;
 
 		if (isNothingSelected)
