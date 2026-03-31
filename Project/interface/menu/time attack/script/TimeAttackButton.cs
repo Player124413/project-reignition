@@ -9,6 +9,7 @@ public partial class TimeAttackButton : Menu
 	[Export] public String description { get; private set; }
 	[Export] private Label label;
 	[Export] public Texture2D image { get; private set; }
+	[Export] private AnimationPlayer confirmAnim;
 
 	public void SetText() => label.Text = text;
 	public void ShowButton() => animator.Play("show");
@@ -16,5 +17,5 @@ public partial class TimeAttackButton : Menu
 	public void SelectButton() => animator.Play("select");
 	public void DeselectButton() => animator.Play("deselect");
 
-	public void ConfirmButton() => animator.Play("confirm");
+	public void ConfirmButton() => confirmAnim.Play("confirm");
 }
