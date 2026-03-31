@@ -22,12 +22,15 @@ public partial class TimeAttack : Menu
 	protected override void SetUp()
 	{
 		currentSelection = 1;
+
 	}
 
 	public override void ShowMenu()
 	{
+
 		TimeAttackManager.Instance.SetRunActive(true);
 		SaveManager.ActiveSaveSlotIndex = SaveManager.SaveSlotCount; //Saves skills and presets on a hidden file
+		SaveManager.ActiveSkillRing.LoadFromActiveData();
 		SaveManager.ActiveGameData.level = 99;
 		SaveManager.ActiveGameData.UnlockAllWorlds();
 		SaveManager.ActiveSkillRing.UpdateTotalSkillPoints();
