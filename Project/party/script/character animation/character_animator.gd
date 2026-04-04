@@ -15,3 +15,7 @@ func play_animation(anim : StringName) -> void:
 		return
 	animator.play(anim)
 	animator.seek(0.0, true)
+
+## Loads a given animation library to the animator.
+func load_animation_library(library_name : String, library : AnimationLibrary) -> void:
+	animator.add_animation_library(library_name, library);

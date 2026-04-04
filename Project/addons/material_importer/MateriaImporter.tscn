@@ -1,0 +1,103 @@
+[gd_scene load_steps=2 format=3 uid="uid://c43ipuuad8j33"]
+
+[ext_resource type="Script" uid="uid://ctajatmd4suqh" path="res://addons/material_importer/material_importer.gd" id="1_wkofb"]
+
+[node name="Material Importer" type="Control" node_paths=PackedStringArray("texture_path", "material_path", "file_dialog", "skip_custom_shaders", "use_vertex_colors", "reset_albedo_colors")]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_wkofb")
+texture_path = NodePath("Data/TexturePath/Path")
+material_path = NodePath("Data/MaterialPath/Path")
+file_dialog = NodePath("FileDialog")
+skip_custom_shaders = NodePath("Data/CustomShaderButton")
+use_vertex_colors = NodePath("Data/VertexColorButton")
+reset_albedo_colors = NodePath("Data/AlbedoColorButton")
+
+[node name="Data" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 1.0
+offset_left = 24.0
+offset_top = 24.0
+offset_right = -24.0
+offset_bottom = 268.0
+grow_horizontal = 2
+
+[node name="TextureLabel" type="Label" parent="Data"]
+layout_mode = 2
+text = "Texture Folder"
+
+[node name="TexturePath" type="HBoxContainer" parent="Data"]
+layout_mode = 2
+
+[node name="Path" type="LineEdit" parent="Data/TexturePath"]
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "res://textures/"
+
+[node name="Button" type="Button" parent="Data/TexturePath"]
+layout_mode = 2
+text = "Open Folder"
+
+[node name="Materials" type="Label" parent="Data"]
+layout_mode = 2
+text = "Material Folder"
+
+[node name="MaterialPath" type="HBoxContainer" parent="Data"]
+layout_mode = 2
+
+[node name="Path" type="LineEdit" parent="Data/MaterialPath"]
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "res://materials/"
+
+[node name="Button" type="Button" parent="Data/MaterialPath"]
+layout_mode = 2
+text = "Open Folder"
+
+[node name="Spacer" type="Label" parent="Data"]
+layout_mode = 2
+
+[node name="OptionsLabel" type="Label" parent="Data"]
+layout_mode = 2
+text = "Options"
+
+[node name="CustomShaderButton" type="CheckButton" parent="Data"]
+layout_mode = 2
+button_pressed = true
+text = "Ignore Custom Shaders (UNIMPLEMENTED)"
+
+[node name="VertexColorButton" type="CheckButton" parent="Data"]
+layout_mode = 2
+button_pressed = true
+text = "Enable Vertex Colors"
+
+[node name="AlbedoColorButton" type="CheckButton" parent="Data"]
+layout_mode = 2
+button_pressed = true
+text = "Reset Albedo Colors"
+
+[node name="LinkButton" type="Button" parent="Data"]
+layout_mode = 2
+text = "Link Materials"
+
+[node name="CleanButton" type="Button" parent="Data"]
+layout_mode = 2
+text = "Clean Material External Resources"
+
+[node name="FileDialog" type="FileDialog" parent="."]
+oversampling_override = 1.0
+title = "Open a Directory"
+initial_position = 2
+size = Vector2i(1280, 720)
+file_mode = 2
+
+[connection signal="pressed" from="Data/TexturePath/Button" to="." method="_on_texture_button_pressed"]
+[connection signal="pressed" from="Data/MaterialPath/Button" to="." method="_on_material_button_pressed"]
+[connection signal="pressed" from="Data/LinkButton" to="." method="_on_link_button_pressed"]
+[connection signal="pressed" from="Data/CleanButton" to="." method="_on_clean_button_pressed"]
+[connection signal="dir_selected" from="FileDialog" to="." method="_on_file_dialog_dir_selected"]
