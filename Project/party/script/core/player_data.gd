@@ -19,8 +19,9 @@ var player_index : int
 ## Also determines which controller to use.
 var local_player_index : int
 
-## How well the player did in the previous mini-game from [0, 3]. Same numbers means a tie has occurred.
-var previous_minigame_placement : int
+## How well the player did in the previous mini-game from [0, 3], 0 is a win.
+## Same numbers means a tie has occurred.
+var minigame_placement : int
 
 ## Determines how difficult the cpu should be.
 var cpu_difficulty : CPU_DIFFICULTY_ENUM

@@ -94,9 +94,14 @@ func _ready() -> void:
 		# TODO Check if this player index is actually being used
 		set_physics_process(false)
 		MinigameManager.instance.gameplay_started.connect(Callable.create(self, "activate"))
+		MinigameManager.instance.gameplay_finished.connect(Callable.create(self, "deactivate"))
+		MinigameManager.instance.minigame_finished.connect(Callable.create(self, "on_minigame_finished"))
 		
 		if is_multiplayer_authority() && player_index == 0: # Only generate queue from player 1
 			rpc("generate_pitch_queue")
+	else:
+		# Hide demo batting station after gameplay starts
+		MinigameManager.instance.gameplay_started.connect(Callable.create(self, "set_visible").bind(false))
 	
 	ball.visible = false
 	bat_attachment.reparent(character_animator.skeleton)
@@ -111,6 +116,13 @@ func generate_pitch_queue() -> void:
 func activate() -> void:
 	set_physics_process(true)
 	pitch_ball() # Start pitching balls
+
+func deactivate() -> void:
+	set_process(false)
+	set_physics_process(false)
+
+func on_minigame_finished() -> void:
+	bat_attachment.visible = false
 
 func _physics_process(_delta: float) -> void:
 	if !is_multiplayer_authority():
@@ -157,9 +169,7 @@ func process_ball() -> void:
 	
 	if player_index == -1: # Finished the demo!
 		demo_finished.emit()
-		# Stop processing
-		set_process(false)
-		set_physics_process(false)
+		deactivate()
 	else:
 		pitch_ball()
 
@@ -202,8 +212,10 @@ func check_hit() -> void:
 		hit_ball(distance, hit_direction)
 
 func hit_ball(distance : float, direction : int, _network_time : float = 0.0) -> void:
+	var is_home_run : bool = distance < HOME_RUN_WINDOW
 	var angle : float = calculate_hit_angle(distance) * direction
-	var target_distance : float = HOME_RUN_DISTANCE if distance < HOME_RUN_WINDOW else IN_FIELD_DISTANCE
+	var target_distance : float = HOME_RUN_DISTANCE if is_home_run else IN_FIELD_DISTANCE
+	MinigameManager.instance.request_score_change(player_index, 2 if is_home_run else 1)
 	
 	# Change state
 	ball_state = BALL_STATES.HIT
@@ -224,7 +236,9 @@ func pitch_ball() -> void:
 	ball.visible = false
 	
 	if pitch_index == PITCH_COUNT: # Finished pitching balls
+		MinigameManager.instance.register_completed_player()
 		return
+	
 	catapult_animator.play("catapult", -1, CATAPULT_ANIMATION_MULTIPLIER)
 	catapult_animator.seek(0.0)
 

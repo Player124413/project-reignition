@@ -5,12 +5,26 @@ signal animation_event(info : int)
 
 @export var skeleton : Skeleton3D
 @export var animator : AnimationPlayer
+@export var data : PartyCharacterResource
 
 ## Emitted after the select animation finishes. Emitted from aniamtion.
 @warning_ignore("unused_signal")
 signal select_finished
 
+## The index of this character
+var player_index : int
+
 # TODO Add support for more complex character animations
+
+func _ready() -> void:
+	player_index = PartyManager.get_character_index(data)
+	
+	if player_index == -1:
+		return
+	
+	if MinigameManager.instance != null && data != null:
+		MinigameManager.instance.minigame_finished.connect(Callable.create(self, "on_minigame_finished"))
+		MinigameManager.instance.results_started.connect(Callable.create(self, "on_results_started"))
 
 ## Emits a signal from an animation. Use this to send data to the generic minigame controller.
 func emit_animation_event(info : int) -> void:
@@ -34,6 +48,25 @@ func play_minigame_animation(anim : StringName, blend : float = 0.0, speed : flo
 
 func queue_minigame_animation(anim : StringName) -> void:
 	animator.queue("%s" % anim)
+
+## Warps this animator to the correct results location.
+func on_minigame_finished() -> void:
+	if player_index == -1:
+		return
+	
+	reparent(MinigameManager.instance.results_location[player_index])
+	transform = Transform3D.IDENTITY
+	play_animation("idle") # TODO Switch to boat anims if needed
+
+## Play victory or loss animation
+func on_results_started() -> void:
+	if player_index == -1:
+		return
+	
+	if PartyManager.get_player_data(player_index).minigame_placement == 0:
+		play_animation("win")
+	else:
+		play_animation("lose")
 
 ## Loads a given animation library to the animator.
 func load_animation_library(library_name : String, library : AnimationLibrary) -> void:
