@@ -88,6 +88,9 @@ const MAX_PLAYER_COUNT : int = 4;
 func get_player_data(index : int) -> PlayerData:
 	return _player_data.get(index)
 
+func is_player_data_initialized() -> bool:
+	return _player_data.size() != 0
+
 ## Resets player data to the default offline settings.
 func initialize_offline_player_data() -> void:
 	# Initialize player data

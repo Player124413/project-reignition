@@ -1,0 +1,44 @@
+[gd_scene load_steps=6 format=3 uid="uid://lilinlwbmj5f"]
+
+[ext_resource type="PackedScene" uid="uid://dsbufs8tjchk7" path="res://party/scene/minigame/MinigameBase.tscn" id="1_cn0q6"]
+[ext_resource type="AnimationLibrary" uid="uid://kjq242is18kp" path="res://party/scene/minigame/02 home run/animation/_Library.glb" id="2_4bxo6"]
+[ext_resource type="PackedScene" uid="uid://dlxu4m3m50bs8" path="res://party/scene/minigame/02 home run/Environment.tscn" id="3_atj77"]
+[ext_resource type="PackedScene" uid="uid://y4jam2px1kdf" path="res://party/scene/minigame/02 home run/DemoStation.tscn" id="4_amw07"]
+[ext_resource type="PackedScene" uid="uid://b56otdkeqma2r" path="res://party/scene/minigame/02 home run/PlayerStation.tscn" id="5_atj77"]
+
+[node name="HomeRun" type="Node3D"]
+
+[node name="Demo" type="Node3D" parent="."]
+
+[node name="Environment" parent="Demo" instance=ExtResource("3_atj77")]
+
+[node name="DemoStation" parent="Demo" instance=ExtResource("4_amw07")]
+
+[node name="SplitscreenMinigame" parent="." instance=ExtResource("1_cn0q6")]
+screen_mode = 1
+demo_transition_mode = 1
+anim_library = ExtResource("2_4bxo6")
+
+[node name="Environment" parent="SplitscreenMinigame/SplitscreenLayout/GridContainer/Player1/SubViewport" index="0" instance=ExtResource("3_atj77")]
+
+[node name="BattingStation" parent="SplitscreenMinigame/SplitscreenLayout/GridContainer/Player1/SubViewport" index="1" instance=ExtResource("5_atj77")]
+
+[node name="Environment" parent="SplitscreenMinigame/SplitscreenLayout/GridContainer/Player2/SubViewport" index="0" instance=ExtResource("3_atj77")]
+
+[node name="BattingStation" parent="SplitscreenMinigame/SplitscreenLayout/GridContainer/Player2/SubViewport" index="1" instance=ExtResource("5_atj77")]
+player_index = 1
+
+[node name="Environment" parent="SplitscreenMinigame/SplitscreenLayout/GridContainer/Player3/SubViewport" index="0" instance=ExtResource("3_atj77")]
+
+[node name="BattingStation" parent="SplitscreenMinigame/SplitscreenLayout/GridContainer/Player3/SubViewport" index="1" instance=ExtResource("5_atj77")]
+player_index = 2
+
+[node name="Environment" parent="SplitscreenMinigame/SplitscreenLayout/GridContainer/Player4/SubViewport" index="0" instance=ExtResource("3_atj77")]
+
+[node name="BattingStation" parent="SplitscreenMinigame/SplitscreenLayout/GridContainer/Player4/SubViewport" index="1" instance=ExtResource("5_atj77")]
+player_index = 3
+
+[connection signal="demo_finished" from="Demo/DemoStation" to="SplitscreenMinigame" method="start_minigame"]
+[connection signal="peers_loaded" from="SplitscreenMinigame" to="Demo/DemoStation" method="pitch_ball"]
+
+[editable path="SplitscreenMinigame"]

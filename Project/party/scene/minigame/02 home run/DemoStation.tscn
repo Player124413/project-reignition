@@ -1,0 +1,22 @@
+[gd_scene load_steps=3 format=3 uid="uid://y4jam2px1kdf"]
+
+[ext_resource type="PackedScene" uid="uid://bmupsthsqkjjb" path="res://party/scene/minigame/02 home run/BattingStation.tscn" id="1_lelyq"]
+[ext_resource type="PackedScene" uid="uid://b10vgifvnr4tc" path="res://party/resource/character/scene/MajinBlue.tscn" id="2_08hoh"]
+
+[node name="DemoStation" node_paths=PackedStringArray("character_animator") instance=ExtResource("1_lelyq")]
+player_index = -1
+character_animator = NodePath("CharacterPosition/MajinBlue")
+
+[node name="MajinBlue" parent="CharacterPosition" index="0" instance=ExtResource("2_08hoh")]
+
+[node name="GeneralSkeleton" parent="CharacterPosition/MajinBlue/Majin/CharacterRoot" index="0" node_paths=PackedStringArray("face_meshes", "left_hand_meshes", "right_hand_meshes")]
+face_meshes = [NodePath("face_default"), null, null, NodePath("face_shock")]
+left_hand_meshes = [NodePath("hand_curl_l"), NodePath("hand_fist_l"), NodePath("hand_flat_l"), NodePath("hand_open_l"), NodePath("hand_point_l"), NodePath("hand_relax_l"), NodePath("hand_thumb_l"), null]
+right_hand_meshes = [NodePath("hand_curl_r"), NodePath("hand_fist_r"), NodePath("hand_flat_r"), NodePath("hand_open_r"), NodePath("hand_point_r"), NodePath("hand_relax_r"), NodePath("hand_thumb_r"), null]
+
+[node name="AnimationPlayer" parent="CharacterPosition/MajinBlue/Majin" index="1"]
+autoplay = "02-wait"
+
+[editable path="CharacterPosition/MajinBlue"]
+[editable path="CharacterPosition/MajinBlue/Majin"]
+[editable path="Catapult"]
