@@ -1,0 +1,133 @@
+[gd_scene load_steps=13 format=3 uid="uid://bmupsthsqkjjb"]
+
+[ext_resource type="Script" uid="uid://b3l2nixn2qvg6" path="res://party/scene/minigame/02 home run/script/batting_station.gd" id="1_area0"]
+[ext_resource type="PackedScene" uid="uid://bthgdlikxgup5" path="res://party/scene/minigame/02 home run/model/Bat.glb" id="15_gesd3"]
+[ext_resource type="PackedScene" uid="uid://8lg8p3vq6ahs" path="res://party/scene/minigame/02 home run/model/Ball.glb" id="16_iagwu"]
+[ext_resource type="PackedScene" uid="uid://hp77sy8ccqwg" path="res://party/scene/minigame/02 home run/model/Catapult.glb" id="17_gn28g"]
+
+[sub_resource type="Curve" id="Curve_lek4y"]
+_limits = [-1.0, 1.0, 0.0, 1.0]
+_data = [Vector2(0, -1), 0.0, 0.0, 0, 0, Vector2(0.4, 0.6), 0.0, 0.0, 0, 0, Vector2(0.7, -0.6), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 4
+
+[sub_resource type="Curve" id="Curve_rtuc6"]
+_limits = [-1.0, 1.0, 0.0, 1.0]
+_data = [Vector2(0, -1), 0.0, 2.0, 0, 1, Vector2(0.3, -0.39999998), 0.0, 0.0, 0, 0, Vector2(0.7, 0.40000004), 0.0, 0.0, 0, 0, Vector2(1, 1), 1.0, 0.0, 0, 0]
+point_count = 4
+
+[sub_resource type="Curve" id="Curve_mo0ae"]
+_limits = [-1.0, 1.0, 0.0, 1.0]
+_data = [Vector2(0, 1), 0.0, -5.689139, 0, 0, Vector2(0.4, -0.19999999), 0.0, 0.0, 0, 0, Vector2(0.6, 0.20000002), 0.0, 0.0, 0, 0, Vector2(1, -1), -5.627962, 0.0, 0, 0]
+point_count = 4
+
+[sub_resource type="Curve" id="Curve_5v31x"]
+_limits = [-1.0, 1.0, 0.0, 1.0]
+_data = [Vector2(0, -1), 0.0, 0.0, 0, 0, Vector2(0.1, 0.20000002), 0.0, 0.0, 0, 0, Vector2(0.90000004, -0.19999999), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 4
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_lek4y"]
+radius = 2.0
+
+[sub_resource type="Animation" id="Animation_rtuc6"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:rotation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0, 0, 0)]
+}
+
+[sub_resource type="Animation" id="Animation_lek4y"]
+resource_name = "loop"
+length = 0.5
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:rotation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.5),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector3(0, 0, 0), Vector3(6.2831855, 0, 0)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_mo0ae"]
+_data = {
+&"RESET": SubResource("Animation_rtuc6"),
+&"loop": SubResource("Animation_lek4y")
+}
+
+[node name="BattingStation" type="Node3D" node_paths=PackedStringArray("spawn_position", "bat_attachment", "catapult_animator", "ball", "ball_target")]
+script = ExtResource("1_area0")
+spawn_position = NodePath("CharacterPosition")
+bat_attachment = NodePath("BatAttachment")
+catapult_animator = NodePath("Catapult/AnimationPlayer")
+ball = NodePath("BallAttachment/BallRoot")
+ball_target = NodePath("BallTarget")
+cpu_difficulty_curves = Array[Curve]([SubResource("Curve_lek4y"), SubResource("Curve_rtuc6"), SubResource("Curve_mo0ae"), SubResource("Curve_5v31x")])
+
+[node name="CharacterPosition" type="Node3D" parent="."]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, -8, 0.2, 0)
+
+[node name="BatAttachment" type="BoneAttachment3D" parent="."]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, -8, 0, 0)
+bone_name = "hand_attachment"
+bone_idx = 89
+
+[node name="Bat" parent="BatAttachment" instance=ExtResource("15_gesd3")]
+
+[node name="BallAttachment" type="BoneAttachment3D" parent="."]
+transform = Transform3D(1, -2.3852988e-07, 1.1129231e-10, 1.1129231e-10, 0, -1, 2.3852988e-07, 1, 9.729483e-18, 4.3120235e-07, 26.805416, -135.0915)
+bone_name = "ball_position"
+bone_idx = 10
+use_external_skeleton = true
+external_skeleton = NodePath("../Catapult/CatapultRoot/Skeleton3D")
+
+[node name="BallRoot" type="Node3D" parent="BallAttachment"]
+transform = Transform3D(1, 0, -6.3321435e-24, 0, 0.99999994, -1.6543614e-24, 6.3321435e-24, 1.6543612e-24, 1, 0, 0, 0)
+
+[node name="Collision" type="Area3D" parent="BallAttachment/BallRoot"]
+transform = Transform3D(1, 0, -2.081668e-17, 0, 1, -3.3087225e-24, 2.0816688e-17, -1.6543612e-24, 1, 0, 0, 0)
+collision_layer = 8
+collision_mask = 0
+monitoring = false
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="BallAttachment/BallRoot/Collision"]
+shape = SubResource("SphereShape3D_lek4y")
+
+[node name="Ball" parent="BallAttachment/BallRoot" instance=ExtResource("16_iagwu")]
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="BallAttachment/BallRoot"]
+root_node = NodePath("../Ball")
+libraries = {
+&"": SubResource("AnimationLibrary_mo0ae")
+}
+autoplay = "loop"
+
+[node name="BallTarget" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5, -3)
+
+[node name="Catapult" parent="." instance=ExtResource("17_gn28g")]
+
+[node name="Skeleton3D" parent="Catapult/CatapultRoot" index="0"]
+bones/0/rotation = Quaternion(-0.7071068, 0, 0, 0.7071068)
+bones/6/rotation = Quaternion(0, 1, 0, 7.54979e-08)
+bones/7/rotation = Quaternion(0, 1, 0, 4.371139e-08)
+
+[node name="Camera" type="Camera3D" parent="."]
+transform = Transform3D(0.9848077, -0.015134435, 0.1729874, 0, 0.9961947, 0.08715574, -0.17364818, -0.08583164, 0.98106027, 10, 14, 50)
+cull_mask = 1027
+current = true
+fov = 40.0
+far = 8000.0
+
+[editable path="Catapult"]
