@@ -58,13 +58,15 @@ var ball_speed : float
 var ball_start_position : Vector3
 ## The position the ball will end at.
 var ball_end_position : Vector3
-
 var ball_state : BALL_STATES
 enum BALL_STATES {
 	LOAD,
 	PITCH,
 	HIT
 }
+
+# At what point to begin scaling the ball (so it's not gigantic next to the player).
+const BALL_SCALE_DISTANCE : float = 80
 
 ## Total number of balls to send over the course of the mini-game.
 const BAT_COUNT : int = 10
@@ -125,6 +127,11 @@ func process_ball() -> void:
 	
 	travel_ratio = move_toward(travel_ratio, 1.0, ball_speed * get_physics_process_delta_time())
 	ball.global_position = sample_hit_position(travel_ratio)
+	
+	# Update ball scale
+	var scale_t : float = ball.global_position.distance_to(ball_target.global_position) / BALL_SCALE_DISTANCE
+	scale_t = 1.0 - clamp(scale_t, 0.0, 1.0)
+	ball.scale = Vector3.ONE.lerp(Vector3.ONE * 0.5, scale_t)
 	if !is_equal_approx(travel_ratio, 1.0) || catapult_animator.is_playing():
 		return
 	
