@@ -93,7 +93,7 @@ func request_character_selection(index : int) -> void:
 		cursors[index].rpc("request_enable_processing")
 		return
 	
-	if !PartyManager.is_character_available(character_data):
+	if PartyManager.get_character_index(character_data) != -1:
 		# Character is already taken; allow cursor movement again
 		cursors[index].rpc("request_enable_processing")
 		return

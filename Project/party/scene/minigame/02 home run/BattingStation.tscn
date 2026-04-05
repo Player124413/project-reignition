@@ -1,9 +1,12 @@
-[gd_scene load_steps=24 format=3 uid="uid://bmupsthsqkjjb"]
+[gd_scene load_steps=27 format=3 uid="uid://bmupsthsqkjjb"]
 
-[ext_resource type="Script" uid="uid://b3l2nixn2qvg6" path="res://party/scene/minigame/02 home run/script/batting_station.gd" id="1_area0"]
+[ext_resource type="Script" uid="uid://b3l2nixn2qvg6" path="res://party/scene/minigame/02 home run/script/home_run.gd" id="1_area0"]
 [ext_resource type="Material" uid="uid://ber4ufg4kp1rp" path="res://party/scene/minigame/02 home run/material/Hit Shock.tres" id="4_rtuc6"]
 [ext_resource type="Script" uid="uid://c65ffkknyq6gr" path="res://addons/custom_nodes/script/GroupGpuParticles3D.cs" id="5_5v31x"]
 [ext_resource type="Material" uid="uid://qt5e5luhdrke" path="res://party/scene/minigame/02 home run/material/Hit Spark.tres" id="5_mo0ae"]
+[ext_resource type="AudioStream" uid="uid://n20nu1wpy141" path="res://party/scene/minigame/02 home run/sound/throw01.wav" id="8_faech"]
+[ext_resource type="AudioStream" uid="uid://cxa8rcbpygx3x" path="res://party/scene/minigame/02 home run/sound/swing.wav" id="9_qa8ly"]
+[ext_resource type="AudioStream" uid="uid://dyk1pg8at5o28" path="res://party/scene/minigame/02 home run/sound/hit01.wav" id="10_ocufk"]
 [ext_resource type="PackedScene" uid="uid://bthgdlikxgup5" path="res://party/scene/minigame/02 home run/model/Bat.glb" id="15_gesd3"]
 [ext_resource type="PackedScene" uid="uid://8lg8p3vq6ahs" path="res://party/scene/minigame/02 home run/model/Ball.glb" id="16_iagwu"]
 [ext_resource type="PackedScene" uid="uid://hp77sy8ccqwg" path="res://party/scene/minigame/02 home run/model/Catapult.glb" id="17_gn28g"]
@@ -215,6 +218,24 @@ cull_mask = 1059
 current = true
 fov = 40.0
 far = 8000.0
+
+[node name="SFX" type="Node" parent="."]
+
+[node name="ThrowSFX" type="AudioStreamPlayer" parent="SFX"]
+stream = ExtResource("8_faech")
+bus = &"GAME SFX"
+
+[node name="PitchSFX" type="AudioStreamPlayer" parent="SFX"]
+stream = ExtResource("8_faech")
+bus = &"GAME SFX"
+
+[node name="SwingSFX" type="AudioStreamPlayer" parent="SFX"]
+stream = ExtResource("9_qa8ly")
+bus = &"GAME SFX"
+
+[node name="HitSFX" type="AudioStreamPlayer" parent="SFX"]
+stream = ExtResource("10_ocufk")
+bus = &"GAME SFX"
 
 [connection signal="ball_hit" from="." to="HitShock" method="RestartGroup"]
 
