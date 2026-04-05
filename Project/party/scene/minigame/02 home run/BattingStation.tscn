@@ -5,19 +5,19 @@
 [ext_resource type="PackedScene" uid="uid://8lg8p3vq6ahs" path="res://party/scene/minigame/02 home run/model/Ball.glb" id="16_iagwu"]
 [ext_resource type="PackedScene" uid="uid://hp77sy8ccqwg" path="res://party/scene/minigame/02 home run/model/Catapult.glb" id="17_gn28g"]
 
-[sub_resource type="Curve" id="Curve_lek4y"]
-_limits = [-1.0, 1.0, 0.0, 1.0]
-_data = [Vector2(0, -1), 0.0, 0.0, 0, 0, Vector2(0.4, 0.6), 0.0, 0.0, 0, 0, Vector2(0.7, -0.6), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
-point_count = 4
-
 [sub_resource type="Curve" id="Curve_rtuc6"]
 _limits = [-1.0, 1.0, 0.0, 1.0]
 _data = [Vector2(0, -1), 0.0, 2.0, 0, 1, Vector2(0.3, -0.39999998), 0.0, 0.0, 0, 0, Vector2(0.7, 0.40000004), 0.0, 0.0, 0, 0, Vector2(1, 1), 1.0, 0.0, 0, 0]
 point_count = 4
 
+[sub_resource type="Curve" id="Curve_lek4y"]
+_limits = [-1.0, 1.0, 0.0, 1.0]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(0.2, -0.39999998), 0.0, 0.0, 0, 0, Vector2(0.4, 0.6), 0.0, 0.0, 0, 0, Vector2(0.6, -0.39999998), 0.0, 0.0, 0, 0, Vector2(0.8, 0.40000004), 0.0, 0.0, 0, 0, Vector2(1, -1), 0.0, 0.0, 0, 0]
+point_count = 6
+
 [sub_resource type="Curve" id="Curve_mo0ae"]
 _limits = [-1.0, 1.0, 0.0, 1.0]
-_data = [Vector2(0, 1), 0.0, -5.689139, 0, 0, Vector2(0.4, -0.19999999), 0.0, 0.0, 0, 0, Vector2(0.6, 0.20000002), 0.0, 0.0, 0, 0, Vector2(1, -1), -5.627962, 0.0, 0, 0]
+_data = [Vector2(0, 1), 0.0, -5.689139, 0, 0, Vector2(0.3, -0.39999998), 0.0, 0.0, 0, 0, Vector2(0.7, 0.40000004), 0.0, 0.0, 0, 0, Vector2(1, -1), -5.627962, 0.0, 0, 0]
 point_count = 4
 
 [sub_resource type="Curve" id="Curve_5v31x"]
@@ -66,14 +66,15 @@ _data = {
 &"loop": SubResource("Animation_lek4y")
 }
 
-[node name="BattingStation" type="Node3D" node_paths=PackedStringArray("spawn_position", "bat_attachment", "catapult_animator", "ball", "ball_target")]
+[node name="BattingStation" type="Node3D" node_paths=PackedStringArray("camera", "spawn_position", "bat_attachment", "catapult_animator", "ball", "ball_target")]
 script = ExtResource("1_area0")
+camera = NodePath("CameraRoot/Camera")
 spawn_position = NodePath("CharacterPosition")
 bat_attachment = NodePath("BatAttachment")
 catapult_animator = NodePath("Catapult/AnimationPlayer")
 ball = NodePath("BallAttachment/BallRoot")
 ball_target = NodePath("BallTarget")
-cpu_difficulty_curves = Array[Curve]([SubResource("Curve_lek4y"), SubResource("Curve_rtuc6"), SubResource("Curve_mo0ae"), SubResource("Curve_5v31x")])
+cpu_difficulty_curves = Array[Curve]([SubResource("Curve_rtuc6"), SubResource("Curve_lek4y"), SubResource("Curve_mo0ae"), SubResource("Curve_5v31x")])
 
 [node name="CharacterPosition" type="Node3D" parent="."]
 transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, -8, 0.2, 0)
@@ -123,8 +124,12 @@ bones/0/rotation = Quaternion(-0.7071068, 0, 0, 0.7071068)
 bones/6/rotation = Quaternion(0, 1, 0, 7.54979e-08)
 bones/7/rotation = Quaternion(0, 1, 0, 4.371139e-08)
 
-[node name="Camera" type="Camera3D" parent="."]
-transform = Transform3D(0.9848077, -0.015134435, 0.1729874, 0, 0.9961947, 0.08715574, -0.17364818, -0.08583164, 0.98106027, 10, 14, 50)
+[node name="CameraRoot" type="Node3D" parent="."]
+transform = Transform3D(0.9848078, -0.015134435, 0.1729874, 0, 0.9961947, 0.08715574, -0.1736482, -0.08583164, 0.98106027, 10, 14, 50)
+
+[node name="Camera" type="Camera3D" parent="CameraRoot"]
+physics_interpolation_mode = 2
+transform = Transform3D(0.99999994, 9.313226e-10, -1.4901161e-08, 9.313226e-10, 0.99999994, -7.450581e-09, 1.4901161e-08, 0, 0.99999994, 0, 0, 0)
 cull_mask = 1027
 current = true
 fov = 40.0
