@@ -1,5 +1,6 @@
 extends Node3D
 
+signal ball_hit
 signal demo_finished
 
 @export var player_index : int
@@ -11,6 +12,9 @@ signal demo_finished
 @export var catapult_animator : AnimationPlayer
 @export var ball : Node3D
 @export var ball_target : Node3D
+@export var hit_fx : Node3D
+var camera_transition : float
+const CAMERA_TRANSITION_LENGTH : float = 0.1
 
 @export_group("CPU Settings")
 ## Curves that are sampled to determine cpu's offset amount
@@ -45,7 +49,7 @@ const HIT_HEIGHT : float = 150.0
 const STRIKE_DISTANCE : float = 100.0
 
 ## Multiplier for the catapult animation, because it's too slow by default.
-const CATAPULT_ANIMATION_MULTIPLIER : float = 1.8
+const CATAPULT_ANIMATION_MULTIPLIER : float = 3.0
 ## Multiplier for the swing animation, because it feels sluggish otherwise.
 const SWING_ANIMATION_MULTIPLIER : float = 2.0
 ## Windup length used for CPU controlled players to calculate when to swing.
@@ -160,10 +164,11 @@ func process_ball() -> void:
 		pitch_ball()
 
 func process_camera() -> void:
-	if ball_state == BALL_STATES.HIT:
-		camera.look_at_from_position(camera.global_position, ball.global_position, Vector3.UP)
-	else:
-		camera.transform = Transform3D.IDENTITY
+	var target_transition : float = 1 if ball_state == BALL_STATES.HIT else 0
+	camera_transition = move_toward(camera_transition, target_transition, get_physics_process_delta_time() / CAMERA_TRANSITION_LENGTH)
+	camera.look_at_from_position(camera.global_position, ball.global_position, Vector3.UP)
+	var t : float = smoothstep(0.0, 1.0, 1.0 - camera_transition)
+	camera.transform = camera.transform.interpolate_with(Transform3D.IDENTITY, t)
 
 func sample_hit_position(ratio : float) -> Vector3:
 	var ball_position : Vector3 = ball_start_position.lerp(ball_end_position, ratio)
@@ -207,6 +212,8 @@ func hit_ball(distance : float, direction : int, _network_time : float = 0.0) ->
 	ball_start_position = ball.global_position
 	ball_end_position = ball_target.global_position
 	ball_end_position += Vector3.FORWARD.rotated(Vector3.UP, angle) * target_distance
+	hit_fx.global_position = ball.global_position
+	ball_hit.emit()
 
 func calculate_hit_angle(hit_distance : float) -> float:
 	return IN_FIELD_ANGLE * (hit_distance / HIT_WINDOW)

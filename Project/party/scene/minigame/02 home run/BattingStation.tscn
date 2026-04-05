@@ -1,6 +1,9 @@
-[gd_scene load_steps=13 format=3 uid="uid://bmupsthsqkjjb"]
+[gd_scene load_steps=24 format=3 uid="uid://bmupsthsqkjjb"]
 
 [ext_resource type="Script" uid="uid://b3l2nixn2qvg6" path="res://party/scene/minigame/02 home run/script/batting_station.gd" id="1_area0"]
+[ext_resource type="Material" uid="uid://ber4ufg4kp1rp" path="res://party/scene/minigame/02 home run/material/Hit Shock.tres" id="4_rtuc6"]
+[ext_resource type="Script" uid="uid://c65ffkknyq6gr" path="res://addons/custom_nodes/script/GroupGpuParticles3D.cs" id="5_5v31x"]
+[ext_resource type="Material" uid="uid://qt5e5luhdrke" path="res://party/scene/minigame/02 home run/material/Hit Spark.tres" id="5_mo0ae"]
 [ext_resource type="PackedScene" uid="uid://bthgdlikxgup5" path="res://party/scene/minigame/02 home run/model/Bat.glb" id="15_gesd3"]
 [ext_resource type="PackedScene" uid="uid://8lg8p3vq6ahs" path="res://party/scene/minigame/02 home run/model/Ball.glb" id="16_iagwu"]
 [ext_resource type="PackedScene" uid="uid://hp77sy8ccqwg" path="res://party/scene/minigame/02 home run/model/Catapult.glb" id="17_gn28g"]
@@ -66,7 +69,55 @@ _data = {
 &"loop": SubResource("Animation_lek4y")
 }
 
-[node name="BattingStation" type="Node3D" node_paths=PackedStringArray("camera", "spawn_position", "bat_attachment", "catapult_animator", "ball", "ball_target")]
+[sub_resource type="Curve" id="Curve_faech"]
+_data = [Vector2(0, 0), 0.0, 11.09696, 0, 0, Vector2(0.2, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), -1.2496579, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_qa8ly"]
+width = 64
+curve = SubResource("Curve_faech")
+
+[sub_resource type="Curve" id="Curve_qa8ly"]
+_data = [Vector2(0, 0.5), 0.0, 1.7395972, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_ocufk"]
+width = 64
+curve = SubResource("Curve_qa8ly")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_mo0ae"]
+lifetime_randomness = 0.4
+angle_min = 1.0728836e-05
+angle_max = 360.00003
+gravity = Vector3(0, 0, 0)
+scale_min = 5.0
+scale_max = 10.0
+scale_curve = SubResource("CurveTexture_ocufk")
+color = Color(0.9953124, 0.8667063, 0.7291793, 1)
+alpha_curve = SubResource("CurveTexture_qa8ly")
+
+[sub_resource type="QuadMesh" id="QuadMesh_lek4y"]
+material = ExtResource("4_rtuc6")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_5v31x"]
+lifetime_randomness = 0.8
+angle_min = 1.0728836e-05
+angle_max = 360.00003
+direction = Vector3(0, 1, 0)
+spread = 60.0
+initial_velocity_min = 10.0
+initial_velocity_max = 50.0
+gravity = Vector3(0, -98, 0)
+scale_min = 5.0
+scale_max = 15.0
+scale_curve = SubResource("CurveTexture_ocufk")
+color = Color(0.9953124, 0.8667063, 0.7291793, 1)
+alpha_curve = SubResource("CurveTexture_qa8ly")
+
+[sub_resource type="QuadMesh" id="QuadMesh_5v31x"]
+material = ExtResource("5_mo0ae")
+
+[node name="BattingStation" type="Node3D" node_paths=PackedStringArray("camera", "spawn_position", "bat_attachment", "catapult_animator", "ball", "ball_target", "hit_fx")]
 script = ExtResource("1_area0")
 camera = NodePath("CameraRoot/Camera")
 spawn_position = NodePath("CharacterPosition")
@@ -74,6 +125,7 @@ bat_attachment = NodePath("BatAttachment")
 catapult_animator = NodePath("Catapult/AnimationPlayer")
 ball = NodePath("BallAttachment/BallRoot")
 ball_target = NodePath("BallTarget")
+hit_fx = NodePath("HitShock")
 cpu_difficulty_curves = Array[Curve]([SubResource("Curve_rtuc6"), SubResource("Curve_lek4y"), SubResource("Curve_mo0ae"), SubResource("Curve_5v31x")])
 
 [node name="CharacterPosition" type="Node3D" parent="."]
@@ -117,6 +169,35 @@ autoplay = "loop"
 [node name="BallTarget" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5, -3)
 
+[node name="HitShock" type="GPUParticles3D" parent="." node_paths=PackedStringArray("subSystems")]
+transform = Transform3D(1, 0, 0, 0, 0.99999994, 0, 0, 0, 1, 0, 5, -3)
+layers = 32
+cast_shadow = 0
+extra_cull_margin = 16384.0
+emitting = false
+lifetime = 0.2
+one_shot = true
+explosiveness = 0.9
+fixed_fps = 0
+interpolate = false
+process_material = SubResource("ParticleProcessMaterial_mo0ae")
+draw_pass_1 = SubResource("QuadMesh_lek4y")
+script = ExtResource("5_5v31x")
+subSystems = [NodePath("HitSpark")]
+
+[node name="HitSpark" type="GPUParticles3D" parent="HitShock"]
+layers = 32
+cast_shadow = 0
+extra_cull_margin = 16384.0
+emitting = false
+lifetime = 0.6
+one_shot = true
+explosiveness = 0.8
+fixed_fps = 0
+interpolate = false
+process_material = SubResource("ParticleProcessMaterial_5v31x")
+draw_pass_1 = SubResource("QuadMesh_5v31x")
+
 [node name="Catapult" parent="." instance=ExtResource("17_gn28g")]
 
 [node name="Skeleton3D" parent="Catapult/CatapultRoot" index="0"]
@@ -130,9 +211,11 @@ transform = Transform3D(0.9848078, -0.015134435, 0.1729874, 0, 0.9961947, 0.0871
 [node name="Camera" type="Camera3D" parent="CameraRoot"]
 physics_interpolation_mode = 2
 transform = Transform3D(0.99999994, 9.313226e-10, -1.4901161e-08, 9.313226e-10, 0.99999994, -7.450581e-09, 1.4901161e-08, 0, 0.99999994, 0, 0, 0)
-cull_mask = 1027
+cull_mask = 1059
 current = true
 fov = 40.0
 far = 8000.0
+
+[connection signal="ball_hit" from="." to="HitShock" method="RestartGroup"]
 
 [editable path="Catapult"]
