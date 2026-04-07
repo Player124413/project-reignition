@@ -1,6 +1,7 @@
-[gd_scene load_steps=3 format=3 uid="uid://c8wrhoilndl5h"]
+[gd_scene load_steps=4 format=3 uid="uid://c8wrhoilndl5h"]
 
 [ext_resource type="PackedScene" uid="uid://d3t70d3i5ire4" path="res://party/scene/world library/model/WorldLibrary.glb" id="1_ytcrv"]
+[ext_resource type="PackedScene" uid="uid://dqrs0sg3rfo1s" path="res://party/scene/world library/model/Book.glb" id="2_e318g"]
 
 [sub_resource type="Environment" id="Environment_7bnmw"]
 background_mode = 1
@@ -13,13 +14,47 @@ glow_enabled = true
 
 [node name="WorldLibrary" parent="." instance=ExtResource("1_ytcrv")]
 
-[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
-environment = SubResource("Environment_7bnmw")
+[node name="pt_06_map_Mesh_0005" parent="WorldLibrary" index="0"]
+layers = 4
 
-[node name="Camera3D" type="Camera3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 36, 31)
-cull_mask = 1025
-current = true
+[node name="pt_06_map_Mesh_0006" parent="WorldLibrary" index="1"]
+layers = 4
+
+[node name="pt_06_map_Mesh_0007" parent="WorldLibrary" index="2"]
+layers = 4
+
+[node name="pt_06_map_Mesh_0011" parent="WorldLibrary" index="3"]
+layers = 4
+
+[node name="pt_06_map_Mesh_0016" parent="WorldLibrary" index="4"]
+layers = 4
+
+[node name="pt_06_map_Mesh_0019" parent="WorldLibrary" index="5"]
+layers = 4
+
+[node name="pt_06_map_Mesh_0020" parent="WorldLibrary" index="6"]
+layers = 4
+
+[node name="pt_06_map_Mesh_0021" parent="WorldLibrary" index="7"]
+layers = 4
+
+[node name="pt_06_map_Mesh_0022" parent="WorldLibrary" index="8"]
+layers = 4
+
+[node name="pt_06_map_Mesh_0023" parent="WorldLibrary" index="9"]
+layers = 4
+
+[node name="pt_06_map_Mesh_0027" parent="WorldLibrary" index="10"]
+layers = 4
+
+[node name="pt_06_map_Mesh_0031" parent="WorldLibrary" index="11"]
+layers = 4
+
+[node name="pt_06_map_Mesh_0033" parent="WorldLibrary" index="12"]
+layers = 4
+
+[node name="pt_06_map_Mesh_0055" parent="WorldLibrary" index="13"]
+layers = 4
 
 [node name="Lights" type="Node3D" parent="."]
 
@@ -29,7 +64,7 @@ layers = 1024
 light_color = Color(1, 0.79, 0.58000004, 1)
 light_energy = 50.0
 light_specular = 0.0
-light_cull_mask = 1
+light_cull_mask = 4
 shadow_enabled = true
 shadow_caster_mask = 1
 omni_range = 50.0
@@ -40,7 +75,7 @@ layers = 1024
 light_color = Color(1, 0.79, 0.58000004, 1)
 light_energy = 50.0
 light_specular = 0.0
-light_cull_mask = 1
+light_cull_mask = 4
 shadow_enabled = true
 shadow_caster_mask = 1
 omni_range = 50.0
@@ -51,7 +86,7 @@ layers = 1024
 light_color = Color(1, 0.79, 0.58000004, 1)
 light_energy = 50.0
 light_specular = 0.0
-light_cull_mask = 1
+light_cull_mask = 4
 shadow_enabled = true
 shadow_caster_mask = 1
 omni_range = 30.0
@@ -62,7 +97,7 @@ layers = 1024
 light_color = Color(1, 0.79, 0.58000004, 1)
 light_energy = 50.0
 light_specular = 0.0
-light_cull_mask = 1
+light_cull_mask = 4
 shadow_enabled = true
 shadow_caster_mask = 1
 omni_range = 30.0
@@ -73,6 +108,67 @@ layers = 1024
 light_color = Color(1, 0.79, 0.58000004, 1)
 light_energy = 50.0
 light_specular = 0.0
-light_cull_mask = 1
+light_cull_mask = 4
 shadow_caster_mask = 1
 omni_range = 200.0
+
+[node name="BookLight" type="DirectionalLight3D" parent="Lights"]
+transform = Transform3D(1, 0, 0, 0, 0.25881907, 0.9659258, 0, -0.9659258, 0.25881907, 0, 38, 100)
+layers = 1024
+light_color = Color(1, 0.79, 0.58000004, 1)
+light_energy = 1.5
+light_cull_mask = 1
+shadow_enabled = true
+shadow_caster_mask = 1
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_7bnmw")
+
+[node name="Camera" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 36.2, 100)
+cull_mask = 1031
+current = true
+fov = 50.0
+
+[node name="Book" parent="Camera" instance=ExtResource("2_e318g")]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 0, -11, -161)
+
+[node name="st_999_book_Mesh_0009" parent="Camera/Book/BookRoot/Skeleton3D" index="1"]
+visible = false
+
+[node name="st_999_book_Mesh_0012" parent="Camera/Book/BookRoot/Skeleton3D" index="2"]
+visible = false
+
+[node name="AnimationPlayer" parent="Camera/Book" index="1"]
+speed_scale = 3.0
+
+[node name="Menu" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="SubViewportContainer" type="SubViewportContainer" parent="Menu"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+stretch = true
+
+[node name="SubViewport" type="SubViewport" parent="Menu/SubViewportContainer"]
+size = Vector2i(1920, 1080)
+
+[node name="Menu" type="Control" parent="Menu/SubViewportContainer/SubViewport"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[editable path="WorldLibrary"]
+[editable path="Camera/Book"]
