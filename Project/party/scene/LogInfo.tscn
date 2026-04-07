@@ -1,0 +1,153 @@
+[gd_scene load_steps=8 format=3 uid="uid://c1jq84sse7d17"]
+
+[ext_resource type="FontFile" uid="uid://cgpj6fy1l1fco" path="res://interface/font/otf/Sonic and The Secret Rings - Credits by Dark Sonic & Co.otf" id="1_be5bg"]
+[ext_resource type="Script" path="res://party/script/core/network_logger.gd" id="2_7gttr"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_7gttr"]
+font = ExtResource("1_be5bg")
+font_size = 60
+outline_size = 8
+outline_color = Color(0, 0, 0, 1)
+shadow_size = 16
+shadow_color = Color(0, 0, 0, 0.5882353)
+
+[sub_resource type="Animation" id="Animation_7gttr"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("..:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(1, 1)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath(".:position")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(0, 0)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath(".:modulate")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+
+[sub_resource type="Animation" id="Animation_a3wlx"]
+resource_name = "init"
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("..:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(1, 0)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath(".:modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 0)]
+}
+
+[sub_resource type="Animation" id="Animation_be5bg"]
+resource_name = "show"
+length = 2.0
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("..:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.13333334),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector2(1, 0), Vector2(1, 1)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath(".:position")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.33333334),
+"transitions": PackedFloat32Array(0.5, 1),
+"update": 0,
+"values": [Vector2(-128, 0), Vector2(0, 0)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath(".:modulate")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 0.33333334, 1.6666667, 2),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 1), Color(1, 1, 1, 1), Color(1, 1, 1, 0)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_7gttr"]
+_data = {
+&"RESET": SubResource("Animation_7gttr"),
+&"init": SubResource("Animation_a3wlx"),
+&"show": SubResource("Animation_be5bg")
+}
+
+[node name="Info" type="Control" node_paths=PackedStringArray("label", "animator")]
+custom_minimum_size = Vector2(0, 64)
+layout_mode = 3
+offset_bottom = 64.0
+pivot_offset = Vector2(0, 32)
+script = ExtResource("2_7gttr")
+label = NodePath("Label")
+animator = NodePath("AnimationPlayer")
+
+[node name="Label" type="Label" parent="."]
+custom_minimum_size = Vector2(0, 64)
+layout_mode = 1
+anchors_preset = -1
+offset_right = 550.0
+offset_bottom = 64.0
+text = "Connecting..."
+label_settings = SubResource("LabelSettings_7gttr")
+vertical_alignment = 1
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+deterministic = true
+root_node = NodePath("../Label")
+libraries = {
+&"": SubResource("AnimationLibrary_7gttr")
+}
+autoplay = "init"

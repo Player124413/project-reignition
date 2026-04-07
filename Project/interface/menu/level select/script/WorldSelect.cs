@@ -166,7 +166,7 @@ public partial class WorldSelect : Menu
 	{
 		if (SaveManager.ActiveGameData.CurrentStoryLevel != null)
 		{
-			if (!forceClose && (int)SaveManager.ActiveGameData.CurrentStoryLevel.AreaKey == VerticalSelection)
+			if (!forceClose && (int)SaveManager.ActiveGameData.CurrentStoryLevel.AreaKey == VerticalSelection && !TimeAttackManager.Instance.IsRunActive)
 			{
 				storyIndicationAnimator.Play("show");
 				return;
@@ -205,8 +205,13 @@ public partial class WorldSelect : Menu
 			player.Stop();
 
 		SaveManager.SaveGameData();
-		SaveManager.ActiveSaveSlotIndex = -1;
-		UpdateStoryIndicator(true);
+
+		if (!TimeAttackManager.Instance.IsRunActive)
+		{
+			GD.Print("Run is not active");
+			SaveManager.ActiveSaveSlotIndex = -1;
+			UpdateStoryIndicator(true);
+		}
 	}
 
 	public override void OpenSubmenu()
@@ -257,8 +262,11 @@ public partial class WorldSelect : Menu
 		if (!SaveManager.ActiveGameData.IsWorldUnlocked((SaveManager.WorldEnum)selectionIndex)) // World isn't unlocked.
 			selectionIndex = levelSpriteRegions.Count - 1;
 
-		// Update new notifications
-		_levelNewSprites[spriteIndex].Visible = newLevelList.Contains(selectionIndex);
+		if (!TimeAttackManager.Instance.IsRunActive)
+			_levelNewSprites[spriteIndex].Visible = newLevelList.Contains(selectionIndex);// Update new notifications
+		else
+			_levelNewSprites[spriteIndex].Visible = false;
+
 		_levelTextSprites[spriteIndex].RegionRect = levelSpriteRegions[selectionIndex];
 
 		if (spriteIndex == 1) // Updating primary selection

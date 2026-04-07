@@ -156,7 +156,7 @@ public partial class Menu : Control
 
 	public virtual void PlayReturnAnim()
 	{
-		animator.Play("return");
+		animator.Play("show");
 	}
 
 	public virtual void PlayReturnAnim(int animNum)

@@ -189,20 +189,18 @@ public partial class SaveSelect : Menu
 			SaveManager.ResetSaveData(SaveManager.ActiveSaveSlotIndex, false);
 			SaveManager.SaveGameData();
 
-			if (menuMemory[MemoryKeys.ActiveMenu] != (int)MemoryKeys.TimeAttack) // Only load a scene if we aren't in Time Attack
+			if (!DebugManager.Instance.UseDemoSave) // Don't load into cutscenes in the demo
 			{
-				if (!DebugManager.Instance.UseDemoSave) // Don't load into cutscenes in the demo
+				// Load directly into the first cutscene
+				TransitionManager.QueueSceneChange($"{TransitionManager.EventScenePath}Event1.tscn");
+				TransitionManager.StartTransition(new()
 				{
-					// Load directly into the first cutscene
-					TransitionManager.QueueSceneChange($"{TransitionManager.EventScenePath}Event1.tscn");
-					TransitionManager.StartTransition(new()
-					{
-						color = Colors.Black,
-						inSpeed = 1f,
-					});
-					return;
-				}
+					color = Colors.Black,
+					inSpeed = 1f,
+				});
+				return;
 			}
+
 		}
 
 		if (DebugManager.Instance.UseDemoSave) // Unlock all worlds in the demo

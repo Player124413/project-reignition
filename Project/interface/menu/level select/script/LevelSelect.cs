@@ -109,11 +109,6 @@ public partial class LevelSelect : Menu
 
 	public override void ShowMenu()
 	{
-		if (menuMemory[MemoryKeys.ActiveMenu] == (int)MemoryKeys.TimeAttack)
-		{
-			menuMemory[MemoryKeys.LevelSelect] = 0;
-			SetUp();
-		}
 
 		VerticalSelection = menuMemory[MemoryKeys.LevelSelect];
 		RecalculateListPosition();
@@ -132,32 +127,25 @@ public partial class LevelSelect : Menu
 		cursorAnimator.Advance(0.0);
 
 		animator.Play("show");
-		if (menuMemory[MemoryKeys.ActiveMenu] != (int)MemoryKeys.TimeAttack)
-		{
-			UpdateDescription();
-			for (int i = 0; i < levelOptions.Count; i++)
-				levelOptions[i].ShowOption();
 
-			bool canPlayBgm = !SaveManager.Config.useRetailMenuMusic && IsWorldUnlocked() && bgm?.Stream != null;
-			if (canPlayBgm && bgm?.Playing == false)
-			{
-				// Change to world specific level select music
-				parentMenu.FadeBgm(.5f);
-				FadeBgm(.5f, true, .5f); // Fade in bgm
-				CurrentBgmTime = parentMenu.CurrentBgmTime; // Sync bgm
-				readyMenu.SetBgmPlayer(bgm); // Update readymenu's bgm player
-			}
-			else if (!canPlayBgm)
-			{
-				// As a fallback, play the parent menu's bgm (won't do anything if parent bgm is already playing)
-				parentMenu.PlayBgm();
-				readyMenu.SetBgmPlayer(parentMenu.bgm);
-			}
-		}
-		else
+		UpdateDescription();
+		for (int i = 0; i < levelOptions.Count; i++)
+			levelOptions[i].ShowOption();
+
+		bool canPlayBgm = !SaveManager.Config.useRetailMenuMusic && IsWorldUnlocked() && bgm?.Stream != null;
+		if (canPlayBgm && bgm?.Playing == false)
 		{
-			for (int i = 0; i < levelOptions.Count; i++)
-				levelOptions[i].EnableTAInfo();
+			// Change to world specific level select music
+			parentMenu.FadeBgm(.5f);
+			FadeBgm(.5f, true, .5f); // Fade in bgm
+			CurrentBgmTime = parentMenu.CurrentBgmTime; // Sync bgm
+			readyMenu.SetBgmPlayer(bgm); // Update readymenu's bgm player
+		}
+		else if (!canPlayBgm)
+		{
+			// As a fallback, play the parent menu's bgm (won't do anything if parent bgm is already playing)
+			parentMenu.PlayBgm();
+			readyMenu.SetBgmPlayer(parentMenu.bgm);
 		}
 	}
 
@@ -169,10 +157,13 @@ public partial class LevelSelect : Menu
 
 	protected override void Confirm()
 	{
-		if (menuMemory[MemoryKeys.ActiveMenu] != (int)MemoryKeys.TimeAttack && !levelOptions[VerticalSelection].IsUnlocked)
+		if (TimeAttackManager.Instance.IsRunActive && TimeAttackManager.Instance.CurrentRunType != TimeAttackManager.RunType.SingleRun)
 			return;
 
 		if (isNothingSelected)
+			return;
+
+		if (!levelOptions[VerticalSelection].IsUnlocked)
 			return;
 
 		base.Confirm();
@@ -181,16 +172,6 @@ public partial class LevelSelect : Menu
 	protected override void Cancel()
 	{
 		base.Cancel();
-
-		if (menuMemory[MemoryKeys.ActiveMenu] == (int)MemoryKeys.TimeAttack)
-		{
-			HideMenu();
-			cursorPosition = 0;
-			levelOptions.Clear();
-
-			parentMenu.OpenParentMenu();
-			return;
-		}
 
 		// Revert bgm music
 		if (bgm?.Playing == true)
@@ -204,6 +185,9 @@ public partial class LevelSelect : Menu
 	/// <summary> Shows the "Are you ready?" screen. </summary>
 	public override void OpenSubmenu()
 	{
+		if (TimeAttackManager.Instance.IsRunActive && TimeAttackManager.Instance.CurrentRunType == TimeAttackManager.RunType.SingleRun)
+			TimeAttackManager.Instance.Level_Single = levelOptions[VerticalSelection].data;
+
 		readyMenu.SetMapText(areaKey);
 		readyMenu.SetMissionText(levelOptions[VerticalSelection].data.MissionTypeKey);
 		readyMenu.parentMenu = this;
@@ -232,14 +216,14 @@ public partial class LevelSelect : Menu
 		animator.Play("select");
 		animator.Seek(0, true);
 
-		if (menuMemory[MemoryKeys.ActiveMenu] != (int)MemoryKeys.TimeAttack)
-			UpdateDescription();
+		UpdateDescription();
 		StartSelectionTimer();
 		RecalculateListPosition();
 	}
 
 	private void UpdateDescription()
 	{
+		GD.Print("Changing description");
 		description.ShowDescription();
 		description.Text = levelOptions[VerticalSelection].GetDescription();
 	}
@@ -295,5 +279,10 @@ public partial class LevelSelect : Menu
 		isNothingSelected = false;
 		VerticalSelection = levelOptions.IndexOf(node);
 		ChangeSelection();
+	}
+
+	public List<LevelOption> GetLevelOptions()
+	{
+		return levelOptions;
 	}
 }

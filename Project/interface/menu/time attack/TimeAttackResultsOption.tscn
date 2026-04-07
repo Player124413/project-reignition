@@ -1,0 +1,137 @@
+[gd_scene load_steps=9 format=3 uid="uid://b04nx00ecsmme"]
+
+[ext_resource type="Script" uid="uid://23xgow2qfeck" path="res://interface/menu/time attack/script/TimeAttackResultsOption.cs" id="1_ex1gf"]
+[ext_resource type="FontFile" uid="uid://cislueb5bhi02" path="res://interface/font/bitmap fonts/Experience.fnt" id="1_wuyv4"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_xfl4h"]
+font = ExtResource("1_wuyv4")
+font_size = 32
+
+[sub_resource type="LabelSettings" id="LabelSettings_ex1gf"]
+font = ExtResource("1_wuyv4")
+font_size = 52
+
+[sub_resource type="LabelSettings" id="LabelSettings_itwy4"]
+font = ExtResource("1_wuyv4")
+font_size = 64
+
+[sub_resource type="Animation" id="Animation_wuyv4"]
+resource_name = "RESET"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("HBoxContainer:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0.033333335),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 0)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("HBoxContainer:scale")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(1, 1)]
+}
+
+[sub_resource type="Animation" id="Animation_ex1gf"]
+resource_name = "show"
+length = 0.5
+step = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("HBoxContainer:modulate")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.5),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 1)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("HBoxContainer:scale")
+tracks/1/interp = 2
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.5),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector2(0, 0), Vector2(1, 1)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_xfl4h"]
+_data = {
+&"RESET": SubResource("Animation_wuyv4"),
+&"show": SubResource("Animation_ex1gf")
+}
+
+[node name="TimeAttackResultsOption" type="Control" node_paths=PackedStringArray("worldLabel", "levelLabel", "timeLabel", "animator")]
+layout_mode = 3
+offset_right = 1204.6399
+offset_bottom = 73.5
+script = ExtResource("1_ex1gf")
+worldLabel = NodePath("HBoxContainer/VBoxContainer/World")
+levelLabel = NodePath("HBoxContainer/VBoxContainer/Level")
+timeLabel = NodePath("HBoxContainer/Time")
+animator = NodePath("AnimationPlayer")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+modulate = Color(1, 1, 1, 0)
+custom_minimum_size = Vector2(0, 72)
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 0.99000007
+anchor_bottom = 1.3610001
+offset_left = 1.0
+offset_right = 0.40637207
+offset_bottom = -0.0335083
+pivot_offset = Vector2(544, 33)
+theme_override_constants/separation = 325
+alignment = 1
+
+[node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer"]
+layout_mode = 2
+
+[node name="World" type="Label" parent="HBoxContainer/VBoxContainer"]
+clip_contents = true
+custom_minimum_size = Vector2(360, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "SAND OASIS"
+label_settings = SubResource("LabelSettings_xfl4h")
+vertical_alignment = 1
+uppercase = true
+
+[node name="Level" type="Label" parent="HBoxContainer/VBoxContainer"]
+clip_contents = true
+custom_minimum_size = Vector2(580, 0)
+layout_mode = 2
+text = "GO FOR THE GOAL"
+label_settings = SubResource("LabelSettings_ex1gf")
+vertical_alignment = 1
+uppercase = true
+
+[node name="Time" type="Label" parent="HBoxContainer"]
+custom_minimum_size = Vector2(240, 0)
+layout_mode = 2
+text = "99:99:99"
+label_settings = SubResource("LabelSettings_itwy4")
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+&"": SubResource("AnimationLibrary_xfl4h")
+}

@@ -47,7 +47,7 @@ public partial class ReadyMenu : Menu
 				SetupReadyMenu(TimeAttackManager.Instance.GetCurrentLevel());
 		}
 
-		if (SaveManager.ActiveGameData.HasNewSkill())
+		if (SaveManager.ActiveGameData.HasNewSkill() && !TimeAttackManager.Instance.IsRunActive)
 			notifAnimPlayer.Play("show");
 		else
 			notifAnimPlayer.Play("hide");
@@ -77,10 +77,23 @@ public partial class ReadyMenu : Menu
 		if (HorizontalSelection == 0) // Load level
 		{
 			StopBgm(); // Stop bgm
-			if (menuMemory[MemoryKeys.ActiveMenu] == (int)MemoryKeys.TimeAttack)
-				TimeAttackManager.Instance.SetRunActive(true);
 
-			menuMemory[MemoryKeys.ActiveMenu] = (int)MemoryKeys.LevelSelect;
+			if (!TimeAttackManager.Instance.IsRunActive)
+				menuMemory[MemoryKeys.ActiveMenu] = (int)MemoryKeys.LevelSelect;
+			else
+			{
+
+				if (TimeAttackManager.Instance.CurrentRunType != TimeAttackManager.RunType.SingleRun)
+				{
+					TimeAttackManager.Instance.ClearCurrentRun();
+					TimeAttackManager.Instance.ClearCurrentSavedRun();
+
+					SaveManager.TimeData.CurrentRunType = TimeAttackManager.Instance.CurrentRunType;
+					SaveManager.SaveTimeAttackData(); //Overwrites currently saved run
+				}
+
+				menuMemory[MemoryKeys.ActiveMenu] = (int)MemoryKeys.TimeAttack;
+			}
 			base.Confirm();
 		}
 		else
@@ -165,8 +178,9 @@ public partial class ReadyMenu : Menu
 	/// <summary> Sets up the ready menu for time attack. </summary>
 	public void SetupReadyMenu(LevelDataResource level)
 	{
-		SetMapText(level.AreaKey.ToString().ToCamelCase());
-		SetMissionText(level.MissionTypeKey);
+		SetMapText(Tr(level.GetAreaKey()));
+		SetMissionText(Tr(level.MissionTypeKey));
+		description.Text = Tr(level.MissionDescriptionKey);
 		LevelData = level;
 	}
 
