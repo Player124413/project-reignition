@@ -2,6 +2,7 @@
 @tool
 extends MeshInstance3D
 
+@export var influence : float = 10.0
 @export var bone_name : StringName
 var _skeleton : Skeleton3D
 var _bone_index : int = -1
@@ -25,7 +26,7 @@ func _enter_tree() -> void:
 
 func update_blend_shape() -> void:
 	var bone_position : Vector3 = calculate_local_bone_position()
-	set_blend_shape_value(0, bone_position.x * 10.0)
+	set_blend_shape_value(0, clamp(bone_position.x * influence, 0.0, 1.0))
 
 func calculate_local_bone_position() -> Vector3:
 	var pose_transform : Transform3D = _skeleton.get_bone_pose(_bone_index)
