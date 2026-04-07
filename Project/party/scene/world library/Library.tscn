@@ -1,7 +1,13 @@
-[gd_scene load_steps=4 format=3 uid="uid://c8wrhoilndl5h"]
+[gd_scene load_steps=17 format=3 uid="uid://c8wrhoilndl5h"]
 
 [ext_resource type="PackedScene" uid="uid://d3t70d3i5ire4" path="res://party/scene/world library/model/WorldLibrary.glb" id="1_ytcrv"]
 [ext_resource type="PackedScene" uid="uid://dqrs0sg3rfo1s" path="res://party/scene/world library/model/Book.glb" id="2_e318g"]
+[ext_resource type="Texture2D" uid="uid://dvus7cb7e13en" path="res://party/scene/party menu/texture/button.png" id="3_rkcga"]
+[ext_resource type="LabelSettings" uid="uid://llo2fr0lcqu0" path="res://party/font/WorldLibraryButton.tres" id="4_yq5mu"]
+[ext_resource type="Material" uid="uid://bhbsafmnnhtdb" path="res://effect/material/Canvas Item Add.tres" id="5_01kxe"]
+[ext_resource type="Texture2D" uid="uid://cmfbnrdapjnue" path="res://party/scene/party menu/texture/cursor hand.png" id="6_71mx1"]
+[ext_resource type="PackedScene" uid="uid://bqaafoua436c8" path="res://interface/menu/DescriptionParty.tscn" id="7_x6bjf"]
+[ext_resource type="PackedScene" uid="uid://crwawg2ivy3xd" path="res://interface/menu/NavigationButton.tscn" id="8_01kxe"]
 
 [sub_resource type="Environment" id="Environment_7bnmw"]
 background_mode = 1
@@ -10,55 +16,589 @@ ambient_light_color = Color(0.45452422, 0.45452428, 0.45452422, 1)
 tonemap_mode = 2
 glow_enabled = true
 
-[node name="Library" type="Node3D"]
+[sub_resource type="Animation" id="Animation_01kxe"]
+resource_name = "loop"
+length = 0.6
+loop_mode = 1
+step = 0.05
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Hand:scale")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.3, 0.6),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector2(1.3, 1.3), Vector2(1.4, 1.4), Vector2(1.3, 1.3)]
+}
 
-[node name="WorldLibrary" parent="." instance=ExtResource("1_ytcrv")]
+[sub_resource type="Animation" id="Animation_71mx1"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Hand:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(1.3, 1.3)]
+}
 
-[node name="pt_06_map_Mesh_0005" parent="WorldLibrary" index="0"]
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_x6bjf"]
+_data = {
+&"RESET": SubResource("Animation_71mx1"),
+&"loop": SubResource("Animation_01kxe")
+}
+
+[sub_resource type="Animation" id="Animation_e318g"]
+resource_name = "show"
+length = 3.0
+step = 0.05
+tracks/0/type = "animation"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Environment/SubViewport/Camera/Book/AnimationPlayer")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"clips": PackedStringArray("RESET", "open"),
+"times": PackedFloat32Array(0, 0.05)
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Menu:visible")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 1.35),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [false, true]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Menu:modulate")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 1.35, 1.8),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 0), Color(1, 1, 1, 1)]
+}
+tracks/3/type = "method"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("Menu/DescriptionParty")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(2),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"show_description"
+}]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("Menu/MainPage/Options/All/Button:scale")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(1.35, 1.5, 1.7),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector2(0.5, 1), Vector2(1.05, 1), Vector2(1, 1)]
+}
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("Menu/MainPage/Options/Record/Button:scale")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(1.35, 1.5, 1.7),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector2(0.5, 1), Vector2(1.05, 1), Vector2(1, 1)]
+}
+tracks/6/type = "value"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("Menu/MainPage/Options/Survival/Button:scale")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"times": PackedFloat32Array(1.35, 1.5, 1.7),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector2(0.5, 1), Vector2(1.05, 1), Vector2(1, 1)]
+}
+tracks/7/type = "value"
+tracks/7/imported = false
+tracks/7/enabled = true
+tracks/7/path = NodePath("Menu/MainPage/Options/Ranking/Button:scale")
+tracks/7/interp = 1
+tracks/7/loop_wrap = true
+tracks/7/keys = {
+"times": PackedFloat32Array(1.35, 1.5, 1.7),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector2(0.5, 1), Vector2(1.05, 1), Vector2(1, 1)]
+}
+tracks/8/type = "value"
+tracks/8/imported = false
+tracks/8/enabled = true
+tracks/8/path = NodePath("Menu/MainPage/Options/Point/Button:scale")
+tracks/8/interp = 1
+tracks/8/loop_wrap = true
+tracks/8/keys = {
+"times": PackedFloat32Array(1.35, 1.5, 1.7),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector2(0.5, 1), Vector2(1.05, 1), Vector2(1, 1)]
+}
+tracks/9/type = "value"
+tracks/9/imported = false
+tracks/9/enabled = true
+tracks/9/path = NodePath("Menu/MainPage/Options/Character/Button:scale")
+tracks/9/interp = 1
+tracks/9/loop_wrap = true
+tracks/9/keys = {
+"times": PackedFloat32Array(1.35, 1.5, 1.7),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector2(0.5, 1), Vector2(1.05, 1), Vector2(1, 1)]
+}
+tracks/10/type = "value"
+tracks/10/imported = false
+tracks/10/enabled = true
+tracks/10/path = NodePath("Menu/MainPage/Options/Race/Button:scale")
+tracks/10/interp = 1
+tracks/10/loop_wrap = true
+tracks/10/keys = {
+"times": PackedFloat32Array(1.35, 1.5, 1.7),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector2(0.5, 1), Vector2(1.05, 1), Vector2(1, 1)]
+}
+tracks/11/type = "value"
+tracks/11/imported = false
+tracks/11/enabled = true
+tracks/11/path = NodePath("Menu/MainPage/Options/Final/Button:scale")
+tracks/11/interp = 1
+tracks/11/loop_wrap = true
+tracks/11/keys = {
+"times": PackedFloat32Array(1.35, 1.5, 1.7),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector2(0.5, 1), Vector2(1.05, 1), Vector2(1, 1)]
+}
+tracks/12/type = "value"
+tracks/12/imported = false
+tracks/12/enabled = true
+tracks/12/path = NodePath("Menu/MainPage/Options/All/Button/Label:modulate")
+tracks/12/interp = 1
+tracks/12/loop_wrap = true
+tracks/12/keys = {
+"times": PackedFloat32Array(1.5, 1.75),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 1)]
+}
+tracks/13/type = "value"
+tracks/13/imported = false
+tracks/13/enabled = true
+tracks/13/path = NodePath("Menu/MainPage/Options/Record/Button/Label:modulate")
+tracks/13/interp = 1
+tracks/13/loop_wrap = true
+tracks/13/keys = {
+"times": PackedFloat32Array(1.5, 1.75),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 1)]
+}
+tracks/14/type = "value"
+tracks/14/imported = false
+tracks/14/enabled = true
+tracks/14/path = NodePath("Menu/MainPage/Options/Survival/Button/Label:modulate")
+tracks/14/interp = 1
+tracks/14/loop_wrap = true
+tracks/14/keys = {
+"times": PackedFloat32Array(1.5, 1.75),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 1)]
+}
+tracks/15/type = "value"
+tracks/15/imported = false
+tracks/15/enabled = true
+tracks/15/path = NodePath("Menu/MainPage/Options/Ranking/Button/Label:modulate")
+tracks/15/interp = 1
+tracks/15/loop_wrap = true
+tracks/15/keys = {
+"times": PackedFloat32Array(1.5, 1.75),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 1)]
+}
+tracks/16/type = "value"
+tracks/16/imported = false
+tracks/16/enabled = true
+tracks/16/path = NodePath("Menu/MainPage/Options/Point/Button/Label:modulate")
+tracks/16/interp = 1
+tracks/16/loop_wrap = true
+tracks/16/keys = {
+"times": PackedFloat32Array(1.5, 1.75),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 1)]
+}
+tracks/17/type = "value"
+tracks/17/imported = false
+tracks/17/enabled = true
+tracks/17/path = NodePath("Menu/MainPage/Options/Character/Button/Label:modulate")
+tracks/17/interp = 1
+tracks/17/loop_wrap = true
+tracks/17/keys = {
+"times": PackedFloat32Array(1.5, 1.75),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 1)]
+}
+tracks/18/type = "value"
+tracks/18/imported = false
+tracks/18/enabled = true
+tracks/18/path = NodePath("Menu/MainPage/Options/Race/Button/Label:modulate")
+tracks/18/interp = 1
+tracks/18/loop_wrap = true
+tracks/18/keys = {
+"times": PackedFloat32Array(1.5, 1.75),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 1)]
+}
+tracks/19/type = "value"
+tracks/19/imported = false
+tracks/19/enabled = true
+tracks/19/path = NodePath("Menu/MainPage/Options/Final/Button/Label:modulate")
+tracks/19/interp = 1
+tracks/19/loop_wrap = true
+tracks/19/keys = {
+"times": PackedFloat32Array(1.5, 1.75),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 1)]
+}
+
+[sub_resource type="Animation" id="Animation_rkcga"]
+resource_name = "cancel"
+
+[sub_resource type="Animation" id="Animation_7bnmw"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Menu:visible")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Menu:modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Menu/MainPage/Options/All/Button:scale")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(1, 1)]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("Menu/MainPage/Options/Record/Button:scale")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(1, 1)]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("Menu/MainPage/Options/Survival/Button:scale")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(1, 1)]
+}
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("Menu/MainPage/Options/Ranking/Button:scale")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(1, 1)]
+}
+tracks/6/type = "value"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("Menu/MainPage/Options/Point/Button:scale")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(1, 1)]
+}
+tracks/7/type = "value"
+tracks/7/imported = false
+tracks/7/enabled = true
+tracks/7/path = NodePath("Menu/MainPage/Options/Character/Button:scale")
+tracks/7/interp = 1
+tracks/7/loop_wrap = true
+tracks/7/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(1, 1)]
+}
+tracks/8/type = "value"
+tracks/8/imported = false
+tracks/8/enabled = true
+tracks/8/path = NodePath("Menu/MainPage/Options/Race/Button:scale")
+tracks/8/interp = 1
+tracks/8/loop_wrap = true
+tracks/8/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(1, 1)]
+}
+tracks/9/type = "value"
+tracks/9/imported = false
+tracks/9/enabled = true
+tracks/9/path = NodePath("Menu/MainPage/Options/Final/Button:scale")
+tracks/9/interp = 1
+tracks/9/loop_wrap = true
+tracks/9/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(1, 1)]
+}
+tracks/10/type = "value"
+tracks/10/imported = false
+tracks/10/enabled = true
+tracks/10/path = NodePath("Menu/MainPage/Options/All/Button/Label:modulate")
+tracks/10/interp = 1
+tracks/10/loop_wrap = true
+tracks/10/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+tracks/11/type = "value"
+tracks/11/imported = false
+tracks/11/enabled = true
+tracks/11/path = NodePath("Menu/MainPage/Options/Record/Button/Label:modulate")
+tracks/11/interp = 1
+tracks/11/loop_wrap = true
+tracks/11/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+tracks/12/type = "value"
+tracks/12/imported = false
+tracks/12/enabled = true
+tracks/12/path = NodePath("Menu/MainPage/Options/Survival/Button/Label:modulate")
+tracks/12/interp = 1
+tracks/12/loop_wrap = true
+tracks/12/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+tracks/13/type = "value"
+tracks/13/imported = false
+tracks/13/enabled = true
+tracks/13/path = NodePath("Menu/MainPage/Options/Ranking/Button/Label:modulate")
+tracks/13/interp = 1
+tracks/13/loop_wrap = true
+tracks/13/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+tracks/14/type = "value"
+tracks/14/imported = false
+tracks/14/enabled = true
+tracks/14/path = NodePath("Menu/MainPage/Options/Point/Button/Label:modulate")
+tracks/14/interp = 1
+tracks/14/loop_wrap = true
+tracks/14/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+tracks/15/type = "value"
+tracks/15/imported = false
+tracks/15/enabled = true
+tracks/15/path = NodePath("Menu/MainPage/Options/Character/Button/Label:modulate")
+tracks/15/interp = 1
+tracks/15/loop_wrap = true
+tracks/15/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+tracks/16/type = "value"
+tracks/16/imported = false
+tracks/16/enabled = true
+tracks/16/path = NodePath("Menu/MainPage/Options/Race/Button/Label:modulate")
+tracks/16/interp = 1
+tracks/16/loop_wrap = true
+tracks/16/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+tracks/17/type = "value"
+tracks/17/imported = false
+tracks/17/enabled = true
+tracks/17/path = NodePath("Menu/MainPage/Options/Final/Button/Label:modulate")
+tracks/17/interp = 1
+tracks/17/loop_wrap = true
+tracks/17/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_7bnmw"]
+_data = {
+&"RESET": SubResource("Animation_7bnmw"),
+&"hide": SubResource("Animation_rkcga"),
+&"show": SubResource("Animation_e318g")
+}
+
+[node name="Library" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Environment" type="SubViewportContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+stretch = true
+
+[node name="SubViewport" type="SubViewport" parent="Environment"]
+handle_input_locally = false
+screen_space_aa = 1
+size = Vector2i(1920, 1080)
+render_target_update_mode = 4
+
+[node name="WorldLibrary" parent="Environment/SubViewport" instance=ExtResource("1_ytcrv")]
+
+[node name="pt_06_map_Mesh_0005" parent="Environment/SubViewport/WorldLibrary" index="0"]
 layers = 4
 
-[node name="pt_06_map_Mesh_0006" parent="WorldLibrary" index="1"]
+[node name="pt_06_map_Mesh_0006" parent="Environment/SubViewport/WorldLibrary" index="1"]
 layers = 4
 
-[node name="pt_06_map_Mesh_0007" parent="WorldLibrary" index="2"]
+[node name="pt_06_map_Mesh_0007" parent="Environment/SubViewport/WorldLibrary" index="2"]
 layers = 4
 
-[node name="pt_06_map_Mesh_0011" parent="WorldLibrary" index="3"]
+[node name="pt_06_map_Mesh_0011" parent="Environment/SubViewport/WorldLibrary" index="3"]
 layers = 4
 
-[node name="pt_06_map_Mesh_0016" parent="WorldLibrary" index="4"]
+[node name="pt_06_map_Mesh_0016" parent="Environment/SubViewport/WorldLibrary" index="4"]
 layers = 4
 
-[node name="pt_06_map_Mesh_0019" parent="WorldLibrary" index="5"]
+[node name="pt_06_map_Mesh_0019" parent="Environment/SubViewport/WorldLibrary" index="5"]
 layers = 4
 
-[node name="pt_06_map_Mesh_0020" parent="WorldLibrary" index="6"]
+[node name="pt_06_map_Mesh_0020" parent="Environment/SubViewport/WorldLibrary" index="6"]
 layers = 4
 
-[node name="pt_06_map_Mesh_0021" parent="WorldLibrary" index="7"]
+[node name="pt_06_map_Mesh_0021" parent="Environment/SubViewport/WorldLibrary" index="7"]
 layers = 4
 
-[node name="pt_06_map_Mesh_0022" parent="WorldLibrary" index="8"]
+[node name="pt_06_map_Mesh_0022" parent="Environment/SubViewport/WorldLibrary" index="8"]
 layers = 4
 
-[node name="pt_06_map_Mesh_0023" parent="WorldLibrary" index="9"]
+[node name="pt_06_map_Mesh_0023" parent="Environment/SubViewport/WorldLibrary" index="9"]
 layers = 4
 
-[node name="pt_06_map_Mesh_0027" parent="WorldLibrary" index="10"]
+[node name="pt_06_map_Mesh_0027" parent="Environment/SubViewport/WorldLibrary" index="10"]
 layers = 4
 
-[node name="pt_06_map_Mesh_0031" parent="WorldLibrary" index="11"]
+[node name="pt_06_map_Mesh_0031" parent="Environment/SubViewport/WorldLibrary" index="11"]
 layers = 4
 
-[node name="pt_06_map_Mesh_0033" parent="WorldLibrary" index="12"]
+[node name="pt_06_map_Mesh_0033" parent="Environment/SubViewport/WorldLibrary" index="12"]
 layers = 4
 
-[node name="pt_06_map_Mesh_0055" parent="WorldLibrary" index="13"]
+[node name="pt_06_map_Mesh_0055" parent="Environment/SubViewport/WorldLibrary" index="13"]
 layers = 4
 
-[node name="Lights" type="Node3D" parent="."]
+[node name="Lights" type="Node3D" parent="Environment/SubViewport"]
 
-[node name="Light1" type="OmniLight3D" parent="Lights"]
+[node name="Light1" type="OmniLight3D" parent="Environment/SubViewport/Lights"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -116, 40, -39)
 layers = 1024
 light_color = Color(1, 0.79, 0.58000004, 1)
@@ -69,7 +609,7 @@ shadow_enabled = true
 shadow_caster_mask = 1
 omni_range = 50.0
 
-[node name="Light2" type="OmniLight3D" parent="Lights"]
+[node name="Light2" type="OmniLight3D" parent="Environment/SubViewport/Lights"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 117, 40, -39)
 layers = 1024
 light_color = Color(1, 0.79, 0.58000004, 1)
@@ -80,7 +620,7 @@ shadow_enabled = true
 shadow_caster_mask = 1
 omni_range = 50.0
 
-[node name="Light3" type="OmniLight3D" parent="Lights"]
+[node name="Light3" type="OmniLight3D" parent="Environment/SubViewport/Lights"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 36, 71, -85)
 layers = 1024
 light_color = Color(1, 0.79, 0.58000004, 1)
@@ -91,7 +631,7 @@ shadow_enabled = true
 shadow_caster_mask = 1
 omni_range = 30.0
 
-[node name="Light4" type="OmniLight3D" parent="Lights"]
+[node name="Light4" type="OmniLight3D" parent="Environment/SubViewport/Lights"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -36.5, 71, -85)
 layers = 1024
 light_color = Color(1, 0.79, 0.58000004, 1)
@@ -102,7 +642,7 @@ shadow_enabled = true
 shadow_caster_mask = 1
 omni_range = 30.0
 
-[node name="MainLight" type="OmniLight3D" parent="Lights"]
+[node name="MainLight" type="OmniLight3D" parent="Environment/SubViewport/Lights"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 38, -14)
 layers = 1024
 light_color = Color(1, 0.79, 0.58000004, 1)
@@ -112,7 +652,7 @@ light_cull_mask = 4
 shadow_caster_mask = 1
 omni_range = 200.0
 
-[node name="BookLight" type="DirectionalLight3D" parent="Lights"]
+[node name="BookLight" type="DirectionalLight3D" parent="Environment/SubViewport/Lights"]
 transform = Transform3D(1, 0, 0, 0, 0.25881907, 0.9659258, 0, -0.9659258, 0.25881907, 0, 38, 100)
 layers = 1024
 light_color = Color(1, 0.79, 0.58000004, 1)
@@ -121,54 +661,337 @@ light_cull_mask = 1
 shadow_enabled = true
 shadow_caster_mask = 1
 
-[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+[node name="WorldEnvironment" type="WorldEnvironment" parent="Environment/SubViewport"]
 environment = SubResource("Environment_7bnmw")
 
-[node name="Camera" type="Camera3D" parent="."]
+[node name="Camera" type="Camera3D" parent="Environment/SubViewport"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 36.2, 100)
 cull_mask = 1031
 current = true
 fov = 50.0
 
-[node name="Book" parent="Camera" instance=ExtResource("2_e318g")]
-transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 0, -11, -161)
-
-[node name="st_999_book_Mesh_0009" parent="Camera/Book/BookRoot/Skeleton3D" index="1"]
-visible = false
-
-[node name="st_999_book_Mesh_0012" parent="Camera/Book/BookRoot/Skeleton3D" index="2"]
-visible = false
-
-[node name="AnimationPlayer" parent="Camera/Book" index="1"]
-speed_scale = 3.0
+[node name="Book" parent="Environment/SubViewport/Camera" instance=ExtResource("2_e318g")]
 
 [node name="Menu" type="Control" parent="."]
-layout_mode = 3
-anchors_preset = 15
-anchor_right = 1.0
+custom_minimum_size = Vector2(1280, 0)
+layout_mode = 1
+anchors_preset = 13
+anchor_left = 0.5
+anchor_right = 0.5
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="SubViewportContainer" type="SubViewportContainer" parent="Menu"]
+[node name="MainPage" type="Control" parent="Menu"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-stretch = true
 
-[node name="SubViewport" type="SubViewport" parent="Menu/SubViewportContainer"]
-size = Vector2i(1920, 1080)
+[node name="Options" type="GridContainer" parent="Menu/MainPage"]
+custom_minimum_size = Vector2(1200, 0)
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.5
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -600.0
+offset_top = 160.0
+offset_right = 600.0
+offset_bottom = -360.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/h_separation = 0
+theme_override_constants/v_separation = 0
+columns = 2
 
-[node name="Menu" type="Control" parent="Menu/SubViewportContainer/SubViewport"]
-layout_mode = 3
+[node name="All" type="Control" parent="Menu/MainPage/Options"]
+custom_minimum_size = Vector2(600, 140)
+layout_mode = 2
+
+[node name="Button" type="TextureRect" parent="Menu/MainPage/Options/All"]
+custom_minimum_size = Vector2(600, 140)
+layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+pivot_offset = Vector2(300, 70)
+texture = ExtResource("3_rkcga")
+stretch_mode = 5
 
-[editable path="WorldLibrary"]
-[editable path="Camera/Book"]
+[node name="Label" type="Label" parent="Menu/MainPage/Options/All/Button"]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_bottom = -4.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "world_library_all"
+label_settings = ExtResource("4_yq5mu")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Cursor" type="TextureRect" parent="Menu/MainPage/Options/All"]
+z_index = 1
+material = ExtResource("5_01kxe")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("3_rkcga")
+stretch_mode = 5
+
+[node name="Hand" type="TextureRect" parent="Menu/MainPage/Options/All/Cursor"]
+layout_mode = 1
+anchors_preset = -1
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = -98.000015
+offset_top = -73.00006
+offset_right = 29.999985
+offset_bottom = 54.99994
+grow_vertical = 2
+rotation = -0.6981317
+scale = Vector2(1.3, 1.3)
+pivot_offset = Vector2(64, 64)
+texture = ExtResource("6_71mx1")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Menu/MainPage/Options/All/Cursor"]
+libraries = {
+&"": SubResource("AnimationLibrary_x6bjf")
+}
+autoplay = "loop"
+
+[node name="Record" type="Control" parent="Menu/MainPage/Options"]
+custom_minimum_size = Vector2(600, 140)
+layout_mode = 2
+
+[node name="Button" type="TextureRect" parent="Menu/MainPage/Options/Record"]
+custom_minimum_size = Vector2(600, 140)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+pivot_offset = Vector2(300, 70)
+texture = ExtResource("3_rkcga")
+stretch_mode = 5
+
+[node name="Label" type="Label" parent="Menu/MainPage/Options/Record/Button"]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_bottom = -4.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "world_library_record"
+label_settings = ExtResource("4_yq5mu")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Survival" type="Control" parent="Menu/MainPage/Options"]
+custom_minimum_size = Vector2(600, 140)
+layout_mode = 2
+
+[node name="Button" type="TextureRect" parent="Menu/MainPage/Options/Survival"]
+custom_minimum_size = Vector2(600, 140)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+pivot_offset = Vector2(300, 70)
+texture = ExtResource("3_rkcga")
+stretch_mode = 5
+
+[node name="Label" type="Label" parent="Menu/MainPage/Options/Survival/Button"]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_bottom = -4.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "world_library_survival"
+label_settings = ExtResource("4_yq5mu")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Ranking" type="Control" parent="Menu/MainPage/Options"]
+custom_minimum_size = Vector2(600, 140)
+layout_mode = 2
+
+[node name="Button" type="TextureRect" parent="Menu/MainPage/Options/Ranking"]
+custom_minimum_size = Vector2(600, 140)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+pivot_offset = Vector2(300, 70)
+texture = ExtResource("3_rkcga")
+stretch_mode = 5
+
+[node name="Label" type="Label" parent="Menu/MainPage/Options/Ranking/Button"]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_bottom = -4.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "world_library_rankings"
+label_settings = ExtResource("4_yq5mu")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Point" type="Control" parent="Menu/MainPage/Options"]
+custom_minimum_size = Vector2(600, 140)
+layout_mode = 2
+
+[node name="Button" type="TextureRect" parent="Menu/MainPage/Options/Point"]
+custom_minimum_size = Vector2(600, 140)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+pivot_offset = Vector2(300, 70)
+texture = ExtResource("3_rkcga")
+stretch_mode = 5
+
+[node name="Label" type="Label" parent="Menu/MainPage/Options/Point/Button"]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_bottom = -4.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "world_library_point"
+label_settings = ExtResource("4_yq5mu")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Character" type="Control" parent="Menu/MainPage/Options"]
+custom_minimum_size = Vector2(600, 140)
+layout_mode = 2
+
+[node name="Button" type="TextureRect" parent="Menu/MainPage/Options/Character"]
+custom_minimum_size = Vector2(600, 140)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+pivot_offset = Vector2(300, 70)
+texture = ExtResource("3_rkcga")
+stretch_mode = 5
+
+[node name="Label" type="Label" parent="Menu/MainPage/Options/Character/Button"]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_bottom = -4.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "world_library_character"
+label_settings = ExtResource("4_yq5mu")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Race" type="Control" parent="Menu/MainPage/Options"]
+custom_minimum_size = Vector2(600, 140)
+layout_mode = 2
+
+[node name="Button" type="TextureRect" parent="Menu/MainPage/Options/Race"]
+custom_minimum_size = Vector2(600, 140)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+pivot_offset = Vector2(300, 70)
+texture = ExtResource("3_rkcga")
+stretch_mode = 5
+
+[node name="Label" type="Label" parent="Menu/MainPage/Options/Race/Button"]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_bottom = -4.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "world_library_race"
+label_settings = ExtResource("4_yq5mu")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Final" type="Control" parent="Menu/MainPage/Options"]
+custom_minimum_size = Vector2(600, 140)
+layout_mode = 2
+
+[node name="Button" type="TextureRect" parent="Menu/MainPage/Options/Final"]
+custom_minimum_size = Vector2(600, 140)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+pivot_offset = Vector2(300, 70)
+texture = ExtResource("3_rkcga")
+stretch_mode = 5
+
+[node name="Label" type="Label" parent="Menu/MainPage/Options/Final/Button"]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_bottom = -4.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "world_library_final"
+label_settings = ExtResource("4_yq5mu")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="NavigationButton" parent="Menu/MainPage" instance=ExtResource("8_01kxe")]
+layout_mode = 1
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = 192.0
+offset_top = 104.0
+offset_right = 408.0
+offset_bottom = 152.0
+grow_horizontal = 2
+ActionKey = &"sys_return"
+inputKey = &"button_secondary1"
+
+[node name="DescriptionParty" parent="Menu" instance=ExtResource("7_x6bjf")]
+layout_mode = 1
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+&"": SubResource("AnimationLibrary_7bnmw")
+}
+autoplay = "show"
+
+[editable path="Environment/SubViewport/WorldLibrary"]
+[editable path="Environment/SubViewport/Camera/Book"]
