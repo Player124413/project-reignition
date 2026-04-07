@@ -21,7 +21,6 @@ uniform float luminance_range;
 uniform float emission_intensity : hint_range(0.0, 16.0, 0.01) = 0.0;
 uniform float alpha_scissor_threshold : hint_range(0.0, 1.0, 0.001) = 0.5; // NEW
 
-varying vec2 specular_uv;
 varying vec4 vColor;
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
@@ -50,7 +49,6 @@ float compute_fresnel(float cos_theta)
 
 void vertex()
 {
-    specular_uv = UV;
     vColor      = COLOR;
 }
 
@@ -100,7 +98,7 @@ void light()
     nDotL       = clamp(nDotL, 0.0, 1.0);
     nDotL      *= nDotL;
 
-    vec4  falloff_tex = texture(falloff_texture, specular_uv);
+    vec4  falloff_tex = texture(falloff_texture, UV);
     float falloff_fac = compute_falloff(dot(NORMAL, VIEW));
     vec3  rim_light   = vColor.rgb * falloff_tex.rgb * falloff_fac;
     rim_light        *= rim_light;
@@ -112,7 +110,7 @@ void light()
     float specular_gloss   = clamp(power_gloss_level.y * 500.0, 1.0, 1024.0);
     float specular_level   = power_gloss_level.z * 5.0;
 
-    vec4  specular_tex    = texture(specular_texture, specular_uv);
+    vec4  specular_tex    = texture(specular_texture, UV);
     vec3  halfway         = normalize(LIGHT + VIEW);
     float spec_cos        = pow(clamp(dot(halfway, NORMAL), 0.0, 1.0), specular_gloss);
 

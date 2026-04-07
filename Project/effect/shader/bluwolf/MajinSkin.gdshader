@@ -35,7 +35,6 @@ uniform float detail_emission_intensity : hint_range(0.0, 16.0, 0.01) = 0.0;
 uniform float alpha_scissor_threshold : hint_range(0.0, 1.0, 0.001) = 0.5;
 uniform float detail_blend_amount : hint_range(0.0, 1.0, 0.01) = 1.0;
 
-varying vec2 specular_uv;
 varying vec4 vColor;
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
@@ -56,7 +55,6 @@ float compute_fresnel(float cos_theta)
 
 void vertex()
 {
-    specular_uv = UV;
     vColor      = COLOR;
 }
 
@@ -153,7 +151,7 @@ void light()
     nDotL      *= nDotL;
 
     // FALLOFF ─────────────────────────────────────────────────────────────────
-    vec2 falloff_uv  = falloff_use_uv2 ? UV2 : specular_uv;
+    vec2 falloff_uv  = falloff_use_uv2 ? UV2 : UV;
     vec4 falloff_tex = texture(falloff_texture, falloff_uv);
     // ─────────────────────────────────────────────────────────────────────────
 
@@ -164,7 +162,7 @@ void light()
 
     DIFFUSE_LIGHT += (nDotL * ALBEDO * LIGHT_COLOR * ATTENUATION) + (rim_light * ATTENUATION);
 
-    vec4 specular_tex = texture(specular_texture, specular_uv);
+    vec4 specular_tex = texture(specular_texture, UV);
     if (enable_detail_map)
     {
         vec4  d_col   = texture(detail_texture,          UV2);
