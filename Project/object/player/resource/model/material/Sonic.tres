@@ -63,9 +63,7 @@ vec3 decode_normal_map(vec4 n)
 
 float compute_falloff(float cos_theta)
 {
-    return pow(clamp(1.0 - cos_theta, 0.0, 1.0), sonic_skin_falloff_param.z)
-           * sonic_skin_falloff_param.y
-           + sonic_skin_falloff_param.x;
+    return pow(clamp(1.0 - cos_theta, 0.0, 1.0), sonic_skin_falloff_param.z);
 }
 
 float compute_fresnel(float cos_theta)
@@ -167,7 +165,7 @@ void light()
     rim_light        *= rim_light;
     rim_light        *= LIGHT_COLOR / M_PI;
 
-    DIFFUSE_LIGHT += (nDotL * ALBEDO * LIGHT_COLOR * ATTENUATION) + (rim_light * ATTENUATION);
+    DIFFUSE_LIGHT += (nDotL * ALBEDO * LIGHT_COLOR * ATTENUATION) + (rim_light * ATTENUATION * LIGHT_COLOR * sonic_skin_falloff_param.x);
 
     float specular_fresnel = compute_fresnel(dot(NORMAL, VIEW));
     float specular_gloss   = clamp(power_gloss_level.y * 500.0, 1.0, 1024.0);
@@ -182,7 +180,11 @@ void light()
     specular_tex.rgb *= specular_fresnel;
     specular_tex.rgb *= specular_tex.rgb;
 
+<<<<<<< Updated upstream
     SPECULAR_LIGHT += specular_tex.rgb * LIGHT_COLOR * ATTENUATION * 100.0 * SPECULAR_AMOUNT;
+=======
+    SPECULAR_LIGHT += specular_tex.rgb * LIGHT_COLOR * ATTENUATION * 100.0 * SPECULAR_AMOUNT + (rim_light * ATTENUATION * LIGHT_COLOR * nDotL * sonic_skin_falloff_param.y);
+>>>>>>> Stashed changes
 }"
 
 [resource]
@@ -202,8 +204,8 @@ shader_parameter/enable_environment_map = true
 shader_parameter/enable_alpha_scissor = false
 shader_parameter/diffuse_color = Color(1, 1, 1, 1)
 shader_parameter/specular_color = Color(0, 0, 0, 1)
-shader_parameter/power_gloss_level = Vector4(50, 0.012, 0.017, 0)
-shader_parameter/sonic_skin_falloff_param = Vector4(0.15, 2, 3, 0)
+shader_parameter/power_gloss_level = Vector4(0, 0.02, 0.011, 2)
+shader_parameter/sonic_skin_falloff_param = Vector4(0.5, 0.5, 1, 0)
 shader_parameter/luminance_range = 0.0
 shader_parameter/env_intensity_1 = 1.499999966472
 shader_parameter/env_intensity_2 = 1.999999955296
