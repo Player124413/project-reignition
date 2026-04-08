@@ -6,6 +6,11 @@ signal host_connected
 ## Emitted when a client successfully connects.
 signal client_connected
 
+## Emitted when the current primary scene is changed. The other signals provide more detail on the type of scene change.
+signal scene_changed()
+signal attraction_started() # NOTE: This is also emitted when a mini-game finishes.
+signal party_game_started()
+
 ## Emitted when a connection attempt either succeeds or fails.
 signal connection_attempt_finished(err : String)
 
@@ -28,15 +33,92 @@ var is_online : bool
 ## Determines whether to attempt NAT Punchthrough or not. Enable this when exporting the project.
 var is_nat_enabled : bool = false
 
+var load_states : Array[bool]
+var loading_peers : int
+## Tracks all the scenes instanced through the network manager. Includes party games and attractions.
+var scene_dictionary : Dictionary = {}
+enum TRANSITION_TYPE_ENUM {
+	ATTRACTION,
+	PARTY_GAME
+}
+
 func _ready() -> void:
 	initialize_loggers()
 	initialize_connection_logs()
+	load_states.resize(PartyManager.MAX_PLAYER_COUNT)
 
 func initialize_loggers() -> void:
 	for i in LOGGER_COUNT:
 		var new_log : Control = log_scene.instantiate()
 		loggers.append(new_log)
 		log_parent.add_child(new_log)
+
+## Queues a scene change.
+@rpc("any_peer", "call_local", "reliable")
+func load_scene(scene_path : String, type : TRANSITION_TYPE_ENUM) -> void:
+	rpc_id(1, "set_loading", multiplayer.get_unique_id(), true) # Let the host know we're loading
+	
+	# TODO Add Fade Transitions
+	ResourceLoader.load_threaded_request(scene_path)
+	while ResourceLoader.load_threaded_get_status(scene_path) == ResourceLoader.ThreadLoadStatus.THREAD_LOAD_IN_PROGRESS:
+		await get_tree().create_timer(0.1).timeout
+	
+	var scene : PackedScene = ResourceLoader.load_threaded_get(scene_path) as PackedScene
+	var scene_node : Node = scene.instantiate() as Node
+	scene_dictionary[scene_path] = scene_node # Add to the dictionary
+	add_child(scene_node) # Do this before notifying the server, since it might lag the game a bit
+	emit_scene_signals(type)
+	
+	rpc_id(1, "set_loading", multiplayer.get_unique_id(), false) # Let the host know we're done loading
+
+func emit_scene_signals(type : TRANSITION_TYPE_ENUM) -> void:
+	scene_changed.emit() # Base signal
+	if type == TRANSITION_TYPE_ENUM.ATTRACTION:
+		attraction_started.emit()
+	elif type == TRANSITION_TYPE_ENUM.PARTY_GAME:
+		party_game_started.emit()
+
+@rpc("any_peer", "call_local", "reliable")
+func unload_scene(scene_path : String) -> void:
+	if !scene_dictionary.has(scene_path):
+		print("WARN: Tried to unload scene that was never loaded.")
+		return
+	
+	scene_dictionary[scene_path].queue_free() # Delete the node associated with the scene
+	scene_dictionary.erase(scene_path) # Register the scene as unloaded
+
+@rpc("any_peer", "call_local", "reliable")
+func set_loading(peer_id : int, is_loading : bool) -> void:
+	var index : int = multiplayer.get_peers().find(peer_id)
+	if index == -1:
+		print("WARN: Invalid peer id %s passed to set_loading." % peer_id)
+		return
+	load_states[index] = is_loading
+	loading_peers = loading_peer_count()
+	if loading_peers == 0:
+		rpc("finish_loading", calculate_transition_tick()) # RPC on a timer so we can sync unpauses
+
+@rpc("any_peer", "call_local", "reliable")
+func finish_loading(target_tick : float) -> void:
+	await get_tree().create_timer(calculate_transition_delay(target_tick)).timeout
+	get_tree().paused = false
+	print("Loading is finished.")
+
+## How much extra time to delay during scene changes. A safe-guard in case the jitter spikes after loading.
+const TRANSITION_SYNC_DELAY : float = 0.5
+func calculate_transition_tick() -> float:
+	return NetworkTimeSynchronizer.get_time() + (NetworkTimeSynchronizer.rtt_jitter * 2.0) + TRANSITION_SYNC_DELAY
+
+## Returns the wait time to sync game to a particular tick.
+func calculate_transition_delay(target_tick : float) -> float:
+	return target_tick - NetworkTimeSynchronizer.get_time()
+
+func loading_peer_count() -> int:
+	var count : int = 0
+	for i in load_states.size():
+		if load_states[i]:
+			count += 1
+	return count
 
 @rpc("any_peer", "call_local", "reliable")
 func log_message(localization_key : StringName) -> void:

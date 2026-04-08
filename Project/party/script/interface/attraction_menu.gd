@@ -6,6 +6,7 @@ extends Menu
 @export var attraction_animators : Array[AnimationPlayer]
 @export var omochao : CharacterAnimator
 @export var omochao_locations : Array[Node3D]
+@export_file("*.tscn") var attraction_scenes : Array[String]
 var current_omochao_location : int
 var original_omochao_transform : Transform3D
 var omochao_move_ratio : float
@@ -53,6 +54,15 @@ func process_cursor() -> void:
 func confirm() -> void:
 	if is_dialog_active:
 		rpc("advance_dialog")
+	else:
+		var target_scene : String = attraction_scenes[current_omochao_location]
+		if target_scene.is_empty():
+			print("Unimplemented.")
+			return
+		
+		# Load attraction
+		disable_processing()
+		NetworkManager.rpc("load_scene", attraction_scenes[current_omochao_location], NetworkManager.TRANSITION_TYPE_ENUM.ATTRACTION)
 
 @rpc("any_peer", "call_local", "reliable")
 func advance_dialog() -> void:
@@ -74,6 +84,9 @@ func cancel() -> void:
 	description.set_text("party_attract_menu3")
 
 func update_selection() -> void:
+	if is_dialog_active:
+		return
+	
 	rpc("change_selection", input_axis)
 	start_selection_timer()
 

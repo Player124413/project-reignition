@@ -27,6 +27,14 @@ func _ready() -> void:
 	if _is_menu_processing:
 		show_menu()
 
+## Override in subclass
+func on_party_menu_enabled() -> void:
+	pass
+
+## Override in subclass
+func on_party_menu_disabled() -> void:
+	pass
+
 func disable_processing() -> void:
 	_is_menu_processing = false
 
