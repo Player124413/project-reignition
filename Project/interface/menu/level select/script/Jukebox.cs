@@ -8,12 +8,13 @@ namespace Project.Interface.Menus;
 
 public partial class Jukebox : Menu
 {
-
+	[Export] private ResourcePreloader preloader;
+	[Export] private BGMResource defaultOption;
 	[Export] private PackedScene jukeboxOption;
 	[Export] private VBoxContainer optionContainer;
 	[Export] private Node2D cursor;
 	[Export] private Sprite2D scrollbar;
-	[Export] private Array<BGMResource> songList;
+	Array<BGMResource> songList;
 
 	public LevelDataResource selectedData;
 
@@ -39,6 +40,12 @@ public partial class Jukebox : Menu
 	{
 		//if (SaveManager.Config.useRetailMenuMusic) // Disable bgm
 		//bgm = null;
+		songList = [];
+		songList.Add(defaultOption);
+
+		for (int i = 0; i < preloader.GetResourceList().Length; i++)
+			songList.Add((BGMResource)preloader.GetResource(preloader.GetResourceList()[i]));
+
 
 		for (int i = 0; i < songList.Count; i++)
 		{
@@ -49,6 +56,8 @@ public partial class Jukebox : Menu
 			songOptionList.Add(newSong);
 			optionContainer.AddChild(newSong);
 		}
+
+
 		base.SetUp();
 	}
 
@@ -76,19 +85,21 @@ public partial class Jukebox : Menu
 
 			if (cursorPosition != 0) //If we haven't selected the default option
 			{
-				SaveManager.ActiveGameData.selectedMusic.Add(selectedData.LevelID, ResourceUid.IdToText(ResourceLoader.GetResourceUid(songOptionList[cursorPosition].bgm.ResourcePath)));//Add the level ID to the dictionary with the selected song
+				//Add the level ID to the dictionary with the selected song
+				SaveManager.ActiveGameData.selectedMusic.Add(selectedData.LevelID, ResourceUid.IdToText(ResourceLoader.GetResourceUid(songOptionList[VerticalSelection].bgm.ResourcePath)));
+				SaveManager.SaveGameData();
 
-				bgm.SetBgmResource(songOptionList[cursorPosition].bgm);
-				bgm.LoadBgmResource();
+				bgm.SetBgmResource(songOptionList[VerticalSelection].bgm);
+				bgm.LoadBgmResource();//Loads the selected BGM
 
 				if (parentMenu.bgm.GetBgmResource() != null)
 					parentMenu.bgm.Stop();
 				else
-					parentMenu.parentMenu.bgm.Stop();//This is for lost prologue, since it doesn't have a level select BGM
+					parentMenu.parentMenu.bgm.Stop();//When selecting Lost Prologue, load the World Select theme, since 
 
 				bgm.Play();
 			}
-			else
+			else //Switch to the level select theme when hitting "default"
 			{
 
 				if (bgm.Playing)
@@ -187,6 +198,7 @@ public partial class Jukebox : Menu
 
 	public override void ShowMenu()
 	{
+		VerticalSelection = 0;
 		string bgmID;
 		BGMResource bgm;
 
