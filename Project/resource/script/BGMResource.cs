@@ -15,4 +15,6 @@ public partial class BGMResource : Resource
 	[Export] public float LoopStart;
 	/// <summary> The time (in seconds) where the loop ends. </summary>
 	[Export] public float LoopEnd;
+
+	public void SetStreamPath(string path) => StreamPath = path;
 }

@@ -16,7 +16,7 @@ public partial class JukeboxOption : Control
 
 	public void SetData()
 	{
-		name.Text = bgm.SongName;
+		name.Text = bgm.SongName.GetBaseName();
 	}
 
 	public void Equip()
