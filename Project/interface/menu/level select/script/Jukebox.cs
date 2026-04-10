@@ -8,6 +8,7 @@ namespace Project.Interface.Menus;
 
 public partial class Jukebox : Menu
 {
+	[Export] private AudioStreamPlayer player;
 	[Export] private ResourcePreloader preloader;
 	[Export] private BGMResource defaultOption;
 	[Export] private PackedScene jukeboxOption;
@@ -87,18 +88,21 @@ public partial class Jukebox : Menu
 			string fileName = dir.GetNext();
 			while (fileName != "")
 			{
-				if (fileName.GetExtension() == "wav" ||
-				fileName.GetExtension() == "ogg" ||
-				fileName.GetExtension() == "mp3")
+				if (fileName.GetExtension() == "wav" || fileName.GetExtension() == "ogg")
 				{
-					GD.Print("File scanned: " + fileName);
 					BGMResource bgm = new()
 					{
 						SongName = fileName
 					};
 					bgm.SetStreamPath(path + "/" + fileName);
-					bgm.LoopStart = 0f;
-					bgm.LoopEnd = 0f;
+					bgm.LoopStart = 1f;
+					bgm.LoopEnd = 1f;
+
+					if (dir.FileExists(fileName.GetBaseName() + ".tres"))
+						bgm = ResourceLoader.Load(path + "/" + fileName.GetBaseName() + ".tres") as BGMResource;
+					else
+						ResourceSaver.Save(bgm, path + "/" + fileName.GetBaseName() + ".tres");
+
 					songListSub.Add(bgm);
 				}
 
@@ -161,9 +165,13 @@ public partial class Jukebox : Menu
 	{
 		if (menuMemory[MemoryKeys.ActiveMenu] == (int)MemoryKeys.Jukebox)
 		{
-
+			if (parentMenu.bgm.GetBgmResource() != null)
+				parentMenu.bgm.Stop();
+			else
+				parentMenu.parentMenu.bgm.Stop();//When selecting Lost Prologue, load the World Select theme
 
 			UnequipSongs();
+
 			if (SaveManager.ActiveGameData.selectedMusic.ContainsKey(selectedData.LevelID)) //If our dictionary already contains the ID for the selected level
 				SaveManager.ActiveGameData.selectedMusic.Remove(selectedData.LevelID); //Remove the level ID from the dictionary
 
@@ -174,22 +182,27 @@ public partial class Jukebox : Menu
 					//Add the level ID to the dictionary with the selected song
 					SaveManager.ActiveGameData.selectedMusic.Add(selectedData.LevelID, ResourceUid.IdToText(ResourceLoader.GetResourceUid(songOptionList[VerticalSelection].bgm.ResourcePath)));
 					bgm.SetBgmResource(songOptionList[VerticalSelection].bgm);
+
+					bgm.LoadBgmResource();//Loads the selected BGM
+					bgm.Play();
 				}
 				else
 				{
 					SaveManager.ActiveGameData.selectedMusic.Add(selectedData.LevelID, customSongOptionList[VerticalSelection].bgm.SongName);
-					bgm.SetBgmResource(customSongOptionList[VerticalSelection].bgm);
+					//bgm.SetBgmResource(customSongOptionList[VerticalSelection].bgm);
+
+					switch (customSongOptionList[VerticalSelection].bgm.SongName.GetExtension())
+					{
+						case "wav":
+							player.Stream = AudioStreamWav.LoadFromFile(customPath + "/" + customSongOptionList[VerticalSelection].bgm.SongName);
+							player.Play();
+							break;
+						case "ogg":
+							player.Stream = AudioStreamOggVorbis.LoadFromFile(customPath + "/" + customSongOptionList[VerticalSelection].bgm.SongName);
+							player.Play();
+							break;
+					}
 				}
-
-				SaveManager.SaveGameData();
-				bgm.LoadBgmResource();//Loads the selected BGM
-
-				if (parentMenu.bgm.GetBgmResource() != null)
-					parentMenu.bgm.Stop();
-				else
-					parentMenu.parentMenu.bgm.Stop();//When selecting Lost Prologue, load the World Select theme, since 
-
-				bgm.Play();
 			}
 			else //Switch to the level select theme when hitting "default"
 			{
@@ -202,7 +215,7 @@ public partial class Jukebox : Menu
 					parentMenu.parentMenu.bgm.Play();
 			}
 
-
+			SaveManager.SaveGameData();
 			SelectedSong.Equip();
 			animator.Play("equip");
 
