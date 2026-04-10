@@ -1,5 +1,5 @@
 shader_type spatial;
-render_mode blend_mix, depth_draw_opaque, cull_back, diffuse_lambert;
+render_mode blend_mix, depth_draw_opaque, cull_disabled, diffuse_lambert;
 
 uniform sampler2D diffuse_texture : source_color;
 uniform sampler2D specular_texture;
@@ -19,7 +19,7 @@ uniform sampler2D emission_texture : source_color;
 uniform bool enable_normal_map;
 uniform bool enable_environment_map;
 uniform bool enable_alpha_scissor;
-
+uniform bool enable_backface_culling = true;
 uniform vec4 diffuse_color : source_color;
 uniform vec4 specular_color : source_color;
 
@@ -69,7 +69,9 @@ void vertex()
 // ── Fragment ───────────────────────────────────────
 void fragment()
 {
-	vec4 diffuse = texture(diffuse_texture, UV);
+    if (enable_backface_culling && !FRONT_FACING) { discard; }
+
+    vec4 diffuse = texture(diffuse_texture, UV);;
 
 	ALBEDO = COLOR.rgb * diffuse.rgb * diffuse_color.rgb;
 
