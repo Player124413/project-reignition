@@ -75,21 +75,16 @@ public partial class Jukebox : Menu
 
 		foreach (string file in dir.GetFiles())
 		{
-			if (IsValidExtension(file.GetExtension()))
+			if (!IsValidExtension(file.GetExtension()))
 				continue;
 
-			BGMResource bgm = new()
-			{
-				SongName = file,
-				StreamPath = CustomMusicPath + file,
-				LoopEnd = -1 // Default to loop the entire audio file
-			};
+			BGMResource bgm = new();
 
-			string targetFilePath = $"{file.GetBaseName()}.tres";
-			if (dir.FileExists(targetFilePath))
-				bgm = ResourceLoader.Load(CustomMusicPath + targetFilePath) as BGMResource;
-			else
-				ResourceSaver.Save(bgm, CustomMusicPath + targetFilePath);
+			GD.Print("Loading prm..." + CustomMusicPath + file);
+			if (SaveManager.Instance.LoadPRM(CustomMusicPath + file) == null) //If we can't find a PRM of the current track, create one
+				SaveManager.Instance.CreatePRM(file, CustomMusicPath + file);
+
+			bgm = SaveManager.Instance.LoadPRM(CustomMusicPath + file);
 
 			customSongList.Add(bgm);
 		}
@@ -148,7 +143,7 @@ public partial class Jukebox : Menu
 		else
 			parentMenu.parentMenu.bgm.Stop(); // When selecting default, load the World Select theme
 
-		UnequipSongs();
+
 
 		if (SaveManager.ActiveGameData.selectedMusic.ContainsKey(selectedData.LevelID)) //If our dictionary already contains the ID for the selected level
 			SaveManager.ActiveGameData.selectedMusic.Remove(selectedData.LevelID); //Remove the level ID from the dictionary
@@ -157,6 +152,10 @@ public partial class Jukebox : Menu
 		{
 			if (!isCustomMusicMenuActive)
 			{
+
+				if (!songOptionList[VerticalSelection].Equipped)//If the currently selected song is not equipped, go ahead and unequip the song
+					UnequipSongs();
+
 				//Add the level ID to the dictionary with the selected song
 				SaveManager.ActiveGameData.selectedMusic.Add(selectedData.LevelID, ResourceUid.IdToText(ResourceLoader.GetResourceUid(songOptionList[VerticalSelection].Bgm.ResourcePath)));
 				bgm.SetBgmResource(songOptionList[VerticalSelection].Bgm);
@@ -165,17 +164,25 @@ public partial class Jukebox : Menu
 			}
 			else
 			{
-				SaveManager.ActiveGameData.selectedMusic.Add(selectedData.LevelID, customSongOptionList[VerticalSelection].Bgm.SongName);
+
+				UnequipSongs();
+				SaveManager.ActiveGameData.selectedMusic.Add(selectedData.LevelID, customSongOptionList[VerticalSelection].Bgm.StreamPath);
 				//bgm.SetBgmResource(customSongOptionList[VerticalSelection].bgm);
 
-				switch (customSongOptionList[VerticalSelection].Bgm.SongName.GetExtension())
+				GD.Print("Loading " + customSongOptionList[VerticalSelection].Bgm.StreamPath.GetExtension());
+
+				switch (customSongOptionList[VerticalSelection].Bgm.StreamPath.GetExtension())
 				{
 					case "wav":
-						player.Stream = AudioStreamWav.LoadFromFile(CustomMusicPath + "/" + customSongOptionList[VerticalSelection].Bgm.SongName);
+						player.Stream = AudioStreamWav.LoadFromFile(customSongOptionList[VerticalSelection].Bgm.StreamPath);
 						player.Play();
 						break;
 					case "ogg":
-						player.Stream = AudioStreamOggVorbis.LoadFromFile(CustomMusicPath + "/" + customSongOptionList[VerticalSelection].Bgm.SongName);
+						player.Stream = AudioStreamOggVorbis.LoadFromFile(customSongOptionList[VerticalSelection].Bgm.StreamPath);
+						player.Play();
+						break;
+					case "mp3":
+						player.Stream = AudioStreamMP3.LoadFromFile(customSongOptionList[VerticalSelection].Bgm.StreamPath);
 						player.Play();
 						break;
 				}
@@ -299,16 +306,29 @@ public partial class Jukebox : Menu
 			for (int i = 0; i < songOptionList.Count; i++)
 			{
 				bgm = (BGMResource)ResourceLoader.Load(bgmID);
-				if (bgm == null || !songOptionList[i].Bgm.SongName.Equals(bgm.SongName))
+				if (bgm == null || !songOptionList[i].Bgm.StreamPath.Equals(bgm.StreamPath))
 					continue;
 
 				songOptionList[i].Equip();
 				return;
 			}
+
+			for (int i = 0; i < customSongOptionList.Count; i++)
+			{
+				bgm = (BGMResource)ResourceLoader.Load(bgmID);
+				if (bgm == null || !customSongOptionList[i].Bgm.StreamPath.Equals(bgm.StreamPath))
+					continue;
+
+				customSongOptionList[i].Equip();
+				return;
+			}
 		}
 
 		if (!SaveManager.ActiveGameData.selectedMusic.TryGetValue(selectedData.LevelID, out _)) // If we have selected the default song
+		{
 			songOptionList[0].Equip();
+			//customSongOptionList[0].Equip();
+		}
 		UpdateSelection();
 	}
 
@@ -358,13 +378,21 @@ public partial class Jukebox : Menu
 	private void UnequipSongs()
 	{
 		for (int i = 0; i < songOptionList.Count; i++)
-			songOptionList[i].Unequip();
+		{
+			if (VerticalSelection != i)
+				songOptionList[i].Unequip();
+		}
 
 		if (customSongOptionList.Count > 0)
 		{
 			GD.Print("Custom Song Count: " + customSongOptionList.Count);
 			for (int i = 0; i < customSongOptionList.Count; i++)
-				customSongOptionList[i].Unequip();
+			{
+				if (VerticalSelection != i && isCustomMusicMenuActive)
+					customSongOptionList[i].Unequip();
+				else if (!isCustomMusicMenuActive)
+					customSongOptionList[i].Unequip();
+			}
 		}
 	}
 
@@ -420,5 +448,7 @@ public partial class Jukebox : Menu
 		if (VerticalSelection != initialSelection)
 			MoveCursor();
 	}
+
+
 
 }

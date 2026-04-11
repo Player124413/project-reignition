@@ -935,6 +935,58 @@ public partial class SaveManager : Node
 		OS.MoveToTrash(ProjectSettings.GlobalizePath(saveFile));
 	}
 
+	//<summary>Creates a json file with contents of BGMResource.</summary>
+	public void CreatePRM(string fileName, string path)
+	{
+		Dictionary dict = new() //Creates a new Dictionary based on BGMResource
+		{
+			{"Song Name", fileName.GetBaseName()},
+			{"Loop Start", 0.0},
+			{"Loop End", -1},
+			{"File Path", path}
+		};
+
+		string json = Json.Stringify(dict, "\t");
+
+		FileAccess file = FileAccess.Open(path.GetBaseName() + ".prm", FileAccess.ModeFlags.WriteRead); //Creates a file with a .prm extension (Project Reignition Music)
+
+		if (file == null)
+			return;
+
+		file.StoreString(json);
+		file.Close();
+	}
+
+	//<summary>Returns a BGMResource from a loaded PRM file</summary>
+	public BGMResource LoadPRM(string path)
+	{
+		BGMResource res = new();
+
+		FileAccess file = FileAccess.Open(path.GetBaseName() + ".prm", FileAccess.ModeFlags.Read);
+
+		if (file == null)
+			return null;
+
+		Dictionary dictReturn = Json.ParseString(file.GetAsText()).AsGodotDictionary();
+
+		Variant songName;
+		Variant loopStart;
+		Variant loopEnd;
+		Variant filePath;
+
+		dictReturn.TryGetValue("Song Name", out songName);
+		dictReturn.TryGetValue("Loop Start", out loopStart);
+		dictReturn.TryGetValue("Loop End", out loopEnd);
+		dictReturn.TryGetValue("File Path", out filePath);
+
+		res.SongName = (string)songName;
+		res.LoopStart = (float)loopStart;
+		res.LoopEnd = (float)loopEnd;
+		res.StreamPath = (string)filePath;
+
+		return res;
+	}
+
 	public class GameData
 	{
 		/// <summary> Which area was the player in last? (Used for save select) </summary>

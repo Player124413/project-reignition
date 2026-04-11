@@ -125,13 +125,13 @@ public partial class StageSettings : Node3D
 			SaveManager.ActiveGameData.selectedMusic.TryGetValue(Data.LevelID, out bgmID);
 			GD.Print("bgmID: " + bgmID);
 
-			if (bgmID.GetExtension() != "wav" && bgmID.GetExtension() != "ogg")
+			if (bgmID.GetExtension() != "wav" && bgmID.GetExtension() != "ogg" && bgmID.GetExtension() != "mp3")
 			{
 				currentBGM = (BGMResource)ResourceLoader.Load(ResourceUid.GetIdPath(ResourceUid.TextToId(bgmID)));
 			}
 			else
 			{
-				currentBGM = (BGMResource)ResourceLoader.Load("user://custom/music/" + bgmID.GetBaseName() + ".tres");
+				currentBGM = SaveManager.Instance.LoadPRM(bgmID);
 				GD.Print("LOADING RESOURCE: " + bgmID.GetBaseName() + ".tres");
 			}
 
