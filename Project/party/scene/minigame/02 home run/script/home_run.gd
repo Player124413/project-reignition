@@ -137,9 +137,10 @@ func process_swing() -> void:
 	if is_swinging:
 		return
 	
-	if player_index == -1 || PartyManager.get_player_data(player_index).is_cpu_player(): # CPU Behaviour
+	var player_data : PlayerData = PartyManager.get_player_data(player_index)
+	if player_index == -1 || player_data.is_cpu_player(): # CPU Behaviour
 		process_cpu()
-	elif Input.is_action_just_pressed("button_primary1"):
+	elif Input.is_action_just_pressed("button_primary%s" % player_data.local_player_index):
 		start_swing()
 
 ## Simply swings at the right time. The swing timing is set in calculate_swing_ratio().

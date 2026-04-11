@@ -68,10 +68,14 @@ func _ready() -> void:
 	if screen_mode == SCREEN_MODE.SHARED || demo_transition_mode == DEMO_TRANSITION.FULLSCREEN:
 		animator.play("demo-init") # NOTE: This animation is the same as a split-screen demo.
 		animator.advance(0.0)
-	
-	# TODO Wait for peers to connect when online
-	if !NetworkManager.is_online:
-		peers_loaded.emit()
+	NetworkManager.party_game_started.connect(Callable(self, "start_party_game"))
+
+func _exit_tree() -> void:
+	if NetworkManager.party_game_started.is_connected(Callable(self, "start_party_game")):
+		NetworkManager.party_game_started.disconnect(Callable(self, "start_party_game"))
+
+func start_party_game() -> void:
+	peers_loaded.emit()
 
 ## Called when running a mini-game from the editor. Loads 4 default characters.
 func initialize_debug_characters() -> void:

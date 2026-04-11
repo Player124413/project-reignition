@@ -8,7 +8,9 @@ signal client_connected
 
 ## Emitted when the current primary scene is changed. The other signals provide more detail on the type of scene change.
 signal scene_changed()
-signal attraction_started() # NOTE: This is also emitted when a mini-game finishes.
+signal attraction_loaded() # NOTE: This is also emitted when a mini-game finishes.
+signal party_game_loaded()
+## Emitted when the party game actually starts.
 signal party_game_started()
 
 ## Emitted when a connection attempt either succeeds or fails.
@@ -66,7 +68,7 @@ func load_scene(scene_path : String, type : TRANSITION_TYPE_ENUM) -> void:
 	var scene : PackedScene = ResourceLoader.load_threaded_get(scene_path) as PackedScene
 	var scene_node : Node = scene.instantiate() as Node
 	scene_dictionary[scene_path] = scene_node # Add to the dictionary
-	add_child(scene_node) # Do this before notifying the server, since it might lag the game a bit
+	add_child(scene_node)
 	emit_scene_signals(type)
 	
 	rpc_id(1, "set_loading", multiplayer.get_unique_id(), false) # Let the host know we're done loading
@@ -74,9 +76,9 @@ func load_scene(scene_path : String, type : TRANSITION_TYPE_ENUM) -> void:
 func emit_scene_signals(type : TRANSITION_TYPE_ENUM) -> void:
 	scene_changed.emit() # Base signal
 	if type == TRANSITION_TYPE_ENUM.ATTRACTION:
-		attraction_started.emit()
+		attraction_loaded.emit()
 	elif type == TRANSITION_TYPE_ENUM.PARTY_GAME:
-		party_game_started.emit()
+		party_game_loaded.emit()
 
 @rpc("any_peer", "call_local", "reliable")
 func unload_scene(scene_path : String) -> void:
@@ -89,7 +91,7 @@ func unload_scene(scene_path : String) -> void:
 
 @rpc("any_peer", "call_local", "reliable")
 func set_loading(peer_id : int, is_loading : bool) -> void:
-	var index : int = multiplayer.get_peers().find(peer_id)
+	var index : int = multiplayer.get_peers().find(peer_id) if is_online else 0
 	if index == -1:
 		print("WARN: Invalid peer id %s passed to set_loading." % peer_id)
 		return
@@ -102,7 +104,8 @@ func set_loading(peer_id : int, is_loading : bool) -> void:
 func finish_loading(target_tick : float) -> void:
 	await get_tree().create_timer(calculate_transition_delay(target_tick)).timeout
 	get_tree().paused = false
-	print("Loading is finished.")
+	party_game_started.emit()
+	print("Party Game Started.")
 
 ## How much extra time to delay during scene changes. A safe-guard in case the jitter spikes after loading.
 const TRANSITION_SYNC_DELAY : float = 0.5

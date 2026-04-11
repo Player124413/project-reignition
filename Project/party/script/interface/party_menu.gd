@@ -7,11 +7,11 @@ func _init() -> void:
 	instance = self
 
 func _ready() -> void:
-	NetworkManager.attraction_started.connect(Callable.create(self, "disable"))
+	NetworkManager.attraction_loaded.connect(Callable.create(self, "disable"))
 
 func _exit_tree() -> void:
-	if NetworkManager.attraction_started.is_connected(Callable.create(self, "disable")):
-		NetworkManager.attraction_started.disconnect(Callable.create(self, "disable"))
+	if NetworkManager.attraction_loaded.is_connected(Callable.create(self, "disable")):
+		NetworkManager.attraction_loaded.disconnect(Callable.create(self, "disable"))
 
 ## Disables main Party Menu.
 func disable() -> void:

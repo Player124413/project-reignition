@@ -1,12 +1,13 @@
-[gd_scene load_steps=17 format=3 uid="uid://c8wrhoilndl5h"]
+[gd_scene load_steps=18 format=3 uid="uid://c8wrhoilndl5h"]
 
+[ext_resource type="Script" uid="uid://0r15blspnpm8" path="res://party/scene/world library/script/world_library.gd" id="1_71mx1"]
 [ext_resource type="PackedScene" uid="uid://d3t70d3i5ire4" path="res://party/scene/world library/model/WorldLibrary.glb" id="1_ytcrv"]
 [ext_resource type="PackedScene" uid="uid://dqrs0sg3rfo1s" path="res://party/scene/world library/model/Book.glb" id="2_e318g"]
 [ext_resource type="Texture2D" uid="uid://dvus7cb7e13en" path="res://party/scene/party menu/texture/button.png" id="3_rkcga"]
-[ext_resource type="LabelSettings" uid="uid://llo2fr0lcqu0" path="res://party/font/WorldLibraryButton.tres" id="4_yq5mu"]
+[ext_resource type="LabelSettings" path="res://party/font/WorldLibraryButton.tres" id="4_yq5mu"]
 [ext_resource type="Material" uid="uid://bhbsafmnnhtdb" path="res://effect/material/Canvas Item Add.tres" id="5_01kxe"]
 [ext_resource type="Texture2D" uid="uid://cmfbnrdapjnue" path="res://party/scene/party menu/texture/cursor hand.png" id="6_71mx1"]
-[ext_resource type="PackedScene" uid="uid://bqaafoua436c8" path="res://interface/menu/DescriptionParty.tscn" id="7_x6bjf"]
+[ext_resource type="PackedScene" path="res://interface/menu/DescriptionParty.tscn" id="7_x6bjf"]
 [ext_resource type="PackedScene" uid="uid://crwawg2ivy3xd" path="res://interface/menu/NavigationButton.tscn" id="8_01kxe"]
 
 [sub_resource type="Environment" id="Environment_7bnmw"]
@@ -273,9 +274,34 @@ tracks/17/keys = {
 "update": 0,
 "values": [Color(1, 1, 1, 1)]
 }
+tracks/18/type = "value"
+tracks/18/imported = false
+tracks/18/enabled = true
+tracks/18/path = NodePath(".:visible")
+tracks/18/interp = 1
+tracks/18/loop_wrap = true
+tracks/18/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
 
 [sub_resource type="Animation" id="Animation_rkcga"]
 resource_name = "cancel"
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:visible")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
 
 [sub_resource type="Animation" id="Animation_e318g"]
 resource_name = "show"
@@ -529,13 +555,17 @@ _data = {
 &"show": SubResource("Animation_e318g")
 }
 
-[node name="Library" type="Control"]
+[node name="Library" type="Control" node_paths=PackedStringArray("animator")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+script = ExtResource("1_71mx1")
+minigame_scene = "res://party/scene/minigame/02 home run/_Game.tscn"
+animator = NodePath("AnimationPlayer")
+_is_menu_processing = true
 
 [node name="Environment" type="SubViewportContainer" parent="."]
 layout_mode = 1
