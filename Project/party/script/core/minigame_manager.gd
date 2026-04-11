@@ -117,12 +117,20 @@ func register_completed_player() -> void:
 	if completed_player_count == PartyManager.MAX_PLAYER_COUNT:
 		finish_minigame()
 
+func request_minigame_start() -> void:
+	print("Starting Minigame!")
+	if !NetworkManager.is_online || NetworkManager.is_hosting_game:
+		rpc("start_minigame", NetworkManager.calculate_transition_tick())
+
 ## Plays the "START!" animation.
-func start_minigame() -> void:
+@rpc("any_peer", "call_local", "reliable")
+func start_minigame(tick : float) -> void:
+	var target_animation : String = "minigame-start"
 	if screen_mode == SCREEN_MODE.SPLITSCREEN && demo_transition_mode == DEMO_TRANSITION.FULLSCREEN:
-		rpc("play_animation", "demo-fade") # Transition to split-screen
-	else:
-		rpc("play_animation", "minigame-start")
+		target_animation = "demo-fade" # Transition to split-screen
+	
+	var callable : Callable = Callable(self, "play_animation").bind(target_animation)
+	get_tree().create_timer(NetworkManager.calculate_transition_delay(tick)).timeout.connect(callable)
 
 ## Plays the "GAME SET!" animation, then starts the results screen.
 func finish_minigame() -> void:

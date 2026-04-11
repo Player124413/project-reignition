@@ -108,7 +108,7 @@ func finish_loading(target_tick : float) -> void:
 	print("Party Game Started.")
 
 ## How much extra time to delay during scene changes. A safe-guard in case the jitter spikes after loading.
-const TRANSITION_SYNC_DELAY : float = 0.5
+const TRANSITION_SYNC_DELAY : float = 0.2
 func calculate_transition_tick() -> float:
 	return NetworkTimeSynchronizer.get_time() + (NetworkTimeSynchronizer.rtt_jitter * 2.0) + TRANSITION_SYNC_DELAY
 

@@ -81,9 +81,10 @@ const PITCH_COUNT : int = 10
 const BALL_SCALE_DISTANCE : float = 80
 
 func _ready() -> void:
-	if NetworkManager.is_online:
-		# TODO Set up authority
-		pass
+	if NetworkManager.is_online && player_index != -1:
+		# Set up authority
+		var data : PlayerData = PartyManager.get_player_data(player_index)
+		set_multiplayer_authority(data.device)
 	
 	if player_index != -1:
 		# Instance Player Model
@@ -97,8 +98,8 @@ func _ready() -> void:
 		MinigameManager.instance.gameplay_finished.connect(Callable.create(self, "deactivate"))
 		MinigameManager.instance.minigame_finished.connect(Callable.create(self, "on_minigame_finished"))
 		
-		if is_multiplayer_authority() && player_index == 0: # Only generate queue from player 1
-			rpc("generate_pitch_queue")
+		if player_index == 0 && (!NetworkManager.is_online || NetworkManager.is_hosting_game): # Only generate queue on player 1
+			generate_pitch_queue()
 	else:
 		# Hide demo batting station after gameplay starts
 		MinigameManager.instance.gameplay_started.connect(Callable.create(self, "set_visible").bind(false))
@@ -107,11 +108,16 @@ func _ready() -> void:
 	bat_attachment.reparent(character_animator.skeleton)
 	character_animator.connect("animation_event", Callable.create(self, "process_animation_event"))
 
-@rpc("any_peer", "call_local", "reliable")
 func generate_pitch_queue() -> void:
 	for i in PITCH_COUNT:
 		var random_index : int = randi_range(0, PITCH_LENGTHS.size() - 1)
 		pitch_queue.append(random_index)
+	rpc("sync_pitch_queue", pitch_queue) # Sync to all network devices
+
+## Syncs the pitching queue across the network
+@rpc("any_peer", "call_local", "reliable")
+func sync_pitch_queue(new_queue : Array[int]) -> void:
+	pitch_queue = new_queue
 
 func activate() -> void:
 	set_physics_process(true)
@@ -125,10 +131,6 @@ func on_minigame_finished() -> void:
 	bat_attachment.visible = false
 
 func _physics_process(_delta: float) -> void:
-	if !is_multiplayer_authority():
-		# TODO Sync with other users
-		return
-	
 	process_swing()
 	process_ball()
 	process_camera()
@@ -137,10 +139,15 @@ func process_swing() -> void:
 	if is_swinging:
 		return
 	
-	var player_data : PlayerData = PartyManager.get_player_data(player_index)
-	if player_index == -1 || player_data.is_cpu_player(): # CPU Behaviour
+	if player_index == -1 || PartyManager.get_player_data(player_index).is_cpu_player(): # CPU Behaviour
 		process_cpu()
-	elif Input.is_action_just_pressed("button_primary%s" % player_data.local_player_index):
+		return
+	
+	# TODO Sync with other users
+	if !is_multiplayer_authority():
+		return
+	
+	if Input.is_action_just_pressed("button_primary%s" % PartyManager.get_player_data(player_index).local_player_index):
 		start_swing()
 
 ## Simply swings at the right time. The swing timing is set in calculate_swing_ratio().
@@ -266,13 +273,14 @@ func launch_ball() -> void:
 	travel_ratio = 0.0
 	
 	if is_multiplayer_authority():
-		calculate_swing_ratio()
+		rpc("calculate_swing_ratio", randf())
 
 ## Calculates the swing ratio for CPUs.
-func calculate_swing_ratio() -> void:
+@rpc("any_peer", "call_local", "reliable")
+func calculate_swing_ratio(random_value : float) -> void:
 	var total_distance : float = ball_start_position.distance_to(ball_end_position)
 	var target_distance : float = ball_start_position.distance_to(ball_target.global_position) # This is the target contact ratio
-	var cpu_offset : float = calculate_cpu_difficulty_offset() # Add randomness based on CPU difficulty
+	var cpu_offset : float = calculate_cpu_difficulty_offset(random_value) # Add randomness based on CPU difficulty
 	var swing_offset : float = SWING_ANIMATION_WINDUP / SWING_ANIMATION_MULTIPLIER + get_physics_process_delta_time() * 2.0
 	swing_offset += cpu_offset
 	
@@ -281,12 +289,12 @@ func calculate_swing_ratio() -> void:
 	cpu_swing_ratio = target_distance / total_distance
 	can_cpu_swing = true # Allow the cpu to swing
 
-func calculate_cpu_difficulty_offset() -> float:
+func calculate_cpu_difficulty_offset(random_value : float) -> float:
 	if player_index == -1: # Demo has a consistent offset
 		return 0
 	
 	var difficulty : int = PartyManager.get_player_data(player_index).cpu_difficulty
-	var offset : float = cpu_difficulty_curves[difficulty].sample(randf()) * CPU_MAX_VARIANCE
+	var offset : float = cpu_difficulty_curves[difficulty].sample(random_value) * CPU_MAX_VARIANCE
 	return offset
 
 func calculate_travel_speed(travel_length : float) -> float:

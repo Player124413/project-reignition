@@ -1,6 +1,5 @@
 extends Menu
 
-
 @export_file_path("*.tscn") var minigame_scene : String
 
 func confirm() -> void:
