@@ -15,6 +15,7 @@ public partial class Jukebox : Menu
 	[Export] private Node2D cursor;
 	[Export] private Sprite2D scrollbar;
 	[Export] private Array<BGMResource> songList;
+	[Export] private Control worldText;
 	private readonly Array<BGMResource> customSongList = [];
 
 	public LevelDataResource selectedData;
@@ -205,6 +206,7 @@ public partial class Jukebox : Menu
 	{
 		if (menuMemory[MemoryKeys.ActiveMenu] == (int)MemoryKeys.Jukebox)
 		{
+			worldText.Visible = true;
 			isCustomMusicMenuActive = false;
 			menuMemory[MemoryKeys.ActiveMenu] = (int)MemoryKeys.LevelSelect;
 			animator.Play("hide");
@@ -286,6 +288,7 @@ public partial class Jukebox : Menu
 
 	public override void ShowMenu()
 	{
+		worldText.Visible = false;
 		VerticalSelection = 0;
 		cursorPosition = 0;
 		BGMResource newBGM;
