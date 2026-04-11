@@ -125,9 +125,10 @@ public partial class StageSettings : Node3D
 			SaveManager.ActiveGameData.selectedMusic.TryGetValue(Data.LevelID, out bgmID);
 			GD.Print("bgmID: " + bgmID);
 
-
 			if (bgmID.GetExtension() != "wav" && bgmID.GetExtension() != "ogg")
+			{
 				currentBGM = (BGMResource)ResourceLoader.Load(ResourceUid.GetIdPath(ResourceUid.TextToId(bgmID)));
+			}
 			else
 			{
 				currentBGM = (BGMResource)ResourceLoader.Load("user://custom/music/" + bgmID.GetBaseName() + ".tres");
@@ -143,7 +144,6 @@ public partial class StageSettings : Node3D
 
 		GD.Print("current level: " + Data.LevelID);
 		GD.Print("selected music: " + SaveManager.ActiveGameData.selectedMusic);
-		GD.Print("current BGM: " + currentBGM.SongName);
 	}
 
 	public override void _ExitTree() => EmitSignal(SignalName.Unloaded);

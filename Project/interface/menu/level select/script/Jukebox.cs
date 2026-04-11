@@ -3,21 +3,19 @@ using Godot.Collections;
 using Project.Core;
 using Project.Gameplay;
 
-
 namespace Project.Interface.Menus;
 
 public partial class Jukebox : Menu
 {
 	[Export] private AudioStreamPlayer player;
-	[Export] private ResourcePreloader preloader;
 	[Export] private BGMResource defaultOption;
 	[Export] private PackedScene jukeboxOption;
 	[Export] private VBoxContainer optionContainer;
 	[Export] private VBoxContainer optionContainerSub;
 	[Export] private Node2D cursor;
 	[Export] private Sprite2D scrollbar;
-	Array<BGMResource> songList;
-	Array<BGMResource> songListSub;
+	[Export] private Array<BGMResource> songList;
+	private readonly Array<BGMResource> customSongList = [];
 
 	public LevelDataResource selectedData;
 
@@ -40,90 +38,69 @@ public partial class Jukebox : Menu
 
 	private readonly Array<JukeboxOption> songOptionList = [];
 	private readonly Array<JukeboxOption> customSongOptionList = [];
-	private bool isSubMenuActive;
-	private string customPath = "user://custom/music";
+	private bool isCustomMusicMenuActive;
+	private readonly string CustomMusicPath = "user://custom/music/";
 
 	protected override void SetUp()
 	{
-		songList = [];
-		songList.Add(defaultOption);
-
-		for (int i = 0; i < preloader.GetResourceList().Length; i++)
-			songList.Add((BGMResource)preloader.GetResource(preloader.GetResourceList()[i]));
-
-
 		for (int i = 0; i < songList.Count; i++)
 		{
 			JukeboxOption newSong = jukeboxOption.Instantiate<JukeboxOption>();
-			newSong.bgm = songList[i];
-			newSong.SetData();
-
+			newSong.SetBgmResource(songList[i]);
 			songOptionList.Add(newSong);
 			optionContainer.AddChild(newSong);
 		}
 
-		SetUpSub(customPath);
-
-
 		base.SetUp();
 	}
 
-	private void SetUpSub(string path)
+	/// <summary> Returns whether a given extension is supported for custom music playback. </summary>
+	private bool IsValidExtension(string extension) => extension.Equals("wav") || extension.Equals("ogg") || extension.Equals("mp3");
+
+	private void SetUpCustomMusic()
 	{
 		for (int i = 0; i < optionContainerSub.GetChildren().Count; i++)
 			optionContainerSub.GetChild(i).QueueFree();
 
-		songListSub = [];
-		songListSub.Add(defaultOption);
+		customSongList.Clear();
 		customSongOptionList.Clear();
+		customSongList.Add(defaultOption);
 
-		if (!DirAccess.DirExistsAbsolute(path))
-			DirAccess.MakeDirRecursiveAbsolute(path);
+		if (!DirAccess.DirExistsAbsolute(CustomMusicPath))
+			DirAccess.MakeDirRecursiveAbsolute(CustomMusicPath);
 
-		using var dir = DirAccess.Open(path);
+		DirAccess dir = DirAccess.Open(CustomMusicPath);
+		if (dir == null)
+			return;
 
-		if (dir != null)
+		foreach (string file in dir.GetFiles())
 		{
-			dir.ListDirBegin();
-			string fileName = dir.GetNext();
-			while (fileName != "")
+			if (IsValidExtension(file.GetExtension()))
+				continue;
+
+			BGMResource bgm = new()
 			{
-				if (fileName.GetExtension() == "wav" || fileName.GetExtension() == "ogg")
-				{
-					BGMResource bgm = new()
-					{
-						SongName = fileName
-					};
-					bgm.SetStreamPath(path + "/" + fileName);
-					bgm.LoopStart = 1f;
-					bgm.LoopEnd = 1f;
+				SongName = file,
+				StreamPath = CustomMusicPath + file,
+				LoopEnd = -1 // Default to loop the entire audio file
+			};
 
-					if (dir.FileExists(fileName.GetBaseName() + ".tres"))
-						bgm = ResourceLoader.Load(path + "/" + fileName.GetBaseName() + ".tres") as BGMResource;
-					else
-						ResourceSaver.Save(bgm, path + "/" + fileName.GetBaseName() + ".tres");
+			string targetFilePath = $"{file.GetBaseName()}.tres";
+			if (dir.FileExists(targetFilePath))
+				bgm = ResourceLoader.Load(CustomMusicPath + targetFilePath) as BGMResource;
+			else
+				ResourceSaver.Save(bgm, CustomMusicPath + targetFilePath);
 
-					songListSub.Add(bgm);
-				}
-
-				fileName = dir.GetNext();
-			}
-
-			dir.ListDirEnd();
+			customSongList.Add(bgm);
 		}
 
-		for (int i = 0; i < songListSub.Count; i++)
+		for (int i = 0; i < customSongList.Count; i++)
 		{
 			JukeboxOption newSong = jukeboxOption.Instantiate<JukeboxOption>();
-			newSong.bgm = songListSub[i];
-			newSong.SetData();
-
+			newSong.SetBgmResource(customSongList[i]);
 			customSongOptionList.Add(newSong);
 			optionContainerSub.AddChild(newSong);
 		}
-
-		base.SetUp();
-
 	}
 
 	public override void _Process(double _)
@@ -135,7 +112,7 @@ public partial class Jukebox : Menu
 		float targetCursorPosition = cursorPosition * ScrollInterval;
 		cursor.Position = cursor.Position.SmoothDamp(Vector2.Down * targetCursorPosition, ref cursorVelocity, CursorSmoothing);
 
-		if (!isSubMenuActive)
+		if (!isCustomMusicMenuActive)
 		{
 			Vector2 targetContainerPosition = new(optionContainer.Position.X, -scrollAmount * ScrollInterval);
 			optionContainer.Position = optionContainer.Position.SmoothDamp(targetContainerPosition, ref containerVelocity, ScrollSmoothing);
@@ -151,10 +128,10 @@ public partial class Jukebox : Menu
 	{
 		if (Input.IsActionJustPressed("button_attack"))
 		{
-			if (isSubMenuActive)
+			if (isCustomMusicMenuActive)
 				ShowMenu();
 			else
-				ShowSubMenu();
+				ShowCustomMusicMenu();
 
 		}
 
@@ -163,71 +140,68 @@ public partial class Jukebox : Menu
 
 	protected override void Confirm()
 	{
-		if (menuMemory[MemoryKeys.ActiveMenu] == (int)MemoryKeys.Jukebox)
+		if (menuMemory[MemoryKeys.ActiveMenu] != (int)MemoryKeys.Jukebox)
+			return;
+
+		if (parentMenu.bgm.GetBgmResource() != null)
+			parentMenu.bgm.Stop();
+		else
+			parentMenu.parentMenu.bgm.Stop(); // When selecting default, load the World Select theme
+
+		UnequipSongs();
+
+		if (SaveManager.ActiveGameData.selectedMusic.ContainsKey(selectedData.LevelID)) //If our dictionary already contains the ID for the selected level
+			SaveManager.ActiveGameData.selectedMusic.Remove(selectedData.LevelID); //Remove the level ID from the dictionary
+
+		if (VerticalSelection != 0) //If we haven't selected the default option
 		{
-			if (parentMenu.bgm.GetBgmResource() != null)
-				parentMenu.bgm.Stop();
+			if (!isCustomMusicMenuActive)
+			{
+				//Add the level ID to the dictionary with the selected song
+				SaveManager.ActiveGameData.selectedMusic.Add(selectedData.LevelID, ResourceUid.IdToText(ResourceLoader.GetResourceUid(songOptionList[VerticalSelection].Bgm.ResourcePath)));
+				bgm.SetBgmResource(songOptionList[VerticalSelection].Bgm);
+				bgm.LoadBgmResource(); // Loads the selected BGM
+				bgm.Play();
+			}
 			else
-				parentMenu.parentMenu.bgm.Stop();//When selecting Lost Prologue, load the World Select theme
-
-			UnequipSongs();
-
-			if (SaveManager.ActiveGameData.selectedMusic.ContainsKey(selectedData.LevelID)) //If our dictionary already contains the ID for the selected level
-				SaveManager.ActiveGameData.selectedMusic.Remove(selectedData.LevelID); //Remove the level ID from the dictionary
-
-			if (VerticalSelection != 0) //If we haven't selected the default option
 			{
-				if (!isSubMenuActive)
-				{
-					//Add the level ID to the dictionary with the selected song
-					SaveManager.ActiveGameData.selectedMusic.Add(selectedData.LevelID, ResourceUid.IdToText(ResourceLoader.GetResourceUid(songOptionList[VerticalSelection].bgm.ResourcePath)));
-					bgm.SetBgmResource(songOptionList[VerticalSelection].bgm);
+				SaveManager.ActiveGameData.selectedMusic.Add(selectedData.LevelID, customSongOptionList[VerticalSelection].Bgm.SongName);
+				//bgm.SetBgmResource(customSongOptionList[VerticalSelection].bgm);
 
-					bgm.LoadBgmResource();//Loads the selected BGM
-					bgm.Play();
-				}
-				else
+				switch (customSongOptionList[VerticalSelection].Bgm.SongName.GetExtension())
 				{
-					SaveManager.ActiveGameData.selectedMusic.Add(selectedData.LevelID, customSongOptionList[VerticalSelection].bgm.SongName);
-					//bgm.SetBgmResource(customSongOptionList[VerticalSelection].bgm);
-
-					switch (customSongOptionList[VerticalSelection].bgm.SongName.GetExtension())
-					{
-						case "wav":
-							player.Stream = AudioStreamWav.LoadFromFile(customPath + "/" + customSongOptionList[VerticalSelection].bgm.SongName);
-							player.Play();
-							break;
-						case "ogg":
-							player.Stream = AudioStreamOggVorbis.LoadFromFile(customPath + "/" + customSongOptionList[VerticalSelection].bgm.SongName);
-							player.Play();
-							break;
-					}
+					case "wav":
+						player.Stream = AudioStreamWav.LoadFromFile(CustomMusicPath + "/" + customSongOptionList[VerticalSelection].Bgm.SongName);
+						player.Play();
+						break;
+					case "ogg":
+						player.Stream = AudioStreamOggVorbis.LoadFromFile(CustomMusicPath + "/" + customSongOptionList[VerticalSelection].Bgm.SongName);
+						player.Play();
+						break;
 				}
 			}
-			else //Switch to the level select theme when hitting "default"
-			{
+		}
+		else //Switch to the level select theme when hitting "default"
+		{
 
-				if (bgm.Playing)
-					bgm.Stop();
-				if (parentMenu.bgm.GetBgmResource() != null && !parentMenu.bgm.Playing)
-					parentMenu.bgm.Play();
-				else if (!parentMenu.parentMenu.bgm.Playing)
-					parentMenu.parentMenu.bgm.Play();
-			}
-
-			SaveManager.SaveGameData();
-			SelectedSong.Equip();
-			animator.Play("equip");
-
+			if (bgm.Playing)
+				bgm.Stop();
+			if (parentMenu.bgm.GetBgmResource() != null && !parentMenu.bgm.Playing)
+				parentMenu.bgm.Play();
+			else if (!parentMenu.parentMenu.bgm.Playing)
+				parentMenu.parentMenu.bgm.Play();
 		}
 
+		SaveManager.SaveGameData();
+		SelectedSong.Equip();
+		animator.Play("equip");
 	}
 
 	protected override void Cancel()
 	{
 		if (menuMemory[MemoryKeys.ActiveMenu] == (int)MemoryKeys.Jukebox)
 		{
-			isSubMenuActive = false;
+			isCustomMusicMenuActive = false;
 			menuMemory[MemoryKeys.ActiveMenu] = (int)MemoryKeys.LevelSelect;
 			animator.Play("hide");
 			SaveManager.SaveGameData();
@@ -246,14 +220,13 @@ public partial class Jukebox : Menu
 
 	protected override void UpdateSelection()
 	{
-
 		if (menuMemory[MemoryKeys.ActiveMenu] == (int)MemoryKeys.Jukebox)
 		{
 			int inputSign = Mathf.Sign(Input.GetAxis("ui_up", "ui_down"));
 
 			if (inputSign != 0)
 			{
-				if (!isSubMenuActive)
+				if (!isCustomMusicMenuActive)
 					VerticalSelection = WrapSelection(VerticalSelection + inputSign, songOptionList.Count);
 				else
 					VerticalSelection = WrapSelection(VerticalSelection + inputSign, customSongOptionList.Count);
@@ -262,14 +235,13 @@ public partial class Jukebox : Menu
 				MoveCursor();
 			}
 		}
-
 	}
 
 	private void UpdateScrollAmount(int amount)
 	{
 		int listSize = songOptionList.Count;
 
-		if (isSubMenuActive)
+		if (isCustomMusicMenuActive)
 			listSize = customSongOptionList.Count;
 
 
@@ -313,77 +285,61 @@ public partial class Jukebox : Menu
 	{
 		VerticalSelection = 0;
 		cursorPosition = 0;
-		string bgmID;
 		BGMResource bgm;
 
-		if (!isSubMenuActive)
+		if (!isCustomMusicMenuActive)
 			animator.Play("show");
 		else
 			animator.Play("hidesub");
 
-		isSubMenuActive = false;
+		isCustomMusicMenuActive = false;
 		UnequipSongs();
-		for (int i = 0; i < songOptionList.Count; i++)
+		if (SaveManager.ActiveGameData.selectedMusic.TryGetValue(selectedData.LevelID, out string bgmID))
 		{
-
-			if (SaveManager.ActiveGameData.selectedMusic.TryGetValue(selectedData.LevelID, out bgmID))
+			for (int i = 0; i < songOptionList.Count; i++)
 			{
-				bgm = (BGMResource)ResourceLoader.Load(ResourceUid.GetIdPath(ResourceUid.TextToId(bgmID)));
-				if (bgm != null)
-				{
-					if (songOptionList[i].bgm.SongName == bgm.SongName)
-					{
-						songOptionList[i].Equip();
-						return;
-					}
-				}
+				bgm = (BGMResource)ResourceLoader.Load(bgmID);
+				if (bgm == null || !songOptionList[i].Bgm.SongName.Equals(bgm.SongName))
+					continue;
 
-
+				songOptionList[i].Equip();
+				return;
 			}
 		}
 
-		if (!SaveManager.ActiveGameData.selectedMusic.TryGetValue(selectedData.LevelID, out bgmID)) //If we have selected the default song
+		if (!SaveManager.ActiveGameData.selectedMusic.TryGetValue(selectedData.LevelID, out _)) // If we have selected the default song
 			songOptionList[0].Equip();
-
 		UpdateSelection();
-
-
 	}
 
-	private void ShowSubMenu()
+	private void ShowCustomMusicMenu()
 	{
-		SetUpSub(customPath);
-		isSubMenuActive = true;
+		SetUpCustomMusic();
+		isCustomMusicMenuActive = true;
 
 		VerticalSelection = 0;
 		cursorPosition = 0;
-		string bgmID;
-		BGMResource bgm;
 
 		animator.Play("showsub");
 		UnequipSongs();
-		for (int i = 0; i < customSongOptionList.Count; i++)
+		if (SaveManager.ActiveGameData.selectedMusic.TryGetValue(selectedData.LevelID, out string bgmID))
 		{
-
-			if (SaveManager.ActiveGameData.selectedMusic.TryGetValue(selectedData.LevelID, out bgmID))
+			for (int i = 0; i < customSongOptionList.Count; i++)
 			{
-
-				bgm = GetCustomSong(bgmID);
+				BGMResource bgm = GetCustomSong(bgmID);
 				if (bgm == null)
 					continue;
 
-				if (customSongOptionList[i].bgm.SongName == bgm.SongName)
+				if (customSongOptionList[i].Bgm.SongName == bgm.SongName)
 				{
 					customSongOptionList[i].Equip();
 					return;
 				}
-
 			}
 		}
 
-		if (!SaveManager.ActiveGameData.selectedMusic.TryGetValue(selectedData.LevelID, out bgmID)) //If we have selected the default song
+		if (!SaveManager.ActiveGameData.selectedMusic.TryGetValue(selectedData.LevelID, out _)) // If we have selected the default song
 			songOptionList[0].Equip();
-
 		UpdateSelection();
 	}
 
@@ -410,15 +366,14 @@ public partial class Jukebox : Menu
 			for (int i = 0; i < customSongOptionList.Count; i++)
 				customSongOptionList[i].Unequip();
 		}
-
 	}
 
 	private BGMResource GetCustomSong(string songName)
 	{
 		for (int i = 0; i < customSongOptionList.Count; i++)
 		{
-			if (songName == customSongOptionList[i].bgm.SongName)
-				return customSongOptionList[i].bgm;
+			if (songName == customSongOptionList[i].Bgm.SongName)
+				return customSongOptionList[i].Bgm;
 		}
 		return null;
 
@@ -434,7 +389,7 @@ public partial class Jukebox : Menu
 		// Reupdate cursor since clamping is applied in UpdateScrollAmount()
 		cursorPosition = VerticalSelection - scrollAmount;
 
-		if (!isSubMenuActive && VerticalSelection != 0 && VerticalSelection != songOptionList.Count - 1)
+		if (!isCustomMusicMenuActive && VerticalSelection != 0 && VerticalSelection != songOptionList.Count - 1)
 		{
 			// Ensure cursor doesn't get stuck on the edges of the list
 			if (cursorPosition == 0) // Top of the list
@@ -448,7 +403,7 @@ public partial class Jukebox : Menu
 				scrollAmount++;
 			}
 		}
-		else if (isSubMenuActive && VerticalSelection != 0 && VerticalSelection != customSongOptionList.Count - 1)
+		else if (isCustomMusicMenuActive && VerticalSelection != 0 && VerticalSelection != customSongOptionList.Count - 1)
 		{
 			if (cursorPosition == 0) // Top of the list
 			{

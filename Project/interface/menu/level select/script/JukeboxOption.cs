@@ -2,21 +2,22 @@ using Godot;
 using System;
 
 namespace Project.Interface.Menus;
+
 public partial class JukeboxOption : Control
 {
 
-	///<summary> Reference to the target BGM Resource</summary>
-	[Export] public BGMResource bgm;
+	///<summary> Reference to the target BGM Resource. </summary>
+	[Export] public BGMResource Bgm { get; private set; }
 
 	[Export] private Label name;
 	[Export] private AnimationPlayer animator;
 
 	public bool Equipped { get; private set; }
 
-
-	public void SetData()
+	public void SetBgmResource(BGMResource resource)
 	{
-		name.Text = bgm.SongName.GetBaseName();
+		Bgm = resource;
+		name.Text = Bgm.SongName.GetBaseName();
 	}
 
 	public void Equip()
