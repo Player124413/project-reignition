@@ -7,6 +7,7 @@ namespace Project.Interface.Menus;
 
 public partial class Jukebox : Menu
 {
+	[Export] private AnimationPlayer cursorAnimator;
 	[Export] private AudioStreamPlayer player;
 	[Export] private BGMResource defaultOption;
 	[Export] private PackedScene jukeboxOption;
@@ -37,6 +38,7 @@ public partial class Jukebox : Menu
 	private readonly int PageSize = 8;
 	private int MaxScrollAmount => (isCustomMusicMenuActive ? customSongOptionList.Count : songOptionList.Count) - 1;
 
+	private bool isNothingSelected;
 	private readonly Array<JukeboxOption> songOptionList = [];
 	private readonly Array<JukeboxOption> customSongOptionList = [];
 	private bool isCustomMusicMenuActive;
@@ -47,6 +49,8 @@ public partial class Jukebox : Menu
 		for (int i = 0; i < songList.Count; i++)
 		{
 			JukeboxOption newSong = jukeboxOption.Instantiate<JukeboxOption>();
+			newSong.MouseEntered += () => ReceiveMouseInput(newSong);
+			newSong.MouseExited += () => ReceiveMouseInput(null);
 			newSong.SetBgmResource(songList[i]);
 			songOptionList.Add(newSong);
 			optionContainer.AddChild(newSong);
@@ -92,6 +96,8 @@ public partial class Jukebox : Menu
 		for (int i = 0; i < customSongList.Count; i++) // Creates the menu options for the custom songs
 		{
 			JukeboxOption newSong = jukeboxOption.Instantiate<JukeboxOption>();
+			newSong.MouseEntered += () => ReceiveMouseInput(newSong);
+			newSong.MouseExited += () => ReceiveMouseInput(null);
 			newSong.SetBgmResource(customSongList[i]);
 			customSongOptionList.Add(newSong);
 			optionContainerSub.AddChild(newSong);
@@ -138,6 +144,23 @@ public partial class Jukebox : Menu
 
 	protected override void ProcessMenu()
 	{
+		if (Runtime.Instance.MouseScrollInput != 0)
+		{
+			int targetIndex = VerticalSelection + Runtime.Instance.MouseScrollInput;
+			targetIndex = Mathf.Clamp(targetIndex, 0, MaxScrollAmount);
+
+			int sign = targetIndex - VerticalSelection;
+			if (sign != 0)
+			{
+				VerticalSelection = targetIndex;
+				UpdateScrollAmount(sign);
+				MoveCursor();
+				StartSelectionTimer();
+			}
+
+			return;
+		}
+
 		if (Runtime.Instance.IsActionJustPressed("sys_sort", "ui_focus_next"))
 		{
 			isCustomMusicMenuActive = !isCustomMusicMenuActive;
@@ -410,6 +433,28 @@ public partial class Jukebox : Menu
 
 		if (isProcessing && VerticalSelection != initialSelection)
 			MoveCursor();
+	}
+
+	private void ReceiveMouseInput(Node node)
+	{
+		if (!isProcessing)
+			return;
+
+		Runtime.Instance.IsUsingMouse = true;
+
+		if (node == null)
+		{
+			isNothingSelected = true;
+			cursorAnimator.Play("hide");
+			return;
+		}
+
+		isNothingSelected = false;
+		int targetIndex = node.GetIndex();
+		int sign = targetIndex - VerticalSelection;
+		VerticalSelection = targetIndex;
+		UpdateScrollAmount(sign);
+		MoveCursor();
 	}
 
 	private void HideParentNavigationButtons() => parentNavigationButtons.Visible = false;
