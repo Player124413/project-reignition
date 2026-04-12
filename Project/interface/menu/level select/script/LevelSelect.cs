@@ -148,7 +148,7 @@ public partial class LevelSelect : Menu
 
 	public void UpdateBgm()
 	{
-		bool canPlayBgm = !SaveManager.Config.useRetailMenuMusic && IsWorldUnlocked() && bgm?.Stream != null;
+		bool canPlayBgm = !SaveManager.Config.useRetailMenuMusic && IsWorldUnlocked();
 		if (canPlayBgm && bgm?.Playing == false)
 		{
 			// Change to world specific level select music
@@ -249,7 +249,6 @@ public partial class LevelSelect : Menu
 
 	private void UpdateDescription()
 	{
-		GD.Print("Changing description");
 		description.ShowDescription();
 		description.Text = levelOptions[VerticalSelection].GetDescription();
 	}

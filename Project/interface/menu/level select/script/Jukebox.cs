@@ -249,7 +249,6 @@ public partial class Jukebox : Menu
 
 	protected override void UpdateSelection()
 	{
-		GD.Print("Selection Updated");
 		int inputSign = Mathf.Sign(Input.GetAxis("ui_up", "ui_down"));
 
 		if (inputSign != 0)
