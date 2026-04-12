@@ -66,7 +66,7 @@ func on_minigame_finished() -> void:
 	
 	reparent(MinigameManager.instance.results_location[player_index])
 	transform = Transform3D.IDENTITY
-	play_animation("idle") # TODO Switch to boat anims if needed
+	play_animation("idle")
 
 ## Play victory or loss animation
 func on_results_started() -> void:

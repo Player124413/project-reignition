@@ -1,0 +1,144 @@
+[gd_scene load_steps=11 format=3 uid="uid://q76tk2hwfseh"]
+
+[ext_resource type="Texture2D" uid="uid://bojtqtxd8in37" path="res://party/scene/minigame/00 base/interface/score trim.png" id="1_2dk12"]
+[ext_resource type="Script" uid="uid://4dcfv03x8rp3" path="res://party/scene/minigame/00 base/script/score_counter.gd" id="2_2dk12"]
+[ext_resource type="Texture2D" uid="uid://f814vrxaxvh3" path="res://party/scene/minigame/00 base/interface/score clip.png" id="3_2dk12"]
+[ext_resource type="LabelSettings" uid="uid://b7qvf22ixh66g" path="res://party/font/minigame/ScoreNameOutline.tres" id="3_fw6pw"]
+[ext_resource type="Script" uid="uid://qvplfr0cibu5" path="res://party/script/interface/synced_label.gd" id="3_n66y8"]
+[ext_resource type="Texture2D" uid="uid://cnlbuerlqyq80" path="res://party/resource/character/texture/cs sonic.png" id="4_2dk12"]
+[ext_resource type="LabelSettings" uid="uid://udp30iqcrb0d" path="res://party/font/minigame/ScoreNameFill.tres" id="5_d7axx"]
+[ext_resource type="Texture2D" uid="uid://cm4dsrfm8yxab" path="res://party/font/minigame/MinigameGradientFill.tres" id="5_fw6pw"]
+[ext_resource type="LabelSettings" uid="uid://c82xi6o7qj2bf" path="res://party/font/minigame/ScoreNumberOutline.tres" id="7_ugnli"]
+[ext_resource type="LabelSettings" uid="uid://dirkfcy6gq3v3" path="res://party/font/minigame/ScoreNumberFill.tres" id="8_i8n4t"]
+
+[node name="ScoreCounter" type="TextureRect" node_paths=PackedStringArray("name_label", "score_label", "character_texture_rect")]
+anchors_preset = -1
+offset_right = 280.0
+offset_bottom = 128.0
+texture = ExtResource("1_2dk12")
+script = ExtResource("2_2dk12")
+name_label = NodePath("NameLabel")
+score_label = NodePath("ScoreLabel")
+character_texture_rect = NodePath("Clip/Character")
+
+[node name="BG" type="TextureRect" parent="."]
+self_modulate = Color(1, 1, 1, 0.5882353)
+show_behind_parent = true
+clip_children = 2
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("3_2dk12")
+
+[node name="Clip" type="TextureRect" parent="."]
+show_behind_parent = true
+clip_children = 1
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("3_2dk12")
+
+[node name="Character" type="TextureRect" parent="Clip"]
+modulate = Color(1, 1, 1, 0.78431374)
+layout_mode = 1
+anchors_preset = -1
+anchor_bottom = 1.0
+offset_top = -32.0
+offset_right = 184.0
+offset_bottom = 24.0
+grow_vertical = 2
+texture = ExtResource("4_2dk12")
+
+[node name="NameLabel" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_top = 0.30100003
+anchor_right = 1.0
+anchor_bottom = 0.30100003
+offset_top = -14.528004
+offset_bottom = 14.471996
+grow_horizontal = 2
+text = "SONIC"
+label_settings = ExtResource("3_fw6pw")
+horizontal_alignment = 1
+vertical_alignment = 1
+uppercase = true
+script = ExtResource("3_n66y8")
+metadata/_custom_type_script = "uid://qvplfr0cibu5"
+
+[node name="FillLabel" type="Label" parent="NameLabel"]
+clip_children = 1
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "SONIC"
+label_settings = ExtResource("5_d7axx")
+horizontal_alignment = 1
+vertical_alignment = 1
+uppercase = true
+
+[node name="Gradient" type="TextureRect" parent="NameLabel/FillLabel"]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = 7.5
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("5_fw6pw")
+expand_mode = 1
+
+[node name="ScoreLabel" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 24.0
+offset_top = -16.0
+offset_right = 84.0
+offset_bottom = 41.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "00"
+label_settings = ExtResource("7_ugnli")
+horizontal_alignment = 1
+vertical_alignment = 1
+uppercase = true
+script = ExtResource("3_n66y8")
+metadata/_custom_type_script = "uid://qvplfr0cibu5"
+
+[node name="FillLabel" type="Label" parent="ScoreLabel"]
+clip_children = 1
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "00"
+label_settings = ExtResource("8_i8n4t")
+horizontal_alignment = 1
+vertical_alignment = 1
+uppercase = true
+
+[node name="Gradient" type="TextureRect" parent="ScoreLabel/FillLabel"]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = 7.5
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("5_fw6pw")
+expand_mode = 1

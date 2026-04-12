@@ -13,6 +13,8 @@ class_name PartyCharacterResource extends Resource
 @export var character_select_portrait : Texture2D
 ## Portrait to use when locked.
 @export var locked_character_select_portrait : Texture2D
+## Portrait to use for the score counter.
+@export var score_portrait : Texture2D
 ## Number of firesouls required in the main game to unlock this character.
 @export var unlock_requirements : int
 func is_unlocked() -> bool:

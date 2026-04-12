@@ -23,7 +23,7 @@ const LOGGER_COUNT : int = 5
 var current_log_index : int
 
 ## Determines whether this device is acting as a host or a client.
-var is_hosting_game : bool
+var is_hosting_game : bool = true
 ## The address to use for connections.
 var address : String = "tomfol.io"
 ## The port to use for connections.
@@ -83,7 +83,8 @@ func emit_scene_signals(type : TRANSITION_TYPE_ENUM) -> void:
 @rpc("any_peer", "call_local", "reliable")
 func unload_scene(scene_path : String, type : TRANSITION_TYPE_ENUM) -> void:
 	if !scene_dictionary.has(scene_path):
-		print("WARN: Tried to unload scene that was never loaded.")
+		print("FATAL: Tried to unload scene that was never loaded. Returning to Title Screen.")
+		get_tree().change_scene_to_file("res://interface/menu/Menu.tscn") #  Return to title screen
 		return
 	
 	scene_dictionary[scene_path].queue_free() # Delete the node associated with the scene

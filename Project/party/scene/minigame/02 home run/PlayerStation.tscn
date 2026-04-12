@@ -1,10 +1,30 @@
-[gd_scene load_steps=2 format=3 uid="uid://b56otdkeqma2r"]
+[gd_scene load_steps=3 format=3 uid="uid://b56otdkeqma2r"]
 
 [ext_resource type="PackedScene" uid="uid://bmupsthsqkjjb" path="res://party/scene/minigame/02 home run/BattingStation.tscn" id="1_y88n0"]
+[ext_resource type="PackedScene" uid="uid://q76tk2hwfseh" path="res://party/scene/minigame/00 base/ScoreCounter.tscn" id="2_2wq2p"]
 
-[node name="BattingStation" instance=ExtResource("1_y88n0")]
+[node name="BattingStation" node_paths=PackedStringArray("score_counter") instance=ExtResource("1_y88n0")]
+score_counter = NodePath("UI/PlayerScore")
 
-[node name="BatAttachment" parent="." index="1"]
-use_external_skeleton = false
+[node name="UI" type="Control" parent="." index="8"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="PlayerScore" parent="UI" index="0" instance=ExtResource("2_2wq2p")]
+layout_mode = 1
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -384.0
+offset_top = -184.0
+offset_right = -64.0
+offset_bottom = -56.0
+grow_horizontal = 0
+grow_vertical = 0
 
 [editable path="Catapult"]

@@ -13,6 +13,8 @@ signal gameplay_finished
 signal minigame_finished
 ## Character Animators will play their result animations when this signal emits.
 signal results_started
+## Emitted whenever a player's score is changed.
+signal on_score_updated(player_index : int, score : int)
 
 @export_group("Minigame Settings")
 @export var minigame_resource : MinigameResource
@@ -116,9 +118,7 @@ func request_score_change(player_index : int, amount : int = 1) -> void:
 @rpc("any_peer", "call_local", "reliable")
 func _change_score(player_index : int, amount : int) -> void:
 	player_scores[player_index] += amount
-	
-	if NetworkManager.is_hosting_game:
-		print("Added %s score to player %s. TOTAL: %s." % [amount, player_index, player_scores[player_index]])
+	on_score_updated.emit(player_index, player_scores[player_index])
 
 ## Adds one completed player and checks whether we should finish the mini-game.
 func register_completed_player() -> void:

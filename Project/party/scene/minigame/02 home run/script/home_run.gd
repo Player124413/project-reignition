@@ -12,6 +12,7 @@ signal demo_finished
 
 @export var player_index : int
 @export var character_animator : CharacterAnimator
+@export var score_counter : ScoreCounter
 
 @export var camera : Camera3D
 @export var spawn_position : Node3D
@@ -108,6 +109,8 @@ func _ready() -> void:
 		
 		if player_index == 0 && NetworkManager.is_hosting_game: # Only generate queue on player 1
 			MinigameManager.instance.peers_loaded.connect(Callable(self, "generate_pitch_queue"))
+		
+		score_counter.set_player_index(player_index)
 	else:
 		# Hide demo batting station after gameplay starts
 		MinigameManager.instance.gameplay_started.connect(Callable.create(self, "set_visible").bind(false))
