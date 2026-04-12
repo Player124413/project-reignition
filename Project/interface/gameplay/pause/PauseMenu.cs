@@ -308,9 +308,9 @@ public partial class PauseMenu : Node
 		{
 			SaveManager.SaveGameData();
 			SoundManager.instance.StageMusicPlayer.Stop();
+			SoundManager.instance.StageMusicPlayer.SetBgmResource(null); //Fixes a bug where the stage music will continue playing after a level quit
 			if (TimeAttackManager.Instance.IsRunActive)
 			{
-				SoundManager.instance.StageMusicPlayer.Stop();
 				if (TimeAttackManager.Instance.CurrentRunType == TimeAttackManager.RunType.SingleRun)
 					TimeAttackManager.Instance.LoadTimeAttack(true);
 				else

@@ -1,0 +1,294 @@
+[gd_scene load_steps=34 format=3 uid="uid://bmupsthsqkjjb"]
+
+[ext_resource type="Script" uid="uid://b3l2nixn2qvg6" path="res://party/scene/minigame/02 home run/script/home_run.gd" id="1_area0"]
+[ext_resource type="Material" uid="uid://ber4ufg4kp1rp" path="res://party/scene/minigame/02 home run/material/Hit Shock.tres" id="4_rtuc6"]
+[ext_resource type="Script" uid="uid://c65ffkknyq6gr" path="res://addons/custom_nodes/script/GroupGpuParticles3D.cs" id="5_5v31x"]
+[ext_resource type="Material" uid="uid://qt5e5luhdrke" path="res://party/scene/minigame/02 home run/material/Hit Spark.tres" id="5_mo0ae"]
+[ext_resource type="AudioStream" uid="uid://n20nu1wpy141" path="res://party/scene/minigame/02 home run/sound/throw fast.wav" id="8_faech"]
+[ext_resource type="AudioStream" uid="uid://cxa8rcbpygx3x" path="res://party/scene/minigame/02 home run/sound/swing.wav" id="9_qa8ly"]
+[ext_resource type="AudioStream" uid="uid://dyk1pg8at5o28" path="res://party/scene/minigame/02 home run/sound/hit out.wav" id="10_ocufk"]
+[ext_resource type="AudioStream" uid="uid://dd1afuktki0b" path="res://party/scene/minigame/02 home run/sound/throw slow.wav" id="10_w3q6g"]
+[ext_resource type="Script" uid="uid://bkwc2atbp4cjd" path="res://party/scene/minigame/00 base/script/group_sfx_player.gd" id="11_area0"]
+[ext_resource type="AudioStream" uid="uid://cjbolxhsb2xid" path="res://party/scene/minigame/02 home run/sound/hit run.wav" id="11_exr67"]
+[ext_resource type="AudioStream" uid="uid://bv0c38ckhuugr" path="res://party/scene/minigame/02 home run/sound/throw mid.wav" id="11_p7b1j"]
+[ext_resource type="AudioStream" uid="uid://v1lfjf1x5hkc" path="res://party/scene/minigame/02 home run/sound/pitch slow.wav" id="13_hcpke"]
+[ext_resource type="AudioStream" uid="uid://c5h2o10y60bit" path="res://party/scene/minigame/02 home run/sound/pitch mid.wav" id="14_area0"]
+[ext_resource type="PackedScene" uid="uid://bthgdlikxgup5" path="res://party/scene/minigame/02 home run/model/Bat.glb" id="15_gesd3"]
+[ext_resource type="AudioStream" uid="uid://n15iooncks1x" path="res://party/scene/minigame/02 home run/sound/pitch fast.wav" id="15_ijjrd"]
+[ext_resource type="PackedScene" uid="uid://8lg8p3vq6ahs" path="res://party/scene/minigame/02 home run/model/Ball.glb" id="16_iagwu"]
+[ext_resource type="PackedScene" uid="uid://hp77sy8ccqwg" path="res://party/scene/minigame/02 home run/model/Catapult.glb" id="17_gn28g"]
+
+[sub_resource type="Curve" id="Curve_rtuc6"]
+_limits = [-1.0, 1.0, 0.0, 1.0]
+_data = [Vector2(0, -1), 0.0, 2.0, 0, 1, Vector2(0.3, -0.39999998), 0.0, 0.0, 0, 0, Vector2(0.7, 0.40000004), 0.0, 0.0, 0, 0, Vector2(1, 1), 1.0, 0.0, 0, 0]
+point_count = 4
+
+[sub_resource type="Curve" id="Curve_lek4y"]
+_limits = [-1.0, 1.0, 0.0, 1.0]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(0.2, -0.39999998), 0.0, 0.0, 0, 0, Vector2(0.4, 0.6), 0.0, 0.0, 0, 0, Vector2(0.6, -0.39999998), 0.0, 0.0, 0, 0, Vector2(0.8, 0.40000004), 0.0, 0.0, 0, 0, Vector2(1, -1), 0.0, 0.0, 0, 0]
+point_count = 6
+
+[sub_resource type="Curve" id="Curve_mo0ae"]
+_limits = [-1.0, 1.0, 0.0, 1.0]
+_data = [Vector2(0, 1), 0.0, -5.689139, 0, 0, Vector2(0.3, -0.39999998), 0.0, 0.0, 0, 0, Vector2(0.7, 0.40000004), 0.0, 0.0, 0, 0, Vector2(1, -1), -5.627962, 0.0, 0, 0]
+point_count = 4
+
+[sub_resource type="Curve" id="Curve_5v31x"]
+_limits = [-1.0, 1.0, 0.0, 1.0]
+_data = [Vector2(0, -1), 0.0, 0.0, 0, 0, Vector2(0.1, 0.20000002), 0.0, 0.0, 0, 0, Vector2(0.90000004, -0.19999999), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 4
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_lek4y"]
+radius = 2.0
+
+[sub_resource type="Animation" id="Animation_rtuc6"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:rotation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0, 0, 0)]
+}
+
+[sub_resource type="Animation" id="Animation_lek4y"]
+resource_name = "loop"
+length = 0.5
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:rotation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.5),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector3(0, 0, 0), Vector3(6.2831855, 0, 0)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_mo0ae"]
+_data = {
+&"RESET": SubResource("Animation_rtuc6"),
+&"loop": SubResource("Animation_lek4y")
+}
+
+[sub_resource type="Curve" id="Curve_faech"]
+_data = [Vector2(0, 0), 0.0, 11.09696, 0, 0, Vector2(0.2, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), -1.2496579, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_qa8ly"]
+width = 64
+curve = SubResource("Curve_faech")
+
+[sub_resource type="Curve" id="Curve_qa8ly"]
+_data = [Vector2(0, 0.5), 0.0, 1.7395972, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_ocufk"]
+width = 64
+curve = SubResource("Curve_qa8ly")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_mo0ae"]
+lifetime_randomness = 0.4
+angle_min = 1.0728836e-05
+angle_max = 360.00003
+gravity = Vector3(0, 0, 0)
+scale_min = 5.0
+scale_max = 10.0
+scale_curve = SubResource("CurveTexture_ocufk")
+color = Color(0.9953124, 0.8667063, 0.7291793, 1)
+alpha_curve = SubResource("CurveTexture_qa8ly")
+
+[sub_resource type="QuadMesh" id="QuadMesh_lek4y"]
+material = ExtResource("4_rtuc6")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_5v31x"]
+lifetime_randomness = 0.8
+angle_min = 1.0728836e-05
+angle_max = 360.00003
+direction = Vector3(0, 1, 0)
+spread = 60.0
+initial_velocity_min = 10.0
+initial_velocity_max = 50.0
+gravity = Vector3(0, -98, 0)
+scale_min = 5.0
+scale_max = 15.0
+scale_curve = SubResource("CurveTexture_ocufk")
+color = Color(0.9953124, 0.8667063, 0.7291793, 1)
+alpha_curve = SubResource("CurveTexture_qa8ly")
+
+[sub_resource type="QuadMesh" id="QuadMesh_5v31x"]
+material = ExtResource("5_mo0ae")
+
+[node name="BattingStation" type="Node3D" node_paths=PackedStringArray("camera", "spawn_position", "bat_attachment", "catapult_animator", "ball", "ball_target", "hit_fx", "hit_sfx", "pitch_sfx", "throw_sfx", "swing_sfx")]
+script = ExtResource("1_area0")
+camera = NodePath("CameraRoot/Camera")
+spawn_position = NodePath("CharacterPosition")
+bat_attachment = NodePath("BatAttachment")
+catapult_animator = NodePath("Catapult/AnimationPlayer")
+ball = NodePath("BallAttachment/BallRoot")
+ball_target = NodePath("BallTarget")
+hit_fx = NodePath("HitShock")
+hit_sfx = [NodePath("SFX/HitSFX1"), NodePath("SFX/HitSFX2")]
+pitch_sfx = [NodePath("SFX/PitchSFX1"), NodePath("SFX/PitchSFX2"), NodePath("SFX/PitchSFX3")]
+throw_sfx = [NodePath("SFX/ThrowSFX1"), NodePath("SFX/ThrowSFX2"), NodePath("SFX/ThrowSFX3")]
+swing_sfx = NodePath("SFX/SwingSFX")
+cpu_difficulty_curves = Array[Curve]([SubResource("Curve_rtuc6"), SubResource("Curve_lek4y"), SubResource("Curve_mo0ae"), SubResource("Curve_5v31x")])
+
+[node name="CharacterPosition" type="Node3D" parent="."]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, -8, 0.2, 0)
+
+[node name="BatAttachment" type="BoneAttachment3D" parent="."]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, -8, 0, 0)
+bone_name = "hand_attachment"
+bone_idx = 89
+
+[node name="Bat" parent="BatAttachment" instance=ExtResource("15_gesd3")]
+
+[node name="BallAttachment" type="BoneAttachment3D" parent="."]
+transform = Transform3D(1, -2.3852988e-07, 1.1129231e-10, 1.1129231e-10, 0, -1, 2.3852988e-07, 1, 9.729483e-18, 4.3120235e-07, 26.805416, -135.0915)
+bone_name = "ball_position"
+bone_idx = 10
+use_external_skeleton = true
+external_skeleton = NodePath("../Catapult/CatapultRoot/Skeleton3D")
+
+[node name="BallRoot" type="Node3D" parent="BallAttachment"]
+transform = Transform3D(1, 0, -6.3321435e-24, 0, 0.99999994, -1.6543614e-24, 6.3321435e-24, 1.6543612e-24, 1, 0, 0, 0)
+
+[node name="Collision" type="Area3D" parent="BallAttachment/BallRoot"]
+transform = Transform3D(1, 0, -2.081668e-17, 0, 1, -3.3087225e-24, 2.0816688e-17, -1.6543612e-24, 1, 0, 0, 0)
+collision_layer = 8
+collision_mask = 0
+monitoring = false
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="BallAttachment/BallRoot/Collision"]
+shape = SubResource("SphereShape3D_lek4y")
+
+[node name="Ball" parent="BallAttachment/BallRoot" instance=ExtResource("16_iagwu")]
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="BallAttachment/BallRoot"]
+root_node = NodePath("../Ball")
+libraries = {
+&"": SubResource("AnimationLibrary_mo0ae")
+}
+autoplay = "loop"
+
+[node name="BallTarget" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5, -3)
+
+[node name="HitShock" type="GPUParticles3D" parent="." node_paths=PackedStringArray("subSystems")]
+transform = Transform3D(1, 0, 0, 0, 0.99999994, 0, 0, 0, 1, 0, 5, -3)
+layers = 32
+cast_shadow = 0
+extra_cull_margin = 16384.0
+emitting = false
+lifetime = 0.2
+one_shot = true
+explosiveness = 0.9
+fixed_fps = 0
+interpolate = false
+process_material = SubResource("ParticleProcessMaterial_mo0ae")
+draw_pass_1 = SubResource("QuadMesh_lek4y")
+script = ExtResource("5_5v31x")
+subSystems = [NodePath("HitSpark")]
+
+[node name="HitSpark" type="GPUParticles3D" parent="HitShock"]
+layers = 32
+cast_shadow = 0
+extra_cull_margin = 16384.0
+emitting = false
+lifetime = 0.6
+one_shot = true
+explosiveness = 0.8
+fixed_fps = 0
+interpolate = false
+process_material = SubResource("ParticleProcessMaterial_5v31x")
+draw_pass_1 = SubResource("QuadMesh_5v31x")
+
+[node name="Catapult" parent="." instance=ExtResource("17_gn28g")]
+
+[node name="Skeleton3D" parent="Catapult/CatapultRoot" index="0"]
+bones/0/rotation = Quaternion(-0.7071068, 0, 0, 0.7071068)
+bones/6/rotation = Quaternion(0, 1, 0, 7.54979e-08)
+bones/7/rotation = Quaternion(0, 1, 0, 4.371139e-08)
+
+[node name="CameraRoot" type="Node3D" parent="."]
+transform = Transform3D(0.9848078, -0.015134435, 0.1729874, 0, 0.9961947, 0.08715574, -0.1736482, -0.08583164, 0.98106027, 10, 14, 50)
+
+[node name="Camera" type="Camera3D" parent="CameraRoot"]
+physics_interpolation_mode = 2
+transform = Transform3D(0.99999994, 9.313226e-10, -1.4901161e-08, 9.313226e-10, 0.99999994, -7.450581e-09, 1.4901161e-08, 0, 0.99999994, 0, 0, 0)
+cull_mask = 1059
+current = true
+fov = 40.0
+far = 8000.0
+
+[node name="SFX" type="Node" parent="."]
+
+[node name="HitSFX1" type="AudioStreamPlayer" parent="SFX"]
+stream = ExtResource("10_ocufk")
+bus = &"GAME SFX"
+script = ExtResource("11_area0")
+group = "hit"
+max_volume = 0.6000000000000001
+
+[node name="HitSFX2" type="AudioStreamPlayer" parent="SFX"]
+stream = ExtResource("11_exr67")
+bus = &"GAME SFX"
+script = ExtResource("11_area0")
+group = "hit"
+max_volume = 0.6000000000000001
+
+[node name="ThrowSFX1" type="AudioStreamPlayer" parent="SFX"]
+stream = ExtResource("10_w3q6g")
+bus = &"GAME SFX"
+script = ExtResource("11_area0")
+group = "throw"
+
+[node name="ThrowSFX2" type="AudioStreamPlayer" parent="SFX"]
+stream = ExtResource("11_p7b1j")
+bus = &"GAME SFX"
+script = ExtResource("11_area0")
+group = "throw"
+
+[node name="ThrowSFX3" type="AudioStreamPlayer" parent="SFX"]
+stream = ExtResource("8_faech")
+bus = &"GAME SFX"
+script = ExtResource("11_area0")
+group = "throw"
+
+[node name="PitchSFX1" type="AudioStreamPlayer" parent="SFX"]
+stream = ExtResource("13_hcpke")
+bus = &"GAME SFX"
+script = ExtResource("11_area0")
+group = "pitch"
+max_volume = 0.6000000000000001
+
+[node name="PitchSFX2" type="AudioStreamPlayer" parent="SFX"]
+stream = ExtResource("14_area0")
+bus = &"GAME SFX"
+script = ExtResource("11_area0")
+group = "pitch"
+max_volume = 0.6000000000000001
+
+[node name="PitchSFX3" type="AudioStreamPlayer" parent="SFX"]
+stream = ExtResource("15_ijjrd")
+bus = &"GAME SFX"
+script = ExtResource("11_area0")
+group = "pitch"
+max_volume = 0.6000000000000001
+
+[node name="SwingSFX" type="AudioStreamPlayer" parent="SFX"]
+stream = ExtResource("9_qa8ly")
+bus = &"GAME SFX"
+
+[connection signal="ball_hit" from="." to="HitShock" method="RestartGroup"]
+
+[editable path="Catapult"]

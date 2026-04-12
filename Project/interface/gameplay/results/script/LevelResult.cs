@@ -136,6 +136,7 @@ public partial class LevelResult : Control
 
 	public void StartResults()
 	{
+		SoundManager.instance.StageMusicPlayer.SetBgmResource(null);
 		bool isRetryButtonDisabled = StageSettings.Instance.Data == SaveManager.ActiveGameData.CurrentStoryLevel &&
 			Stage.LevelState == StageSettings.LevelStateEnum.Success;
 

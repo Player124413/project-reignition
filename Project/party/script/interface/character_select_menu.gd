@@ -14,7 +14,6 @@ var active_cursor_count : int
 
 ## Number of rows for the portraits.
 const PORTRAIT_ROWS : int = 2
-const ATTRACTION_MENU_DELAY : float = 1.0
 
 func _ready() -> void:
 	super()
@@ -93,7 +92,7 @@ func request_character_selection(index : int) -> void:
 		cursors[index].rpc("request_enable_processing")
 		return
 	
-	if !PartyManager.is_character_available(character_data):
+	if PartyManager.get_character_index(character_data) != -1:
 		# Character is already taken; allow cursor movement again
 		cursors[index].rpc("request_enable_processing")
 		return
@@ -158,7 +157,7 @@ func advance_cursor_port(index : int) -> void:
 		cursors[index].rpc("hide_cursor")
 		active_cursor_count -= 1
 		if active_cursor_count == 0:
-			rpc("queue_attraction_menu", NetworkTimeSynchronizer.get_time() + ATTRACTION_MENU_DELAY)
+			rpc("queue_attraction_menu", NetworkManager.calculate_transition_tick())
 	else:
 		var portrait : Control = get_portrait(cursors[index].current_selection)
 		cursors[index].rpc("set_player_tag", next_port)
@@ -201,8 +200,8 @@ func show_player_count_menu() -> void:
 	player_count_menu.show_menu()
 
 @rpc("authority", "call_local", "reliable")
-func queue_attraction_menu(time_tick : float) -> void:
-	get_tree().create_timer(time_tick - NetworkTimeSynchronizer.get_time()).timeout.connect(show_attraction_menu)
+func queue_attraction_menu(target_tick : float) -> void:
+	get_tree().create_timer(NetworkManager.calculate_transition_delay(target_tick)).timeout.connect(show_attraction_menu)
 
 func show_attraction_menu() -> void:
 	hide_menu()

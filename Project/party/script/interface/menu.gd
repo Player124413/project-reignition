@@ -86,6 +86,7 @@ func show_menu() -> void:
 func hide_menu() -> void:
 	if animator.has_animation(HIDE_ANIMATION):
 		animator.play(HIDE_ANIMATION)
+		animator.advance(0.0)
 	else: # Fallback
 		visible = false
 

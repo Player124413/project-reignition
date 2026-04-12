@@ -20,7 +20,13 @@ public partial class BGMPlayer : AudioStreamPlayer
 
 	public override void _Process(double _)
 	{
-		if (!Playing) return;
+		if (!Playing)
+		{
+			if (bgmResource != null && Mathf.IsEqualApprox(bgmResource.LoopEnd, -1))
+				Play();
+
+			return;
+		}
 
 		if (isFadingBgm && !SoundManager.FadeAudioPlayer(this, 0.5f))
 			isFadingBgm = false;
@@ -28,7 +34,7 @@ public partial class BGMPlayer : AudioStreamPlayer
 		if (!canLoop) return;
 
 		float currentPosition = GetPlaybackPosition() + (float)AudioServer.GetTimeSinceLastMix();
-		if (currentPosition >= bgmResource.LoopEnd)
+		if (!Mathf.IsEqualApprox(bgmResource.LoopEnd, -1) && currentPosition >= bgmResource.LoopEnd)
 			Seek(currentPosition - LoopLength);
 	}
 
@@ -38,8 +44,8 @@ public partial class BGMPlayer : AudioStreamPlayer
 		if (bgmResource == null)
 			return;
 
-		canLoop = bgmResource.LoopEnd > bgmResource.LoopStart;
-		if (!canLoop && !Mathf.IsEqualApprox(bgmResource.LoopEnd, -1.0f))
+		canLoop = bgmResource.LoopEnd > bgmResource.LoopStart || Mathf.IsEqualApprox(bgmResource.LoopEnd, -1.0f);
+		if (!canLoop && bgmResource.LoopEnd <= bgmResource.LoopStart)
 			GD.PrintErr("BGM loop points are set up incorrectly. Looping is disabled.");
 
 		if (loadAsyncronously)
@@ -48,11 +54,29 @@ public partial class BGMPlayer : AudioStreamPlayer
 			return;
 		}
 
-		AudioStream stream = ResourceLoader.Load<AudioStream>(bgmResource.StreamPath);
+		AudioStream stream = GetAudioStream();
 		Stream = stream;
 
 		if (Autoplay)
 			Play();
+	}
+
+	private AudioStream GetAudioStream()
+	{
+
+		if (bgmResource.StreamPath.StartsWith("uid://"))
+			return ResourceLoader.Load<AudioStream>(bgmResource.StreamPath);
+
+		if (bgmResource.StreamPath.EndsWith(".wav"))
+			return AudioStreamWav.LoadFromFile(bgmResource.StreamPath);
+
+		if (bgmResource.StreamPath.EndsWith(".ogg"))
+			return AudioStreamOggVorbis.LoadFromFile(bgmResource.StreamPath);
+
+		if (bgmResource.StreamPath.EndsWith(".mp3"))
+			return AudioStreamMP3.LoadFromFile(bgmResource.StreamPath);
+
+		return null;
 	}
 
 	public async void LoadBgmResourceAsync()
@@ -63,7 +87,11 @@ public partial class BGMPlayer : AudioStreamPlayer
 		while (ResourceLoader.LoadThreadedGetStatus(bgmResource.StreamPath) == ResourceLoader.ThreadLoadStatus.InProgress)
 			await ToSignal(GetTree().CreateTimer(.1f), SceneTreeTimer.SignalName.Timeout); // Still loading; wait a bit
 
-		Stream = ResourceLoader.LoadThreadedGet(bgmResource.StreamPath) as AudioStream;
+		Resource loadedResource = ResourceLoader.LoadThreadedGet(bgmResource.StreamPath);
+		if (loadedResource is AudioStream)
+			Stream = loadedResource as AudioStream;
+		else
+			GD.Print(loadedResource);
 
 		if (Autoplay)
 			Play();

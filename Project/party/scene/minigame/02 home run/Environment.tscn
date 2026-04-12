@@ -1,0 +1,44 @@
+[gd_scene load_steps=3 format=3 uid="uid://dlxu4m3m50bs8"]
+
+[ext_resource type="PackedScene" uid="uid://bfutuvpxy3g0w" path="res://party/scene/minigame/02 home run/model/Field.glb" id="1_mp6ga"]
+
+[sub_resource type="Environment" id="Environment_f1ciw"]
+ambient_light_source = 2
+ambient_light_color = Color(0.49, 0.38579336, 0.34790003, 1)
+tonemap_mode = 2
+tonemap_exposure = 1.2
+glow_enabled = true
+glow_normalized = true
+fog_enabled = true
+fog_light_color = Color(0.54072946, 0.1289461, 0, 1)
+fog_density = 0.0001
+
+[node name="Environment" type="Node3D"]
+
+[node name="EnvironmentSun" type="DirectionalLight3D" parent="."]
+transform = Transform3D(1.0000001, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 0, 0)
+layers = 1024
+light_color = Color(1, 0.884, 0.71000004, 1)
+light_specular = 0.0
+light_cull_mask = 2
+shadow_enabled = true
+directional_shadow_max_distance = 200.0
+
+[node name="ObjectMain" type="DirectionalLight3D" parent="."]
+transform = Transform3D(-0.7885907, 0.35562435, -0.5016533, -0.29769588, 0.49303845, 0.8174902, 0.5380538, 0.7940054, -0.28293765, 0, 0, 0)
+layers = 1024
+light_color = Color(0.9529412, 0.6392157, 0.5647059, 1)
+light_energy = 1.2
+light_cull_mask = 1
+
+[node name="ObjectBounce" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.8211255, -0.3045545, 0.48270032, 0.1419979, 0.928151, 0.34405303, -0.5528016, -0.21396825, 0.8053745, 0, 0, 0)
+layers = 1024
+light_color = Color(0.7797239, 0.74303, 0.40866518, 1)
+light_specular = 0.0
+light_cull_mask = 1
+
+[node name="Environment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_f1ciw")
+
+[node name="Field" parent="." instance=ExtResource("1_mp6ga")]

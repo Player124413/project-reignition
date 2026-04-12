@@ -119,7 +119,33 @@ public partial class StageSettings : Node3D
 		}
 
 		SetEnvironmentFxFactor(environmentFxFactor, 0);
-		SoundManager.instance.UpdateBgmResource(DefaultBgm); // TODO Update with player-selected value
+
+		string bgmID;
+		currentBGM = null;
+		if (SaveManager.ActiveGameData.selectedMusic.ContainsKey(Data.LevelID))
+		{
+			SaveManager.ActiveGameData.selectedMusic.TryGetValue(Data.LevelID, out bgmID);
+			GD.Print("bgmID: " + bgmID);
+
+			if (bgmID.GetExtension() != "wav" && bgmID.GetExtension() != "ogg" && bgmID.GetExtension() != "mp3")
+			{
+				currentBGM = (BGMResource)ResourceLoader.Load(ResourceUid.GetIdPath(ResourceUid.TextToId(bgmID)));
+			}
+			else
+			{
+				currentBGM = SaveManager.Instance.LoadPRM(bgmID);
+				GD.Print("LOADING RESOURCE: " + bgmID.GetBaseName() + ".tres");
+			}
+
+		}
+
+		if (currentBGM == null)
+			SoundManager.instance.UpdateBgmResource(DefaultBgm);
+		else
+			SoundManager.instance.UpdateBgmResource(currentBGM);
+
+		GD.Print("current level: " + Data.LevelID);
+		GD.Print("selected music: " + SaveManager.ActiveGameData.selectedMusic);
 	}
 
 	public override void _ExitTree()
@@ -242,6 +268,7 @@ public partial class StageSettings : Node3D
 	/// <summary> Reference to the level's data. </summary>
 	[Export] public LevelDataResource Data { get; private set; }
 	[Export] public BGMResource DefaultBgm { get; private set; }
+	[Export] public BGMResource currentBGM;
 	[Export] private bool disableObjectiveAutocompletion;
 	[Export] public CameraSettingsResource InitialCameraSettings { get; private set; }
 	[Export] public SFXLibraryResource dialogLibrary;

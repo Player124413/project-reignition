@@ -2,6 +2,7 @@ using System;
 
 //using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json.Serialization;
 using Godot;
 using Godot.Collections;
 using Project.Gameplay;
@@ -1002,7 +1003,7 @@ public partial class SaveManager : Node
 		}
 	}
 
-	/// <summary> Frees game data at the given index
+	/// <summary> Frees game data at the given index. </summary>
 	public static void ResetSaveData(int index, bool asEmptyFile)
 	{
 		GameSaveSlots[index] = GameData.CreateDefaultData();
@@ -1011,7 +1012,7 @@ public partial class SaveManager : Node
 			GameSaveSlots[index].level = 1;
 	}
 
-	/// <summary> Deletes a save file at the given index
+	/// <summary> Deletes a save file at the given index. </summary>
 	public static void DeleteSaveData(int index)
 	{
 		string saveFile = index.ToString("00");
@@ -1021,6 +1022,47 @@ public partial class SaveManager : Node
 			return;
 
 		OS.MoveToTrash(ProjectSettings.GlobalizePath(saveFile));
+	}
+
+	/// <summary> Creates a json file with contents of BGMResource. </summary>
+	public void CreatePRM(string fileName, string path)
+	{
+		Dictionary dict = new() //Creates a new Dictionary based on BGMResource
+		{
+			{"Song Name", fileName.GetBaseName()},
+			{"Loop Start", 0.0},
+			{"Loop End", 0.0}, // Loop at end of file by default
+			{"File Path", path}
+		};
+
+		string json = Json.Stringify(dict, "\t");
+		FileAccess file = FileAccess.Open(path.GetBaseName() + ".prm", FileAccess.ModeFlags.WriteRead); //Creates a file with a .prm extension (Project Reignition Music)
+
+		if (file == null)
+			return;
+
+		file.StoreString(json);
+		file.Close();
+	}
+
+	/// <summary> Returns a BGMResource from a loaded PRM file. </summary>
+	public BGMResource LoadPRM(string path)
+	{
+		FileAccess file = FileAccess.Open(path.GetBaseName() + ".prm", FileAccess.ModeFlags.Read);
+		if (file == null)
+			return null;
+
+		BGMResource res = new();
+		Dictionary dictReturn = Json.ParseString(file.GetAsText()).AsGodotDictionary();
+		if (dictReturn.TryGetValue("Song Name", out Variant value))
+			res.SongName = (string)value;
+		if (dictReturn.TryGetValue("Loop Start", out value))
+			res.LoopStart = (float)value;
+		if (dictReturn.TryGetValue("Loop End", out value))
+			res.LoopEnd = (float)value;
+		if (dictReturn.TryGetValue("File Path", out value))
+			res.StreamPath = (string)value;
+		return res;
 	}
 
 	public class GameData
@@ -1056,6 +1098,8 @@ public partial class SaveManager : Node
 		public Array<SkillKey> equippedSkills;
 		public Dictionary<SkillKey, int> equippedAugments;
 		public Array<SkillKey> viewedSkills;
+		/// <summary> Ties a BGM resource to a stageID. Any stageID not found can be presumed to be default music. </summary>
+		public Dictionary<string, string> selectedMusic;
 		public LevelSaveData LevelData => levelData;
 		private LevelSaveData levelData = new();
 
@@ -1183,6 +1227,7 @@ public partial class SaveManager : Node
 				{ nameof(presetNames), presetNames},
 				{ nameof(presetSkills), presetDictionary},
 				{ nameof(presetSkillAugments), augmentDictionary},
+				{ nameof(selectedMusic), selectedMusic},
 			};
 		}
 
@@ -1267,6 +1312,8 @@ public partial class SaveManager : Node
 				for (int i = 0; i < presetSkillAugments.Count; i++)
 					presetSkillAugments[i] = LoadAugments(presetAugments[i]);
 			}
+			if (dictionary.TryGetValue(nameof(selectedMusic), out var))
+				selectedMusic = (Dictionary<string, string>)var;
 		}
 
 		/// <summary> Converts an array of SkillKeys to an array of strings for index-agnostic saving. </summary>
@@ -1338,6 +1385,7 @@ public partial class SaveManager : Node
 				equippedSkills = [],
 				equippedAugments = [],
 				viewedSkills = [],
+				selectedMusic = [],
 				level = 0,
 				lastPlayedWorld = WorldEnum.LostPrologue,
 				levelData = new(),

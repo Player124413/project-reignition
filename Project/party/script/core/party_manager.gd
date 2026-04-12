@@ -73,12 +73,14 @@ func set_character_data(index : int, character_name : String) -> void:
 	_player_data[index].character_data = _character_data[character_index]
 	print("set character data to %s at port %s" % [_character_data[character_index].character_name, index])
 
-## Returns whether a character is available for selection.
-func is_character_available(character_data : PartyCharacterResource) -> bool:
+## Gets the player_index of a particular character. Returns -1 if not selected.
+func get_character_index(character_data : PartyCharacterResource) -> int:
+	var index : int = 0;
 	for player_data in _player_data:
 		if player_data.character_data == character_data:
-			return false
-	return true
+			return index
+		index += 1
+	return -1
 
 ## An array containing all the currently active players.
 var _player_data : Array[PlayerData]
@@ -87,6 +89,9 @@ const MAX_PLAYER_COUNT : int = 4;
 ## Returns the player data of a specific player.
 func get_player_data(index : int) -> PlayerData:
 	return _player_data.get(index)
+
+func is_player_data_initialized() -> bool:
+	return _player_data.size() != 0
 
 ## Resets player data to the default offline settings.
 func initialize_offline_player_data() -> void:
@@ -123,6 +128,10 @@ func set_difficulty(index : int, difficulty : int) -> void:
 @rpc("authority", "call_local", "reliable")
 func finish_initializing_players() -> void:
 	players_initialized.emit()
+
+@rpc("authority", "call_local", "reliable")
+func set_minigame_placement(index : int, placement : int) -> void:
+	_player_data[index].minigame_placement = placement
 
 ## Returns the number of players attached to a particular device.
 func get_player_count_device(device_id : int) -> int:

@@ -21,7 +21,6 @@ public partial class ReadyMenu : Menu
 	{
 		if (menuMemory[MemoryKeys.SkillMenuOpen] == 1)
 		{
-			EnableProcessing();
 			animator.Play("show-from-skill");
 		}
 		else

@@ -26,6 +26,7 @@ public partial class Menu : Control
 		Options,
 
 		TimeAttack,
+		Jukebox,
 		PartyMenu,
 
 		ActiveMenu,
@@ -278,7 +279,7 @@ public partial class Menu : Control
 		get => bgm.GetPlaybackPosition() + (float)AudioServer.GetTimeSinceLastMix();
 	}
 
-	public void PlayBgm()
+	public virtual void PlayBgm()
 	{
 		if (bgm == null || bgm.GetBgmResource() == null || bgm.Playing) return;
 
@@ -288,7 +289,7 @@ public partial class Menu : Control
 	}
 
 	/// <summary> Call this function to stop bgm instantly. </summary>
-	public void StopBgm() => bgm?.Stop();
+	public virtual void StopBgm() => bgm?.Stop();
 
 	// Overload for animation players
 	public void FadeBgm(float fadetime) => FadeBgm(fadetime, false);

@@ -1,4 +1,4 @@
-[gd_scene load_steps=25 format=3 uid="uid://dy0oxfmu7ahxi"]
+[gd_scene load_steps=26 format=3 uid="uid://dy0oxfmu7ahxi"]
 
 [ext_resource type="Texture2D" uid="uid://c0j6hn525tqn5" path="res://interface/menu/level select/texture/world text/level en.png" id="1_fuqut"]
 [ext_resource type="Script" uid="uid://c5txxmax7ey8k" path="res://interface/menu/level select/script/LevelSelect.cs" id="1_p6dn7"]
@@ -13,6 +13,7 @@
 [ext_resource type="SpriteFrames" uid="uid://btjml6xghvlgt" path="res://effect/particle/sprite frames/Flame Menu Tall.tres" id="5_yw72e"]
 [ext_resource type="PackedScene" uid="uid://crwawg2ivy3xd" path="res://interface/menu/NavigationButton.tscn" id="8_38k76"]
 [ext_resource type="Script" uid="uid://cj76gvi7tbku6" path="res://sound/script/BGMPlayer.cs" id="14_f6v0v"]
+[ext_resource type="PackedScene" uid="uid://dv4qcaq6uiajo" path="res://interface/menu/level select/Jukebox.tscn" id="14_yvgri"]
 
 [sub_resource type="Animation" id="Animation_8efxu"]
 length = 0.001
@@ -865,7 +866,7 @@ _data = {
 &"show": SubResource("Animation_8vhjs")
 }
 
-[node name="LevelSelect" type="Control" node_paths=PackedStringArray("cursor", "cursorAnimator", "options", "scrollbar", "bgm", "animator")]
+[node name="LevelSelect" type="Control" node_paths=PackedStringArray("cursor", "cursorAnimator", "navigationButtons", "options", "scrollbar", "jukebox", "parentMenu", "bgm", "animator")]
 visible = false
 layout_mode = 3
 anchors_preset = 15
@@ -876,8 +877,11 @@ grow_vertical = 2
 script = ExtResource("1_p6dn7")
 cursor = NodePath("Cursor")
 cursorAnimator = NodePath("Cursor/AnimationPlayer")
+navigationButtons = NodePath("NavigationButtons")
 options = NodePath("Clip/Options")
 scrollbar = NodePath("Scrollbar/ScrollPosition")
+jukebox = NodePath("Jukebox")
+parentMenu = NodePath("Jukebox")
 submenus = []
 bgm = NodePath("BGM")
 animator = NodePath("AnimationPlayer")
@@ -1040,7 +1044,7 @@ anchor_bottom = 1.0
 offset_left = -15.807999
 offset_top = 0.16003418
 offset_right = -0.12805176
-offset_bottom = -11.999939
+offset_bottom = -12.0
 texture = ExtResource("3_c1sgp")
 region_rect = Rect2(379, 60, 94, 60)
 axis_stretch_horizontal = 1
@@ -1145,15 +1149,21 @@ alignment = 1
 
 [node name="Select" parent="NavigationButtons" instance=ExtResource("8_38k76")]
 layout_mode = 2
-ActionKey = "sys_select"
+ActionKey = &"sys_select"
 inputKey = &"sys_select"
 fallbackKey = &"ui_select"
 
 [node name="Cancel" parent="NavigationButtons" instance=ExtResource("8_38k76")]
 layout_mode = 2
-ActionKey = "sys_return"
+ActionKey = &"sys_cancel"
 inputKey = &"sys_cancel"
 fallbackKey = &"ui_cancel"
+
+[node name="BGM" parent="NavigationButtons" instance=ExtResource("8_38k76")]
+layout_mode = 2
+ActionKey = &"sys_bgm"
+inputKey = &"button_pause"
+fallbackKey = &"ui_accept"
 
 [node name="SFX" type="Node" parent="."]
 
@@ -1177,4 +1187,9 @@ libraries = {
 [node name="BGM" type="AudioStreamPlayer" parent="."]
 bus = &"BGM"
 script = ExtResource("14_f6v0v")
-loadAsyncronously = true
+
+[node name="Jukebox" parent="." node_paths=PackedStringArray("worldText", "parentNavigationButtons", "parentMenu") instance=ExtResource("14_yvgri")]
+layout_mode = 1
+worldText = NodePath("../WorldText")
+parentNavigationButtons = NodePath("../NavigationButtons")
+parentMenu = NodePath("..")

@@ -14,6 +14,7 @@ public partial class LevelSelect : Menu
 
 	[Export] private Control cursor;
 	[Export] private AnimationPlayer cursorAnimator;
+	[Export] private Control navigationButtons;
 	private float initialCursorPosition;
 	private int cursorPosition;
 	private Vector2 cursorWidthVelocity;
@@ -30,6 +31,7 @@ public partial class LevelSelect : Menu
 	private Vector2 scrollVelocity;
 	private const float ScrollSmoothing = .05f;
 	private readonly List<LevelOption> levelOptions = [];
+	[Export] private Jukebox jukebox;
 
 	public bool HasNewLevel()
 	{
@@ -39,7 +41,7 @@ public partial class LevelSelect : Menu
 			{
 				levelOption.UpdateLevelData();
 
-				if (levelOption.IsUnlocked && levelOption.ClearState == Core.SaveManager.LevelSaveData.LevelStatus.New)
+				if (levelOption.IsUnlocked && levelOption.ClearState == SaveManager.LevelSaveData.LevelStatus.New)
 					return true;
 			}
 		}
@@ -97,10 +99,14 @@ public partial class LevelSelect : Menu
 			ChangeSelection();
 		}
 
-		if (Runtime.Instance.IsActionJustPressed("sys_pause", "ui_accept") && !Input.IsActionJustPressed("toggle_fullscreen"))
+		if (levelOptions[VerticalSelection].IsUnlocked)
 		{
-			statusMenu?.ShowMenu();
-			return;
+			if (Runtime.Instance.IsActionJustPressed("sys_pause", "ui_accept") && menuMemory[MemoryKeys.ActiveMenu] != (int)MemoryKeys.TimeAttack)
+			{
+				menuMemory[MemoryKeys.ActiveMenu] = (int)MemoryKeys.Jukebox;
+				OpenBGMMenu();
+				DisableProcessing();
+			}
 		}
 
 		base.ProcessMenu();
@@ -109,6 +115,11 @@ public partial class LevelSelect : Menu
 
 	public override void ShowMenu()
 	{
+		if (menuMemory[MemoryKeys.ActiveMenu] == (int)MemoryKeys.TimeAttack)
+		{
+			menuMemory[MemoryKeys.LevelSelect] = 0;
+			SetUp();
+		}
 
 		VerticalSelection = menuMemory[MemoryKeys.LevelSelect];
 		RecalculateListPosition();
@@ -132,7 +143,12 @@ public partial class LevelSelect : Menu
 		for (int i = 0; i < levelOptions.Count; i++)
 			levelOptions[i].ShowOption();
 
-		bool canPlayBgm = !SaveManager.Config.useRetailMenuMusic && IsWorldUnlocked() && bgm?.Stream != null;
+		UpdateBgm();
+	}
+
+	public void UpdateBgm()
+	{
+		bool canPlayBgm = !SaveManager.Config.useRetailMenuMusic && IsWorldUnlocked();
 		if (canPlayBgm && bgm?.Playing == false)
 		{
 			// Change to world specific level select music
@@ -195,9 +211,19 @@ public partial class LevelSelect : Menu
 		readyMenu.ShowMenu();
 	}
 
+	private void OpenBGMMenu()
+	{
+		jukebox.SelectedLevel = levelOptions[VerticalSelection].data;
+		jukebox.ShowMenu();
+	}
+
 	protected override void UpdateSelection()
 	{
-		if (Mathf.IsZeroApprox(Input.GetAxis("ui_up", "ui_down"))) return;
+		if (Mathf.IsZeroApprox(Input.GetAxis("ui_up", "ui_down")))
+			return;
+
+		if (menuMemory[MemoryKeys.ActiveMenu] == (int)MemoryKeys.Jukebox)
+			return;
 
 		if (isNothingSelected)
 		{
@@ -223,7 +249,6 @@ public partial class LevelSelect : Menu
 
 	private void UpdateDescription()
 	{
-		GD.Print("Changing description");
 		description.ShowDescription();
 		description.Text = levelOptions[VerticalSelection].GetDescription();
 	}

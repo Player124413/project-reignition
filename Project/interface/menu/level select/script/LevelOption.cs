@@ -87,7 +87,9 @@ public partial class LevelOption : Control
 				missionLabel.Text = string.IsNullOrEmpty(data.MissionTypeKey) ? "Mission Name" : data.MissionTypeKey;
 		}
 
-		if (fireSoulParent != null)
+		if (TimeAttackManager.Instance.IsRunActive)
+			fireSoulParent.Visible = false;
+		else if (fireSoulParent != null)
 			fireSoulParent.Visible = data.HasFireSouls && (Engine.IsEditorHint() || IsUnlocked);
 	}
 

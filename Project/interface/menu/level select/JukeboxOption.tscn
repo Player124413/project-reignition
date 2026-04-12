@@ -1,0 +1,123 @@
+[gd_scene load_steps=10 format=3 uid="uid://deouid5ipnoai"]
+
+[ext_resource type="Texture2D" uid="uid://t6odc5txfarh" path="res://interface/menu/skill select/texture/light.png" id="1_fqimv"]
+[ext_resource type="Script" uid="uid://cn3j5dx6efrbw" path="res://interface/menu/level select/script/JukeboxOption.cs" id="1_w6t5w"]
+[ext_resource type="Material" uid="uid://bhbsafmnnhtdb" path="res://effect/material/Canvas Item Add.tres" id="2_w6t5w"]
+[ext_resource type="Texture2D" uid="uid://sn6871vb7ats" path="res://interface/menu/skill select/texture/glow.png" id="3_t5rhc"]
+[ext_resource type="LabelSettings" uid="uid://d2esxoalpgwjg" path="res://interface/font/MenuText.tres" id="4_61ibu"]
+
+[sub_resource type="Animation" id="Animation_w6t5w"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Light/Glow:visible")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+
+[sub_resource type="Animation" id="Animation_t5rhc"]
+resource_name = "equip"
+length = 0.01
+step = 0.01
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Light/Glow:visible")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0.010000005),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+
+[sub_resource type="Animation" id="Animation_fqimv"]
+resource_name = "unequip"
+length = 0.01
+step = 0.01
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Light/Glow:visible")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0.010000005),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_t5rhc"]
+_data = {
+&"RESET": SubResource("Animation_w6t5w"),
+&"equip": SubResource("Animation_t5rhc"),
+&"unequip": SubResource("Animation_fqimv")
+}
+
+[node name="JukeboxOption" type="Control" node_paths=PackedStringArray("name", "animator")]
+custom_minimum_size = Vector2(0, 64)
+layout_mode = 3
+anchor_right = 1.0
+anchor_bottom = 0.059000004
+offset_bottom = 0.27999496
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_w6t5w")
+name = NodePath("Tint/NameLabel")
+animator = NodePath("AnimationPlayer")
+
+[node name="Light" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_top = -32.0
+offset_right = 64.0
+offset_bottom = 32.0
+grow_vertical = 2
+texture = ExtResource("1_fqimv")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Glow" type="TextureRect" parent="Light"]
+modulate = Color(0, 1, 0, 1)
+material = ExtResource("2_w6t5w")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("3_t5rhc")
+
+[node name="Tint" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="NameLabel" type="Label" parent="Tint"]
+layout_mode = 1
+anchors_preset = -1
+offset_left = 86.0
+offset_right = 1346.288
+offset_bottom = 64.0
+text = "Song Name"
+label_settings = ExtResource("4_61ibu")
+vertical_alignment = 1
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+&"": SubResource("AnimationLibrary_t5rhc")
+}
