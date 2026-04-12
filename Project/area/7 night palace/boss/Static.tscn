@@ -84,12 +84,16 @@ glow_levels/5 = 0.0
 glow_levels/6 = 0.1
 glow_normalized = true
 glow_intensity = 1.5
-glow_strength = 2.0
-glow_mix = 0.03
+glow_strength = 0.2
+glow_mix = 0.054
 glow_bloom = 0.5
 glow_blend_mode = 4
 glow_hdr_threshold = 1.2
-volumetric_fog_density = 0.01
+volumetric_fog_enabled = true
+volumetric_fog_density = 0.0081
+volumetric_fog_albedo = Color(0.29803923, 0.38039216, 0.47058824, 1)
+volumetric_fog_emission_energy = 0.0
+volumetric_fog_length = 55.75
 adjustment_enabled = true
 
 [sub_resource type="Animation" id="Animation_jhood"]
@@ -452,7 +456,7 @@ surface_material_override/0 = SubResource("StandardMaterial3D_ca2n2")
 [node name="moonlight" type="Node3D" parent="Visuals/Skybox"]
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="Visuals/Skybox/moonlight"]
-transform = Transform3D(0.7582935, -0.15555832, 0.63308156, -6.7525194e-09, 0.9711134, 0.23861818, -0.651913, -0.18094265, 0.73638904, 0, 0.7781255, 0)
+transform = Transform3D(0.7582937, -0.15555833, 0.6330817, -6.752521e-09, 0.97111344, 0.23861821, -0.65191317, -0.18094267, 0.73638916, 0, 2.7190177, 0)
 layers = 1024
 light_color = Color(0.7, 0.765, 1, 1)
 light_energy = 1.2
@@ -461,6 +465,19 @@ light_cull_mask = 4293918787
 shadow_enabled = true
 directional_shadow_split_1 = 0.15
 directional_shadow_split_2 = 0.3
+directional_shadow_max_distance = 80.0
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="Visuals/Skybox/moonlight/DirectionalLight3D"]
+transform = Transform3D(0.782771, -0.06196451, -0.6192169, -0.08312882, 0.97570115, -0.2027232, 0.6167324, 0.21016069, 0.75859976, -5.1584826, 1.2872431, 5.826931)
+layers = 1024
+light_color = Color(0.11270679, 1.540184e-06, 0.5560142, 1)
+light_energy = 0.325
+light_indirect_energy = 0.875
+light_specular = 2.0
+light_cull_mask = 4293918787
+directional_shadow_split_1 = 0.15
+directional_shadow_split_2 = 0.3
+directional_shadow_blend_splits = true
 directional_shadow_max_distance = 80.0
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="Visuals/Skybox/moonlight"]
