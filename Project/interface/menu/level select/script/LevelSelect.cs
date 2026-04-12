@@ -41,7 +41,7 @@ public partial class LevelSelect : Menu
 			{
 				levelOption.UpdateLevelData();
 
-				if (levelOption.IsUnlocked && levelOption.ClearState == Core.SaveManager.LevelSaveData.LevelStatus.New)
+				if (levelOption.IsUnlocked && levelOption.ClearState == SaveManager.LevelSaveData.LevelStatus.New)
 					return true;
 			}
 		}
@@ -99,11 +99,14 @@ public partial class LevelSelect : Menu
 			ChangeSelection();
 		}
 
-		if (Runtime.Instance.IsActionJustPressed("sys_pause", "ui_accept") && menuMemory[MemoryKeys.ActiveMenu] != (int)MemoryKeys.TimeAttack)
+		if (levelOptions[VerticalSelection].IsUnlocked)
 		{
-			menuMemory[MemoryKeys.ActiveMenu] = (int)MemoryKeys.Jukebox;
-			OpenBGMMenu();
-			DisableProcessing();
+			if (Runtime.Instance.IsActionJustPressed("sys_pause", "ui_accept") && menuMemory[MemoryKeys.ActiveMenu] != (int)MemoryKeys.TimeAttack)
+			{
+				menuMemory[MemoryKeys.ActiveMenu] = (int)MemoryKeys.Jukebox;
+				OpenBGMMenu();
+				DisableProcessing();
+			}
 		}
 
 		base.ProcessMenu();
@@ -179,16 +182,11 @@ public partial class LevelSelect : Menu
 		if (!levelOptions[VerticalSelection].IsUnlocked)
 			return;
 
-		if (menuMemory[MemoryKeys.ActiveMenu] == (int)MemoryKeys.Jukebox)
-			return;
-
 		base.Confirm();
 	}
 
 	protected override void Cancel()
 	{
-		if (menuMemory[MemoryKeys.ActiveMenu] == (int)MemoryKeys.Jukebox)
-			return;
 		base.Cancel();
 
 		// Revert bgm music
@@ -215,7 +213,7 @@ public partial class LevelSelect : Menu
 
 	private void OpenBGMMenu()
 	{
-		jukebox.selectedData = levelOptions[VerticalSelection].data;
+		jukebox.SelectedLevel = levelOptions[VerticalSelection].data;
 		jukebox.ShowMenu();
 	}
 

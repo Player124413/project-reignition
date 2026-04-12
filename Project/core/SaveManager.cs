@@ -1048,11 +1048,11 @@ public partial class SaveManager : Node
 	/// <summary> Returns a BGMResource from a loaded PRM file. </summary>
 	public BGMResource LoadPRM(string path)
 	{
-		BGMResource res = new();
 		FileAccess file = FileAccess.Open(path.GetBaseName() + ".prm", FileAccess.ModeFlags.Read);
 		if (file == null)
 			return null;
 
+		BGMResource res = new();
 		Dictionary dictReturn = Json.ParseString(file.GetAsText()).AsGodotDictionary();
 		if (dictReturn.TryGetValue("Song Name", out Variant value))
 			res.SongName = (string)value;
@@ -1062,7 +1062,6 @@ public partial class SaveManager : Node
 			res.LoopEnd = (float)value;
 		if (dictReturn.TryGetValue("File Path", out value))
 			res.StreamPath = (string)value;
-
 		return res;
 	}
 
@@ -1099,7 +1098,8 @@ public partial class SaveManager : Node
 		public Array<SkillKey> equippedSkills;
 		public Dictionary<SkillKey, int> equippedAugments;
 		public Array<SkillKey> viewedSkills;
-		public Dictionary<string, string> selectedMusic; //Ties the selected BGM resource to the currently selected stageID. Any stageID not found can be presumed to be default music.
+		/// <summary> Ties a BGM resource to a stageID. Any stageID not found can be presumed to be default music. </summary>
+		public Dictionary<string, string> selectedMusic;
 		public LevelSaveData LevelData => levelData;
 		private LevelSaveData levelData = new();
 
