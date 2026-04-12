@@ -27,14 +27,6 @@ func _ready() -> void:
 	if _is_menu_processing:
 		show_menu()
 
-## Override in subclass
-func on_party_menu_enabled() -> void:
-	pass
-
-## Override in subclass
-func on_party_menu_disabled() -> void:
-	pass
-
 func disable_processing() -> void:
 	_is_menu_processing = false
 
@@ -94,6 +86,7 @@ func show_menu() -> void:
 func hide_menu() -> void:
 	if animator.has_animation(HIDE_ANIMATION):
 		animator.play(HIDE_ANIMATION)
+		animator.advance(0.0)
 	else: # Fallback
 		visible = false
 

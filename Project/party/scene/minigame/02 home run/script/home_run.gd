@@ -1,3 +1,10 @@
+### Manages the Home Run party game.
+### Netcode Implementation Details:
+### When the game first loads, the host player generates a queue of ball speeds
+### and sends that queue to the other players via an RPC call.
+### As the game runs, Player animations are synced through RPC calls,
+### and ball positions are resynced on contact.
+### CPU swing timings are calculated and sent via RPC far in advance, then simulated locally.
 extends Node3D
 
 signal ball_hit
@@ -84,7 +91,8 @@ func _ready() -> void:
 	if NetworkManager.is_online && player_index != -1:
 		# Set up authority
 		var data : PlayerData = PartyManager.get_player_data(player_index)
-		set_multiplayer_authority(data.device)
+		if !data.is_cpu_player():
+			set_multiplayer_authority(data.device)
 	
 	if player_index != -1:
 		# Instance Player Model
@@ -98,8 +106,8 @@ func _ready() -> void:
 		MinigameManager.instance.gameplay_finished.connect(Callable.create(self, "deactivate"))
 		MinigameManager.instance.minigame_finished.connect(Callable.create(self, "on_minigame_finished"))
 		
-		if player_index == 0 && (!NetworkManager.is_online || NetworkManager.is_hosting_game): # Only generate queue on player 1
-			generate_pitch_queue()
+		if player_index == 0 && NetworkManager.is_hosting_game: # Only generate queue on player 1
+			MinigameManager.instance.peers_loaded.connect(Callable(self, "generate_pitch_queue"))
 	else:
 		# Hide demo batting station after gameplay starts
 		MinigameManager.instance.gameplay_started.connect(Callable.create(self, "set_visible").bind(false))
@@ -130,6 +138,10 @@ func deactivate() -> void:
 func on_minigame_finished() -> void:
 	bat_attachment.visible = false
 
+## Returns whether this batter is a cpu or not.
+func is_cpu() -> bool:
+	return player_index == -1 || PartyManager.get_player_data(player_index).is_cpu_player()
+
 func _physics_process(_delta: float) -> void:
 	process_swing()
 	process_ball()
@@ -139,7 +151,7 @@ func process_swing() -> void:
 	if is_swinging:
 		return
 	
-	if player_index == -1 || PartyManager.get_player_data(player_index).is_cpu_player(): # CPU Behaviour
+	if is_cpu():
 		process_cpu()
 		return
 	
@@ -148,16 +160,26 @@ func process_swing() -> void:
 		return
 	
 	if Input.is_action_just_pressed("button_primary%s" % PartyManager.get_player_data(player_index).local_player_index):
-		start_swing()
+		start_player_swing()
 
 ## Simply swings at the right time. The swing timing is set in calculate_swing_ratio().
 func process_cpu() -> void:
 	if can_cpu_swing && ball_state == BALL_STATES.PITCH && cpu_swing_ratio < travel_ratio:
 		can_cpu_swing = false
-		start_swing()
+		start_cpu_swing()
 
-func start_swing() -> void:
+## Starts a local swing animation from a CPU.
+func start_cpu_swing() -> void:
 	character_animator.play_minigame_animation(get_anim_prefix() + "swing", 0.1, SWING_ANIMATION_MULTIPLIER)
+	is_swinging = true
+
+## Starts an RPC swing from a player.
+func start_player_swing() -> void:
+	character_animator.rpc("play_minigame_animation",
+		get_anim_prefix() + "swing",
+		0.1,
+		SWING_ANIMATION_MULTIPLIER,
+		NetworkTimeSynchronizer.get_time())
 	is_swinging = true
 
 ## Handles ball movement.
@@ -201,38 +223,50 @@ func get_anim_prefix() -> String:
 func process_animation_event(info : int) -> void:
 	if info == 0: # Return to idle
 		is_swinging = false
-		character_animator.play_minigame_animation(get_anim_prefix() + "wait", 0.1)
-	elif info == 1: # Strike the ball
+		character_animator.queue_minigame_animation(get_anim_prefix() + "wait", 0.1)
+	elif info == 1 && (is_multiplayer_authority() || is_cpu()): # Strike the ball
 		check_hit()
 
+## Checks whether the batter hit the ball or not.
 func check_hit() -> void:
 	if ball_state != BALL_STATES.PITCH: # Ball is not travelling
 		return
 	
-	if player_index == -1 || PartyManager.get_player_data(player_index).is_cpu_player():
+	var ball_position : Vector3 = ball.global_position
+	if is_cpu():
 		# Calculate on the exact swing ratio to avoid fps jank
-		ball.global_position = sample_hit_position(cpu_contact_ratio)
+		ball_position = sample_hit_position(cpu_contact_ratio)
 	
-	var distance : float = ball.global_position.distance_to(ball_target.global_position)
+	var distance : float = ball_position.distance_to(ball_target.global_position)
 	if distance < HIT_WINDOW:
 		var travel_direction : Vector3 = (ball_end_position - ball_start_position).normalized()
-		var hit_direction : int = sign(travel_direction.dot(ball_target.global_position - ball.global_position))
-		hit_ball(distance, hit_direction)
+		var hit_direction : int = sign(travel_direction.dot(ball_target.global_position - ball_position))
+		if is_cpu():
+			hit_ball(distance, hit_direction, ball_position, NetworkTimeSynchronizer.get_time())
+		else:
+			rpc("hit_ball", distance, hit_direction, ball_position, NetworkTimeSynchronizer.get_time())
 
-func hit_ball(distance : float, direction : int, _network_time : float = 0.0) -> void:
+@rpc("any_peer", "call_local", "reliable")
+func hit_ball(distance : float, direction : int, hit_position : Vector3, network_time : float) -> void:
 	var is_home_run : bool = distance < HOME_RUN_WINDOW
 	var angle : float = calculate_hit_angle(distance) * direction
 	var target_distance : float = HOME_RUN_DISTANCE if is_home_run else IN_FIELD_DISTANCE
-	MinigameManager.instance.request_score_change(player_index, 2 if is_home_run else 1)
+	
+	if !is_cpu() || NetworkManager.is_hosting_game:
+		MinigameManager.instance.request_score_change(player_index, 2 if is_home_run else 1)
 	
 	# Change state
 	ball_state = BALL_STATES.HIT
-	travel_ratio = 0.0 # TODO Change this based on network_time
 	ball_speed = calculate_travel_speed(HIT_TRAVEL_LENGTH)
-	ball_start_position = ball.global_position
+	ball_start_position = hit_position
 	ball_end_position = ball_target.global_position
 	ball_end_position += Vector3.FORWARD.rotated(Vector3.UP, angle) * target_distance
-	hit_fx.global_position = ball.global_position
+	hit_fx.global_position = hit_position
+	
+	# Resync ball position
+	var delta_time : float = NetworkTimeSynchronizer.get_time() - network_time
+	travel_ratio = ball_speed * delta_time
+	ball.global_position = sample_hit_position(travel_ratio)
 	ball_hit.emit()
 
 func calculate_hit_angle(hit_distance : float) -> float:

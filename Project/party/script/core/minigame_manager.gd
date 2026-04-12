@@ -15,6 +15,7 @@ signal minigame_finished
 signal results_started
 
 @export_group("Minigame Settings")
+@export var minigame_resource : MinigameResource
 ## How should the screen be set up for this mini-game?
 @export var screen_mode : SCREEN_MODE
 enum SCREEN_MODE {
@@ -68,7 +69,11 @@ func _ready() -> void:
 	if screen_mode == SCREEN_MODE.SHARED || demo_transition_mode == DEMO_TRANSITION.FULLSCREEN:
 		animator.play("demo-init") # NOTE: This animation is the same as a split-screen demo.
 		animator.advance(0.0)
-	NetworkManager.party_game_started.connect(Callable(self, "start_party_game"))
+	
+	if NetworkManager.is_online:
+		NetworkManager.party_game_started.connect(Callable(self, "start_party_game"))
+	else:
+		start_party_game()
 
 func _exit_tree() -> void:
 	if NetworkManager.party_game_started.is_connected(Callable(self, "start_party_game")):
@@ -103,13 +108,17 @@ func play_animation(anim : String) -> void:
 func request_score_change(player_index : int, amount : int = 1) -> void:
 	if player_index < 0 || player_index > PartyManager.MAX_PLAYER_COUNT:
 		return
-	rpc("_change_score", player_index, amount)
+	
+	if NetworkManager.is_hosting_game:
+		rpc("_change_score", player_index, amount)
 
 ## Changes the score of a player.
 @rpc("any_peer", "call_local", "reliable")
 func _change_score(player_index : int, amount : int) -> void:
 	player_scores[player_index] += amount
-	print("Adding %s score to player %s. TOTAL: %s." % [amount, player_index, player_scores[player_index]])
+	
+	if NetworkManager.is_hosting_game:
+		print("Added %s score to player %s. TOTAL: %s." % [amount, player_index, player_scores[player_index]])
 
 ## Adds one completed player and checks whether we should finish the mini-game.
 func register_completed_player() -> void:
@@ -119,7 +128,7 @@ func register_completed_player() -> void:
 
 func request_minigame_start() -> void:
 	print("Starting Minigame!")
-	if !NetworkManager.is_online || NetworkManager.is_hosting_game:
+	if NetworkManager.is_hosting_game:
 		rpc("start_minigame", NetworkManager.calculate_transition_tick())
 
 ## Plays the "START!" animation.
@@ -157,7 +166,6 @@ func start_results() -> void:
 	rankings.resize(PartyManager.MAX_PLAYER_COUNT)
 	
 	var is_tie : bool = check_tie()
-	print(is_tie)
 	if is_tie: # Force everyone to lose if it's a tie.
 		for i in rankings.size():
 			rankings[i] = PartyManager.MAX_PLAYER_COUNT # This forces everybody to "lose."
@@ -192,7 +200,10 @@ func update_win_text() -> void:
 	var label_index : int = 0
 	for i in PartyManager.MAX_PLAYER_COUNT:
 		var data : PlayerData = PartyManager.get_player_data(i)
-		print("Player %s placed %s with a score of %s." % [data.character_data.character_name, data.minigame_placement, player_scores[i]])
+		
+		if NetworkManager.is_online && !NetworkManager.is_hosting_game:
+			print("Player %s placed %s with a score of %s." % [data.character_data.character_name, data.minigame_placement, player_scores[i]])
+		
 		if data.minigame_placement != 0:
 			continue
 		winner_labels[label_index].set_synced_text(data.character_data.character_name)
@@ -207,5 +218,8 @@ func on_results_started() -> void:
 	results_started.emit()
 
 ## Cleans up all nodes related to this particular mini-game.
-func free_minigame() -> void:
-	get_parent().queue_free() # NOTE: This function expects that the minigame manager is a direct child of the mini-game scene.
+func on_results_finished() -> void:
+	if NetworkManager.is_online && !NetworkManager.is_hosting_game:
+		return
+	# Return to the active attraction
+	NetworkManager.rpc("unload_scene", minigame_resource.scene_path, NetworkManager.TRANSITION_TYPE_ENUM.ATTRACTION)

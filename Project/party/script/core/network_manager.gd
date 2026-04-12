@@ -81,20 +81,24 @@ func emit_scene_signals(type : TRANSITION_TYPE_ENUM) -> void:
 		party_game_loaded.emit()
 
 @rpc("any_peer", "call_local", "reliable")
-func unload_scene(scene_path : String) -> void:
+func unload_scene(scene_path : String, type : TRANSITION_TYPE_ENUM) -> void:
 	if !scene_dictionary.has(scene_path):
 		print("WARN: Tried to unload scene that was never loaded.")
 		return
 	
 	scene_dictionary[scene_path].queue_free() # Delete the node associated with the scene
 	scene_dictionary.erase(scene_path) # Register the scene as unloaded
+	emit_scene_signals(type)
 
 @rpc("any_peer", "call_local", "reliable")
 func set_loading(peer_id : int, is_loading : bool) -> void:
 	var index : int = multiplayer.get_peers().find(peer_id) if is_online else 0
 	if index == -1:
-		print("WARN: Invalid peer id %s passed to set_loading." % peer_id)
-		return
+		if peer_id == 1:
+			peer_id = 0
+		else:
+			print("WARN: Invalid peer id %s passed to set_loading." % peer_id)
+			return
 	load_states[index] = is_loading
 	loading_peers = loading_peer_count()
 	if loading_peers == 0:
@@ -105,7 +109,6 @@ func finish_loading(target_tick : float) -> void:
 	await get_tree().create_timer(calculate_transition_delay(target_tick)).timeout
 	get_tree().paused = false
 	party_game_started.emit()
-	print("Party Game Started.")
 
 ## How much extra time to delay during scene changes. A safe-guard in case the jitter spikes after loading.
 const TRANSITION_SYNC_DELAY : float = 0.2

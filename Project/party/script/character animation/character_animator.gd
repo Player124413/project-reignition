@@ -38,16 +38,26 @@ func play_animation(anim : StringName) -> void:
 	animator.seek(0.0, true)
 
 ## Plays a specific mini-game animation on the animator.
-func play_minigame_animation(anim : StringName, blend : float = 0.0, speed : float = 1.0) -> void:
+@rpc("any_peer", "call_local", "reliable")
+func play_minigame_animation(anim : StringName, blend : float = 0.0, speed : float = 1.0, tick : float = 0.0) -> void:
 	if animator == null || !animator.has_animation(anim):
 		return
 	
-	if anim == animator.assigned_animation:
-		animator.seek(0.0, true)
+	var seek : float = 0.0
+	if !is_zero_approx(tick):
+		seek = NetworkTimeSynchronizer.get_time() - tick
+	animator.seek(seek, true)
 	animator.play("%s" % anim, blend, speed)
 
-func queue_minigame_animation(anim : StringName) -> void:
-	animator.queue("%s" % anim)
+## Seeks an animation to the given network tick.
+func network_seek(original_tick : float) -> void:
+	if !NetworkManager.is_online:
+		return
+	animator.seek(NetworkTimeSynchronizer.get_time() - original_tick, true)
+
+func queue_minigame_animation(anim : StringName, blend : float = 0.0) -> void:
+	animator.set_blend_time(animator.assigned_animation, anim, blend)
+	animator.queue(anim)
 
 ## Warps this animator to the correct results location.
 func on_minigame_finished() -> void:
