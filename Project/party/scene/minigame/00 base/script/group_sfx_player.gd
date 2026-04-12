@@ -2,7 +2,9 @@
 class_name GroupSfxPlayer extends AudioStreamPlayer
 
 @export var group : String
-@export_range(0.0, 1.0, 0.1) var base_volume : float = 1.0
+@export_range(0.0, 1.0, 0.1, "or_greater") var base_volume : float = 1.0
+@export_range(0.0, 1.0, 0.1, "or_greater") var max_volume : float = 1.0
+@export_range(0.0, 1.0, 0.1) var min_volume : float = 0.2
 static var sfx_dictionary : Dictionary
 
 func _ready() -> void:
@@ -16,8 +18,13 @@ func play_in_group() -> void:
 		# Adjust volume of all in group
 		var volume : float = 1.0 / sfx_dictionary[group].size()
 		for sfx_player : GroupSfxPlayer in sfx_dictionary[group]:
-			sfx_player.volume_linear = volume * sfx_player.base_volume
+			sfx_player.set_volume(volume)
 	play()
+
+func set_volume(volume : float) -> void:
+	volume *= base_volume
+	volume = clamp(volume, min_volume, max_volume)
+	volume_linear = volume
 
 func stop_in_group() -> void:
 	stop()
