@@ -1,4 +1,4 @@
-[gd_scene load_steps=27 format=3 uid="uid://dsbufs8tjchk7"]
+[gd_scene load_steps=29 format=3 uid="uid://dsbufs8tjchk7"]
 
 [ext_resource type="Script" uid="uid://c2l8vamj7yw5f" path="res://party/script/core/minigame_manager.gd" id="1_2ioki"]
 [ext_resource type="LabelSettings" uid="uid://cqgp6rvtwclbe" path="res://party/font/minigame/MinigameResultOutline.tres" id="2_4rlr7"]
@@ -13,6 +13,8 @@
 [ext_resource type="AudioStream" uid="uid://bmwgtgetkeo88" path="res://party/sound/jingle/win.ogg" id="9_sdy3o"]
 [ext_resource type="Texture2D" uid="uid://r1jdsaivtfke" path="res://party/scene/minigame/00 base/interface/draw.png" id="10_jakhn"]
 [ext_resource type="AudioStream" uid="uid://dr4270ueftmkw" path="res://party/sound/jingle/lose.ogg" id="10_r20nr"]
+[ext_resource type="Script" uid="uid://cj76gvi7tbku6" path="res://sound/script/BGMPlayer.cs" id="14_v6cmt"]
+[ext_resource type="Resource" uid="uid://su3ug0op2nlh" path="res://party/resource/bgm/Minigame1.tres" id="15_prljn"]
 
 [sub_resource type="Animation" id="Animation_cn0q6"]
 length = 0.001
@@ -885,7 +887,7 @@ tracks/0/keys = {
 tracks/1/type = "method"
 tracks/1/imported = false
 tracks/1/enabled = true
-tracks/1/path = NodePath("System/Result/Draw/DrawSFX")
+tracks/1/path = NodePath("System/Result/Draw/SFX")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/keys = {
@@ -1051,7 +1053,7 @@ tracks/0/keys = {
 tracks/1/type = "method"
 tracks/1/imported = false
 tracks/1/enabled = true
-tracks/1/path = NodePath("System/Result/Draw/DrawSFX")
+tracks/1/path = NodePath("System/Result/Win/Win/SFX")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/keys = {
@@ -1691,11 +1693,7 @@ grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("6_r20nr")
 
-[node name="DrawSFX" type="AudioStreamPlayer" parent="System/Result/Win/Win"]
-stream = ExtResource("10_r20nr")
-bus = &"BGM"
-
-[node name="WinSFX" type="AudioStreamPlayer" parent="System/Result/Win"]
+[node name="SFX" type="AudioStreamPlayer" parent="System/Result/Win/Win"]
 stream = ExtResource("9_sdy3o")
 bus = &"BGM"
 
@@ -1754,7 +1752,7 @@ grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("6_r20nr")
 
-[node name="DrawSFX" type="AudioStreamPlayer" parent="System/Result/Draw"]
+[node name="SFX" type="AudioStreamPlayer" parent="System/Result/Draw"]
 stream = ExtResource("10_r20nr")
 bus = &"BGM"
 
@@ -1777,3 +1775,11 @@ libraries = {
 &"": SubResource("AnimationLibrary_cn0q6")
 }
 next/demo-fade = &"minigame-start"
+
+[node name="BGM" type="AudioStreamPlayer" parent="."]
+bus = &"BGM"
+script = ExtResource("14_v6cmt")
+bgmResource = ExtResource("15_prljn")
+
+[connection signal="gameplay_finished" from="." to="BGM" method="stop"]
+[connection signal="gameplay_started" from="." to="BGM" method="Play"]

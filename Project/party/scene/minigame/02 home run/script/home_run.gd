@@ -21,6 +21,12 @@ signal demo_finished
 @export var ball : Node3D
 @export var ball_target : Node3D
 @export var hit_fx : Node3D
+
+@export var hit_sfx : Array[AudioStreamPlayer]
+@export var pitch_sfx : Array[GroupSfxPlayer]
+@export var throw_sfx : Array[GroupSfxPlayer]
+@export var swing_sfx : AudioStreamPlayer
+
 var camera_transition : float
 const CAMERA_TRANSITION_LENGTH : float = 0.1
 
@@ -81,7 +87,7 @@ enum BALL_STATES {
 static var pitch_queue : Array[int]
 var pitch_index : int
 ## List of possible pitch timings.
-const PITCH_LENGTHS : Array[float] = [1.0, 1.5, 0.8]
+const PITCH_LENGTHS : Array[float] = [1.5, 1.0, 0.8]
 ## Total number of balls to send over the course of the mini-game.
 const PITCH_COUNT : int = 10
 
@@ -229,6 +235,7 @@ func process_animation_event(info : int) -> void:
 		character_animator.queue_minigame_animation(get_anim_prefix() + "wait", 0.1)
 	elif info == 1 && (is_multiplayer_authority() || is_cpu()): # Strike the ball
 		check_hit()
+		swing_sfx.play()
 
 ## Checks whether the batter hit the ball or not.
 func check_hit() -> void:
@@ -254,6 +261,7 @@ func hit_ball(distance : float, direction : int, hit_position : Vector3, network
 	var is_home_run : bool = distance < HOME_RUN_WINDOW
 	var angle : float = calculate_hit_angle(distance) * direction
 	var target_distance : float = HOME_RUN_DISTANCE if is_home_run else IN_FIELD_DISTANCE
+	hit_sfx[1 if is_home_run else 0].play()
 	
 	if !is_cpu() || NetworkManager.is_hosting_game:
 		MinigameManager.instance.request_score_change(player_index, 2 if is_home_run else 1)
@@ -286,6 +294,10 @@ func pitch_ball() -> void:
 	
 	catapult_animator.play("catapult", -1, CATAPULT_ANIMATION_MULTIPLIER)
 	catapult_animator.seek(0.0)
+	var speed_index : int = 1
+	if player_index != -1:
+		speed_index = pitch_queue[pitch_index]
+	pitch_sfx[speed_index].play_in_group()
 
 ## Called from the catapult animation when the ball spawns.
 func load_ball() -> void:
@@ -301,14 +313,16 @@ func launch_ball() -> void:
 	ball_start_position = ball.global_position
 	ball_end_position = ball_target.global_position
 	ball_end_position += (ball_end_position - ball_start_position).normalized() * STRIKE_DISTANCE
-	if player_index == -1:
-		ball_speed = calculate_travel_speed(PITCH_LENGTHS[0])
-	else:
-		var index : int = pitch_queue[pitch_index]
-		ball_speed = calculate_travel_speed(PITCH_LENGTHS[index])
+	var speed_index : int = 1
+	if player_index != -1:
+		speed_index = pitch_queue[pitch_index]
 		pitch_index += 1
-	travel_ratio = 0.0
 	
+	ball_speed = calculate_travel_speed(PITCH_LENGTHS[speed_index])
+	travel_ratio = 0.0
+	throw_sfx[speed_index].play_in_group()
+	pitch_sfx[speed_index].stop_in_group()
+
 	if is_multiplayer_authority():
 		rpc("calculate_swing_ratio", randf())
 
