@@ -63,6 +63,7 @@ public partial class BGMPlayer : AudioStreamPlayer
 
 	private AudioStream GetAudioStream()
 	{
+
 		if (bgmResource.StreamPath.StartsWith("uid://"))
 			return ResourceLoader.Load<AudioStream>(bgmResource.StreamPath);
 
@@ -86,7 +87,11 @@ public partial class BGMPlayer : AudioStreamPlayer
 		while (ResourceLoader.LoadThreadedGetStatus(bgmResource.StreamPath) == ResourceLoader.ThreadLoadStatus.InProgress)
 			await ToSignal(GetTree().CreateTimer(.1f), SceneTreeTimer.SignalName.Timeout); // Still loading; wait a bit
 
-		Stream = ResourceLoader.LoadThreadedGet(bgmResource.StreamPath) as AudioStream;
+		Resource loadedResource = ResourceLoader.LoadThreadedGet(bgmResource.StreamPath);
+		if (loadedResource is AudioStream)
+			Stream = loadedResource as AudioStream;
+		else
+			GD.Print(loadedResource);
 
 		if (Autoplay)
 			Play();

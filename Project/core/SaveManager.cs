@@ -1003,7 +1003,7 @@ public partial class SaveManager : Node
 		}
 	}
 
-	/// <summary> Frees game data at the given index
+	/// <summary> Frees game data at the given index. </summary>
 	public static void ResetSaveData(int index, bool asEmptyFile)
 	{
 		GameSaveSlots[index] = GameData.CreateDefaultData();
@@ -1012,7 +1012,7 @@ public partial class SaveManager : Node
 			GameSaveSlots[index].level = 1;
 	}
 
-	/// <summary> Deletes a save file at the given index
+	/// <summary> Deletes a save file at the given index. </summary>
 	public static void DeleteSaveData(int index)
 	{
 		string saveFile = index.ToString("00");
@@ -1024,19 +1024,18 @@ public partial class SaveManager : Node
 		OS.MoveToTrash(ProjectSettings.GlobalizePath(saveFile));
 	}
 
-	//<summary>Creates a json file with contents of BGMResource.</summary>
+	/// <summary> Creates a json file with contents of BGMResource. </summary>
 	public void CreatePRM(string fileName, string path)
 	{
 		Dictionary dict = new() //Creates a new Dictionary based on BGMResource
 		{
 			{"Song Name", fileName.GetBaseName()},
 			{"Loop Start", 0.0},
-			{"Loop End", -1},
+			{"Loop End", 0.0}, // Loop at end of file by default
 			{"File Path", path}
 		};
 
 		string json = Json.Stringify(dict, "\t");
-
 		FileAccess file = FileAccess.Open(path.GetBaseName() + ".prm", FileAccess.ModeFlags.WriteRead); //Creates a file with a .prm extension (Project Reignition Music)
 
 		if (file == null)
@@ -1046,32 +1045,23 @@ public partial class SaveManager : Node
 		file.Close();
 	}
 
-	//<summary>Returns a BGMResource from a loaded PRM file</summary>
+	/// <summary> Returns a BGMResource from a loaded PRM file. </summary>
 	public BGMResource LoadPRM(string path)
 	{
 		BGMResource res = new();
-
 		FileAccess file = FileAccess.Open(path.GetBaseName() + ".prm", FileAccess.ModeFlags.Read);
-
 		if (file == null)
 			return null;
 
 		Dictionary dictReturn = Json.ParseString(file.GetAsText()).AsGodotDictionary();
-
-		Variant songName;
-		Variant loopStart;
-		Variant loopEnd;
-		Variant filePath;
-
-		dictReturn.TryGetValue("Song Name", out songName);
-		dictReturn.TryGetValue("Loop Start", out loopStart);
-		dictReturn.TryGetValue("Loop End", out loopEnd);
-		dictReturn.TryGetValue("File Path", out filePath);
-
-		res.SongName = (string)songName;
-		res.LoopStart = (float)loopStart;
-		res.LoopEnd = (float)loopEnd;
-		res.StreamPath = (string)filePath;
+		if (dictReturn.TryGetValue("Song Name", out Variant value))
+			res.SongName = (string)value;
+		if (dictReturn.TryGetValue("Loop Start", out value))
+			res.LoopStart = (float)value;
+		if (dictReturn.TryGetValue("Loop End", out value))
+			res.LoopEnd = (float)value;
+		if (dictReturn.TryGetValue("File Path", out value))
+			res.StreamPath = (string)value;
 
 		return res;
 	}

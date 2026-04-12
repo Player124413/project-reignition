@@ -99,10 +99,11 @@ public partial class LevelSelect : Menu
 			ChangeSelection();
 		}
 
-		if (Runtime.Instance.IsActionJustPressed("sys_pause", "ui_accept") && menuMemory[MemoryKeys.ActiveMenu] != (int)MemoryKeys.TimeAttack && menuMemory[MemoryKeys.ActiveMenu] != (int)MemoryKeys.Jukebox)
+		if (Runtime.Instance.IsActionJustPressed("sys_pause", "ui_accept") && menuMemory[MemoryKeys.ActiveMenu] != (int)MemoryKeys.TimeAttack)
 		{
 			menuMemory[MemoryKeys.ActiveMenu] = (int)MemoryKeys.Jukebox;
 			OpenBGMMenu();
+			DisableProcessing();
 		}
 
 		base.ProcessMenu();
@@ -139,6 +140,11 @@ public partial class LevelSelect : Menu
 		for (int i = 0; i < levelOptions.Count; i++)
 			levelOptions[i].ShowOption();
 
+		UpdateBgm();
+	}
+
+	public void UpdateBgm()
+	{
 		bool canPlayBgm = !SaveManager.Config.useRetailMenuMusic && IsWorldUnlocked() && bgm?.Stream != null;
 		if (canPlayBgm && bgm?.Playing == false)
 		{

@@ -247,7 +247,7 @@ tracks/0/path = NodePath("SFX/Equip")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
-"times": PackedFloat32Array(0.033333335),
+"times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "values": [{
 "args": [0.0],
@@ -339,27 +339,13 @@ tracks/5/keys = {
 "method": &"play"
 }]
 }
-tracks/6/type = "method"
+tracks/6/type = "value"
 tracks/6/imported = false
 tracks/6/enabled = true
-tracks/6/path = NodePath("AnimationPlayer")
+tracks/6/path = NodePath("NavigationButtons:modulate")
 tracks/6/interp = 1
 tracks/6/loop_wrap = true
 tracks/6/keys = {
-"times": PackedFloat32Array(0.3),
-"transitions": PackedFloat32Array(1),
-"values": [{
-"args": [&"hidesub", -1, 1.0, false],
-"method": &"play"
-}]
-}
-tracks/7/type = "value"
-tracks/7/imported = false
-tracks/7/enabled = true
-tracks/7/path = NodePath("NavigationButtons:modulate")
-tracks/7/interp = 1
-tracks/7/loop_wrap = true
-tracks/7/keys = {
 "times": PackedFloat32Array(0, 0.3),
 "transitions": PackedFloat32Array(1, 1),
 "update": 0,
@@ -710,6 +696,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
 script = ExtResource("1_oj0xe")
 player = NodePath("BGM")
 defaultOption = ExtResource("3_d1at2")
@@ -731,6 +718,7 @@ offset_left = -640.0
 offset_right = 640.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
 
 [node name="Window" type="Control" parent="Content"]
 modulate = Color(1, 1, 1, 0)
@@ -739,6 +727,7 @@ offset_left = 640.0
 offset_top = 480.0
 offset_right = 640.0
 offset_bottom = 480.0
+mouse_filter = 2
 
 [node name="Background" type="TextureRect" parent="Content/Window"]
 layout_mode = 0
@@ -746,6 +735,7 @@ offset_left = -640.0
 offset_top = -374.0
 offset_right = 640.0
 offset_bottom = 290.0
+mouse_filter = 2
 texture = ExtResource("1_ppt4h")
 expand_mode = 1
 
@@ -810,6 +800,7 @@ offset_bottom = -4.16003
 grow_horizontal = 2
 grow_vertical = 2
 size_flags_horizontal = 0
+mouse_filter = 2
 metadata/_edit_group_ = true
 
 [node name="Options" type="VBoxContainer" parent="Content/Clip"]
@@ -820,6 +811,7 @@ offset_top = -3.0
 offset_right = 780.0
 offset_bottom = 880.0
 grow_horizontal = 2
+mouse_filter = 2
 theme_override_constants/separation = 62
 
 [node name="OptionsSub" type="VBoxContainer" parent="Content/Clip"]
@@ -830,6 +822,7 @@ offset_top = -3.0
 offset_right = 780.0
 offset_bottom = 880.0
 grow_horizontal = 2
+mouse_filter = 2
 theme_override_constants/separation = 62
 
 [node name="NavigationButtons" type="HBoxContainer" parent="."]
@@ -841,6 +834,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 offset_top = -312.0
 offset_bottom = -264.0
+mouse_filter = 2
 theme_override_constants/separation = 64
 alignment = 1
 
@@ -859,15 +853,15 @@ fallbackKey = &"ui_cancel"
 [node name="Custom" parent="NavigationButtons" instance=ExtResource("7_1g6qt")]
 layout_mode = 2
 ActionKey = &"sys_customtracks"
-inputKey = &"button_step_right"
-fallbackKey = &""
+inputKey = &"sys_sort"
+fallbackKey = &"ui_focus_next"
 
 [node name="Main" parent="NavigationButtons" instance=ExtResource("7_1g6qt")]
 visible = false
 layout_mode = 2
 ActionKey = &"sys_maintracks"
-inputKey = &"button_step_right"
-fallbackKey = &""
+inputKey = &"sys_sort"
+fallbackKey = &"ui_focus_next"
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 libraries = {
@@ -893,5 +887,6 @@ stream = ExtResource("15_k8x75")
 bus = &"SFX"
 
 [node name="BGM" type="AudioStreamPlayer" parent="."]
+autoplay = true
 bus = &"BGM"
 script = ExtResource("9_1fgcy")
