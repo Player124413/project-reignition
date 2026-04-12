@@ -143,8 +143,6 @@ void fragment()
 
 void light()
 {
-    const float M_PI = 3.14159265;
-
     float nDotL = dot(LIGHT, NORMAL);
     nDotL       = (nDotL - 0.05) / (1.0 - 0.05);
     nDotL       = clamp(nDotL, 0.0, 1.0);
@@ -158,10 +156,11 @@ void light()
     float falloff_fac = compute_falloff(dot(NORMAL, VIEW));
     vec3  rim_light   = vColor.rgb * falloff_tex.rgb * falloff_fac;
     rim_light        *= rim_light;
-    rim_light        *= LIGHT_COLOR / M_PI;
+    rim_light        *= LIGHT_COLOR / PI;
 
     DIFFUSE_LIGHT += (nDotL * ALBEDO * LIGHT_COLOR * ATTENUATION) + (rim_light * ATTENUATION);
 
+	/*
     vec4 specular_tex = texture(specular_texture, UV);
     if (enable_detail_map)
     {
@@ -172,16 +171,18 @@ void light()
     }
 
     float specular_fresnel = compute_fresnel(dot(NORMAL, VIEW));
-    float specular_gloss   = clamp(power_gloss_level.y * 500.0, 1.0, 1024.0);
-    float specular_level   = power_gloss_level.z * 5.0;
+	float specular_gloss = clamp(power_gloss_level.y * 500.0, 1.0, 1024.0);
+	float specular_level = power_gloss_level.z * 5.0;
 
-    vec3  halfway  = normalize(LIGHT + VIEW);
-    float spec_cos = pow(clamp(dot(halfway, NORMAL), 0.0, 1.0), specular_gloss);
+	vec3  halfway  = normalize(LIGHT + VIEW);
+	float spec_cos = pow(clamp(dot(halfway, NORMAL), 0.0, 1.0), specular_gloss);
 
-    specular_tex.rgb *= spec_cos;
-    specular_tex.rgb *= specular_level;
-    specular_tex.rgb *= specular_fresnel;
-    specular_tex.rgb *= specular_tex.rgb;
-
-    SPECULAR_LIGHT += specular_tex.rgb * LIGHT_COLOR * ATTENUATION * 100.0;
+	specular_tex.rgb *= spec_cos;
+	specular_tex.rgb *= specular_level;
+	specular_tex.rgb *= specular_fresnel;
+	specular_tex.rgb *= specular_tex.rgb;
+	
+	Commented out because this causes odd rendering on some devices
+	// SPECULAR_LIGHT += specular_tex.rgb * LIGHT_COLOR * ATTENUATION * 100.0 * SPECULAR_AMOUNT;
+	*/
 }
