@@ -16,6 +16,7 @@ public partial class Jukebox : Menu
 	[Export] private Sprite2D scrollbar;
 	[Export] private Array<BGMResource> songList;
 	[Export] private Control worldText;
+	[Export] private Control parentNavigationButtons;
 	private readonly Array<BGMResource> customSongList = [];
 
 	public LevelDataResource selectedData;
@@ -122,7 +123,7 @@ public partial class Jukebox : Menu
 
 	protected override void ProcessMenu()
 	{
-		if (Input.IsActionJustPressed("button_attack"))
+		if (Input.IsActionJustPressed("button_step_right"))
 		{
 			if (isCustomMusicMenuActive)
 				ShowMenu();
@@ -441,6 +442,15 @@ public partial class Jukebox : Menu
 
 		if (VerticalSelection != initialSelection)
 			MoveCursor();
+	}
+
+	private void HideParentNavigationButtons()
+	{
+		parentNavigationButtons.Visible = false;
+	}
+	private void ShowParentNavigationButtons()
+	{
+		parentNavigationButtons.Visible = true;
 	}
 
 

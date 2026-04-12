@@ -272,6 +272,7 @@ public partial class PauseMenu : Node
 			SaveManager.SaveGameData();
 			TransitionManager.Instance.QueuedScene = TransitionManager.MenuScenePath;
 			SoundManager.instance.StageMusicPlayer.Stop();
+			SoundManager.instance.StageMusicPlayer.SetBgmResource(null); //Fixes a bug where the stage music will continue playing after a level quit
 			EmitSignal(SignalName.OnSceneChangeSelected);
 		}
 	}

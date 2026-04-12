@@ -12,6 +12,7 @@ public partial class LevelSelect : Menu
 	[Export] private ReadyMenu readyMenu;
 
 	[Export] private Control cursor;
+	[Export] private Control navigationButtons;
 	private float initialCursorPosition;
 	private int cursorPosition;
 	private Vector2 cursorWidthVelocity;
