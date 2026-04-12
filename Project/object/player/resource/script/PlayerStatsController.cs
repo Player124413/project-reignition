@@ -13,12 +13,6 @@ public partial class PlayerStatsController : Node
 	[Export] private int baseGroundFriction;
 	[Export] private int baseGroundOverspeed;
 	[Export] private int baseGroundTurnaround;
-	// For strafe controls
-	[Export] private float baseStrafeSpeed;
-	[Export] private float baseStrafeTraction;
-	[Export] private float baseStrafeFriction;
-	[Export] private float baseStrafeOverspeed;
-	[Export] private float baseStrafeTurnaround;
 	// For tuning
 	[Export(PropertyHint.Range, "1,2,.1f")] private float groundSpeedLowRatio = 1.1f;
 	[Export(PropertyHint.Range, "1,2,.1f")] private float groundSpeedMediumRatio = 1.3f;
@@ -27,13 +21,6 @@ public partial class PlayerStatsController : Node
 	[Export(PropertyHint.Range, "1,5,.1f")] private float tractionMediumRatio = 1.5f;
 	[Export(PropertyHint.Range, "1,5,.1f")] private float tractionHighRatio = 2f;
 	[Export(PropertyHint.Range, "1,5,.1f")] private float turnaroundHighRatio = 3f;
-	// For Strafing
-	[Export(PropertyHint.Range, "0,5,.1f")] private float strafeQuickTurnLowRatio = 1.5f;
-	[Export(PropertyHint.Range, "0,5,.1f")] private float strafeQuickTurnMediumRatio = 2f;
-	[Export(PropertyHint.Range, "0,5,.1f")] private float strafeQuickTurnHighRatio = 3f;
-	[Export(PropertyHint.Range, "0,5,.1f")] private float strafeSlowTurnLowRatio = 0.9f;
-	[Export(PropertyHint.Range, "0,5,.1f")] private float strafeSlowTurnMediumRatio = 0.7f;
-	[Export(PropertyHint.Range, "0,5,.1f")] private float strafeSlowTurnHighRatio = 0.5f;
 
 	public float GetBaseSpeedRatio()
 	{
@@ -84,14 +71,27 @@ public partial class PlayerStatsController : Node
 	[Export] public float accelerationJumpSpeed;
 	[ExportSubgroup("Turn Settings")]
 	[Export] private float baseMinTurn = .1f;
-	[Export] private float baseMaxTurn = .3f;
-	[Export] private float baseTurnTurnaround = .25f;
-	[Export(PropertyHint.Range, "0,5,.1f")] private float quickTurnLowRatio = .8f;
-	[Export(PropertyHint.Range, "0,5,.1f")] private float quickTurnMediumRatio = .5f;
-	[Export(PropertyHint.Range, "0,5,.1f")] private float quickTurnHighRatio = .3f;
+	[Export] private float baseMaxTurn = .4f;
+	[Export] private float baseRecenterTurn = .25f;
+	[Export(PropertyHint.Range, "0,5,.1f")] private float quickTurnLowRatio = .9f;
+	[Export(PropertyHint.Range, "0,5,.1f")] private float quickTurnMediumRatio = .7f;
+	[Export(PropertyHint.Range, "0,5,.1f")] private float quickTurnHighRatio = .5f;
 	[Export(PropertyHint.Range, "0,5,.1f")] private float slowTurnLowRatio = 1.2f;
 	[Export(PropertyHint.Range, "0,5,.1f")] private float slowTurnMediumRatio = 1.5f;
 	[Export(PropertyHint.Range, "0,5,.1f")] private float slowTurnHighRatio = 2f;
+	// For strafe controls
+	[Export] private float baseStrafeSpeed;
+	[Export] private float baseStrafeTraction;
+	[Export] private float baseStrafeFriction;
+	[Export] private float baseStrafeOverspeed;
+	[Export] private float baseStrafeTurnaround;
+	// For Strafing
+	[Export(PropertyHint.Range, "0,5,.1f")] private float strafeQuickTurnLowRatio = 1.5f;
+	[Export(PropertyHint.Range, "0,5,.1f")] private float strafeQuickTurnMediumRatio = 2f;
+	[Export(PropertyHint.Range, "0,5,.1f")] private float strafeQuickTurnHighRatio = 3f;
+	[Export(PropertyHint.Range, "0,5,.1f")] private float strafeSlowTurnLowRatio = 0.9f;
+	[Export(PropertyHint.Range, "0,5,.1f")] private float strafeSlowTurnMediumRatio = 0.7f;
+	[Export(PropertyHint.Range, "0,5,.1f")] private float strafeSlowTurnHighRatio = 0.5f;
 
 	/// <summary> How quickly to turn when moving slowly. </summary>
 	public float MinTurnAmount { get; private set; }
@@ -314,7 +314,7 @@ public partial class PlayerStatsController : Node
 
 		MinTurnAmount = baseMinTurn;
 		MaxTurnAmount = baseMaxTurn * GetTurnRatio();
-		RecenterTurnAmount = baseTurnTurnaround * Mathf.Min(GetTurnRatio(), 1f);
+		RecenterTurnAmount = baseRecenterTurn * Mathf.Max(GetTurnRatio(), 1f);
 	}
 }
 

@@ -149,7 +149,6 @@ public partial class SlideState : PlayerState
 		if (Mathf.IsZeroApprox(Player.MoveSpeed))
 		{
 			Player.Animator.SlideToCrouch();
-			Player.ChangeHitbox("crouch");
 			return crouchState;
 		}
 
@@ -158,7 +157,7 @@ public partial class SlideState : PlayerState
 
 	protected override void ProcessMoveSpeed()
 	{
-		ProcessStrafeSpeed();
+		ProcessAutorunStrafeSpeed();
 		Player.Stats.UpdateSlideSpeed(Player.SlopeRatio);
 
 		// Influence speed based on input strength

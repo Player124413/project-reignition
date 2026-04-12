@@ -694,12 +694,10 @@ public partial class PlayerAnimator : Node3D
 			return;
 
 		float targetRotation = CalculateTargetVisualRotation();
-		if (Player.ExternalController == null &&
-			(Player.Skills.IsSpeedBreakActive ||
-			Player.IsLockoutOverridingMovementAngle))
+		if (Player.ExternalController == null)
 		{
-			// Fix sluggish angle changes during lockout overrides
-			VisualAngle += Player.PathFollower.DeltaAngle;
+			// Fix sluggish visual angle changes when turning
+			VisualAngle += Player.PathFollower.DeltaAngle * 1.5f;
 		}
 
 		if (!SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.FreeRoam))
@@ -742,7 +740,7 @@ public partial class PlayerAnimator : Node3D
 			return VisualAngle;
 
 		float strafeAngle = Player.Stats.StrafeSettings.GetSpeedRatio(Player.StrafeSpeed) * -Mathf.Pi * 0.5f;
-		strafeAngle *= 1f - Player.Stats.GroundSettings.GetSpeedRatioClamped(Player.MoveSpeed);
+		strafeAngle *= 1f - Player.Stats.GroundSettings.GetSpeedRatioClamped(Player.MoveSpeed) * 0.8f;
 		return Player.MovementAngle + strafeAngle;
 	}
 	#endregion

@@ -141,6 +141,9 @@ public partial class GasTank : Area3D
 
 	private void StrikeTank()
 	{
+		if (CurrentState != TankStates.Idle && !AllowDoubleLaunch) // Already traveling
+			return;
+
 		currentTimeScale = StrikeTimeScale;
 
 		Player.StartBounce(BounceState.SnapMode.SnappingEnabledNoHeight, 1f, this);

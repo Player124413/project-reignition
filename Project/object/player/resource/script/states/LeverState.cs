@@ -32,6 +32,8 @@ public partial class LeverState : PlayerState
 
 	private void StartLeverTurn()
 	{
+		isTurningLever = true;
+		Player.Effect.PlayVoice("grunt", 4);
 		Trigger.StartLeverTurn();
 		Player.Animator.StartLeverTurn(Trigger.IsRightLever);
 	}

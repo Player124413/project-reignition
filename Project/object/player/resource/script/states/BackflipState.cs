@@ -116,7 +116,7 @@ public partial class BackflipState : PlayerState
 
 	protected override void ProcessMoveSpeed()
 	{
-		ProcessStrafeSpeed();
+		ProcessAutorunStrafeSpeed();
 		float inputAngle = Player.Controller.GetTargetInputAngle();
 		float inputStrength = Player.Controller.GetInputStrength();
 

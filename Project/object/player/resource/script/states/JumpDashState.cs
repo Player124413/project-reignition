@@ -99,7 +99,7 @@ public partial class JumpDashState : PlayerState
 
 	protected override void ProcessMoveSpeed()
 	{
-		ProcessStrafeSpeed();
+		ProcessAutorunStrafeSpeed();
 		float inputStrength = Player.Controller.GetInputStrength();
 		if (Mathf.IsZeroApprox(inputStrength) || !Mathf.IsZeroApprox(Player.MoveSpeed))
 		{
@@ -143,8 +143,7 @@ public partial class JumpDashState : PlayerState
 			Player.MovementAngle = ExtensionMethods.ClampAngleRange(Player.MovementAngle, Player.PathFollower.ForwardAngle, Mathf.Pi * .5f);
 
 		// Strafe implementation
-		if (Player.Controller.IsStrafeModeActive)
-			ProcessStrafe(targetMovementAngle);
+		ProcessAutorunStrafe(targetMovementAngle);
 	}
 
 	protected override bool DisableTurning(float targetMovementAngle)

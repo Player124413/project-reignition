@@ -1,5 +1,7 @@
 using System.Globalization;
+using System.Numerics;
 using Godot;
+using Godot.Collections;
 using Project.Core;
 using Project.Gameplay;
 
@@ -9,9 +11,11 @@ public partial class LevelResult : Control
 {
 	[Signal] public delegate void ContinuePressedEventHandler();
 
+	[Export] private Control nextButton;
 	[Export] private Control retryButton;
 	[Export] private Label score;
 	[Export] private Label time;
+	[Export] private Label timeTotal; //For time attack
 	[Export] private Label ring;
 	[Export] private Label technical;
 	[Export] private Label total;
@@ -91,16 +95,16 @@ public partial class LevelResult : Control
 	private void ProcessMenuButtons()
 	{
 		// Determine which scene to load without connecting it
-		if (TimeAttackManager.Instance.IsRunActive)
-		{
-			TimeAttackManager.Instance.IncreaseLevel();
-		}
-		else if (Runtime.Instance.IsActionJustPressed("sys_cancel", "ui_cancel", "escape")) // Retry stage
+
+		if (Runtime.Instance.IsActionJustPressed("sys_cancel", "ui_cancel", "escape")) // Retry stage
 		{
 			TransitionManager.Instance.QueuedScene = string.Empty;
+			EmitSignal(SignalName.ContinuePressed);
 		}
 		else
 		{
+			if (!nextButton.IsVisibleInTree())
+				return;
 			// Adventure mode; Process events
 			TransitionManager.Instance.QueuedScene = TransitionManager.MenuScenePath;
 
@@ -110,12 +114,21 @@ public partial class LevelResult : Control
 			{
 				TransitionManager.Instance.QueuedScene = $"{TransitionManager.EventScenePath}{Stage.Data.PostStoryEvent}.tscn";
 			}
+
+			if (TimeAttackManager.Instance.IsRunActive && !TimeAttackManager.Instance.IsLastLevel() && TimeAttackManager.Instance.CurrentRunType != TimeAttackManager.RunType.SingleRun)
+			{
+				TimeAttackManager.Instance.LoadLevel(TimeAttackManager.Instance.GetNextLevel());
+				TimeAttackManager.Instance.IncreaseLevel();
+			}
+			else if (TimeAttackManager.Instance.IsRunActive && TimeAttackManager.Instance.IsLastLevel() && TimeAttackManager.Instance.CurrentRunType != TimeAttackManager.RunType.SingleRun)
+				TimeAttackManager.Instance.LoadResults();
+			else if (TimeAttackManager.Instance.IsRunActive && TimeAttackManager.Instance.CurrentRunType == TimeAttackManager.RunType.SingleRun)
+				TimeAttackManager.Instance.LoadTimeAttack(true);
+			else // Actual scene transition is handled by the experience results screen (which is connected via this signal)
+				EmitSignal(SignalName.ContinuePressed);
 		}
 
-		if (TimeAttackManager.Instance.IsRunActive)
-			TimeAttackManager.Instance.LoadLevel(TimeAttackManager.Instance.GetCurrentLevel());
-		else // Actual scene transition is handled by the experience results screen (which is connected via this signal)
-			EmitSignal(SignalName.ContinuePressed);
+
 
 		isFadingBgm = true; // Start fading bgm
 		SetInputProcessing(false);
@@ -125,12 +138,55 @@ public partial class LevelResult : Control
 	{
 		SoundManager.instance.StageMusicPlayer.SetBgmResource(null);
 		bool isRetryButtonDisabled = StageSettings.Instance.Data == SaveManager.ActiveGameData.CurrentStoryLevel &&
-			Stage.LevelState == StageSettings.LevelStateEnum.Success &&
-			!TimeAttackManager.Instance.IsRunActive;
+			Stage.LevelState == StageSettings.LevelStateEnum.Success;
+
+		if (TimeAttackManager.Instance.IsRunActive && Stage.LevelState == StageSettings.LevelStateEnum.Success)
+			isRetryButtonDisabled = true;
+
+		if (TimeAttackManager.Instance.IsRunActive && Stage.LevelState == StageSettings.LevelStateEnum.Failed)
+		{
+			nextButton.Visible = false;
+			isRetryButtonDisabled = false;
+		}
+
+		if (TimeAttackManager.Instance.IsRunActive && TimeAttackManager.Instance.CurrentRunType == TimeAttackManager.RunType.SingleRun)
+		{
+			nextButton.Visible = true;
+			isRetryButtonDisabled = false;
+		}
+
 		retryButton.Visible = !isRetryButtonDisabled;
 
 		score.Text = Stage.DisplayScore;
 		time.Text = Stage.DisplayTime;
+
+		if (TimeAttackManager.Instance.IsRunActive && Stage.LevelState != StageSettings.LevelStateEnum.Failed)
+		{
+			if (TimeAttackManager.Instance.CurrentRunType != TimeAttackManager.RunType.SingleRun)
+			{
+				TimeAttackManager.Instance.AddTime(Stage.CurrentTime);
+				timeTotal.Text = ExtensionMethods.FormatTime(TimeAttackManager.Instance.GetTotalRunTime() + Stage.CurrentTime);
+
+				if (TimeAttackManager.Instance.IsLastLevel())
+					SaveManager.TimeData.AddCurrentRun();
+				else
+					SaveManager.TimeData.CurrentPlacement += 1;
+				SaveManager.SaveTimeAttackData();
+			}
+			else
+			{
+				if (SaveManager.TimeData.SingleRun.ContainsKey(Stage.Data.LevelID))
+					SaveManager.TimeData.SingleRun[Stage.Data.LevelID].Add(Stage.CurrentTime);
+				else
+				{
+					SaveManager.TimeData.SingleRun.Add(Stage.Data.LevelID, []);
+					SaveManager.TimeData.SingleRun[Stage.Data.LevelID].Add(Stage.CurrentTime);
+				}
+				SaveManager.SaveTimeAttackData();
+			}
+		}
+
+
 
 		ring.Text = Stage.RingBonus.ToString();
 		technical.Text = "×" + Stage.TechnicalBonus.ToString("0.0", CultureInfo.InvariantCulture);
@@ -187,7 +243,16 @@ public partial class LevelResult : Control
 		bgm[bgmIndex].Play();
 
 		animator.Advance(0.0);
-		animator.Play(isStageCleared ? "success-start" : "fail-start");
+
+		if (TimeAttackManager.Instance.IsRunActive && TimeAttackManager.Instance.CurrentRunType == TimeAttackManager.RunType.SingleRun)
+			animator.Play(isStageCleared ? "success-start-timeattack-single" : "fail-start-ta");
+		else if (TimeAttackManager.Instance.IsRunActive)
+			animator.Play(isStageCleared ? "success-start-timeattack" : "fail-start-ta");
+
+		else
+			animator.Play(isStageCleared ? "success-start" : "fail-start");
+
+
 	}
 
 	public void SetInputProcessing(bool value) => isProcessing = value;

@@ -76,11 +76,12 @@ public partial class DarkspineSpinState : PlayerState
 		if (!Player.Skills.IsSpeedBreakActive)
 		{
 			Player.MoveSpeed = Mathf.MoveToward(Player.MoveSpeed, 0, SpeedLoss * PhysicsManager.physicsDelta);
-			Player.StrafeSpeed = Player.Stats.StrafeSettings.UpdateInterpolate(Player.StrafeSpeed, -1.0f); // Reset to 0 quickly
+			float moveSpeedRatio = Player.Stats.GroundSettings.GetSpeedRatioClamped(Player.MoveSpeed);
+			Player.StrafeSpeed = Player.Stats.StrafeSettings.UpdateInterpolate(Player.StrafeSpeed * moveSpeedRatio, -1.0f); // Reset to 0 quickly
 			return;
 		}
 
-		ProcessStrafeSpeed();
+		ProcessAutorunStrafeSpeed();
 	}
 
 	protected override void ProcessTurning()

@@ -77,6 +77,9 @@ public partial class PlayerLockonController : Area3D
 	{
 		bool wasTargetChanged = false;
 
+		if (SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.Autorun))
+			GlobalRotation = Vector3.Up * Player.PathFollower.ForwardAngle;
+
 		isSideScrolling = Player.IsLockoutOverridingMovementAngle &&
 			Player.ActiveLockoutData.recenterPlayer &&
 			Mathf.Abs(Player.PathFollower.Forward().Dot(Player.Camera.Camera.Forward())) < 0.6f;

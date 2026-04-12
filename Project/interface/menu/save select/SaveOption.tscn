@@ -20,18 +20,26 @@ font_size = 64
 [node name="SaveOption" type="Control" node_paths=PackedStringArray("newData", "existingData", "worldIcon", "slotLabel", "slotShadowLabel", "levelLabel", "timeLabel")]
 layout_mode = 3
 anchors_preset = 0
+mouse_filter = 2
 script = ExtResource("2_lb1d2")
 newData = NodePath("Background/Data/New")
 existingData = NodePath("Background/Data/Existing")
+worldIcon = NodePath("Background/Data/Existing/WorldIcon")
 worldRingObtainedRegion = Rect2(40, 280, 312, 296)
 worldRingMissingRegion = Rect2(520, 280, 312, 296)
-worldIcon = NodePath("Background/Data/Existing/WorldIcon")
 worldIconRegions = Array[Rect2]([Rect2(0, 0, 400, 240), Rect2(400, 0, 400, 240), Rect2(0, 260, 400, 240), Rect2(400, 520, 400, 240), Rect2(0, 520, 400, 240), Rect2(400, 260, 400, 240), Rect2(0, 780, 400, 240), Rect2(400, 780, 400, 240)])
+worldRings = Array[NodePath]([NodePath("Background/Data/Existing/WorldRingBackground/YellowRing"), NodePath("Background/Data/Existing/WorldRingBackground/GreenRing"), NodePath("Background/Data/Existing/WorldRingBackground/RedRing"), NodePath("Background/Data/Existing/WorldRingBackground/BlueRing"), NodePath("Background/Data/Existing/WorldRingBackground/AquaRing"), NodePath("Background/Data/Existing/WorldRingBackground/WhiteRing"), NodePath("Background/Data/Existing/WorldRingBackground/PurpleRing")])
 slotLabel = NodePath("Background/Data/SlotLabel")
 slotShadowLabel = NodePath("Background/Data/SlotLabel/SlotShadowLabel")
 levelLabel = NodePath("Background/Data/Existing/Text/LLabel/LevelLabel")
 timeLabel = NodePath("Background/Data/Existing/Text/TimeLabel")
-worldRings = Array[NodePath]([NodePath("Background/Data/Existing/WorldRingBackground/YellowRing"), NodePath("Background/Data/Existing/WorldRingBackground/GreenRing"), NodePath("Background/Data/Existing/WorldRingBackground/RedRing"), NodePath("Background/Data/Existing/WorldRingBackground/BlueRing"), NodePath("Background/Data/Existing/WorldRingBackground/AquaRing"), NodePath("Background/Data/Existing/WorldRingBackground/WhiteRing"), NodePath("Background/Data/Existing/WorldRingBackground/PurpleRing")])
+
+[node name="ClickRegion" type="Control" parent="."]
+anchors_preset = 0
+offset_left = -672.0
+offset_top = -12.0
+offset_right = 680.0
+offset_bottom = 317.0
 
 [node name="Background" type="TextureRect" parent="."]
 layout_mode = 0
@@ -39,6 +47,7 @@ offset_left = -736.0
 offset_top = -152.0
 offset_right = 764.0
 offset_bottom = 432.0
+mouse_filter = 2
 texture = ExtResource("1_f5kj5")
 stretch_mode = 5
 metadata/_edit_lock_ = true
@@ -50,6 +59,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
 metadata/_edit_lock_ = true
 
 [node name="Existing" type="Control" parent="Background/Data"]
@@ -59,6 +69,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
 metadata/_edit_lock_ = true
 
 [node name="WorldRingBackground" type="NinePatchRect" parent="Background/Data/Existing"]
@@ -169,6 +180,7 @@ region_rect = Rect2(0, 0, 400, 240)
 position = Vector2(656, 200)
 
 [node name="LLabel" type="Label" parent="Background/Data/Existing/Text"]
+anchors_preset = -1
 offset_left = -112.0
 offset_top = -32.0
 offset_right = 104.0
@@ -181,7 +193,7 @@ uppercase = true
 
 [node name="LevelLabel" type="Label" parent="Background/Data/Existing/Text/LLabel"]
 layout_mode = 1
-anchors_preset = 11
+anchors_preset = -1
 anchor_left = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -195,6 +207,7 @@ horizontal_alignment = 3
 vertical_alignment = 1
 
 [node name="TimeLabel" type="Label" parent="Background/Data/Existing/Text"]
+anchors_preset = -1
 offset_left = 336.0
 offset_top = -32.0
 offset_right = 640.0
@@ -207,7 +220,7 @@ vertical_alignment = 1
 [node name="New" type="TextureRect" parent="Background/Data"]
 visible = false
 layout_mode = 1
-anchors_preset = 15
+anchors_preset = -1
 anchor_right = 1.0
 anchor_bottom = 1.0
 offset_top = -16.0
@@ -216,6 +229,7 @@ grow_horizontal = 2
 grow_vertical = 2
 scale = Vector2(0.75, 0.75)
 pivot_offset = Vector2(750, 292)
+mouse_filter = 2
 texture = ExtResource("7_c1lef")
 stretch_mode = 5
 
@@ -234,7 +248,7 @@ vertical_alignment = 1
 [node name="SlotShadowLabel" type="Label" parent="Background/Data/SlotLabel"]
 show_behind_parent = true
 layout_mode = 1
-anchors_preset = 15
+anchors_preset = -1
 anchor_right = 1.0
 anchor_bottom = 1.0
 offset_left = 4.0
@@ -247,3 +261,6 @@ text = "00"
 label_settings = SubResource("LabelSettings_gu6c4")
 horizontal_alignment = 2
 vertical_alignment = 1
+
+[connection signal="mouse_entered" from="ClickRegion" to="." method="emit_signal" binds= [&"mouse_entered"]]
+[connection signal="mouse_exited" from="ClickRegion" to="." method="emit_signal" binds= [&"mouse_exited"]]

@@ -6,14 +6,11 @@ namespace Project.Interface.Menus;
 
 public partial class ReadyMenu : Menu
 {
-	[Export]
-	private Label mapLabel;
-	[Export]
-	private Label missionLabel;
-	[Export]
-	private Description description;
-	[Export]
-	private AnimationPlayer notifAnimPlayer;
+	[Export] private Label mapLabel;
+	[Export] private Label missionLabel;
+	[Export] private Description description;
+	[Export] private AnimationPlayer notifAnimPlayer;
+	[Export] private AudioStreamPlayer selectSfx;
 	public void ShowDescription() => description.ShowDescription();
 	public void HideDescription() => description.HideDescription();
 
@@ -29,7 +26,18 @@ public partial class ReadyMenu : Menu
 		}
 		else
 		{
-			HorizontalSelection = 0; // Default to yes
+			if (Runtime.Instance.IsUsingMouse)
+			{
+				HorizontalSelection = -1;
+				animator.Play("select-none");
+			}
+			else
+			{
+				// Default to yes
+				HorizontalSelection = 0;
+				animator.Play("select-yes");
+			}
+			animator.Advance(0.0);
 			base.ShowMenu();
 		}
 
@@ -39,7 +47,7 @@ public partial class ReadyMenu : Menu
 				SetupReadyMenu(TimeAttackManager.Instance.GetCurrentLevel());
 		}
 
-		if (SaveManager.ActiveGameData.HasNewSkill())
+		if (SaveManager.ActiveGameData.HasNewSkill() && !TimeAttackManager.Instance.IsRunActive)
 			notifAnimPlayer.Play("show");
 		else
 			notifAnimPlayer.Play("hide");
@@ -63,13 +71,29 @@ public partial class ReadyMenu : Menu
 
 	protected override void Confirm()
 	{
+		if (HorizontalSelection == -1)
+			return;
+
 		if (HorizontalSelection == 0) // Load level
 		{
 			StopBgm(); // Stop bgm
-			if (menuMemory[MemoryKeys.ActiveMenu] == (int)MemoryKeys.TimeAttack)
-				TimeAttackManager.Instance.SetRunActive(true);
 
-			menuMemory[MemoryKeys.ActiveMenu] = (int)MemoryKeys.LevelSelect;
+			if (!TimeAttackManager.Instance.IsRunActive)
+				menuMemory[MemoryKeys.ActiveMenu] = (int)MemoryKeys.LevelSelect;
+			else
+			{
+
+				if (TimeAttackManager.Instance.CurrentRunType != TimeAttackManager.RunType.SingleRun)
+				{
+					TimeAttackManager.Instance.ClearCurrentRun();
+					TimeAttackManager.Instance.ClearCurrentSavedRun();
+
+					SaveManager.TimeData.CurrentRunType = TimeAttackManager.Instance.CurrentRunType;
+					SaveManager.SaveTimeAttackData(); //Overwrites currently saved run
+				}
+
+				menuMemory[MemoryKeys.ActiveMenu] = (int)MemoryKeys.TimeAttack;
+			}
 			base.Confirm();
 		}
 		else
@@ -95,18 +119,24 @@ public partial class ReadyMenu : Menu
 	protected override void UpdateSelection()
 	{
 		int sign = Mathf.Sign(Input.GetAxis("ui_left", "ui_right"));
-		if (sign == 0) return;
 
-		if (sign > 0 && HorizontalSelection == 0)
+		if ((sign > 0 && HorizontalSelection != 1) || sign < 0 && HorizontalSelection != 0)
 		{
-			HorizontalSelection = 1;
-			animator.Play("select-no");
+			HorizontalSelection = sign > 0 ? 1 : 0;
+			selectSfx.Play();
+			UpdateVisuals();
 		}
-		else if (sign < 0 && HorizontalSelection == 1)
+	}
+
+	private void UpdateVisuals()
+	{
+		if (HorizontalSelection == -1)
 		{
-			HorizontalSelection = 0;
-			animator.Play("select-yes");
+			animator.Play("select-none");
+			return;
 		}
+
+		animator.Play(HorizontalSelection == 0 ? "select-yes" : "select-no");
 	}
 
 	public void SetBgmPlayer(BGMPlayer audioStreamPlayer) => bgm = audioStreamPlayer;
@@ -145,11 +175,25 @@ public partial class ReadyMenu : Menu
 		TransitionManager.Instance.UpdateLoadingText("load_level");
 	}
 
-	///<summary> Sets up the ready menu for time attack
+	/// <summary> Sets up the ready menu for time attack. </summary>
 	public void SetupReadyMenu(LevelDataResource level)
 	{
-		SetMapText(level.AreaKey.ToString().ToCamelCase());
-		SetMissionText(level.MissionTypeKey);
+		SetMapText(Tr(level.GetAreaKey()));
+		SetMissionText(Tr(level.MissionTypeKey));
+		description.Text = Tr(level.MissionDescriptionKey);
 		LevelData = level;
+	}
+
+	private void ReceiveMouseInput(int selection)
+	{
+		if (!isProcessing)
+			return;
+
+		if (HorizontalSelection != selection && selection != -1)
+			selectSfx.Play();
+
+		Runtime.Instance.IsUsingMouse = true;
+		HorizontalSelection = selection;
+		UpdateVisuals();
 	}
 }

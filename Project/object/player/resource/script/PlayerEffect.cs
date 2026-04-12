@@ -524,14 +524,14 @@ public partial class PlayerEffect : Node3D
 	[ExportGroup("Voices")]
 	[Export] public SFXLibraryResource voiceLibrary;
 	[Export] private AudioStreamPlayer voiceChannel;
-	public void PlayVoice(StringName key)
+	public void PlayVoice(StringName key, int sfxIndex = -1)
 	{
 		// Don't play anything if someone is already talking
 		if (SoundManager.instance.IsDialogActive || voiceChannel.Playing)
 			return;
 
 		SoundManager.instance.IsSonicSfxVoiceChannelActive = true;
-		voiceChannel.Stream = voiceLibrary.GetStream(key, SoundManager.LanguageIndex);
+		voiceChannel.Stream = voiceLibrary.GetStream(key, SoundManager.LanguageIndex, sfxIndex);
 		voiceChannel.Play();
 	}
 

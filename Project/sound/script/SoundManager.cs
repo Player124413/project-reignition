@@ -6,7 +6,7 @@ using System.Text.RegularExpressions;
 
 namespace Project.Core;
 
-public partial class SoundManager : Node
+public partial class SoundManager : Control
 {
 	public static SoundManager instance;
 	public static int LanguageIndex => (int)SaveManager.Config.voiceLanguage;
@@ -27,12 +27,11 @@ public partial class SoundManager : Node
 	{
 		instance = this;
 		subtitleAnimator.Play("RESET");
-
 		InitializePearlSFX();
 		InitializeButtonPromptValues();
 
 		// Cancel Dialog when switching to a new scene
-		TransitionManager.Instance.Connect(TransitionManager.SignalName.SceneChanged, new(this, MethodName.CancelDialog));
+		TransitionManager.Instance.SceneChanged += CancelDialog;
 	}
 
 	public override void _PhysicsProcess(double _)
@@ -78,6 +77,8 @@ public partial class SoundManager : Node
 	public void PlayDialog(DialogTrigger dialog)
 	{
 		if (dialog.DialogCount == 0 || DebugManager.Instance.DisableDialog || SaveManager.Config.isDialogDisabled) return; // No dialog
+
+		Visible = !SaveManager.Config.isSubtitleDisabled && !dialog.disableSubtitles;
 
 		IsSubtitlesActive = true;
 		subtitleLabel.Text = string.Empty;
@@ -135,9 +136,6 @@ public partial class SoundManager : Node
 			return;
 		}
 
-		if (SaveManager.Config.isSubtitleDisabled && !currentDialog.disableSubtitles)
-			return;
-
 		if (currentDialog.IsCutscene)
 		{
 			if (currentDialog.HasDelay(currentDialogIndex))
@@ -152,8 +150,7 @@ public partial class SoundManager : Node
 	private void DisableDialog()
 	{
 		IsSubtitlesActive = false;
-		if (!SaveManager.Config.isSubtitleDisabled && !currentDialog.disableSubtitles)
-			subtitleAnimator.Play("deactivate");
+		subtitleAnimator.Play("deactivate");
 
 		UpdateSonicDialog();
 		UpdateShahraDialog();
@@ -184,6 +181,7 @@ public partial class SoundManager : Node
 
 	private void UpdateDialog(bool processDelay)
 	{
+		InitializeSubtitleOpacity();
 		// Must have been interrupted
 		if (dialogChannel.IsConnected(AudioStreamPlayer.SignalName.Finished, new Callable(this, MethodName.OnDialogFinished)))
 			dialogChannel.Disconnect(AudioStreamPlayer.SignalName.Finished, new Callable(this, MethodName.OnDialogFinished));
@@ -198,8 +196,7 @@ public partial class SoundManager : Node
 			return;
 		}
 
-		if (!SaveManager.Config.isSubtitleDisabled && !currentDialog.disableSubtitles)
-			subtitleAnimator.Play(currentDialogIndex == 0 ? "activate" : "activate-text");
+		subtitleAnimator.Play(currentDialogIndex == 0 ? "activate" : "activate-text");
 
 		string key = currentDialog.textKeys[currentDialogIndex];
 		AudioStream targetStream = null;
@@ -279,6 +276,14 @@ public partial class SoundManager : Node
 		Rid lineRid = spaceWidth.GetLineRid(0);
 		var glyphs = server.ShapedTextGetGlyphs(lineRid);
 		spaceCharacterWidth += (float)glyphs[0]["advance"] * 5;
+	}
+
+	private void InitializeSubtitleOpacity()
+	{
+		if (!currentDialog.IsCutscene)
+			subtitleLetterbox.Color = new Color(0.0f, 0.0f, 0.0f, SaveManager.Config.subtitleOpacity * 0.01f);
+		else
+			subtitleLetterbox.Color = new Color(0.0f, 0.0f, 0.0f, SaveManager.Config.cutsceneOpacity * 0.01f);
 	}
 
 	private void UpdateButtonPromptPosition()

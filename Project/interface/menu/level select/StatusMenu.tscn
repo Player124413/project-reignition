@@ -1,0 +1,894 @@
+[gd_scene load_steps=16 format=3 uid="uid://bdxqnxi1i3dcr"]
+
+[ext_resource type="Script" uid="uid://bsq45ot17rhx" path="res://interface/menu/level select/script/StatusMenu.cs" id="1_0y2is"]
+[ext_resource type="Texture2D" uid="uid://bxi35ys2ubi74" path="res://interface/menu/level select/texture/status_menu.png" id="2_2djop"]
+[ext_resource type="LabelSettings" uid="uid://b3k06q5urpxjh" path="res://interface/font/PauseStatus.tres" id="2_koge4"]
+[ext_resource type="LabelSettings" uid="uid://cj0phf1e0gscl" path="res://interface/font/StatusHeader.tres" id="2_xwbnd"]
+[ext_resource type="Texture2D" uid="uid://bwasgjby472mu" path="res://interface/menu/level select/texture/ring.png" id="3_koge4"]
+[ext_resource type="Texture2D" uid="uid://pqt4jg7a3vhw" path="res://interface/menu/level select/texture/status_scroll.png" id="3_vfdeu"]
+[ext_resource type="Texture2D" uid="uid://b6eevqhlu5ymx" path="res://interface/menu/level select/texture/fire soul.png" id="4_7pdsa"]
+[ext_resource type="Texture2D" uid="uid://bokmpqe3qfali" path="res://interface/menu/save select/texture/save atlas.png" id="8_vfdeu"]
+[ext_resource type="AudioStream" uid="uid://ysuyyr6346w6" path="res://sound/sfx/system/special book confirm.wav" id="9_jxgx2"]
+[ext_resource type="AudioStream" uid="uid://d3o0o85sotlrf" path="res://sound/sfx/system/special book cancel.wav" id="10_1ibwx"]
+
+[sub_resource type="Animation" id="Animation_xwbnd"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("ColorRect:visible")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("ColorRect:modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Menu/Background/Clip:anchor_right")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [1.0]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("Menu/Background/Scroll:anchor_right")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [1.0]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("Menu/Background/Scroll:anchor_left")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [1.0]
+}
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("Menu/Background:modulate")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+tracks/6/type = "value"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("Menu/Data:modulate")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+tracks/7/type = "value"
+tracks/7/imported = false
+tracks/7/enabled = true
+tracks/7/path = NodePath(".:visible")
+tracks/7/interp = 1
+tracks/7/loop_wrap = true
+tracks/7/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+
+[sub_resource type="Animation" id="Animation_vfdeu"]
+resource_name = "hide"
+length = 0.30001
+step = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("ColorRect:visible")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.2),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [true, false]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("ColorRect:modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.2),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 1), Color(1, 1, 1, 0)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Menu/Background/Clip:anchor_right")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 0.2),
+"transitions": PackedFloat32Array(2, 1),
+"update": 0,
+"values": [1.0, 0.0]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("Menu/Background/Scroll:anchor_right")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0, 0.2),
+"transitions": PackedFloat32Array(2, 1),
+"update": 0,
+"values": [1.0, 0.0]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("Menu/Background/Scroll:anchor_left")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0, 0.2),
+"transitions": PackedFloat32Array(2, 1),
+"update": 0,
+"values": [1.0, 0.0]
+}
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("Menu/Background:modulate")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0, 0.2),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 1), Color(1, 1, 1, 0)]
+}
+tracks/6/type = "value"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("Menu/Data:modulate")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"times": PackedFloat32Array(0, 0.1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 1), Color(1, 1, 1, 0)]
+}
+tracks/7/type = "value"
+tracks/7/imported = false
+tracks/7/enabled = true
+tracks/7/path = NodePath(".:visible")
+tracks/7/interp = 1
+tracks/7/loop_wrap = true
+tracks/7/keys = {
+"times": PackedFloat32Array(0, 0.3),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [true, false]
+}
+tracks/8/type = "method"
+tracks/8/imported = false
+tracks/8/enabled = true
+tracks/8/path = NodePath(".")
+tracks/8/interp = 1
+tracks/8/loop_wrap = true
+tracks/8/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"DisableProcessing"
+}]
+}
+tracks/9/type = "method"
+tracks/9/imported = false
+tracks/9/enabled = true
+tracks/9/path = NodePath("HideSfx")
+tracks/9/interp = 1
+tracks/9/loop_wrap = true
+tracks/9/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [0.0],
+"method": &"play"
+}]
+}
+
+[sub_resource type="Animation" id="Animation_2djop"]
+resource_name = "init"
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("ColorRect:visible")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("ColorRect:modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 0)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Menu/Background/Clip:anchor_right")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.0]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("Menu/Background/Scroll:anchor_right")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.0]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("Menu/Background/Scroll:anchor_left")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.0]
+}
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("Menu/Background:modulate")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 0)]
+}
+tracks/6/type = "value"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("Menu/Data:modulate")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 0)]
+}
+tracks/7/type = "value"
+tracks/7/imported = false
+tracks/7/enabled = true
+tracks/7/path = NodePath(".:visible")
+tracks/7/interp = 1
+tracks/7/loop_wrap = true
+tracks/7/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+
+[sub_resource type="Animation" id="Animation_7pdsa"]
+resource_name = "show"
+length = 0.30001
+step = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("ColorRect:visible")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("ColorRect:modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.2),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 1)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Menu/Background/Clip:anchor_right")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 0.2),
+"transitions": PackedFloat32Array(0.5, 1),
+"update": 0,
+"values": [0.0, 1.0]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("Menu/Background/Scroll:anchor_right")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0, 0.2),
+"transitions": PackedFloat32Array(0.5, 1),
+"update": 0,
+"values": [0.0, 1.0]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("Menu/Background/Scroll:anchor_left")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0, 0.2),
+"transitions": PackedFloat32Array(0.5, 1),
+"update": 0,
+"values": [0.0, 1.0]
+}
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("Menu/Background:modulate")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0, 0.1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 1)]
+}
+tracks/6/type = "value"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("Menu/Data:modulate")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"times": PackedFloat32Array(0.1, 0.3),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 1)]
+}
+tracks/7/type = "value"
+tracks/7/imported = false
+tracks/7/enabled = true
+tracks/7/path = NodePath(".:visible")
+tracks/7/interp = 1
+tracks/7/loop_wrap = true
+tracks/7/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/8/type = "method"
+tracks/8/imported = false
+tracks/8/enabled = true
+tracks/8/path = NodePath(".")
+tracks/8/interp = 1
+tracks/8/loop_wrap = true
+tracks/8/keys = {
+"times": PackedFloat32Array(0.3),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"EnableProcessing"
+}]
+}
+tracks/9/type = "method"
+tracks/9/imported = false
+tracks/9/enabled = true
+tracks/9/path = NodePath("ShowSfx")
+tracks/9/interp = 1
+tracks/9/loop_wrap = true
+tracks/9/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [0.0],
+"method": &"play"
+}]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_xwbnd"]
+_data = {
+&"RESET": SubResource("Animation_xwbnd"),
+&"hide": SubResource("Animation_vfdeu"),
+&"init": SubResource("Animation_2djop"),
+&"show": SubResource("Animation_7pdsa")
+}
+
+[node name="StatusMenu" type="Control" node_paths=PackedStringArray("levelLabel", "ringLabel", "skillPointLabel", "fireSoulLabel", "soulGaugeLabel", "expLabel", "nextExpLabel", "nextMissionLabel", "animator")]
+z_index = 100
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("1_0y2is")
+worldIconRegions = Array[Rect2]([Rect2(0, 0, 400, 240), Rect2(400, 0, 400, 240), Rect2(0, 260, 400, 240), Rect2(400, 520, 400, 240), Rect2(0, 520, 400, 240), Rect2(400, 260, 400, 240), Rect2(0, 780, 400, 240), Rect2(400, 780, 400, 240)])
+worldRings = Array[NodePath]([NodePath("Menu/Data/WorldRingBackground/Yellow/Ring"), NodePath("Menu/Data/WorldRingBackground/Green/Ring"), NodePath("Menu/Data/WorldRingBackground/Red/Ring"), NodePath("Menu/Data/WorldRingBackground/Blue/Ring"), NodePath("Menu/Data/WorldRingBackground/Aqua/Ring"), NodePath("Menu/Data/WorldRingBackground/White/Ring"), NodePath("Menu/Data/WorldRingBackground/Purple/Ring")])
+levelLabel = NodePath("Menu/Data/Options/Values/LevelLabel")
+ringLabel = NodePath("Menu/Data/Options/Values/RingLabel")
+skillPointLabel = NodePath("Menu/Data/Options/Values/SkillPointLabel")
+fireSoulLabel = NodePath("Menu/Data/Options/Values/FireSoulLabel")
+soulGaugeLabel = NodePath("Menu/Data/Options/Values/SoulGaugeLabel")
+expLabel = NodePath("Menu/Data/Options/Values/TotalExpLabel")
+nextExpLabel = NodePath("Menu/Data/Options/Values/NextLevelLabel")
+nextMissionLabel = NodePath("Menu/Data/Options/Values/NextMissionLabel")
+animator = NodePath("AnimationPlayer")
+
+[node name="ColorRect" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.5882353)
+
+[node name="Menu" type="Control" parent="."]
+custom_minimum_size = Vector2(1400, 800)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Background" type="Control" parent="Menu"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Clip" type="Control" parent="Menu/Background"]
+clip_contents = true
+layout_mode = 1
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = -124.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Background" type="TextureRect" parent="Menu/Background/Clip"]
+layout_mode = 1
+anchors_preset = -1
+offset_right = 1276.0
+offset_bottom = 800.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("2_2djop")
+
+[node name="Scroll" type="TextureRect" parent="Menu/Background"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -192.0
+offset_top = -400.0
+offset_bottom = 400.0
+grow_horizontal = 0
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("3_vfdeu")
+
+[node name="Data" type="Control" parent="Menu"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Header" type="Label" parent="Menu/Data"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -266.0
+offset_top = 100.0
+offset_right = 266.0
+offset_bottom = 176.70999
+grow_horizontal = 2
+text = "status_header"
+label_settings = ExtResource("2_xwbnd")
+horizontal_alignment = 1
+uppercase = true
+
+[node name="Options" type="HBoxContainer" parent="Menu/Data"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -502.0
+offset_top = -220.0
+offset_right = 498.0
+offset_bottom = 204.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_constants/separation = 0
+alignment = 1
+
+[node name="Labels" type="VBoxContainer" parent="Menu/Data/Options"]
+custom_minimum_size = Vector2(600, 0)
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 8
+
+[node name="LevelLabel" type="Label" parent="Menu/Data/Options/Labels"]
+layout_mode = 2
+text = "status_level"
+label_settings = ExtResource("2_koge4")
+uppercase = true
+
+[node name="Ring" type="HBoxContainer" parent="Menu/Data/Options/Labels"]
+layout_mode = 2
+mouse_filter = 2
+
+[node name="Icon" type="TextureRect" parent="Menu/Data/Options/Labels/Ring"]
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("3_koge4")
+expand_mode = 2
+
+[node name="RingLabel" type="Label" parent="Menu/Data/Options/Labels/Ring"]
+layout_mode = 2
+text = "status_ring"
+label_settings = ExtResource("2_koge4")
+uppercase = true
+
+[node name="FireSoul" type="HBoxContainer" parent="Menu/Data/Options/Labels"]
+layout_mode = 2
+mouse_filter = 2
+
+[node name="Icon" type="TextureRect" parent="Menu/Data/Options/Labels/FireSoul"]
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("4_7pdsa")
+expand_mode = 2
+
+[node name="FireSoulLabel" type="Label" parent="Menu/Data/Options/Labels/FireSoul"]
+layout_mode = 2
+text = "status_fire_soul"
+label_settings = ExtResource("2_koge4")
+uppercase = true
+
+[node name="SkillPointLabel" type="Label" parent="Menu/Data/Options/Labels"]
+layout_mode = 2
+text = "status_skill_points"
+label_settings = ExtResource("2_koge4")
+uppercase = true
+
+[node name="SoulGaugeLabel" type="Label" parent="Menu/Data/Options/Labels"]
+layout_mode = 2
+text = "status_soul_gauge"
+label_settings = ExtResource("2_koge4")
+uppercase = true
+
+[node name="TotalExpLabel" type="Label" parent="Menu/Data/Options/Labels"]
+layout_mode = 2
+text = "status_total_exp"
+label_settings = ExtResource("2_koge4")
+uppercase = true
+
+[node name="NextLevelLabel" type="Label" parent="Menu/Data/Options/Labels"]
+layout_mode = 2
+text = "status_next_exp"
+label_settings = ExtResource("2_koge4")
+uppercase = true
+
+[node name="NextMissionLabel" type="Label" parent="Menu/Data/Options/Labels"]
+layout_mode = 2
+text = "status_next_story"
+label_settings = ExtResource("2_koge4")
+uppercase = true
+
+[node name="Values" type="VBoxContainer" parent="Menu/Data/Options"]
+custom_minimum_size = Vector2(400, 0)
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 8
+
+[node name="LevelLabel" type="Label" parent="Menu/Data/Options/Values"]
+layout_mode = 2
+text = "00"
+label_settings = ExtResource("2_koge4")
+horizontal_alignment = 2
+uppercase = true
+
+[node name="RingLabel" type="Label" parent="Menu/Data/Options/Values"]
+layout_mode = 2
+text = "123"
+label_settings = ExtResource("2_koge4")
+horizontal_alignment = 2
+uppercase = true
+
+[node name="FireSoulLabel" type="Label" parent="Menu/Data/Options/Values"]
+layout_mode = 2
+text = "000/100"
+label_settings = ExtResource("2_koge4")
+horizontal_alignment = 2
+uppercase = true
+
+[node name="SkillPointLabel" type="Label" parent="Menu/Data/Options/Values"]
+layout_mode = 2
+text = "230/300"
+label_settings = ExtResource("2_koge4")
+horizontal_alignment = 2
+uppercase = true
+
+[node name="SoulGaugeLabel" type="Label" parent="Menu/Data/Options/Values"]
+layout_mode = 2
+text = "100"
+label_settings = ExtResource("2_koge4")
+horizontal_alignment = 2
+uppercase = true
+
+[node name="TotalExpLabel" type="Label" parent="Menu/Data/Options/Values"]
+layout_mode = 2
+text = "10000000"
+label_settings = ExtResource("2_koge4")
+horizontal_alignment = 2
+uppercase = true
+
+[node name="NextLevelLabel" type="Label" parent="Menu/Data/Options/Values"]
+layout_mode = 2
+text = "10000000"
+label_settings = ExtResource("2_koge4")
+horizontal_alignment = 2
+uppercase = true
+
+[node name="NextMissionLabel" type="Label" parent="Menu/Data/Options/Values"]
+layout_mode = 2
+text = "DINOSAUR JUNGLE"
+label_settings = ExtResource("2_koge4")
+horizontal_alignment = 2
+uppercase = true
+
+[node name="WorldRings" type="HBoxContainer" parent="Menu/Data"]
+layout_mode = 0
+offset_left = 1204.0
+offset_top = 215.0
+offset_right = 1204.0
+offset_bottom = 585.0
+
+[node name="WorldRingBackground" type="HBoxContainer" parent="Menu/Data"]
+self_modulate = Color(0.784314, 0.784314, 0.784314, 0.784314)
+layout_mode = 1
+anchors_preset = -1
+offset_left = 252.0
+offset_top = 620.0
+offset_right = 1148.0
+offset_bottom = 716.0
+scale = Vector2(1.2, 1.2)
+pivot_offset = Vector2(448, 48)
+alignment = 1
+metadata/_edit_group_ = true
+
+[node name="Yellow" type="Control" parent="Menu/Data/WorldRingBackground"]
+custom_minimum_size = Vector2(108, 96)
+layout_mode = 2
+mouse_filter = 2
+
+[node name="Ring" type="Sprite2D" parent="Menu/Data/WorldRingBackground/Yellow"]
+position = Vector2(54, 48)
+scale = Vector2(0.35, 0.35)
+texture = ExtResource("8_vfdeu")
+region_enabled = true
+region_rect = Rect2(16, 296, 328, 272)
+
+[node name="Ring" type="Sprite2D" parent="Menu/Data/WorldRingBackground/Yellow/Ring"]
+texture = ExtResource("8_vfdeu")
+region_enabled = true
+region_rect = Rect2(0, 0, 272, 240)
+
+[node name="Green" type="Control" parent="Menu/Data/WorldRingBackground"]
+custom_minimum_size = Vector2(108, 96)
+layout_mode = 2
+mouse_filter = 2
+
+[node name="Ring" type="Sprite2D" parent="Menu/Data/WorldRingBackground/Green"]
+position = Vector2(54, 48)
+scale = Vector2(0.35, 0.35)
+texture = ExtResource("8_vfdeu")
+region_enabled = true
+region_rect = Rect2(16, 296, 328, 272)
+
+[node name="Ring" type="Sprite2D" parent="Menu/Data/WorldRingBackground/Green/Ring"]
+texture = ExtResource("8_vfdeu")
+region_enabled = true
+region_rect = Rect2(272, 0, 272, 240)
+
+[node name="Red" type="Control" parent="Menu/Data/WorldRingBackground"]
+custom_minimum_size = Vector2(108, 96)
+layout_mode = 2
+mouse_filter = 2
+
+[node name="Ring" type="Sprite2D" parent="Menu/Data/WorldRingBackground/Red"]
+position = Vector2(54, 48)
+scale = Vector2(0.35, 0.35)
+texture = ExtResource("8_vfdeu")
+region_enabled = true
+region_rect = Rect2(16, 296, 328, 272)
+
+[node name="Ring" type="Sprite2D" parent="Menu/Data/WorldRingBackground/Red/Ring"]
+texture = ExtResource("8_vfdeu")
+region_enabled = true
+region_rect = Rect2(544, 0, 272, 240)
+
+[node name="Blue" type="Control" parent="Menu/Data/WorldRingBackground"]
+custom_minimum_size = Vector2(108, 96)
+layout_mode = 2
+mouse_filter = 2
+
+[node name="Ring" type="Sprite2D" parent="Menu/Data/WorldRingBackground/Blue"]
+position = Vector2(54, 48)
+scale = Vector2(0.35, 0.35)
+texture = ExtResource("8_vfdeu")
+region_enabled = true
+region_rect = Rect2(16, 296, 328, 272)
+
+[node name="Ring" type="Sprite2D" parent="Menu/Data/WorldRingBackground/Blue/Ring"]
+texture = ExtResource("8_vfdeu")
+region_enabled = true
+region_rect = Rect2(816, 0, 272, 240)
+
+[node name="Aqua" type="Control" parent="Menu/Data/WorldRingBackground"]
+custom_minimum_size = Vector2(108, 96)
+layout_mode = 2
+mouse_filter = 2
+
+[node name="Ring" type="Sprite2D" parent="Menu/Data/WorldRingBackground/Aqua"]
+position = Vector2(54, 48)
+scale = Vector2(0.35, 0.35)
+texture = ExtResource("8_vfdeu")
+region_enabled = true
+region_rect = Rect2(16, 296, 328, 272)
+
+[node name="Ring" type="Sprite2D" parent="Menu/Data/WorldRingBackground/Aqua/Ring"]
+texture = ExtResource("8_vfdeu")
+region_enabled = true
+region_rect = Rect2(1088, 0, 272, 240)
+
+[node name="White" type="Control" parent="Menu/Data/WorldRingBackground"]
+custom_minimum_size = Vector2(108, 96)
+layout_mode = 2
+mouse_filter = 2
+
+[node name="Ring" type="Sprite2D" parent="Menu/Data/WorldRingBackground/White"]
+position = Vector2(54, 48)
+scale = Vector2(0.35, 0.35)
+texture = ExtResource("8_vfdeu")
+region_enabled = true
+region_rect = Rect2(16, 296, 328, 272)
+
+[node name="Ring" type="Sprite2D" parent="Menu/Data/WorldRingBackground/White/Ring"]
+texture = ExtResource("8_vfdeu")
+region_enabled = true
+region_rect = Rect2(1360, 0, 272, 240)
+
+[node name="Purple" type="Control" parent="Menu/Data/WorldRingBackground"]
+custom_minimum_size = Vector2(108, 96)
+layout_mode = 2
+mouse_filter = 2
+
+[node name="Ring" type="Sprite2D" parent="Menu/Data/WorldRingBackground/Purple"]
+position = Vector2(54, 48)
+scale = Vector2(0.35, 0.35)
+texture = ExtResource("8_vfdeu")
+region_enabled = true
+region_rect = Rect2(16, 296, 328, 272)
+
+[node name="Ring" type="Sprite2D" parent="Menu/Data/WorldRingBackground/Purple/Ring"]
+texture = ExtResource("8_vfdeu")
+region_enabled = true
+region_rect = Rect2(1632, 0, 272, 240)
+
+[node name="ShowSfx" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("9_jxgx2")
+bus = &"SFX"
+
+[node name="HideSfx" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("10_1ibwx")
+bus = &"SFX"
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+&"": SubResource("AnimationLibrary_xwbnd")
+}
+autoplay = "init"

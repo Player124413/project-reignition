@@ -1,32 +1,29 @@
 using Godot;
 using Godot.Collections;
 using Project.Core;
+using Project.Gameplay;
 
 namespace Project.Interface.Menus;
 
 public partial class SaveSelect : Menu
 {
-	[Export]
-	private Sprite2D scrollbar;
+	[Export] private LevelDataResource initialLevelData;
+	[Export] private Sprite2D scrollbar;
 	private Vector2 scrollbarVelocity;
 	private float scrollRatio;
 	private const int ScrollbarHeight = 625;
 	private const float ScrollSmoothing = .05f;
 
-	[Export]
-	private Array<NodePath> saveOptions = [];
+	[Export] private Array<NodePath> saveOptions = [];
 	private readonly Array<SaveOption> _saveOptions = [];
 	private const int ActiveSaveOptionIndex = 3; // Corresponds to the center save option
 
-	[Export]
-	private AnimationPlayer deleteAnimator;
+	[Export] private AnimationPlayer deleteAnimator;
 	private bool isDeleteMenuActive;
-	private bool isDeleteSelected;
+	private int deleteSelection;
 
-	[Export]
-	private string descriptionText;
-	[Export]
-	private Description description;
+	[Export] private string descriptionText;
+	[Export] private Description description;
 
 	protected override void SetUp()
 	{
@@ -61,6 +58,12 @@ public partial class SaveSelect : Menu
 			return;
 		}
 
+		if (Runtime.Instance.MouseScrollInput != 0)
+		{
+			ScrollSelection(Runtime.Instance.MouseScrollInput);
+			return;
+		}
+
 		base.ProcessMenu();
 	}
 
@@ -68,7 +71,7 @@ public partial class SaveSelect : Menu
 	{
 		if (isDeleteMenuActive)
 		{
-			if (isDeleteSelected)
+			if (deleteSelection == 0)
 			{
 				deleteAnimator.Play("confirm");
 				DeleteSaveFile();
@@ -108,9 +111,20 @@ public partial class SaveSelect : Menu
 		if (SaveManager.GameSaveSlots[saveIndex].IsNewFile()) // Check if a save file is new
 			return;
 
+		if (Runtime.Instance.IsUsingMouse)
+		{
+			deleteSelection = -1;
+			deleteAnimator.Play("select-none");
+		}
+		else
+		{
+			deleteSelection = 1;
+			deleteAnimator.Play("select-no");
+		}
+		deleteAnimator.Advance(0.0);
+
 		deleteAnimator.Play("show");
 		isDeleteMenuActive = true;
-		isDeleteSelected = false;
 	}
 
 	protected override void UpdateSelection()
@@ -118,11 +132,10 @@ public partial class SaveSelect : Menu
 		if (isDeleteMenuActive)
 		{
 			int input = Mathf.Sign(Input.GetAxis("ui_left", "ui_right"));
-			if ((input > 0 && isDeleteSelected) ||
-				(input < 0 && !isDeleteSelected))
+			if ((input > 0 && deleteSelection != 1) || (input < 0 && deleteSelection != 0))
 			{
-				isDeleteSelected = !isDeleteSelected;
-				deleteAnimator.Play(isDeleteSelected ? "select-yes" : "select-no");
+				deleteSelection = input > 0 ? 1 : 0;
+				UpdateDeleteMenuVisuals();
 			}
 
 			return;
@@ -131,6 +144,24 @@ public partial class SaveSelect : Menu
 		// Only listen for vertical scrolling
 		int inputSign = Mathf.Sign(Input.GetAxis("ui_up", "ui_down"));
 		if (inputSign == 0) return;
+		ScrollSelection(inputSign);
+	}
+
+	private void UpdateDeleteMenuVisuals()
+	{
+		if (deleteSelection == -1)
+		{
+			deleteAnimator.Play("select-none");
+			return;
+		}
+
+		deleteAnimator.Play(deleteSelection == 0 ? "select-yes" : "select-no");
+	}
+
+	private void ScrollSelection(int inputSign)
+	{
+		if (!Mathf.IsZeroApprox(cursorSelectionTimer))
+			return;
 
 		VerticalSelection = WrapSelection(VerticalSelection + inputSign, SaveManager.SaveSlotCount);
 		animator.Play(inputSign < 0 ? ScrollUpAnimation : ScrollDownAnimation);
@@ -143,8 +174,12 @@ public partial class SaveSelect : Menu
 
 	public override void OpenSubmenu()
 	{
+		menuMemory[MemoryKeys.LevelSelect] = 0;
+		menuMemory[MemoryKeys.SkillMenuInitialized] = 0;
 		SaveManager.ActiveSaveSlotIndex = _saveOptions[ActiveSaveOptionIndex].SaveIndex;
+		SaveManager.ActiveGameData.UnlockStagesRecursively(initialLevelData);
 		SaveManager.ActiveSkillRing.LoadFromActiveData();
+		NotificationManager.Instance.UpdateCounters();
 
 		// Update next story level
 		SaveManager.ActiveGameData.LoadCurrentStoryLevelFromSaveData();
@@ -154,20 +189,18 @@ public partial class SaveSelect : Menu
 			SaveManager.ResetSaveData(SaveManager.ActiveSaveSlotIndex, false);
 			SaveManager.SaveGameData();
 
-			if (menuMemory[MemoryKeys.ActiveMenu] != (int)MemoryKeys.TimeAttack) // Only load a scene if we aren't in Time Attack
+			if (!DebugManager.Instance.UseDemoSave) // Don't load into cutscenes in the demo
 			{
-				if (!DebugManager.Instance.UseDemoSave) // Don't load into cutscenes in the demo
+				// Load directly into the first cutscene
+				TransitionManager.QueueSceneChange($"{TransitionManager.EventScenePath}Event1.tscn");
+				TransitionManager.StartTransition(new()
 				{
-					// Load directly into the first cutscene
-					TransitionManager.QueueSceneChange($"{TransitionManager.EventScenePath}Event1.tscn");
-					TransitionManager.StartTransition(new()
-					{
-						color = Colors.Black,
-						inSpeed = 1f,
-					});
-					return;
-				}
+					color = Colors.Black,
+					inSpeed = 1f,
+				});
+				return;
 			}
+
 		}
 
 		if (DebugManager.Instance.UseDemoSave) // Unlock all worlds in the demo
@@ -187,11 +220,9 @@ public partial class SaveSelect : Menu
 
 	private void CancelDeleteMenu()
 	{
-		if (isDeleteSelected)
-		{
-			deleteAnimator.Play("select-no");
-			deleteAnimator.Advance(0.0);
-		}
+		deleteSelection = 1;
+		deleteAnimator.Play("select-no");
+		deleteAnimator.Advance(0.0);
 
 		isDeleteMenuActive = false;
 		deleteAnimator.Play("hide");
@@ -220,4 +251,20 @@ public partial class SaveSelect : Menu
 	}
 
 	public void SetDescriptionText() => description.Text = descriptionText;
+
+	private void ReceiveMouseInput(int direction)
+	{
+		if (!isProcessing)
+			return;
+
+		if (isDeleteMenuActive)
+		{
+			deleteSelection = direction;
+			UpdateDeleteMenuVisuals();
+			return;
+		}
+
+		ScrollSelection(direction);
+		Runtime.Instance.IsUsingMouse = true;
+	}
 }

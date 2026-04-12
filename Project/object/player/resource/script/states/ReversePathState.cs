@@ -68,8 +68,11 @@ public partial class ReversePathState : PlayerState
 				if (Player.IsBackflipInputValid())
 					return backflipState;
 
-				if (SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.ChargeJump))
+				if (SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.ChargeJump) &&
+					!Player.IsLockoutDisablingAction(LockoutResource.ActionFlags.FullJump))
+				{
 					return crouchState;
+				}
 
 				return jumpState;
 			}

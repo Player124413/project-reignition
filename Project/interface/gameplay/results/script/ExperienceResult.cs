@@ -68,7 +68,7 @@ public partial class ExperienceResult : Control
 	/// <summary> Experience points needed for the previous level up. </summary>
 	private int previousLevelupRequirement;
 	/// <summary> More exp is granted in PR, so the levelup requirements are higher than the original game. </summary>
-	private static int CalculateLevelUpRequirement(int level) => level == MaxLevel ? 99999999 : (LevelInterval * level) + (LevelInterval * (level / 10));
+	public static int CalculateLevelUpRequirement(int level) => level == MaxLevel ? 99999999 : (LevelInterval * level) + (LevelInterval * (level / 10));
 	/// <summary> Converts exp amount to level amount. Mostly used to fix corrupt save data. </summary>
 	private static int CalculateLevel(int exp)
 	{

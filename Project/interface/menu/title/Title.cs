@@ -45,6 +45,7 @@ namespace Project.Interface.Menus
 
 			if (Input.IsAnythingPressed()) // Change menu
 			{
+				Runtime.Instance.IsUsingMouse = Input.IsActionJustPressed("mouse_left");
 				Confirm();
 				return;
 			}

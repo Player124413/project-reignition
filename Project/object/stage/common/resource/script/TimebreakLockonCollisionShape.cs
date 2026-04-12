@@ -1,5 +1,4 @@
 using Godot;
-using System;
 
 namespace Project.Gameplay.Objects;
 
@@ -14,7 +13,6 @@ public partial class TimebreakLockonCollisionShape : CollisionShape3D
 		Player.Skills.TimeBreakStopped += UpdateCollision;
 		CallDeferred(MethodName.UpdateCollision);
 	}
-
 
 	private void UpdateCollision() => Disabled = !Player.Skills.IsTimeBreakActive;
 }

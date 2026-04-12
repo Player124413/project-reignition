@@ -1,3 +1,6 @@
+using System.IO.Pipes;
+using System.Numerics;
+
 using Godot;
 using Godot.Collections;
 using Project.Core;
@@ -10,11 +13,15 @@ public partial class TimeAttackNewRun : Menu
 	[Export] private Description description;
 	[Export] TimeAttack thisParent;
 	[Export] SaveSelect saveSelect;
-	[Export] TimeAttackReady readyMenu;
+	[Export] TimeAttackStartRun startRun;
 	[Export] TimeAttackLevelList levelList;
+	[Export] private TextureRect buttonImage;
+	[Export] private AnimationPlayer buttonImageAnimator;
+	[Export] Array<TimeAttackButton> buttonList;
 	private bool isActive;
 	private int currentSelection;
-	private int maxSelection = 4;
+	private int maxSelection = 3;
+
 
 	protected override void SetUp()
 	{
@@ -25,6 +32,8 @@ public partial class TimeAttackNewRun : Menu
 	{
 		base.ShowMenu();
 		currentSelection = 1;
+		description.Text = buttonList[0].description;
+		SaveManager.LoadTimeAttackData();
 	}
 
 	public override void OpenParentMenu()
@@ -54,8 +63,17 @@ public partial class TimeAttackNewRun : Menu
 				currentSelection = WrapSelection(currentSelection, maxSelection, 1);
 
 			if (input.X == 0)
+			{
+				description.Text = buttonList[currentSelection - 1].description;
 				description.ShowDescription();
-			newRunAnimator.Play("select-" + currentSelection);
+			}
+
+			for (int i = 0; i < buttonList.Count; i++)
+			{
+				buttonList[i].DeselectButton();
+			}
+			buttonImageAnimator.Play("show");
+			buttonList[currentSelection - 1].SelectButton();
 		}
 		else
 			return;
@@ -64,36 +82,71 @@ public partial class TimeAttackNewRun : Menu
 	protected override void Confirm()
 	{
 		if (isActive)
-			if (currentSelection == 3) //Only goal percent is in this version
+		{
+			TimeAttackManager.Instance.ResetLevelCount();
+
+			switch (currentSelection)
 			{
-				TimeAttackManager.Instance.ResetLevelCount();
-				TimeAttackManager.Instance.SetRunType(TimeAttackManager.RunType.GoalPercent);
-				levelList.parentMenu = this;
-
-				readyMenu.SetupReadyMenu();
-				newRunAnimator.Play("confirm-" + currentSelection);
+				case 1:
+					TimeAttackManager.Instance.SetRunType(TimeAttackManager.RunType.AnyP);
+					break;
+				case 2:
+					TimeAttackManager.Instance.SetRunType(TimeAttackManager.RunType.GoalPercent);
+					break;
+				case 3:
+					TimeAttackManager.Instance.SetRunType(TimeAttackManager.RunType.BossRush);
+					break;
 			}
+			TimeAttackManager.Instance.SetRunActive(true);
+			levelList.parentMenu = this;
 
+			newRunAnimator.Play("confirm-" + currentSelection);
+			currentSelection = 1;
+		}
 	}
 
 	protected override void Cancel()
 	{
 		if (isActive)
+		{
+			TimeAttackManager.Instance.SetRunActive(false);
 			newRunAnimator.Play("hide");
+
+		}
 	}
 
-	public void PlayReturnAnimParent(int selection) => thisParent.PlayReturnAnim(selection);
-	public override void PlayReturnAnim()
-	{
-		newRunAnimator.Play("return-" + currentSelection);
-	}
 	public void SetActive() => isActive = true;
 	public void SetInactive() => isActive = false;
 
+	public override void OpenSubmenu()
+	{
+		switch (currentSelection)
+		{
+			case 1:
+				_submenus[0].ShowMenu();
+				break;
+			case 2:
+				OpenSaveSelect();
+				break;
+			case 3:
+				OpenSaveSelect();
+				break;
+		}
+		currentSelection = 1;
+	}
 	public void OpenSaveSelect()
 	{
 		saveSelect.Visible = true;
 		saveSelect.parentMenu = this;
 		saveSelect.ShowMenu();
 	}
+
+	public void OpenStartRun()
+	{
+		startRun.ShowMenu();
+	}
+
+	public void ChangeButtonImage() => buttonImage.Texture = buttonList[currentSelection - 1].image;
+
+
 }

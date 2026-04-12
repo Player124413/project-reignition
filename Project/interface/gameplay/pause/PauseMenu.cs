@@ -7,9 +7,11 @@ namespace Project.Interface;
 public partial class PauseMenu : Node
 {
 	public static bool AllowInputs = true;
+	private bool isNothingSelected;
 
 	[Signal] public delegate void OnSceneChangeSelectedEventHandler();
 
+	[Export] private Control mouseOptionParent;
 	[Export] AnimationPlayer pageAnimator;
 	[Export] AnimationPlayer statusAnimator;
 	[Export] AnimationPlayer selectionAnimator;
@@ -18,6 +20,7 @@ public partial class PauseMenu : Node
 	[Export] private AudioStreamPlayer selectSfx;
 	[Export] private AudioStreamPlayer cancelSfx;
 	[Export] private Menus.Description description;
+	[Export] private Label restart;
 
 	[ExportGroup("Status Menu")]
 	[Export] private Label[] values;
@@ -41,10 +44,12 @@ public partial class PauseMenu : Node
 	[Export] private int[] rectVerticalValues;
 	[Export] private Sprite2D levelSprite;
 	private PauseSkill[] skills;
+	private float skillContainerStartingOffset;
 	private int skillScrollOffset;
 	[Export] private Sprite2D skillScrollbar;
 	private Vector2 scrollVelocity;
 	private readonly float ScrollSmoothing = .05f;
+	private readonly float SkillScrollInterval = 60;
 
 	private bool isActive;
 	private enum Submenu
@@ -70,11 +75,19 @@ public partial class PauseMenu : Node
 			levelSprite.RegionRect.Size
 		);
 
+		for (int i = 0; i < mouseOptionParent.GetChildCount(); i++)
+		{
+			Control node = mouseOptionParent.GetChildOrNull<Control>(i);
+			node.MouseEntered += () => ReceiveMouseInput(node, false);
+			node.MouseExited += () => ReceiveMouseInput(null, false);
+		}
+
 		// Set up the skill menu
 		noSkillLabel.Visible = SaveManager.ActiveSkillRing.EquippedSkills.Count == 0;
 		skillScrollbar.GetParent<NinePatchRect>().Visible = SaveManager.ActiveSkillRing.EquippedSkills.Count != 0;
 
 		skills = new PauseSkill[SaveManager.ActiveSkillRing.EquippedSkills.Count];
+		skillContainerStartingOffset = skillContainer.Position.Y;
 		skillContainer.SetDeferred("size", new Vector2(skillContainer.Size.X, skills.Length * 60));
 
 		// Generate skill list
@@ -85,10 +98,19 @@ public partial class PauseMenu : Node
 			if (pauseSkill.Skill.HasAugments)
 				pauseSkill.Skill = pauseSkill.Skill.GetAugment(SaveManager.ActiveSkillRing.GetAugmentIndex(key));
 			pauseSkill.Initialize();
+			pauseSkill.MouseEntered += () => ReceiveMouseInput(pauseSkill, true);
 			skillContainer.AddChild(pauseSkill);
 		}
 
 		isHidden = false;
+
+		if (TimeAttackManager.Instance.IsRunActive && TimeAttackManager.Instance.CurrentRunType != TimeAttackManager.RunType.SingleRun)
+		{
+			Label glow = restart.GetChild(0) as Label;
+			restart.Text = "ta_restartrun";
+			glow.Text = "ta_restartrun";
+
+		}
 	}
 
 	public override void _PhysicsProcess(double _)
@@ -137,9 +159,6 @@ public partial class PauseMenu : Node
 
 	private bool IsQuickRestart()
 	{
-		if (SaveManager.ActiveGameData.LevelData.GetClearStatus(StageSettings.Instance.Data.LevelID) != SaveManager.LevelSaveData.LevelStatus.Cleared)
-			return false;
-
 		if (!Input.IsActionPressed("button_step_left") || !Input.IsActionPressed("button_step_right")) // Quick restart
 			return false;
 
@@ -168,7 +187,8 @@ public partial class PauseMenu : Node
 
 	private void UpdateBuffers()
 	{
-		if (Runtime.Instance.IsActionJustPressed("sys_select", "ui_select"))
+		if (Runtime.Instance.IsActionJustPressed("sys_select", "ui_select") ||
+			(Runtime.Instance.IsUsingMouse && Input.IsActionJustPressed("mouse_left")))
 		{
 			isConfirmButtonBuffered = true;
 			isCancelButtonBuffered = false;
@@ -208,13 +228,21 @@ public partial class PauseMenu : Node
 		pauseCursorAnimator.Play("show");
 		selectionAnimator.Play("show-skill");
 		currentSelection = 3;
-		description.HideDescription();
+
+		if (skills.Length != 0)
+			description.HideDescription();
 	}
 
 	private void ChangeSelection(int direction)
 	{
-		int targetSelection = currentSelection + direction;
+		Runtime.Instance.IsUsingMouse = false;
+		if (isNothingSelected)
+		{
+			UpdateSelection(currentSelection, true);
+			return;
+		}
 
+		int targetSelection = currentSelection + direction;
 		if (submenu == Submenu.Skill) // Allow wrapping when viewing skills
 		{
 			if (targetSelection < 0)
@@ -255,10 +283,19 @@ public partial class PauseMenu : Node
 		}
 		else if (currentSelection == 1) // Restart
 		{
-			// Resume
-			TransitionManager.Instance.QueuedScene = string.Empty;
-			SoundManager.instance.StageMusicPlayer.Stop();
-			EmitSignal(SignalName.OnSceneChangeSelected);
+			if (TimeAttackManager.Instance.IsRunActive)
+			{
+				GetTree().Paused = false;
+				Engine.TimeScale = 1.0f;
+				TimeAttackManager.Instance.RestartRun();
+			}
+			else
+			{
+				// Resume
+				TransitionManager.Instance.QueuedScene = string.Empty;
+				SoundManager.instance.StageMusicPlayer.Stop();
+				EmitSignal(SignalName.OnSceneChangeSelected);
+			}
 		}
 		else if (currentSelection == 3) // Open the Skill Menu
 		{
@@ -270,10 +307,20 @@ public partial class PauseMenu : Node
 		else if (currentSelection == 4) // Quit by opening the EXP menu
 		{
 			SaveManager.SaveGameData();
-			TransitionManager.Instance.QueuedScene = TransitionManager.MenuScenePath;
 			SoundManager.instance.StageMusicPlayer.Stop();
 			SoundManager.instance.StageMusicPlayer.SetBgmResource(null); //Fixes a bug where the stage music will continue playing after a level quit
-			EmitSignal(SignalName.OnSceneChangeSelected);
+			if (TimeAttackManager.Instance.IsRunActive)
+			{
+				if (TimeAttackManager.Instance.CurrentRunType == TimeAttackManager.RunType.SingleRun)
+					TimeAttackManager.Instance.LoadTimeAttack(true);
+				else
+					TimeAttackManager.Instance.LoadTimeAttack();
+			}
+			else
+			{
+				TransitionManager.Instance.QueuedScene = TransitionManager.MenuScenePath;
+				EmitSignal(SignalName.OnSceneChangeSelected);
+			}
 		}
 	}
 
@@ -348,8 +395,8 @@ public partial class PauseMenu : Node
 			skillScrollOffset = skillSelection;
 		}
 
-		skillContainer.Position = Vector2.Up * skillScrollOffset * 60;
-		skillCursor.Position = Vector2.Down * visualSelection * 60;
+		skillContainer.Position = Vector2.Up * (skillScrollOffset * SkillScrollInterval - skillContainerStartingOffset);
+		skillCursor.Position = Vector2.Down * visualSelection * SkillScrollInterval;
 		skillCursorAnimator.Play("show");
 		skillCursorAnimator.Seek(0.0, true);
 	}
@@ -360,12 +407,14 @@ public partial class PauseMenu : Node
 			selectSfx.Play();
 
 		canMoveCursor = false;
+		isNothingSelected = false;
 		currentSelection = selection;
 
 		if (submenu == Submenu.Pause)
 		{
 			pauseCursorAnimator.Play("move");
 			selectionAnimator.Play($"select-{selection}", 0.1);
+			selectionAnimator.Advance(0.0);
 
 			UpdateStatusMenu();
 			return;
@@ -404,6 +453,7 @@ public partial class PauseMenu : Node
 	private float unpausedSpeed;
 	private void TogglePause()
 	{
+		submenu = Submenu.Pause;
 		canMoveCursor = false; // Disable cursor movement
 		AllowInputs = false; // Disable pause inputs during the animation
 
@@ -415,6 +465,8 @@ public partial class PauseMenu : Node
 		{
 			// Reset cursors
 			skillCursorAnimator.Play("RESET");
+			selectionAnimator.Play("RESET");
+			selectionAnimator.Advance(0.0);
 			selectionAnimator.Play("show");
 
 			UpdateSelection(0);
@@ -436,5 +488,35 @@ public partial class PauseMenu : Node
 	{
 		GetTree().Paused = isActive;
 		SoundManager.instance.IsStageMusicPaused = isActive;
+	}
+
+	private void ReceiveMouseInput(Node node, bool isSkill)
+	{
+		if (!AllowInputs || !isActive)
+			return;
+
+		if (submenu == Submenu.Skill)
+		{
+			if (!isSkill)
+				return;
+
+			UpdateSelection(node.GetIndex());
+			Runtime.Instance.IsUsingMouse = true;
+			return;
+		}
+
+		if (isSkill)
+			return;
+
+		if (node == null)
+		{
+			pauseCursorAnimator.Play("hide");
+			selectionAnimator.Play($"select-none", 0.1);
+			isNothingSelected = true;
+			return;
+		}
+
+		UpdateSelection(node.GetIndex());
+		Runtime.Instance.IsUsingMouse = true;
 	}
 }

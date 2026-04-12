@@ -39,6 +39,7 @@ public partial class SkillPresetSelect : Menu
 	private int cursorPosition;
 	private Vector2 cursorVelocity;
 	private const float CursorSmoothing = .1f;
+	private bool isNothingSelected;
 
 	private Array<SkillPresetOption> presetList = [];
 
@@ -50,8 +51,6 @@ public partial class SkillPresetSelect : Menu
 	private bool isAlertMenuActive;
 	private int alertSelection;
 
-
-
 	protected override void SetUp()
 	{
 		//  Create Preset Option nodes
@@ -59,6 +58,8 @@ public partial class SkillPresetSelect : Menu
 		{
 			SkillPresetOption newPreset = presetOption.Instantiate<SkillPresetOption>();
 			newPreset.Index = i;
+			newPreset.MouseEntered += () => ReceiveMouseInput(newPreset);
+			newPreset.MouseExited += () => ReceiveMouseInput(null);
 
 			presetList.Add(newPreset);
 			presetContainer.AddChild(newPreset);
@@ -96,13 +97,27 @@ public partial class SkillPresetSelect : Menu
 			}
 		}
 
+		if (Runtime.Instance.MouseScrollInput != 0 && !isSubMenuActive)
+		{
+			int previousSelection = VerticalSelection;
+			VerticalSelection = Mathf.Clamp(VerticalSelection + Runtime.Instance.MouseScrollInput, 0, presetList.Count - 1);
+
+			if (previousSelection != VerticalSelection)
+			{
+				presetList[previousSelection].DeselectInstant();
+				selectSFX.Play();
+				MoveCursor(Runtime.Instance.MouseScrollInput, VerticalSelection);
+				UpdateScrollAmount(Runtime.Instance.MouseScrollInput, true);
+			}
+		}
+
 		if (Runtime.Instance.IsActionJustPressed("sys_pause", "ui_accept") && !Input.IsActionJustPressed("toggle_fullscreen"))
 			Confirm();
 
 		base.ProcessMenu();
 	}
 
-	private void UpdateScrollAmount(int inputSign)
+	private void UpdateScrollAmount(int inputSign, bool forceScroll = false)
 	{
 		int listSize = presetList.Count;
 
@@ -114,7 +129,9 @@ public partial class SkillPresetSelect : Menu
 			return;
 		}
 
-		if (VerticalSelection == 0 || VerticalSelection == listSize - 1)
+		if (forceScroll)
+			scrollAmount += inputSign;
+		else if (VerticalSelection == 0 || VerticalSelection == listSize - 1)
 			cursorPosition = scrollAmount = VerticalSelection;
 		else if ((inputSign < 0 && cursorPosition == 0) || (inputSign > 0 && cursorPosition == PageSize - 1))
 			scrollAmount += inputSign;
@@ -122,8 +139,8 @@ public partial class SkillPresetSelect : Menu
 			cursorPosition += inputSign;
 
 		scrollAmount = Mathf.Clamp(scrollAmount, 0, listSize - PageSize);
-		scrollRatio = (float)VerticalSelection / (listSize - 1);
 		cursorPosition = Mathf.Clamp(cursorPosition, 0, PageSize - 1);
+		scrollRatio = (float)VerticalSelection / (presetList.Count - 1);
 	}
 
 	public override void ShowMenu()
@@ -147,20 +164,14 @@ public partial class SkillPresetSelect : Menu
 		if (isAlertMenuActive)
 		{
 			int input = Mathf.Sign(Input.GetAxis("ui_left", "ui_right"));
-			if (input < 0 && alertSelection == 0)
+			if ((input > 0 && alertSelection != 1) || (input < 0 && alertSelection != 0))
 			{
-				alertSelection = 1;
-				alertAnimator.Play("select-yes");
-			}
-			else if (input > 0 && alertSelection == 1)
-			{
-				alertSelection = 0;
-				alertAnimator.Play("select-no");
+				alertSelection = input > 0 ? 1 : 0;
+				UpdateAlertMenuVisuals();
 			}
 
 			return;
 		}
-
 
 		int inputSign = Mathf.Sign(Input.GetAxis("ui_up", "ui_down"));
 		if (inputSign == 0)
@@ -180,7 +191,6 @@ public partial class SkillPresetSelect : Menu
 		VerticalSelection = WrapSelection(VerticalSelection + inputSign, presetList.Count);
 		selectSFX.Play();
 		MoveCursor(inputSign, VerticalSelection);
-
 		UpdateScrollAmount(inputSign);
 	}
 
@@ -191,6 +201,9 @@ public partial class SkillPresetSelect : Menu
 
 		if (isSubMenuActive)
 		{
+			if (subIndex == -1)
+				return;
+
 			switch (subIndex)
 			{
 				case 0:
@@ -212,10 +225,22 @@ public partial class SkillPresetSelect : Menu
 				case 3:
 					if (!IsInvalid(VerticalSelection))
 					{
-						//Show alert menu
+						// Show alert menu
+						if (Runtime.Instance.IsUsingMouse)
+						{
+							alertSelection = -1;
+							alertAnimator.Play("select-none");
+						}
+						else
+						{
+							alertSelection = 1;
+							alertAnimator.Play("select-no");
+						}
+						alertAnimator.Advance(0.0);
+
 						isAlertMenuActive = true;
 						isSubMenuActive = false;
-						alertSelection = 0;
+
 						alertAnimator.Play("show");
 						alertAnimator.Advance(0.0);
 					}
@@ -233,7 +258,10 @@ public partial class SkillPresetSelect : Menu
 
 		if (isAlertMenuActive)
 		{
-			if (alertSelection == 1)
+			if (alertSelection == -1)
+				return;
+
+			if (alertSelection == 0)
 			{
 				DeletePreset(VerticalSelection);
 				isSubMenuActive = true;
@@ -251,25 +279,40 @@ public partial class SkillPresetSelect : Menu
 		}
 
 		//  Show the submenu
-		subIndex = 0;
-
-		submenuAnimator.Play(IsInvalid(VerticalSelection) ? "select-save-invalid" : "select-save");
+		if (Runtime.Instance.IsUsingMouse)
+		{
+			subIndex = -1;
+			submenuAnimator.Play(IsInvalid(VerticalSelection) ? "select-none-invalid" : "select-none");
+		}
+		else
+		{
+			subIndex = 0;
+			submenuAnimator.Play(IsInvalid(VerticalSelection) ? "select-save-invalid" : "select-save");
+		}
 		submenuAnimator.Advance(0.0);
+
 		submenuAnimator.Play("show");
 		isSubMenuActive = true;
 	}
 
+	private void UpdateAlertMenuVisuals()
+	{
+		if (alertSelection == -1)
+		{
+			alertAnimator.Play("select-none");
+			return;
+		}
+
+		alertAnimator.Play(alertSelection == 0 ? "select-yes" : "select-no");
+	}
+
 	protected override void Cancel()
 	{
-
 		if (isAlertMenuActive)
 		{
-			if (alertSelection == 1)
-			{
-				alertSelection = 0;
-				alertAnimator.Play("select-no");
-				alertAnimator.Advance(0.0);
-			}
+			alertSelection = 1;
+			alertAnimator.Play("select-no");
+			alertAnimator.Advance(0.0);
 			isSubMenuActive = true;
 			isAlertMenuActive = false;
 			alertAnimator.Play("hide");
@@ -297,6 +340,9 @@ public partial class SkillPresetSelect : Menu
 		string targetAnimation = string.Empty;
 		switch (subIndex)
 		{
+			case -1:
+				targetAnimation = "select-none";
+				break;
 			case 0:
 				targetAnimation = "select-save";
 				break;
@@ -325,7 +371,9 @@ public partial class SkillPresetSelect : Menu
 
 	private void MoveCursor(int dir, int index)
 	{
-		if (dir < 0)
+		if (dir == 0)
+			presetList[index].SelectRight();
+		else if (dir < 0)
 			presetList[index].SelectUp();
 		else
 			presetList[index].SelectDown();
@@ -419,4 +467,48 @@ public partial class SkillPresetSelect : Menu
 	}
 
 	private bool IsInvalid(int index) => presetList[index].IsInvalid;
+
+	private void ReceiveSubmenuMouseInput(int index)
+	{
+		if (!isProcessing || !isSubMenuActive)
+			return;
+
+		subIndex = index;
+		MoveSubCursor();
+	}
+
+	private void ReceiveAlertMouseInput(int index)
+	{
+		if (!isProcessing || !isAlertMenuActive)
+			return;
+
+		alertSelection = index;
+		UpdateAlertMenuVisuals();
+	}
+
+	private void ReceiveMouseInput(Node node)
+	{
+		if (!isProcessing)
+			return;
+
+		if (isSubMenuActive || isAlertMenuActive)
+			return;
+
+		Runtime.Instance.IsUsingMouse = true;
+		if (node == null)
+		{
+			isNothingSelected = true;
+			presetList[VerticalSelection].Deselect();
+			return;
+		}
+
+		isNothingSelected = false;
+		int sign = node.GetIndex() - VerticalSelection;
+		if (sign != 0)
+			presetList[VerticalSelection].DeselectInstant();
+
+		VerticalSelection = node.GetIndex();
+		selectSFX.Play();
+		MoveCursor(sign, VerticalSelection);
+	}
 }

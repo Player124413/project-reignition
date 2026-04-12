@@ -1,8 +1,8 @@
 using Godot;
 using System;
 using Godot.Collections;
-using System.Collections.Generic;
 using Project.Gameplay;
+using System.Linq;
 
 namespace Project.Core;
 
@@ -13,34 +13,32 @@ public partial class TimeAttackManager : Node
 	public enum RunType
 	{
 		AnyP,
-		AnyPercentPlus,
 		GoalPercent,
 		SingleRun,
 		BossRush,
-		Custom
 	}
 
 	public RunType CurrentRunType { get; private set; }
 
-	[Export]
-	private LevelDataResource[] Levels_AnyPercent;
-	[Export]
-	private LevelDataResource[] Levels_GoalPercent;
-	[Export]
-	private LevelDataResource[] Levels_BossRush;
-	private LevelDataResource[] Levels_Custom;
+	private Array<float> CurrentRunTimes;
 
+	[Export] private LevelDataResource[] Levels_AnyPercent;
+	[Export] private LevelDataResource[] Levels_GoalPercent;
+	[Export] private LevelDataResource[] Levels_BossRush;
+	public LevelDataResource Level_Single;
 	public int CurrentLevel { get; private set; }
 	public bool IsRunActive { get; private set; }
+	public bool LoadIntoSingle { get; private set; }
 
 
 	public override void _EnterTree()
 	{
 		Instance = this;
 	}
-	public void SetRunType(RunType type) => CurrentRunType = type;
-
-	public void SetCustomRun(LevelDataResource[] custom) => custom.CopyTo(Levels_Custom, 0);
+	public void SetRunType(RunType type)
+	{
+		CurrentRunType = type;
+	}
 
 	public LevelDataResource[] GetCurrentRunLevels(RunType type)
 	{
@@ -48,14 +46,23 @@ public partial class TimeAttackManager : Node
 		{
 			case RunType.AnyP:
 				return Levels_AnyPercent;
-			case RunType.AnyPercentPlus:
+			case RunType.GoalPercent:
+				return Levels_GoalPercent;
+			case RunType.BossRush:
+				return Levels_BossRush;
+		}
+		return Levels_AnyPercent;
+	}
+	public LevelDataResource[] GetCurrentRunLevels()
+	{
+		switch (CurrentRunType)
+		{
+			case RunType.AnyP:
 				return Levels_AnyPercent;
 			case RunType.GoalPercent:
 				return Levels_GoalPercent;
 			case RunType.BossRush:
 				return Levels_BossRush;
-			case RunType.Custom:
-				return Levels_Custom;
 		}
 		return Levels_AnyPercent;
 	}
@@ -69,7 +76,10 @@ public partial class TimeAttackManager : Node
 	///<summary> Gets the current level of the run being played </summary>
 	public LevelDataResource GetCurrentLevel()
 	{
-		return GetCurrentRunLevels(CurrentRunType)[CurrentLevel];
+		if (CurrentRunType != RunType.SingleRun)
+			return GetCurrentRunLevels(CurrentRunType)[CurrentLevel];
+		else
+			return Level_Single;
 	}
 	///<summary> Gets the next level of the run being played </summary>
 	public LevelDataResource GetNextLevel()
@@ -80,12 +90,11 @@ public partial class TimeAttackManager : Node
 	///<summary> Are we on the last level? </summary>
 	public bool IsLastLevel()
 	{
-		if (GetCurrentRunLevels(CurrentRunType)[CurrentLevel + 1] == null)
+		if (GetCurrentLevel() == GetCurrentRunLevels().Last() || CurrentRunType == RunType.SingleRun)
 			return true;
 		else
 			return false;
 	}
-
 	public void IncreaseLevel() => CurrentLevel += 1;
 	public void ResetLevelCount() => CurrentLevel = 0;
 
@@ -104,4 +113,99 @@ public partial class TimeAttackManager : Node
 		TransitionManager.Instance.SetMissionDescriptionText(level.MissionTypeKey, level.MissionDescriptionKey);
 		TransitionManager.Instance.UpdateLoadingText("load_level");
 	}
+
+	public void LoadResults()
+	{
+		TransitionManager.QueueSceneChange(TransitionManager.TimeAttackResultsPath);
+		TransitionManager.StartTransition(new()
+		{
+			inSpeed = 0.2f,
+			outSpeed = 0.5f,
+			color = Colors.Black,
+			disableAutoTransition = false
+		});
+		ClearCurrentSavedRun();
+	}
+
+	public void LoadTimeAttack()
+	{
+		TransitionManager.QueueSceneChange(TransitionManager.TimeAttackScenePath);
+		TransitionManager.StartTransition(new()
+		{
+			inSpeed = 0.2f,
+			outSpeed = 0.5f,
+			color = Colors.Black,
+			disableAutoTransition = false
+		});
+	}
+
+	//<summary>Makes it so Time Attack immediately loads into Single Run mode</summary>
+	public void LoadTimeAttack(bool loadIntoSingle)
+	{
+		LoadIntoSingle = loadIntoSingle;
+		LoadTimeAttack();
+	}
+
+	public void RestartRun()
+	{
+		ResetRunTimes();
+		ResetLevelCount();
+		ClearCurrentSavedRun();
+		ClearCurrentRun();
+		LoadLevel(GetCurrentLevel());
+	}
+
+	public void ClearCurrentSavedRun()
+	{
+		SaveManager.TimeData.CurrentPlacement = 0;
+		SaveManager.TimeData.RunInProgress = [];
+		SaveManager.SaveTimeAttackData();
+	}
+
+	public void ClearCurrentRun()
+	{
+		CurrentLevel = 0;
+		if (GetCurrentRun() != null)
+			CurrentRunTimes = new Array<float>();
+
+	}
+
+	public void AddTime(float time)
+	{
+		CurrentRunTimes.Add(time);
+		SaveManager.TimeData.RunInProgress = CurrentRunTimes;
+	}
+
+	public Array<float> GetCurrentRunTimes()
+	{
+		return CurrentRunTimes;
+	}
+	public float GetTotalRunTime()
+	{
+		float results = 0;
+		foreach (float time in CurrentRunTimes)
+		{
+			//GD.Print("Time: " + time);
+			results += time;
+		}
+		//GD.Print("Total Run Time: " + results);
+		return results;
+	}
+
+	public void SetReturnTimes()
+	{
+		CurrentRunTimes = SaveManager.TimeData.RunInProgress;
+		CurrentRunType = SaveManager.TimeData.CurrentRunType;
+		CurrentLevel = SaveManager.TimeData.CurrentPlacement;
+	}
+
+	public void ShouldLoadIntoSingle(bool single) => LoadIntoSingle = single;
+	private void ResetRunTimes()
+	{
+		CurrentRunTimes = new Array<float>();
+	}
+
+
+
+
 }

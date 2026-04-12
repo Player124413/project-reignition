@@ -17,7 +17,6 @@ public partial class AchievementManager : Control
 	[Export] private Label description;
 	[Export] private AnimationPlayer animator;
 
-
 	public override void _EnterTree()
 	{
 		Instance = this;

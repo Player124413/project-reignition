@@ -8,13 +8,13 @@ public partial class PlayerInputController : Node
 	private PlayerController Player { get; set; }
 	public void Initialize(PlayerController player) => Player = player;
 
+	private Vector2 mouseInput;
+
 	[Export]
 	private Curve InputCurve { get; set; }
 	public float GetInputStrength()
 	{
 		float inputLength = InputAxis.Length();
-		if (inputLength <= DeadZone)
-			inputLength = 0;
 
 		if (Player.IsLockoutActive && Player.ActiveLockoutData.movementMode == LockoutResource.MovementModes.Replace)
 		{
@@ -79,14 +79,20 @@ public partial class PlayerInputController : Node
 
 	/// <summary> Maximum amount the player can turn when running at full speed. </summary>
 	public readonly float TurningDampingRange = Mathf.Pi * .35f;
+	/// <summary> Maximum amount the player can turn when in an autorun lockout at minimum speed. </summary>
+	public readonly float AutorunLockoutTurningDampingRange = Mathf.Pi * 0.45f;
 	/// <summary> Rotation amount to just flat-out ignore player input. </summary>
 	public readonly float TurningDeadzone = Mathf.Pi * .08f;
 
 	public void ProcessInputs()
 	{
+		ProcessMouseMovement();
 		InputAxis = Input.GetVector("move_left", "move_right", "move_up", "move_down", DeadZone);
+		InputAxis = (InputAxis + mouseInput).LimitLength(1f);
 		InputHorizontal = Input.GetAxis("move_left", "move_right");
+		InputHorizontal = Mathf.Clamp(InputHorizontal + mouseInput.X, -1f, 1f);
 		InputVertical = Input.GetAxis("move_up", "move_down");
+		InputVertical = Mathf.Clamp(InputVertical + mouseInput.Y, -1f, 1f);
 		if (!InputAxis.IsZeroApprox())
 			NonZeroInputAxis = InputAxis;
 
@@ -97,6 +103,76 @@ public partial class PlayerInputController : Node
 		UpdateAttackBuffer();
 		UpdateStepBuffer();
 		UpdateLightDashBuffer();
+	}
+
+	/// <summary> Constant to convert floats ratios to int percentages.  </summary>
+	private readonly float MouseConversionFactor = 100f;
+	private readonly float MouseMotionDenominator = 40f;
+	private readonly float MouseMotionDeadzone = 5f;
+	private void ProcessMouseMovement()
+	{
+		if (SaveManager.Config.mouseControlMode == SaveManager.MouseControlModeEnum.Disabled || Runtime.Instance.IsUsingController)
+		{
+			// Disable mouse inputs
+			mouseInput = Vector2.Zero;
+			return;
+		}
+
+		if (SaveManager.Config.mouseControlMode == SaveManager.MouseControlModeEnum.Absolute)
+			ProcessPositionalMouseInputs();
+
+		if (SaveManager.Config.mouseControlMode == SaveManager.MouseControlModeEnum.Relative)
+			ProcessRelativeMouseInputs();
+	}
+
+	private void ProcessPositionalMouseInputs()
+	{
+		// Convert input ranges to [-100f, 100f]
+		Vector2 inputRatio = (Runtime.Instance.MousePositionRatio - Vector2.One * 0.5f) * 2f * MouseConversionFactor;
+		inputRatio.Y += SaveManager.Config.mouseVerticalOffset;
+		if (Mathf.Abs(inputRatio.X) < SaveManager.Config.mouseDeadzone)
+		{
+			mouseInput.X = 0f;
+		}
+		else
+		{
+			mouseInput.X = (inputRatio.X - SaveManager.Config.mouseDeadzone) / (SaveManager.Config.mouseHorizontalRange - SaveManager.Config.mouseDeadzone);
+			mouseInput.X = Mathf.Clamp(mouseInput.X, -1f, 1f);
+		}
+
+		if (Mathf.Abs(inputRatio.Y) < SaveManager.Config.mouseDeadzone || !SaveManager.Config.isMouseVerticalEnabled)
+		{
+			mouseInput.Y = 0f;
+		}
+		else
+		{
+			mouseInput.Y = (inputRatio.Y - SaveManager.Config.mouseDeadzone) / (SaveManager.Config.mouseVerticalRange - SaveManager.Config.mouseDeadzone);
+			mouseInput.Y = Mathf.Clamp(mouseInput.Y, -1f, 1f);
+		}
+	}
+
+	private void ProcessRelativeMouseInputs()
+	{
+		Vector2 inputRatio = Runtime.Instance.MouseMotionAmount;
+		float deadzone = MouseMotionDeadzone * SaveManager.Config.mouseSensitivity / MouseConversionFactor;
+		if (Mathf.Abs(inputRatio.X) < deadzone)
+		{
+			mouseInput.X = 0;
+		}
+		else
+		{
+			mouseInput.X = inputRatio.X / MouseMotionDenominator;
+			mouseInput.X = Mathf.Clamp(mouseInput.X, -1f, 1f);
+		}
+
+		if (Mathf.Abs(inputRatio.Y) < deadzone || !SaveManager.Config.isMouseVerticalEnabled)
+		{
+			mouseInput.Y = 0f;
+			return;
+		}
+
+		mouseInput.Y = inputRatio.Y / MouseMotionDenominator;
+		mouseInput.Y = Mathf.Clamp(mouseInput.Y, -1f, 1f);
 	}
 
 	private void UpdateJumpBuffer()
@@ -231,8 +307,8 @@ public partial class PlayerInputController : Node
 
 	public float CalculatePathControlAmount()
 	{
-		if (IsStrafeModeActive || Player.IsLockoutActive)
-			return 0; // Don't use path influence during speedbreak/autorun
+		if (SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.Autorun))
+			return 0; // Don't use path influence during autorun
 
 		return Player.PathTurnInfluence;
 	}
@@ -240,8 +316,7 @@ public partial class PlayerInputController : Node
 	/// <summary> Returns whether the player is currently in strafing mode. </summary>
 	public bool IsStrafeModeActive => Player.Skills.IsSpeedBreakActive ||
 			SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.Autorun) ||
-			(Player.IsLockoutActive &&
-			Player.ActiveLockoutData.movementMode == LockoutResource.MovementModes.Strafe);
+			(Player.IsLockoutActive && Player.ActiveLockoutData.movementMode == LockoutResource.MovementModes.Strafe);
 
 	/// <summary> Returns the automaticly calculated input angle based on the game's settings and skills. </summary>
 	public float GetTargetInputAngle()
@@ -359,14 +434,22 @@ public partial class PlayerInputController : Node
 			inputs *= sign >= 0 ? 1 : -1;
 		}
 
-		float strafeAngle = inputs.X * TurningDampingRange;
+		float strafeAngle = TurningDampingRange;
+		if (Player.IsLockoutActive && Player.ActiveLockoutData.overrideSpeed)
+		{
+			float t = Player.Stats.GroundSettings.GetSpeedRatioClamped(Player.MoveSpeed);
+			strafeAngle = Mathf.Lerp(AutorunLockoutTurningDampingRange, TurningDampingRange, t);
+		}
+
+		strafeAngle *= inputs.X;
+
 		if (Player.IsMovingBackwardFreeRoam || Player.IsMovingBackward)
 		{
 			strafeAngle *= -1;
 			baseAngle = Player.PathFollower.BackAngle;
 		}
 
-		if (!IsStrafeModeActive || Player.IsBackflipping)
+		if (!SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.Autorun) || Player.IsBackflipping)
 			baseAngle -= strafeAngle;
 
 		return baseAngle;

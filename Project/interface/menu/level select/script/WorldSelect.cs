@@ -7,18 +7,17 @@ namespace Project.Interface.Menus;
 public partial class WorldSelect : Menu
 {
 	[ExportGroup("Media Settings")]
-	[Export]
-	private BGMPlayer retailBgm;
-	[Export]
-	private VideoStreamPlayer[] videoPlayers;
+	[Export] private BGMPlayer retailBgm;
+	[Export] private VideoStreamPlayer[] videoPlayers;
 	private VideoStreamPlayer ActiveVideoPlayer { get; set; }
 	private VideoStreamPlayer PreviousVideoPlayer { get; set; }
-	[Export]
-	private AnimationPlayer storyIndicationAnimator;
+	[Export] private AnimationPlayer storyIndicationAnimator;
+	[Export] private StatusMenu statusMenu;
 
 	private Color crossfadeColor;
 	private float videoFadeFactor;
 	private const float VideoCrossfadeSpeed = 5.0f;
+	private int mouseSelection;
 
 	[ExportGroup("Selection Settings")]
 	[Export]
@@ -117,31 +116,57 @@ public partial class WorldSelect : Menu
 			PreviousVideoPlayer.Modulate = crossfadeColor.Lerp(Colors.Transparent, videoFadeFactor);
 	}
 
+	protected override void ProcessMenu()
+	{
+		if (statusMenu != null && statusMenu.IsVisibleInTree())
+			return;
+
+		if (Runtime.Instance.MouseScrollInput != 0)
+		{
+			ScrollSelection(Runtime.Instance.MouseScrollInput);
+			return;
+		}
+
+		if (Runtime.Instance.IsActionJustPressed("sys_pause", "ui_accept") && !Input.IsActionJustPressed("toggle_fullscreen"))
+		{
+			statusMenu?.ShowMenu();
+			return;
+		}
+
+		base.ProcessMenu();
+	}
+
 	protected override void UpdateSelection()
 	{
 		int inputSign = Mathf.Sign(Input.GetAxis("ui_up", "ui_down"));
 		if (inputSign != 0)
-		{
-			VerticalSelection = WrapSelection(VerticalSelection + inputSign, (int)SaveManager.WorldEnum.Max);
-			menuMemory[MemoryKeys.WorldSelect] = VerticalSelection;
-			menuMemory[MemoryKeys.LevelSelect] = 0; // Reset level selection
+			ScrollSelection(inputSign);
+	}
 
-			bool isScrollingUp = inputSign < 0;
-			int transitionIndex = WrapSelection(isScrollingUp ? VerticalSelection - 1 : VerticalSelection + 1, (int)SaveManager.WorldEnum.Max);
-			UpdateSpriteRegion(3, transitionIndex); // Update level text
+	private void ScrollSelection(int direction)
+	{
+		if (!Mathf.IsZeroApprox(cursorSelectionTimer))
+			return;
 
-			animator.Play(isScrollingUp ? ScrollUpAnimation : ScrollDownAnimation);
-			animator.Seek(0.0, true);
-			DisableProcessing();
-			UpdateStoryIndicator(false);
-		}
+		VerticalSelection = WrapSelection(VerticalSelection + direction, (int)SaveManager.WorldEnum.Max);
+		menuMemory[MemoryKeys.WorldSelect] = VerticalSelection;
+		menuMemory[MemoryKeys.LevelSelect] = 0; // Reset level selection
+
+		bool isScrollingUp = direction < 0;
+		int transitionIndex = WrapSelection(isScrollingUp ? VerticalSelection - 1 : VerticalSelection + 1, (int)SaveManager.WorldEnum.Max);
+		UpdateSpriteRegion(3, transitionIndex); // Update level text
+
+		animator.Play(isScrollingUp ? ScrollUpAnimation : ScrollDownAnimation);
+		animator.Seek(0.0, true);
+		DisableProcessing();
+		UpdateStoryIndicator(false);
 	}
 
 	private void UpdateStoryIndicator(bool forceClose)
 	{
 		if (SaveManager.ActiveGameData.CurrentStoryLevel != null)
 		{
-			if (!forceClose && (int)SaveManager.ActiveGameData.CurrentStoryLevel.AreaKey == VerticalSelection)
+			if (!forceClose && (int)SaveManager.ActiveGameData.CurrentStoryLevel.AreaKey == VerticalSelection && !TimeAttackManager.Instance.IsRunActive)
 			{
 				storyIndicationAnimator.Play("show");
 				return;
@@ -156,6 +181,18 @@ public partial class WorldSelect : Menu
 		// World hasn't been unlocked
 		if (!SaveManager.ActiveGameData.IsWorldUnlocked((SaveManager.WorldEnum)VerticalSelection)) return;
 
+		if (isConfirmedWithMouse && Runtime.Instance.IsUsingMouse)
+		{
+			if (mouseSelection == -100)
+				return;
+
+			if (mouseSelection != 0)
+			{
+				ScrollSelection(mouseSelection);
+				return;
+			}
+		}
+
 		UpdateStoryIndicator(true);
 		base.Confirm();
 	}
@@ -168,8 +205,13 @@ public partial class WorldSelect : Menu
 			player.Stop();
 
 		SaveManager.SaveGameData();
-		SaveManager.ActiveSaveSlotIndex = -1;
-		UpdateStoryIndicator(true);
+
+		if (!TimeAttackManager.Instance.IsRunActive)
+		{
+			GD.Print("Run is not active");
+			SaveManager.ActiveSaveSlotIndex = -1;
+			UpdateStoryIndicator(true);
+		}
 	}
 
 	public override void OpenSubmenu()
@@ -220,8 +262,11 @@ public partial class WorldSelect : Menu
 		if (!SaveManager.ActiveGameData.IsWorldUnlocked((SaveManager.WorldEnum)selectionIndex)) // World isn't unlocked.
 			selectionIndex = levelSpriteRegions.Count - 1;
 
-		// Update new notifications
-		_levelNewSprites[spriteIndex].Visible = newLevelList.Contains(selectionIndex);
+		if (!TimeAttackManager.Instance.IsRunActive)
+			_levelNewSprites[spriteIndex].Visible = newLevelList.Contains(selectionIndex);// Update new notifications
+		else
+			_levelNewSprites[spriteIndex].Visible = false;
+
 		_levelTextSprites[spriteIndex].RegionRect = levelSpriteRegions[selectionIndex];
 
 		if (spriteIndex == 1) // Updating primary selection
@@ -229,5 +274,11 @@ public partial class WorldSelect : Menu
 			description.ShowDescription();
 			description.Text = levelDescriptionKeys[selectionIndex];
 		}
+	}
+
+	private void ReceiveMouseInput(int direction)
+	{
+		Runtime.Instance.IsUsingMouse = true;
+		mouseSelection = direction;
 	}
 }

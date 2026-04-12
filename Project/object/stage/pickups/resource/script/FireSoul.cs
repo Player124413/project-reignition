@@ -15,7 +15,7 @@ public partial class FireSoul : Pickup
 	[Export(PropertyHint.NodePathValidTypes, "AnimationPlayer")] private NodePath animator;
 	private AnimationPlayer Animator;
 	private readonly StringName AchievementFireSoulKey = "soul collector";
-	private readonly int AchievementFireSoulRequirement = 129; // Total number of fire souls in the entire game
+	public const int AchievementFireSoulRequirement = 129; // Total number of fire souls in the entire game
 
 	protected override void SetUp()
 	{

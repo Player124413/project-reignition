@@ -52,8 +52,11 @@ public partial class BackstepState : PlayerState
 			if (Player.IsBackflipInputValid())
 				return backflipState;
 
-			if (SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.ChargeJump))
+			if (SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.ChargeJump) &&
+				!Player.IsLockoutDisablingAction(LockoutResource.ActionFlags.FullJump))
+			{
 				return crouchState;
+			}
 
 			return jumpState;
 		}
@@ -84,6 +87,12 @@ public partial class BackstepState : PlayerState
 	protected override void Deccelerate() => Player.MoveSpeed = Player.Stats.BackstepSettings.UpdateInterpolate(Player.MoveSpeed, 0);
 	protected override void Accelerate(float inputStrength) => Player.MoveSpeed = Player.Stats.BackstepSettings.UpdateInterpolate(Player.MoveSpeed, inputStrength);
 	protected override void Brake() => Player.MoveSpeed = Player.Stats.BackstepSettings.UpdateInterpolate(Player.MoveSpeed, -1);
+
+	protected override void ProcessAutorunStrafeSpeed()
+	{
+		base.ProcessAutorunStrafeSpeed();
+		Player.StrafeSpeed = Mathf.Clamp(Player.StrafeSpeed, -Player.Stats.BackstepSettings.Speed, Player.Stats.BackstepSettings.Speed);
+	}
 
 	protected override void ProcessTurning()
 	{

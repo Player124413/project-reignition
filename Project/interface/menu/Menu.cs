@@ -18,6 +18,7 @@ public partial class Menu : Control
 		WorldSelect,
 		LevelSelect,
 		SkillMenuOpen,
+		SkillMenuInitialized,
 		PresetsOpen,
 
 		SpecialBook,
@@ -26,6 +27,7 @@ public partial class Menu : Control
 
 		TimeAttack,
 		Jukebox,
+		PartyMenu,
 
 		ActiveMenu,
 		Max
@@ -42,6 +44,9 @@ public partial class Menu : Control
 	[Export]
 	public Array<NodePath> submenus;
 	public Array<Menu> _submenus = []; // Also ensure the order of submenus is correct in the inspector hierarchy
+
+	/// <summary> Tracks whether confirm was pressed via mouse. </summary>
+	protected bool isConfirmedWithMouse;
 
 	[Export]
 	public BGMPlayer bgm;
@@ -152,7 +157,7 @@ public partial class Menu : Control
 
 	public virtual void PlayReturnAnim()
 	{
-		animator.Play("return");
+		animator.Play("show");
 	}
 
 	public virtual void PlayReturnAnim(int animNum)
@@ -166,7 +171,8 @@ public partial class Menu : Control
 	protected readonly float SelectionScrollingInterval = .1f;
 	protected virtual void ProcessMenu()
 	{
-		if (Runtime.Instance.IsActionJustPressed("sys_select", "ui_select"))
+		isConfirmedWithMouse = Runtime.Instance.IsUsingMouse && Input.IsActionJustPressed("mouse_left");
+		if (Runtime.Instance.IsActionJustPressed("sys_select", "ui_select") || isConfirmedWithMouse)
 		{
 			Confirm();
 			return;
@@ -180,12 +186,21 @@ public partial class Menu : Control
 
 		if (Input.GetVector("ui_left", "ui_right", "ui_up", "ui_down").Length() > SaveManager.Config.deadZone)
 		{
+			Runtime.Instance.IsUsingMouse = false;
 			if (Mathf.IsZeroApprox(cursorSelectionTimer))
 				UpdateSelection();
 			else
 				cursorSelectionTimer = Mathf.MoveToward(cursorSelectionTimer, 0, PhysicsManager.physicsDelta);
 
 			return;
+		}
+
+		if (Runtime.Instance.MouseScrollInput != 0)
+		{
+			if (Mathf.IsZeroApprox(cursorSelectionTimer))
+				UpdateSelection();
+			else
+				cursorSelectionTimer = Mathf.MoveToward(cursorSelectionTimer, 0, PhysicsManager.physicsDelta);
 		}
 
 		cursorSelectionTimer = 0;
@@ -237,6 +252,17 @@ public partial class Menu : Control
 
 	/// <summary> Wraps a selection around max and min selection </summary>
 	protected int WrapSelection(int currentSelection, int maxSelection, int minSelection)
+	{
+		if (currentSelection < minSelection)
+			currentSelection = maxSelection;
+		else if (currentSelection > maxSelection)
+			currentSelection = minSelection;
+
+		return currentSelection;
+	}
+
+	/// <summary> Wraps a selection around max and min selection </summary>
+	protected float WrapSelection(float currentSelection, float maxSelection, float minSelection)
 	{
 		if (currentSelection < minSelection)
 			currentSelection = maxSelection;

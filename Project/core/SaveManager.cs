@@ -1,4 +1,6 @@
 using System;
+
+//using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json.Serialization;
 using Godot;
@@ -26,6 +28,7 @@ public partial class SaveManager : Node
 		SaveDirectory = ProjectSettings.GlobalizePath(GetSaveDirectory());
 		MenuData = GameData.CreateDefaultData(); // Create a default game data object for the menu
 		SharedData = SharedGameData.CreateDefaultData();
+		TimeData = TimeAttackData.CreateDefaultData();
 
 		LoadConfig();
 		LoadGameData();
@@ -98,6 +101,14 @@ public partial class SaveManager : Node
 		Count
 	}
 
+	public enum MouseControlModeEnum
+	{
+		Disabled,
+		Absolute,
+		Relative,
+		Count
+	}
+
 	public enum JumpButtonModeEnum
 	{
 		Both,
@@ -165,6 +176,7 @@ public partial class SaveManager : Node
 		E3,
 		Count
 	}
+
 
 	public static readonly Vector2I[] WindowSizes =
 	[
@@ -268,6 +280,18 @@ public partial class SaveManager : Node
 		public float deadZone = .2f;
 		public ControllerType controllerType = ControllerType.Automatic;
 		public bool useHoldBreakMode = true;
+		public MouseControlModeEnum mouseControlMode = MouseControlModeEnum.Disabled;
+		public bool isMouseVerticalEnabled = true;
+		/// <summary> Mouse motion sensitivity. </summary>
+		public int mouseSensitivity = 100;
+		/// <summary> How much to ignore mouse controls in the center of the screen. </summary>
+		public int mouseDeadzone = 15;
+		/// <summary> How much counts as "max mouse movement." </summary>
+		public int mouseHorizontalRange = 80;
+		/// <summary> How much counts as "max mouse movement." </summary>
+		public int mouseVerticalRange = 80;
+		/// <summary> How much to offset the mouse inputs vertically. </summary>
+		public int mouseVerticalOffset = -10;
 		public JumpButtonModeEnum jumpButtonMode;
 		public int[] partyModeDevices = [0, 0, 0, 0];
 		public Dictionary inputConfiguration = [];
@@ -287,6 +311,8 @@ public partial class SaveManager : Node
 
 		public bool useQuickLoad;
 		public bool skipRepeatCutscenes; // Enable this to skip cutscenes when replaying missions
+		public int subtitleOpacity = 20;
+		public int cutsceneOpacity = 20;
 
 		/// <summary> Creates a dictionary based on config data. </summary>
 		public Dictionary ToDictionary()
@@ -329,6 +355,15 @@ public partial class SaveManager : Node
 				{ nameof(controllerType), (int)controllerType },
 				{ nameof(useHoldBreakMode), useHoldBreakMode },
 				{ nameof(jumpButtonMode), (int)jumpButtonMode },
+
+				{ nameof(mouseControlMode), (int)mouseControlMode },
+				{ nameof(isMouseVerticalEnabled), isMouseVerticalEnabled },
+				{ nameof(mouseSensitivity), mouseSensitivity },
+				{ nameof(mouseDeadzone), mouseDeadzone },
+				{ nameof(mouseHorizontalRange), mouseHorizontalRange },
+				{ nameof(mouseVerticalRange), mouseVerticalRange },
+				{ nameof(mouseVerticalOffset), mouseVerticalOffset },
+
 				{ nameof(partyModeDevices), partyModeDevices },
 				{ nameof(inputConfiguration), inputConfiguration },
 
@@ -345,7 +380,9 @@ public partial class SaveManager : Node
 				{ nameof(isUsingHorizontalSoulGauge), isUsingHorizontalSoulGauge },
 				{ nameof(isActionPromptsEnabled), isActionPromptsEnabled },
 
-				{ nameof(useQuickLoad), useQuickLoad }
+				{ nameof(useQuickLoad), useQuickLoad },
+				{ nameof(subtitleOpacity), subtitleOpacity},
+				{ nameof(cutsceneOpacity), cutsceneOpacity},
 			};
 		}
 
@@ -419,6 +456,22 @@ public partial class SaveManager : Node
 				useHoldBreakMode = (bool)var;
 			if (dictionary.TryGetValue(nameof(jumpButtonMode), out var))
 				jumpButtonMode = (JumpButtonModeEnum)(int)var;
+
+			if (dictionary.TryGetValue(nameof(mouseControlMode), out var))
+				mouseControlMode = (MouseControlModeEnum)(int)var;
+			if (dictionary.TryGetValue(nameof(isMouseVerticalEnabled), out var))
+				isMouseVerticalEnabled = (bool)var;
+			if (dictionary.TryGetValue(nameof(mouseSensitivity), out var))
+				mouseSensitivity = (int)var;
+			if (dictionary.TryGetValue(nameof(mouseDeadzone), out var))
+				mouseDeadzone = (int)var;
+			if (dictionary.TryGetValue(nameof(mouseHorizontalRange), out var))
+				mouseHorizontalRange = (int)var;
+			if (dictionary.TryGetValue(nameof(mouseVerticalRange), out var))
+				mouseVerticalRange = (int)var;
+			if (dictionary.TryGetValue(nameof(mouseVerticalOffset), out var))
+				mouseVerticalOffset = (int)var;
+
 			if (dictionary.TryGetValue(nameof(partyModeDevices), out var))
 				partyModeDevices = (int[])var;
 			if (dictionary.TryGetValue(nameof(inputConfiguration), out var))
@@ -450,6 +503,11 @@ public partial class SaveManager : Node
 				useQuickLoad = (bool)var;
 			else
 				Instance.IsQuickLoadAlertEnabled = true;
+			if (dictionary.TryGetValue(nameof(subtitleOpacity), out var))
+				subtitleOpacity = (int)var;
+			if (dictionary.TryGetValue(nameof(cutsceneOpacity), out var))
+				cutsceneOpacity = (int)var;
+
 		}
 	}
 
@@ -732,7 +790,7 @@ public partial class SaveManager : Node
 		Array<InputEvent> eventList = InputMap.ActionGetEvents(action); // Refresh event list
 
 		// Construct the mapping string
-		int[] mappingList = [(int)Key.None, (int)JoyAxis.Invalid, (int)JoyButton.Invalid];
+		int[] mappingList = [(int)Key.None, (int)JoyAxis.Invalid, (int)JoyButton.Invalid, (int)MouseButton.None];
 		int axisSign = 0;
 		foreach (var e in eventList)
 		{
@@ -749,9 +807,13 @@ public partial class SaveManager : Node
 			{
 				mappingList[2] = (int)button.ButtonIndex;
 			}
+			else if (e is InputEventMouseButton mouse)
+			{
+				mappingList[3] = (int)mouse.ButtonIndex;
+			}
 		}
 
-		return $"{mappingList[0]}, {mappingList[1]}, {mappingList[2]}, {axisSign}";
+		return $"{mappingList[0]}, {mappingList[1]}, {mappingList[2]}, {axisSign}, {mappingList[3]}";
 	}
 
 	public static void SaveInputAction(StringName action)
@@ -771,6 +833,14 @@ public partial class SaveManager : Node
 		ApplyInputMap();
 	}
 
+	private static int GetInputMap(string[] mappings, int index)
+	{
+		if (mappings.Length <= index || !mappings[index].IsValidInt())
+			return 0;
+
+		return mappings[index].ToInt();
+	}
+
 	/// <summary> Applies input map configuration. </summary>
 	public static void ApplyInputMap()
 	{
@@ -784,12 +854,20 @@ public partial class SaveManager : Node
 			if (!Config.inputConfiguration.ContainsKey(actions[i]))
 				continue;
 
-			// Mappings are ordered in a [key, axis, button] format.
+			// Mappings are ordered in a [key, axis, button, axisSign, mouseButton] format.
 			string[] mappings = ((string)Config.inputConfiguration[actions[i]]).Split(',');
-			Key key = (Key)mappings[0].ToInt();
-			JoyAxis axis = (JoyAxis)mappings[1].ToInt();
-			JoyButton button = (JoyButton)mappings[2].ToInt();
-			int axisSign = mappings[3].ToInt();
+			Key key = (Key)GetInputMap(mappings, 0);
+			JoyAxis axis = (JoyAxis)GetInputMap(mappings, 1);
+			JoyButton button = (JoyButton)GetInputMap(mappings, 2);
+			int axisSign = GetInputMap(mappings, 3);
+			MouseButton mouse = (MouseButton)GetInputMap(mappings, 4);
+
+			string actionString = actions[i].ToString();
+			actionString = actionString.Substring(actionString.Length - 1);
+			bool isPartyMapping = actionString.IsValidInt();
+			int device = isPartyMapping ? actionString.ToInt() - 1 : -1;
+			if (device != -1)
+				device = Config.partyModeDevices[device];
 
 			InputMap.ActionEraseEvents(actions[i]);
 			InputMap.ActionSetDeadzone(actions[i], Config.deadZone);
@@ -807,7 +885,8 @@ public partial class SaveManager : Node
 				InputMap.ActionAddEvent(actions[i], new InputEventJoypadMotion()
 				{
 					Axis = axis,
-					AxisValue = axisSign
+					AxisValue = axisSign,
+					Device = device,
 				});
 			}
 
@@ -815,7 +894,16 @@ public partial class SaveManager : Node
 			{
 				InputMap.ActionAddEvent(actions[i], new InputEventJoypadButton()
 				{
-					ButtonIndex = button
+					ButtonIndex = button,
+					Device = device,
+				});
+			}
+
+			if (mouse != MouseButton.None)
+			{
+				InputMap.ActionAddEvent(actions[i], new InputEventMouseButton()
+				{
+					ButtonIndex = mouse
 				});
 			}
 		}
@@ -858,7 +946,7 @@ public partial class SaveManager : Node
 	/// <summary> Current skill ring. </summary>
 	public readonly static SkillRing ActiveSkillRing = new();
 	/// <summary> List of all saves created. </summary>
-	public readonly static GameData[] GameSaveSlots = new GameData[SaveSlotCount];
+	public readonly static GameData[] GameSaveSlots = new GameData[SaveSlotCount + 1]; //Creating a fake save slot for Time Attack
 	/// <summary> Maximum number of save slots that can be created. </summary>
 	public const int SaveSlotCount = 9;
 
@@ -886,6 +974,7 @@ public partial class SaveManager : Node
 	public static void LoadGameData()
 	{
 		LoadSharedData();
+		LoadTimeAttackData();
 
 		for (int i = 0; i < GameSaveSlots.Length; i++)
 		{
@@ -1008,6 +1097,8 @@ public partial class SaveManager : Node
 
 		/// <summary> How much exp the player currently has. </summary>
 		public int exp;
+		/// <summary> Number of rings collected on this particular save file. </summary>
+		public int ringCount;
 		/// <summary> Total playtime, in seconds. </summary>
 		public float playTime;
 
@@ -1062,6 +1153,21 @@ public partial class SaveManager : Node
 				return;
 
 			stagesUnlocked.Add(levelID);
+		}
+
+		/// <summary> Updates the game data to ensure levels are unlocked properly, even with old save files. </summary>
+		public void UnlockStagesRecursively(LevelDataResource level)
+		{
+			// Base case--level was not cleared; don't do anything
+			if (levelData.GetClearStatus(level.LevelID) != LevelSaveData.LevelStatus.Cleared)
+				return;
+
+			// Recursive case; unlock child stages
+			for (int i = 0; i < level.UnlockStage.Count; i++)
+			{
+				UnlockStage(level.UnlockStage[i].LevelID);
+				UnlockStagesRecursively(level.UnlockStage[i]);
+			}
 		}
 
 		/// <summary> Checks if a world is unlocked. </summary>
@@ -1123,6 +1229,7 @@ public partial class SaveManager : Node
 				// Player stats
 				{ nameof(level), level },
 				{ nameof(exp), exp },
+				{ nameof(ringCount), ringCount },
 				{ nameof(playTime), Mathf.RoundToInt(playTime) },
 				{ nameof(equippedSkills), SaveSkills(equippedSkills) },
 				{ nameof(equippedAugments), SaveAugments(equippedAugments) },
@@ -1176,6 +1283,8 @@ public partial class SaveManager : Node
 				level = (int)var;
 			if (dictionary.TryGetValue(nameof(exp), out var))
 				exp = (int)var;
+			if (dictionary.TryGetValue(nameof(ringCount), out var))
+				ringCount = (int)var;
 			if (dictionary.TryGetValue(nameof(playTime), out var))
 				playTime = (float)var;
 
@@ -1498,6 +1607,175 @@ public partial class SaveManager : Node
 	}
 	#endregion
 
+	#region Time Attack Data
+	public static TimeAttackData TimeData;
+	private const string timeAttackFileName = "timeAttack.dat";
+
+	public class TimeAttackData
+	{
+		///<summary>The times stored for Standard runs</summary>
+		public Array<Array<float>> AnyP = [];
+		///<summary>The times stored for Main Mission runs</summary>
+		public Array<Array<float>> GoalP = [];
+		///<summary>The times stored for Boss Rush runs</summary>
+		public Array<Array<float>> BossRush = [];
+		///<summary>The times stored for single runs</summary>
+		public Dictionary<string, Array<float>> SingleRun;
+		///<summary>The times stored for the current run.</summary>
+		public Array<float> RunInProgress;
+		///<summary>The current run type</summary>
+		public TimeAttackManager.RunType CurrentRunType;
+		///<summary>The player's spot in the current run</summary>
+		public int CurrentPlacement;
+
+		///<summary>Adds the current run to the saved runs</summary>
+		public void AddCurrentRun()
+		{
+			switch (TimeAttackManager.Instance.CurrentRunType)
+			{
+				case TimeAttackManager.RunType.AnyP:
+					AnyP.Add(RunInProgress);
+					break;
+				case TimeAttackManager.RunType.GoalPercent:
+					GoalP.Add(RunInProgress);
+					break;
+				case TimeAttackManager.RunType.BossRush:
+					BossRush.Add(RunInProgress);
+					break;
+			}
+		}
+
+		public float CalculateTotalTime(Dictionary<string, float> times)
+		{
+			float total = 0f;
+
+			foreach (float time in times.Values)
+			{
+				total += time;
+			}
+
+			return total;
+		}
+
+		public void AddToRunInProgress(float time)
+		{
+			RunInProgress.Add(time);
+		}
+
+		///<summary>Is Time Attack unlocked?</summary>
+		public bool CheckUnlocked()
+		{
+			return SharedData.achievements.Contains("true hero"); //Checking if Alf Layla is defeated
+		}
+
+		public float GetBestTimeForLevel(LevelDataResource level)
+		{
+			if (SingleRun.ContainsKey(level.LevelID))
+			{
+				SingleRun[level.LevelID].Sort();
+				return SingleRun[level.LevelID][0];
+			}
+			else
+				return -1;
+		}
+
+		public bool HasRank(LevelDataResource level)
+		{
+			float bestTime = GetBestTimeForLevel(level);
+			if (bestTime <= level.GoldTimeTA && bestTime != -1)
+				return true;
+			else
+				return false;
+		}
+
+		public Dictionary ToDictionary()
+		{
+			return new()
+			{
+				{ nameof(AnyP), AnyP },
+				{ nameof(GoalP), GoalP},
+				{ nameof(BossRush), BossRush},
+				{ nameof(SingleRun), SingleRun},
+				{ nameof(RunInProgress), RunInProgress},
+				{ nameof(CurrentRunType), (int)CurrentRunType},
+				{ nameof(CurrentPlacement), CurrentPlacement}
+
+			};
+		}
+
+		public void FromDictionary(Dictionary dictionary)
+		{
+			if (dictionary.TryGetValue(nameof(AnyP), out Variant var))
+				AnyP = (Array<Array<float>>)var;
+			if (dictionary.TryGetValue(nameof(GoalP), out var))
+				GoalP = (Array<Array<float>>)var;
+			if (dictionary.TryGetValue(nameof(BossRush), out var))
+				BossRush = (Array<Array<float>>)var;
+			if (dictionary.TryGetValue(nameof(SingleRun), out var))
+				SingleRun = (Dictionary<string, Array<float>>)var;
+			if (dictionary.TryGetValue(nameof(RunInProgress), out var))
+				RunInProgress = (Array<float>)var;
+			if (dictionary.TryGetValue(nameof(CurrentRunType), out var))
+				CurrentRunType = (TimeAttackManager.RunType)(int)var;
+			if (dictionary.TryGetValue(nameof(CurrentPlacement), out var))
+				CurrentPlacement = (int)var;
+
+		}
+
+		public static TimeAttackData CreateDefaultData()
+		{
+			TimeAttackData data = new()
+			{
+				AnyP = [],
+				GoalP = [],
+				BossRush = [],
+				SingleRun = [],
+				RunInProgress = []
+
+			};
+			return data;
+		}
+	}
+
+	/// <summary> Attempts to load Time Attack data from file. </summary>
+	public static void LoadTimeAttackData()
+	{
+		string dataFile = SaveDirectory.PathJoin(timeAttackFileName);
+		FileAccess file = FileAccess.Open(dataFile, FileAccess.ModeFlags.Read);
+
+		try
+		{
+			if (file.GetError() == Error.Ok)
+			{
+				// Attempt to load.
+				Dictionary d = (Dictionary)Json.ParseString(file.GetAsText());
+				TimeData.FromDictionary(d);
+				file.Close();
+			}
+		}
+		catch // Load Default settings
+		{
+			TimeData = TimeAttackData.CreateDefaultData();
+		}
+	}
+
+	public static void SaveTimeAttackData()
+	{
+		if (!DirAccess.DirExistsAbsolute(SaveDirectory))
+			DirAccess.MakeDirRecursiveAbsolute(SaveDirectory);
+
+		string dataFile = SaveDirectory.PathJoin(timeAttackFileName);
+		FileAccess file = FileAccess.Open(dataFile, FileAccess.ModeFlags.Write);
+		file.StoreString(Json.Stringify(TimeData.ToDictionary(), "\t"));
+		file.Close();
+
+		file = FileAccess.Open(SaveLocationFile, FileAccess.ModeFlags.Write);
+		file.StoreString(SaveDirectory);
+		file.Close();
+	}
+
+	#endregion
+
 	public class LevelSaveData
 	{
 		/// <summary> Dictionaries for each individual level's data. </summary>
@@ -1525,11 +1803,7 @@ public partial class SaveManager : Node
 				BronzeMedalCount++;
 		}
 
-		private void IncrementFireSoulCounter()
-		{
-			// TODO Check soul collector achievement
-			FireSoulCount++;
-		}
+		private void IncrementFireSoulCounter() => FireSoulCount++;
 
 		private readonly string FireSoulKey = "fire_soul";
 		/// <summary> Returns whether a particular fire soul has been collected or not. </summary>

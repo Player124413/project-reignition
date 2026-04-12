@@ -176,7 +176,7 @@ public partial class NotificationManager : Control
 
 	private void EnableProcessing() => isProcessing = true;
 
-	private void UpdateCounters()
+	public void UpdateCounters()
 	{
 		startingSkillCount = CalculateUnlockedSkillCount();
 		startingUnlockedPageCount = CalculateUnlockedSpecialBookPages();
@@ -211,7 +211,6 @@ public partial class NotificationManager : Control
 	}
 
 	/// <summary> Returns the number of levels that have just been unlocked through unorthodox means. </summary>
-	/// <returns></returns>
 	public int CalculateUnlockedSpecialLevelData()
 	{
 		int count = 0;

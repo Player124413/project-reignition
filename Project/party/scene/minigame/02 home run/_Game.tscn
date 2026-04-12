@@ -1,0 +1,53 @@
+[gd_scene load_steps=7 format=3 uid="uid://lilinlwbmj5f"]
+
+[ext_resource type="PackedScene" uid="uid://dsbufs8tjchk7" path="res://party/scene/minigame/00 base/MinigameBase.tscn" id="1_cn0q6"]
+[ext_resource type="AnimationLibrary" uid="uid://kjq242is18kp" path="res://party/scene/minigame/02 home run/animation/_Library.glb" id="2_4bxo6"]
+[ext_resource type="PackedScene" uid="uid://dlxu4m3m50bs8" path="res://party/scene/minigame/02 home run/Environment.tscn" id="3_atj77"]
+[ext_resource type="PackedScene" uid="uid://y4jam2px1kdf" path="res://party/scene/minigame/02 home run/DemoStation.tscn" id="4_amw07"]
+[ext_resource type="Resource" uid="uid://lo4hf3o42ggq" path="res://party/resource/minigame/02HomeRun.tres" id="4_cn0q6"]
+[ext_resource type="PackedScene" uid="uid://b56otdkeqma2r" path="res://party/scene/minigame/02 home run/PlayerStation.tscn" id="5_atj77"]
+
+[node name="HomeRun" type="Node3D"]
+
+[node name="Environment" parent="." instance=ExtResource("3_atj77")]
+
+[node name="DemoStation" parent="." instance=ExtResource("4_amw07")]
+
+[node name="ResultsCamera" type="Camera3D" parent="."]
+transform = Transform3D(0.9848078, -0.015134436, 0.17298739, 2.2265005e-09, 0.9961947, 0.08715574, -0.17364818, -0.08583164, 0.98106027, 10, 14, 50)
+fov = 50.0
+far = 8000.0
+
+[node name="SplitscreenMinigame" parent="." node_paths=PackedStringArray("results_camera") instance=ExtResource("1_cn0q6")]
+minigame_resource = ExtResource("4_cn0q6")
+screen_mode = 1
+demo_transition_mode = 1
+anim_library = ExtResource("2_4bxo6")
+results_camera = NodePath("../ResultsCamera")
+
+[node name="Environment" parent="SplitscreenMinigame/SplitscreenLayout/GridContainer/Player1/SubViewport" index="0" instance=ExtResource("3_atj77")]
+
+[node name="BattingStation" parent="SplitscreenMinigame/SplitscreenLayout/GridContainer/Player1/SubViewport" index="1" instance=ExtResource("5_atj77")]
+
+[node name="Environment" parent="SplitscreenMinigame/SplitscreenLayout/GridContainer/Player2/SubViewport" index="0" instance=ExtResource("3_atj77")]
+
+[node name="BattingStation" parent="SplitscreenMinigame/SplitscreenLayout/GridContainer/Player2/SubViewport" index="1" instance=ExtResource("5_atj77")]
+player_index = 1
+
+[node name="Environment" parent="SplitscreenMinigame/SplitscreenLayout/GridContainer/Player3/SubViewport" index="0" instance=ExtResource("3_atj77")]
+
+[node name="BattingStation" parent="SplitscreenMinigame/SplitscreenLayout/GridContainer/Player3/SubViewport" index="1" instance=ExtResource("5_atj77")]
+player_index = 2
+
+[node name="Environment" parent="SplitscreenMinigame/SplitscreenLayout/GridContainer/Player4/SubViewport" index="0" instance=ExtResource("3_atj77")]
+
+[node name="BattingStation" parent="SplitscreenMinigame/SplitscreenLayout/GridContainer/Player4/SubViewport" index="1" instance=ExtResource("5_atj77")]
+player_index = 3
+
+[node name="ResultsLocation" parent="SplitscreenMinigame" index="3"]
+transform = Transform3D(0.98480767, 0, 0.17364816, 0, 1, 0, -0.17364816, 0, 0.98480767, 0, 0, 0)
+
+[connection signal="demo_finished" from="DemoStation" to="SplitscreenMinigame" method="request_minigame_start"]
+[connection signal="peers_loaded" from="SplitscreenMinigame" to="DemoStation" method="pitch_ball"]
+
+[editable path="SplitscreenMinigame"]

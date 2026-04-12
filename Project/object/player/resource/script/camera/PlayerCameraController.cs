@@ -381,7 +381,7 @@ public partial class PlayerCameraController : Node3D
 	{
 		Vector2 targetRotation = LookaroundAmount;
 
-		if (!isFreeCamActive)
+		if (!IsFreeCamActive)
 		{
 			if (!Player.Controller.CameraAxis.IsZeroApprox() && !StageSettings.Instance.IsControlTest || !Player.IsLaunching)
 			{
@@ -398,7 +398,7 @@ public partial class PlayerCameraController : Node3D
 
 	private Vector2 GetLookaroundCameraInput()
 	{
-		if (Player.Controller.CameraAxis.IsZeroApprox() || isFreeCamActive)
+		if (Player.Controller.CameraAxis.IsZeroApprox() || IsFreeCamActive)
 			return Vector2.Zero;
 
 		if (StageSettings.Instance.IsControlTest && Player.IsLaunching)
@@ -519,7 +519,7 @@ public partial class PlayerCameraController : Node3D
 
 		cameraTransform = cameraTransform.RotatedLocal(Vector3.Right, CalculateLockonAngle(cameraTransform.Origin, lockonPitchReferenceAngle));
 
-		if (!isFreeCamActive || !isFreeCamLocked) // Only update camera transform when free cam isn't locked
+		if (!IsFreeCamActive || !isFreeCamLocked) // Only update camera transform when free cam isn't locked
 		{
 			cameraRoot.GlobalTransform = cameraTransform; // Update transform
 
@@ -1135,7 +1135,7 @@ public partial class PlayerCameraController : Node3D
 	private Vector3 freecamMovementVector;
 	private Vector3 freecamVelocity;
 
-	private bool isFreeCamActive;
+	public bool IsFreeCamActive { get; private set; }
 	private bool isFreeCamRotating;
 	private bool isFreeCamTilting;
 
@@ -1155,7 +1155,7 @@ public partial class PlayerCameraController : Node3D
 		DebugManager.Instance.RedrawCamData(FreeCamRoot.GlobalPosition, freeCamRotation);
 		if (isFreeCamLocked)
 			UpdateFreeCamData(freeCamPosition, freeCamRotation);
-		else if (isFreeCamActive)
+		else if (IsFreeCamActive)
 			UpdateMotionBlur();
 	}
 
@@ -1168,7 +1168,7 @@ public partial class PlayerCameraController : Node3D
 
 	private void ToggleFreeCam()
 	{
-		if (isFreeCamActive)
+		if (IsFreeCamActive)
 		{
 			Camera.Rotation = FreeCamRoot.GlobalRotation.RemoveVertical();
 			FreeCamRoot.GlobalRotation = new(0, FreeCamRoot.GlobalRotation.Y, 0);
@@ -1176,7 +1176,7 @@ public partial class PlayerCameraController : Node3D
 		else
 		{
 			isFreeCamLocked = false;
-			isFreeCamActive = isFreeCamRotating = false;
+			IsFreeCamActive = isFreeCamRotating = false;
 			Camera.Transform = Transform3D.Identity;
 			FreeCamRoot.Transform = Transform3D.Identity;
 		}
@@ -1184,27 +1184,31 @@ public partial class PlayerCameraController : Node3D
 
 	private void UpdateFreeCamState()
 	{
-		bool wasFreeCamActive = isFreeCamActive;
+		bool wasFreeCamActive = IsFreeCamActive;
 
 		if (Input.IsActionJustPressed("debug_free_cam_reset"))
-			isFreeCamActive = false;
+			IsFreeCamActive = false;
 
-		isFreeCamRotating = Input.IsMouseButtonPressed(MouseButton.Right);
-		isFreeCamTilting = Input.IsMouseButtonPressed(MouseButton.Middle);
-		if (isFreeCamRotating || isFreeCamTilting)
+		if (SaveManager.Config.mouseControlMode == SaveManager.MouseControlModeEnum.Disabled)
 		{
-			isFreeCamActive = true;
-			Input.MouseMode = Input.MouseModeEnum.Captured;
-		}
-		else
-		{
-			Input.MouseMode = Input.MouseModeEnum.Visible;
+			isFreeCamRotating = Input.IsMouseButtonPressed(MouseButton.Right);
+			isFreeCamTilting = Input.IsMouseButtonPressed(MouseButton.Middle);
+
+			if (isFreeCamRotating || isFreeCamTilting)
+			{
+				IsFreeCamActive = true;
+				Input.MouseMode = Input.MouseModeEnum.Captured;
+			}
+			else
+			{
+				Input.MouseMode = Input.MouseModeEnum.Visible;
+			}
 		}
 
-		if (isFreeCamActive != wasFreeCamActive)
+		if (IsFreeCamActive != wasFreeCamActive)
 			ToggleFreeCam();
 
-		if (!isFreeCamActive) return;
+		if (!IsFreeCamActive) return;
 
 		if (Input.IsActionJustPressed("debug_free_cam_lock"))
 		{
@@ -1217,7 +1221,7 @@ public partial class PlayerCameraController : Node3D
 	private const float FreeCamPositionSmoothing = .3f;
 	private void UpdateFreeCamMovement()
 	{
-		if (!isFreeCamActive)
+		if (!IsFreeCamActive)
 			return;
 
 		float targetMoveSpeed = freecamMovespeed;
@@ -1274,7 +1278,7 @@ public partial class PlayerCameraController : Node3D
 
 	public void UpdateFreeCamData(Vector3 position, Vector3 rotation)
 	{
-		if (!isFreeCamActive) return;
+		if (!IsFreeCamActive) return;
 
 		FreeCamRoot.GlobalPosition = position;
 		FreeCamRoot.GlobalRotationDegrees = Vector3.Up * rotation.Y;
@@ -1283,7 +1287,7 @@ public partial class PlayerCameraController : Node3D
 
 	private void ReceiveInput(InputEvent e)
 	{
-		if (!isFreeCamActive) return;
+		if (!IsFreeCamActive) return;
 
 		if (e is InputEventMouseMotion)
 		{

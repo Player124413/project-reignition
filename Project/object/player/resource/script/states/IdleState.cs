@@ -41,8 +41,11 @@ public partial class IdleState : PlayerState
 			if (Player.IsBackflipInputValid())
 				return backflipState;
 
-			if (SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.ChargeJump))
+			if (SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.ChargeJump) &&
+				!Player.IsLockoutDisablingAction(LockoutResource.ActionFlags.FullJump))
+			{
 				return crouchState;
+			}
 
 			return jumpState;
 		}
@@ -85,20 +88,24 @@ public partial class IdleState : PlayerState
 			if (Player.IsLockoutActive && Player.ActiveLockoutData.overrideSpeed && !Mathf.IsZeroApprox(Player.ActiveLockoutData.speedRatio))
 				return runState;
 
+			bool hasInputStrength = !Mathf.IsZeroApprox(Player.Controller.GetInputStrength());
 			if (!Player.Controller.IsBrakeHeld() &&
-				(SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.Autorun) || !Mathf.IsZeroApprox(Player.Controller.GetInputStrength())))
+				(SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.Autorun) || hasInputStrength))
 			{
 				if (Player.Controller.GetHoldingDistance(Player.Controller.GetTargetInputAngle(), Player.PathFollower.ForwardAngle) >= 1.0f &&
-					!SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.FreeRoam))
+					hasInputStrength && !SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.FreeRoam))
 				{
 					return backstepState;
 				}
 
 				return runState;
 			}
+		}
 
-			if (!Mathf.IsZeroApprox(Player.MoveSpeed))
-				return runState;
+		if (!Mathf.IsZeroApprox(Player.MoveSpeed) ||
+			(Player.Controller.IsStrafeModeActive && !Mathf.IsZeroApprox(Player.StrafeSpeed)))
+		{
+			return runState;
 		}
 
 		Player.Animator.IdleAnimation();

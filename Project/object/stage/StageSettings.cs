@@ -52,7 +52,7 @@ public partial class StageSettings : Node3D
 
 		// Update gameplay sfx audio channel
 		SoundManager.SetAudioBusVolume(SoundManager.AudioBuses.GameSfx, IsControlTest ? 100 : 0);
-		SoundManager.instance.SetStageMusicVolume(0f);
+		SoundManager.instance?.SetStageMusicVolume(0f);
 
 		if (IsControlTest)
 		{
@@ -69,6 +69,7 @@ public partial class StageSettings : Node3D
 		EquipRequiredSkill();
 	}
 
+	private bool wasSkillForceEquipped;
 	private SkillKey conflictingSkill = SkillKey.Count;
 	private int conflictingSkillIndex = 0;
 	/// <summary> For Lost Prologue: Force equip skills needed for tutorials. </summary>
@@ -85,13 +86,14 @@ public partial class StageSettings : Node3D
 			SaveManager.ActiveSkillRing.ForceUnequipSkill(conflictingSkill, conflictingSkillIndex);
 		}
 
-		GD.Print(SaveManager.ActiveSkillRing.EquipSkill(Data.RequiredSkill.Key, Data.RequiredSkill.AugmentIndex, true));
+		wasSkillForceEquipped = true;
+		SaveManager.ActiveSkillRing.EquipSkill(Data.RequiredSkill.Key, Data.RequiredSkill.AugmentIndex, true);
 	}
 
 	/// <summary> Restores skills back to whatever we started with. </summary>
 	private void RevertRequiredSkill()
 	{
-		if (conflictingSkill == SkillKey.Count) // Nothing to revert to.
+		if (!wasSkillForceEquipped) // Nothing to revert to.
 			return;
 
 		SaveManager.ActiveSkillRing.UnequipSkill(Data.RequiredSkill.Key, Data.RequiredSkill.AugmentIndex);
@@ -146,7 +148,11 @@ public partial class StageSettings : Node3D
 		GD.Print("selected music: " + SaveManager.ActiveGameData.selectedMusic);
 	}
 
-	public override void _ExitTree() => EmitSignal(SignalName.Unloaded);
+	public override void _ExitTree()
+	{
+		RevertRequiredSkill();
+		EmitSignal(SignalName.Unloaded);
+	}
 
 	public void UpdateQualitySettings()
 	{
@@ -278,31 +284,42 @@ public partial class StageSettings : Node3D
 		int rank = 0; // DEFAULT - No rank
 		float completionTime = Mathf.RoundToInt(CurrentTime * 100f) * 0.01f; // Round to nearest millisecond
 
-		if (Data.SkipScore)
+		if (TimeAttackManager.Instance.IsRunActive)
 		{
-			if (completionTime <= Data.GoldTime)
+			if (completionTime <= Data.GoldTimeTA)
+			{
 				rank = 3;
-			else if (completionTime <= Data.SilverTime)
-				rank = 2;
-			else if (completionTime <= Data.BronzeTime)
-				rank = 1;
+			}
 		}
 		else
 		{
-			int score = TotalScore;
-			if (preCountBonuses)
-				score += BonusManager.instance.QueuedScore;
+			if (Data.SkipScore)
+			{
+				if (completionTime <= Data.GoldTime)
+					rank = 3;
+				else if (completionTime <= Data.SilverTime)
+					rank = 2;
+				else if (completionTime <= Data.BronzeTime)
+					rank = 1;
+			}
+			else
+			{
+				int score = TotalScore;
+				if (preCountBonuses)
+					score += BonusManager.instance.QueuedScore;
 
-			if (completionTime <= Data.GoldTime && score >= Data.Score) // Perfect run
-				rank = 3;
-			else if (completionTime <= Data.SilverTime && score >= Data.SilverScore) // Silver score reqs are always 3/4 of gold
+				if (completionTime <= Data.GoldTime && score >= Data.Score) // Perfect run
+					rank = 3;
+				else if (completionTime <= Data.SilverTime && score >= Data.SilverScore) // Silver score reqs are always 3/4 of gold
+					rank = 2;
+				else if (completionTime <= Data.BronzeTime || score >= Data.SilverScore) // Bronze is easy to get
+					rank = 1;
+			}
+
+			if (rank >= 3 && RespawnCount != 0) // Limit to silver if a respawn occured
 				rank = 2;
-			else if (completionTime <= Data.BronzeTime || score >= Data.SilverScore) // Bronze is easy to get
-				rank = 1;
 		}
 
-		if (rank >= 3 && RespawnCount != 0) // Limit to silver if a respawn occured
-			rank = 2;
 
 		return rank;
 	}
@@ -670,8 +687,6 @@ public partial class StageSettings : Node3D
 
 		EmitSignal(SignalName.LevelCompleted);
 		EmitSignal(wasSuccessful ? SignalName.LevelSuccess : SignalName.LevelFailed);
-
-		RevertRequiredSkill();
 
 		// Process save data after emitting level completion
 		CalculateTechnicalBonus(); // Recalculate technical bonus
