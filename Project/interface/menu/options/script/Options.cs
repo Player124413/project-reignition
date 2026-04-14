@@ -184,7 +184,7 @@ public partial class Options : Menu
 
 	protected override void Confirm()
 	{
-		if (isCursorHidden)
+		if (isCursorHidden && currentSubmenu != Submenus.ResetSettings && currentSubmenu != Submenus.ResetControls)
 		{
 			if (!Runtime.Instance.IsUsingMouse)
 				UpdateVerticalSelection();
