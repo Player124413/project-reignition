@@ -70,6 +70,13 @@ public partial class MainMenu : Menu
 		}
 
 		base.EnableProcessing();
+		GD.Print("Processing!");
+	}
+
+	public override void DisableProcessing()
+	{
+		base.DisableProcessing();
+		GD.Print("Not Processing!");
 	}
 
 	private void FinishShowingMenu()
