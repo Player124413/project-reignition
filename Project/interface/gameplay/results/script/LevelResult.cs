@@ -164,8 +164,9 @@ public partial class LevelResult : Control
 		{
 			if (TimeAttackManager.Instance.CurrentRunType != TimeAttackManager.RunType.SingleRun)
 			{
-				TimeAttackManager.Instance.AddTime(Stage.CurrentTime);
+
 				timeTotal.Text = ExtensionMethods.FormatTime(TimeAttackManager.Instance.GetTotalRunTime() + Stage.CurrentTime);
+				TimeAttackManager.Instance.AddTime(Stage.CurrentTime);
 
 				if (TimeAttackManager.Instance.IsLastLevel())
 					SaveManager.TimeData.AddCurrentRun();
