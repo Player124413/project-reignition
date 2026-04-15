@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=3 uid="uid://cohlvhd08ytco"]
+[gd_scene load_steps=22 format=3 uid="uid://cohlvhd08ytco"]
 
 [ext_resource type="Texture2D" uid="uid://bmwc4e25fnuqd" path="res://interface/gameplay/results/texture/result atlas.png" id="1_0o4mk"]
 [ext_resource type="Texture2D" uid="uid://cno436k6axxi5" path="res://interface/menu/main/texture/background.png" id="1_7udyn"]
@@ -7,6 +7,10 @@
 [ext_resource type="PackedScene" uid="uid://b04nx00ecsmme" path="res://interface/menu/time attack/TimeAttackResultsOption.tscn" id="2_woix1"]
 [ext_resource type="Texture2D" uid="uid://c2hlq1r5rff2u" path="res://interface/menu/skill select/texture/cursor.png" id="4_n6pm5"]
 [ext_resource type="Texture2D" uid="uid://dx4vxnhtgd13t" path="res://interface/menu/common/common menu atlas.png" id="5_woix1"]
+[ext_resource type="Script" uid="uid://cj76gvi7tbku6" path="res://sound/script/BGMPlayer.cs" id="8_cwq8c"]
+[ext_resource type="Resource" uid="uid://b3nly8ltpmtd2" path="res://resource/bgm/menu/time attack results.tres" id="9_7ca2l"]
+[ext_resource type="AudioStream" uid="uid://cl54rftw5aiyf" path="res://sound/sfx/system/menu cancel.wav" id="10_yi44n"]
+[ext_resource type="AudioStream" uid="uid://huxte6rhwx58" path="res://sound/sfx/system/menu selection.wav" id="11_6y6eg"]
 
 [sub_resource type="Animation" id="Animation_8efxu"]
 length = 0.001
@@ -177,10 +181,36 @@ tracks/8/keys = {
 "update": 0,
 "values": [Color(1, 1, 1, 0)]
 }
+tracks/9/type = "value"
+tracks/9/imported = false
+tracks/9/enabled = true
+tracks/9/path = NodePath("BackgroundBox:scale")
+tracks/9/interp = 1
+tracks/9/loop_wrap = true
+tracks/9/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(1, 1)]
+}
 
 [sub_resource type="Animation" id="Animation_nvlrs"]
 resource_name = "select"
 step = 0.1
+tracks/0/type = "method"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("SFX/Select")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [0.0],
+"method": &"play"
+}]
+}
 
 [sub_resource type="Animation" id="Animation_vcpj2"]
 resource_name = "show"
@@ -328,15 +358,46 @@ tracks/10/keys = {
 "update": 0,
 "values": [Color(1, 1, 1, 0), Color(1, 1, 1, 1)]
 }
+tracks/11/type = "value"
+tracks/11/imported = false
+tracks/11/enabled = true
+tracks/11/path = NodePath("BackgroundBox:scale")
+tracks/11/interp = 1
+tracks/11/loop_wrap = true
+tracks/11/keys = {
+"times": PackedFloat32Array(0, 0.5, 1),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector2(1, 1e-05), Vector2(1, 0), Vector2(1, 1)]
+}
+
+[sub_resource type="Animation" id="Animation_yi44n"]
+resource_name = "hide"
+step = 0.1
+tracks/0/type = "method"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("SFX/Cancel")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [0.0],
+"method": &"play"
+}]
+}
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_7udyn"]
 _data = {
 &"RESET": SubResource("Animation_ob4jm"),
+&"hide": SubResource("Animation_yi44n"),
 &"select": SubResource("Animation_nvlrs"),
 &"show": SubResource("Animation_vcpj2")
 }
 
-[node name="TimeAttackResults" type="Control" node_paths=PackedStringArray("cursor", "options", "scrollbar", "totalTimeLabel", "animator")]
+[node name="TimeAttackResults" type="Control" node_paths=PackedStringArray("cursor", "options", "scrollbar", "totalTimeLabel", "bgm", "animator")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -349,11 +410,11 @@ options = NodePath("Clip/Options")
 scrollbar = NodePath("Scrollbar/ScrollPosition")
 totalTimeLabel = NodePath("HBoxContainer/TotalTime2")
 resultOptionScene = ExtResource("2_woix1")
+bgm = NodePath("BGM")
 animator = NodePath("AnimationPlayer")
 isProcessing = true
 
 [node name="Background" type="TextureRect" parent="."]
-modulate = Color(0.5743278, 0.5743278, 0.5743278, 1)
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -363,6 +424,26 @@ grow_vertical = 2
 texture = ExtResource("1_7udyn")
 expand_mode = 2
 stretch_mode = 6
+
+[node name="BackgroundBox" type="NinePatchRect" parent="."]
+self_modulate = Color(1, 1, 1, 0.588235)
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 377.0
+offset_top = 275.0
+offset_right = -388.0
+offset_bottom = -175.0
+grow_horizontal = 2
+grow_vertical = 2
+pivot_offset = Vector2(575, 206)
+texture = ExtResource("5_woix1")
+region_rect = Rect2(128, 352, 96, 96)
+patch_margin_left = 32
+patch_margin_top = 32
+patch_margin_right = 32
+patch_margin_bottom = 32
 
 [node name="Cursor" type="NinePatchRect" parent="."]
 modulate = Color(1, 1, 1, 0)
@@ -478,13 +559,14 @@ anchor_left = 0.5
 anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
-offset_left = -535.5
+offset_left = -955.0
 offset_top = -137.0
-offset_right = 535.5
+offset_right = 956.0
 offset_bottom = -61.0
 grow_horizontal = 2
 grow_vertical = 0
 theme_override_constants/separation = 39
+alignment = 1
 
 [node name="TotalTime" type="Label" parent="HBoxContainer"]
 layout_mode = 2
@@ -513,3 +595,18 @@ uppercase = true
 libraries = {
 &"": SubResource("AnimationLibrary_7udyn")
 }
+
+[node name="BGM" type="AudioStreamPlayer" parent="."]
+bus = &"BGM"
+script = ExtResource("8_cwq8c")
+bgmResource = ExtResource("9_7ca2l")
+
+[node name="SFX" type="Node" parent="."]
+
+[node name="Cancel" type="AudioStreamPlayer" parent="SFX"]
+stream = ExtResource("10_yi44n")
+bus = &"SFX"
+
+[node name="Select" type="AudioStreamPlayer" parent="SFX"]
+stream = ExtResource("11_6y6eg")
+bus = &"SFX"

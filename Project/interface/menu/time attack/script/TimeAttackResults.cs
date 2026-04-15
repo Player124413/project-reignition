@@ -62,10 +62,14 @@ public partial class TimeAttackResults : Menu
 		UpdateListPosition(0);
 
 		animator.Play("show");
+
+		if (!bgm.Playing)
+			bgm.Play();
 	}
 
 	protected override void Confirm()
 	{
+		animator.Play("hide");
 		Cancel();
 	}
 
