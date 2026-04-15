@@ -1,7 +1,8 @@
-[gd_scene load_steps=4 format=3 uid="uid://u5so6ulpdpsk"]
+[gd_scene load_steps=8 format=3 uid="uid://u5so6ulpdpsk"]
 
 [ext_resource type="PackedScene" uid="uid://bfoxkau0x3c6f" path="res://area/7 night palace/act 1/environment/model/01Start.gltf" id="1_k2ook"]
 [ext_resource type="Script" uid="uid://kvlmbv66orqt" path="res://object/trigger/modules/CullingTrigger.cs" id="2_mqx11"]
+[ext_resource type="PackedScene" uid="uid://wnnthoykndrj" path="res://effect/particle/Lantern.tscn" id="3_74878"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_3hdd6"]
 resource_name = "Light Emission"
@@ -12,6 +13,22 @@ specular_mode = 2
 disable_fog = true
 vertex_color_use_as_albedo = true
 albedo_color = Color(2.844042, 2.3604105, 1.5250467, 1)
+
+[sub_resource type="Gradient" id="Gradient_rfsfu"]
+offsets = PackedFloat32Array(0, 0.19174, 0.79941, 1)
+colors = PackedColorArray(0, 0, 0, 1, 1, 1, 1, 1, 0.257962, 0.257962, 0.257962, 1, 0, 0, 0, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_qvt04"]
+gradient = SubResource("Gradient_rfsfu")
+width = 64
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_74878"]
+gravity = Vector3(0, 0, 0)
+color = Color(0.7969027, 0.6292633, 1.1638972, 1)
+color_ramp = SubResource("GradientTexture1D_qvt04")
+anim_speed_min = 1.0
+anim_speed_max = 1.0
+anim_offset_max = 1.0
 
 [node name="01Start" instance=ExtResource("1_k2ook")]
 script = ExtResource("2_mqx11")
@@ -238,3 +255,55 @@ distance_fade_shadow = 0.0
 distance_fade_length = 20.0
 omni_range = 10.0
 omni_attenuation = 0.0
+
+[node name="LanternsLeft" type="Node3D" parent="." index="34"]
+
+[node name="Lantern1" parent="LanternsLeft" index="0" instance=ExtResource("3_74878")]
+transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, -18, 8, 16.9)
+process_material = SubResource("ParticleProcessMaterial_74878")
+
+[node name="Lantern2" parent="LanternsLeft" index="1" instance=ExtResource("3_74878")]
+transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, -21.7, 8, 11.299999)
+process_material = SubResource("ParticleProcessMaterial_74878")
+
+[node name="Lantern3" parent="LanternsLeft" index="2" instance=ExtResource("3_74878")]
+transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, -23.1, 8, -0.59999996)
+process_material = SubResource("ParticleProcessMaterial_74878")
+
+[node name="Lantern4" parent="LanternsLeft" index="3" instance=ExtResource("3_74878")]
+transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, -23.1, 8, -9.900001)
+process_material = SubResource("ParticleProcessMaterial_74878")
+
+[node name="Lantern5" parent="LanternsLeft" index="4" instance=ExtResource("3_74878")]
+transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, -23.1, 8, -19.000002)
+process_material = SubResource("ParticleProcessMaterial_74878")
+
+[node name="Lantern6" parent="LanternsLeft" index="5" instance=ExtResource("3_74878")]
+transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, -23.1, 8, -28.000002)
+process_material = SubResource("ParticleProcessMaterial_74878")
+
+[node name="LanternsRight" type="Node3D" parent="." index="35"]
+
+[node name="Lantern1" parent="LanternsRight" index="0" instance=ExtResource("3_74878")]
+transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 18, 8, 16.9)
+process_material = SubResource("ParticleProcessMaterial_74878")
+
+[node name="Lantern2" parent="LanternsRight" index="1" instance=ExtResource("3_74878")]
+transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 21.7, 8, 11.3)
+process_material = SubResource("ParticleProcessMaterial_74878")
+
+[node name="Lantern3" parent="LanternsRight" index="2" instance=ExtResource("3_74878")]
+transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 23.1, 8, -0.6)
+process_material = SubResource("ParticleProcessMaterial_74878")
+
+[node name="Lantern4" parent="LanternsRight" index="3" instance=ExtResource("3_74878")]
+transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 23.1, 8, -9.900001)
+process_material = SubResource("ParticleProcessMaterial_74878")
+
+[node name="Lantern5" parent="LanternsRight" index="4" instance=ExtResource("3_74878")]
+transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 23.1, 8, -19.000002)
+process_material = SubResource("ParticleProcessMaterial_74878")
+
+[node name="Lantern6" parent="LanternsRight" index="5" instance=ExtResource("3_74878")]
+transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 23.1, 8, -28.000002)
+process_material = SubResource("ParticleProcessMaterial_74878")
