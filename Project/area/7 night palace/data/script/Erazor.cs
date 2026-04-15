@@ -162,6 +162,12 @@ public partial class Erazor : Node3D
 		GlobalTransform = Player.GlobalTransform;
 		ResetPhysicsInterpolation();
 
+		if (SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.Darkspine))
+		{
+			StartBattle();
+			return;
+		}
+
 		animationTree.Set(IntroductionTrigger, (int)AnimationNodeOneShot.OneShotRequest.Fire);
 		cutsceneCamera.Activate();
 		Interface.PauseMenu.AllowInputs = false;
@@ -234,6 +240,14 @@ public partial class Erazor : Node3D
 		BonusManager.instance.QueueBonus(new(BonusType.Boss, 1000));
 		EmitSignal(SignalName.CutsceneStarted);
 	}
+
+	/// <summary> Special cutscene skip for darkspine sonic. Called from animation. </summary>
+	private void DarkspineSkipDefeat()
+	{
+		if (SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.Darkspine))
+			FinishDefeat();
+	}
+
 
 	private void FinishDefeat()
 	{
@@ -318,8 +332,6 @@ public partial class Erazor : Node3D
 		else
 			currentHealth -= Player.AttackState == PlayerController.AttackStates.Strong ? 2 : 1;
 
-		GD.Print($"Erazor's Health is now {currentHealth}");
-
 		if (currentHealth <= 0)
 		{
 			StartFinalBlow();
@@ -351,8 +363,6 @@ public partial class Erazor : Node3D
 			// Advance Phase
 			currentAttackPatternIndex++;
 			currentCharacterIndex = 0;
-
-			GD.Print($"Advanced Phase to {currentAttackPatternIndex}.");
 		}
 	}
 
@@ -457,7 +467,6 @@ public partial class Erazor : Node3D
 	private void ProcessAttackPattern()
 	{
 		currentCharacter = attackPatterns[currentAttackPatternIndex][currentCharacterIndex];
-		GD.Print("Processing character " + currentCharacter);
 
 		if (currentCharacter == 'd')
 		{
