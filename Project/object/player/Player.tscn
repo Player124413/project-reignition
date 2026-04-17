@@ -1099,31 +1099,56 @@ script/source = "extends Node3D
 
 @onready var ray: RayCast3D = $ShadowRay
 @onready var decal: Decal = $BlobShadow
+@onready var animator_root: Node3D = get_parent()
+@onready var player: CharacterBody3D = get_parent().get_parent()
 
-const SHADOW_OFFSET := 0.05
+const SHADOW_OFFSET := 0.1
+const FADE_SPEED := 6.0
+const MAX_SHADOW_HEIGHT := 4.0
+
+var alpha := 0.0
 
 func _physics_process(delta):
 
-	ray.global_position = global_position + Vector3.UP * 0.1
+ 
+	var up_dir := player.global_transform.basis.y
+
+ 
+	ray.global_position = player.global_position + up_dir * 0.1
 	ray.force_raycast_update()
+
+	var target_alpha := 0.0
 
 	if ray.is_colliding():
 
-		var hit_pos = ray.get_collision_point()
+		var normal = ray.get_collision_normal()
+		var hit_pos = ray.get_collision_point() + normal * 0.02
 
-		var pos = global_position
-		pos.y = hit_pos.y + SHADOW_OFFSET
+		# project shadow onto slope-following plane
+		var pos = player.global_position
+		pos = hit_pos + up_dir * SHADOW_OFFSET
 		decal.global_position = pos
 
-		var yaw = global_rotation.y
-		var basis = Basis(Vector3.UP, yaw)
+	   
+		var yaw_basis := Basis(up_dir, animator_root.global_rotation.y)
+		decal.global_basis = yaw_basis
 
-		decal.global_transform = Transform3D(basis, decal.global_position)
+	   
+		var height_vec = player.global_position - hit_pos
+		var height = height_vec.dot(up_dir)
 
-		decal.visible = true
+		var adjusted_height = MAX_SHADOW_HEIGHT * 0.5
+		var height_factor = clamp(height / adjusted_height, 0.0, 1.0)
+		height_factor = pow(height_factor, 0.6)
 
-	else:
-		decal.visible = false
+		target_alpha = height_factor
+
+	
+	alpha = move_toward(alpha, target_alpha, FADE_SPEED * delta)
+
+	var color := decal.modulate
+	color.a = alpha
+	decal.modulate = color
 "
 
 [sub_resource type="Curve" id="Curve_0y4at"]
