@@ -1,0 +1,158 @@
+[gd_scene load_steps=7 format=3 uid="uid://3a3bre1ktjw6"]
+
+[ext_resource type="PackedScene" uid="uid://cqybgdebu0hqr" path="res://party/scene/minigame/01 ball roll/model/Stage.glb" id="1_fj5i0"]
+[ext_resource type="PackedScene" uid="uid://dsbufs8tjchk7" path="res://party/scene/minigame/00 base/MinigameBase.tscn" id="2_8pafc"]
+[ext_resource type="Resource" uid="uid://can0xtf3s4ll8" path="res://party/resource/minigame/01BallRoll.tres" id="3_vyaoh"]
+[ext_resource type="PackedScene" uid="uid://dk8kf7b16d0wd" path="res://party/scene/minigame/01 ball roll/BallPlayer.tscn" id="4_vyaoh"]
+[ext_resource type="PackedScene" uid="uid://q76tk2hwfseh" path="res://party/scene/minigame/00 base/ScoreCounter.tscn" id="5_p46qy"]
+
+[sub_resource type="Environment" id="Environment_vyaoh"]
+ambient_light_source = 2
+ambient_light_color = Color(0.364, 0.39519998, 0.52, 1)
+ambient_light_sky_contribution = 0.1
+tonemap_mode = 1
+tonemap_exposure = 1.2
+glow_enabled = true
+
+[node name="BallRoll" type="Node3D"]
+
+[node name="Stage" parent="." instance=ExtResource("1_fj5i0")]
+
+[node name="st_104_map_Mesh_0000" parent="Stage" index="0"]
+layers = 2
+cast_shadow = 0
+
+[node name="st_104_map_Mesh_0002" parent="Stage" index="1"]
+layers = 2
+cast_shadow = 0
+
+[node name="st_104_map_Mesh_0007" parent="Stage" index="2"]
+layers = 2
+cast_shadow = 0
+
+[node name="st_104_map_Mesh_0018" parent="Stage" index="3"]
+layers = 2
+cast_shadow = 0
+
+[node name="st_104_map_Mesh_0036" parent="Stage" index="4"]
+layers = 2
+cast_shadow = 0
+
+[node name="st_104_map_Mesh_0041" parent="Stage" index="5"]
+layers = 2
+cast_shadow = 0
+
+[node name="st_104_map_Mesh_0047" parent="Stage" index="6"]
+layers = 2
+cast_shadow = 0
+
+[node name="st_104_map_Mesh_0050" parent="Stage" index="7"]
+layers = 2
+cast_shadow = 0
+
+[node name="st_104_map_Mesh_0052" parent="Stage" index="8"]
+layers = 2
+cast_shadow = 0
+
+[node name="st_104_map_Mesh_0060" parent="Stage" index="9"]
+layers = 2
+
+[node name="st_104_map_Mesh_0103" parent="Stage" index="10"]
+layers = 2
+
+[node name="st_104_map_Mesh_0118" parent="Stage" index="11"]
+layers = 2
+cast_shadow = 0
+
+[node name="st_104_map_Mesh_0119" parent="Stage" index="12"]
+layers = 2
+cast_shadow = 0
+
+[node name="st_104_map_Mesh_0169" parent="Stage" index="13"]
+layers = 2
+
+[node name="st_104_map_Mesh_0225" parent="Stage" index="14"]
+layers = 2
+
+[node name="st_104_map_Mesh_0236" parent="Stage" index="15"]
+layers = 2
+
+[node name="st_104_map_Mesh_0353" parent="Stage" index="16"]
+layers = 2
+cast_shadow = 0
+
+[node name="Sun" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.70710677, 0.61237246, -0.35355335, 0, 0.49999997, 0.86602545, 0.70710677, -0.61237246, 0.35355335, 0, 0, 0)
+layers = 1024
+light_color = Color(1, 0.9041667, 0.77, 1)
+light_energy = 1.2
+light_cull_mask = 3
+shadow_enabled = true
+directional_shadow_max_distance = 500.0
+
+[node name="Environment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_vyaoh")
+
+[node name="Player1" parent="." instance=ExtResource("4_vyaoh")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -75, 0, -60)
+
+[node name="Player2" parent="." instance=ExtResource("4_vyaoh")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 75, 0, -60)
+
+[node name="Player3" parent="." instance=ExtResource("4_vyaoh")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -75, 0, 60)
+
+[node name="Player4" parent="." instance=ExtResource("4_vyaoh")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 75, 0, 60)
+
+[node name="GameCamera" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.70710677, 0.70710677, 0, -0.70710677, 0.70710677, 0, 135, 150)
+cull_mask = 1027
+current = true
+fov = 60.0
+far = 8000.0
+
+[node name="ResultsCamera" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -65, 10, 0)
+cull_mask = 1027
+fov = 25.0
+far = 8000.0
+
+[node name="Minigame" parent="." node_paths=PackedStringArray("results_camera") instance=ExtResource("2_8pafc")]
+minigame_resource = ExtResource("3_vyaoh")
+results_camera = NodePath("../ResultsCamera")
+
+[node name="ResultsLocation" parent="Minigame" index="3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -65, 0, -74)
+
+[node name="P2" parent="Minigame/ResultsLocation" index="1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, -1, 0)
+
+[node name="Scores" type="HBoxContainer" parent="."]
+anchors_preset = -1
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 128.0
+offset_top = -184.0
+offset_right = -128.0
+offset_bottom = -56.0
+grow_horizontal = 2
+grow_vertical = 0
+size_flags_vertical = 3
+alignment = 1
+
+[node name="ScoreCounter" parent="Scores" instance=ExtResource("5_p46qy")]
+layout_mode = 2
+
+[node name="ScoreCounter2" parent="Scores" instance=ExtResource("5_p46qy")]
+layout_mode = 2
+
+[node name="ScoreCounter3" parent="Scores" instance=ExtResource("5_p46qy")]
+layout_mode = 2
+
+[node name="ScoreCounter4" parent="Scores" instance=ExtResource("5_p46qy")]
+layout_mode = 2
+
+[editable path="Stage"]
+[editable path="Minigame"]
