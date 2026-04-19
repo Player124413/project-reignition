@@ -256,4 +256,9 @@ public partial class StageTrigger : Node3D
 	}
 
 	private void Deactivate() => EmitSignal(SignalName.Deactivated);
+
+	public void CameraShake(float length = .2f)
+	{
+		StageSettings.Player.Camera.StartMediumCameraShake(length);
+	}
 }
