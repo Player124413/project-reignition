@@ -26,6 +26,7 @@ public partial class LevelDataResource : Resource
 		Side, // Option side mission mission
 		Story, // Mandatory story mission
 		Boss, // Boss battle
+		Mod, // Mod mission
 	}
 
 	public enum CompletionAnimationType
