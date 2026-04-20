@@ -924,6 +924,7 @@ public partial class SaveManager : Node
 		PirateStorm,
 		SkeletonDome,
 		NightPalace,
+		Mods,
 		Max
 	}
 
