@@ -1,4 +1,4 @@
-[gd_scene load_steps=60 format=3 uid="uid://skx536edn7yd"]
+[gd_scene load_steps=65 format=3 uid="uid://skx536edn7yd"]
 
 [ext_resource type="PackedScene" uid="uid://g7vhevg8ipxh" path="res://area/1 sand oasis/act 2/environment/01Opening.tscn" id="1_vn5mm"]
 [ext_resource type="Script" uid="uid://dtkbvehtmy3em" path="res://object/stage/StageSettings.cs" id="1_yumdi"]
@@ -41,6 +41,7 @@
 [ext_resource type="Texture2D" uid="uid://cq8nonxnp634w" path="res://effect/sun/texture/base.png" id="31_t41dx"]
 [ext_resource type="PackedScene" uid="uid://bxso4ejxqcm4k" path="res://area/1 sand oasis/act 2/completion/CompletionDemo.gltf" id="34_7u7yr"]
 [ext_resource type="PackedScene" uid="uid://0o1ds8o5k04j" path="res://effect/buffer/PlanarReflectionRenderer.tscn" id="43_ggjet"]
+[ext_resource type="Texture2D" uid="uid://8mkpblbre8og" path="res://effect/particle/texture/environment/sand dust.png" id="43_n3txd"]
 [ext_resource type="Material" uid="uid://5wxyrpeo8ycq" path="res://area/1 sand oasis/data/material/Water.tres" id="44_bp8pk"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_50thi"]
@@ -139,6 +140,50 @@ volumetric_fog_temporal_reprojection_enabled = false
 adjustment_enabled = true
 adjustment_saturation = 1.2
 adjustment_color_correction = SubResource("GradientTexture1D_wehji")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_t41dx"]
+lifetime_randomness = 0.15
+emission_shape_scale = Vector3(10, 5, 50)
+emission_shape = 3
+emission_box_extents = Vector3(1, 1, 1)
+angular_velocity_min = -1.6093254e-05
+angular_velocity_max = -1.6093254e-05
+gravity = Vector3(0, 0, 100)
+attractor_interaction_enabled = false
+scale_min = 0.14
+scale_max = 0.25
+scale_over_velocity_max = 1000.0
+turbulence_enabled = true
+turbulence_influence_min = 0.0
+turbulence_influence_max = 0.060000002
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_f37hi"]
+transparency = 1
+shading_mode = 0
+disable_ambient_light = true
+disable_fog = true
+disable_specular_occlusion = true
+albedo_texture = ExtResource("43_n3txd")
+billboard_mode = 3
+particles_anim_h_frames = 1
+particles_anim_v_frames = 1
+particles_anim_loop = false
+proximity_fade_distance = 4096.0
+distance_fade_max_distance = 43.99
+
+[sub_resource type="QuadMesh" id="QuadMesh_lydsg"]
+material = SubResource("StandardMaterial3D_f37hi")
+size = Vector2(0.2, 0.2)
+
+[sub_resource type="GDScript" id="GDScript_w5n0d"]
+script/source = "extends GPUParticles3D
+
+@onready var camera: Camera3D = get_viewport().get_camera_3d()
+
+func _process(delta: float) -> void:
+	if camera:
+		global_transform = camera.global_transform
+"
 
 [node name="Static" type="Node3D" node_paths=PackedStringArray("pathParent", "completionAnimator", "Environment")]
 script = ExtResource("1_yumdi")
@@ -710,6 +755,18 @@ reflectionMaterials = [ExtResource("44_bp8pk")]
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_n3txd")
+
+[node name="SandStormParticleCamAttach" type="GPUParticles3D" parent="."]
+layers = 2
+cast_shadow = 0
+amount = 100
+speed_scale = 4.0
+fixed_fps = 0
+collision_base_size = 0.0
+local_coords = true
+process_material = SubResource("ParticleProcessMaterial_t41dx")
+draw_pass_1 = SubResource("QuadMesh_lydsg")
+script = SubResource("GDScript_w5n0d")
 
 [connection signal="Activated" from="Trigger/Object/UTurn" to="Trigger/Object/UTurn/Camera" method="Activate"]
 [connection signal="Activated" from="Trigger/Object/UTurn" to="Trigger/Object/UTurn/ActivatePath" method="Activate"]
