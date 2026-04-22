@@ -1,4 +1,4 @@
-[gd_scene load_steps=91 format=3 uid="uid://tvjx2wghc06t"]
+[gd_scene load_steps=95 format=3 uid="uid://tvjx2wghc06t"]
 
 [ext_resource type="Script" uid="uid://dtkbvehtmy3em" path="res://object/stage/StageSettings.cs" id="1_0njhg"]
 [ext_resource type="PackedScene" uid="uid://c2ckwltf2j1kv" path="res://area/1 sand oasis/act 1/environment/collision/Collision.tscn" id="1_pkods"]
@@ -54,7 +54,7 @@
 [ext_resource type="Curve3D" uid="uid://p2pt4ps3pmj" path="res://area/1 sand oasis/act 1/environment/path/Island2Path.tres" id="41_bop36"]
 [ext_resource type="Curve3D" uid="uid://b4qnnk3nkq7i4" path="res://area/1 sand oasis/act 1/environment/path/BeachPath.tres" id="41_tujp6"]
 [ext_resource type="Script" uid="uid://coiui4qvdxbqe" path="res://object/trigger/modules/EventTrigger.cs" id="44_tp8n3"]
-[ext_resource type="Curve3D" uid="uid://dyf3xaw47l0tm" path="res://area/1 sand oasis/act 1/environment/path/EndingPath.tres" id="45_mavj3"]
+[ext_resource type="Curve3D" uid="uid://dl1ffh26tvq1a" path="res://area/1 sand oasis/act 1/environment/path/EndingPath.tres" id="45_mavj3"]
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_eqslh"]
 radius = 1.0
@@ -702,6 +702,107 @@ fog_sky_affect = 0.0
 adjustment_enabled = true
 adjustment_brightness = 1.1
 adjustment_saturation = 1.1
+
+[sub_resource type="Shader" id="Shader_tp8n3"]
+code = "shader_type canvas_item;
+render_mode unshaded, blend_add;
+
+uniform sampler2D subviewport_tex : filter_linear;
+uniform sampler2D light_color : hint_default_white;
+uniform vec4 ray_color : source_color = vec4(1.0, 1.0, 1.0, 1.0);
+
+uniform float ray_length : hint_range(0.0, 1.0) = 1.0;
+uniform float ray_intensity : hint_range(0.0, 1.0) = 1.0;
+uniform float light_source_scale = 1.0;
+uniform float light_source_feather = 2.0;
+uniform float noise_strength : hint_range(0.0, 1.0) = 0.2;
+
+uniform vec2 light_source_pos = vec2(0.0, 0.0);
+uniform vec3 light_source_dir = vec3(0.5, -1.0, 0.25);
+uniform vec3 camera_dir = vec3(-0.5, 1.0, -0.25);
+
+const int SAMPLE_COUNT = 80;
+
+float random (vec2 uv) {
+    return fract(sin(dot(uv.xy, vec2(12.9898,78.233))) * 43758.5453123);
+}
+
+void fragment() {
+	vec2 light_pos = light_source_pos / (1.0 / SCREEN_PIXEL_SIZE);
+	vec2 dir = UV - light_pos;
+
+	vec2 ratio = vec2(SCREEN_PIXEL_SIZE.x / SCREEN_PIXEL_SIZE.y, 1.0);
+	vec2 dir2 = UV / ratio - light_pos / ratio;
+
+	float light_rays = 0.0;
+	vec2 uv2;
+	float scale, l;
+	for (int i = 0; i < SAMPLE_COUNT; i++){
+		scale = 1.0f - ray_length * (float(i) / float(SAMPLE_COUNT - 1));
+		l = (1.0 - texture(subviewport_tex, dir * scale + light_pos).a);
+		uv2 = dir2 * scale * pow(light_source_scale, 2.0);
+		l *= smoothstep(1.0, 0.999 - light_source_feather, dot(uv2, uv2) * 4.0);
+		light_rays += l / float(SAMPLE_COUNT);
+	}
+
+	float n = 1.0 - random(UV) * noise_strength * smoothstep(0.999 - 1.25, 1.0, dot(dir2, dir2) * 2.0);
+	light_rays *= n;
+
+	float d = clamp(-dot(normalize(camera_dir), normalize(light_source_dir)), 0.0, 1.0);
+	light_rays *= d;
+
+	COLOR.rgb = vec3(light_rays * ray_intensity) * texture(light_color, UV).rgb * ray_color.rgb;
+	COLOR.a = ray_color.a;
+}"
+
+[sub_resource type="ViewportTexture" id="ViewportTexture_chr2p"]
+viewport_path = NodePath("CanvasLayerLightShafts/SubViewportContainer/SubViewport")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_50ywy"]
+resource_local_to_scene = true
+shader = SubResource("Shader_tp8n3")
+shader_parameter/subviewport_tex = SubResource("ViewportTexture_chr2p")
+shader_parameter/ray_color = Color(1, 0.69803923, 0.31764707, 1)
+shader_parameter/ray_length = 0.8000000380000001
+shader_parameter/ray_intensity = 0.770000036575
+shader_parameter/light_source_scale = 1.1999999999970896
+shader_parameter/light_source_feather = 1.5
+shader_parameter/noise_strength = 0.0
+shader_parameter/light_source_pos = Vector2(0, 0)
+shader_parameter/light_source_dir = Vector3(0.5, -1, 0.25)
+shader_parameter/camera_dir = Vector3(-0.5, 1, -0.25)
+
+[sub_resource type="GDScript" id="GDScript_dtvsn"]
+script/source = "extends ColorRect
+
+@export var sun_rotation_degrees: Vector3 = Vector3(-18.9, -174.9, -178.3)
+
+@export var viewport_camera_path: NodePath
+@onready var viewport_camera: Camera3D = get_node(viewport_camera_path)
+
+var _sun_dir: Vector3
+
+func _ready() -> void:
+	var basis = Basis.from_euler(sun_rotation_degrees * PI / 180.0)
+	_sun_dir = -basis.z
+	material.set_shader_parameter(\"light_source_dir\", _sun_dir)
+
+func _process(_delta: float) -> void:
+	var active_cam: Camera3D = get_tree().root.get_camera_3d()
+	if not active_cam:
+		return
+
+	viewport_camera.global_transform = active_cam.global_transform
+	viewport_camera.fov = active_cam.fov
+	viewport_camera.near = active_cam.near
+	viewport_camera.far = active_cam.far
+
+	var sun_point = active_cam.global_position + _sun_dir * 10000.0
+	var pos = active_cam.unproject_position(sun_point)
+
+	material.set_shader_parameter(\"light_source_pos\", pos)
+	material.set_shader_parameter(\"camera_dir\", -active_cam.global_basis.z)
+"
 
 [node name="Static" type="Node3D" node_paths=PackedStringArray("pathParent", "completionAnimator", "Environment")]
 script = ExtResource("1_0njhg")
@@ -1669,6 +1770,50 @@ environment = SubResource("Environment_xc600")
 [node name="PlanarReflectionRenderer" parent="." instance=ExtResource("28_5kt56")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 100, -50, -250)
 reflectionMaterials = [ExtResource("29_lfji7")]
+
+[node name="CanvasLayerLightShafts" type="CanvasLayer" parent="."]
+
+[node name="Control" type="Control" parent="CanvasLayerLightShafts"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+metadata/_edit_use_anchors_ = true
+
+[node name="ColorRect_LightRays" type="ColorRect" parent="CanvasLayerLightShafts/Control"]
+material = SubResource("ShaderMaterial_50ywy")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = SubResource("GDScript_dtvsn")
+viewport_camera_path = NodePath("../../SubViewportContainer/SubViewport/Camera3D_Viewport")
+metadata/_edit_use_anchors_ = true
+
+[node name="SubViewportContainer" type="SubViewportContainer" parent="CanvasLayerLightShafts"]
+visibility_layer = 0
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+metadata/_edit_use_anchors_ = true
+
+[node name="SubViewport" type="SubViewport" parent="CanvasLayerLightShafts/SubViewportContainer"]
+transparent_bg = true
+handle_input_locally = false
+scaling_3d_scale = 0.5
+positional_shadow_atlas_size = 0
+size = Vector2i(480, 270)
+render_target_clear_mode = 2
+render_target_update_mode = 4
+
+[node name="Camera3D_Viewport" type="Camera3D" parent="CanvasLayerLightShafts/SubViewportContainer/SubViewport"]
+cull_mask = 1095
 
 [connection signal="Activated" from="Trigger/SandfallTrigger/SandfallEvent" to="Trigger/Path/EndingTrigger" method="Activate" flags=3]
 [connection signal="DriftCompleted" from="Trigger/Object/DriftTrigger2" to="Trigger/Object/DriftTrigger2/DriftCamera" method="Deactivate"]
