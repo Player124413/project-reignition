@@ -1,6 +1,6 @@
 using Godot;
 using System;
-using Godot.Collections;
+using System.Collections.Generic;
 using Project.Gameplay;
 
 namespace Project.Core;
@@ -9,7 +9,7 @@ public partial class ModManager : Node
 {
 
 	public static ModManager Instance;
-	public LevelDataResource[] ModdedLevels { get; private set; }
+	public List<LevelDataResource> ModdedLevels { get; private set; }
 	private readonly string CustomLevelPath = "user://custom/levels/";
 
 	public override void _EnterTree()
@@ -19,7 +19,7 @@ public partial class ModManager : Node
 
 	private void SetUpMods()
 	{
-
+		ModdedLevels = [];
 		if (!DirAccess.DirExistsAbsolute(CustomLevelPath))
 			DirAccess.MakeDirRecursiveAbsolute(CustomLevelPath);
 
@@ -39,20 +39,31 @@ public partial class ModManager : Node
 				else
 					GD.Print("LOADING MOD Succeeded");
 			}
-			GD.Print("FINISHED LOADING MOD: " + file);
 		}
 
 		DirAccess modDir = DirAccess.Open("res://mods/levels/");
 
 		foreach (string mod in modDir.GetDirectories())//Gets all the directories that were added
 		{
-			DirAccess levelDir = DirAccess.Open("res://mods/levels/" + mod); //Access the specific mod directory
+			GD.Print("res://mods/levels/" + mod);
+			DirAccess levelDir = DirAccess.Open("res://mods/levels/" + mod + "/"); //Access the specific mod directory
 
-			foreach (string level in levelDir.GetFiles()) //Look through the files for the stage resource
+			for (int i = 0; i < levelDir.GetFiles().Length; i++)
 			{
-				GD.Print("Level File: " + level);
+				if (levelDir.GetFiles()[i].GetFile().GetExtension().Equals("tres")) //Finds the first tres in the directory, which should be the level data resource
+				{
+					LevelDataResource data = ResourceLoader.Load(levelDir.GetCurrentDir() + "/" + levelDir.GetFiles()[i]) as LevelDataResource;
+					GD.Print("Loading mod: " + levelDir.GetFiles()[i]);
+					ModdedLevels.Add(data);
+
+					GD.Print("Mission Name: " + ModdedLevels[i].MissionTypeKey);
+					GD.Print("Mission Description: " + ModdedLevels[i].MissionDescriptionKey);
+					break;
+				}
+
 			}
-			GD.Print(mod);
+
+
 		}
 
 
