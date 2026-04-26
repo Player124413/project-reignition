@@ -1,0 +1,186 @@
+[gd_scene load_steps=11 format=3 uid="uid://d0vj15l625nt7"]
+
+[ext_resource type="PackedScene" uid="uid://7q1h48dogua7" path="res://party/resource/character/model/SlimeMajin.glb" id="1_8kilo"]
+[ext_resource type="Script" uid="uid://dya6adym6shcr" path="res://party/scene/minigame/01 ball roll/script/majin_controller.gd" id="1_ldpof"]
+[ext_resource type="Material" uid="uid://m8tkr4fj8ghw" path="res://party/resource/character/model/material/Slime Red.tres" id="2_ldpof"]
+[ext_resource type="Material" uid="uid://dnc5sxqserp6p" path="res://party/resource/character/model/material/Slime Gray.tres" id="2_my3q3"]
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_my3q3"]
+radius = 2.0
+
+[sub_resource type="Animation" id="Animation_2x4ld"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("SlimeMajin:visible")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath(".:monitoring")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+
+[sub_resource type="Animation" id="Animation_my3q3"]
+resource_name = "init"
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("SlimeMajin:visible")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath(".:monitoring")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+
+[sub_resource type="Animation" id="Animation_cl347"]
+resource_name = "spawn"
+length = 0.001
+tracks/0/type = "method"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("SlimeMajin/AnimationPlayer")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [&"idle", -1, 1.0, false],
+"method": &"play"
+}]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("SlimeMajin:visible")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath(".:monitoring")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+
+[sub_resource type="Animation" id="Animation_yviun"]
+resource_name = "squish"
+tracks/0/type = "method"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("SlimeMajin/AnimationPlayer")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [&"squish", -1, 1.0, false],
+"method": &"play"
+}]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("SlimeMajin:visible")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.5),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [true, false]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath(".:monitoring")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_2x4ld"]
+_data = {
+&"RESET": SubResource("Animation_2x4ld"),
+&"init": SubResource("Animation_my3q3"),
+&"spawn": SubResource("Animation_cl347"),
+&"squish": SubResource("Animation_yviun")
+}
+
+[node name="Majin" type="Area3D" node_paths=PackedStringArray("animation_player", "mesh")]
+collision_layer = 0
+collision_mask = 3
+monitoring = false
+monitorable = false
+script = ExtResource("1_ldpof")
+animation_player = NodePath("AnimationPlayer")
+mesh = NodePath("SlimeMajin/SlimeMajinRoot/Skeleton3D/SlimeMajinMesh")
+materials = Array[Material]([ExtResource("2_my3q3"), ExtResource("2_ldpof")])
+initial_speed = 30.0
+normal_speed = 20.0
+
+[node name="SlimeMajin" parent="." instance=ExtResource("1_8kilo")]
+
+[node name="SlimeMajinMesh" parent="SlimeMajin/SlimeMajinRoot/Skeleton3D" index="0"]
+surface_material_override/0 = ExtResource("2_ldpof")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 0)
+shape = SubResource("SphereShape3D_my3q3")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+&"": SubResource("AnimationLibrary_2x4ld")
+}
+autoplay = "init"
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]
+
+[editable path="SlimeMajin"]
