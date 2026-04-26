@@ -68,15 +68,16 @@ func get_score_amount() -> int:
 	return 3 if is_bonus_majin else 1
 
 func _ready() -> void:
-	if !is_multiplayer_authority(): # Only host controls majin movement
+	if !NetworkManager.is_hosting_game: # Only host controls majin movement
 		return
 	
+	set_multiplayer_authority(multiplayer.get_unique_id())
 	world = get_world_3d()
 	MinigameManager.instance.gameplay_started.connect(Callable.create(self, "on_gameplay_started"))
 	MinigameManager.instance.minigame_finished.connect(Callable.create(self, "on_minigame_finished"))
 
 func _physics_process(_delta: float) -> void:
-	if !is_multiplayer_authority(): # Only host controls majin movement
+	if !NetworkManager.is_hosting_game: # Only host controls majin movement
 		return
 	
 	if !is_active:
@@ -120,17 +121,21 @@ func process_ground() -> void:
 
 ## Called when gameplay starts. Spawns the initial wave of majin.
 func on_gameplay_started() -> void:
+	if !NetworkManager.is_hosting_game:
+		return
 	rpc("request_spawn", get_initial_spawn_time(), get_spawn_rotation(), get_spawn_position(), false)
 
-@rpc("authority", "call_local", "reliable")
+@rpc("any_peer", "call_local", "reliable")
 func request_spawn(target_tick : float, angle : float, spawn_pos : Vector2, is_bonus : bool) -> void:
 	var spawn_delay : float = target_tick - NetworkTimeSynchronizer.get_time()
 	var spawn_callable : Callable = Callable.create(self, "spawn")
 	spawn_callable = spawn_callable.bind(angle, spawn_pos, is_bonus)
 	get_tree().create_timer(spawn_delay).timeout.connect(spawn_callable)
+	print("Requesting spawn on %s" % multiplayer.get_unique_id())
 
 ## Actually spawns the majin.
 func spawn(angle : float, spawn_pos : Vector2, is_bonus : bool) -> void:
+	print("Spawning majin on %s" % multiplayer.get_unique_id())
 	movement_angle = angle
 	global_position = Vector3(spawn_pos.x, 0, spawn_pos.y)
 	is_bonus_majin = is_bonus
@@ -139,7 +144,7 @@ func spawn(angle : float, spawn_pos : Vector2, is_bonus : bool) -> void:
 	is_active = true
 	squish_player = -1 # Reset squish tracking
 
-@rpc("authority", "call_local", "reliable")
+@rpc("any_peer", "call_local", "reliable")
 func request_squish(player_index : int, network_time : float) -> void:
 	if squish_player != -1: # Resolve network conflicts
 		if network_time >= squish_time: # Already squished by someone
@@ -156,7 +161,9 @@ func request_squish(player_index : int, network_time : float) -> void:
 	if is_active: # Handle visuals
 		animation_player.play("squish")
 		is_active = false
-		rpc("request_spawn", get_spawn_time(), get_spawn_rotation(), get_spawn_position(), randf() > 0.8)
+		
+		if NetworkManager.is_hosting_game:
+			rpc("request_spawn", get_spawn_time(), get_spawn_rotation(), get_spawn_position(), randf() > 0.8)
 
 func on_minigame_finished() -> void:
 	is_game_finished = true

@@ -1,9 +1,17 @@
-[gd_scene load_steps=11 format=3 uid="uid://d0vj15l625nt7"]
+[gd_scene load_steps=12 format=3 uid="uid://d0vj15l625nt7"]
 
 [ext_resource type="PackedScene" uid="uid://7q1h48dogua7" path="res://party/resource/character/model/SlimeMajin.glb" id="1_8kilo"]
 [ext_resource type="Script" uid="uid://dya6adym6shcr" path="res://party/scene/minigame/01 ball roll/script/majin_controller.gd" id="1_ldpof"]
 [ext_resource type="Material" uid="uid://m8tkr4fj8ghw" path="res://party/resource/character/model/material/Slime Red.tres" id="2_ldpof"]
 [ext_resource type="Material" uid="uid://dnc5sxqserp6p" path="res://party/resource/character/model/material/Slime Gray.tres" id="2_my3q3"]
+
+[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_my3q3"]
+properties/0/path = NodePath(".:position")
+properties/0/spawn = true
+properties/0/replication_mode = 2
+properties/1/path = NodePath(".:rotation")
+properties/1/spawn = true
+properties/1/replication_mode = 2
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_my3q3"]
 radius = 2.0
@@ -165,6 +173,10 @@ mesh = NodePath("SlimeMajin/SlimeMajinRoot/Skeleton3D/SlimeMajinMesh")
 materials = Array[Material]([ExtResource("2_my3q3"), ExtResource("2_ldpof")])
 initial_speed = 30.0
 normal_speed = 20.0
+
+[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
+replication_interval = 0.1
+replication_config = SubResource("SceneReplicationConfig_my3q3")
 
 [node name="SlimeMajin" parent="." instance=ExtResource("1_8kilo")]
 

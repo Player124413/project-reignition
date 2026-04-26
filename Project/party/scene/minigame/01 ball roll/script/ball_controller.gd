@@ -11,13 +11,14 @@ extends PartyGameCharacterSpawner
 @export var character_raycast : RayCast3D
 @export var ball_mesh : MeshInstance3D
 @export var ball_materials : Array[Material]
+var is_minigame_complete : bool
 
-## The player's move speed.
-var move_speed : float
-## The angle this player is moving/facing.
-var movement_angle : float
 ## The last input recorded by this player.
-var movement_input : Vector2
+@export var movement_input : Vector2
+## The player's move speed.
+@export var move_speed : float
+## The angle this player is moving/facing.
+@export var movement_angle : float
 var velocity : Vector3
 var floor_angle : float
 ## Amount of gravity to apply to the ball.
@@ -35,8 +36,17 @@ func on_spawn_finished() -> void:
 	character_animator.animator.set_blend_time(get_anim_prefix() + "wait", get_anim_prefix() + "push", 0.5)
 	character_animator.animator.set_blend_time(get_anim_prefix() + "push", get_anim_prefix() + "wait", 0.5)
 	movement_angle = global_rotation.y
+	
+	MinigameManager.instance.gameplay_finished.connect(Callable.create(self, "on_gameplay_finished"))
+
+func on_gameplay_finished() -> void:
+	ball_mesh.visible = false
+	is_minigame_complete = true
 
 func _physics_process(_delta: float) -> void:
+	if is_minigame_complete:
+		return
+	
 	if is_multiplayer_authority(): # Update inputs
 		movement_input = calculate_cpu_input() if is_cpu() else get_input_axis()
 	

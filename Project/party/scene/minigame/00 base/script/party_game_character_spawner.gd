@@ -51,7 +51,6 @@ func _ready() -> void:
 		set_physics_process(false)
 		MinigameManager.instance.gameplay_started.connect(Callable.create(self, "activate"))
 		MinigameManager.instance.gameplay_finished.connect(Callable.create(self, "deactivate"))
-		MinigameManager.instance.minigame_finished.connect(Callable.create(self, "on_minigame_finished"))
 		
 		if is_instance_valid(score_counter):
 			# Initialize the score counter
