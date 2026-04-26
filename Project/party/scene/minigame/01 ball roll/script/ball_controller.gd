@@ -16,9 +16,18 @@ extends PartyGameCharacterSpawner
 var move_speed : float
 ## The angle this player is moving/facing.
 var movement_angle : float
+## The last input recorded by this player.
+var movement_input : Vector2
 var velocity : Vector3
 var floor_angle : float
+## Amount of gravity to apply to the ball.
+const GRAVITY : float = 30.0
+## Used to offset the player's model from the ball.
 const BALL_RADIUS : float = 12.0
+## Time that updates cpu player's inputs.
+var cpu_timer : float
+## Base amount to update the cpu's inputs.
+const CPU_BASE_INPUT_INTERVAL : float = 3.0 / 2.0
 
 func on_spawn_finished() -> void:
 	ball_mesh.material_override = ball_materials[player_index]
@@ -28,29 +37,26 @@ func on_spawn_finished() -> void:
 	movement_angle = global_rotation.y
 
 func _physics_process(_delta: float) -> void:
-	if !is_multiplayer_authority():
-		return
+	if is_multiplayer_authority(): # Update inputs
+		movement_input = calculate_cpu_input() if is_cpu() else get_input_axis()
 	
-	if is_cpu():
-		# TODO Calculate CPU Inputs
-		return
-	
-	var input : Vector2 = get_input_axis()
-	process_move_speed(input)
-	process_turning(input)
+	process_move_speed()
+	process_turning()
 	apply_movement()
 	process_animation()
 
 func apply_movement() -> void:
 	velocity = Vector3.BACK.rotated(Vector3.UP, movement_angle) * move_speed
+	if !velocity.is_zero_approx():
+		velocity += Vector3.DOWN * GRAVITY
 	character_body.velocity = velocity
 	character_body.move_and_slide()
 	move_speed = character_body.velocity.length()
 
-func process_move_speed(input : Vector2) -> void:
+func process_move_speed() -> void:
 	var target : float = 0
 	var delta : float = decceleration
-	if !input.is_equal_approx(Vector2.ZERO):
+	if !movement_input.is_equal_approx(Vector2.ZERO):
 		target = max_speed
 		delta = acceleration
 	move_speed = move_toward(move_speed, target, delta * get_physics_process_delta_time())
@@ -78,13 +84,34 @@ func process_animation() -> void:
 	else:
 		character_animator.play_animation(get_anim_prefix() + "push")
 	
-	if !velocity.is_zero_approx():
+	if !character_body.velocity.is_zero_approx():
 		var rotation_speed : float = move_speed * 0.1 * get_physics_process_delta_time()
-		ball_mesh.global_rotate(velocity.rotated(Vector3.UP, PI * 0.5).normalized(), rotation_speed)
+		ball_mesh.global_rotate(character_body.velocity.rotated(Vector3.UP, PI * 0.5).normalized(), rotation_speed)
 
-func process_turning(input : Vector2) -> void:
-	if input.is_zero_approx():
+func process_turning() -> void:
+	if movement_input.is_zero_approx():
 		return
 	
-	var target_angle : float = Vector2.UP.angle_to(input);
+	var target_angle : float = Vector2.UP.angle_to(movement_input);
 	movement_angle = rotate_toward(movement_angle, target_angle, turn_speed * get_physics_process_delta_time())
+
+const HARD_CPU_RING_RADIUS : int = 15
+func calculate_cpu_input() -> Vector2:
+	if !is_zero_approx(cpu_timer):
+		cpu_timer = move_toward(cpu_timer, 0, get_physics_process_delta_time())
+		return movement_input # No change
+	
+	var difficulty : PlayerData.CPU_DIFFICULTY_ENUM = get_cpu_difficulty()
+	cpu_timer = CPU_BASE_INPUT_INTERVAL / difficulty
+	if difficulty == PlayerData.CPU_DIFFICULTY_ENUM.HARD:
+		# Stay in the central area, but avoid the exact center so we don't get stuck on other players
+		var input : Vector2 = Vector2(character_body.global_position.x, -character_body.global_position.z)
+		var target_position = input.normalized().rotated(randf() * PI * 0.2) * randf() * HARD_CPU_RING_RADIUS
+		return (target_position - input).normalized()
+	elif difficulty == PlayerData.CPU_DIFFICULTY_ENUM.EXTREME:
+		# Stay in the center at all costs, even if it means bullying other players
+		var input : Vector2 = Vector2(character_body.global_position.x, -character_body.global_position.z)
+		input = input.rotated(PI * 0.5 * (0.5 - randf())) # Prevent CPU from being too robotic
+		return -input.normalized()
+	
+	return Vector2.UP.rotated(randf() * TAU) # Just choose a random direction

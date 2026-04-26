@@ -27,11 +27,13 @@ func get_vertical_input() -> float:
 func get_input_axis() -> Vector2:
 	return Vector2(get_horizontal_input(), get_vertical_input()).limit_length()
 
-## Returns whether this batter is a cpu or not.
+## Returns whether this character is a cpu or not.
 func is_cpu() -> bool:
 	return player_index == -1 || PartyManager.get_player_data(player_index).is_cpu_player()
 
-
+## Returns the difficulty of this cpu player.0
+func get_cpu_difficulty() -> PlayerData.CPU_DIFFICULTY_ENUM:
+	return PartyManager.get_player_data(player_index).cpu_difficulty
 
 func _ready() -> void:
 	if NetworkManager.is_online && player_index != -1:

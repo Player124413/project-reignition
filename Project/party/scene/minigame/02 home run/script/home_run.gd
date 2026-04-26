@@ -303,7 +303,7 @@ func calculate_cpu_difficulty_offset(random_value : float) -> float:
 	if player_index == -1: # Demo has a consistent offset
 		return 0
 	
-	var difficulty : int = PartyManager.get_player_data(player_index).cpu_difficulty
+	var difficulty : int = get_cpu_difficulty()
 	var offset : float = cpu_difficulty_curves[difficulty].sample(random_value) * CPU_MAX_VARIANCE
 	return offset
 
