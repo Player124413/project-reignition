@@ -6,18 +6,21 @@ extends Area3D
 @export var materials : Array[Material]
 
 ## Initial movement speed when spawning.
-@export var initial_speed : float
+@export var hyper_speed : float
 ## normal movement speed when hyper speed wears off.
 @export var normal_speed : float
 
-@export var movement_angle : float
+var movement_angle : float
 var move_speed : float
+var turn_speed : float
+const MAX_TURN_SPEED : float = 3.0
 
 ## Bonus majin are worth 3 points instead of 1.
 var is_bonus_majin : bool
 var is_active : bool
 var is_game_finished : bool
 
+var hyperspeed_timer : float
 ## How long the majin should be zooming after being spawned
 const POSTSPAWN_HYPERSPEED_LENGTH : float = 1.0
 
@@ -28,7 +31,7 @@ const GROUND_CHECK_OFFSET : float = 50
 ## Length to use when checking for wall collisions.
 const COLLISION_RADIUS : float = 2
 ## Bound for initial spawn locations.
-const SPAWN_BOUNDS : Vector2 = Vector2(20, 20)
+const SPAWN_BOUNDS : Vector2 = Vector2(40, 30)
 ## Maximum amount of time to wait before spawning a new majin.
 const MAX_SPAWN_INTERVAL : float = 5
 ## Minimum amount of time to wait before spawning a new majin.
@@ -83,7 +86,12 @@ func _physics_process(_delta: float) -> void:
 	if !is_active:
 		return
 	
-	move_speed = normal_speed
+	if is_zero_approx(hyperspeed_timer):
+		move_speed = normal_speed
+	else:
+		hyperspeed_timer = move_toward(hyperspeed_timer, 0, get_physics_process_delta_time())
+	
+	movement_angle += turn_speed * get_physics_process_delta_time()
 	global_rotation = Vector3.UP * movement_angle
 	global_position += global_basis.z * move_speed * get_physics_process_delta_time()
 	
@@ -131,18 +139,21 @@ func request_spawn(target_tick : float, angle : float, spawn_pos : Vector2, is_b
 	var spawn_callable : Callable = Callable.create(self, "spawn")
 	spawn_callable = spawn_callable.bind(angle, spawn_pos, is_bonus)
 	get_tree().create_timer(spawn_delay).timeout.connect(spawn_callable)
-	print("Requesting spawn on %s" % multiplayer.get_unique_id())
 
 ## Actually spawns the majin.
 func spawn(angle : float, spawn_pos : Vector2, is_bonus : bool) -> void:
-	print("Spawning majin on %s" % multiplayer.get_unique_id())
 	movement_angle = angle
 	global_position = Vector3(spawn_pos.x, 0, spawn_pos.y)
 	is_bonus_majin = is_bonus
 	mesh.material_override = materials[0 if is_bonus_majin else 1]
 	animation_player.play("spawn")
+	
 	is_active = true
 	squish_player = -1 # Reset squish tracking
+	
+	move_speed = hyper_speed
+	hyperspeed_timer = POSTSPAWN_HYPERSPEED_LENGTH
+	turn_speed = lerp(-MAX_TURN_SPEED, MAX_TURN_SPEED, randf())
 
 @rpc("any_peer", "call_local", "reliable")
 func request_squish(player_index : int, network_time : float) -> void:
