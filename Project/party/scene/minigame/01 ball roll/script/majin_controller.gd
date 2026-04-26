@@ -15,8 +15,8 @@ var move_speed : float
 
 ## Bonus majin are worth 3 points instead of 1.
 var is_bonus_majin : bool
-
 var is_active : bool
+var is_game_finished : bool
 
 ## How long the majin should be zooming after being spawned
 const POSTSPAWN_HYPERSPEED_LENGTH : float = 1.0
@@ -73,6 +73,7 @@ func _ready() -> void:
 	
 	world = get_world_3d()
 	MinigameManager.instance.gameplay_started.connect(Callable.create(self, "on_gameplay_started"))
+	MinigameManager.instance.minigame_finished.connect(Callable.create(self, "on_minigame_finished"))
 
 func _physics_process(_delta: float) -> void:
 	if !is_multiplayer_authority(): # Only host controls majin movement
@@ -157,7 +158,13 @@ func request_squish(player_index : int, network_time : float) -> void:
 		is_active = false
 		rpc("request_spawn", get_spawn_time(), get_spawn_rotation(), get_spawn_position(), randf() > 0.8)
 
+func on_minigame_finished() -> void:
+	is_game_finished = true
+
 func _on_body_entered(body : PhysicsBody3D) -> void:
+	if is_game_finished:
+		return
+	
 	if body is not CharacterBody3D:
 		return
 	

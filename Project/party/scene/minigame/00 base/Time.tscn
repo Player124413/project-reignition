@@ -1,0 +1,146 @@
+[gd_scene load_steps=10 format=3 uid="uid://f5w7fq20xmd1"]
+
+[ext_resource type="LabelSettings" uid="uid://c5kf3sgtr1y1f" path="res://party/font/minigame/TimeNumberOutline.tres" id="1_a4vgp"]
+[ext_resource type="Script" uid="uid://cpib0pjipupdy" path="res://party/scene/minigame/00 base/script/party_game_time.gd" id="1_i1hfe"]
+[ext_resource type="Texture2D" uid="uid://d1ofcrjax2g4l" path="res://party/scene/minigame/00 base/interface/time background.png" id="1_lf7yx"]
+[ext_resource type="Script" uid="uid://qvplfr0cibu5" path="res://party/script/interface/synced_label.gd" id="2_lf7yx"]
+[ext_resource type="LabelSettings" uid="uid://gfrq5exvibbr" path="res://party/font/minigame/TimeNumberFill.tres" id="3_a4vgp"]
+[ext_resource type="Texture2D" uid="uid://cqc7cmiys46t3" path="res://party/font/minigame/TimeGradientFill.tres" id="4_a4vgp"]
+
+[sub_resource type="Animation" id="Animation_4u71v"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("TimeLabel:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(1, 1)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("TimeLabel:modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+
+[sub_resource type="Animation" id="Animation_i1hfe"]
+resource_name = "countdown"
+length = 0.2
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("TimeLabel:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.2),
+"transitions": PackedFloat32Array(0.5, 1),
+"update": 0,
+"values": [Vector2(2, 2), Vector2(1, 1)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("TimeLabel:modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.2),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 1)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_4u71v"]
+_data = {
+&"RESET": SubResource("Animation_4u71v"),
+&"countdown": SubResource("Animation_i1hfe")
+}
+
+[node name="Time" type="Control" node_paths=PackedStringArray("time_label", "animation_player")]
+custom_minimum_size = Vector2(256, 128)
+layout_mode = 3
+offset_right = 256.0
+offset_bottom = 128.0
+mouse_filter = 2
+script = ExtResource("1_i1hfe")
+time_label = NodePath("TimeLabel")
+animation_player = NodePath("AnimationPlayer")
+
+[node name="TextureRect" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -98.0
+offset_top = -64.0
+offset_right = 98.0
+offset_bottom = 78.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("1_lf7yx")
+
+[node name="TimeLabel" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -64.0
+offset_top = -36.5
+offset_right = 64.0
+offset_bottom = 36.5
+grow_horizontal = 2
+grow_vertical = 2
+pivot_offset = Vector2(64, 48)
+text = "00"
+label_settings = ExtResource("1_a4vgp")
+horizontal_alignment = 1
+vertical_alignment = 1
+uppercase = true
+script = ExtResource("2_lf7yx")
+metadata/_custom_type_script = "uid://qvplfr0cibu5"
+
+[node name="FillLabel" type="Label" parent="TimeLabel"]
+clip_children = 1
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "00"
+label_settings = ExtResource("3_a4vgp")
+horizontal_alignment = 1
+vertical_alignment = 1
+uppercase = true
+
+[node name="Gradient" type="TextureRect" parent="TimeLabel/FillLabel"]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = 7.5
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("4_a4vgp")
+expand_mode = 1
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+&"": SubResource("AnimationLibrary_4u71v")
+}

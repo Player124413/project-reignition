@@ -142,9 +142,9 @@ func start_minigame(tick : float) -> void:
 	get_tree().create_timer(NetworkManager.calculate_transition_delay(tick)).timeout.connect(callable)
 
 ## Plays the "GAME SET!" animation, then starts the results screen.
-func finish_minigame() -> void:
+func finish_minigame(from_timer : bool = false) -> void:
 	gameplay_finished.emit()
-	rpc("play_animation", "minigame-finish")
+	rpc("play_animation", "minigame-time" if from_timer else "minigame-finish")
 
 ## Emits the signal to actually enable gameplay objects.
 func on_gameplay_started() -> void:
