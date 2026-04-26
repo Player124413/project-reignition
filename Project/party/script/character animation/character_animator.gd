@@ -14,8 +14,7 @@ signal select_finished
 ## The index of this character
 var player_index : int
 
-# TODO Add support for more complex character animations
-
+# TODO Add support for more complex character animations (i.e. blending)
 func _ready() -> void:
 	player_index = PartyManager.get_character_index(data)
 	
@@ -31,9 +30,13 @@ func emit_animation_event(info : int) -> void:
 	emit_signal("animation_event", info)
 
 ## Plays a specific animation on the animator.
-func play_animation(anim : StringName) -> void:
+func play_animation(anim : StringName, reset : bool = false) -> void:
 	if animator == null || !animator.has_animation(anim):
 		return
+	
+	if !reset && animator.assigned_animation == anim:
+		return
+	
 	animator.play(anim)
 	animator.seek(0.0, true)
 

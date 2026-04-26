@@ -8,7 +8,6 @@
 extends PartyGameCharacterSpawner
 
 signal ball_hit
-signal demo_finished
 
 @export var camera : Camera3D
 @export var bat_attachment : BoneAttachment3D
@@ -92,6 +91,10 @@ const BALL_SCALE_DISTANCE : float = 80
 func on_spawn_finished() -> void:
 	ball.visible = false
 	bat_attachment.reparent(character_animator.skeleton)
+	character_animator.play_animation(get_anim_prefix() + "wait")
+
+func on_host_spawned() -> void:
+	MinigameManager.instance.peers_loaded.connect(Callable(self, "generate_pitch_queue"))
 
 func generate_pitch_queue() -> void:
 	for i in PITCH_COUNT:
@@ -105,19 +108,11 @@ func sync_pitch_queue(new_queue : Array[int]) -> void:
 	pitch_queue = new_queue
 
 func activate() -> void:
-	set_physics_process(true)
+	super()
 	pitch_ball() # Start pitching balls
-
-func deactivate() -> void:
-	set_process(false)
-	set_physics_process(false)
 
 func on_minigame_finished() -> void:
 	bat_attachment.visible = false
-
-## Returns whether this batter is a cpu or not.
-func is_cpu() -> bool:
-	return player_index == -1 || PartyManager.get_player_data(player_index).is_cpu_player()
 
 func _physics_process(_delta: float) -> void:
 	process_swing()
@@ -135,7 +130,7 @@ func process_swing() -> void:
 	if !is_multiplayer_authority():
 		return
 	
-	if Input.is_action_just_pressed("button_primary%s" % PartyManager.get_player_data(player_index).local_player_index):
+	if Input.is_action_just_pressed("button_primary%s" % get_input_suffix()):
 		start_player_swing()
 
 ## Simply swings at the right time. The swing timing is set in calculate_swing_ratio().
@@ -174,7 +169,7 @@ func process_ball() -> void:
 		return
 	
 	if player_index == -1: # Finished the demo!
-		demo_finished.emit()
+		MinigameManager.instance.request_minigame_start() # Start the minigame
 		deactivate()
 	else:
 		pitch_ball()

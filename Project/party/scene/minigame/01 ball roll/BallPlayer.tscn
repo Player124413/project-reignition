@@ -1,11 +1,47 @@
-[gd_scene load_steps=2 format=3 uid="uid://c5pa1j2se32y2"]
+[gd_scene load_steps=8 format=3 uid="uid://c5pa1j2se32y2"]
 
 [ext_resource type="PackedScene" uid="uid://3lunifbef355" path="res://party/scene/minigame/01 ball roll/model/Ball.glb" id="1_22pp1"]
+[ext_resource type="Script" uid="uid://c5a0ubmjeoquw" path="res://party/scene/minigame/01 ball roll/script/ball_controller.gd" id="1_d2vov"]
+[ext_resource type="Material" uid="uid://bal5uyxvnomwn" path="res://party/scene/minigame/01 ball roll/material/Ball Blue.tres" id="2_jr1jc"]
+[ext_resource type="Material" uid="uid://mcm3n4vdbdg4" path="res://party/scene/minigame/01 ball roll/material/Ball Red.tres" id="3_8aipo"]
+[ext_resource type="Material" uid="uid://dbb2yyteakycb" path="res://party/scene/minigame/01 ball roll/material/Ball Green.tres" id="4_fhgoj"]
+[ext_resource type="Material" uid="uid://krmd3sgcumve" path="res://party/scene/minigame/01 ball roll/material/Ball Yellow.tres" id="5_jkeol"]
 
-[node name="Player" type="Node3D"]
+[sub_resource type="SphereShape3D" id="SphereShape3D_8aipo"]
+radius = 12.0
 
-[node name="Ball" parent="." instance=ExtResource("1_22pp1")]
+[node name="Player" type="Node3D" node_paths=PackedStringArray("character_body", "character_rotation", "character_raycast", "ball_mesh", "spawn_position")]
+script = ExtResource("1_d2vov")
+max_speed = 60.0
+turn_speed = 2.0
+acceleration = 25.0
+decceleration = 10.0
+character_body = NodePath("Body")
+character_rotation = NodePath("Body/CharacterRotation")
+character_raycast = NodePath("Body/CharacterRotation/Spawn/RayCast3D")
+ball_mesh = NodePath("Body/Ball/BallMesh")
+ball_materials = Array[Material]([ExtResource("2_jr1jc"), ExtResource("3_8aipo"), ExtResource("4_fhgoj"), ExtResource("5_jkeol")])
+spawn_position = NodePath("Body/CharacterRotation/Spawn")
+
+[node name="Body" type="CharacterBody3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 12, 0)
+collision_layer = 2
+collision_mask = 3
+floor_snap_length = 5.0
 
-[node name="CharacterRotation" type="Node3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 12, 0)
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Body"]
+shape = SubResource("SphereShape3D_8aipo")
+
+[node name="Ball" parent="Body" instance=ExtResource("1_22pp1")]
+
+[node name="CharacterRotation" type="Node3D" parent="Body"]
+
+[node name="Spawn" type="Node3D" parent="Body/CharacterRotation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -12, -15)
+
+[node name="RayCast3D" type="RayCast3D" parent="Body/CharacterRotation/Spawn"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 10, 0)
+target_position = Vector3(0, -20, 0)
+hit_back_faces = false
+
+[editable path="Body/Ball"]

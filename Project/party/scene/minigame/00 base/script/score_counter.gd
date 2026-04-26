@@ -6,12 +6,16 @@ class_name ScoreCounter extends TextureRect
 @export var character_texture_rect : TextureRect
 var _player_index : int = -1
 
+func _ready() -> void:
+	visible = false;
+
 func on_score_updated(player_index : int, score : int) -> void:
 	if player_index == _player_index:
 		score_label.set_synced_text("%02d" % score)
 
 ## Sets the player index and links the on_score_updated signal.
 func set_player_index(player_index : int) -> void:
+	visible = true
 	_player_index = player_index
 	var character_data : PartyCharacterResource = PartyManager.get_player_data(player_index).character_data
 	character_texture_rect.texture = character_data.score_portrait
