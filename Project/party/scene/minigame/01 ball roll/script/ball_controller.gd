@@ -17,7 +17,8 @@ var move_speed : float
 ## The angle this player is moving/facing.
 var movement_angle : float
 var velocity : Vector3
-const BALL_RADIUS : float = 6.0
+var floor_angle : float
+const BALL_RADIUS : float = 12.0
 
 func on_spawn_finished() -> void:
 	ball_mesh.material_override = ball_materials[player_index]
@@ -59,6 +60,17 @@ func process_animation() -> void:
 	if character_raycast.is_colliding():
 		# Snap to ground
 		var target_position : Vector3 = character_raycast.get_collision_point()
+		var distance_vector : Vector3 = target_position - character_rotation.global_position
+		distance_vector.y = 0
+		distance_vector = distance_vector.normalized()
+		var amount : float = (target_position.y + BALL_RADIUS) - character_body.global_position.y
+		amount = min(amount, 0)
+		var target_angle : float = character_raycast.get_collision_normal().signed_angle_to(Vector3.UP, character_rotation.global_basis.x)
+		target_angle = max(target_angle, 0)
+		floor_angle = lerp(floor_angle, target_angle, 0.1)
+		if floor_angle < 0:
+			target_position.y += sin(floor_angle) * BALL_RADIUS
+		target_position += distance_vector * amount
 		character_animator.global_position = target_position
 	
 	if is_zero_approx(move_speed):
