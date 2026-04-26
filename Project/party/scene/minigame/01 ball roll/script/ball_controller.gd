@@ -11,6 +11,8 @@ extends PartyGameCharacterSpawner
 @export var character_raycast : RayCast3D
 @export var ball_mesh : MeshInstance3D
 @export var ball_materials : Array[Material]
+@export var roll_sfx : GroupSfxPlayer
+@export var collide_sfx : GroupSfxPlayer
 var is_minigame_complete : bool
 
 ## The last input recorded by this player.
@@ -37,11 +39,12 @@ func on_spawn_finished() -> void:
 	character_animator.animator.set_blend_time(get_anim_prefix() + "push", get_anim_prefix() + "wait", 0.5)
 	movement_angle = global_rotation.y
 	
-	MinigameManager.instance.gameplay_finished.connect(Callable.create(self, "on_gameplay_finished"))
+	MinigameManager.instance.minigame_finished.connect(Callable.create(self, "on_minigame_finished"))
 
-func on_gameplay_finished() -> void:
+func on_minigame_finished() -> void:
 	ball_mesh.visible = false
 	is_minigame_complete = true
+	roll_sfx.play_in_group()
 
 func _physics_process(_delta: float) -> void:
 	if is_minigame_complete:
@@ -61,6 +64,15 @@ func apply_movement() -> void:
 		velocity += Vector3.DOWN * GRAVITY
 	character_body.velocity = velocity
 	character_body.move_and_slide()
+	
+	if character_body.get_slide_collision_count() != 0:
+		if !collide_sfx.playing && character_body.get_slide_collision(0).get_collider(0) is CharacterBody3D:
+			collide_sfx.play_in_group()
+	elif is_zero_approx(move_speed):
+		roll_sfx.stop_in_group()
+	elif !roll_sfx.playing:
+		roll_sfx.play_in_group()
+	
 	move_speed = character_body.velocity.length()
 
 func process_move_speed() -> void:

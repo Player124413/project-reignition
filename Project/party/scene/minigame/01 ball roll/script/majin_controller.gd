@@ -178,6 +178,9 @@ func request_squish(player_index : int, network_time : float) -> void:
 
 func on_minigame_finished() -> void:
 	is_game_finished = true
+	visible = false
+	set_process(false)
+	set_physics_process(false)
 
 func _on_body_entered(body : PhysicsBody3D) -> void:
 	if is_game_finished:
