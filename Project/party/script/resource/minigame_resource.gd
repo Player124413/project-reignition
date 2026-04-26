@@ -4,3 +4,4 @@ class_name MinigameResource extends Resource
 @export var localization_key : String
 @export var description_key : String
 @export_file("*.tscn") var scene_path : String
+@export_range(1, 32, 1) var minigame_index : int = 1

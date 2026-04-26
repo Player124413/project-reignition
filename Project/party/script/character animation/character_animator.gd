@@ -7,7 +7,7 @@ signal animation_event(info : int)
 @export var animator : AnimationPlayer
 @export var data : PartyCharacterResource
 
-## Emitted after the select animation finishes. Emitted from aniamtion.
+## Emitted after the select animation finishes. Emitted from animation.
 @warning_ignore("unused_signal")
 signal select_finished
 

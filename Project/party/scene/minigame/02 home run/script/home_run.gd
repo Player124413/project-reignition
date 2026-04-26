@@ -5,17 +5,12 @@
 ### As the game runs, Player animations are synced through RPC calls,
 ### and ball positions are resynced on contact.
 ### CPU swing timings are calculated and sent via RPC far in advance, then simulated locally.
-extends Node3D
+extends PartyGameCharacterSpawner
 
 signal ball_hit
 signal demo_finished
 
-@export var player_index : int
-@export var character_animator : CharacterAnimator
-@export var score_counter : ScoreCounter
-
 @export var camera : Camera3D
-@export var spawn_position : Node3D
 @export var bat_attachment : BoneAttachment3D
 @export var catapult_animator : AnimationPlayer
 @export var ball : Node3D
@@ -94,36 +89,9 @@ const PITCH_COUNT : int = 10
 # At what point to begin scaling the ball (so it's not gigantic next to the player).
 const BALL_SCALE_DISTANCE : float = 80
 
-func _ready() -> void:
-	if NetworkManager.is_online && player_index != -1:
-		# Set up authority
-		var data : PlayerData = PartyManager.get_player_data(player_index)
-		if !data.is_cpu_player():
-			set_multiplayer_authority(data.device)
-	
-	if player_index != -1:
-		# Instance Player Model
-		character_animator = MinigameManager.instance.load_character_model(player_index)
-		spawn_position.add_child(character_animator)
-		character_animator.play_animation(get_anim_prefix() + "wait")
-		
-		# TODO Check if this player index is actually being used
-		set_physics_process(false)
-		MinigameManager.instance.gameplay_started.connect(Callable.create(self, "activate"))
-		MinigameManager.instance.gameplay_finished.connect(Callable.create(self, "deactivate"))
-		MinigameManager.instance.minigame_finished.connect(Callable.create(self, "on_minigame_finished"))
-		
-		if player_index == 0 && NetworkManager.is_hosting_game: # Only generate queue on player 1
-			MinigameManager.instance.peers_loaded.connect(Callable(self, "generate_pitch_queue"))
-		
-		score_counter.set_player_index(player_index)
-	else:
-		# Hide demo batting station after gameplay starts
-		MinigameManager.instance.gameplay_started.connect(Callable.create(self, "set_visible").bind(false))
-	
+func on_spawn_finished() -> void:
 	ball.visible = false
 	bat_attachment.reparent(character_animator.skeleton)
-	character_animator.connect("animation_event", Callable.create(self, "process_animation_event"))
 
 func generate_pitch_queue() -> void:
 	for i in PITCH_COUNT:
@@ -164,7 +132,6 @@ func process_swing() -> void:
 		process_cpu()
 		return
 	
-	# TODO Sync with other users
 	if !is_multiplayer_authority():
 		return
 	
@@ -224,9 +191,6 @@ func sample_hit_position(ratio : float) -> Vector3:
 	if ball_state == BALL_STATES.HIT: # Add vertical height
 		ball_position.y += sin(PI * ratio) * HIT_HEIGHT
 	return ball_position
-
-func get_anim_prefix() -> String:
-	return "02-" if player_index == -1 else "%s/" % MinigameManager.ANIMATION_LIBRARY_PREFIX
 
 ## Handle animation events from the character's animation controller
 func process_animation_event(info : int) -> void:
