@@ -166,7 +166,7 @@ public partial class LevelSelect : Menu
 
 	public void UpdateBgm()
 	{
-		bool canPlayBgm = !SaveManager.Config.useRetailMenuMusic && IsWorldUnlocked() && bgm.GetBgmResource() != null;
+		bool canPlayBgm = !SaveManager.Config.useRetailMenuMusic && IsWorldUnlocked() && bgm.GetBgmResource() != null && !isModWorld;
 		if (canPlayBgm && bgm?.Playing == false)
 		{
 			// Change to world specific level select music
