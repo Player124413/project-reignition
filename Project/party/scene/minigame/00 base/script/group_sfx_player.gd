@@ -9,6 +9,7 @@ static var sfx_dictionary : Dictionary
 
 func _ready() -> void:
 	finished.connect(Callable(self, "stop_in_group"))
+	tree_exiting.connect(Callable(self, "stop_in_group"))
 
 func play_in_group() -> void:
 	if !sfx_dictionary.has(group):

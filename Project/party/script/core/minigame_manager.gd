@@ -86,8 +86,6 @@ func _exit_tree() -> void:
 
 func start_party_game() -> void:
 	peers_loaded.emit()
-	
-	print(is_instance_valid(intro_animator) && intro_animator.has_animation("intro"))
 	if is_instance_valid(intro_animator) && intro_animator.has_animation("intro"):
 		intro_animator.play("intro")
 

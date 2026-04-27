@@ -44,7 +44,7 @@ func on_spawn_finished() -> void:
 func on_minigame_finished() -> void:
 	ball_mesh.visible = false
 	is_minigame_complete = true
-	roll_sfx.play_in_group()
+	roll_sfx.stop_in_group()
 
 func _physics_process(_delta: float) -> void:
 	if is_minigame_complete:

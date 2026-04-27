@@ -45,6 +45,9 @@ var squish_time : float = -1
 static var initial_spawn_index : int = 0
 static var initial_spawn_counter : int = 0
 
+## Stores the latest time we've updated on the network
+var latest_network_time : float = 0.0
+
 ## Generates a random spawn time.
 func get_spawn_time() -> float:
 	var spawn_time : float = lerp(MIN_SPAWN_INTERVAL , MAX_SPAWN_INTERVAL, randf())
@@ -71,12 +74,15 @@ func get_score_amount() -> int:
 	return 3 if is_bonus_majin else 1
 
 func _ready() -> void:
-	if !NetworkManager.is_hosting_game: # Only host controls majin movement
-		return
-	
-	set_multiplayer_authority(multiplayer.get_unique_id())
 	world = get_world_3d()
+	initial_spawn_index = 0
+	initial_spawn_counter = 0
+	
+	if NetworkManager.is_hosting_game: # Only host controls majin movement
+		set_multiplayer_authority(multiplayer.get_unique_id())
+	
 	MinigameManager.instance.gameplay_started.connect(Callable.create(self, "on_gameplay_started"))
+	MinigameManager.instance.gameplay_finished.connect(Callable.create(self, "on_gameplay_finished"))
 	MinigameManager.instance.minigame_finished.connect(Callable.create(self, "on_minigame_finished"))
 
 func _physics_process(_delta: float) -> void:
@@ -86,10 +92,12 @@ func _physics_process(_delta: float) -> void:
 	if !is_active:
 		return
 	
-	if is_zero_approx(hyperspeed_timer):
-		move_speed = normal_speed
-	else:
-		hyperspeed_timer = move_toward(hyperspeed_timer, 0, get_physics_process_delta_time())
+	process_movement_tick()
+	request_rollback()
+
+func process_movement_tick() -> void:
+	hyperspeed_timer -= get_physics_process_delta_time()
+	move_speed = normal_speed if hyperspeed_timer <= 0 else hyper_speed
 	
 	movement_angle += turn_speed * get_physics_process_delta_time()
 	global_rotation = Vector3.UP * movement_angle
@@ -142,6 +150,9 @@ func request_spawn(target_tick : float, angle : float, spawn_pos : Vector2, is_b
 
 ## Actually spawns the majin.
 func spawn(angle : float, spawn_pos : Vector2, is_bonus : bool) -> void:
+	if is_game_finished:
+		return
+	
 	movement_angle = angle
 	global_position = Vector3(spawn_pos.x, 0, spawn_pos.y)
 	is_bonus_majin = is_bonus
@@ -154,6 +165,7 @@ func spawn(angle : float, spawn_pos : Vector2, is_bonus : bool) -> void:
 	move_speed = hyper_speed
 	hyperspeed_timer = POSTSPAWN_HYPERSPEED_LENGTH
 	turn_speed = lerp(-MAX_TURN_SPEED, MAX_TURN_SPEED, randf())
+	request_rollback()
 
 @rpc("any_peer", "call_local", "reliable")
 func request_squish(player_index : int, network_time : float) -> void:
@@ -176,8 +188,34 @@ func request_squish(player_index : int, network_time : float) -> void:
 		if NetworkManager.is_hosting_game:
 			rpc("request_spawn", get_spawn_time(), get_spawn_rotation(), get_spawn_position(), randf() > 0.8)
 
-func on_minigame_finished() -> void:
+## Sends an rpc request to resync across the network
+func request_rollback() -> void:
+	if !NetworkManager.is_hosting_game: # Only host controls majin movement
+		return
+	rpc("rollback", NetworkTimeSynchronizer.get_time(), global_position, movement_angle, turn_speed)
+
+## Resyncs this majin across the network.
+@rpc
+func rollback(network_time : float, rollback_position : Vector3, angle : float, turn_spd : float) -> void:
+	if network_time <= latest_network_time: # Already recieved an earlier tick
+		return
+	
+	# Rollback to sync state
+	latest_network_time = network_time
+	global_position = rollback_position
+	movement_angle = angle
+	turn_speed = turn_spd
+	hyperspeed_timer += NetworkTimeSynchronizer.get_time() - network_time
+	
+	# Simulate a number of physics ticks to catch up to the current frame
+	var rollback_amount : float = NetworkTimeSynchronizer.get_time() - network_time
+	for i in range(floor(rollback_amount / get_physics_process_delta_time())):
+		process_movement_tick()
+
+func on_gameplay_finished() -> void:
 	is_game_finished = true
+
+func on_minigame_finished() -> void:
 	visible = false
 	set_process(false)
 	set_physics_process(false)
