@@ -1,4 +1,4 @@
-[gd_scene load_steps=62 format=3 uid="uid://cumqwrsj6eqpd"]
+[gd_scene load_steps=63 format=3 uid="uid://cumqwrsj6eqpd"]
 
 [ext_resource type="Script" uid="uid://cb7uekm77nlag" path="res://interface/menu/level select/script/WorldSelect.cs" id="1_7vrge"]
 [ext_resource type="Script" uid="uid://bjs225yvpdim2" path="res://video/VideoStreamFileLoadPlayer.cs" id="2_rcls3"]
@@ -33,6 +33,7 @@
 [ext_resource type="PackedScene" uid="uid://bft64s1qkqatm" path="res://interface/menu/level select/level lists/NightPalace.tscn" id="20_y3iyc"]
 [ext_resource type="AudioStream" uid="uid://cl54rftw5aiyf" path="res://sound/sfx/system/menu cancel.wav" id="21_fw6ew"]
 [ext_resource type="PackedScene" uid="uid://bgsvifk5vld4y" path="res://interface/menu/skill select/SkillPresetSelect.tscn" id="22_go238"]
+[ext_resource type="PackedScene" uid="uid://bf4ftjpxteunq" path="res://interface/menu/level select/level lists/Mods.tscn" id="24_rh4tn"]
 [ext_resource type="Resource" uid="uid://ny663nd8wxoa" path="res://resource/bgm/menu/level select.tres" id="32_uuntt"]
 [ext_resource type="Resource" uid="uid://cmpl3pqub1vjr" path="res://resource/bgm/menu/retail level select.tres" id="33_uuntt"]
 [ext_resource type="PackedScene" uid="uid://bdxqnxi1i3dcr" path="res://interface/menu/level select/StatusMenu.tscn" id="36_54me0"]
@@ -155,6 +156,21 @@ tracks/1/keys = {
 "values": [Color(1, 1, 1, 1), Color(1, 1, 1, 0)]
 }
 
+[sub_resource type="Animation" id="Animation_6bt2l"]
+resource_name = "hide-ta"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("../StoryMarker:visible")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0.033333335),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+
 [sub_resource type="Animation" id="Animation_yb35s"]
 resource_name = "show"
 length = 0.15
@@ -194,21 +210,6 @@ tracks/2/keys = {
 "transitions": PackedFloat32Array(1),
 "update": 1,
 "values": [true]
-}
-
-[sub_resource type="Animation" id="Animation_6bt2l"]
-resource_name = "hide-ta"
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("../StoryMarker:visible")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0.033333335),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [false]
 }
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_rcls3"]
@@ -2306,16 +2307,16 @@ grow_vertical = 2
 mouse_filter = 2
 script = ExtResource("1_7vrge")
 retailBgm = NodePath("RetailBGM")
-videoPlayers = [NodePath("DemoVideo/LostPrologue"), NodePath("DemoVideo/SandOasis"), NodePath("DemoVideo/DinosaurJungle"), NodePath("DemoVideo/EvilFoundry"), NodePath("DemoVideo/LevitatedRuin"), NodePath("DemoVideo/PirateStorm"), NodePath("DemoVideo/SkeletonDome"), NodePath("DemoVideo/NightPalace")]
+videoPlayers = [NodePath("DemoVideo/LostPrologue"), NodePath("DemoVideo/SandOasis"), NodePath("DemoVideo/DinosaurJungle"), NodePath("DemoVideo/EvilFoundry"), NodePath("DemoVideo/LevitatedRuin"), NodePath("DemoVideo/PirateStorm"), NodePath("DemoVideo/SkeletonDome"), NodePath("DemoVideo/NightPalace"), NodePath("DemoVideo/LostPrologue")]
 storyIndicationAnimator = NodePath("AreaSelection/StoryMarker/AnimationPlayer")
 statusMenu = NodePath("StatusMenu")
 description = NodePath("Description/Description")
 levelSpriteRegions = Array[Rect2]([Rect2(0, 800, 1024, 120), Rect2(0, 0, 1024, 120), Rect2(0, 460, 1024, 120), Rect2(0, 580, 1024, 100), Rect2(0, 700, 1024, 100), Rect2(0, 240, 1024, 100), Rect2(0, 126, 1024, 100), Rect2(0, 360, 1024, 100), Rect2(0, 920, 1024, 100)])
-levelDescriptionKeys = Array[String](["lost_prologue_description", "sand_oasis_description", "dinosaur_jungle_description", "evil_foundry_description", "levitated_ruin_description", "pirate_storm_description", "skeleton_dome_description", "night_palace_description", "sys_world_locked"])
+levelDescriptionKeys = Array[String](["lost_prologue_description", "sand_oasis_description", "dinosaur_jungle_description", "evil_foundry_description", "levitated_ruin_description", "pirate_storm_description", "skeleton_dome_description", "night_palace_description", "mods_description", "sys_world_locked"])
 levelTextSprites = Array[NodePath]([NodePath("AreaSelection/Text/Top/Sprite"), NodePath("AreaSelection/Text/Center/Sprite"), NodePath("AreaSelection/Text/Bottom/Sprite"), NodePath("AreaSelection/Text/TransitionText/Sprite")])
 levelGlowSprites = Array[NodePath]([NodePath("AreaSelection/Text/Top/Sprite/Glow"), NodePath("AreaSelection/Text/Center/Sprite/Glow"), NodePath("AreaSelection/Text/Bottom/Sprite/Glow")])
 levelNewSprites = Array[NodePath]([NodePath("AreaSelection/Text/Top/New"), NodePath("AreaSelection/Text/Center/New"), NodePath("AreaSelection/Text/Bottom/New"), NodePath("AreaSelection/Text/TransitionText/New")])
-submenus = Array[NodePath]([NodePath("Submenus/LostPrologue"), NodePath("Submenus/SandOasis"), NodePath("Submenus/DinosaurJungle"), NodePath("Submenus/EvilFoundry"), NodePath("Submenus/LevitatedRuin"), NodePath("Submenus/PirateStorm"), NodePath("Submenus/SkeletonDome"), NodePath("Submenus/NightPalace")])
+submenus = Array[NodePath]([NodePath("Submenus/LostPrologue"), NodePath("Submenus/SandOasis"), NodePath("Submenus/DinosaurJungle"), NodePath("Submenus/EvilFoundry"), NodePath("Submenus/LevitatedRuin"), NodePath("Submenus/PirateStorm"), NodePath("Submenus/SkeletonDome"), NodePath("Submenus/NightPalace"), NodePath("Submenus/Mods")])
 bgm = NodePath("BGM")
 animator = NodePath("AnimationPlayer")
 
@@ -2899,6 +2900,13 @@ description = NodePath("../../Description/Description")
 readyMenu = NodePath("../ReadyMenu")
 statusMenu = NodePath("../../StatusMenu")
 parentMenu = NodePath("../..")
+
+[node name="Mods" parent="Submenus" node_paths=PackedStringArray("description", "readyMenu", "statusMenu") instance=ExtResource("24_rh4tn")]
+layout_mode = 1
+description = NodePath("../../Description/Description")
+readyMenu = NodePath("../ReadyMenu")
+statusMenu = NodePath("../../StatusMenu")
+isModWorld = true
 
 [node name="ReadyMenu" parent="Submenus" node_paths=PackedStringArray("description", "bgm") instance=ExtResource("17_c7rwi")]
 z_index = 5

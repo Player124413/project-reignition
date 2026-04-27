@@ -14,12 +14,13 @@ public partial class ModManager : Node
 
 	public override void _EnterTree()
 	{
+		Instance = this;
 		SetUpMods();
 	}
 
 	private void SetUpMods()
 	{
-		ModdedLevels = [];
+		ModdedLevels = new List<LevelDataResource>();
 		if (!DirAccess.DirExistsAbsolute(CustomLevelPath))
 			DirAccess.MakeDirRecursiveAbsolute(CustomLevelPath);
 
@@ -58,14 +59,11 @@ public partial class ModManager : Node
 
 					GD.Print("Mission Name: " + ModdedLevels[i].MissionTypeKey);
 					GD.Print("Mission Description: " + ModdedLevels[i].MissionDescriptionKey);
-					break;
+					break;//Break out of the loop when we find the tres
 				}
 
 			}
-
-
 		}
-
 
 	}
 }

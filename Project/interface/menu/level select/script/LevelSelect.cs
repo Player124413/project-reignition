@@ -1,5 +1,6 @@
 using Godot;
 using Project.Core;
+using Project.Gameplay;
 using System.Collections.Generic;
 
 namespace Project.Interface.Menus;
@@ -32,6 +33,8 @@ public partial class LevelSelect : Menu
 	private const float ScrollSmoothing = .05f;
 	private readonly List<LevelOption> levelOptions = [];
 	[Export] private Jukebox jukebox;
+	[Export] bool isModWorld = false;
+	[Export] PackedScene levelOption;
 
 	public bool HasNewLevel()
 	{
@@ -72,6 +75,9 @@ public partial class LevelSelect : Menu
 
 	protected override void SetUp()
 	{
+		if (isModWorld)
+			ModSetUp();
+
 		foreach (Node node in options.GetChildren())
 		{
 			if (node is LevelOption levelOption)
@@ -84,6 +90,18 @@ public partial class LevelSelect : Menu
 
 		initialCursorPosition = cursor.Position.Y;
 		base.SetUp();
+	}
+
+	private void ModSetUp()
+	{
+
+		GD.Print(ModManager.Instance.ModdedLevels.Count);
+		foreach (LevelDataResource mod in ModManager.Instance.ModdedLevels)
+		{
+			LevelOption newOption = levelOption.Instantiate<LevelOption>();
+			newOption.data = mod;
+			options.AddChild(newOption);
+		}
 	}
 
 	protected override void ProcessMenu()

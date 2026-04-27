@@ -179,7 +179,7 @@ public partial class WorldSelect : Menu
 	protected override void Confirm()
 	{
 		// World hasn't been unlocked
-		if (!SaveManager.ActiveGameData.IsWorldUnlocked((SaveManager.WorldEnum)VerticalSelection)) return;
+		if (!SaveManager.ActiveGameData.IsWorldUnlocked((SaveManager.WorldEnum)VerticalSelection) && VerticalSelection != (int)SaveManager.WorldEnum.Mods) return;
 
 		if (isConfirmedWithMouse && Runtime.Instance.IsUsingMouse)
 		{
@@ -227,6 +227,7 @@ public partial class WorldSelect : Menu
 		if (!SaveManager.ActiveGameData.IsWorldUnlocked((SaveManager.WorldEnum)VerticalSelection)) return; // World is locked
 		if (!Mathf.IsZeroApprox(Input.GetAxis("ui_up", "ui_down"))) return; // Still scrolling
 
+
 		if (ActiveVideoPlayer?.IsPlaying() == true)
 		{
 			videoFadeFactor = 0;
@@ -236,6 +237,9 @@ public partial class WorldSelect : Menu
 		}
 
 		UpdateActiveVideoPlayer();
+
+		if (VerticalSelection == (int)SaveManager.WorldEnum.Mods)//Selected Mods world?
+			ActiveVideoPlayer.Stop();
 	}
 
 	private void UpdateActiveVideoPlayer()
