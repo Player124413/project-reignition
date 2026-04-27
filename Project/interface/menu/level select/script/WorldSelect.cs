@@ -216,7 +216,8 @@ public partial class WorldSelect : Menu
 
 	public override void OpenSubmenu()
 	{
-		SaveManager.ActiveGameData.lastPlayedWorld = (SaveManager.WorldEnum)VerticalSelection;
+		if (VerticalSelection != (int)SaveManager.WorldEnum.Mods)
+			SaveManager.ActiveGameData.lastPlayedWorld = (SaveManager.WorldEnum)VerticalSelection;
 		_submenus[VerticalSelection].ShowMenu();
 	}
 
