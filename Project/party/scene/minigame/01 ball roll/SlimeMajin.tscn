@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=3 uid="uid://d0vj15l625nt7"]
+[gd_scene load_steps=31 format=3 uid="uid://d0vj15l625nt7"]
 
 [ext_resource type="PackedScene" uid="uid://7q1h48dogua7" path="res://party/resource/character/model/SlimeMajin.glb" id="1_8kilo"]
 [ext_resource type="Script" uid="uid://dya6adym6shcr" path="res://party/scene/minigame/01 ball roll/script/majin_controller.gd" id="1_ldpof"]
@@ -7,6 +7,10 @@
 [ext_resource type="AudioStream" uid="uid://bt2jw85wkfpe6" path="res://party/scene/minigame/01 ball roll/sound/majin spawn.wav" id="5_lsuyx"]
 [ext_resource type="Script" uid="uid://bkwc2atbp4cjd" path="res://party/scene/minigame/00 base/script/group_sfx_player.gd" id="6_distt"]
 [ext_resource type="AudioStream" uid="uid://05r68o8pe16o" path="res://party/scene/minigame/01 ball roll/sound/majin squish.wav" id="7_cipy2"]
+[ext_resource type="Texture2D" uid="uid://c3acn6cm5vo5h" path="res://party/scene/minigame/01 ball roll/texture/fx shockwave.png" id="8_lsuyx"]
+[ext_resource type="Texture2D" uid="uid://cu3qwmyb7f27" path="res://party/scene/minigame/01 ball roll/texture/fx spawn dust.png" id="9_distt"]
+[ext_resource type="Texture2D" uid="uid://caot6iu7rvma4" path="res://party/scene/minigame/01 ball roll/texture/fx squish dust.png" id="10_cipy2"]
+[ext_resource type="Texture2D" uid="uid://ctcubf6txrpbf" path="res://party/scene/minigame/01 ball roll/texture/fx squish dust 2.png" id="11_vrgbe"]
 
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_my3q3"]
 properties/0/path = NodePath(".:position")
@@ -45,6 +49,18 @@ tracks/1/keys = {
 "update": 1,
 "values": [false]
 }
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("SlimeMajin:scale")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(1, 1, 1)]
+}
 
 [sub_resource type="Animation" id="Animation_my3q3"]
 resource_name = "init"
@@ -72,6 +88,18 @@ tracks/1/keys = {
 "transitions": PackedFloat32Array(1),
 "update": 1,
 "values": [false]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("SlimeMajin:scale")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(1, 1, 1)]
 }
 
 [sub_resource type="Animation" id="Animation_cl347"]
@@ -118,7 +146,7 @@ tracks/2/keys = {
 tracks/3/type = "method"
 tracks/3/imported = false
 tracks/3/enabled = true
-tracks/3/path = NodePath("Spawn")
+tracks/3/path = NodePath("SFX/Spawn")
 tracks/3/interp = 1
 tracks/3/loop_wrap = true
 tracks/3/keys = {
@@ -129,9 +157,36 @@ tracks/3/keys = {
 "method": &"play_in_group"
 }]
 }
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("SlimeMajin:scale")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0, 0.099999994),
+"transitions": PackedFloat32Array(0.5, 1),
+"update": 0,
+"values": [Vector3(0.1, 0.1, 0.1), Vector3(1, 1, 1)]
+}
+tracks/5/type = "method"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("VFX/Spawn")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [false],
+"method": &"restart"
+}]
+}
 
 [sub_resource type="Animation" id="Animation_yviun"]
 resource_name = "squish"
+length = 0.5
 tracks/0/type = "method"
 tracks/0/imported = false
 tracks/0/enabled = true
@@ -153,7 +208,7 @@ tracks/1/path = NodePath("SlimeMajin:visible")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/keys = {
-"times": PackedFloat32Array(0, 0.5),
+"times": PackedFloat32Array(0, 0.4),
 "transitions": PackedFloat32Array(1, 1),
 "update": 1,
 "values": [true, false]
@@ -173,7 +228,7 @@ tracks/2/keys = {
 tracks/3/type = "method"
 tracks/3/imported = false
 tracks/3/enabled = true
-tracks/3/path = NodePath("Squish")
+tracks/3/path = NodePath("SFX/Squish")
 tracks/3/interp = 1
 tracks/3/loop_wrap = true
 tracks/3/keys = {
@@ -184,6 +239,60 @@ tracks/3/keys = {
 "method": &"play_in_group"
 }]
 }
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("SlimeMajin:scale")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(1, 1, 1)]
+}
+tracks/5/type = "method"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("VFX/Shock")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0.4),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [false],
+"method": &"restart"
+}]
+}
+tracks/6/type = "method"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("VFX/Squish1")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [false],
+"method": &"restart"
+}]
+}
+tracks/7/type = "method"
+tracks/7/imported = false
+tracks/7/enabled = true
+tracks/7/path = NodePath("VFX/Squish2")
+tracks/7/interp = 1
+tracks/7/loop_wrap = true
+tracks/7/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [false],
+"method": &"restart"
+}]
+}
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_2x4ld"]
 _data = {
@@ -192,6 +301,119 @@ _data = {
 &"spawn": SubResource("Animation_cl347"),
 &"squish": SubResource("Animation_yviun")
 }
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_yviun"]
+transparency = 1
+blend_mode = 1
+shading_mode = 0
+specular_mode = 2
+vertex_color_use_as_albedo = true
+albedo_texture = ExtResource("8_lsuyx")
+
+[sub_resource type="Curve" id="Curve_lsuyx"]
+_data = [Vector2(0, 0), 0.0, 24.614237, 0, 0, Vector2(0.1, 1), 0.0, 0.0, 0, 0, Vector2(0.4, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 4
+
+[sub_resource type="CurveTexture" id="CurveTexture_lsuyx"]
+width = 64
+texture_mode = 1
+curve = SubResource("Curve_lsuyx")
+
+[sub_resource type="Curve" id="Curve_distt"]
+_data = [Vector2(0, 0.24276775), 0.0, 1.3143897, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_cipy2"]
+width = 64
+curve = SubResource("Curve_distt")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_yviun"]
+gravity = Vector3(0, 0, 0)
+scale_min = 8.0
+scale_max = 10.0
+scale_curve = SubResource("CurveTexture_cipy2")
+alpha_curve = SubResource("CurveTexture_lsuyx")
+
+[sub_resource type="QuadMesh" id="QuadMesh_lsuyx"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_lsuyx"]
+transparency = 1
+shading_mode = 0
+specular_mode = 2
+vertex_color_use_as_albedo = true
+albedo_texture = ExtResource("9_distt")
+billboard_mode = 3
+billboard_keep_scale = true
+particles_anim_h_frames = 1
+particles_anim_v_frames = 1
+particles_anim_loop = false
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_distt"]
+lifetime_randomness = 0.4
+emission_shape = 6
+emission_ring_axis = Vector3(0, 1, 0)
+emission_ring_height = 0.0
+emission_ring_radius = 4.0
+emission_ring_inner_radius = 0.5
+emission_ring_cone_angle = 90.0
+angle_min = 1.0728836e-05
+angle_max = 360.00003
+direction = Vector3(0, 1, 0)
+spread = 30.0
+initial_velocity_min = 5.0
+initial_velocity_max = 20.0
+gravity = Vector3(0, 0, 0)
+scale_min = 5.0
+scale_max = 10.0
+scale_curve = SubResource("CurveTexture_cipy2")
+alpha_curve = SubResource("CurveTexture_lsuyx")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_distt"]
+transparency = 1
+blend_mode = 1
+shading_mode = 0
+specular_mode = 2
+vertex_color_use_as_albedo = true
+albedo_texture = ExtResource("10_cipy2")
+billboard_mode = 3
+billboard_keep_scale = true
+particles_anim_h_frames = 1
+particles_anim_v_frames = 1
+particles_anim_loop = false
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_cipy2"]
+lifetime_randomness = 0.4
+emission_shape = 6
+emission_ring_axis = Vector3(0, 1, 0)
+emission_ring_height = 0.0
+emission_ring_radius = 4.0
+emission_ring_inner_radius = 0.5
+emission_ring_cone_angle = 90.0
+angle_min = 1.0728836e-05
+angle_max = 360.00003
+direction = Vector3(0, 1, 0)
+spread = 30.0
+initial_velocity_min = 5.0
+initial_velocity_max = 20.0
+gravity = Vector3(0, 0, 0)
+scale_min = 3.0
+scale_max = 5.0
+scale_curve = SubResource("CurveTexture_cipy2")
+color = Color(1.353256, 1.0417933, 0.8860621, 1)
+alpha_curve = SubResource("CurveTexture_lsuyx")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_cipy2"]
+transparency = 1
+blend_mode = 1
+shading_mode = 0
+specular_mode = 2
+vertex_color_use_as_albedo = true
+albedo_texture = ExtResource("11_vrgbe")
+billboard_mode = 3
+billboard_keep_scale = true
+particles_anim_h_frames = 1
+particles_anim_v_frames = 1
+particles_anim_loop = false
 
 [node name="Majin" type="Area3D" node_paths=PackedStringArray("animation_player", "mesh")]
 collision_layer = 0
@@ -224,19 +446,89 @@ libraries = {
 }
 autoplay = "init"
 
-[node name="Spawn" type="AudioStreamPlayer" parent="."]
+[node name="SFX" type="Node" parent="."]
+
+[node name="Spawn" type="AudioStreamPlayer" parent="SFX"]
 stream = ExtResource("5_lsuyx")
 bus = &"GAME SFX"
 script = ExtResource("6_distt")
 group = "majin spawn"
 max_volume = 0.5
 
-[node name="Squish" type="AudioStreamPlayer" parent="."]
+[node name="Squish" type="AudioStreamPlayer" parent="SFX"]
 stream = ExtResource("7_cipy2")
 bus = &"GAME SFX"
 script = ExtResource("6_distt")
 group = "majin spawn"
 max_volume = 0.5
+min_volume = 0.4
+
+[node name="VFX" type="Node3D" parent="."]
+
+[node name="Shock" type="GPUParticles3D" parent="VFX"]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 1, -4.371139e-08)
+layers = 32
+material_override = SubResource("StandardMaterial3D_yviun")
+extra_cull_margin = 16384.0
+emitting = false
+amount = 2
+lifetime = 0.3
+one_shot = true
+explosiveness = 0.8
+fixed_fps = 0
+fract_delta = false
+visibility_aabb = AABB(0, 0, 0, 0, 0, 0)
+local_coords = true
+process_material = SubResource("ParticleProcessMaterial_yviun")
+draw_pass_1 = SubResource("QuadMesh_lsuyx")
+
+[node name="Spawn" type="GPUParticles3D" parent="VFX"]
+layers = 32
+material_override = SubResource("StandardMaterial3D_lsuyx")
+extra_cull_margin = 16384.0
+emitting = false
+amount = 16
+lifetime = 0.4
+one_shot = true
+explosiveness = 0.8
+fixed_fps = 0
+fract_delta = false
+visibility_aabb = AABB(0, 0, 0, 0, 0, 0)
+local_coords = true
+process_material = SubResource("ParticleProcessMaterial_distt")
+draw_pass_1 = SubResource("QuadMesh_lsuyx")
+
+[node name="Squish1" type="GPUParticles3D" parent="VFX"]
+layers = 32
+material_override = SubResource("StandardMaterial3D_distt")
+extra_cull_margin = 16384.0
+emitting = false
+amount = 32
+lifetime = 0.4
+one_shot = true
+explosiveness = 0.8
+fixed_fps = 0
+fract_delta = false
+visibility_aabb = AABB(0, 0, 0, 0, 0, 0)
+local_coords = true
+process_material = SubResource("ParticleProcessMaterial_cipy2")
+draw_pass_1 = SubResource("QuadMesh_lsuyx")
+
+[node name="Squish2" type="GPUParticles3D" parent="VFX"]
+layers = 32
+material_override = SubResource("StandardMaterial3D_cipy2")
+extra_cull_margin = 16384.0
+emitting = false
+amount = 32
+lifetime = 0.4
+one_shot = true
+explosiveness = 0.8
+fixed_fps = 0
+fract_delta = false
+visibility_aabb = AABB(0, 0, 0, 0, 0, 0)
+local_coords = true
+process_material = SubResource("ParticleProcessMaterial_cipy2")
+draw_pass_1 = SubResource("QuadMesh_lsuyx")
 
 [connection signal="body_entered" from="." to="." method="_on_body_entered"]
 
