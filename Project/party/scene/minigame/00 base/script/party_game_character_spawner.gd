@@ -67,8 +67,7 @@ func _ready() -> void:
 
 ## Called after the host has spawned.
 func on_host_spawned() -> void:
-	# Default behavior: start the minigame
-	MinigameManager.instance.request_minigame_start()
+	pass
 
 ## Called after spawn logic has finished.
 func on_spawn_finished() -> void:

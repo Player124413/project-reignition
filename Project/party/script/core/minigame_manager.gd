@@ -25,6 +25,9 @@ enum SCREEN_MODE {
 	SPLITSCREEN # Each player gets a corner of the screen. Use this for simultaneous screens.
 }
 
+## Optional animator that plays when all peers are loaded.
+@export var intro_animator : AnimationPlayer
+
 ## Demo transition. Only used when splitscreen is active.
 @export var demo_transition_mode : DEMO_TRANSITION
 enum DEMO_TRANSITION {
@@ -73,9 +76,9 @@ func _ready() -> void:
 		animator.advance(0.0)
 	
 	if NetworkManager.is_online:
-		NetworkManager.party_game_started.connect(Callable(self, "start_party_game"))
+		NetworkManager.party_game_started.connect(Callable(self, "start_party_game"), CONNECT_DEFERRED)
 	else:
-		start_party_game()
+		call_deferred("start_party_game")
 
 func _exit_tree() -> void:
 	if NetworkManager.party_game_started.is_connected(Callable(self, "start_party_game")):
@@ -83,6 +86,10 @@ func _exit_tree() -> void:
 
 func start_party_game() -> void:
 	peers_loaded.emit()
+	
+	print(is_instance_valid(intro_animator) && intro_animator.has_animation("intro"))
+	if is_instance_valid(intro_animator) && intro_animator.has_animation("intro"):
+		intro_animator.play("intro")
 
 ## Called when running a mini-game from the editor. Loads 4 default characters.
 func initialize_debug_characters() -> void:
