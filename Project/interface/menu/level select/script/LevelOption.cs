@@ -50,6 +50,7 @@ public partial class LevelOption : Control
 		{
 			if (string.IsNullOrEmpty(data.LevelPath)) return false; // Level doesn't exist.
 			if (DebugManager.Instance.UnlockAllStages) return true;
+			if (data.AreaKey == SaveManager.WorldEnum.Mods) return true;
 
 			return SaveManager.ActiveGameData.IsStageUnlocked(data.LevelID);
 		}
