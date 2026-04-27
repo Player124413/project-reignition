@@ -129,7 +129,7 @@ func _change_score(player_index : int, amount : int) -> void:
 func register_completed_player() -> void:
 	completed_player_count += 1
 	if completed_player_count == PartyManager.MAX_PLAYER_COUNT:
-		finish_minigame()
+		request_minigame_finish()
 
 func request_minigame_start() -> void:
 	print("Starting Minigame!")
@@ -146,13 +146,21 @@ func start_minigame(tick : float) -> void:
 	var callable : Callable = Callable(self, "play_animation").bind(target_animation)
 	get_tree().create_timer(NetworkManager.calculate_transition_delay(tick)).timeout.connect(callable)
 
+func request_minigame_finish(from_timer : bool = false) -> void:
+	print("Finishing Minigame!")
+	if NetworkManager.is_hosting_game:
+		rpc("finish_minigame", from_timer)
+
 ## Plays the "GAME SET!" animation, then starts the results screen.
-func finish_minigame(from_timer : bool = false) -> void:
+@rpc("any_peer", "call_local", "reliable")
+func finish_minigame(from_timer : bool) -> void:
+	print("Gameplay Finished.")
 	gameplay_finished.emit()
 	rpc("play_animation", "minigame-time" if from_timer else "minigame-finish")
 
 ## Emits the signal to actually enable gameplay objects.
 func on_gameplay_started() -> void:
+	print("Gameplay Started.")
 	gameplay_started.emit()
 
 ## Emits the signal to teleport players to the results screen.

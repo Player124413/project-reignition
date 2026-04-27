@@ -26,8 +26,8 @@ func _physics_process(_delta: float) -> void:
 	set_display_time(ceil(current_time))
 	if current_time < 0:
 		set_physics_process(false)
-		if is_multiplayer_authority():
-			MinigameManager.instance.finish_minigame()
+		if NetworkManager.is_hosting_game:
+			MinigameManager.instance.request_minigame_finish(true)
 
 func set_display_time(value : int) -> void:
 	if display_time == value:
