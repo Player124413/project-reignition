@@ -35,6 +35,7 @@ public partial class LevelDataResource : Resource
 		ThumbsUp, // Thumbs up variation is determined by character's speed...
 	}
 
+	public bool UnlockedByDefault { get; private set; }
 	public SkillResource RequiredSkill { get; private set; }
 	/// <summary> Set this to True to ignore the required skill when unlocking the level. </summary>
 	public bool BypassSkillUnlockRequirement { get; private set; }
@@ -64,6 +65,7 @@ public partial class LevelDataResource : Resource
 			ExtensionMethods.CreateProperty("Mission Category", Variant.Type.Int, PropertyHint.Enum, MissionCategory.EnumToString()),
 			ExtensionMethods.CreateProperty("Has Fire Souls", Variant.Type.Bool),
 
+			ExtensionMethods.CreateProperty("Unlock Requirements/Unlocked By Default", Variant.Type.Bool),
 			ExtensionMethods.CreateProperty("Unlock Requirements/Required Skill", Variant.Type.Object, PropertyHint.ResourceType, "SkillResource"),
 			ExtensionMethods.CreateProperty("Unlock Requirements/Bypass Skill Unlock", Variant.Type.Bool),
 			ExtensionMethods.CreateProperty("Unlock Requirements/Required Level", Variant.Type.Int, PropertyHint.Range, "0,99"),
@@ -124,6 +126,8 @@ public partial class LevelDataResource : Resource
 			case "World Ring":
 				return (int)WorldRing;
 
+			case "Unlock Requirements/Unlocked By Default":
+				return UnlockedByDefault;
 			case "Unlock Requirements/Required Skill":
 				return RequiredSkill;
 			case "Unlock Requirements/Bypass Skill Unlock":
@@ -209,6 +213,9 @@ public partial class LevelDataResource : Resource
 				WorldRing = (SaveManager.WorldEnum)(int)value;
 				break;
 
+			case "Unlock Requirements/Unlocked By Default":
+				UnlockedByDefault = (bool)value;
+				break;
 			case "Unlock Requirements/Required Skill":
 				RequiredSkill = (SkillResource)value;
 				break;

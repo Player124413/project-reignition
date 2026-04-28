@@ -48,9 +48,12 @@ public partial class LevelOption : Control
 	{
 		get
 		{
+
 			if (string.IsNullOrEmpty(data.LevelPath)) return false; // Level doesn't exist.
+			if (data.UnlockedByDefault) return true;
 			if (DebugManager.Instance.UnlockAllStages) return true;
 			if (data.AreaKey == SaveManager.WorldEnum.Mods) return true;
+
 
 			return SaveManager.ActiveGameData.IsStageUnlocked(data.LevelID);
 		}
@@ -68,6 +71,9 @@ public partial class LevelOption : Control
 			animator.Play(ShowTAAnimation);
 		else
 			animator.Play(ShowAnimation);
+
+		if (data.AreaKey == SaveManager.WorldEnum.Mods)
+			newLabel.Visible = false;
 	}
 	public void HideOption() => animator.Play(HideAnimation);
 
