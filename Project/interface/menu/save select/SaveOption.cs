@@ -47,7 +47,11 @@ public partial class SaveOption : Control
 
 			newData.Visible = false;
 			existingData.Visible = true;
-			worldIcon.RegionRect = worldIconRegions[(int)saveData.lastPlayedWorld];
+
+			if (saveData.lastPlayedWorld != SaveManager.WorldEnum.Mods)
+				worldIcon.RegionRect = worldIconRegions[(int)saveData.lastPlayedWorld];
+			else
+				worldIcon.RegionRect = worldIconRegions[(int)SaveManager.WorldEnum.LostPrologue]; //Defaults the save icon to Lost Prologue if we have selected the Mods world previously
 
 			levelLabel.Text = $" : {saveData.level:00}";
 
