@@ -35,6 +35,7 @@ public partial class LevelSelect : Menu
 	[Export] private Jukebox jukebox;
 	[Export] bool isModWorld = false;
 	[Export] PackedScene levelOption;
+	[Export] LevelDataResource defaultLevelModOption;
 
 	public bool HasNewLevel()
 	{
@@ -96,12 +97,23 @@ public partial class LevelSelect : Menu
 	{
 
 		GD.Print(ModManager.Instance.ModdedLevels.Count);
-		foreach (LevelDataResource mod in ModManager.Instance.ModdedLevels)
+
+		if (ModManager.Instance.ModdedLevels.Count > 0)
 		{
-			LevelOption newOption = levelOption.Instantiate<LevelOption>();
-			newOption.data = mod;
-			options.AddChild(newOption);
+			foreach (LevelDataResource mod in ModManager.Instance.ModdedLevels)
+			{
+				LevelOption newOption = levelOption.Instantiate<LevelOption>();
+				newOption.data = mod;
+				options.AddChild(newOption);
+			}
 		}
+		else
+		{
+			LevelOption defaultOption = levelOption.Instantiate<LevelOption>();
+			defaultOption.data = defaultLevelModOption;
+			options.AddChild(defaultOption);
+		}
+
 	}
 
 	protected override void ProcessMenu()
@@ -121,6 +133,8 @@ public partial class LevelSelect : Menu
 		{
 			if (Runtime.Instance.IsActionJustPressed("sys_pause", "ui_accept") && menuMemory[MemoryKeys.ActiveMenu] != (int)MemoryKeys.TimeAttack)
 			{
+				if (isModWorld && ModManager.Instance.ModdedLevels.Count == 0) //Don't open the bgm menu when we don't have any mods
+					return;
 				menuMemory[MemoryKeys.ActiveMenu] = (int)MemoryKeys.Jukebox;
 				OpenBGMMenu();
 				DisableProcessing();
@@ -191,6 +205,9 @@ public partial class LevelSelect : Menu
 
 	protected override void Confirm()
 	{
+		if (ModManager.Instance.ModdedLevels.Count == 0 && isModWorld)
+			return;
+
 		if (TimeAttackManager.Instance.IsRunActive && TimeAttackManager.Instance.CurrentRunType != TimeAttackManager.RunType.SingleRun)
 			return;
 

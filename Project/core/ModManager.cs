@@ -44,6 +44,9 @@ public partial class ModManager : Node
 
 		DirAccess modDir = DirAccess.Open("res://mods/levels/");
 
+		if (modDir == null)
+			return;
+
 		foreach (string mod in modDir.GetDirectories())//Gets all the directories that were added
 		{
 			GD.Print("res://mods/levels/" + mod);
