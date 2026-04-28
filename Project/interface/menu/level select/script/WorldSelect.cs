@@ -97,6 +97,7 @@ public partial class WorldSelect : Menu
 		PreviousVideoPlayer = null;
 		UpdateActiveVideoPlayer();
 		UpdateStoryIndicator(false);
+		SetVideoVisibility();
 	}
 
 	public override void _Process(double _)
@@ -160,6 +161,8 @@ public partial class WorldSelect : Menu
 		animator.Seek(0.0, true);
 		DisableProcessing();
 		UpdateStoryIndicator(false);
+
+		SetVideoVisibility();
 	}
 
 	private void UpdateStoryIndicator(bool forceClose)
@@ -216,8 +219,7 @@ public partial class WorldSelect : Menu
 
 	public override void OpenSubmenu()
 	{
-		if (VerticalSelection != (int)SaveManager.WorldEnum.Mods)//Prevents saving the mods world as the last played world
-			SaveManager.ActiveGameData.lastPlayedWorld = (SaveManager.WorldEnum)VerticalSelection;
+		SaveManager.ActiveGameData.lastPlayedWorld = (SaveManager.WorldEnum)VerticalSelection;
 		_submenus[VerticalSelection].ShowMenu();
 	}
 
@@ -239,8 +241,6 @@ public partial class WorldSelect : Menu
 
 		UpdateActiveVideoPlayer();
 
-		if (VerticalSelection == (int)SaveManager.WorldEnum.Mods)//Selected Mods world?
-			ActiveVideoPlayer.Stop();
 	}
 
 	private void UpdateActiveVideoPlayer()
@@ -249,6 +249,14 @@ public partial class WorldSelect : Menu
 		ActiveVideoPlayer.Paused = false;
 		if (!ActiveVideoPlayer.IsPlaying())
 			ActiveVideoPlayer.Play();
+	}
+
+	private void SetVideoVisibility()
+	{
+		if (VerticalSelection == (int)SaveManager.WorldEnum.Mods) //Selected Mods world?
+			ActiveVideoPlayer.Visible = false;
+		else
+			ActiveVideoPlayer.Visible = true;
 	}
 
 	public void UpdateLevelText()
