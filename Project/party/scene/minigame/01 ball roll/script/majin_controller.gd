@@ -139,7 +139,7 @@ func on_gameplay_started() -> void:
 	rpc("request_spawn", get_initial_spawn_time(), get_spawn_rotation(), get_spawn_position(), get_spawn_turn_speed(), false)
 
 @rpc("any_peer", "call_local", "reliable")
-func request_spawn(target_tick : float, angle : float, spawn_pos : Vector2, is_bonus : bool, turn_spd : float) -> void:
+func request_spawn(target_tick : float, angle : float, spawn_pos : Vector2, turn_spd : float, is_bonus : bool) -> void:
 	var spawn_delay : float = target_tick - NetworkTimeSynchronizer.get_time()
 	var spawn_callable : Callable = Callable.create(self, "spawn")
 	spawn_callable = spawn_callable.bind(angle, spawn_pos, is_bonus, turn_spd)
