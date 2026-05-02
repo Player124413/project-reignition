@@ -39,6 +39,10 @@ func on_spawn_finished() -> void:
 	character_animator.animator.set_blend_time(get_anim_prefix() + "push", get_anim_prefix() + "wait", 0.5)
 	movement_angle = global_rotation.y
 	
+	## Desync rollback timers so we aren't sending a ton of data on a single frame
+	rollback_interval_timer = ROLLBACK_INTERVAL
+	rollback_interval_timer *= ((player_index as float) / PartyManager.MAX_PLAYER_COUNT)
+	
 	MinigameManager.instance.minigame_finished.connect(Callable.create(self, "on_minigame_finished"))
 
 func on_minigame_finished() -> void:
@@ -53,6 +57,10 @@ func _physics_process(_delta: float) -> void:
 	if is_multiplayer_authority(): # Update inputs
 		movement_input = calculate_cpu_input() if is_cpu() else get_input_axis()
 	
+	process_movement_tick()
+	request_rollback()
+
+func process_movement_tick() -> void:
 	process_move_speed()
 	process_turning()
 	apply_movement()
@@ -137,3 +145,40 @@ func calculate_cpu_input() -> Vector2:
 		return -input.normalized()
 	
 	return Vector2.UP.rotated(randf() * TAU) # Just choose a random direction
+
+#####################
+### ROLLBACK CODE ###
+#####################
+
+## Stores the latest time we've updated on the network
+var latest_network_time : float = 0.0
+var rollback_interval_timer : float
+const ROLLBACK_INTERVAL : float = 0.06
+
+## Sends an rpc request to resync across the network
+func request_rollback() -> void:
+	if !is_multiplayer_authority():
+		return
+	
+	rollback_interval_timer = move_toward(rollback_interval_timer, 0, get_physics_process_delta_time())
+	if is_zero_approx(rollback_interval_timer):
+		rollback_interval_timer = ROLLBACK_INTERVAL
+		rpc("rollback", NetworkTimeSynchronizer.get_time(), global_position, movement_angle, turn_speed, movement_input)
+
+## Resyncs this majin across the network.
+@rpc
+func rollback(network_time : float, rollback_position : Vector3, angle : float, turn_spd : float, input : Vector2) -> void:
+	if network_time <= latest_network_time: # Already recieved an earlier tick
+		return
+	
+	# Rollback to sync state
+	latest_network_time = network_time
+	global_position = rollback_position
+	movement_angle = angle
+	movement_input = input
+	turn_speed = turn_spd
+	#
+	## Simulate a number of physics ticks to catch up to the current frame
+	#var rollback_amount : float = NetworkTimeSynchronizer.get_time() - network_time
+	#for i in range(floor(rollback_amount / get_physics_process_delta_time())):
+		#process_movement_tick()

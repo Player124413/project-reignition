@@ -45,9 +45,6 @@ var squish_time : float = -1
 static var initial_spawn_index : int = 0
 static var initial_spawn_counter : int = 0
 
-## Stores the latest time we've updated on the network
-var latest_network_time : float = 0.0
-
 ## Generates a random spawn time.
 func get_spawn_time() -> float:
 	var spawn_time : float = lerp(MIN_SPAWN_INTERVAL , MAX_SPAWN_INTERVAL, randf())
@@ -70,6 +67,9 @@ func get_spawn_position() -> Vector2:
 func get_spawn_rotation() -> float:
 	return randf() * TAU
 
+func get_spawn_turn_speed() -> float:
+	return lerp(-MAX_TURN_SPEED, MAX_TURN_SPEED, randf())
+
 func get_score_amount() -> int:
 	return 3 if is_bonus_majin else 1
 
@@ -86,9 +86,6 @@ func _ready() -> void:
 	MinigameManager.instance.minigame_finished.connect(Callable.create(self, "on_minigame_finished"))
 
 func _physics_process(_delta: float) -> void:
-	if !NetworkManager.is_hosting_game: # Only host controls majin movement
-		return
-	
 	if !is_active:
 		return
 	
@@ -139,20 +136,21 @@ func process_ground() -> void:
 func on_gameplay_started() -> void:
 	if !NetworkManager.is_hosting_game:
 		return
-	rpc("request_spawn", get_initial_spawn_time(), get_spawn_rotation(), get_spawn_position(), false)
+	rpc("request_spawn", get_initial_spawn_time(), get_spawn_rotation(), get_spawn_position(), get_spawn_turn_speed(), false)
 
 @rpc("any_peer", "call_local", "reliable")
-func request_spawn(target_tick : float, angle : float, spawn_pos : Vector2, is_bonus : bool) -> void:
+func request_spawn(target_tick : float, angle : float, spawn_pos : Vector2, is_bonus : bool, turn_spd : float) -> void:
 	var spawn_delay : float = target_tick - NetworkTimeSynchronizer.get_time()
 	var spawn_callable : Callable = Callable.create(self, "spawn")
-	spawn_callable = spawn_callable.bind(angle, spawn_pos, is_bonus)
+	spawn_callable = spawn_callable.bind(angle, spawn_pos, is_bonus, turn_spd)
 	get_tree().create_timer(spawn_delay).timeout.connect(spawn_callable)
 
 ## Actually spawns the majin.
-func spawn(angle : float, spawn_pos : Vector2, is_bonus : bool) -> void:
+func spawn(angle : float, spawn_pos : Vector2, is_bonus : bool, turn_spd : float) -> void:
 	if is_game_finished:
 		return
 	
+	turn_speed = turn_spd
 	movement_angle = angle
 	global_position = Vector3(spawn_pos.x, 0, spawn_pos.y)
 	is_bonus_majin = is_bonus
@@ -164,7 +162,6 @@ func spawn(angle : float, spawn_pos : Vector2, is_bonus : bool) -> void:
 	
 	move_speed = hyper_speed
 	hyperspeed_timer = POSTSPAWN_HYPERSPEED_LENGTH
-	turn_speed = lerp(-MAX_TURN_SPEED, MAX_TURN_SPEED, randf())
 	request_rollback()
 
 @rpc("any_peer", "call_local", "reliable")
@@ -186,17 +183,30 @@ func request_squish(player_index : int, network_time : float) -> void:
 		is_active = false
 		
 		if NetworkManager.is_hosting_game:
-			rpc("request_spawn", get_spawn_time(), get_spawn_rotation(), get_spawn_position(), randf() > 0.8)
+			rpc("request_spawn", get_spawn_time(), get_spawn_rotation(), get_spawn_position(), get_spawn_turn_speed(), randf() > 0.8)
+
+
+#####################
+### ROLLBACK CODE ###
+#####################
+## Stores the latest time we've updated on the network
+var latest_network_time : float = 0.0
+var rollback_interval_timer : float
+const ROLLBACK_INTERVAL : float = 0.2
 
 ## Sends an rpc request to resync across the network
 func request_rollback() -> void:
 	if !NetworkManager.is_hosting_game: # Only host controls majin movement
 		return
-	rpc("rollback", NetworkTimeSynchronizer.get_time(), global_position, movement_angle, turn_speed)
+	
+	rollback_interval_timer = move_toward(rollback_interval_timer, 0, get_physics_process_delta_time())
+	if is_zero_approx(rollback_interval_timer):
+		rollback_interval_timer = ROLLBACK_INTERVAL
+		rpc("rollback", NetworkTimeSynchronizer.get_time(), global_position, movement_angle)
 
 ## Resyncs this majin across the network.
 @rpc
-func rollback(network_time : float, rollback_position : Vector3, angle : float, turn_spd : float) -> void:
+func rollback(network_time : float, rollback_position : Vector3, angle : float) -> void:
 	if network_time <= latest_network_time: # Already recieved an earlier tick
 		return
 	
@@ -204,12 +214,9 @@ func rollback(network_time : float, rollback_position : Vector3, angle : float, 
 	latest_network_time = network_time
 	global_position = rollback_position
 	movement_angle = angle
-	turn_speed = turn_spd
 	hyperspeed_timer += NetworkTimeSynchronizer.get_time() - network_time
 	
-	# Simulate a number of physics ticks to catch up to the current frame
-	var rollback_amount : float = NetworkTimeSynchronizer.get_time() - network_time
-	for i in range(floor(rollback_amount / get_physics_process_delta_time())):
+	for i in range(floor((NetworkTimeSynchronizer.get_time() - network_time) / get_physics_process_delta_time())):
 		process_movement_tick()
 
 func on_gameplay_finished() -> void:

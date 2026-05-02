@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=3 uid="uid://c5pa1j2se32y2"]
+[gd_scene load_steps=14 format=3 uid="uid://c5pa1j2se32y2"]
 
 [ext_resource type="PackedScene" uid="uid://3lunifbef355" path="res://party/scene/minigame/01 ball roll/model/Ball.glb" id="1_22pp1"]
 [ext_resource type="Script" uid="uid://c5a0ubmjeoquw" path="res://party/scene/minigame/01 ball roll/script/ball_controller.gd" id="1_d2vov"]
@@ -21,23 +21,6 @@ shading_mode = 0
 specular_mode = 2
 vertex_color_use_as_albedo = true
 albedo_texture = ExtResource("8_4h3yl")
-
-[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_jr1jc"]
-properties/0/path = NodePath("Body:position")
-properties/0/spawn = true
-properties/0/replication_mode = 2
-properties/1/path = NodePath("Body:rotation")
-properties/1/spawn = true
-properties/1/replication_mode = 2
-properties/2/path = NodePath(".:movement_input")
-properties/2/spawn = true
-properties/2/replication_mode = 2
-properties/3/path = NodePath(".:move_speed")
-properties/3/spawn = true
-properties/3/replication_mode = 2
-properties/4/path = NodePath(".:movement_angle")
-properties/4/spawn = true
-properties/4/replication_mode = 2
 
 [node name="Player" type="Node3D" node_paths=PackedStringArray("character_body", "character_rotation", "character_raycast", "ball_mesh", "roll_sfx", "collide_sfx", "spawn_position")]
 script = ExtResource("1_d2vov")
@@ -102,9 +85,5 @@ bus = &"GAME SFX"
 script = ExtResource("8_jkeol")
 group = "ball collide"
 min_volume = 0.5
-
-[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
-replication_interval = 0.1
-replication_config = SubResource("SceneReplicationConfig_jr1jc")
 
 [editable path="Body/Ball"]

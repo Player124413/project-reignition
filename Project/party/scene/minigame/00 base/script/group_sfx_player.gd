@@ -39,5 +39,4 @@ func stop_in_group() -> void:
 			sfx_dictionary.erase(group)
 
 func calculate_max_volume() -> float:
-		
 	return base_volume;
