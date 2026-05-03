@@ -61,7 +61,13 @@ func initialize() -> void:
 			minigame_list.append(resource)
 
 func confirm() -> void:
-	# TODO Use Submenus.
+	if !NetworkManager.is_hosting_game:
+		return
+	
+	rpc("start_confirm")
+
+@rpc("any_peer", "call_local", "reliable")
+func start_confirm() -> void:
 	# For this current branch, we're just loading the mini-game immediately.
 	if current_menu == SUBMENUS.DEFAULT:
 		if current_selection != Vector2i(0, 0): # TODO Allow selecting other options
@@ -81,9 +87,16 @@ func confirm() -> void:
 		rpc("load_minigame", minigame.scene_path)
 
 func cancel() -> void:
+	if !NetworkManager.is_hosting_game:
+		return
+	
+	rpc("start_cancel")
+
+@rpc("any_peer", "call_local", "reliable")
+func start_cancel() -> void:
 	if current_menu == SUBMENUS.DEFAULT:
 		return
-
+	
 	selection_type = SELECTION.CANCEL
 	animator.play("right")
 
@@ -148,21 +161,24 @@ func update_minigame_list() -> void:
 	minigame_page_root.visible = true
 
 func update_selection() -> void:
+	rpc("change_selection", input_axis)
 	start_selection_timer()
-	
+
+@rpc("any_peer", "call_local", "reliable")
+func change_selection(input : Vector2i) -> void:
 	if current_menu == SUBMENUS.DEFAULT:
 		var max_x : int = default_parent.columns
 		@warning_ignore("integer_division")
 		var max_y : int = default_parent.get_child_count() / max_x
-		current_selection.x = abs(current_selection.x + input_axis.x) % max_x
-		current_selection.y = (current_selection.y + input_axis.y) % max_y
+		current_selection.x = abs(current_selection.x + input.x) % max_x
+		current_selection.y = (current_selection.y + input.y) % max_y
 		update_default_cursor_selection()
 	else: # TODO Add rankings and records
-		if input_axis.x != 0 && current_minigame_list.size() > minigame_option_list.size():
-			selection_type = SELECTION.LEFT if input_axis.x < 0 else SELECTION.RIGHT
-			animator.play("left" if input_axis.x < 0 else "right")
-		elif input_axis.y != 0:
-			current_selection.y = abs(current_selection.y + input_axis.y) % max_minigame_selection
+		if input.x != 0 && current_minigame_list.size() > minigame_option_list.size():
+			selection_type = SELECTION.LEFT if input.x < 0 else SELECTION.RIGHT
+			animator.play("left" if input.x < 0 else "right")
+		elif input.y != 0:
+			current_selection.y = abs(current_selection.y + input.y) % max_minigame_selection
 			update_minigame_cursor_selection()
 
 func update_default_cursor_selection() -> void:
