@@ -101,9 +101,8 @@ func change_selection(input : Vector2i) -> void:
 		current_selection.x = 1 # Select the middle option when returning from exit
 	
 	if current_selection != previous_selection:
-		rpc("update_cursor_position", current_selection)
+		update_cursor_position(current_selection)
 
-@rpc("any_peer", "call_local", "reliable")
 func update_cursor_position(selection : Vector2i) -> void:
 	# TODO Change Omochao's target position and play animation
 	var target_animation : StringName = "exit"
@@ -125,4 +124,4 @@ func update_cursor_position(selection : Vector2i) -> void:
 	original_omochao_transform = omochao.global_transform
 	description.set_text("party_" + target_animation.replace("-", "_") + "_desc")
 	current_omochao_location = selection.x + selection.y * 3
-	selection_animator.play(target_animation, 0.05)
+	selection_animator.play(target_animation)
