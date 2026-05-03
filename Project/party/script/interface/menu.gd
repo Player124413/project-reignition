@@ -24,8 +24,12 @@ const SELECTION_INTERVAL : float = .2;
 const SELECTION_SCROLLING_INTERVAL : float = .1;
 
 func _ready() -> void:
+	initialize()
 	if _is_menu_processing:
 		show_menu()
+
+func initialize() -> void:
+	pass
 
 func disable_processing() -> void:
 	_is_menu_processing = false
