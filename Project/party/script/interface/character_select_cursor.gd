@@ -6,6 +6,8 @@ signal moved(index : int, direction : Vector2i)
 signal confirmed(index : int)
 ## Emitted when the cursor cancels a selection.
 signal cancelled(index : int)
+## Emitted when the cursor updates a random selection.
+signal update_random(index : int)
 
 @export var player_label : SyncedLabel
 @export var animator : AnimationPlayer
@@ -17,6 +19,11 @@ var controller_index : int
 var is_scrolling : bool
 ## Tracks the current scroll time.
 var scroll_timer : float
+
+## Is the cursor currently scrolling to select random?
+var is_selecting_random : bool
+## How many times to cycle randomly before visually choosing the character.
+var random_count : int
 
 ## Tracks the currently select portrait. Read and modified from the select menu.
 var current_selection : Vector2i
@@ -30,11 +37,20 @@ func _process(delta: float) -> void:
 	if !is_processing_inputs || (NetworkManager.is_online && !is_multiplayer_authority()):
 		return
 	
+	if is_selecting_random:
+		if is_zero_approx(scroll_timer):
+			update_random.emit(get_index())
+			scroll_timer = Menu.SELECTION_SCROLLING_INTERVAL
+		else:
+			scroll_timer = move_toward(scroll_timer, 0, delta)
+		return
+	
 	if !is_hidden:
 		# Only process directions and selections when being shown
 		var input_axis : Vector2i = Vector2i.ZERO
-		input_axis.x = sign(Input.get_axis("move_left" + str(controller_index), "move_right" + str(controller_index)))
-		input_axis.y = sign(Input.get_axis("move_up" + str(controller_index), "move_down" + str(controller_index)))
+		if !is_selecting_random:
+			input_axis.x = sign(Input.get_axis("move_left" + str(controller_index), "move_right" + str(controller_index)))
+			input_axis.y = sign(Input.get_axis("move_up" + str(controller_index), "move_down" + str(controller_index)))
 		
 		if input_axis == Vector2i.ZERO:
 			is_scrolling = false
@@ -91,6 +107,23 @@ func set_cursor_position(new_position : Vector2) -> void:
 	animator.seek(0.0)
 	is_hidden = false
 	global_position = new_position
+
+## Sets the cursor's position and shows it.
+@rpc("any_peer", "call_local", "reliable")
+func select_random(cycle_count : int) -> void:
+	random_count = cycle_count
+	is_selecting_random = true
+
+@rpc("any_peer", "call_local", "reliable")
+func decrement_random_count() -> void:
+	random_count -= 1
+	random_count = max(random_count, 0)
+
+## Sets the cursor's position and shows it.
+@rpc("any_peer", "call_local", "reliable")
+func finish_random() -> void:
+	is_selecting_random = false
+	disable_processing()
 
 ## Starts the looping animation.
 func start_loop() -> void:

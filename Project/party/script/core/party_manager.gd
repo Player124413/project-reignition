@@ -18,7 +18,11 @@ var current_mode : CURRENT_MODE_ENUM = CURRENT_MODE_ENUM.COUNT
 signal players_initialized
 
 ## An array containing all possible character datas.
-var _character_data : Array[PartyCharacterResource]
+var character_data : Array[PartyCharacterResource]
+
+func get_character_count() -> int:
+	return character_data.size()
+
 const CHARACTER_DATA_FOLDER = "res://party/resource/character/"
 
 func _init() -> void:
@@ -36,23 +40,23 @@ func load_characters() -> void:
 		if character is not PartyCharacterResource:
 			continue
 		# Insert the character into the character list at the correct index
-		if _character_data.size() <= character.character_select_index:
-			_character_data.resize(character.character_select_index + 1)
-		if _character_data[character.character_select_index] == null:
-			_character_data[character.character_select_index] = character
+		if character_data.size() <= character.character_select_index:
+			character_data.resize(character.character_select_index + 1)
+		if character_data[character.character_select_index] == null:
+			character_data[character.character_select_index] = character
 		else:
-			_character_data.insert(character.character_select_index, character)
+			character_data.insert(character.character_select_index, character)
 			printerr("DUPLICATE CHARACTER INDEX FOUND")
 		print("Loaded party character %s from %s into index %s" % [character.character_name, CHARACTER_DATA_FOLDER + char_file, character.character_select_index])
 	# Trim any extra entries
-	for i in range(_character_data.size(), 0):
-		if _character_data[i] == null:
-			_character_data.remove_at(i)
+	for i in range(character_data.size(), 0):
+		if character_data[i] == null:
+			character_data.remove_at(i)
 
 ## Identifies a character data's index based on its name.
 func find_character_index_by_name(character_name : String) -> int:
-	for i in _character_data.size():
-		if _character_data[i].character_name == character_name:
+	for i in character_data.size():
+		if character_data[i].character_name == character_name:
 			return i
 	return -1
 
@@ -70,8 +74,8 @@ func set_character_data(index : int, character_name : String) -> void:
 		printerr("Couldn't find character " + character_name + " on client " + str(multiplayer.get_unique_id()))
 		return
 	
-	_player_data[index].character_data = _character_data[character_index]
-	print("set character data to %s at port %s" % [_character_data[character_index].character_name, index])
+	_player_data[index].character_data = character_data[character_index]
+	print("set character data to %s at port %s" % [character_data[character_index].character_name, index])
 
 ## Gets the player_index of a particular character. Returns -1 if not selected.
 func get_character_index(character_data : PartyCharacterResource) -> int:

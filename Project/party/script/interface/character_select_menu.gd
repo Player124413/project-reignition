@@ -21,6 +21,7 @@ func _ready() -> void:
 		cursor.moved.connect(recieve_cursor_movement)
 		cursor.confirmed.connect(recieve_cursor_confirm)
 		cursor.cancelled.connect(recieve_cursor_cancel)
+		cursor.update_random.connect(recieve_random_update)
 	
 	for preview in previews:
 		preview.confirmed.connect(recieve_difficulty_confirm)
@@ -30,14 +31,14 @@ func _ready() -> void:
 
 func initialize_portraits() -> void:
 	@warning_ignore("integer_division")
-	var column_count : int = PartyManager._character_data.size() / PORTRAIT_ROWS
+	var column_count : int = PartyManager.character_data.size() / PORTRAIT_ROWS
 	for i in column_count:
 		var column_container : VBoxContainer = VBoxContainer.new()
 		column_container.add_theme_constant_override("separation", portrait_parent.get_theme_constant("separation"))
 		portrait_parent.add_child(column_container)
 	
-	for i in PartyManager._character_data.size():
-		var new_portrait : Control = create_portrait(PartyManager._character_data[i])
+	for i in PartyManager.character_data.size():
+		var new_portrait : Control = create_portrait(PartyManager.character_data[i])
 		portraits.append(new_portrait)
 		@warning_ignore("integer_division")
 		portrait_parent.get_child(i / PORTRAIT_ROWS).add_child(new_portrait)
@@ -79,6 +80,9 @@ func recieve_cursor_confirm(index : int) -> void:
 func recieve_cursor_cancel(index : int) -> void:
 	rpc("request_character_cancellation", index)
 
+func recieve_random_update(index : int) -> void:
+	rpc("request_random_movement", index)
+
 ## Tries to confirm a player's selection.
 @rpc("any_peer", "call_local", "reliable")
 func request_character_selection(index : int) -> void:
@@ -88,11 +92,17 @@ func request_character_selection(index : int) -> void:
 	var portrait : Control = get_portrait(cursors[index].current_selection)
 	var character_data : PartyCharacterResource = portrait.linked_character
 	if character_data == null:
-		print("Selecting Random is not implemented yet.")
+		character_data = get_random_character()
+		print("Randomly selected " + character_data.character_name)
+		PartyManager.rpc("set_character_data", cursors[index].port_index, character_data.character_name)
+		cursors[index].rpc("select_random", randi_range(1, 2))
+		cursors[index].rpc("set_current_selection", Vector2i.ZERO)
+		rpc("update_cursor_position", index, Vector2i.ZERO)
 		cursors[index].rpc("request_enable_processing")
 		return
 	
-	if PartyManager.get_character_index(character_data) != -1:
+	var player_index : int = PartyManager.get_character_index(character_data)
+	if player_index != -1 && player_index != cursors[index].port_index:
 		# Character is already taken; allow cursor movement again
 		cursors[index].rpc("request_enable_processing")
 		return
@@ -109,6 +119,41 @@ func request_character_selection(index : int) -> void:
 		previews[port_index].rpc("show_difficulty", cursors[index].controller_index, cursors[index].get_multiplayer_authority(), index)
 		return
 	advance_cursor_port(index)
+
+@rpc("any_peer", "call_local", "reliable")
+func request_random_movement(index : int) -> void:
+	if !NetworkManager.is_hosting_game:
+		return
+	
+	var port_index : int = cursors[index].port_index
+	var initial_portrait : Control = get_portrait(cursors[index].current_selection)
+	if initial_portrait.linked_character == PartyManager.get_player_data(port_index).character_data:
+		if cursors[index].random_count == 0:
+			cursors[index].rpc("finish_random")
+			cursors[index].confirm()
+			return
+		cursors[index].rpc("decrement_random_count")
+	
+	var cursor_selection : Vector2i = cursors[index].current_selection + Vector2i.RIGHT
+	@warning_ignore("integer_division")
+	var portrait_columns : int = portraits.size() / PORTRAIT_ROWS
+	if cursor_selection.x > portrait_columns - 1:
+		cursor_selection.x = 0
+		cursor_selection.y += 1
+	if cursor_selection.y < 0 || cursor_selection.y > PORTRAIT_ROWS - 1:
+		cursor_selection.y -= sign(cursor_selection.y) * PORTRAIT_ROWS
+	cursors[index].rpc("set_current_selection", cursor_selection) # Update the cursor's selection property
+	var portrait : Control = get_portrait(cursor_selection)
+	rpc("update_cursor_position", index, cursor_selection)
+	previews[cursors[index].port_index].rpc("set_character_text", "" if portrait.linked_character == null else portrait.linked_character.character_name)
+
+## Gets a random character.
+func get_random_character() -> PartyCharacterResource:
+	var character_index : int = randi_range(0, PartyManager.character_data.size() - 1)
+	while PartyManager.get_character_index(PartyManager.character_data[character_index]) != -1:
+		character_index = randi_range(0, PartyManager.character_data.size() - 1)
+	
+	return PartyManager.character_data[character_index]
 
 ## Tries to cancel a player's selection.
 @rpc("any_peer", "call_local", "reliable")
