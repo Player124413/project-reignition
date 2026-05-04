@@ -78,10 +78,10 @@ func set_character_data(index : int, character_name : String) -> void:
 	print("set character data to %s at port %s" % [character_data[character_index].character_name, index])
 
 ## Gets the player_index of a particular character. Returns -1 if not selected.
-func get_character_index(character_data : PartyCharacterResource) -> int:
+func get_character_index(data : PartyCharacterResource) -> int:
 	var index : int = 0;
 	for player_data in _player_data:
-		if player_data.character_data == character_data:
+		if player_data.character_data == data:
 			return index
 		index += 1
 	return -1

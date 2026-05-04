@@ -1,0 +1,101 @@
+[gd_scene load_steps=7 format=3 uid="uid://cd0s36gih2ueg"]
+
+[ext_resource type="Script" uid="uid://dgnlrxpyocw8j" path="res://party/scene/minigame/03 cogwheel relay/script/cogwheel.gd" id="1_lijki"]
+[ext_resource type="PackedScene" uid="uid://crqxft0pw0gkh" path="res://party/scene/minigame/03 cogwheel relay/model/Handle.glb" id="2_m17wm"]
+[ext_resource type="PackedScene" uid="uid://3nkov0ayj34m" path="res://party/scene/minigame/03 cogwheel relay/model/Gear.glb" id="3_ekyy7"]
+
+[sub_resource type="Animation" id="Animation_lijki"]
+resource_name = "invert"
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("LowSide:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(2.5, 0, 0)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("HighSide:position")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(-2.5, 0, 0)]
+}
+
+[sub_resource type="Animation" id="Animation_m17wm"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("LowSide:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(-2.5, 0, 0)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("HighSide:position")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(2.5, 0, 0)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_m17wm"]
+_data = {
+&"RESET": SubResource("Animation_m17wm"),
+&"invert": SubResource("Animation_lijki")
+}
+
+[node name="Player1" type="Node3D" node_paths=PackedStringArray("cogwheels", "handle", "spawn_position")]
+script = ExtResource("1_lijki")
+cogwheels = [NodePath("LowSide/GearLow"), NodePath("HighSide/GearHigh")]
+handle = NodePath("Handle")
+spawn_position = NodePath("PlayerPosition")
+
+[node name="Handle" parent="." instance=ExtResource("2_m17wm")]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, -6, 4, 0)
+
+[node name="LowSide" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.5, 0, 0)
+
+[node name="GearLow" parent="LowSide" instance=ExtResource("3_ekyy7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 14, -5)
+
+[node name="SpawnLow" type="Node3D" parent="LowSide"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 40, 0)
+
+[node name="HighSide" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.5, 0, 0)
+
+[node name="GearHigh" parent="HighSide" instance=ExtResource("3_ekyy7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 24, -5)
+
+[node name="SpawnHigh" type="Node3D" parent="HighSide"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 40, 0)
+
+[node name="PlayerPosition" type="Node3D" parent="."]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, -4.371139e-07, 0, 5)
+
+[node name="DirectionAnimator" type="AnimationPlayer" parent="."]
+libraries = {
+&"": SubResource("AnimationLibrary_m17wm")
+}

@@ -40,17 +40,36 @@ func play_animation(anim : StringName, reset : bool = false) -> void:
 	animator.play(anim)
 	animator.seek(0.0, true)
 
+## Gets the current animator's speed.
+func get_speed() -> float:
+	return animator.speed_scale
+
+## Gets the current animation position.
+func get_animation_position() -> float:
+	return animator.current_animation_position
+
+## Gets the current animation length.
+func get_animation_length() -> float:
+	return animator.current_animation_length
+
+## Sets the current animator's speed.
+func set_speed(value : float) -> void:
+	animator.speed_scale = value
+
+func get_current_animation() -> String:
+	return animator.assigned_animation
+
 ## Plays a specific mini-game animation on the animator.
 @rpc("any_peer", "call_local", "reliable")
-func play_minigame_animation(anim : StringName, blend : float = 0.0, speed : float = 1.0, tick : float = 0.0) -> void:
+func play_minigame_animation(anim : StringName, blend : float = 0.0, speed : float = 1.0, seek : float = 0.0, tick : float = 0.0) -> void:
 	if animator == null || !animator.has_animation(anim):
 		return
 	
-	var seek : float = 0.0
-	if !is_zero_approx(tick):
-		seek = NetworkTimeSynchronizer.get_time() - tick
-	animator.seek(seek, true)
 	animator.play("%s" % anim, blend, speed)
+	if !is_zero_approx(tick):
+		seek += NetworkTimeSynchronizer.get_time() - tick
+	seek = fmod(seek, get_animation_length())
+	animator.seek(seek, true)
 
 ## Seeks an animation to the given network tick.
 func network_seek(original_tick : float) -> void:
