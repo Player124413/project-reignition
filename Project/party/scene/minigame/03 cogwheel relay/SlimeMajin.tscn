@@ -1,0 +1,29 @@
+[gd_scene load_steps=6 format=3 uid="uid://chno4t2pbstbx"]
+
+[ext_resource type="Script" uid="uid://dd5b31n421be6" path="res://party/scene/minigame/03 cogwheel relay/script/majin_controller.gd" id="1_pkkib"]
+[ext_resource type="Material" uid="uid://m8tkr4fj8ghw" path="res://party/resource/character/model/material/Slime Red.tres" id="2_388ph"]
+[ext_resource type="Material" uid="uid://dnc5sxqserp6p" path="res://party/resource/character/model/material/Slime Gray.tres" id="3_rh6cn"]
+[ext_resource type="PackedScene" uid="uid://7q1h48dogua7" path="res://party/resource/character/model/SlimeMajin.glb" id="4_bexr2"]
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_pkkib"]
+radius = 1.0
+
+[node name="SlimeMajin" type="Area3D" node_paths=PackedStringArray("root", "mesh", "raycast") groups=["enemy"]]
+script = ExtResource("1_pkkib")
+root = NodePath("SlimeMajin")
+mesh = NodePath("SlimeMajin/SlimeMajinRoot/Skeleton3D/SlimeMajinMesh")
+materials = Array[Material]([ExtResource("2_388ph"), ExtResource("3_rh6cn")])
+raycast = NodePath("RayCast3D")
+
+[node name="SlimeMajin" parent="." instance=ExtResource("4_bexr2")]
+transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 0, 0)
+
+[node name="RayCast3D" type="RayCast3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+collide_with_areas = true
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+shape = SubResource("SphereShape3D_pkkib")
+
+[editable path="SlimeMajin"]

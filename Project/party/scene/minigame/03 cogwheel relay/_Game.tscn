@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://c1op5l6n3gll5"]
+[gd_scene load_steps=11 format=3 uid="uid://c1op5l6n3gll5"]
 
 [ext_resource type="PackedScene" uid="uid://dsbufs8tjchk7" path="res://party/scene/minigame/00 base/MinigameBase.tscn" id="1_iidf5"]
 [ext_resource type="PackedScene" uid="uid://s4n5ttch5th" path="res://party/scene/minigame/03 cogwheel relay/model/Map.glb" id="1_uvjx8"]
@@ -16,34 +16,14 @@ tonemap_mode = 3
 tonemap_exposure = 1.2
 glow_enabled = true
 
-[sub_resource type="Animation" id="Animation_gleah"]
-resource_name = "intro"
-length = 0.5
-tracks/0/type = "method"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("Minigame")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0.5),
-"transitions": PackedFloat32Array(1),
-"values": [{
-"args": [],
-"method": &"request_minigame_start"
-}]
-}
-
-[sub_resource type="AnimationLibrary" id="AnimationLibrary_oo0l3"]
-_data = {
-&"intro": SubResource("Animation_gleah")
-}
+[sub_resource type="BoxShape3D" id="BoxShape3D_gi8uu"]
+size = Vector3(100, 1, 100)
 
 [node name="CogwheelRelay" type="Node3D"]
 
 [node name="Minigame" parent="." node_paths=PackedStringArray("intro_animator", "results_camera") instance=ExtResource("1_iidf5")]
 minigame_resource = ExtResource("2_iy8n4")
-intro_animator = NodePath("../AnimationPlayer")
+intro_animator = NodePath("")
 anim_library = ExtResource("3_gi8uu")
 results_camera = NodePath("../Camera")
 
@@ -79,9 +59,11 @@ max_game_time = 30
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_vdqkk")
 
-[node name="Lighting" type="Node3D" parent="."]
+[node name="Environment" type="Node3D" parent="."]
 
-[node name="EnvironmentLighting" type="DirectionalLight3D" parent="Lighting"]
+[node name="Lighting" type="Node3D" parent="Environment"]
+
+[node name="EnvironmentLighting" type="DirectionalLight3D" parent="Environment/Lighting"]
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 0, 65)
 layers = 1024
 light_specular = 0.0
@@ -89,13 +71,13 @@ light_cull_mask = 4
 shadow_enabled = true
 shadow_caster_mask = 1
 
-[node name="EnvironmentFillLighting" type="DirectionalLight3D" parent="Lighting"]
+[node name="EnvironmentFillLighting" type="DirectionalLight3D" parent="Environment/Lighting"]
 transform = Transform3D(1, 0, 0, 0, 0.8660253, 0.50000006, 0, -0.50000006, 0.8660253, 0, 3.8146973e-06, 129)
 layers = 1024
 light_specular = 0.0
 light_cull_mask = 4
 
-[node name="CharacterLighting" type="DirectionalLight3D" parent="Lighting"]
+[node name="CharacterLighting" type="DirectionalLight3D" parent="Environment/Lighting"]
 transform = Transform3D(1, 0, 0, 0, 0.49999997, 0.86602545, 0, -0.86602545, 0.49999997, 0, 0, 62)
 layers = 1024
 light_color = Color(1, 0.85, 0, 1)
@@ -103,7 +85,7 @@ light_energy = 0.4
 light_specular = 0.0
 light_cull_mask = 1
 
-[node name="Lamp1" type="OmniLight3D" parent="Lighting"]
+[node name="Lamp1" type="OmniLight3D" parent="Environment/Lighting"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -30, 31, 60)
 layers = 1024
 light_color = Color(1, 0.747, 0.33999997, 1)
@@ -112,7 +94,7 @@ light_cull_mask = 7
 omni_range = 30.0
 omni_attenuation = 0.8
 
-[node name="Lamp2" type="OmniLight3D" parent="Lighting"]
+[node name="Lamp2" type="OmniLight3D" parent="Environment/Lighting"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30, 31, 60)
 layers = 1024
 light_color = Color(1, 0.747, 0.33999997, 1)
@@ -121,75 +103,85 @@ light_cull_mask = 7
 omni_range = 30.0
 omni_attenuation = 0.8
 
-[node name="Map" parent="." instance=ExtResource("1_uvjx8")]
+[node name="Map" parent="Environment" instance=ExtResource("1_uvjx8")]
 
-[node name="st_107_map_Mesh_0000" parent="Map/MapRoot/Skeleton3D" index="0"]
+[node name="Skeleton3D" parent="Environment/Map/MapRoot" index="0"]
+bones/9/position = Vector3(-26.053795, 0.7205334, -2.2865334)
+bones/10/position = Vector3(5.1176333, 9.954975, -2.2865334)
+bones/12/rotation = Quaternion(0, 0, 0, 1)
+
+[node name="st_107_map_Mesh_0000" parent="Environment/Map/MapRoot/Skeleton3D" index="0"]
 layers = 4
 
-[node name="st_107_map_Mesh_0006" parent="Map/MapRoot/Skeleton3D" index="1"]
+[node name="st_107_map_Mesh_0006" parent="Environment/Map/MapRoot/Skeleton3D" index="1"]
 layers = 4
 
-[node name="st_107_map_Mesh_0010" parent="Map/MapRoot/Skeleton3D" index="2"]
+[node name="st_107_map_Mesh_0010" parent="Environment/Map/MapRoot/Skeleton3D" index="2"]
 layers = 4
 
-[node name="st_107_map_Mesh_0013" parent="Map/MapRoot/Skeleton3D" index="3"]
+[node name="st_107_map_Mesh_0013" parent="Environment/Map/MapRoot/Skeleton3D" index="3"]
 layers = 4
 
-[node name="st_107_map_Mesh_0014" parent="Map/MapRoot/Skeleton3D" index="4"]
+[node name="st_107_map_Mesh_0014" parent="Environment/Map/MapRoot/Skeleton3D" index="4"]
 layers = 4
 
-[node name="st_107_map_Mesh_0016" parent="Map/MapRoot/Skeleton3D" index="5"]
+[node name="st_107_map_Mesh_0016" parent="Environment/Map/MapRoot/Skeleton3D" index="5"]
 layers = 4
 
-[node name="st_107_map_Mesh_0017" parent="Map/MapRoot/Skeleton3D" index="6"]
+[node name="st_107_map_Mesh_0017" parent="Environment/Map/MapRoot/Skeleton3D" index="6"]
 layers = 4
 
-[node name="st_107_map_Mesh_0018" parent="Map/MapRoot/Skeleton3D" index="7"]
+[node name="st_107_map_Mesh_0018" parent="Environment/Map/MapRoot/Skeleton3D" index="7"]
 layers = 4
 
-[node name="st_107_map_Mesh_0019" parent="Map/MapRoot/Skeleton3D" index="8"]
+[node name="st_107_map_Mesh_0019" parent="Environment/Map/MapRoot/Skeleton3D" index="8"]
 layers = 4
 
-[node name="st_107_map_Mesh_0023" parent="Map/MapRoot/Skeleton3D" index="9"]
+[node name="st_107_map_Mesh_0023" parent="Environment/Map/MapRoot/Skeleton3D" index="9"]
 layers = 4
 
-[node name="st_107_map_Mesh_0031" parent="Map/MapRoot/Skeleton3D" index="10"]
+[node name="st_107_map_Mesh_0031" parent="Environment/Map/MapRoot/Skeleton3D" index="10"]
 layers = 4
 
-[node name="st_107_map_Mesh_0034" parent="Map/MapRoot/Skeleton3D" index="11"]
+[node name="st_107_map_Mesh_0034" parent="Environment/Map/MapRoot/Skeleton3D" index="11"]
 layers = 4
 
-[node name="st_107_map_Mesh_0035" parent="Map/MapRoot/Skeleton3D" index="12"]
+[node name="st_107_map_Mesh_0035" parent="Environment/Map/MapRoot/Skeleton3D" index="12"]
 layers = 4
+
+[node name="AnimationPlayer" parent="Environment/Map" index="1"]
+autoplay = "map"
+
+[node name="Ground" type="StaticBody3D" parent="Environment" groups=["floor"]]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Environment/Ground"]
+shape = SubResource("BoxShape3D_gi8uu")
 
 [node name="Camera" type="Camera3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 0.9961947, 0.08715574, 0, -0.08715574, 0.9961947, 0, 30, 200)
 fov = 15.0
 
-[node name="Player1" parent="." node_paths=PackedStringArray("score_counter") instance=ExtResource("7_gleah")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -22.5, 0, 27.5)
-score_counter = NodePath("../Scores/ScoreCounter1")
+[node name="Players" type="Node3D" parent="."]
 
-[node name="Player2" parent="." node_paths=PackedStringArray("score_counter") instance=ExtResource("7_gleah")]
+[node name="Player1" parent="Players" node_paths=PackedStringArray("score_counter") instance=ExtResource("7_gleah")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -22.5, 0, 27.5)
+score_counter = NodePath("../../Scores/ScoreCounter1")
+
+[node name="Player2" parent="Players" node_paths=PackedStringArray("score_counter") instance=ExtResource("7_gleah")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.5, 0, 27.5)
 player_index = 1
-score_counter = NodePath("../Scores/ScoreCounter2")
+score_counter = NodePath("../../Scores/ScoreCounter2")
 
-[node name="Player3" parent="." node_paths=PackedStringArray("score_counter") instance=ExtResource("7_gleah")]
+[node name="Player3" parent="Players" node_paths=PackedStringArray("score_counter") instance=ExtResource("7_gleah")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.5, 0, 27.5)
 player_index = 2
-score_counter = NodePath("../Scores/ScoreCounter3")
+score_counter = NodePath("../../Scores/ScoreCounter3")
 
-[node name="Player4" parent="." node_paths=PackedStringArray("score_counter") instance=ExtResource("7_gleah")]
+[node name="Player4" parent="Players" node_paths=PackedStringArray("score_counter") instance=ExtResource("7_gleah")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22.5, 0, 27.5)
 player_index = 3
-score_counter = NodePath("../Scores/ScoreCounter4")
-
-[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
-libraries = {
-&"": SubResource("AnimationLibrary_oo0l3")
-}
+score_counter = NodePath("../../Scores/ScoreCounter4")
 
 [editable path="Minigame"]
 [editable path="Scores"]
-[editable path="Map"]
+[editable path="Environment/Map"]

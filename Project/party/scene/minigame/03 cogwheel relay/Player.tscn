@@ -1,8 +1,40 @@
-[gd_scene load_steps=7 format=3 uid="uid://cd0s36gih2ueg"]
+[gd_scene load_steps=9 format=3 uid="uid://cd0s36gih2ueg"]
 
-[ext_resource type="Script" uid="uid://dgnlrxpyocw8j" path="res://party/scene/minigame/03 cogwheel relay/script/cogwheel.gd" id="1_lijki"]
+[ext_resource type="Script" uid="uid://dgnlrxpyocw8j" path="res://party/scene/minigame/03 cogwheel relay/script/cogwheel_controller.gd" id="1_lijki"]
+[ext_resource type="PackedScene" uid="uid://chno4t2pbstbx" path="res://party/scene/minigame/03 cogwheel relay/SlimeMajin.tscn" id="2_ekyy7"]
 [ext_resource type="PackedScene" uid="uid://crqxft0pw0gkh" path="res://party/scene/minigame/03 cogwheel relay/model/Handle.glb" id="2_m17wm"]
 [ext_resource type="PackedScene" uid="uid://3nkov0ayj34m" path="res://party/scene/minigame/03 cogwheel relay/model/Gear.glb" id="3_ekyy7"]
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_ekyy7"]
+height = 3.0
+radius = 2.6000001
+
+[sub_resource type="Animation" id="Animation_m17wm"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("LowSide:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(-2.5, 0, 0)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("HighSide:position")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(2.5, 0, 0)]
+}
 
 [sub_resource type="Animation" id="Animation_lijki"]
 resource_name = "invert"
@@ -32,44 +64,20 @@ tracks/1/keys = {
 "values": [Vector3(-2.5, 0, 0)]
 }
 
-[sub_resource type="Animation" id="Animation_m17wm"]
-length = 0.001
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("LowSide:position")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [Vector3(-2.5, 0, 0)]
-}
-tracks/1/type = "value"
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/path = NodePath("HighSide:position")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
-tracks/1/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [Vector3(2.5, 0, 0)]
-}
-
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_m17wm"]
 _data = {
 &"RESET": SubResource("Animation_m17wm"),
 &"invert": SubResource("Animation_lijki")
 }
 
-[node name="Player1" type="Node3D" node_paths=PackedStringArray("cogwheels", "handle", "spawn_position")]
+[node name="Player1" type="Node3D" node_paths=PackedStringArray("cogwheels", "majin_spawn_positions", "handle", "spawn_position")]
 script = ExtResource("1_lijki")
 cogwheels = [NodePath("LowSide/GearLow"), NodePath("HighSide/GearHigh")]
+majin_spawn_positions = [NodePath("LowSide/SpawnLow"), NodePath("HighSide/SpawnHigh")]
 handle = NodePath("Handle")
+majin_scene = ExtResource("2_ekyy7")
 spawn_position = NodePath("PlayerPosition")
+start_enabled = true
 
 [node name="Handle" parent="." instance=ExtResource("2_m17wm")]
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, -6, 4, 0)
@@ -80,8 +88,14 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.5, 0, 0)
 [node name="GearLow" parent="LowSide" instance=ExtResource("3_ekyy7")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 14, -5)
 
+[node name="GearCollision" type="StaticBody3D" parent="LowSide/GearLow"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="LowSide/GearLow/GearCollision"]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0)
+shape = SubResource("CylinderShape3D_ekyy7")
+
 [node name="SpawnLow" type="Node3D" parent="LowSide"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 40, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 40, -5)
 
 [node name="HighSide" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.5, 0, 0)
@@ -89,8 +103,14 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.5, 0, 0)
 [node name="GearHigh" parent="HighSide" instance=ExtResource("3_ekyy7")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 24, -5)
 
+[node name="GearCollision" type="StaticBody3D" parent="HighSide/GearHigh"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="HighSide/GearHigh/GearCollision"]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0)
+shape = SubResource("CylinderShape3D_ekyy7")
+
 [node name="SpawnHigh" type="Node3D" parent="HighSide"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 40, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 40, -5)
 
 [node name="PlayerPosition" type="Node3D" parent="."]
 transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, -4.371139e-07, 0, 5)

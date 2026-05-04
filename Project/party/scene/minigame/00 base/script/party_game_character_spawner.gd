@@ -5,6 +5,7 @@ class_name PartyGameCharacterSpawner extends Node3D
 @export_range(-1, 3, 1) var player_index : int = 0
 @export var spawn_position : Node3D
 @export var score_counter : ScoreCounter
+
 var character_animator : CharacterAnimator
 
 ## Gets the animation prefix for minigame animations.
@@ -42,7 +43,10 @@ func _ready() -> void:
 		if !data.is_cpu_player():
 			set_multiplayer_authority(data.device)
 	
-	if player_index != -1:
+	if player_index == -1:
+		# This is a demo character
+		on_demo_spawned()
+	else:
 		# Instance Player Model
 		character_animator = MinigameManager.instance.load_character_model(player_index)
 		spawn_position.add_child(character_animator)
@@ -55,9 +59,6 @@ func _ready() -> void:
 		if is_instance_valid(score_counter):
 			# Initialize the score counter
 			score_counter.set_player_index(player_index)
-	else:
-		# This is a demo character
-		on_demo_spawned()
 	
 	character_animator.connect("animation_event", Callable.create(self, "process_animation_event"))
 	on_spawn_finished()

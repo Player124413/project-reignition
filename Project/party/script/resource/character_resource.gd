@@ -9,6 +9,9 @@ class_name PartyCharacterResource extends Resource
 ## The index of the character on the character select screen.
 @export_range(0, 7, 1, "or_greater") var character_select_index : int
 
+## Font to use for this character's score.
+@export var score_font : LabelSettings
+
 ## Portrait to use when unlocked.
 @export var character_select_portrait : Texture2D
 ## Portrait to use when locked.
