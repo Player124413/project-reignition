@@ -151,6 +151,7 @@ func start_player_swing() -> void:
 		get_anim_prefix() + "swing",
 		0.1,
 		SWING_ANIMATION_MULTIPLIER,
+		0.0,
 		NetworkTimeSynchronizer.get_time())
 	is_swinging = true
 
