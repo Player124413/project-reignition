@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3 uid="uid://c1op5l6n3gll5"]
+[gd_scene load_steps=13 format=3 uid="uid://c1op5l6n3gll5"]
 
 [ext_resource type="PackedScene" uid="uid://dsbufs8tjchk7" path="res://party/scene/minigame/00 base/MinigameBase.tscn" id="1_iidf5"]
 [ext_resource type="PackedScene" uid="uid://s4n5ttch5th" path="res://party/scene/minigame/03 cogwheel relay/model/Map.glb" id="1_uvjx8"]
@@ -18,6 +18,13 @@ glow_enabled = true
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_gi8uu"]
 size = Vector3(100, 1, 100)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_oo0l3"]
+size = Vector3(5, 1, 10)
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_oo0l3"]
+height = 1.5
+radius = 3.5
 
 [node name="CogwheelRelay" type="Node3D"]
 
@@ -77,11 +84,10 @@ light_specular = 0.0
 light_cull_mask = 4
 
 [node name="CharacterLighting" type="DirectionalLight3D" parent="Environment/Lighting"]
-transform = Transform3D(1, 0, 0, 0, 0.49999997, 0.86602545, 0, -0.86602545, 0.49999997, 0, 0, 62)
+transform = Transform3D(0.8660254, 0.24999999, 0.43301272, -0.5, 0.43301266, 0.75, 0, -0.86602545, 0.49999997, 0, 0, 62)
 layers = 1024
 light_color = Color(1, 0.85, 0, 1)
 light_energy = 0.4
-light_specular = 0.0
 light_cull_mask = 1
 
 [node name="Lamp1" type="OmniLight3D" parent="Environment/Lighting"]
@@ -151,10 +157,95 @@ layers = 4
 [node name="AnimationPlayer" parent="Environment/Map" index="1"]
 autoplay = "map"
 
-[node name="Ground" type="StaticBody3D" parent="Environment" groups=["floor"]]
+[node name="CrateGround" type="StaticBody3D" parent="Environment" groups=["floor", "player"]]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Environment/Ground"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Environment/CrateGround"]
 shape = SubResource("BoxShape3D_gi8uu")
+
+[node name="Exit1" type="Node3D" parent="Environment"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -30, 17.5, 23)
+
+[node name="Collision" type="StaticBody3D" parent="Environment/Exit1" groups=["floor"]]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Environment/Exit1/Collision"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, -3)
+shape = SubResource("BoxShape3D_oo0l3")
+
+[node name="Trigger" type="Area3D" parent="Environment/Exit1" groups=["wall"]]
+collision_layer = 8
+monitoring = false
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Environment/Exit1/Trigger"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+shape = SubResource("CylinderShape3D_oo0l3")
+
+[node name="Exit2" type="Node3D" parent="Environment"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -15, 27.5, 23)
+
+[node name="Collision" type="StaticBody3D" parent="Environment/Exit2" groups=["floor"]]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Environment/Exit2/Collision"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, -3)
+shape = SubResource("BoxShape3D_oo0l3")
+
+[node name="Trigger" type="Area3D" parent="Environment/Exit2" groups=["wall"]]
+collision_layer = 8
+monitoring = false
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Environment/Exit2/Trigger"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+shape = SubResource("CylinderShape3D_oo0l3")
+
+[node name="Exit3" type="Node3D" parent="Environment"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 17.5, 23)
+
+[node name="Collision" type="StaticBody3D" parent="Environment/Exit3" groups=["floor"]]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Environment/Exit3/Collision"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, -3)
+shape = SubResource("BoxShape3D_oo0l3")
+
+[node name="Trigger" type="Area3D" parent="Environment/Exit3" groups=["wall"]]
+collision_layer = 8
+monitoring = false
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Environment/Exit3/Trigger"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+shape = SubResource("CylinderShape3D_oo0l3")
+
+[node name="Exit4" type="Node3D" parent="Environment"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 15, 27.5, 23)
+
+[node name="Collision" type="StaticBody3D" parent="Environment/Exit4" groups=["floor"]]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Environment/Exit4/Collision"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, -3)
+shape = SubResource("BoxShape3D_oo0l3")
+
+[node name="Trigger" type="Area3D" parent="Environment/Exit4" groups=["wall"]]
+collision_layer = 8
+monitoring = false
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Environment/Exit4/Trigger"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+shape = SubResource("CylinderShape3D_oo0l3")
+
+[node name="Exit5" type="Node3D" parent="Environment"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30, 17.5, 23)
+
+[node name="Collision" type="StaticBody3D" parent="Environment/Exit5" groups=["floor"]]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Environment/Exit5/Collision"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, -3)
+shape = SubResource("BoxShape3D_oo0l3")
+
+[node name="Trigger" type="Area3D" parent="Environment/Exit5" groups=["wall"]]
+collision_layer = 8
+monitoring = false
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Environment/Exit5/Trigger"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+shape = SubResource("CylinderShape3D_oo0l3")
 
 [node name="Camera" type="Camera3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 0.9961947, 0.08715574, 0, -0.08715574, 0.9961947, 0, 30, 200)

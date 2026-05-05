@@ -8,25 +8,37 @@
 [sub_resource type="SphereShape3D" id="SphereShape3D_pkkib"]
 radius = 1.0
 
-[node name="SlimeMajin" type="Area3D" node_paths=PackedStringArray("root", "collider", "mesh", "raycast") groups=["enemy"]]
+[node name="SlimeMajin" type="Area3D" node_paths=PackedStringArray("root", "collider", "mesh", "ceiling_raycast", "ground_raycast") groups=["enemy"]]
+collision_mask = 8
 script = ExtResource("1_pkkib")
 root = NodePath("SlimeMajin")
 collider = NodePath("CollisionShape3D")
 mesh = NodePath("SlimeMajin/SlimeMajinRoot/Skeleton3D/SlimeMajinMesh")
 materials = Array[Material]([ExtResource("2_388ph"), ExtResource("3_rh6cn")])
-raycast = NodePath("RayCast3D")
+ceiling_raycast = NodePath("CeilingCast")
+ground_raycast = NodePath("GroundCast")
 
 [node name="SlimeMajin" parent="." instance=ExtResource("4_bexr2")]
 transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 0, 0)
 
-[node name="RayCast3D" type="RayCast3D" parent="."]
+[node name="GroundCast" type="RayCast3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
 enabled = false
+target_position = Vector3(0, -1.5, 0)
+collide_with_areas = true
+
+[node name="CeilingCast" type="RayCast3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
+enabled = false
+target_position = Vector3(0, 1, 0)
 collide_with_areas = true
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
 shape = SubResource("SphereShape3D_pkkib")
 disabled = true
+
+[connection signal="area_entered" from="." to="." method="_on_area_entered"]
+[connection signal="area_exited" from="." to="." method="_on_area_exited"]
 
 [editable path="SlimeMajin"]
