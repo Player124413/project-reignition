@@ -80,7 +80,7 @@ func start_confirm() -> void:
 		pass
 	elif current_menu == SUBMENUS.CHARACTER:
 		pass
-	else: # Load the currently selected minigame
+	elif NetworkManager.is_hosting_game: # Load the currently selected minigame
 		var minigame_index : int = current_selection.x * minigame_option_list_parent.get_child_count()
 		minigame_index += current_selection.y
 		var minigame : MinigameResource = minigame_list[minigame_index]
