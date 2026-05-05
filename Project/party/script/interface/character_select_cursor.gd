@@ -1,4 +1,4 @@
-extends Control
+class_name CharacterSelectCursor extends Control
 
 ## Emitted when the cursor moves in a direction.
 signal moved(index : int, direction : Vector2i)
