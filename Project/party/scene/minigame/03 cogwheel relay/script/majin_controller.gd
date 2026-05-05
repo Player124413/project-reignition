@@ -7,6 +7,7 @@ var cogwheel : Node3D
 @export var mesh : MeshInstance3D
 @export var materials : Array[Material]
 @export var ceiling_raycast : RayCast3D
+@export var animator : AnimationPlayer
 @export var ground_raycast : RayCast3D
 
 var current_speed : float
@@ -122,16 +123,22 @@ func on_majin_grounded() -> void:
 			MinigameManager.instance.request_score_change(cogwheel.player_index, score)
 		else:
 			cogwheel.complete_demo()
+		rpc("play_animation", "stun")
 		rpc("set_grounded_position", calculate_grounded_position())
 	else: # Exiting
+		rpc("play_animation", "land")
 		rpc("set_grounded_position", calculate_exit_position(col.global_position))
+
+@rpc("any_peer", "call_local", "reliable")
+func play_animation(anim : String) -> void:
+	animator.play(anim)
 
 @rpc("any_peer", "call_local", "reliable")
 func set_grounded_position(pos : Vector3) -> void:
 	grounded_position = pos
 
-const BASKET_WIDTH : float = 5
-const BASKET_DEPTH : float = 1.4
+const BASKET_WIDTH : float = 4
+const BASKET_DEPTH : float = 1.2
 func calculate_grounded_position() -> Vector3:
 	var pos : Vector3 = Vector3.ZERO
 	pos.x = (1 - randf() * 2) * BASKET_WIDTH
@@ -178,6 +185,7 @@ func start_jump(initial_pos : Vector3, target_pos : Vector3, time : float) -> vo
 	jump_end = target_pos
 	ground_raycast.collide_with_areas = false
 	process_jump(0)
+	play_animation("jump")
 
 func process_jump(delta : float) -> void:
 	jump_timer += delta
