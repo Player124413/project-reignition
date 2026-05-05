@@ -3,7 +3,6 @@ extends Area3D
 ### The cogwheel this is on
 var cogwheel : Node3D
 
-@export var root : Node3D
 @export var collider : CollisionShape3D
 @export var mesh : MeshInstance3D
 @export var materials : Array[Material]
@@ -76,21 +75,21 @@ func _physics_process(delta: float) -> void:
 	
 	global_position += Vector3.RIGHT * speed * delta
 	if ground_raycast.is_colliding(): # Don't update directions in the air
-		root.rotation = Vector3.DOWN * PI * 0.5 * (current_speed / MOVE_SPEED)
+		rotation = Vector3.DOWN * PI * 0.5 * (current_speed / MOVE_SPEED)
 
 func process_grounded_position(delta : float) -> void:
-	if position.is_equal_approx(grounded_position): # Finished; disable majin
-		root.rotation = root.rotation.move_toward(Vector3.ZERO, GROUNDED_ROTATION_SPEED * delta)
-		if root.rotation.is_zero_approx():
+	if global_position.is_equal_approx(grounded_position): # Finished; disable majin
+		rotation = rotation.move_toward(Vector3.ZERO, GROUNDED_ROTATION_SPEED * delta)
+		if rotation.is_zero_approx():
 			set_physics_process(false)
 		return
 	
-	position = position.move_toward(grounded_position, GROUNDED_MOVEMENT_SPEED * delta)
-	var movement_direction : Vector3 = grounded_position - position
-	var target_angle : float = movement_direction.angle_to(Vector3.BACK)
-	var current_rotation : float = root.rotation.y
+	global_position = global_position.move_toward(grounded_position, GROUNDED_MOVEMENT_SPEED * delta)
+	var movement_direction : Vector3 = grounded_position - global_position
+	var target_angle : float = movement_direction.signed_angle_to(Vector3.BACK, Vector3.DOWN)
+	var current_rotation : float = rotation.y
 	current_rotation = rotate_toward(current_rotation, target_angle, GROUNDED_ROTATION_SPEED * delta)
-	root.rotation = Vector3.UP * current_rotation
+	rotation = Vector3.UP * current_rotation
 
 func is_colliding_with_ground() -> bool:
 	var col : Node3D = ground_raycast.get_collider() as Node3D
@@ -137,10 +136,10 @@ func calculate_grounded_position() -> Vector3:
 	var pos : Vector3 = Vector3.ZERO
 	pos.x = (1 - randf() * 2) * BASKET_WIDTH
 	pos.z = (1 - randf() * 2) * BASKET_DEPTH
-	return pos
+	return cogwheel.global_position + pos
 
 func calculate_exit_position(exit_pos : Vector3) -> Vector3:
-	return (exit_pos - cogwheel.global_position) + Vector3.FORWARD * 8.0
+	return exit_pos + Vector3.FORWARD * 8.0
 
 @rpc("any_peer", "call_local", "reliable")
 func spawn(spawn_position : Vector3, is_bonus : bool) -> void:
