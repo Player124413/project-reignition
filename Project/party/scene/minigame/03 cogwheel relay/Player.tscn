@@ -70,22 +70,40 @@ _data = {
 &"invert": SubResource("Animation_lijki")
 }
 
-[node name="Player1" type="Node3D" node_paths=PackedStringArray("cogwheels", "majin_spawn_positions", "handle", "spawn_position")]
+[node name="Player1" type="Node3D" node_paths=PackedStringArray("cogwheels", "majin_spawn_positions", "handle", "cpu_upper_bound", "cpu_lower_bound", "cpu_middle_bound", "spawn_position")]
 script = ExtResource("1_lijki")
 cogwheels = [NodePath("LowSide/GearLow"), NodePath("HighSide/GearHigh")]
 majin_spawn_positions = [NodePath("LowSide/SpawnLow"), NodePath("HighSide/SpawnHigh")]
 handle = NodePath("Handle")
 majin_scene = ExtResource("2_ekyy7")
+cpu_upper_bound = NodePath("CPUUpperIgnore")
+cpu_lower_bound = NodePath("CPULowerIgnore")
+cpu_middle_bound = NodePath("CPUMiddle")
 spawn_position = NodePath("PlayerPosition")
 
 [node name="Handle" parent="." instance=ExtResource("2_m17wm")]
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, -6, 4, 5)
+
+[node name="HandleMesh" parent="Handle" index="0"]
+layers = 2
+
+[node name="CPULowerIgnore" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 10, 0)
+
+[node name="CPUMiddle" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 19, 0)
+
+[node name="CPUUpperIgnore" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 30, 0)
 
 [node name="LowSide" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0, 0)
 
 [node name="GearLow" parent="LowSide" instance=ExtResource("3_ekyy7")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 14, 0)
+
+[node name="GearMesh" parent="LowSide/GearLow" index="0"]
+layers = 2
 
 [node name="GearCollision" type="StaticBody3D" parent="LowSide/GearLow" groups=["player"]]
 
@@ -101,6 +119,9 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0, 0)
 
 [node name="GearHigh" parent="HighSide" instance=ExtResource("3_ekyy7")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 24, 0)
+
+[node name="GearMesh" parent="HighSide/GearHigh" index="0"]
+layers = 2
 
 [node name="GearCollision" type="StaticBody3D" parent="HighSide/GearHigh" groups=["ceiling", "player"]]
 
@@ -118,3 +139,7 @@ transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 0, 0
 libraries = {
 &"": SubResource("AnimationLibrary_m17wm")
 }
+
+[editable path="Handle"]
+[editable path="LowSide/GearLow"]
+[editable path="HighSide/GearHigh"]

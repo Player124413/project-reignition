@@ -15,12 +15,21 @@ var majin_spawn_timer : float
 ## Tracks the current majin being spawned.
 var majin_spawn_index : int
 ## Total amount of time it should take to spawn all majins.
-const TOTAL_SPAWN_TIME : float = 26
+const TOTAL_SPAWN_TIME : float = 27
 ## Variance between each spawn time.
-const SPAWN_TIME_VARIANCE : float = 0.2
+const SPAWN_TIME_VARIANCE : float = 0.1
 
 @export var majin_scene : PackedScene
 var majin_pool : Array[Node3D]
+## Majin currently in play. Used for CPU calculations.
+var active_majin : Array[Node3D]
+
+## Ignore all majin above this node.
+@export var cpu_upper_bound : Node3D
+## Ignore all majin below this node.
+@export var cpu_lower_bound : Node3D
+## Determines whether a majin is on the upper gear or the lower gear.
+@export var cpu_middle_bound : Node3D
 
 var is_demo_complete : bool
 var is_inverted : bool
@@ -30,6 +39,18 @@ const ROTATION_ACCELERATION : float = 40.0
 const ROTATION_DECCELERATION : float = 120.0
 const MAX_ROTATION_SPEED : float = 5.0
 const ANIMATION_SPEED : float = 3.0
+## Amount to bias spawn randomness based on rotation speed.
+const SPAWN_BIAS : float = 0.25
+
+func _physics_process(delta: float) -> void:
+	if !is_demo_complete:
+		return
+	
+	var input : float = calculate_cpu_input() if is_cpu() else get_horizontal_input()
+	apply_input(input, delta)
+	
+	if is_multiplayer_authority():
+		process_majin_spawn(delta)
 
 func on_spawn_finished() -> void:
 	initialize_majin()
@@ -88,15 +109,25 @@ func initialize_majin() -> void:
 		if !is_cpu():
 			print("Bonus majin are %s" % index)
 
-@rpc
 func spawn_majin() -> void:
 	var majin : Node3D = majin_pool[majin_spawn_index]
 	var spawn_position_index : int = 0
-	if is_demo_complete && randf() > 0.5:
-		spawn_position_index = 1
+	active_majin.append(majin)
+	if is_demo_complete:
+		var cut_off : float = 0.5
+		cut_off += (current_rotation_speed * SPAWN_BIAS) / MAX_ROTATION_SPEED
+		if is_inverted:
+			cut_off = 1 - cut_off
+		spawn_position_index = 0 if randf() > cut_off else 1
+		
 	var majin_position : Vector3 = majin_spawn_positions[spawn_position_index].global_position
 	majin.request_spawn(majin_position, majin_spawn_times[majin_spawn_index] < 0)
 	majin_spawn_index += 1
+
+func on_majin_despawned(majin : Node3D) -> void:
+	var index : int = active_majin.find(majin)
+	if index != -1:
+		active_majin.remove_at(index)
 
 func process_majin_spawn(delta : float) -> void:
 	if majin_spawn_index >= majin_spawn_times.size():
@@ -105,16 +136,6 @@ func process_majin_spawn(delta : float) -> void:
 	majin_spawn_timer += delta
 	if majin_spawn_timer > abs(majin_spawn_times[majin_spawn_index]):
 		spawn_majin()
-
-func _physics_process(delta: float) -> void:
-	if !is_demo_complete:
-		return
-	
-	var input : float = 0.0 if is_cpu() else get_horizontal_input()
-	apply_input(input, delta)
-	
-	if is_multiplayer_authority() && !is_cpu():
-		process_majin_spawn(delta)
 
 ## Applies an input when in demo mode.
 func apply_demo_input(is_contacting_slime : bool, delta : float) -> void:
@@ -131,6 +152,95 @@ func apply_input(input : float, delta : float) -> void:
 		target_rotation = ROTATION_DECCELERATION
 	current_rotation_speed = move_toward(current_rotation_speed, target_speed, target_rotation * delta)
 	process_animation(delta)
+
+var current_cpu_input : float
+var cpu_input_timer : float
+const CPU_INTERVAL : float = 1.5
+const INTERVAL_VARIANCE : float = 0.4
+
+func calculate_cpu_input() -> float:
+	if active_majin.size() == 0: # Nothing to process
+		return 0
+	
+	var difficulty : PlayerData.CPU_DIFFICULTY_ENUM = get_cpu_difficulty()
+	cpu_input_timer -= get_physics_process_delta_time()
+	if cpu_input_timer > 0: # Don't update
+		return current_cpu_input
+	
+	cpu_input_timer = CPU_INTERVAL + randf() * INTERVAL_VARIANCE
+	if difficulty == PlayerData.CPU_DIFFICULTY_ENUM.EASY:
+		# Choose a random direction and just hold it indefinitely
+		current_cpu_input = 1 - (randf() * 2)
+		if abs(current_cpu_input) < 0.6: # Overwhelmed; catch breath
+			current_cpu_input = 0
+			cpu_input_timer = CPU_INTERVAL - INTERVAL_VARIANCE
+		else:
+			current_cpu_input = sign(current_cpu_input) # Easy cpu doesn't know how to stack
+	elif difficulty == PlayerData.CPU_DIFFICULTY_ENUM.NORMAL:
+		# Choose a random direction and just hold it indefinitely
+		if is_zero_approx(current_cpu_input):
+			current_cpu_input = 1 if randf() > 0.5 else -1
+		else: # Choose the opposite direction
+			current_cpu_input *= -1
+		cpu_input_timer = CPU_INTERVAL + randf() * INTERVAL_VARIANCE
+	elif difficulty == PlayerData.CPU_DIFFICULTY_ENUM.HARD:
+		# Always go for the direction with more majin on it
+		var preferred_direction : int = get_side_priority()
+		current_cpu_input = preferred_direction
+		cpu_input_timer *= 0.2
+	elif difficulty == PlayerData.CPU_DIFFICULTY_ENUM.EXTREME:
+		# Always go for the direction with more majin on it, plus use accumulation and cashout
+		var preferred_direction : int = get_height_priority()
+		cpu_input_timer *= 0.2
+		current_cpu_input = preferred_direction
+	
+	return current_cpu_input
+
+## Returns the side with more majin on it, based on height.
+func get_height_priority() -> int:
+	var low_count : int = 0
+	var high_count : int = 0
+	for majin in active_majin:
+		# Ignore airborne majin
+		if majin.global_position.y > cpu_upper_bound.global_position.y:
+			continue
+		if majin.global_position.y < cpu_lower_bound.global_position.y:
+			continue
+		
+		var priority : int = 5 if majin.is_bonus_majin else 1 # Prioritize bonus majin
+		if majin.global_position.y > cpu_middle_bound.global_position.y:
+			low_count += priority
+		else:
+			high_count += priority
+	if low_count == 0 && high_count == 0:
+		return 0
+	var target : int = -1 if low_count > high_count else 1
+	if is_inverted:
+		target *= -1
+	return target
+
+## Returns the side with more majin on it, based on positions.
+func get_side_priority() -> int:
+	var left_count : int = 0
+	var right_count : int = 0
+	for majin in active_majin:
+		# Ignore airborne majin
+		if majin.global_position.y > cpu_upper_bound.global_position.y:
+			continue
+		if majin.global_position.y < cpu_lower_bound.global_position.y:
+			continue
+		
+		var priority : int = 5 if majin.is_bonus_majin else 1 # Prioritize bonus majin
+		if majin.position.x < 0:
+			left_count += priority
+		else:
+			right_count += priority
+	if left_count == 0 && right_count == 0:
+		return 0
+	var target : int = -1 if left_count > right_count else 1
+	if !is_inverted:
+		target *= -1
+	return target
 
 func process_animation(delta: float) -> void:
 	var target_animation : String

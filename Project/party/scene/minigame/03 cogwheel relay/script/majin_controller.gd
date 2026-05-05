@@ -113,6 +113,7 @@ func on_majin_grounded() -> void:
 	if !is_multiplayer_authority():
 		return
 	
+	cogwheel.on_majin_despawned(self) # Let controller know to ignore this majin
 	var col : Node3D = ground_raycast.get_collider() as Node3D
 	if col.is_in_group("player"): # Collected
 		var score : int = 3 if is_bonus_majin else 1
@@ -138,7 +139,7 @@ func set_grounded_position(pos : Vector3) -> void:
 	grounded_position = pos
 
 const BASKET_WIDTH : float = 4
-const BASKET_DEPTH : float = 1.2
+const BASKET_DEPTH : float = 1
 func calculate_grounded_position() -> Vector3:
 	var pos : Vector3 = Vector3.ZERO
 	pos.x = (1 - randf() * 2) * BASKET_WIDTH
