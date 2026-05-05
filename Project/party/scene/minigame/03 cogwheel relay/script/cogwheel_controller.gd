@@ -45,8 +45,9 @@ const SPAWN_BIAS : float = 0.25
 
 func _physics_process(delta: float) -> void:
 	if is_multiplayer_authority():
-		process_majin_spawn(delta)
-		current_input = calculate_cpu_input() if is_cpu() else get_horizontal_input()
+		if is_demo_complete:
+			process_majin_spawn(delta)
+			current_input = calculate_cpu_input() if is_cpu() else get_horizontal_input()
 		request_rollback()
 	
 	process_movement_tick()
@@ -70,8 +71,8 @@ func request_rollback() -> void:
 		rollback_interval_timer = ROLLBACK_INTERVAL
 		rpc("rollback", NetworkTimeSynchronizer.get_time(), current_input, current_rotation_speed)
 
-## Resyncs this majin across the network.
-@rpc
+## Resyncs this controller across the network.
+@rpc("any_peer", "call_remote", "unreliable")
 func rollback(network_time : float, rollback_input : float, rollback_spd : float) -> void:
 	if network_time <= latest_network_time: # Already recieved an earlier tick
 		return
@@ -85,6 +86,7 @@ func rollback(network_time : float, rollback_input : float, rollback_spd : float
 		process_movement_tick()
 
 func on_spawn_finished() -> void:
+	set_physics_process(true)
 	initialize_majin()
 	is_inverted = player_index % 2 == 1
 	character_animator.play_minigame_animation(get_anim_prefix() + "pull")
@@ -101,6 +103,7 @@ func on_spawn_finished() -> void:
 
 func complete_demo() -> void:
 	is_demo_complete = true
+	set_physics_process(false)
 	
 	if NetworkManager.is_hosting_game:
 		var start_callable : Callable = Callable.create(MinigameManager.instance, "request_minigame_start")
@@ -174,10 +177,6 @@ func apply_demo_input(is_contacting_slime : bool) -> void:
 	current_input = 0
 	if is_contacting_slime:
 		current_input = -1 if is_inverted else 1
-	
-	process_movement_tick()
-	process_animation()
-	request_rollback()
 
 ## Applies the input to the cogwheel.
 func process_movement_tick() -> void:

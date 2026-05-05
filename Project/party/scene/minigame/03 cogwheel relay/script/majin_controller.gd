@@ -56,6 +56,8 @@ func _physics_process(delta: float) -> void:
 
 func process_movement_tick() -> void:
 	var speed : float = 0
+	ground_raycast.force_raycast_update()
+	ceiling_raycast.force_raycast_update()
 	if ground_raycast.is_colliding():
 		if is_colliding_with_ground():
 			on_majin_grounded()
@@ -100,7 +102,7 @@ func request_rollback() -> void:
 		rpc("rollback", NetworkTimeSynchronizer.get_time(), global_position, current_speed)
 
 ## Resyncs this majin across the network.
-@rpc
+@rpc("any_peer", "call_remote", "unreliable")
 func rollback(network_time : float, rollback_pos : Vector3, spd : float) -> void:
 	if network_time <= latest_network_time: # Already recieved an earlier tick
 		return

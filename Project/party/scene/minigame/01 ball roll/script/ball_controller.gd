@@ -93,6 +93,7 @@ func process_move_speed() -> void:
 
 func process_animation() -> void:
 	character_rotation.global_rotation = Vector3.UP * movement_angle
+	character_raycast.force_raycast_update()
 	if character_raycast.is_colliding():
 		# Snap to ground
 		var target_position : Vector3 = character_raycast.get_collision_point()
@@ -149,7 +150,6 @@ func calculate_cpu_input() -> Vector2:
 #####################
 ### ROLLBACK CODE ###
 #####################
-
 ## Stores the latest time we've updated on the network
 var latest_network_time : float = 0.0
 var rollback_interval_timer : float
@@ -163,22 +163,17 @@ func request_rollback() -> void:
 	rollback_interval_timer = move_toward(rollback_interval_timer, 0, get_physics_process_delta_time())
 	if is_zero_approx(rollback_interval_timer):
 		rollback_interval_timer = ROLLBACK_INTERVAL
-		rpc("rollback", NetworkTimeSynchronizer.get_time(), global_position, movement_angle, turn_speed, movement_input)
+		rpc("rollback", NetworkTimeSynchronizer.get_time(), character_body.global_position, movement_angle, turn_speed, movement_input)
 
-## Resyncs this majin across the network.
-@rpc
+## Resyncs this ball across the network
+@rpc("any_peer", "call_remote", "unreliable")
 func rollback(network_time : float, rollback_position : Vector3, angle : float, turn_spd : float, input : Vector2) -> void:
 	if network_time <= latest_network_time: # Already recieved an earlier tick
 		return
 	
 	# Rollback to sync state
 	latest_network_time = network_time
-	global_position = rollback_position
+	character_body.global_position = rollback_position
 	movement_angle = angle
 	movement_input = input
 	turn_speed = turn_spd
-	#
-	## Simulate a number of physics ticks to catch up to the current frame
-	#var rollback_amount : float = NetworkTimeSynchronizer.get_time() - network_time
-	#for i in range(floor(rollback_amount / get_physics_process_delta_time())):
-		#process_movement_tick()

@@ -205,7 +205,7 @@ func request_rollback() -> void:
 		rpc("rollback", NetworkTimeSynchronizer.get_time(), global_position, movement_angle)
 
 ## Resyncs this majin across the network.
-@rpc
+@rpc("any_peer", "call_remote", "unreliable")
 func rollback(network_time : float, rollback_position : Vector3, angle : float) -> void:
 	if network_time <= latest_network_time: # Already recieved an earlier tick
 		return
