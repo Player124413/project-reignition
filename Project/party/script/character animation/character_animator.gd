@@ -95,6 +95,7 @@ func on_results_started() -> void:
 	if player_index == -1:
 		return
 	
+	set_speed(1)
 	if PartyManager.get_player_data(player_index).minigame_placement == 0:
 		play_animation("win")
 	else:
