@@ -33,6 +33,7 @@ var active_majin : Array[Node3D]
 
 var is_demo_complete : bool
 var is_inverted : bool
+var current_input : float
 
 var current_rotation_speed : float
 const ROTATION_ACCELERATION : float = 40.0
@@ -43,14 +44,45 @@ const ANIMATION_SPEED : float = 3.0
 const SPAWN_BIAS : float = 0.25
 
 func _physics_process(delta: float) -> void:
-	if !is_demo_complete:
-		return
-	
-	var input : float = calculate_cpu_input() if is_cpu() else get_horizontal_input()
-	apply_input(input, delta)
-	
 	if is_multiplayer_authority():
 		process_majin_spawn(delta)
+		current_input = calculate_cpu_input() if is_cpu() else get_horizontal_input()
+		request_rollback()
+	
+	process_movement_tick()
+	process_animation()
+
+#####################
+### ROLLBACK CODE ###
+#####################
+## Stores the latest time we've updated on the network
+var latest_network_time : float = 0.0
+var rollback_interval_timer : float
+const ROLLBACK_INTERVAL : float = 0.2
+
+## Sends an rpc request to resync across the network
+func request_rollback() -> void:
+	if !is_multiplayer_authority():
+		return
+	
+	rollback_interval_timer = move_toward(rollback_interval_timer, 0, get_physics_process_delta_time())
+	if is_zero_approx(rollback_interval_timer):
+		rollback_interval_timer = ROLLBACK_INTERVAL
+		rpc("rollback", NetworkTimeSynchronizer.get_time(), current_input, current_rotation_speed)
+
+## Resyncs this majin across the network.
+@rpc
+func rollback(network_time : float, rollback_input : float, rollback_spd : float) -> void:
+	if network_time <= latest_network_time: # Already recieved an earlier tick
+		return
+	
+	# Rollback to sync state
+	latest_network_time = network_time
+	current_input = rollback_input
+	current_rotation_speed = rollback_spd
+	
+	for i in range(floor((NetworkTimeSynchronizer.get_time() - network_time) / get_physics_process_delta_time())):
+		process_movement_tick()
 
 func on_spawn_finished() -> void:
 	initialize_majin()
@@ -137,23 +169,24 @@ func process_majin_spawn(delta : float) -> void:
 	if majin_spawn_timer > abs(majin_spawn_times[majin_spawn_index]):
 		spawn_majin()
 
-## Applies an input when in demo mode.
-func apply_demo_input(is_contacting_slime : bool, delta : float) -> void:
-	var input : float = 0
+## Applies an input when in demo mode. Called from slimes.
+func apply_demo_input(is_contacting_slime : bool) -> void:
+	current_input = 0
 	if is_contacting_slime:
-		input = -1 if is_inverted else 1
-	apply_input(input, delta)
+		current_input = -1 if is_inverted else 1
+	
+	process_movement_tick()
+	process_animation()
+	request_rollback()
 
 ## Applies the input to the cogwheel.
-func apply_input(input : float, delta : float) -> void:
-	var target_speed : float = input * MAX_ROTATION_SPEED
+func process_movement_tick() -> void:
+	var target_speed : float = current_input * MAX_ROTATION_SPEED
 	var target_rotation : float = ROTATION_ACCELERATION
 	if sign(target_speed) != sign(current_rotation_speed):
 		target_rotation = ROTATION_DECCELERATION
-	current_rotation_speed = move_toward(current_rotation_speed, target_speed, target_rotation * delta)
-	process_animation(delta)
+	current_rotation_speed = move_toward(current_rotation_speed, target_speed, target_rotation * get_physics_process_delta_time())
 
-var current_cpu_input : float
 var cpu_input_timer : float
 const CPU_INTERVAL : float = 1.5
 const INTERVAL_VARIANCE : float = 0.4
@@ -165,36 +198,37 @@ func calculate_cpu_input() -> float:
 	var difficulty : PlayerData.CPU_DIFFICULTY_ENUM = get_cpu_difficulty()
 	cpu_input_timer -= get_physics_process_delta_time()
 	if cpu_input_timer > 0: # Don't update
-		return current_cpu_input
+		return current_input
 	
+	var target_input : float = current_input
 	cpu_input_timer = CPU_INTERVAL + randf() * INTERVAL_VARIANCE
 	if difficulty == PlayerData.CPU_DIFFICULTY_ENUM.EASY:
 		# Choose a random direction and just hold it indefinitely
-		current_cpu_input = 1 - (randf() * 2)
-		if abs(current_cpu_input) < 0.6: # Overwhelmed; catch breath
-			current_cpu_input = 0
+		target_input = 1 - (randf() * 2)
+		if abs(target_input) < 0.6: # Overwhelmed; catch breath
+			target_input = 0
 			cpu_input_timer = CPU_INTERVAL - INTERVAL_VARIANCE
 		else:
-			current_cpu_input = sign(current_cpu_input) # Easy cpu doesn't know how to stack
+			target_input = sign(target_input) # Easy cpu doesn't know how to stack
 	elif difficulty == PlayerData.CPU_DIFFICULTY_ENUM.NORMAL:
 		# Choose a random direction and just hold it indefinitely
-		if is_zero_approx(current_cpu_input):
-			current_cpu_input = 1 if randf() > 0.5 else -1
+		if is_zero_approx(target_input):
+			target_input = 1 if randf() > 0.5 else -1
 		else: # Choose the opposite direction
-			current_cpu_input *= -1
+			target_input *= -1
 		cpu_input_timer = CPU_INTERVAL + randf() * INTERVAL_VARIANCE
 	elif difficulty == PlayerData.CPU_DIFFICULTY_ENUM.HARD:
 		# Always go for the direction with more majin on it
 		var preferred_direction : int = get_side_priority()
-		current_cpu_input = preferred_direction
+		target_input = preferred_direction
 		cpu_input_timer *= 0.2
 	elif difficulty == PlayerData.CPU_DIFFICULTY_ENUM.EXTREME:
 		# Always go for the direction with more majin on it, plus use accumulation and cashout
 		var preferred_direction : int = get_height_priority()
 		cpu_input_timer *= 0.2
-		current_cpu_input = preferred_direction
+		target_input = preferred_direction
 	
-	return current_cpu_input
+	return target_input
 
 ## Returns the side with more majin on it, based on height.
 func get_height_priority() -> int:
@@ -242,7 +276,7 @@ func get_side_priority() -> int:
 		target *= -1
 	return target
 
-func process_animation(delta: float) -> void:
+func process_animation() -> void:
 	var target_animation : String
 	if current_rotation_speed > 0:
 		target_animation = get_anim_prefix() + "push"
@@ -261,4 +295,4 @@ func process_animation(delta: float) -> void:
 	handle.rotation = Vector3.RIGHT * handle_rotation
 	
 	for cog in cogwheels:
-		cog.rotation += Vector3.FORWARD * current_rotation_speed * delta
+		cog.rotation += Vector3.FORWARD * current_rotation_speed * get_physics_process_delta_time()

@@ -34,20 +34,27 @@ func initialize() -> void:
 	set_physics_process(false)
 
 func _physics_process(delta: float) -> void:
-	if !is_multiplayer_authority():
-		return
-	
 	if is_jumping:
 		process_jump(delta)
-		return
-	
-	if is_jump_queued && attempt_jump():
 		return
 	
 	if is_grounded:
 		process_grounded_position(delta)
 		return
 	
+	if is_multiplayer_authority():
+		if is_jump_queued && attempt_jump():
+			return
+	
+	process_movement_tick()
+	# Update the inputs of the demo based on this majin's state
+	if cogwheel.is_multiplayer_authority() && !cogwheel.is_demo_complete:
+		cogwheel.apply_demo_input(ground_raycast.is_colliding())
+	
+	if is_multiplayer_authority():
+		request_rollback()
+
+func process_movement_tick() -> void:
 	var speed : float = 0
 	if ground_raycast.is_colliding():
 		if is_colliding_with_ground():
@@ -64,19 +71,47 @@ func _physics_process(delta: float) -> void:
 		elif sign(cogwheel.current_rotation_speed) != desired_direction:
 			target_speed = MOVE_SPEED * sign(cogwheel.current_rotation_speed)
 			
-		current_speed = move_toward(current_speed, target_speed, ACCELERATION * delta)
+		current_speed = move_toward(current_speed, target_speed, ACCELERATION * get_physics_process_delta_time())
 		speed = cogwheel.current_rotation_speed - current_speed
 	else:
-		current_speed = move_toward(current_speed, 0, ACCELERATION * delta)
-		global_position += Vector3.DOWN * GRAVITY * delta
+		current_speed = move_toward(current_speed, 0, ACCELERATION * get_physics_process_delta_time())
+		global_position += Vector3.DOWN * GRAVITY * get_physics_process_delta_time()
 	
-	# Update the inputs of the demo based on this majin's state
-	if !cogwheel.is_demo_complete:
-		cogwheel.apply_demo_input(ground_raycast.is_colliding(), delta)
-	
-	global_position += Vector3.RIGHT * speed * delta
+	global_position += Vector3.RIGHT * speed * get_physics_process_delta_time()
 	if ground_raycast.is_colliding(): # Don't update directions in the air
 		rotation = Vector3.DOWN * PI * 0.5 * (current_speed / MOVE_SPEED)
+
+#####################
+### ROLLBACK CODE ###
+#####################
+## Stores the latest time we've updated on the network
+var latest_network_time : float = 0.0
+var rollback_interval_timer : float
+const ROLLBACK_INTERVAL : float = 0.2
+
+## Sends an rpc request to resync across the network
+func request_rollback() -> void:
+	if !is_multiplayer_authority():
+		return
+	
+	rollback_interval_timer = move_toward(rollback_interval_timer, 0, get_physics_process_delta_time())
+	if is_zero_approx(rollback_interval_timer):
+		rollback_interval_timer = ROLLBACK_INTERVAL
+		rpc("rollback", NetworkTimeSynchronizer.get_time(), global_position, current_speed)
+
+## Resyncs this majin across the network.
+@rpc
+func rollback(network_time : float, rollback_pos : Vector3, spd : float) -> void:
+	if network_time <= latest_network_time: # Already recieved an earlier tick
+		return
+	
+	# Rollback to sync state
+	latest_network_time = network_time
+	global_position = rollback_pos
+	current_speed = spd
+	
+	for i in range(floor((NetworkTimeSynchronizer.get_time() - network_time) / get_physics_process_delta_time())):
+		process_movement_tick()
 
 func process_grounded_position(delta : float) -> void:
 	if global_position.is_equal_approx(grounded_position): # Finished; disable majin
@@ -119,16 +154,32 @@ func on_majin_grounded() -> void:
 		var score : int = 3 if is_bonus_majin else 1
 		var projected_position : Vector3 = cogwheel.global_position + Vector3.UP * 8
 		var screen_pos : Vector2 = get_tree().root.get_camera_3d().unproject_position(projected_position)
-		MinigameManager.instance.request_score_popup(cogwheel.player_index, score, screen_pos)
+		rpc("request_score_popup", cogwheel.player_index, score, screen_pos)
+		
 		if cogwheel.is_demo_complete:
-			MinigameManager.instance.request_score_change(cogwheel.player_index, score)
+			rpc("request_score_change", cogwheel.player_index, score)
 		else:
 			cogwheel.complete_demo()
+		
 		rpc("play_animation", "stun")
 		rpc("set_grounded_position", calculate_grounded_position())
 	else: # Exiting
 		rpc("play_animation", "land")
 		rpc("set_grounded_position", calculate_exit_position(col.global_position))
+
+@rpc("any_peer", "call_local", "reliable")
+func request_score_popup(player_index : int, score : int, screen_pos : Vector2) -> void:
+	if !NetworkManager.is_hosting_game:
+		return
+	
+	MinigameManager.instance.request_score_popup(cogwheel.player_index, score, screen_pos)
+
+@rpc("any_peer", "call_local", "reliable")
+func request_score_change(player_index : int, score : int) -> void:
+	if !NetworkManager.is_hosting_game:
+		return
+	
+	MinigameManager.instance.request_score_change(cogwheel.player_index, score)
 
 @rpc("any_peer", "call_local", "reliable")
 func play_animation(anim : String) -> void:
