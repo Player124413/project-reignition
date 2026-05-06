@@ -34,6 +34,7 @@ func on_spawn_finished() -> void:
 	_move_angle = rotation.y
 	global_rotation = Vector3.ZERO
 	process_animation()
+	rollback_timer.register_target(self)
 
 func _physics_process(_delta: float) -> void:
 	if is_multiplayer_authority():
@@ -43,7 +44,24 @@ func _physics_process(_delta: float) -> void:
 	if is_multiplayer_authority():
 		process_rollback()
 
+#####################
+### ROLLBACK CODE ###
+#####################
+const RB_POS : int = 0
+const RB_SPD : int = 1
+const RB_ANGLE : int = 2
+const RB_INPUT : int = 3
+func on_rollback_applied(rb_params : Array) -> void:
+	character_body.global_position = rb_params[RB_POS]
+	_move_speed = rb_params[RB_SPD]
+	_move_angle = rb_params[RB_ANGLE]
+	_input = rb_params[RB_INPUT]
+
 func process_rollback() -> void:
+	rollback_timer.set_param(RB_POS, character_body.global_position)
+	rollback_timer.set_param(RB_SPD, _move_speed)
+	rollback_timer.set_param(RB_ANGLE, _move_angle)
+	rollback_timer.set_param(RB_INPUT, _input)
 	rollback_timer.process_rollback()
 
 func process_inputs() -> void:

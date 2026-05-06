@@ -1,56 +1,10 @@
-[gd_scene load_steps=7 format=3 uid="uid://d1evp826ax3a5"]
+[gd_scene load_steps=3 format=3 uid="uid://d1evp826ax3a5"]
 
-[ext_resource type="Script" uid="uid://cmb5knexcdbc1" path="res://party/scene/minigame/05 parasol ball/script/player_controller.gd" id="1_hfye1"]
+[ext_resource type="PackedScene" uid="uid://f5wi8d1pc1ci" path="res://party/scene/minigame/05 parasol ball/Player.tscn" id="1_5qevw"]
 [ext_resource type="PackedScene" uid="uid://b10vgifvnr4tc" path="res://party/resource/character/scene/MajinBlue.tscn" id="2_homyi"]
-[ext_resource type="PackedScene" uid="uid://c81mcio1pe8er" path="res://party/scene/minigame/05 parasol ball/model/Racket.glb" id="2_nvg40"]
-[ext_resource type="Script" uid="uid://ds056nimfywwr" path="res://party/script/core/rollback_timer.gd" id="3_homyi"]
 
-[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_neto8"]
-radius = 3.0
-height = 8.0
-
-[sub_resource type="CylinderShape3D" id="CylinderShape3D_tnoa7"]
-height = 15.0
-radius = 8.0
-
-[node name="Player" type="Node3D" node_paths=PackedStringArray("hand_attachment", "rollback_timer", "character_body", "spawn_position", "character_animator")]
-script = ExtResource("1_hfye1")
-hand_attachment = NodePath("HandAttachment")
-rollback_timer = NodePath("Rollback")
-character_body = NodePath("CharacterBody3D")
+[node name="DemoPlayer" node_paths=PackedStringArray("character_animator") instance=ExtResource("1_5qevw")]
 player_index = -1
-spawn_position = NodePath("CharacterBody3D")
 character_animator = NodePath("CharacterBody3D/MajinBlue")
 
-[node name="CharacterBody3D" type="CharacterBody3D" parent="."]
-collision_layer = 2
-collision_mask = 3
-
-[node name="MajinBlue" parent="CharacterBody3D" instance=ExtResource("2_homyi")]
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="CharacterBody3D"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4, 0)
-shape = SubResource("CapsuleShape3D_neto8")
-
-[node name="HitTrigger" type="Area3D" parent="CharacterBody3D"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5, 3)
-collision_layer = 0
-collision_mask = 8
-monitorable = false
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="CharacterBody3D/HitTrigger"]
-shape = SubResource("CylinderShape3D_tnoa7")
-
-[node name="HandAttachment" type="BoneAttachment3D" parent="."]
-transform = Transform3D(-0.055639148, 0.82801193, 0.5579431, -0.9488646, -0.21776418, 0.22854908, 0.3107414, -0.51669616, 0.7977873, -0.11048618, 3.0883198, 1.8606191)
-bone_name = "hand_attachment"
-bone_idx = 89
-
-[node name="Racket" parent="HandAttachment" instance=ExtResource("2_nvg40")]
-transform = Transform3D(1, 0, 0, 0, -4.3711385e-08, -0.99999994, 0, 0.99999994, -4.3711385e-08, 0, 0, 0)
-
-[node name="Rollback" type="Node" parent="."]
-script = ExtResource("3_homyi")
-
-[connection signal="area_entered" from="CharacterBody3D/HitTrigger" to="." method="_on_hit_trigger_area_entered"]
-[connection signal="area_exited" from="CharacterBody3D/HitTrigger" to="." method="_on_hit_trigger_area_exited"]
+[node name="MajinBlue" parent="CharacterBody3D" index="2" instance=ExtResource("2_homyi")]

@@ -73,20 +73,23 @@ func calculate_hit_position(dir : int, pos : Vector3) -> Vector3:
 	return pos
 
 func process_inputs() -> void:
-	if !is_cpu():
+	if !is_cpu() && swing_state == SWING_STATE.IDLE:
 		if Input.is_action_just_pressed("button_primary%s" % get_input_suffix()):
-			start_swing(1)
+			rpc("start_swing", NetworkTimeSynchronizer.get_time(), 1)
 		elif Input.is_action_just_pressed("button_secondary%s" % get_input_suffix()):
-			start_swing(-1)
+			rpc("start_swing", NetworkTimeSynchronizer.get_time(), -1)
 	if swing_state != SWING_STATE.RECOVERY:
 		super()
 
-func start_swing(dir : int) -> void:
+@rpc("any_peer", "call_local", "reliable")
+func start_swing(tick : float, dir : int) -> void:
 	swing_state = SWING_STATE.AIMING
+	var target_anim : StringName
 	if dir == 1:
-		character_animator.rpc("play_minigame_animation", get_anim_prefix() + "shot-right")
+		target_anim = get_anim_prefix() + "shot-right"
 	else:
-		character_animator.rpc("play_minigame_animation", get_anim_prefix() + "shot-left")
+		target_anim = get_anim_prefix() + "shot-left"
+	character_animator.rpc("play_minigame_animation", target_anim, 0, 1, 0, tick)
 
 func _on_hit_trigger_area_entered(area: Area3D) -> void:
 	if !area.is_in_group("enemy"):
@@ -94,7 +97,7 @@ func _on_hit_trigger_area_entered(area: Area3D) -> void:
 	
 	ball_targets.append(area)
 	if player_index == -1:
-		start_swing(-1)
+		rpc("start_swing", NetworkTimeSynchronizer.get_time(), -1)
 
 func _on_hit_trigger_area_exited(area: Area3D) -> void:
 	if !area.is_in_group("enemy"):
@@ -102,3 +105,12 @@ func _on_hit_trigger_area_exited(area: Area3D) -> void:
 	var index : int = ball_targets.find(area)
 	if index != -1:
 		ball_targets.remove_at(index)
+
+const RB_SWING : int = 4
+func on_rollback_applied(rb_params : Array) -> void:
+	swing_state = rb_params[RB_SWING]
+	super(rb_params)
+
+func process_rollback() -> void:
+	rollback_timer.set_param(RB_SWING, swing_state)
+	super()
