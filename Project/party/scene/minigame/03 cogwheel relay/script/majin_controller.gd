@@ -32,6 +32,7 @@ func initialize() -> void:
 	visible = false
 	set_process(false)
 	set_physics_process(false)
+	rollback_timer.register_target(self)
 
 func _physics_process(delta: float) -> void:
 	if is_jumping:
@@ -51,8 +52,23 @@ func _physics_process(delta: float) -> void:
 	if cogwheel.is_multiplayer_authority() && !cogwheel.is_demo_complete:
 		cogwheel.apply_demo_input(ground_raycast.is_colliding())
 	
-	if is_multiplayer_authority():
-		request_rollback()
+	if rollback_timer.is_authority():
+		rollback_timer.set_param(RB_POS_KEY, global_position)
+		rollback_timer.set_param(RB_SPD_KEY, current_speed)
+		rollback_timer.process_rollback()
+
+
+#####################
+### ROLLBACK CODE ###
+#####################
+@export var rollback_timer : RollbackTimer
+### Index of position key.
+const RB_POS_KEY : int = 0
+### Index of speed key.
+const RB_SPD_KEY : int = 1
+func on_rollback_applied(params : Array) -> void:
+	global_position = params[RB_POS_KEY]
+	current_speed = params[RB_SPD_KEY]
 
 func process_movement_tick() -> void:
 	var speed : float = 0
@@ -82,38 +98,6 @@ func process_movement_tick() -> void:
 	global_position += Vector3.RIGHT * speed * get_physics_process_delta_time()
 	if ground_raycast.is_colliding(): # Don't update directions in the air
 		rotation = Vector3.DOWN * PI * 0.5 * (current_speed / MOVE_SPEED)
-
-#####################
-### ROLLBACK CODE ###
-#####################
-## Stores the latest time we've updated on the network
-var latest_network_time : float = 0.0
-var rollback_interval_timer : float
-const ROLLBACK_INTERVAL : float = 0.2
-
-## Sends an rpc request to resync across the network
-func request_rollback() -> void:
-	if !is_multiplayer_authority():
-		return
-	
-	rollback_interval_timer = move_toward(rollback_interval_timer, 0, get_physics_process_delta_time())
-	if is_zero_approx(rollback_interval_timer):
-		rollback_interval_timer = ROLLBACK_INTERVAL
-		rpc("rollback", NetworkTimeSynchronizer.get_time(), global_position, current_speed)
-
-## Resyncs this majin across the network.
-@rpc("any_peer", "call_remote", "unreliable")
-func rollback(network_time : float, rollback_pos : Vector3, spd : float) -> void:
-	if network_time <= latest_network_time: # Already recieved an earlier tick
-		return
-	
-	# Rollback to sync state
-	latest_network_time = network_time
-	global_position = rollback_pos
-	current_speed = spd
-	
-	for i in range(floor((NetworkTimeSynchronizer.get_time() - network_time) / get_physics_process_delta_time())):
-		process_movement_tick()
 
 func process_grounded_position(delta : float) -> void:
 	if global_position.is_equal_approx(grounded_position): # Finished; disable majin
