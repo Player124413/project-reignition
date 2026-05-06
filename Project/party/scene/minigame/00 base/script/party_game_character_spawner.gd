@@ -5,8 +5,7 @@ class_name PartyGameCharacterSpawner extends Node3D
 @export_range(-1, 3, 1) var player_index : int = 0
 @export var spawn_position : Node3D
 @export var score_counter : ScoreCounter
-
-var character_animator : CharacterAnimator
+@export var character_animator : CharacterAnimator
 
 ## Gets the animation prefix for minigame animations.
 func get_anim_prefix() -> String:
@@ -74,10 +73,15 @@ func on_host_spawned() -> void:
 func on_spawn_finished() -> void:
 	pass
 
-## Called after a demo object has spawned. Default behavior: hide the demo object.
+## Called after a demo object has spawned. Default behavior: connect the demo_transition_processed signal.
 func on_demo_spawned() -> void:
-	# Hide demo batting station after gameplay starts
-	MinigameManager.instance.gameplay_started.connect(Callable.create(self, "set_visible").bind(false))
+	# Hide demo nodes during the transition
+	MinigameManager.instance.demo_transition_processed.connect(Callable.create(self, "disable_tree"))
+
+## Disables the node and its children. Used to disable demo nodes.
+func disable_tree() -> void:
+	visible = false
+	process_mode = Node.PROCESS_MODE_DISABLED
 
 ## Called when recieving an animation event. Override in subclass.
 func process_animation_event(_info : int) -> void:

@@ -137,7 +137,7 @@ func on_majin_grounded() -> void:
 	if col.is_in_group("player"): # Collected
 		var score : int = 3 if is_bonus_majin else 1
 		var projected_position : Vector3 = cogwheel.global_position + Vector3.UP * 8
-		var screen_pos : Vector2 = get_tree().root.get_camera_3d().unproject_position(projected_position)
+		var screen_pos : Vector2 = get_viewport().get_camera_3d().unproject_position(projected_position)
 		rpc("request_score_popup", cogwheel.player_index, score, screen_pos)
 		
 		if cogwheel.is_demo_complete:

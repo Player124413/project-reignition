@@ -7,6 +7,8 @@ static var instance : MinigameManager
 signal peers_loaded
 ## Start reading player inputs and processing cpu players here. 
 signal gameplay_started
+## Emitted when a demo transition is processed.
+signal demo_transition_processed
 ## Stop processing players here.
 signal gameplay_finished
 ## Teleport players to their results position here.
@@ -16,25 +18,12 @@ signal results_started
 ## Emitted whenever a player's score is changed.
 signal on_score_updated(player_index : int, score : int)
 
-@export_group("Minigame Settings")
+func process_demo_transition() -> void:
+	splitscreen_parent.visible = screen_mode == SCREEN_MODE.SPLITSCREEN
+	demo_transition_processed.emit()
+
+@export_group("Resource Settings")
 @export var minigame_resource : MinigameResource
-## How should the screen be set up for this mini-game?
-@export var screen_mode : SCREEN_MODE
-enum SCREEN_MODE {
-	SHARED, # A single screen for everybody. Use this for sequential or group mini-games.
-	SPLITSCREEN # Each player gets a corner of the screen. Use this for simultaneous screens.
-}
-
-## Optional animator that plays when all peers are loaded.
-@export var intro_animator : AnimationPlayer
-
-## Demo transition. Only used when splitscreen is active.
-@export var demo_transition_mode : DEMO_TRANSITION
-enum DEMO_TRANSITION {
-	NONE, # Start with screen already split
-	FULLSCREEN, # Show a fullscreen demo first (normally played by a majin)
-}
-
 ## Minigame specific animation library to attach to player when adding them to the scene.
 @export var anim_library : AnimationLibrary
 ## Animations common to all minigames.
@@ -42,6 +31,28 @@ enum DEMO_TRANSITION {
 const ANIMATION_LIBRARY_PREFIX : String = "MINIGAME"
 const COMMON_ANIMATION_LIBRARY_PREFIX : String = "COMMON_MINIGAME"
 
+@export_group("View Settings")
+## How should the screen be set up for this mini-game?
+@export var screen_mode : SCREEN_MODE
+enum SCREEN_MODE {
+	SHARED, # A single screen for everybody. Use this for sequential or group mini-games.
+	SPLITSCREEN # Each player gets a corner of the screen. Use this for simultaneous screens.
+}
+## Transition to use when exiting demo.
+@export var demo_transition_mode : DEMO_TRANSITION
+enum DEMO_TRANSITION {
+	NONE, # Start with screen already split
+	FULLSCREEN, # Show a fullscreen demo first (normally played by a majin)
+}
+
+## Disable this if you have something in the game that needs to finish before we can play the results.
+@export var autoplay_results : bool = true
+## Tracks whether we're ready to play the results screen or not (based on non-game elements).
+var is_results_queued : bool
+
+@export_group("Component Settings")
+## Optional animator that plays when all peers are loaded. Use this for camera pans.
+@export var intro_animator : AnimationPlayer
 ## Option camera to use for the results screen.
 @export var results_camera : Camera3D
 
@@ -180,7 +191,7 @@ func request_minigame_start() -> void:
 @rpc("any_peer", "call_local", "reliable")
 func start_minigame(tick : float) -> void:
 	var target_animation : String = "minigame-start"
-	if screen_mode == SCREEN_MODE.SPLITSCREEN && demo_transition_mode == DEMO_TRANSITION.FULLSCREEN:
+	if demo_transition_mode == DEMO_TRANSITION.FULLSCREEN:
 		target_animation = "demo-fade" # Transition to split-screen
 	
 	var callable : Callable = Callable(self, "play_animation").bind(target_animation)
@@ -190,6 +201,24 @@ func request_minigame_finish(from_timer : bool = false) -> void:
 	print("Finishing Minigame!")
 	if NetworkManager.is_hosting_game:
 		rpc("finish_minigame", from_timer)
+
+## Attempts to start the results screen from another animation.
+func attempt_autoplay_results() -> void:
+	if !NetworkManager.is_hosting_game:
+		return
+	if autoplay_results:
+		rpc("play_animation", "results-start")
+	else:
+		is_results_queued = true
+
+## Call this after all minigame objects are finished processing.
+@rpc("any_peer", "call_local", "reliable")
+func request_autoplay_results() -> void:
+	if !NetworkManager.is_hosting_game:
+		return
+	autoplay_results = true
+	if is_results_queued:
+		attempt_autoplay_results()
 
 ## Plays the "GAME SET!" animation, then starts the results screen.
 @rpc("any_peer", "call_local", "reliable")

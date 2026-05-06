@@ -91,7 +91,10 @@ func start_swing(dir : int) -> void:
 func _on_hit_trigger_area_entered(area: Area3D) -> void:
 	if !area.is_in_group("enemy"):
 		return
+	
 	ball_targets.append(area)
+	if player_index == -1:
+		start_swing(-1)
 
 func _on_hit_trigger_area_exited(area: Area3D) -> void:
 	if !area.is_in_group("enemy"):

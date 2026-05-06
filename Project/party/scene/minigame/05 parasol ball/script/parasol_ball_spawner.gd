@@ -8,6 +8,7 @@ extends Node3D
 
 var ball_pool : Array
 var current_ball_index : int
+var deactivated_ball_count : int
 var spawn_timer : float
 var _spawn_interval : float
 
@@ -18,8 +19,15 @@ func _ready() -> void:
 	if !NetworkManager.is_hosting_game:
 		return
 	
-	_spawn_interval = 1.5
+	_spawn_interval = total_spawn_length / total_ball_count
 	MinigameManager.instance.gameplay_started.connect(Callable(self,"start_spawning"))
+
+func on_ball_deactivated() -> void:
+	if !NetworkManager.is_hosting_game:
+		return
+	deactivated_ball_count += 1
+	if deactivated_ball_count >= total_ball_count:
+		MinigameManager.instance.request_autoplay_results()
 
 func start_spawning() -> void:
 	set_physics_process(true)
@@ -28,7 +36,8 @@ func initialize_ball_pool() -> void:
 	ball_pool.resize(total_ball_count)
 	for i in total_ball_count:
 		var new_ball : Node3D = parasol_ball_scene.instantiate() as Node3D
-		new_ball.initialize(false)
+		new_ball.deactivated.connect(Callable(self, "on_ball_deactivated"), CONNECT_ONE_SHOT)
+		new_ball.call_deferred("initialize", false)
 		add_child(new_ball)
 		ball_pool[i] = new_ball
 
@@ -48,6 +57,5 @@ func request_ball_spawn() -> void:
 	var spawn_time : float = NetworkTimeSynchronizer.get_time() + 0.5
 	ball_pool[current_ball_index].rpc("request_spawn", spawn_time, spawn_position)
 	current_ball_index += 1
-	print("Spawning ball %s" % current_ball_index)
 	if current_ball_index >= ball_pool.size(): # Done spawning
 		set_physics_process(false)

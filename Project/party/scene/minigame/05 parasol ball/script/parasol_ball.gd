@@ -1,11 +1,16 @@
 extends Area3D
 
+## Emitted after this ball is deactivated.
+signal deactivated()
+
 @export var animator : AnimationPlayer
 @export var mesh : MeshInstance3D
 @export var materials : Array[Material]
 @export var fall_curve : Curve
 @export var hit_curve : Curve
+@export var is_demo_ball : bool
 
+var is_bonus_ball : bool
 var start_position : Vector3
 var end_position : Vector3
 var travel_timer : float
@@ -13,6 +18,7 @@ const HIT_TIME : float = 0.4
 const FALL_TIME : float = 4.0
 const ANIMATION_HEIGHT : int = 30
 
+var is_active : bool
 ## Tracks whether this ball is falling or hit.
 var is_hit : bool
 ## The tick when this ball was hit.
@@ -20,7 +26,19 @@ var hit_time : float
 ## The player who hit this ball.
 var hit_index : int = -1
 
+func _ready() -> void:
+	if NetworkManager.is_hosting_game && is_demo_ball:
+		initialize(false)
+
+## Kick off the demo by spawning a ball.
+func start_demo() -> void:
+	is_active = true
+	start_falling(global_position)
+	reset_physics_interpolation()
+	spawn()
+
 func initialize(is_bonus : bool) -> void:
+	is_bonus_ball = is_bonus
 	mesh.material_override = materials[0 if is_bonus else 1]
 	visible = false
 	set_physics_process(false)
@@ -45,14 +63,16 @@ func hit_ball(time : float, player_index : int, start_pos : Vector3, end_pos : V
 func request_spawn(time : float, spawn_pos : Vector3) -> void:
 	start_falling(spawn_pos)
 	reset_physics_interpolation()
-	var callable : Callable = Callable(self, "spawn").bind()
+	var callable : Callable = Callable(self, "spawn")
 	get_tree().create_timer(NetworkTimeSynchronizer.get_time() - time).timeout.connect(callable)
 
 func spawn() -> void:
+	is_active = true
 	visible = true
 	animator.play("RESET")
 	set_physics_process(true)
 	monitorable = true
+	monitoring = true
 
 func start_falling(pos : Vector3) -> void:
 	is_hit = false
@@ -63,7 +83,7 @@ func start_falling(pos : Vector3) -> void:
 	end_position.y = 0
 
 func _physics_process(delta: float) -> void:
-	if !NetworkManager.is_hosting_game:
+	if !is_active:
 		return
 	
 	travel_timer += delta
@@ -87,6 +107,23 @@ func process_movement_tick() -> void:
 		animator.play("fall")
 
 func deactivate() -> void:
+	monitoring = false
 	monitorable = false
 	set_physics_process(false) 
 	animator.play("destroy")
+	deactivated.emit()
+
+func _on_area_entered(area: Area3D) -> void:
+	if !NetworkManager.is_hosting_game:
+		return
+	if area.is_in_group("enemy"):
+		return
+	call_deferred("deactivate")
+	if hit_index == -1:
+		MinigameManager.instance.request_minigame_start()
+	else:
+		var score : int = 3 if is_bonus_ball else 1
+		var projected_position : Vector3 = global_position + Vector3.UP * 2
+		var screen_pos : Vector2 = get_viewport().get_camera_3d().unproject_position(projected_position)
+		MinigameManager.instance.request_score_popup(hit_index, score, screen_pos)
+		MinigameManager.instance.request_score_change(hit_index, score)
