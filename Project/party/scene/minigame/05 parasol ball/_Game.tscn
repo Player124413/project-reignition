@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3 uid="uid://cg3rfa7pkutq5"]
+[gd_scene load_steps=14 format=3 uid="uid://cg3rfa7pkutq5"]
 
 [ext_resource type="PackedScene" uid="uid://dsbufs8tjchk7" path="res://party/scene/minigame/00 base/MinigameBase.tscn" id="1_0e34q"]
 [ext_resource type="PackedScene" uid="uid://bdprj0jav5bid" path="res://party/scene/minigame/05 parasol ball/model/Map.glb" id="1_36t0w"]
@@ -9,6 +9,7 @@
 [ext_resource type="PackedScene" uid="uid://b7ti0ill2nhev" path="res://party/scene/minigame/05 parasol ball/Basket.tscn" id="4_fmn3e"]
 [ext_resource type="AnimationLibrary" uid="uid://d3q7b5jy25m52" path="res://party/scene/minigame/05 parasol ball/animation/_Library.glb" id="4_ft4ug"]
 [ext_resource type="PackedScene" uid="uid://f5wi8d1pc1ci" path="res://party/scene/minigame/05 parasol ball/Player.tscn" id="9_afcnm"]
+[ext_resource type="PackedScene" uid="uid://bvkej7ps0siog" path="res://party/scene/minigame/05 parasol ball/ParasolBall.tscn" id="10_ik6b2"]
 
 [sub_resource type="Environment" id="Environment_casa6"]
 ambient_light_source = 2
@@ -247,11 +248,6 @@ grow_horizontal = 2
 [node name="Basket" parent="." instance=ExtResource("4_fmn3e")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 50, 0, 91)
 
-[node name="Camera" type="Camera3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 0.9238795, 0.38268346, 0, -0.38268346, 0.9238795, 30, 65, 250)
-cull_mask = 1027
-fov = 35.0
-
 [node name="Player1" parent="." node_paths=PackedStringArray("score_counter") instance=ExtResource("9_afcnm")]
 transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, 0, 144)
 score_counter = NodePath("../Scores/ScoreCounter1")
@@ -275,6 +271,14 @@ score_counter = NodePath("../Scores/ScoreCounter4")
 libraries = {
 &"": SubResource("AnimationLibrary_ik6b2")
 }
+
+[node name="ParasolBall" parent="." instance=ExtResource("10_ik6b2")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 28.255276, 126)
+
+[node name="Camera" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.90630776, 0.42261827, 0, -0.42261827, 0.90630776, 30, 70, 250)
+cull_mask = 1027
+fov = 35.0
 
 [editable path="Environment/Map"]
 [editable path="Environment/Collision"]

@@ -1,7 +1,6 @@
 ### Base implemention for characters that need to run around in a top-down perspective.
 class_name PartyGameCharacterMover extends PartyGameCharacterSpawner
 
-
 @export_group("Components")
 @export var rollback_timer : RollbackTimer
 @export var character_body : CharacterBody3D
@@ -17,9 +16,13 @@ class_name PartyGameCharacterMover extends PartyGameCharacterSpawner
 ## How far the controller needs to be pressed to perform a run.
 const RUN_LENGTH : float = 0.5
 
+## The current speed we're moving at.
 var _move_speed : float
+## The current angle we're moving at.
 var _move_angle : float
+## The current input being processed.
 var _input : Vector2
+## What input angle should be counted as "braking."
 const BRAKE_ANGLE : float = PI * 0.8
 
 ## Tracks whether the player is braking or not.
@@ -33,9 +36,19 @@ func on_spawn_finished() -> void:
 	process_animation()
 
 func _physics_process(_delta: float) -> void:
+	if is_multiplayer_authority():
+		process_inputs()
+	
+	process_movement_tick()
+	if is_multiplayer_authority():
+		process_rollback()
+
+func process_rollback() -> void:
+	rollback_timer.process_rollback()
+
+func process_inputs() -> void:
 	if !is_cpu():
 		_input = get_input_axis() # TODO Allow CPU inputs
-	process_movement_tick()
 
 func process_movement_tick() -> void:
 	var target_angle : float = _move_angle if _input.is_zero_approx() else Vector2.UP.angle_to(_input)
@@ -90,9 +103,12 @@ func process_animation() -> void:
 	else:
 		target_animation = "%s/%s" % [MinigameManager.COMMON_ANIMATION_LIBRARY_PREFIX, target_animation]
 	
-	character_body.rotation = Vector3.UP * _move_angle
 	character_animator.set_speed(target_speed)
 	character_animator.play_animation(target_animation, false, 0.1)
+	apply_movement_rotation()
+
+func apply_movement_rotation() -> void:
+	character_body.rotation = Vector3.UP * _move_angle
 
 ## Returns the target animation that should be playing at this time.
 func get_target_animation() -> StringName:
