@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=3 uid="uid://cg3rfa7pkutq5"]
+[gd_scene load_steps=16 format=3 uid="uid://cg3rfa7pkutq5"]
 
 [ext_resource type="PackedScene" uid="uid://dsbufs8tjchk7" path="res://party/scene/minigame/00 base/MinigameBase.tscn" id="1_0e34q"]
 [ext_resource type="PackedScene" uid="uid://bdprj0jav5bid" path="res://party/scene/minigame/05 parasol ball/model/Map.glb" id="1_36t0w"]
@@ -9,7 +9,8 @@
 [ext_resource type="PackedScene" uid="uid://b7ti0ill2nhev" path="res://party/scene/minigame/05 parasol ball/Basket.tscn" id="4_fmn3e"]
 [ext_resource type="AnimationLibrary" uid="uid://d3q7b5jy25m52" path="res://party/scene/minigame/05 parasol ball/animation/_Library.glb" id="4_ft4ug"]
 [ext_resource type="PackedScene" uid="uid://f5wi8d1pc1ci" path="res://party/scene/minigame/05 parasol ball/Player.tscn" id="9_afcnm"]
-[ext_resource type="PackedScene" uid="uid://bvkej7ps0siog" path="res://party/scene/minigame/05 parasol ball/ParasolBall.tscn" id="10_ik6b2"]
+[ext_resource type="Script" uid="uid://dinbpl7tr4mf4" path="res://party/scene/minigame/05 parasol ball/script/parasol_ball_spawner.gd" id="10_ik6b2"]
+[ext_resource type="PackedScene" uid="uid://bvkej7ps0siog" path="res://party/scene/minigame/05 parasol ball/ParasolBall.tscn" id="11_6erql"]
 
 [sub_resource type="Environment" id="Environment_casa6"]
 ambient_light_source = 2
@@ -21,6 +22,9 @@ glow_enabled = true
 glow_normalized = true
 adjustment_enabled = true
 adjustment_saturation = 1.2
+
+[sub_resource type="BoxMesh" id="BoxMesh_6erql"]
+size = Vector3(84, 1, 36)
 
 [sub_resource type="Animation" id="Animation_afcnm"]
 resource_name = "intro"
@@ -47,6 +51,7 @@ _data = {
 [node name="Game" type="Node3D"]
 
 [node name="Environment" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -27.5, 0, 0)
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="Environment"]
 environment = SubResource("Environment_casa6")
@@ -246,24 +251,36 @@ grow_horizontal = 2
 [node name="Scores" parent="." instance=ExtResource("2_36t0w")]
 
 [node name="Basket" parent="." instance=ExtResource("4_fmn3e")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 50, 0, 91)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 90)
 
-[node name="Player1" parent="." node_paths=PackedStringArray("score_counter") instance=ExtResource("9_afcnm")]
-transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, 0, 144)
+[node name="BallSpawner" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 60, 135)
+cast_shadow = 0
+mesh = SubResource("BoxMesh_6erql")
+script = ExtResource("10_ik6b2")
+parasol_ball_scene = ExtResource("11_6erql")
+spawn_bounds = Vector2(42, 18)
+
+[node name="Player1" parent="." node_paths=PackedStringArray("basket", "score_counter") instance=ExtResource("9_afcnm")]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, -24, 0, 144)
+basket = NodePath("../Basket")
 score_counter = NodePath("../Scores/ScoreCounter1")
 
-[node name="Player2" parent="." node_paths=PackedStringArray("score_counter") instance=ExtResource("9_afcnm")]
-transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 16, 0, 144)
+[node name="Player2" parent="." node_paths=PackedStringArray("basket", "score_counter") instance=ExtResource("9_afcnm")]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, -8, 0, 144)
+basket = NodePath("../Basket")
 player_index = 1
 score_counter = NodePath("../Scores/ScoreCounter2")
 
-[node name="Player3" parent="." node_paths=PackedStringArray("score_counter") instance=ExtResource("9_afcnm")]
-transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 32, 0, 144)
+[node name="Player3" parent="." node_paths=PackedStringArray("basket", "score_counter") instance=ExtResource("9_afcnm")]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 8, 0, 144)
+basket = NodePath("../Basket")
 player_index = 2
 score_counter = NodePath("../Scores/ScoreCounter3")
 
-[node name="Player4" parent="." node_paths=PackedStringArray("score_counter") instance=ExtResource("9_afcnm")]
-transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 48, 0, 144)
+[node name="Player4" parent="." node_paths=PackedStringArray("basket", "score_counter") instance=ExtResource("9_afcnm")]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 24, 0, 144)
+basket = NodePath("../Basket")
 player_index = 3
 score_counter = NodePath("../Scores/ScoreCounter4")
 
@@ -272,11 +289,8 @@ libraries = {
 &"": SubResource("AnimationLibrary_ik6b2")
 }
 
-[node name="ParasolBall" parent="." instance=ExtResource("10_ik6b2")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 28.255276, 126)
-
 [node name="Camera" type="Camera3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 0.90630776, 0.42261827, 0, -0.42261827, 0.90630776, 30, 70, 250)
+transform = Transform3D(1, 0, 0, 0, 0.9063077, 0.42261827, 0, -0.42261827, 0.9063077, 0, 70, 250)
 cull_mask = 1027
 fov = 35.0
 

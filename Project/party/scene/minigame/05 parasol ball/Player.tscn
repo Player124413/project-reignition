@@ -1,4 +1,4 @@
-[gd_scene load_steps=5 format=3 uid="uid://f5wi8d1pc1ci"]
+[gd_scene load_steps=6 format=3 uid="uid://f5wi8d1pc1ci"]
 
 [ext_resource type="Script" uid="uid://cmb5knexcdbc1" path="res://party/scene/minigame/05 parasol ball/script/player_controller.gd" id="1_neto8"]
 [ext_resource type="Script" uid="uid://ds056nimfywwr" path="res://party/script/core/rollback_timer.gd" id="2_neto8"]
@@ -7,6 +7,10 @@
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_neto8"]
 radius = 3.0
 height = 8.0
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_tnoa7"]
+height = 15.0
+radius = 8.0
 
 [node name="Player" type="Node3D" node_paths=PackedStringArray("hand_attachment", "rollback_timer", "character_body", "spawn_position")]
 script = ExtResource("1_neto8")
@@ -23,6 +27,15 @@ collision_mask = 3
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4, 0)
 shape = SubResource("CapsuleShape3D_neto8")
 
+[node name="HitTrigger" type="Area3D" parent="CharacterBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5, 3)
+collision_layer = 0
+collision_mask = 8
+monitorable = false
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="CharacterBody3D/HitTrigger"]
+shape = SubResource("CylinderShape3D_tnoa7")
+
 [node name="HandAttachment" type="BoneAttachment3D" parent="."]
 transform = Transform3D(-0.055639148, 0.82801193, 0.5579431, -0.9488646, -0.21776418, 0.22854908, 0.3107414, -0.51669616, 0.7977873, -0.11048618, 3.0883198, 1.8606191)
 bone_name = "hand_attachment"
@@ -33,3 +46,6 @@ transform = Transform3D(1, 0, 0, 0, -4.3711385e-08, -0.99999994, 0, 0.99999994, 
 
 [node name="Rollback" type="Node" parent="."]
 script = ExtResource("2_neto8")
+
+[connection signal="area_entered" from="CharacterBody3D/HitTrigger" to="." method="_on_hit_trigger_area_entered"]
+[connection signal="area_exited" from="CharacterBody3D/HitTrigger" to="." method="_on_hit_trigger_area_exited"]
