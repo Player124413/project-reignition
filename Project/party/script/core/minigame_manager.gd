@@ -35,9 +35,12 @@ enum DEMO_TRANSITION {
 	FULLSCREEN, # Show a fullscreen demo first (normally played by a majin)
 }
 
-## Library to attach to player animators when adding them to the scene
+## Minigame specific animation library to attach to player when adding them to the scene.
 @export var anim_library : AnimationLibrary
+## Animations common to all minigames.
+@export var common_anim_library : AnimationLibrary
 const ANIMATION_LIBRARY_PREFIX : String = "MINIGAME"
+const COMMON_ANIMATION_LIBRARY_PREFIX : String = "COMMON_MINIGAME"
 
 ## Option camera to use for the results screen.
 @export var results_camera : Camera3D
@@ -110,8 +113,12 @@ func initialize_debug_characters() -> void:
 func load_character_model(player_index : int) -> CharacterAnimator:
 	var scene : PackedScene = load(PartyManager.get_player_data(player_index).character_data.model_file) as PackedScene
 	var character : CharacterAnimator = scene.instantiate() as CharacterAnimator
+	if common_anim_library != null:
+		character.load_animation_library(COMMON_ANIMATION_LIBRARY_PREFIX, common_anim_library)
+	
 	if anim_library != null:
 		character.load_animation_library(ANIMATION_LIBRARY_PREFIX, anim_library)
+	
 	return character
 
 ## Plays an animation, synced across the network.

@@ -29,16 +29,22 @@ func _ready() -> void:
 func emit_animation_event(info : int) -> void:
 	emit_signal("animation_event", info)
 
-## Plays a specific animation on the animator.
-func play_animation(anim : StringName, reset : bool = false) -> void:
-	if animator == null || !animator.has_animation(anim):
+## Returns whether an animation exists or not.
+func has_animation(anim : StringName) -> bool:
+	return animator.has_animation(anim)
+
+## Plays an animation locally.
+func play_animation(anim : StringName, reset : bool = false, blend : float = 0.0) -> void:
+	if animator == null || !has_animation(anim):
 		return
 	
 	if !reset && animator.assigned_animation == anim:
 		return
 	
-	animator.play(anim)
-	animator.seek(0.0, true)
+	animator.play(anim, blend)
+	
+	if reset:
+		animator.seek(0.0, true)
 
 ## Gets the current animator's speed.
 func get_speed() -> float:
@@ -62,7 +68,7 @@ func get_current_animation() -> String:
 ## Plays a specific mini-game animation on the animator.
 @rpc("any_peer", "call_local", "reliable")
 func play_minigame_animation(anim : StringName, blend : float = 0.0, speed : float = 1.0, seek : float = 0.0, tick : float = 0.0) -> void:
-	if animator == null || !animator.has_animation(anim):
+	if animator == null || !has_animation(anim):
 		return
 	
 	animator.play("%s" % anim, blend, speed)
@@ -88,7 +94,7 @@ func on_minigame_finished() -> void:
 	
 	reparent(MinigameManager.instance.results_location[player_index])
 	transform = Transform3D.IDENTITY
-	play_animation("idle")
+	play_animation("%s/wait" % MinigameManager.COMMON_ANIMATION_LIBRARY_PREFIX)
 
 ## Play victory or loss animation
 func on_results_started() -> void:

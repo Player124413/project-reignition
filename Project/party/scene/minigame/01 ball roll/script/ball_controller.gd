@@ -120,7 +120,7 @@ func process_turning() -> void:
 	if movement_input.is_zero_approx():
 		return
 	
-	var target_angle : float = Vector2.UP.angle_to(movement_input);
+	var target_angle : float = Vector2.UP.angle_to(movement_input)
 	movement_angle = rotate_toward(movement_angle, target_angle, turn_speed * get_physics_process_delta_time())
 
 const HARD_CPU_RING_RADIUS : int = 15
