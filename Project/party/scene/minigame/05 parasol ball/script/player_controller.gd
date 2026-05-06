@@ -59,7 +59,7 @@ func hit_balls(dir : int) -> void:
 	swing_state = SWING_STATE.RECOVERY
 	for ball in ball_targets:
 		var target_position : Vector3 = calculate_hit_position(dir, ball.global_position)
-		ball.rpc("hit_ball", NetworkTimeSynchronizer.get_time(), player_index, ball.global_position, target_position)
+		ball.rpc("hit_ball", NetworkTimeSynchronizer.get_time(), player_index, ball.global_position, target_position, get_multiplayer_authority())
 
 func calculate_hit_position(dir : int, pos : Vector3) -> Vector3:
 	pos.y = HIT_HEIGHT

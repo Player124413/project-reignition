@@ -44,10 +44,11 @@ func initialize(is_bonus : bool) -> void:
 	set_physics_process(false)
 
 @rpc("any_peer", "call_local", "reliable")
-func hit_ball(time : float, player_index : int, start_pos : Vector3, end_pos : Vector3) -> void:
+func hit_ball(time : float, player_index : int, start_pos : Vector3, end_pos : Vector3, authority : int) -> void:
 	if !is_zero_approx(hit_time) && hit_time < time: # Conflict resolution
 		return
 	
+	set_multiplayer_authority(authority)
 	travel_timer = NetworkTimeSynchronizer.get_time() - time
 	start_position = start_pos
 	end_position = end_pos
@@ -114,8 +115,9 @@ func deactivate() -> void:
 	deactivated.emit()
 
 func _on_area_entered(area: Area3D) -> void:
-	if !NetworkManager.is_hosting_game:
+	if !is_multiplayer_authority():
 		return
+	
 	if area.is_in_group("enemy"):
 		return
 	call_deferred("deactivate")
