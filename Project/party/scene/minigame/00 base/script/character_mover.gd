@@ -36,6 +36,12 @@ func on_spawn_finished() -> void:
 	process_animation()
 	rollback_timer.register_target(self)
 
+func deactivate() -> void:
+	super()
+	_input = Vector2.ZERO
+	_move_speed = 0
+	process_animation()
+
 func _physics_process(_delta: float) -> void:
 	if is_multiplayer_authority():
 		process_inputs()
