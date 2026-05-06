@@ -1,0 +1,37 @@
+[gd_scene load_steps=4 format=3 uid="uid://b7ti0ill2nhev"]
+
+[ext_resource type="PackedScene" uid="uid://fyxwf6fnm1as" path="res://party/scene/minigame/05 parasol ball/model/Basket.glb" id="1_78frh"]
+[ext_resource type="PackedScene" uid="uid://cho38gsk705f8" path="res://party/resource/character/scene/Omochao.tscn" id="2_n421a"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_78frh"]
+size = Vector3(41, 10, 28)
+
+[node name="Basket" type="Area3D"]
+monitoring = false
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 14, 0)
+shape = SubResource("BoxShape3D_78frh")
+
+[node name="Basket" parent="." instance=ExtResource("1_78frh")]
+
+[node name="BasketMesh" parent="Basket" index="0"]
+layers = 2
+
+[node name="Omochao1" parent="." instance=ExtResource("2_n421a")]
+transform = Transform3D(0.4330127, 0, 0.25, 0, 0.5, 0, -0.25, 0, 0.4330127, -21.5, 10, -18.330128)
+
+[node name="AnimationPlayer" parent="Omochao1/Omochao" index="1"]
+autoplay = "select"
+
+[node name="Omochao2" parent="." instance=ExtResource("2_n421a")]
+transform = Transform3D(0.43301272, 0, -0.24999999, 0, 0.5, 0, 0.24999999, 0, 0.43301272, 22.5, 10, -18.33)
+
+[node name="AnimationPlayer" parent="Omochao2/Omochao" index="1"]
+autoplay = "select"
+
+[editable path="Basket"]
+[editable path="Omochao1"]
+[editable path="Omochao1/Omochao"]
+[editable path="Omochao2"]
+[editable path="Omochao2/Omochao"]
