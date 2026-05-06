@@ -210,11 +210,27 @@ layers = 2
 [node name="Collision" parent="Environment" instance=ExtResource("2_6kbes")]
 visible = false
 
-[node name="Minigame" parent="." instance=ExtResource("1_0e34q")]
+[node name="Minigame" parent="." node_paths=PackedStringArray("results_camera") instance=ExtResource("1_0e34q")]
 minigame_resource = ExtResource("4_0pqt4")
 anim_library = ExtResource("4_ft4ug")
 demo_transition_mode = 1
 autoplay_results = false
+results_camera = NodePath("../ResultsCamera")
+
+[node name="ResultsLocation" parent="Minigame" index="3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 127)
+
+[node name="P1" parent="Minigame/ResultsLocation" index="0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -24, 0, 0)
+
+[node name="P2" parent="Minigame/ResultsLocation" index="1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 0, 0)
+
+[node name="P3" parent="Minigame/ResultsLocation" index="2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 0, 0)
+
+[node name="P4" parent="Minigame/ResultsLocation" index="3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24, 0, 0)
 
 [node name="Time" parent="Minigame" instance=ExtResource("3_casa6")]
 layout_mode = 1
@@ -277,6 +293,11 @@ basket = NodePath("../Basket")
 transform = Transform3D(1, 0, 0, 0, 0.9063077, 0.42261827, 0, -0.42261827, 0.9063077, 0, 70, 250)
 cull_mask = 1027
 fov = 35.0
+
+[node name="ResultsCamera" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.99619466, 0.08715573, 0, -0.08715573, 0.99619466, 0, 20, 230)
+cull_mask = 1027
+fov = 30.0
 
 [connection signal="demo_transition_processed" from="Minigame" to="Players" method="set_visible" binds= [true]]
 [connection signal="gameplay_started" from="Minigame" to="Basket/AnimationPlayer" method="play" binds= [&"loop", -1.0, 1.0, false]]
