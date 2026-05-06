@@ -102,8 +102,9 @@ func initialize_offline_player_data() -> void:
 	# Initialize player data
 	_player_data.clear()
 	for i in MAX_PLAYER_COUNT:
+		# Set every except P1 to a cpu
 		_player_data.append(PlayerData.new())
-		set_player_indexes(i, i, 1, i + 1)
+		set_player_indexes(i, i, 0 if i != 0 else 1, i + 1)
 
 func initialize_online_player_data() -> void:
 	print("Adding online players to " + str(multiplayer.get_unique_id()))
