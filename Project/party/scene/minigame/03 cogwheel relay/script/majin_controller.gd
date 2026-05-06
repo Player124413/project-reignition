@@ -43,32 +43,30 @@ func _physics_process(delta: float) -> void:
 		process_grounded_position(delta)
 		return
 	
-	if is_multiplayer_authority():
-		if is_jump_queued && attempt_jump():
-			return
-	
 	process_movement_tick()
 	# Update the inputs of the demo based on this majin's state
 	if cogwheel.is_multiplayer_authority() && !cogwheel.is_demo_complete:
 		cogwheel.apply_demo_input(ground_raycast.is_colliding())
 	
-	if rollback_timer.is_authority():
-		rollback_timer.set_param(RB_POS_KEY, global_position)
-		rollback_timer.set_param(RB_SPD_KEY, current_speed)
-		rollback_timer.process_rollback()
-
+	if is_multiplayer_authority():
+		process_rollback()
+		if is_jump_queued:
+			attempt_jump()
 
 #####################
 ### ROLLBACK CODE ###
 #####################
 @export var rollback_timer : RollbackTimer
-### Index of position key.
-const RB_POS_KEY : int = 0
-### Index of speed key.
-const RB_SPD_KEY : int = 1
-func on_rollback_applied(params : Array) -> void:
-	global_position = params[RB_POS_KEY]
-	current_speed = params[RB_SPD_KEY]
+const RB_POS : int = 0
+const RB_SPD : int = 1
+func on_rollback_applied(rb_params : Array) -> void:
+	global_position = rb_params[RB_POS]
+	current_speed = rb_params[RB_SPD]
+
+func process_rollback() -> void:
+	rollback_timer.set_param(RB_POS, global_position)
+	rollback_timer.set_param(RB_SPD, current_speed)
+	rollback_timer.process_rollback()
 
 func process_movement_tick() -> void:
 	var speed : float = 0
@@ -198,21 +196,20 @@ func spawn(spawn_position : Vector3, is_bonus : bool) -> void:
 	collider.disabled = false
 	set_physics_process(true)
 
-func attempt_jump() -> bool:
+func attempt_jump() -> void:
 	if is_grounded:
-		return false
+		return
 	
 	if ceiling_raycast.is_colliding():
 		var col : Node3D = ceiling_raycast.get_collider() as Node3D
 		if col.is_in_group("enemy"): # Stuck under another slime
-			return false
+			return
 	
 	if ground_raycast.is_colliding():
 		var col : Node3D = ground_raycast.get_collider() as Node3D
 		if col.is_in_group("enemy"): # Stuck on another slime
-			return false
+			return
 	rpc("start_jump", global_position, jump_end, NetworkTimeSynchronizer.get_time())
-	return true
 
 @rpc("any_peer", "call_local", "reliable")
 func start_jump(initial_pos : Vector3, target_pos : Vector3, time : float) -> void:

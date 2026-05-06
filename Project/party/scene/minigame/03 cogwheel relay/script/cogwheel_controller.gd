@@ -48,7 +48,8 @@ func _physics_process(delta: float) -> void:
 		if is_demo_complete:
 			process_majin_spawn(delta)
 			current_input = calculate_cpu_input() if is_cpu() else get_horizontal_input()
-		request_rollback()
+		
+		process_rollback()
 	
 	process_movement_tick()
 	process_animation()
@@ -56,37 +57,22 @@ func _physics_process(delta: float) -> void:
 #####################
 ### ROLLBACK CODE ###
 #####################
-## Stores the latest time we've updated on the network
-var latest_network_time : float = 0.0
-var rollback_interval_timer : float
-const ROLLBACK_INTERVAL : float = 0.2
+@export var rollback_timer : RollbackTimer
+const RB_INPUT : int = 0
+const RB_SPD : int = 1
+func on_rollback_applied(rb_params : Array) -> void:
+	current_input = rb_params[RB_INPUT]
+	current_rotation_speed = rb_params[RB_SPD]
 
-## Sends an rpc request to resync across the network
-func request_rollback() -> void:
-	if !is_multiplayer_authority():
-		return
-	
-	rollback_interval_timer = move_toward(rollback_interval_timer, 0, get_physics_process_delta_time())
-	if is_zero_approx(rollback_interval_timer):
-		rollback_interval_timer = ROLLBACK_INTERVAL
-		rpc("rollback", NetworkTimeSynchronizer.get_time(), current_input, current_rotation_speed)
-
-## Resyncs this controller across the network.
-@rpc("any_peer", "call_remote", "unreliable")
-func rollback(network_time : float, rollback_input : float, rollback_spd : float) -> void:
-	if network_time <= latest_network_time: # Already recieved an earlier tick
-		return
-	
-	# Rollback to sync state
-	latest_network_time = network_time
-	current_input = rollback_input
-	current_rotation_speed = rollback_spd
-	
-	for i in range(floor((NetworkTimeSynchronizer.get_time() - network_time) / get_physics_process_delta_time())):
-		process_movement_tick()
+func process_rollback() -> void:
+	rollback_timer.set_param(RB_INPUT, current_input)
+	rollback_timer.set_param(RB_SPD, current_rotation_speed) 
+	rollback_timer.process_rollback()
 
 func on_spawn_finished() -> void:
 	set_physics_process(true)
+	rollback_timer.register_target(self)
+	
 	initialize_majin()
 	is_inverted = player_index % 2 == 1
 	character_animator.play_minigame_animation(get_anim_prefix() + "pull")

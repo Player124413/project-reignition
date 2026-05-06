@@ -1,9 +1,9 @@
-[gd_scene load_steps=30 format=3 uid="uid://d0vj15l625nt7"]
+[gd_scene load_steps=31 format=3 uid="uid://d0vj15l625nt7"]
 
 [ext_resource type="Script" uid="uid://dya6adym6shcr" path="res://party/scene/minigame/01 ball roll/script/majin_controller.gd" id="1_ldpof"]
 [ext_resource type="Material" uid="uid://m8tkr4fj8ghw" path="res://party/resource/character/model/material/Slime Red.tres" id="2_ldpof"]
 [ext_resource type="Material" uid="uid://dnc5sxqserp6p" path="res://party/resource/character/model/material/Slime Gray.tres" id="2_my3q3"]
-[ext_resource type="PackedScene" path="res://party/resource/character/scene/SlimeMajin.tscn" id="4_vrgbe"]
+[ext_resource type="PackedScene" uid="uid://di2egba5hsjd4" path="res://party/resource/character/scene/SlimeMajin.tscn" id="4_vrgbe"]
 [ext_resource type="AudioStream" uid="uid://bt2jw85wkfpe6" path="res://party/scene/minigame/01 ball roll/sound/majin spawn.wav" id="5_lsuyx"]
 [ext_resource type="Script" uid="uid://bkwc2atbp4cjd" path="res://party/scene/minigame/00 base/script/group_sfx_player.gd" id="6_distt"]
 [ext_resource type="AudioStream" uid="uid://05r68o8pe16o" path="res://party/scene/minigame/01 ball roll/sound/majin squish.wav" id="7_cipy2"]
@@ -11,6 +11,7 @@
 [ext_resource type="Texture2D" uid="uid://cu3qwmyb7f27" path="res://party/scene/minigame/01 ball roll/texture/fx spawn dust.png" id="9_distt"]
 [ext_resource type="Texture2D" uid="uid://caot6iu7rvma4" path="res://party/scene/minigame/01 ball roll/texture/fx squish dust.png" id="10_cipy2"]
 [ext_resource type="Texture2D" uid="uid://ctcubf6txrpbf" path="res://party/scene/minigame/01 ball roll/texture/fx squish dust 2.png" id="11_vrgbe"]
+[ext_resource type="Script" uid="uid://ds056nimfywwr" path="res://party/script/core/rollback_timer.gd" id="12_kutui"]
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_my3q3"]
 radius = 2.0
@@ -407,7 +408,7 @@ particles_anim_h_frames = 1
 particles_anim_v_frames = 1
 particles_anim_loop = false
 
-[node name="Majin" type="Area3D" node_paths=PackedStringArray("animation_player", "mesh")]
+[node name="Majin" type="Area3D" node_paths=PackedStringArray("animation_player", "mesh", "rollback_timer")]
 collision_layer = 0
 collision_mask = 3
 monitoring = false
@@ -418,6 +419,7 @@ mesh = NodePath("SlimeMajin/SlimeMajinRoot/Skeleton3D/SlimeMajinMesh")
 materials = Array[Material]([ExtResource("2_my3q3"), ExtResource("2_ldpof")])
 hyper_speed = 30.0
 normal_speed = 20.0
+rollback_timer = NodePath("Rollback")
 
 [node name="SlimeMajin" parent="." instance=ExtResource("4_vrgbe")]
 
@@ -517,6 +519,11 @@ visibility_aabb = AABB(0, 0, 0, 0, 0, 0)
 local_coords = true
 process_material = SubResource("ParticleProcessMaterial_cipy2")
 draw_pass_1 = SubResource("QuadMesh_lsuyx")
+
+[node name="Rollback" type="Node" parent="."]
+script = ExtResource("12_kutui")
+authority_mode = 1
+param_count = 3
 
 [connection signal="body_entered" from="." to="." method="_on_body_entered"]
 

@@ -1,8 +1,9 @@
-[gd_scene load_steps=9 format=3 uid="uid://cd0s36gih2ueg"]
+[gd_scene load_steps=10 format=3 uid="uid://cd0s36gih2ueg"]
 
 [ext_resource type="Script" uid="uid://dgnlrxpyocw8j" path="res://party/scene/minigame/03 cogwheel relay/script/cogwheel_controller.gd" id="1_lijki"]
-[ext_resource type="PackedScene" uid="uid://chno4t2pbstbx" path="res://party/scene/minigame/03 cogwheel relay/SlimeMajin.tscn" id="2_ekyy7"]
+[ext_resource type="PackedScene" uid="uid://be21lrysd2f75" path="res://party/scene/minigame/03 cogwheel relay/SlimeMajin.tscn" id="2_ekyy7"]
 [ext_resource type="PackedScene" uid="uid://crqxft0pw0gkh" path="res://party/scene/minigame/03 cogwheel relay/model/Handle.glb" id="2_m17wm"]
+[ext_resource type="Script" uid="uid://ds056nimfywwr" path="res://party/script/core/rollback_timer.gd" id="3_65srd"]
 [ext_resource type="PackedScene" uid="uid://3nkov0ayj34m" path="res://party/scene/minigame/03 cogwheel relay/model/Gear.glb" id="3_ekyy7"]
 
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_ekyy7"]
@@ -70,7 +71,7 @@ _data = {
 &"invert": SubResource("Animation_lijki")
 }
 
-[node name="Player1" type="Node3D" node_paths=PackedStringArray("cogwheels", "majin_spawn_positions", "handle", "cpu_upper_bound", "cpu_lower_bound", "cpu_middle_bound", "spawn_position")]
+[node name="Player1" type="Node3D" node_paths=PackedStringArray("cogwheels", "majin_spawn_positions", "handle", "cpu_upper_bound", "cpu_lower_bound", "cpu_middle_bound", "rollback_timer", "spawn_position")]
 script = ExtResource("1_lijki")
 cogwheels = [NodePath("LowSide/GearLow"), NodePath("HighSide/GearHigh")]
 majin_spawn_positions = [NodePath("LowSide/SpawnLow"), NodePath("HighSide/SpawnHigh")]
@@ -79,7 +80,11 @@ majin_scene = ExtResource("2_ekyy7")
 cpu_upper_bound = NodePath("CPUUpperIgnore")
 cpu_lower_bound = NodePath("CPULowerIgnore")
 cpu_middle_bound = NodePath("CPUMiddle")
+rollback_timer = NodePath("Rollback")
 spawn_position = NodePath("PlayerPosition")
+
+[node name="Rollback" type="Node" parent="."]
+script = ExtResource("3_65srd")
 
 [node name="Handle" parent="." instance=ExtResource("2_m17wm")]
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, -6, 4, 5)

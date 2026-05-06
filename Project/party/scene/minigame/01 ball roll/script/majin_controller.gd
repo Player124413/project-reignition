@@ -90,7 +90,8 @@ func _physics_process(_delta: float) -> void:
 		return
 	
 	process_movement_tick()
-	request_rollback()
+	if rollback_timer.is_authority():
+		process_rollback()
 
 func process_movement_tick() -> void:
 	hyperspeed_timer -= get_physics_process_delta_time()
@@ -162,7 +163,6 @@ func spawn(angle : float, spawn_pos : Vector2, is_bonus : bool, turn_spd : float
 	
 	move_speed = hyper_speed
 	hyperspeed_timer = POSTSPAWN_HYPERSPEED_LENGTH
-	request_rollback()
 
 @rpc("any_peer", "call_local", "reliable")
 func request_squish(player_index : int, network_time : float) -> void:
@@ -185,39 +185,23 @@ func request_squish(player_index : int, network_time : float) -> void:
 		if NetworkManager.is_hosting_game:
 			rpc("request_spawn", get_spawn_time(), get_spawn_rotation(), get_spawn_position(), get_spawn_turn_speed(), randf() > 0.8)
 
-
 #####################
 ### ROLLBACK CODE ###
 #####################
-## Stores the latest time we've updated on the network
-var latest_network_time : float = 0.0
-var rollback_interval_timer : float
-const ROLLBACK_INTERVAL : float = 0.2
+@export var rollback_timer : RollbackTimer
+const RB_POS : int = 0
+const RB_SPD : int = 1
+const RB_ANGLE : int = 2
+func on_rollback_applied(rb_params : Array) -> void:
+	global_position = rb_params[RB_POS]
+	movement_angle = rb_params[RB_ANGLE]
+	hyperspeed_timer += NetworkTimeSynchronizer.get_time() - rb_params[RB_SPD]
 
-## Sends an rpc request to resync across the network
-func request_rollback() -> void:
-	if !NetworkManager.is_hosting_game: # Only host controls majin movement
-		return
-	
-	rollback_interval_timer = move_toward(rollback_interval_timer, 0, get_physics_process_delta_time())
-	if is_zero_approx(rollback_interval_timer):
-		rollback_interval_timer = ROLLBACK_INTERVAL
-		rpc("rollback", NetworkTimeSynchronizer.get_time(), global_position, movement_angle)
-
-## Resyncs this majin across the network.
-@rpc("any_peer", "call_remote", "unreliable")
-func rollback(network_time : float, rollback_position : Vector3, angle : float) -> void:
-	if network_time <= latest_network_time: # Already recieved an earlier tick
-		return
-	
-	# Rollback to sync state
-	latest_network_time = network_time
-	global_position = rollback_position
-	movement_angle = angle
-	hyperspeed_timer += NetworkTimeSynchronizer.get_time() - network_time
-	
-	for i in range(floor((NetworkTimeSynchronizer.get_time() - network_time) / get_physics_process_delta_time())):
-		process_movement_tick()
+func process_rollback() -> void:
+	rollback_timer.set_param(RB_POS, global_position)
+	rollback_timer.set_param(RB_ANGLE, movement_angle)
+	rollback_timer.set_param(RB_SPD, NetworkTimeSynchronizer.get_time())
+	rollback_timer.process_rollback()
 
 func on_gameplay_finished() -> void:
 	is_game_finished = true

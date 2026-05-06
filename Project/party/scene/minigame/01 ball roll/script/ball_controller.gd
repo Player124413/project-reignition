@@ -33,15 +33,12 @@ var cpu_timer : float
 const CPU_BASE_INPUT_INTERVAL : float = 3.0 / 2.0
 
 func on_spawn_finished() -> void:
+	rollback_timer.register_target(self)
 	ball_mesh.material_override = ball_materials[player_index]
 	character_animator.play_animation(get_anim_prefix() + "wait")
 	character_animator.animator.set_blend_time(get_anim_prefix() + "wait", get_anim_prefix() + "push", 0.5)
 	character_animator.animator.set_blend_time(get_anim_prefix() + "push", get_anim_prefix() + "wait", 0.5)
 	movement_angle = global_rotation.y
-	
-	## Desync rollback timers so we aren't sending a ton of data on a single frame
-	rollback_interval_timer = ROLLBACK_INTERVAL
-	rollback_interval_timer *= ((player_index as float) / PartyManager.MAX_PLAYER_COUNT)
 	
 	MinigameManager.instance.minigame_finished.connect(Callable.create(self, "on_minigame_finished"))
 
@@ -58,7 +55,7 @@ func _physics_process(_delta: float) -> void:
 		movement_input = calculate_cpu_input() if is_cpu() else get_input_axis()
 	
 	process_movement_tick()
-	request_rollback()
+	process_rollback()
 
 func process_movement_tick() -> void:
 	process_move_speed()
@@ -150,30 +147,20 @@ func calculate_cpu_input() -> Vector2:
 #####################
 ### ROLLBACK CODE ###
 #####################
-## Stores the latest time we've updated on the network
-var latest_network_time : float = 0.0
-var rollback_interval_timer : float
-const ROLLBACK_INTERVAL : float = 0.06
+@export var rollback_timer : RollbackTimer
+const RB_POS : int = 0
+const RB_SPD : int = 1
+const RB_INPUT : int = 2
+const RB_ANGLE : int = 3
+func on_rollback_applied(rb_params : Array) -> void:
+	character_body.global_position = rb_params[RB_POS]
+	turn_speed = rb_params[RB_SPD]
+	movement_input = rb_params[RB_INPUT]
+	movement_angle = rb_params[RB_ANGLE]
 
-## Sends an rpc request to resync across the network
-func request_rollback() -> void:
-	if !is_multiplayer_authority():
-		return
-	
-	rollback_interval_timer = move_toward(rollback_interval_timer, 0, get_physics_process_delta_time())
-	if is_zero_approx(rollback_interval_timer):
-		rollback_interval_timer = ROLLBACK_INTERVAL
-		rpc("rollback", NetworkTimeSynchronizer.get_time(), character_body.global_position, movement_angle, turn_speed, movement_input)
-
-## Resyncs this ball across the network
-@rpc("any_peer", "call_remote", "unreliable")
-func rollback(network_time : float, rollback_position : Vector3, angle : float, turn_spd : float, input : Vector2) -> void:
-	if network_time <= latest_network_time: # Already recieved an earlier tick
-		return
-	
-	# Rollback to sync state
-	latest_network_time = network_time
-	character_body.global_position = rollback_position
-	movement_angle = angle
-	movement_input = input
-	turn_speed = turn_spd
+func process_rollback() -> void:
+	rollback_timer.set_param(RB_POS, character_body.global_position)
+	rollback_timer.set_param(RB_SPD, turn_speed)
+	rollback_timer.set_param(RB_INPUT, movement_input)
+	rollback_timer.set_param(RB_ANGLE, movement_angle)
+	rollback_timer.process_rollback()

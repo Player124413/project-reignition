@@ -31,6 +31,8 @@ var _params : Array
 ## Call this and pass in the object to sync.
 func _ready() -> void:
 	_params.resize(param_count)
+	## Desync rollback timers so we aren't sending a ton of data on a single frame
+	rollback_interval_timer = rollback_interval * randf()
 
 func register_target(tar : Node) -> void:
 	target = tar
