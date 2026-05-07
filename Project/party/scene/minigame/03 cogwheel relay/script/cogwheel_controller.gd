@@ -116,7 +116,7 @@ func initialize_majin() -> void:
 		majin_spawn_times[i] = i * base_spawn_interval + (1 - randf() * 2) * SPAWN_TIME_VARIANCE
 	
 	@warning_ignore("integer_division")
-	var bonus_interval : int = (majin_pool.size() - 2) / majin_pool.size()
+	var bonus_interval : int = (majin_pool.size() - 2) / total_bonus_majin_count
 	for i in range(total_bonus_majin_count): # Flag bonus majin
 		var lower_bound : int = bonus_interval * i
 		lower_bound = max(lower_bound, 1)
