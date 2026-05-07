@@ -55,7 +55,17 @@ func _physics_process(_delta: float) -> void:
 		movement_input = calculate_cpu_input() if is_cpu() else get_input_axis()
 	
 	process_movement_tick()
+	process_sfx()
 	process_rollback()
+
+func process_sfx() -> void:
+	if character_body.get_slide_collision_count() != 0:
+		if !collide_sfx.playing && character_body.get_slide_collision(0).get_collider(0) is CharacterBody3D:
+			collide_sfx.play_in_group()
+	elif is_zero_approx(move_speed):
+		roll_sfx.stop_in_group()
+	elif !roll_sfx.playing:
+		roll_sfx.play_in_group()
 
 func process_movement_tick() -> void:
 	process_move_speed()
@@ -69,14 +79,6 @@ func apply_movement() -> void:
 		velocity += Vector3.DOWN * GRAVITY
 	character_body.velocity = velocity
 	character_body.move_and_slide()
-	
-	if character_body.get_slide_collision_count() != 0:
-		if !collide_sfx.playing && character_body.get_slide_collision(0).get_collider(0) is CharacterBody3D:
-			collide_sfx.play_in_group()
-	elif is_zero_approx(move_speed):
-		roll_sfx.stop_in_group()
-	elif !roll_sfx.playing:
-		roll_sfx.play_in_group()
 	
 	move_speed = character_body.velocity.length()
 
