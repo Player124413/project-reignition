@@ -4,8 +4,6 @@ extends PartyGameCharacterSpawner
 @export var majin_spawn_positions : Array[Node3D]
 @export var handle : Node3D
 
-## Total number of majin to spawn. Add 1 for the demo.
-@export var total_majin_count : int = 45
 ## Total number of bonus majin to spawn.
 @export var total_bonus_majin_count : int = 3
 ## List of all majin spawn times. Negative means that it's a bonus majin.
@@ -19,7 +17,7 @@ const TOTAL_SPAWN_TIME : float = 27
 ## Variance between each spawn time.
 const SPAWN_TIME_VARIANCE : float = 0.1
 
-@export var majin_scene : PackedScene
+@export var majin_parent : Node3D
 var majin_pool : Array[Node3D]
 ## Majin currently in play. Used for CPU calculations.
 var active_majin : Array[Node3D]
@@ -102,25 +100,23 @@ func deactivate() -> void:
 
 ## Initialize the pool of majin.
 func initialize_majin() -> void:
-	for i in range(total_majin_count):
-		var new_majin : Node3D = majin_scene.instantiate()
-		new_majin.set_multiplayer_authority(get_multiplayer_authority())
-		add_child(new_majin)
-		new_majin.cogwheel = self
-		new_majin.initialize()
-		majin_pool.append(new_majin)
+	for i in majin_parent.get_child_count():
+		var majin : Node3D = majin_parent.get_child(i)
+		majin.cogwheel = self
+		majin.initialize()
+		majin_pool.append(majin)
 	
 	if !is_multiplayer_authority():
 		return
 	
 	# Set up spawn times
-	majin_spawn_times.resize(total_majin_count)
-	var base_spawn_interval : float = TOTAL_SPAWN_TIME / (total_majin_count - 1)
-	for i in range(1, total_majin_count):
+	majin_spawn_times.resize(majin_pool.size())
+	var base_spawn_interval : float = TOTAL_SPAWN_TIME / (majin_pool.size() - 1)
+	for i in range(1, majin_pool.size()):
 		majin_spawn_times[i] = i * base_spawn_interval + (1 - randf() * 2) * SPAWN_TIME_VARIANCE
 	
 	@warning_ignore("integer_division")
-	var bonus_interval : int = (total_majin_count - 2) / total_bonus_majin_count
+	var bonus_interval : int = (majin_pool.size() - 2) / majin_pool.size()
 	for i in range(total_bonus_majin_count): # Flag bonus majin
 		var lower_bound : int = bonus_interval * i
 		lower_bound = max(lower_bound, 1)
