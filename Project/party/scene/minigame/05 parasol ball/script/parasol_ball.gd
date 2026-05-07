@@ -44,11 +44,13 @@ func initialize(is_bonus : bool) -> void:
 	set_physics_process(false)
 
 @rpc("any_peer", "call_local", "reliable")
-func hit_ball(time : float, player_index : int, start_pos : Vector3, end_pos : Vector3, authority : int) -> void:
+func hit_ball(time : float, player_index : int, start_pos : Vector3, end_pos : Vector3) -> void:
 	if !is_zero_approx(hit_time) && hit_time < time: # Conflict resolution
 		return
 	
-	set_multiplayer_authority(authority)
+	if player_index != -1:
+		var data : PlayerData = PartyManager.get_player_data(player_index)
+		set_multiplayer_authority(data.device)
 	travel_timer = NetworkTimeSynchronizer.get_time() - time
 	start_position = start_pos
 	end_position = end_pos
@@ -115,17 +117,26 @@ func deactivate() -> void:
 	deactivated.emit()
 
 func _on_area_entered(area: Area3D) -> void:
+	if area.is_in_group("enemy"):
+		return
+	
+	call_deferred("deactivate")
+	
 	if !is_multiplayer_authority():
 		return
 	
-	if area.is_in_group("enemy"):
-		return
-	call_deferred("deactivate")
 	if hit_index == -1:
 		MinigameManager.instance.request_minigame_start()
 	else:
 		var score : int = 3 if is_bonus_ball else 1
 		var projected_position : Vector3 = global_position + Vector3.UP * 2
 		var screen_pos : Vector2 = get_viewport().get_camera_3d().unproject_position(projected_position)
-		MinigameManager.instance.request_score_popup(hit_index, score, screen_pos)
-		MinigameManager.instance.request_score_change(hit_index, score)
+		rpc("request_score_popup", hit_index, score, screen_pos)
+
+@rpc("any_peer", "call_local", "reliable")
+func request_score_popup(player_index : int, score : int, screen_pos : Vector2) -> void:
+	if !NetworkManager.is_hosting_game:
+		return
+	
+	MinigameManager.instance.request_score_popup(player_index, score, screen_pos)
+	MinigameManager.instance.request_score_change(player_index, score)
