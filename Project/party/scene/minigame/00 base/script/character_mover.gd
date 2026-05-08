@@ -73,6 +73,8 @@ func process_rollback() -> void:
 func process_inputs() -> void:
 	if !is_cpu():
 		_input = get_input_axis() # TODO Allow CPU inputs
+	elif player_index != -1:
+		_input = get_cpu_input()
 
 func process_movement_tick() -> void:
 	var target_angle : float = _move_angle if _input.is_zero_approx() else Vector2.UP.angle_to(_input)
@@ -130,6 +132,31 @@ func process_animation() -> void:
 	character_animator.set_speed(target_speed)
 	character_animator.play_animation(target_animation, false, 0.1)
 	apply_movement_rotation()
+
+var cpu_interval_timer : float
+func get_cpu_input() -> Vector2:
+	cpu_interval_timer = move_toward(cpu_interval_timer, 0.0, get_physics_process_delta_time())
+	if is_zero_approx(cpu_interval_timer):
+		cpu_interval_timer = get_cpu_interval()
+		return calculate_cpu_input()
+	return _input
+
+const CPU_VARIANCE : float = 0.1
+## Override this function to change how often the cpu updates their inputs.
+func get_cpu_interval() -> float:
+	var difficulty : PlayerData.CPU_DIFFICULTY_ENUM = get_cpu_difficulty()
+	if difficulty == PlayerData.CPU_DIFFICULTY_ENUM.EXTREME:
+		return 0.0
+	if difficulty == PlayerData.CPU_DIFFICULTY_ENUM.HARD:
+		return 0.1 - randf() * CPU_VARIANCE
+	if difficulty == PlayerData.CPU_DIFFICULTY_ENUM.NORMAL:
+		return 0.2 - randf() * CPU_VARIANCE
+	
+	return 0.4 - randf() * CPU_VARIANCE
+
+## Override this function to calculate the cpu inputs.
+func calculate_cpu_input() -> Vector2:
+	return Vector2.ZERO
 
 func apply_movement_rotation() -> void:
 	character_body.rotation = Vector3.UP * _move_angle

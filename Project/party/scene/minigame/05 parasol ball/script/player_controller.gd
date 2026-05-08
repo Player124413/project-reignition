@@ -2,6 +2,7 @@
 extends PartyGameCharacterMover
 
 @export var hand_attachment : BoneAttachment3D
+@export var collision_raycast : RayCast3D
 @export var aim_speed : float = 8.0
 @export var basket : Node3D
 const HIT_HEIGHT : int = 30
@@ -55,7 +56,7 @@ func process_animation_event(event : int) -> void:
 		hit_balls(-1 if event == ANIM_SHOT_LEFT else 1)
 
 func hit_balls(dir : int) -> void:
-	# TODO Launch all balls in range
+	# Launch all balls in range
 	swing_state = SWING_STATE.RECOVERY
 	for ball in ball_targets:
 		var target_position : Vector3 = calculate_hit_position(dir, ball.global_position)
@@ -98,6 +99,8 @@ func _on_hit_trigger_area_entered(area: Area3D) -> void:
 	ball_targets.append(area)
 	if player_index == -1:
 		rpc("start_swing", NetworkTimeSynchronizer.get_time(), -1)
+	elif is_cpu():
+		process_cpu_swing()
 
 func _on_hit_trigger_area_exited(area: Area3D) -> void:
 	if !area.is_in_group("enemy"):
@@ -114,3 +117,115 @@ func on_rollback_applied(rb_params : Array) -> void:
 func process_rollback() -> void:
 	rollback_timer.set_param(RB_SWING, swing_state)
 	super()
+
+## Used to track cpu parasol balls
+var cpu_parasols : Array[ParasolBall]
+var cpu_target_parasol : ParasolBall
+var cpu_swing_direction : int
+func on_cpu_parasol_entered(area : Area3D) -> void:
+	if area is not ParasolBall || area.hit_index != -1:
+		return
+	
+	cpu_parasols.append(area)
+
+func on_cpu_parasol_exited(area: Area3D) -> void:
+	if area is not ParasolBall:
+		return
+	var index : int = cpu_parasols.find(area)
+	if index != -1:
+		cpu_parasols.remove_at(index)
+
+const CPU_SWING_DISTANCE : float = 7.5
+func process_cpu_swing() -> void:
+	if !is_multiplayer_authority():
+		return
+	
+	var difficulty : PlayerData.CPU_DIFFICULTY_ENUM = get_cpu_difficulty()
+	if difficulty == PlayerData.CPU_DIFFICULTY_ENUM.EASY || difficulty == PlayerData.CPU_DIFFICULTY_ENUM.NORMAL:
+		cpu_swing_direction = sign(-basket.global_position.x)
+		if cpu_swing_direction == 0:
+			cpu_swing_direction += 1
+	elif difficulty == PlayerData.CPU_DIFFICULTY_ENUM.HARD: # Choose the proper swing side
+		cpu_swing_direction = sign(ball_targets[0].global_position.x - character_body.global_position.x)
+		if cpu_swing_direction == 0:
+			cpu_swing_direction += 1
+	elif difficulty == PlayerData.CPU_DIFFICULTY_ENUM.EXTREME: # Choose the proper swing side
+		cpu_swing_direction = sign(character_body.global_position.x)
+	
+	cpu_interval_timer = 0.0
+	start_swing(NetworkTimeSynchronizer.get_time(), cpu_swing_direction)
+
+func calculate_cpu_input() -> Vector2:
+	process_cpu_target_parasol()
+	var difficulty : PlayerData.CPU_DIFFICULTY_ENUM = get_cpu_difficulty()
+	var direction : Vector2 = Vector2.DOWN
+	if swing_state == SWING_STATE.AIMING:
+		if difficulty == PlayerData.CPU_DIFFICULTY_ENUM.EASY || difficulty == PlayerData.CPU_DIFFICULTY_ENUM.NORMAL:
+			return Vector2.DOWN
+		
+		var basket_position : Vector2 = Vector2(basket.global_position.x, basket.global_position.z) 
+		direction = Vector2.DOWN.rotated(-HIT_DIRECTION_INFLUENCE * cpu_swing_direction) # Calculate a "straight shot forward"
+		if difficulty == PlayerData.CPU_DIFFICULTY_ENUM.HARD:
+			# Kinda aim towards the basket
+			direction = direction.rotated(-PI * 0.2 * sign(basket_position.x) * randf())
+		else:
+			# Much better aim
+			basket_position -= Vector2(character_body.global_position.x, character_body.global_position.z)
+			var rotation_amount : float = basket_position.angle_to(Vector2.UP)
+			direction = direction.rotated(rotation_amount)
+		return direction
+	
+	if difficulty == PlayerData.CPU_DIFFICULTY_ENUM.EASY:
+		# Choose a random direction (Even when there's nothing to hit)
+		direction = direction.rotated(TAU * randf())
+		return direction
+	
+	if cpu_target_parasol == null:
+		return Vector2.ZERO
+	
+	# Chase the target
+	var difference : Vector3 = cpu_target_parasol.global_position - character_body.global_position
+	direction.x = difference.x
+	direction.y = -difference.z
+	direction = direction.limit_length()
+	return direction
+
+func process_cpu_target_parasol() -> void:
+	if cancel_cpu_target_parasol():
+		cpu_target_parasol.cpu_count -= 1
+		cpu_target_parasol = null
+	
+	while cpu_target_parasol == null && cpu_parasols.size() != 0:
+		var target_index : int = randi_range(0, cpu_parasols.size() - 1)
+		if cpu_parasols[target_index].is_hit || !cpu_parasols[target_index].is_active:
+			cpu_parasols.remove_at(target_index)
+		else:
+			cpu_target_parasol = cpu_parasols[target_index]
+			cpu_target_parasol.cpu_count += 1
+
+func cancel_cpu_target_parasol() -> bool:
+	if cpu_target_parasol == null:
+		return false
+	
+	if cpu_target_parasol.hit_index != -1 || !cpu_target_parasol.is_active:
+		return true
+	
+	if cpu_target_parasol.cpu_count > 2:
+		# Prevent cpus clumping together
+		return true
+	
+	var difficulty : PlayerData.CPU_DIFFICULTY_ENUM = get_cpu_difficulty()
+	if difficulty == PlayerData.CPU_DIFFICULTY_ENUM.EASY || difficulty == PlayerData.CPU_DIFFICULTY_ENUM.NORMAL:
+		# Easier cpus have simplier cancel checks
+		return false
+	
+	var delta_pos : Vector3 = cpu_target_parasol.global_position - character_body.global_position
+	var flat_pos : Vector2 = Vector2(delta_pos.x, delta_pos.z)
+	if delta_pos.y < CPU_SWING_DISTANCE && flat_pos.length() > CPU_SWING_DISTANCE * 2.0:
+		# Not reaching the ball in time. Find a different ball.
+		return true
+	
+	return false
+
+func get_cpu_interval() -> float:
+	return super()

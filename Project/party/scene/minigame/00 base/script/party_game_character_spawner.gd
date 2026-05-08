@@ -31,8 +31,10 @@ func get_input_axis() -> Vector2:
 func is_cpu() -> bool:
 	return player_index == -1 || PartyManager.get_player_data(player_index).is_cpu_player()
 
-## Returns the difficulty of this cpu player.0
+## Returns the difficulty of this cpu player.
 func get_cpu_difficulty() -> PlayerData.CPU_DIFFICULTY_ENUM:
+	if player_index == -1:
+		return PlayerData.CPU_DIFFICULTY_ENUM.EASY
 	return PartyManager.get_player_data(player_index).cpu_difficulty
 
 func _ready() -> void:

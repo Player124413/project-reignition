@@ -1,7 +1,10 @@
-extends Area3D
+class_name ParasolBall extends Area3D
 
+## Emitted after this ball is hit
+signal hit
 ## Emitted after this ball is deactivated.
 signal deactivated()
+
 
 @export var animator : AnimationPlayer
 @export var mesh : MeshInstance3D
@@ -25,6 +28,9 @@ var is_hit : bool
 var hit_time : float
 ## The player who hit this ball.
 var hit_index : int = -1
+
+## Tracks the number of cpus chasing this ball (local variable because cpus are simulated on a single device).
+var cpu_count : int
 
 func _ready() -> void:
 	if NetworkManager.is_hosting_game && is_demo_ball:
@@ -50,7 +56,8 @@ func hit_ball(time : float, player_index : int, start_pos : Vector3, end_pos : V
 	
 	if player_index != -1:
 		var data : PlayerData = PartyManager.get_player_data(player_index)
-		set_multiplayer_authority(data.device)
+		if !data.is_cpu_player():
+			set_multiplayer_authority(data.device)
 	travel_timer = NetworkTimeSynchronizer.get_time() - time
 	start_position = start_pos
 	end_position = end_pos
@@ -59,6 +66,7 @@ func hit_ball(time : float, player_index : int, start_pos : Vector3, end_pos : V
 	hit_time = time
 	monitorable = false
 	animator.play("RESET")
+	hit.emit()
 	set_physics_process(true)
 	process_movement_tick()
 
@@ -112,6 +120,7 @@ func process_movement_tick() -> void:
 func deactivate() -> void:
 	monitoring = false
 	monitorable = false
+	is_active = false
 	set_physics_process(false) 
 	animator.play("destroy")
 	deactivated.emit()
@@ -124,7 +133,6 @@ func _on_area_entered(area: Area3D) -> void:
 	
 	if !is_multiplayer_authority():
 		return
-	
 	if hit_index == -1:
 		MinigameManager.instance.request_minigame_start()
 	else:

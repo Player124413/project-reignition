@@ -119,7 +119,7 @@ func initialize_debug_characters() -> void:
 		PartyManager.set_character_data(i, character_data.character_name)
 		PartyManager.set_player_indexes(i, i, 1 if i == 0 else 0, 1) # Set everyone to a cpu except for p1
 		if i > 0:
-			PartyManager.set_difficulty(i, i)
+			PartyManager.set_difficulty(i, i) # Set this to i - 1 if you need to test easy cpus
 
 func load_character_model(player_index : int) -> CharacterAnimator:
 	var scene : PackedScene = load(PartyManager.get_player_data(player_index).character_data.model_file) as PackedScene
