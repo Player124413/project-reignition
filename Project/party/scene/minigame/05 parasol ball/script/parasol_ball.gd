@@ -43,6 +43,7 @@ func start_demo() -> void:
 	reset_physics_interpolation()
 	spawn()
 
+@rpc("any_peer", "call_local", "reliable")
 func initialize(is_bonus : bool) -> void:
 	is_bonus_ball = is_bonus
 	mesh.material_override = materials[0 if is_bonus else 1]

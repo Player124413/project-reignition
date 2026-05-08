@@ -36,7 +36,7 @@ func initialize_ball_pool() -> void:
 	
 	for ball in ball_pool:
 		ball.deactivated.connect(Callable(self, "on_ball_deactivated"), CONNECT_ONE_SHOT)
-		ball.call_deferred("initialize", false)
+		ball.rpc("initialize", randf() > 0.9)
 
 func _physics_process(delta: float) -> void:
 	if !NetworkManager.is_hosting_game:
