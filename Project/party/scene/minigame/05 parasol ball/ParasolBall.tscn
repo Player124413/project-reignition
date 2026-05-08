@@ -134,7 +134,7 @@ _data = {
 &"fall": SubResource("Animation_1a2t5")
 }
 
-[node name="ParasolBall" type="Area3D" node_paths=PackedStringArray("animator", "mesh") groups=["enemy"]]
+[node name="ParasolBall" type="Area3D" node_paths=PackedStringArray("animator", "mesh", "left_raycast", "right_raycast") groups=["enemy"]]
 collision_layer = 8
 collision_mask = 8
 script = ExtResource("1_wbhdi")
@@ -143,6 +143,8 @@ mesh = NodePath("Ball/BallRoot/Skeleton3D/BallMesh")
 materials = Array[Material]([ExtResource("3_ivu4k"), ExtResource("2_1a2t5")])
 fall_curve = SubResource("Curve_ivu4k")
 hit_curve = SubResource("Curve_1a2t5")
+left_raycast = NodePath("LeftSide")
+right_raycast = NodePath("RightSide")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3, 0)
@@ -173,6 +175,18 @@ cull_mask = 2
 libraries = {
 &"": SubResource("AnimationLibrary_1a2t5")
 }
+
+[node name="LeftSide" type="RayCast3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0, 0)
+enabled = false
+target_position = Vector3(-5, 0, 0)
+collision_mask = 8
+
+[node name="RightSide" type="RayCast3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0, 0)
+enabled = false
+target_position = Vector3(5, 0, 0)
+collision_mask = 8
 
 [connection signal="area_entered" from="." to="." method="_on_area_entered"]
 

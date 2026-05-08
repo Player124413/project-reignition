@@ -5,13 +5,15 @@ signal hit
 ## Emitted after this ball is deactivated.
 signal deactivated()
 
-
 @export var animator : AnimationPlayer
 @export var mesh : MeshInstance3D
 @export var materials : Array[Material]
 @export var fall_curve : Curve
 @export var hit_curve : Curve
 @export var is_demo_ball : bool
+@export var left_raycast : RayCast3D
+@export var right_raycast : RayCast3D
+const COLLISION_RADIUS : float = 3.0
 
 var is_bonus_ball : bool
 var start_position : Vector3
@@ -85,6 +87,8 @@ func spawn() -> void:
 	set_physics_process(true)
 	monitorable = true
 	monitoring = true
+	left_raycast.enabled = true
+	right_raycast.enabled = true
 
 func start_falling(pos : Vector3) -> void:
 	is_hit = false
@@ -100,6 +104,18 @@ func _physics_process(delta: float) -> void:
 	
 	travel_timer += delta
 	process_movement_tick()
+	process_collision()
+
+func process_collision() -> void:
+	if is_hit:
+		return
+	
+	if left_raycast.is_colliding():
+		start_position.x = left_raycast.get_collision_point().x + COLLISION_RADIUS
+		end_position.x = start_position.x
+	elif right_raycast.is_colliding():
+		start_position.x = right_raycast.get_collision_point().x - COLLISION_RADIUS
+		end_position.x = start_position.x
 
 func process_movement_tick() -> void:
 	var denominator : float = HIT_TIME if is_hit else FALL_TIME
@@ -121,6 +137,8 @@ func process_movement_tick() -> void:
 func deactivate() -> void:
 	monitoring = false
 	monitorable = false
+	left_raycast.enabled = false
+	right_raycast.enabled = false
 	is_active = false
 	set_physics_process(false) 
 	animator.play("destroy")
