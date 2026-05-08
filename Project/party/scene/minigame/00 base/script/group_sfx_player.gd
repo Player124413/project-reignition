@@ -18,8 +18,11 @@ func play_in_group() -> void:
 		sfx_dictionary[group].append(self)
 		# Adjust volume of all in group
 		var volume : float = 1.0 / sfx_dictionary[group].size()
-		for sfx_player : GroupSfxPlayer in sfx_dictionary[group]:
-			sfx_player.set_volume(volume)
+		for i in range(sfx_dictionary[group].size() - 1, 0):
+			if is_instance_valid(sfx_dictionary[group][i]):
+				sfx_dictionary[group][i].set_volume(volume)
+			else:
+				sfx_dictionary[group].remove_at(i)
 	play()
 
 func set_volume(volume : float) -> void:
