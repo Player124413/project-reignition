@@ -1,15 +1,85 @@
-[gd_scene load_steps=7 format=3 uid="uid://ffhhdixtf43s"]
+[gd_scene load_steps=14 format=3 uid="uid://ffhhdixtf43s"]
 
 [ext_resource type="PackedScene" uid="uid://dsbufs8tjchk7" path="res://party/scene/minigame/00 base/MinigameBase.tscn" id="1_jkew2"]
+[ext_resource type="Resource" uid="uid://bvbrjojf8qg3g" path="res://party/resource/minigame/06ParasolDiving.tres" id="2_ogt8w"]
 [ext_resource type="PackedScene" uid="uid://f5w7fq20xmd1" path="res://party/scene/minigame/00 base/Time.tscn" id="2_u0q54"]
-[ext_resource type="PackedScene" uid="uid://buyteje32mlhs" path="res://party/scene/minigame/00 base/ScoreTop.tscn" id="3_vrmy4"]
-[ext_resource type="PackedScene" uid="uid://xq7x7nwhvjdr" path="res://party/scene/minigame/06 parasol diving/model/Cloud.glb" id="5_ot7ge"]
+[ext_resource type="AnimationLibrary" uid="uid://c0p0b7qfdj3yi" path="res://party/scene/minigame/06 parasol diving/animation/_Library.glb" id="3_ot7ge"]
+[ext_resource type="PackedScene" path="res://party/scene/minigame/00 base/ScoreTop.tscn" id="3_vrmy4"]
 [ext_resource type="PackedScene" uid="uid://bsko14xju1hst" path="res://party/scene/minigame/06 parasol diving/model/Map.glb" id="6_pqpg5"]
-[ext_resource type="PackedScene" uid="uid://bq421e7316n42" path="res://party/scene/minigame/06 parasol diving/model/Parasol.glb" id="7_2qxqt"]
+[ext_resource type="PackedScene" uid="uid://b0khnq3fhs771" path="res://party/scene/minigame/06 parasol diving/Player.tscn" id="9_pqpg5"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_ot7ge"]
+sky_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
+ground_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
+
+[sub_resource type="Sky" id="Sky_pqpg5"]
+sky_material = SubResource("ProceduralSkyMaterial_ot7ge")
+
+[sub_resource type="Environment" id="Environment_2qxqt"]
+background_mode = 2
+sky = SubResource("Sky_pqpg5")
+tonemap_mode = 3
+tonemap_white = 1.1
+glow_enabled = true
+
+[sub_resource type="Animation" id="Animation_ogt8w"]
+resource_name = "intro"
+length = 1.5
+tracks/0/type = "method"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Minigame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(1.5),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"request_minigame_start"
+}]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Camera:position")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 1),
+"transitions": PackedFloat32Array(0.5, 1),
+"update": 0,
+"values": [Vector3(0, 20, 150), Vector3(0, 0, 150)]
+}
+
+[sub_resource type="Animation" id="Animation_ot7ge"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Camera:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0, 0, 150)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_pqpg5"]
+_data = {
+&"RESET": SubResource("Animation_ot7ge"),
+&"intro": SubResource("Animation_ogt8w")
+}
 
 [node name="Game" type="Node3D"]
 
-[node name="Minigame" parent="." instance=ExtResource("1_jkew2")]
+[node name="Minigame" parent="." node_paths=PackedStringArray("intro_animator", "results_camera") instance=ExtResource("1_jkew2")]
+minigame_resource = ExtResource("2_ogt8w")
+anim_library = ExtResource("3_ot7ge")
+intro_animator = NodePath("../IntroAnimation")
+results_camera = NodePath("../Camera")
 
 [node name="Time" parent="Minigame" instance=ExtResource("2_u0q54")]
 layout_mode = 1
@@ -23,10 +93,17 @@ grow_horizontal = 2
 
 [node name="Environment" type="Node3D" parent="."]
 
-[node name="Cloud" parent="Environment" instance=ExtResource("5_ot7ge")]
+[node name="CloudLight" type="DirectionalLight3D" parent="Environment"]
+layers = 2
 
-[node name="AnimationPlayer" parent="Environment/Cloud" index="1"]
-autoplay = "cloud"
+[node name="ObjectLight" type="DirectionalLight3D" parent="Environment"]
+transform = Transform3D(0.8660254, -0.43301272, 0.25, -0.12940954, 0.28884858, 0.94858825, -0.48296288, -0.8538539, 0.19411425, 0, 0, 0)
+layers = 1024
+light_color = Color(0.6417139, 0.5494095, 0.42329592, 1)
+light_energy = 0.5
+light_cull_mask = 1
+shadow_enabled = true
+shadow_caster_mask = 1
 
 [node name="Map" parent="Environment" instance=ExtResource("6_pqpg5")]
 
@@ -45,11 +122,38 @@ layers = 2
 [node name="AnimationPlayer" parent="Environment/Map" index="1"]
 autoplay = "map"
 
-[node name="Parasol" parent="Environment" instance=ExtResource("7_2qxqt")]
+[node name="WorldEnvironment" type="WorldEnvironment" parent="Environment"]
+environment = SubResource("Environment_2qxqt")
 
-[node name="Camera3D" type="Camera3D" parent="."]
+[node name="Player1" parent="Environment" node_paths=PackedStringArray("score_counter") instance=ExtResource("9_pqpg5")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -30, 0, 0)
+score_counter = NodePath("../../Scores/ScoreCounter1")
+
+[node name="Player2" parent="Environment" node_paths=PackedStringArray("score_counter") instance=ExtResource("9_pqpg5")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 0, 0)
+player_index = 1
+score_counter = NodePath("../../Scores/ScoreCounter2")
+
+[node name="Player3" parent="Environment" node_paths=PackedStringArray("score_counter") instance=ExtResource("9_pqpg5")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 0, 0)
+player_index = 2
+score_counter = NodePath("../../Scores/ScoreCounter3")
+
+[node name="Player4" parent="Environment" node_paths=PackedStringArray("score_counter") instance=ExtResource("9_pqpg5")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30, 0, 0)
+player_index = 3
+score_counter = NodePath("../../Scores/ScoreCounter4")
+
+[node name="Camera" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 150)
 cull_mask = 3
+fov = 25.0
+
+[node name="IntroAnimation" type="AnimationPlayer" parent="."]
+libraries = {
+&"": SubResource("AnimationLibrary_pqpg5")
+}
 
 [editable path="Minigame"]
-[editable path="Environment/Cloud"]
+[editable path="Scores"]
 [editable path="Environment/Map"]

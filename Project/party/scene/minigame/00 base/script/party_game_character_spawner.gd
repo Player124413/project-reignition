@@ -6,6 +6,17 @@ class_name PartyGameCharacterSpawner extends Node3D
 @export var spawn_position : Node3D
 @export var score_counter : ScoreCounter
 @export var character_animator : CharacterAnimator
+## Option animation tree. Use initialize_animation_tree() to set it up.
+@export var animation_tree : AnimationTree
+
+func initialize_animation_tree(anim_prefix : String, anim_list : PackedStringArray) -> void:
+	animation_tree.anim_player = animation_tree.get_path_to(character_animator.animator)
+	var root : AnimationNodeBlendTree = animation_tree.tree_root as AnimationNodeBlendTree
+	for anim in anim_list:
+		if !root.has_node(anim):
+			continue
+		(root.get_node(anim) as AnimationNodeAnimation).animation = anim_prefix + anim
+	animation_tree.active = true
 
 ## Gets the animation prefix for minigame animations.
 func get_anim_prefix() -> String:
