@@ -1,5 +1,6 @@
 extends PartyGameCharacterSpawner
 
+@export var rollback_timer : RollbackTimer
 @export var hand_attachment : BoneAttachment3D
 @export var character_body : CharacterBody3D
 @export var ascend_speed : float = 30.0
@@ -9,7 +10,7 @@ extends PartyGameCharacterSpawner
 @export var move_speed : float = 40.0
 @export var acceleration : float = 100.0
 var _current_speed : Vector2
-var _input : Vector2
+var _input : float
 var is_dropping : bool
 
 var current_cloud : Area3D
@@ -46,14 +47,98 @@ func on_minigame_finished() -> void:
 	hand_attachment.visible = false
 
 func _physics_process(_delta: float) -> void:
-	if is_cpu():
-		pass
-	else:
-		_input = get_input_axis()
+	if is_multiplayer_authority():
+		if is_cpu():
+			_input = get_cpu_input()
+		else:
+			_input = get_input_axis().x
 	
 	process_cloud()
 	process_movement_tick()
 	process_animation()
+	process_rollback()
+
+#####################
+### ROLLBACK CODE ###
+#####################
+const RB_POS : int = 0
+const RB_SPD : int = 1
+const RB_INPUT : int = 2
+func on_rollback_applied(rb_params : Array) -> void:
+	character_body.global_position = rb_params[RB_POS]
+	_current_speed = rb_params[RB_SPD]
+	_input = rb_params[RB_INPUT]
+
+func process_rollback() -> void:
+	rollback_timer.set_param(RB_POS, character_body.global_position)
+	rollback_timer.set_param(RB_SPD, _current_speed)
+	rollback_timer.set_param(RB_INPUT, _input)
+	rollback_timer.process_rollback()
+
+################
+### CPU CODE ###
+################
+var _cpu_preferred_side : int = -1
+## The position coins are spawned in.
+const IDEAL_COIN_DISTANCE : float = 20
+var _cpu_input_timer : float
+const CPU_INPUT_INTERVAL : float = 0.8
+const CPU_SHORT_INPUT_INTERVAL : float = 0.4
+const CPU_INPUT_INTERVAL_VARIANCE : float = 0.4
+
+var _cpu_shake_timer : float
+## How often the cpu should shake.
+const CPU_SHAKE_INTERVAL : float = 0.2
+const NORMAL_SHAKE_CHANCE : float = 0.5
+const HARD_SHAKE_CHANCE : float = 0.75
+func get_cpu_input() -> float:
+	_cpu_input_timer = move_toward(_cpu_input_timer, 0, get_physics_process_delta_time())
+	if !is_zero_approx(_cpu_input_timer): # Holding
+		return _input
+	var difficulty : PlayerData.CPU_DIFFICULTY_ENUM = get_cpu_difficulty()
+	
+	if difficulty == PlayerData.CPU_DIFFICULTY_ENUM.EASY: # Choose a random direction
+		_cpu_input_timer = CPU_INPUT_INTERVAL - randf() * CPU_INPUT_INTERVAL_VARIANCE
+		if randf() < 0.25:
+			return 0
+		return 1.0 - randf() * 2.0
+	
+	if difficulty == PlayerData.CPU_DIFFICULTY_ENUM.NORMAL: # Choose a random direction
+		_cpu_input_timer = CPU_INPUT_INTERVAL - randf() * CPU_INPUT_INTERVAL_VARIANCE
+		return 1.0 - randf() * 2.0
+	
+	_cpu_input_timer = CPU_SHORT_INPUT_INTERVAL - randf() * CPU_INPUT_INTERVAL_VARIANCE
+	if difficulty == PlayerData.CPU_DIFFICULTY_ENUM.HARD: # Choose a random direction
+		return sign(_cpu_preferred_side * IDEAL_COIN_DISTANCE - character_body.global_position.x)
+	
+	_cpu_input_timer *= 0.5
+	if randf() < 0.2: # Try to avoid getting stuck against other players
+		return 0
+	return sign(_cpu_preferred_side * IDEAL_COIN_DISTANCE - character_body.global_position.x)
+
+func is_cpu_shaking() -> bool:
+	var difficulty : PlayerData.CPU_DIFFICULTY_ENUM = get_cpu_difficulty()
+	
+	if difficulty == PlayerData.CPU_DIFFICULTY_ENUM.EASY: # Easy CPUs don't know how to shake
+		return false
+	
+	_cpu_shake_timer = move_toward(_cpu_shake_timer, 0, get_physics_process_delta_time())
+	if !is_zero_approx(_cpu_shake_timer):
+		return false
+	_cpu_shake_timer = CPU_SHAKE_INTERVAL
+	
+	if difficulty == PlayerData.CPU_DIFFICULTY_ENUM.EXTREME: # Extreme cpu mashes out
+		return true
+	
+	var is_shaking : bool
+	if difficulty == PlayerData.CPU_DIFFICULTY_ENUM.NORMAL:
+		is_shaking = randf() < NORMAL_SHAKE_CHANCE
+	else:
+		is_shaking = randf() < HARD_SHAKE_CHANCE
+	return is_shaking
+
+func _on_cpu_trigger_area_exited(area: Area3D) -> void:
+	_cpu_preferred_side = -sign(area.global_position.x)
 
 func process_cloud() -> void:
 	if current_cloud == null:
@@ -65,7 +150,18 @@ func process_cloud() -> void:
 	
 	if is_cloud_exploded():
 		explode_cloud()
-	elif !is_cpu() && Input.is_action_just_pressed("button_primary" + get_input_suffix()):
+		return
+	
+	if !is_multiplayer_authority():
+		return
+	
+	if is_cpu():
+		if is_cpu_shaking():
+			perform_shake()
+	elif Input.is_action_just_pressed("button_primary" + get_input_suffix()):
+		perform_shake()
+
+func perform_shake() -> void:
 		shake_anim_timer = SHAKE_ANIM_INPUT_LENGTH
 		animation_tree.set(SHAKE_TRANSITION, "enabled")
 		shake_strength += SHAKE_STRENGTH_INTERVAL
@@ -87,7 +183,7 @@ func process_movement_tick() -> void:
 		clamp_position()
 		return
 	
-	var target_speed : float = _input.x * move_speed
+	var target_speed : float = _input * move_speed
 	_current_speed.x = move_toward(_current_speed.x, target_speed, acceleration * get_physics_process_delta_time())
 	if !is_zero_approx(target_speed):
 		is_dropping = false

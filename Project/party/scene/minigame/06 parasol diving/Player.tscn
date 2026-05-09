@@ -1,11 +1,15 @@
-[gd_scene load_steps=14 format=3 uid="uid://b0khnq3fhs771"]
+[gd_scene load_steps=16 format=3 uid="uid://b0khnq3fhs771"]
 
 [ext_resource type="PackedScene" uid="uid://bq421e7316n42" path="res://party/scene/minigame/06 parasol diving/model/Parasol.glb" id="2_ale5a"]
+[ext_resource type="Script" uid="uid://ds056nimfywwr" path="res://party/script/core/rollback_timer.gd" id="3_hdqxl"]
 [ext_resource type="Script" uid="uid://cc7qa43vyrxaw" path="res://party/scene/minigame/06 parasol diving/script/player_controller.gd" id="14_la5i6"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_dn1mx"]
 radius = 3.0
 height = 8.0
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_dn1mx"]
+size = Vector3(100, 50, 10)
 
 [sub_resource type="AnimationNodeBlend3" id="AnimationNodeBlend3_mc2m2"]
 sync = true
@@ -67,8 +71,9 @@ nodes/stuck-transition/node = SubResource("AnimationNodeTransition_dn1mx")
 nodes/stuck-transition/position = Vector2(-160, 160)
 node_connections = [&"output", 0, &"shake-transition", &"shake-transition", 0, &"shake", &"shake-transition", 1, &"stuck-transition", &"float-speed", 0, &"direction-blend", &"direction-blend", 0, &"left", &"direction-blend", 1, &"fall", &"direction-blend", 2, &"right", &"stuck-transition", 0, &"stuck", &"stuck-transition", 1, &"float-speed"]
 
-[node name="Player" type="Node3D" node_paths=PackedStringArray("hand_attachment", "character_body", "spawn_position", "animation_tree")]
+[node name="Player" type="Node3D" node_paths=PackedStringArray("rollback_timer", "hand_attachment", "character_body", "spawn_position", "animation_tree")]
 script = ExtResource("14_la5i6")
+rollback_timer = NodePath("Rollback")
 hand_attachment = NodePath("HandAttachment")
 character_body = NodePath("CharacterBody3D")
 spawn_position = NodePath("CharacterBody3D")
@@ -85,6 +90,15 @@ monitorable = false
 [node name="CollisionShape3D" type="CollisionShape3D" parent="CharacterBody3D/Trigger"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5, 0)
 shape = SubResource("CapsuleShape3D_dn1mx")
+
+[node name="CPUTrigger" type="Area3D" parent="CharacterBody3D"]
+collision_layer = 0
+collision_mask = 8
+monitorable = false
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="CharacterBody3D/CPUTrigger"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -21, 0)
+shape = SubResource("BoxShape3D_dn1mx")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="CharacterBody3D"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5, 0)
@@ -109,4 +123,9 @@ parameters/stuck-transition/current_state = "disabled"
 parameters/stuck-transition/transition_request = ""
 parameters/stuck-transition/current_index = 1
 
+[node name="Rollback" type="Node" parent="."]
+script = ExtResource("3_hdqxl")
+param_count = 3
+
 [connection signal="area_entered" from="CharacterBody3D/Trigger" to="." method="_on_trigger_area_entered"]
+[connection signal="area_exited" from="CharacterBody3D/CPUTrigger" to="." method="_on_cpu_trigger_area_exited"]
