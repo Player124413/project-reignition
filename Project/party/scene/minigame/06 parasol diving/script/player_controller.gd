@@ -231,7 +231,6 @@ func _on_trigger_area_entered(area: Area3D) -> void:
 		current_cloud = area
 		cloud_position_offset = character_body.global_position - current_cloud.global_position
 		animation_tree.set(STUCK_TRANSITION, "enabled")
-		print("STUCK TRIGGER ACTIVATED")
 		return
 	
 	# Grabbed a coin
