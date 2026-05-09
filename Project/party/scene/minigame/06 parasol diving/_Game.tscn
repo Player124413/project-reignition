@@ -1,0 +1,55 @@
+[gd_scene load_steps=7 format=3 uid="uid://ffhhdixtf43s"]
+
+[ext_resource type="PackedScene" uid="uid://dsbufs8tjchk7" path="res://party/scene/minigame/00 base/MinigameBase.tscn" id="1_jkew2"]
+[ext_resource type="PackedScene" uid="uid://f5w7fq20xmd1" path="res://party/scene/minigame/00 base/Time.tscn" id="2_u0q54"]
+[ext_resource type="PackedScene" uid="uid://buyteje32mlhs" path="res://party/scene/minigame/00 base/ScoreTop.tscn" id="3_vrmy4"]
+[ext_resource type="PackedScene" uid="uid://xq7x7nwhvjdr" path="res://party/scene/minigame/06 parasol diving/model/Cloud.glb" id="5_ot7ge"]
+[ext_resource type="PackedScene" uid="uid://bsko14xju1hst" path="res://party/scene/minigame/06 parasol diving/model/Map.glb" id="6_pqpg5"]
+[ext_resource type="PackedScene" uid="uid://bq421e7316n42" path="res://party/scene/minigame/06 parasol diving/model/Parasol.glb" id="7_2qxqt"]
+
+[node name="Game" type="Node3D"]
+
+[node name="Minigame" parent="." instance=ExtResource("1_jkew2")]
+
+[node name="Time" parent="Minigame" instance=ExtResource("2_u0q54")]
+layout_mode = 1
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -128.0
+offset_right = 128.0
+grow_horizontal = 2
+
+[node name="Scores" parent="." instance=ExtResource("3_vrmy4")]
+
+[node name="Environment" type="Node3D" parent="."]
+
+[node name="Cloud" parent="Environment" instance=ExtResource("5_ot7ge")]
+
+[node name="AnimationPlayer" parent="Environment/Cloud" index="1"]
+autoplay = "cloud"
+
+[node name="Map" parent="Environment" instance=ExtResource("6_pqpg5")]
+
+[node name="Skeleton3D" parent="Environment/Map/MapRoot" index="0"]
+bones/1/position = Vector3(-2.3010714, -235.92838, 6.666327)
+
+[node name="st_113_map_Mesh_0000" parent="Environment/Map/MapRoot/Skeleton3D" index="0"]
+layers = 2
+
+[node name="st_113_map_Mesh_0001" parent="Environment/Map/MapRoot/Skeleton3D" index="1"]
+layers = 2
+
+[node name="st_113_map_Mesh_0002" parent="Environment/Map/MapRoot/Skeleton3D" index="2"]
+layers = 2
+
+[node name="AnimationPlayer" parent="Environment/Map" index="1"]
+autoplay = "map"
+
+[node name="Parasol" parent="Environment" instance=ExtResource("7_2qxqt")]
+
+[node name="Camera3D" type="Camera3D" parent="."]
+cull_mask = 3
+
+[editable path="Minigame"]
+[editable path="Environment/Cloud"]
+[editable path="Environment/Map"]
