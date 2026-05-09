@@ -18,39 +18,54 @@ sync = true
 
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_ddocx"]
 
-[sub_resource type="AnimationNodeOneShot" id="AnimationNodeOneShot_bfq2g"]
-fadein_time = 0.1
-fadeout_time = 0.1
+[sub_resource type="AnimationNodeTransition" id="AnimationNodeTransition_hdqxl"]
+xfade_time = 0.1
+input_0/name = "enabled"
+input_0/auto_advance = false
+input_0/break_loop_at_end = false
+input_0/reset = true
+input_1/name = "disabled"
+input_1/auto_advance = false
+input_1/break_loop_at_end = false
+input_1/reset = true
 
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_i0xjf"]
 
-[sub_resource type="AnimationNodeOneShot" id="AnimationNodeOneShot_0t5rc"]
-fadein_time = 0.1
-fadeout_time = 0.1
+[sub_resource type="AnimationNodeTransition" id="AnimationNodeTransition_dn1mx"]
+xfade_time = 0.1
+input_0/name = "enabled"
+input_0/auto_advance = false
+input_0/break_loop_at_end = false
+input_0/reset = true
+input_1/name = "disabled"
+input_1/auto_advance = false
+input_1/break_loop_at_end = false
+input_1/reset = true
 
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_ywtf7"]
 
 [sub_resource type="AnimationNodeBlendTree" id="AnimationNodeBlendTree_tukkm"]
+graph_offset = Vector2(-700.47156, -196.67426)
 nodes/output/position = Vector2(380, 140)
 nodes/fall/node = SubResource("AnimationNodeAnimation_la5i6")
 nodes/fall/position = Vector2(-1260, 240)
-nodes/shake-trigger/node = SubResource("AnimationNodeOneShot_bfq2g")
-nodes/shake-trigger/position = Vector2(180, 120)
-nodes/stuck-trigger/node = SubResource("AnimationNodeOneShot_0t5rc")
-nodes/stuck-trigger/position = Vector2(-160, 120)
+nodes/shake-transition/node = SubResource("AnimationNodeTransition_hdqxl")
+nodes/shake-transition/position = Vector2(160, 100)
+nodes/float-speed/node = SubResource("AnimationNodeTimeScale_dn1mx")
+nodes/float-speed/position = Vector2(-540, 160)
 nodes/stuck/node = SubResource("AnimationNodeAnimation_ywtf7")
-nodes/stuck/position = Vector2(-320, 320)
+nodes/stuck/position = Vector2(-380, 0)
 nodes/shake/node = SubResource("AnimationNodeAnimation_i0xjf")
-nodes/shake/position = Vector2(0, 320)
+nodes/shake/position = Vector2(-120, -60)
 nodes/direction-blend/node = SubResource("AnimationNodeBlend3_mc2m2")
 nodes/direction-blend/position = Vector2(-820, 160)
 nodes/left/node = SubResource("AnimationNodeAnimation_63ds4")
 nodes/left/position = Vector2(-1020, 80)
 nodes/right/node = SubResource("AnimationNodeAnimation_ddocx")
 nodes/right/position = Vector2(-1020, 360)
-nodes/float-speed/node = SubResource("AnimationNodeTimeScale_dn1mx")
-nodes/float-speed/position = Vector2(-540, 160)
-node_connections = [&"output", 0, &"shake-trigger", &"shake-trigger", 0, &"stuck-trigger", &"shake-trigger", 1, &"shake", &"stuck-trigger", 0, &"float-speed", &"stuck-trigger", 1, &"stuck", &"direction-blend", 0, &"left", &"direction-blend", 1, &"fall", &"direction-blend", 2, &"right", &"float-speed", 0, &"direction-blend"]
+nodes/stuck-transition/node = SubResource("AnimationNodeTransition_dn1mx")
+nodes/stuck-transition/position = Vector2(-160, 160)
+node_connections = [&"output", 0, &"shake-transition", &"shake-transition", 0, &"shake", &"shake-transition", 1, &"stuck-transition", &"float-speed", 0, &"direction-blend", &"direction-blend", 0, &"left", &"direction-blend", 1, &"fall", &"direction-blend", 2, &"right", &"stuck-transition", 0, &"stuck", &"stuck-transition", 1, &"float-speed"]
 
 [node name="Player" type="Node3D" node_paths=PackedStringArray("hand_attachment", "character_body", "spawn_position", "animation_tree")]
 script = ExtResource("14_la5i6")
@@ -83,14 +98,15 @@ bone_idx = 45
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 0.99999994, 0, -1, 0, -4.371139e-08, 0.8, 0, 0)
 
 [node name="AnimationTree" type="AnimationTree" parent="."]
+active = false
 tree_root = SubResource("AnimationNodeBlendTree_tukkm")
-parameters/shake-trigger/active = false
-parameters/shake-trigger/internal_active = false
-parameters/shake-trigger/request = 0
-parameters/stuck-trigger/active = false
-parameters/stuck-trigger/internal_active = false
-parameters/stuck-trigger/request = 0
-parameters/direction-blend/blend_amount = 0.0
+parameters/shake-transition/current_state = "disabled"
+parameters/shake-transition/transition_request = ""
+parameters/shake-transition/current_index = 1
 parameters/float-speed/scale = 1.3999999999999986
+parameters/direction-blend/blend_amount = 0.0
+parameters/stuck-transition/current_state = "disabled"
+parameters/stuck-transition/transition_request = ""
+parameters/stuck-transition/current_index = 1
 
 [connection signal="area_entered" from="CharacterBody3D/Trigger" to="." method="_on_trigger_area_entered"]

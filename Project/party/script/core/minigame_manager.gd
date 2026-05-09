@@ -91,6 +91,9 @@ func _ready() -> void:
 	for i in range(INITIAL_SCORE_POPUP_POOL_SIZE):
 		generate_score_popup()
 	
+	for i in results_location.size():
+		results_location[i].visible = false
+	
 	# TODO Change splitscreen mode if in Tournament Palace (2 players)
 	animator.play("free-for-all")
 	animator.advance(0.0)
@@ -239,6 +242,10 @@ func on_gameplay_started() -> void:
 ## Emits the signal to teleport players to the results screen.
 func on_minigame_finished() -> void:
 	minigame_finished.emit()
+	
+	for i in results_location.size():
+		results_location[i].visible = true
+	
 	splitscreen_parent.visible = false # Hide splitscreen stuff
 	if results_camera != null:
 		results_camera.make_current()

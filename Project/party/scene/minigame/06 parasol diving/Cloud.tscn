@@ -1,24 +1,284 @@
-[gd_scene load_steps=4 format=3 uid="uid://hdd7tlt77uqu"]
+[gd_scene load_steps=16 format=3 uid="uid://hdd7tlt77uqu"]
 
 [ext_resource type="Script" uid="uid://bdqr8rerf3ru6" path="res://party/scene/minigame/06 parasol diving/script/cloud.gd" id="1_6g2bd"]
 [ext_resource type="PackedScene" uid="uid://xq7x7nwhvjdr" path="res://party/scene/minigame/06 parasol diving/model/Cloud.glb" id="2_scrxx"]
+[ext_resource type="PackedScene" uid="uid://dshbu54rbi5ja" path="res://party/scene/minigame/06 parasol diving/model/CloudExplosion.glb" id="3_scrxx"]
+[ext_resource type="Material" uid="uid://d25152dkwwy0o" path="res://party/scene/minigame/06 parasol diving/material/Cloud Explosion.tres" id="4_gs8sf"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_gs8sf"]
-radius = 6.0
-height = 19.0
+radius = 3.0
+height = 16.0
 
-[node name="Cloud" type="Area3D" groups=["enemy"]]
+[sub_resource type="Curve" id="Curve_55xsp"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.3, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_6k27s"]
+width = 64
+texture_mode = 1
+curve = SubResource("Curve_55xsp")
+
+[sub_resource type="Curve" id="Curve_fiqw7"]
+_data = [Vector2(0, 0.1), 0.0, 2.464286, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_b8pgm"]
+width = 64
+curve = SubResource("Curve_fiqw7")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_gs8sf"]
+lifetime_randomness = 0.4
+particle_flag_rotate_y = true
+emission_shape = 2
+emission_sphere_radius = 5.0
+angle_min = 1.0728836e-05
+angle_max = 360.00003
+direction = Vector3(0, 1, 0)
+spread = 90.0
+initial_velocity_min = 5.0
+initial_velocity_max = 50.0
+gravity = Vector3(0, 0, 0)
+scale_min = 10.0
+scale_max = 15.0
+scale_curve = SubResource("CurveTexture_b8pgm")
+color = Color(1, 1, 1, 0.7058824)
+alpha_curve = SubResource("CurveTexture_6k27s")
+
+[sub_resource type="QuadMesh" id="QuadMesh_qvlrk"]
+
+[sub_resource type="Animation" id="Animation_scrxx"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("CloudExplosion:visible")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Cloud:visible")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath(".:monitorable")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+
+[sub_resource type="Animation" id="Animation_gs8sf"]
+resource_name = "explode"
+tracks/0/type = "animation"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("CloudExplosion/AnimationPlayer")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"clips": PackedStringArray("[stop]", "cloud-explosion"),
+"times": PackedFloat32Array(0, 0.03333333)
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("CloudExplosion:visible")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Cloud:visible")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/3/type = "method"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("ExplodeVFX")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [false],
+"method": &"restart"
+}]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath(".:monitorable")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+
+[sub_resource type="Animation" id="Animation_55xsp"]
+resource_name = "spawn"
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("CloudExplosion:visible")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Cloud:visible")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath(".:monitorable")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_fiqw7"]
+_data = {
+&"RESET": SubResource("Animation_scrxx"),
+&"explode": SubResource("Animation_gs8sf"),
+&"spawn": SubResource("Animation_55xsp")
+}
+
+[node name="Cloud" type="Area3D" node_paths=PackedStringArray("animator") groups=["enemy"]]
 collision_layer = 8
 collision_mask = 0
 monitoring = false
 script = ExtResource("1_6g2bd")
+animator = NodePath("AnimationPlayer")
 
 [node name="Cloud" parent="." instance=ExtResource("2_scrxx")]
 
+[node name="AnimationPlayer" parent="Cloud" index="1"]
+autoplay = "cloud"
+
+[node name="CloudExplosion" parent="." instance=ExtResource("3_scrxx")]
+visible = false
+
+[node name="Skeleton3D" parent="CloudExplosion/CloudExplosionRoot" index="0"]
+bones/2/position = Vector3(-4.0922527, 4.4330273, 7.218441)
+bones/2/rotation = Quaternion(0, 0, 0.9945196, 0.10455063)
+bones/2/scale = Vector3(2.0000007, 2.0000007, 2)
+bones/3/position = Vector3(3.3636036, 6.370655, 7.366203)
+bones/3/rotation = Quaternion(0, 0, 0.9945196, 0.10455063)
+bones/3/scale = Vector3(2.0000007, 2.0000007, 2)
+bones/4/position = Vector3(8.936159, 1.4859233, 7.507802)
+bones/4/rotation = Quaternion(0, 0, 0.9945196, 0.10455063)
+bones/4/scale = Vector3(2.0000007, 2.0000007, 2)
+bones/5/position = Vector3(11.524437, -5.183372, 7.798461)
+bones/5/rotation = Quaternion(0, 0, 0.9945196, 0.10455063)
+bones/5/scale = Vector3(2.0000007, 2.0000007, 2)
+bones/6/position = Vector3(8.136124, -10.85996, 8.207586)
+bones/6/rotation = Quaternion(0, 0, 0.9945196, 0.10455063)
+bones/6/scale = Vector3(2.0000007, 2.0000007, 2)
+bones/7/position = Vector3(-4.0042706, -12.560059, 7.662587)
+bones/7/rotation = Quaternion(0, 0, 0.9945196, 0.10455063)
+bones/7/scale = Vector3(2.0000007, 2.0000007, 2)
+bones/8/position = Vector3(-9.004702, -8.304373, 8.48526)
+bones/8/rotation = Quaternion(0, 0, 0.9945196, 0.10455063)
+bones/8/scale = Vector3(2.0000007, 2.0000007, 2)
+bones/9/position = Vector3(-8.557286, -0.73638296, 7.9196253)
+bones/9/rotation = Quaternion(0, 0, 0.9945196, 0.10455063)
+bones/9/scale = Vector3(2.0000007, 2.0000007, 2)
+bones/10/position = Vector3(0.57059145, 0.9517441, 8.070488)
+bones/10/rotation = Quaternion(0, 0, 0.9945196, 0.10455063)
+bones/10/scale = Vector3(2.0000007, 2.0000007, 2)
+bones/11/position = Vector3(5.145454, -3.2055597, 8.34148)
+bones/11/rotation = Quaternion(0, 0, 0.9945196, 0.10455063)
+bones/11/scale = Vector3(2.0000007, 2.0000007, 2)
+bones/12/position = Vector3(2.6926298, -15.244871, 8.631677)
+bones/12/rotation = Quaternion(0, 0, 0.9945196, 0.10455063)
+bones/12/scale = Vector3(2.0000007, 2.0000007, 2)
+bones/14/position = Vector3(10.419365, 5.499525, 0.5162662)
+bones/14/scale = Vector3(0, 0, 0)
+bones/15/position = Vector3(2.7999573, 7.98383, 0.8991933)
+bones/15/scale = Vector3(0, 0, 0)
+bones/16/position = Vector3(-10.663473, -4.363519, 0.795081)
+bones/16/scale = Vector3(0, 0, 0)
+bones/17/position = Vector3(-6.4232163, 5.4098387, -0.5331054)
+bones/17/scale = Vector3(0, 0, 0)
+bones/18/position = Vector3(2.4042244, -7.864913, 2.4025207)
+bones/18/scale = Vector3(0, 0, 0)
+bones/19/position = Vector3(11.696993, -2.2412, 1.4267648)
+bones/19/scale = Vector3(0, 0, 0)
+
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
-transform = Transform3D(-4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 0, 0, 1, 0, 2, 0)
+transform = Transform3D(-4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 0, 0, 1, 0, 0, 0)
 shape = SubResource("CapsuleShape3D_gs8sf")
 
-[connection signal="body_entered" from="." to="." method="_on_body_entered"]
+[node name="ExplodeVFX" type="GPUParticles3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 4)
+layers = 32
+material_override = ExtResource("4_gs8sf")
+cast_shadow = 0
+emitting = false
+lifetime = 0.4
+one_shot = true
+explosiveness = 0.6
+fixed_fps = 0
+fract_delta = false
+process_material = SubResource("ParticleProcessMaterial_gs8sf")
+draw_pass_1 = SubResource("QuadMesh_qvlrk")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+&"": SubResource("AnimationLibrary_fiqw7")
+}
 
 [editable path="Cloud"]
+[editable path="CloudExplosion"]

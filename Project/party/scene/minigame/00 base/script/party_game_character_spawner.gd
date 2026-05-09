@@ -17,6 +17,10 @@ func initialize_animation_tree(anim_prefix : String, anim_list : PackedStringArr
 			continue
 		(root.get_node(anim) as AnimationNodeAnimation).animation = anim_prefix + anim
 	animation_tree.active = true
+	MinigameManager.instance.minigame_finished.connect(Callable(self, "deactivate_animation_tree"))
+
+func deactivate_animation_tree() -> void:
+	animation_tree.active = false
 
 ## Gets the animation prefix for minigame animations.
 func get_anim_prefix() -> String:
