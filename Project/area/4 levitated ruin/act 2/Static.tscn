@@ -1,4 +1,4 @@
-[gd_scene load_steps=87 format=3 uid="uid://bpxj0juyhbmxs"]
+[gd_scene load_steps=93 format=3 uid="uid://bpxj0juyhbmxs"]
 
 [ext_resource type="Script" uid="uid://dtkbvehtmy3em" path="res://object/stage/StageSettings.cs" id="1_16rgi"]
 [ext_resource type="PackedScene" uid="uid://c06ghybsci6mi" path="res://area/4 levitated ruin/data/skybox/Skybox.tscn" id="2_dq0yd"]
@@ -28,6 +28,8 @@
 [ext_resource type="Curve3D" uid="uid://ceyxa8kv6wyp6" path="res://area/4 levitated ruin/act 2/environment/path/Rukh2Path.tres" id="14_pfd68"]
 [ext_resource type="Curve3D" uid="uid://dop3mxxws32gb" path="res://area/4 levitated ruin/act 2/environment/path/Rukh3Path.tres" id="15_ht7o1"]
 [ext_resource type="Curve3D" uid="uid://dwulsfu05b38q" path="res://area/4 levitated ruin/act 2/environment/path/Rukh4Path.tres" id="16_it03k"]
+[ext_resource type="Script" uid="uid://2o7w04fafmsf" path="res://effect/buffer/script/DepthRenderer.cs" id="16_tjkwn"]
+[ext_resource type="Material" uid="uid://tma3nv6ewgck" path="res://effect/buffer/material/Depth Renderer Material.tres" id="17_h61ba"]
 [ext_resource type="Curve3D" uid="uid://vb8wm0cfjf38" path="res://area/4 levitated ruin/act 2/environment/path/Rukh5Path.tres" id="17_p27ay"]
 [ext_resource type="Curve3D" uid="uid://mtulat3gydtp" path="res://area/4 levitated ruin/act 2/environment/path/Tower1Path.tres" id="18_h17nb"]
 [ext_resource type="Resource" uid="uid://38s0wkpi5mlf" path="res://resource/preset/lockout/run/RecenterLockout.tres" id="19_5d7iq"]
@@ -99,6 +101,135 @@ emission = Color(0.85, 0.7766167, 0.5355, 1)
 emission_energy_multiplier = 2.1
 emission_operator = 1
 emission_texture = ExtResource("5_y7vf5")
+
+[sub_resource type="QuadMesh" id="QuadMesh_flgq4"]
+flip_faces = true
+size = Vector2(2, 2)
+
+[sub_resource type="Shader" id="Shader_emcxb"]
+code = "shader_type canvas_item;
+render_mode unshaded, blend_add;
+
+uniform sampler2D depth_tex : filter_linear;
+uniform sampler2D screen_texture : hint_screen_texture, filter_linear;
+uniform sampler2D light_color : hint_default_white;
+uniform vec4 ray_color : source_color = vec4(1.0, 1.0, 1.0, 1.0);
+uniform float ray_length : hint_range(0.0, 1.0) = 1.0;
+uniform float ray_intensity : hint_range(0.0, 1.0) = 1.0;
+uniform float light_source_scale = 1.0;
+uniform float light_source_feather = 2.0;
+uniform float noise_strength : hint_range(0.0, 1.0) = 0.2;
+uniform vec2 light_source_pos = vec2(0.0, 0.0);
+uniform vec3 light_source_dir = vec3(0.5, -1.0, 0.25);
+uniform float mask_threshold : hint_range(0.0, 1.0) = 0.5;
+uniform float mask_softness : hint_range(0.01, 0.5) = 0.15;
+uniform float mask_radius : hint_range(0.01, 0.5) = 0.15;
+uniform bool debug_mode = false;
+uniform float debug_dot_radius : hint_range(0.001, 0.05) = 0.01;
+
+const int SAMPLE_COUNT = 120;
+
+float random(vec2 uv) {
+	return fract(sin(dot(uv.xy, vec2(12.9898, 78.233))) * 43758.5453123);
+}
+
+void fragment() {
+	vec2 light_pos = light_source_pos;
+	vec2 ratio = vec2(SCREEN_PIXEL_SIZE.x / SCREEN_PIXEL_SIZE.y, 1.0);
+
+	if (debug_mode) {
+		vec2 diff = (UV - light_pos) / ratio;
+		float dist = length(diff);
+		float dot_mask = smoothstep(debug_dot_radius, debug_dot_radius * 0.5, dist);
+		COLOR.rgb = vec3(dot_mask);
+		COLOR.a = 1.0;
+	} else {
+		vec2 dir = UV - light_pos;
+		vec2 dir2 = UV / ratio - light_pos / ratio;
+		float light_rays = 0.0;
+		vec2 uv2;
+		float scale, l;
+
+		for (int i = 0; i < SAMPLE_COUNT; i++) {
+			scale = 1.0 - ray_length * (float(i) / float(SAMPLE_COUNT - 1));
+			vec2 sample_uv = dir * scale + light_pos;
+			l = 1.0 - texture(depth_tex, sample_uv).a;
+			uv2 = dir2 * scale * pow(light_source_scale, 2.0);
+			l *= smoothstep(1.0, 0.999 - light_source_feather, dot(uv2, uv2) * 4.0);
+			light_rays += l / float(SAMPLE_COUNT);
+		}
+
+		float n = 1.0 - random(UV) * noise_strength * smoothstep(0.999 - 1.25, 1.0, dot(dir2, dir2) * 2.0);
+		light_rays *= n;
+
+		vec3 screen_col = texture(screen_texture, SCREEN_UV).rgb;
+		float brightness = max(screen_col.r, max(screen_col.g, screen_col.b));
+		float moon_mask = smoothstep(mask_threshold, mask_threshold + mask_softness, brightness);
+
+		float dist_to_light = length((UV - light_pos) / ratio);
+		float proximity = 1.0 - smoothstep(0.0, mask_radius, dist_to_light);
+		moon_mask *= proximity;
+
+		light_rays *= (1.0 - moon_mask);
+
+		COLOR.rgb = vec3(light_rays * ray_intensity) * texture(light_color, UV).rgb * ray_color.rgb;
+		COLOR.a = ray_color.a;
+	}
+}"
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_ywkj6"]
+resource_local_to_scene = true
+shader = SubResource("Shader_emcxb")
+shader_parameter/ray_color = Color(0.5529412, 0.49411765, 0.23921569, 1)
+shader_parameter/ray_length = 0.70000003325
+shader_parameter/ray_intensity = 0.6000000285
+shader_parameter/light_source_scale = 1.1999999999970896
+shader_parameter/light_source_feather = 1.4499999999970896
+shader_parameter/noise_strength = 0.10000000475
+shader_parameter/light_source_pos = Vector2(0, 0)
+shader_parameter/light_source_dir = Vector3(0.5, -1, 0.25)
+shader_parameter/mask_threshold = 0.69200003287
+shader_parameter/mask_softness = 0.16900000732898002
+shader_parameter/mask_radius = 0.5
+shader_parameter/debug_mode = false
+shader_parameter/debug_dot_radius = 0.01
+
+[sub_resource type="GDScript" id="GDScript_ed5c1"]
+script/source = "extends ColorRect
+
+@export var sun_target_path: NodePath
+@export var depth_viewport_path: NodePath
+
+@onready var depth_viewport: SubViewport = get_node(depth_viewport_path)
+@onready var sun_target: Node3D = get_node(sun_target_path)
+
+func _ready() -> void:
+	process_priority = 100
+	material.set_shader_parameter(\"depth_tex\", depth_viewport.get_texture())
+
+func _process(_delta: float) -> void:
+	var active_cam: Camera3D = get_tree().root.get_camera_3d()
+	if not active_cam or not sun_target:
+		return
+
+	var cam_forward: Vector3 = -active_cam.global_basis.z
+	var target_pos: Vector3 = sun_target.global_position
+
+	if active_cam.is_position_behind(target_pos):
+		material.set_shader_parameter(\"light_source_pos\", Vector2(-99999, -99999))
+		material.set_shader_parameter(\"camera_dir\", cam_forward)
+		return
+
+	var sun_dir: Vector3 = (target_pos - active_cam.global_position).normalized()
+	material.set_shader_parameter(\"light_source_dir\", sun_dir)
+
+	var pos: Vector2 = active_cam.unproject_position(target_pos)
+	var viewport_size: Vector2 = get_viewport().get_visible_rect().size
+	var pos_uv: Vector2 = pos / viewport_size
+
+	material.set_shader_parameter(\"light_source_pos\", pos_uv)
+	material.set_shader_parameter(\"camera_dir\", cam_forward)
+"
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_mwnvi"]
 size = Vector3(5, 8, 3)
@@ -956,6 +1087,80 @@ surface_material_override/0 = SubResource("StandardMaterial3D_nwodq")
 
 [node name="MoonMesh" parent="Visuals/LRSky/Skybox/SkyRoot/Skeleton3D" index="5"]
 surface_material_override/0 = SubResource("StandardMaterial3D_q7bfn")
+
+[node name="DepthRenderer" type="Node" parent="Visuals/LRSky" node_paths=PackedStringArray("depthCamera", "depthViewport", "depthViewportContainer")]
+script = ExtResource("16_tjkwn")
+depthCamera = NodePath("Viewport/DepthPreview/DepthViewport/DepthCamera")
+depthViewport = NodePath("Viewport/DepthPreview/DepthViewport")
+depthMaterial = ExtResource("17_h61ba")
+depthViewportContainer = NodePath("Viewport")
+depthMaterials = []
+
+[node name="Viewport" type="Control" parent="Visuals/LRSky/DepthRenderer"]
+visible = false
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="DepthPreview" type="SubViewportContainer" parent="Visuals/LRSky/DepthRenderer/Viewport"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -480.0
+offset_top = -540.0
+offset_right = 480.0
+grow_horizontal = 0
+grow_vertical = 0
+scale = Vector2(0.5, 0.5)
+pivot_offset = Vector2(0, 540)
+
+[node name="DepthViewport" type="SubViewport" parent="Visuals/LRSky/DepthRenderer/Viewport/DepthPreview"]
+transparent_bg = true
+handle_input_locally = false
+scaling_3d_scale = 0.25
+anisotropic_filtering_level = 0
+gui_disable_input = true
+positional_shadow_atlas_size = 0
+positional_shadow_atlas_16_bits = false
+positional_shadow_atlas_quad_0 = 0
+positional_shadow_atlas_quad_1 = 0
+positional_shadow_atlas_quad_2 = 0
+positional_shadow_atlas_quad_3 = 0
+canvas_cull_mask = 0
+size = Vector2i(256, 256)
+render_target_update_mode = 0
+
+[node name="DepthCamera" type="Camera3D" parent="Visuals/LRSky/DepthRenderer/Viewport/DepthPreview/DepthViewport"]
+cull_mask = 262215
+current = true
+
+[node name="DepthRenderer" type="MeshInstance3D" parent="Visuals/LRSky/DepthRenderer/Viewport/DepthPreview/DepthViewport/DepthCamera"]
+layers = 262144
+material_override = ExtResource("17_h61ba")
+cast_shadow = 0
+extra_cull_margin = 16384.0
+mesh = SubResource("QuadMesh_flgq4")
+
+[node name="CanvasLayerLightShafts" type="CanvasLayer" parent="Visuals/LRSky/DepthRenderer"]
+layer = -1
+
+[node name="ColorRect_LightRays" type="ColorRect" parent="Visuals/LRSky/DepthRenderer/CanvasLayerLightShafts"]
+material = SubResource("ShaderMaterial_ywkj6")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = SubResource("GDScript_ed5c1")
+sun_target_path = NodePath("../../../Skybox/SkyRoot/Skeleton3D/MoonMesh/MoonTransform")
+depth_viewport_path = NodePath("../../Viewport/DepthPreview/DepthViewport")
+metadata/_edit_use_anchors_ = true
 
 [node name="Rukh1" parent="Visuals" instance=ExtResource("3_8fsym")]
 startEnabled = true

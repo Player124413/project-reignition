@@ -16,15 +16,15 @@ render_mode unshaded, blend_add;
 uniform sampler2D depth_tex : filter_linear;
 uniform sampler2D light_color : hint_default_white;
 uniform vec4 ray_color : source_color = vec4(1.0, 1.0, 1.0, 1.0);
-
 uniform float ray_length : hint_range(0.0, 1.0) = 1.0;
 uniform float ray_intensity : hint_range(0.0, 1.0) = 1.0;
 uniform float light_source_scale = 1.0;
 uniform float light_source_feather = 2.0;
 uniform float noise_strength : hint_range(0.0, 1.0) = 0.2;
-
 uniform vec2 light_source_pos = vec2(0.0, 0.0);
 uniform vec3 light_source_dir = vec3(0.5, -1.0, 0.25);
+uniform bool debug_mode = false;
+uniform float debug_dot_radius : hint_range(0.001, 0.05) = 0.01;
 
 const int SAMPLE_COUNT = 120;
 
@@ -33,33 +33,37 @@ float random(vec2 uv) {
 }
 
 void fragment() {
-	vec2 light_pos = light_source_pos / (1.0 / SCREEN_PIXEL_SIZE);
-	vec2 dir = UV - light_pos;
-
+	vec2 light_pos = light_source_pos;
 	vec2 ratio = vec2(SCREEN_PIXEL_SIZE.x / SCREEN_PIXEL_SIZE.y, 1.0);
-	vec2 dir2 = UV / ratio - light_pos / ratio;
 
-	float light_rays = 0.0;
-	vec2 uv2;
-	float scale, l;
+	if (debug_mode) {
+		vec2 diff = (UV - light_pos) / ratio;
+		float dist = length(diff);
+		float dot_mask = smoothstep(debug_dot_radius, debug_dot_radius * 0.5, dist);
+		COLOR.rgb = vec3(dot_mask);
+		COLOR.a = 1.0;
+	} else {
+		vec2 dir = UV - light_pos;
+		vec2 dir2 = UV / ratio - light_pos / ratio;
+		float light_rays = 0.0;
+		vec2 uv2;
+		float scale, l;
 
-	for (int i = 0; i < SAMPLE_COUNT; i++) {
-		scale = 1.0 - ray_length * (float(i) / float(SAMPLE_COUNT - 1));
-		vec2 sample_uv = dir * scale + light_pos;
+		for (int i = 0; i < SAMPLE_COUNT; i++) {
+			scale = 1.0 - ray_length * (float(i) / float(SAMPLE_COUNT - 1));
+			vec2 sample_uv = dir * scale + light_pos;
+			l = 1.0 - texture(depth_tex, sample_uv).a;
+			uv2 = dir2 * scale * pow(light_source_scale, 2.0);
+			l *= smoothstep(1.0, 0.999 - light_source_feather, dot(uv2, uv2) * 4.0);
+			light_rays += l / float(SAMPLE_COUNT);
+		}
 
+		float n = 1.0 - random(UV) * noise_strength * smoothstep(0.999 - 1.25, 1.0, dot(dir2, dir2) * 2.0);
+		light_rays *= n;
 
-		l = 1.0 - texture(depth_tex, sample_uv).a;
-
-		uv2 = dir2 * scale * pow(light_source_scale, 2.0);
-		l *= smoothstep(1.0, 0.999 - light_source_feather, dot(uv2, uv2) * 4.0);
-		light_rays += l / float(SAMPLE_COUNT);
+		COLOR.rgb = vec3(light_rays * ray_intensity) * texture(light_color, UV).rgb * ray_color.rgb;
+		COLOR.a = ray_color.a;
 	}
-
-	float n = 1.0 - random(UV) * noise_strength * smoothstep(0.999 - 1.25, 1.0, dot(dir2, dir2) * 2.0);
-	light_rays *= n;
-
-	COLOR.rgb = vec3(light_rays * ray_intensity) * texture(light_color, UV).rgb * ray_color.rgb;
-	COLOR.a = ray_color.a;
 }"
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_3353e"]
@@ -69,36 +73,47 @@ shader_parameter/ray_color = Color(1, 0.69803923, 0.31764707, 1)
 shader_parameter/ray_length = 0.8000000380000001
 shader_parameter/ray_intensity = 0.770000036575
 shader_parameter/light_source_scale = 1.1999999999970896
-shader_parameter/light_source_feather = 1.5
-shader_parameter/noise_strength = 0.10000000475000001
+shader_parameter/light_source_feather = 1.4499999999970896
+shader_parameter/noise_strength = 0.10000000475
 shader_parameter/light_source_pos = Vector2(0, 0)
 shader_parameter/light_source_dir = Vector3(0.5, -1, 0.25)
+shader_parameter/debug_mode = false
+shader_parameter/debug_dot_radius = 0.01
 
 [sub_resource type="GDScript" id="GDScript_f4p4h"]
 script/source = "extends ColorRect
 
-@export var sun_direction: Vector3 = Vector3(0.23, -0.447, 0.942)
-
+@export var sun_disc_path: NodePath
 @export var depth_viewport_path: NodePath
-@onready var depth_viewport: SubViewport = get_node(depth_viewport_path)
 
-var _sun_dir: Vector3
+@onready var depth_viewport: SubViewport = get_node(depth_viewport_path)
+@onready var sun_disc: Node3D = get_node(sun_disc_path)
 
 func _ready() -> void:
-	_sun_dir = sun_direction.normalized()
-	material.set_shader_parameter(\"light_source_dir\", _sun_dir)
+	process_priority = 100
 	material.set_shader_parameter(\"depth_tex\", depth_viewport.get_texture())
 
 func _process(_delta: float) -> void:
 	var active_cam: Camera3D = get_tree().root.get_camera_3d()
-	if not active_cam:
+	if not active_cam or not sun_disc:
 		return
 
-	var sun_point = active_cam.global_position + _sun_dir * 10000.0
-	var pos = active_cam.unproject_position(sun_point)
+	var cam_forward: Vector3 = -active_cam.global_basis.z
+	var sun_dir: Vector3 = (sun_disc.global_position - active_cam.global_position).normalized()
 
-	material.set_shader_parameter(\"light_source_pos\", pos)
-	material.set_shader_parameter(\"camera_dir\", -active_cam.global_basis.z)
+	material.set_shader_parameter(\"light_source_dir\", sun_dir)
+
+	if active_cam.is_position_behind(sun_disc.global_position):
+		material.set_shader_parameter(\"light_source_pos\", Vector2(-99999, -99999))
+		material.set_shader_parameter(\"camera_dir\", cam_forward)
+		return
+
+	var pos: Vector2 = active_cam.unproject_position(sun_disc.global_position)
+	var viewport_size: Vector2 = get_viewport().get_visible_rect().size
+	var pos_uv: Vector2 = pos / viewport_size
+
+	material.set_shader_parameter(\"light_source_pos\", pos_uv)
+	material.set_shader_parameter(\"camera_dir\", cam_forward)
 "
 
 [node name="Skybox" instance=ExtResource("1_7dq0r")]
@@ -194,5 +209,6 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = SubResource("GDScript_f4p4h")
+sun_disc_path = NodePath("../../../Sun")
 depth_viewport_path = NodePath("../../Viewport/DepthPreview/DepthViewport")
 metadata/_edit_use_anchors_ = true
