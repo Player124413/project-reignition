@@ -80,3 +80,12 @@ func clamp_position() -> void:
 	character_body.global_position.x = clamp(character_body.global_position.x, -MAX_HORIZONTAL, MAX_HORIZONTAL)
 	character_body.global_position.y = clamp(character_body.global_position.y, -MAX_VERTICAL, MAX_VERTICAL)
 	character_body.global_position.z = 0
+
+
+func _on_trigger_area_entered(area: Area3D) -> void:
+	if area.is_in_group("enemy"):
+		# Hit a cloud
+		return
+	
+	# Grabbed a coin
+	area.rpc("request_collect", NetworkTimeSynchronizer.get_time(), player_index)

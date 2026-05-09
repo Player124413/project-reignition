@@ -31,7 +31,6 @@ fadeout_time = 0.1
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_ywtf7"]
 
 [sub_resource type="AnimationNodeBlendTree" id="AnimationNodeBlendTree_tukkm"]
-graph_offset = Vector2(-1147.96, -156)
 nodes/output/position = Vector2(380, 140)
 nodes/fall/node = SubResource("AnimationNodeAnimation_la5i6")
 nodes/fall/position = Vector2(-1260, 240)
@@ -63,6 +62,15 @@ animation_tree = NodePath("AnimationTree")
 [node name="CharacterBody3D" type="CharacterBody3D" parent="."]
 motion_mode = 1
 
+[node name="Trigger" type="Area3D" parent="CharacterBody3D"]
+collision_layer = 0
+collision_mask = 8
+monitorable = false
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="CharacterBody3D/Trigger"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5, 0)
+shape = SubResource("CapsuleShape3D_dn1mx")
+
 [node name="CollisionShape3D" type="CollisionShape3D" parent="CharacterBody3D"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5, 0)
 shape = SubResource("CapsuleShape3D_dn1mx")
@@ -84,3 +92,5 @@ parameters/stuck-trigger/internal_active = false
 parameters/stuck-trigger/request = 0
 parameters/direction-blend/blend_amount = 0.0
 parameters/float-speed/scale = 1.3999999999999986
+
+[connection signal="area_entered" from="CharacterBody3D/Trigger" to="." method="_on_trigger_area_entered"]

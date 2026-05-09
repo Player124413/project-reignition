@@ -18,6 +18,9 @@ signal results_started
 ## Emitted whenever a player's score is changed.
 signal on_score_updated(player_index : int, score : int)
 
+## Stores the network time when gameplay was started.
+var gameplay_start_tick : float
+
 func process_demo_transition() -> void:
 	splitscreen_parent.visible = screen_mode == SCREEN_MODE.SPLITSCREEN
 	demo_transition_processed.emit()
@@ -230,6 +233,7 @@ func finish_minigame(from_timer : bool) -> void:
 ## Emits the signal to actually enable gameplay objects.
 func on_gameplay_started() -> void:
 	print("Gameplay Started.")
+	gameplay_start_tick = NetworkTimeSynchronizer.get_time()
 	gameplay_started.emit()
 
 ## Emits the signal to teleport players to the results screen.

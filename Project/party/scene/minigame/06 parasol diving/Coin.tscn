@@ -1,0 +1,202 @@
+[gd_scene load_steps=17 format=3 uid="uid://d1iodnfaxfyet"]
+
+[ext_resource type="Script" uid="uid://cgj4nlx5fbcmq" path="res://party/scene/minigame/06 parasol diving/script/coin.gd" id="1_nljhk"]
+[ext_resource type="PackedScene" uid="uid://b1rqg5xv3qyak" path="res://party/scene/minigame/00 base/model/Coin.glb" id="2_j6inb"]
+[ext_resource type="Material" uid="uid://dfy7bbfabmnms" path="res://party/scene/minigame/00 base/material/Coin Gold.tres" id="2_tud03"]
+[ext_resource type="Material" uid="uid://bbqimku04cwxr" path="res://party/scene/minigame/00 base/material/Coin Silver.tres" id="3_6k27s"]
+[ext_resource type="Material" uid="uid://cd8mqsy8lhhcb" path="res://object/stage/pickups/resource/model/material/Ring Spark.tres" id="5_6k27s"]
+
+[sub_resource type="Animation" id="Animation_ipnsq"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("CoinMesh:visible")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("CoinMesh:rotation")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0, 0, 0)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("..:monitorable")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+
+[sub_resource type="Animation" id="Animation_b8pgm"]
+resource_name = "collect"
+length = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("CoinMesh:visible")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/1/type = "method"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("../CollectVFX")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0.033333335),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [false],
+"method": &"restart"
+}]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("..:monitorable")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+
+[sub_resource type="Animation" id="Animation_6k27s"]
+resource_name = "spawn"
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("CoinMesh:visible")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("CoinMesh:rotation")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector3(0, 0, 0), Vector3(0, 6.2831855, 0)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("..:monitorable")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_ut2w0"]
+_data = {
+&"RESET": SubResource("Animation_ipnsq"),
+&"collect": SubResource("Animation_b8pgm"),
+&"spawn": SubResource("Animation_6k27s")
+}
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_tud03"]
+radius = 4.0
+
+[sub_resource type="Curve" id="Curve_6k27s"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.3, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_6k27s"]
+width = 64
+texture_mode = 1
+curve = SubResource("Curve_6k27s")
+
+[sub_resource type="Curve" id="Curve_ipnsq"]
+_data = [Vector2(0, 0.1), 0.0, 2.464286, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_b8pgm"]
+width = 64
+curve = SubResource("Curve_ipnsq")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_ipnsq"]
+lifetime_randomness = 0.4
+emission_shape = 2
+emission_sphere_radius = 10.0
+gravity = Vector3(0, 0, 0)
+scale_min = 2.0
+scale_max = 5.0
+scale_curve = SubResource("CurveTexture_b8pgm")
+alpha_curve = SubResource("CurveTexture_6k27s")
+
+[sub_resource type="QuadMesh" id="QuadMesh_b8pgm"]
+
+[node name="Coin" type="Area3D" node_paths=PackedStringArray("mesh", "animator")]
+collision_layer = 8
+collision_mask = 0
+monitoring = false
+script = ExtResource("1_nljhk")
+mesh = NodePath("Coin/CoinMesh")
+animator = NodePath("Coin/AnimationPlayer")
+materials = Array[Material]([ExtResource("2_tud03"), ExtResource("3_6k27s")])
+
+[node name="Coin" parent="." instance=ExtResource("2_j6inb")]
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Coin"]
+libraries = {
+&"": SubResource("AnimationLibrary_ut2w0")
+}
+autoplay = "spawn"
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("SphereShape3D_tud03")
+
+[node name="CollectVFX" type="GPUParticles3D" parent="."]
+layers = 32
+material_override = ExtResource("5_6k27s")
+cast_shadow = 0
+emitting = false
+lifetime = 0.4
+one_shot = true
+explosiveness = 0.6
+fixed_fps = 0
+fract_delta = false
+process_material = SubResource("ParticleProcessMaterial_ipnsq")
+draw_pass_1 = SubResource("QuadMesh_b8pgm")
+
+[editable path="Coin"]

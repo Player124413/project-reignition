@@ -1,0 +1,24 @@
+[gd_scene load_steps=4 format=3 uid="uid://hdd7tlt77uqu"]
+
+[ext_resource type="Script" uid="uid://bdqr8rerf3ru6" path="res://party/scene/minigame/06 parasol diving/script/cloud.gd" id="1_6g2bd"]
+[ext_resource type="PackedScene" uid="uid://xq7x7nwhvjdr" path="res://party/scene/minigame/06 parasol diving/model/Cloud.glb" id="2_scrxx"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_gs8sf"]
+radius = 6.0
+height = 19.0
+
+[node name="Cloud" type="Area3D" groups=["enemy"]]
+collision_layer = 8
+collision_mask = 0
+monitoring = false
+script = ExtResource("1_6g2bd")
+
+[node name="Cloud" parent="." instance=ExtResource("2_scrxx")]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(-4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 0, 0, 1, 0, 2, 0)
+shape = SubResource("CapsuleShape3D_gs8sf")
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]
+
+[editable path="Cloud"]
