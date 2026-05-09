@@ -5,24 +5,12 @@ class_name GroupSfxPlayer extends AudioStreamPlayer
 @export_range(0.0, 1.0, 0.1, "or_greater") var base_volume : float = 1.0
 @export_range(0.0, 1.0, 0.1, "or_greater") var max_volume : float = 1.0
 @export_range(0.0, 1.0, 0.1) var min_volume : float = 0.2
-static var sfx_dictionary : Dictionary
 
 func _ready() -> void:
 	finished.connect(Callable(self, "stop_in_group"))
-	tree_exiting.connect(Callable(self, "stop_in_group"))
 
 func play_in_group() -> void:
-	if !sfx_dictionary.has(group):
-		sfx_dictionary.get_or_add(group, [self])
-	else:
-		sfx_dictionary[group].append(self)
-		# Adjust volume of all in group
-		var volume : float = 1.0 / sfx_dictionary[group].size()
-		for i in range(sfx_dictionary[group].size() - 1, 0):
-			if is_instance_valid(sfx_dictionary[group][i]):
-				sfx_dictionary[group][i].set_volume(volume)
-			else:
-				sfx_dictionary[group].remove_at(i)
+	GroupSfxManager.instance.register_player(self, group)
 	play()
 
 func set_volume(volume : float) -> void:
@@ -31,15 +19,5 @@ func set_volume(volume : float) -> void:
 	volume_linear = volume
 
 func stop_in_group() -> void:
+	GroupSfxManager.instance.unregister_player(self, group)
 	stop()
-	if !sfx_dictionary.has(group):
-		return
-	
-	var index : int = sfx_dictionary[group].find(self)
-	if index != -1:
-		sfx_dictionary[group].remove_at(index)
-		if sfx_dictionary[group].size() == 0:
-			sfx_dictionary.erase(group)
-
-func calculate_max_volume() -> float:
-	return base_volume;

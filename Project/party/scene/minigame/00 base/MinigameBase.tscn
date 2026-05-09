@@ -1,4 +1,4 @@
-[gd_scene load_steps=32 format=3 uid="uid://dsbufs8tjchk7"]
+[gd_scene load_steps=33 format=3 uid="uid://dsbufs8tjchk7"]
 
 [ext_resource type="Script" uid="uid://c2l8vamj7yw5f" path="res://party/script/core/minigame_manager.gd" id="1_2ioki"]
 [ext_resource type="LabelSettings" uid="uid://cqgp6rvtwclbe" path="res://party/font/minigame/MinigameResultOutline.tres" id="2_4rlr7"]
@@ -7,6 +7,7 @@
 [ext_resource type="PackedScene" uid="uid://lq2enbjppbyh" path="res://party/scene/minigame/00 base/ScorePopup.tscn" id="2_v6cmt"]
 [ext_resource type="Script" uid="uid://qvplfr0cibu5" path="res://party/script/interface/synced_label.gd" id="3_cusyw"]
 [ext_resource type="Texture2D" uid="uid://b5dlgr0imdal5" path="res://party/scene/minigame/00 base/interface/name.png" id="4_d74a3"]
+[ext_resource type="Script" uid="uid://cmtsm05dcuuff" path="res://party/scene/minigame/00 base/script/group_sfx_manager.gd" id="4_pr303"]
 [ext_resource type="LabelSettings" uid="uid://dukge6ihruibt" path="res://party/font/minigame/MinigameResultsFill.tres" id="5_sdy3o"]
 [ext_resource type="Texture2D" uid="uid://cm4dsrfm8yxab" path="res://party/font/minigame/MinigameGradientFill.tres" id="6_r20nr"]
 [ext_resource type="AudioStream" uid="uid://nueec3tqjh0r" path="res://party/sound/jingle/start.ogg" id="7_cusyw"]
@@ -1170,6 +1171,51 @@ tracks/1/keys = {
 "values": [Vector2(0.5, 0.5)]
 }
 
+[sub_resource type="Animation" id="Animation_prljn"]
+resource_name = "results-start"
+step = 0.05
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Fade:visible")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.8000004),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [true, false]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Fade:modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.29999995, 0.5, 0.8000004),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 0), Color(0, 0, 0, 1), Color(0, 0, 0, 1), Color(1, 1, 1, 0)]
+}
+tracks/2/type = "method"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath(".")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0.4000001, 0.95000005),
+"transitions": PackedFloat32Array(1, 1),
+"values": [{
+"args": [],
+"method": &"on_minigame_finished"
+}, {
+"args": [],
+"method": &"start_results"
+}]
+}
+
 [sub_resource type="Animation" id="Animation_jakhn"]
 resource_name = "results-win"
 length = 6.0
@@ -1302,51 +1348,6 @@ tracks/9/keys = {
 "values": [Vector2(1, 0), Vector2(1, 1), Vector2(1, -1), Vector2(1, 1.2), Vector2(1, 1)]
 }
 
-[sub_resource type="Animation" id="Animation_prljn"]
-resource_name = "results-start"
-step = 0.05
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("Fade:visible")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0, 0.8000004),
-"transitions": PackedFloat32Array(1, 1),
-"update": 1,
-"values": [true, false]
-}
-tracks/1/type = "value"
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/path = NodePath("Fade:modulate")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
-tracks/1/keys = {
-"times": PackedFloat32Array(0, 0.29999995, 0.5, 0.8000004),
-"transitions": PackedFloat32Array(1, 1, 1, 1),
-"update": 0,
-"values": [Color(1, 1, 1, 0), Color(0, 0, 0, 1), Color(0, 0, 0, 1), Color(1, 1, 1, 0)]
-}
-tracks/2/type = "method"
-tracks/2/imported = false
-tracks/2/enabled = true
-tracks/2/path = NodePath(".")
-tracks/2/interp = 1
-tracks/2/loop_wrap = true
-tracks/2/keys = {
-"times": PackedFloat32Array(0.4000001, 0.95000005),
-"transitions": PackedFloat32Array(1, 1),
-"values": [{
-"args": [],
-"method": &"on_minigame_finished"
-}, {
-"args": [],
-"method": &"start_results"
-}]
-}
-
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_cn0q6"]
 _data = {
 &"RESET": SubResource("Animation_cn0q6"),
@@ -1380,6 +1381,9 @@ subviewport_worlds = [NodePath("SplitscreenLayout/GridContainer/Player1/SubViewp
 results_location = [NodePath("ResultsLocation/P1"), NodePath("ResultsLocation/P2"), NodePath("ResultsLocation/P3"), NodePath("ResultsLocation/P4")]
 winner_labels = [NodePath("System/Result/Win/Win/Winners/Winner1Label"), NodePath("System/Result/Win/Win/Winners/Players23/Winner2Label"), NodePath("System/Result/Win/Win/Winners/Players23/Winner3Label")]
 score_popup_scene = ExtResource("2_v6cmt")
+
+[node name="GroupSfxManager" type="Node" parent="."]
+script = ExtResource("4_pr303")
 
 [node name="SplitscreenLayout" type="Control" parent="."]
 layout_mode = 1
