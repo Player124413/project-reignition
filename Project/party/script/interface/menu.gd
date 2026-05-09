@@ -24,8 +24,12 @@ const SELECTION_INTERVAL : float = .2;
 const SELECTION_SCROLLING_INTERVAL : float = .1;
 
 func _ready() -> void:
+	initialize()
 	if _is_menu_processing:
 		show_menu()
+
+func initialize() -> void:
+	pass
 
 func disable_processing() -> void:
 	_is_menu_processing = false
@@ -47,6 +51,10 @@ func process_cursor() -> void:
 
 ## Called every frame.
 func process_menu() -> void:
+	# Only allow host to control menus
+	if NetworkManager.is_online && !NetworkManager.is_hosting_game:
+		return
+	
 	# Default behavior is to listen for inputs.
 	if !is_zero_approx(selection_timer):
 		selection_timer = move_toward(selection_timer, 0, get_process_delta_time())

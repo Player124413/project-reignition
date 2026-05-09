@@ -1,8 +1,10 @@
-[gd_scene load_steps=29 format=3 uid="uid://dsbufs8tjchk7"]
+[gd_scene load_steps=32 format=3 uid="uid://dsbufs8tjchk7"]
 
 [ext_resource type="Script" uid="uid://c2l8vamj7yw5f" path="res://party/script/core/minigame_manager.gd" id="1_2ioki"]
 [ext_resource type="LabelSettings" uid="uid://cqgp6rvtwclbe" path="res://party/font/minigame/MinigameResultOutline.tres" id="2_4rlr7"]
 [ext_resource type="Texture2D" uid="uid://bagtdggnnvkjn" path="res://party/scene/minigame/00 base/interface/info.png" id="2_cusyw"]
+[ext_resource type="AnimationLibrary" uid="uid://dxk4h6c6yt1k0" path="res://party/scene/minigame/00 base/animation/_Library.glb" id="2_prljn"]
+[ext_resource type="PackedScene" uid="uid://lq2enbjppbyh" path="res://party/scene/minigame/00 base/ScorePopup.tscn" id="2_v6cmt"]
 [ext_resource type="Script" uid="uid://qvplfr0cibu5" path="res://party/script/interface/synced_label.gd" id="3_cusyw"]
 [ext_resource type="Texture2D" uid="uid://b5dlgr0imdal5" path="res://party/scene/minigame/00 base/interface/name.png" id="4_d74a3"]
 [ext_resource type="LabelSettings" uid="uid://dukge6ihruibt" path="res://party/font/minigame/MinigameResultsFill.tres" id="5_sdy3o"]
@@ -14,7 +16,6 @@
 [ext_resource type="Texture2D" uid="uid://r1jdsaivtfke" path="res://party/scene/minigame/00 base/interface/draw.png" id="10_jakhn"]
 [ext_resource type="AudioStream" uid="uid://dr4270ueftmkw" path="res://party/sound/jingle/lose.ogg" id="10_r20nr"]
 [ext_resource type="Script" uid="uid://cj76gvi7tbku6" path="res://sound/script/BGMPlayer.cs" id="14_v6cmt"]
-[ext_resource type="Resource" uid="uid://su3ug0op2nlh" path="res://party/resource/bgm/Minigame1.tres" id="15_prljn"]
 
 [sub_resource type="Animation" id="Animation_cn0q6"]
 length = 0.001
@@ -201,7 +202,7 @@ tracks/14/keys = {
 tracks/15/type = "value"
 tracks/15/imported = false
 tracks/15/enabled = true
-tracks/15/path = NodePath("System/Info/SetLabel:modulate")
+tracks/15/path = NodePath("System/Info/TimeLabel:modulate")
 tracks/15/interp = 1
 tracks/15/loop_wrap = true
 tracks/15/keys = {
@@ -213,7 +214,7 @@ tracks/15/keys = {
 tracks/16/type = "value"
 tracks/16/imported = false
 tracks/16/enabled = true
-tracks/16/path = NodePath("System/Info/SetLabel:scale")
+tracks/16/path = NodePath("System/Info/TimeLabel:scale")
 tracks/16/interp = 1
 tracks/16/loop_wrap = true
 tracks/16/keys = {
@@ -285,7 +286,7 @@ tracks/21/keys = {
 tracks/22/type = "value"
 tracks/22/imported = false
 tracks/22/enabled = true
-tracks/22/path = NodePath("System/Info/SetLabel:visible")
+tracks/22/path = NodePath("System/Info/TimeLabel:visible")
 tracks/22/interp = 1
 tracks/22/loop_wrap = true
 tracks/22/keys = {
@@ -390,6 +391,42 @@ tracks/30/keys = {
 "update": 0,
 "values": [Vector2(0.32, 0.32)]
 }
+tracks/31/type = "value"
+tracks/31/imported = false
+tracks/31/enabled = true
+tracks/31/path = NodePath("System/Info/SetLabel:modulate")
+tracks/31/interp = 1
+tracks/31/loop_wrap = true
+tracks/31/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+tracks/32/type = "value"
+tracks/32/imported = false
+tracks/32/enabled = true
+tracks/32/path = NodePath("System/Info/SetLabel:scale")
+tracks/32/interp = 1
+tracks/32/loop_wrap = true
+tracks/32/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(1, 1)]
+}
+tracks/33/type = "value"
+tracks/33/imported = false
+tracks/33/enabled = true
+tracks/33/path = NodePath("System/Info/SetLabel:visible")
+tracks/33/interp = 1
+tracks/33/loop_wrap = true
+tracks/33/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
 
 [sub_resource type="Animation" id="Animation_atj77"]
 resource_name = "demo-fade"
@@ -417,17 +454,19 @@ tracks/1/keys = {
 "update": 0,
 "values": [Color(1, 1, 1, 0), Color(0, 0, 0, 1), Color(0, 0, 0, 1), Color(1, 1, 1, 0)]
 }
-tracks/2/type = "value"
+tracks/2/type = "method"
 tracks/2/imported = false
 tracks/2/enabled = true
-tracks/2/path = NodePath("SplitscreenLayout:visible")
+tracks/2/path = NodePath(".")
 tracks/2/interp = 1
 tracks/2/loop_wrap = true
 tracks/2/keys = {
-"times": PackedFloat32Array(0, 0.43333334),
-"transitions": PackedFloat32Array(1, 1),
-"update": 1,
-"values": [false, true]
+"times": PackedFloat32Array(0.43333334),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"process_demo_transition"
+}]
 }
 
 [sub_resource type="Animation" id="Animation_t1cqd"]
@@ -592,7 +631,7 @@ tracks/2/keys = {
 
 [sub_resource type="Animation" id="Animation_d74a3"]
 resource_name = "minigame-finish"
-length = 3.0
+length = 2.0
 step = 0.05
 tracks/0/type = "method"
 tracks/0/imported = false
@@ -695,55 +734,28 @@ tracks/7/keys = {
 tracks/8/type = "value"
 tracks/8/imported = false
 tracks/8/enabled = true
-tracks/8/path = NodePath("Fade:visible")
+tracks/8/path = NodePath("System/Info/SetLabel:visible")
 tracks/8/interp = 1
 tracks/8/loop_wrap = true
 tracks/8/keys = {
-"times": PackedFloat32Array(2, 2.8000004),
-"transitions": PackedFloat32Array(1, 1),
-"update": 1,
-"values": [true, false]
-}
-tracks/9/type = "value"
-tracks/9/imported = false
-tracks/9/enabled = true
-tracks/9/path = NodePath("Fade:modulate")
-tracks/9/interp = 1
-tracks/9/loop_wrap = true
-tracks/9/keys = {
-"times": PackedFloat32Array(2, 2.3, 2.5, 2.8000004),
-"transitions": PackedFloat32Array(1, 1, 1, 1),
-"update": 0,
-"values": [Color(1, 1, 1, 0), Color(0, 0, 0, 1), Color(0, 0, 0, 1), Color(1, 1, 1, 0)]
-}
-tracks/10/type = "method"
-tracks/10/imported = false
-tracks/10/enabled = true
-tracks/10/path = NodePath(".")
-tracks/10/interp = 1
-tracks/10/loop_wrap = true
-tracks/10/keys = {
-"times": PackedFloat32Array(2.4, 2.95),
-"transitions": PackedFloat32Array(1, 1),
-"values": [{
-"args": [],
-"method": &"on_minigame_finished"
-}, {
-"args": [],
-"method": &"start_results"
-}]
-}
-tracks/11/type = "value"
-tracks/11/imported = false
-tracks/11/enabled = true
-tracks/11/path = NodePath("System/Info/SetLabel:visible")
-tracks/11/interp = 1
-tracks/11/loop_wrap = true
-tracks/11/keys = {
 "times": PackedFloat32Array(0, 1.4),
 "transitions": PackedFloat32Array(1, 1),
 "update": 1,
 "values": [true, false]
+}
+tracks/9/type = "method"
+tracks/9/imported = false
+tracks/9/enabled = true
+tracks/9/path = NodePath(".")
+tracks/9/interp = 1
+tracks/9/loop_wrap = true
+tracks/9/keys = {
+"times": PackedFloat32Array(1.95),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"attempt_autoplay_results"
+}]
 }
 
 [sub_resource type="Animation" id="Animation_cusyw"]
@@ -861,6 +873,135 @@ tracks/8/keys = {
 "transitions": PackedFloat32Array(1),
 "update": 0,
 "values": [Color(1, 1, 1, 1)]
+}
+
+[sub_resource type="Animation" id="Animation_v6cmt"]
+resource_name = "minigame-time"
+length = 2.0
+step = 0.05
+tracks/0/type = "method"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("System/Info/Set/FinishSFX")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [0.0],
+"method": &"play"
+}]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("System/Info:visible")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("System/Info/Set:scale")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 0.1),
+"transitions": PackedFloat32Array(0.5, 1),
+"update": 0,
+"values": [Vector2(1, 0), Vector2(1, 1)]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("System/Info/Set:visible")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0, 1.4),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [true, false]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("System/Info/Set:modulate")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0, 1, 1.4),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 1), Color(1, 1, 1, 1), Color(1, 1, 1, 0)]
+}
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("System/Info/TimeLabel:modulate")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0.1, 0.3, 1, 1.4),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 1), Color(1, 1, 1, 1), Color(1, 1, 1, 0)]
+}
+tracks/6/type = "value"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("System/Info/TimeLabel:scale")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"times": PackedFloat32Array(0.1, 0.2, 0.25, 0.29999998, 1, 1.1500001, 1.3999999),
+"transitions": PackedFloat32Array(0.5, 1, 0.5, 1, 2, 0.45062527, 1),
+"update": 0,
+"values": [Vector2(2, 2), Vector2(1, 1.5), Vector2(1.2, 0.8), Vector2(1, 1), Vector2(1, 1), Vector2(1, 2), Vector2(2, 0)]
+}
+tracks/7/type = "value"
+tracks/7/imported = false
+tracks/7/enabled = true
+tracks/7/path = NodePath("System/Info:modulate")
+tracks/7/interp = 1
+tracks/7/loop_wrap = true
+tracks/7/keys = {
+"times": PackedFloat32Array(0, 1, 1.4),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 1), Color(1, 1, 1, 1), Color(1, 1, 1, 0)]
+}
+tracks/8/type = "value"
+tracks/8/imported = false
+tracks/8/enabled = true
+tracks/8/path = NodePath("System/Info/TimeLabel:visible")
+tracks/8/interp = 1
+tracks/8/loop_wrap = true
+tracks/8/keys = {
+"times": PackedFloat32Array(0, 1.4),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [true, false]
+}
+tracks/9/type = "method"
+tracks/9/imported = false
+tracks/9/enabled = true
+tracks/9/path = NodePath(".")
+tracks/9/interp = 1
+tracks/9/loop_wrap = true
+tracks/9/keys = {
+"times": PackedFloat32Array(1.95),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"attempt_autoplay_results"
+}]
 }
 
 [sub_resource type="Animation" id="Animation_sdy3o"]
@@ -1161,6 +1302,51 @@ tracks/9/keys = {
 "values": [Vector2(1, 0), Vector2(1, 1), Vector2(1, -1), Vector2(1, 1.2), Vector2(1, 1)]
 }
 
+[sub_resource type="Animation" id="Animation_prljn"]
+resource_name = "results-start"
+step = 0.05
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Fade:visible")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.8000004),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [true, false]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Fade:modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.29999995, 0.5, 0.8000004),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 0), Color(0, 0, 0, 1), Color(0, 0, 0, 1), Color(1, 1, 1, 0)]
+}
+tracks/2/type = "method"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath(".")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0.4000001, 0.95000005),
+"transitions": PackedFloat32Array(1, 1),
+"values": [{
+"args": [],
+"method": &"on_minigame_finished"
+}, {
+"args": [],
+"method": &"start_results"
+}]
+}
+
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_cn0q6"]
 _data = {
 &"RESET": SubResource("Animation_cn0q6"),
@@ -1171,9 +1357,11 @@ _data = {
 &"free-for-all": SubResource("Animation_4rlr7"),
 &"minigame-finish": SubResource("Animation_d74a3"),
 &"minigame-start": SubResource("Animation_cusyw"),
+&"minigame-time": SubResource("Animation_v6cmt"),
 &"results-draw": SubResource("Animation_sdy3o"),
 &"results-multi-winner": SubResource("Animation_4205w"),
 &"results-solo-winner": SubResource("Animation_lsguc"),
+&"results-start": SubResource("Animation_prljn"),
 &"results-win": SubResource("Animation_jakhn")
 }
 
@@ -1185,11 +1373,13 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_2ioki")
+common_anim_library = ExtResource("2_prljn")
 splitscreen_parent = NodePath("SplitscreenLayout")
 animator = NodePath("AnimationPlayer")
 subviewport_worlds = [NodePath("SplitscreenLayout/GridContainer/Player1/SubViewport"), NodePath("SplitscreenLayout/GridContainer/Player2/SubViewport"), NodePath("SplitscreenLayout/GridContainer/Player3/SubViewport"), NodePath("SplitscreenLayout/GridContainer/Player4/SubViewport")]
 results_location = [NodePath("ResultsLocation/P1"), NodePath("ResultsLocation/P2"), NodePath("ResultsLocation/P3"), NodePath("ResultsLocation/P4")]
 winner_labels = [NodePath("System/Result/Win/Win/Winners/Winner1Label"), NodePath("System/Result/Win/Win/Winners/Players23/Winner2Label"), NodePath("System/Result/Win/Win/Winners/Players23/Winner3Label")]
+score_popup_scene = ExtResource("2_v6cmt")
 
 [node name="SplitscreenLayout" type="Control" parent="."]
 layout_mode = 1
@@ -1293,6 +1483,7 @@ color = Color(0, 0, 0, 1)
 [node name="Fade" type="ColorRect" parent="."]
 visible = false
 modulate = Color(1, 1, 1, 0)
+z_index = 200
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -1433,6 +1624,48 @@ vertical_alignment = 1
 uppercase = true
 
 [node name="Gradient" type="TextureRect" parent="System/Info/SetLabel/OutlineLabel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("6_r20nr")
+
+[node name="TimeLabel" type="Label" parent="System/Info"]
+visible = false
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = 78.0
+offset_bottom = -22.0
+grow_horizontal = 2
+grow_vertical = 2
+pivot_offset = Vector2(960, 130)
+text = "minigame_time"
+label_settings = ExtResource("2_4rlr7")
+horizontal_alignment = 1
+vertical_alignment = 1
+uppercase = true
+script = ExtResource("3_cusyw")
+metadata/_custom_type_script = "uid://qvplfr0cibu5"
+
+[node name="OutlineLabel" type="Label" parent="System/Info/TimeLabel"]
+clip_children = 1
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "minigame_time"
+label_settings = ExtResource("5_sdy3o")
+horizontal_alignment = 1
+vertical_alignment = 1
+uppercase = true
+
+[node name="Gradient" type="TextureRect" parent="System/Info/TimeLabel/OutlineLabel"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -1779,7 +2012,6 @@ next/demo-fade = &"minigame-start"
 [node name="BGM" type="AudioStreamPlayer" parent="."]
 bus = &"BGM"
 script = ExtResource("14_v6cmt")
-bgmResource = ExtResource("15_prljn")
 
 [connection signal="gameplay_finished" from="." to="BGM" method="stop"]
 [connection signal="gameplay_started" from="." to="BGM" method="Play"]

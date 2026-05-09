@@ -5,12 +5,12 @@ extends Menu
 
 ## References
 @export var attraction_menu : Menu
-@export var cursors : Array[Control]
-@export var previews : Array[Control]
+@export var cursors : Array[CharacterSelectCursor]
+@export var previews : Array[CharacterSelectPreview]
 @export var portrait_parent : HBoxContainer
 @export var portrait_scene : PackedScene
 var portraits : Array[Control]
-var active_cursor_count : int
+var finalized_selections : Array[bool]
 
 ## Number of rows for the portraits.
 const PORTRAIT_ROWS : int = 2
@@ -21,23 +21,25 @@ func _ready() -> void:
 		cursor.moved.connect(recieve_cursor_movement)
 		cursor.confirmed.connect(recieve_cursor_confirm)
 		cursor.cancelled.connect(recieve_cursor_cancel)
+		cursor.update_random.connect(recieve_random_update)
 	
 	for preview in previews:
 		preview.confirmed.connect(recieve_difficulty_confirm)
 		preview.cancelled.connect(recieve_difficulty_cancel)
+		preview.anim_finished.connect(recieve_animation_finished)
 	
 	initialize_portraits()
 
 func initialize_portraits() -> void:
 	@warning_ignore("integer_division")
-	var column_count : int = PartyManager._character_data.size() / PORTRAIT_ROWS
+	var column_count : int = PartyManager.character_data.size() / PORTRAIT_ROWS
 	for i in column_count:
 		var column_container : VBoxContainer = VBoxContainer.new()
 		column_container.add_theme_constant_override("separation", portrait_parent.get_theme_constant("separation"))
 		portrait_parent.add_child(column_container)
 	
-	for i in PartyManager._character_data.size():
-		var new_portrait : Control = create_portrait(PartyManager._character_data[i])
+	for i in PartyManager.character_data.size():
+		var new_portrait : Control = create_portrait(PartyManager.character_data[i])
 		portraits.append(new_portrait)
 		@warning_ignore("integer_division")
 		portrait_parent.get_child(i / PORTRAIT_ROWS).add_child(new_portrait)
@@ -79,20 +81,36 @@ func recieve_cursor_confirm(index : int) -> void:
 func recieve_cursor_cancel(index : int) -> void:
 	rpc("request_character_cancellation", index)
 
+func recieve_random_update(index : int) -> void:
+	rpc("request_random_movement", index)
+
+## Returns whether all selections have been finalized or not.
+func are_selections_finalized() -> bool:
+	for i in finalized_selections.size():
+		if !finalized_selections[i]:
+			return false
+	return true
+
 ## Tries to confirm a player's selection.
 @rpc("any_peer", "call_local", "reliable")
 func request_character_selection(index : int) -> void:
-	if !NetworkManager.is_hosting_game || active_cursor_count == 0:
+	if !NetworkManager.is_hosting_game || are_selections_finalized():
 		return
 	
 	var portrait : Control = get_portrait(cursors[index].current_selection)
 	var character_data : PartyCharacterResource = portrait.linked_character
 	if character_data == null:
-		print("Selecting Random is not implemented yet.")
+		character_data = get_random_character()
+		print("Randomly selected " + character_data.character_name)
+		PartyManager.rpc("set_character_data", cursors[index].port_index, character_data.character_name)
+		cursors[index].rpc("select_random", randi_range(1, 2))
+		cursors[index].rpc("set_current_selection", Vector2i.ZERO)
+		rpc("update_cursor_position", index, Vector2i.ZERO)
 		cursors[index].rpc("request_enable_processing")
 		return
 	
-	if PartyManager.get_character_index(character_data) != -1:
+	var player_index : int = PartyManager.get_character_index(character_data)
+	if player_index != -1 && player_index != cursors[index].port_index:
 		# Character is already taken; allow cursor movement again
 		cursors[index].rpc("request_enable_processing")
 		return
@@ -110,16 +128,49 @@ func request_character_selection(index : int) -> void:
 		return
 	advance_cursor_port(index)
 
+@rpc("any_peer", "call_local", "reliable")
+func request_random_movement(index : int) -> void:
+	if !NetworkManager.is_hosting_game:
+		return
+	
+	var port_index : int = cursors[index].port_index
+	var initial_portrait : Control = get_portrait(cursors[index].current_selection)
+	if initial_portrait.linked_character == PartyManager.get_player_data(port_index).character_data:
+		if cursors[index].random_count == 0:
+			cursors[index].rpc("finish_random")
+			cursors[index].confirm()
+			return
+		cursors[index].rpc("decrement_random_count")
+	
+	var cursor_selection : Vector2i = cursors[index].current_selection + Vector2i.RIGHT
+	@warning_ignore("integer_division")
+	var portrait_columns : int = portraits.size() / PORTRAIT_ROWS
+	if cursor_selection.x > portrait_columns - 1:
+		cursor_selection.x = 0
+		cursor_selection.y += 1
+	if cursor_selection.y < 0 || cursor_selection.y > PORTRAIT_ROWS - 1:
+		cursor_selection.y -= sign(cursor_selection.y) * PORTRAIT_ROWS
+	cursors[index].rpc("set_current_selection", cursor_selection) # Update the cursor's selection property
+	var portrait : Control = get_portrait(cursor_selection)
+	rpc("update_cursor_position", index, cursor_selection)
+	previews[cursors[index].port_index].rpc("set_character_text", "" if portrait.linked_character == null else portrait.linked_character.character_name)
+
+## Gets a random character.
+func get_random_character() -> PartyCharacterResource:
+	var character_index : int = randi_range(0, PartyManager.character_data.size() - 1)
+	while PartyManager.get_character_index(PartyManager.character_data[character_index]) != -1:
+		character_index = randi_range(0, PartyManager.character_data.size() - 1)
+	
+	return PartyManager.character_data[character_index]
+
 ## Tries to cancel a player's selection.
 @rpc("any_peer", "call_local", "reliable")
 func request_character_cancellation(index : int) -> void:
-	if !NetworkManager.is_hosting_game || active_cursor_count == 0:
+	if !NetworkManager.is_hosting_game || are_selections_finalized():
 		return
 	
-	if cursors[index].is_hidden:
-		active_cursor_count += 1
-	
 	var port_index : int = cursors[index].port_index
+	finalized_selections[port_index] = false
 	var player_data : PlayerData = PartyManager.get_player_data(port_index)
 	if player_data.character_data == null:
 		# Nothing was selected to begin with
@@ -148,16 +199,14 @@ func update_cursor_position(index : int, portrait_index : Vector2i) -> void:
 ## Updates (or disables if no ports are left to configure) a cursor to select the next player's port.
 func advance_cursor_port(index : int) -> void:
 	## Show the character model on the current port's preview
-	previews[cursors[index].port_index].rpc("select")
+	var port_index : int = cursors[index].port_index
+	previews[port_index].rpc("select", PartyManager.get_player_data(port_index).character_data.model_file)
 	var next_port : int = cursors[index].port_index + 1
 	for i in cursors.size():
 		if cursors[i].is_processing_inputs && cursors[i].port_index >= next_port:
 			next_port = cursors[i].port_index + 1
 	if next_port >= PartyManager.MAX_PLAYER_COUNT:
 		cursors[index].rpc("hide_cursor")
-		active_cursor_count -= 1
-		if active_cursor_count == 0:
-			rpc("queue_attraction_menu", NetworkManager.calculate_transition_tick())
 	else:
 		var portrait : Control = get_portrait(cursors[index].current_selection)
 		cursors[index].rpc("set_player_tag", next_port)
@@ -184,6 +233,14 @@ func recieve_difficulty_confirm(index : int, difficulty : int, cursor_index : in
 
 func recieve_difficulty_cancel(cursor_index : int) -> void:
 	rpc("request_character_cancellation", cursor_index)
+
+func recieve_animation_finished(port_index : int) -> void:
+	if !NetworkManager.is_hosting_game:
+		return
+	
+	finalized_selections[port_index] = true
+	if are_selections_finalized():
+		rpc("queue_attraction_menu", NetworkManager.calculate_transition_tick())
 
 @rpc("any_peer", "call_local", "reliable")
 func request_difficulty_selection(index : int, difficulty : int, cursor_index : int) -> void:
@@ -215,7 +272,7 @@ func show_menu() -> void:
 	for preview in previews:
 		preview.initialize()
 	
-	active_cursor_count = -1
+	finalized_selections.resize(PartyManager.MAX_PLAYER_COUNT)
 	super()
 
 ## Shows all the character portraits
@@ -235,12 +292,11 @@ func show_cursors() -> void:
 		return
 	var cpu_index = PartyManager.get_first_player_index_device(0)
 	var last_index = cpu_index if cpu_index != -1 else PartyManager.MAX_PLAYER_COUNT
-	active_cursor_count = 0
 	for i in last_index:
 		var selection : Vector2i = Vector2i.RIGHT * i
 		var portrait : Control = get_portrait(selection)
 		cursors[i].rpc("set_current_selection", selection)
-		active_cursor_count += 1
+		finalized_selections[i] = false
 		rpc("update_cursor_position", i, selection)
 		cursors[i].rpc("set_player_tag", i)
 		previews[i].rpc("set_character_text", "" if portrait.linked_character == null else portrait.linked_character.character_name)

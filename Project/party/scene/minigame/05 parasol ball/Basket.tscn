@@ -1,0 +1,158 @@
+[gd_scene load_steps=10 format=3 uid="uid://b7ti0ill2nhev"]
+
+[ext_resource type="PackedScene" uid="uid://fyxwf6fnm1as" path="res://party/scene/minigame/05 parasol ball/model/Basket.glb" id="1_78frh"]
+[ext_resource type="PackedScene" uid="uid://cho38gsk705f8" path="res://party/resource/character/scene/Omochao.tscn" id="2_n421a"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_n421a"]
+size = Vector3(41, 14, 2)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_aiu8g"]
+size = Vector3(2, 14, 30)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_78frh"]
+size = Vector3(38, 5, 28)
+
+[sub_resource type="Animation" id="Animation_aiu8g"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("BasketRoot:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0, 0, 0)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("BasketRoot/BasketTarget:position")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0, 0, 0)]
+}
+
+[sub_resource type="Animation" id="Animation_78frh"]
+resource_name = "init"
+length = 0.001
+step = 0.5
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("BasketRoot:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(25, 0, 0)]
+}
+
+[sub_resource type="Animation" id="Animation_n421a"]
+resource_name = "loop"
+length = 16.0
+loop_mode = 1
+step = 0.5
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("BasketRoot:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.5, 4, 7.5, 8, 8.5, 12, 15.5, 16),
+"transitions": PackedFloat32Array(1, 2, 0.5, 1, 1, 2, 0.5, 1, 1),
+"update": 0,
+"values": [Vector3(25, 0, 0), Vector3(25, 0, 0), Vector3(3.5, 0, 0), Vector3(-18, 0, 0), Vector3(-18, 0, 0), Vector3(-18, 0, 0), Vector3(3.5, 0, 0), Vector3(25, 0, 0), Vector3(25, 0, 0)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("BasketRoot/BasketTarget:position")
+tracks/1/interp = 2
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 4, 8, 12, 16),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"update": 0,
+"values": [Vector3(0, 0, 0), Vector3(-30, 0, 0), Vector3(0, 0, 0), Vector3(30, 0, 0), Vector3(0, 0, 0)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_aiu8g"]
+_data = {
+&"RESET": SubResource("Animation_aiu8g"),
+&"init": SubResource("Animation_78frh"),
+&"loop": SubResource("Animation_n421a")
+}
+
+[node name="Basket" type="Node3D"]
+
+[node name="BasketRoot" parent="." groups=["floor"] instance=ExtResource("1_78frh")]
+
+[node name="BasketMesh" parent="BasketRoot" index="0"]
+layers = 2
+
+[node name="StaticBody3D" type="StaticBody3D" parent="BasketRoot" groups=["wall"]]
+collision_layer = 8
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="BasketRoot/StaticBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, -14)
+shape = SubResource("BoxShape3D_n421a")
+
+[node name="CollisionShape3D2" type="CollisionShape3D" parent="BasketRoot/StaticBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 14)
+shape = SubResource("BoxShape3D_n421a")
+
+[node name="CollisionShape3D3" type="CollisionShape3D" parent="BasketRoot/StaticBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20, 8, 0)
+shape = SubResource("BoxShape3D_aiu8g")
+
+[node name="CollisionShape3D4" type="CollisionShape3D" parent="BasketRoot/StaticBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -20, 8, 0)
+shape = SubResource("BoxShape3D_aiu8g")
+
+[node name="CollectionTrigger" type="Area3D" parent="BasketRoot"]
+collision_layer = 8
+collision_mask = 0
+monitoring = false
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="BasketRoot/CollectionTrigger"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 7.5, 0)
+shape = SubResource("BoxShape3D_78frh")
+
+[node name="Omochao1" parent="BasketRoot" instance=ExtResource("2_n421a")]
+transform = Transform3D(0.4330127, 0, 0.25, 0, 0.5, 0, -0.25, 0, 0.4330127, -21.5, 10, -18.330128)
+
+[node name="AnimationPlayer" parent="BasketRoot/Omochao1/Omochao" index="1"]
+autoplay = "select"
+
+[node name="Omochao2" parent="BasketRoot" instance=ExtResource("2_n421a")]
+transform = Transform3D(0.43301272, 0, -0.24999999, 0, 0.5, 0, 0.24999999, 0, 0.43301272, 22.5, 10, -18.33)
+
+[node name="AnimationPlayer" parent="BasketRoot/Omochao2/Omochao" index="1"]
+autoplay = "select"
+
+[node name="BasketTarget" type="Node3D" parent="BasketRoot"]
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+&"": SubResource("AnimationLibrary_aiu8g")
+}
+autoplay = "init"
+
+[connection signal="area_entered" from="BasketRoot/CollectionTrigger" to="." method="_on_collection_trigger_area_entered"]
+
+[editable path="BasketRoot"]
+[editable path="BasketRoot/Omochao1"]
+[editable path="BasketRoot/Omochao1/Omochao"]
+[editable path="BasketRoot/Omochao2"]
+[editable path="BasketRoot/Omochao2/Omochao"]

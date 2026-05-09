@@ -1,0 +1,242 @@
+[gd_scene load_steps=10 format=3 uid="uid://cd0s36gih2ueg"]
+
+[ext_resource type="Script" uid="uid://dgnlrxpyocw8j" path="res://party/scene/minigame/03 cogwheel relay/script/cogwheel_controller.gd" id="1_lijki"]
+[ext_resource type="PackedScene" uid="uid://be21lrysd2f75" path="res://party/scene/minigame/03 cogwheel relay/SlimeMajin.tscn" id="2_ekyy7"]
+[ext_resource type="PackedScene" uid="uid://crqxft0pw0gkh" path="res://party/scene/minigame/03 cogwheel relay/model/Handle.glb" id="2_m17wm"]
+[ext_resource type="Script" uid="uid://ds056nimfywwr" path="res://party/script/core/rollback_timer.gd" id="3_65srd"]
+[ext_resource type="PackedScene" uid="uid://3nkov0ayj34m" path="res://party/scene/minigame/03 cogwheel relay/model/Gear.glb" id="3_ekyy7"]
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_ekyy7"]
+height = 3.0
+radius = 2.6000001
+
+[sub_resource type="Animation" id="Animation_m17wm"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("LowSide:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(-2, 0, 0)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("HighSide:position")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(2, 0, 0)]
+}
+
+[sub_resource type="Animation" id="Animation_lijki"]
+resource_name = "invert"
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("LowSide:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(2, 0, 0)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("HighSide:position")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(-2, 0, 0)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_m17wm"]
+_data = {
+&"RESET": SubResource("Animation_m17wm"),
+&"invert": SubResource("Animation_lijki")
+}
+
+[node name="Player1" type="Node3D" node_paths=PackedStringArray("cogwheels", "majin_spawn_positions", "handle", "majin_parent", "cpu_upper_bound", "cpu_lower_bound", "cpu_middle_bound", "rollback_timer", "spawn_position")]
+script = ExtResource("1_lijki")
+cogwheels = [NodePath("LowSide/GearLow"), NodePath("HighSide/GearHigh")]
+majin_spawn_positions = [NodePath("LowSide/SpawnLow"), NodePath("HighSide/SpawnHigh")]
+handle = NodePath("Handle")
+majin_parent = NodePath("Majin")
+cpu_upper_bound = NodePath("CPUUpperIgnore")
+cpu_lower_bound = NodePath("CPULowerIgnore")
+cpu_middle_bound = NodePath("CPUMiddle")
+rollback_timer = NodePath("Rollback")
+spawn_position = NodePath("PlayerPosition")
+
+[node name="Rollback" type="Node" parent="."]
+script = ExtResource("3_65srd")
+
+[node name="Handle" parent="." instance=ExtResource("2_m17wm")]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, -6, 4, 5)
+
+[node name="HandleMesh" parent="Handle" index="0"]
+layers = 2
+
+[node name="CPULowerIgnore" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 10, 0)
+
+[node name="CPUMiddle" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 19, 0)
+
+[node name="CPUUpperIgnore" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 30, 0)
+
+[node name="LowSide" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0, 0)
+
+[node name="GearLow" parent="LowSide" instance=ExtResource("3_ekyy7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 14, 0)
+
+[node name="GearMesh" parent="LowSide/GearLow" index="0"]
+layers = 2
+
+[node name="GearCollision" type="StaticBody3D" parent="LowSide/GearLow" groups=["player"]]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="LowSide/GearLow/GearCollision"]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0)
+shape = SubResource("CylinderShape3D_ekyy7")
+
+[node name="SpawnLow" type="Node3D" parent="LowSide"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 40, 0)
+
+[node name="HighSide" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0, 0)
+
+[node name="GearHigh" parent="HighSide" instance=ExtResource("3_ekyy7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 24, 0)
+
+[node name="GearMesh" parent="HighSide/GearHigh" index="0"]
+layers = 2
+
+[node name="GearCollision" type="StaticBody3D" parent="HighSide/GearHigh" groups=["ceiling", "player"]]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="HighSide/GearHigh/GearCollision"]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0)
+shape = SubResource("CylinderShape3D_ekyy7")
+
+[node name="SpawnHigh" type="Node3D" parent="HighSide"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 40, 0)
+
+[node name="PlayerPosition" type="Node3D" parent="."]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 0, 0, 10)
+
+[node name="Majin" type="Node3D" parent="."]
+
+[node name="SlimeMajin1" parent="Majin" instance=ExtResource("2_ekyy7")]
+
+[node name="SlimeMajin2" parent="Majin" instance=ExtResource("2_ekyy7")]
+
+[node name="SlimeMajin3" parent="Majin" instance=ExtResource("2_ekyy7")]
+
+[node name="SlimeMajin4" parent="Majin" instance=ExtResource("2_ekyy7")]
+
+[node name="SlimeMajin5" parent="Majin" instance=ExtResource("2_ekyy7")]
+
+[node name="SlimeMajin6" parent="Majin" instance=ExtResource("2_ekyy7")]
+
+[node name="SlimeMajin7" parent="Majin" instance=ExtResource("2_ekyy7")]
+
+[node name="SlimeMajin8" parent="Majin" instance=ExtResource("2_ekyy7")]
+
+[node name="SlimeMajin9" parent="Majin" instance=ExtResource("2_ekyy7")]
+
+[node name="SlimeMajin10" parent="Majin" instance=ExtResource("2_ekyy7")]
+
+[node name="SlimeMajin11" parent="Majin" instance=ExtResource("2_ekyy7")]
+
+[node name="SlimeMajin12" parent="Majin" instance=ExtResource("2_ekyy7")]
+
+[node name="SlimeMajin13" parent="Majin" instance=ExtResource("2_ekyy7")]
+
+[node name="SlimeMajin14" parent="Majin" instance=ExtResource("2_ekyy7")]
+
+[node name="SlimeMajin15" parent="Majin" instance=ExtResource("2_ekyy7")]
+
+[node name="SlimeMajin16" parent="Majin" instance=ExtResource("2_ekyy7")]
+
+[node name="SlimeMajin17" parent="Majin" instance=ExtResource("2_ekyy7")]
+
+[node name="SlimeMajin18" parent="Majin" instance=ExtResource("2_ekyy7")]
+
+[node name="SlimeMajin19" parent="Majin" instance=ExtResource("2_ekyy7")]
+
+[node name="SlimeMajin20" parent="Majin" instance=ExtResource("2_ekyy7")]
+
+[node name="SlimeMajin21" parent="Majin" instance=ExtResource("2_ekyy7")]
+
+[node name="SlimeMajin22" parent="Majin" instance=ExtResource("2_ekyy7")]
+
+[node name="SlimeMajin23" parent="Majin" instance=ExtResource("2_ekyy7")]
+
+[node name="SlimeMajin24" parent="Majin" instance=ExtResource("2_ekyy7")]
+
+[node name="SlimeMajin25" parent="Majin" instance=ExtResource("2_ekyy7")]
+
+[node name="SlimeMajin26" parent="Majin" instance=ExtResource("2_ekyy7")]
+
+[node name="SlimeMajin27" parent="Majin" instance=ExtResource("2_ekyy7")]
+
+[node name="SlimeMajin28" parent="Majin" instance=ExtResource("2_ekyy7")]
+
+[node name="SlimeMajin29" parent="Majin" instance=ExtResource("2_ekyy7")]
+
+[node name="SlimeMajin30" parent="Majin" instance=ExtResource("2_ekyy7")]
+
+[node name="SlimeMajin31" parent="Majin" instance=ExtResource("2_ekyy7")]
+
+[node name="SlimeMajin32" parent="Majin" instance=ExtResource("2_ekyy7")]
+
+[node name="SlimeMajin33" parent="Majin" instance=ExtResource("2_ekyy7")]
+
+[node name="SlimeMajin34" parent="Majin" instance=ExtResource("2_ekyy7")]
+
+[node name="SlimeMajin35" parent="Majin" instance=ExtResource("2_ekyy7")]
+
+[node name="SlimeMajin36" parent="Majin" instance=ExtResource("2_ekyy7")]
+
+[node name="SlimeMajin37" parent="Majin" instance=ExtResource("2_ekyy7")]
+
+[node name="SlimeMajin38" parent="Majin" instance=ExtResource("2_ekyy7")]
+
+[node name="SlimeMajin39" parent="Majin" instance=ExtResource("2_ekyy7")]
+
+[node name="SlimeMajin40" parent="Majin" instance=ExtResource("2_ekyy7")]
+
+[node name="SlimeMajin41" parent="Majin" instance=ExtResource("2_ekyy7")]
+
+[node name="SlimeMajin42" parent="Majin" instance=ExtResource("2_ekyy7")]
+
+[node name="SlimeMajin43" parent="Majin" instance=ExtResource("2_ekyy7")]
+
+[node name="SlimeMajin44" parent="Majin" instance=ExtResource("2_ekyy7")]
+
+[node name="SlimeMajin45" parent="Majin" instance=ExtResource("2_ekyy7")]
+
+[node name="DirectionAnimator" type="AnimationPlayer" parent="."]
+libraries = {
+&"": SubResource("AnimationLibrary_m17wm")
+}
+
+[editable path="Handle"]
+[editable path="LowSide/GearLow"]
+[editable path="HighSide/GearHigh"]

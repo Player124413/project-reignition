@@ -1,0 +1,403 @@
+[gd_scene load_steps=15 format=3 uid="uid://cg3rfa7pkutq5"]
+
+[ext_resource type="PackedScene" uid="uid://dsbufs8tjchk7" path="res://party/scene/minigame/00 base/MinigameBase.tscn" id="1_0e34q"]
+[ext_resource type="PackedScene" uid="uid://bdprj0jav5bid" path="res://party/scene/minigame/05 parasol ball/model/Map.glb" id="1_36t0w"]
+[ext_resource type="PackedScene" uid="uid://bivvedkvfmnm5" path="res://party/scene/minigame/05 parasol ball/model/Collision.glb" id="2_6kbes"]
+[ext_resource type="PackedScene" uid="uid://30sgb1pjxad8" path="res://party/scene/minigame/00 base/ScoreBottom.tscn" id="2_36t0w"]
+[ext_resource type="PackedScene" uid="uid://f5w7fq20xmd1" path="res://party/scene/minigame/00 base/Time.tscn" id="3_casa6"]
+[ext_resource type="Resource" uid="uid://dk1xshedb5pkp" path="res://party/resource/minigame/05ParasolBall.tres" id="4_0pqt4"]
+[ext_resource type="PackedScene" uid="uid://b7ti0ill2nhev" path="res://party/scene/minigame/05 parasol ball/Basket.tscn" id="4_fmn3e"]
+[ext_resource type="AnimationLibrary" uid="uid://d3q7b5jy25m52" path="res://party/scene/minigame/05 parasol ball/animation/_Library.glb" id="4_ft4ug"]
+[ext_resource type="PackedScene" uid="uid://f5wi8d1pc1ci" path="res://party/scene/minigame/05 parasol ball/Player.tscn" id="9_afcnm"]
+[ext_resource type="Script" uid="uid://dinbpl7tr4mf4" path="res://party/scene/minigame/05 parasol ball/script/parasol_ball_spawner.gd" id="10_ik6b2"]
+[ext_resource type="PackedScene" uid="uid://bvkej7ps0siog" path="res://party/scene/minigame/05 parasol ball/ParasolBall.tscn" id="11_6erql"]
+[ext_resource type="PackedScene" uid="uid://d1evp826ax3a5" path="res://party/scene/minigame/05 parasol ball/DemoPlayer.tscn" id="12_3jb57"]
+
+[sub_resource type="Environment" id="Environment_casa6"]
+ambient_light_source = 2
+ambient_light_color = Color(0.24909998, 0.43686503, 0.47, 1)
+tonemap_mode = 2
+tonemap_exposure = 1.2
+tonemap_white = 1.2
+glow_enabled = true
+glow_normalized = true
+adjustment_enabled = true
+adjustment_saturation = 1.2
+
+[sub_resource type="BoxMesh" id="BoxMesh_6erql"]
+size = Vector3(84, 1, 36)
+
+[node name="Game" type="Node3D"]
+
+[node name="Environment" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -27.5, 0, 0)
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="Environment"]
+environment = SubResource("Environment_casa6")
+
+[node name="ShadowLight" type="DirectionalLight3D" parent="Environment"]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 0, 0)
+light_color = Color(1, 0.9853333, 0.78, 1)
+light_cull_mask = 2
+shadow_enabled = true
+shadow_caster_mask = 3
+directional_shadow_mode = 1
+directional_shadow_max_distance = 250.0
+
+[node name="FillLight" type="DirectionalLight3D" parent="Environment"]
+transform = Transform3D(0.70710677, -0.6830127, 0.1830127, 0, 0.258819, 0.9659258, -0.7071067, -0.68301266, 0.18301268, 0, 0, 120)
+layers = 1024
+light_color = Color(1, 0.9853333, 0.78, 1)
+light_energy = 0.2
+light_cull_mask = 2
+directional_shadow_mode = 1
+directional_shadow_max_distance = 250.0
+
+[node name="ObjectLight" type="DirectionalLight3D" parent="Environment"]
+transform = Transform3D(0.70710677, -0.6830127, 0.1830127, 0, 0.258819, 0.9659258, -0.7071067, -0.68301266, 0.18301268, 0, 0, 120)
+layers = 1024
+light_color = Color(1, 0.9853333, 0.78, 1)
+light_cull_mask = 1
+directional_shadow_mode = 1
+directional_shadow_max_distance = 250.0
+
+[node name="Map" parent="Environment" instance=ExtResource("1_36t0w")]
+
+[node name="st_111_map_Mesh_0000" parent="Environment/Map/MapRoot/Skeleton3D" index="0"]
+layers = 2
+
+[node name="st_111_map_Mesh_0003" parent="Environment/Map/MapRoot/Skeleton3D" index="1"]
+layers = 2
+
+[node name="st_111_map_Mesh_0005" parent="Environment/Map/MapRoot/Skeleton3D" index="2"]
+layers = 2
+
+[node name="st_111_map_Mesh_0007" parent="Environment/Map/MapRoot/Skeleton3D" index="3"]
+layers = 2
+
+[node name="st_111_map_Mesh_0011" parent="Environment/Map/MapRoot/Skeleton3D" index="4"]
+layers = 2
+
+[node name="st_111_map_Mesh_0021" parent="Environment/Map/MapRoot/Skeleton3D" index="5"]
+layers = 2
+
+[node name="st_111_map_Mesh_0023" parent="Environment/Map/MapRoot/Skeleton3D" index="6"]
+layers = 2
+
+[node name="st_111_map_Mesh_0024" parent="Environment/Map/MapRoot/Skeleton3D" index="7"]
+layers = 2
+
+[node name="st_111_map_Mesh_0029" parent="Environment/Map/MapRoot/Skeleton3D" index="8"]
+layers = 2
+
+[node name="st_111_map_Mesh_0031" parent="Environment/Map/MapRoot/Skeleton3D" index="9"]
+layers = 2
+
+[node name="st_111_map_Mesh_0033" parent="Environment/Map/MapRoot/Skeleton3D" index="10"]
+layers = 2
+
+[node name="st_111_map_Mesh_0037" parent="Environment/Map/MapRoot/Skeleton3D" index="11"]
+layers = 2
+
+[node name="st_111_map_Mesh_0041" parent="Environment/Map/MapRoot/Skeleton3D" index="12"]
+layers = 2
+
+[node name="st_111_map_Mesh_0042" parent="Environment/Map/MapRoot/Skeleton3D" index="13"]
+layers = 2
+
+[node name="st_111_map_Mesh_0044" parent="Environment/Map/MapRoot/Skeleton3D" index="14"]
+layers = 2
+
+[node name="st_111_map_Mesh_0045" parent="Environment/Map/MapRoot/Skeleton3D" index="15"]
+layers = 2
+
+[node name="st_111_map_Mesh_0049" parent="Environment/Map/MapRoot/Skeleton3D" index="16"]
+layers = 2
+
+[node name="st_111_map_Mesh_0067" parent="Environment/Map/MapRoot/Skeleton3D" index="17"]
+layers = 2
+
+[node name="st_111_map_Mesh_0071" parent="Environment/Map/MapRoot/Skeleton3D" index="18"]
+layers = 2
+
+[node name="st_111_map_Mesh_0073" parent="Environment/Map/MapRoot/Skeleton3D" index="19"]
+layers = 2
+
+[node name="st_111_map_Mesh_0080" parent="Environment/Map/MapRoot/Skeleton3D" index="20"]
+layers = 2
+
+[node name="st_111_map_Mesh_0081" parent="Environment/Map/MapRoot/Skeleton3D" index="21"]
+layers = 2
+
+[node name="st_111_map_Mesh_0084" parent="Environment/Map/MapRoot/Skeleton3D" index="22"]
+layers = 2
+
+[node name="st_111_map_Mesh_0085" parent="Environment/Map/MapRoot/Skeleton3D" index="23"]
+layers = 2
+
+[node name="st_111_map_Mesh_0088" parent="Environment/Map/MapRoot/Skeleton3D" index="24"]
+layers = 2
+
+[node name="st_111_map_Mesh_0091" parent="Environment/Map/MapRoot/Skeleton3D" index="25"]
+layers = 2
+
+[node name="st_111_map_Mesh_0093" parent="Environment/Map/MapRoot/Skeleton3D" index="26"]
+layers = 2
+
+[node name="st_111_map_Mesh_0095" parent="Environment/Map/MapRoot/Skeleton3D" index="27"]
+layers = 2
+
+[node name="st_111_map_Mesh_0099" parent="Environment/Map/MapRoot/Skeleton3D" index="28"]
+layers = 2
+
+[node name="st_111_map_Mesh_0104" parent="Environment/Map/MapRoot/Skeleton3D" index="29"]
+layers = 2
+
+[node name="st_111_map_Mesh_0110" parent="Environment/Map/MapRoot/Skeleton3D" index="30"]
+layers = 2
+
+[node name="st_111_map_Mesh_0112" parent="Environment/Map/MapRoot/Skeleton3D" index="31"]
+layers = 2
+
+[node name="st_111_map_Mesh_0113" parent="Environment/Map/MapRoot/Skeleton3D" index="32"]
+layers = 2
+
+[node name="st_111_map_Mesh_0114" parent="Environment/Map/MapRoot/Skeleton3D" index="33"]
+layers = 2
+
+[node name="st_111_map_Mesh_0115" parent="Environment/Map/MapRoot/Skeleton3D" index="34"]
+layers = 2
+
+[node name="st_111_map_Mesh_0116" parent="Environment/Map/MapRoot/Skeleton3D" index="35"]
+layers = 2
+
+[node name="st_111_map_Mesh_0117" parent="Environment/Map/MapRoot/Skeleton3D" index="36"]
+layers = 2
+
+[node name="st_111_map_Mesh_0118" parent="Environment/Map/MapRoot/Skeleton3D" index="37"]
+layers = 2
+
+[node name="st_111_map_Mesh_0120" parent="Environment/Map/MapRoot/Skeleton3D" index="38"]
+layers = 2
+
+[node name="st_111_map_Mesh_0133" parent="Environment/Map/MapRoot/Skeleton3D" index="39"]
+layers = 2
+
+[node name="st_111_map_Mesh_0136" parent="Environment/Map/MapRoot/Skeleton3D" index="40"]
+layers = 2
+
+[node name="st_111_map_Mesh_0137" parent="Environment/Map/MapRoot/Skeleton3D" index="41"]
+layers = 2
+
+[node name="st_111_map_Mesh_0138" parent="Environment/Map/MapRoot/Skeleton3D" index="42"]
+layers = 2
+
+[node name="st_111_map_Mesh_0139" parent="Environment/Map/MapRoot/Skeleton3D" index="43"]
+layers = 2
+
+[node name="st_111_map_Mesh_0141" parent="Environment/Map/MapRoot/Skeleton3D" index="44"]
+layers = 2
+
+[node name="st_111_map_Mesh_0142" parent="Environment/Map/MapRoot/Skeleton3D" index="45"]
+layers = 2
+
+[node name="st_111_map_Mesh_0143" parent="Environment/Map/MapRoot/Skeleton3D" index="46"]
+layers = 2
+
+[node name="st_111_map_Mesh_0144" parent="Environment/Map/MapRoot/Skeleton3D" index="47"]
+layers = 2
+
+[node name="Collision" parent="Environment" instance=ExtResource("2_6kbes")]
+visible = false
+
+[node name="Minigame" parent="." node_paths=PackedStringArray("results_camera") instance=ExtResource("1_0e34q")]
+minigame_resource = ExtResource("4_0pqt4")
+anim_library = ExtResource("4_ft4ug")
+demo_transition_mode = 1
+autoplay_results = false
+results_camera = NodePath("../ResultsCamera")
+
+[node name="ResultsLocation" parent="Minigame" index="3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 127)
+
+[node name="P1" parent="Minigame/ResultsLocation" index="0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -24, 0, 0)
+
+[node name="P2" parent="Minigame/ResultsLocation" index="1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 0, 0)
+
+[node name="P3" parent="Minigame/ResultsLocation" index="2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 0, 0)
+
+[node name="P4" parent="Minigame/ResultsLocation" index="3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24, 0, 0)
+
+[node name="Time" parent="Minigame" instance=ExtResource("3_casa6")]
+layout_mode = 1
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -128.0
+offset_right = 128.0
+grow_horizontal = 2
+
+[node name="Scores" parent="." instance=ExtResource("2_36t0w")]
+
+[node name="Basket" parent="." instance=ExtResource("4_fmn3e")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 90)
+
+[node name="BallSpawner" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 60, 135)
+cast_shadow = 0
+mesh = SubResource("BoxMesh_6erql")
+script = ExtResource("10_ik6b2")
+spawn_bounds = Vector2(42, 18)
+total_spawn_length = 55.0
+
+[node name="ParasolBall1" parent="BallSpawner" instance=ExtResource("11_6erql")]
+
+[node name="ParasolBall2" parent="BallSpawner" instance=ExtResource("11_6erql")]
+
+[node name="ParasolBall3" parent="BallSpawner" instance=ExtResource("11_6erql")]
+
+[node name="ParasolBall4" parent="BallSpawner" instance=ExtResource("11_6erql")]
+
+[node name="ParasolBall5" parent="BallSpawner" instance=ExtResource("11_6erql")]
+
+[node name="ParasolBall6" parent="BallSpawner" instance=ExtResource("11_6erql")]
+
+[node name="ParasolBall7" parent="BallSpawner" instance=ExtResource("11_6erql")]
+
+[node name="ParasolBall8" parent="BallSpawner" instance=ExtResource("11_6erql")]
+
+[node name="ParasolBall9" parent="BallSpawner" instance=ExtResource("11_6erql")]
+
+[node name="ParasolBall10" parent="BallSpawner" instance=ExtResource("11_6erql")]
+
+[node name="ParasolBall11" parent="BallSpawner" instance=ExtResource("11_6erql")]
+
+[node name="ParasolBall12" parent="BallSpawner" instance=ExtResource("11_6erql")]
+
+[node name="ParasolBall13" parent="BallSpawner" instance=ExtResource("11_6erql")]
+
+[node name="ParasolBall14" parent="BallSpawner" instance=ExtResource("11_6erql")]
+
+[node name="ParasolBall15" parent="BallSpawner" instance=ExtResource("11_6erql")]
+
+[node name="ParasolBall16" parent="BallSpawner" instance=ExtResource("11_6erql")]
+
+[node name="ParasolBall17" parent="BallSpawner" instance=ExtResource("11_6erql")]
+
+[node name="ParasolBall18" parent="BallSpawner" instance=ExtResource("11_6erql")]
+
+[node name="ParasolBall19" parent="BallSpawner" instance=ExtResource("11_6erql")]
+
+[node name="ParasolBall20" parent="BallSpawner" instance=ExtResource("11_6erql")]
+
+[node name="ParasolBall21" parent="BallSpawner" instance=ExtResource("11_6erql")]
+
+[node name="ParasolBall22" parent="BallSpawner" instance=ExtResource("11_6erql")]
+
+[node name="ParasolBall23" parent="BallSpawner" instance=ExtResource("11_6erql")]
+
+[node name="ParasolBall24" parent="BallSpawner" instance=ExtResource("11_6erql")]
+
+[node name="ParasolBall25" parent="BallSpawner" instance=ExtResource("11_6erql")]
+
+[node name="ParasolBall26" parent="BallSpawner" instance=ExtResource("11_6erql")]
+
+[node name="ParasolBall27" parent="BallSpawner" instance=ExtResource("11_6erql")]
+
+[node name="ParasolBall28" parent="BallSpawner" instance=ExtResource("11_6erql")]
+
+[node name="ParasolBall29" parent="BallSpawner" instance=ExtResource("11_6erql")]
+
+[node name="ParasolBall30" parent="BallSpawner" instance=ExtResource("11_6erql")]
+
+[node name="ParasolBall31" parent="BallSpawner" instance=ExtResource("11_6erql")]
+
+[node name="ParasolBall32" parent="BallSpawner" instance=ExtResource("11_6erql")]
+
+[node name="ParasolBall33" parent="BallSpawner" instance=ExtResource("11_6erql")]
+
+[node name="ParasolBall34" parent="BallSpawner" instance=ExtResource("11_6erql")]
+
+[node name="ParasolBall35" parent="BallSpawner" instance=ExtResource("11_6erql")]
+
+[node name="ParasolBall36" parent="BallSpawner" instance=ExtResource("11_6erql")]
+
+[node name="ParasolBall37" parent="BallSpawner" instance=ExtResource("11_6erql")]
+
+[node name="ParasolBall38" parent="BallSpawner" instance=ExtResource("11_6erql")]
+
+[node name="ParasolBall39" parent="BallSpawner" instance=ExtResource("11_6erql")]
+
+[node name="ParasolBall40" parent="BallSpawner" instance=ExtResource("11_6erql")]
+
+[node name="ParasolBall41" parent="BallSpawner" instance=ExtResource("11_6erql")]
+
+[node name="ParasolBall42" parent="BallSpawner" instance=ExtResource("11_6erql")]
+
+[node name="ParasolBall43" parent="BallSpawner" instance=ExtResource("11_6erql")]
+
+[node name="ParasolBall44" parent="BallSpawner" instance=ExtResource("11_6erql")]
+
+[node name="ParasolBall45" parent="BallSpawner" instance=ExtResource("11_6erql")]
+
+[node name="Players" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 144)
+visible = false
+
+[node name="Player1" parent="Players" node_paths=PackedStringArray("basket", "score_counter") instance=ExtResource("9_afcnm")]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, -24, 0, 0)
+basket = NodePath("../../Basket/BasketRoot/BasketTarget")
+score_counter = NodePath("../../Scores/ScoreCounter1")
+
+[node name="Player2" parent="Players" node_paths=PackedStringArray("basket", "score_counter") instance=ExtResource("9_afcnm")]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, -8, 0, 0)
+basket = NodePath("../../Basket/BasketRoot/BasketTarget")
+player_index = 1
+score_counter = NodePath("../../Scores/ScoreCounter2")
+
+[node name="Player3" parent="Players" node_paths=PackedStringArray("basket", "score_counter") instance=ExtResource("9_afcnm")]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 8, 0, 0)
+basket = NodePath("../../Basket/BasketRoot/BasketTarget")
+player_index = 2
+score_counter = NodePath("../../Scores/ScoreCounter3")
+
+[node name="Player4" parent="Players" node_paths=PackedStringArray("basket", "score_counter") instance=ExtResource("9_afcnm")]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 24, 0, 0)
+basket = NodePath("../../Basket/BasketRoot/BasketTarget")
+player_index = 3
+score_counter = NodePath("../../Scores/ScoreCounter4")
+
+[node name="ParasolBall" parent="." instance=ExtResource("11_6erql")]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, -1, 60, 148)
+is_demo_ball = true
+
+[node name="DemoPlayer" parent="." node_paths=PackedStringArray("basket") instance=ExtResource("12_3jb57")]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 2, 0, 149)
+basket = NodePath("../Basket/BasketRoot")
+
+[node name="Camera" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.9063077, 0.42261827, 0, -0.42261827, 0.9063077, 0, 70, 250)
+cull_mask = 1027
+fov = 35.0
+
+[node name="ResultsCamera" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.99619466, 0.08715573, 0, -0.08715573, 0.99619466, 0, 20, 230)
+cull_mask = 1027
+fov = 30.0
+
+[connection signal="demo_transition_processed" from="Minigame" to="Players" method="set_visible" binds= [true]]
+[connection signal="gameplay_started" from="Minigame" to="Basket/AnimationPlayer" method="play" binds= [&"loop", -1.0, 1.0, false]]
+[connection signal="peers_loaded" from="Minigame" to="ParasolBall" method="start_demo"]
+
+[editable path="Environment/Map"]
+[editable path="Minigame"]
+[editable path="Scores"]
+[editable path="Basket"]
+[editable path="Basket/BasketRoot"]
+[editable path="Basket/BasketRoot/Omochao1"]
+[editable path="Basket/BasketRoot/Omochao1/Omochao"]
+[editable path="Basket/BasketRoot/Omochao2"]
+[editable path="Basket/BasketRoot/Omochao2/Omochao"]

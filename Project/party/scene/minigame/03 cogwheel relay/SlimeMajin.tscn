@@ -1,0 +1,52 @@
+[gd_scene load_steps=7 format=3 uid="uid://be21lrysd2f75"]
+
+[ext_resource type="Script" uid="uid://dd5b31n421be6" path="res://party/scene/minigame/03 cogwheel relay/script/majin_controller.gd" id="1_pkkib"]
+[ext_resource type="Material" uid="uid://m8tkr4fj8ghw" path="res://party/resource/character/model/material/Slime Red.tres" id="2_388ph"]
+[ext_resource type="Material" uid="uid://dnc5sxqserp6p" path="res://party/resource/character/model/material/Slime Gray.tres" id="3_rh6cn"]
+[ext_resource type="PackedScene" uid="uid://di2egba5hsjd4" path="res://party/resource/character/scene/SlimeMajin.tscn" id="4_pkkib"]
+[ext_resource type="Script" uid="uid://ds056nimfywwr" path="res://party/script/core/rollback_timer.gd" id="5_388ph"]
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_pkkib"]
+radius = 1.0
+
+[node name="SlimeMajin" type="Area3D" node_paths=PackedStringArray("collider", "mesh", "ceiling_raycast", "animator", "ground_raycast", "rollback_timer") groups=["enemy"]]
+collision_mask = 8
+script = ExtResource("1_pkkib")
+collider = NodePath("CollisionShape3D")
+mesh = NodePath("SlimeMajin/SlimeMajinRoot/Skeleton3D/SlimeMajinMesh")
+materials = Array[Material]([ExtResource("2_388ph"), ExtResource("3_rh6cn")])
+ceiling_raycast = NodePath("CeilingCast")
+animator = NodePath("SlimeMajin/AnimationPlayer")
+ground_raycast = NodePath("GroundCast")
+rollback_timer = NodePath("Rollback")
+
+[node name="SlimeMajin" parent="." instance=ExtResource("4_pkkib")]
+transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 0, 0)
+
+[node name="AnimationPlayer" parent="SlimeMajin" index="1"]
+blend_times = [&"land", &"idle", 0.1]
+
+[node name="GroundCast" type="RayCast3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+enabled = false
+target_position = Vector3(0, -1.5, 0)
+collide_with_areas = true
+
+[node name="CeilingCast" type="RayCast3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
+enabled = false
+target_position = Vector3(0, 1, 0)
+collide_with_areas = true
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+shape = SubResource("SphereShape3D_pkkib")
+disabled = true
+
+[node name="Rollback" type="Node" parent="."]
+script = ExtResource("5_388ph")
+
+[connection signal="area_entered" from="." to="." method="_on_area_entered"]
+[connection signal="area_exited" from="." to="." method="_on_area_exited"]
+
+[editable path="SlimeMajin"]

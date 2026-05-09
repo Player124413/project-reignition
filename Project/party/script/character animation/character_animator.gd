@@ -7,15 +7,14 @@ signal animation_event(info : int)
 @export var animator : AnimationPlayer
 @export var data : PartyCharacterResource
 
-## Emitted after the select animation finishes. Emitted from aniamtion.
+## Emitted after the select animation finishes. Emitted from animation.
 @warning_ignore("unused_signal")
 signal select_finished
 
 ## The index of this character
 var player_index : int
 
-# TODO Add support for more complex character animations
-
+# TODO Add support for more complex character animations (i.e. blending)
 func _ready() -> void:
 	player_index = PartyManager.get_character_index(data)
 	
@@ -30,24 +29,53 @@ func _ready() -> void:
 func emit_animation_event(info : int) -> void:
 	emit_signal("animation_event", info)
 
-## Plays a specific animation on the animator.
-func play_animation(anim : StringName) -> void:
-	if animator == null || !animator.has_animation(anim):
+## Returns whether an animation exists or not.
+func has_animation(anim : StringName) -> bool:
+	return animator.has_animation(anim)
+
+## Plays an animation locally.
+func play_animation(anim : StringName, reset : bool = false, blend : float = 0.0) -> void:
+	if animator == null || !has_animation(anim):
 		return
-	animator.play(anim)
-	animator.seek(0.0, true)
+	
+	if !reset && animator.assigned_animation == anim:
+		return
+	
+	animator.play(anim, blend)
+	
+	if reset:
+		animator.seek(0.0, true)
+
+## Gets the current animator's speed.
+func get_speed() -> float:
+	return animator.speed_scale
+
+## Gets the current animation position.
+func get_animation_position() -> float:
+	return animator.current_animation_position
+
+## Gets the current animation length.
+func get_animation_length() -> float:
+	return animator.current_animation_length
+
+## Sets the current animator's speed.
+func set_speed(value : float) -> void:
+	animator.speed_scale = value
+
+func get_current_animation() -> String:
+	return animator.assigned_animation
 
 ## Plays a specific mini-game animation on the animator.
 @rpc("any_peer", "call_local", "reliable")
-func play_minigame_animation(anim : StringName, blend : float = 0.0, speed : float = 1.0, tick : float = 0.0) -> void:
-	if animator == null || !animator.has_animation(anim):
+func play_minigame_animation(anim : StringName, blend : float = 0.0, speed : float = 1.0, seek : float = 0.0, tick : float = 0.0) -> void:
+	if animator == null || !has_animation(anim):
 		return
 	
-	var seek : float = 0.0
-	if !is_zero_approx(tick):
-		seek = NetworkTimeSynchronizer.get_time() - tick
-	animator.seek(seek, true)
 	animator.play("%s" % anim, blend, speed)
+	if !is_zero_approx(tick):
+		seek += NetworkTimeSynchronizer.get_time() - tick
+	seek = fmod(seek, get_animation_length())
+	animator.seek(seek, true)
 
 ## Seeks an animation to the given network tick.
 func network_seek(original_tick : float) -> void:
@@ -66,13 +94,14 @@ func on_minigame_finished() -> void:
 	
 	reparent(MinigameManager.instance.results_location[player_index])
 	transform = Transform3D.IDENTITY
-	play_animation("idle")
+	play_animation("%s/wait" % MinigameManager.COMMON_ANIMATION_LIBRARY_PREFIX)
 
 ## Play victory or loss animation
 func on_results_started() -> void:
 	if player_index == -1:
 		return
 	
+	set_speed(1)
 	if PartyManager.get_player_data(player_index).minigame_placement == 0:
 		play_animation("win")
 	else:

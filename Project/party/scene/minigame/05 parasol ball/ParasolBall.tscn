@@ -1,0 +1,193 @@
+[gd_scene load_steps=13 format=3 uid="uid://bvkej7ps0siog"]
+
+[ext_resource type="PackedScene" uid="uid://dq11nnbns4cqj" path="res://party/scene/minigame/05 parasol ball/model/Ball.glb" id="1_odj36"]
+[ext_resource type="Script" uid="uid://7540gp3bqv6e" path="res://party/scene/minigame/05 parasol ball/script/parasol_ball.gd" id="1_wbhdi"]
+[ext_resource type="Material" uid="uid://biofoktm0f068" path="res://party/scene/minigame/05 parasol ball/material/Ball Blue.tres" id="2_1a2t5"]
+[ext_resource type="Texture2D" uid="uid://bbxp6vo83xbo5" path="res://party/scene/minigame/05 parasol ball/texture/blob_shadow.png" id="2_c6exx"]
+[ext_resource type="Material" uid="uid://btopnwdc7dfmx" path="res://party/scene/minigame/05 parasol ball/material/Ball Red.tres" id="3_ivu4k"]
+
+[sub_resource type="Curve" id="Curve_ivu4k"]
+_data = [Vector2(0, 0), 0.0, 1.8277826, 0, 0, Vector2(1, 1), 0.842751, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="Curve" id="Curve_1a2t5"]
+_data = [Vector2(0, 0), 0.0, 3.0324786, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_wbhdi"]
+radius = 3.0
+
+[sub_resource type="Animation" id="Animation_c8h27"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Ball/BallRoot/Skeleton3D/BallMesh:transparency")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.0]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Ball/Shadow:modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Ball/BallRoot:position")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0, 0, 0)]
+}
+
+[sub_resource type="Animation" id="Animation_wbhdi"]
+resource_name = "destroy"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Ball/BallRoot/Skeleton3D/BallMesh:transparency")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.5),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [0.0, 1.0]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Ball/Shadow:modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.5),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 1), Color(1, 1, 1, 0)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Ball/BallRoot:position")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 0.5),
+"transitions": PackedFloat32Array(0.5, 1),
+"update": 0,
+"values": [Vector3(0, 0, 0), Vector3(0, 5, 0)]
+}
+tracks/3/type = "method"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("Ball/AnimationPlayer")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [&"RESET", -1, 1.0, false],
+"method": &"play"
+}]
+}
+
+[sub_resource type="Animation" id="Animation_1a2t5"]
+resource_name = "fall"
+length = 0.001
+tracks/0/type = "method"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Ball/AnimationPlayer")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [&"ball", -1, 1.0, false],
+"method": &"play"
+}]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_1a2t5"]
+_data = {
+&"RESET": SubResource("Animation_c8h27"),
+&"destroy": SubResource("Animation_wbhdi"),
+&"fall": SubResource("Animation_1a2t5")
+}
+
+[node name="ParasolBall" type="Area3D" node_paths=PackedStringArray("animator", "mesh", "left_raycast", "right_raycast") groups=["enemy"]]
+collision_layer = 8
+collision_mask = 8
+script = ExtResource("1_wbhdi")
+animator = NodePath("AnimationPlayer")
+mesh = NodePath("Ball/BallRoot/Skeleton3D/BallMesh")
+materials = Array[Material]([ExtResource("3_ivu4k"), ExtResource("2_1a2t5")])
+fall_curve = SubResource("Curve_ivu4k")
+hit_curve = SubResource("Curve_1a2t5")
+left_raycast = NodePath("LeftSide")
+right_raycast = NodePath("RightSide")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3, 0)
+shape = SubResource("SphereShape3D_wbhdi")
+
+[node name="Ball" parent="." instance=ExtResource("1_odj36")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3, 0)
+
+[node name="BallRoot" parent="Ball" index="0"]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0)
+
+[node name="BallMesh" parent="Ball/BallRoot/Skeleton3D" index="0"]
+cast_shadow = 0
+
+[node name="AnimationPlayer" parent="Ball" index="1"]
+blend_times = [&"ball", &"RESET", 0.5]
+
+[node name="Shadow" type="Decal" parent="Ball"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -24, 0)
+size = Vector3(10, 50, 10)
+texture_albedo = ExtResource("2_c6exx")
+texture_orm = ExtResource("2_c6exx")
+upper_fade = 0.01
+lower_fade = 0.5
+cull_mask = 2
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+&"": SubResource("AnimationLibrary_1a2t5")
+}
+
+[node name="LeftSide" type="RayCast3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0, 0)
+enabled = false
+target_position = Vector3(-5, 0, 0)
+collision_mask = 8
+
+[node name="RightSide" type="RayCast3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0, 0)
+enabled = false
+target_position = Vector3(5, 0, 0)
+collision_mask = 8
+
+[connection signal="area_entered" from="." to="." method="_on_area_entered"]
+
+[editable path="Ball"]

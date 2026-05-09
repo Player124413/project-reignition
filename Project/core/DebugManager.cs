@@ -89,7 +89,7 @@ public partial class DebugManager : Control
 
 		if (Input.IsActionJustPressed("debug_window_small"))
 		{
-			SaveManager.Config.windowSize = 0;
+			SaveManager.Config.windowSize = 1;
 			SaveManager.ApplyConfig();
 		}
 

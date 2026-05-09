@@ -162,7 +162,10 @@ func _process(_delta):
 	if not is_connected_to_host():
 		return
 
-	_peer.poll()
+	var error : Error = _peer.poll()
+	if _peer.get_status() != StreamPeerTCP.STATUS_CONNECTED || error != OK:
+		return
+	
 	var available = _peer.get_available_bytes()
 	if available <= 0:
 		return

@@ -1,7 +1,8 @@
-extends Control
+class_name CharacterSelectPreview extends Control
 
 signal confirmed(index : int, selection : int, cursor_index : int)
 signal cancelled(cursor_index : int)
+signal anim_finished(port_index : int)
 
 ## Tracks the index of the cursor that is configuring this preview.
 ## Used to enable the cursor after finishing difficulty adjustments.
@@ -82,7 +83,11 @@ func process_model_loading() -> void:
 	model_parent.add_child(instanced_model)
 	# TODO Play sfx
 	instanced_model.play_animation("select")
+	instanced_model.animation_event.connect(Callable(self, "on_select_finished"), CONNECT_ONE_SHOT)
 
+# Tell Character Select screen we're done.
+func on_select_finished(_info : int) -> void:
+	anim_finished.emit(get_index())
 
 ## Sets the selected difficulty and updates the cursor's position.
 @rpc("any_peer", "call_local", "reliable")
@@ -121,9 +126,9 @@ func set_character_text(text : String) -> void:
 
 ## Selects the character and loads the model
 @rpc("authority", "call_local", "reliable")
-func select() -> void:
+func select(model_path : String) -> void:
 	## Load character model
-	current_model_path = PartyManager.get_player_data(get_index()).character_data.model_file
+	current_model_path = model_path
 	print("Started loading model " + current_model_path)
 	if ResourceLoader.exists(current_model_path):
 		ResourceLoader.load_threaded_request(current_model_path)

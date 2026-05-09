@@ -1,15 +1,22 @@
-[gd_scene load_steps=19 format=3 uid="uid://c8wrhoilndl5h"]
+[gd_scene load_steps=31 format=3 uid="uid://c8wrhoilndl5h"]
 
 [ext_resource type="Script" uid="uid://0r15blspnpm8" path="res://party/scene/world library/script/world_library.gd" id="1_71mx1"]
 [ext_resource type="PackedScene" uid="uid://d3t70d3i5ire4" path="res://party/scene/world library/model/WorldLibrary.glb" id="1_ytcrv"]
 [ext_resource type="PackedScene" uid="uid://dqrs0sg3rfo1s" path="res://party/scene/world library/model/Book.glb" id="2_e318g"]
-[ext_resource type="Resource" uid="uid://lo4hf3o42ggq" path="res://party/resource/minigame/02HomeRun.tres" id="2_x6bjf"]
+[ext_resource type="Resource" uid="uid://can0xtf3s4ll8" path="res://party/resource/minigame/01BallRoll.tres" id="2_x6bjf"]
 [ext_resource type="Texture2D" uid="uid://dvus7cb7e13en" path="res://party/scene/party menu/texture/button.png" id="3_rkcga"]
 [ext_resource type="LabelSettings" path="res://party/font/WorldLibraryButton.tres" id="4_yq5mu"]
 [ext_resource type="Material" uid="uid://bhbsafmnnhtdb" path="res://effect/material/Canvas Item Add.tres" id="5_01kxe"]
 [ext_resource type="Texture2D" uid="uid://cmfbnrdapjnue" path="res://party/scene/party menu/texture/cursor hand.png" id="6_71mx1"]
 [ext_resource type="PackedScene" path="res://interface/menu/DescriptionParty.tscn" id="7_x6bjf"]
 [ext_resource type="PackedScene" uid="uid://crwawg2ivy3xd" path="res://interface/menu/NavigationButton.tscn" id="8_01kxe"]
+[ext_resource type="Texture2D" uid="uid://i8btrhq21720" path="res://party/scene/world library/sprite/flame decal.png" id="10_tniag"]
+[ext_resource type="Texture2D" uid="uid://bnjplrvhjfs87" path="res://party/scene/world library/sprite/corner decal.png" id="11_rk5cm"]
+[ext_resource type="LabelSettings" uid="uid://b80k145kso12q" path="res://party/font/WorldLibraryMinigameType.tres" id="11_yxc40"]
+[ext_resource type="PackedScene" uid="uid://cin7y4p7njars" path="res://party/scene/world library/MinigameOption.tscn" id="12_jvdxe"]
+[ext_resource type="LabelSettings" uid="uid://b3k06q5urpxjh" path="res://interface/font/PauseStatus.tres" id="13_jvdxe"]
+[ext_resource type="Texture2D" uid="uid://2qaaei658n63" path="res://party/scene/world library/sprite/minigame cursor.png" id="13_rtwdu"]
+[ext_resource type="Texture2D" uid="uid://u3nt7e5uvp48" path="res://party/scene/world library/sprite/arrow.png" id="14_d1pmx"]
 
 [sub_resource type="Environment" id="Environment_7bnmw"]
 background_mode = 1
@@ -55,6 +62,68 @@ tracks/0/keys = {
 _data = {
 &"RESET": SubResource("Animation_71mx1"),
 &"loop": SubResource("Animation_01kxe")
+}
+
+[sub_resource type="Animation" id="Animation_rtwdu"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Glow:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(1, 1)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Glow:modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+
+[sub_resource type="Animation" id="Animation_d1pmx"]
+resource_name = "loop"
+length = 2.0
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Glow:scale")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.13333334, 0.33333334),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector2(1, 1), Vector2(1, 1.5), Vector2(2, 0.5)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Glow:modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.13333334, 0.3),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 1), Color(1, 1, 1, 0)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_uqsuv"]
+_data = {
+&"RESET": SubResource("Animation_rtwdu"),
+&"loop": SubResource("Animation_d1pmx")
 }
 
 [sub_resource type="Animation" id="Animation_7bnmw"]
@@ -318,9 +387,127 @@ tracks/1/keys = {
 }]
 }
 
+[sub_resource type="Animation" id="Animation_rk5cm"]
+resource_name = "left"
+length = 0.8
+step = 0.05
+tracks/0/type = "animation"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Environment/SubViewport/Camera/Book/AnimationPlayer")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"clips": PackedStringArray("left"),
+"times": PackedFloat32Array(0)
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Menu:visible")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.05, 0.7),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 1,
+"values": [true, false, true]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Menu:modulate")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 0.7, 0.8),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 1), Color(1, 1, 1, 0), Color(1, 1, 1, 1)]
+}
+tracks/3/type = "method"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath(".")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0, 0.3, 0.7),
+"transitions": PackedFloat32Array(1, 1, 1),
+"values": [{
+"args": [],
+"method": &"disable_processing"
+}, {
+"args": [],
+"method": &"process_selection"
+}, {
+"args": [],
+"method": &"enable_processing"
+}]
+}
+
+[sub_resource type="Animation" id="Animation_x6bjf"]
+resource_name = "right"
+length = 0.8
+step = 0.05
+tracks/0/type = "animation"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Environment/SubViewport/Camera/Book/AnimationPlayer")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"clips": PackedStringArray("right"),
+"times": PackedFloat32Array(0)
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Menu:visible")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.05, 0.7),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 1,
+"values": [true, false, true]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Menu:modulate")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 0.7, 0.8),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 1), Color(1, 1, 1, 0), Color(1, 1, 1, 1)]
+}
+tracks/3/type = "method"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath(".")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0, 0.3, 0.7),
+"transitions": PackedFloat32Array(1, 1, 1),
+"values": [{
+"args": [],
+"method": &"disable_processing"
+}, {
+"args": [],
+"method": &"process_selection"
+}, {
+"args": [],
+"method": &"enable_processing"
+}]
+}
+
 [sub_resource type="Animation" id="Animation_e318g"]
 resource_name = "show"
-length = 3.0
+length = 2.0
 step = 0.05
 tracks/0/type = "animation"
 tracks/0/imported = false
@@ -356,24 +543,22 @@ tracks/2/keys = {
 "update": 0,
 "values": [Color(1, 1, 1, 0), Color(1, 1, 1, 0), Color(1, 1, 1, 1)]
 }
-tracks/3/type = "method"
+tracks/3/type = "value"
 tracks/3/imported = false
 tracks/3/enabled = true
-tracks/3/path = NodePath("Menu/DescriptionParty")
+tracks/3/path = NodePath("Menu/MainPage/Options/All/Button:scale")
 tracks/3/interp = 1
 tracks/3/loop_wrap = true
 tracks/3/keys = {
-"times": PackedFloat32Array(2),
-"transitions": PackedFloat32Array(1),
-"values": [{
-"args": [],
-"method": &"show_description"
-}]
+"times": PackedFloat32Array(1.35, 1.5, 1.7),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector2(0.5, 1), Vector2(1.05, 1), Vector2(1, 1)]
 }
 tracks/4/type = "value"
 tracks/4/imported = false
 tracks/4/enabled = true
-tracks/4/path = NodePath("Menu/MainPage/Options/All/Button:scale")
+tracks/4/path = NodePath("Menu/MainPage/Options/Record/Button:scale")
 tracks/4/interp = 1
 tracks/4/loop_wrap = true
 tracks/4/keys = {
@@ -385,7 +570,7 @@ tracks/4/keys = {
 tracks/5/type = "value"
 tracks/5/imported = false
 tracks/5/enabled = true
-tracks/5/path = NodePath("Menu/MainPage/Options/Record/Button:scale")
+tracks/5/path = NodePath("Menu/MainPage/Options/Survival/Button:scale")
 tracks/5/interp = 1
 tracks/5/loop_wrap = true
 tracks/5/keys = {
@@ -397,7 +582,7 @@ tracks/5/keys = {
 tracks/6/type = "value"
 tracks/6/imported = false
 tracks/6/enabled = true
-tracks/6/path = NodePath("Menu/MainPage/Options/Survival/Button:scale")
+tracks/6/path = NodePath("Menu/MainPage/Options/Ranking/Button:scale")
 tracks/6/interp = 1
 tracks/6/loop_wrap = true
 tracks/6/keys = {
@@ -409,7 +594,7 @@ tracks/6/keys = {
 tracks/7/type = "value"
 tracks/7/imported = false
 tracks/7/enabled = true
-tracks/7/path = NodePath("Menu/MainPage/Options/Ranking/Button:scale")
+tracks/7/path = NodePath("Menu/MainPage/Options/Point/Button:scale")
 tracks/7/interp = 1
 tracks/7/loop_wrap = true
 tracks/7/keys = {
@@ -421,7 +606,7 @@ tracks/7/keys = {
 tracks/8/type = "value"
 tracks/8/imported = false
 tracks/8/enabled = true
-tracks/8/path = NodePath("Menu/MainPage/Options/Point/Button:scale")
+tracks/8/path = NodePath("Menu/MainPage/Options/Character/Button:scale")
 tracks/8/interp = 1
 tracks/8/loop_wrap = true
 tracks/8/keys = {
@@ -433,7 +618,7 @@ tracks/8/keys = {
 tracks/9/type = "value"
 tracks/9/imported = false
 tracks/9/enabled = true
-tracks/9/path = NodePath("Menu/MainPage/Options/Character/Button:scale")
+tracks/9/path = NodePath("Menu/MainPage/Options/Race/Button:scale")
 tracks/9/interp = 1
 tracks/9/loop_wrap = true
 tracks/9/keys = {
@@ -445,7 +630,7 @@ tracks/9/keys = {
 tracks/10/type = "value"
 tracks/10/imported = false
 tracks/10/enabled = true
-tracks/10/path = NodePath("Menu/MainPage/Options/Race/Button:scale")
+tracks/10/path = NodePath("Menu/MainPage/Options/Final/Button:scale")
 tracks/10/interp = 1
 tracks/10/loop_wrap = true
 tracks/10/keys = {
@@ -457,19 +642,19 @@ tracks/10/keys = {
 tracks/11/type = "value"
 tracks/11/imported = false
 tracks/11/enabled = true
-tracks/11/path = NodePath("Menu/MainPage/Options/Final/Button:scale")
+tracks/11/path = NodePath("Menu/MainPage/Options/All/Button/Label:modulate")
 tracks/11/interp = 1
 tracks/11/loop_wrap = true
 tracks/11/keys = {
-"times": PackedFloat32Array(1.35, 1.5, 1.7),
-"transitions": PackedFloat32Array(1, 1, 1),
+"times": PackedFloat32Array(1.5, 1.75),
+"transitions": PackedFloat32Array(1, 1),
 "update": 0,
-"values": [Vector2(0.5, 1), Vector2(1.05, 1), Vector2(1, 1)]
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 1)]
 }
 tracks/12/type = "value"
 tracks/12/imported = false
 tracks/12/enabled = true
-tracks/12/path = NodePath("Menu/MainPage/Options/All/Button/Label:modulate")
+tracks/12/path = NodePath("Menu/MainPage/Options/Record/Button/Label:modulate")
 tracks/12/interp = 1
 tracks/12/loop_wrap = true
 tracks/12/keys = {
@@ -481,7 +666,7 @@ tracks/12/keys = {
 tracks/13/type = "value"
 tracks/13/imported = false
 tracks/13/enabled = true
-tracks/13/path = NodePath("Menu/MainPage/Options/Record/Button/Label:modulate")
+tracks/13/path = NodePath("Menu/MainPage/Options/Survival/Button/Label:modulate")
 tracks/13/interp = 1
 tracks/13/loop_wrap = true
 tracks/13/keys = {
@@ -493,7 +678,7 @@ tracks/13/keys = {
 tracks/14/type = "value"
 tracks/14/imported = false
 tracks/14/enabled = true
-tracks/14/path = NodePath("Menu/MainPage/Options/Survival/Button/Label:modulate")
+tracks/14/path = NodePath("Menu/MainPage/Options/Ranking/Button/Label:modulate")
 tracks/14/interp = 1
 tracks/14/loop_wrap = true
 tracks/14/keys = {
@@ -505,7 +690,7 @@ tracks/14/keys = {
 tracks/15/type = "value"
 tracks/15/imported = false
 tracks/15/enabled = true
-tracks/15/path = NodePath("Menu/MainPage/Options/Ranking/Button/Label:modulate")
+tracks/15/path = NodePath("Menu/MainPage/Options/Point/Button/Label:modulate")
 tracks/15/interp = 1
 tracks/15/loop_wrap = true
 tracks/15/keys = {
@@ -517,7 +702,7 @@ tracks/15/keys = {
 tracks/16/type = "value"
 tracks/16/imported = false
 tracks/16/enabled = true
-tracks/16/path = NodePath("Menu/MainPage/Options/Point/Button/Label:modulate")
+tracks/16/path = NodePath("Menu/MainPage/Options/Character/Button/Label:modulate")
 tracks/16/interp = 1
 tracks/16/loop_wrap = true
 tracks/16/keys = {
@@ -529,7 +714,7 @@ tracks/16/keys = {
 tracks/17/type = "value"
 tracks/17/imported = false
 tracks/17/enabled = true
-tracks/17/path = NodePath("Menu/MainPage/Options/Character/Button/Label:modulate")
+tracks/17/path = NodePath("Menu/MainPage/Options/Race/Button/Label:modulate")
 tracks/17/interp = 1
 tracks/17/loop_wrap = true
 tracks/17/keys = {
@@ -541,7 +726,7 @@ tracks/17/keys = {
 tracks/18/type = "value"
 tracks/18/imported = false
 tracks/18/enabled = true
-tracks/18/path = NodePath("Menu/MainPage/Options/Race/Button/Label:modulate")
+tracks/18/path = NodePath("Menu/MainPage/Options/Final/Button/Label:modulate")
 tracks/18/interp = 1
 tracks/18/loop_wrap = true
 tracks/18/keys = {
@@ -553,34 +738,22 @@ tracks/18/keys = {
 tracks/19/type = "value"
 tracks/19/imported = false
 tracks/19/enabled = true
-tracks/19/path = NodePath("Menu/MainPage/Options/Final/Button/Label:modulate")
+tracks/19/path = NodePath(".:visible")
 tracks/19/interp = 1
 tracks/19/loop_wrap = true
 tracks/19/keys = {
-"times": PackedFloat32Array(1.5, 1.75),
-"transitions": PackedFloat32Array(1, 1),
-"update": 0,
-"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 1)]
-}
-tracks/20/type = "value"
-tracks/20/imported = false
-tracks/20/enabled = true
-tracks/20/path = NodePath(".:visible")
-tracks/20/interp = 1
-tracks/20/loop_wrap = true
-tracks/20/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 1,
 "values": [true]
 }
-tracks/21/type = "method"
-tracks/21/imported = false
-tracks/21/enabled = true
-tracks/21/path = NodePath(".")
-tracks/21/interp = 1
-tracks/21/loop_wrap = true
-tracks/21/keys = {
+tracks/20/type = "method"
+tracks/20/imported = false
+tracks/20/enabled = true
+tracks/20/path = NodePath(".")
+tracks/20/interp = 1
+tracks/20/loop_wrap = true
+tracks/20/keys = {
 "times": PackedFloat32Array(0, 2),
 "transitions": PackedFloat32Array(1, 1),
 "values": [{
@@ -596,10 +769,12 @@ tracks/21/keys = {
 _data = {
 &"RESET": SubResource("Animation_7bnmw"),
 &"hide": SubResource("Animation_rkcga"),
+&"left": SubResource("Animation_rk5cm"),
+&"right": SubResource("Animation_x6bjf"),
 &"show": SubResource("Animation_e318g")
 }
 
-[node name="Library" type="Control" node_paths=PackedStringArray("animator")]
+[node name="Library" type="Control" node_paths=PackedStringArray("description", "default_page_root", "default_parent", "default_cursor", "minigame_page_root", "minigame_option_list_parent", "minigame_cursor", "animator")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -608,6 +783,13 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_71mx1")
 debug_minigame = ExtResource("2_x6bjf")
+description = NodePath("Menu/DescriptionParty")
+default_page_root = NodePath("Menu/MainPage")
+default_parent = NodePath("Menu/MainPage/Options")
+default_cursor = NodePath("Menu/MainPage/Options/All/Cursor")
+minigame_page_root = NodePath("Menu/MinigamePage")
+minigame_option_list_parent = NodePath("Menu/MinigamePage/Left/MinigameList")
+minigame_cursor = NodePath("Menu/MinigamePage/Left/MinigameList/MinigameOption1/Cursor")
 animator = NodePath("AnimationPlayer")
 _is_menu_processing = true
 
@@ -731,7 +913,7 @@ omni_range = 200.0
 transform = Transform3D(1, 0, 0, 0, 0.25881907, 0.9659258, 0, -0.9659258, 0.25881907, 0, 38, 100)
 layers = 1024
 light_color = Color(1, 0.79, 0.58000004, 1)
-light_energy = 1.5
+light_energy = 2.5
 light_cull_mask = 1
 shadow_enabled = true
 shadow_caster_mask = 1
@@ -748,12 +930,15 @@ fov = 50.0
 [node name="Book" parent="Environment/SubViewport/Camera" instance=ExtResource("2_e318g")]
 
 [node name="Menu" type="Control" parent="."]
-custom_minimum_size = Vector2(1280, 0)
+custom_minimum_size = Vector2(1200, 0)
 layout_mode = 1
-anchors_preset = 13
 anchor_left = 0.5
 anchor_right = 0.5
 anchor_bottom = 1.0
+offset_left = -624.0
+offset_top = 72.0
+offset_right = 616.0
+offset_bottom = -72.0
 grow_horizontal = 2
 grow_vertical = 2
 
@@ -773,9 +958,9 @@ anchor_left = 0.5
 anchor_right = 0.5
 anchor_bottom = 1.0
 offset_left = -600.0
-offset_top = 160.0
+offset_top = 120.0
 offset_right = 600.0
-offset_bottom = -360.0
+offset_bottom = -256.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/h_separation = 0
@@ -1049,15 +1234,283 @@ vertical_alignment = 1
 
 [node name="NavigationButton" parent="Menu/MainPage" instance=ExtResource("8_01kxe")]
 layout_mode = 1
-anchor_left = 0.5
-anchor_right = 0.5
-offset_left = 192.0
-offset_top = 104.0
-offset_right = 408.0
-offset_bottom = 152.0
-grow_horizontal = 2
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -424.0
+offset_top = 40.0
+offset_right = -208.0
+offset_bottom = 88.0
+grow_horizontal = 0
 ActionKey = &"sys_return"
 inputKey = &"button_secondary1"
+
+[node name="DecalTop" type="TextureRect" parent="Menu/MainPage"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -102.0
+offset_right = 102.0
+offset_bottom = 120.0
+grow_horizontal = 2
+texture = ExtResource("10_tniag")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="MinigamePage" type="Control" parent="Menu"]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Left" type="Control" parent="Menu/MinigamePage"]
+layout_mode = 1
+anchor_bottom = 1.0
+offset_right = 624.0
+grow_vertical = 2
+
+[node name="DecalLeft" type="TextureRect" parent="Menu/MinigamePage/Left"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -116.0
+offset_right = 116.0
+offset_bottom = 120.0
+grow_horizontal = 2
+texture = ExtResource("10_tniag")
+stretch_mode = 5
+
+[node name="Type" type="Label" parent="Menu/MinigamePage/Left"]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 1.0
+offset_top = 16.0
+offset_bottom = 81.0
+grow_horizontal = 2
+text = "All Party Games"
+label_settings = ExtResource("11_yxc40")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="MinigameList" type="VBoxContainer" parent="Menu/MinigamePage/Left"]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = 120.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 16
+
+[node name="MinigameOption1" parent="Menu/MinigamePage/Left/MinigameList" instance=ExtResource("12_jvdxe")]
+layout_mode = 2
+
+[node name="Cursor" type="TextureRect" parent="Menu/MinigamePage/Left/MinigameList/MinigameOption1"]
+show_behind_parent = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("13_rtwdu")
+expand_mode = 5
+stretch_mode = 5
+
+[node name="MinigameOption2" parent="Menu/MinigamePage/Left/MinigameList" instance=ExtResource("12_jvdxe")]
+layout_mode = 2
+
+[node name="MinigameOption3" parent="Menu/MinigamePage/Left/MinigameList" instance=ExtResource("12_jvdxe")]
+layout_mode = 2
+
+[node name="MinigameOption4" parent="Menu/MinigamePage/Left/MinigameList" instance=ExtResource("12_jvdxe")]
+layout_mode = 2
+
+[node name="MinigameOption5" parent="Menu/MinigamePage/Left/MinigameList" instance=ExtResource("12_jvdxe")]
+layout_mode = 2
+
+[node name="MinigameOption6" parent="Menu/MinigamePage/Left/MinigameList" instance=ExtResource("12_jvdxe")]
+layout_mode = 2
+
+[node name="MinigameOption7" parent="Menu/MinigamePage/Left/MinigameList" instance=ExtResource("12_jvdxe")]
+layout_mode = 2
+
+[node name="Navigation" type="Control" parent="Menu/MinigamePage/Left"]
+layout_mode = 1
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 64.0
+offset_top = -224.0
+offset_right = -64.0
+offset_bottom = -64.0
+grow_horizontal = 2
+grow_vertical = 0
+
+[node name="Back" type="Label" parent="Menu/MinigamePage/Left/Navigation"]
+layout_mode = 1
+anchors_preset = -1
+offset_left = 88.0
+offset_top = 8.0
+offset_right = 277.0
+offset_bottom = 54.17
+size_flags_vertical = 1
+text = "sys_back"
+label_settings = ExtResource("13_jvdxe")
+horizontal_alignment = 1
+vertical_alignment = 1
+uppercase = true
+
+[node name="Next" type="Label" parent="Menu/MinigamePage/Left/Navigation"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -272.0
+offset_top = 8.0
+offset_right = -83.0
+offset_bottom = 54.17
+grow_horizontal = 0
+size_flags_vertical = 1
+text = "sys_next"
+label_settings = ExtResource("13_jvdxe")
+horizontal_alignment = 1
+vertical_alignment = 1
+uppercase = true
+
+[node name="DecalLeft" type="TextureRect" parent="Menu/MinigamePage/Left/Navigation"]
+layout_mode = 1
+anchors_preset = -1
+offset_right = 96.00003
+offset_bottom = 64.0
+texture = ExtResource("10_tniag")
+stretch_mode = 5
+flip_h = true
+
+[node name="DecalRight" type="TextureRect" parent="Menu/MinigamePage/Left/Navigation"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -96.0
+offset_bottom = 64.0
+grow_horizontal = 0
+texture = ExtResource("10_tniag")
+stretch_mode = 5
+
+[node name="Left" type="TextureRect" parent="Menu/MinigamePage/Left/Navigation"]
+layout_mode = 1
+anchors_preset = -1
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 72.0
+offset_top = -112.0
+offset_right = 240.0
+grow_vertical = 0
+pivot_offset = Vector2(84, 56)
+texture = ExtResource("14_d1pmx")
+stretch_mode = 5
+
+[node name="Glow" type="TextureRect" parent="Menu/MinigamePage/Left/Navigation/Left"]
+material = ExtResource("5_01kxe")
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -168.0
+offset_top = -112.0
+grow_horizontal = 0
+grow_vertical = 0
+pivot_offset = Vector2(84, 56)
+texture = ExtResource("14_d1pmx")
+stretch_mode = 5
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Menu/MinigamePage/Left/Navigation/Left"]
+libraries = {
+&"": SubResource("AnimationLibrary_uqsuv")
+}
+autoplay = "loop"
+
+[node name="Right" type="TextureRect" parent="Menu/MinigamePage/Left/Navigation"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -256.0
+offset_top = -112.0
+offset_right = -88.0
+grow_horizontal = 0
+grow_vertical = 0
+pivot_offset = Vector2(84, 56)
+texture = ExtResource("14_d1pmx")
+stretch_mode = 5
+flip_h = true
+
+[node name="Glow" type="TextureRect" parent="Menu/MinigamePage/Left/Navigation/Right"]
+material = ExtResource("5_01kxe")
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -168.0
+offset_top = -112.0
+grow_horizontal = 0
+grow_vertical = 0
+pivot_offset = Vector2(84, 56)
+texture = ExtResource("14_d1pmx")
+stretch_mode = 5
+flip_h = true
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Menu/MinigamePage/Left/Navigation/Right"]
+libraries = {
+&"": SubResource("AnimationLibrary_uqsuv")
+}
+autoplay = "loop"
+
+[node name="Right" type="Control" parent="Menu/MinigamePage"]
+layout_mode = 1
+anchor_left = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -616.0
+grow_horizontal = 0
+grow_vertical = 2
+
+[node name="DecalBottomLeft" type="TextureRect" parent="Menu"]
+layout_mode = 1
+anchors_preset = -1
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_top = -144.0
+offset_right = 144.0
+grow_vertical = 0
+texture = ExtResource("11_rk5cm")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="DecalTopRight" type="TextureRect" parent="Menu"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -144.0
+offset_bottom = 144.0
+grow_horizontal = 0
+texture = ExtResource("11_rk5cm")
+expand_mode = 1
+stretch_mode = 5
+flip_h = true
+flip_v = true
 
 [node name="DescriptionParty" parent="Menu" instance=ExtResource("7_x6bjf")]
 layout_mode = 1
