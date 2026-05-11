@@ -1,4 +1,4 @@
-[gd_scene load_steps=116 format=3 uid="uid://ctfcgpodfhnp0"]
+[gd_scene load_steps=119 format=3 uid="uid://ctfcgpodfhnp0"]
 
 [ext_resource type="PackedScene" uid="uid://u5so6ulpdpsk" path="res://area/7 night palace/act 1/environment/01Start.tscn" id="1_c3xql"]
 [ext_resource type="Script" uid="uid://dtkbvehtmy3em" path="res://object/stage/StageSettings.cs" id="1_siayx"]
@@ -157,6 +157,15 @@ size = Vector3(10, 20, 2)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_pyq2g"]
 size = Vector3(40, 5, 30)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_tc8c3"]
+size = Vector3(20, 30, 60)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_g4ytx"]
+size = Vector3(80, 20, 285)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_c5pob"]
+size = Vector3(20, 30, 100)
 
 [sub_resource type="Animation" id="Animation_p0vwu"]
 length = 0.001
@@ -1756,23 +1765,24 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
 shape = SubResource("BoxShape3D_mow5f")
 
 [node name="SecondaryReflection6" parent="Trigger/Reflection" instance=ExtResource("4_d1bik")]
-transform = Transform3D(1.31134e-07, 0, 1, 0, 1, 0, -1, 0, 1.31134e-07, 319.005, -103.998, -490.011)
+transform = Transform3D(1.31134e-07, 0, 1, 0, 1, 0, -1, 0, 1.31134e-07, 372.005, -100.698, -490.011)
 "Trigger Mode" = 2
-"Exit Mode" = 2
+"Enter Mode" = 0
+"Exit Mode" = 0
 
 [node name="Hall" type="Node3D" parent="Trigger/Reflection/SecondaryReflection6" node_paths=PackedStringArray("reflectionRenderer")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.00012207, 3.34888, 52)
 script = ExtResource("8_ucc6w")
 reflectionRenderer = NodePath("../../../../SecondaryReflectionRenderer")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Trigger/Reflection/SecondaryReflection6"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
-shape = SubResource("BoxShape3D_mow5f")
+shape = SubResource("BoxShape3D_tc8c3")
 
 [node name="PrimaryReflection6" parent="Trigger/Reflection" instance=ExtResource("4_d1bik")]
-transform = Transform3D(1.31134e-07, 0, 1, 0, 1, 0, -1, 0, 1.31134e-07, 372.601, -100.649, -490.048)
+transform = Transform3D(1.31134e-07, 0, 1, 0, 1, 0, -1, 0, 1.31134e-07, 481.601, -100.649, -490.048)
 "Trigger Mode" = 2
-"Exit Mode" = 2
+"Enter Mode" = 0
+"Exit Mode" = 0
 
 [node name="Hall" type="Node3D" parent="Trigger/Reflection/PrimaryReflection6" node_paths=PackedStringArray("reflectionRenderer")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.45932, 22)
@@ -1780,8 +1790,22 @@ script = ExtResource("8_ucc6w")
 reflectionRenderer = NodePath("../../../../PrimaryReflectionRenderer")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Trigger/Reflection/PrimaryReflection6"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
-shape = SubResource("BoxShape3D_mow5f")
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 35)
+shape = SubResource("BoxShape3D_g4ytx")
+
+[node name="PrimaryReflectionReverse" parent="Trigger/Reflection" instance=ExtResource("4_d1bik")]
+transform = Transform3D(1.31134e-07, 0, 1, 0, 1, 0, -1, 0, 1.31134e-07, 343.601, -104, -490.048)
+"Trigger Mode" = 2
+"Enter Mode" = 0
+"Exit Mode" = 0
+
+[node name="Hall" type="Node3D" parent="Trigger/Reflection/PrimaryReflectionReverse" node_paths=PackedStringArray("reflectionRenderer")]
+script = ExtResource("8_ucc6w")
+reflectionRenderer = NodePath("../../../../PrimaryReflectionRenderer")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Trigger/Reflection/PrimaryReflectionReverse"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.00012207031, 13, -21.5)
+shape = SubResource("BoxShape3D_c5pob")
 
 [node name="GasRoomReflection" type="Node3D" parent="Trigger/Reflection" node_paths=PackedStringArray("reflectionRenderer")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1140, 0, -560)
