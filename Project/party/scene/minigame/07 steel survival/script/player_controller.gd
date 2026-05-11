@@ -35,7 +35,7 @@ var _throw_distance : float
 var _action_timer : float
 
 const MAX_SPIN_SPEED : float = 14.0
-const SPIN_ACCELERATION : float = 40
+const SPIN_ACCELERATION : float = 20
 const SPIN_DECELERATION : float = 80
 
 const THROW_LENGTH : float = 0.4

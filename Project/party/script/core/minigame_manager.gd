@@ -243,6 +243,9 @@ func on_gameplay_started() -> void:
 
 ## Emits the signal to teleport players to the results screen.
 func on_minigame_finished() -> void:
+	if is_instance_valid(intro_animator) && intro_animator.has_animation("finish"):
+		intro_animator.play("finish")
+	
 	minigame_finished.emit()
 	
 	for i in results_location.size():
