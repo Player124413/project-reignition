@@ -68,7 +68,7 @@ public partial class WorldSelect : Menu
 		int levelIndex = 0;
 		foreach (Menu item in _submenus) // Update new level statuses
 		{
-			if (item is LevelSelect levelSelect)
+			if (item is LevelSelect levelSelect && (item as LevelSelect).IsWorldUnlocked())
 			{
 				if (levelSelect.HasNewLevel())
 					newLevelList.Add(levelIndex);
