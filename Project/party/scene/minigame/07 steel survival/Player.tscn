@@ -1,24 +1,96 @@
-[gd_scene load_steps=4 format=3 uid="uid://chv67k88pbmx2"]
+[gd_scene load_steps=11 format=3 uid="uid://chv67k88pbmx2"]
 
 [ext_resource type="PackedScene" uid="uid://bnps6pgfyd6po" path="res://party/scene/minigame/07 steel survival/model/PlatformTop.glb" id="1_fs2wc"]
+[ext_resource type="Script" uid="uid://ds2yfogl28fbh" path="res://party/scene/minigame/07 steel survival/script/player_controller.gd" id="1_mtgim"]
 [ext_resource type="Script" uid="uid://dd24u7rlj0dwl" path="res://addons/custom_nodes/script/ObjectGenerator.cs" id="2_mtgim"]
 [ext_resource type="PackedScene" uid="uid://btea7jacrpr70" path="res://party/scene/minigame/07 steel survival/model/PlatformBlock.glb" id="3_bhnry"]
+[ext_resource type="PackedScene" uid="uid://dhch8v73igtdm" path="res://party/scene/minigame/07 steel survival/model/Spikeball.glb" id="5_bhnry"]
+[ext_resource type="PackedScene" uid="uid://t7bh6id6n2pp" path="res://party/scene/minigame/07 steel survival/model/Chain.glb" id="6_ppyg8"]
 
-[node name="Player" type="Node3D"]
+[sub_resource type="Curve" id="Curve_ppyg8"]
+_data = [Vector2(0, 0), 0.0, 2.0957532, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="Curve" id="Curve_lgll0"]
+_data = [Vector2(0.2, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_bhnry"]
+radius = 15.955
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_bhnry"]
+height = 40.0
+radius = 23.0
+
+[node name="Player" type="Node3D" node_paths=PackedStringArray("character_physics_parent", "surface_platform", "spike_ball_rotation", "spike_ball_position", "spike_ball", "hurtbox", "platform_parent", "spawn_position")]
+script = ExtResource("1_mtgim")
+character_physics_parent = NodePath("CharacterPhysics")
+surface_platform = NodePath("PlatformTop")
+spike_ball_rotation = NodePath("CharacterPhysics/SpikeballRotation")
+spike_ball_position = NodePath("CharacterPhysics/SpikeballRotation/SpikeballPosition")
+spike_ball = NodePath("CharacterPhysics/SpikeballRotation/SpikeballPosition/Hitbox")
+hurtbox = NodePath("Hurtbox")
+platform_parent = NodePath("Blocks")
+throw_curve = SubResource("Curve_ppyg8")
+recovery_curve = SubResource("Curve_lgll0")
+spawn_position = NodePath("CharacterPhysics/CharacterSpawn")
 
 [node name="PlatformTop" parent="." instance=ExtResource("1_fs2wc")]
 
-[node name="Blocks" type="Node3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -870, 0)
+[node name="CharacterPhysics" type="RigidBody3D" parent="."]
+transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 15, 0)
+gravity_scale = 50.0
+freeze = true
+
+[node name="CharacterSpawn" type="Node3D" parent="CharacterPhysics"]
+
+[node name="SpikeballRotation" type="Node3D" parent="CharacterPhysics"]
+transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 2.5, 0)
+
+[node name="SpikeballPosition" type="Node3D" parent="CharacterPhysics/SpikeballRotation"]
+transform = Transform3D(0.5, 0, 0, 0, -2.1855694e-08, -0.5, 0, 0.5, -2.1855694e-08, 0, 0, -15)
+
+[node name="Spikeball" parent="CharacterPhysics/SpikeballRotation/SpikeballPosition" instance=ExtResource("5_bhnry")]
+
+[node name="Hitbox" type="Area3D" parent="CharacterPhysics/SpikeballRotation/SpikeballPosition" groups=["enemy"]]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="CharacterPhysics/SpikeballRotation/SpikeballPosition/Hitbox"]
+shape = SubResource("SphereShape3D_bhnry")
+
+[node name="Chains" type="Node3D" parent="CharacterPhysics/SpikeballRotation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -30, 0)
 script = ExtResource("2_mtgim")
-Source = ExtResource("3_bhnry")
-Amount = 29
+Source = ExtResource("6_ppyg8")
+Amount = 10
 Shape = 0
 Orientation = 1
-Spacing = 30.0
+Spacing = 0.0
 "Horizontal Offset" = null
 "Vertical Offset" = null
 metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
+
+[node name="Child01" parent="CharacterPhysics/SpikeballRotation/Chains" instance=ExtResource("6_ppyg8")]
+
+[node name="Child02" parent="CharacterPhysics/SpikeballRotation/Chains" instance=ExtResource("6_ppyg8")]
+
+[node name="Child03" parent="CharacterPhysics/SpikeballRotation/Chains" instance=ExtResource("6_ppyg8")]
+
+[node name="Child04" parent="CharacterPhysics/SpikeballRotation/Chains" instance=ExtResource("6_ppyg8")]
+
+[node name="Child05" parent="CharacterPhysics/SpikeballRotation/Chains" instance=ExtResource("6_ppyg8")]
+
+[node name="Child06" parent="CharacterPhysics/SpikeballRotation/Chains" instance=ExtResource("6_ppyg8")]
+
+[node name="Child07" parent="CharacterPhysics/SpikeballRotation/Chains" instance=ExtResource("6_ppyg8")]
+
+[node name="Child08" parent="CharacterPhysics/SpikeballRotation/Chains" instance=ExtResource("6_ppyg8")]
+
+[node name="Child09" parent="CharacterPhysics/SpikeballRotation/Chains" instance=ExtResource("6_ppyg8")]
+
+[node name="Child10" parent="CharacterPhysics/SpikeballRotation/Chains" instance=ExtResource("6_ppyg8")]
+
+[node name="Blocks" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -870, 0)
 
 [node name="Child01" parent="Blocks" instance=ExtResource("3_bhnry")]
 
@@ -106,5 +178,11 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 810, 0)
 [node name="Child29" parent="Blocks" instance=ExtResource("3_bhnry")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 840, 0)
 
-[node name="CharacterSpawn" type="Node3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 15, 0)
+[node name="Hurtbox" type="Area3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -30, 0)
+monitoring = false
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Hurtbox"]
+shape = SubResource("CylinderShape3D_bhnry")
+
+[connection signal="area_entered" from="CharacterPhysics/SpikeballRotation/SpikeballPosition/Hitbox" to="." method="_on_hitbox_area_entered"]

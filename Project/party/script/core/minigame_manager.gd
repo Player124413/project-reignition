@@ -50,6 +50,8 @@ enum DEMO_TRANSITION {
 
 ## Disable this if you have something in the game that needs to finish before we can play the results.
 @export var autoplay_results : bool = true
+## Number of players that must "complete" the game the minigame to auto-complete.
+@export var autocomplete_player_count : int = 4
 ## Tracks whether we're ready to play the results screen or not (based on non-game elements).
 var is_results_queued : bool
 
@@ -185,7 +187,7 @@ func _change_score(player_index : int, amount : int) -> void:
 ## Adds one completed player and checks whether we should finish the mini-game.
 func register_completed_player() -> void:
 	completed_player_count += 1
-	if completed_player_count == PartyManager.MAX_PLAYER_COUNT:
+	if completed_player_count >= autocomplete_player_count:
 		request_minigame_finish()
 
 func request_minigame_start() -> void:
