@@ -44,7 +44,7 @@ const RECOVERY_LENGTH : float = 0.4
 const IDLE_DISTANCE : float = 15
 const THROW_DISTANCE : float = 150
 const SPIN_DISTANCE : float = 30
-const SPIN_HEIGHT : float = 0
+const SPIN_HEIGHT : float = 1
 
 const THROW_HEIGHT : float = -50
 const MINIMUM_THROW_SPEED : float = 0.6
@@ -59,6 +59,10 @@ func on_spawn_finished() -> void:
 	for child in platform_parent.get_children():
 		register_rigidbody(child.get_child(0) as RigidBody3D)
 	
+	for child in chain_parent.get_children():
+		_chains.append(child)
+	
+	hand_attachment.reparent(character_animator.skeleton)
 	register_rigidbody(surface_platform.get_child(0) as RigidBody3D)
 	_top_platform_position = _platforms[_platforms.size() - 2].position
 	MinigameManager.instance.request_score_change(player_index, MAX_HEALTH)
@@ -70,9 +74,8 @@ func register_rigidbody(rb : RigidBody3D) -> void:
 	rb.freeze = true
 	rb.gravity_scale = GRAVITY_SCALE
 
-
 func _physics_process(_delta: float) -> void:
-	if is_multiplayer_authority():
+	if !_is_gameplay_finished && is_multiplayer_authority():
 		process_input()
 	
 	process_movement_tick()
@@ -89,9 +92,8 @@ func process_input() -> void:
 	if is_pressed:
 		_state = STATE.SPINNING
 	elif _state == STATE.SPINNING:
-		# TODO Check for throw
 		var throw_ratio : float = _rotation_speed / MAX_SPIN_SPEED
-		if throw_ratio < MINIMUM_THROW_SPEED:
+		if throw_ratio < MINIMUM_THROW_SPEED || abs(angle_difference(_current_rotation, PI)) > PI * 0.8:
 			_state = STATE.IDLE
 		else:
 			_action_timer = 0
@@ -140,6 +142,7 @@ func process_animation() -> void:
 		update_animation()
 	
 	process_shaking()
+	process_chain()
 	
 	if _state == STATE.SPINNING: # Sync spin speeds
 		character_animator.set_speed(1.0 + _rotation_speed / MAX_SPIN_SPEED)
@@ -160,9 +163,34 @@ func process_shaking() -> void:
 	top_pos += Vector3.MODEL_FRONT * (1.0 - randf() * 2.0) * SHAKE_AMOUNT * shake_ratio
 	_platforms[_platforms.size() - 2].position = _top_platform_position + top_pos
 
+@export var chain_parent : Node3D
+@export var hand_attachment : BoneAttachment3D
+@export var chain_origin : Node3D
+var _chains : Array[Node3D]
+const CHAIN_SIZE : int = 10
+func process_chain() -> void:
+	var distance : Vector3 = spike_ball_position.global_position - chain_origin.global_position
+	var direction : Vector3 = distance.normalized()
+	var chain_length : int = floor(_current_distance / CHAIN_SIZE)
+	for i in _chains.size():
+		_chains[i].visible = i <= chain_length
+		if !_chains[i].visible:
+			continue
+		var pos : Vector3 = direction * CHAIN_SIZE
+		if i == chain_length:
+			pos = spike_ball_position.global_position - pos
+		else:
+			pos = chain_origin.global_position + pos * i
+		_chains[i].look_at_from_position(pos, spike_ball_position.global_position)
+		if i % 2 == 0:
+			_chains[i].rotate_object_local(Vector3.MODEL_FRONT, PI * 0.5)
+
+const SPIN_ANIM_LENGTH : float = 0.933
 func update_animation() -> void:
 	if _state == STATE.SPINNING:
-		character_animator.play_minigame_animation(get_anim_prefix() + "spin-c", 0.2)
+		var seek : float = _current_rotation / TAU
+		seek *= SPIN_ANIM_LENGTH
+		character_animator.play_minigame_animation(get_anim_prefix() + "spin-c", 0.2, 1.0, seek)
 	elif _state == STATE.IDLE || _state == STATE.RECOVERY:
 		character_animator.play_minigame_animation(get_anim_prefix() + "wait", 0.4)
 	elif _state == STATE.THROWING:

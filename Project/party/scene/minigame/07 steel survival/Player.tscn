@@ -22,7 +22,7 @@ radius = 15.955
 height = 40.0
 radius = 23.0
 
-[node name="Player" type="Node3D" node_paths=PackedStringArray("character_physics_parent", "surface_platform", "spike_ball_rotation", "spike_ball_position", "spike_ball", "hurtbox", "platform_parent", "spawn_position")]
+[node name="Player" type="Node3D" node_paths=PackedStringArray("character_physics_parent", "surface_platform", "spike_ball_rotation", "spike_ball_position", "spike_ball", "hurtbox", "platform_parent", "chain_parent", "hand_attachment", "chain_origin", "spawn_position")]
 script = ExtResource("1_mtgim")
 character_physics_parent = NodePath("CharacterPhysics")
 surface_platform = NodePath("PlatformTop")
@@ -33,7 +33,11 @@ hurtbox = NodePath("Hurtbox")
 platform_parent = NodePath("Blocks")
 throw_curve = SubResource("Curve_ppyg8")
 recovery_curve = SubResource("Curve_lgll0")
+chain_parent = NodePath("CharacterPhysics/SpikeballRotation/Chains")
+hand_attachment = NodePath("HandAttachment")
+chain_origin = NodePath("HandAttachment/ChainOrigin")
 spawn_position = NodePath("CharacterPhysics/CharacterSpawn")
+deactivate_on_gameplay_finished = false
 
 [node name="PlatformTop" parent="." instance=ExtResource("1_fs2wc")]
 
@@ -51,6 +55,7 @@ transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 2.5, 0)
 transform = Transform3D(0.5, 0, 0, 0, -2.1855694e-08, -0.5, 0, 0.5, -2.1855694e-08, 0, 0, -15)
 
 [node name="Spikeball" parent="CharacterPhysics/SpikeballRotation/SpikeballPosition" instance=ExtResource("5_bhnry")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -11.999998, 0)
 
 [node name="Hitbox" type="Area3D" parent="CharacterPhysics/SpikeballRotation/SpikeballPosition" groups=["enemy"]]
 
@@ -61,7 +66,7 @@ shape = SubResource("SphereShape3D_bhnry")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -30, 0)
 script = ExtResource("2_mtgim")
 Source = ExtResource("6_ppyg8")
-Amount = 10
+Amount = 20
 Shape = 0
 Orientation = 1
 Spacing = 0.0
@@ -88,6 +93,26 @@ metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
 [node name="Child09" parent="CharacterPhysics/SpikeballRotation/Chains" instance=ExtResource("6_ppyg8")]
 
 [node name="Child10" parent="CharacterPhysics/SpikeballRotation/Chains" instance=ExtResource("6_ppyg8")]
+
+[node name="Child11" parent="CharacterPhysics/SpikeballRotation/Chains" instance=ExtResource("6_ppyg8")]
+
+[node name="Child12" parent="CharacterPhysics/SpikeballRotation/Chains" instance=ExtResource("6_ppyg8")]
+
+[node name="Child13" parent="CharacterPhysics/SpikeballRotation/Chains" instance=ExtResource("6_ppyg8")]
+
+[node name="Child14" parent="CharacterPhysics/SpikeballRotation/Chains" instance=ExtResource("6_ppyg8")]
+
+[node name="Child15" parent="CharacterPhysics/SpikeballRotation/Chains" instance=ExtResource("6_ppyg8")]
+
+[node name="Child16" parent="CharacterPhysics/SpikeballRotation/Chains" instance=ExtResource("6_ppyg8")]
+
+[node name="Child17" parent="CharacterPhysics/SpikeballRotation/Chains" instance=ExtResource("6_ppyg8")]
+
+[node name="Child18" parent="CharacterPhysics/SpikeballRotation/Chains" instance=ExtResource("6_ppyg8")]
+
+[node name="Child19" parent="CharacterPhysics/SpikeballRotation/Chains" instance=ExtResource("6_ppyg8")]
+
+[node name="Child20" parent="CharacterPhysics/SpikeballRotation/Chains" instance=ExtResource("6_ppyg8")]
 
 [node name="Blocks" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -870, 0)
@@ -184,5 +209,13 @@ monitoring = false
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Hurtbox"]
 shape = SubResource("CylinderShape3D_bhnry")
+
+[node name="HandAttachment" type="BoneAttachment3D" parent="."]
+transform = Transform3D(0.30647463, -0.8422366, -0.44351918, -0.22739112, -0.5172302, 0.8250848, -0.924319, -0.15201524, -0.35003522, -2.1761835, 4.414789, 0.326791)
+bone_name = "hand_open_r_2"
+bone_idx = 46
+
+[node name="ChainOrigin" type="Node3D" parent="HandAttachment"]
+transform = Transform3D(1, -7.4505806e-08, 8.940697e-08, -8.940697e-08, 1, -9.313226e-08, 0, -2.2351742e-08, 1, -1.3791025, -1.1864777, 1.3001356)
 
 [connection signal="area_entered" from="CharacterPhysics/SpikeballRotation/SpikeballPosition/Hitbox" to="." method="_on_hitbox_area_entered"]
