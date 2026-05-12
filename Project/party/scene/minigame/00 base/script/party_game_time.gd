@@ -16,6 +16,7 @@ func _ready() -> void:
 	set_display_time(ceil(current_time))
 	
 	MinigameManager.instance.gameplay_started.connect(Callable.create(self, "on_gameplay_started"))
+	MinigameManager.instance.gameplay_finished.connect(Callable.create(self, "on_gameplay_finished"))
 	MinigameManager.instance.minigame_finished.connect(Callable.create(self, "on_minigame_finished"))
 
 func _physics_process(_delta: float) -> void:
@@ -41,6 +42,9 @@ func set_display_time(value : int) -> void:
 
 func on_gameplay_started() -> void:
 	visible = true
+
+func on_gameplay_finished() -> void:
+	set_physics_process(false)
 
 func on_minigame_finished() -> void:
 	visible = false

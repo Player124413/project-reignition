@@ -67,6 +67,10 @@ func on_spawn_finished() -> void:
 	_top_platform_position = _platforms[_platforms.size() - 2].position
 	MinigameManager.instance.request_score_change(player_index, MAX_HEALTH)
 	character_animator.play_minigame_animation(get_anim_prefix() + "wait")
+	
+	_current_distance = IDLE_DISTANCE
+	process_movement_tick()
+	call_deferred("process_animation")
 
 func register_rigidbody(rb : RigidBody3D) -> void:
 	_platforms.append(rb)
@@ -82,23 +86,90 @@ func _physics_process(_delta: float) -> void:
 	process_animation()
 
 func process_input() -> void:
-	if is_cpu():
+	if _state != STATE.IDLE && _state != STATE.SPINNING:
 		return
 	
-	if _state != STATE.IDLE && _state != STATE.SPINNING:
+	if is_cpu():
+		process_cpu_input()
 		return
 	
 	var is_pressed : bool = Input.is_action_pressed("button_primary" + get_input_suffix())
 	if is_pressed:
 		_state = STATE.SPINNING
 	elif _state == STATE.SPINNING:
+		attempt_throw()
+
+func can_throw() -> bool:
+	var throw_ratio : float = _rotation_speed / MAX_SPIN_SPEED
+	return throw_ratio > MINIMUM_THROW_SPEED && abs(angle_difference(_current_rotation, PI)) < PI
+
+func attempt_throw() -> void:
+	if can_throw():
+		_action_timer = 0
+		_state = STATE.THROWING
 		var throw_ratio : float = _rotation_speed / MAX_SPIN_SPEED
-		if throw_ratio < MINIMUM_THROW_SPEED || abs(angle_difference(_current_rotation, PI)) > PI * 0.8:
-			_state = STATE.IDLE
-		else:
-			_action_timer = 0
-			_throw_distance = lerp(SPIN_DISTANCE, THROW_DISTANCE, throw_ratio)
-			_state = STATE.THROWING
+		_throw_distance = lerp(SPIN_DISTANCE, THROW_DISTANCE, throw_ratio)
+		return
+	_state = STATE.IDLE
+
+@export var cpu_remaining_targets : Array[Node3D]
+var cpu_timer : float
+var cpu_target : int = -1
+const CPU_INTERVAL : float = 1.5
+const CPU_VARIANCE : float = 0.5
+const CPU_ROTATION_INTERVAL = PI * 0.5
+const CPU_THROW_RANGE = PI * 0.15
+const CPU_THROW_OFFSET = PI * 0.25
+func process_cpu_input() -> void:
+	if _state == STATE.IDLE:
+		_state = STATE.SPINNING
+		return
+	
+	cpu_timer = move_toward(cpu_timer, 0, get_physics_process_delta_time())
+	if !is_zero_approx(cpu_timer):
+		return
+	cpu_timer = CPU_INTERVAL - randf() * CPU_VARIANCE
+	
+	var difficulty : PlayerData.CPU_DIFFICULTY_ENUM = get_cpu_difficulty()
+	if difficulty == PlayerData.CPU_DIFFICULTY_ENUM.EASY:
+		# Low chance to randomly throw
+		if randf() > 0.8:
+			attempt_throw()
+		return
+	
+	if difficulty == PlayerData.CPU_DIFFICULTY_ENUM.NORMAL:
+		# Medium chance to randomly throw
+		if randf() > 0.5:
+			attempt_throw()
+		return
+	
+	if !can_throw():
+		return
+	
+	# Actually try to target a player
+	if cpu_target == -1 || cpu_target >= cpu_remaining_targets.size():
+		cpu_target = calculate_cpu_target()
+	
+	var throw_direction : Vector3 = cpu_remaining_targets[cpu_target].global_position - global_position
+	var target_throw_angle : float = Vector3.FORWARD.rotated(Vector3.UP, rotation.y).signed_angle_to(throw_direction, Vector3.UP)
+	target_throw_angle -= CPU_THROW_OFFSET
+	var angle_delta : float = abs(angle_difference(target_throw_angle, _current_rotation))
+	
+	if difficulty == PlayerData.CPU_DIFFICULTY_ENUM.HARD:
+		cpu_timer = randf() * CPU_VARIANCE
+	else:
+		cpu_timer = 0
+	
+	if angle_delta <= CPU_THROW_RANGE:
+		attempt_throw()
+		cpu_target = -1
+
+func calculate_cpu_target() -> int:
+	for i in range(cpu_remaining_targets.size() - 1, -1, -1):
+		if MinigameManager.instance.player_scores[cpu_remaining_targets[i].player_index] == 0:
+			# This target has been defeated
+			cpu_remaining_targets.remove_at(i)
+	return randi_range(0, cpu_remaining_targets.size() - 1)
 
 func process_rotation() -> void:
 	if _state == STATE.SPINNING:
@@ -106,9 +177,12 @@ func process_rotation() -> void:
 	else:
 		_rotation_speed = move_toward(_rotation_speed, 0, SPIN_DECELERATION * get_physics_process_delta_time())
 
-func process_throw_distance() -> void:
-	if _state == STATE.IDLE || _state == STATE.DAMAGE:
+func process_distance() -> void:
+	if _state == STATE.IDLE:
 		_current_distance = move_toward(_current_distance, IDLE_DISTANCE, SPIN_ACCELERATION * get_physics_process_delta_time())
+	elif _state == STATE.DAMAGE:
+		_current_distance = move_toward(_current_distance, IDLE_DISTANCE, SPIN_DECELERATION * get_physics_process_delta_time())
+		_current_height = move_toward(_current_height, SPIN_HEIGHT, SPIN_DECELERATION * get_physics_process_delta_time())
 	elif _state == STATE.SPINNING:
 		_current_distance = move_toward(_current_distance, SPIN_DISTANCE, SPIN_ACCELERATION * get_physics_process_delta_time())
 	elif _state == STATE.THROWING:
@@ -132,8 +206,9 @@ func finish_throw(hitstun : bool) -> void:
 
 func process_movement_tick() -> void:
 	process_rotation()
-	process_throw_distance()
+	process_distance()
 	_current_rotation += _rotation_speed * get_physics_process_delta_time()
+	_current_rotation = fmod(_current_rotation, TAU)
 	spike_ball_position.position = Vector3.FORWARD * _current_distance + Vector3.UP * _current_height
 	spike_ball_rotation.rotation = Vector3.UP * _current_rotation
 
