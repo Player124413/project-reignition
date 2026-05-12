@@ -18,8 +18,8 @@ enum AUTHORITY_MODE {
 	HOST
 }
 
-## How often to rollback
-@export var rollback_interval : float = 0.2
+## How often to rollback. Set this to 0 if there's enough network bandwidth.
+@export_range(0, 1, 0.01) var rollback_interval : float = 0.2
 ## Stores the latest time we've updated on the network
 var latest_network_time : float
 var rollback_interval_timer : float

@@ -1,6 +1,7 @@
 ### Player controller for the steel survival minigame.
 extends PartyGameCharacterSpawner
 
+@export var rollback_timer : RollbackTimer
 @export var character_physics_parent : RigidBody3D
 @export var surface_platform : Node3D
 @export var spike_ball_rotation : Node3D
@@ -56,6 +57,7 @@ const SHAKE_AMOUNT : float = 1.0
 const GRAVITY_SCALE : float = 100.0
 
 func on_spawn_finished() -> void:
+	rollback_timer.register_target(self)
 	for child in platform_parent.get_children():
 		register_rigidbody(child.get_child(0) as RigidBody3D)
 	
@@ -65,9 +67,11 @@ func on_spawn_finished() -> void:
 	hand_attachment.reparent(character_animator.skeleton)
 	register_rigidbody(surface_platform.get_child(0) as RigidBody3D)
 	_top_platform_position = _platforms[_platforms.size() - 2].position
-	MinigameManager.instance.request_score_change(player_index, MAX_HEALTH)
-	character_animator.play_minigame_animation(get_anim_prefix() + "wait")
 	
+	if is_multiplayer_authority():
+		MinigameManager.instance.request_score_change(player_index, MAX_HEALTH)
+	
+	character_animator.play_minigame_animation(get_anim_prefix() + "wait")
 	_current_distance = IDLE_DISTANCE
 	process_movement_tick()
 	call_deferred("process_animation")
@@ -84,6 +88,9 @@ func _physics_process(_delta: float) -> void:
 	
 	process_movement_tick()
 	process_animation()
+	
+	if is_multiplayer_authority():
+		process_rollback()
 
 func process_input() -> void:
 	if _state != STATE.IDLE && _state != STATE.SPINNING:
@@ -112,6 +119,39 @@ func attempt_throw() -> void:
 		return
 	_state = STATE.IDLE
 
+#####################
+### ROLLBACK CODE ###
+#####################
+const RB_DST : int = 0
+const RB_ROT : int = 1
+const RB_HEIGHT : int = 2
+const RB_SPD : int = 3
+const RB_THR : int = 4
+const RB_TIME : int = 5
+const RB_STATE : int = 6
+
+func on_rollback_applied(rb_params : Array) -> void:
+	_current_distance = rb_params[RB_DST]
+	_current_rotation = rb_params[RB_ROT]
+	_current_height = rb_params[RB_HEIGHT]
+	_rotation_speed = rb_params[RB_SPD]
+	_throw_distance = rb_params[RB_THR]
+	_action_timer = rb_params[RB_TIME]
+	_state = rb_params[RB_STATE]
+
+func process_rollback() -> void:
+	rollback_timer.set_param(RB_DST, _current_distance)
+	rollback_timer.set_param(RB_ROT, _current_rotation)
+	rollback_timer.set_param(RB_HEIGHT, _current_height)
+	rollback_timer.set_param(RB_SPD, _rotation_speed)
+	rollback_timer.set_param(RB_THR, _throw_distance)
+	rollback_timer.set_param(RB_TIME, _action_timer)
+	rollback_timer.set_param(RB_STATE, _state)
+	rollback_timer.process_rollback()
+
+################
+### CPU CODE ###
+################
 @export var cpu_remaining_targets : Array[Node3D]
 var cpu_timer : float
 var cpu_target : int = -1
@@ -307,6 +347,9 @@ func process_animation_event(info : int) -> void:
 
 func _on_hitbox_area_entered(area: Area3D) -> void:
 	if _state != STATE.THROWING:
+		return
+	
+	if !is_multiplayer_authority():
 		return
 	
 	if area == hurtbox: # Don't allow hitting self

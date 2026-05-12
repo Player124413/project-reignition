@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3 uid="uid://chv67k88pbmx2"]
+[gd_scene load_steps=12 format=3 uid="uid://chv67k88pbmx2"]
 
 [ext_resource type="PackedScene" uid="uid://bnps6pgfyd6po" path="res://party/scene/minigame/07 steel survival/model/PlatformTop.glb" id="1_fs2wc"]
 [ext_resource type="Script" uid="uid://ds2yfogl28fbh" path="res://party/scene/minigame/07 steel survival/script/player_controller.gd" id="1_mtgim"]
@@ -6,6 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://btea7jacrpr70" path="res://party/scene/minigame/07 steel survival/model/PlatformBlock.glb" id="3_bhnry"]
 [ext_resource type="PackedScene" uid="uid://dhch8v73igtdm" path="res://party/scene/minigame/07 steel survival/model/Spikeball.glb" id="5_bhnry"]
 [ext_resource type="PackedScene" uid="uid://t7bh6id6n2pp" path="res://party/scene/minigame/07 steel survival/model/Chain.glb" id="6_ppyg8"]
+[ext_resource type="Script" uid="uid://ds056nimfywwr" path="res://party/script/core/rollback_timer.gd" id="7_lgll0"]
 
 [sub_resource type="Curve" id="Curve_ppyg8"]
 _data = [Vector2(0, 0), 0.0, 2.0957532, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
@@ -22,8 +23,9 @@ radius = 15.955
 height = 40.0
 radius = 23.0
 
-[node name="Player" type="Node3D" node_paths=PackedStringArray("character_physics_parent", "surface_platform", "spike_ball_rotation", "spike_ball_position", "spike_ball", "hurtbox", "platform_parent", "chain_parent", "hand_attachment", "chain_origin", "spawn_position")]
+[node name="Player" type="Node3D" node_paths=PackedStringArray("rollback_timer", "character_physics_parent", "surface_platform", "spike_ball_rotation", "spike_ball_position", "spike_ball", "hurtbox", "platform_parent", "chain_parent", "hand_attachment", "chain_origin", "spawn_position")]
 script = ExtResource("1_mtgim")
+rollback_timer = NodePath("Rollback")
 character_physics_parent = NodePath("CharacterPhysics")
 surface_platform = NodePath("PlatformTop")
 spike_ball_rotation = NodePath("CharacterPhysics/SpikeballRotation")
@@ -217,5 +219,10 @@ bone_idx = 46
 
 [node name="ChainOrigin" type="Node3D" parent="HandAttachment"]
 transform = Transform3D(1, -7.4505806e-08, 8.940697e-08, -8.940697e-08, 1, -9.313226e-08, 0, -2.2351742e-08, 1, -1.3791025, -1.1864777, 1.3001356)
+
+[node name="Rollback" type="Node" parent="."]
+script = ExtResource("7_lgll0")
+param_count = 7
+rollback_interval = 0.0
 
 [connection signal="area_entered" from="CharacterPhysics/SpikeballRotation/SpikeballPosition/Hitbox" to="." method="_on_hitbox_area_entered"]
