@@ -1,10 +1,16 @@
 ### The player controller for the parasol ball minigame.
 extends PartyGameCharacterMover
 
+signal ball_hit
+
 @export var hand_attachment : BoneAttachment3D
 @export var collision_raycast : RayCast3D
 @export var aim_speed : float = 8.0
 @export var basket : Node3D
+
+@export var swing_sfx : GroupSfxPlayer
+@export var hit_sfx : GroupSfxPlayer
+
 const HIT_HEIGHT : int = 30
 const HIT_DIRECTION_INFLUENCE : float = PI * 0.2
 var ball_targets : Array[Area3D]
@@ -56,6 +62,10 @@ func process_animation_event(event : int) -> void:
 		hit_balls(-1 if event == ANIM_SHOT_LEFT else 1)
 
 func hit_balls(dir : int) -> void:
+	if ball_targets.size() != 0:
+		hit_sfx.play_in_group()
+		ball_hit.emit()
+	
 	# Launch all balls in range
 	swing_state = SWING_STATE.RECOVERY
 	for ball in ball_targets:
@@ -85,6 +95,7 @@ func process_inputs() -> void:
 @rpc("any_peer", "call_local", "reliable")
 func start_swing(tick : float, dir : int) -> void:
 	swing_state = SWING_STATE.AIMING
+	swing_sfx.play_in_group()
 	var target_anim : StringName
 	if dir == 1:
 		target_anim = get_anim_prefix() + "shot-right"
