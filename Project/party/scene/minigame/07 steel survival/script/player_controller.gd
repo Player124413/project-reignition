@@ -1,6 +1,8 @@
 ### Player controller for the steel survival minigame.
 extends PartyGameCharacterSpawner
 
+signal hit
+
 @export var rollback_timer : RollbackTimer
 @export var character_physics_parent : RigidBody3D
 @export var surface_platform : Node3D
@@ -11,6 +13,14 @@ extends PartyGameCharacterSpawner
 @export var platform_parent : Node3D
 @export var throw_curve : Curve
 @export var recovery_curve : Curve
+
+@export var spin_sfx : GroupSfxPlayer
+@export var hit_sfx : GroupSfxPlayer
+@export var throw_sfx : GroupSfxPlayer
+@export var crumble_sfx : AudioStreamPlayer
+
+var spin_sfx_timer : float
+const SPIN_SFX_INTERVAL : float = 0.5
 
 var _platforms : Array[RigidBody3D]
 
@@ -41,13 +51,17 @@ const SPIN_DECELERATION : float = 80
 
 const THROW_LENGTH : float = 0.4
 const RECOVERY_LENGTH : float = 0.4
+const IDLE_ACCELERATION : float = 160
 
 const IDLE_DISTANCE : float = 15
-const THROW_DISTANCE : float = 150
-const SPIN_DISTANCE : float = 30
-const SPIN_HEIGHT : float = 1
+const IDLE_HEIGHT : float = 0
 
+const SPIN_DISTANCE : float = 30
+const SPIN_HEIGHT : float = 30
+
+const THROW_DISTANCE : float = 150
 const THROW_HEIGHT : float = -50
+const THROW_HEIGHT_MULTIPLIER : float = 5
 const MINIMUM_THROW_SPEED : float = 0.6
 const HITSTUN_LENGTH : float = 0.4
 
@@ -83,7 +97,7 @@ func register_rigidbody(rb : RigidBody3D) -> void:
 	rb.gravity_scale = GRAVITY_SCALE
 
 func _physics_process(_delta: float) -> void:
-	if !_is_gameplay_finished && is_multiplayer_authority():
+	if is_multiplayer_authority() && !_is_gameplay_finished:
 		process_input()
 	
 	process_movement_tick()
@@ -114,6 +128,7 @@ func attempt_throw() -> void:
 	if can_throw():
 		_action_timer = 0
 		_state = STATE.THROWING
+		throw_sfx.play_in_group()
 		var throw_ratio : float = _rotation_speed / MAX_SPIN_SPEED
 		_throw_distance = lerp(SPIN_DISTANCE, THROW_DISTANCE, throw_ratio)
 		return
@@ -218,24 +233,28 @@ func process_rotation() -> void:
 		_rotation_speed = move_toward(_rotation_speed, 0, SPIN_DECELERATION * get_physics_process_delta_time())
 
 func process_distance() -> void:
-	if _state == STATE.IDLE:
-		_current_distance = move_toward(_current_distance, IDLE_DISTANCE, SPIN_ACCELERATION * get_physics_process_delta_time())
-	elif _state == STATE.DAMAGE:
-		_current_distance = move_toward(_current_distance, IDLE_DISTANCE, SPIN_DECELERATION * get_physics_process_delta_time())
-		_current_height = move_toward(_current_height, SPIN_HEIGHT, SPIN_DECELERATION * get_physics_process_delta_time())
+	if _state == STATE.IDLE || _state == STATE.DAMAGE:
+		_current_distance = move_toward(_current_distance, IDLE_DISTANCE, IDLE_ACCELERATION * get_physics_process_delta_time())
+		_current_height = move_toward(_current_height, IDLE_HEIGHT, IDLE_ACCELERATION * get_physics_process_delta_time())
 	elif _state == STATE.SPINNING:
+		spin_sfx_timer = move_toward(spin_sfx_timer, 0, get_physics_process_delta_time())
+		if is_zero_approx(spin_sfx_timer):
+			spin_sfx.play_in_group()
+			spin_sfx_timer = SPIN_SFX_INTERVAL
 		_current_distance = move_toward(_current_distance, SPIN_DISTANCE, SPIN_ACCELERATION * get_physics_process_delta_time())
+		_current_height = move_toward(_current_height, SPIN_HEIGHT, SPIN_ACCELERATION * get_physics_process_delta_time())
 	elif _state == STATE.THROWING:
 		_action_timer += get_physics_process_delta_time()
 		var t : float = throw_curve.sample(_action_timer / THROW_LENGTH)
 		_current_distance = lerp(SPIN_DISTANCE, _throw_distance, t)
+		t = clamp(t * THROW_HEIGHT_MULTIPLIER, 0, 1)
 		_current_height = lerp(SPIN_HEIGHT, THROW_HEIGHT, t)
 		if _action_timer >= THROW_LENGTH:
 			finish_throw(false)
 	elif _state == STATE.RECOVERY:
 		_action_timer += get_physics_process_delta_time()
 		var t : float = recovery_curve.sample(clamp(_action_timer / RECOVERY_LENGTH, 0, 1))
-		_current_height = lerp(SPIN_HEIGHT, THROW_HEIGHT, t)
+		_current_height = lerp(IDLE_HEIGHT, THROW_HEIGHT, t)
 		_current_distance = lerp(IDLE_DISTANCE, _throw_distance, t)
 		if _action_timer >= RECOVERY_LENGTH:
 			_state = STATE.IDLE
@@ -282,7 +301,7 @@ func process_shaking() -> void:
 @export var hand_attachment : BoneAttachment3D
 @export var chain_origin : Node3D
 var _chains : Array[Node3D]
-const CHAIN_SIZE : int = 10
+const CHAIN_SIZE : int = 5
 func process_chain() -> void:
 	var distance : Vector3 = spike_ball_position.global_position - chain_origin.global_position
 	var direction : Vector3 = distance.normalized()
@@ -293,7 +312,7 @@ func process_chain() -> void:
 			continue
 		var pos : Vector3 = direction * CHAIN_SIZE
 		if i == chain_length:
-			pos = spike_ball_position.global_position - pos
+			pos = spike_ball_position.global_position - pos * 2
 		else:
 			pos = chain_origin.global_position + pos * i
 		_chains[i].look_at_from_position(pos, spike_ball_position.global_position)
@@ -317,6 +336,7 @@ func update_animation() -> void:
 func take_damage() -> void:
 	_current_health -= 1
 	character_animator.play_minigame_animation(get_anim_prefix() + "hit")
+	hit.emit()
 	
 	if _current_health == 0:
 		for rb in _platforms:
@@ -324,6 +344,7 @@ func take_damage() -> void:
 			rb.apply_torque_impulse(Vector3(randf(), randf(), randf()) * 10.0)
 			rb.apply_central_impulse(Vector3.MODEL_REAR * randf() * 50.0)
 		
+		crumble_sfx.play()
 		character_physics_parent.freeze = false
 		set_physics_process(false)
 		hurtbox.set_deferred("monitorable", false)
@@ -332,6 +353,7 @@ func take_damage() -> void:
 		_top_platform_position += Vector3.MODEL_FRONT * -5 + Vector3.RIGHT * 4
 		_platforms[_platforms.size() - 2].position = _top_platform_position
 		hurtbox.global_position = _platforms[_platforms.size() - 2].global_position
+		hit_sfx.play_in_group()
 	
 	_state = STATE.DAMAGE
 	
@@ -360,6 +382,7 @@ func _on_hitbox_area_entered(area: Area3D) -> void:
 	finish_throw(true)
 	
 	if area.is_in_group("enemy"): # Hit another spikeball
+		print("hit a spike ball.")
 		return
 	
 	area.get_parent().rpc("take_damage")

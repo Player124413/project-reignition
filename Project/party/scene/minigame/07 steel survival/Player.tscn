@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://chv67k88pbmx2"]
+[gd_scene load_steps=31 format=3 uid="uid://chv67k88pbmx2"]
 
 [ext_resource type="PackedScene" uid="uid://bnps6pgfyd6po" path="res://party/scene/minigame/07 steel survival/model/PlatformTop.glb" id="1_fs2wc"]
 [ext_resource type="Script" uid="uid://ds2yfogl28fbh" path="res://party/scene/minigame/07 steel survival/script/player_controller.gd" id="1_mtgim"]
@@ -7,6 +7,15 @@
 [ext_resource type="PackedScene" uid="uid://dhch8v73igtdm" path="res://party/scene/minigame/07 steel survival/model/Spikeball.glb" id="5_bhnry"]
 [ext_resource type="PackedScene" uid="uid://t7bh6id6n2pp" path="res://party/scene/minigame/07 steel survival/model/Chain.glb" id="6_ppyg8"]
 [ext_resource type="Script" uid="uid://ds056nimfywwr" path="res://party/script/core/rollback_timer.gd" id="7_lgll0"]
+[ext_resource type="AudioStream" uid="uid://bkfs0nccmxgw5" path="res://party/scene/minigame/07 steel survival/sound/hit.wav" id="8_8pcbm"]
+[ext_resource type="Script" uid="uid://bkwc2atbp4cjd" path="res://party/scene/minigame/00 base/script/group_sfx_player.gd" id="9_yad88"]
+[ext_resource type="AudioStream" uid="uid://blyb8633pxs26" path="res://party/scene/minigame/07 steel survival/sound/spin.wav" id="10_yad88"]
+[ext_resource type="AudioStream" uid="uid://dljn132bxklq2" path="res://party/scene/minigame/07 steel survival/sound/throw.wav" id="11_2rdul"]
+[ext_resource type="AudioStream" uid="uid://c3yim17vgk0xg" path="res://party/scene/minigame/07 steel survival/sound/crumble.wav" id="12_2t2bk"]
+[ext_resource type="ArrayMesh" uid="uid://1bft2pj424ei" path="res://party/scene/minigame/07 steel survival/model/Shatter_ShatterMesh.res" id="13_2t2bk"]
+[ext_resource type="Script" uid="uid://c65ffkknyq6gr" path="res://addons/custom_nodes/script/GroupGpuParticles3D.cs" id="14_6yavx"]
+[ext_resource type="Material" uid="uid://ce4407ug83g0b" path="res://effect/particle/material/Ember Orange Billboard.tres" id="15_7ed68"]
+[ext_resource type="Material" uid="uid://c2lqqtvy2q1xp" path="res://effect/particle/material/environment/Common Dust.tres" id="16_uekia"]
 
 [sub_resource type="Curve" id="Curve_ppyg8"]
 _data = [Vector2(0, 0), 0.0, 2.0957532, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
@@ -17,13 +26,92 @@ _data = [Vector2(0.2, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
 point_count = 2
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_bhnry"]
-radius = 15.955
+radius = 12.0
+
+[sub_resource type="Curve" id="Curve_hl3om"]
+_data = [Vector2(0, 0), 0.0, 28.8149, 0, 0, Vector2(0.1, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_7wd64"]
+width = 64
+curve = SubResource("Curve_hl3om")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_2t2bk"]
+lifetime_randomness = 0.5
+particle_flag_align_y = true
+emission_shape = 6
+emission_ring_axis = Vector3(0, 1, 0)
+emission_ring_height = 0.0
+emission_ring_radius = 20.0
+emission_ring_inner_radius = 15.0
+emission_ring_cone_angle = 90.0
+direction = Vector3(0, 1, -1)
+spread = 90.0
+initial_velocity_min = 100.0
+initial_velocity_max = 200.0
+gravity = Vector3(0, -400, 0)
+attractor_interaction_enabled = false
+scale_max = 2.0
+scale_curve = SubResource("CurveTexture_7wd64")
+
+[sub_resource type="Curve" id="Curve_uekia"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.1, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_30kef"]
+width = 64
+texture_mode = 1
+curve = SubResource("Curve_uekia")
+
+[sub_resource type="Curve" id="Curve_7ed68"]
+_data = [Vector2(0, 0.22660428), 0.0, 1.873143, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_uekia"]
+width = 64
+curve = SubResource("Curve_7ed68")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_7ed68"]
+lifetime_randomness = 0.4
+emission_shape = 2
+emission_sphere_radius = 20.0
+direction = Vector3(0, 0, -1)
+spread = 180.0
+initial_velocity_min = 150.0
+initial_velocity_max = 300.0
+gravity = Vector3(0, 0, 0)
+damping_min = 50.000004
+damping_max = 50.000004
+scale_min = 10.0
+scale_max = 15.0
+scale_curve = SubResource("CurveTexture_uekia")
+alpha_curve = SubResource("CurveTexture_30kef")
+
+[sub_resource type="QuadMesh" id="QuadMesh_uekia"]
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_30kef"]
+lifetime_randomness = 0.4
+emission_shape = 2
+emission_sphere_radius = 20.0
+angle_min = 1.0728836e-05
+angle_max = 360.00003
+direction = Vector3(0, 0, -1)
+spread = 80.0
+initial_velocity_min = 50.0
+initial_velocity_max = 150.0
+gravity = Vector3(0, 0, 0)
+damping_min = 50.000004
+damping_max = 50.000004
+scale_min = 20.0
+scale_max = 50.0
+scale_curve = SubResource("CurveTexture_uekia")
+alpha_curve = SubResource("CurveTexture_30kef")
 
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_bhnry"]
-height = 40.0
+height = 90.0
 radius = 23.0
 
-[node name="Player" type="Node3D" node_paths=PackedStringArray("rollback_timer", "character_physics_parent", "surface_platform", "spike_ball_rotation", "spike_ball_position", "spike_ball", "hurtbox", "platform_parent", "chain_parent", "hand_attachment", "chain_origin", "spawn_position")]
+[node name="Player" type="Node3D" node_paths=PackedStringArray("rollback_timer", "character_physics_parent", "surface_platform", "spike_ball_rotation", "spike_ball_position", "spike_ball", "hurtbox", "platform_parent", "spin_sfx", "hit_sfx", "throw_sfx", "crumble_sfx", "chain_parent", "hand_attachment", "chain_origin", "spawn_position")]
 script = ExtResource("1_mtgim")
 rollback_timer = NodePath("Rollback")
 character_physics_parent = NodePath("CharacterPhysics")
@@ -35,6 +123,10 @@ hurtbox = NodePath("Hurtbox")
 platform_parent = NodePath("Blocks")
 throw_curve = SubResource("Curve_ppyg8")
 recovery_curve = SubResource("Curve_lgll0")
+spin_sfx = NodePath("Spin")
+hit_sfx = NodePath("Hit")
+throw_sfx = NodePath("Throw")
+crumble_sfx = NodePath("Crumble")
 chain_parent = NodePath("CharacterPhysics/SpikeballRotation/Chains")
 hand_attachment = NodePath("HandAttachment")
 chain_origin = NodePath("HandAttachment/ChainOrigin")
@@ -54,21 +146,22 @@ freeze = true
 transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 2.5, 0)
 
 [node name="SpikeballPosition" type="Node3D" parent="CharacterPhysics/SpikeballRotation"]
-transform = Transform3D(0.5, 0, 0, 0, -2.1855694e-08, -0.5, 0, 0.5, -2.1855694e-08, 0, 0, -15)
+transform = Transform3D(0.75, 0, 0, 0, -3.278354e-08, -0.75, 0, 0.75, -3.278354e-08, 0, 0, -15)
 
 [node name="Spikeball" parent="CharacterPhysics/SpikeballRotation/SpikeballPosition" instance=ExtResource("5_bhnry")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -11.999998, 0)
 
 [node name="Hitbox" type="Area3D" parent="CharacterPhysics/SpikeballRotation/SpikeballPosition" groups=["enemy"]]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -11.999998, 1.9073486e-06)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="CharacterPhysics/SpikeballRotation/SpikeballPosition/Hitbox"]
 shape = SubResource("SphereShape3D_bhnry")
 
 [node name="Chains" type="Node3D" parent="CharacterPhysics/SpikeballRotation"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -30, 0)
+transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, -30, 0)
 script = ExtResource("2_mtgim")
 Source = ExtResource("6_ppyg8")
-Amount = 20
+Amount = 30
 Shape = 0
 Orientation = 1
 Spacing = 0.0
@@ -115,6 +208,70 @@ metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
 [node name="Child19" parent="CharacterPhysics/SpikeballRotation/Chains" instance=ExtResource("6_ppyg8")]
 
 [node name="Child20" parent="CharacterPhysics/SpikeballRotation/Chains" instance=ExtResource("6_ppyg8")]
+
+[node name="Child21" parent="CharacterPhysics/SpikeballRotation/Chains" instance=ExtResource("6_ppyg8")]
+
+[node name="Child22" parent="CharacterPhysics/SpikeballRotation/Chains" instance=ExtResource("6_ppyg8")]
+
+[node name="Child23" parent="CharacterPhysics/SpikeballRotation/Chains" instance=ExtResource("6_ppyg8")]
+
+[node name="Child24" parent="CharacterPhysics/SpikeballRotation/Chains" instance=ExtResource("6_ppyg8")]
+
+[node name="Child25" parent="CharacterPhysics/SpikeballRotation/Chains" instance=ExtResource("6_ppyg8")]
+
+[node name="Child26" parent="CharacterPhysics/SpikeballRotation/Chains" instance=ExtResource("6_ppyg8")]
+
+[node name="Child27" parent="CharacterPhysics/SpikeballRotation/Chains" instance=ExtResource("6_ppyg8")]
+
+[node name="Child28" parent="CharacterPhysics/SpikeballRotation/Chains" instance=ExtResource("6_ppyg8")]
+
+[node name="Child29" parent="CharacterPhysics/SpikeballRotation/Chains" instance=ExtResource("6_ppyg8")]
+
+[node name="Child30" parent="CharacterPhysics/SpikeballRotation/Chains" instance=ExtResource("6_ppyg8")]
+
+[node name="HitVFX" type="GPUParticles3D" parent="." node_paths=PackedStringArray("subSystems")]
+layers = 32
+extra_cull_margin = 16384.0
+gi_mode = 0
+emitting = false
+amount = 4
+lifetime = 2.0
+one_shot = true
+explosiveness = 1.0
+fixed_fps = 0
+interpolate = false
+process_material = SubResource("ParticleProcessMaterial_2t2bk")
+draw_pass_1 = ExtResource("13_2t2bk")
+script = ExtResource("14_6yavx")
+subSystems = [NodePath("Embers"), NodePath("Dust")]
+
+[node name="Embers" type="GPUParticles3D" parent="HitVFX"]
+layers = 32
+material_override = ExtResource("15_7ed68")
+cast_shadow = 0
+emitting = false
+amount = 64
+lifetime = 0.3
+one_shot = true
+explosiveness = 0.6
+fixed_fps = 0
+fract_delta = false
+process_material = SubResource("ParticleProcessMaterial_7ed68")
+draw_pass_1 = SubResource("QuadMesh_uekia")
+
+[node name="Dust" type="GPUParticles3D" parent="HitVFX"]
+layers = 32
+material_override = ExtResource("16_uekia")
+cast_shadow = 0
+emitting = false
+amount = 16
+lifetime = 0.4
+one_shot = true
+explosiveness = 0.6
+fixed_fps = 0
+fract_delta = false
+process_material = SubResource("ParticleProcessMaterial_30kef")
+draw_pass_1 = SubResource("QuadMesh_uekia")
 
 [node name="Blocks" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -870, 0)
@@ -225,4 +382,30 @@ script = ExtResource("7_lgll0")
 param_count = 7
 rollback_interval = 0.0
 
+[node name="Hit" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("8_8pcbm")
+bus = &"GAME SFX"
+script = ExtResource("9_yad88")
+group = "hit"
+min_volume = 0.6000000000000001
+
+[node name="Spin" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("10_yad88")
+bus = &"GAME SFX"
+script = ExtResource("9_yad88")
+group = "spin"
+min_volume = 0.6000000000000001
+
+[node name="Throw" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("11_2rdul")
+bus = &"GAME SFX"
+script = ExtResource("9_yad88")
+group = "throw"
+min_volume = 0.6000000000000001
+
+[node name="Crumble" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("12_2t2bk")
+bus = &"GAME SFX"
+
+[connection signal="hit" from="." to="HitVFX" method="RestartGroup"]
 [connection signal="area_entered" from="CharacterPhysics/SpikeballRotation/SpikeballPosition/Hitbox" to="." method="_on_hitbox_area_entered"]
