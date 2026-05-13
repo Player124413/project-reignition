@@ -75,6 +75,8 @@ var is_results_queued : bool
 @export var score_popup_scene : PackedScene
 ## Pool for score popups
 var score_popup_pool : Array[ScorePopup]
+## List of active popups
+var active_popups : Array[ScorePopup]
 ## Number of players that have completed the current mini-game.
 var completed_player_count : int
 ## Tracks the player's scores.
@@ -154,22 +156,38 @@ func generate_score_popup() -> void:
 ## Repools a score popup after it fades away.
 func on_repool_score_popup(popup : ScorePopup) -> void:
 	score_popup_pool.append(popup)
+	var index : int = active_popups.find(popup)
+	if index != -1:
+		active_popups.remove_at(index)
 
 func request_score_popup(player_index : int, amount : int, pos : Vector2) -> void:
 	if player_index < 0 || player_index > PartyManager.MAX_PLAYER_COUNT:
 		return
 	
-	if NetworkManager.is_hosting_game:
-		rpc("_score_popup", player_index, amount, pos)
+	if screen_mode == SCREEN_MODE.SPLITSCREEN: # Account for splitscreen
+		pos += subviewport_worlds[player_index].get_parent().position
+	
+	rpc("_score_popup", player_index, amount, pos, NetworkTimeSynchronizer.get_time())
+
+func request_score_popup_abort(player_index : int, time : float) -> void:
+	rpc("_score_popup_abort", player_index, time)
 
 @rpc("any_peer", "call_local", "reliable")
-func _score_popup(player_index : int, amount : int, pos : Vector2) -> void:
+func _score_popup(player_index : int, amount : int, pos : Vector2, time : float) -> void:
 	if score_popup_pool.is_empty():
 		generate_score_popup()
 	
 	var popup : ScorePopup = score_popup_pool[0]
 	score_popup_pool.remove_at(0)
-	popup.show_popup(player_index, amount, pos)
+	active_popups.append(popup)
+	popup.show_popup(player_index, amount, pos, time)
+
+@rpc("any_peer", "call_local", "reliable")
+func _score_popup_abort(player_index : int, time : float) -> void:
+	for popup : ScorePopup in active_popups:
+		if popup.player_index == player_index && is_equal_approx(popup.spawn_time, time):
+			popup.abort_popup()
+			break
 
 func request_score_change(player_index : int, amount : int = 1) -> void:
 	if player_index < 0 || player_index > PartyManager.MAX_PLAYER_COUNT:

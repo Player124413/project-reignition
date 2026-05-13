@@ -118,6 +118,9 @@ func process_collision() -> void:
 		end_position.x = start_position.x
 
 func process_movement_tick() -> void:
+	if !is_active:
+		return
+	
 	var denominator : float = HIT_TIME if is_hit else FALL_TIME
 	var ratio : float = clamp(travel_timer / denominator, 0, 1)
 	if is_hit:
