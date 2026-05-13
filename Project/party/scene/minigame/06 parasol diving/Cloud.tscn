@@ -1,9 +1,11 @@
-[gd_scene load_steps=16 format=3 uid="uid://hdd7tlt77uqu"]
+[gd_scene load_steps=18 format=3 uid="uid://hdd7tlt77uqu"]
 
 [ext_resource type="Script" uid="uid://bdqr8rerf3ru6" path="res://party/scene/minigame/06 parasol diving/script/cloud.gd" id="1_6g2bd"]
 [ext_resource type="PackedScene" uid="uid://xq7x7nwhvjdr" path="res://party/scene/minigame/06 parasol diving/model/Cloud.glb" id="2_scrxx"]
 [ext_resource type="PackedScene" uid="uid://dshbu54rbi5ja" path="res://party/scene/minigame/06 parasol diving/model/CloudExplosion.glb" id="3_scrxx"]
 [ext_resource type="Material" uid="uid://d25152dkwwy0o" path="res://party/scene/minigame/06 parasol diving/material/Cloud Explosion.tres" id="4_gs8sf"]
+[ext_resource type="AudioStream" uid="uid://sjkotkv61fen" path="res://party/scene/minigame/06 parasol diving/sound/cloud catch.wav" id="5_fiqw7"]
+[ext_resource type="AudioStream" uid="uid://b4j33mpr7pf1g" path="res://party/scene/minigame/06 parasol diving/sound/cloud explode.wav" id="6_115sd"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_gs8sf"]
 radius = 3.0
@@ -195,12 +197,14 @@ _data = {
 &"spawn": SubResource("Animation_55xsp")
 }
 
-[node name="Cloud" type="Area3D" node_paths=PackedStringArray("animator") groups=["enemy"]]
+[node name="Cloud" type="Area3D" node_paths=PackedStringArray("animator", "catch_sfx", "explode_sfx") groups=["enemy"]]
 collision_layer = 8
 collision_mask = 0
 monitoring = false
 script = ExtResource("1_6g2bd")
 animator = NodePath("AnimationPlayer")
+catch_sfx = NodePath("Catch")
+explode_sfx = NodePath("Explode")
 
 [node name="Cloud" parent="." instance=ExtResource("2_scrxx")]
 
@@ -279,6 +283,16 @@ draw_pass_1 = SubResource("QuadMesh_qvlrk")
 libraries = {
 &"": SubResource("AnimationLibrary_fiqw7")
 }
+
+[node name="Catch" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("5_fiqw7")
+volume_db = 6.0
+bus = &"GAME SFX"
+
+[node name="Explode" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("6_115sd")
+volume_db = 6.0
+bus = &"GAME SFX"
 
 [editable path="Cloud"]
 [editable path="CloudExplosion"]

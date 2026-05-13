@@ -10,6 +10,9 @@ func _ready() -> void:
 	finished.connect(Callable(self, "stop_in_group"))
 
 func play_in_group() -> void:
+	if playing:
+		return
+	
 	GroupSfxManager.instance.register_player(self, group)
 	play()
 

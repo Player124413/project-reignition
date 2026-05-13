@@ -1,10 +1,12 @@
-[gd_scene load_steps=17 format=3 uid="uid://d1iodnfaxfyet"]
+[gd_scene load_steps=19 format=3 uid="uid://d1iodnfaxfyet"]
 
 [ext_resource type="Script" uid="uid://cgj4nlx5fbcmq" path="res://party/scene/minigame/06 parasol diving/script/coin.gd" id="1_nljhk"]
 [ext_resource type="PackedScene" uid="uid://b1rqg5xv3qyak" path="res://party/scene/minigame/00 base/model/Coin.glb" id="2_j6inb"]
 [ext_resource type="Material" uid="uid://dfy7bbfabmnms" path="res://party/scene/minigame/00 base/material/Coin Gold.tres" id="2_tud03"]
 [ext_resource type="Material" uid="uid://bbqimku04cwxr" path="res://party/scene/minigame/00 base/material/Coin Silver.tres" id="3_6k27s"]
 [ext_resource type="Material" uid="uid://cd8mqsy8lhhcb" path="res://object/stage/pickups/resource/model/material/Ring Spark.tres" id="5_6k27s"]
+[ext_resource type="AudioStream" uid="uid://eivd5wvygewi" path="res://sound/sfx/objects/ring.wav" id="6_b8pgm"]
+[ext_resource type="Script" uid="uid://bkwc2atbp4cjd" path="res://party/scene/minigame/00 base/script/group_sfx_player.gd" id="7_ut2w0"]
 
 [sub_resource type="Animation" id="Animation_ipnsq"]
 length = 0.001
@@ -166,11 +168,12 @@ alpha_curve = SubResource("CurveTexture_6k27s")
 
 [sub_resource type="QuadMesh" id="QuadMesh_b8pgm"]
 
-[node name="Coin" type="Area3D" node_paths=PackedStringArray("mesh", "animator")]
+[node name="Coin" type="Area3D" node_paths=PackedStringArray("collect_sfx", "mesh", "animator")]
 collision_layer = 8
 collision_mask = 0
 monitoring = false
 script = ExtResource("1_nljhk")
+collect_sfx = NodePath("CollectSFX")
 mesh = NodePath("Coin/CoinMesh")
 animator = NodePath("Coin/AnimationPlayer")
 materials = Array[Material]([ExtResource("2_tud03"), ExtResource("3_6k27s")])
@@ -198,5 +201,12 @@ fixed_fps = 0
 fract_delta = false
 process_material = SubResource("ParticleProcessMaterial_ipnsq")
 draw_pass_1 = SubResource("QuadMesh_b8pgm")
+
+[node name="CollectSFX" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("6_b8pgm")
+bus = &"GAME SFX"
+script = ExtResource("7_ut2w0")
+group = "coin"
+min_volume = 0.6000000000000001
 
 [editable path="Coin"]

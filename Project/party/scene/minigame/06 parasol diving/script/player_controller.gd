@@ -47,7 +47,7 @@ func on_minigame_finished() -> void:
 	hand_attachment.visible = false
 
 func _physics_process(_delta: float) -> void:
-	if is_multiplayer_authority():
+	if is_multiplayer_authority() && !_is_gameplay_finished:
 		if is_cpu():
 			_input = get_cpu_input()
 		else:
@@ -56,6 +56,7 @@ func _physics_process(_delta: float) -> void:
 	process_cloud()
 	process_movement_tick()
 	process_animation()
+	process_sfx_timer()
 	
 	if is_multiplayer_authority():
 		process_rollback()
@@ -228,9 +229,22 @@ func _on_trigger_area_entered(area: Area3D) -> void:
 	if area.is_in_group("enemy"):
 		# Hit a cloud
 		current_cloud = area
+		current_cloud.catch()
 		cloud_position_offset = character_body.global_position - current_cloud.global_position
 		animation_tree.set(STUCK_TRANSITION, "enabled")
 		return
 	
 	# Grabbed a coin
 	area.rpc("request_collect", NetworkTimeSynchronizer.get_time(), player_index)
+
+@export var drift_sfx : AudioStreamPlayer
+var _sfx_timer : float
+const SFX_TIMER_INTERVAL = 0.5
+func process_sfx_timer() -> void:
+	_sfx_timer = move_toward(_sfx_timer, 0, get_physics_process_delta_time())
+	if !is_zero_approx(_sfx_timer) && !_is_gameplay_finished:
+		return
+	
+	if !is_zero_approx(_current_speed.x):
+		drift_sfx.play()
+		_sfx_timer = SFX_TIMER_INTERVAL

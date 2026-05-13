@@ -1,7 +1,8 @@
-[gd_scene load_steps=16 format=3 uid="uid://b0khnq3fhs771"]
+[gd_scene load_steps=17 format=3 uid="uid://b0khnq3fhs771"]
 
 [ext_resource type="PackedScene" uid="uid://bq421e7316n42" path="res://party/scene/minigame/06 parasol diving/model/Parasol.glb" id="2_ale5a"]
 [ext_resource type="Script" uid="uid://ds056nimfywwr" path="res://party/script/core/rollback_timer.gd" id="3_hdqxl"]
+[ext_resource type="AudioStream" uid="uid://skfy845l2uuy" path="res://party/scene/minigame/06 parasol diving/sound/drift.wav" id="4_xqsq0"]
 [ext_resource type="Script" uid="uid://cc7qa43vyrxaw" path="res://party/scene/minigame/06 parasol diving/script/player_controller.gd" id="14_la5i6"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_dn1mx"]
@@ -71,13 +72,15 @@ nodes/stuck-transition/node = SubResource("AnimationNodeTransition_dn1mx")
 nodes/stuck-transition/position = Vector2(-160, 160)
 node_connections = [&"output", 0, &"shake-transition", &"shake-transition", 0, &"shake", &"shake-transition", 1, &"stuck-transition", &"float-speed", 0, &"direction-blend", &"direction-blend", 0, &"left", &"direction-blend", 1, &"fall", &"direction-blend", 2, &"right", &"stuck-transition", 0, &"stuck", &"stuck-transition", 1, &"float-speed"]
 
-[node name="Player" type="Node3D" node_paths=PackedStringArray("rollback_timer", "hand_attachment", "character_body", "spawn_position", "animation_tree")]
+[node name="Player" type="Node3D" node_paths=PackedStringArray("rollback_timer", "hand_attachment", "character_body", "drift_sfx", "spawn_position", "animation_tree")]
 script = ExtResource("14_la5i6")
 rollback_timer = NodePath("Rollback")
 hand_attachment = NodePath("HandAttachment")
 character_body = NodePath("CharacterBody3D")
+drift_sfx = NodePath("Drift")
 spawn_position = NodePath("CharacterBody3D")
 animation_tree = NodePath("AnimationTree")
+deactivate_on_gameplay_finished = false
 
 [node name="CharacterBody3D" type="CharacterBody3D" parent="."]
 motion_mode = 1
@@ -127,6 +130,11 @@ parameters/stuck-transition/current_index = 1
 script = ExtResource("3_hdqxl")
 param_count = 4
 rollback_interval = 0.0
+
+[node name="Drift" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("4_xqsq0")
+max_polyphony = 4
+bus = &"GAME SFX"
 
 [connection signal="area_entered" from="CharacterBody3D/Trigger" to="." method="_on_trigger_area_entered"]
 [connection signal="area_exited" from="CharacterBody3D/CPUTrigger" to="." method="_on_cpu_trigger_area_exited"]

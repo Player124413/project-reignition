@@ -93,7 +93,7 @@ func on_minigame_finished() -> void:
 		return
 	
 	reparent(MinigameManager.instance.results_location[player_index])
-	transform = Transform3D.IDENTITY
+	set_deferred("transform", Transform3D.IDENTITY)
 	play_animation("%s/wait" % MinigameManager.COMMON_ANIMATION_LIBRARY_PREFIX)
 
 ## Play victory or loss animation
