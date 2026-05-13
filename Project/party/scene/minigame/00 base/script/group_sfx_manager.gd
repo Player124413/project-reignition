@@ -13,7 +13,7 @@ func register_player(player : GroupSfxPlayer, group : StringName) -> void:
 		sfx_dictionary[group].append(player)
 		# Adjust volume of all in group
 		var volume : float = 1.0 / sfx_dictionary[group].size()
-		for i in range(sfx_dictionary[group].size() - 1, 0):
+		for i in range(sfx_dictionary[group].size() - 1, 0, -1):
 			if is_instance_valid(sfx_dictionary[group][i]):
 				sfx_dictionary[group][i].set_volume(volume)
 			else:
