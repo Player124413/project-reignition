@@ -47,8 +47,10 @@ func on_minigame_finished() -> void:
 	hand_attachment.visible = false
 
 func _physics_process(_delta: float) -> void:
-	if is_multiplayer_authority() && !_is_gameplay_finished:
-		if is_cpu():
+	if is_multiplayer_authority():
+		if _is_gameplay_finished:
+			_input = 0
+		elif is_cpu():
 			_input = get_cpu_input()
 		else:
 			_input = get_input_axis().x
@@ -237,14 +239,14 @@ func _on_trigger_area_entered(area: Area3D) -> void:
 	# Grabbed a coin
 	area.rpc("request_collect", NetworkTimeSynchronizer.get_time(), player_index)
 
-@export var drift_sfx : AudioStreamPlayer
+@export var drift_sfx : GroupSfxPlayer
 var _sfx_timer : float
 const SFX_TIMER_INTERVAL = 0.5
 func process_sfx_timer() -> void:
 	_sfx_timer = move_toward(_sfx_timer, 0, get_physics_process_delta_time())
-	if !is_zero_approx(_sfx_timer) && !_is_gameplay_finished:
+	if !is_zero_approx(_sfx_timer) || _is_gameplay_finished:
 		return
 	
 	if !is_zero_approx(_current_speed.x):
-		drift_sfx.play()
+		drift_sfx.play_in_group()
 		_sfx_timer = SFX_TIMER_INTERVAL

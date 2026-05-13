@@ -10,7 +10,7 @@ func _ready() -> void:
 	finished.connect(Callable(self, "stop_in_group"))
 
 func play_in_group() -> void:
-	if playing:
+	if playing && max_polyphony == 1:
 		return
 	
 	GroupSfxManager.instance.register_player(self, group)

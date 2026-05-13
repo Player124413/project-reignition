@@ -52,7 +52,10 @@ func _physics_process(_delta: float) -> void:
 		return
 	
 	if is_multiplayer_authority(): # Update inputs
-		movement_input = calculate_cpu_input() if is_cpu() else get_input_axis()
+		if _is_gameplay_finished:
+			movement_input = Vector2.ZERO
+		else:
+			movement_input = calculate_cpu_input() if is_cpu() else get_input_axis()
 	
 	process_movement_tick()
 	process_sfx()
