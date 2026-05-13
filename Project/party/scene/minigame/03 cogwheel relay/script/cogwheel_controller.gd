@@ -3,6 +3,7 @@ extends PartyGameCharacterSpawner
 @export var cogwheels : Array[Node3D]
 @export var majin_spawn_positions : Array[Node3D]
 @export var handle : Node3D
+@export var turn_sfx : GroupSfxPlayer
 
 ## Total number of bonus majin to spawn.
 @export var total_bonus_majin_count : int = 3
@@ -51,6 +52,10 @@ func _physics_process(delta: float) -> void:
 	
 	process_movement_tick()
 	process_animation()
+	if is_zero_approx(current_rotation_speed) && turn_sfx.playing:
+		turn_sfx.stop_in_group()
+	elif !is_zero_approx(current_rotation_speed) && !turn_sfx.playing:
+		turn_sfx.play_in_group()
 
 #####################
 ### ROLLBACK CODE ###

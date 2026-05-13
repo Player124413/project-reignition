@@ -1,15 +1,64 @@
-[gd_scene load_steps=7 format=3 uid="uid://be21lrysd2f75"]
+[gd_scene load_steps=18 format=3 uid="uid://be21lrysd2f75"]
 
 [ext_resource type="Script" uid="uid://dd5b31n421be6" path="res://party/scene/minigame/03 cogwheel relay/script/majin_controller.gd" id="1_pkkib"]
 [ext_resource type="Material" uid="uid://m8tkr4fj8ghw" path="res://party/resource/character/model/material/Slime Red.tres" id="2_388ph"]
 [ext_resource type="Material" uid="uid://dnc5sxqserp6p" path="res://party/resource/character/model/material/Slime Gray.tres" id="3_rh6cn"]
 [ext_resource type="PackedScene" uid="uid://di2egba5hsjd4" path="res://party/resource/character/scene/SlimeMajin.tscn" id="4_pkkib"]
 [ext_resource type="Script" uid="uid://ds056nimfywwr" path="res://party/script/core/rollback_timer.gd" id="5_388ph"]
+[ext_resource type="AudioStream" uid="uid://p1i50xycrud8" path="res://party/scene/minigame/03 cogwheel relay/sound/point.wav" id="6_bexr2"]
+[ext_resource type="AudioStream" uid="uid://lqdrvn1fnan8" path="res://party/scene/minigame/03 cogwheel relay/sound/fall.wav" id="7_gv4b2"]
+[ext_resource type="Script" uid="uid://bkwc2atbp4cjd" path="res://party/scene/minigame/00 base/script/group_sfx_player.gd" id="7_nk1fd"]
+[ext_resource type="Material" uid="uid://c2lqqtvy2q1xp" path="res://effect/particle/material/environment/Common Dust.tres" id="9_gv4b2"]
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_pkkib"]
 radius = 1.0
 
-[node name="SlimeMajin" type="Area3D" node_paths=PackedStringArray("collider", "mesh", "ceiling_raycast", "animator", "ground_raycast", "rollback_timer") groups=["enemy"]]
+[sub_resource type="Curve" id="Curve_wn8yn"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.2, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_sap0e"]
+width = 64
+texture_mode = 1
+curve = SubResource("Curve_wn8yn")
+
+[sub_resource type="Curve" id="Curve_gv4b2"]
+_data = [Vector2(0, 0.2), 0.0, 1.962757, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_wn8yn"]
+width = 64
+curve = SubResource("Curve_gv4b2")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_wn8yn"]
+angle_min = 1.0728836e-05
+angle_max = 360.00003
+direction = Vector3(0, 1, 0)
+spread = 80.0
+initial_velocity_min = 1.0
+initial_velocity_max = 2.0
+gravity = Vector3(0, 0, 0)
+scale_min = 2.0
+scale_max = 4.0
+scale_curve = SubResource("CurveTexture_wn8yn")
+alpha_curve = SubResource("CurveTexture_sap0e")
+
+[sub_resource type="QuadMesh" id="QuadMesh_sap0e"]
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_gv4b2"]
+angle_min = 1.0728836e-05
+angle_max = 360.00003
+direction = Vector3(0, 1, 0)
+spread = 90.0
+initial_velocity_min = 2.0
+initial_velocity_max = 4.0
+gravity = Vector3(0, 0, 0)
+scale_min = 2.0
+scale_max = 2.5
+scale_curve = SubResource("CurveTexture_wn8yn")
+alpha_curve = SubResource("CurveTexture_sap0e")
+
+[node name="SlimeMajin" type="Area3D" node_paths=PackedStringArray("collider", "mesh", "ceiling_raycast", "animator", "ground_raycast", "point_sfx", "fall_sfx", "move_vfx", "land_vfx", "rollback_timer") groups=["enemy"]]
 collision_mask = 8
 script = ExtResource("1_pkkib")
 collider = NodePath("CollisionShape3D")
@@ -18,6 +67,10 @@ materials = Array[Material]([ExtResource("2_388ph"), ExtResource("3_rh6cn")])
 ceiling_raycast = NodePath("CeilingCast")
 animator = NodePath("SlimeMajin/AnimationPlayer")
 ground_raycast = NodePath("GroundCast")
+point_sfx = NodePath("SFX/Point")
+fall_sfx = NodePath("SFX/Fall")
+move_vfx = NodePath("Move")
+land_vfx = NodePath("Land")
 rollback_timer = NodePath("Rollback")
 
 [node name="SlimeMajin" parent="." instance=ExtResource("4_pkkib")]
@@ -42,6 +95,44 @@ collide_with_areas = true
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
 shape = SubResource("SphereShape3D_pkkib")
 disabled = true
+
+[node name="Move" type="GPUParticles3D" parent="."]
+layers = 32
+material_override = ExtResource("9_gv4b2")
+emitting = false
+lifetime = 0.5
+fixed_fps = 0
+fract_delta = false
+process_material = SubResource("ParticleProcessMaterial_wn8yn")
+draw_pass_1 = SubResource("QuadMesh_sap0e")
+
+[node name="Land" type="GPUParticles3D" parent="."]
+layers = 32
+material_override = ExtResource("9_gv4b2")
+emitting = false
+lifetime = 0.5
+one_shot = true
+explosiveness = 1.0
+fixed_fps = 0
+fract_delta = false
+process_material = SubResource("ParticleProcessMaterial_gv4b2")
+draw_pass_1 = SubResource("QuadMesh_sap0e")
+
+[node name="SFX" type="Node" parent="."]
+
+[node name="Point" type="AudioStreamPlayer" parent="SFX"]
+stream = ExtResource("6_bexr2")
+bus = &"GAME SFX"
+script = ExtResource("7_nk1fd")
+group = "point"
+min_volume = 0.5
+
+[node name="Fall" type="AudioStreamPlayer" parent="SFX"]
+stream = ExtResource("7_gv4b2")
+bus = &"GAME SFX"
+script = ExtResource("7_nk1fd")
+group = "fall"
+min_volume = 0.5
 
 [node name="Rollback" type="Node" parent="."]
 script = ExtResource("5_388ph")
