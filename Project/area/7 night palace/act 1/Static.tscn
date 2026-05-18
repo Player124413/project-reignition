@@ -1,4 +1,4 @@
-[gd_scene load_steps=119 format=3 uid="uid://ctfcgpodfhnp0"]
+[gd_scene load_steps=122 format=3 uid="uid://ctfcgpodfhnp0"]
 
 [ext_resource type="PackedScene" uid="uid://u5so6ulpdpsk" path="res://area/7 night palace/act 1/environment/01Start.tscn" id="1_c3xql"]
 [ext_resource type="Script" uid="uid://dtkbvehtmy3em" path="res://object/stage/StageSettings.cs" id="1_siayx"]
@@ -52,7 +52,7 @@
 [ext_resource type="Resource" uid="uid://bku7n4ufln8ro" path="res://resource/preset/camera/common/StaticCam.tres" id="27_pyq2g"]
 [ext_resource type="Curve3D" uid="uid://bu2xlhn0gs3pw" path="res://area/7 night palace/act 1/environment/path/SpaceAPath.tres" id="29_42w86"]
 [ext_resource type="Curve3D" uid="uid://dme7e0d67phan" path="res://area/7 night palace/act 1/environment/path/SpaceBPath.tres" id="30_wgmg4"]
-[ext_resource type="Curve3D" uid="uid://0118jjx4y4ma" path="res://area/7 night palace/act 1/environment/path/SpaceCPath.tres" id="31_vfagc"]
+[ext_resource type="Curve3D" uid="uid://l07xy3ljfoki" path="res://area/7 night palace/act 1/environment/path/SpaceCPath.tres" id="31_vfagc"]
 [ext_resource type="Texture2D" uid="uid://c4b0rmtreq4w6" path="res://area/7 night palace/data/skybox/model/texture/moon glow.png" id="39_mgyvg"]
 [ext_resource type="Texture2D" uid="uid://caxeerv5m6p41" path="res://area/7 night palace/data/skybox/model/texture/sky moon.png" id="40_l0dmw"]
 [ext_resource type="Curve3D" uid="uid://dpokcowfe8c78" path="res://area/7 night palace/act 1/environment/path/GasRoomPath.tres" id="40_nugtn"]
@@ -68,8 +68,8 @@
 [ext_resource type="PackedScene" uid="uid://b2ym415hopd85" path="res://area/7 night palace/object/Carpet.tscn" id="52_vgsxs"]
 [ext_resource type="Resource" uid="uid://blg2b6vgjsl4x" path="res://area/7 night palace/act 1/camera/CarpetJumpCam.tres" id="52_wlx14"]
 [ext_resource type="Resource" uid="uid://b3ti60dq0o0ro" path="res://area/7 night palace/act 1/camera/CarpetCam.tres" id="53_51kfd"]
-[ext_resource type="Curve3D" uid="uid://cmcvug7dbe85a" path="res://area/7 night palace/act 1/environment/path/SpaceC2Path.tres" id="57_cppoj"]
-[ext_resource type="Curve3D" uid="uid://bhivojgxr36sl" path="res://area/7 night palace/act 1/environment/path/SpaceC3Path.tres" id="58_guye2"]
+[ext_resource type="Curve3D" uid="uid://cnilxlm5iir3r" path="res://area/7 night palace/act 1/environment/path/SpaceC2Path.tres" id="57_cppoj"]
+[ext_resource type="Curve3D" uid="uid://dhba6rm8wpm31" path="res://area/7 night palace/act 1/environment/path/SpaceC3Path.tres" id="58_guye2"]
 [ext_resource type="Resource" uid="uid://b808qipr112qt" path="res://area/7 night palace/act 1/camera/CarpetAutorunCam.tres" id="59_guye2"]
 [ext_resource type="Resource" uid="uid://w6ax6wllo7x8" path="res://resource/bgm/bgm np act1.tres" id="64_guye2"]
 
@@ -149,11 +149,20 @@ size = Vector3(30, 15, 50)
 [sub_resource type="BoxShape3D" id="BoxShape3D_eiht3"]
 size = Vector3(20, 5, 38)
 
-[sub_resource type="BoxShape3D" id="BoxShape3D_cppoj"]
-size = Vector3(10, 20, 5)
+[sub_resource type="BoxShape3D" id="BoxShape3D_scag8"]
+size = Vector3(10, 20, 3)
 
-[sub_resource type="BoxShape3D" id="BoxShape3D_guye2"]
+[sub_resource type="BoxShape3D" id="BoxShape3D_i2aec"]
+size = Vector3(7.4, 20, 1.6)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_g4m5y"]
 size = Vector3(10, 20, 2)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_11dl0"]
+size = Vector3(8, 20, 2)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_701k8"]
+size = Vector3(20, 20, 5)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_pyq2g"]
 size = Vector3(40, 5, 30)
@@ -1319,6 +1328,23 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 788, 0, -300)
 script = ExtResource("7_omcuu")
 path = NodePath("../../../Path/SpaceCPath")
 
+[node name="SpaceCPath2" parent="Trigger/Path" instance=ExtResource("4_d1bik")]
+transform = Transform3D(-4.37114e-08, 0, -1.0000002, 0, 1, 0, 1.0000002, 0, -4.37114e-08, 938.7577, -3.1, -282.54303)
+"Enter Mode" = 0
+
+[node name="Path" type="Node3D" parent="Trigger/Path/SpaceCPath2" node_paths=PackedStringArray("path")]
+script = ExtResource("7_omcuu")
+path = NodePath("../../../../Path/SpaceCPath")
+cameraPathBlendTime = 0.5
+
+[node name="CollisionShape3D2" type="CollisionShape3D" parent="Trigger/Path/SpaceCPath2"]
+transform = Transform3D(0.9659256, 0, -0.25881913, 0, 1, 0, 0.25881913, 0, 0.9659256, -29.698168, 8, -14.869965)
+shape = SubResource("BoxShape3D_scag8")
+
+[node name="CollisionShape3D3" type="CollisionShape3D" parent="Trigger/Path/SpaceCPath2"]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -17.40005, 3.2999992, -6)
+shape = SubResource("BoxShape3D_i2aec")
+
 [node name="SpaceC2Path" parent="Trigger/Path" instance=ExtResource("4_d1bik")]
 transform = Transform3D(1.0000002, 0, 0, 0, 1, 0, 0, 0, 1.0000002, 957.7577, -4, -306.34302)
 "Enter Mode" = 0
@@ -1328,29 +1354,36 @@ script = ExtResource("7_omcuu")
 path = NodePath("../../../../Path/SpaceC2Path")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Trigger/Path/SpaceC2Path"]
-transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -6.0000005, 8, -5.9999995)
-shape = SubResource("BoxShape3D_cppoj")
+transform = Transform3D(0.70710677, 0, 0.7071067, 0, 1, 0, -0.7071067, 0, 0.70710677, -23.8775, 3, 22.318573)
+shape = SubResource("BoxShape3D_scag8")
 
 [node name="CollisionShape3D2" type="CollisionShape3D" parent="Trigger/Path/SpaceC2Path"]
-transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -13, 1, 8)
-shape = SubResource("BoxShape3D_guye2")
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -12.800049, 1.2, 8)
+shape = SubResource("BoxShape3D_i2aec")
 
-[node name="SpaceC3Path" parent="Trigger/Path" instance=ExtResource("4_d1bik")]
-transform = Transform3D(-4.37114e-08, 0, -1.0000002, 0, 1, 0, 1.0000002, 0, -4.37114e-08, 938.7577, -3.1, -282.54303)
+[node name="CollisionShape3D3" type="CollisionShape3D" parent="Trigger/Path/SpaceC2Path"]
+transform = Transform3D(-0.86602545, 0, 0.49999988, 0, 1, 0, -0.49999988, 0, -0.86602545, -11.799988, 3, -2.2000122)
+shape = SubResource("BoxShape3D_scag8")
+
+[node name="SpaceC3Path2" parent="Trigger/Path" instance=ExtResource("4_d1bik")]
+transform = Transform3D(1.0000002, 0, 0, 0, 1, 0, 0, 0, 1.0000002, 957.7577, -4, -306.34302)
 "Enter Mode" = 0
 
-[node name="Path" type="Node3D" parent="Trigger/Path/SpaceC3Path" node_paths=PackedStringArray("path")]
+[node name="Path" type="Node3D" parent="Trigger/Path/SpaceC3Path2" node_paths=PackedStringArray("path")]
 script = ExtResource("7_omcuu")
 path = NodePath("../../../../Path/SpaceC3Path")
-cameraPathBlendTime = 0.5
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Trigger/Path/SpaceC3Path"]
-transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, -5.0000005, 5, 6.4)
-shape = SubResource("BoxShape3D_cppoj")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Trigger/Path/SpaceC3Path2"]
+transform = Transform3D(-4.3711385e-08, -1, -4.371139e-08, 0, -4.371139e-08, 1, -1, 4.371139e-08, 0, -14, -2, 11)
+shape = SubResource("BoxShape3D_g4m5y")
 
-[node name="CollisionShape3D2" type="CollisionShape3D" parent="Trigger/Path/SpaceC3Path"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.8, 8, -12.400001)
-shape = SubResource("BoxShape3D_cppoj")
+[node name="CollisionShape3D2" type="CollisionShape3D" parent="Trigger/Path/SpaceC3Path2"]
+transform = Transform3D(0.47929698, 0.86272997, 0.16115646, -0.097337164, -0.13023615, 0.9866935, 0.8722384, -0.4886058, 0.021553904, -22.60194, -0.2855032, 12.967008)
+shape = SubResource("BoxShape3D_11dl0")
+
+[node name="CollisionShape3D3" type="CollisionShape3D" parent="Trigger/Path/SpaceC3Path2"]
+transform = Transform3D(0.7071067, 0, 0.7071068, 0, 1, 0, -0.7071068, 0, 0.7071067, 3, 4, 10.999999)
+shape = SubResource("BoxShape3D_701k8")
 
 [node name="GasRoomPath" type="Node3D" parent="Trigger/Path" node_paths=PackedStringArray("path")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1126, 0, -560)
