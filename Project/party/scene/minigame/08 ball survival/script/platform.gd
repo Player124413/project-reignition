@@ -76,12 +76,12 @@ func _on_player_trigger_area_exited(area : Area3D) -> void:
 
 func _on_fall_trigger_area_entered(area : Area3D) -> void:
 	splash_sfx.play()
+	var player : Node3D = area.get_parent().get_parent()
+	splash_vfx.get(player.player_index).global_position = player.character_body.global_position
+	splash_vfx.get(player.player_index).call("RestartGroup")
 	if _is_gameplay_finished:
 		return
 	
-	var player : Node3D = area.get_parent().get_parent()
 	if NetworkManager.is_hosting_game:
-		splash_vfx.get(player.player_index).global_position = player.character_body.global_position
-		splash_vfx.get(player.player_index).call("RestartGroup")
 		MinigameManager.instance.request_score_change(player.player_index, -1)
 		MinigameManager.instance.register_completed_player()

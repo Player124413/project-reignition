@@ -41,6 +41,58 @@ func process_inputs() -> void:
 		return
 	super()
 
+var cpu_target_player : PartyGameCharacterMover
+
+func calculate_cpu_input() -> Vector2:
+	var difficulty : PlayerData.CPU_DIFFICULTY_ENUM = get_cpu_difficulty()
+	var pos : Vector3 = character_body.global_position
+	pos.y = 0
+	var dir : Vector2 = Vector2(-pos.x, pos.z).normalized()
+	var variance : float = 1.0 - randf() * 2.0
+	if difficulty == PlayerData.CPU_DIFFICULTY_ENUM.EASY:
+		return dir.rotated(variance * PI * 0.5)
+	elif difficulty == PlayerData.CPU_DIFFICULTY_ENUM.NORMAL:
+		return dir.normalized().rotated(variance * PI * 0.2)
+	elif difficulty == PlayerData.CPU_DIFFICULTY_ENUM.HARD:
+		cpu_interval_timer = 0.0
+		var target_pos : Vector3 = cpu_target_player.global_position if cpu_target_player != null else Vector3.ZERO
+		target_pos.y = 0
+		if target_pos.length() < PLATFORM_RADIUS * 0.8 && pos.length() > PLATFORM_RADIUS * 0.5:
+			cpu_target_player = null
+		elif cpu_target_player == null:
+			cpu_target_player = get_target_cpu()
+		if cpu_target_player != null:
+			pos = (character_body.global_position - cpu_target_player.global_position)
+			dir = Vector2(-pos.x, pos.z).normalized()
+		return dir.normalized().rotated(variance * PI * 0.2)
+	elif difficulty == PlayerData.CPU_DIFFICULTY_ENUM.EXTREME:
+		cpu_interval_timer = 0.0
+		var target_pos : Vector3 = cpu_target_player.global_position if cpu_target_player != null else Vector3.ZERO
+		target_pos.y = 0
+		if target_pos.length() < PLATFORM_RADIUS * 0.5 && pos.length() > PLATFORM_RADIUS * 0.2:
+			cpu_target_player = null
+		elif cpu_target_player == null:
+			cpu_target_player = get_target_cpu()
+		if cpu_target_player != null:
+			pos = (character_body.global_position - cpu_target_player.global_position)
+			dir = Vector2(-pos.x, pos.z).normalized()
+		return dir.normalized().rotated(variance * PI * 0.2)
+	return Vector2.ZERO
+
+const PLATFORM_RADIUS : float = 30.0
+
+### Gets the player that's closest to the edge so we can attack them.
+func get_target_cpu() -> PartyGameCharacterMover:
+	var closest : PartyGameCharacterMover = null
+	for player in BallSurvivalPlatform.instance.players:
+		if player == self:
+			continue
+		if closest == null:
+			closest = player
+		elif player.global_position.length_squared() > closest.global_position.length_squared():
+			closest = player
+	return closest
+
 func process_speed() -> void:
 	super()
 	if _is_knockback_active && (is_zero_approx(_move_speed) || is_falling()):
