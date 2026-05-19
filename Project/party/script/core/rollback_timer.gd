@@ -10,7 +10,7 @@ signal rollback_applied(rb_params : Array)
 ## How should authority be determined?
 @export var authority_mode : AUTHORITY_MODE
 ## How many parameters should we allocate?
-@export var param_count : int = 2
+@export_range(1, 5, 1, "or_greater") var param_count : int = 2
 var target : Node
 
 enum AUTHORITY_MODE {

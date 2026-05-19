@@ -9,14 +9,24 @@ var last_knockback_index : int = -1
 const BASE_KNOCKBACK : float = 12.0
 
 @export var ball_mesh : Node3D
+var previous_ball_position : Vector3
 ### Multiplier for the ball's rotation
 const BALL_ROTATION_FACTOR : float = 0.2
+const SLIDE_STRENGTH : float = 30.0
 
 func on_spawn_finished() -> void:
 	super()
+	previous_ball_position = ball_mesh.global_position
 	character_animator.play_minigame_animation(get_anim_prefix() + "walk")
+	BallSurvivalPlatform.instance.register_player(self)
 
 func process_movement_tick() -> void:
+	if character_body.is_on_floor():
+		var slide_vel : Vector3 = character_body.get_floor_normal()
+		slide_vel.y = 0.0
+		character_body.velocity = slide_vel * SLIDE_STRENGTH
+		character_body.move_and_slide()
+	
 	super()
 	if character_body.get_slide_collision_count() != 0:
 		if is_multiplayer_authority() && character_body.get_slide_collision(0).get_collider(0) is CharacterBody3D:
@@ -80,9 +90,14 @@ func apply_movement_rotation() -> void:
 
 func process_animation() -> void:
 	super()
-	var rotation_axis : Vector3 = Vector3.RIGHT.rotated(Vector3.UP, _move_angle)
-	var rotation_amount : float = _move_speed * BALL_ROTATION_FACTOR * get_physics_process_delta_time()
-	ball_mesh.global_rotate(rotation_axis, rotation_amount)
+	
+	var rotation_axis : Vector3 = (ball_mesh.global_position - previous_ball_position).rotated(Vector3.UP, PI * 0.5)
+	if rotation_axis.is_zero_approx():
+		return
+	
+	var rotation_amount : float = rotation_axis.length() * BALL_ROTATION_FACTOR
+	ball_mesh.global_rotate(rotation_axis.normalized(), rotation_amount)
+	previous_ball_position = ball_mesh.global_position
 
 func get_target_animation() -> StringName:
 	if is_falling():

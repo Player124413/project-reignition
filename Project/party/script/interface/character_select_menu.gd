@@ -200,6 +200,11 @@ func update_cursor_position(index : int, portrait_index : Vector2i) -> void:
 func advance_cursor_port(index : int) -> void:
 	## Show the character model on the current port's preview
 	var port_index : int = cursors[index].port_index
+	if PartyManager.get_player_data(port_index).character_data == null:
+		# Waiting for RPCs
+		get_tree().create_timer(0.1).timeout.connect(Callable(self, "advance_cursor_port").bind(index))
+		return
+	
 	previews[port_index].rpc("select", PartyManager.get_player_data(port_index).character_data.model_file)
 	var next_port : int = cursors[index].port_index + 1
 	for i in cursors.size():
