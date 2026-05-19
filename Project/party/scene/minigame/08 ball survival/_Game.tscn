@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=3 uid="uid://c1aktyomsu436"]
+[gd_scene load_steps=18 format=3 uid="uid://c1aktyomsu436"]
 
 [ext_resource type="PackedScene" uid="uid://dsbufs8tjchk7" path="res://party/scene/minigame/00 base/MinigameBase.tscn" id="1_2wqpo"]
 [ext_resource type="PackedScene" uid="uid://djxelrue6bxb" path="res://party/scene/minigame/08 ball survival/model/Map.glb" id="1_grd5u"]
@@ -6,8 +6,11 @@
 [ext_resource type="PackedScene" uid="uid://bn74farnowac7" path="res://party/scene/minigame/08 ball survival/model/Platform.glb" id="2_2wqpo"]
 [ext_resource type="AnimationLibrary" uid="uid://cr0b1euy0vp1" path="res://party/scene/minigame/08 ball survival/animation/_Library.glb" id="3_e0i4m"]
 [ext_resource type="Resource" uid="uid://dh0fbmwjh64ii" path="res://party/resource/minigame/08BallSurvival.tres" id="3_v27jp"]
+[ext_resource type="Resource" uid="uid://byywjgtxw58k" path="res://party/resource/bgm/Minigame3.tres" id="4_6cmup"]
 [ext_resource type="Script" uid="uid://csmw78km7gmp3" path="res://party/scene/minigame/08 ball survival/script/platform.gd" id="5_hp02w"]
 [ext_resource type="Script" uid="uid://ds056nimfywwr" path="res://party/script/core/rollback_timer.gd" id="7_w3ika"]
+[ext_resource type="AudioStream" uid="uid://qv7tv2xnkc3c" path="res://party/scene/minigame/08 ball survival/sound/splash.wav" id="9_tpt1h"]
+[ext_resource type="AudioStream" uid="uid://bqlcxknjegyc2" path="res://party/scene/minigame/08 ball survival/sound/move.wav" id="9_yppg1"]
 
 [sub_resource type="Environment" id="Environment_hp02w"]
 ambient_light_source = 2
@@ -145,6 +148,9 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 0, 0)
 [node name="P4" parent="Minigame/ResultsLocation" index="3"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 21, 0, 0)
 
+[node name="BGM" parent="Minigame" index="6"]
+bgmResource = ExtResource("4_6cmup")
+
 [node name="Environment" type="Node3D" parent="."]
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="Environment"]
@@ -192,9 +198,11 @@ layers = 8
 [node name="water02" parent="Map/WaterRoot/Skeleton3D" index="3"]
 layers = 8
 
-[node name="Platform" type="Node3D" parent="." node_paths=PackedStringArray("rollback_timer")]
+[node name="Platform" type="Node3D" parent="." node_paths=PackedStringArray("rollback_timer", "move_sfx", "splash_sfx")]
 script = ExtResource("5_hp02w")
 rollback_timer = NodePath("Rollback")
+move_sfx = NodePath("MoveSfx")
+splash_sfx = NodePath("SplashSfx")
 
 [node name="Root" type="StaticBody3D" parent="Platform"]
 
@@ -216,6 +224,17 @@ monitorable = false
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Platform/PlayerTrigger"]
 shape = SubResource("CylinderShape3D_v27jp")
+
+[node name="MoveSfx" type="AudioStreamPlayer" parent="Platform"]
+stream = ExtResource("9_yppg1")
+volume_db = -3.0
+bus = &"GAME SFX"
+
+[node name="SplashSfx" type="AudioStreamPlayer" parent="Platform"]
+stream = ExtResource("9_tpt1h")
+volume_db = 6.0
+max_polyphony = 4
+bus = &"GAME SFX"
 
 [node name="Rollback" type="Node" parent="Platform"]
 script = ExtResource("7_w3ika")

@@ -3,6 +3,8 @@ class_name BallSurvivalPlatform extends Node3D
 static var instance : BallSurvivalPlatform
 
 @export var rollback_timer : RollbackTimer
+@export var move_sfx : AudioStreamPlayer
+@export var splash_sfx : AudioStreamPlayer
 
 var _is_gameplay_finished : bool
 var players : Array[PartyGameCharacterMover]
@@ -21,7 +23,12 @@ func _enter_tree() -> void:
 func on_gameplay_finished() -> void:
 	_is_gameplay_finished = true
 
+func activate() -> void:
+	process_mode = Node.PROCESS_MODE_INHERIT
+	move_sfx.play()
+
 func deactivate() -> void:
+	move_sfx.stop()
 	process_mode = Node.PROCESS_MODE_DISABLED
 	rotation_degrees = Vector3.ZERO
 
@@ -47,9 +54,6 @@ func process_movement_tick() -> void:
 	target_rot = target_rot.rotated(Vector3.UP, PI * 0.5)
 	rotation_degrees = rotation_degrees.move_toward(target_rot, ROTATION_SPEED * get_physics_process_delta_time())
 
-func activate() -> void:
-	process_mode = Node.PROCESS_MODE_INHERIT
-
 func get_average_position() -> Vector3:
 	var avg : Vector3 = Vector3.ZERO
 	if players.size() == 0:
@@ -71,6 +75,7 @@ func _on_player_trigger_area_exited(area : Area3D) -> void:
 			players.remove_at(index)
 
 func _on_fall_trigger_area_entered(area : Area3D) -> void:
+	splash_sfx.play()
 	if _is_gameplay_finished:
 		return
 	

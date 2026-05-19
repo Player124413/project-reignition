@@ -1,5 +1,6 @@
 extends PartyGameCharacterMover
 
+@export var collision_sfx : GroupSfxPlayer
 @export var knockback_strength : float = 15.0
 ### Tracks whether the player is being knocked back or not.
 var _is_knockback_active : bool
@@ -69,6 +70,7 @@ func apply_knockback_deferred(original_angle : float, target_angle : float , tar
 		# Store knockback angle so we can return to it later
 		_knockback_angle = original_angle
 		_is_knockback_active = true
+		collision_sfx.play_in_group()
 	_move_angle = target_angle
 	_move_speed = target_speed 
 	last_knockback_index = other_index # Store index to detect double collisions
