@@ -1,0 +1,136 @@
+[gd_scene load_steps=16 format=3 uid="uid://b4eubeg7km2ax"]
+
+[ext_resource type="Material" uid="uid://cfj2lar13vb43" path="res://effect/particle/material/environment/Water Splash Ripple.tres" id="1_vhnxr"]
+[ext_resource type="Script" uid="uid://c65ffkknyq6gr" path="res://addons/custom_nodes/script/GroupGpuParticles3D.cs" id="2_7qq46"]
+[ext_resource type="Material" uid="uid://bhj21xbsvtun5" path="res://effect/particle/material/environment/Common Dust Splatter Add.tres" id="3_lcy5h"]
+[ext_resource type="Texture2D" uid="uid://x6xj3uo7y1dj" path="res://party/scene/minigame/08 ball survival/texture/drop fx.png" id="4_rpdwf"]
+
+[sub_resource type="Curve" id="Curve_gm5qh"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.2, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_wmvsj"]
+width = 64
+texture_mode = 1
+curve = SubResource("Curve_gm5qh")
+
+[sub_resource type="Curve" id="Curve_g5ilf"]
+_data = [Vector2(0, 0), 0.0, 3.1025736, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_o1ost"]
+width = 64
+curve = SubResource("Curve_g5ilf")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_kl18m"]
+lifetime_randomness = 0.2
+particle_flag_rotate_y = true
+angle_min = 1.0728836e-05
+angle_max = 360.00003
+gravity = Vector3(0, 0, 0)
+scale_min = 20.0
+scale_max = 25.0
+scale_curve = SubResource("CurveTexture_o1ost")
+alpha_curve = SubResource("CurveTexture_wmvsj")
+
+[sub_resource type="QuadMesh" id="QuadMesh_r7a2r"]
+orientation = 1
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_gm5qh"]
+lifetime_randomness = 0.2
+particle_flag_rotate_y = true
+emission_shape = 6
+emission_ring_axis = Vector3(0, 1, 0)
+emission_ring_height = 0.0
+emission_ring_radius = 5.0
+emission_ring_inner_radius = 4.0
+emission_ring_cone_angle = 90.0
+angle_min = -29.99999
+angle_max = 30.000011
+direction = Vector3(0, 1, 0)
+initial_velocity_min = 1.0
+initial_velocity_max = 2.0
+gravity = Vector3(0, 0, 0)
+scale_min = 10.0
+scale_max = 25.0
+scale_curve = SubResource("CurveTexture_o1ost")
+alpha_curve = SubResource("CurveTexture_wmvsj")
+
+[sub_resource type="QuadMesh" id="QuadMesh_g5ilf"]
+size = Vector2(0.5, 1)
+center_offset = Vector3(0, 0.5, 0)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_g5ilf"]
+transparency = 1
+blend_mode = 1
+shading_mode = 0
+vertex_color_use_as_albedo = true
+albedo_texture = ExtResource("4_rpdwf")
+billboard_mode = 3
+billboard_keep_scale = true
+particles_anim_h_frames = 1
+particles_anim_v_frames = 1
+particles_anim_loop = false
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_g5ilf"]
+lifetime_randomness = 0.2
+particle_flag_rotate_y = true
+angle_min = 1.0728836e-05
+angle_max = 360.00003
+direction = Vector3(0, 1, 0)
+spread = 60.0
+initial_velocity_min = 30.0
+initial_velocity_max = 50.0
+gravity = Vector3(0, -50, 0)
+scale_min = 10.0
+scale_max = 15.0
+scale_curve = SubResource("CurveTexture_o1ost")
+alpha_curve = SubResource("CurveTexture_wmvsj")
+
+[sub_resource type="QuadMesh" id="QuadMesh_d8hju"]
+
+[node name="Splash" type="GPUParticles3D" node_paths=PackedStringArray("subSystems")]
+layers = 32
+material_override = ExtResource("1_vhnxr")
+cast_shadow = 0
+emitting = false
+amount = 4
+lifetime = 0.8
+one_shot = true
+explosiveness = 0.7
+fixed_fps = 0
+fract_delta = false
+process_material = SubResource("ParticleProcessMaterial_kl18m")
+draw_pass_1 = SubResource("QuadMesh_r7a2r")
+script = ExtResource("2_7qq46")
+subSystems = [NodePath("Splatter"), NodePath("Drops")]
+
+[node name="Splatter" type="GPUParticles3D" parent="."]
+layers = 32
+material_override = ExtResource("3_lcy5h")
+cast_shadow = 0
+emitting = false
+amount = 16
+lifetime = 0.4
+one_shot = true
+explosiveness = 0.7
+fixed_fps = 0
+fract_delta = false
+transform_align = 2
+process_material = SubResource("ParticleProcessMaterial_gm5qh")
+draw_pass_1 = SubResource("QuadMesh_g5ilf")
+
+[node name="Drops" type="GPUParticles3D" parent="."]
+layers = 32
+material_override = SubResource("StandardMaterial3D_g5ilf")
+cast_shadow = 0
+emitting = false
+amount = 16
+lifetime = 0.4
+one_shot = true
+explosiveness = 0.7
+fixed_fps = 0
+fract_delta = false
+transform_align = 2
+process_material = SubResource("ParticleProcessMaterial_g5ilf")
+draw_pass_1 = SubResource("QuadMesh_d8hju")

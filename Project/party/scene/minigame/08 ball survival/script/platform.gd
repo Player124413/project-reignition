@@ -5,6 +5,7 @@ static var instance : BallSurvivalPlatform
 @export var rollback_timer : RollbackTimer
 @export var move_sfx : AudioStreamPlayer
 @export var splash_sfx : AudioStreamPlayer
+@export var splash_vfx : Array[GPUParticles3D]
 
 var _is_gameplay_finished : bool
 var players : Array[PartyGameCharacterMover]
@@ -81,5 +82,7 @@ func _on_fall_trigger_area_entered(area : Area3D) -> void:
 	
 	var player : Node3D = area.get_parent().get_parent()
 	if player.is_multiplayer_authority():
+		splash_vfx.get(player.player_index).global_position = player.character_body.global_position
+		splash_vfx.get(player.player_index).call("RestartGroup")
 		MinigameManager.instance.request_score_change(player.player_index, -1)
 		MinigameManager.instance.register_completed_player()
