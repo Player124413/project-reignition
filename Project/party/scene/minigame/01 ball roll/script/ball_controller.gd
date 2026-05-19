@@ -39,10 +39,9 @@ func on_spawn_finished() -> void:
 	character_animator.animator.set_blend_time(get_anim_prefix() + "wait", get_anim_prefix() + "push", 0.5)
 	character_animator.animator.set_blend_time(get_anim_prefix() + "push", get_anim_prefix() + "wait", 0.5)
 	movement_angle = global_rotation.y
-	
-	MinigameManager.instance.minigame_finished.connect(Callable.create(self, "on_minigame_finished"))
 
 func on_minigame_finished() -> void:
+	super()
 	ball_mesh.visible = false
 	is_minigame_complete = true
 	roll_sfx.stop_in_group()

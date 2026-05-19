@@ -23,7 +23,7 @@ func show_popup(index : int, score : int, screen_position : Vector2, time : floa
 
 ## Cancels a popup
 func abort_popup() -> void:
-	animator.play("RESET")
+	animator.play("init")
 	animator.seek(0.0)
 	repool.emit()
 

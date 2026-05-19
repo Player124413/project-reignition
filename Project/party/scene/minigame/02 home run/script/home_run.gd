@@ -91,7 +91,6 @@ const BALL_SCALE_DISTANCE : float = 80
 func on_spawn_finished() -> void:
 	ball.visible = false
 	bat_attachment.reparent(character_animator.skeleton)
-	MinigameManager.instance.minigame_finished.connect(Callable(self, "on_minigame_finished"))
 	character_animator.play_animation(get_anim_prefix() + "wait")
 
 func on_host_spawned() -> void:
@@ -113,6 +112,7 @@ func activate() -> void:
 	pitch_ball() # Start pitching balls
 
 func on_minigame_finished() -> void:
+	super()
 	bat_attachment.visible = false
 
 func _physics_process(_delta: float) -> void:

@@ -18,7 +18,6 @@ func _enter_tree() -> void:
 	MinigameManager.instance.gameplay_started.connect(Callable(self, "activate"))
 	MinigameManager.instance.gameplay_finished.connect(Callable(self, "on_gameplay_finished"))
 	MinigameManager.instance.minigame_finished.connect(Callable(self, "deactivate"))
-	deactivate()
 	rollback_timer.register_target(self)
 
 func on_gameplay_finished() -> void:
@@ -81,7 +80,7 @@ func _on_fall_trigger_area_entered(area : Area3D) -> void:
 		return
 	
 	var player : Node3D = area.get_parent().get_parent()
-	if player.is_multiplayer_authority():
+	if NetworkManager.is_hosting_game:
 		splash_vfx.get(player.player_index).global_position = player.character_body.global_position
 		splash_vfx.get(player.player_index).call("RestartGroup")
 		MinigameManager.instance.request_score_change(player.player_index, -1)

@@ -41,9 +41,9 @@ func on_spawn_finished() -> void:
 	rollback_timer.register_target(self)
 	initialize_animation_tree(get_anim_prefix(), ANIM_LIST)
 	hand_attachment.reparent(character_animator.skeleton)
-	MinigameManager.instance.minigame_finished.connect(Callable(self, "on_minigame_finished"))
 
 func on_minigame_finished() -> void:
+	super()
 	hand_attachment.visible = false
 
 func _physics_process(_delta: float) -> void:
