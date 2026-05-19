@@ -1,0 +1,51 @@
+[gd_scene load_steps=5 format=3 uid="uid://bibmi1nq7ul4e"]
+
+[ext_resource type="PackedScene" uid="uid://bcgaqhvrrfooj" path="res://party/scene/minigame/08 ball survival/model/Ball.glb" id="1_atgpo"]
+[ext_resource type="Script" uid="uid://ba40pisodeghn" path="res://party/scene/minigame/08 ball survival/script/player_controller.gd" id="1_jis8g"]
+[ext_resource type="Script" uid="uid://ds056nimfywwr" path="res://party/script/core/rollback_timer.gd" id="3_nieit"]
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_jis8g"]
+radius = 5.0
+
+[node name="Player" type="Node3D" node_paths=PackedStringArray("ball_mesh", "rollback_timer", "character_body", "spawn_position")]
+script = ExtResource("1_jis8g")
+ball_mesh = NodePath("Body/Ball")
+rollback_timer = NodePath("Rollback")
+character_body = NodePath("Body")
+allow_instant_turn = false
+enable_gravity = true
+run_speed = 30.0
+walk_speed = 30.0
+turn_speed = 3.0
+in_place_turn_speed = 6.0
+friction = 20.0
+traction = 30.0
+brake_friction = 20.0
+spawn_position = NodePath("Body/Spawn")
+deactivate_on_gameplay_finished = false
+
+[node name="Body" type="CharacterBody3D" parent="."]
+floor_stop_on_slope = false
+floor_block_on_wall = false
+
+[node name="Spawn" type="Node3D" parent="Body"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 10, 0)
+
+[node name="Ball" parent="Body" instance=ExtResource("1_atgpo")]
+transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 5, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Body"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5, 0)
+shape = SubResource("SphereShape3D_jis8g")
+
+[node name="FallDetector" type="Area3D" parent="Body"]
+monitoring = false
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Body/FallDetector"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5, 0)
+shape = SubResource("SphereShape3D_jis8g")
+
+[node name="Rollback" type="Node" parent="."]
+script = ExtResource("3_nieit")
+param_count = 4
+rollback_interval = 0.0

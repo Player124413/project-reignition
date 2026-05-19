@@ -10,6 +10,7 @@ class_name PartyGameCharacterSpawner extends Node3D
 @export var animation_tree : AnimationTree
 
 @export var deactivate_on_gameplay_finished : bool = true
+var _is_spawn_finished : bool
 var _is_gameplay_finished : bool
 
 func initialize_animation_tree(anim_prefix : String, anim_list : PackedStringArray) -> void:
@@ -74,6 +75,7 @@ func _ready() -> void:
 		set_physics_process(false)
 		MinigameManager.instance.gameplay_started.connect(Callable.create(self, "activate"))
 		MinigameManager.instance.gameplay_finished.connect(Callable.create(self, "on_gameplay_finished"))
+		MinigameManager.instance.minigame_finished.connect(Callable.create(self, "on_minigame_finished"))
 		
 		if is_instance_valid(score_counter):
 			# Initialize the score counter
@@ -91,12 +93,16 @@ func on_host_spawned() -> void:
 
 ## Called after spawn logic has finished.
 func on_spawn_finished() -> void:
-	pass
+	_is_spawn_finished = true
 
 func on_gameplay_finished() -> void:
 	_is_gameplay_finished = true
 	if deactivate_on_gameplay_finished:
 		deactivate()
+
+func on_minigame_finished() -> void:
+	disable_tree()
+	deactivate()
 
 ## Called after a demo object has spawned. Default behavior: connect the demo_transition_processed signal.
 func on_demo_spawned() -> void:

@@ -21,6 +21,7 @@ func on_spawn_finished() -> void:
 	MinigameManager.instance.minigame_finished.connect(Callable(self, "on_minigame_finished"))
 
 func on_minigame_finished() -> void:
+	super()
 	hand_attachment.visible = false
 
 ## The swing direction. -1 for left, 1 for right, 0 for not swinging.
