@@ -1,0 +1,55 @@
+[gd_scene load_steps=4 format=3 uid="uid://c58n83ustsuks"]
+
+[ext_resource type="PackedScene" uid="uid://c4m2t2e7quuex" path="res://party/scene/minigame/04 minecart race/model/Truck.glb" id="1_25a8o"]
+[ext_resource type="Script" uid="uid://b4ric7jscsvby" path="res://party/scene/minigame/04 minecart race/scipt/minecart_race.gd" id="1_rfm5b"]
+[ext_resource type="PackedScene" uid="uid://pujru0qdm8n1" path="res://party/scene/minigame/04 minecart race/model/Tire.glb" id="2_a6nxi"]
+
+[node name="Minecart" type="Node3D" node_paths=PackedStringArray("camera", "minecart_animator", "spawn_position")]
+script = ExtResource("1_rfm5b")
+camera = NodePath("CameraRoot/Camera")
+minecart_animator = NodePath("Truck/AnimationPlayer")
+spawn_position = NodePath("CharacterPosition")
+
+[node name="Truck" parent="." instance=ExtResource("1_25a8o")]
+
+[node name="Skeleton3D" parent="Truck/TruckRoot" index="0"]
+bones/0/rotation = Quaternion(0.7071072, 1.7763568e-14, -2.1584686e-15, 0.7071065)
+bones/2/rotation = Quaternion(0.35205558, -1.5388629e-08, -0.9359792, 4.091299e-08)
+
+[node name="CharacterPosition" type="Node3D" parent="."]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -3.3935304, 2.6598778, 0.09640026)
+
+[node name="Tire" parent="." instance=ExtResource("2_a6nxi")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.9218464, 2.5244555, 6.2929044)
+
+[node name="Tire2" parent="." instance=ExtResource("2_a6nxi")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.0781536, 2.5244555, 6.2929044)
+
+[node name="Tire3" parent="." instance=ExtResource("2_a6nxi")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 6.0781536, 2.5244555, -6.2156296)
+
+[node name="Tire4" parent="." instance=ExtResource("2_a6nxi")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, -5.9218464, 2.5244555, -6.2156305)
+
+[node name="CameraRoot" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 3.7866974, 24.341766)
+
+[node name="Camera" type="Camera3D" parent="CameraRoot"]
+physics_interpolation_mode = 2
+transform = Transform3D(0.7259269, 0.089915015, -0.68186915, -0.687772, 0.09490312, -0.7196966, -2.4305363e-08, 0.9914175, 0.13073374, -33.52001, -30.898571, 10.738611)
+cull_mask = 1059
+current = true
+fov = 40.0
+far = 8000.0
+
+[node name="SpotLight3D" type="SpotLight3D" parent="."]
+transform = Transform3D(-1.8626451e-09, -1, -2.9903383e-08, -0.04227665, -2.97979e-08, 0.999106, -0.999106, 3.1251945e-09, -0.04227665, 27.481644, 53.4449, -6.649214)
+light_color = Color(1, 1, 0.8, 1)
+light_energy = 3.983
+light_specular = 0.0
+spot_range = 121.61988
+spot_attenuation = -0.4
+spot_angle = 73.125
+spot_angle_attenuation = 1.6817875
+
+[editable path="Truck"]
