@@ -769,6 +769,7 @@ public partial class StageSettings : Node3D
 
 		// Unlock World Rings, if necessary
 		if (Data.WorldRing != SaveManager.WorldEnum.LostPrologue &&
+			Data.WorldRing != SaveManager.WorldEnum.Mods &&
 			!SaveManager.ActiveGameData.IsWorldRingObtained(Data.WorldRing))
 		{
 			SaveManager.ActiveGameData.UnlockWorldRing(Data.WorldRing);
