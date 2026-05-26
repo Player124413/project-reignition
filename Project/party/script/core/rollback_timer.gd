@@ -44,6 +44,9 @@ func set_authority_mode(mode : AUTHORITY_MODE) -> void:
 
 ## Sets a param.
 func set_param(index : int, value) -> void:
+	if _params.size() <= index: # Resize params if needed
+		param_count = index
+		_params.resize(param_count)
 	_params[index] = value
 
 ## Optional function if you want to change lag compensation.
