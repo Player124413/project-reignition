@@ -49,14 +49,14 @@ radius = 0.9
 
 [node name="SpikeBall" type="Node3D"]
 script = ExtResource("1_q51ix")
+root = NodePath("Root")
+animator = NodePath("Root/AnimationPlayer")
 Movement/Mode = 1
 "Movement/Cycle Length" = 0.0
 "Movement/Starting Offset" = 0.0
 Movement/Distance = 0.0
 Movement/Angle = 0.0
 "Vertical Orientation" = false
-root = NodePath("Root")
-animator = NodePath("Root/AnimationPlayer")
 
 [node name="Root" type="Node3D" parent="."]
 script = ExtResource("2_k2q3r")
@@ -64,15 +64,15 @@ script = ExtResource("2_k2q3r")
 [node name="AnimationPlayer" type="AnimationPlayer" parent="Root"]
 root_node = NodePath("../StaticBody3D")
 libraries = {
-"": SubResource("AnimationLibrary_jat4b")
+&"": SubResource("AnimationLibrary_jat4b")
 }
 autoplay = "idle-loop"
 
 [node name="SpikeBall" parent="Root" instance=ExtResource("1")]
 transform = Transform3D(0.999996, 0, 0, 0, 1, 0, 0, 0, 0.999996, 0, 0, 0)
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Root"]
-collision_layer = 8
+[node name="StaticBody3D" type="StaticBody3D" parent="Root" groups=["force lockon bounce"]]
+collision_layer = 72
 collision_mask = 0
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Root/StaticBody3D"]

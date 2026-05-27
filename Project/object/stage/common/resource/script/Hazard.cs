@@ -29,9 +29,6 @@ public partial class Hazard : Node3D
 		if (Player.IsAutomationActive) // Prevent unfair damage
 			return;
 
-		if (Player.IsPerfectHomingAttacking) // Increase defense when performing a perfect homing attack
-			return;
-
 		if (Player.IsLaunching && !Player.ActiveLaunchSettings.AllowDamage)
 			return;
 
