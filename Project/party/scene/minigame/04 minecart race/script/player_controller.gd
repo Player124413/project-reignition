@@ -59,12 +59,15 @@ const TIRE_ANIMATION_SPEED : float = 0.1
 
 func on_spawn_finished() -> void:
 	super()
-	current_speed = INITIAL_SPEED
-	character_animator.play_animation(get_anim_prefix() + "low-wait")
 	camera_root.top_level = true
 	wall_detection.top_level = true
-	set_physics_process(true) # Movement is needed during the demo
+	
+	rollback_timer.register_target(self)
+	character_animator.play_animation(get_anim_prefix() + "low-wait")
+	
+	current_speed = INITIAL_SPEED
 	MinigameManager.instance.gameplay_started.connect(Callable(self, "on_gamplay_started"))
+	set_physics_process(true) # Movement is needed during the demo
 
 func on_gamplay_started() -> void:
 	can_pump = true
@@ -80,8 +83,37 @@ func _physics_process(_delta: float) -> void:
 	process_movement_tick()
 	process_pump()
 	process_animation()
+	
+	if rollback_timer.is_authority():
+		process_rollback()
+
+#####################
+### ROLLBACK CODE ###
+#####################
+@export var rollback_timer : RollbackTimer
+const RB_POS : int = 0
+const RB_SPD : int = 1
+const RB_SLOPE_SPD : int = 2
+const RB_GRAVITY : int = 3
+func on_rollback_applied(rb_params : Array) -> void:
+	path_follower.progress = rb_params[RB_POS]
+	current_speed = rb_params[RB_SPD]
+	slope_speed = rb_params[RB_SLOPE_SPD]
+	current_gravity = rb_params[RB_GRAVITY]
+
+func process_rollback() -> void:
+	rollback_timer.set_param(RB_POS, path_follower.progress)
+	rollback_timer.set_param(RB_SPD, current_speed)
+	rollback_timer.set_param(RB_SLOPE_SPD, slope_speed)
+	rollback_timer.set_param(RB_GRAVITY, current_gravity)
+	rollback_timer.process_rollback()
 
 func process_movement_tick() -> void:
+	if _is_gameplay_finished:
+		current_speed = move_toward(current_speed, MIN_SPEED, SLOPE_DECCELERATION * get_physics_process_delta_time())
+	elif current_speed > INITIAL_SPEED && is_zero_approx(slope_speed):
+		current_speed = move_toward(current_speed, INITIAL_SPEED, NORMAL_DECCELERATION * get_physics_process_delta_time())
+	
 	# Store starting state
 	var starting_height : float = path_follower.global_position.y
 	var starting_progress : float = path_follower.progress
@@ -147,12 +179,10 @@ func is_processing_fall() -> bool:
 	return is_equal_approx(abs(dot), 1.0)
 
 func process_pump() -> void:
-	if _is_gameplay_finished:
-		current_speed = move_toward(current_speed, MIN_SPEED, SLOPE_DECCELERATION * get_physics_process_delta_time())
-	elif current_speed > INITIAL_SPEED && is_zero_approx(slope_speed):
-		current_speed = move_toward(current_speed, INITIAL_SPEED, NORMAL_DECCELERATION * get_physics_process_delta_time())
+	if _is_gameplay_finished || !can_pump:
+		return
 	
-	if _is_gameplay_finished || !can_pump || !is_multiplayer_authority():
+	if !is_multiplayer_authority():
 		return
 	
 	var is_pressed : bool = false
@@ -163,10 +193,9 @@ func process_pump() -> void:
 	
 	if is_pressed: # If the lever is up, pump down, and vice versa.
 		if lever_state == LEVER_STATES.UP:
-			start_player_pump_down()
+			rpc("start_player_pump_down")
 		else:
-			start_player_pump_up()
-
+			rpc("start_player_pump_up")
 
 var walls_detected : int
 var cpu_timer : float
@@ -202,6 +231,7 @@ func process_animation() -> void:
 		wheel.rotation += Vector3.FORWARD * rot_amount
 
 ## Pushes the minecart lever down.
+@rpc("authority", "call_local", "reliable")
 func start_player_pump_down() -> void:
 	can_pump = false
 	lever_state = LEVER_STATES.DOWN
@@ -211,6 +241,7 @@ func start_player_pump_down() -> void:
 	current_speed = move_toward(current_speed, MAX_SPEED, ADDITIVE_SPEED)
 
 ## Pushes the minecart lever up.
+@rpc("authority", "call_local", "reliable")
 func start_player_pump_up() -> void:
 	can_pump = false
 	lever_state = LEVER_STATES.UP
@@ -225,6 +256,7 @@ func process_animation_event(info : int) -> void:
 		can_pump = true
 		is_damage_active = false
 
+@rpc("authority", "call_local", "reliable")
 func take_damage() -> void:
 	if is_damage_active:
 		return
@@ -241,8 +273,9 @@ func take_damage() -> void:
 func _on_detection_area_entered(area: Area3D) -> void:
 	if !is_multiplayer_authority():
 		return
+	
 	if area.is_in_group("wall"):
-		take_damage()
+		rpc("take_damage")
 	elif area.is_in_group("level wall"):
 		MinigameManager.instance.request_time_change(player_index, NetworkTimeSynchronizer.get_time())
 		MinigameManager.instance.request_minigame_finish()
@@ -253,5 +286,4 @@ func _on_wall_detection_area_entered(area: Area3D) -> void:
 
 func _on_wall_detection_area_exited(area: Area3D) -> void:
 	if area.is_in_group("wall"):
-		@warning_ignore("narrowing_conversion")
 		walls_detected = max(walls_detected - 1, 0)

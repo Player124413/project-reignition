@@ -358,7 +358,7 @@ func update_win_text() -> void:
 		var data : PlayerData = PartyManager.get_player_data(i)
 		
 		if NetworkManager.is_online && !NetworkManager.is_hosting_game:
-			print("Player %s placed %s with a score of %s." % [data.character_data.character_name, data.minigame_placement, player_scores[i]])
+			print("Player %s placed %s with a score of %s and a time of %s" % [data.character_data.character_name, data.minigame_placement, player_scores[i], player_times[i]])
 		
 		if data.minigame_placement != 0:
 			continue

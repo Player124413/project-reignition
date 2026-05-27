@@ -1,7 +1,8 @@
-[gd_scene load_steps=10 format=3 uid="uid://drufyn63umk81"]
+[gd_scene load_steps=11 format=3 uid="uid://drufyn63umk81"]
 
 [ext_resource type="Script" uid="uid://b4ric7jscsvby" path="res://party/scene/minigame/04 minecart race/script/player_controller.gd" id="1_6587d"]
 [ext_resource type="PackedScene" uid="uid://bfk08sq4fsyow" path="res://party/scene/minigame/04 minecart race/Environment.tscn" id="2_xlrck"]
+[ext_resource type="Script" uid="uid://ds056nimfywwr" path="res://party/script/core/rollback_timer.gd" id="5_6k58l"]
 [ext_resource type="PackedScene" uid="uid://c4m2t2e7quuex" path="res://party/scene/minigame/04 minecart race/model/Truck.glb" id="12_u37is"]
 [ext_resource type="PackedScene" uid="uid://pujru0qdm8n1" path="res://party/scene/minigame/04 minecart race/model/Tire.glb" id="13_jw1r2"]
 
@@ -24,7 +25,7 @@ size = Vector3(5, 50, 20)
 [sub_resource type="SphereShape3D" id="SphereShape3D_u37is"]
 radius = 2.0
 
-[node name="Player" type="Node3D" node_paths=PackedStringArray("wall_detection", "path_follower", "camera_root", "minecart_root", "minecart_animator", "wheels", "spawn_position")]
+[node name="Player" type="Node3D" node_paths=PackedStringArray("wall_detection", "path_follower", "camera_root", "minecart_root", "minecart_animator", "wheels", "rollback_timer", "spawn_position")]
 script = ExtResource("1_6587d")
 wall_detection = NodePath("Minecart/Truck/WallDetectionEntrance")
 path_follower = NodePath("Path/PathFollow")
@@ -32,6 +33,7 @@ camera_root = NodePath("Minecart/CameraRoot")
 minecart_root = NodePath("Minecart")
 minecart_animator = NodePath("Minecart/Truck/AnimationPlayer")
 wheels = [NodePath("Minecart/Truck/FrontAxle"), NodePath("Minecart/Truck/RearAxle")]
+rollback_timer = NodePath("Rollback")
 spawn_position = NodePath("Minecart/Truck/CharacterPosition")
 deactivate_on_gameplay_finished = false
 
@@ -204,6 +206,12 @@ monitoring = false
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Finish"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 25, 0)
 shape = SubResource("BoxShape3D_u37is")
+
+[node name="Rollback" type="Node" parent="."]
+script = ExtResource("5_6k58l")
+enable_lag_compensation = false
+param_count = 4
+rollback_interval = 0.0
 
 [connection signal="area_entered" from="Minecart/Truck/WallDetectionEntrance" to="." method="_on_wall_detection_area_entered"]
 [connection signal="area_entered" from="Minecart/Truck/WallDetectionExit" to="." method="_on_wall_detection_area_exited"]
