@@ -164,7 +164,6 @@ public partial class SoundManager : Control
 
 		if (dialogChannel.IsConnected(AudioStreamPlayer.SignalName.Finished, new Callable(this, MethodName.OnDialogFinished)))
 			dialogChannel.Disconnect(AudioStreamPlayer.SignalName.Finished, new Callable(this, MethodName.OnDialogFinished));
-
 	}
 
 	private void OnSubtitleAnimationFinished()

@@ -20,7 +20,10 @@ public partial class BGMPlayer : AudioStreamPlayer
 
 	public override void _Process(double _)
 	{
-		if (!Playing)
+		if (bgmResource == null)
+			return;
+
+		if (!Playing && Autoplay)
 		{
 			if (bgmResource != null && Mathf.IsEqualApprox(bgmResource.LoopEnd, -1))
 				Play();
