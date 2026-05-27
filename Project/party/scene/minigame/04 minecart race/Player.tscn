@@ -1,0 +1,186 @@
+[gd_scene load_steps=8 format=3 uid="uid://drufyn63umk81"]
+
+[ext_resource type="Script" uid="uid://b4ric7jscsvby" path="res://party/scene/minigame/04 minecart race/script/player_controller.gd" id="1_6587d"]
+[ext_resource type="PackedScene" uid="uid://bfk08sq4fsyow" path="res://party/scene/minigame/04 minecart race/Environment.tscn" id="2_xlrck"]
+[ext_resource type="PackedScene" uid="uid://c4m2t2e7quuex" path="res://party/scene/minigame/04 minecart race/model/Truck.glb" id="12_u37is"]
+[ext_resource type="PackedScene" uid="uid://pujru0qdm8n1" path="res://party/scene/minigame/04 minecart race/model/Tire.glb" id="13_jw1r2"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_u37is"]
+size = Vector3(4, 50, 50)
+
+[sub_resource type="Curve3D" id="Curve3D_kt2gw"]
+_data = {
+"points": PackedVector3Array(0, 0, 0, 0, 0, 0, -80, 0, 0, 0, 0, 0, 0, 0, 0, 320, 0, 0, 0, 0, 0, 0, 0, 0, 320, -10, 0, 0, 0, 0, 0, 0, 0, 471, -10, 0, 0, 0, 0, 0, 0, 0, 487.3, 0, 0, 0, 0, 0, 0, 0, 0, 791.3, 0, 0, 0, 0, 0, 0, 0, 0, 807, -10, 0, 0, 0, 0, 0, 0, 0, 1111, -10, 0, 0, 0, 0, 0, 0, 0, 1126.8, 0, 0, 0, 0, 0, 0, 0, 0, 1381.4, 0, 0, 0, 0, 0, 0, 0, 0, 1495.75, -40, 0, 0, 0, 0, 0, 0, 0, 1590.5, -40, 0, 0, 0, 0, 0, 0, 0, 1606.3, -50, 0, 0, 0, 0, 0, 0, 0, 1750.7, -50, 0, 0, 0, 0, 0, 0, 0, 1766.6, -40, 0, 0, 0, 0, 0, 0, 0, 2070, -40, 0, 0, 0, 0, 0, 0, 0, 2086.4, -30, 0, 0, 0, 0, 0, 0, 0, 2181, -30, 0, 0, 0, 0, 0, 0, 0, 2295.4, -70, 0, 0, 0, 0, 0, 0, 0, 2341.15, -70, 0, 0, 0, 0, 0, 0, 0, 2455.6, -110, 0, 0, 0, 0, 0, 0, 0, 2550.15, -110, 0, 0, 0, 0, 0, 0, 0, 2566, -100, 0, 0, 0, 0, 0, 0, 0, 2710.195, -100, 0, 0, 0, 0, 0, 0, 0, 2726, -110, 0, 0, 0, 0, 0, 0, 0, 2980.3, -110, 0, 0, 0, 0, 0, 0, 0, 3095, -150, 0, 0, 0, 0, 0, 0, 0, 3349, -150, 0, 0, 0, 0, 0, 0, 0, 3365.3, -140, 0, 0, 0, 0, 0, 0, 0, 3509, -140, 0, 0, 0, 0, 0, 0, 0, 3525.2, -150, 0, 0, 0, 0, 0, 0, 0, 3677, -150, 0, 0, 0, 0, 0, 0, 0, 3677, -160, 0, 0, 0, 0, 0, 0, 0, 4740, -160, 0),
+"tilts": PackedFloat32Array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+}
+point_count = 34
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_u37is"]
+radius = 3.0
+
+[node name="Player" type="Node3D" node_paths=PackedStringArray("path_follower", "camera_root", "minecart_root", "minecart_animator", "wheels", "spawn_position")]
+script = ExtResource("1_6587d")
+path_follower = NodePath("Path/PathFollow")
+camera_root = NodePath("Minecart/CameraRoot")
+minecart_root = NodePath("Minecart")
+minecart_animator = NodePath("Minecart/Truck/AnimationPlayer")
+wheels = [NodePath("Minecart/Truck/FrontAxle"), NodePath("Minecart/Truck/RearAxle")]
+spawn_position = NodePath("Minecart/Truck/CharacterPosition")
+deactivate_on_gameplay_finished = false
+
+[node name="Walls" type="Node3D" parent="."]
+
+[node name="Wall1" type="Area3D" parent="Walls" groups=["wall"]]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 773.5, 14, 0)
+monitoring = false
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Walls/Wall1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 25, 0)
+shape = SubResource("BoxShape3D_u37is")
+
+[node name="Wall2" type="Area3D" parent="Walls" groups=["wall"]]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1252.9, 14, 0)
+monitoring = false
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Walls/Wall2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 25, 0)
+shape = SubResource("BoxShape3D_u37is")
+
+[node name="Wall3" type="Area3D" parent="Walls" groups=["wall"]]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1572.9, -26, 0)
+monitoring = false
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Walls/Wall3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 25, 0)
+shape = SubResource("BoxShape3D_u37is")
+
+[node name="Wall4" type="Area3D" parent="Walls" groups=["wall"]]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2104.7998, -16, 0)
+monitoring = false
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Walls/Wall4"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 25, 0)
+shape = SubResource("BoxShape3D_u37is")
+
+[node name="Wall5" type="Area3D" parent="Walls" groups=["wall"]]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2584.7998, -86, 0)
+monitoring = false
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Walls/Wall5"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 25, 0)
+shape = SubResource("BoxShape3D_u37is")
+
+[node name="Wall6" type="Area3D" parent="Walls" groups=["wall"]]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2692.5999, -86, 0)
+monitoring = false
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Walls/Wall6"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 25, 0)
+shape = SubResource("BoxShape3D_u37is")
+
+[node name="Wall7" type="Area3D" parent="Walls" groups=["wall"]]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3383.5999, -126.5, 0)
+monitoring = false
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Walls/Wall7"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 25, 0)
+shape = SubResource("BoxShape3D_u37is")
+
+[node name="Wall8" type="Area3D" parent="Walls" groups=["wall"]]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3491.4, -126.5, 0)
+monitoring = false
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Walls/Wall8"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 25, 0)
+shape = SubResource("BoxShape3D_u37is")
+
+[node name="Environment" parent="." instance=ExtResource("2_xlrck")]
+
+[node name="Path" type="Path3D" parent="."]
+curve = SubResource("Curve3D_kt2gw")
+
+[node name="PathFollow" type="PathFollow3D" parent="Path"]
+transform = Transform3D(4.371137e-08, 0, 0.9999996, 0, 1, 0, -0.9999996, 0, 4.371137e-08, -20.000107, 0, 0)
+progress = 60.0
+use_model_front = true
+loop = false
+tilt_enabled = false
+
+[node name="Minecart" type="Node3D" parent="."]
+transform = Transform3D(4.371137e-08, 0, 0.9999996, 0, 1, 0, -0.9999996, 0, 4.371137e-08, -20.000107, 0, 0)
+
+[node name="Truck" parent="Minecart" instance=ExtResource("12_u37is")]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 0, 2.4, 0)
+
+[node name="Skeleton3D" parent="Minecart/Truck/TruckRoot" index="0"]
+bones/0/rotation = Quaternion(0.7071072, 1.7763568e-14, -2.1584686e-15, 0.7071065)
+bones/2/rotation = Quaternion(0.8179435, -3.575307e-08, -0.57529855, 2.5147042e-08)
+
+[node name="AnimationPlayer" parent="Minecart/Truck" index="1"]
+autoplay = "down-wait"
+
+[node name="FrontAxle" type="Node3D" parent="Minecart/Truck"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 2.5, 0)
+
+[node name="TireR" parent="Minecart/Truck/FrontAxle" instance=ExtResource("13_jw1r2")]
+transform = Transform3D(0.99999994, 0, 7.1054274e-15, 0, 1, 0, -7.1054274e-15, 0, 0.99999994, 0, 0, 6)
+
+[node name="TireL" parent="Minecart/Truck/FrontAxle" instance=ExtResource("13_jw1r2")]
+transform = Transform3D(-0.99999994, 0, 1.509958e-07, 0, 1, 0, -1.509958e-07, 0, -0.99999994, 0, 0, -6)
+
+[node name="RearAxle" type="Node3D" parent="Minecart/Truck"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 2.5, 0)
+
+[node name="TireR" parent="Minecart/Truck/RearAxle" instance=ExtResource("13_jw1r2")]
+transform = Transform3D(0.99999994, 0, 7.1054274e-15, 0, 1, 0, -7.1054274e-15, 0, 0.99999994, 0, 0, 6)
+
+[node name="TireL" parent="Minecart/Truck/RearAxle" instance=ExtResource("13_jw1r2")]
+transform = Transform3D(-0.99999994, 0, 1.509958e-07, 0, 1, 0, -1.509958e-07, 0, -0.99999994, 0, 0, -6)
+
+[node name="Light" type="SpotLight3D" parent="Minecart/Truck"]
+transform = Transform3D(1.3131648e-07, 0, -1, 0, 1, 0, 1, 0, 1.3131648e-07, 4.999998, 7.9999995, -2.9802322e-07)
+layers = 1024
+light_color = Color(1, 1, 0.8, 1)
+light_specular = 0.0
+light_cull_mask = 7
+spot_range = 150.0
+spot_attenuation = -0.5
+spot_angle = 60.0
+
+[node name="CharacterPosition" type="Node3D" parent="Minecart/Truck"]
+
+[node name="BoneAttachment3D" type="BoneAttachment3D" parent="Minecart/Truck"]
+transform = Transform3D(0.33806315, -2.9553902e-08, -0.94112337, 0.9411234, 7.521899e-07, 0.33806324, 6.9791247e-07, -0.99999994, 2.821016e-07, 4.565713, 7.72245, -1.0641273)
+bone_name = "handle"
+bone_idx = 2
+use_external_skeleton = true
+external_skeleton = NodePath("../TruckRoot/Skeleton3D")
+
+[node name="Detection" type="Area3D" parent="Minecart/Truck/BoneAttachment3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, -1, 4.3)
+monitorable = false
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Minecart/Truck/BoneAttachment3D/Detection"]
+shape = SubResource("SphereShape3D_u37is")
+
+[node name="CameraRoot" type="Node3D" parent="Minecart"]
+transform = Transform3D(-0.7071067, 0.15304591, -0.69034547, 0, 0.97629595, 0.2164396, 0.7071067, 0.15304591, -0.69034547, 0, 0, 0)
+
+[node name="Camera" type="Camera3D" parent="Minecart/CameraRoot"]
+physics_interpolation_mode = 2
+transform = Transform3D(1, 0, 0, 0, 0.9890159, -0.1478094, 0, 0.1478094, 0.9890159, 10, 0, 58)
+cull_mask = 1059
+current = true
+fov = 50.0
+
+[node name="Finish" type="Area3D" parent="." groups=["level wall"]]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4315.4, -160.5, 0)
+monitoring = false
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Finish"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 25, 0)
+shape = SubResource("BoxShape3D_u37is")
+
+[connection signal="area_entered" from="Minecart/Truck/BoneAttachment3D/Detection" to="." method="_on_detection_area_entered"]
+
+[editable path="Minecart/Truck"]
