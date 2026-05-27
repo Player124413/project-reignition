@@ -175,10 +175,15 @@ func change_selection(input : Vector2i) -> void:
 		update_default_cursor_selection()
 	else: # TODO Add rankings and records
 		if input.x != 0 && current_minigame_list.size() > minigame_option_list.size():
+			printt(current_minigame_list.size(), minigame_option_list.size())
 			selection_type = SELECTION.LEFT if input.x < 0 else SELECTION.RIGHT
 			animator.play("left" if input.x < 0 else "right")
 		elif input.y != 0:
-			current_selection.y = abs(current_selection.y + input.y) % max_minigame_selection
+			current_selection.y += input.y
+			if current_selection.y >= max_minigame_selection:
+				current_selection.y = 0
+			elif current_selection.y < 0:
+				current_selection.y = max_minigame_selection - 1
 			update_minigame_cursor_selection()
 
 func update_default_cursor_selection() -> void:
