@@ -67,7 +67,6 @@ public partial class HomingAttackState : PlayerState
 		}
 		else
 		{
-			Player.IsPerfectHomingAttacking = false;
 			Player.Lockon.ResetLockonTarget();
 			Player.Skills.DeactivateFireCrest();
 		}
