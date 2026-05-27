@@ -1,6 +1,7 @@
 ### Manages the Minecart Race party game.
 extends PartyGameCharacterSpawner
 
+@export var wall_detection : Node3D
 @export var path_follower : PathFollow3D
 @export var camera_root : Node3D
 @export var minecart_root : Node3D
@@ -35,7 +36,8 @@ const MIN_SPEED : float = 20.0
 ## How fast should the minecart go with pumping.
 const MAX_SPEED : float = 300.0
 ## How much speed should be added each pump.
-const ADDITIVE_SPEED : float = 20.0
+const ADDITIVE_SPEED : float = 50.0
+const NORMAL_DECCELERATION : float = 5.0
 
 ## How much speed should be added during a slope.
 const SLOPE_ACCELERATION : float = 200.0
@@ -43,6 +45,10 @@ const SLOPE_ACCELERATION : float = 200.0
 const SLOPE_DECCELERATION : float = 100.0
 ## How much additional speed to add when going downhill.
 const MAX_DOWNHILL_ADDITIVE_SPEED : float = 60.0
+
+### How far ahead to look for walls.
+const WALL_DETECTION_LEAD : float = 120.0
+const INITIAL_WALL_DETECTION_OFFSET : float = 5.0
 
 ## How much to smooth the cart's rotation.
 const BASIS_ROTATION_SPEED : float = 0.3
@@ -56,6 +62,7 @@ func on_spawn_finished() -> void:
 	current_speed = INITIAL_SPEED
 	character_animator.play_animation(get_anim_prefix() + "low-wait")
 	camera_root.top_level = true
+	wall_detection.top_level = true
 	set_physics_process(true) # Movement is needed during the demo
 	MinigameManager.instance.gameplay_started.connect(Callable(self, "on_gamplay_started"))
 
@@ -124,6 +131,11 @@ func process_transforms() -> void:
 		camera_root.global_position = path_follower.global_position
 	minecart_root.global_position = path_follower.global_position
 	
+	# Update wall detection
+	var speed_ratio : float = (current_speed + slope_speed) / MAX_SPEED
+	var wall_detection_offset : float = (speed_ratio * WALL_DETECTION_LEAD + INITIAL_WALL_DETECTION_OFFSET)
+	wall_detection.global_position = path_follower.global_position + Vector3.RIGHT * wall_detection_offset
+	
 	# Smooth out rotations
 	var target_basis : Basis = minecart_root.global_basis
 	target_basis = target_basis.slerp(path_follower.global_basis, BASIS_ROTATION_SPEED)
@@ -137,8 +149,10 @@ func is_processing_fall() -> bool:
 func process_pump() -> void:
 	if _is_gameplay_finished:
 		current_speed = move_toward(current_speed, MIN_SPEED, SLOPE_DECCELERATION * get_physics_process_delta_time())
+	elif current_speed > INITIAL_SPEED && is_zero_approx(slope_speed):
+		current_speed = move_toward(current_speed, INITIAL_SPEED, NORMAL_DECCELERATION * get_physics_process_delta_time())
 	
-	if !can_pump || !is_multiplayer_authority():
+	if _is_gameplay_finished || !can_pump || !is_multiplayer_authority():
 		return
 	
 	var is_pressed : bool = false
@@ -153,8 +167,33 @@ func process_pump() -> void:
 		else:
 			start_player_pump_up()
 
+
+var walls_detected : int
+var cpu_timer : float
+const SLOW_CPU_INTERVAL : float = 0.2
+const QUICK_CPU_INTERVAL : float = 0.05
+const CPU_INTERVAL_VARIANCE : float = 0.15
 func process_cpu_inputs() -> bool:
-	return false
+	cpu_timer = move_toward(cpu_timer, 0, get_physics_process_delta_time())
+	if !is_zero_approx(cpu_timer):
+		return false
+	
+	var difficulty : PlayerData.CPU_DIFFICULTY_ENUM = get_cpu_difficulty()
+	if difficulty == PlayerData.CPU_DIFFICULTY_ENUM.EASY: # Slow mash
+		cpu_timer = SLOW_CPU_INTERVAL + (1.0 - randf() * 2.0) * CPU_INTERVAL_VARIANCE
+		return randf() > 0.5
+	elif difficulty == PlayerData.CPU_DIFFICULTY_ENUM.NORMAL: # Just mashes
+		cpu_timer = QUICK_CPU_INTERVAL + randf() * CPU_INTERVAL_VARIANCE
+		return true
+	elif difficulty == PlayerData.CPU_DIFFICULTY_ENUM.HARD: # Wall avoidance
+		if walls_detected <= 0:
+			cpu_timer = SLOW_CPU_INTERVAL + randf() * CPU_INTERVAL_VARIANCE
+		else:
+			cpu_timer = QUICK_CPU_INTERVAL + randf() * CPU_INTERVAL_VARIANCE
+		return walls_detected <= 0 || lever_state == LEVER_STATES.UP
+	else:
+		cpu_timer = QUICK_CPU_INTERVAL + randf() * CPU_INTERVAL_VARIANCE
+		return walls_detected <= 0 || lever_state == LEVER_STATES.UP
 
 func process_animation() -> void:
 	var rot_amount : float = slope_speed + current_speed
@@ -186,20 +225,33 @@ func process_animation_event(info : int) -> void:
 		can_pump = true
 		is_damage_active = false
 
-func _on_detection_area_entered(area: Area3D) -> void:
-	if area.is_in_group("wall"):
-		take_damage()
-	elif area.is_in_group("level wall"):
-		MinigameManager.instance.request_score_change(player_index, 1)
-		MinigameManager.instance.request_minigame_finish()
-
 func take_damage() -> void:
 	if is_damage_active:
 		return
 	can_pump = false
+	cpu_timer = 0
+	walls_detected = 0
 	is_damage_active = true
 	current_speed = MIN_SPEED
 	lever_state = LEVER_STATES.DOWN
 	minecart_animator.play("damage", -1, PUMP_ANIM_SPEED)
 	character_animator.play_minigame_animation(get_anim_prefix() + "damage")
 	character_animator.queue_minigame_animation(get_anim_prefix() + "low-wait", 0.2)
+
+func _on_detection_area_entered(area: Area3D) -> void:
+	if !is_multiplayer_authority():
+		return
+	if area.is_in_group("wall"):
+		take_damage()
+	elif area.is_in_group("level wall"):
+		MinigameManager.instance.request_time_change(player_index, NetworkTimeSynchronizer.get_time())
+		MinigameManager.instance.request_minigame_finish()
+
+func _on_wall_detection_area_entered(area: Area3D) -> void:
+	if area.is_in_group("wall"):
+		walls_detected += 1
+
+func _on_wall_detection_area_exited(area: Area3D) -> void:
+	if area.is_in_group("wall"):
+		@warning_ignore("narrowing_conversion")
+		walls_detected = max(walls_detected - 1, 0)
