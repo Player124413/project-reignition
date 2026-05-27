@@ -1,16 +1,38 @@
-[gd_scene load_steps=3 format=3 uid="uid://cq28dycahd23h"]
+[gd_scene load_steps=5 format=3 uid="uid://cq28dycahd23h"]
 
 [ext_resource type="Script" uid="uid://bbddgqgqev64x" path="res://party/scene/minigame/11 giant stake/script/player_controller.gd" id="1_yl5s7"]
 [ext_resource type="Script" uid="uid://ds056nimfywwr" path="res://party/script/core/rollback_timer.gd" id="2_3d660"]
+[ext_resource type="PackedScene" uid="uid://c3oef1iwj8cvk" path="res://party/scene/minigame/11 giant stake/model/Hammer.glb" id="3_30hdn"]
 
-[node name="Player" type="Node3D" node_paths=PackedStringArray("rollback_timer", "character_body", "spawn_position")]
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_3d660"]
+radius = 3.0
+height = 8.0
+
+[node name="Player" type="Node3D" node_paths=PackedStringArray("hand_attachment", "rollback_timer", "character_body", "spawn_position")]
 script = ExtResource("1_yl5s7")
+hand_attachment = NodePath("HandAttachment")
 rollback_timer = NodePath("Rollback")
 character_body = NodePath("CharacterBody3D")
+allow_braking = false
+run_speed = 35.0
+friction = 230.0
 spawn_position = NodePath("CharacterBody3D")
 
 [node name="CharacterBody3D" type="CharacterBody3D" parent="."]
 
+[node name="CollisionShape3D" type="CollisionShape3D" parent="CharacterBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4, 0)
+shape = SubResource("CapsuleShape3D_3d660")
+
+[node name="HandAttachment" type="BoneAttachment3D" parent="."]
+transform = Transform3D(-0.055639148, 0.82801193, 0.5579431, -0.9488646, -0.21776418, 0.22854908, 0.3107414, -0.51669616, 0.7977873, -0.11048618, 3.0883198, 1.8606191)
+bone_name = "hand_attachment"
+bone_idx = 89
+
+[node name="Hammer" parent="HandAttachment" instance=ExtResource("3_30hdn")]
+
 [node name="Rollback" type="Node" parent="."]
 script = ExtResource("2_3d660")
+enable_lag_compensation = false
+param_count = 10
 rollback_interval = 0.0
