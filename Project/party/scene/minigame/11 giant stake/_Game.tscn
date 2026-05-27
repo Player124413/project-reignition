@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://cbo7cekvr0yl3"]
+[gd_scene load_steps=14 format=3 uid="uid://cbo7cekvr0yl3"]
 
 [ext_resource type="PackedScene" uid="uid://dsbufs8tjchk7" path="res://party/scene/minigame/00 base/MinigameBase.tscn" id="1_c2ry3"]
 [ext_resource type="PackedScene" uid="uid://52d2yrlaeay6" path="res://party/scene/minigame/11 giant stake/model/Map.glb" id="1_w3tee"]
@@ -8,6 +8,8 @@
 [ext_resource type="PackedScene" uid="uid://cq28dycahd23h" path="res://party/scene/minigame/11 giant stake/Player.tscn" id="4_jf3kn"]
 [ext_resource type="PackedScene" uid="uid://c8260un2fmbaj" path="res://party/scene/minigame/11 giant stake/model/Collision.glb" id="4_jpi4x"]
 [ext_resource type="PackedScene" uid="uid://f5w7fq20xmd1" path="res://party/scene/minigame/00 base/Time.tscn" id="5_k2xmr"]
+[ext_resource type="Script" uid="uid://k2e6sqw17l8i" path="res://party/scene/minigame/11 giant stake/script/stake_spawner.gd" id="8_6lk5b"]
+[ext_resource type="PackedScene" uid="uid://dgpa1n80e4hkd" path="res://party/scene/minigame/11 giant stake/Stake.tscn" id="8_c1dcx"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_w3tee"]
 sky_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
@@ -222,6 +224,9 @@ visible = false
 [node name="StaticBody3D" parent="Environment/Collision/WallCollision" index="0" groups=["wall"]]
 
 [node name="Minigame" parent="." instance=ExtResource("1_c2ry3")]
+anchors_preset = -1
+offset_left = -1.0
+offset_right = -1.0
 minigame_resource = ExtResource("2_w1vx6")
 anim_library = ExtResource("3_k2xmr")
 
@@ -237,24 +242,400 @@ offset_right = 128.0
 grow_horizontal = 2
 max_game_time = 40
 
+[node name="Stake Spawner" type="Node3D" parent="." node_paths=PackedStringArray("rows")]
+script = ExtResource("8_6lk5b")
+rows = [NodePath("Row 1"), NodePath("Row 2"), NodePath("Row 3"), NodePath("Row 4"), NodePath("Row 5"), NodePath("Row 6"), NodePath("Row 7"), NodePath("Row 8"), NodePath("Row 9"), NodePath("Row 10")]
+stake_distance_horiz = 8.0
+stake_distance_vert = 8.0
+
+[node name="Row 1" type="Node3D" parent="Stake Spawner"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.4219475, 0, 0)
+
+[node name="Stake 1" parent="Stake Spawner/Row 1" instance=ExtResource("8_c1dcx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -38.290222, -2.2819986, -38.562744)
+
+[node name="Stake 2" parent="Stake Spawner/Row 1" instance=ExtResource("8_c1dcx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -38.290222, -2.2819986, -38.562744)
+
+[node name="Stake 3" parent="Stake Spawner/Row 1" instance=ExtResource("8_c1dcx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -38.290222, -2.2819986, -38.562744)
+
+[node name="Stake 4" parent="Stake Spawner/Row 1" instance=ExtResource("8_c1dcx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -38.290222, -2.2819986, -38.562744)
+
+[node name="Stake 5" parent="Stake Spawner/Row 1" instance=ExtResource("8_c1dcx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -38.290222, -2.2819986, -38.562744)
+
+[node name="Stake 6" parent="Stake Spawner/Row 1" instance=ExtResource("8_c1dcx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -38.290222, -2.2819986, -38.562744)
+
+[node name="Stake 7" parent="Stake Spawner/Row 1" instance=ExtResource("8_c1dcx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -38.290222, -2.2819986, -38.562744)
+
+[node name="Stake 8" parent="Stake Spawner/Row 1" instance=ExtResource("8_c1dcx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -38.290222, -2.2819986, -38.562744)
+
+[node name="Stake 9" parent="Stake Spawner/Row 1" instance=ExtResource("8_c1dcx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -38.290222, -2.2819986, -38.562744)
+
+[node name="Stake 10" parent="Stake Spawner/Row 1" instance=ExtResource("8_c1dcx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -38.290222, -2.2819986, -38.562744)
+
+[node name="Stake 11" parent="Stake Spawner/Row 1" instance=ExtResource("8_c1dcx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -38.290222, -2.2819986, -38.562744)
+
+[node name="Row 2" type="Node3D" parent="Stake Spawner"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.4219475, 0, 0)
+
+[node name="Stake 1" parent="Stake Spawner/Row 2" instance=ExtResource("8_c1dcx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -38.290222, -2.2819986, -38.562744)
+
+[node name="Stake 2" parent="Stake Spawner/Row 2" instance=ExtResource("8_c1dcx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -38.290222, -2.2819986, -38.562744)
+
+[node name="Stake 3" parent="Stake Spawner/Row 2" instance=ExtResource("8_c1dcx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -38.290222, -2.2819986, -38.562744)
+
+[node name="Stake 4" parent="Stake Spawner/Row 2" instance=ExtResource("8_c1dcx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -38.290222, -2.2819986, -38.562744)
+
+[node name="Stake 5" parent="Stake Spawner/Row 2" instance=ExtResource("8_c1dcx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -38.290222, -2.2819986, -38.562744)
+
+[node name="Stake 6" parent="Stake Spawner/Row 2" instance=ExtResource("8_c1dcx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -38.290222, -2.2819986, -38.562744)
+
+[node name="Stake 7" parent="Stake Spawner/Row 2" instance=ExtResource("8_c1dcx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -38.290222, -2.2819986, -38.562744)
+
+[node name="Stake 8" parent="Stake Spawner/Row 2" instance=ExtResource("8_c1dcx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -38.290222, -2.2819986, -38.562744)
+
+[node name="Stake 9" parent="Stake Spawner/Row 2" instance=ExtResource("8_c1dcx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -38.290222, -2.2819986, -38.562744)
+
+[node name="Stake 10" parent="Stake Spawner/Row 2" instance=ExtResource("8_c1dcx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -38.290222, -2.2819986, -38.562744)
+
+[node name="Stake 11" parent="Stake Spawner/Row 2" instance=ExtResource("8_c1dcx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -38.290222, -2.2819986, -38.562744)
+
+[node name="Row 3" type="Node3D" parent="Stake Spawner"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.4219475, 0, 0)
+
+[node name="Stake 1" parent="Stake Spawner/Row 3" instance=ExtResource("8_c1dcx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -38.290222, -2.2819986, -38.562744)
+
+[node name="Stake 2" parent="Stake Spawner/Row 3" instance=ExtResource("8_c1dcx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -38.290222, -2.2819986, -38.562744)
+starting_stake = true
+
+[node name="Stake 3" parent="Stake Spawner/Row 3" instance=ExtResource("8_c1dcx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -38.290222, -2.2819986, -38.562744)
+
+[node name="Stake 4" parent="Stake Spawner/Row 3" instance=ExtResource("8_c1dcx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -38.290222, -2.2819986, -38.562744)
+starting_stake = true
+
+[node name="Stake 5" parent="Stake Spawner/Row 3" instance=ExtResource("8_c1dcx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -38.290222, -2.2819986, -38.562744)
+
+[node name="Stake 6" parent="Stake Spawner/Row 3" instance=ExtResource("8_c1dcx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -38.290222, -2.2819986, -38.562744)
+starting_stake = true
+
+[node name="Stake 7" parent="Stake Spawner/Row 3" instance=ExtResource("8_c1dcx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -38.290222, -2.2819986, -38.562744)
+
+[node name="Stake 8" parent="Stake Spawner/Row 3" instance=ExtResource("8_c1dcx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -38.290222, -2.2819986, -38.562744)
+starting_stake = true
+
+[node name="Stake 9" parent="Stake Spawner/Row 3" instance=ExtResource("8_c1dcx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -38.290222, -2.2819986, -38.562744)
+
+[node name="Stake 10" parent="Stake Spawner/Row 3" instance=ExtResource("8_c1dcx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -38.290222, -2.2819986, -38.562744)
+starting_stake = true
+
+[node name="Stake 11" parent="Stake Spawner/Row 3" instance=ExtResource("8_c1dcx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -38.290222, -2.2819986, -38.562744)
+
+[node name="Row 4" type="Node3D" parent="Stake Spawner"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.4219475, 0, 0)
+
+[node name="Stake 1" parent="Stake Spawner/Row 4" instance=ExtResource("8_c1dcx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -38.290222, -2.2819986, -38.562744)
+
+[node name="Stake 2" parent="Stake Spawner/Row 4" instance=ExtResource("8_c1dcx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -38.290222, -2.2819986, -38.562744)
+
+[node name="Stake 3" parent="Stake Spawner/Row 4" instance=ExtResource("8_c1dcx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -38.290222, -2.2819986, -38.562744)
+
+[node name="Stake 4" parent="Stake Spawner/Row 4" instance=ExtResource("8_c1dcx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -38.290222, -2.2819986, -38.562744)
+
+[node name="Stake 5" parent="Stake Spawner/Row 4" instance=ExtResource("8_c1dcx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -38.290222, -2.2819986, -38.562744)
+
+[node name="Stake 6" parent="Stake Spawner/Row 4" instance=ExtResource("8_c1dcx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -38.290222, -2.2819986, -38.562744)
+
+[node name="Stake 7" parent="Stake Spawner/Row 4" instance=ExtResource("8_c1dcx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -38.290222, -2.2819986, -38.562744)
+
+[node name="Stake 8" parent="Stake Spawner/Row 4" instance=ExtResource("8_c1dcx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -38.290222, -2.2819986, -38.562744)
+
+[node name="Stake 9" parent="Stake Spawner/Row 4" instance=ExtResource("8_c1dcx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -38.290222, -2.2819986, -38.562744)
+
+[node name="Stake 10" parent="Stake Spawner/Row 4" instance=ExtResource("8_c1dcx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -38.290222, -2.2819986, -38.562744)
+
+[node name="Stake 11" parent="Stake Spawner/Row 4" instance=ExtResource("8_c1dcx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -38.290222, -2.2819986, -38.562744)
+
+[node name="Row 5" type="Node3D" parent="Stake Spawner"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.4219475, 0, 0)
+
+[node name="Stake 1" parent="Stake Spawner/Row 5" instance=ExtResource("8_c1dcx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -38.290222, -2.2819986, -38.562744)
+
+[node name="Stake 2" parent="Stake Spawner/Row 5" instance=ExtResource("8_c1dcx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -38.290222, -2.2819986, -38.562744)
+
+[node name="Stake 3" parent="Stake Spawner/Row 5" instance=ExtResource("8_c1dcx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -38.290222, -2.2819986, -38.562744)
+
+[node name="Stake 4" parent="Stake Spawner/Row 5" instance=ExtResource("8_c1dcx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -38.290222, -2.2819986, -38.562744)
+
+[node name="Stake 5" parent="Stake Spawner/Row 5" instance=ExtResource("8_c1dcx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -38.290222, -2.2819986, -38.562744)
+
+[node name="Stake 6" parent="Stake Spawner/Row 5" instance=ExtResource("8_c1dcx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -38.290222, -2.2819986, -38.562744)
+
+[node name="Stake 7" parent="Stake Spawner/Row 5" instance=ExtResource("8_c1dcx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -38.290222, -2.2819986, -38.562744)
+
+[node name="Stake 8" parent="Stake Spawner/Row 5" instance=ExtResource("8_c1dcx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -38.290222, -2.2819986, -38.562744)
+
+[node name="Stake 9" parent="Stake Spawner/Row 5" instance=ExtResource("8_c1dcx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -38.290222, -2.2819986, -38.562744)
+
+[node name="Stake 10" parent="Stake Spawner/Row 5" instance=ExtResource("8_c1dcx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -38.290222, -2.2819986, -38.562744)
+
+[node name="Stake 11" parent="Stake Spawner/Row 5" instance=ExtResource("8_c1dcx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -38.290222, -2.2819986, -38.562744)
+
+[node name="Row 6" type="Node3D" parent="Stake Spawner"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.4219475, 0, 0)
+
+[node name="Stake 1" parent="Stake Spawner/Row 6" instance=ExtResource("8_c1dcx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -38.290222, -2.2819986, -38.562744)
+
+[node name="Stake 2" parent="Stake Spawner/Row 6" instance=ExtResource("8_c1dcx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -38.290222, -2.2819986, -38.562744)
+
+[node name="Stake 3" parent="Stake Spawner/Row 6" instance=ExtResource("8_c1dcx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -38.290222, -2.2819986, -38.562744)
+
+[node name="Stake 4" parent="Stake Spawner/Row 6" instance=ExtResource("8_c1dcx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -38.290222, -2.2819986, -38.562744)
+
+[node name="Stake 5" parent="Stake Spawner/Row 6" instance=ExtResource("8_c1dcx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -38.290222, -2.2819986, -38.562744)
+
+[node name="Stake 6" parent="Stake Spawner/Row 6" instance=ExtResource("8_c1dcx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -38.290222, -2.2819986, -38.562744)
+
+[node name="Stake 7" parent="Stake Spawner/Row 6" instance=ExtResource("8_c1dcx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -38.290222, -2.2819986, -38.562744)
+
+[node name="Stake 8" parent="Stake Spawner/Row 6" instance=ExtResource("8_c1dcx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -38.290222, -2.2819986, -38.562744)
+
+[node name="Stake 9" parent="Stake Spawner/Row 6" instance=ExtResource("8_c1dcx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -38.290222, -2.2819986, -38.562744)
+
+[node name="Stake 10" parent="Stake Spawner/Row 6" instance=ExtResource("8_c1dcx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -38.290222, -2.2819986, -38.562744)
+
+[node name="Stake 11" parent="Stake Spawner/Row 6" instance=ExtResource("8_c1dcx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -38.290222, -2.2819986, -38.562744)
+
+[node name="Row 7" type="Node3D" parent="Stake Spawner"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.4219475, 0, 0)
+
+[node name="Stake 1" parent="Stake Spawner/Row 7" instance=ExtResource("8_c1dcx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -38.290222, -2.2819986, -38.562744)
+
+[node name="Stake 2" parent="Stake Spawner/Row 7" instance=ExtResource("8_c1dcx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -38.290222, -2.2819986, -38.562744)
+
+[node name="Stake 3" parent="Stake Spawner/Row 7" instance=ExtResource("8_c1dcx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -38.290222, -2.2819986, -38.562744)
+
+[node name="Stake 4" parent="Stake Spawner/Row 7" instance=ExtResource("8_c1dcx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -38.290222, -2.2819986, -38.562744)
+
+[node name="Stake 5" parent="Stake Spawner/Row 7" instance=ExtResource("8_c1dcx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -38.290222, -2.2819986, -38.562744)
+
+[node name="Stake 6" parent="Stake Spawner/Row 7" instance=ExtResource("8_c1dcx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -38.290222, -2.2819986, -38.562744)
+
+[node name="Stake 7" parent="Stake Spawner/Row 7" instance=ExtResource("8_c1dcx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -38.290222, -2.2819986, -38.562744)
+
+[node name="Stake 8" parent="Stake Spawner/Row 7" instance=ExtResource("8_c1dcx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -38.290222, -2.2819986, -38.562744)
+
+[node name="Stake 9" parent="Stake Spawner/Row 7" instance=ExtResource("8_c1dcx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -38.290222, -2.2819986, -38.562744)
+
+[node name="Stake 10" parent="Stake Spawner/Row 7" instance=ExtResource("8_c1dcx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -38.290222, -2.2819986, -38.562744)
+
+[node name="Stake 11" parent="Stake Spawner/Row 7" instance=ExtResource("8_c1dcx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -38.290222, -2.2819986, -38.562744)
+
+[node name="Row 8" type="Node3D" parent="Stake Spawner"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.4219475, 0, 0)
+
+[node name="Stake 1" parent="Stake Spawner/Row 8" instance=ExtResource("8_c1dcx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -38.290222, -2.2819986, -38.562744)
+
+[node name="Stake 2" parent="Stake Spawner/Row 8" instance=ExtResource("8_c1dcx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -38.290222, -2.2819986, -38.562744)
+
+[node name="Stake 3" parent="Stake Spawner/Row 8" instance=ExtResource("8_c1dcx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -38.290222, -2.2819986, -38.562744)
+
+[node name="Stake 4" parent="Stake Spawner/Row 8" instance=ExtResource("8_c1dcx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -38.290222, -2.2819986, -38.562744)
+
+[node name="Stake 5" parent="Stake Spawner/Row 8" instance=ExtResource("8_c1dcx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -38.290222, -2.2819986, -38.562744)
+
+[node name="Stake 6" parent="Stake Spawner/Row 8" instance=ExtResource("8_c1dcx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -38.290222, -2.2819986, -38.562744)
+
+[node name="Stake 7" parent="Stake Spawner/Row 8" instance=ExtResource("8_c1dcx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -38.290222, -2.2819986, -38.562744)
+
+[node name="Stake 8" parent="Stake Spawner/Row 8" instance=ExtResource("8_c1dcx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -38.290222, -2.2819986, -38.562744)
+
+[node name="Stake 9" parent="Stake Spawner/Row 8" instance=ExtResource("8_c1dcx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -38.290222, -2.2819986, -38.562744)
+
+[node name="Stake 10" parent="Stake Spawner/Row 8" instance=ExtResource("8_c1dcx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -38.290222, -2.2819986, -38.562744)
+
+[node name="Stake 11" parent="Stake Spawner/Row 8" instance=ExtResource("8_c1dcx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -38.290222, -2.2819986, -38.562744)
+
+[node name="Row 9" type="Node3D" parent="Stake Spawner"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.4219475, 0, 0)
+
+[node name="Stake 1" parent="Stake Spawner/Row 9" instance=ExtResource("8_c1dcx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -38.290222, -2.2819986, -38.562744)
+
+[node name="Stake 2" parent="Stake Spawner/Row 9" instance=ExtResource("8_c1dcx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -38.290222, -2.2819986, -38.562744)
+starting_stake = true
+
+[node name="Stake 3" parent="Stake Spawner/Row 9" instance=ExtResource("8_c1dcx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -38.290222, -2.2819986, -38.562744)
+
+[node name="Stake 4" parent="Stake Spawner/Row 9" instance=ExtResource("8_c1dcx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -38.290222, -2.2819986, -38.562744)
+starting_stake = true
+
+[node name="Stake 5" parent="Stake Spawner/Row 9" instance=ExtResource("8_c1dcx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -38.290222, -2.2819986, -38.562744)
+
+[node name="Stake 6" parent="Stake Spawner/Row 9" instance=ExtResource("8_c1dcx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -38.290222, -2.2819986, -38.562744)
+starting_stake = true
+
+[node name="Stake 7" parent="Stake Spawner/Row 9" instance=ExtResource("8_c1dcx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -38.290222, -2.2819986, -38.562744)
+
+[node name="Stake 8" parent="Stake Spawner/Row 9" instance=ExtResource("8_c1dcx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -38.290222, -2.2819986, -38.562744)
+starting_stake = true
+
+[node name="Stake 9" parent="Stake Spawner/Row 9" instance=ExtResource("8_c1dcx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -38.290222, -2.2819986, -38.562744)
+
+[node name="Stake 10" parent="Stake Spawner/Row 9" instance=ExtResource("8_c1dcx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -38.290222, -2.2819986, -38.562744)
+starting_stake = true
+
+[node name="Stake 11" parent="Stake Spawner/Row 9" instance=ExtResource("8_c1dcx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -38.290222, -2.2819986, -38.562744)
+
+[node name="Row 10" type="Node3D" parent="Stake Spawner"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.4219475, 0, 0)
+
+[node name="Stake 1" parent="Stake Spawner/Row 10" instance=ExtResource("8_c1dcx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -38.290222, -2.2819986, -38.562744)
+
+[node name="Stake 2" parent="Stake Spawner/Row 10" instance=ExtResource("8_c1dcx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -38.290222, -2.2819986, -38.562744)
+
+[node name="Stake 3" parent="Stake Spawner/Row 10" instance=ExtResource("8_c1dcx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -38.290222, -2.2819986, -38.562744)
+
+[node name="Stake 4" parent="Stake Spawner/Row 10" instance=ExtResource("8_c1dcx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -38.290222, -2.2819986, -38.562744)
+
+[node name="Stake 5" parent="Stake Spawner/Row 10" instance=ExtResource("8_c1dcx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -38.290222, -2.2819986, -38.562744)
+
+[node name="Stake 6" parent="Stake Spawner/Row 10" instance=ExtResource("8_c1dcx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -38.290222, -2.2819986, -38.562744)
+
+[node name="Stake 7" parent="Stake Spawner/Row 10" instance=ExtResource("8_c1dcx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -38.290222, -2.2819986, -38.562744)
+
+[node name="Stake 8" parent="Stake Spawner/Row 10" instance=ExtResource("8_c1dcx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -38.290222, -2.2819986, -38.562744)
+
+[node name="Stake 9" parent="Stake Spawner/Row 10" instance=ExtResource("8_c1dcx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -38.290222, -2.2819986, -38.562744)
+
+[node name="Stake 10" parent="Stake Spawner/Row 10" instance=ExtResource("8_c1dcx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -38.290222, -2.2819986, -38.562744)
+
+[node name="Stake 11" parent="Stake Spawner/Row 10" instance=ExtResource("8_c1dcx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -38.290222, -2.2819986, -38.562744)
+
 [node name="Objects" type="Node3D" parent="."]
 
 [node name="Player1" parent="Objects" node_paths=PackedStringArray("score_counter") instance=ExtResource("4_jf3kn")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -20, 0, -20)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -15.4515, 0, -30.675323)
 score_counter = NodePath("../../Minigame/Scores/ScoreCounter1")
 
 [node name="Player2" parent="Objects" node_paths=PackedStringArray("score_counter") instance=ExtResource("4_jf3kn")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20, 0, -20)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16.101395, 0, -30.675323)
 player_index = 1
 score_counter = NodePath("../../Minigame/Scores/ScoreCounter2")
 
 [node name="Player3" parent="Objects" node_paths=PackedStringArray("score_counter") instance=ExtResource("4_jf3kn")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -20, 0, 20)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -15.4515, 0, 15.253555)
 player_index = 2
 score_counter = NodePath("../../Minigame/Scores/ScoreCounter3")
 
 [node name="Player4" parent="Objects" node_paths=PackedStringArray("score_counter") instance=ExtResource("4_jf3kn")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20, 0, 20)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16.427265, 0, 15.253555)
 player_index = 3
 score_counter = NodePath("../../Minigame/Scores/ScoreCounter4")
 
