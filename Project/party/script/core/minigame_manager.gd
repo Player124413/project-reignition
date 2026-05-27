@@ -17,6 +17,8 @@ signal minigame_finished
 signal results_started
 ## Emitted whenever a player's score is changed.
 signal on_score_updated(player_index : int, score : int)
+## Emitted whenever a player's score is changed.
+signal on_time_updated(player_index : int, time : float)
 
 ## Stores the network time when gameplay was started.
 var gameplay_start_tick : float
@@ -33,6 +35,12 @@ func process_demo_transition() -> void:
 @export var common_anim_library : AnimationLibrary
 const ANIMATION_LIBRARY_PREFIX : String = "MINIGAME"
 const COMMON_ANIMATION_LIBRARY_PREFIX : String = "COMMON_MINIGAME"
+
+@export var rank_mode : RANK_MODE
+enum RANK_MODE {
+	SCORE, # Use scores to rank players; highest score wins
+	TIME # Use times to rank players; lowest time wins
+}
 
 @export_group("View Settings")
 ## How should the screen be set up for this mini-game?
@@ -79,14 +87,22 @@ var score_popup_pool : Array[ScorePopup]
 var active_popups : Array[ScorePopup]
 ## Number of players that have completed the current mini-game.
 var completed_player_count : int
+
 ## Tracks the player's scores.
 var player_scores : Array[int]
+## Tracks the player's times.
+var player_times : Array[float]
+
 const INITIAL_SCORE_POPUP_POOL_SIZE : int = 10
 
 func _init() -> void:
 	instance = self
 	
 	player_scores.resize(PartyManager.MAX_PLAYER_COUNT)
+	player_times.resize(PartyManager.MAX_PLAYER_COUNT)
+	for i in player_times.size():
+		player_times[i] = INF
+	
 	if !PartyManager.is_player_data_initialized():
 		PartyManager.initialize_offline_player_data()
 		initialize_debug_characters()
@@ -192,15 +208,24 @@ func _score_popup_abort(player_index : int, time : float) -> void:
 func request_score_change(player_index : int, amount : int = 1) -> void:
 	if player_index < 0 || player_index > PartyManager.MAX_PLAYER_COUNT:
 		return
-	
-	if NetworkManager.is_hosting_game:
-		rpc("_change_score", player_index, amount)
+	rpc("_change_score", player_index, amount)
+
+func request_time_change(player_index : int, time : float) -> void:
+	if player_index < 0 || player_index > PartyManager.MAX_PLAYER_COUNT:
+		return
+	rpc("_change_time", player_index, time)
 
 ## Changes the score of a player.
 @rpc("any_peer", "call_local", "reliable")
 func _change_score(player_index : int, amount : int) -> void:
 	player_scores[player_index] += amount
 	on_score_updated.emit(player_index, player_scores[player_index])
+
+## Changes the time of a player.
+@rpc("any_peer", "call_local", "reliable")
+func _change_time(player_index : int, time : float) -> void:
+	player_times[player_index] = time
+	on_time_updated.emit(player_index, player_times[player_index])
 
 ## Adds one completed player and checks whether we should finish the mini-game.
 func register_completed_player() -> void:
@@ -286,14 +311,24 @@ func start_results() -> void:
 		for i in rankings.size():
 			rankings[i] = PartyManager.MAX_PLAYER_COUNT # This forces everybody to "lose."
 	else: # Figure out the proper placement for each player
-		for i in player_scores.size():
-			var rank : int = 0
-			for j in i:
-				if player_scores[j] > player_scores[i]:
-					rank += 1
-				elif player_scores[j] < player_scores[i]:
-					rankings[j] += 1
-			rankings[i] = rank
+		if rank_mode == RANK_MODE.TIME:
+			for i in player_times.size():
+				var rank : int = 0
+				for j in i:
+					if player_times[j] < player_times[i]:
+						rank += 1
+					else:
+						rankings[j] += 1
+				rankings[i] = rank
+		else:
+			for i in player_scores.size():
+				var rank : int = 0
+				for j in i:
+					if player_scores[j] > player_scores[i]:
+						rank += 1
+					elif player_scores[j] < player_scores[i]:
+						rankings[j] += 1
+				rankings[i] = rank
 	
 	# Store rankings to PartyManager
 	for i in PartyManager.MAX_PLAYER_COUNT:
@@ -305,6 +340,9 @@ func start_results() -> void:
 
 ## Returns true if everybody has the same score.
 func check_tie() -> bool:
+	if rank_mode == RANK_MODE.TIME: # Can't tie in timed mode
+		return false
+	
 	for i in range(1, player_scores.size()): # Check all scores against P1's score
 		if player_scores[i] != player_scores[0]:
 			return false
@@ -318,7 +356,7 @@ func update_win_text() -> void:
 		var data : PlayerData = PartyManager.get_player_data(i)
 		
 		if NetworkManager.is_online && !NetworkManager.is_hosting_game:
-			print("Player %s placed %s with a score of %s." % [data.character_data.character_name, data.minigame_placement, player_scores[i]])
+			print("Player %s placed %s with a score of %s and a time of %s" % [data.character_data.character_name, data.minigame_placement, player_scores[i], player_times[i]])
 		
 		if data.minigame_placement != 0:
 			continue

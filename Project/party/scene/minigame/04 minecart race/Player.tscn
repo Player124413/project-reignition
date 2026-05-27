@@ -1,0 +1,348 @@
+[gd_scene load_steps=24 format=3 uid="uid://drufyn63umk81"]
+
+[ext_resource type="Script" uid="uid://b4ric7jscsvby" path="res://party/scene/minigame/04 minecart race/script/player_controller.gd" id="1_6587d"]
+[ext_resource type="PackedScene" uid="uid://bfk08sq4fsyow" path="res://party/scene/minigame/04 minecart race/Environment.tscn" id="2_xlrck"]
+[ext_resource type="Material" uid="uid://ce4407ug83g0b" path="res://effect/particle/material/Ember Orange Billboard.tres" id="4_6587d"]
+[ext_resource type="Script" uid="uid://c65ffkknyq6gr" path="res://addons/custom_nodes/script/GroupGpuParticles3D.cs" id="4_ovtod"]
+[ext_resource type="Script" uid="uid://ds056nimfywwr" path="res://party/script/core/rollback_timer.gd" id="5_6k58l"]
+[ext_resource type="AudioStream" uid="uid://jrfo6e3rcncy" path="res://party/scene/minigame/04 minecart race/sound/roll.wav" id="6_ltp00"]
+[ext_resource type="Material" uid="uid://c2lqqtvy2q1xp" path="res://effect/particle/material/environment/Common Dust.tres" id="6_u37is"]
+[ext_resource type="Script" uid="uid://bkwc2atbp4cjd" path="res://party/scene/minigame/00 base/script/group_sfx_player.gd" id="7_sroh6"]
+[ext_resource type="AudioStream" uid="uid://ctjmyedypxodd" path="res://party/scene/minigame/04 minecart race/sound/damage.wav" id="8_qimh2"]
+[ext_resource type="AudioStream" uid="uid://b32oxu1vh6f03" path="res://party/scene/minigame/04 minecart race/sound/wind.wav" id="8_sroh6"]
+[ext_resource type="AudioStream" uid="uid://7jihnw58nltx" path="res://party/scene/minigame/04 minecart race/sound/pump.wav" id="9_ovtod"]
+[ext_resource type="PackedScene" uid="uid://c4m2t2e7quuex" path="res://party/scene/minigame/04 minecart race/model/Truck.glb" id="12_u37is"]
+[ext_resource type="PackedScene" uid="uid://pujru0qdm8n1" path="res://party/scene/minigame/04 minecart race/model/Tire.glb" id="13_jw1r2"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_u37is"]
+size = Vector3(4, 50, 50)
+
+[sub_resource type="Curve3D" id="Curve3D_kt2gw"]
+_data = {
+"points": PackedVector3Array(0, 0, 0, 0, 0, 0, -80, 0, 0, 0, 0, 0, 0, 0, 0, 320, 0, 0, 0, 0, 0, 0, 0, 0, 320, -10, 0, 0, 0, 0, 0, 0, 0, 471, -10, 0, 0, 0, 0, 0, 0, 0, 487.3, 0, 0, 0, 0, 0, 0, 0, 0, 791.3, 0, 0, 0, 0, 0, 0, 0, 0, 807, -10, 0, 0, 0, 0, 0, 0, 0, 1111, -10, 0, 0, 0, 0, 0, 0, 0, 1126.8, 0, 0, 0, 0, 0, 0, 0, 0, 1381.4, 0, 0, 0, 0, 0, 0, 0, 0, 1495.75, -40, 0, 0, 0, 0, 0, 0, 0, 1590.5, -40, 0, 0, 0, 0, 0, 0, 0, 1606.3, -50, 0, 0, 0, 0, 0, 0, 0, 1750.7, -50, 0, 0, 0, 0, 0, 0, 0, 1766.6, -40, 0, 0, 0, 0, 0, 0, 0, 2070, -40, 0, 0, 0, 0, 0, 0, 0, 2086.4, -30, 0, 0, 0, 0, 0, 0, 0, 2181, -30, 0, 0, 0, 0, 0, 0, 0, 2295.4, -70, 0, 0, 0, 0, 0, 0, 0, 2341.15, -70, 0, 0, 0, 0, 0, 0, 0, 2455.6, -110, 0, 0, 0, 0, 0, 0, 0, 2550.15, -110, 0, 0, 0, 0, 0, 0, 0, 2566, -100, 0, 0, 0, 0, 0, 0, 0, 2710.195, -100, 0, 0, 0, 0, 0, 0, 0, 2726, -110, 0, 0, 0, 0, 0, 0, 0, 2980.3, -110, 0, 0, 0, 0, 0, 0, 0, 3095, -150, 0, 0, 0, 0, 0, 0, 0, 3349, -150, 0, 0, 0, 0, 0, 0, 0, 3365.3, -140, 0, 0, 0, 0, 0, 0, 0, 3509, -140, 0, 0, 0, 0, 0, 0, 0, 3525.2, -150, 0, 0, 0, 0, 0, 0, 0, 3677, -150, 0, 0, 0, 0, 0, 0, 0, 3677, -160, 0, 0, 0, 0, 0, 0, 0, 4740, -160, 0),
+"tilts": PackedFloat32Array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+}
+point_count = 34
+
+[sub_resource type="Curve" id="Curve_6587d"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.1, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_u37is"]
+width = 64
+texture_mode = 1
+curve = SubResource("Curve_6587d")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_6587d"]
+lifetime_randomness = 0.4
+angle_min = 1.0728836e-05
+angle_max = 360.00003
+direction = Vector3(-1, 1, 0)
+spread = 120.0
+initial_velocity_min = 40.0
+initial_velocity_max = 60.0
+gravity = Vector3(0, 0, 0)
+damping_min = 10.0
+damping_max = 20.0
+scale_min = 3.0
+scale_max = 5.0
+alpha_curve = SubResource("CurveTexture_u37is")
+
+[sub_resource type="QuadMesh" id="QuadMesh_u37is"]
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_u37is"]
+lifetime_randomness = 0.4
+angle_min = 1.0728836e-05
+angle_max = 360.00003
+direction = Vector3(-1, 1, 0)
+spread = 100.0
+initial_velocity_min = 30.0
+initial_velocity_max = 50.0
+gravity = Vector3(0, 0, 0)
+damping_min = 10.0
+damping_max = 20.0
+scale_min = 4.0
+scale_max = 5.0
+color = Color(0.99999994, 0.75279254, 0.43371812, 1)
+alpha_curve = SubResource("CurveTexture_u37is")
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_6k58l"]
+size = Vector3(15, 50, 20)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_xlrck"]
+size = Vector3(5, 50, 20)
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_u37is"]
+radius = 2.0
+
+[node name="Player" type="Node3D" node_paths=PackedStringArray("wall_detection", "path_follower", "camera_root", "minecart_root", "minecart_animator", "wheels", "cart_roll_sfx", "damage_sfx", "pump_sfx", "wind_sfx", "rollback_timer", "spawn_position")]
+script = ExtResource("1_6587d")
+wall_detection = NodePath("Minecart/Truck/WallDetectionEntrance")
+path_follower = NodePath("Path/PathFollow")
+camera_root = NodePath("Minecart/CameraRoot")
+minecart_root = NodePath("Minecart")
+minecart_animator = NodePath("Minecart/Truck/AnimationPlayer")
+wheels = [NodePath("Minecart/Truck/FrontAxle"), NodePath("Minecart/Truck/RearAxle")]
+cart_roll_sfx = NodePath("SFX/CartRoll")
+damage_sfx = NodePath("SFX/Damage")
+pump_sfx = NodePath("SFX/Pump")
+wind_sfx = NodePath("SFX/Wind")
+rollback_timer = NodePath("Rollback")
+spawn_position = NodePath("Minecart/Truck/CharacterPosition")
+deactivate_on_gameplay_finished = false
+
+[node name="Walls" type="Node3D" parent="."]
+
+[node name="Wall1" type="Area3D" parent="Walls" groups=["wall"]]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 773.5, 14, 0)
+monitoring = false
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Walls/Wall1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 25, 0)
+shape = SubResource("BoxShape3D_u37is")
+
+[node name="Wall2" type="Area3D" parent="Walls" groups=["wall"]]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1252.9, 14, 0)
+monitoring = false
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Walls/Wall2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 25, 0)
+shape = SubResource("BoxShape3D_u37is")
+
+[node name="Wall3" type="Area3D" parent="Walls" groups=["wall"]]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1572.9, -26, 0)
+monitoring = false
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Walls/Wall3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 25, 0)
+shape = SubResource("BoxShape3D_u37is")
+
+[node name="Wall4" type="Area3D" parent="Walls" groups=["wall"]]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2104.7998, -16, 0)
+monitoring = false
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Walls/Wall4"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 25, 0)
+shape = SubResource("BoxShape3D_u37is")
+
+[node name="Wall5" type="Area3D" parent="Walls" groups=["wall"]]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2584.7998, -86, 0)
+monitoring = false
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Walls/Wall5"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 25, 0)
+shape = SubResource("BoxShape3D_u37is")
+
+[node name="Wall6" type="Area3D" parent="Walls" groups=["wall"]]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2692.5999, -86, 0)
+monitoring = false
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Walls/Wall6"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 25, 0)
+shape = SubResource("BoxShape3D_u37is")
+
+[node name="Wall7" type="Area3D" parent="Walls" groups=["wall"]]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3383.5999, -126.5, 0)
+monitoring = false
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Walls/Wall7"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 25, 0)
+shape = SubResource("BoxShape3D_u37is")
+
+[node name="Wall8" type="Area3D" parent="Walls" groups=["wall"]]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3491.4, -126.5, 0)
+monitoring = false
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Walls/Wall8"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 25, 0)
+shape = SubResource("BoxShape3D_u37is")
+
+[node name="Environment" parent="." instance=ExtResource("2_xlrck")]
+
+[node name="Path" type="Path3D" parent="."]
+curve = SubResource("Curve3D_kt2gw")
+
+[node name="PathFollow" type="PathFollow3D" parent="Path"]
+transform = Transform3D(4.371137e-08, 0, 0.9999996, 0, 1, 0, -0.9999996, 0, 4.371137e-08, -30.000147, 0, 0)
+progress = 50.0
+use_model_front = true
+loop = false
+tilt_enabled = false
+
+[node name="Minecart" type="Node3D" parent="."]
+transform = Transform3D(4.371137e-08, 0, 0.9999996, 0, 1, 0, -0.9999996, 0, 4.371137e-08, -30, 0, 0)
+
+[node name="Truck" parent="Minecart" instance=ExtResource("12_u37is")]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 0, 2.4, 0)
+
+[node name="Skeleton3D" parent="Minecart/Truck/TruckRoot" index="0"]
+bones/0/rotation = Quaternion(0.7071072, 1.7763568e-14, -2.1584686e-15, 0.7071065)
+bones/2/rotation = Quaternion(0.8179435, -3.575307e-08, -0.57529855, 2.5147042e-08)
+
+[node name="AnimationPlayer" parent="Minecart/Truck" index="1"]
+autoplay = "down-wait"
+
+[node name="DamageFX" type="Node3D" parent="Minecart/Truck"]
+
+[node name="Damage" type="ColorRect" parent="Minecart/Truck/DamageFX"]
+self_modulate = Color(1, 1, 1, 0)
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(1, 0, 0, 1)
+
+[node name="Embers" type="GPUParticles3D" parent="Minecart/Truck/DamageFX" node_paths=PackedStringArray("subSystems")]
+transform = Transform3D(0.99999976, 0, 2.1316282e-14, 0, 1, 0, -2.1316282e-14, 0, 0.99999976, -2.999998, 7.9999995, 2.622685e-07)
+layers = 32
+material_override = ExtResource("4_6587d")
+cast_shadow = 0
+emitting = false
+amount = 16
+lifetime = 0.4
+one_shot = true
+explosiveness = 0.8
+fixed_fps = 0
+fract_delta = false
+process_material = SubResource("ParticleProcessMaterial_6587d")
+draw_pass_1 = SubResource("QuadMesh_u37is")
+script = ExtResource("4_ovtod")
+subSystems = [NodePath("Smoke")]
+
+[node name="Smoke" type="GPUParticles3D" parent="Minecart/Truck/DamageFX/Embers"]
+transform = Transform3D(0.99999994, 0, 7.1054274e-15, 0, 1, 0, -7.1054274e-15, 0, 0.99999994, 0, 0, 0)
+layers = 32
+material_override = ExtResource("6_u37is")
+cast_shadow = 0
+emitting = false
+amount = 16
+lifetime = 0.3
+one_shot = true
+explosiveness = 0.8
+fixed_fps = 0
+fract_delta = false
+process_material = SubResource("ParticleProcessMaterial_u37is")
+draw_pass_1 = SubResource("QuadMesh_u37is")
+
+[node name="CharacterPosition" type="Node3D" parent="Minecart/Truck"]
+transform = Transform3D(0.99999994, 0, 7.1054274e-15, 0, 1, 0, -7.1054274e-15, 0, 0.99999994, 0, 0, 0)
+
+[node name="Light" type="SpotLight3D" parent="Minecart/Truck"]
+transform = Transform3D(1.3131653e-07, 0, -1.0000004, 0, 1, 0, 1.0000004, 0, 1.3131653e-07, 4.999998, 7.9999995, -2.9802322e-07)
+layers = 1024
+light_color = Color(1, 1, 0.8, 1)
+light_specular = 0.0
+light_cull_mask = 7
+spot_range = 150.0
+spot_attenuation = -0.5
+spot_angle = 60.0
+
+[node name="FrontAxle" type="Node3D" parent="Minecart/Truck"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 2.5, 0)
+
+[node name="TireR" parent="Minecart/Truck/FrontAxle" instance=ExtResource("13_jw1r2")]
+transform = Transform3D(0.99999994, 0, 7.1054274e-15, 0, 1, 0, -7.1054274e-15, 0, 0.99999994, 0, 0, 6)
+
+[node name="TireL" parent="Minecart/Truck/FrontAxle" instance=ExtResource("13_jw1r2")]
+transform = Transform3D(-0.99999994, 0, 1.509958e-07, 0, 1, 0, -1.509958e-07, 0, -0.99999994, 0, 0, -6)
+
+[node name="RearAxle" type="Node3D" parent="Minecart/Truck"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 2.5, 0)
+
+[node name="TireR" parent="Minecart/Truck/RearAxle" instance=ExtResource("13_jw1r2")]
+transform = Transform3D(0.99999994, 0, 7.1054274e-15, 0, 1, 0, -7.1054274e-15, 0, 0.99999994, 0, 0, 6)
+
+[node name="TireL" parent="Minecart/Truck/RearAxle" instance=ExtResource("13_jw1r2")]
+transform = Transform3D(-0.99999994, 0, 1.509958e-07, 0, 1, 0, -1.509958e-07, 0, -0.99999994, 0, 0, -6)
+
+[node name="WallDetectionEntrance" type="Area3D" parent="Minecart/Truck"]
+transform = Transform3D(0.9999998, 0, 1.4210855e-14, 0, 1, 0, -1.4210855e-14, 0, 0.9999998, 5, 0, 0)
+monitorable = false
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Minecart/Truck/WallDetectionEntrance"]
+transform = Transform3D(1, 0, 2.778222e-12, 0, 1, 0, -2.778222e-12, 0, 1, 5, 25, 0)
+shape = SubResource("BoxShape3D_6k58l")
+
+[node name="WallDetectionExit" type="Area3D" parent="Minecart/Truck"]
+transform = Transform3D(0.99999964, 0, 3.5527137e-14, 0, 1, 0, -3.5527137e-14, 0, 0.99999964, -10.000006, 0, 1.3113422e-06)
+monitorable = false
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Minecart/Truck/WallDetectionExit"]
+transform = Transform3D(1, 0, 2.778222e-12, 0, 1, 0, -2.778222e-12, 0, 1, 0, 25, 0)
+shape = SubResource("BoxShape3D_xlrck")
+
+[node name="HandleAttachment" type="BoneAttachment3D" parent="Minecart/Truck"]
+transform = Transform3D(0.33806315, -2.9553902e-08, -0.94112337, 0.9411234, 7.521899e-07, 0.33806324, 6.9791247e-07, -0.99999994, 2.821016e-07, 4.565713, 7.72245, -1.0641273)
+bone_name = "handle"
+bone_idx = 2
+use_external_skeleton = true
+external_skeleton = NodePath("../TruckRoot/Skeleton3D")
+
+[node name="Detection" type="Area3D" parent="Minecart/Truck/HandleAttachment"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, -1, 4.3)
+monitorable = false
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Minecart/Truck/HandleAttachment/Detection"]
+shape = SubResource("SphereShape3D_u37is")
+
+[node name="CameraRoot" type="Node3D" parent="Minecart"]
+transform = Transform3D(-0.7071067, 0.15304591, -0.69034547, 0, 0.97629595, 0.2164396, 0.7071067, 0.15304591, -0.69034547, 0, 0, 0)
+
+[node name="Camera" type="Camera3D" parent="Minecart/CameraRoot"]
+physics_interpolation_mode = 2
+transform = Transform3D(1, 0, 0, 0, 0.9890159, -0.1478094, 0, 0.1478094, 0.9890159, 10, 0, 58)
+cull_mask = 1059
+current = true
+fov = 50.0
+
+[node name="Finish" type="Area3D" parent="." groups=["level wall"]]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4315.4, -160.5, 0)
+monitoring = false
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Finish"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 25, 0)
+shape = SubResource("BoxShape3D_u37is")
+
+[node name="Rollback" type="Node" parent="."]
+script = ExtResource("5_6k58l")
+enable_lag_compensation = false
+param_count = 4
+rollback_interval = 0.0
+
+[node name="SFX" type="Node" parent="."]
+
+[node name="CartRoll" type="AudioStreamPlayer" parent="SFX"]
+stream = ExtResource("6_ltp00")
+bus = &"GAME SFX"
+script = ExtResource("7_sroh6")
+group = "cart_roll"
+base_volume = 0.1
+max_volume = 0.1
+min_volume = 0.1
+
+[node name="Damage" type="AudioStreamPlayer" parent="SFX"]
+stream = ExtResource("8_qimh2")
+bus = &"GAME SFX"
+script = ExtResource("7_sroh6")
+group = "cart_damage"
+base_volume = 0.6000000000000001
+
+[node name="Pump" type="AudioStreamPlayer" parent="SFX"]
+stream = ExtResource("9_ovtod")
+bus = &"GAME SFX"
+script = ExtResource("7_sroh6")
+group = "cart_pump"
+min_volume = 0.5
+
+[node name="Wind" type="AudioStreamPlayer" parent="SFX"]
+stream = ExtResource("8_sroh6")
+bus = &"GAME SFX"
+script = ExtResource("7_sroh6")
+group = "cart_wind"
+
+[connection signal="area_entered" from="Minecart/Truck/WallDetectionEntrance" to="." method="_on_wall_detection_area_entered"]
+[connection signal="area_entered" from="Minecart/Truck/WallDetectionExit" to="." method="_on_wall_detection_area_exited"]
+[connection signal="area_entered" from="Minecart/Truck/HandleAttachment/Detection" to="." method="_on_detection_area_entered"]
+
+[editable path="Minecart/Truck"]
