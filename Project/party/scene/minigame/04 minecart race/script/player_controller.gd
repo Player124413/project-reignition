@@ -29,6 +29,13 @@ var current_gravity : float
 var can_pump : bool
 ## Tracks whether the player is taking damage or not.
 var is_damage_active : bool
+## Tracks whether the demo is active or not.
+var is_demo_active : bool = true
+## Tracks whether the demo pump is finished or not.
+var is_demo_pump_finished : bool
+
+## The progress at which to fire the demo pump.
+const DEMO_PUMP_PROGRESS : float = 100.0
 
 const GRAVITY : float = 500.0
 const MAX_GRAVITY : float = 800.0
@@ -78,6 +85,7 @@ func on_spawn_finished() -> void:
 
 func on_gamplay_started() -> void:
 	can_pump = true
+	is_demo_active = false
 
 func on_gameplay_finished() -> void:
 	super()
@@ -86,6 +94,13 @@ func on_gameplay_finished() -> void:
 func _physics_process(_delta: float) -> void:
 	if !_is_spawn_finished:
 		return
+	
+	if is_demo_active && is_multiplayer_authority():
+		if lever_state == LEVER_STATES.UP && character_animator.get_current_animation() != get_anim_prefix() + "up":
+			rpc("start_player_pump_down")
+		elif !is_demo_pump_finished && path_follower.progress > DEMO_PUMP_PROGRESS:
+			is_demo_pump_finished = true
+			rpc("start_player_pump_up")
 	
 	process_movement_tick()
 	process_pump()
@@ -265,7 +280,7 @@ func start_player_pump_up() -> void:
 ## Animation event used to enable pumping again.
 const ANIM_PUMP_ENABLED : int = 0
 func process_animation_event(info : int) -> void:
-	if info == ANIM_PUMP_ENABLED:
+	if info == ANIM_PUMP_ENABLED && !is_demo_active:
 		can_pump = true
 		is_damage_active = false
 
