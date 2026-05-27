@@ -7,6 +7,10 @@ extends PartyGameCharacterSpawner
 @export var minecart_root : Node3D
 @export var minecart_animator: AnimationPlayer
 @export var wheels : Array[Node3D]
+@export var cart_roll_sfx : GroupSfxPlayer
+@export var damage_sfx : GroupSfxPlayer
+@export var pump_sfx : GroupSfxPlayer
+@export var wind_sfx : GroupSfxPlayer
 
 var lever_state: LEVER_STATES
 enum LEVER_STATES {
@@ -68,6 +72,9 @@ func on_spawn_finished() -> void:
 	current_speed = INITIAL_SPEED
 	MinigameManager.instance.gameplay_started.connect(Callable(self, "on_gamplay_started"))
 	set_physics_process(true) # Movement is needed during the demo
+	
+	# Randomize sfx time so they aren't all overlapping
+	get_tree().create_timer(randf()).timeout.connect(Callable(cart_roll_sfx, "play_in_group"))
 
 func on_gamplay_started() -> void:
 	can_pump = true
@@ -157,6 +164,8 @@ func process_gravity() -> void:
 	
 	current_gravity = move_toward(current_gravity, MAX_GRAVITY, GRAVITY * get_physics_process_delta_time())
 	path_follower.v_offset = move_toward(path_follower.v_offset, 0, current_gravity * get_physics_process_delta_time())
+	if is_zero_approx(path_follower.v_offset):
+		damage_sfx.play_in_group()
 
 func process_transforms() -> void:
 	if !_is_gameplay_finished:
@@ -239,6 +248,9 @@ func start_player_pump_down() -> void:
 	character_animator.play_minigame_animation(get_anim_prefix() + "down", 0.0, PUMP_ANIM_SPEED)
 	character_animator.queue_minigame_animation(get_anim_prefix() + "low-wait")
 	current_speed = move_toward(current_speed, MAX_SPEED, ADDITIVE_SPEED)
+	pump_sfx.play_in_group()
+	if is_equal_approx(current_speed, MAX_SPEED):
+		wind_sfx.play_in_group()
 
 ## Pushes the minecart lever up.
 @rpc("authority", "call_local", "reliable")
@@ -248,6 +260,7 @@ func start_player_pump_up() -> void:
 	minecart_animator.play("up", -1, PUMP_ANIM_SPEED)
 	character_animator.play_minigame_animation(get_anim_prefix() + "up", 0.0, PUMP_ANIM_SPEED)
 	character_animator.queue_minigame_animation(get_anim_prefix() + "top-wait")
+	pump_sfx.play_in_group()
 
 ## Animation event used to enable pumping again.
 const ANIM_PUMP_ENABLED : int = 0
@@ -260,6 +273,7 @@ func process_animation_event(info : int) -> void:
 func take_damage() -> void:
 	if is_damage_active:
 		return
+	
 	can_pump = false
 	cpu_timer = 0
 	walls_detected = 0
@@ -269,6 +283,7 @@ func take_damage() -> void:
 	minecart_animator.play("damage", -1, PUMP_ANIM_SPEED)
 	character_animator.play_minigame_animation(get_anim_prefix() + "damage")
 	character_animator.queue_minigame_animation(get_anim_prefix() + "low-wait", 0.2)
+	damage_sfx.play_in_group()
 
 func _on_detection_area_entered(area: Area3D) -> void:
 	if !is_multiplayer_authority():
