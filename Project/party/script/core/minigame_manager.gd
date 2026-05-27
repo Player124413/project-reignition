@@ -317,7 +317,7 @@ func start_results() -> void:
 				for j in i:
 					if player_times[j] < player_times[i]:
 						rank += 1
-					elif player_times[j] > player_times[i]:
+					else:
 						rankings[j] += 1
 				rankings[i] = rank
 		else:
@@ -340,14 +340,12 @@ func start_results() -> void:
 
 ## Returns true if everybody has the same score.
 func check_tie() -> bool:
-	if rank_mode == RANK_MODE.TIME:
-		for i in range(1, player_times.size()): # Check all scores against P1's time
-			if !is_equal_approx(player_times[i], player_times[0]):
-				return false
-	else:
-		for i in range(1, player_scores.size()): # Check all scores against P1's score
-			if player_scores[i] != player_scores[0]:
-				return false
+	if rank_mode == RANK_MODE.TIME: # Can't tie in timed mode
+		return false
+	
+	for i in range(1, player_scores.size()): # Check all scores against P1's score
+		if player_scores[i] != player_scores[0]:
+			return false
 	return true
 
 ## Updates the names of the winners for the results screen.
