@@ -2,6 +2,7 @@
 extends PartyGameCharacterMover
 
 @export var hand_attachment: BoneAttachment3D
+@export var stake_spawner: StakeSpawner
 
 func on_spawn_finished() -> void:
 	super ()
@@ -47,11 +48,13 @@ func process_inputs() -> void:
 	if !is_cpu() && swing_state == SWING_STATE.IDLE:
 		if Input.is_action_just_pressed("button_primary%s" % get_input_suffix()):
 			rpc("start_swing", NetworkTimeSynchronizer.get_time())
+		if Input.is_action_just_pressed("button_secondary%s" % get_input_suffix()):
+			stake_spawner.request_spawn()
 		super ()
 
 @rpc("any_peer", "call_local", "reliable")
 func start_swing(tick: float) -> void:
 	swing_state = SWING_STATE.SWING
 	var target_anim: StringName
-	target_anim = get_anim_prefix() + "hammer-up"
-	character_animator.rpc("play_minigame_animation", target_anim, 0, 2, 0, tick)
+	target_anim = get_anim_prefix() + "hammer-down"
+	character_animator.rpc("play_minigame_animation", target_anim, 0, 1, 0, tick)
