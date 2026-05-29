@@ -1,18 +1,23 @@
-[gd_scene load_steps=19 format=3 uid="uid://c5c7l1iqlehx7"]
+[gd_scene load_steps=22 format=3 uid="uid://c5c7l1iqlehx7"]
 
 [ext_resource type="PackedScene" uid="uid://dax0mun2bjm1v" path="res://area/0 lost prologue/act/Static.tscn" id="1_tmevk"]
 [ext_resource type="Resource" uid="uid://drty8agumurt5" path="res://resource/level data/lost prologue/Classic2.tres" id="2_e2u66"]
+[ext_resource type="Resource" uid="uid://cy5gbm8r5pdcl" path="res://area/0 lost prologue/data/DialogLibrary.tres" id="3_tn44e"]
 [ext_resource type="PackedScene" uid="uid://cjupypih0myxo" path="res://object/player/CharacterSpawn.tscn" id="3_ym4qw"]
 [ext_resource type="PackedScene" uid="uid://dxepb172kmp8n" path="res://object/stage/common/Goal.tscn" id="4_7uuc6"]
 [ext_resource type="PackedScene" uid="uid://bn6wr6l8s3qyt" path="res://object/trigger/StageTrigger.tscn" id="4_ym4qw"]
 [ext_resource type="Script" uid="uid://dx0a0rhyauccl" path="res://object/trigger/modules/CameraTrigger.cs" id="5_6r6c3"]
 [ext_resource type="PackedScene" uid="uid://dgq0cufk1muvh" path="res://area/0 lost prologue/object/wonder/WonderBlock2.tscn" id="5_tetak"]
+[ext_resource type="Script" uid="uid://bitgnn108jmaa" path="res://object/trigger/modules/DialogTrigger.cs" id="6_dlgq7"]
 [ext_resource type="Resource" uid="uid://7fh17f1uaotj" path="res://area/0 lost prologue/act/camera/MediumCamera.tres" id="6_rh0ru"]
 [ext_resource type="Resource" uid="uid://bw3u4i24ks1jc" path="res://area/0 lost prologue/act/camera/BackupOverheadCamera.tres" id="7_6r6c3"]
 [ext_resource type="Script" uid="uid://dd24u7rlj0dwl" path="res://addons/custom_nodes/script/ObjectGenerator.cs" id="7_u1rwr"]
 [ext_resource type="PackedScene" uid="uid://c7l8mr7ubn848" path="res://object/stage/pickups/Ring.tscn" id="8_tn44e"]
 [ext_resource type="Resource" uid="uid://b6ynjki0mxqdh" path="res://area/0 lost prologue/act/camera/CloseCamera.tres" id="8_w58xj"]
 [ext_resource type="Resource" uid="uid://gri0snamoatr" path="res://area/0 lost prologue/act/camera/Classic02BackupOverheadCamera.tres" id="11_rh0ru"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_b6k6e"]
+size = Vector3(20, 20, 5)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_e5om0"]
 size = Vector3(20, 30, 5)
@@ -34,6 +39,7 @@ size = Vector3(10, 6, 6)
 
 [node name="Static" parent="." instance=ExtResource("1_tmevk")]
 Data = ExtResource("2_e2u66")
+dialogLibrary = ExtResource("3_tn44e")
 
 [node name="Classic02" type="Node3D" parent="."]
 
@@ -41,6 +47,38 @@ Data = ExtResource("2_e2u66")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 28)
 
 [node name="CharacterSpawn" parent="Classic02/SpawnPosition" instance=ExtResource("3_ym4qw")]
+
+[node name="Voicelines" type="Node3D" parent="Classic02"]
+
+[node name="JumpTutorial" parent="Classic02/Voicelines" instance=ExtResource("4_ym4qw")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 10)
+OneShot = true
+"Respawn Mode" = 0
+"Enter Mode" = 0
+
+[node name="Dialog" type="Node3D" parent="Classic02/Voicelines/JumpTutorial" node_paths=PackedStringArray("randomizedDialogTriggers")]
+script = ExtResource("6_dlgq7")
+textKeys = Array[String](["lp_jump_sh"])
+randomizedDialogTriggers = []
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Classic02/Voicelines/JumpTutorial"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
+shape = SubResource("BoxShape3D_b6k6e")
+
+[node name="FullJumpTutorial" parent="Classic02/Voicelines" instance=ExtResource("4_ym4qw")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -50)
+OneShot = true
+"Respawn Mode" = 0
+"Enter Mode" = 0
+
+[node name="Dialog" type="Node3D" parent="Classic02/Voicelines/FullJumpTutorial" node_paths=PackedStringArray("randomizedDialogTriggers")]
+script = ExtResource("6_dlgq7")
+textKeys = Array[String](["lp_full_jump_sh"])
+randomizedDialogTriggers = []
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Classic02/Voicelines/FullJumpTutorial"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
+shape = SubResource("BoxShape3D_b6k6e")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="Classic02" groups=["wall"]]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 35)

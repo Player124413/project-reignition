@@ -1,13 +1,19 @@
-[gd_scene load_steps=13 format=3 uid="uid://by4l2emxjrhny"]
+[gd_scene load_steps=17 format=3 uid="uid://by4l2emxjrhny"]
 
 [ext_resource type="PackedScene" uid="uid://dax0mun2bjm1v" path="res://area/0 lost prologue/act/Static.tscn" id="1_e5om0"]
 [ext_resource type="Resource" uid="uid://dk3ieffp4nroy" path="res://resource/level data/lost prologue/Classic1.tres" id="2_voo6r"]
+[ext_resource type="Resource" uid="uid://cy5gbm8r5pdcl" path="res://area/0 lost prologue/data/DialogLibrary.tres" id="3_610e2"]
 [ext_resource type="PackedScene" uid="uid://cjupypih0myxo" path="res://object/player/CharacterSpawn.tscn" id="3_iq7x8"]
 [ext_resource type="PackedScene" uid="uid://bhnh1as6xgpiy" path="res://object/stage/common/DashPanel.tscn" id="4_gcoqu"]
 [ext_resource type="Script" uid="uid://bssd28yqn1cxg" path="res://object/trigger/modules/PathTrigger.cs" id="5_ejht8"]
 [ext_resource type="PackedScene" uid="uid://dpdmwi0k3jhd1" path="res://area/0 lost prologue/object/wonder/WonderBlock1.tscn" id="6_voo6r"]
 [ext_resource type="Script" uid="uid://dd24u7rlj0dwl" path="res://addons/custom_nodes/script/ObjectGenerator.cs" id="7_gcoqu"]
 [ext_resource type="PackedScene" uid="uid://c7l8mr7ubn848" path="res://object/stage/pickups/Ring.tscn" id="8_ejht8"]
+[ext_resource type="PackedScene" uid="uid://bn6wr6l8s3qyt" path="res://object/trigger/StageTrigger.tscn" id="9_ss5oq"]
+[ext_resource type="Script" uid="uid://bitgnn108jmaa" path="res://object/trigger/modules/DialogTrigger.cs" id="10_610e2"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_610e2"]
+size = Vector3(20, 20, 5)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_e5om0"]
 size = Vector3(10, 20, 5)
@@ -31,6 +37,7 @@ point_count = 4
 
 [node name="Static" parent="." instance=ExtResource("1_e5om0")]
 Data = ExtResource("2_voo6r")
+dialogLibrary = ExtResource("3_610e2")
 
 [node name="Classic01" type="Node3D" parent="."]
 
@@ -38,6 +45,23 @@ Data = ExtResource("2_voo6r")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 160)
 
 [node name="CharacterSpawn" parent="Classic01/SpawnPosition" instance=ExtResource("3_iq7x8")]
+
+[node name="Voicelines" type="Node3D" parent="Classic01"]
+
+[node name="MoveTutorial" parent="Classic01/Voicelines" instance=ExtResource("9_ss5oq")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 156)
+OneShot = true
+"Respawn Mode" = 0
+"Enter Mode" = 0
+
+[node name="Dialog" type="Node3D" parent="Classic01/Voicelines/MoveTutorial" node_paths=PackedStringArray("randomizedDialogTriggers")]
+script = ExtResource("10_610e2")
+textKeys = Array[String](["lp_strafe_sh"])
+randomizedDialogTriggers = []
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Classic01/Voicelines/MoveTutorial"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
+shape = SubResource("BoxShape3D_610e2")
 
 [node name="DashPanelGroup1" type="Node3D" parent="Classic01"]
 transform = Transform3D(-0.80670726, 0.14224426, -0.57357645, 0.1736482, 0.9848077, 0, 0.5648625, -0.09960051, -0.81915206, 9.838658, 0.03472964, 193.11298)

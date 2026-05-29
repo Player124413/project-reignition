@@ -279,10 +279,10 @@ public partial class SoundManager : Control
 
 	private void InitializeSubtitleOpacity()
 	{
-		if (!currentDialog.IsCutscene)
-			subtitleLetterbox.Color = new Color(0.0f, 0.0f, 0.0f, SaveManager.Config.subtitleOpacity * 0.01f);
-		else
+		if (currentDialog.IsCutscene)
 			subtitleLetterbox.Color = new Color(0.0f, 0.0f, 0.0f, SaveManager.Config.cutsceneOpacity * 0.01f);
+		else
+			subtitleLetterbox.Color = new Color(0.0f, 0.0f, 0.0f, SaveManager.Config.subtitleOpacity * 0.01f);
 	}
 
 	private void UpdateButtonPromptPosition()
@@ -297,6 +297,9 @@ public partial class SoundManager : Control
 
 		int currentIndex = 0;
 		Vector2 glyphPosition = Vector2.Zero;
+
+		if (paragraph.GetLineCount() > 1)
+			buttonPromptOffset.Y -= subtitleSize * 0.75f;
 
 		for (int i = 0; i < paragraph.GetLineCount(); i++)
 		{
@@ -318,7 +321,7 @@ public partial class SoundManager : Control
 				}
 			}
 
-			buttonPromptOffset.Y -= subtitleSize * 0.5f;
+			buttonPromptOffset.Y += subtitleSize * 0.5f;
 		}
 	}
 

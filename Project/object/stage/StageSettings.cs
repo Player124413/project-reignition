@@ -268,7 +268,7 @@ public partial class StageSettings : Node3D
 	/// <summary> Reference to the level's data. </summary>
 	[Export] public LevelDataResource Data { get; private set; }
 	[Export] public BGMResource DefaultBgm { get; private set; }
-	[Export] public BGMResource currentBGM;
+	private BGMResource currentBGM;
 	[Export] private bool disableObjectiveAutocompletion;
 	[Export] public CameraSettingsResource InitialCameraSettings { get; private set; }
 	[Export] public SFXLibraryResource dialogLibrary;

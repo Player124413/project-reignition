@@ -126,7 +126,6 @@ public partial class HomingAttackState : PlayerState
 		RaycastHit hit = Player.CastRay(castPosition, castVector, Runtime.Instance.lockonObstructionMask);
 		DebugManager.DrawRay(castPosition, castVector, Colors.Magenta);
 
-		GD.Print(hit.collidedObject);
 		if (!hit)
 			return false;
 
