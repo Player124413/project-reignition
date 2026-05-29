@@ -7,19 +7,26 @@ class_name PartyGameCharacterMover extends PartyGameCharacterSpawner
 
 @export_group("Movement Settings")
 @export var allow_braking : bool = true
+@export var allow_instant_turn : bool = true
+@export var enable_gravity : bool
 @export var run_speed : float = 50.0
 @export var walk_speed : float = 20.0
 @export var turn_speed : float = 15.0
+@export var in_place_turn_speed : float = 15.0
 @export var friction : float = 120.0
 @export var traction : float = 100.0
 @export var brake_friction : float = 200.0
 ## How far the controller needs to be pressed to perform a run.
 const RUN_LENGTH : float = 0.5
+const GRAVITY : float = 40.0
+const MAX_GRAVITY : float = -50.0
 
 ## The current speed we're moving at.
 var _move_speed : float
 ## The current angle we're moving at.
 var _move_angle : float
+## The current speed we're falling at.
+var _vertical_speed : float
 ## The current input being processed.
 var _input : Vector2
 ## What input angle should be counted as "braking."
@@ -29,6 +36,8 @@ const BRAKE_ANGLE : float = PI * 0.8
 var _is_braking : bool = false
 ## Tracks whether the player is walking or not.
 var _is_walking : bool = false
+## Tracks whether the player is turning from a stop.
+var _is_start_turning : bool = false
 
 func on_spawn_finished() -> void:
 	_move_angle = rotation.y
@@ -59,20 +68,25 @@ const RB_ANGLE : int = 2
 const RB_INPUT : int = 3
 func on_rollback_applied(rb_params : Array) -> void:
 	character_body.global_position = rb_params[RB_POS]
-	_move_speed = rb_params[RB_SPD]
+	_move_speed = rb_params[RB_SPD].x
+	_vertical_speed = rb_params[RB_SPD].y
 	_move_angle = rb_params[RB_ANGLE]
 	_input = rb_params[RB_INPUT]
 
 func process_rollback() -> void:
 	rollback_timer.set_param(RB_POS, character_body.global_position)
-	rollback_timer.set_param(RB_SPD, _move_speed)
+	rollback_timer.set_param(RB_SPD, Vector2(_move_speed, _vertical_speed))
 	rollback_timer.set_param(RB_ANGLE, _move_angle)
 	rollback_timer.set_param(RB_INPUT, _input)
 	rollback_timer.process_rollback()
 
 func process_inputs() -> void:
+	if _is_gameplay_finished:
+		_input = Vector2.ZERO
+		return
+	
 	if !is_cpu():
-		_input = get_input_axis() # TODO Allow CPU inputs
+		_input = get_input_axis()
 	elif player_index != -1:
 		_input = get_cpu_input()
 
@@ -90,6 +104,7 @@ func process_movement_tick() -> void:
 ## Updates the character's position based on movespeed and moveangle.
 func apply_movement() -> void:
 	var velocity : Vector3 = Vector3.MODEL_FRONT.rotated(Vector3.UP, _move_angle) * _move_speed
+	velocity += Vector3.UP * _vertical_speed
 	character_body.velocity = velocity
 	character_body.move_and_slide()
 
@@ -98,10 +113,13 @@ func process_rotation(target_angle : float) -> void:
 	if _is_braking:
 		return
 	
-	if is_zero_approx(_move_speed):
+	if is_zero_approx(_move_speed) && allow_instant_turn:
 		_move_angle = target_angle
 	else:
-		_move_angle = rotate_toward(_move_angle, target_angle, turn_speed * get_physics_process_delta_time())
+		var turn_spd : float = in_place_turn_speed if is_zero_approx(_move_speed) else turn_speed
+		_move_angle = rotate_toward(_move_angle, target_angle, turn_spd * get_physics_process_delta_time())
+		var angle_dif : float = angle_difference(_move_angle, target_angle)
+		_is_start_turning = !allow_instant_turn && is_zero_approx(_move_speed) && !is_zero_approx(angle_dif)
 
 ## Updates the character's movement speed.
 func process_speed() -> void:
@@ -109,12 +127,17 @@ func process_speed() -> void:
 	var target_delta : float
 	if _is_braking:
 		target_delta = brake_friction
-	elif _input.is_zero_approx():
+	elif _input.is_zero_approx() || _is_start_turning:
 		target_delta = friction
 	else:
 		target_speed = walk_speed if _is_walking else run_speed 
 		target_delta = traction if target_speed > _move_speed else friction
 	_move_speed = move_toward(_move_speed, target_speed, target_delta * get_physics_process_delta_time())
+	
+	if enable_gravity:
+		if character_body.is_on_floor():
+			_vertical_speed = 0 # Reset (don't accumulate on the ground)
+		_vertical_speed = move_toward(_vertical_speed, MAX_GRAVITY, GRAVITY * get_physics_process_delta_time())
 
 ## Updates the characters animations.
 func process_animation() -> void:
@@ -165,6 +188,7 @@ func apply_movement_rotation() -> void:
 func get_target_animation() -> StringName:
 	if _is_braking:
 		return "brake"
+	
 	if is_zero_approx(_move_speed):
 		return "wait"
 	

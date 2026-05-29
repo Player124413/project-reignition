@@ -10,6 +10,12 @@ var cogwheel : Node3D
 @export var animator : AnimationPlayer
 @export var ground_raycast : RayCast3D
 
+@export var point_sfx : GroupSfxPlayer
+@export var fall_sfx : GroupSfxPlayer
+@export var move_vfx : GPUParticles3D
+@export var land_vfx : GPUParticles3D
+
+var is_on_cogwheel : bool
 var current_speed : float
 const MOVE_SPEED : float = 3.0
 const ACCELERATION : float = 10.0
@@ -79,6 +85,9 @@ func process_movement_tick() -> void:
 		
 		if is_colliding_with_object():
 			global_position = ground_raycast.get_collision_point()
+			if !is_on_cogwheel:
+				is_on_cogwheel = true
+				land_vfx.restart()
 		
 		var desired_direction : int = sign(position.x)
 		var target_speed : float = 0
@@ -86,10 +95,16 @@ func process_movement_tick() -> void:
 			target_speed = -desired_direction * MOVE_SPEED
 		elif sign(cogwheel.current_rotation_speed) != desired_direction:
 			target_speed = MOVE_SPEED * sign(cogwheel.current_rotation_speed)
-			
+			move_vfx.emitting = true
 		current_speed = move_toward(current_speed, target_speed, ACCELERATION * get_physics_process_delta_time())
 		speed = cogwheel.current_rotation_speed - current_speed
 	else:
+		if is_on_cogwheel:
+			is_on_cogwheel = false
+			move_vfx.emitting = false
+			if global_position.y < cogwheel.cpu_middle_bound.global_position.y:
+				fall_sfx.play_in_group()
+		
 		current_speed = move_toward(current_speed, 0, ACCELERATION * get_physics_process_delta_time())
 		global_position += Vector3.DOWN * GRAVITY * get_physics_process_delta_time()
 	
@@ -125,6 +140,7 @@ func request_spawn(spawn_position : Vector3, is_bonus : bool) -> void:
 func on_majin_grounded() -> void:
 	is_jumping = false
 	is_grounded = true
+	land_vfx.restart()
 	collider.disabled = true
 	ground_raycast.enabled = false
 	ceiling_raycast.enabled = false
@@ -138,6 +154,7 @@ func on_majin_grounded() -> void:
 		var score : int = 3 if is_bonus_majin else 1
 		var projected_position : Vector3 = cogwheel.global_position + Vector3.UP * 8
 		var screen_pos : Vector2 = get_viewport().get_camera_3d().unproject_position(projected_position)
+		point_sfx.play_in_group()
 		rpc("request_score_popup", cogwheel.player_index, score, screen_pos)
 		
 		if cogwheel.is_demo_complete:

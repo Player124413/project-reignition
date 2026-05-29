@@ -48,6 +48,7 @@ public partial class HomingAttackState : PlayerState
 		if (!Player.IsLightSpeedAttacking)
 		{
 			Player.IsHomingAttacking = false;
+			Player.IsPerfectHomingAttacking = false;
 			Player.AttackState = PlayerController.AttackStates.None;
 			Player.ChangeHitbox("RESET");
 			Player.Effect.StopSpinFX();
@@ -66,7 +67,6 @@ public partial class HomingAttackState : PlayerState
 		}
 		else
 		{
-			Player.IsPerfectHomingAttacking = false;
 			Player.Lockon.ResetLockonTarget();
 			Player.Skills.DeactivateFireCrest();
 		}

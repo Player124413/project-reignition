@@ -1,0 +1,327 @@
+[gd_scene load_steps=16 format=3 uid="uid://dvmacjbjuhooe"]
+
+[ext_resource type="PackedScene" uid="uid://0nep0dnqmthl" path="res://party/scene/minigame/07 steel survival/model/Map.glb" id="1_7gs6f"]
+[ext_resource type="PackedScene" uid="uid://dsbufs8tjchk7" path="res://party/scene/minigame/00 base/MinigameBase.tscn" id="1_n2u17"]
+[ext_resource type="Resource" uid="uid://ydo4wy1h8mpc" path="res://party/resource/minigame/07SteelSurvival.tres" id="2_2dkdv"]
+[ext_resource type="AnimationLibrary" uid="uid://dkka8liusi25g" path="res://party/scene/minigame/07 steel survival/animation/_Library.glb" id="2_8msmn"]
+[ext_resource type="PackedScene" uid="uid://bnps6pgfyd6po" path="res://party/scene/minigame/07 steel survival/model/PlatformTop.glb" id="2_ajb6b"]
+[ext_resource type="PackedScene" uid="uid://chv67k88pbmx2" path="res://party/scene/minigame/07 steel survival/Player.tscn" id="2_gfnfg"]
+[ext_resource type="PackedScene" uid="uid://f5w7fq20xmd1" path="res://party/scene/minigame/00 base/Time.tscn" id="3_prml5"]
+[ext_resource type="Resource" uid="uid://byywjgtxw58k" path="res://party/resource/bgm/Minigame3.tres" id="5_hhv6j"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_ajb6b"]
+sky_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
+ground_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
+
+[sub_resource type="Sky" id="Sky_prml5"]
+sky_material = SubResource("ProceduralSkyMaterial_ajb6b")
+
+[sub_resource type="Environment" id="Environment_8msmn"]
+sky = SubResource("Sky_prml5")
+ambient_light_source = 2
+ambient_light_color = Color(0.5597794, 0.5808049, 0.59608865, 1)
+tonemap_mode = 1
+tonemap_exposure = 1.2
+tonemap_white = 1.1
+glow_enabled = true
+glow_normalized = true
+fog_density = 0.0001
+
+[sub_resource type="Animation" id="Animation_prml5"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Camera:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0, 220, 0)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Players:visible")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+
+[sub_resource type="Animation" id="Animation_2dkdv"]
+resource_name = "finish"
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Players:visible")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+
+[sub_resource type="Animation" id="Animation_ajb6b"]
+resource_name = "intro"
+length = 2.0
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Camera:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 1),
+"transitions": PackedFloat32Array(0.5, 1),
+"update": 0,
+"values": [Vector3(0, 0, 0), Vector3(0, 220, 0)]
+}
+tracks/1/type = "method"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Minigame")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(1.5),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"request_minigame_start"
+}]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_8msmn"]
+_data = {
+&"RESET": SubResource("Animation_prml5"),
+&"finish": SubResource("Animation_2dkdv"),
+&"intro": SubResource("Animation_ajb6b")
+}
+
+[node name="Game" type="Node3D"]
+
+[node name="Minigame" parent="." node_paths=PackedStringArray("intro_animator", "results_camera") instance=ExtResource("1_n2u17")]
+minigame_resource = ExtResource("2_2dkdv")
+anim_library = ExtResource("2_8msmn")
+autocomplete_player_count = 3
+intro_animator = NodePath("../AnimationPlayer")
+results_camera = NodePath("../ResultsCamera")
+
+[node name="P1" parent="Minigame/ResultsLocation" index="0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -36, 0, 0)
+
+[node name="PlatformTop" parent="Minigame/ResultsLocation/P1" index="0" instance=ExtResource("2_ajb6b")]
+process_mode = 4
+transform = Transform3D(0.5, 0, 0, 0, 1.5, 0, 0, 0, 0.5, 0, -22.5, -2)
+
+[node name="P2" parent="Minigame/ResultsLocation" index="1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12, 0, 0)
+
+[node name="PlatformTop" parent="Minigame/ResultsLocation/P2" index="0" instance=ExtResource("2_ajb6b")]
+process_mode = 4
+transform = Transform3D(0.5, 0, 0, 0, 1.5, 0, 0, 0, 0.5, 0, -22.5, -2)
+
+[node name="P3" parent="Minigame/ResultsLocation" index="2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12, 0, 0)
+
+[node name="PlatformTop" parent="Minigame/ResultsLocation/P3" index="0" instance=ExtResource("2_ajb6b")]
+process_mode = 4
+transform = Transform3D(0.5, 0, 0, 0, 1.5, 0, 0, 0, 0.5, 0, -22.5, -2)
+
+[node name="P4" parent="Minigame/ResultsLocation" index="3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 36, 0, 0)
+
+[node name="PlatformTop" parent="Minigame/ResultsLocation/P4" index="0" instance=ExtResource("2_ajb6b")]
+process_mode = 4
+transform = Transform3D(0.5, 0, 0, 0, 1.5, 0, 0, 0, 0.5, 0, -22.5, -2)
+
+[node name="BGM" parent="Minigame" index="6"]
+bgmResource = ExtResource("5_hhv6j")
+
+[node name="Time" parent="Minigame" instance=ExtResource("3_prml5")]
+layout_mode = 1
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -128.0
+offset_right = 128.0
+grow_horizontal = 2
+
+[node name="Environment" type="Node3D" parent="."]
+
+[node name="Map" parent="Environment" instance=ExtResource("1_7gs6f")]
+
+[node name="st_114_map_Mesh_0000" parent="Environment/Map/MapRoot/Skeleton3D" index="0"]
+layers = 2
+cast_shadow = 0
+
+[node name="st_114_map_Mesh_0001" parent="Environment/Map/MapRoot/Skeleton3D" index="1"]
+layers = 2
+cast_shadow = 0
+
+[node name="st_114_map_Mesh_0002" parent="Environment/Map/MapRoot/Skeleton3D" index="2"]
+layers = 2
+cast_shadow = 0
+
+[node name="st_114_map_Mesh_0020" parent="Environment/Map/MapRoot/Skeleton3D" index="3"]
+layers = 2
+cast_shadow = 0
+
+[node name="st_114_map_Mesh_0025" parent="Environment/Map/MapRoot/Skeleton3D" index="4"]
+layers = 2
+cast_shadow = 0
+
+[node name="st_114_map_Mesh_0026" parent="Environment/Map/MapRoot/Skeleton3D" index="5"]
+layers = 2
+cast_shadow = 0
+
+[node name="st_114_map_Mesh_0027" parent="Environment/Map/MapRoot/Skeleton3D" index="6"]
+layers = 2
+cast_shadow = 0
+
+[node name="st_114_map_Mesh_0028" parent="Environment/Map/MapRoot/Skeleton3D" index="7"]
+layers = 2
+cast_shadow = 0
+
+[node name="st_114_map_Mesh_0029" parent="Environment/Map/MapRoot/Skeleton3D" index="8"]
+layers = 2
+cast_shadow = 0
+
+[node name="st_114_map_Mesh_0030" parent="Environment/Map/MapRoot/Skeleton3D" index="9"]
+layers = 2
+cast_shadow = 0
+
+[node name="st_114_map_Mesh_0031" parent="Environment/Map/MapRoot/Skeleton3D" index="10"]
+layers = 2
+cast_shadow = 0
+
+[node name="st_114_map_Mesh_0032" parent="Environment/Map/MapRoot/Skeleton3D" index="11"]
+layers = 2
+cast_shadow = 0
+
+[node name="st_114_map_Mesh_0033" parent="Environment/Map/MapRoot/Skeleton3D" index="12"]
+layers = 2
+cast_shadow = 0
+
+[node name="st_114_map_Mesh_0034_001" parent="Environment/Map/MapRoot/Skeleton3D" index="13"]
+layers = 2
+cast_shadow = 0
+
+[node name="st_114_map_Mesh_0035" parent="Environment/Map/MapRoot/Skeleton3D" index="14"]
+layers = 2
+cast_shadow = 0
+
+[node name="st_114_map_Mesh_0036" parent="Environment/Map/MapRoot/Skeleton3D" index="15"]
+layers = 2
+cast_shadow = 0
+
+[node name="st_114_map_Mesh_0037" parent="Environment/Map/MapRoot/Skeleton3D" index="16"]
+layers = 2
+cast_shadow = 0
+
+[node name="st_114_map_Mesh_0038" parent="Environment/Map/MapRoot/Skeleton3D" index="17"]
+layers = 2
+cast_shadow = 0
+
+[node name="st_114_map_Mesh_0039" parent="Environment/Map/MapRoot/Skeleton3D" index="18"]
+layers = 2
+cast_shadow = 0
+
+[node name="st_114_map_Mesh_0041" parent="Environment/Map/MapRoot/Skeleton3D" index="19"]
+visible = false
+layers = 2
+cast_shadow = 0
+
+[node name="st_114_map_Mesh_0048" parent="Environment/Map/MapRoot/Skeleton3D" index="20"]
+layers = 2
+cast_shadow = 0
+
+[node name="st_114_map_Mesh_0053" parent="Environment/Map/MapRoot/Skeleton3D" index="21"]
+layers = 2
+cast_shadow = 0
+
+[node name="st_114_map_Mesh_0054" parent="Environment/Map/MapRoot/Skeleton3D" index="22"]
+layers = 2
+cast_shadow = 0
+
+[node name="st_114_map_Mesh_0055" parent="Environment/Map/MapRoot/Skeleton3D" index="23"]
+layers = 2
+cast_shadow = 0
+
+[node name="st_114_map_Mesh_0056" parent="Environment/Map/MapRoot/Skeleton3D" index="24"]
+layers = 2
+cast_shadow = 0
+
+[node name="st_114_map_Mesh_0057" parent="Environment/Map/MapRoot/Skeleton3D" index="25"]
+layers = 2
+cast_shadow = 0
+
+[node name="st_114_map_Mesh_0065" parent="Environment/Map/MapRoot/Skeleton3D" index="26"]
+layers = 2
+cast_shadow = 0
+
+[node name="AnimationPlayer" parent="Environment/Map" index="1"]
+autoplay = "map"
+
+[node name="Light" type="DirectionalLight3D" parent="Environment"]
+transform = Transform3D(1, 0, 0, 0, 0.49999997, 0.86602545, 0, -0.86602545, 0.49999997, 0, 0, 0)
+layers = 1024
+light_color = Color(1, 0.9688333, 0.89, 1)
+light_cull_mask = 2
+
+[node name="Objects" type="DirectionalLight3D" parent="Environment"]
+transform = Transform3D(1, 0, 0, 0, 0.49999997, 0.86602545, 0, -0.86602545, 0.49999997, 0, 0, 0)
+light_color = Color(1, 0.98, 0.8, 1)
+light_cull_mask = 1
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="Environment"]
+environment = SubResource("Environment_8msmn")
+
+[node name="Players" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 60, 0)
+
+[node name="Player1" parent="Players" node_paths=PackedStringArray("cpu_remaining_targets") instance=ExtResource("2_gfnfg")]
+transform = Transform3D(0.70710677, 0, 0.70710677, 0, 1, 0, -0.70710677, 0, 0.70710677, -50, 0, -50)
+cpu_remaining_targets = [NodePath("../Player2"), NodePath("../Player4"), NodePath("../Player3")]
+
+[node name="Player2" parent="Players" node_paths=PackedStringArray("cpu_remaining_targets") instance=ExtResource("2_gfnfg")]
+transform = Transform3D(0.70710677, 0, -0.70710677, 0, 1, 0, 0.70710677, 0, 0.70710677, 50, 0, -50)
+cpu_remaining_targets = [NodePath("../Player4"), NodePath("../Player3"), NodePath("../Player1")]
+player_index = 1
+
+[node name="Player3" parent="Players" node_paths=PackedStringArray("cpu_remaining_targets") instance=ExtResource("2_gfnfg")]
+transform = Transform3D(-0.70710677, 0, 0.70710677, 0, 1, 0, -0.70710677, 0, -0.70710677, -50, 0, 50)
+cpu_remaining_targets = [NodePath("../Player1"), NodePath("../Player2"), NodePath("../Player4")]
+player_index = 2
+
+[node name="Player4" parent="Players" node_paths=PackedStringArray("cpu_remaining_targets") instance=ExtResource("2_gfnfg")]
+transform = Transform3D(-0.70710677, 0, -0.70710677, 0, 1, 0, 0.70710677, 0, -0.70710677, 50, 0, 50)
+cpu_remaining_targets = [NodePath("../Player3"), NodePath("../Player1"), NodePath("../Player2")]
+player_index = 3
+
+[node name="Camera" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 220, 0)
+cull_mask = 1059
+fov = 60.0
+
+[node name="ResultsCamera" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.9848077, 0.17364818, 0, -0.17364818, 0.9848077, 0, 30, 87.5)
+cull_mask = 1059
+fov = 40.0
+far = 10000.0
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+&"": SubResource("AnimationLibrary_8msmn")
+}
+
+[editable path="Minigame"]
+[editable path="Environment/Map"]

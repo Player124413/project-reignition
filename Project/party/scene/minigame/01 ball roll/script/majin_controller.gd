@@ -26,6 +26,8 @@ const POSTSPAWN_HYPERSPEED_LENGTH : float = 1.0
 
 ## Reference to the physics world.
 var world : World3D
+## Reference to the world's camera.
+var camera : Camera3D
 ## Length to use when checking for ground collisions.
 const GROUND_CHECK_OFFSET : float = 50
 ## Length to use when checking for wall collisions.
@@ -75,6 +77,7 @@ func get_score_amount() -> int:
 
 func _ready() -> void:
 	world = get_world_3d()
+	camera = get_tree().root.get_camera_3d()
 	initial_spawn_index = 0
 	initial_spawn_counter = 0
 	
@@ -170,13 +173,17 @@ func request_squish(player_index : int, network_time : float) -> void:
 		if network_time >= squish_time: # Already squished by someone
 			return
 		
-		# Undo the incorrect score TODO: Abort score text
-		MinigameManager.instance.request_score_change(squish_player, -get_score_amount())
+		# Undo the incorrect score
+		if is_multiplayer_authority():
+			MinigameManager.instance.request_score_change(squish_player, -get_score_amount())
+			MinigameManager.instance.request_score_popup_abort(player_index, squish_time)
 	
 	squish_player = player_index
 	squish_time = network_time
-	MinigameManager.instance.request_score_change(player_index, get_score_amount())
-	# TODO Play score effect (don't forget to abort if there's a network conflict!)
+	
+	if is_multiplayer_authority():
+		MinigameManager.instance.request_score_change(player_index, get_score_amount())
+		MinigameManager.instance.request_score_popup(player_index, get_score_amount(), camera.unproject_position(global_position))
 	
 	if is_active: # Handle visuals
 		animation_player.play("squish")

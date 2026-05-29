@@ -14,6 +14,9 @@ public partial class VideoStreamFileLoadPlayer : VideoStreamPlayer
 		if (Engine.IsEditorHint())
 			return;
 
+		if (string.IsNullOrEmpty(videoFilePath))
+			return;
+
 		if (!ResourceLoader.Exists(videoFilePath, "VideoStream"))
 		{
 			GD.PushWarning($"Couldn't load video file {videoFilePath}!");

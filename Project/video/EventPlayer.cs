@@ -70,7 +70,13 @@ public partial class EventPlayer : Node
 		CreateSubtitles();
 
 		if (!isNestedCutscene && musicResource != null)
-			SoundManager.instance.UpdateBgmResource(musicResource as BGMResource);
+		{
+			if (SoundManager.instance.StageMusicPlayer.GetBgmResource() != musicResource)
+			{
+				SoundManager.instance.UpdateBgmResource(musicResource as BGMResource);
+				SoundManager.instance.StageMusicPlayer.Stop();
+			}
+		}
 
 		if (!isNestedCutscene)
 			CallDeferred(MethodName.StartCutscene);
@@ -242,6 +248,12 @@ public partial class EventPlayer : Node
 				OnEventFinished(true);
 
 			return;
+		}
+
+		if (OS.IsDebugBuild() && !Mathf.IsEqualApprox(Engine.TimeScale, 1.0))
+		{
+			if (audioPlayer != null && animator != null)
+				audioPlayer.Seek((float)animator.CurrentAnimationPosition + (float)AudioServer.GetTimeSinceLastMix()); // Resync audio (for debug TURBO support)
 		}
 
 		// Process skipping story cutscene
@@ -487,8 +499,8 @@ public partial class EventPlayer : Node
 			HideSubtitles();
 	}
 
-	/// <summary> Called from a signal during the final cutscene. </summary>
-	private void PlayCreditsMusic() => SoundManager.instance.StartBgm(false);
+	/// <summary> Called from an animation during the final cutscene. </summary>
+	private void PlayCreditsMusic() => SoundManager.instance.StartBgm(!SoundManager.instance.StageMusicPlayer.Playing);
 
 	private void FadeOutCreditsMusic() => isFadingBgm = true;
 	#endregion

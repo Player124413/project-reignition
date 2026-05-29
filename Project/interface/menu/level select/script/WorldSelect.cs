@@ -68,7 +68,7 @@ public partial class WorldSelect : Menu
 		int levelIndex = 0;
 		foreach (Menu item in _submenus) // Update new level statuses
 		{
-			if (item is LevelSelect levelSelect)
+			if (item is LevelSelect levelSelect && (item as LevelSelect).IsWorldUnlocked())
 			{
 				if (levelSelect.HasNewLevel())
 					newLevelList.Add(levelIndex);
@@ -97,6 +97,7 @@ public partial class WorldSelect : Menu
 		PreviousVideoPlayer = null;
 		UpdateActiveVideoPlayer();
 		UpdateStoryIndicator(false);
+		SetVideoVisibility();
 	}
 
 	public override void _Process(double _)
@@ -160,6 +161,8 @@ public partial class WorldSelect : Menu
 		animator.Seek(0.0, true);
 		DisableProcessing();
 		UpdateStoryIndicator(false);
+
+		SetVideoVisibility();
 	}
 
 	private void UpdateStoryIndicator(bool forceClose)
@@ -179,7 +182,7 @@ public partial class WorldSelect : Menu
 	protected override void Confirm()
 	{
 		// World hasn't been unlocked
-		if (!SaveManager.ActiveGameData.IsWorldUnlocked((SaveManager.WorldEnum)VerticalSelection)) return;
+		if (!SaveManager.ActiveGameData.IsWorldUnlocked((SaveManager.WorldEnum)VerticalSelection) && VerticalSelection != (int)SaveManager.WorldEnum.Mods) return;
 
 		if (isConfirmedWithMouse && Runtime.Instance.IsUsingMouse)
 		{
@@ -227,6 +230,7 @@ public partial class WorldSelect : Menu
 		if (!SaveManager.ActiveGameData.IsWorldUnlocked((SaveManager.WorldEnum)VerticalSelection)) return; // World is locked
 		if (!Mathf.IsZeroApprox(Input.GetAxis("ui_up", "ui_down"))) return; // Still scrolling
 
+
 		if (ActiveVideoPlayer?.IsPlaying() == true)
 		{
 			videoFadeFactor = 0;
@@ -236,6 +240,7 @@ public partial class WorldSelect : Menu
 		}
 
 		UpdateActiveVideoPlayer();
+
 	}
 
 	private void UpdateActiveVideoPlayer()
@@ -244,6 +249,14 @@ public partial class WorldSelect : Menu
 		ActiveVideoPlayer.Paused = false;
 		if (!ActiveVideoPlayer.IsPlaying())
 			ActiveVideoPlayer.Play();
+	}
+
+	private void SetVideoVisibility()
+	{
+		if (VerticalSelection == (int)SaveManager.WorldEnum.Mods) //Selected Mods world?
+			ActiveVideoPlayer.Visible = false;
+		else
+			ActiveVideoPlayer.Visible = true;
 	}
 
 	public void UpdateLevelText()

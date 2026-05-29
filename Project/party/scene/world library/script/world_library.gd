@@ -104,16 +104,18 @@ func process_selection() -> void:
 	default_page_root.visible = false
 	minigame_page_root.visible = false
 	
-	if selection_type == SELECTION.CONFIRM:
-		process_confirm()
-	elif selection_type == SELECTION.CANCEL:
+	if selection_type == SELECTION.CANCEL:
 		process_cancel()
+	else:
+		process_confirm()
 
 func process_confirm() -> void:
-	current_selection = Vector2i.ZERO # Reset to first entry in page
-	current_menu = SUBMENUS.ALL
+	if current_menu == SUBMENUS.DEFAULT:
+		current_selection = Vector2i.ZERO # Reset to first entry in page
+		current_menu = SUBMENUS.ALL # TODO Allow selecting other minigame categories
 	
 	if current_menu != SUBMENUS.DEFAULT: # TODO Account for ranking and records
+		current_selection.y = 0 # Reset to first entry in page
 		update_minigame_list()
 
 func process_cancel() -> void:
@@ -170,15 +172,17 @@ func change_selection(input : Vector2i) -> void:
 		var max_x : int = default_parent.columns
 		@warning_ignore("integer_division")
 		var max_y : int = default_parent.get_child_count() / max_x
-		current_selection.x = abs(current_selection.x + input.x) % max_x
+		current_selection.x = (current_selection.x + input.x) % max_x
 		current_selection.y = (current_selection.y + input.y) % max_y
 		update_default_cursor_selection()
 	else: # TODO Add rankings and records
 		if input.x != 0 && current_minigame_list.size() > minigame_option_list.size():
-			selection_type = SELECTION.LEFT if input.x < 0 else SELECTION.RIGHT
-			animator.play("left" if input.x < 0 else "right")
+			var max_x : int = ceil(current_minigame_list.size() / (minigame_option_list.size() as float))
+			selection_type = SELECTION.LEFT if input.x > 0 else SELECTION.RIGHT
+			current_selection.x = (current_selection.x + input.x) % max_x
+			animator.play("left" if input.x > 0 else "right")
 		elif input.y != 0:
-			current_selection.y = abs(current_selection.y + input.y) % max_minigame_selection
+			current_selection.y = (current_selection.y + input.y) % max_minigame_selection
 			update_minigame_cursor_selection()
 
 func update_default_cursor_selection() -> void:

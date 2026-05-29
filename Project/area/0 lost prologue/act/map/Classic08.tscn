@@ -1,14 +1,20 @@
-[gd_scene load_steps=11 format=3 uid="uid://b5u65uive61ea"]
+[gd_scene load_steps=15 format=3 uid="uid://b5u65uive61ea"]
 
 [ext_resource type="PackedScene" uid="uid://dax0mun2bjm1v" path="res://area/0 lost prologue/act/Static.tscn" id="1_gxiam"]
 [ext_resource type="Resource" uid="uid://btd3oihc54a0h" path="res://resource/level data/lost prologue/Classic8.tres" id="2_gxiam"]
 [ext_resource type="PackedScene" uid="uid://1tjbikxq7apd" path="res://area/0 lost prologue/object/grindrail/Grindrail06.tscn" id="3_6kr00"]
 [ext_resource type="PackedScene" uid="uid://cjupypih0myxo" path="res://object/player/CharacterSpawn.tscn" id="3_14fok"]
+[ext_resource type="Resource" uid="uid://cy5gbm8r5pdcl" path="res://area/0 lost prologue/data/DialogLibrary.tres" id="3_crgco"]
+[ext_resource type="PackedScene" uid="uid://bn6wr6l8s3qyt" path="res://object/trigger/StageTrigger.tscn" id="4_jdwgn"]
 [ext_resource type="PackedScene" uid="uid://b8m1x0tudbcbd" path="res://object/stage/common/Spring.tscn" id="4_n5ycy"]
+[ext_resource type="Script" uid="uid://bitgnn108jmaa" path="res://object/trigger/modules/DialogTrigger.cs" id="5_crgco"]
 [ext_resource type="Script" uid="uid://dx0a0rhyauccl" path="res://object/trigger/modules/CameraTrigger.cs" id="5_rbtrm"]
 [ext_resource type="Resource" uid="uid://bw3u4i24ks1jc" path="res://area/0 lost prologue/act/camera/BackupOverheadCamera.tres" id="6_crgco"]
 [ext_resource type="PackedScene" uid="uid://dxepb172kmp8n" path="res://object/stage/common/Goal.tscn" id="6_jdwgn"]
 [ext_resource type="PackedScene" uid="uid://biywpw2ega7fx" path="res://object/enemy/majin/data/lost prologue/GreenMajin.tscn" id="7_ooe3p"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_ooe3p"]
+size = Vector3(20, 20, 5)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_lau7f"]
 size = Vector3(20, 30, 5)
@@ -17,6 +23,7 @@ size = Vector3(20, 30, 5)
 
 [node name="Static" parent="." instance=ExtResource("1_gxiam")]
 Data = ExtResource("2_gxiam")
+dialogLibrary = ExtResource("3_crgco")
 
 [node name="Classic08" type="Node3D" parent="."]
 
@@ -24,6 +31,23 @@ Data = ExtResource("2_gxiam")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 145)
 
 [node name="CharacterSpawn" parent="Classic08/SpawnPosition" instance=ExtResource("3_14fok")]
+
+[node name="Voicelines" type="Node3D" parent="Classic08"]
+
+[node name="GrindTutorial" parent="Classic08/Voicelines" instance=ExtResource("4_jdwgn")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 130)
+OneShot = true
+"Respawn Mode" = 0
+"Enter Mode" = 0
+
+[node name="Dialog" type="Node3D" parent="Classic08/Voicelines/GrindTutorial" node_paths=PackedStringArray("randomizedDialogTriggers")]
+script = ExtResource("5_crgco")
+textKeys = Array[String](["lp_grind_sh"])
+randomizedDialogTriggers = []
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Classic08/Voicelines/GrindTutorial"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
+shape = SubResource("BoxShape3D_ooe3p")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="Classic08" groups=["wall"]]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 160)

@@ -91,7 +91,6 @@ const BALL_SCALE_DISTANCE : float = 80
 func on_spawn_finished() -> void:
 	ball.visible = false
 	bat_attachment.reparent(character_animator.skeleton)
-	MinigameManager.instance.minigame_finished.connect(Callable(self, "on_minigame_finished"))
 	character_animator.play_animation(get_anim_prefix() + "wait")
 
 func on_host_spawned() -> void:
@@ -113,6 +112,7 @@ func activate() -> void:
 	pitch_ball() # Start pitching balls
 
 func on_minigame_finished() -> void:
+	super()
 	bat_attachment.visible = false
 
 func _physics_process(_delta: float) -> void:
@@ -224,8 +224,10 @@ func hit_ball(distance : float, direction : int, hit_position : Vector3, network
 	var target_distance : float = HOME_RUN_DISTANCE if is_home_run else IN_FIELD_DISTANCE
 	hit_sfx[1 if is_home_run else 0].play()
 	
-	if !is_cpu() || NetworkManager.is_hosting_game:
+	if is_multiplayer_authority() && player_index != -1:
 		MinigameManager.instance.request_score_change(player_index, 2 if is_home_run else 1)
+		var popup_pos : Vector2 = score_counter.global_position + Vector2.RIGHT * score_counter.size.x * 0.5
+		MinigameManager.instance.request_score_popup(player_index, 2 if is_home_run else 1, popup_pos)
 	
 	# Change state
 	ball_state = BALL_STATES.HIT

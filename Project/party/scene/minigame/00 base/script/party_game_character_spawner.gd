@@ -6,6 +6,25 @@ class_name PartyGameCharacterSpawner extends Node3D
 @export var spawn_position : Node3D
 @export var score_counter : ScoreCounter
 @export var character_animator : CharacterAnimator
+## Option animation tree. Use initialize_animation_tree() to set it up.
+@export var animation_tree : AnimationTree
+
+@export var deactivate_on_gameplay_finished : bool = true
+var _is_spawn_finished : bool
+var _is_gameplay_finished : bool
+
+func initialize_animation_tree(anim_prefix : String, anim_list : PackedStringArray) -> void:
+	animation_tree.anim_player = animation_tree.get_path_to(character_animator.animator)
+	var root : AnimationNodeBlendTree = animation_tree.tree_root as AnimationNodeBlendTree
+	for anim in anim_list:
+		if !root.has_node(anim):
+			continue
+		(root.get_node(anim) as AnimationNodeAnimation).animation = anim_prefix + anim
+	animation_tree.active = true
+	MinigameManager.instance.minigame_finished.connect(Callable(self, "deactivate_animation_tree"))
+
+func deactivate_animation_tree() -> void:
+	animation_tree.active = false
 
 ## Gets the animation prefix for minigame animations.
 func get_anim_prefix() -> String:
@@ -55,7 +74,8 @@ func _ready() -> void:
 		# TODO Check if this player index is actually being used. (i.e. duel minigames)
 		set_physics_process(false)
 		MinigameManager.instance.gameplay_started.connect(Callable.create(self, "activate"))
-		MinigameManager.instance.gameplay_finished.connect(Callable.create(self, "deactivate"))
+		MinigameManager.instance.gameplay_finished.connect(Callable.create(self, "on_gameplay_finished"))
+		MinigameManager.instance.minigame_finished.connect(Callable.create(self, "on_minigame_finished"))
 		
 		if is_instance_valid(score_counter):
 			# Initialize the score counter
@@ -73,7 +93,16 @@ func on_host_spawned() -> void:
 
 ## Called after spawn logic has finished.
 func on_spawn_finished() -> void:
-	pass
+	_is_spawn_finished = true
+
+func on_gameplay_finished() -> void:
+	_is_gameplay_finished = true
+	if deactivate_on_gameplay_finished:
+		deactivate()
+
+func on_minigame_finished() -> void:
+	disable_tree()
+	deactivate()
 
 ## Called after a demo object has spawned. Default behavior: connect the demo_transition_processed signal.
 func on_demo_spawned() -> void:

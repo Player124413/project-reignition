@@ -1,0 +1,144 @@
+[gd_scene load_steps=18 format=3 uid="uid://b0khnq3fhs771"]
+
+[ext_resource type="PackedScene" uid="uid://bq421e7316n42" path="res://party/scene/minigame/06 parasol diving/model/Parasol.glb" id="2_ale5a"]
+[ext_resource type="Script" uid="uid://ds056nimfywwr" path="res://party/script/core/rollback_timer.gd" id="3_hdqxl"]
+[ext_resource type="AudioStream" uid="uid://skfy845l2uuy" path="res://party/scene/minigame/06 parasol diving/sound/drift.wav" id="4_xqsq0"]
+[ext_resource type="Script" uid="uid://bkwc2atbp4cjd" path="res://party/scene/minigame/00 base/script/group_sfx_player.gd" id="5_iruah"]
+[ext_resource type="Script" uid="uid://cc7qa43vyrxaw" path="res://party/scene/minigame/06 parasol diving/script/player_controller.gd" id="14_la5i6"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_dn1mx"]
+radius = 3.0
+height = 8.0
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_dn1mx"]
+size = Vector3(100, 50, 10)
+
+[sub_resource type="AnimationNodeBlend3" id="AnimationNodeBlend3_mc2m2"]
+sync = true
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_la5i6"]
+
+[sub_resource type="AnimationNodeTimeScale" id="AnimationNodeTimeScale_dn1mx"]
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_63ds4"]
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_ddocx"]
+
+[sub_resource type="AnimationNodeTransition" id="AnimationNodeTransition_hdqxl"]
+xfade_time = 0.1
+input_0/name = "enabled"
+input_0/auto_advance = false
+input_0/break_loop_at_end = false
+input_0/reset = true
+input_1/name = "disabled"
+input_1/auto_advance = false
+input_1/break_loop_at_end = false
+input_1/reset = true
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_i0xjf"]
+
+[sub_resource type="AnimationNodeTransition" id="AnimationNodeTransition_dn1mx"]
+xfade_time = 0.1
+input_0/name = "enabled"
+input_0/auto_advance = false
+input_0/break_loop_at_end = false
+input_0/reset = true
+input_1/name = "disabled"
+input_1/auto_advance = false
+input_1/break_loop_at_end = false
+input_1/reset = true
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_ywtf7"]
+
+[sub_resource type="AnimationNodeBlendTree" id="AnimationNodeBlendTree_tukkm"]
+graph_offset = Vector2(-700.47156, -196.67426)
+nodes/output/position = Vector2(380, 140)
+nodes/fall/node = SubResource("AnimationNodeAnimation_la5i6")
+nodes/fall/position = Vector2(-1260, 240)
+nodes/shake-transition/node = SubResource("AnimationNodeTransition_hdqxl")
+nodes/shake-transition/position = Vector2(160, 100)
+nodes/float-speed/node = SubResource("AnimationNodeTimeScale_dn1mx")
+nodes/float-speed/position = Vector2(-540, 160)
+nodes/stuck/node = SubResource("AnimationNodeAnimation_ywtf7")
+nodes/stuck/position = Vector2(-380, 0)
+nodes/shake/node = SubResource("AnimationNodeAnimation_i0xjf")
+nodes/shake/position = Vector2(-120, -60)
+nodes/direction-blend/node = SubResource("AnimationNodeBlend3_mc2m2")
+nodes/direction-blend/position = Vector2(-820, 160)
+nodes/left/node = SubResource("AnimationNodeAnimation_63ds4")
+nodes/left/position = Vector2(-1020, 80)
+nodes/right/node = SubResource("AnimationNodeAnimation_ddocx")
+nodes/right/position = Vector2(-1020, 360)
+nodes/stuck-transition/node = SubResource("AnimationNodeTransition_dn1mx")
+nodes/stuck-transition/position = Vector2(-160, 160)
+node_connections = [&"output", 0, &"shake-transition", &"shake-transition", 0, &"shake", &"shake-transition", 1, &"stuck-transition", &"float-speed", 0, &"direction-blend", &"direction-blend", 0, &"left", &"direction-blend", 1, &"fall", &"direction-blend", 2, &"right", &"stuck-transition", 0, &"stuck", &"stuck-transition", 1, &"float-speed"]
+
+[node name="Player" type="Node3D" node_paths=PackedStringArray("rollback_timer", "hand_attachment", "character_body", "drift_sfx", "spawn_position", "animation_tree")]
+script = ExtResource("14_la5i6")
+rollback_timer = NodePath("Rollback")
+hand_attachment = NodePath("HandAttachment")
+character_body = NodePath("CharacterBody3D")
+drift_sfx = NodePath("Drift")
+spawn_position = NodePath("CharacterBody3D")
+animation_tree = NodePath("AnimationTree")
+deactivate_on_gameplay_finished = false
+
+[node name="CharacterBody3D" type="CharacterBody3D" parent="."]
+motion_mode = 1
+
+[node name="Trigger" type="Area3D" parent="CharacterBody3D"]
+collision_layer = 0
+collision_mask = 8
+monitorable = false
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="CharacterBody3D/Trigger"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5, 0)
+shape = SubResource("CapsuleShape3D_dn1mx")
+
+[node name="CPUTrigger" type="Area3D" parent="CharacterBody3D"]
+collision_layer = 0
+collision_mask = 8
+monitorable = false
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="CharacterBody3D/CPUTrigger"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -21, 0)
+shape = SubResource("BoxShape3D_dn1mx")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="CharacterBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5, 0)
+shape = SubResource("CapsuleShape3D_dn1mx")
+
+[node name="HandAttachment" type="BoneAttachment3D" parent="."]
+bone_name = "wrist_r"
+bone_idx = 45
+
+[node name="Parasol" parent="HandAttachment" instance=ExtResource("2_ale5a")]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 0.99999994, 0, -1, 0, -4.371139e-08, 0.8, 0, 0)
+
+[node name="AnimationTree" type="AnimationTree" parent="."]
+active = false
+tree_root = SubResource("AnimationNodeBlendTree_tukkm")
+parameters/shake-transition/current_state = "disabled"
+parameters/shake-transition/transition_request = ""
+parameters/shake-transition/current_index = 1
+parameters/float-speed/scale = 1.3999999999999986
+parameters/direction-blend/blend_amount = 0.0
+parameters/stuck-transition/current_state = "disabled"
+parameters/stuck-transition/transition_request = ""
+parameters/stuck-transition/current_index = 1
+
+[node name="Rollback" type="Node" parent="."]
+script = ExtResource("3_hdqxl")
+param_count = 4
+rollback_interval = 0.0
+
+[node name="Drift" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("4_xqsq0")
+max_polyphony = 4
+bus = &"GAME SFX"
+script = ExtResource("5_iruah")
+group = "drift"
+min_volume = 0.5
+
+[connection signal="area_entered" from="CharacterBody3D/Trigger" to="." method="_on_trigger_area_entered"]
+[connection signal="area_exited" from="CharacterBody3D/CPUTrigger" to="." method="_on_cpu_trigger_area_exited"]

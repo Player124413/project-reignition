@@ -17,6 +17,11 @@ signal minigame_finished
 signal results_started
 ## Emitted whenever a player's score is changed.
 signal on_score_updated(player_index : int, score : int)
+## Emitted whenever a player's score is changed.
+signal on_time_updated(player_index : int, time : float)
+
+## Stores the network time when gameplay was started.
+var gameplay_start_tick : float
 
 func process_demo_transition() -> void:
 	splitscreen_parent.visible = screen_mode == SCREEN_MODE.SPLITSCREEN
@@ -30,6 +35,12 @@ func process_demo_transition() -> void:
 @export var common_anim_library : AnimationLibrary
 const ANIMATION_LIBRARY_PREFIX : String = "MINIGAME"
 const COMMON_ANIMATION_LIBRARY_PREFIX : String = "COMMON_MINIGAME"
+
+@export var rank_mode : RANK_MODE
+enum RANK_MODE {
+	SCORE, # Use scores to rank players; highest score wins
+	TIME # Use times to rank players; lowest time wins
+}
 
 @export_group("View Settings")
 ## How should the screen be set up for this mini-game?
@@ -47,6 +58,8 @@ enum DEMO_TRANSITION {
 
 ## Disable this if you have something in the game that needs to finish before we can play the results.
 @export var autoplay_results : bool = true
+## Number of players that must "complete" the game the minigame to auto-complete.
+@export var autocomplete_player_count : int = 4
 ## Tracks whether we're ready to play the results screen or not (based on non-game elements).
 var is_results_queued : bool
 
@@ -70,16 +83,26 @@ var is_results_queued : bool
 @export var score_popup_scene : PackedScene
 ## Pool for score popups
 var score_popup_pool : Array[ScorePopup]
+## List of active popups
+var active_popups : Array[ScorePopup]
 ## Number of players that have completed the current mini-game.
 var completed_player_count : int
+
 ## Tracks the player's scores.
 var player_scores : Array[int]
+## Tracks the player's times.
+var player_times : Array[float]
+
 const INITIAL_SCORE_POPUP_POOL_SIZE : int = 10
 
 func _init() -> void:
 	instance = self
 	
 	player_scores.resize(PartyManager.MAX_PLAYER_COUNT)
+	player_times.resize(PartyManager.MAX_PLAYER_COUNT)
+	for i in player_times.size():
+		player_times[i] = INF
+	
 	if !PartyManager.is_player_data_initialized():
 		PartyManager.initialize_offline_player_data()
 		initialize_debug_characters()
@@ -87,6 +110,9 @@ func _init() -> void:
 func _ready() -> void:
 	for i in range(INITIAL_SCORE_POPUP_POOL_SIZE):
 		generate_score_popup()
+	
+	for i in results_location.size():
+		results_location[i].visible = false
 	
 	# TODO Change splitscreen mode if in Tournament Palace (2 players)
 	animator.play("free-for-all")
@@ -146,29 +172,48 @@ func generate_score_popup() -> void:
 ## Repools a score popup after it fades away.
 func on_repool_score_popup(popup : ScorePopup) -> void:
 	score_popup_pool.append(popup)
+	var index : int = active_popups.find(popup)
+	if index != -1:
+		active_popups.remove_at(index)
 
 func request_score_popup(player_index : int, amount : int, pos : Vector2) -> void:
 	if player_index < 0 || player_index > PartyManager.MAX_PLAYER_COUNT:
 		return
 	
-	if NetworkManager.is_hosting_game:
-		rpc("_score_popup", player_index, amount, pos)
+	if screen_mode == SCREEN_MODE.SPLITSCREEN: # Account for splitscreen
+		pos += subviewport_worlds[player_index].get_parent().position
+	
+	rpc("_score_popup", player_index, amount, pos, NetworkTimeSynchronizer.get_time())
+
+func request_score_popup_abort(player_index : int, time : float) -> void:
+	rpc("_score_popup_abort", player_index, time)
 
 @rpc("any_peer", "call_local", "reliable")
-func _score_popup(player_index : int, amount : int, pos : Vector2) -> void:
+func _score_popup(player_index : int, amount : int, pos : Vector2, time : float) -> void:
 	if score_popup_pool.is_empty():
 		generate_score_popup()
 	
 	var popup : ScorePopup = score_popup_pool[0]
 	score_popup_pool.remove_at(0)
-	popup.show_popup(player_index, amount, pos)
+	active_popups.append(popup)
+	popup.show_popup(player_index, amount, pos, time)
+
+@rpc("any_peer", "call_local", "reliable")
+func _score_popup_abort(player_index : int, time : float) -> void:
+	for popup : ScorePopup in active_popups:
+		if popup.player_index == player_index && is_equal_approx(popup.spawn_time, time):
+			popup.abort_popup()
+			break
 
 func request_score_change(player_index : int, amount : int = 1) -> void:
 	if player_index < 0 || player_index > PartyManager.MAX_PLAYER_COUNT:
 		return
-	
-	if NetworkManager.is_hosting_game:
-		rpc("_change_score", player_index, amount)
+	rpc("_change_score", player_index, amount)
+
+func request_time_change(player_index : int, time : float) -> void:
+	if player_index < 0 || player_index > PartyManager.MAX_PLAYER_COUNT:
+		return
+	rpc("_change_time", player_index, time)
 
 ## Changes the score of a player.
 @rpc("any_peer", "call_local", "reliable")
@@ -176,10 +221,16 @@ func _change_score(player_index : int, amount : int) -> void:
 	player_scores[player_index] += amount
 	on_score_updated.emit(player_index, player_scores[player_index])
 
+## Changes the time of a player.
+@rpc("any_peer", "call_local", "reliable")
+func _change_time(player_index : int, time : float) -> void:
+	player_times[player_index] = time
+	on_time_updated.emit(player_index, player_times[player_index])
+
 ## Adds one completed player and checks whether we should finish the mini-game.
 func register_completed_player() -> void:
 	completed_player_count += 1
-	if completed_player_count == PartyManager.MAX_PLAYER_COUNT:
+	if completed_player_count >= autocomplete_player_count:
 		request_minigame_finish()
 
 func request_minigame_start() -> void:
@@ -230,11 +281,19 @@ func finish_minigame(from_timer : bool) -> void:
 ## Emits the signal to actually enable gameplay objects.
 func on_gameplay_started() -> void:
 	print("Gameplay Started.")
+	gameplay_start_tick = NetworkTimeSynchronizer.get_time()
 	gameplay_started.emit()
 
 ## Emits the signal to teleport players to the results screen.
 func on_minigame_finished() -> void:
+	if is_instance_valid(intro_animator) && intro_animator.has_animation("finish"):
+		intro_animator.play("finish")
+	
 	minigame_finished.emit()
+	
+	for i in results_location.size():
+		results_location[i].visible = true
+	
 	splitscreen_parent.visible = false # Hide splitscreen stuff
 	if results_camera != null:
 		results_camera.make_current()
@@ -252,14 +311,24 @@ func start_results() -> void:
 		for i in rankings.size():
 			rankings[i] = PartyManager.MAX_PLAYER_COUNT # This forces everybody to "lose."
 	else: # Figure out the proper placement for each player
-		for i in player_scores.size():
-			var rank : int = 0
-			for j in i:
-				if player_scores[j] > player_scores[i]:
-					rank += 1
-				elif player_scores[j] < player_scores[i]:
-					rankings[j] += 1
-			rankings[i] = rank
+		if rank_mode == RANK_MODE.TIME:
+			for i in player_times.size():
+				var rank : int = 0
+				for j in i:
+					if player_times[j] < player_times[i]:
+						rank += 1
+					else:
+						rankings[j] += 1
+				rankings[i] = rank
+		else:
+			for i in player_scores.size():
+				var rank : int = 0
+				for j in i:
+					if player_scores[j] > player_scores[i]:
+						rank += 1
+					elif player_scores[j] < player_scores[i]:
+						rankings[j] += 1
+				rankings[i] = rank
 	
 	# Store rankings to PartyManager
 	for i in PartyManager.MAX_PLAYER_COUNT:
@@ -271,6 +340,9 @@ func start_results() -> void:
 
 ## Returns true if everybody has the same score.
 func check_tie() -> bool:
+	if rank_mode == RANK_MODE.TIME: # Can't tie in timed mode
+		return false
+	
 	for i in range(1, player_scores.size()): # Check all scores against P1's score
 		if player_scores[i] != player_scores[0]:
 			return false
@@ -284,7 +356,7 @@ func update_win_text() -> void:
 		var data : PlayerData = PartyManager.get_player_data(i)
 		
 		if NetworkManager.is_online && !NetworkManager.is_hosting_game:
-			print("Player %s placed %s with a score of %s." % [data.character_data.character_name, data.minigame_placement, player_scores[i]])
+			print("Player %s placed %s with a score of %s and a time of %s" % [data.character_data.character_name, data.minigame_placement, player_scores[i], player_times[i]])
 		
 		if data.minigame_placement != 0:
 			continue

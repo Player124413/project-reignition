@@ -1,6 +1,6 @@
 extends Control
 
-## The amount of time this minigame should take.
+## The amount of time this minigame should take. Set this to 0 if you want to count upwards.
 @export var max_game_time : int = 60
 @export var time_label : SyncedLabel
 @export var animation_player : AnimationPlayer
@@ -16,18 +16,23 @@ func _ready() -> void:
 	set_display_time(ceil(current_time))
 	
 	MinigameManager.instance.gameplay_started.connect(Callable.create(self, "on_gameplay_started"))
+	MinigameManager.instance.gameplay_finished.connect(Callable.create(self, "on_gameplay_finished"))
 	MinigameManager.instance.minigame_finished.connect(Callable.create(self, "on_minigame_finished"))
 
 func _physics_process(_delta: float) -> void:
 	if !visible:
 		return
 	
-	current_time -= get_physics_process_delta_time()
-	set_display_time(ceil(current_time))
-	if current_time < 0:
-		set_physics_process(false)
-		if NetworkManager.is_hosting_game:
-			MinigameManager.instance.request_minigame_finish(true)
+	if max_game_time == 0:
+		current_time += get_physics_process_delta_time()
+		set_display_time(floor(current_time))
+	else:
+		current_time -= get_physics_process_delta_time()
+		set_display_time(ceil(current_time))
+		if current_time < 0:
+			set_physics_process(false)
+			if NetworkManager.is_hosting_game:
+				MinigameManager.instance.request_minigame_finish(true)
 
 func set_display_time(value : int) -> void:
 	if display_time == value:
@@ -35,12 +40,15 @@ func set_display_time(value : int) -> void:
 	
 	display_time = value
 	time_label.set_synced_text("%02d" % display_time)
-	if display_time < 10:
+	if display_time < 10 && max_game_time != 0:
 		animation_player.play("countdown")
 		animation_player.seek(0.0, true)
 
 func on_gameplay_started() -> void:
 	visible = true
+
+func on_gameplay_finished() -> void:
+	set_physics_process(false)
 
 func on_minigame_finished() -> void:
 	visible = false

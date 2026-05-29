@@ -10,7 +10,7 @@ signal rollback_applied(rb_params : Array)
 ## How should authority be determined?
 @export var authority_mode : AUTHORITY_MODE
 ## How many parameters should we allocate?
-@export var param_count : int = 2
+@export_range(1, 5, 1, "or_greater") var param_count : int = 2
 var target : Node
 
 enum AUTHORITY_MODE {
@@ -18,8 +18,8 @@ enum AUTHORITY_MODE {
 	HOST
 }
 
-## How often to rollback
-@export var rollback_interval : float = 0.2
+## How often to rollback. Set this to 0 if there's enough network bandwidth.
+@export_range(0, 1, 0.01) var rollback_interval : float = 0.2
 ## Stores the latest time we've updated on the network
 var latest_network_time : float
 var rollback_interval_timer : float
@@ -44,6 +44,9 @@ func set_authority_mode(mode : AUTHORITY_MODE) -> void:
 
 ## Sets a param.
 func set_param(index : int, value) -> void:
+	if _params.size() <= index: # Resize params if needed
+		param_count = index
+		_params.resize(param_count)
 	_params[index] = value
 
 ## Optional function if you want to change lag compensation.

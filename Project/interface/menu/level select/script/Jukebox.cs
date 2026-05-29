@@ -242,10 +242,9 @@ public partial class Jukebox : Menu
 
 	public override void PlayBgm()
 	{
-		if (parentMenu.bgm.GetBgmResource() != null)
-			parentMenu.bgm.Stop();
-		else
-			parentMenu.parentMenu.bgm.Stop();
+		//if (parentMenu.bgm.GetBgmResource() != null)
+		parentMenu.bgm.Stop();
+		parentMenu.parentMenu.bgm.Stop();
 
 		BGMResource targetBgmResource = isCustomMusicMenuActive ? customSongOptionList[VerticalSelection].Bgm : songOptionList[VerticalSelection].Bgm;
 		bgm.SetBgmResource(targetBgmResource);

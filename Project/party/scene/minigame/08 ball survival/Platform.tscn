@@ -1,0 +1,72 @@
+[gd_scene load_steps=9 format=3 uid="uid://dx2lyg8jttwbs"]
+
+[ext_resource type="Script" uid="uid://csmw78km7gmp3" path="res://party/scene/minigame/08 ball survival/script/platform.gd" id="1_a0xeb"]
+[ext_resource type="PackedScene" uid="uid://bn74farnowac7" path="res://party/scene/minigame/08 ball survival/model/Platform.glb" id="2_ych1u"]
+[ext_resource type="AudioStream" uid="uid://bqlcxknjegyc2" path="res://party/scene/minigame/08 ball survival/sound/move.wav" id="3_5a2ht"]
+[ext_resource type="AudioStream" uid="uid://qv7tv2xnkc3c" path="res://party/scene/minigame/08 ball survival/sound/splash.wav" id="4_wmvsj"]
+[ext_resource type="Script" uid="uid://ds056nimfywwr" path="res://party/script/core/rollback_timer.gd" id="5_o1ost"]
+[ext_resource type="PackedScene" uid="uid://b4eubeg7km2ax" path="res://party/scene/minigame/08 ball survival/Splash.tscn" id="6_ych1u"]
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_v27jp"]
+height = 30.0
+radius = 39.0
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_v27jp"]
+size = Vector3(200, 2, 200)
+
+[node name="Platform" type="Node3D" node_paths=PackedStringArray("rollback_timer", "move_sfx", "splash_sfx", "splash_vfx")]
+script = ExtResource("1_a0xeb")
+rollback_timer = NodePath("Rollback")
+move_sfx = NodePath("MoveSfx")
+splash_sfx = NodePath("SplashSfx")
+splash_vfx = [NodePath("Splash1"), NodePath("Splash2"), NodePath("Splash3"), NodePath("Splash4")]
+
+[node name="Root" type="StaticBody3D" parent="."]
+
+[node name="Platform" parent="Root" instance=ExtResource("2_ych1u")]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Root"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -15, 0)
+shape = SubResource("CylinderShape3D_v27jp")
+
+[node name="FallTrigger" type="Area3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -9, 0)
+monitorable = false
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="FallTrigger"]
+shape = SubResource("BoxShape3D_v27jp")
+
+[node name="PlayerTrigger" type="Area3D" parent="."]
+monitorable = false
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="PlayerTrigger"]
+shape = SubResource("CylinderShape3D_v27jp")
+
+[node name="MoveSfx" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("3_5a2ht")
+volume_db = -3.0
+bus = &"GAME SFX"
+
+[node name="SplashSfx" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("4_wmvsj")
+volume_db = 6.0
+max_polyphony = 4
+bus = &"GAME SFX"
+
+[node name="Rollback" type="Node" parent="."]
+script = ExtResource("5_o1ost")
+enable_lag_compensation = false
+authority_mode = 1
+param_count = 1
+rollback_interval = 0.0
+
+[node name="Splash1" parent="." instance=ExtResource("6_ych1u")]
+
+[node name="Splash2" parent="." instance=ExtResource("6_ych1u")]
+
+[node name="Splash3" parent="." instance=ExtResource("6_ych1u")]
+
+[node name="Splash4" parent="." instance=ExtResource("6_ych1u")]
+
+[connection signal="area_entered" from="FallTrigger" to="." method="_on_fall_trigger_area_entered"]
+[connection signal="area_exited" from="PlayerTrigger" to="." method="_on_player_trigger_area_exited"]

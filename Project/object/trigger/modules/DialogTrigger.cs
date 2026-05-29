@@ -13,7 +13,6 @@ public partial class DialogTrigger : StageTriggerModule
 	[Export] public bool allowRespawn;
 	[Export] public bool disableSubtitles;
 
-
 	[Export] private PlaybackMode playbackType;
 	private enum PlaybackMode
 	{

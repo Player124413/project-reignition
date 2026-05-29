@@ -1,8 +1,10 @@
-[gd_scene load_steps=38 format=3 uid="uid://dk7gl1lklyav3"]
+[gd_scene load_steps=44 format=3 uid="uid://dk7gl1lklyav3"]
 
 [ext_resource type="Resource" uid="uid://brbt2g8nig68o" path="res://resource/level data/lost prologue/Tutorial.tres" id="2_43bdp"]
 [ext_resource type="PackedScene" uid="uid://cjupypih0myxo" path="res://object/player/CharacterSpawn.tscn" id="3"]
+[ext_resource type="Resource" uid="uid://cy5gbm8r5pdcl" path="res://area/0 lost prologue/data/DialogLibrary.tres" id="3_1iswf"]
 [ext_resource type="PackedScene" uid="uid://dxepb172kmp8n" path="res://object/stage/common/Goal.tscn" id="4_dbc02"]
+[ext_resource type="Script" uid="uid://bitgnn108jmaa" path="res://object/trigger/modules/DialogTrigger.cs" id="4_pvq5s"]
 [ext_resource type="PackedScene" uid="uid://cu6lpq7q82grk" path="res://object/stage/pickups/FireSoul.tscn" id="4_ve30n"]
 [ext_resource type="Script" uid="uid://dd24u7rlj0dwl" path="res://addons/custom_nodes/script/ObjectGenerator.cs" id="5_opxss"]
 [ext_resource type="PackedScene" uid="uid://bmgmok3n82tte" path="res://area/0 lost prologue/object/wonder/WonderBlock4.tscn" id="6_72i0e"]
@@ -29,6 +31,18 @@
 [ext_resource type="Resource" uid="uid://cmcksgatwxf5p" path="res://area/0 lost prologue/act/camera/OverheadPlatformingCamera.tres" id="25_314rx"]
 [ext_resource type="Resource" uid="uid://b6ynjki0mxqdh" path="res://area/0 lost prologue/act/camera/CloseCamera.tres" id="26_5q5x3"]
 [ext_resource type="PackedScene" uid="uid://5l5gkjoad6bq" path="res://area/0 lost prologue/object/wonder/WonderPillar2.tscn" id="28_5q5x3"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_1iswf"]
+size = Vector3(20, 20, 5)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_e3lpi"]
+size = Vector3(20, 20, 5)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_s3meg"]
+size = Vector3(20, 20, 5)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_s40mf"]
+size = Vector3(20, 20, 5)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_y6kil"]
 size = Vector3(10, 10, 1)
@@ -62,8 +76,102 @@ size = Vector3(10, 15, 6)
 
 [node name="Static" parent="." instance=ExtResource("10_bbet4")]
 Data = ExtResource("2_43bdp")
+dialogLibrary = ExtResource("3_1iswf")
 
 [node name="Tutorial" type="Node3D" parent="."]
+
+[node name="Voicelines" type="Node3D" parent="Tutorial"]
+
+[node name="MoveTutorial" parent="Tutorial/Voicelines" instance=ExtResource("10_ixgn8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -15)
+OneShot = true
+"Respawn Mode" = 0
+"Enter Mode" = 0
+
+[node name="Dialog" type="Node3D" parent="Tutorial/Voicelines/MoveTutorial" node_paths=PackedStringArray("randomizedDialogTriggers")]
+script = ExtResource("4_pvq5s")
+textKeys = Array[String](["lp_strafe_sh"])
+randomizedDialogTriggers = []
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Tutorial/Voicelines/MoveTutorial"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
+shape = SubResource("BoxShape3D_1iswf")
+
+[node name="JumpTutorial" parent="Tutorial/Voicelines" instance=ExtResource("10_ixgn8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -50)
+OneShot = true
+"Respawn Mode" = 0
+"Enter Mode" = 0
+
+[node name="Dialog" type="Node3D" parent="Tutorial/Voicelines/JumpTutorial" node_paths=PackedStringArray("randomizedDialogTriggers")]
+script = ExtResource("4_pvq5s")
+textKeys = Array[String](["lp_jump_sh"])
+randomizedDialogTriggers = []
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Tutorial/Voicelines/JumpTutorial"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
+shape = SubResource("BoxShape3D_1iswf")
+
+[node name="FullJumpTutorial" parent="Tutorial/Voicelines" instance=ExtResource("10_ixgn8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -110)
+OneShot = true
+"Respawn Mode" = 0
+"Enter Mode" = 0
+
+[node name="Dialog" type="Node3D" parent="Tutorial/Voicelines/FullJumpTutorial" node_paths=PackedStringArray("randomizedDialogTriggers")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -60)
+script = ExtResource("4_pvq5s")
+textKeys = Array[String](["lp_full_jump_sh"])
+randomizedDialogTriggers = []
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Tutorial/Voicelines/FullJumpTutorial"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
+shape = SubResource("BoxShape3D_1iswf")
+
+[node name="GrindTutorial" parent="Tutorial/Voicelines" instance=ExtResource("10_ixgn8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 80, 0, -220)
+OneShot = true
+"Respawn Mode" = 0
+"Enter Mode" = 0
+
+[node name="Dialog" type="Node3D" parent="Tutorial/Voicelines/GrindTutorial" node_paths=PackedStringArray("randomizedDialogTriggers")]
+script = ExtResource("4_pvq5s")
+textKeys = Array[String](["lp_grind_sh"])
+randomizedDialogTriggers = []
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Tutorial/Voicelines/GrindTutorial"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
+shape = SubResource("BoxShape3D_e3lpi")
+
+[node name="HomingAttackTutorial" parent="Tutorial/Voicelines" instance=ExtResource("10_ixgn8")]
+transform = Transform3D(0.76604444, 0, -0.6427877, 0, 1, 0, 0.6427877, 0, 0.76604444, 109.248, -5, 51.689507)
+OneShot = true
+"Respawn Mode" = 0
+"Enter Mode" = 0
+
+[node name="Dialog" type="Node3D" parent="Tutorial/Voicelines/HomingAttackTutorial" node_paths=PackedStringArray("randomizedDialogTriggers")]
+script = ExtResource("4_pvq5s")
+textKeys = Array[String](["lp_lockon_sh", "lp_lockon2_sh"])
+randomizedDialogTriggers = []
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Tutorial/Voicelines/HomingAttackTutorial"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
+shape = SubResource("BoxShape3D_s3meg")
+
+[node name="JumpDashTutorial" parent="Tutorial/Voicelines" instance=ExtResource("10_ixgn8")]
+transform = Transform3D(0.70710677, 0, -0.7071068, 0, 1, 0, 0.7071068, 0, 0.70710677, 170.71716, -10, -10.282843)
+OneShot = true
+"Respawn Mode" = 0
+"Enter Mode" = 0
+
+[node name="Dialog" type="Node3D" parent="Tutorial/Voicelines/JumpDashTutorial" node_paths=PackedStringArray("randomizedDialogTriggers")]
+script = ExtResource("4_pvq5s")
+textKeys = Array[String](["lp_jumpdash_sh"])
+randomizedDialogTriggers = []
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Tutorial/Voicelines/JumpDashTutorial"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
+shape = SubResource("BoxShape3D_s40mf")
 
 [node name="SpawnPosition" type="Node3D" parent="Tutorial"]
 metadata/_edit_lock_ = true

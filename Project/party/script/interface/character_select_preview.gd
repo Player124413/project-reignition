@@ -42,11 +42,11 @@ func show_preview() -> void:
 func _process(delta: float) -> void:
 	process_model_loading()
 	
+	cursor.global_position = difficulty_options[current_difficulty].global_position
+	
 	if controller_index == -1 || !is_multiplayer_authority():
 		return
 	
-	cursor.global_position = difficulty_options[current_difficulty].global_position
-
 	# Only process directions and selections when being shown
 	var input_axis : int = sign(Input.get_axis("move_up" + str(controller_index), "move_down" + str(controller_index)))
 	
