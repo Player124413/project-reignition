@@ -971,6 +971,7 @@ public partial class PlayerAnimator : Node3D
 	private readonly string HurtForwardStartState = "hurt-forward-start";
 	private readonly string HurtForwardStopState = "hurt-forward-stop";
 	private readonly string HurtDarkspineState = "ds-damage-back";
+	private readonly string HurtDarkspineDefeatState = "ds-defeat";
 	private readonly string HurtPlayback = "parameters/hurt_state/playback";
 	private AnimationNodeStateMachinePlayback HurtStatePlayback => animationTree.Get(HurtPlayback).Obj as AnimationNodeStateMachinePlayback;
 
@@ -989,6 +990,8 @@ public partial class PlayerAnimator : Node3D
 			HurtStatePlayback.Start(HurtForwardStartState);
 		else if (animation == KnockbackSettings.KnockbackAnimation.Darkspine)
 			HurtStatePlayback.Start(HurtDarkspineState);
+		else if (animation == KnockbackSettings.KnockbackAnimation.DarkspineDefeat)
+			HurtStatePlayback.Start(HurtDarkspineDefeatState);
 
 		animationTree.Set(HurtTrigger, (int)AnimationNodeOneShot.OneShotRequest.Fire);
 	}

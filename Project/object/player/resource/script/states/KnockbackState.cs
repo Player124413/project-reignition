@@ -74,6 +74,9 @@ public partial class KnockbackState : PlayerState
 
 	public override PlayerState ProcessPhysics()
 	{
+		if (StageSettings.Instance.Data.LevelID == "np_last" && Player.IsFinalDarkspineDefeated)
+			return null;
+
 		Player.MoveSpeed = Mathf.MoveToward(Player.MoveSpeed, 0, DamageFriction * PhysicsManager.physicsDelta);
 		Player.VerticalSpeed -= Runtime.Gravity * PhysicsManager.physicsDelta;
 		Player.ApplyMovement();
@@ -125,6 +128,7 @@ public struct KnockbackSettings
 		Forward,
 		Block,
 		Darkspine, // Darkspine Knockback used in the final boss
+		DarkspineDefeat,
 	}
 
 	/// <summary> Knock the player around without bouncing them into the air. </summary>

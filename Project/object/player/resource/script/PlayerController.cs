@@ -671,6 +671,8 @@ public partial class PlayerController : CharacterBody3D
 	public bool DisableDamage { get; set; }
 	/// <summary> True while the player is defeated but hasn't respawned yet. </summary>
 	public bool IsDefeated { get; set; }
+	/// <summary> Defeat flag specifically for getting defeated at the final boss. </summary>
+	public bool IsFinalDarkspineDefeated { get; private set; }
 	public bool AllowLandingSkills { get; set; }
 
 	public bool IsBackflipInputValid()
@@ -1031,8 +1033,19 @@ public partial class PlayerController : CharacterBody3D
 			}
 			else
 			{
-				Effect.PlayVoice("defeat");
-				StartRespawn();
+				if (Stage.Data.LevelID == "np_last")
+				{
+					IsFinalDarkspineDefeated = true;
+					Effect.PlayVoice("ds defeat", -1, true);
+					Animator.StartHurt(KnockbackSettings.KnockbackAnimation.DarkspineDefeat); // Force special defeat animation
+					GetTree().CreateTimer(0.5f).Timeout += () => StartRespawn();
+				}
+				else
+				{
+					Effect.PlayVoice("defeat", -1, true);
+					StartRespawn();
+				}
+
 				return;
 			}
 		}
@@ -1213,6 +1226,7 @@ public partial class PlayerController : CharacterBody3D
 		Camera.PathFollower.SetActivePath(currentCheckpoint.CameraPath);
 
 		IsDefeated = false;
+		IsFinalDarkspineDefeated = false;
 		IsMovingBackward = false;
 		IsGrindstepping = false;
 		MoveSpeed = VerticalSpeed = 0;

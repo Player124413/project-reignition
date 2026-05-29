@@ -1,4 +1,4 @@
-[gd_resource type="AnimationNodeBlendTree" load_steps=415 format=3 uid="uid://biwe75w273iq7"]
+[gd_resource type="AnimationNodeBlendTree" load_steps=417 format=3 uid="uid://biwe75w273iq7"]
 
 [sub_resource type="AnimationNodeTimeScale" id="AnimationNodeTimeScale_hf2vv"]
 
@@ -1726,6 +1726,9 @@ node_connections = [&"output", 0, &"quick_step_trigger", &"backstep_seek", 0, &"
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_wx07p"]
 animation = &"DarkspineLibrary/ds-damage-back"
 
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_ambg2"]
+animation = &"DarkspineLibrary/ds-defeat"
+
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_yavkw"]
 animation = &"ActionLibrary/hurt"
 
@@ -1771,9 +1774,14 @@ advance_mode = 2
 switch_mode = 2
 advance_mode = 2
 
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_merkq"]
+advance_mode = 2
+
 [sub_resource type="AnimationNodeStateMachine" id="AnimationNodeStateMachine_kdifa"]
 states/ds-damage-back/node = SubResource("AnimationNodeAnimation_wx07p")
 states/ds-damage-back/position = Vector2(576, 33)
+states/ds-defeat/node = SubResource("AnimationNodeAnimation_ambg2")
+states/ds-defeat/position = Vector2(576, 299)
 states/hurt-backward-loop/node = SubResource("AnimationNodeAnimation_yavkw")
 states/hurt-backward-loop/position = Vector2(576, 101.392)
 states/hurt-backward-start/node = SubResource("AnimationNodeAnimation_pv3ab")
@@ -1784,8 +1792,8 @@ states/hurt-forward-start/node = SubResource("AnimationNodeAnimation_xmxy0")
 states/hurt-forward-start/position = Vector2(380.8, 158)
 states/hurt-forward-stop/node = SubResource("AnimationNodeAnimation_talfe")
 states/hurt-forward-stop/position = Vector2(758, 158)
-transitions = ["hurt-backward-start", "hurt-backward-loop", SubResource("AnimationNodeStateMachineTransition_b442m"), "Start", "hurt-backward-start", SubResource("AnimationNodeStateMachineTransition_cmj73"), "Start", "hurt-forward-start", SubResource("AnimationNodeStateMachineTransition_e5yi2"), "hurt-forward-start", "hurt-forward-loop", SubResource("AnimationNodeStateMachineTransition_mlipo"), "hurt-forward-loop", "hurt-forward-stop", SubResource("AnimationNodeStateMachineTransition_cxmnf"), "hurt-forward-stop", "End", SubResource("AnimationNodeStateMachineTransition_ikb2c"), "Start", "ds-damage-back", SubResource("AnimationNodeStateMachineTransition_ui6v0"), "ds-damage-back", "End", SubResource("AnimationNodeStateMachineTransition_3sjqr")]
-graph_offset = Vector2(-106, 12)
+transitions = ["hurt-backward-start", "hurt-backward-loop", SubResource("AnimationNodeStateMachineTransition_b442m"), "Start", "hurt-backward-start", SubResource("AnimationNodeStateMachineTransition_cmj73"), "Start", "hurt-forward-start", SubResource("AnimationNodeStateMachineTransition_e5yi2"), "hurt-forward-start", "hurt-forward-loop", SubResource("AnimationNodeStateMachineTransition_mlipo"), "hurt-forward-loop", "hurt-forward-stop", SubResource("AnimationNodeStateMachineTransition_cxmnf"), "hurt-forward-stop", "End", SubResource("AnimationNodeStateMachineTransition_ikb2c"), "Start", "ds-damage-back", SubResource("AnimationNodeStateMachineTransition_ui6v0"), "ds-damage-back", "End", SubResource("AnimationNodeStateMachineTransition_3sjqr"), "Start", "ds-defeat", SubResource("AnimationNodeStateMachineTransition_merkq")]
+graph_offset = Vector2(-150, -76)
 
 [sub_resource type="AnimationNodeOneShot" id="AnimationNodeOneShot_ep02e"]
 fadeout_time = 0.1
@@ -1903,7 +1911,7 @@ animation = &"EventLibrary/so_a1_sandfall_event"
 animation = &"ActionLibrary/speedbreak"
 
 [sub_resource type="AnimationNodeBlendTree" id="132"]
-graph_offset = Vector2(-862.35144, 237.92114)
+graph_offset = Vector2(-814.524, 80.95209)
 nodes/output/position = Vector2(360, 140)
 nodes/completion_crouch_anim/node = SubResource("AnimationNodeAnimation_y04wd")
 nodes/completion_crouch_anim/position = Vector2(-780, 600)
@@ -2192,7 +2200,7 @@ input_5/break_loop_at_end = false
 input_5/reset = true
 
 [resource]
-graph_offset = Vector2(-694.0613, 167.46854)
+graph_offset = Vector2(-1370.033, -103.78015)
 nodes/air_tree/node = SubResource("AnimationNodeBlendTree_2rvqt")
 nodes/air_tree/position = Vector2(-1280, 60)
 nodes/balance_tree/node = SubResource("AnimationNodeBlendTree_gi378")

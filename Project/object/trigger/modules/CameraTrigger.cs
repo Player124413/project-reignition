@@ -74,6 +74,7 @@ public partial class CameraTrigger : StageTriggerModule
 
 	public override void Activate()
 	{
+		GD.Print($"Camera set to {Name}");
 		if (settings == null)
 		{
 			GD.PrintErr($"{Name} doesn't have a CameraSettingResource attached!");
