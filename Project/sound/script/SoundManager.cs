@@ -28,7 +28,6 @@ public partial class SoundManager : Control
 		instance = this;
 		subtitleAnimator.Play("RESET");
 		InitializePearlSFX();
-		InitializeButtonPromptValues();
 
 		// Cancel Dialog when switching to a new scene
 		TransitionManager.Instance.SceneChanged += CancelDialog;
@@ -251,7 +250,7 @@ public partial class SoundManager : Control
 		{
 			buttonPrompt.SetInputKey(regexMatch.Groups[0].Value.Substring(1, regexMatch.Groups[0].Length - 2));
 			text = text.Replace(regexMatch.Captures[0].Value, ButtonSpaceReplacement); // 5 Spaces
-			buttonPromptIndex = regexMatch.Captures[0].Index;
+			buttonPromptIndex = regexMatch.Captures[0].Index + 2;
 		}
 
 		return text;
@@ -259,23 +258,7 @@ public partial class SoundManager : Control
 
 	[GeneratedRegex("\\[(.*?)\\]")]
 	private static partial Regex ButtonPromptRegex();
-	private Font subtitleFont;
-	private int subtitleSize;
-	private float spaceCharacterWidth;
 	private readonly string ButtonSpaceReplacement = "     ";
-	private void InitializeButtonPromptValues()
-	{
-		subtitleFont = (Font)subtitleLabel.Get("theme_override_fonts/font");
-		subtitleSize = (int)subtitleLabel.Get("theme_override_font_sizes/font_size");
-
-		TextServer server = TextServerManager.GetPrimaryInterface();
-
-		TextParagraph spaceWidth = new();
-		spaceWidth.AddString(" ", subtitleFont, subtitleSize);
-		Rid lineRid = spaceWidth.GetLineRid(0);
-		var glyphs = server.ShapedTextGetGlyphs(lineRid);
-		spaceCharacterWidth += (float)glyphs[0]["advance"] * 5;
-	}
 
 	private void InitializeSubtitleOpacity()
 	{
@@ -290,39 +273,9 @@ public partial class SoundManager : Control
 		if (!buttonPrompt.Visible)
 			return;
 
-		TextServer server = TextServerManager.GetPrimaryInterface();
-		TextParagraph paragraph = new();
-		paragraph.AddString(subtitleLabel.Text, subtitleFont, subtitleSize);
-		Vector2 buttonPromptOffset = new((spaceCharacterWidth - buttonPrompt.Size.X * buttonPrompt.Scale.X) * 0.5f, subtitleSize * 0.5f);
-
-		int currentIndex = 0;
-		Vector2 glyphPosition = Vector2.Zero;
-
-		if (paragraph.GetLineCount() > 1)
-			buttonPromptOffset.Y -= subtitleSize * 0.75f;
-
-		for (int i = 0; i < paragraph.GetLineCount(); i++)
-		{
-			glyphPosition.X = 0f;
-			glyphPosition.Y += paragraph.GetLineAscent(i) + paragraph.GetLineDescent(i);
-
-			Rid lineRid = paragraph.GetLineRid(i);
-			var glyphs = server.ShapedTextGetGlyphs(lineRid);
-
-			for (int j = 0; j < glyphs.Count; j++)
-			{
-				glyphPosition.X += (float)glyphs[j]["advance"];
-				currentIndex++;
-
-				if (currentIndex == buttonPromptIndex)
-				{
-					buttonPrompt.GlobalPosition = subtitleLabel.GlobalPosition + glyphPosition + buttonPromptOffset;
-					return;
-				}
-			}
-
-			buttonPromptOffset.Y += subtitleSize * 0.5f;
-		}
+		Vector2 buttonPromptOffset = -buttonPrompt.Size * 0.5f;
+		Rect2 charBounds = subtitleLabel.GetCharacterBounds(buttonPromptIndex);
+		buttonPrompt.GlobalPosition = subtitleLabel.GlobalPosition + charBounds.GetCenter() + buttonPromptOffset;
 	}
 
 	public bool IsSonicSfxVoiceChannelActive { get; set; }
