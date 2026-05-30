@@ -10,7 +10,7 @@ class_name PartyCharacterResource extends Resource
 @export_range(0, 7, 1, "or_greater") var character_select_index : int
 
 ## Should be a CharacterVoice resource, but bc that's a C# class, we're keeping it generic.
-@export var voice : Resource
+@export var voice_library : Resource
 
 ## Font to use for this character's score.
 @export var score_font : LabelSettings
@@ -23,6 +23,14 @@ class_name PartyCharacterResource extends Resource
 @export var score_portrait : Texture2D
 ## Number of firesouls required in the main game to unlock this character.
 @export var unlock_requirements : int
+
 func is_unlocked() -> bool:
 	# TODO Link to the main game's save data through the c# script
 	return true
+
+## Gets the audio stream associated with a particular key.
+func get_voice_stream(key : String, index : int = -1) -> AudioStream:
+	# Calls some C# methods
+	if voice_library != null:
+		return voice_library.GetStream(key, voice_library.CurrentLanguageIndex, index)
+	return null

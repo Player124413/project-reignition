@@ -516,4 +516,7 @@ public partial class SFXLibraryResource : Resource
 
 		return GetStream(key, 0); // English fallback
 	}
+
+	/// <summary> Wrapper function for party mode gdscripts. </summary>
+	public int CurrentLanguageIndex => SoundManager.LanguageIndex;
 }

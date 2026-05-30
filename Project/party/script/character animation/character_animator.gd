@@ -5,6 +5,7 @@ signal animation_event(info : int)
 
 @export var skeleton : Skeleton3D
 @export var animator : AnimationPlayer
+@export var sfx_player : AudioStreamPlayer
 @export var data : PartyCharacterResource
 
 ## Emitted after the select animation finishes. Emitted from animation.
@@ -13,6 +14,14 @@ signal select_finished
 
 ## The index of this character
 var player_index : int
+
+## Plays a sound effect.
+func play_sfx(key : String) -> void:
+	if data.voice_library == null:
+		return
+	var stream : AudioStream = data.get_voice_stream(key)
+	sfx_player.stream = stream
+	sfx_player.play()
 
 # TODO Add support for more complex character animations (i.e. blending)
 func _ready() -> void:
