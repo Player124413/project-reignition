@@ -9,6 +9,9 @@ class_name PartyCharacterResource extends Resource
 ## The index of the character on the character select screen.
 @export_range(0, 7, 1, "or_greater") var character_select_index : int
 
+## Should be a CharacterVoice resource, but bc that's a C# class, we're keeping it generic.
+@export var voice : Resource
+
 ## Font to use for this character's score.
 @export var score_font : LabelSettings
 
@@ -23,6 +26,3 @@ class_name PartyCharacterResource extends Resource
 func is_unlocked() -> bool:
 	# TODO Link to the main game's save data through the c# script
 	return true
-
-
-## TODO Add party-mode specific SFX libraries.
