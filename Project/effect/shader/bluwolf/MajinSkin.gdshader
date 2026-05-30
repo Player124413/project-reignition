@@ -86,14 +86,7 @@ void fragment()
     // ALPHA SCISSOR ───────────────────────────────────────────────────────────
     ALPHA = diffuse.a * diffuse_color.a;
     ALPHA_SCISSOR_THRESHOLD = enable_alpha_scissor ? alpha_scissor_threshold : 0.0;
-    // ─────────────────────────────────────────────────────────────────────────
 
-    // NORMAL MAP ──────────────────────────────────────────────────────────────
-    // Decodes a standard RGB normal map (R=X, G=Y, B=Z) and writes directly to
-    // NORMAL so that every downstream use — fresnel, env map lookup, and the
-    // entire light() function — all see the correct perturbed normal.
-    // Scaling XY by normal_intensity before normalising controls depth:
-    //   0.0 = flat, 1.0 = full strength, >1.0 = exaggerated.
     if (enable_normal_map)
     {
         vec4 n_tex = texture(normal_texture, UV);
@@ -160,7 +153,7 @@ void light()
 
     DIFFUSE_LIGHT += (nDotL * ALBEDO * LIGHT_COLOR * ATTENUATION) + (rim_light * ATTENUATION);
 
-	/*
+
     vec4 specular_tex = texture(specular_texture, UV);
     if (enable_detail_map)
     {
@@ -181,8 +174,8 @@ void light()
 	specular_tex.rgb *= specular_level;
 	specular_tex.rgb *= specular_fresnel;
 	specular_tex.rgb *= specular_tex.rgb;
-	
-	Commented out because this causes odd rendering on some devices
-	// SPECULAR_LIGHT += specular_tex.rgb * LIGHT_COLOR * ATTENUATION * 100.0 * SPECULAR_AMOUNT;
-	*/
+
+
+	SPECULAR_LIGHT += specular_tex.rgb * LIGHT_COLOR * ATTENUATION * 100.0 * SPECULAR_AMOUNT;
+
 }
