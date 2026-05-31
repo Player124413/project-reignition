@@ -18,6 +18,7 @@ var is_bonus: bool = false
 ### Can we currently hit this stake
 var is_enabled: bool = false
 var is_fallen: bool = false
+var is_chosen: bool = false
 
 func _ready() -> void:
 	initialize_stake()
@@ -35,6 +36,8 @@ func spawn_stake() -> void:
 	
 	if is_bonus:
 		animator.play("metal_fall")
+	else:
+		animator.play("wood_fall")
 
 	
 	return
