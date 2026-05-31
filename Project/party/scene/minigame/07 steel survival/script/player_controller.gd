@@ -349,10 +349,12 @@ func take_damage() -> void:
 		set_physics_process(false)
 		hurtbox.set_deferred("monitorable", false)
 		MinigameManager.instance.register_completed_player()
+		character_animator.play_voice("fall1")
 	else:
 		_top_platform_position += Vector3.MODEL_FRONT * -5 + Vector3.RIGHT * 4
 		_platforms[_platforms.size() - 2].position = _top_platform_position
 		hurtbox.global_position = _platforms[_platforms.size() - 2].global_position
+		character_animator.play_voice("hurt2")
 		hit_sfx.play_in_group()
 	
 	_state = STATE.DAMAGE

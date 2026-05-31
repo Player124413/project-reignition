@@ -5,23 +5,23 @@ signal animation_event(info : int)
 
 @export var skeleton : Skeleton3D
 @export var animator : AnimationPlayer
-@export var sfx_player : AudioStreamPlayer
+@export var voice_player : AudioStreamPlayer
 @export var data : PartyCharacterResource
-
-## Emitted after the select animation finishes. Emitted from animation.
-@warning_ignore("unused_signal")
-signal select_finished
 
 ## The index of this character
 var player_index : int
 
-## Plays a sound effect.
-func play_sfx(key : String) -> void:
-	if data.voice_library == null:
+## Plays a voice clip.
+func play_voice(key : String, index : int = -1) -> void:
+	if data == null || data.voice_library == null:
 		return
-	var stream : AudioStream = data.get_voice_stream(key)
-	sfx_player.stream = stream
-	sfx_player.play()
+	
+	var stream : AudioStream = data.get_voice_stream(key, index)
+	voice_player.stream = stream
+	voice_player.play()
+
+func is_voice_playing() -> bool:
+	return voice_player.playing
 
 # TODO Add support for more complex character animations (i.e. blending)
 func _ready() -> void:
@@ -113,8 +113,11 @@ func on_results_started() -> void:
 	set_speed(1)
 	if PartyManager.get_player_data(player_index).minigame_placement == 0:
 		play_animation("win")
+		play_voice("win%s" % randi_range(1, 2))
 	else:
 		play_animation("lose")
+		if MinigameManager.instance.is_tie:
+			play_voice("draw")
 
 ## Loads a given animation library to the animator.
 func load_animation_library(library_name : String, library : AnimationLibrary) -> void:

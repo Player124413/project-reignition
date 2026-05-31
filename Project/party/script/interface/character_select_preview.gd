@@ -82,7 +82,7 @@ func process_model_loading() -> void:
 	instanced_model = model_scene.instantiate() as CharacterAnimator
 	model_parent.add_child(instanced_model)
 	instanced_model.play_animation("select")
-	instanced_model.play_sfx("select")
+	instanced_model.play_voice("select")
 	instanced_model.animation_event.connect(Callable(self, "on_select_finished"), CONNECT_ONE_SHOT)
 
 # Tell Character Select screen we're done.

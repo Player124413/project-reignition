@@ -29,7 +29,7 @@ func is_unlocked() -> bool:
 	return true
 
 ## Gets the audio stream associated with a particular key.
-func get_voice_stream(key : String, index : int = -1) -> AudioStream:
+func get_voice_stream(key : String, index : int) -> AudioStream:
 	# Calls some C# methods
 	if voice_library != null:
 		return voice_library.GetStream(key, voice_library.CurrentLanguageIndex, index)

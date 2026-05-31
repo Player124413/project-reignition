@@ -276,6 +276,8 @@ func start_player_pump_up() -> void:
 	character_animator.play_minigame_animation(get_anim_prefix() + "up", 0.0, PUMP_ANIM_SPEED)
 	character_animator.queue_minigame_animation(get_anim_prefix() + "top-wait")
 	pump_sfx.play_in_group()
+	if !is_demo_active && !character_animator.is_voice_playing() && randf() > 0.75:
+		character_animator.play_voice("grunt1")
 
 ## Animation event used to enable pumping again.
 const ANIM_PUMP_ENABLED : int = 0
@@ -299,6 +301,7 @@ func take_damage() -> void:
 	character_animator.play_minigame_animation(get_anim_prefix() + "damage")
 	character_animator.queue_minigame_animation(get_anim_prefix() + "low-wait", 0.2)
 	damage_sfx.play_in_group()
+	character_animator.play_voice("hurt1")
 
 func _on_detection_area_entered(area: Area3D) -> void:
 	if !is_multiplayer_authority():

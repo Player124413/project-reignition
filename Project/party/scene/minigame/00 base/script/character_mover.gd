@@ -135,9 +135,12 @@ func process_speed() -> void:
 	_move_speed = move_toward(_move_speed, target_speed, target_delta * get_physics_process_delta_time())
 	
 	if enable_gravity:
-		if character_body.is_on_floor():
-			_vertical_speed = 0 # Reset (don't accumulate on the ground)
-		_vertical_speed = move_toward(_vertical_speed, MAX_GRAVITY, GRAVITY * get_physics_process_delta_time())
+		apply_gravity()
+
+func apply_gravity() -> void:
+	if character_body.is_on_floor():
+		_vertical_speed = 0 # Reset (don't accumulate on the ground)
+	_vertical_speed = move_toward(_vertical_speed, MAX_GRAVITY, GRAVITY * get_physics_process_delta_time())
 
 ## Updates the characters animations.
 func process_animation() -> void:

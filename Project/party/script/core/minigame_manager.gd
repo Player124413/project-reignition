@@ -88,6 +88,9 @@ var active_popups : Array[ScorePopup]
 ## Number of players that have completed the current mini-game.
 var completed_player_count : int
 
+## Tracks whether the minigame ended in a tie.
+var is_tie : bool
+
 ## Tracks the player's scores.
 var player_scores : Array[int]
 ## Tracks the player's times.
@@ -306,7 +309,7 @@ func start_results() -> void:
 	var rankings : Array[int]
 	rankings.resize(PartyManager.MAX_PLAYER_COUNT)
 	
-	var is_tie : bool = check_tie()
+	is_tie = check_tie()
 	if is_tie: # Force everyone to lose if it's a tie.
 		for i in rankings.size():
 			rankings[i] = PartyManager.MAX_PLAYER_COUNT # This forces everybody to "lose."

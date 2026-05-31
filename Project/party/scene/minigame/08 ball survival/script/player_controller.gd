@@ -6,6 +6,8 @@ extends PartyGameCharacterMover
 var _is_knockback_active : bool
 ### The stored knockback angle
 var _knockback_angle : float
+### Tracks whether we played the falling voice clip or not.
+var can_play_fall_voice : bool
 var last_knockback_index : int = -1
 const BASE_KNOCKBACK : float = 12.0
 
@@ -20,6 +22,8 @@ func on_spawn_finished() -> void:
 	previous_ball_position = ball_mesh.global_position
 	character_animator.play_minigame_animation(get_anim_prefix() + "walk")
 	BallSurvivalPlatform.instance.register_player(self)
+	apply_gravity() # Snap to floor
+	apply_movement()
 
 func process_movement_tick() -> void:
 	if character_body.is_on_floor():
@@ -104,6 +108,15 @@ func process_speed() -> void:
 		_is_knockback_active = false
 		last_knockback_index = -1 # Reset flag
 
+func apply_gravity() -> void:
+	super()
+	var collision_test : KinematicCollision3D = character_body.move_and_collide(Vector3.DOWN * 10, true)
+	if collision_test != null && collision_test.get_collider() != null:
+		can_play_fall_voice = true
+	elif can_play_fall_voice:
+		can_play_fall_voice = false
+		character_animator.play_voice("fall1")
+
 func request_knockback(other : PartyGameCharacterMover) -> void:
 	var knockback_direction : Vector3 = (character_body.global_position - other.character_body.global_position)
 	var target_angle : float = Vector3.FORWARD.signed_angle_to(knockback_direction, Vector3.UP)
@@ -128,6 +141,7 @@ func apply_knockback_deferred(original_angle : float, target_angle : float , tar
 	last_knockback_index = other_index # Store index to detect double collisions
 	character_animator.play_minigame_animation(get_anim_prefix() + "hit")
 	character_animator.queue_minigame_animation(get_anim_prefix() + "walk", 0.3)
+	character_animator.play_voice("balance")
 
 func get_knockback_ratio() -> float:
 	return _move_speed / run_speed

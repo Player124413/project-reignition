@@ -18,7 +18,6 @@ var ball_targets : Array[Area3D]
 func on_spawn_finished() -> void:
 	super()
 	hand_attachment.reparent(character_animator.skeleton)
-	MinigameManager.instance.minigame_finished.connect(Callable(self, "on_minigame_finished"))
 
 func on_minigame_finished() -> void:
 	super()
@@ -99,13 +98,15 @@ func start_swing(tick : float, dir : int) -> void:
 	swing_sfx.play_in_group()
 	var target_anim : StringName
 	if dir == 1:
+		character_animator.play_voice("grunt2")
 		target_anim = get_anim_prefix() + "shot-right"
 	else:
+		character_animator.play_voice("grunt1")
 		target_anim = get_anim_prefix() + "shot-left"
 	character_animator.rpc("play_minigame_animation", target_anim, 0, 1, 0, tick)
 
 func _on_hit_trigger_area_entered(area: Area3D) -> void:
-	if !area.is_in_group("enemy"):
+	if !area.is_in_group("enemy") || !is_physics_processing():
 		return
 	
 	ball_targets.append(area)
@@ -115,7 +116,7 @@ func _on_hit_trigger_area_entered(area: Area3D) -> void:
 		process_cpu_swing()
 
 func _on_hit_trigger_area_exited(area: Area3D) -> void:
-	if !area.is_in_group("enemy"):
+	if !area.is_in_group("enemy") || !is_physics_processing():
 		return
 	var index : int = ball_targets.find(area)
 	if index != -1:
