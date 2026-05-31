@@ -211,13 +211,14 @@ func advance_cursor_port(index : int) -> void:
 	previews[port_index].rpc("select", PartyManager.get_player_data(port_index).character_data.model_file)
 	var next_port : int = cursors[index].port_index + 1
 	for i in cursors.size():
-		if cursors[i].is_processing_inputs && cursors[i].port_index >= next_port:
+		if cursors[i].port_index >= next_port:
 			next_port = cursors[i].port_index + 1
 	if next_port >= PartyManager.MAX_PLAYER_COUNT:
 		cursors[index].rpc("hide_cursor")
 	else:
 		var portrait : Control = get_portrait(cursors[index].current_selection)
 		cursors[index].rpc("set_player_tag", next_port)
+		print("advanced cursor %s to %s" % [index, next_port])
 		rpc("update_cursor_position", index, cursors[index].current_selection)
 		previews[next_port].rpc("set_character_text", "" if portrait.linked_character == null else portrait.linked_character.character_name)
 
