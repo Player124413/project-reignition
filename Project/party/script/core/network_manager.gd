@@ -89,6 +89,7 @@ func unload_scene(scene_path : String, type : TRANSITION_TYPE_ENUM) -> void:
 	
 	scene_dictionary[scene_path].queue_free() # Delete the node associated with the scene
 	scene_dictionary.erase(scene_path) # Register the scene as unloaded
+	get_tree().paused = false
 	emit_scene_signals(type)
 
 @rpc("any_peer", "call_local", "reliable")
