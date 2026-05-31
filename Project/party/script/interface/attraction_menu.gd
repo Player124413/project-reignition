@@ -18,6 +18,7 @@ var is_dialog_active : bool
 
 func _ready() -> void:
 	super()
+	NetworkManager.attraction_unloaded.connect(Callable(self, "show_menu"))
 	# TODO Make active immediately and skip intro animation if the menu is already active.
 	for attraction : AnimationPlayer in attraction_animators:
 		# Force reset the attraction animators

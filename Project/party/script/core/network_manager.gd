@@ -8,6 +8,8 @@ signal client_connected
 
 ## Emitted when the current primary scene is changed. The other signals provide more detail on the type of scene change.
 signal scene_changed()
+## Emitted when the player returns to the attraction selection menu.
+signal attraction_unloaded()
 signal attraction_loaded() # NOTE: This is also emitted when a mini-game finishes.
 signal party_game_loaded()
 ## Emitted when the party game actually starts.
@@ -41,7 +43,8 @@ var loading_peers : int
 var scene_dictionary : Dictionary = {}
 enum TRANSITION_TYPE_ENUM {
 	ATTRACTION,
-	PARTY_GAME
+	PARTY_GAME,
+	ATTRACTION_SELECTOR
 }
 
 func _ready() -> void:
@@ -58,8 +61,10 @@ func initialize_loggers() -> void:
 ## Queues a scene change.
 @rpc("any_peer", "call_local", "reliable")
 func load_scene(scene_path : String, type : TRANSITION_TYPE_ENUM) -> void:
-	rpc_id(1, "set_loading", multiplayer.get_unique_id(), true) # Let the host know we're loading
+	if scene_path.begins_with("uid://"):
+		scene_path = ResourceUID.uid_to_path(scene_path) # Always use resource paths for keys
 	
+	rpc_id(1, "set_loading", multiplayer.get_unique_id(), true) # Let the host know we're loading
 	# TODO Add Fade Transitions
 	ResourceLoader.load_threaded_request(scene_path)
 	while ResourceLoader.load_threaded_get_status(scene_path) == ResourceLoader.ThreadLoadStatus.THREAD_LOAD_IN_PROGRESS:
@@ -68,6 +73,7 @@ func load_scene(scene_path : String, type : TRANSITION_TYPE_ENUM) -> void:
 	var scene : PackedScene = ResourceLoader.load_threaded_get(scene_path) as PackedScene
 	var scene_node : Node = scene.instantiate() as Node
 	scene_dictionary[scene_path] = scene_node # Add to the dictionary
+	print("Loaded scene %s" % scene_path)
 	add_child(scene_node)
 	emit_scene_signals(type)
 	
@@ -79,11 +85,14 @@ func emit_scene_signals(type : TRANSITION_TYPE_ENUM) -> void:
 		attraction_loaded.emit()
 	elif type == TRANSITION_TYPE_ENUM.PARTY_GAME:
 		party_game_loaded.emit()
+	elif type == TRANSITION_TYPE_ENUM.ATTRACTION_SELECTOR:
+		attraction_unloaded.emit()
 
 @rpc("any_peer", "call_local", "reliable")
 func unload_scene(scene_path : String, type : TRANSITION_TYPE_ENUM) -> void:
 	if !scene_dictionary.has(scene_path):
 		print("FATAL: Tried to unload scene that was never loaded. Returning to Title Screen.")
+		print("Attempted scene was %s" % scene_path)
 		get_tree().change_scene_to_file("res://interface/menu/Menu.tscn") #  Return to title screen
 		return
 	

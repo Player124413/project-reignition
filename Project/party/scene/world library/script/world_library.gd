@@ -95,6 +95,8 @@ func cancel() -> void:
 @rpc("any_peer", "call_local", "reliable")
 func start_cancel() -> void:
 	if current_menu == SUBMENUS.DEFAULT:
+		if NetworkManager.is_hosting_game:
+			NetworkManager.rpc("unload_scene", scene_file_path, NetworkManager.TRANSITION_TYPE_ENUM.ATTRACTION_SELECTOR)
 		return
 	
 	selection_type = SELECTION.CANCEL
