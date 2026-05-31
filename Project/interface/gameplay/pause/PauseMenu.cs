@@ -126,7 +126,7 @@ public partial class PauseMenu : Node
 			if (IsQuickRestart())
 				return;
 
-			TogglePause();
+			CallDeferred(MethodName.TogglePause);
 			return;
 		}
 
@@ -453,6 +453,9 @@ public partial class PauseMenu : Node
 	private float unpausedSpeed;
 	private void TogglePause()
 	{
+		if (!Stage.IsLevelIngame && !isActive) // Prevent softlock when pausing on the same frame as completing a mission
+			return;
+
 		submenu = Submenu.Pause;
 		canMoveCursor = false; // Disable cursor movement
 		AllowInputs = false; // Disable pause inputs during the animation
