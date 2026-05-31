@@ -30,7 +30,7 @@ func _ready() -> void:
 	
 	finalized_selections.resize(PartyManager.MAX_PLAYER_COUNT)
 	
-	attraction_menu.character_select_queued.connect(Callable(self, "show_from_attraction_menu"))
+	attraction_menu.character_select_queued.connect(Callable(self, "request_show_from_attraction_menu"))
 	initialize_portraits()
 
 func initialize_portraits() -> void:
@@ -268,8 +268,14 @@ func show_player_count_menu() -> void:
 func queue_attraction_menu(target_tick : float) -> void:
 	get_tree().create_timer(NetworkManager.calculate_transition_delay(target_tick)).timeout.connect(show_attraction_menu)
 
-@rpc("authority", "call_local", "reliable")
+func request_show_from_attraction_menu(target_tick : float) -> void:
+	if !is_multiplayer_authority():
+		return
+	rpc("show_from_attraction_menu", target_tick)
+
+@rpc("any_peer", "call_local", "reliable")
 func show_from_attraction_menu(target_tick : float) -> void:
+	attraction_menu.hide_menu()
 	get_tree().create_timer(NetworkManager.calculate_transition_delay(target_tick)).timeout.connect(show_menu)
 
 func show_attraction_menu() -> void:

@@ -68,7 +68,6 @@ func return_to_character_select() -> void:
 	await get_tree().create_timer(0.2).timeout
 	character_select_queued.emit(NetworkManager.calculate_transition_tick())
 	description.disconnect_all_signals()
-	hide_menu()
 
 func on_description_cancelled() -> void:
 	description.disconnect_all_signals()
