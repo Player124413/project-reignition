@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=3 uid="uid://dfmawxqsw6v4d"]
+[gd_scene load_steps=32 format=3 uid="uid://dfmawxqsw6v4d"]
 
 [ext_resource type="Script" uid="uid://bheef5pyjpb1a" path="res://party/script/interface/description_box.gd" id="1_frugd"]
 [ext_resource type="Texture2D" uid="uid://dx4vxnhtgd13t" path="res://interface/menu/common/common menu atlas.png" id="2_frugd"]
@@ -6,10 +6,136 @@
 [ext_resource type="LabelSettings" uid="uid://dki35mj1oux2s" path="res://interface/font/DescriptionText.tres" id="4_4xpai"]
 [ext_resource type="Shader" uid="uid://bvyh6seeihpwy" path="res://effect/shader/interface/InterfaceFlash.gdshader" id="5_tghlg"]
 [ext_resource type="PackedScene" uid="uid://crwawg2ivy3xd" path="res://interface/menu/NavigationButton.tscn" id="6_etdfr"]
+[ext_resource type="Texture2D" uid="uid://bfrvi8f0phspt" path="res://interface/menu/common/description border.png" id="7_ywryd"]
+[ext_resource type="Texture2D" uid="uid://2nhmu64hj08j" path="res://interface/menu/common/description border clip.png" id="8_203oc"]
+[ext_resource type="Texture2D" uid="uid://dkuw6tvtqmh1r" path="res://party/scene/party menu/resource/ConfimationBoxGradient.tres" id="9_s8bts"]
+[ext_resource type="Texture2D" uid="uid://dnys6b7ntwl7j" path="res://party/scene/party menu/texture/confirmation cursor.png" id="10_7ayxy"]
+[ext_resource type="LabelSettings" uid="uid://c2ppn463q7sif" path="res://interface/font/PauseOptionFont.tres" id="11_1ju1x"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_ss5tr"]
 shader = ExtResource("5_tghlg")
 shader_parameter/flash_amount = 0.0
+
+[sub_resource type="Gradient" id="Gradient_wdyqh"]
+offsets = PackedFloat32Array(0, 0.4979424, 1)
+colors = PackedColorArray(1, 0.38333333, 0.26, 0.19607843, 1, 0.7058824, 0.54509807, 1, 1, 1, 1, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_jaras"]
+gradient = SubResource("Gradient_wdyqh")
+fill_from = Vector2(0, 1)
+fill_to = Vector2(0.5, 1)
+repeat = 2
+
+[sub_resource type="Animation" id="Animation_203oc"]
+resource_name = "loop"
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("CursorClip/Cursor:self_modulate")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.5, 1),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 1), Color(1, 1, 1, 0), Color(1, 1, 1, 1)]
+}
+
+[sub_resource type="Animation" id="Animation_s8bts"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("CursorClip/Cursor:self_modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath(".:position")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(0, 68)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath(".:scale")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(1, 1)]
+}
+
+[sub_resource type="Animation" id="Animation_7ayxy"]
+resource_name = "select-yes"
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(0, 68)]
+}
+
+[sub_resource type="Animation" id="Animation_1ju1x"]
+resource_name = "select-no"
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(0, 148)]
+}
+
+[sub_resource type="Animation" id="Animation_jaras"]
+resource_name = "select"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(1, 1)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_1ju1x"]
+_data = {
+&"RESET": SubResource("Animation_s8bts"),
+&"loop": SubResource("Animation_203oc"),
+&"select": SubResource("Animation_jaras"),
+&"select-no": SubResource("Animation_1ju1x"),
+&"select-yes": SubResource("Animation_7ayxy")
+}
 
 [sub_resource type="Animation" id="Animation_e0sjp"]
 resource_name = "RESET"
@@ -101,7 +227,7 @@ tracks/6/keys = {
 tracks/7/type = "value"
 tracks/7/imported = false
 tracks/7/enabled = true
-tracks/7/path = NodePath("Background:scale")
+tracks/7/path = NodePath("Border/Background:scale")
 tracks/7/interp = 1
 tracks/7/loop_wrap = true
 tracks/7/keys = {
@@ -125,7 +251,7 @@ tracks/8/keys = {
 tracks/9/type = "value"
 tracks/9/imported = false
 tracks/9/enabled = true
-tracks/9/path = NodePath("NavigationButton:visible")
+tracks/9/path = NodePath("Border/NavigationButton:visible")
 tracks/9/interp = 1
 tracks/9/loop_wrap = true
 tracks/9/keys = {
@@ -133,6 +259,54 @@ tracks/9/keys = {
 "transitions": PackedFloat32Array(1),
 "update": 1,
 "values": [true]
+}
+tracks/10/type = "value"
+tracks/10/imported = false
+tracks/10/enabled = true
+tracks/10/path = NodePath("Confirmation:visible")
+tracks/10/interp = 1
+tracks/10/loop_wrap = true
+tracks/10/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/11/type = "value"
+tracks/11/imported = false
+tracks/11/enabled = true
+tracks/11/path = NodePath("Confirmation:scale")
+tracks/11/interp = 1
+tracks/11/loop_wrap = true
+tracks/11/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(1, 1)]
+}
+tracks/12/type = "value"
+tracks/12/imported = false
+tracks/12/enabled = true
+tracks/12/path = NodePath("Confirmation:modulate")
+tracks/12/interp = 1
+tracks/12/loop_wrap = true
+tracks/12/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+tracks/13/type = "value"
+tracks/13/imported = false
+tracks/13/enabled = true
+tracks/13/path = NodePath("Confirmation/ConfirmationBox/DifficultyOptions/Yes/Yes:position")
+tracks/13/interp = 1
+tracks/13/loop_wrap = true
+tracks/13/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(0, 0)]
 }
 
 [sub_resource type="Animation" id="Animation_qh8xd"]
@@ -158,7 +332,7 @@ step = 0.0333333
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("NavigationButton:visible")
+tracks/0/path = NodePath("Border/NavigationButton:visible")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
@@ -182,6 +356,18 @@ tracks/0/keys = {
 "transitions": PackedFloat32Array(1),
 "update": 0,
 "values": [Color(1, 1, 1, 0)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Confirmation:visible")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
 }
 
 [sub_resource type="Animation" id="Animation_v8y77"]
@@ -275,7 +461,7 @@ tracks/6/keys = {
 tracks/7/type = "value"
 tracks/7/imported = false
 tracks/7/enabled = true
-tracks/7/path = NodePath("Background:scale")
+tracks/7/path = NodePath("Border/Background:scale")
 tracks/7/interp = 1
 tracks/7/loop_wrap = true
 tracks/7/keys = {
@@ -304,7 +490,7 @@ step = 0.0333333
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("NavigationButton:visible")
+tracks/0/path = NodePath("Border/NavigationButton:visible")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
@@ -314,77 +500,166 @@ tracks/0/keys = {
 "values": [true]
 }
 
+[sub_resource type="Animation" id="Animation_ywryd"]
+resource_name = "show-confirmation"
+length = 0.2
+step = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Confirmation:visible")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Confirmation:scale")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2),
+"transitions": PackedFloat32Array(0.5, 1, 1),
+"update": 0,
+"values": [Vector2(1, 0), Vector2(1, 1.2), Vector2(1, 1)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Confirmation:modulate")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 0.2),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 1)]
+}
+tracks/3/type = "method"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath(".")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0.2),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"enable_processing"
+}]
+}
+
+[sub_resource type="Animation" id="Animation_vr2uq"]
+resource_name = "hide-confirmation"
+length = 0.2
+step = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Confirmation:visible")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.2),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [true, false]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Confirmation:scale")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2),
+"transitions": PackedFloat32Array(1, 1, 0.5),
+"update": 0,
+"values": [Vector2(1, 1), Vector2(1, 1.2), Vector2(1, 0)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Confirmation:modulate")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 0.2),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 1), Color(1, 1, 1, 0)]
+}
+
+[sub_resource type="Animation" id="Animation_0yjs0"]
+resource_name = "select-yes"
+length = 0.2
+step = 0.02
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Confirmation/ConfirmationBox/DifficultyOptions/Yes/Yes:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.04, 0.14, 0.2),
+"transitions": PackedFloat32Array(0.5, 2, 0.5, 1),
+"update": 0,
+"values": [Vector2(0, 0), Vector2(0, 5), Vector2(0, -2), Vector2(0, 0)]
+}
+
+[sub_resource type="Animation" id="Animation_ne1lq"]
+resource_name = "select-no"
+length = 0.2
+step = 0.02
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Confirmation/ConfirmationBox/DifficultyOptions/No/No:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.04, 0.14, 0.2),
+"transitions": PackedFloat32Array(0.5, 2, 0.5, 1),
+"update": 0,
+"values": [Vector2(0, 0), Vector2(0, 5), Vector2(0, -2), Vector2(0, 0)]
+}
+
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_4yfpo"]
 _data = {
 &"RESET": SubResource("Animation_e0sjp"),
 &"hide": SubResource("Animation_qh8xd"),
 &"hide-button": SubResource("Animation_etdfr"),
+&"hide-confirmation": SubResource("Animation_vr2uq"),
 &"init": SubResource("Animation_fr02q"),
+&"select-no": SubResource("Animation_ne1lq"),
+&"select-yes": SubResource("Animation_0yjs0"),
 &"show": SubResource("Animation_v8y77"),
-&"show-button": SubResource("Animation_frugd")
+&"show-button": SubResource("Animation_frugd"),
+&"show-confirmation": SubResource("Animation_ywryd")
 }
 
-[node name="DescriptionTall" type="Control" node_paths=PackedStringArray("animator", "label")]
+[node name="DescriptionTall" type="Control" node_paths=PackedStringArray("label", "cursor_animator", "animator")]
 modulate = Color(1, 1, 1, 0)
 custom_minimum_size = Vector2(1152, 256)
 layout_mode = 3
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -576.0
-offset_top = 164.0
-offset_right = 576.0
-offset_bottom = 484.0
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 pivot_offset = Vector2(576, 128)
 mouse_filter = 2
 script = ExtResource("1_frugd")
+label = NodePath("Border/Background/Label")
+cursor_animator = NodePath("Confirmation/ConfirmationBox/CursorRoot/AnimationPlayer")
 animator = NodePath("AnimationPlayer")
-label = NodePath("Background/Label")
 metadata/_edit_group_ = true
-
-[node name="Background" type="NinePatchRect" parent="."]
-self_modulate = Color(1, 1, 1, 0.588235)
-layout_mode = 1
-anchors_preset = -1
-anchor_left = 0.5
-anchor_right = 0.5
-offset_left = -568.0
-offset_top = 44.615
-offset_right = 568.0
-offset_bottom = 312.0
-grow_horizontal = 2
-grow_vertical = 2
-pivot_offset = Vector2(568, 92)
-texture = ExtResource("2_frugd")
-region_rect = Rect2(128, 352, 96, 96)
-patch_margin_left = 32
-patch_margin_top = 32
-patch_margin_right = 32
-patch_margin_bottom = 32
-metadata/_edit_group_ = true
-
-[node name="Label" type="Label" parent="Background"]
-layout_mode = 1
-anchors_preset = -1
-anchor_left = 0.049000002
-anchor_right = 0.95800006
-anchor_bottom = 1.0
-offset_left = 16.335999
-offset_top = 35.384995
-offset_right = -16.288086
-offset_bottom = -24.000015
-theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
-theme_override_constants/line_spacing = 8
-theme_override_constants/shadow_offset_x = 2
-theme_override_constants/shadow_offset_y = 4
-theme_override_fonts/font = ExtResource("3_etdfr")
-theme_override_font_sizes/font_size = 50
-text = "Description Text."
-label_settings = ExtResource("4_4xpai")
-autowrap_mode = 2
 
 [node name="Border" type="Control" parent="."]
 material = SubResource("ShaderMaterial_ss5tr")
@@ -392,7 +667,9 @@ layout_mode = 1
 anchor_left = 0.5
 anchor_right = 0.5
 offset_left = -576.0
+offset_top = 704.0
 offset_right = -576.0
+offset_bottom = 704.0
 mouse_filter = 2
 
 [node name="Edges" type="Node2D" parent="Border"]
@@ -477,27 +754,212 @@ flip_h = true
 region_enabled = true
 region_rect = Rect2(0, 112, 112, 112)
 
-[node name="NavigationButton" parent="." instance=ExtResource("6_etdfr")]
+[node name="Background" type="NinePatchRect" parent="Border"]
+self_modulate = Color(1, 1, 1, 0.588235)
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = 8.0
+offset_top = 44.61499
+offset_right = 1144.0
+offset_bottom = 312.0
+grow_horizontal = 2
+grow_vertical = 2
+pivot_offset = Vector2(568, 92)
+texture = ExtResource("2_frugd")
+region_rect = Rect2(128, 352, 96, 96)
+patch_margin_left = 32
+patch_margin_top = 32
+patch_margin_right = 32
+patch_margin_bottom = 32
+metadata/_edit_group_ = true
+
+[node name="Label" type="Label" parent="Border/Background"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.049000002
+anchor_right = 0.95800006
+anchor_bottom = 1.0
+offset_left = 16.335999
+offset_top = 35.384995
+offset_right = -16.288086
+offset_bottom = -24.000015
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_constants/line_spacing = 8
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 4
+theme_override_fonts/font = ExtResource("3_etdfr")
+theme_override_font_sizes/font_size = 50
+text = "Description Text."
+label_settings = ExtResource("4_4xpai")
+autowrap_mode = 2
+
+[node name="NavigationButton" parent="Border" instance=ExtResource("6_etdfr")]
 layout_mode = 1
 anchor_left = 1.0
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -264.0
-offset_top = -88.0
-offset_right = -48.0
-offset_bottom = -40.0
+offset_left = 888.0
+offset_top = 232.0
+offset_right = 1104.0
+offset_bottom = 280.0
 grow_horizontal = 0
 grow_vertical = 0
 inputKey = &"sys_selec"
 
-[node name="Action" parent="NavigationButton" index="1"]
+[node name="Action" parent="Border/NavigationButton" index="1"]
 visible = false
+
+[node name="Confirmation" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ConfirmationBox" type="NinePatchRect" parent="Confirmation"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -164.0
+offset_top = -128.0
+offset_right = 164.0
+offset_bottom = 128.0
+grow_horizontal = 2
+grow_vertical = 2
+pivot_offset = Vector2(164, 188)
+texture = ExtResource("7_ywryd")
+patch_margin_left = 112
+patch_margin_top = 112
+patch_margin_right = 112
+patch_margin_bottom = 112
+
+[node name="BackgroundClip" type="NinePatchRect" parent="Confirmation/ConfirmationBox"]
+show_behind_parent = true
+clip_children = 1
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("8_203oc")
+patch_margin_left = 112
+patch_margin_top = 112
+patch_margin_right = 112
+patch_margin_bottom = 112
+
+[node name="Gradient" type="TextureRect" parent="Confirmation/ConfirmationBox/BackgroundClip"]
+modulate = Color(1, 1, 1, 0.9019608)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("9_s8bts")
+
+[node name="CursorRoot" type="Control" parent="Confirmation/ConfirmationBox"]
+layout_mode = 1
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_top = -60.0
+offset_bottom = -12.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="CursorClip" type="TextureRect" parent="Confirmation/ConfirmationBox/CursorRoot"]
+modulate = Color(1, 1, 1, 0.8627451)
+clip_children = 1
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 36.0
+offset_top = -8.0
+offset_right = -36.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("10_7ayxy")
+
+[node name="Cursor" type="TextureRect" parent="Confirmation/ConfirmationBox/CursorRoot/CursorClip"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = SubResource("GradientTexture2D_jaras")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Confirmation/ConfirmationBox/CursorRoot"]
+libraries = {
+&"": SubResource("AnimationLibrary_1ju1x")
+}
+next/select-yes = &"loop"
+next/select-no = &"loop"
+
+[node name="DifficultyOptions" type="VBoxContainer" parent="Confirmation/ConfirmationBox"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.5
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -124.0
+offset_right = 124.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 32
+alignment = 1
+
+[node name="Yes" type="Control" parent="Confirmation/ConfirmationBox/DifficultyOptions"]
+custom_minimum_size = Vector2(248, 48)
+layout_mode = 2
+
+[node name="Yes" type="Label" parent="Confirmation/ConfirmationBox/DifficultyOptions/Yes"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "sys_yes"
+label_settings = ExtResource("11_1ju1x")
+horizontal_alignment = 1
+vertical_alignment = 1
+uppercase = true
+
+[node name="No" type="Control" parent="Confirmation/ConfirmationBox/DifficultyOptions"]
+custom_minimum_size = Vector2(248, 48)
+layout_mode = 2
+
+[node name="No" type="Label" parent="Confirmation/ConfirmationBox/DifficultyOptions/No"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "sys_no"
+label_settings = ExtResource("11_1ju1x")
+horizontal_alignment = 1
+vertical_alignment = 1
+uppercase = true
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 libraries = {
 &"": SubResource("AnimationLibrary_4yfpo")
 }
 autoplay = "init"
+next/select-yes = &"hide-confirmation"
+next/select-no = &"hide-confirmation"
 
-[editable path="NavigationButton"]
+[editable path="Border/NavigationButton"]

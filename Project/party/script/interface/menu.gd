@@ -8,6 +8,14 @@ class_name Menu extends Control
 
 ## The index of the player who is controlling this menu.
 @export var player_index : int = -1
+## Updates the player_index and authority of this Menu.
+func set_player_index(index : int) -> void:
+	player_index = index # Update index
+	if index == -1:
+		set_multiplayer_authority(1) # Revert authority to host
+	else:
+		var data : PlayerData = PartyManager.get_player_data(index)
+		set_multiplayer_authority(data.device) # Update authority
 
 ## Tracks whether the menu is currently processing.
 @export var _is_menu_processing : bool

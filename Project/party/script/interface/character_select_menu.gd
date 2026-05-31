@@ -28,6 +28,9 @@ func _ready() -> void:
 		preview.cancelled.connect(recieve_difficulty_cancel)
 		preview.anim_finished.connect(recieve_animation_finished)
 	
+	finalized_selections.resize(PartyManager.MAX_PLAYER_COUNT)
+	
+	attraction_menu.character_select_queued.connect(Callable(self, "show_from_attraction_menu"))
 	initialize_portraits()
 
 func initialize_portraits() -> void:
@@ -109,8 +112,8 @@ func request_character_selection(index : int) -> void:
 		cursors[index].rpc("request_enable_processing")
 		return
 	
-	var player_index : int = PartyManager.get_character_index(character_data)
-	if player_index != -1 && player_index != cursors[index].port_index:
+	var player_ind : int = PartyManager.get_character_index(character_data)
+	if player_ind != -1 && player_ind != cursors[index].port_index:
 		# Character is already taken; allow cursor movement again
 		cursors[index].rpc("request_enable_processing")
 		return
@@ -265,6 +268,10 @@ func show_player_count_menu() -> void:
 func queue_attraction_menu(target_tick : float) -> void:
 	get_tree().create_timer(NetworkManager.calculate_transition_delay(target_tick)).timeout.connect(show_attraction_menu)
 
+@rpc("authority", "call_local", "reliable")
+func show_from_attraction_menu(target_tick : float) -> void:
+	get_tree().create_timer(NetworkManager.calculate_transition_delay(target_tick)).timeout.connect(show_menu)
+
 func show_attraction_menu() -> void:
 	hide_menu()
 	attraction_menu.show_menu()
@@ -277,7 +284,11 @@ func show_menu() -> void:
 	for preview in previews:
 		preview.initialize()
 	
-	finalized_selections.resize(PartyManager.MAX_PLAYER_COUNT)
+	for i in finalized_selections.size():
+		finalized_selections[i] = false
+	
+	for i in PartyManager.MAX_PLAYER_COUNT:
+		PartyManager._player_data[i].character_data = null
 	super()
 
 ## Shows all the character portraits

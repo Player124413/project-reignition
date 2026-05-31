@@ -1,12 +1,18 @@
 ### Description/dialog box for party mode.
-class_name DescriptionBox extends Control
+class_name DescriptionBox extends Menu
 
-@export var animator : AnimationPlayer
+## Emitted when the player selects "yes." 
+signal confirmed
+## Emitted when the player selects "no."
+signal cancelled
+
 @export var label : Label
+@export var cursor_animator : AnimationPlayer
 
 func get_text() -> String:
 	return label.text
 
+@rpc("any_peer", "call_local", "reliable")
 func set_text(text : String) -> void:
 	label.text = text
 
@@ -25,3 +31,51 @@ func hide_button() -> void:
 func hide_description() -> void:
 	animator.play("hide")
 	animator.seek(0, true)
+
+func update_selection() -> void:
+	if input_axis.y < 0:
+		rpc("set_confirmation_selection", 0)
+	elif input_axis.y > 0:
+		rpc("set_confirmation_selection", 1)
+
+func confirm() -> void:
+	disable_processing()
+	rpc("apply_selection", current_selection.y)
+
+func cancel() -> void:
+	disable_processing()
+	rpc("apply_selection", 1)
+
+@rpc("any_peer", "call_local", "reliable")
+func apply_selection(selection : int) -> void:
+	set_confirmation_selection(selection) # Switch to the correct selection if needed
+	cursor_animator.play("select")
+	if selection == 0:
+		animator.play("select-yes")
+		confirmed.emit()
+	else:
+		animator.play("select-no")
+		cancelled.emit()
+
+@rpc("any_peer", "call_local", "reliable")
+func set_confirmation_selection(selection : int) -> void:
+	if selection != current_selection.y:
+		current_selection.y = selection
+		cursor_animator.play("select-yes" if selection == 0 else "select-no")
+		cursor_animator.advance(0.0)
+
+@rpc("any_peer", "call_local", "reliable")
+func show_confirmation(index : int) -> void:
+	set_player_index(index)
+	current_selection.y = 1
+	cursor_animator.play("RESET")
+	cursor_animator.advance(0.0)
+	cursor_animator.play("select-no")
+	animator.play("show-confirmation")
+
+## Disconnects all signals from the confirmation box.
+func disconnect_all_signals() -> void:
+	for connection in confirmed.get_connections():
+		confirmed.disconnect(connection["callable"])
+	for connection in cancelled.get_connections():
+		cancelled.disconnect(connection["callable"])

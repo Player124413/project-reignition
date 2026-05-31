@@ -50,9 +50,7 @@ func request_show_menu(index : int, target_tick : float) -> void:
 	disable_processing()
 	_is_reading_pause_inputs = false
 	await get_tree().create_timer(NetworkManager.calculate_transition_delay(target_tick)).timeout
-	player_index = index # Update index
-	var data : PlayerData = PartyManager.get_player_data(index)
-	set_multiplayer_authority(data.device) # Update authority
+	set_player_index(index)
 	show_menu()
 
 @rpc("any_peer", "call_local", "reliable")
@@ -60,8 +58,7 @@ func request_hide_menu(target_tick : float) -> void:
 	disable_processing()
 	_is_reading_pause_inputs = false
 	await get_tree().create_timer(NetworkManager.calculate_transition_delay(target_tick)).timeout
-	player_index = -1
-	set_multiplayer_authority(1) # Revert authority to host
+	set_player_index(-1)
 	hide_menu()
 
 func update_selection() -> void:
@@ -117,7 +114,6 @@ func confirm() -> void:
 		return
 	
 	if is_minigame_active(): # In a minigame. Load back to attraction
-		print(PartyManager.current_mode)
 		NetworkManager.rpc("unload_scene", MinigameManager.instance.minigame_resource.scene_path, NetworkManager.TRANSITION_TYPE_ENUM.ATTRACTION)
 		if PartyManager.current_mode == PartyManager.CURRENT_MODE_ENUM.WORLD_LIBRARY:
 			return

@@ -1,6 +1,9 @@
 ### Manages the attraction menu.
 extends Menu
 
+## Emitted when the menu wants to return to the character select menu.
+signal character_select_queued(tick : float)
+
 @export var description : DescriptionBox
 @export var selection_animator : AnimationPlayer
 @export var attraction_animators : Array[AnimationPlayer]
@@ -14,19 +17,19 @@ var omochao_turn_influence : float
 const OMOCHAO_SPEED : float = 1.0
 const OMOCHAO_TURN_SPEED : float = 10.0
 const OMOCHAO_RETURN_SPEED : float = 5.0
+var is_initial_load : bool = true
 var is_dialog_active : bool
 
 func _ready() -> void:
 	super()
 	NetworkManager.attraction_unloaded.connect(Callable(self, "show_menu"))
-	# TODO Make active immediately and skip intro animation if the menu is already active.
 	for attraction : AnimationPlayer in attraction_animators:
 		# Force reset the attraction animators
 		attraction.play("RESET")
 		attraction.advance(0.0)
 
 func show_menu() -> void:
-	super()
+	animator.play(SHOW_ANIMATION if is_initial_load else "show-fast")
 	current_selection = Vector2i(1, 0)
 	selection_animator.play("RESET")
 	selection_animator.advance(0.0)
@@ -35,8 +38,8 @@ func show_menu() -> void:
 	omochao.play_animation("select")
 	is_dialog_active = true
 	description.show_button()
-	# TODO Add separate option for returning from a party game.
-	description.set_text("party_attract_menu1")
+	description.set_text("party_attract_menu1" if is_initial_load else "party_attract_menu2")
+	is_initial_load = false
 
 func process_cursor() -> void:
 	# Process position
@@ -49,8 +52,29 @@ func process_cursor() -> void:
 		omochao_turn_influence = move_toward(omochao_turn_influence, 0.0, OMOCHAO_RETURN_SPEED * get_physics_process_delta_time())
 	else:
 		omochao_turn_influence = move_toward(omochao_turn_influence, 1.0, OMOCHAO_TURN_SPEED * get_physics_process_delta_time())
+	
+	if target_transform.origin.is_equal_approx(original_omochao_transform.origin):
+		return
+	
 	var look_at_basis : Basis = original_omochao_transform.looking_at(target_transform.origin, omochao.global_basis.y, true).basis
 	omochao.global_basis = omochao.global_basis.slerp(look_at_basis, omochao_turn_influence)
+
+func return_to_main_menu() -> void:
+	await get_tree().create_timer(0.2).timeout # TODO remove this when fade transitions are implemented
+	NetworkManager.rpc("return_to_main_menu")
+	description.disconnect_all_signals()
+
+func return_to_character_select() -> void:
+	await get_tree().create_timer(0.2).timeout
+	character_select_queued.emit(NetworkManager.calculate_transition_tick())
+	description.disconnect_all_signals()
+	hide_menu()
+
+func on_description_cancelled() -> void:
+	description.disconnect_all_signals()
+	await get_tree().create_timer(0.2).timeout
+	rpc("update_cursor_position", current_selection)
+	enable_processing()
 
 func confirm() -> void:
 	if is_dialog_active:
@@ -58,8 +82,11 @@ func confirm() -> void:
 	else:
 		var target_mode : PartyManager.CURRENT_MODE_ENUM = get_mode_from_selection()
 		if target_mode == PartyManager.CURRENT_MODE_ENUM.COUNT: # Returning to the main menu
-			# TODO Add a popup
-			NetworkManager.rpc("return_to_main_menu")
+			description.rpc("set_text", "party_exit_confirm")
+			description.rpc("show_confirmation", -1)
+			description.confirmed.connect(Callable(self, "return_to_main_menu"), CONNECT_ONE_SHOT)
+			description.cancelled.connect(Callable(self, "on_description_cancelled"), CONNECT_ONE_SHOT)
+			disable_processing()
 			return
 		
 		var target_scene : String = attraction_scenes[current_omochao_location]
@@ -74,7 +101,6 @@ func confirm() -> void:
 
 @rpc("any_peer", "call_local", "reliable")
 func advance_dialog() -> void:
-	# TODO Process dialog box
 	if description.get_text() == "party_attract_menu2":
 		is_dialog_active = false
 		description.hide_button()
@@ -89,7 +115,11 @@ func cancel() -> void:
 	if is_dialog_active:
 		return
 	
-	description.set_text("party_attract_menu3")
+	disable_processing()
+	description.rpc("set_text", "party_change_players")
+	description.rpc("show_confirmation", -1)
+	description.confirmed.connect(Callable(self, "return_to_character_select"), CONNECT_ONE_SHOT)
+	description.cancelled.connect(Callable(self, "on_description_cancelled"), CONNECT_ONE_SHOT)
 
 func update_selection() -> void:
 	if is_dialog_active:
@@ -111,6 +141,7 @@ func change_selection(input : Vector2i) -> void:
 	if current_selection != previous_selection:
 		update_cursor_position(current_selection)
 
+@rpc("any_peer", "call_local", "reliable")
 func update_cursor_position(selection : Vector2i) -> void:
 	# TODO Change Omochao's target position and play animation
 	var target_animation : StringName = "exit"
