@@ -32,11 +32,20 @@ func start_spawning() -> void:
 	set_physics_process(true)
 	return
 
-func start_new_spawn(new_stakes: Array[GiantStake]):
+@rpc("any_peer", "call_local", "reliable")
+func start_new_spawn(new_stakes: Array[Vector2i]):
+	print("-----------------------")
 	for i in range(new_stakes.size()):
-		new_stakes[i].set_bonus()
-		new_stakes[i].spawn_stake()
+		print("Launching Stake: " + str(i))
+		print("Row: " + str(new_stakes[i].x))
+		print("Col: " + str(new_stakes[i].y))
+		
+		var this_stake: GiantStake = get_stake(new_stakes[i].x, new_stakes[i].y) as GiantStake
+		this_stake.set_bonus()
+		this_stake.spawn_stake()
 		await get_tree().create_timer(time_between_stakes).timeout
+	
+	print("-----------------------")
 	pass
 
 
@@ -46,84 +55,239 @@ const MIN_STAKES: int = 1
 const MAX_STAKES: int = 4
 ## The chance an L-shaped stakes group will spawn
 const SHAPE_CHANCE: int = 3
+## How many rows
+const MAX_ROWS: int = 10
+## How many columns
+const MAX_COLS: int = 11
+
+enum DIRECTION {
+	NORTH,
+	SOUTH,
+	EAST,
+	WEST,
+}
+
+## The type of shape stakes should spawn in
+enum SHAPE {
+	SINGLE,
+	DOUBLE,
+	DOUBLE_SPACE, # This shape has a space between two stakes
+	TRIPLE,
+	TRIPLE_SPACE,
+	#QUAD,
+	#QUAD_L, # This shape has 3 consecutive stakes and one in another direction
+	COUNT
+}
 
 func request_spawn():
 	print("requesting spawn")
 	var rng = RandomNumberGenerator.new()
-	var spawn_type = rng.randi_range(1, SHAPE_CHANCE) # If the stakes should spawn in an L shape
-	var spawn_amt = rng.randi_range(MIN_STAKES, MAX_STAKES)
-	var distance = rng.randi_range(1, 2)
-	var spawn_direction: int
+	var spawn_direction: DIRECTION
+	var shape: SHAPE = rng.randi_range(0, SHAPE.COUNT - 1) as SHAPE
 
-	var stakes: Array[GiantStake]
+	var stakes: Array[Vector2i]
 
 	# The initial starting stake
 	var starting_row: int
 	var starting_col: int
 
-	while true: # Calculate the initial starting stake
+	
+	while true: # Calculate the initial starting stakes
+		print("Getting first stake")
+		print("Shape: " + str(shape))
 		starting_col = rng.randi_range(1, rows.size())
 		starting_row = rng.randi_range(1, rows[0].get_child_count())
+		stakes.resize(1)
 
 		if is_valid_spawn(starting_row, starting_col): # If the stake is not valid, then repeat the rng
-			stakes[0] = rows[starting_row].get_child(starting_col) as GiantStake
+			stakes[0] = Vector2i(starting_row, starting_col)
 			break
-	
 
-	if spawn_amt > 1:
-		var num_tries # If the spawn is not valid, then increment this counter and try again
-		spawn_direction = rng.randi_range(1, 4)
-				
-		for i in range(1, spawn_amt):
-			num_tries = 0
-			while true:
-				if num_tries > rows[0].get_child_count(): # If we have exceeded the number of children in a row, then try a new direction
-					spawn_direction = rng.randi_range(1, 4)
-					num_tries = 0
-				if i == spawn_amt - 1 && spawn_type == 1: # If we are at the last stake in the sequence, spawn in a new direction to make an L-shape
-					spawn_direction = rng.randi_range(1, 4)
-					num_tries = 0
-				match spawn_direction:
-					1: # NORTH
-						var new_row: int = starting_row - (distance + num_tries)
-						if is_valid_spawn(new_row, starting_col):
-							stakes[i] = rows[new_row].get_child(starting_col) as GiantStake
+		
+	while true: # Calculate all possible shapes
+		spawn_direction = rng.randi_range(0, 3) as DIRECTION
+		
+		if shape == SHAPE.SINGLE:
+			break
+		
+		if shape == SHAPE.DOUBLE:
+			stakes.resize(2)
+			match spawn_direction:
+				DIRECTION.NORTH:
+					if is_valid_spawn(starting_row - 1, starting_col):
+						stakes[1] = Vector2i(starting_row - 1, starting_col)
+						break
+				DIRECTION.SOUTH:
+					if is_valid_spawn(starting_row + 1, starting_col):
+						stakes[1] = Vector2i(starting_row + 1, starting_col)
+						break
+				DIRECTION.EAST:
+					if is_valid_spawn(starting_row, starting_col + 1):
+						stakes[1] = Vector2i(starting_row, starting_col + 1)
+						break
+				DIRECTION.WEST:
+					if is_valid_spawn(starting_row, starting_col - 1):
+						stakes[1] = Vector2i(starting_row, starting_col - 1)
+						break
+		
+		if shape == SHAPE.DOUBLE_SPACE:
+			stakes.resize(2)
+			match spawn_direction:
+				DIRECTION.NORTH:
+					if is_valid_spawn(starting_row - 2, starting_col):
+						stakes[1] = Vector2i(starting_row - 2, starting_col)
+						break
+				DIRECTION.SOUTH:
+					if is_valid_spawn(starting_row + 2, starting_col):
+						stakes[1] = Vector2i(starting_row + 2, starting_col)
+						break
+				DIRECTION.EAST:
+					if is_valid_spawn(starting_row, starting_col + 2):
+						stakes[1] = Vector2i(starting_row, starting_col + 2)
+						break
+				DIRECTION.WEST:
+					if is_valid_spawn(starting_row, starting_col - 2):
+						stakes[1] = Vector2i(starting_row, starting_col - 2)
+						break
+		if shape == SHAPE.TRIPLE:
+			stakes.resize(3)
+			match spawn_direction:
+				DIRECTION.NORTH:
+					if is_valid_spawn(starting_row - 1, starting_col):
+						stakes[1] = Vector2i(starting_row - 1, starting_col)
+						if is_valid_spawn(starting_row - 2, starting_col):
+							stakes[2] = Vector2i(starting_row - 2, starting_col)
 							break
-						else:
-							num_tries += 1
-					2: # SOUTH
-						var new_row: int = starting_row + (distance + num_tries)
-						if is_valid_spawn(new_row, starting_col):
-							stakes[i] = rows[new_row].get_child(starting_col) as GiantStake
+				DIRECTION.SOUTH:
+					if is_valid_spawn(starting_row + 1, starting_col):
+						stakes[1] = Vector2i(starting_row + 1, starting_col)
+						if is_valid_spawn(starting_row + 2, starting_col):
+							stakes[2] = Vector2i(starting_row + 2, starting_col)
 							break
-						else:
-							num_tries += 1
-					3: # EAST
-						var new_col: int = starting_col + (distance + num_tries)
-						if is_valid_spawn(starting_row, new_col):
-							stakes[i] = rows[starting_row].get_child(new_col) as GiantStake
+				DIRECTION.EAST:
+					if is_valid_spawn(starting_row, starting_col + 1):
+						stakes[1] = Vector2i(starting_row, starting_col + 1)
+						if is_valid_spawn(starting_row, starting_col + 2):
+							stakes[2] = Vector2i(starting_row, starting_col + 2)
 							break
-						else:
-							num_tries += 1
-					4: # WEST
-						var new_col: int = starting_col - (distance + num_tries)
-						if is_valid_spawn(starting_row, new_col):
-							stakes[i] = rows[starting_row].get_child(new_col) as GiantStake
-						else:
-							num_tries += 1
-						pass
-	rpc("start_new_spawn", stakes)
+				DIRECTION.WEST:
+					if is_valid_spawn(starting_row, starting_col - 1):
+						stakes[1] = Vector2i(starting_row, starting_col - 1)
+						if is_valid_spawn(starting_row, starting_col - 2):
+							stakes[2] = Vector2i(starting_row, starting_col - 2)
+							break
+		if shape == SHAPE.TRIPLE_SPACE:
+			stakes.resize(3)
+			match spawn_direction:
+				DIRECTION.NORTH:
+					if is_valid_direction(starting_row - 2, starting_col):
+						stakes[1] = Vector2i(starting_row - 2, starting_col)
+						if is_valid_direction(starting_row - 4, starting_col):
+							stakes[2] = Vector2i(starting_row - 4, starting_col)
+							break
+				DIRECTION.SOUTH:
+					if is_valid_direction(starting_row + 2, starting_col):
+						stakes[1] = Vector2i(starting_row + 2, starting_col)
+						if is_valid_direction(starting_row + 4, starting_col):
+							stakes[2] = Vector2i(starting_row + 4, starting_col)
+							break
+				DIRECTION.EAST:
+					if is_valid_direction(starting_row, starting_col + 2):
+						stakes[1] = Vector2i(starting_row, starting_col + 2)
+						if is_valid_direction(starting_row, starting_col + 4):
+							stakes[2] = Vector2i(starting_row, starting_col + 4)
+							break
+				DIRECTION.WEST:
+					if is_valid_direction(starting_row, starting_col - 2):
+						stakes[1] = Vector2i(starting_row, starting_col - 2)
+						if is_valid_direction(starting_row, starting_col - 4):
+							stakes[2] = Vector2i(starting_row, starting_col - 4)
+							break
+
+	rpc("start_new_spawn", start_corrections(stakes, spawn_direction))
 			
 
 func is_valid_spawn(row: int, col: int) -> bool:
-	if row > rows.size(): # Check if it's in a valid row
+	if row > rows.size() - 1: # Check if it's in a valid row
 		return false
 	
-	if col > rows[row].get_child_count(): # Check if it's in a valid column
+	if col > rows[row].get_child_count() - 1: # Check if it's in a valid column
 		return false
-		
-	var this_stake: GiantStake = rows[row].get_child(col)
+	
+	if row < 0:
+		return false
+
+	if col < 0:
+		return false
+	
+	var this_stake: GiantStake = rows[row].get_child(col) as GiantStake
+	if this_stake.starting_stake == true:
+		return false
 	if this_stake.is_fallen == true:
 		return false
-	else:
-		return true
+
+	return true
+
+func is_valid_direction(row: int, col: int):
+	if row > rows.size() - 1:
+		return false
+
+	if row < 0:
+		return false
+
+	if col < 0:
+		return false
+	
+	if col > rows[row].get_child_count() - 1:
+		return false
+	var this_stake: GiantStake = rows[row].get_child(col) as GiantStake
+	if this_stake.starting_stake == true:
+		return false
+	return true
+
+func get_next_valid_spawn(row: int, col: int, direction: DIRECTION) -> Vector2i:
+	var rng = RandomNumberGenerator.new()
+	match direction:
+		DIRECTION.NORTH:
+			for i in range(MAX_ROWS, 0):
+				if i < row: # Start checking rows past our current row
+					if is_valid_spawn(i, col):
+						return Vector2i(i, col)
+					if i == 0: # Call this method again if we reached the end of our search, and choose another direction
+						return get_next_valid_spawn(0, col, rng.randi_range(3, 4) as DIRECTION) # Chooses EAST or WEST randomly
+
+		DIRECTION.SOUTH:
+			for i in range(0, MAX_ROWS):
+				if i > row:
+					if is_valid_spawn(i, col):
+						return Vector2i(i, col)
+					if i == MAX_ROWS:
+						return get_next_valid_spawn(MAX_ROWS, col, rng.randi_range(3, 4) as DIRECTION)
+		DIRECTION.EAST:
+			for i in range(0, MAX_COLS):
+				if i > col:
+					if is_valid_spawn(row, i):
+						return Vector2i(row, i)
+					if i == MAX_COLS:
+						return get_next_valid_spawn(row, MAX_COLS, rng.randi_range(1, 2) as DIRECTION)
+		DIRECTION.WEST:
+			for i in range(MAX_COLS, 0):
+				if i < col:
+					if is_valid_spawn(row, i):
+						return Vector2i(row, i)
+					if i == 0:
+						return get_next_valid_spawn(row, 0, rng.randi_range(1, 2))
+	return Vector2i.ZERO
+
+func start_corrections(stakes: Array[Vector2i], direction: DIRECTION) -> Array[Vector2i]:
+	var new_stakes: Array[Vector2i] = stakes
+
+	for i in range(0, stakes.size()):
+		if !is_valid_spawn(new_stakes[i].x, new_stakes[i].y):
+			new_stakes[i] = get_next_valid_spawn(new_stakes[i].x, new_stakes[i].y, direction)
+	
+	return new_stakes
+
+
+func get_stake(row: int, col: int) -> GiantStake:
+	return rows[row].get_child(col) as GiantStake
