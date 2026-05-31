@@ -61,8 +61,7 @@ func initialize_loggers() -> void:
 ## Queues a scene change.
 @rpc("any_peer", "call_local", "reliable")
 func load_scene(scene_path : String, type : TRANSITION_TYPE_ENUM) -> void:
-	if scene_path.begins_with("uid://"):
-		scene_path = ResourceUID.uid_to_path(scene_path) # Always use resource paths for keys
+	scene_path = format_scene_path(scene_path)
 	
 	rpc_id(1, "set_loading", multiplayer.get_unique_id(), true) # Let the host know we're loading
 	# TODO Add Fade Transitions
@@ -90,16 +89,31 @@ func emit_scene_signals(type : TRANSITION_TYPE_ENUM) -> void:
 
 @rpc("any_peer", "call_local", "reliable")
 func unload_scene(scene_path : String, type : TRANSITION_TYPE_ENUM) -> void:
+	scene_path = format_scene_path(scene_path)
 	if !scene_dictionary.has(scene_path):
-		print("FATAL: Tried to unload scene that was never loaded. Returning to Title Screen.")
+		print("FATAL: Tried to unload scene that was never loaded. Returning to Main Menu.")
 		print("Attempted scene was %s" % scene_path)
-		get_tree().change_scene_to_file("res://interface/menu/Menu.tscn") #  Return to title screen
+		return_to_main_menu()
 		return
 	
 	scene_dictionary[scene_path].queue_free() # Delete the node associated with the scene
 	scene_dictionary.erase(scene_path) # Register the scene as unloaded
 	get_tree().paused = false
 	emit_scene_signals(type)
+
+func format_scene_path(scene_path : String) -> String:
+	if scene_path.begins_with("uid://"):
+		return ResourceUID.uid_to_path(scene_path) # Always use resource paths for keys
+	return scene_path
+
+@rpc("any_peer", "call_local", "reliable")
+func return_to_main_menu() -> void:
+	for key in scene_dictionary.keys():
+		scene_dictionary[key].queue_free()
+	scene_dictionary.clear()
+	if is_online:
+		force_disconnect()
+	get_tree().change_scene_to_file("res://interface/menu/Menu.tscn") #  Return to title screen
 
 @rpc("any_peer", "call_local", "reliable")
 func set_loading(peer_id : int, is_loading : bool) -> void:

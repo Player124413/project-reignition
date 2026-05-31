@@ -117,6 +117,7 @@ func confirm() -> void:
 		return
 	
 	if is_minigame_active(): # In a minigame. Load back to attraction
+		print(PartyManager.current_mode)
 		NetworkManager.rpc("unload_scene", MinigameManager.instance.minigame_resource.scene_path, NetworkManager.TRANSITION_TYPE_ENUM.ATTRACTION)
 		if PartyManager.current_mode == PartyManager.CURRENT_MODE_ENUM.WORLD_LIBRARY:
 			return

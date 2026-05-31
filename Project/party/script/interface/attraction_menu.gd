@@ -56,6 +56,12 @@ func confirm() -> void:
 	if is_dialog_active:
 		rpc("advance_dialog")
 	else:
+		var target_mode : PartyManager.CURRENT_MODE_ENUM = get_mode_from_selection()
+		if target_mode == PartyManager.CURRENT_MODE_ENUM.COUNT: # Returning to the main menu
+			# TODO Add a popup
+			NetworkManager.rpc("return_to_main_menu")
+			return
+		
 		var target_scene : String = attraction_scenes[current_omochao_location]
 		if target_scene.is_empty():
 			print("Unimplemented.")
@@ -63,7 +69,7 @@ func confirm() -> void:
 		
 		# Load attraction
 		disable_processing()
-		PartyManager.rpc("set_current_mode", get_mode_from_selection())
+		PartyManager.rpc("set_current_mode", target_mode)
 		NetworkManager.rpc("load_scene", attraction_scenes[current_omochao_location], NetworkManager.TRANSITION_TYPE_ENUM.ATTRACTION)
 
 @rpc("any_peer", "call_local", "reliable")
