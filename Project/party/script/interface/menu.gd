@@ -6,6 +6,9 @@ class_name Menu extends Control
 ## The menu's main animator.
 @export var animator : AnimationPlayer
 
+## The index of the player who is controlling this menu.
+@export var player_index : int = -1
+
 ## Tracks whether the menu is currently processing.
 @export var _is_menu_processing : bool
 ## Tracks the current selection.
@@ -42,17 +45,27 @@ func _process(_delta: float) -> void:
 	if !_is_menu_processing:
 		return
 	
-	input_axis.x = sign(Input.get_axis("ui_left", "ui_right"))
-	input_axis.y = sign(Input.get_axis("ui_up", "ui_down"))
+	process_input_axis()
 	process_menu()
+
+func process_input_axis() -> void:
+	if player_index == -1:
+		input_axis.x = sign(Input.get_axis("ui_left", "ui_right"))
+		input_axis.y = sign(Input.get_axis("ui_up", "ui_down"))
+		return
+	input_axis.x = sign(Input.get_axis("move_left%s" % get_input_suffix(), "move_right%s" % get_input_suffix()))
+	input_axis.y = sign(Input.get_axis("move_up%s" % get_input_suffix(), "move_down%s" % get_input_suffix()))
+
+## Gets the input suffix for this player.
+func get_input_suffix() -> String:
+	return str(PartyManager.get_player_data(player_index).local_player_index)
 
 func process_cursor() -> void:
 	pass # Implemented in subclass
 
 ## Called every frame.
 func process_menu() -> void:
-	# Only allow host to control menus
-	if NetworkManager.is_online && !NetworkManager.is_hosting_game:
+	if !is_multiplayer_authority():
 		return
 	
 	# Default behavior is to listen for inputs.
@@ -63,10 +76,12 @@ func process_menu() -> void:
 	elif input_axis != Vector2i.ZERO:
 		update_selection()
 	# Check button inputs
-	if is_action_just_pressed("sys_select", "ui_select"):
+	if is_action_just_pressed("button_primary", "sys_select", "ui_select"):
 		confirm()
-	if is_action_just_pressed("sys_cancel", "ui_cancel"):
+	elif is_action_just_pressed("button_secondary", "sys_cancel", "ui_cancel"):
 		cancel()
+	elif is_action_just_pressed("button_pause", "sys_pause", "escape"):
+		pause()
 
 func start_selection_timer() -> void:
 	selection_timer = SELECTION_SCROLLING_INTERVAL if is_scrolling else SELECTION_INTERVAL
@@ -81,6 +96,10 @@ func confirm() -> void:
 
 ## Called when cancelling an option.
 func cancel() -> void:
+	pass # Implemented in subclass
+
+## Called when PAUSE is pressed.
+func pause() -> void:
 	pass # Implemented in subclass
 
 ## Shows the menu.
@@ -99,5 +118,7 @@ func hide_menu() -> void:
 		visible = false
 
 ## Returns whether either inputs are pressed.
-func is_action_just_pressed(actionId : StringName, builtInId : StringName) -> bool:
-	return Input.is_action_just_pressed(actionId) || Input.is_action_just_pressed(builtInId);
+func is_action_just_pressed(player_input : StringName, input_id : StringName = "", built_in_input : StringName = "") -> bool:
+	if player_index >= 0:
+		return Input.is_action_just_pressed(player_input + get_input_suffix())
+	return Input.is_action_just_pressed(input_id) || Input.is_action_just_pressed(built_in_input);

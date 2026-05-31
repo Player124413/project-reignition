@@ -100,6 +100,7 @@ const INITIAL_SCORE_POPUP_POOL_SIZE : int = 10
 
 func _init() -> void:
 	instance = self
+	minigame_finished.connect(Callable(PauseManager, "request_cancel_pause_menu"))
 	
 	player_scores.resize(PartyManager.MAX_PLAYER_COUNT)
 	player_times.resize(PartyManager.MAX_PLAYER_COUNT)
@@ -283,9 +284,9 @@ func finish_minigame(from_timer : bool) -> void:
 
 ## Emits the signal to actually enable gameplay objects.
 func on_gameplay_started() -> void:
-	print("Gameplay Started.")
 	gameplay_start_tick = NetworkTimeSynchronizer.get_time()
 	gameplay_started.emit()
+	PauseManager.enable_pause_inputs()
 
 ## Emits the signal to teleport players to the results screen.
 func on_minigame_finished() -> void:
@@ -303,6 +304,7 @@ func on_minigame_finished() -> void:
 
 # Calculate the minigame winners and plays the proper results screen.
 func start_results() -> void:
+	PauseManager.disable_pause_inputs()
 	if NetworkManager.is_online && !NetworkManager.is_hosting_game:
 		return
 	

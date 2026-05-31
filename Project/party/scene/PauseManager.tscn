@@ -1,0 +1,1287 @@
+[gd_scene load_steps=41 format=3 uid="uid://bo28buveqm1x7"]
+
+[ext_resource type="Script" uid="uid://c7w0ai4nk1km6" path="res://party/script/core/pause_manager.gd" id="1_bxnpo"]
+[ext_resource type="Material" uid="uid://bhbsafmnnhtdb" path="res://effect/material/Canvas Item Add.tres" id="1_kb2eb"]
+[ext_resource type="Texture2D" uid="uid://d3svma0uvqtgk" path="res://interface/gameplay/pause/texture/PaperUpdated.png" id="2_bxnpo"]
+[ext_resource type="Texture2D" uid="uid://hqhhv5t5s5gt" path="res://interface/gameplay/pause/texture/scroll_L_Solid.png" id="3_oa8qm"]
+[ext_resource type="Texture2D" uid="uid://xnq4tv0n8xkl" path="res://interface/gameplay/pause/texture/scroll_R_Solid.png" id="4_nr14b"]
+[ext_resource type="LabelSettings" uid="uid://c2ppn463q7sif" path="res://interface/font/PauseOptionFont.tres" id="5_rvsgb"]
+[ext_resource type="Texture2D" uid="uid://deahdnedco0h8" path="res://interface/gameplay/pause/texture/flame/pause flame 1.png" id="6_pyn28"]
+[ext_resource type="Texture2D" uid="uid://dbdjvlt5egcbi" path="res://interface/gameplay/pause/texture/flame/pause flame 2.png" id="7_vuf44"]
+[ext_resource type="Texture2D" uid="uid://dx4vxnhtgd13t" path="res://interface/menu/common/common menu atlas.png" id="8_bc0oc"]
+[ext_resource type="Texture2D" uid="uid://ftko0u3nnv8" path="res://interface/gameplay/pause/texture/text/status/status common en.png" id="9_cxvtt"]
+[ext_resource type="LabelSettings" uid="uid://b3k06q5urpxjh" path="res://interface/font/PauseStatus.tres" id="10_dwrbf"]
+[ext_resource type="FontFile" uid="uid://b60t6w3shtof1" path="res://interface/font/bitmap fonts/Status Numbers en.fnt" id="11_6ftkh"]
+[ext_resource type="Texture2D" uid="uid://dlyp2y2l5p5er" path="res://interface/gameplay/hud/texture/ring_atlas.png" id="12_5gljb"]
+[ext_resource type="FontFile" uid="uid://d1bvfghhgreq7" path="res://interface/font/otf/Rodin DB.otf" id="13_xl66c"]
+[ext_resource type="Texture2D" uid="uid://b6eevqhlu5ymx" path="res://interface/menu/level select/texture/fire soul.png" id="14_jk4nn"]
+[ext_resource type="Texture2D" uid="uid://bongvk7uwqsco" path="res://interface/menu/level select/texture/gold.png" id="15_317bo"]
+[ext_resource type="PackedScene" uid="uid://c4ohuqlywe4f" path="res://interface/menu/Description.tscn" id="16_f5v4c"]
+[ext_resource type="AudioStream" uid="uid://dc6pp0ugxo4e3" path="res://sound/sfx/system/menu pause.wav" id="17_u6xpx"]
+[ext_resource type="AudioStream" uid="uid://cl54rftw5aiyf" path="res://sound/sfx/system/menu cancel.wav" id="18_qc4jp"]
+[ext_resource type="AudioStream" uid="uid://huxte6rhwx58" path="res://sound/sfx/system/menu selection.wav" id="19_3h16x"]
+[ext_resource type="AudioStream" uid="uid://cruu5h1jr78lr" path="res://sound/sfx/system/menu screen change.wav" id="20_lqgvq"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ubgac"]
+atlas = ExtResource("6_pyn28")
+region = Rect2(0, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_uoo77"]
+atlas = ExtResource("6_pyn28")
+region = Rect2(64, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_aqkui"]
+atlas = ExtResource("6_pyn28")
+region = Rect2(0, 64, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_uw2dy"]
+atlas = ExtResource("6_pyn28")
+region = Rect2(64, 64, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_xpij4"]
+atlas = ExtResource("7_vuf44")
+region = Rect2(0, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_rvxmn"]
+atlas = ExtResource("7_vuf44")
+region = Rect2(64, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_bx73f"]
+atlas = ExtResource("7_vuf44")
+region = Rect2(0, 64, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_juxxt"]
+atlas = ExtResource("7_vuf44")
+region = Rect2(64, 64, 64, 64)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_6xsmk"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ubgac")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_uoo77")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_aqkui")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_uw2dy")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_xpij4")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_rvxmn")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_bx73f")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_juxxt")
+}],
+"loop": true,
+"name": &"default",
+"speed": 30.0
+}]
+
+[sub_resource type="Animation" id="Animation_vpj2a"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Cursor:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(1, 1)]
+}
+
+[sub_resource type="Animation" id="Animation_u8ec1"]
+resource_name = "hide"
+length = 0.200003
+step = 0.0333333
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Cursor:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.0666667, 0.166667),
+"transitions": PackedFloat32Array(0.5, 1, 1),
+"update": 0,
+"values": [Vector2(1, 1), Vector2(1.2, 1.2), Vector2(1e-05, 1e-05)]
+}
+tracks/1/type = "method"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("../../..")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0.2),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"update_cursor_position"
+}]
+}
+
+[sub_resource type="Animation" id="Animation_pqbfb"]
+resource_name = "move"
+length = 0.13333654
+step = 0.0333333
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Cursor:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.06666667, 0.13333334),
+"transitions": PackedFloat32Array(0.5, 1, 1),
+"update": 0,
+"values": [Vector2(1, 1), Vector2(1.2, 1.2), Vector2(1e-05, 1e-05)]
+}
+tracks/1/type = "method"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("../../..")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0.13316634),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"update_cursor_position"
+}]
+}
+
+[sub_resource type="Animation" id="Animation_8g051"]
+resource_name = "show"
+length = 0.16666985
+step = 0.0333333
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Cursor:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.033333335, 0.09999964, 0.13333364),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 0,
+"values": [Vector2(0, 0), Vector2(0.6, 1.5), Vector2(1.12, 0.8), Vector2(1, 1)]
+}
+tracks/1/type = "method"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("../../..")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0.033266637),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"enable_cursor_movement"
+}]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_cgr6b"]
+_data = {
+&"RESET": SubResource("Animation_vpj2a"),
+&"hide": SubResource("Animation_u8ec1"),
+&"move": SubResource("Animation_pqbfb"),
+&"show": SubResource("Animation_8g051")
+}
+
+[sub_resource type="Animation" id="Animation_5bjqt"]
+resource_name = "RESET"
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Pause:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Pause/LeftPosition/ScrollLeft:position")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(-95, 0)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Pause/RightPosition/ScrollRight:position")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(-95, 0)]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("Pause/LeftPosition:anchor_left")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.0]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("Pause/LeftPosition:anchor_right")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.0]
+}
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("Pause/RightPosition:anchor_left")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [1.0]
+}
+tracks/6/type = "value"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("Pause/RightPosition:anchor_right")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [1.0]
+}
+tracks/7/type = "value"
+tracks/7/imported = false
+tracks/7/enabled = true
+tracks/7/path = NodePath("Pause/Clip:anchor_left")
+tracks/7/interp = 1
+tracks/7/loop_wrap = true
+tracks/7/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.0]
+}
+tracks/8/type = "value"
+tracks/8/imported = false
+tracks/8/enabled = true
+tracks/8/path = NodePath("Pause/Clip:anchor_right")
+tracks/8/interp = 1
+tracks/8/loop_wrap = true
+tracks/8/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [1.0]
+}
+
+[sub_resource type="Animation" id="Animation_y5522"]
+resource_name = "hide"
+length = 0.26667002
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Pause:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.175),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 1), Color(1, 1, 1, 0)]
+}
+tracks/1/type = "method"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath(".")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0.2, 0.23333333),
+"transitions": PackedFloat32Array(1, 1),
+"values": [{
+"args": [],
+"method": &"unpause_tree"
+}, {
+"args": [],
+"method": &"enable_pause_inputs"
+}]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Pause/LeftPosition/ScrollLeft:position")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(-95, 0)]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("Pause/RightPosition/ScrollRight:position")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(-95, 0)]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("Pause/LeftPosition:anchor_left")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.0]
+}
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("Pause/LeftPosition:anchor_right")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.0]
+}
+tracks/6/type = "value"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("Pause/RightPosition:anchor_left")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [1.0]
+}
+tracks/7/type = "value"
+tracks/7/imported = false
+tracks/7/enabled = true
+tracks/7/path = NodePath("Pause/RightPosition:anchor_right")
+tracks/7/interp = 1
+tracks/7/loop_wrap = true
+tracks/7/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [1.0]
+}
+tracks/8/type = "value"
+tracks/8/imported = false
+tracks/8/enabled = true
+tracks/8/path = NodePath("Pause/Clip:anchor_left")
+tracks/8/interp = 1
+tracks/8/loop_wrap = true
+tracks/8/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.0]
+}
+tracks/9/type = "value"
+tracks/9/imported = false
+tracks/9/enabled = true
+tracks/9/path = NodePath("Pause/Clip:anchor_right")
+tracks/9/interp = 1
+tracks/9/loop_wrap = true
+tracks/9/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [1.0]
+}
+
+[sub_resource type="Animation" id="Animation_kmakp"]
+resource_name = "init"
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Pause:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 0)]
+}
+
+[sub_resource type="Animation" id="Animation_1kq15"]
+resource_name = "show"
+length = 0.3
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Pause:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.133333),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 1)]
+}
+tracks/1/type = "method"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath(".")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0.26666668),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"enable_processing"
+}]
+}
+tracks/2/type = "method"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("SFX/PauseSFX")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [0.0],
+"method": &"play"
+}]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("Pause/LeftPosition/ScrollLeft:position")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0, 0.13333334),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector2(-185, 0), Vector2(-95, 0)]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("Pause/RightPosition/ScrollRight:position")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0, 0.13333334),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector2(-5, 0), Vector2(-95, 0)]
+}
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("Pause/LeftPosition:anchor_left")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0, 0.13333334),
+"transitions": PackedFloat32Array(0.5, 1),
+"update": 0,
+"values": [0.5, 0.0]
+}
+tracks/6/type = "value"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("Pause/LeftPosition:anchor_right")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"times": PackedFloat32Array(0, 0.13333334),
+"transitions": PackedFloat32Array(0.5, 1),
+"update": 0,
+"values": [0.5, 0.0]
+}
+tracks/7/type = "value"
+tracks/7/imported = false
+tracks/7/enabled = true
+tracks/7/path = NodePath("Pause/RightPosition:anchor_left")
+tracks/7/interp = 1
+tracks/7/loop_wrap = true
+tracks/7/keys = {
+"times": PackedFloat32Array(0, 0.13333334),
+"transitions": PackedFloat32Array(0.5, 1),
+"update": 0,
+"values": [0.5, 1.0]
+}
+tracks/8/type = "value"
+tracks/8/imported = false
+tracks/8/enabled = true
+tracks/8/path = NodePath("Pause/RightPosition:anchor_right")
+tracks/8/interp = 1
+tracks/8/loop_wrap = true
+tracks/8/keys = {
+"times": PackedFloat32Array(0, 0.13333334),
+"transitions": PackedFloat32Array(0.5, 1),
+"update": 0,
+"values": [0.5, 1.0]
+}
+tracks/9/type = "value"
+tracks/9/imported = false
+tracks/9/enabled = true
+tracks/9/path = NodePath("Pause/Clip:anchor_left")
+tracks/9/interp = 1
+tracks/9/loop_wrap = true
+tracks/9/keys = {
+"times": PackedFloat32Array(0, 0.13333334),
+"transitions": PackedFloat32Array(0.5, 1),
+"update": 0,
+"values": [0.5, 0.0]
+}
+tracks/10/type = "value"
+tracks/10/imported = false
+tracks/10/enabled = true
+tracks/10/path = NodePath("Pause/Clip:anchor_right")
+tracks/10/interp = 1
+tracks/10/loop_wrap = true
+tracks/10/keys = {
+"times": PackedFloat32Array(0, 0.13333334),
+"transitions": PackedFloat32Array(0.5, 1),
+"update": 0,
+"values": [0.5, 1.0]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_kb2eb"]
+_data = {
+&"RESET": SubResource("Animation_5bjqt"),
+&"hide": SubResource("Animation_y5522"),
+&"init": SubResource("Animation_kmakp"),
+&"show": SubResource("Animation_1kq15")
+}
+
+[node name="PauseManager" type="Control" node_paths=PackedStringArray("options", "cursor", "cursor_animator", "animator")]
+process_mode = 3
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_bxnpo")
+options = [NodePath("Pause/Options/Continue"), NodePath("Pause/Options/Quit")]
+cursor = NodePath("Pause/Options/PauseCursorAnchor")
+cursor_animator = NodePath("Pause/Options/PauseCursorAnchor/PauseCursorAnimator")
+animator = NodePath("PageAnimator")
+
+[node name="Pause" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0, 0, 0, 0.705882)
+
+[node name="Clip" type="Control" parent="Pause"]
+clip_contents = true
+layout_mode = 1
+anchor_top = 0.02
+anchor_right = 1.0
+anchor_bottom = 0.98
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Background" type="TextureRect" parent="Pause/Clip"]
+material = ExtResource("1_kb2eb")
+clip_contents = true
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -296.0
+offset_right = 2155.0
+offset_bottom = 21.0
+grow_horizontal = 2
+grow_vertical = 2
+pivot_offset = Vector2(960, 540)
+mouse_filter = 2
+texture = ExtResource("2_bxnpo")
+
+[node name="LeftPosition" type="Control" parent="Pause"]
+layout_mode = 1
+anchors_preset = 9
+anchor_bottom = 1.0
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="ScrollLeft" type="TextureRect" parent="Pause/LeftPosition"]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -95.0
+offset_right = 95.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("3_oa8qm")
+
+[node name="RightPosition" type="Control" parent="Pause"]
+layout_mode = 1
+anchors_preset = 11
+anchor_left = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 0
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="ScrollRight" type="TextureRect" parent="Pause/RightPosition"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.5
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -95.0
+offset_right = 95.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("4_nr14b")
+
+[node name="Options" type="Control" parent="Pause"]
+layout_mode = 1
+anchor_left = 0.133
+anchor_right = 0.133
+offset_left = 0.6399994
+offset_top = 720.0
+offset_right = 0.6399994
+offset_bottom = 720.0
+mouse_filter = 2
+
+[node name="Continue" type="Label" parent="Pause/Options"]
+self_modulate = Color(1, 1, 1, 0.588235)
+layout_mode = 1
+anchors_preset = -1
+offset_right = 374.0
+offset_bottom = 48.0
+mouse_filter = 0
+text = "pause_continue"
+label_settings = ExtResource("5_rvsgb")
+uppercase = true
+
+[node name="Glow" type="Label" parent="Pause/Options/Continue"]
+self_modulate = Color(1, 1, 1, 0)
+material = ExtResource("1_kb2eb")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "pause_continue"
+label_settings = ExtResource("5_rvsgb")
+uppercase = true
+
+[node name="Restart" type="Label" parent="Pause/Options"]
+self_modulate = Color(1, 1, 1, 0.588235)
+layout_mode = 1
+anchors_preset = -1
+offset_top = 50.0
+offset_right = 408.0
+offset_bottom = 80.0
+mouse_filter = 0
+text = "pause_restart"
+label_settings = ExtResource("5_rvsgb")
+uppercase = true
+
+[node name="Glow" type="Label" parent="Pause/Options/Restart"]
+self_modulate = Color(1, 1, 1, 0)
+material = ExtResource("1_kb2eb")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "pause_restart"
+label_settings = ExtResource("5_rvsgb")
+uppercase = true
+
+[node name="Status" type="Label" parent="Pause/Options"]
+self_modulate = Color(1, 1, 1, 0.588235)
+layout_mode = 1
+anchors_preset = -1
+offset_top = 100.0
+offset_right = 318.0
+offset_bottom = 112.0
+mouse_filter = 0
+text = "pause_status"
+label_settings = ExtResource("5_rvsgb")
+uppercase = true
+
+[node name="Glow" type="Label" parent="Pause/Options/Status"]
+self_modulate = Color(1, 1, 1, 0)
+material = ExtResource("1_kb2eb")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "pause_status"
+label_settings = ExtResource("5_rvsgb")
+uppercase = true
+
+[node name="Skill" type="Label" parent="Pause/Options"]
+self_modulate = Color(1, 1, 1, 0.588235)
+layout_mode = 1
+anchors_preset = -1
+offset_top = 150.0
+offset_right = 273.0
+offset_bottom = 198.0
+mouse_filter = 0
+text = "pause_skill"
+label_settings = ExtResource("5_rvsgb")
+uppercase = true
+
+[node name="Glow" type="Label" parent="Pause/Options/Skill"]
+self_modulate = Color(1, 1, 1, 0)
+material = ExtResource("1_kb2eb")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "pause_skill"
+label_settings = ExtResource("5_rvsgb")
+uppercase = true
+
+[node name="Quit" type="Label" parent="Pause/Options"]
+self_modulate = Color(1, 1, 1, 0.588235)
+layout_mode = 1
+anchors_preset = -1
+offset_top = 200.0
+offset_right = 309.0
+offset_bottom = 248.0
+mouse_filter = 0
+text = "pause_quit"
+label_settings = ExtResource("5_rvsgb")
+uppercase = true
+
+[node name="Glow" type="Label" parent="Pause/Options/Quit"]
+self_modulate = Color(1, 1, 1, 0)
+material = ExtResource("1_kb2eb")
+layout_mode = 0
+text = "pause_quit"
+label_settings = ExtResource("5_rvsgb")
+uppercase = true
+
+[node name="PauseCursorAnchor" type="Control" parent="Pause/Options"]
+layout_mode = 1
+offset_bottom = 24.0
+scale = Vector2(2, 2)
+mouse_filter = 2
+
+[node name="Cursor" type="AnimatedSprite2D" parent="Pause/Options/PauseCursorAnchor"]
+material = ExtResource("1_kb2eb")
+position = Vector2(-16, 12)
+sprite_frames = SubResource("SpriteFrames_6xsmk")
+autoplay = "default"
+offset = Vector2(0, -20)
+metadata/_edit_use_anchors_ = true
+
+[node name="PauseCursorAnimator" type="AnimationPlayer" parent="Pause/Options/PauseCursorAnchor"]
+libraries = {
+&"": SubResource("AnimationLibrary_cgr6b")
+}
+
+[node name="StatusMenu" type="Control" parent="Pause"]
+layout_mode = 1
+anchor_left = 0.86700004
+anchor_right = 0.86700004
+offset_left = -1384.6401
+offset_right = -1384.6401
+mouse_filter = 2
+
+[node name="ValueMenu" type="Node2D" parent="Pause/StatusMenu"]
+modulate = Color(1, 1, 1, 0)
+position = Vector2(1000, 448)
+
+[node name="BG" type="NinePatchRect" parent="Pause/StatusMenu/ValueMenu"]
+anchors_preset = -1
+offset_left = -368.0
+offset_top = -288.0
+offset_right = -304.0
+offset_bottom = -224.0
+pivot_offset = Vector2(368, 266)
+texture = ExtResource("8_bc0oc")
+region_rect = Rect2(128, 352, 96, 96)
+patch_margin_left = 32
+patch_margin_top = 32
+patch_margin_right = 32
+patch_margin_bottom = 32
+
+[node name="Top" type="Sprite2D" parent="Pause/StatusMenu/ValueMenu"]
+visible = false
+scale = Vector2(2.25, 2.25)
+texture = ExtResource("9_cxvtt")
+region_enabled = true
+region_rect = Rect2(0, 436, 396, 32)
+
+[node name="LevelTop" type="Sprite2D" parent="Pause/StatusMenu/ValueMenu"]
+scale = Vector2(2.25, 2.25)
+texture = ExtResource("9_cxvtt")
+region_enabled = true
+region_rect = Rect2(0, 8, 396, 48)
+
+[node name="Bottom" type="Sprite2D" parent="Pause/StatusMenu/ValueMenu"]
+scale = Vector2(2.25, 2.25)
+texture = ExtResource("9_cxvtt")
+region_enabled = true
+region_rect = Rect2(0, 472, 396, 32)
+
+[node name="Status" type="Node2D" parent="Pause/StatusMenu/ValueMenu"]
+modulate = Color(1, 1, 1, 0)
+
+[node name="Level" type="Label" parent="Pause/StatusMenu/ValueMenu/Status"]
+modulate = Color(0, 0, 0, 1)
+anchors_preset = -1
+offset_right = 194.0
+offset_bottom = 53.0
+text = "pause_lv"
+label_settings = ExtResource("10_dwrbf")
+horizontal_alignment = 2
+vertical_alignment = 1
+uppercase = true
+metadata/_edit_use_anchors_ = true
+
+[node name="LevelValue" type="Label" parent="Pause/StatusMenu/ValueMenu/Status/Level"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 1.04167
+anchor_right = 1.35539
+anchor_bottom = 1.0
+theme_override_fonts/font = ExtResource("11_6ftkh")
+theme_override_font_sizes/font_size = 64
+text = "99"
+label_settings = ExtResource("10_dwrbf")
+vertical_alignment = 1
+metadata/_edit_use_anchors_ = true
+
+[node name="RingValue" type="Label" parent="Pause/StatusMenu/ValueMenu/Status/Level"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 2.30412
+anchor_right = 3.29897
+anchor_bottom = 0.981132
+text = "×999/999"
+label_settings = ExtResource("10_dwrbf")
+horizontal_alignment = 2
+vertical_alignment = 1
+metadata/_edit_use_anchors_ = true
+
+[node name="Ring" type="Sprite2D" parent="Pause/StatusMenu/ValueMenu/Status/Level"]
+position = Vector2(416, 24)
+scale = Vector2(0.65, 0.65)
+texture = ExtResource("12_5gljb")
+region_enabled = true
+region_rect = Rect2(0, 0, 120, 128)
+
+[node name="HighScore" type="Label" parent="Pause/StatusMenu/ValueMenu/Status"]
+modulate = Color(0, 0, 0, 1)
+anchors_preset = -1
+offset_right = 420.0
+offset_bottom = 53.0
+theme_override_fonts/font = ExtResource("11_6ftkh")
+theme_override_font_sizes/font_size = 64
+text = "pause_high_score"
+label_settings = ExtResource("10_dwrbf")
+vertical_alignment = 1
+text_overrun_behavior = 1
+uppercase = true
+
+[node name="HighScoreValue" type="Label" parent="Pause/StatusMenu/ValueMenu/Status/HighScore"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 1.0
+anchor_right = 1.52083
+anchor_bottom = 1.0
+offset_top = 2.0
+offset_right = 1.2514
+offset_bottom = 2.0
+theme_override_fonts/font = ExtResource("11_6ftkh")
+theme_override_font_sizes/font_size = 64
+text = "00000000"
+label_settings = ExtResource("10_dwrbf")
+horizontal_alignment = 2
+vertical_alignment = 1
+metadata/_edit_use_anchors_ = true
+
+[node name="Score" type="Label" parent="Pause/StatusMenu/ValueMenu/Status"]
+modulate = Color(0, 0, 0, 1)
+anchors_preset = -1
+offset_right = 420.0
+offset_bottom = 53.0
+theme_override_fonts/font = ExtResource("11_6ftkh")
+theme_override_font_sizes/font_size = 64
+text = "pause_score"
+label_settings = ExtResource("10_dwrbf")
+vertical_alignment = 1
+uppercase = true
+
+[node name="ScoreValue" type="Label" parent="Pause/StatusMenu/ValueMenu/Status/Score"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 1.0
+anchor_right = 1.5288
+anchor_bottom = 1.04167
+offset_top = -0.208335
+offset_right = -2.09601
+offset_bottom = -0.208336
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_fonts/font = ExtResource("11_6ftkh")
+theme_override_font_sizes/font_size = 64
+text = "00000000"
+label_settings = ExtResource("10_dwrbf")
+horizontal_alignment = 2
+vertical_alignment = 1
+metadata/_edit_use_anchors_ = true
+
+[node name="BestTime" type="Label" parent="Pause/StatusMenu/ValueMenu/Status"]
+modulate = Color(0, 0, 0, 1)
+anchors_preset = -1
+offset_right = 420.0
+offset_bottom = 52.999992
+theme_override_fonts/font = ExtResource("11_6ftkh")
+theme_override_font_sizes/font_size = 64
+text = "pause_best_time"
+label_settings = ExtResource("10_dwrbf")
+vertical_alignment = 1
+uppercase = true
+
+[node name="BestTimeValue" type="Label" parent="Pause/StatusMenu/ValueMenu/Status/BestTime"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 1.0
+anchor_right = 1.5288
+anchor_bottom = 1.04167
+offset_top = -0.208335
+offset_right = -2.09601
+offset_bottom = -0.208336
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_fonts/font = ExtResource("11_6ftkh")
+theme_override_font_sizes/font_size = 64
+text = "00:00.00"
+label_settings = ExtResource("10_dwrbf")
+horizontal_alignment = 2
+vertical_alignment = 1
+metadata/_edit_use_anchors_ = true
+
+[node name="Time" type="Label" parent="Pause/StatusMenu/ValueMenu/Status"]
+modulate = Color(0, 0, 0, 1)
+anchors_preset = -1
+offset_right = 420.0
+offset_bottom = 53.0
+theme_override_fonts/font = ExtResource("11_6ftkh")
+theme_override_font_sizes/font_size = 64
+text = "pause_time"
+label_settings = ExtResource("10_dwrbf")
+vertical_alignment = 1
+uppercase = true
+
+[node name="TimeValue" type="Label" parent="Pause/StatusMenu/ValueMenu/Status/Time"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 1.0
+anchor_right = 1.5288
+anchor_bottom = 1.04167
+offset_top = -0.208335
+offset_right = -2.09601
+offset_bottom = -0.208336
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_fonts/font = ExtResource("11_6ftkh")
+theme_override_font_sizes/font_size = 64
+text = "00:00.00"
+label_settings = ExtResource("10_dwrbf")
+horizontal_alignment = 2
+vertical_alignment = 1
+metadata/_edit_use_anchors_ = true
+
+[node name="StageEXP" type="Label" parent="Pause/StatusMenu/ValueMenu/Status"]
+modulate = Color(0, 0, 0, 1)
+anchors_preset = -1
+offset_right = 420.0
+offset_bottom = 53.000023
+theme_override_fonts/font = ExtResource("11_6ftkh")
+theme_override_font_sizes/font_size = 64
+text = "pause_stage_exp"
+label_settings = ExtResource("10_dwrbf")
+vertical_alignment = 1
+uppercase = true
+
+[node name="StageEXPValue" type="Label" parent="Pause/StatusMenu/ValueMenu/Status/StageEXP"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 1.0
+anchor_right = 1.5288
+anchor_bottom = 1.04167
+offset_top = -0.208335
+offset_right = -2.09601
+offset_bottom = -0.208336
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_fonts/font = ExtResource("11_6ftkh")
+theme_override_font_sizes/font_size = 64
+text = "00000000"
+label_settings = ExtResource("10_dwrbf")
+horizontal_alignment = 2
+vertical_alignment = 1
+metadata/_edit_use_anchors_ = true
+
+[node name="TotalEXP" type="Label" parent="Pause/StatusMenu/ValueMenu/Status"]
+modulate = Color(0, 0, 0, 1)
+anchors_preset = -1
+offset_right = 420.0
+offset_bottom = 52.99997
+theme_override_fonts/font = ExtResource("11_6ftkh")
+theme_override_font_sizes/font_size = 64
+text = "pause_total_exp"
+label_settings = ExtResource("10_dwrbf")
+vertical_alignment = 1
+uppercase = true
+
+[node name="TotalEXPValue" type="Label" parent="Pause/StatusMenu/ValueMenu/Status/TotalEXP"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 1.0
+anchor_right = 1.5288
+anchor_bottom = 1.04167
+offset_top = -0.208335
+offset_right = -2.09601
+offset_bottom = -0.208336
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_fonts/font = ExtResource("11_6ftkh")
+theme_override_font_sizes/font_size = 64
+text = "00000000"
+label_settings = ExtResource("10_dwrbf")
+horizontal_alignment = 2
+vertical_alignment = 1
+metadata/_edit_use_anchors_ = true
+
+[node name="SoulGauge" type="Label" parent="Pause/StatusMenu/ValueMenu/Status"]
+modulate = Color(0, 0, 0, 1)
+anchors_preset = -1
+offset_right = 420.0
+offset_bottom = 52.999863
+theme_override_fonts/font = ExtResource("11_6ftkh")
+theme_override_font_sizes/font_size = 64
+text = "pause_gauge"
+label_settings = ExtResource("10_dwrbf")
+vertical_alignment = 1
+uppercase = true
+
+[node name="SoulGaugeValue" type="Label" parent="Pause/StatusMenu/ValueMenu/Status/SoulGauge"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 1.0
+anchor_right = 1.5288
+anchor_bottom = 1.04167
+offset_top = -0.208336
+offset_right = -2.09601
+offset_bottom = -0.208336
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_fonts/font = ExtResource("11_6ftkh")
+theme_override_font_sizes/font_size = 64
+text = "100/100"
+label_settings = ExtResource("10_dwrbf")
+horizontal_alignment = 2
+vertical_alignment = 1
+metadata/_edit_use_anchors_ = true
+
+[node name="Mission" type="Node2D" parent="Pause/StatusMenu/ValueMenu"]
+
+[node name="Header" type="Label" parent="Pause/StatusMenu/ValueMenu/Mission"]
+self_modulate = Color(1, 1, 1, 0)
+anchors_preset = -1
+offset_left = -343.0
+offset_top = -280.0
+offset_bottom = -236.0
+text = "pause_mission"
+label_settings = ExtResource("10_dwrbf")
+vertical_alignment = 1
+uppercase = true
+
+[node name="Type" type="Label" parent="Pause/StatusMenu/ValueMenu/Mission"]
+anchors_preset = -1
+offset_left = -343.0
+offset_top = -232.0
+offset_right = 11.0
+offset_bottom = -184.0
+theme_override_fonts/font = ExtResource("13_xl66c")
+theme_override_font_sizes/font_size = 32
+text = "Go for the Goal"
+vertical_alignment = 1
+
+[node name="Description" type="Label" parent="Pause/StatusMenu/ValueMenu/Mission"]
+anchors_preset = -1
+offset_left = -343.0
+offset_top = -176.0
+offset_right = 344.0
+theme_override_fonts/font = ExtResource("13_xl66c")
+theme_override_font_sizes/font_size = 32
+text = "Find King Shahryar!"
+autowrap_mode = 3
+metadata/_edit_use_anchors_ = true
+
+[node name="FireSoul" type="Label" parent="Pause/StatusMenu/ValueMenu/Mission"]
+modulate = Color(1, 1, 1, 0)
+anchors_preset = -1
+offset_left = -343.0
+offset_top = 40.0
+offset_bottom = 84.0
+text = "pause_fire_soul"
+label_settings = ExtResource("10_dwrbf")
+vertical_alignment = 1
+uppercase = true
+
+[node name="FireSoul1" type="TextureRect" parent="Pause/StatusMenu/ValueMenu/Mission/FireSoul"]
+modulate = Color(1, 1, 1, 0)
+layout_mode = 0
+offset_left = -25.0
+offset_top = 72.0
+offset_right = 71.0
+offset_bottom = 168.0
+mouse_filter = 2
+texture = ExtResource("14_jk4nn")
+expand_mode = 1
+
+[node name="FireSoul2" type="TextureRect" parent="Pause/StatusMenu/ValueMenu/Mission/FireSoul"]
+modulate = Color(1, 1, 1, 0)
+layout_mode = 0
+offset_left = 71.0
+offset_top = 72.0
+offset_right = 167.0
+offset_bottom = 168.0
+mouse_filter = 2
+texture = ExtResource("14_jk4nn")
+expand_mode = 1
+
+[node name="FireSoul3" type="TextureRect" parent="Pause/StatusMenu/ValueMenu/Mission/FireSoul"]
+modulate = Color(1, 1, 1, 0)
+layout_mode = 0
+offset_left = 167.0
+offset_top = 72.0
+offset_right = 263.0
+offset_bottom = 168.0
+mouse_filter = 2
+texture = ExtResource("14_jk4nn")
+expand_mode = 1
+
+[node name="Medal" type="Label" parent="Pause/StatusMenu/ValueMenu/Mission"]
+modulate = Color(1, 1, 1, 0)
+anchors_preset = -1
+offset_left = 64.0
+offset_top = 40.0
+offset_right = 407.0
+offset_bottom = 84.0
+text = "pause_medal"
+label_settings = ExtResource("10_dwrbf")
+vertical_alignment = 1
+uppercase = true
+
+[node name="Rank" type="TextureRect" parent="Pause/StatusMenu/ValueMenu/Mission/Medal"]
+modulate = Color(1, 1, 1, 0)
+layout_mode = 0
+offset_left = 88.0
+offset_top = 48.0
+offset_right = 146.0
+offset_bottom = 106.0
+scale = Vector2(2.5, 2.5)
+mouse_filter = 2
+texture = ExtResource("15_317bo")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Description" parent="Pause" instance=ExtResource("16_f5v4c")]
+layout_mode = 1
+
+[node name="SFX" type="Node" parent="."]
+
+[node name="PauseSFX" type="AudioStreamPlayer" parent="SFX"]
+stream = ExtResource("17_u6xpx")
+bus = &"SFX"
+
+[node name="CancelSFX" type="AudioStreamPlayer" parent="SFX"]
+stream = ExtResource("18_qc4jp")
+bus = &"SFX"
+
+[node name="SelectionSFX" type="AudioStreamPlayer" parent="SFX"]
+stream = ExtResource("19_3h16x")
+bus = &"SFX"
+
+[node name="ScreenChangeSFX" type="AudioStreamPlayer" parent="SFX"]
+stream = ExtResource("20_lqgvq")
+bus = &"SFX"
+
+[node name="PageAnimator" type="AnimationPlayer" parent="."]
+libraries = {
+&"": SubResource("AnimationLibrary_kb2eb")
+}
+autoplay = "init"

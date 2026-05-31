@@ -14,6 +14,9 @@ enum CURRENT_MODE_ENUM {
 }
 ## Represents the current game mode being played.
 var current_mode : CURRENT_MODE_ENUM = CURRENT_MODE_ENUM.COUNT
+@rpc("any_peer", "call_local", "reliable")
+func set_current_mode(mode : CURRENT_MODE_ENUM) -> void:
+	current_mode = mode
 
 signal players_initialized
 

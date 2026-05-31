@@ -62,6 +62,7 @@ func confirm() -> void:
 		
 		# Load attraction
 		disable_processing()
+		PartyManager.rpc("set_current_mode", get_mode_from_selection())
 		NetworkManager.rpc("load_scene", attraction_scenes[current_omochao_location], NetworkManager.TRANSITION_TYPE_ENUM.ATTRACTION)
 
 @rpc("any_peer", "call_local", "reliable")
@@ -125,3 +126,18 @@ func update_cursor_position(selection : Vector2i) -> void:
 	description.set_text("party_" + target_animation.replace("-", "_") + "_desc")
 	current_omochao_location = selection.x + selection.y * 3
 	selection_animator.play(target_animation)
+
+func get_mode_from_selection() -> PartyManager.CURRENT_MODE_ENUM:
+	if current_selection == Vector2i(0, 0):
+		return PartyManager.CURRENT_MODE_ENUM.WORLD_BAZAAR
+	elif current_selection == Vector2i(1, 0):
+		return PartyManager.CURRENT_MODE_ENUM.TOURNAMENT_PALACE
+	elif current_selection == Vector2i(2, 0):
+		return PartyManager.CURRENT_MODE_ENUM.GENIE_LAIR
+	elif current_selection == Vector2i(0, 1):
+		return PartyManager.CURRENT_MODE_ENUM.WORLD_LIBRARY
+	elif current_selection == Vector2i(1, 1):
+		return PartyManager.CURRENT_MODE_ENUM.TREASURE_HUNT
+	elif current_selection == Vector2i(2, 1):
+		return PartyManager.CURRENT_MODE_ENUM.PIRATE_COAST
+	return PartyManager.CURRENT_MODE_ENUM.COUNT

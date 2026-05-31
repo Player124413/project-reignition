@@ -33,7 +33,7 @@ func get_anim_prefix() -> String:
 	
 	return "%s/" % MinigameManager.ANIMATION_LIBRARY_PREFIX
 
-## Gets the input suffix for this player.
+## Gets the input suffix for the player currently controlling this menu.
 func get_input_suffix() -> String:
 	return str(PartyManager.get_player_data(player_index).local_player_index)
 
