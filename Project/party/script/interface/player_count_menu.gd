@@ -51,17 +51,17 @@ func show_online_menu() -> void:
 func add_player(device : int) -> void:
 	var data_index : int = PartyManager.get_first_player_index_device(0)
 	var local_player_index : int = PartyManager.get_player_count_device(device) + 1
-	var player_index : int
+	var first_index : int
 	if NetworkManager.is_online:
-		player_index = PartyManager.get_first_player_index_device(device)
-		player_index = PartyManager.get_player_data(player_index).player_index
+		first_index = PartyManager.get_first_player_index_device(device)
+		first_index = PartyManager.get_player_data(first_index).player_index
 	else:
-		player_index = PartyManager.get_first_player_index_device(0)
+		first_index = PartyManager.get_first_player_index_device(0)
 	
 	if !NetworkManager.is_hosting_game:
 		return
 	
-	PartyManager.rpc("set_player_indexes", data_index, player_index, device, local_player_index)
+	PartyManager.rpc("set_player_indexes", data_index, first_index, device, local_player_index)
 	for i in range(data_index + 1, PartyManager.MAX_PLAYER_COUNT):
 		var player_data : PlayerData = PartyManager.get_player_data(i)
 		PartyManager.rpc("set_player_indexes", i, player_data.player_index - 1, player_data.device, player_data.local_player_index)
@@ -74,9 +74,9 @@ func remove_player(device : int) -> void:
 	if !NetworkManager.is_hosting_game:
 		return
 	
-	var player_index : int = PartyManager.get_last_player_index_device(device) # Select the last player
+	var last_index : int = PartyManager.get_last_player_index_device(device) # Select the last player
 	var cpu_count : int = PartyManager.get_player_count_device(0)
-	for i in range(player_index, PartyManager.MAX_PLAYER_COUNT - 1):
+	for i in range(last_index, PartyManager.MAX_PLAYER_COUNT - 1):
 		# Shift all players down by one 
 		var next_player_data : PlayerData = PartyManager.get_player_data(i + 1)
 		player_count_options[i].rpc("switch_animation")
