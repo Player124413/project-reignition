@@ -55,7 +55,7 @@ public partial class LevelSelect : Menu
 
 	public bool IsWorldUnlocked()
 	{
-		if (DebugManager.Instance.UseDemoSave)
+		if (DebugManager.Instance.UseDemoSave || TimeAttackManager.Instance.IsRunActive) //Fixes bug where time attack would cause stages to remain unlocked in story
 		{
 			/// For the demo, assume the world is unlocked if a stage is available to play.
 			foreach (Node node in options.GetChildren())
