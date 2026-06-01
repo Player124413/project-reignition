@@ -26,6 +26,9 @@ func on_spawn_finished() -> void:
 	apply_movement()
 
 func process_movement_tick() -> void:
+	if !character_body.get_world_3d().space.is_valid():
+		return
+	
 	if character_body.is_on_floor():
 		var slide_vel : Vector3 = character_body.get_floor_normal()
 		slide_vel.y = 0.0

@@ -91,6 +91,9 @@ func process_inputs() -> void:
 		_input = get_cpu_input()
 
 func process_movement_tick() -> void:
+	if !character_body.get_world_3d().space.is_valid():
+		return
+	
 	var target_angle : float = _move_angle if _input.is_zero_approx() else Vector2.UP.angle_to(_input)
 	_is_walking = _input.length() < RUN_LENGTH
 	if allow_braking:
