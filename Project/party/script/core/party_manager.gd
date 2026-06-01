@@ -18,6 +18,9 @@ var current_mode : CURRENT_MODE_ENUM = CURRENT_MODE_ENUM.COUNT
 func set_current_mode(mode : CURRENT_MODE_ENUM) -> void:
 	current_mode = mode
 
+## The minigame resource currently queued to play.
+var queued_minigame : MinigameResource
+
 signal players_initialized
 
 ## An array containing all possible character datas.

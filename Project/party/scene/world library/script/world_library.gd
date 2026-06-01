@@ -8,6 +8,7 @@ extends Menu
 @export var default_parent : GridContainer
 ## Cursor used for the default menu.
 @export var default_cursor : Control
+@export var default_options : Array[Label]
 
 @export_group("Minigame Submenu")
 @export var minigame_page_root : Control
@@ -83,8 +84,7 @@ func start_confirm() -> void:
 	elif NetworkManager.is_hosting_game: # Load the currently selected minigame
 		var minigame_index : int = current_selection.x * minigame_option_list_parent.get_child_count()
 		minigame_index += current_selection.y
-		var minigame : MinigameResource = minigame_list[minigame_index]
-		rpc("load_minigame", minigame.scene_path)
+		rpc("load_minigame", minigame_index)
 
 func cancel() -> void:
 	if !NetworkManager.is_hosting_game:
@@ -177,6 +177,7 @@ func change_selection(input : Vector2i) -> void:
 		current_selection.x = (current_selection.x + input.x) % max_x
 		current_selection.y = (current_selection.y + input.y) % max_y
 		update_default_cursor_selection()
+		description.set_text(default_options[current_selection.x + current_selection.y * max_x].text + "_desc")
 	else: # TODO Add rankings and records
 		if input.x != 0 && current_minigame_list.size() > minigame_option_list.size():
 			var max_x : int = ceil(current_minigame_list.size() / (minigame_option_list.size() as float))
@@ -194,23 +195,25 @@ func update_minigame_cursor_selection() -> void:
 	minigame_cursor.reparent(minigame_option_list[current_selection.y], false)
 
 func show_menu() -> void:
-	super.show_menu()
+	super()
+	if NetworkManager.attraction_loaded.is_connected(Callable(self, "show_menu")):
+		NetworkManager.attraction_loaded.disconnect(Callable(self, "show_menu"))
 	if is_loading_from_minigame: # Advance to the end of the animation
 		animator.advance(animator.current_animation_length)
 		is_loading_from_minigame = false # Return to normal state
 
 func enable_processing() -> void:
-	super.enable_processing()
+	super()
 	
 	if current_menu == SUBMENUS.DEFAULT:
 		description.show_description()
 
 @rpc("any_peer", "call_local", "reliable")
-func load_minigame(minigame_path : String) -> void:
+func load_minigame(minigame_index : int) -> void:
+	PartyManager.queued_minigame = minigame_list[minigame_index]
 	is_loading_from_minigame = true # Store flag for return load
 	hide_menu()
 	disable_processing()
 	RuleManager.cancelled.connect(Callable(self, "show_menu"), ConnectFlags.CONNECT_ONE_SHOT)
 	RuleManager.show_menu()
-	RuleManager.set_minigame(minigame_path)
 	NetworkManager.attraction_loaded.connect(Callable(self, "show_menu"), ConnectFlags.CONNECT_ONE_SHOT)
