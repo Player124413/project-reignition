@@ -191,8 +191,14 @@ func change_selection(input : Vector2i) -> void:
 			if old_selection != current_selection.x:
 				animator.play("left" if input.x > 0 else "right")
 		elif input.y != 0:
-			current_selection.y = (current_selection.y + input.y) % max_minigame_selection
-			update_minigame_cursor_selection()
+			var old_selection : int = current_selection.y
+			current_selection.y += input.y
+			if current_selection.y < 0:
+				current_selection.y = max_minigame_selection - 1
+			elif current_selection.y >= max_minigame_selection:
+				current_selection.y = 0
+			if old_selection != current_selection.y:
+				update_minigame_cursor_selection()
 
 func update_default_cursor_selection() -> void:
 	default_cursor.reparent(default_parent.get_child(current_selection.x + (current_selection.y * 2)), false)
