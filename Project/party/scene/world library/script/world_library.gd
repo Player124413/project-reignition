@@ -182,8 +182,14 @@ func change_selection(input : Vector2i) -> void:
 		if input.x != 0 && current_minigame_list.size() > minigame_option_list.size():
 			var max_x : int = ceil(current_minigame_list.size() / (minigame_option_list.size() as float))
 			selection_type = SELECTION.LEFT if input.x > 0 else SELECTION.RIGHT
-			current_selection.x = (current_selection.x + input.x) % max_x
-			animator.play("left" if input.x > 0 else "right")
+			var old_selection : int = current_selection.x
+			current_selection.x += input.x
+			if current_selection.x < 0:
+				current_selection.x = max_x - 1
+			elif current_selection.x >= max_x:
+				current_selection.x = 0
+			if old_selection != current_selection.x:
+				animator.play("left" if input.x > 0 else "right")
 		elif input.y != 0:
 			current_selection.y = (current_selection.y + input.y) % max_minigame_selection
 			update_minigame_cursor_selection()
