@@ -239,6 +239,3 @@ func cancel_cpu_target_parasol() -> bool:
 		return true
 	
 	return false
-
-func get_cpu_interval() -> float:
-	return super()

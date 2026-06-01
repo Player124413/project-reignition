@@ -1,16 +1,55 @@
-[gd_scene load_steps=5 format=3 uid="uid://bpsepdd02p1mu"]
+[gd_scene load_steps=21 format=3 uid="uid://bpsepdd02p1mu"]
 
-[ext_resource type="Script" uid="uid://dwui7e8lqd857" path="res://party/scene/minigame/09 bubble catch/script/player_controller.gd" id="1_1fwt2"]
+[ext_resource type="Script" uid="uid://dwqpctgwsv6v4" path="res://party/scene/minigame/09 bubble catch/script/player_controller.gd" id="1_1fwt2"]
 [ext_resource type="PackedScene" uid="uid://d0acqwu5fg5qi" path="res://party/scene/minigame/09 bubble catch/model/BubbleMaker.glb" id="2_aq8h0"]
+[ext_resource type="Material" uid="uid://vt6wa3elicpr" path="res://party/scene/minigame/09 bubble catch/material/Bubble Maker P1.tres" id="2_knao0"]
 [ext_resource type="Script" uid="uid://ds056nimfywwr" path="res://party/script/core/rollback_timer.gd" id="3_30oml"]
+[ext_resource type="Material" uid="uid://cdw5gfbfvc7th" path="res://party/scene/minigame/09 bubble catch/material/Bubble Maker P2.tres" id="3_107j7"]
+[ext_resource type="Material" uid="uid://jyiej8ymv7xl" path="res://party/scene/minigame/09 bubble catch/material/Bubble Fill P1.tres" id="3_ammwu"]
+[ext_resource type="Material" uid="uid://c4stof3nfqxu8" path="res://party/scene/minigame/09 bubble catch/material/Bubble Maker P3.tres" id="4_go87n"]
+[ext_resource type="Material" uid="uid://0gm6al3kmr8g" path="res://party/scene/minigame/09 bubble catch/material/Bubble Maker P4.tres" id="5_pcc0g"]
+[ext_resource type="Material" uid="uid://cyr60do8xuomi" path="res://party/scene/minigame/09 bubble catch/material/Bubble Fill P2.tres" id="7_ifxnt"]
+[ext_resource type="Material" uid="uid://cmeruw058y1is" path="res://party/scene/minigame/09 bubble catch/material/Bubble Fill P3.tres" id="8_diljn"]
+[ext_resource type="Material" uid="uid://bakgrshau8frr" path="res://party/scene/minigame/09 bubble catch/material/Bubble Fill P4.tres" id="9_5yqee"]
+[ext_resource type="Material" uid="uid://vha3ft7wpjm2" path="res://party/scene/minigame/09 bubble catch/material/Bubble Trail P2.tres" id="11_15xhd"]
+[ext_resource type="Material" uid="uid://b3b3lepmh048x" path="res://party/scene/minigame/09 bubble catch/material/Bubble Trail P1.tres" id="11_diljn"]
+[ext_resource type="Material" uid="uid://cnkjmcm6ijsdl" path="res://party/scene/minigame/09 bubble catch/material/Bubble Trail P3.tres" id="12_6fp0f"]
+[ext_resource type="Material" uid="uid://b40v4s40xgnoe" path="res://party/scene/minigame/09 bubble catch/material/Bubble Trail P4.tres" id="13_1kgaf"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_ammwu"]
 radius = 3.0
 height = 8.0
 
-[node name="Player" type="Node3D" node_paths=PackedStringArray("hand_attachment", "rollback_timer", "character_body", "spawn_position")]
+[sub_resource type="Gradient" id="Gradient_1kgaf"]
+offsets = PackedFloat32Array(0.13939394, 0.22727273, 0.3969697, 0.73030305, 0.9, 1)
+colors = PackedColorArray(0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_lbem8"]
+gradient = SubResource("Gradient_1kgaf")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_1kgaf"]
+transparency = 1
+blend_mode = 1
+cull_mode = 2
+shading_mode = 0
+vertex_color_use_as_albedo = true
+albedo_texture = SubResource("GradientTexture1D_lbem8")
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_lbem8"]
+top_radius = 1.8
+bottom_radius = 1.8
+cap_top = false
+cap_bottom = false
+
+[node name="Player" type="Node3D" node_paths=PackedStringArray("hand_attachment", "bubble_maker_mesh", "fill_mesh", "trail_mesh", "rollback_timer", "character_body", "spawn_position")]
 script = ExtResource("1_1fwt2")
 hand_attachment = NodePath("HandAttachment")
+bubble_maker_mesh = NodePath("HandAttachment/BubbleMaker/BubbleMaker/BubbleMakerRoot/Skeleton3D/BubbleMakerMesh")
+fill_mesh = NodePath("HandAttachment/BubbleMaker/BubbleMaker/BubbleMakerRoot/Skeleton3D/BubbleMesh")
+trail_mesh = NodePath("HandAttachment/BubbleMaker/Trail")
+bubble_maker_materials = Array[Material]([ExtResource("2_knao0"), ExtResource("3_107j7"), ExtResource("4_go87n"), ExtResource("5_pcc0g")])
+bubble_fill_materials = Array[Material]([ExtResource("3_ammwu"), ExtResource("7_ifxnt"), ExtResource("8_diljn"), ExtResource("9_5yqee")])
+bubble_trail_materials = Array[ParticleProcessMaterial]([ExtResource("11_diljn"), ExtResource("11_15xhd"), ExtResource("12_6fp0f"), ExtResource("13_1kgaf")])
 rollback_timer = NodePath("Rollback")
 character_body = NodePath("CharacterBody3D")
 run_speed = 40.0
@@ -25,7 +64,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4, 0)
 shape = SubResource("CapsuleShape3D_ammwu")
 
 [node name="HandAttachment" type="BoneAttachment3D" parent="."]
-transform = Transform3D(0.09715116, -0.8994694, -0.4260477, -0.6018424, 0.2878461, -0.74493647, 0.7926837, 0.32878503, -0.5133742, -0.52526647, 4.305797, 2.785261)
+transform = Transform3D(1, 0, 0, 0, 0.99999994, -3.5762787e-07, 0, 3.5762787e-07, 0.99999994, 0, 0, 0)
 bone_name = "hand_attachment"
 bone_idx = 89
 
@@ -34,8 +73,23 @@ bone_idx = 89
 [node name="BubbleMaker" parent="HandAttachment/BubbleMaker" instance=ExtResource("2_aq8h0")]
 transform = Transform3D(1, 0, 0, 2.9802322e-08, 1.0000001, -1.4901161e-08, 5.9604645e-08, 0, 1, 0, 0, 0)
 
+[node name="Trail" type="GPUParticles3D" parent="HandAttachment/BubbleMaker"]
+transform = Transform3D(1, 0, 0, 0, -1, -8.742278e-08, 0, 8.742278e-08, -1, 0, -0.5, -4)
+layers = 32
+material_override = SubResource("StandardMaterial3D_1kgaf")
+emitting = false
+amount = 128
+lifetime = 0.4
+one_shot = true
+fixed_fps = 0
+fract_delta = false
+process_material = ExtResource("11_diljn")
+draw_pass_1 = SubResource("CylinderMesh_lbem8")
+
 [node name="Rollback" type="Node" parent="."]
 script = ExtResource("3_30oml")
 enable_lag_compensation = false
 param_count = 5
 rollback_interval = 0.0
+
+[editable path="HandAttachment/BubbleMaker/BubbleMaker"]
