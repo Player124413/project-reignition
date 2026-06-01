@@ -10,7 +10,7 @@ class_name PartyGameCharacterMover extends PartyGameCharacterSpawner
 @export var allow_instant_turn : bool = true
 @export var enable_gravity : bool
 @export var run_speed : float = 50.0
-@export var walk_speed : float = 20.0
+@export var walk_speed : float = 30.0
 @export var turn_speed : float = 15.0
 @export var in_place_turn_speed : float = 15.0
 @export var friction : float = 120.0

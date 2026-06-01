@@ -1,8 +1,13 @@
-[gd_scene load_steps=7 format=3 uid="uid://bt8ci68to4udh"]
+[gd_scene load_steps=15 format=3 uid="uid://bt8ci68to4udh"]
 
 [ext_resource type="PackedScene" uid="uid://dsbufs8tjchk7" path="res://party/scene/minigame/00 base/MinigameBase.tscn" id="1_y134v"]
 [ext_resource type="Resource" uid="uid://70fhnki7lnal" path="res://party/resource/minigame/09BubbleCatch.tres" id="2_nfdah"]
+[ext_resource type="AnimationLibrary" uid="uid://1monqcvh5eia" path="res://party/scene/minigame/09 bubble catch/animation/_Library.glb" id="3_g603l"]
 [ext_resource type="PackedScene" uid="uid://dy01asty2abp5" path="res://party/scene/minigame/09 bubble catch/model/Map.glb" id="3_nfdah"]
+[ext_resource type="PackedScene" uid="uid://f5w7fq20xmd1" path="res://party/scene/minigame/00 base/Time.tscn" id="4_lve3x"]
+[ext_resource type="PackedScene" uid="uid://bpsepdd02p1mu" path="res://party/scene/minigame/09 bubble catch/Player.tscn" id="5_1vgpw"]
+[ext_resource type="PackedScene" uid="uid://30sgb1pjxad8" path="res://party/scene/minigame/00 base/ScoreBottom.tscn" id="5_v04uk"]
+[ext_resource type="PackedScene" uid="uid://cubvnsgd7vvsr" path="res://party/scene/minigame/09 bubble catch/model/Collision.glb" id="6_v04uk"]
 
 [sub_resource type="Gradient" id="Gradient_nfdah"]
 offsets = PackedFloat32Array(0, 0.74848485, 1)
@@ -24,12 +29,103 @@ fog_density = 0.0005
 adjustment_enabled = true
 adjustment_color_correction = SubResource("GradientTexture1D_g603l")
 
+[sub_resource type="Animation" id="Animation_g603l"]
+resource_name = "intro"
+length = 3.0
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("../Camera:rotation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(-0.34906584, 0, 0)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("../Camera/Camera:position")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 1, 2, 3),
+"transitions": PackedFloat32Array(1, 2, 0.5, 1),
+"update": 0,
+"values": [Vector3(0, 0, 75), Vector3(0, 0, 75), Vector3(0, 0, 100), Vector3(0, 0, 120)]
+}
+tracks/2/type = "method"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath(".")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(3),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"request_minigame_start"
+}]
+}
+
+[sub_resource type="Animation" id="Animation_lve3x"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("../Camera:rotation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(-0.34906584, 0, 0)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("../Camera/Camera:position")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0, 0, 75)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_1vgpw"]
+_data = {
+&"RESET": SubResource("Animation_lve3x"),
+&"intro": SubResource("Animation_g603l")
+}
+
 [node name="Game" type="Node3D"]
 
-[node name="Minigame" parent="." instance=ExtResource("1_y134v")]
+[node name="Minigame" parent="." node_paths=PackedStringArray("intro_animator") instance=ExtResource("1_y134v")]
 minigame_resource = ExtResource("2_nfdah")
+anim_library = ExtResource("3_g603l")
+intro_animator = NodePath("../Camera/AnimationPlayer")
+
+[node name="Time" parent="Minigame" instance=ExtResource("4_lve3x")]
+layout_mode = 1
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -128.0
+offset_right = 128.0
+grow_horizontal = 2
+
+[node name="Scores" parent="Minigame" instance=ExtResource("5_v04uk")]
+layout_mode = 1
 
 [node name="Environment" type="Node3D" parent="."]
+
+[node name="Collision" parent="Environment" instance=ExtResource("6_v04uk")]
+visible = false
 
 [node name="Map" parent="Environment" instance=ExtResource("3_nfdah")]
 
@@ -99,10 +195,60 @@ light_specular = 0.0
 light_cull_mask = 2
 shadow_enabled = true
 shadow_caster_mask = 71
+directional_shadow_mode = 0
 directional_shadow_blend_splits = true
-directional_shadow_max_distance = 200.0
+directional_shadow_fade_start = 0.9
+directional_shadow_max_distance = 300.0
+
+[node name="ObjectLight" type="DirectionalLight3D" parent="Environment"]
+transform = Transform3D(-1, 0, 8.742278e-08, 7.5710346e-08, 0.49999997, 0.86602545, -4.3711385e-08, 0.86602545, -0.49999997, 0, 0, 0)
+layers = 1024
+light_color = Color(0.8233334, 0.8, 1, 1)
+light_energy = 0.8
+light_cull_mask = 1
+shadow_enabled = true
+shadow_caster_mask = 1
+directional_shadow_mode = 0
+directional_shadow_blend_splits = true
+directional_shadow_fade_start = 0.9
+directional_shadow_max_distance = 300.0
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="Environment"]
 environment = SubResource("Environment_r1xry")
 
+[node name="Player1" parent="." node_paths=PackedStringArray("score_counter") instance=ExtResource("5_1vgpw")]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -15, -0.8, 6.556708e-07)
+score_counter = NodePath("../Minigame/Scores/ScoreCounter1")
+
+[node name="Player2" parent="." node_paths=PackedStringArray("score_counter") instance=ExtResource("5_1vgpw")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, -6.556708e-07, -0.8, 15)
+player_index = 1
+score_counter = NodePath("../Minigame/Scores/ScoreCounter2")
+
+[node name="Player3" parent="." node_paths=PackedStringArray("score_counter") instance=ExtResource("5_1vgpw")]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 15, -0.8, 6.556708e-07)
+player_index = 2
+score_counter = NodePath("../Minigame/Scores/ScoreCounter3")
+
+[node name="Player4" parent="." node_paths=PackedStringArray("score_counter") instance=ExtResource("5_1vgpw")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.8, -15)
+player_index = 3
+score_counter = NodePath("../Minigame/Scores/ScoreCounter4")
+
+[node name="Camera" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.93969256, 0.3420201, 0, -0.3420201, 0.93969256, 0, 0, 0)
+
+[node name="Camera" type="Camera3D" parent="Camera"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 75)
+cull_mask = 1075
+fov = 35.0
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Camera"]
+root_node = NodePath("../../Minigame")
+libraries = {
+&"": SubResource("AnimationLibrary_1vgpw")
+}
+
+[editable path="Minigame"]
+[editable path="Minigame/Scores"]
 [editable path="Environment/Map"]
