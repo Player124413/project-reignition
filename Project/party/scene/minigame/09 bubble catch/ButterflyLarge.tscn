@@ -1,8 +1,17 @@
-[gd_scene load_steps=2 format=3 uid="uid://cgmhlqs2a37hh"]
+[gd_scene load_steps=5 format=3 uid="uid://cgmhlqs2a37hh"]
 
+[ext_resource type="Script" uid="uid://ct7vnasfi6n6a" path="res://party/scene/minigame/09 bubble catch/script/butterfly_controller.gd" id="1_5x0xv"]
 [ext_resource type="PackedScene" uid="uid://cuatk8mhosvg" path="res://party/scene/minigame/09 bubble catch/model/ButterflyLarge.glb" id="1_ahyre"]
+[ext_resource type="Script" uid="uid://ds056nimfywwr" path="res://party/script/core/rollback_timer.gd" id="3_drxti"]
 
-[node name="ButterflyLarge" type="Node3D"]
+[sub_resource type="SphereShape3D" id="SphereShape3D_ahyre"]
+radius = 5.0
+
+[node name="ButterflyLarge" type="Node3D" node_paths=PackedStringArray("root", "rollback_timer")]
+script = ExtResource("1_5x0xv")
+root = NodePath("ButterflyLarge")
+is_bonus = true
+rollback_timer = NodePath("RollbackTimer")
 
 [node name="ButterflyLarge" parent="." instance=ExtResource("1_ahyre")]
 
@@ -12,5 +21,18 @@ bones/2/rotation = Quaternion(0, 0, -0.5609394, 0.8278569)
 
 [node name="AnimationPlayer" parent="ButterflyLarge" index="1"]
 autoplay = "large"
+
+[node name="Area3D" type="Area3D" parent="."]
+collision_layer = 0
+monitorable = false
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 0)
+shape = SubResource("SphereShape3D_ahyre")
+
+[node name="RollbackTimer" type="Node" parent="."]
+script = ExtResource("3_drxti")
+authority_mode = 1
+metadata/_custom_type_script = "uid://ds056nimfywwr"
 
 [editable path="ButterflyLarge"]

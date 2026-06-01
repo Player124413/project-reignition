@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=3 uid="uid://bt8ci68to4udh"]
+[gd_scene load_steps=18 format=3 uid="uid://bt8ci68to4udh"]
 
 [ext_resource type="PackedScene" uid="uid://dsbufs8tjchk7" path="res://party/scene/minigame/00 base/MinigameBase.tscn" id="1_y134v"]
 [ext_resource type="Resource" uid="uid://70fhnki7lnal" path="res://party/resource/minigame/09BubbleCatch.tres" id="2_nfdah"]
@@ -8,6 +8,9 @@
 [ext_resource type="PackedScene" uid="uid://bpsepdd02p1mu" path="res://party/scene/minigame/09 bubble catch/Player.tscn" id="5_1vgpw"]
 [ext_resource type="PackedScene" uid="uid://30sgb1pjxad8" path="res://party/scene/minigame/00 base/ScoreBottom.tscn" id="5_v04uk"]
 [ext_resource type="PackedScene" uid="uid://cubvnsgd7vvsr" path="res://party/scene/minigame/09 bubble catch/model/Collision.glb" id="6_v04uk"]
+[ext_resource type="PackedScene" uid="uid://cahq5pchsg5xk" path="res://party/scene/minigame/09 bubble catch/ButterflySmall.tscn" id="9_4flk6"]
+[ext_resource type="Script" uid="uid://c7yri6ou5y87" path="res://party/scene/minigame/09 bubble catch/script/butterfly_manager.gd" id="9_jc3bp"]
+[ext_resource type="PackedScene" uid="uid://cgmhlqs2a37hh" path="res://party/scene/minigame/09 bubble catch/ButterflyLarge.tscn" id="10_jc3bp"]
 
 [sub_resource type="Gradient" id="Gradient_nfdah"]
 offsets = PackedFloat32Array(0, 0.74848485, 1)
@@ -234,6 +237,23 @@ score_counter = NodePath("../Minigame/Scores/ScoreCounter3")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.8, -15)
 player_index = 3
 score_counter = NodePath("../Minigame/Scores/ScoreCounter4")
+
+[node name="ButterflyManager" type="Node3D" parent="." node_paths=PackedStringArray("butterflies")]
+script = ExtResource("9_jc3bp")
+butterflies = [NodePath("ButterflySmall1"), NodePath("ButterflySmall2"), NodePath("ButterflySmall3"), NodePath("ButterflySmall4"), NodePath("ButterflyLarge1"), NodePath("ButterflyLarge2")]
+
+[node name="ButterflySmall1" parent="ButterflyManager" instance=ExtResource("9_4flk6")]
+
+[node name="ButterflySmall2" parent="ButterflyManager" instance=ExtResource("9_4flk6")]
+
+[node name="ButterflySmall3" parent="ButterflyManager" instance=ExtResource("9_4flk6")]
+
+[node name="ButterflySmall4" parent="ButterflyManager" instance=ExtResource("9_4flk6")]
+
+[node name="ButterflyLarge1" parent="ButterflyManager" instance=ExtResource("10_jc3bp")]
+
+[node name="ButterflyLarge2" parent="ButterflyManager" instance=ExtResource("10_jc3bp")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 20, 0)
 
 [node name="Camera" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 0.93969256, 0.3420201, 0, -0.3420201, 0.93969256, 0, 0, 0)
