@@ -1,7 +1,8 @@
-[gd_scene load_steps=31 format=3 uid="uid://bvr4uqeokuaj8"]
+[gd_scene load_steps=37 format=3 uid="uid://bvr4uqeokuaj8"]
 
-[ext_resource type="Texture2D" uid="uid://bwly4val6auxn" path="res://party/scene/minigame/00 rules/texture/rule flames.png" id="1_gaic2"]
-[ext_resource type="Texture2D" uid="uid://b1smr5yk80fqt" path="res://party/scene/minigame/00 rules/texture/rulebook.png" id="1_mjahg"]
+[ext_resource type="Texture2D" uid="uid://bwly4val6auxn" path="res://party/scene/rule manager/texture/rule flames.png" id="1_gaic2"]
+[ext_resource type="Script" uid="uid://bnfenvhg4nanb" path="res://party/script/interface/rule_manager.gd" id="1_gd8h5"]
+[ext_resource type="Texture2D" uid="uid://b1smr5yk80fqt" path="res://party/scene/rule manager/texture/rulebook.png" id="1_mjahg"]
 [ext_resource type="PackedScene" uid="uid://bqaafoua436c8" path="res://interface/menu/DescriptionParty.tscn" id="3_w2sj7"]
 [ext_resource type="PackedScene" uid="uid://crwawg2ivy3xd" path="res://interface/menu/NavigationButton.tscn" id="4_1gkbu"]
 [ext_resource type="LabelSettings" uid="uid://vp81pdi2vxo8" path="res://party/font/MinigameRuleName.tres" id="5_osdyi"]
@@ -176,13 +177,104 @@ animations = [{
 "speed": 24.0
 }]
 
-[node name="MinigameRules" type="Control"]
+[sub_resource type="Animation" id="Animation_l6me6"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:visible")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+
+[sub_resource type="Animation" id="Animation_dld6e"]
+resource_name = "hide"
+length = 0.4
+step = 0.05
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:visible")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.25, 0.4),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 1,
+"values": [true, true, false]
+}
+
+[sub_resource type="Animation" id="Animation_6d68q"]
+resource_name = "init"
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:visible")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+
+[sub_resource type="Animation" id="Animation_gd8h5"]
+resource_name = "show"
+length = 0.5
+step = 0.05
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:visible")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/1/type = "method"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath(".")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0.25),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"enable_processing"
+}]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_6d68q"]
+_data = {
+&"RESET": SubResource("Animation_l6me6"),
+&"hide": SubResource("Animation_dld6e"),
+&"init": SubResource("Animation_6d68q"),
+&"show": SubResource("Animation_gd8h5")
+}
+
+[node name="RuleManager" type="Control" node_paths=PackedStringArray("animator")]
+z_index = 9
+z_as_relative = false
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+script = ExtResource("1_gd8h5")
+animator = NodePath("AnimationPlayer")
 
 [node name="Background" type="TextureRect" parent="."]
 layout_mode = 1
@@ -278,6 +370,12 @@ offset_bottom = 100.0
 grow_horizontal = 0
 grow_vertical = 2
 texture = ExtResource("6_p7r22")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+&"": SubResource("AnimationLibrary_6d68q")
+}
+autoplay = "init"
 
 [editable path="DescriptionParty"]
 [editable path="DescriptionParty/NavigationButton"]

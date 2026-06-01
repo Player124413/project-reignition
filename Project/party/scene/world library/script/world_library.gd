@@ -207,9 +207,10 @@ func enable_processing() -> void:
 
 @rpc("any_peer", "call_local", "reliable")
 func load_minigame(minigame_path : String) -> void:
+	is_loading_from_minigame = true # Store flag for return load
 	hide_menu()
 	disable_processing()
-	is_loading_from_minigame = true # Store flag for return load
+	RuleManager.cancelled.connect(Callable(self, "show_menu"), ConnectFlags.CONNECT_ONE_SHOT)
+	RuleManager.show_menu()
+	RuleManager.set_minigame(minigame_path)
 	NetworkManager.attraction_loaded.connect(Callable(self, "show_menu"), ConnectFlags.CONNECT_ONE_SHOT)
-	if NetworkManager.is_hosting_game:
-		NetworkManager.rpc("load_scene", minigame_path, NetworkManager.TRANSITION_TYPE_ENUM.PARTY_GAME)
