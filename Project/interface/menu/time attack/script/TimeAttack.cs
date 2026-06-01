@@ -1,8 +1,6 @@
-using System.Linq;
 using Godot;
 using Godot.Collections;
 using Project.Core;
-using Project.Gameplay;
 
 namespace Project.Interface.Menus;
 
@@ -22,12 +20,10 @@ public partial class TimeAttack : Menu
 	protected override void SetUp()
 	{
 		currentSelection = 1;
-
 	}
 
 	public override void ShowMenu()
 	{
-
 		TimeAttackManager.Instance.SetRunActive(true);
 		SaveManager.ActiveSaveSlotIndex = SaveManager.SaveSlotCount; //Saves skills and presets on a hidden file
 		SaveManager.ActiveSkillRing.LoadFromActiveData();
@@ -77,9 +73,6 @@ public partial class TimeAttack : Menu
 
 		if (!bgm.Playing)
 			bgm.Play();
-
-
-
 	}
 
 	public override void OpenParentMenu()
