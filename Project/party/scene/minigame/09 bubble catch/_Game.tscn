@@ -1,0 +1,108 @@
+[gd_scene load_steps=7 format=3 uid="uid://bt8ci68to4udh"]
+
+[ext_resource type="PackedScene" uid="uid://dsbufs8tjchk7" path="res://party/scene/minigame/00 base/MinigameBase.tscn" id="1_y134v"]
+[ext_resource type="Resource" uid="uid://70fhnki7lnal" path="res://party/resource/minigame/09BubbleCatch.tres" id="2_nfdah"]
+[ext_resource type="PackedScene" uid="uid://dy01asty2abp5" path="res://party/scene/minigame/09 bubble catch/model/Map.glb" id="3_nfdah"]
+
+[sub_resource type="Gradient" id="Gradient_nfdah"]
+offsets = PackedFloat32Array(0, 0.74848485, 1)
+colors = PackedColorArray(0, 0, 0, 1, 0.8705301, 0.8359558, 0.7672175, 1, 1, 1, 1, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_g603l"]
+gradient = SubResource("Gradient_nfdah")
+
+[sub_resource type="Environment" id="Environment_r1xry"]
+ambient_light_source = 2
+ambient_light_color = Color(0.28849995, 0.21750002, 0.75, 1)
+tonemap_mode = 2
+tonemap_exposure = 1.2
+tonemap_white = 1.4
+glow_enabled = true
+fog_enabled = true
+fog_light_color = Color(0.06719999, 0.12767999, 0.24, 1)
+fog_density = 0.0005
+adjustment_enabled = true
+adjustment_color_correction = SubResource("GradientTexture1D_g603l")
+
+[node name="Game" type="Node3D"]
+
+[node name="Minigame" parent="." instance=ExtResource("1_y134v")]
+minigame_resource = ExtResource("2_nfdah")
+
+[node name="Environment" type="Node3D" parent="."]
+
+[node name="Map" parent="Environment" instance=ExtResource("3_nfdah")]
+
+[node name="st_117_map_Mesh_0000" parent="Environment/Map" index="0"]
+layers = 2
+cast_shadow = 0
+
+[node name="st_117_map_Mesh_0001" parent="Environment/Map" index="1"]
+layers = 2
+cast_shadow = 0
+
+[node name="st_117_map_Mesh_0002" parent="Environment/Map" index="2"]
+layers = 2
+cast_shadow = 0
+
+[node name="st_117_map_Mesh_0003" parent="Environment/Map" index="3"]
+layers = 2
+cast_shadow = 0
+
+[node name="st_117_map_Mesh_0005" parent="Environment/Map" index="4"]
+layers = 2
+cast_shadow = 0
+
+[node name="st_117_map_Mesh_0006" parent="Environment/Map" index="5"]
+layers = 2
+
+[node name="st_117_map_Mesh_0022" parent="Environment/Map" index="6"]
+layers = 2
+
+[node name="st_117_map_Mesh_0030" parent="Environment/Map" index="7"]
+layers = 2
+
+[node name="st_117_map_Mesh_0036" parent="Environment/Map" index="8"]
+layers = 2
+
+[node name="st_117_map_Mesh_0038" parent="Environment/Map" index="9"]
+layers = 2
+
+[node name="st_117_map_Mesh_0039" parent="Environment/Map" index="10"]
+layers = 2
+
+[node name="st_117_map_Mesh_0050" parent="Environment/Map" index="11"]
+layers = 2
+
+[node name="st_117_map_Mesh_0067" parent="Environment/Map" index="12"]
+layers = 2
+
+[node name="st_117_map_Mesh_0068" parent="Environment/Map" index="13"]
+layers = 2
+
+[node name="st_117_map_Mesh_0082" parent="Environment/Map" index="14"]
+layers = 2
+
+[node name="st_117_map_Mesh_0090" parent="Environment/Map" index="15"]
+layers = 2
+cast_shadow = 0
+
+[node name="st_117_map_Mesh_0093" parent="Environment/Map" index="16"]
+layers = 2
+
+[node name="EnvironmentLight" type="DirectionalLight3D" parent="Environment"]
+transform = Transform3D(-1, 0, 8.742278e-08, 7.5710346e-08, 0.49999997, 0.86602545, -4.3711385e-08, 0.86602545, -0.49999997, 0, 0, 0)
+layers = 1024
+light_color = Color(0.8233334, 0.8, 1, 1)
+light_energy = 0.8
+light_specular = 0.0
+light_cull_mask = 2
+shadow_enabled = true
+shadow_caster_mask = 71
+directional_shadow_blend_splits = true
+directional_shadow_max_distance = 200.0
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="Environment"]
+environment = SubResource("Environment_r1xry")
+
+[editable path="Environment/Map"]
