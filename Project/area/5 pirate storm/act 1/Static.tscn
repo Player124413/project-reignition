@@ -130,7 +130,7 @@ tracks/2/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 0,
-"values": [1.2]
+"values": [3.0]
 }
 tracks/3/type = "value"
 tracks/3/imported = false
@@ -181,7 +181,7 @@ tracks/2/keys = {
 "times": PackedFloat32Array(0, 1),
 "transitions": PackedFloat32Array(1, 1),
 "update": 0,
-"values": [1.2, 0.0]
+"values": [3.0, 0.0]
 }
 tracks/3/type = "value"
 tracks/3/imported = false
@@ -208,7 +208,7 @@ tracks/0/keys = {
 "times": PackedFloat32Array(0, 1),
 "transitions": PackedFloat32Array(1, 1),
 "update": 0,
-"values": [2.0, 0.0]
+"values": [1.0, 0.0]
 }
 tracks/1/type = "value"
 tracks/1/imported = false
@@ -260,7 +260,7 @@ tracks/0/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 0,
-"values": [2.0]
+"values": [1.0]
 }
 tracks/1/type = "value"
 tracks/1/imported = false
@@ -381,6 +381,7 @@ fog_depth_begin = 50.0
 fog_depth_end = 1500.0
 volumetric_fog_albedo = Color(0.154876, 0.154876, 0.154876, 1)
 adjustment_enabled = true
+adjustment_brightness = 1.2
 adjustment_saturation = 1.2
 
 [sub_resource type="Animation" id="Animation_djq2b"]
@@ -2022,15 +2023,16 @@ light_color = Color(0.697159, 0.804547, 0.963584, 1)
 light_energy = 0.3
 light_specular = 10.0
 light_cull_mask = 4293918785
-shadow_opacity = 0.4
-shadow_blur = 10.0
+shadow_enabled = true
+shadow_bias = 0.001
+shadow_caster_mask = 4293918785
 
 [node name="InteriorPlayerLight" type="DirectionalLight3D" parent="Lighting/CaveLightEvent"]
 transform = Transform3D(0.5, 3.78552e-08, 0.866025, 0.866025, -2.18557e-08, -0.5, -2.11758e-22, 1, -4.37114e-08, 0, 0, 0)
 layers = 1024
 light_color = Color(0.97, 0.96418, 0.7954, 1)
 light_energy = 0.0
-light_specular = 5.0
+light_specular = 2.0
 light_cull_mask = 4293918785
 shadow_blur = 10.0
 
@@ -2038,10 +2040,10 @@ shadow_blur = 10.0
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0, 0)
 layers = 1024
 light_color = Color(0.8275, 0.77, 1, 1)
-light_energy = 1.2
+light_energy = 3.0
 light_cull_mask = 4293918722
 shadow_enabled = true
-shadow_blur = 3.0
+shadow_bias = 0.001
 shadow_caster_mask = 4293918785
 directional_shadow_blend_splits = true
 
@@ -2101,8 +2103,8 @@ interior = true
 cull_mask = 0
 reflection_mask = 2
 ambient_mode = 2
-ambient_color = Color(0.2262, 0.228453, 0.26, 1)
-ambient_color_energy = 16.0
+ambient_color = Color(1, 1, 1, 1)
+ambient_color_energy = 0.35
 
 [node name="InteriorPlayerLighting" type="ReflectionProbe" parent="Lighting"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -295.383, 39.0278, 1574.26)

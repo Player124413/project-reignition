@@ -1,4 +1,4 @@
-[gd_scene load_steps=65 format=3 uid="uid://skx536edn7yd"]
+[gd_scene load_steps=67 format=3 uid="uid://skx536edn7yd"]
 
 [ext_resource type="PackedScene" uid="uid://g7vhevg8ipxh" path="res://area/1 sand oasis/act 2/environment/01Opening.tscn" id="1_vn5mm"]
 [ext_resource type="Script" uid="uid://dtkbvehtmy3em" path="res://object/stage/StageSettings.cs" id="1_yumdi"]
@@ -74,6 +74,77 @@ shader = ExtResource("30_n3txd")
 shader_parameter/movement_affect = 0.0
 shader_parameter/occlusion_affect = 0.0
 shader_parameter/albedo = ExtResource("31_t41dx")
+
+[sub_resource type="Shader" id="Shader_ken67"]
+code = "shader_type canvas_item;
+render_mode unshaded, blend_add;
+
+uniform sampler2D depth_tex : filter_linear;
+uniform sampler2D light_color : hint_default_white;
+uniform vec4 ray_color : source_color = vec4(1.0, 1.0, 1.0, 1.0);
+uniform float ray_length : hint_range(0.0, 1.0) = 1.0;
+uniform float ray_intensity : hint_range(0.0, 1.0) = 1.0;
+uniform float light_source_scale = 1.0;
+uniform float light_source_feather = 2.0;
+uniform float noise_strength : hint_range(0.0, 1.0) = 0.2;
+uniform vec2 light_source_pos = vec2(0.0, 0.0);
+uniform vec3 light_source_dir = vec3(0.5, -1.0, 0.25);
+uniform bool debug_mode = false;
+uniform float debug_dot_radius : hint_range(0.001, 0.05) = 0.01;
+
+const int SAMPLE_COUNT = 120;
+
+float random(vec2 uv) {
+	return fract(sin(dot(uv.xy, vec2(12.9898, 78.233))) * 43758.5453123);
+}
+
+void fragment() {
+	vec2 light_pos = light_source_pos;
+	vec2 ratio = vec2(SCREEN_PIXEL_SIZE.x / SCREEN_PIXEL_SIZE.y, 1.0);
+
+	if (debug_mode) {
+		vec2 diff = (UV - light_pos) / ratio;
+		float dist = length(diff);
+		float dot_mask = smoothstep(debug_dot_radius, debug_dot_radius * 0.5, dist);
+		COLOR.rgb = vec3(dot_mask);
+		COLOR.a = 1.0;
+	} else {
+		vec2 dir = UV - light_pos;
+		vec2 dir2 = UV / ratio - light_pos / ratio;
+		float light_rays = 0.0;
+		vec2 uv2;
+		float scale, l;
+
+		for (int i = 0; i < SAMPLE_COUNT; i++) {
+			scale = 1.0 - ray_length * (float(i) / float(SAMPLE_COUNT - 1));
+			vec2 sample_uv = dir * scale + light_pos;
+			l = 1.0 - texture(depth_tex, sample_uv).a;
+			uv2 = dir2 * scale * pow(light_source_scale, 2.0);
+			l *= smoothstep(1.0, 0.999 - light_source_feather, dot(uv2, uv2) * 4.0);
+			light_rays += l / float(SAMPLE_COUNT);
+		}
+
+		float n = 1.0 - random(UV) * noise_strength * smoothstep(0.999 - 1.25, 1.0, dot(dir2, dir2) * 2.0);
+		light_rays *= n;
+
+		COLOR.rgb = vec3(light_rays * ray_intensity) * texture(light_color, UV).rgb * ray_color.rgb;
+		COLOR.a = ray_color.a;
+	}
+}"
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_n3txd"]
+resource_local_to_scene = true
+shader = SubResource("Shader_ken67")
+shader_parameter/ray_color = Color(1, 0.69803923, 0.31764707, 1)
+shader_parameter/ray_length = 0.8000000380000001
+shader_parameter/ray_intensity = 0.770000036575
+shader_parameter/light_source_scale = 1.1999999999970896
+shader_parameter/light_source_feather = 1.5
+shader_parameter/noise_strength = 0.10000000475
+shader_parameter/light_source_pos = Vector2(0, 0)
+shader_parameter/light_source_dir = Vector3(0.5, -1, 0.25)
+shader_parameter/debug_mode = false
+shader_parameter/debug_dot_radius = 0.01
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_vii8o"]
 
@@ -547,6 +618,9 @@ surface_material_override/0 = ExtResource("31_eo4wn")
 [node name="stg010_sky_Mesh_0004" parent="Visuals/Skybox/SkyRoot/Skeleton3D" index="4"]
 visible = false
 
+[node name="ColorRect_LightRays" parent="Visuals/Skybox/DepthRenderer/CanvasLayerLightShafts" index="0"]
+material = SubResource("ShaderMaterial_n3txd")
+
 [node name="Lighting" type="Node3D" parent="."]
 
 [node name="ExteriorLighting" type="DirectionalLight3D" parent="Lighting"]
@@ -556,7 +630,7 @@ light_color = Color(0.821109, 0.737766, 0.475436, 1)
 light_energy = 0.2
 light_cull_mask = 4293918722
 shadow_enabled = true
-shadow_bias = 0.02
+shadow_bias = 0.001
 shadow_caster_mask = 4293918787
 directional_shadow_blend_splits = true
 
