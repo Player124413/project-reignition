@@ -90,8 +90,11 @@ public partial class ExperienceResult : Control
 		useMissionExp = SaveManager.ActiveGameData.LevelData.GetClearStatus(Stage.Data.LevelID) != SaveManager.LevelSaveData.LevelStatus.Cleared;
 		useAccumulatedExp = AccumulatedExp != 0;
 
-		SaveManager.ActiveGameData.level = CalculateLevel(SaveManager.ActiveGameData.exp); // Update from old save data, just in case
-		SaveManager.ActiveGameData.level = Mathf.Min(SaveManager.ActiveGameData.level, MaxLevel);
+		if (!TimeAttackManager.Instance.IsRunActive)
+		{
+			SaveManager.ActiveGameData.level = CalculateLevel(SaveManager.ActiveGameData.exp); // Update from old save data, just in case
+			SaveManager.ActiveGameData.level = Mathf.Min(SaveManager.ActiveGameData.level, MaxLevel);
+		}
 
 		initialMaxSoulPower = SaveManager.ActiveGameData.CalculateMaxSoulPower(false);
 	}
