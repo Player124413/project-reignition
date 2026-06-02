@@ -93,6 +93,11 @@ public partial class ReadyMenu : Menu
 					SaveManager.TimeData.CurrentRunType = TimeAttackManager.Instance.CurrentRunType;
 					SaveManager.SaveTimeAttackData(); //Overwrites currently saved run
 				}
+				else
+				{
+					SaveManager.TimeData.equippedSkillsSingle = SaveManager.ActiveGameData.equippedSkills;
+					SaveManager.TimeData.equippedAugmentsSingle = SaveManager.ActiveGameData.equippedAugments;
+				}
 
 				menuMemory[MemoryKeys.ActiveMenu] = (int)MemoryKeys.TimeAttack;
 			}

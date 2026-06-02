@@ -1619,6 +1619,11 @@ public partial class SaveManager : Node
 		public Array<SkillKey> equippedSkillsContinue;
 		///<summary>The player's saved augments for the run
 		public Dictionary<SkillKey, int> equippedAugmentsContinue;
+		///<summary>The player's saved skills for single runs
+		public Array<SkillKey> equippedSkillsSingle;
+		///<summary>The player's saved augments for single runs
+		public Dictionary<SkillKey, int> equippedAugmentsSingle;
+
 
 		///<summary>Adds the current run to the saved runs</summary>
 		public void AddCurrentRun()
@@ -1693,6 +1698,8 @@ public partial class SaveManager : Node
 				{ nameof(CurrentPlacement), CurrentPlacement},
 				{ nameof(equippedSkillsContinue), ActiveGameData.SaveSkills(equippedSkillsContinue) },
 				{ nameof(equippedAugmentsContinue), ActiveGameData.SaveAugments(equippedAugmentsContinue) },
+				{ nameof(equippedSkillsSingle), ActiveGameData.SaveSkills(equippedSkillsSingle) },
+				{ nameof(equippedAugmentsSingle), ActiveGameData.SaveAugments(equippedAugmentsSingle) },
 
 			};
 		}
@@ -1723,6 +1730,15 @@ public partial class SaveManager : Node
 			if (dictionary.TryGetValue(nameof(equippedAugmentsContinue), out var))
 				equippedAugmentsContinue = ActiveGameData.LoadAugments((Dictionary<string, int>)var);
 
+			if (dictionary.TryGetValue(nameof(equippedSkillsSingle), out var))
+			{
+				equippedSkillsSingle = ActiveGameData.LoadSkills((Array<string>)var);
+				ActiveSkillRing.ValidateCrestSkills();
+			}
+
+			if (dictionary.TryGetValue(nameof(equippedAugmentsSingle), out var))
+				equippedAugmentsSingle = ActiveGameData.LoadAugments((Dictionary<string, int>)var);
+
 		}
 
 		public static TimeAttackData CreateDefaultData()
@@ -1736,6 +1752,8 @@ public partial class SaveManager : Node
 				RunInProgress = [],
 				equippedSkillsContinue = [],
 				equippedAugmentsContinue = [],
+				equippedSkillsSingle = [],
+				equippedAugmentsSingle = [],
 
 			};
 			return data;
