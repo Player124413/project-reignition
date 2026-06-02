@@ -3,6 +3,7 @@ extends Node3D
 signal despawned
 
 @export var animator : AnimationPlayer
+@export var particles : GPUParticles3D
 @export var rise_speed : float = 10.0
 @export var captured_rise_speed : float = 20.0
 
@@ -33,6 +34,7 @@ func spawn(pos : Vector3, size : int, tick : float) -> void:
 	animator.advance(0.0)
 	animator.play("move")
 	_lifetime = BUBBLE_LIFETIME - tick_offset
+	particles.RestartGroup()
 
 func despawn() -> void:
 	top_level = false
@@ -61,6 +63,7 @@ func collect_butterfly(butterfly_index : int, tick : float, popup_pos : Vector2)
 	
 	if current_butterfly == null:
 		animator.play("capture")
+		particles.RestartGroup()
 	
 	current_butterfly = target_butterfly
 	var score : int = 3 if current_butterfly.is_bonus else 1

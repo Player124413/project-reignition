@@ -1,14 +1,39 @@
-[gd_scene load_steps=7 format=3 uid="uid://cgmhlqs2a37hh"]
+[gd_scene load_steps=12 format=3 uid="uid://cgmhlqs2a37hh"]
 
 [ext_resource type="Script" uid="uid://ct7vnasfi6n6a" path="res://party/scene/minigame/09 bubble catch/script/butterfly_controller.gd" id="1_5x0xv"]
 [ext_resource type="PackedScene" uid="uid://cuatk8mhosvg" path="res://party/scene/minigame/09 bubble catch/model/ButterflyLarge.glb" id="1_ahyre"]
 [ext_resource type="Texture2D" uid="uid://bbxp6vo83xbo5" path="res://party/scene/minigame/05 parasol ball/texture/blob_shadow.png" id="3_8g5rf"]
 [ext_resource type="Script" uid="uid://ds056nimfywwr" path="res://party/script/core/rollback_timer.gd" id="3_drxti"]
+[ext_resource type="Material" uid="uid://bgdd5noueoc21" path="res://party/scene/minigame/09 bubble catch/material/Butterfly Dust.tres" id="5_qfnnp"]
 
 [sub_resource type="Curve" id="Curve_8g5rf"]
 _limits = [-3.0, 3.0, 0.0, 1.0]
 _data = [Vector2(0, 1.1920929e-07), 0.0, 47.66117, 0, 0, Vector2(0.11374408, 3), 0.0, 0.0, 0, 0, Vector2(0.8, -3), 0.0, 0.0, 0, 0, Vector2(1, 1.4901161e-08), 32.76709, 0.0, 0, 0]
 point_count = 4
+
+[sub_resource type="Curve" id="Curve_qfnnp"]
+_data = [Vector2(0, 0.5), 0.0, 4.592355, 0, 0, Vector2(0.2, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_1u1kh"]
+width = 64
+curve = SubResource("Curve_qfnnp")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_qfnnp"]
+emission_shape = 2
+emission_sphere_radius = 2.0
+angle_min = 1.0728836e-05
+angle_max = 360.00003
+spread = 180.0
+flatness = 1.0
+initial_velocity_min = 1.0
+initial_velocity_max = 2.0
+gravity = Vector3(0, -2, 0)
+scale_min = 0.5
+scale_max = 1.1999999
+scale_curve = SubResource("CurveTexture_1u1kh")
+
+[sub_resource type="QuadMesh" id="QuadMesh_qfnnp"]
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_ahyre"]
 radius = 2.5
@@ -32,6 +57,15 @@ cast_shadow = 0
 
 [node name="AnimationPlayer" parent="ButterflyLarge" index="1"]
 autoplay = "large"
+
+[node name="Dust" type="GPUParticles3D" parent="ButterflyLarge"]
+transform = Transform3D(1.6666665, 0, 0, 0, 1.6666665, 0, 0, 0, 1.6666665, 0, 0, 0)
+layers = 32
+material_override = ExtResource("5_qfnnp")
+fixed_fps = 0
+fract_delta = false
+process_material = SubResource("ParticleProcessMaterial_qfnnp")
+draw_pass_1 = SubResource("QuadMesh_qfnnp")
 
 [node name="Decal" type="Decal" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -15, 0)

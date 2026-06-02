@@ -1,10 +1,13 @@
-[gd_scene load_steps=15 format=3 uid="uid://ccwgyiyqqppfx"]
+[gd_scene load_steps=24 format=3 uid="uid://ccwgyiyqqppfx"]
 
 [ext_resource type="Script" uid="uid://ckucw62sohdjn" path="res://party/scene/minigame/09 bubble catch/script/bubble.gd" id="1_t3awv"]
 [ext_resource type="Material" uid="uid://wtqfiuc0wid2" path="res://party/scene/minigame/09 bubble catch/material/Bubble P1.tres" id="2_0q6sf"]
 [ext_resource type="Material" uid="uid://ba54rbpudb85k" path="res://party/scene/minigame/09 bubble catch/material/Bubble P2.tres" id="3_gcryn"]
 [ext_resource type="Material" uid="uid://s2unf4854er6" path="res://party/scene/minigame/09 bubble catch/material/Bubble P3.tres" id="4_ny18l"]
 [ext_resource type="Material" uid="uid://b2i832kokqqsx" path="res://party/scene/minigame/09 bubble catch/material/Bubble P4.tres" id="5_nmnon"]
+[ext_resource type="Material" uid="uid://iflvokbgfyys" path="res://party/scene/minigame/09 bubble catch/material/Bubble Swirl.tres" id="6_nmnon"]
+[ext_resource type="Script" uid="uid://c65ffkknyq6gr" path="res://addons/custom_nodes/script/GroupGpuParticles3D.cs" id="6_ny18l"]
+[ext_resource type="Material" uid="uid://cvqins8ml3b57" path="res://party/scene/minigame/09 bubble catch/material/Bubble Ring.tres" id="8_ybtt0"]
 
 [sub_resource type="QuadMesh" id="QuadMesh_t3awv"]
 
@@ -127,12 +130,47 @@ _data = {
 &"size3": SubResource("Animation_pvslu")
 }
 
-[node name="Bubble" type="Area3D" node_paths=PackedStringArray("animator", "mesh")]
+[sub_resource type="Curve" id="Curve_ybtt0"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.2, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_08xxq"]
+width = 64
+texture_mode = 1
+curve = SubResource("Curve_ybtt0")
+
+[sub_resource type="Curve" id="Curve_nmnon"]
+_data = [Vector2(0, 0.2), 0.0, 6.412748, 0, 0, Vector2(0.2, 1), 0.0, 0.0, 0, 0, Vector2(1, 0.6), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_ybtt0"]
+width = 64
+curve = SubResource("Curve_nmnon")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_nmnon"]
+lifetime_randomness = 0.4
+emission_shape = 1
+emission_sphere_radius = 0.2
+angle_min = 1.0728836e-05
+angle_max = 360.00003
+direction = Vector3(0, -1, 0)
+spread = 110.0
+initial_velocity_min = 0.5
+initial_velocity_max = 1.0
+gravity = Vector3(0, 0, 0)
+scale_max = 2.0
+scale_curve = SubResource("CurveTexture_ybtt0")
+alpha_curve = SubResource("CurveTexture_08xxq")
+
+[sub_resource type="QuadMesh" id="QuadMesh_nmnon"]
+
+[node name="Bubble" type="Area3D" node_paths=PackedStringArray("animator", "particles", "mesh")]
 collision_layer = 8
 collision_mask = 0
 monitoring = false
 script = ExtResource("1_t3awv")
 animator = NodePath("AnimationPlayer")
+particles = NodePath("Swirls")
 mesh = NodePath("Mesh")
 bubble_materials = Array[Material]([ExtResource("2_0q6sf"), ExtResource("3_gcryn"), ExtResource("4_ny18l"), ExtResource("5_nmnon")])
 
@@ -150,3 +188,30 @@ libraries = {
 &"": SubResource("AnimationLibrary_pvslu")
 }
 next/capture = &"move"
+
+[node name="Swirls" type="GPUParticles3D" parent="." node_paths=PackedStringArray("subSystems")]
+layers = 32
+material_override = ExtResource("6_nmnon")
+cast_shadow = 0
+emitting = false
+one_shot = true
+explosiveness = 0.7
+fixed_fps = 0
+fract_delta = false
+process_material = SubResource("ParticleProcessMaterial_nmnon")
+draw_pass_1 = SubResource("QuadMesh_nmnon")
+script = ExtResource("6_ny18l")
+subSystems = [NodePath("Rings")]
+
+[node name="Rings" type="GPUParticles3D" parent="Swirls"]
+layers = 32
+material_override = ExtResource("8_ybtt0")
+cast_shadow = 0
+emitting = false
+lifetime = 0.8
+one_shot = true
+explosiveness = 0.8
+fixed_fps = 0
+fract_delta = false
+process_material = SubResource("ParticleProcessMaterial_nmnon")
+draw_pass_1 = SubResource("QuadMesh_nmnon")
