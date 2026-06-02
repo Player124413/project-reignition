@@ -3,7 +3,8 @@ extends Node3D
 signal despawned
 
 @export var animator : AnimationPlayer
-@export var rise_speed : float = 8.0
+@export var rise_speed : float = 10.0
+@export var captured_rise_speed : float = 20.0
 
 @export var mesh : MeshInstance3D
 @export var bubble_materials : Array[Material]
@@ -73,9 +74,11 @@ func _physics_process(_delta: float) -> void:
 	process_movement_tick()
 
 func process_movement_tick() -> void:
-	global_position += rise_speed * Vector3.UP * get_physics_process_delta_time()
 	if is_instance_valid(current_butterfly):
+		global_position += captured_rise_speed * Vector3.UP * get_physics_process_delta_time()
 		current_butterfly.global_position = global_position
+	else:
+		global_position += rise_speed * Vector3.UP * get_physics_process_delta_time()
 	_lifetime -= get_physics_process_delta_time()
 	if _lifetime <= 0:
 		despawn()

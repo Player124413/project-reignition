@@ -7,6 +7,8 @@ signal collected(butterfly : Node3D, bubble : Node3D)
 @export var rotation_speed : float = 10.0
 @export var is_bonus : bool
 @export var rollback_timer : RollbackTimer
+@export var vertical_height_curve : Curve
+var vertical_height_timer : float
 
 var is_in_bubble : bool
 var target_move_angle : float
@@ -15,17 +17,22 @@ var is_respawning : bool
 var turnaround_time : float
 
 const NORMAL_HEIGHT : float = 15.0
-const BONUS_HEIGHT : float = 20.0
+const BONUS_HEIGHT : float = 18.0
 
 const SPAWN_BOUNDS : int = 45
 const SPAWN_DEPTH_BOUNDS : int = 40
 const RESPAWN_POSITION : int = 70
 const MIN_TURNAROUND_LENGTH : float = 1.0
 const MAX_TURNAROUND_LENGTH : float = 4.0
+const VERTICAL_LOOP_LENGTH : float = 1.2
 
 func _ready() -> void:
 	rollback_timer.register_target(self)
 	MinigameManager.instance.gameplay_started.connect(Callable(self, "on_gameplay_started"))
+
+@rpc("any_peer", "call_local", "reliable")
+func initialize_vertical_offset(offset : float) -> void:
+	vertical_height_timer = offset * VERTICAL_LOOP_LENGTH
 
 func on_gameplay_started() -> void:
 	is_gameplay_started = true
@@ -64,6 +71,13 @@ func process_movement_tick() -> void:
 		var current_rotation : float = root.rotation.y
 		current_rotation = rotate_toward(current_rotation, target_move_angle, rotation_speed * get_physics_process_delta_time())
 		root.rotation = Vector3.UP * current_rotation
+	
+	vertical_height_timer += get_physics_process_delta_time()
+	if vertical_height_timer > VERTICAL_LOOP_LENGTH:
+		vertical_height_timer -= VERTICAL_LOOP_LENGTH
+	var target_height = BONUS_HEIGHT if is_bonus else NORMAL_HEIGHT
+	target_height += vertical_height_curve.sample(vertical_height_timer / VERTICAL_LOOP_LENGTH)
+	global_position = Vector3(global_position.x, target_height, global_position.z)
 	
 	if !NetworkManager.is_hosting_game:
 		return

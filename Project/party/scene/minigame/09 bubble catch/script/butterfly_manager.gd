@@ -17,13 +17,13 @@ func disable() -> void:
 
 func initialize_butterflies() -> void:
 	for i in butterflies.size():
-		butterflies[i].collected.connect(Callable(self, "request_collect_butterfly"))
+		if NetworkManager.is_hosting_game:
+			butterflies[i].collected.connect(Callable(self, "request_collect_butterfly"))
+			butterflies[i].rpc("initialize_vertical_offset", randf())
 		butterflies[i].request_spawn()
 
 ## Processes a collection attempt.
 func request_collect_butterfly(butterfly : Node3D, bubble : Node3D) -> void:
-	if !NetworkManager.is_hosting_game:
-		return
 	if butterfly.is_bonus && bubble.bubble_size <= 1: # Bubble isn't big enough
 		return
 	var popup_position : Vector2 = camera.unproject_position(bubble.global_position + Vector3.UP * 3)
