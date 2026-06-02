@@ -1,16 +1,152 @@
-[gd_scene load_steps=3 format=3 uid="uid://ccwgyiyqqppfx"]
+[gd_scene load_steps=15 format=3 uid="uid://ccwgyiyqqppfx"]
+
+[ext_resource type="Script" uid="uid://ckucw62sohdjn" path="res://party/scene/minigame/09 bubble catch/script/bubble.gd" id="1_t3awv"]
+[ext_resource type="Material" uid="uid://wtqfiuc0wid2" path="res://party/scene/minigame/09 bubble catch/material/Bubble P1.tres" id="2_0q6sf"]
+[ext_resource type="Material" uid="uid://ba54rbpudb85k" path="res://party/scene/minigame/09 bubble catch/material/Bubble P2.tres" id="3_gcryn"]
+[ext_resource type="Material" uid="uid://s2unf4854er6" path="res://party/scene/minigame/09 bubble catch/material/Bubble P3.tres" id="4_ny18l"]
+[ext_resource type="Material" uid="uid://b2i832kokqqsx" path="res://party/scene/minigame/09 bubble catch/material/Bubble P4.tres" id="5_nmnon"]
 
 [sub_resource type="QuadMesh" id="QuadMesh_t3awv"]
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_asyjt"]
 
-[node name="Bubble" type="Area3D"]
-monitorable = false
+[sub_resource type="Animation" id="Animation_0q6sf"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(1, 1, 1)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Mesh:scale")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(1, 1, 1)]
+}
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+[sub_resource type="Animation" id="Animation_gcryn"]
+resource_name = "move"
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Mesh:scale")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.5, 1),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector3(1, 1, 1), Vector3(0.9, 1.2, 0.9), Vector3(1, 1, 1)]
+}
+
+[sub_resource type="Animation" id="Animation_ny18l"]
+resource_name = "capture"
+length = 0.5
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Mesh:scale")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.03333333, 0.16666667, 0.3, 0.5),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"update": 0,
+"values": [Vector3(1, 1, 1), Vector3(1.2, 1.2, 1.2), Vector3(0.9, 0.9, 0.9), Vector3(1.2, 1.2, 1.2), Vector3(1, 1, 1)]
+}
+
+[sub_resource type="Animation" id="Animation_pvslu"]
+resource_name = "size3"
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(10, 10, 10)]
+}
+
+[sub_resource type="Animation" id="Animation_t3awv"]
+resource_name = "size2"
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(6, 6, 6)]
+}
+
+[sub_resource type="Animation" id="Animation_nmnon"]
+resource_name = "size1"
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(3, 3, 3)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_pvslu"]
+_data = {
+&"RESET": SubResource("Animation_0q6sf"),
+&"capture": SubResource("Animation_ny18l"),
+&"move": SubResource("Animation_gcryn"),
+&"size1": SubResource("Animation_nmnon"),
+&"size2": SubResource("Animation_t3awv"),
+&"size3": SubResource("Animation_pvslu")
+}
+
+[node name="Bubble" type="Area3D" node_paths=PackedStringArray("animator", "mesh")]
+collision_layer = 8
+collision_mask = 0
+monitoring = false
+script = ExtResource("1_t3awv")
+animator = NodePath("AnimationPlayer")
+mesh = NodePath("Mesh")
+bubble_materials = Array[Material]([ExtResource("2_0q6sf"), ExtResource("3_gcryn"), ExtResource("4_ny18l"), ExtResource("5_nmnon")])
+
+[node name="Mesh" type="MeshInstance3D" parent="."]
 layers = 32
+material_override = ExtResource("2_0q6sf")
 cast_shadow = 0
 mesh = SubResource("QuadMesh_t3awv")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 shape = SubResource("SphereShape3D_asyjt")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+&"": SubResource("AnimationLibrary_pvslu")
+}
+next/capture = &"move"

@@ -1,4 +1,4 @@
-[gd_scene load_steps=21 format=3 uid="uid://bpsepdd02p1mu"]
+[gd_scene load_steps=36 format=3 uid="uid://bpsepdd02p1mu"]
 
 [ext_resource type="Script" uid="uid://dwqpctgwsv6v4" path="res://party/scene/minigame/09 bubble catch/script/player_controller.gd" id="1_1fwt2"]
 [ext_resource type="PackedScene" uid="uid://d0acqwu5fg5qi" path="res://party/scene/minigame/09 bubble catch/model/BubbleMaker.glb" id="2_aq8h0"]
@@ -15,6 +15,20 @@
 [ext_resource type="Material" uid="uid://b3b3lepmh048x" path="res://party/scene/minigame/09 bubble catch/material/Bubble Trail P1.tres" id="11_diljn"]
 [ext_resource type="Material" uid="uid://cnkjmcm6ijsdl" path="res://party/scene/minigame/09 bubble catch/material/Bubble Trail P3.tres" id="12_6fp0f"]
 [ext_resource type="Material" uid="uid://b40v4s40xgnoe" path="res://party/scene/minigame/09 bubble catch/material/Bubble Trail P4.tres" id="13_1kgaf"]
+[ext_resource type="PackedScene" uid="uid://ccwgyiyqqppfx" path="res://party/scene/minigame/09 bubble catch/Bubble.tscn" id="14_6fp0f"]
+[ext_resource type="PackedScene" uid="uid://bdln8dht3adii" path="res://party/resource/character/scene/Amy.tscn" id="17_iuwyq"]
+[ext_resource type="Animation" uid="uid://cvy1cow4wt0vh" path="res://party/resource/character/model/animation/amy/canoe-draw.res" id="18_6512d"]
+[ext_resource type="Animation" uid="uid://bj7weuvk16fka" path="res://party/resource/character/model/animation/amy/canoe-lose.res" id="19_cm8uj"]
+[ext_resource type="Animation" uid="uid://cn3tkjwh14io2" path="res://party/resource/character/model/animation/amy/canoe-win.res" id="20_x5h0s"]
+[ext_resource type="Animation" uid="uid://ul3eak122kvn" path="res://party/resource/character/model/animation/amy/draw.res" id="21_72nir"]
+[ext_resource type="Animation" uid="uid://dmj4ca7hn2xwr" path="res://party/resource/character/model/animation/amy/fight.res" id="22_775jk"]
+[ext_resource type="Animation" uid="uid://c6m8b6mtr7frf" path="res://party/resource/character/model/animation/amy/lose.res" id="23_ty3ab"]
+[ext_resource type="Animation" uid="uid://de621gpo1bk4w" path="res://party/resource/character/model/animation/amy/RESET.res" id="24_3kmxr"]
+[ext_resource type="Animation" uid="uid://begt4g23shnt3" path="res://party/resource/character/model/animation/amy/select.res" id="25_00d55"]
+[ext_resource type="Animation" uid="uid://c3lsyh6rqgo1a" path="res://party/resource/character/model/animation/amy/win.res" id="26_vnhw8"]
+[ext_resource type="Animation" uid="uid://pwbyjnmuamr8" path="res://party/resource/character/model/animation/amy/jog.res" id="27_aonn0"]
+[ext_resource type="Animation" uid="uid://cqf7ansptodr7" path="res://party/resource/character/model/animation/amy/run.res" id="28_3vjyk"]
+[ext_resource type="AnimationLibrary" uid="uid://1monqcvh5eia" path="res://party/scene/minigame/09 bubble catch/animation/_Library.glb" id="29_x2380"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_ammwu"]
 radius = 3.0
@@ -41,7 +55,22 @@ bottom_radius = 1.8
 cap_top = false
 cap_bottom = false
 
-[node name="Player" type="Node3D" node_paths=PackedStringArray("hand_attachment", "bubble_maker_mesh", "fill_mesh", "trail_mesh", "rollback_timer", "character_body", "spawn_position")]
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_8dyqy"]
+_data = {
+&"RESET": ExtResource("24_3kmxr"),
+&"canoe-draw": ExtResource("18_6512d"),
+&"canoe-lose": ExtResource("19_cm8uj"),
+&"canoe-win": ExtResource("20_x5h0s"),
+&"draw": ExtResource("21_72nir"),
+&"fight": ExtResource("22_775jk"),
+&"jog": ExtResource("27_aonn0"),
+&"lose": ExtResource("23_ty3ab"),
+&"run": ExtResource("28_3vjyk"),
+&"select": ExtResource("25_00d55"),
+&"win": ExtResource("26_vnhw8")
+}
+
+[node name="Player" type="Node3D" node_paths=PackedStringArray("hand_attachment", "bubble_maker_mesh", "fill_mesh", "trail_mesh", "bubble_parent", "rollback_timer", "character_body", "spawn_position")]
 script = ExtResource("1_1fwt2")
 hand_attachment = NodePath("HandAttachment")
 bubble_maker_mesh = NodePath("HandAttachment/BubbleMaker/BubbleMaker/BubbleMakerRoot/Skeleton3D/BubbleMakerMesh")
@@ -50,6 +79,7 @@ trail_mesh = NodePath("HandAttachment/BubbleMaker/Trail")
 bubble_maker_materials = Array[Material]([ExtResource("2_knao0"), ExtResource("3_107j7"), ExtResource("4_go87n"), ExtResource("5_pcc0g")])
 bubble_fill_materials = Array[Material]([ExtResource("3_ammwu"), ExtResource("7_ifxnt"), ExtResource("8_diljn"), ExtResource("9_5yqee")])
 bubble_trail_materials = Array[ParticleProcessMaterial]([ExtResource("11_diljn"), ExtResource("11_15xhd"), ExtResource("12_6fp0f"), ExtResource("13_1kgaf")])
+bubble_parent = NodePath("HandAttachment/BubbleMaker/Bubbles")
 rollback_timer = NodePath("Rollback")
 character_body = NodePath("CharacterBody3D")
 run_speed = 40.0
@@ -69,6 +99,69 @@ bone_name = "hand_attachment"
 bone_idx = 89
 
 [node name="BubbleMaker" type="Node3D" parent="HandAttachment"]
+
+[node name="Bubbles" type="Node3D" parent="HandAttachment/BubbleMaker"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, -2)
+
+[node name="Bubble1" parent="HandAttachment/BubbleMaker/Bubbles" instance=ExtResource("14_6fp0f")]
+process_mode = 4
+visible = false
+
+[node name="Bubble2" parent="HandAttachment/BubbleMaker/Bubbles" instance=ExtResource("14_6fp0f")]
+process_mode = 4
+visible = false
+
+[node name="Bubble3" parent="HandAttachment/BubbleMaker/Bubbles" instance=ExtResource("14_6fp0f")]
+process_mode = 4
+visible = false
+
+[node name="Bubble4" parent="HandAttachment/BubbleMaker/Bubbles" instance=ExtResource("14_6fp0f")]
+process_mode = 4
+visible = false
+
+[node name="Bubble5" parent="HandAttachment/BubbleMaker/Bubbles" instance=ExtResource("14_6fp0f")]
+process_mode = 4
+visible = false
+
+[node name="Bubble6" parent="HandAttachment/BubbleMaker/Bubbles" instance=ExtResource("14_6fp0f")]
+process_mode = 4
+visible = false
+
+[node name="Bubble7" parent="HandAttachment/BubbleMaker/Bubbles" instance=ExtResource("14_6fp0f")]
+process_mode = 4
+visible = false
+
+[node name="Bubble8" parent="HandAttachment/BubbleMaker/Bubbles" instance=ExtResource("14_6fp0f")]
+process_mode = 4
+visible = false
+
+[node name="Bubble9" parent="HandAttachment/BubbleMaker/Bubbles" instance=ExtResource("14_6fp0f")]
+process_mode = 4
+visible = false
+
+[node name="Bubble10" parent="HandAttachment/BubbleMaker/Bubbles" instance=ExtResource("14_6fp0f")]
+process_mode = 4
+visible = false
+
+[node name="Bubble11" parent="HandAttachment/BubbleMaker/Bubbles" instance=ExtResource("14_6fp0f")]
+process_mode = 4
+visible = false
+
+[node name="Bubble12" parent="HandAttachment/BubbleMaker/Bubbles" instance=ExtResource("14_6fp0f")]
+process_mode = 4
+visible = false
+
+[node name="Bubble13" parent="HandAttachment/BubbleMaker/Bubbles" instance=ExtResource("14_6fp0f")]
+process_mode = 4
+visible = false
+
+[node name="Bubble14" parent="HandAttachment/BubbleMaker/Bubbles" instance=ExtResource("14_6fp0f")]
+process_mode = 4
+visible = false
+
+[node name="Bubble15" parent="HandAttachment/BubbleMaker/Bubbles" instance=ExtResource("14_6fp0f")]
+process_mode = 4
+visible = false
 
 [node name="BubbleMaker" parent="HandAttachment/BubbleMaker" instance=ExtResource("2_aq8h0")]
 transform = Transform3D(1, 0, 0, 2.9802322e-08, 1.0000001, -1.4901161e-08, 5.9604645e-08, 0, 1, 0, 0, 0)
@@ -92,4 +185,15 @@ enable_lag_compensation = false
 param_count = 5
 rollback_interval = 0.0
 
+[node name="Amy" parent="." instance=ExtResource("17_iuwyq")]
+visible = false
+
+[node name="AnimationPlayer" parent="Amy/Amy" index="1"]
+libraries = {
+&"": SubResource("AnimationLibrary_8dyqy"),
+&"_Library": ExtResource("29_x2380")
+}
+
 [editable path="HandAttachment/BubbleMaker/BubbleMaker"]
+[editable path="Amy"]
+[editable path="Amy/Amy"]

@@ -1,11 +1,12 @@
-[gd_scene load_steps=5 format=3 uid="uid://cahq5pchsg5xk"]
+[gd_scene load_steps=6 format=3 uid="uid://cahq5pchsg5xk"]
 
 [ext_resource type="PackedScene" uid="uid://c7omqtvrkxfth" path="res://party/scene/minigame/09 bubble catch/model/ButterflySmall.glb" id="1_0g6y8"]
 [ext_resource type="Script" uid="uid://ct7vnasfi6n6a" path="res://party/scene/minigame/09 bubble catch/script/butterfly_controller.gd" id="1_kybvl"]
 [ext_resource type="Script" uid="uid://ds056nimfywwr" path="res://party/script/core/rollback_timer.gd" id="3_73fau"]
+[ext_resource type="Texture2D" uid="uid://bbxp6vo83xbo5" path="res://party/scene/minigame/05 parasol ball/texture/blob_shadow.png" id="4_epvl0"]
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_kybvl"]
-radius = 2.0
+radius = 1.5
 
 [node name="ButterflySmall" type="Node3D" node_paths=PackedStringArray("root", "rollback_timer")]
 script = ExtResource("1_kybvl")
@@ -13,25 +14,38 @@ root = NodePath("ButterflySmall")
 rollback_timer = NodePath("RollbackTimer")
 
 [node name="ButterflySmall" parent="." instance=ExtResource("1_0g6y8")]
+transform = Transform3D(0.8, 0, 0, 0, 0.8, 0, 0, 0, 0.8, 0, 0, 0)
 
 [node name="Skeleton3D" parent="ButterflySmall/ButterflySmallRoot" index="0"]
 bones/1/rotation = Quaternion(0, 0, -0.29143116, 0.9565918)
 bones/2/rotation = Quaternion(0, 0, 0.22064444, 0.9753543)
 
+[node name="ButterflySmallMesh" parent="ButterflySmall/ButterflySmallRoot/Skeleton3D" index="0"]
+cast_shadow = 0
+
 [node name="AnimationPlayer" parent="ButterflySmall" index="1"]
 autoplay = "small"
 
-[node name="Area3D" type="Area3D" parent="."]
+[node name="Decal" type="Decal" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -11, 0)
+layers = 32
+size = Vector3(4, 20, 4)
+texture_albedo = ExtResource("4_epvl0")
+cull_mask = 2
+
+[node name="BubbleDetection" type="Area3D" parent="."]
 collision_layer = 0
+collision_mask = 8
 monitorable = false
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+[node name="CollisionShape3D" type="CollisionShape3D" parent="BubbleDetection"]
 shape = SubResource("SphereShape3D_kybvl")
 
 [node name="RollbackTimer" type="Node" parent="."]
 script = ExtResource("3_73fau")
 authority_mode = 1
 metadata/_custom_type_script = "uid://ds056nimfywwr"
+
+[connection signal="area_entered" from="BubbleDetection" to="." method="_on_bubble_detection_area_entered"]
 
 [editable path="ButterflySmall"]
