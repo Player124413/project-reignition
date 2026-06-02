@@ -147,8 +147,6 @@ func calculate_cpu_input() -> Vector2:
 		cpu_swing_timer = move_toward(cpu_swing_timer, 0, get_physics_process_delta_time())
 		var remaining_distance : Vector3 = target_position - character_body.global_position
 		remaining_distance.y = 0
-		if diff <= PlayerData.CPU_DIFFICULTY_ENUM.NORMAL:
-			print(cpu_swing_timer)
 		if is_zero_approx(cpu_swing_timer) && remaining_distance.length() < CPU_SWING_RANGE:
 			cpu_swing_timer = CPU_SWING_INTERVAL
 			if diff <= PlayerData.CPU_DIFFICULTY_ENUM.NORMAL:
@@ -201,7 +199,7 @@ func start_swing(tick : float, dir : int) -> void:
 		target_anim = get_anim_prefix() + "swing-r"
 	else:
 		target_anim = get_anim_prefix() + "swing-l"
-	character_animator.rpc("play_minigame_animation", target_anim, 0, 1.4, 0, tick)
+	character_animator.play_minigame_animation(target_anim, 0, 1.4, 0, tick)
 	if is_multiplayer_authority() && is_cpu():
 		if get_cpu_difficulty() < PlayerData.CPU_DIFFICULTY_ENUM.NORMAL: # Easier cpus jump to a different butterfly
 			rpc("update_target_butterfly", -1)

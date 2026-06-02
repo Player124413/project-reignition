@@ -49,8 +49,10 @@ func collect_butterfly(butterfly_index : int, tick : float, popup_pos : Vector2)
 			return
 		# Collision resolution
 		current_butterfly.is_in_bubble = false
-		MinigameManager.instance.request_score_change(player_index, -3 if current_butterfly.is_bonus else -1)
-		MinigameManager.instance._score_popup_abort(player_index, collection_tick)
+		
+		if is_multiplayer_authority():
+			MinigameManager.instance.request_score_change(player_index, -3 if current_butterfly.is_bonus else -1)
+			MinigameManager.instance._score_popup_abort(player_index, collection_tick)
 	
 	var target_butterfly : Node3D = ButterflyManager.instance.butterflies[butterfly_index]
 	if target_butterfly.is_in_bubble: # This butterfly has already been collected. ABORT!!!
@@ -63,8 +65,9 @@ func collect_butterfly(butterfly_index : int, tick : float, popup_pos : Vector2)
 	var score : int = 3 if current_butterfly.is_bonus else 1
 	current_butterfly.is_in_bubble = true
 	collection_tick = tick
-	MinigameManager.instance.request_score_change(player_index, score)
-	MinigameManager.instance.request_score_popup(player_index, score, popup_pos)
+	if is_multiplayer_authority():
+		MinigameManager.instance.request_score_change(player_index, score)
+		MinigameManager.instance.request_score_popup(player_index, score, popup_pos)
 
 func _physics_process(_delta: float) -> void:
 	process_movement_tick()
