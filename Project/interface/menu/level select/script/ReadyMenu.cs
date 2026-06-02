@@ -87,6 +87,9 @@ public partial class ReadyMenu : Menu
 					TimeAttackManager.Instance.ClearCurrentRun();
 					TimeAttackManager.Instance.ClearCurrentSavedRun();
 
+					SaveManager.TimeData.equippedSkillsContinue = SaveManager.ActiveGameData.equippedSkills;
+					SaveManager.TimeData.equippedAugmentsContinue = SaveManager.ActiveGameData.equippedAugments;
+
 					SaveManager.TimeData.CurrentRunType = TimeAttackManager.Instance.CurrentRunType;
 					SaveManager.SaveTimeAttackData(); //Overwrites currently saved run
 				}

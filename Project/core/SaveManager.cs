@@ -1315,7 +1315,7 @@ public partial class SaveManager : Node
 		}
 
 		/// <summary> Converts an array of SkillKeys to an array of strings for index-agnostic saving. </summary>
-		private Array<string> SaveSkills(Array<SkillKey> skillArray)
+		public Array<string> SaveSkills(Array<SkillKey> skillArray)
 		{
 			Array<string> stringArray = [];
 
@@ -1328,7 +1328,7 @@ public partial class SaveManager : Node
 			return stringArray;
 		}
 
-		private Dictionary<string, int> SaveAugments(Dictionary<SkillKey, int> augmentDictionary)
+		public Dictionary<string, int> SaveAugments(Dictionary<SkillKey, int> augmentDictionary)
 		{
 			Dictionary<string, int> stringDictionary = [];
 
@@ -1341,7 +1341,7 @@ public partial class SaveManager : Node
 			return stringDictionary;
 		}
 
-		private Array<SkillKey> LoadSkills(Array<string> stringArray)
+		public Array<SkillKey> LoadSkills(Array<string> stringArray)
 		{
 			Array<SkillKey> skills = [];
 
@@ -1354,7 +1354,7 @@ public partial class SaveManager : Node
 			return skills;
 		}
 
-		private Dictionary<SkillKey, int> LoadAugments(Dictionary<string, int> stringDictionary)
+		public Dictionary<SkillKey, int> LoadAugments(Dictionary<string, int> stringDictionary)
 		{
 			string[] augmentKeys = [.. stringDictionary.Keys];
 			Dictionary<SkillKey, int> augmentDictionary = [];
@@ -1615,6 +1615,10 @@ public partial class SaveManager : Node
 		public TimeAttackManager.RunType CurrentRunType;
 		///<summary>The player's spot in the current run</summary>
 		public int CurrentPlacement;
+		///<summary>The player's saved skills for the run
+		public Array<SkillKey> equippedSkillsContinue;
+		///<summary>The player's saved augments for the run
+		public Dictionary<SkillKey, int> equippedAugmentsContinue;
 
 		///<summary>Adds the current run to the saved runs</summary>
 		public void AddCurrentRun()
@@ -1686,7 +1690,9 @@ public partial class SaveManager : Node
 				{ nameof(SingleRun), SingleRun},
 				{ nameof(RunInProgress), RunInProgress},
 				{ nameof(CurrentRunType), (int)CurrentRunType},
-				{ nameof(CurrentPlacement), CurrentPlacement}
+				{ nameof(CurrentPlacement), CurrentPlacement},
+				{ nameof(equippedSkillsContinue), ActiveGameData.SaveSkills(equippedSkillsContinue) },
+				{ nameof(equippedAugmentsContinue), ActiveGameData.SaveAugments(equippedAugmentsContinue) },
 
 			};
 		}
@@ -1708,6 +1714,15 @@ public partial class SaveManager : Node
 			if (dictionary.TryGetValue(nameof(CurrentPlacement), out var))
 				CurrentPlacement = (int)var;
 
+			if (dictionary.TryGetValue(nameof(equippedSkillsContinue), out var))
+			{
+				equippedSkillsContinue = ActiveGameData.LoadSkills((Array<string>)var);
+				ActiveSkillRing.ValidateCrestSkills();
+			}
+
+			if (dictionary.TryGetValue(nameof(equippedAugmentsContinue), out var))
+				equippedAugmentsContinue = ActiveGameData.LoadAugments((Dictionary<string, int>)var);
+
 		}
 
 		public static TimeAttackData CreateDefaultData()
@@ -1718,7 +1733,9 @@ public partial class SaveManager : Node
 				GoalP = [],
 				BossRush = [],
 				SingleRun = [],
-				RunInProgress = []
+				RunInProgress = [],
+				equippedSkillsContinue = [],
+				equippedAugmentsContinue = [],
 
 			};
 			return data;
