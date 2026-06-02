@@ -22,6 +22,8 @@ func initialize_butterflies() -> void:
 
 ## Processes a collection attempt.
 func request_collect_butterfly(butterfly : Node3D, bubble : Node3D) -> void:
+	if !NetworkManager.is_hosting_game:
+		return
 	if butterfly.is_bonus && bubble.bubble_size <= 1: # Bubble isn't big enough
 		return
 	var popup_position : Vector2 = camera.unproject_position(bubble.global_position + Vector3.UP * 3)

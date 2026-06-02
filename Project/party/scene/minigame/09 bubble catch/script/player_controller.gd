@@ -88,8 +88,8 @@ func process_animation_event(event : int) -> void:
 		if is_demo_swing:
 			if event == ANIM_BUBBLE_SIZE_LARGE:
 				is_demo_swing = false
-				rpc("spawn_bubble", bubble_parent.global_position, swing_power, NetworkTimeSynchronizer.get_time())
-		elif is_cpu() && is_multiplayer_authority() && check_cpu_bubble_spawn():
+				spawn_bubble(bubble_parent.global_position, swing_power, NetworkTimeSynchronizer.get_time())
+		elif is_cpu() && check_cpu_bubble_spawn():
 			rpc("spawn_bubble", bubble_parent.global_position, swing_power, NetworkTimeSynchronizer.get_time())
 	elif event == ANIM_TRAIL_START:
 		trail_mesh.emitting = true
@@ -128,7 +128,7 @@ func update_target_butterfly(index : int) -> void:
 
 func calculate_cpu_input() -> Vector2:
 	if !is_instance_valid(target_butterfly) || !target_butterfly.is_cpu_targetable():
-		if is_multiplayer_authority():
+		if NetworkManager.is_hosting_game:
 			rpc("update_target_butterfly", calculate_target_butterfly_index())
 		return Vector2.ZERO
 	
@@ -163,6 +163,9 @@ func get_cpu_interval() -> float:
 	return 0.0 # Don't use cpu intervals for this minigame
 
 func check_cpu_bubble_spawn() -> bool:
+	if !NetworkManager.is_hosting_game:
+		return false
+	
 	var diff : PlayerData.CPU_DIFFICULTY_ENUM = get_cpu_difficulty()
 	if diff == PlayerData.CPU_DIFFICULTY_ENUM.EASY:
 		return randf() < 0.2
@@ -200,7 +203,7 @@ func start_swing(tick : float, dir : int) -> void:
 	else:
 		target_anim = get_anim_prefix() + "swing-l"
 	character_animator.play_minigame_animation(target_anim, 0, 1.4, 0, tick)
-	if is_multiplayer_authority() && is_cpu():
+	if NetworkManager.is_hosting_game && is_cpu():
 		if get_cpu_difficulty() < PlayerData.CPU_DIFFICULTY_ENUM.NORMAL: # Easier cpus jump to a different butterfly
 			rpc("update_target_butterfly", -1)
 
