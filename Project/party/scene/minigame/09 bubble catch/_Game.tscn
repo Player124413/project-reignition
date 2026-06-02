@@ -100,6 +100,62 @@ tracks/2/keys = {
 "method": &"request_minigame_start"
 }]
 }
+tracks/3/type = "method"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("../Player1")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0.5),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"start_demo"
+}]
+}
+tracks/4/type = "method"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("../Player2")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0.5),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"start_demo"
+}]
+}
+tracks/5/type = "method"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("../Player3")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0.5),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"start_demo"
+}]
+}
+tracks/6/type = "method"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("../Player4")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"times": PackedFloat32Array(0.5),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"start_demo"
+}]
+}
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_1vgpw"]
 _data = {
@@ -109,10 +165,11 @@ _data = {
 
 [node name="Game" type="Node3D"]
 
-[node name="Minigame" parent="." node_paths=PackedStringArray("intro_animator") instance=ExtResource("1_y134v")]
+[node name="Minigame" parent="." node_paths=PackedStringArray("intro_animator", "results_camera") instance=ExtResource("1_y134v")]
 minigame_resource = ExtResource("2_nfdah")
 anim_library = ExtResource("3_g603l")
 intro_animator = NodePath("../Camera/AnimationPlayer")
+results_camera = NodePath("../Results")
 
 [node name="Time" parent="Minigame" instance=ExtResource("4_lve3x")]
 layout_mode = 1
@@ -220,21 +277,21 @@ directional_shadow_max_distance = 300.0
 environment = SubResource("Environment_r1xry")
 
 [node name="Player1" parent="." node_paths=PackedStringArray("score_counter") instance=ExtResource("5_1vgpw")]
-transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -15, -0.8, 6.556708e-07)
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -15, -0.9, 6.556708e-07)
 score_counter = NodePath("../Minigame/Scores/ScoreCounter1")
 
 [node name="Player2" parent="." node_paths=PackedStringArray("score_counter") instance=ExtResource("5_1vgpw")]
-transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, -6.556708e-07, -0.8, 15)
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, -6.556708e-07, -0.9, 15)
 player_index = 1
 score_counter = NodePath("../Minigame/Scores/ScoreCounter2")
 
 [node name="Player3" parent="." node_paths=PackedStringArray("score_counter") instance=ExtResource("5_1vgpw")]
-transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 15, -0.8, 6.556708e-07)
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 15, -0.9, 6.556708e-07)
 player_index = 2
 score_counter = NodePath("../Minigame/Scores/ScoreCounter3")
 
 [node name="Player4" parent="." node_paths=PackedStringArray("score_counter") instance=ExtResource("5_1vgpw")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.8, -15)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.9, -15)
 player_index = 3
 score_counter = NodePath("../Minigame/Scores/ScoreCounter4")
 
@@ -268,6 +325,11 @@ root_node = NodePath("../../Minigame")
 libraries = {
 &"": SubResource("AnimationLibrary_1vgpw")
 }
+
+[node name="Results" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.99999994, 0, 0, 0, 0.99999994, 0, 5, 40)
+cull_mask = 1075
+fov = 40.0
 
 [editable path="Minigame"]
 [editable path="Minigame/Scores"]

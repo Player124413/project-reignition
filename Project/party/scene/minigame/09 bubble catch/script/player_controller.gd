@@ -9,7 +9,15 @@ extends PartyGameCharacterMover
 @export var bubble_fill_materials : Array[Material]
 @export var bubble_trail_materials : Array[ParticleProcessMaterial]
 @export var bubble_parent : Node3D
+
 var bubbles : Array[Node3D]
+var is_demo_swing : bool
+
+func start_demo() -> void:
+	swing_power = 0
+	is_demo_swing = true
+	is_swing_active = true
+	character_animator.play_minigame_animation(get_anim_prefix() + "swing-l", 0, 1.4, 0, NetworkTimeSynchronizer.get_time())
 
 func pool_bubble(bubble : Node3D) -> void:
 	bubbles.append(bubble)
@@ -77,6 +85,9 @@ func process_animation_event(event : int) -> void:
 		pass
 	elif event >= ANIM_BUBBLE_SIZE_SMALL && event <= ANIM_BUBBLE_SIZE_LARGE:
 		swing_power = event
+		if is_demo_swing && event == ANIM_BUBBLE_SIZE_LARGE:
+			is_demo_swing = false
+			rpc("spawn_bubble", bubble_parent.global_position, swing_power, NetworkTimeSynchronizer.get_time())
 	elif event == ANIM_TRAIL_START:
 		trail_mesh.emitting = true
 	elif event == ANIM_TRAIL_STOP:
