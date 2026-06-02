@@ -171,6 +171,9 @@ anim_library = ExtResource("3_g603l")
 intro_animator = NodePath("../Camera/AnimationPlayer")
 results_camera = NodePath("../Results")
 
+[node name="ResultsLocation" parent="Minigame" index="4"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.8, 0)
+
 [node name="Time" parent="Minigame" instance=ExtResource("4_lve3x")]
 layout_mode = 1
 anchor_left = 0.5
@@ -281,11 +284,13 @@ transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -15,
 score_counter = NodePath("../Minigame/Scores/ScoreCounter1")
 
 [node name="Player2" parent="." node_paths=PackedStringArray("score_counter") instance=ExtResource("5_1vgpw")]
+process_mode = 4
 transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, -6.556708e-07, -0.9, 15)
 player_index = 1
 score_counter = NodePath("../Minigame/Scores/ScoreCounter2")
 
 [node name="Player3" parent="." node_paths=PackedStringArray("score_counter") instance=ExtResource("5_1vgpw")]
+process_mode = 4
 transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 15, -0.9, 6.556708e-07)
 player_index = 2
 score_counter = NodePath("../Minigame/Scores/ScoreCounter3")
@@ -297,7 +302,12 @@ score_counter = NodePath("../Minigame/Scores/ScoreCounter4")
 
 [node name="ButterflyManager" type="Node3D" parent="." node_paths=PackedStringArray("butterflies")]
 script = ExtResource("9_jc3bp")
-butterflies = [NodePath("ButterflySmall1"), NodePath("ButterflySmall2"), NodePath("ButterflySmall3"), NodePath("ButterflySmall4"), NodePath("ButterflyLarge1"), NodePath("ButterflyLarge2")]
+butterflies = [NodePath("ButterflyLarge1"), NodePath("ButterflyLarge2"), NodePath("ButterflySmall1"), NodePath("ButterflySmall2"), NodePath("ButterflySmall3"), NodePath("ButterflySmall4")]
+
+[node name="ButterflyLarge1" parent="ButterflyManager" instance=ExtResource("10_jc3bp")]
+
+[node name="ButterflyLarge2" parent="ButterflyManager" instance=ExtResource("10_jc3bp")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 20, 0)
 
 [node name="ButterflySmall1" parent="ButterflyManager" instance=ExtResource("9_4flk6")]
 
@@ -306,11 +316,6 @@ butterflies = [NodePath("ButterflySmall1"), NodePath("ButterflySmall2"), NodePat
 [node name="ButterflySmall3" parent="ButterflyManager" instance=ExtResource("9_4flk6")]
 
 [node name="ButterflySmall4" parent="ButterflyManager" instance=ExtResource("9_4flk6")]
-
-[node name="ButterflyLarge1" parent="ButterflyManager" instance=ExtResource("10_jc3bp")]
-
-[node name="ButterflyLarge2" parent="ButterflyManager" instance=ExtResource("10_jc3bp")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 20, 0)
 
 [node name="Camera" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 0.93969256, 0.3420201, 0, -0.3420201, 0.93969256, 0, 0, 0)

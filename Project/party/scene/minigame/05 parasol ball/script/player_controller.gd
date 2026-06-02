@@ -196,12 +196,7 @@ func calculate_cpu_input() -> Vector2:
 	if cpu_target_parasol == null:
 		return Vector2.ZERO
 	
-	# Chase the target
-	var difference : Vector3 = cpu_target_parasol.global_position - character_body.global_position
-	direction.x = difference.x
-	direction.y = -difference.z
-	direction = direction.limit_length()
-	return direction
+	return cpu_chase_position(cpu_target_parasol.global_position)
 
 func process_cpu_target_parasol() -> void:
 	if cancel_cpu_target_parasol():

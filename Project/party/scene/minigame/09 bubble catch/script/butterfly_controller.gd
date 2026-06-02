@@ -11,6 +11,7 @@ signal collected(butterfly : Node3D, bubble : Node3D)
 var is_in_bubble : bool
 var target_move_angle : float
 var is_gameplay_started : bool
+var is_respawning : bool
 var turnaround_time : float
 
 const NORMAL_HEIGHT : float = 15.0
@@ -57,6 +58,8 @@ func process_rollback() -> void:
 func process_movement_tick() -> void:
 	if is_zero_approx(angle_difference(target_move_angle, root.rotation.y)):
 		global_position -= root.basis.z * move_speed * get_physics_process_delta_time()
+		if is_respawning && abs(position.x) < SPAWN_BOUNDS:
+			is_respawning = false
 	else:
 		var current_rotation : float = root.rotation.y
 		current_rotation = rotate_toward(current_rotation, target_move_angle, rotation_speed * get_physics_process_delta_time())
@@ -84,6 +87,7 @@ func spawn(pos : Vector3) -> void:
 	if sign(pos.x) < 0:
 		target_move_angle -= PI
 	
+	is_respawning = is_gameplay_started
 	if NetworkManager.is_hosting_game:
 		turnaround_time = calculate_turnaround_tick()
 
@@ -108,6 +112,10 @@ func generate_random_position() -> Vector3:
 	else:
 		pos.x = (1.0 - randf() * 2.0) * SPAWN_BOUNDS
 	return pos
+
+## Returns whether cpus can target this butterfly.
+func is_cpu_targetable() -> bool:
+	return !is_respawning && !is_in_bubble
 
 func _on_bubble_detection_area_entered(area: Area3D) -> void:
 	if !is_gameplay_started: # Ignore demo

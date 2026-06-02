@@ -85,8 +85,11 @@ func process_animation_event(event : int) -> void:
 		pass
 	elif event >= ANIM_BUBBLE_SIZE_SMALL && event <= ANIM_BUBBLE_SIZE_LARGE:
 		swing_power = event
-		if is_demo_swing && event == ANIM_BUBBLE_SIZE_LARGE:
-			is_demo_swing = false
+		if is_demo_swing:
+			if event == ANIM_BUBBLE_SIZE_LARGE:
+				is_demo_swing = false
+				rpc("spawn_bubble", bubble_parent.global_position, swing_power, NetworkTimeSynchronizer.get_time())
+		elif is_cpu() && is_multiplayer_authority() && check_cpu_bubble_spawn():
 			rpc("spawn_bubble", bubble_parent.global_position, swing_power, NetworkTimeSynchronizer.get_time())
 	elif event == ANIM_TRAIL_START:
 		trail_mesh.emitting = true
@@ -107,6 +110,88 @@ func process_inputs() -> void:
 			rpc("start_swing", NetworkTimeSynchronizer.get_time(), -1)
 	super()
 
+################
+### CPU CODE ###
+################
+var target_butterfly : Node3D
+var cpu_swing_timer : float
+const CPU_SWING_INTERVAL : float = 0.4
+const CPU_SWING_INTERVAL_VARIANCE : float = 0.2
+const CPU_SWING_RANGE : int = 6
+const CPU_LEAD_AMOUNT : int = 8
+@rpc("any_peer", "call_local", "reliable")
+func update_target_butterfly(index : int) -> void:
+	if index == -1:
+		target_butterfly = null
+		return
+	target_butterfly = ButterflyManager.instance.butterflies[index]
+
+func calculate_cpu_input() -> Vector2:
+	if !is_instance_valid(target_butterfly) || !target_butterfly.is_cpu_targetable():
+		if is_multiplayer_authority():
+			rpc("update_target_butterfly", calculate_target_butterfly_index())
+		return Vector2.ZERO
+	
+	if is_swing_active:
+		return Vector2.ZERO
+	
+	var target_position : Vector3 = target_butterfly.global_position
+	var diff : PlayerData.CPU_DIFFICULTY_ENUM = get_cpu_difficulty()
+	if diff >= PlayerData.CPU_DIFFICULTY_ENUM.HARD:
+		target_position += Vector3.FORWARD.rotated(Vector3.UP, _move_angle + PI * 0.5)
+		if diff >= PlayerData.CPU_DIFFICULTY_ENUM.EXTREME: # Lead the butterfly
+			target_position -= target_butterfly.root.basis.z * CPU_LEAD_AMOUNT
+			target_position.x = clamp(target_position.x, -target_butterfly.SPAWN_BOUNDS, target_butterfly.SPAWN_BOUNDS)
+	
+	if is_multiplayer_authority():
+		cpu_swing_timer = move_toward(cpu_swing_timer, 0, get_physics_process_delta_time())
+		var remaining_distance : Vector3 = target_position - character_body.global_position
+		remaining_distance.y = 0
+		if diff <= PlayerData.CPU_DIFFICULTY_ENUM.NORMAL:
+			print(cpu_swing_timer)
+		if is_zero_approx(cpu_swing_timer) && remaining_distance.length() < CPU_SWING_RANGE:
+			cpu_swing_timer = CPU_SWING_INTERVAL
+			if diff <= PlayerData.CPU_DIFFICULTY_ENUM.NORMAL:
+				cpu_swing_timer += randf() * CPU_SWING_INTERVAL_VARIANCE
+				rpc("start_swing", NetworkTimeSynchronizer.get_time(), 1 if randf() > 0.5 else -1)
+			else:
+				cpu_swing_timer += (1.0 - randf() * 2.0) * CPU_SWING_INTERVAL_VARIANCE
+				remaining_distance = remaining_distance.rotated(Vector3.UP, -_move_angle)
+				rpc("start_swing", NetworkTimeSynchronizer.get_time(), sign(remaining_distance.x))
+			return Vector2.ZERO
+	return cpu_chase_position(target_position)
+
+func get_cpu_interval() -> float:
+	return 0.0 # Don't use cpu intervals for this minigame
+
+func check_cpu_bubble_spawn() -> bool:
+	var diff : PlayerData.CPU_DIFFICULTY_ENUM = get_cpu_difficulty()
+	if diff == PlayerData.CPU_DIFFICULTY_ENUM.EASY:
+		return randf() < 0.2
+	elif diff == PlayerData.CPU_DIFFICULTY_ENUM.NORMAL:
+		return randf() < 0.2 * swing_power # More chance to swing a big bubble
+	else: # Always go for full power
+		if swing_power == ANIM_BUBBLE_SIZE_LARGE:
+			return true
+	
+	return false
+
+## Select a random butterfly to chase.
+func calculate_target_butterfly_index() -> int:
+	var target_index : int = 0
+	var diff : PlayerData.CPU_DIFFICULTY_ENUM = get_cpu_difficulty()
+	if diff == PlayerData.CPU_DIFFICULTY_ENUM.EXTREME:
+		target_index = randi_range(0, 1) # First attempt for the bonus butterflies
+	else: # Look for any
+		target_index = randi_range(0, ButterflyManager.instance.butterflies.size() - 1)
+	var iteration : int = 0
+	while iteration < ButterflyManager.instance.butterflies.size():
+		if ButterflyManager.instance.butterflies[target_index].is_cpu_targetable():
+			return target_index
+		iteration += 1
+		target_index = (target_index + 1) % ButterflyManager.instance.butterflies.size()
+	return -1
+
 @rpc("any_peer", "call_local", "reliable")
 func start_swing(tick : float, dir : int) -> void:
 	swing_power = 0
@@ -117,6 +202,9 @@ func start_swing(tick : float, dir : int) -> void:
 	else:
 		target_anim = get_anim_prefix() + "swing-l"
 	character_animator.rpc("play_minigame_animation", target_anim, 0, 1.4, 0, tick)
+	if is_multiplayer_authority() && is_cpu():
+		if get_cpu_difficulty() < PlayerData.CPU_DIFFICULTY_ENUM.NORMAL: # Easier cpus jump to a different butterfly
+			rpc("update_target_butterfly", -1)
 
 func get_target_animation() -> StringName:
 	var base : StringName = super()

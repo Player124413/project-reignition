@@ -110,6 +110,24 @@ func apply_movement() -> void:
 	velocity += Vector3.UP * _vertical_speed
 	character_body.velocity = velocity
 	character_body.move_and_slide()
+	push_other_characters(velocity)
+
+## Handle pushing other characters.
+func push_other_characters(velocity : Vector3) -> void:
+	var characters : Array[CharacterBody3D]
+	for i in character_body.get_slide_collision_count():
+		var collision : KinematicCollision3D = character_body.get_slide_collision(i)
+		var collider : Object = collision.get_collider()
+		if collider is CharacterBody3D:
+			characters.append(collider as CharacterBody3D)
+	
+	if characters.size() == 0:
+		return
+	
+	var push_strength : float = 1.0 / (characters.size() + 1)
+	for character in characters:
+		character.velocity = velocity * push_strength
+		character.move_and_slide()
 
 ## Updates the characters rotation.
 func process_rotation(target_angle : float) -> void:
@@ -186,6 +204,12 @@ func get_cpu_interval() -> float:
 ## Override this function to calculate the cpu inputs.
 func calculate_cpu_input() -> Vector2:
 	return Vector2.ZERO
+
+## Calculates the input needed to reach a particular position.
+func cpu_chase_position(pos : Vector3) -> Vector2:
+	var difference : Vector3 = pos - character_body.global_position
+	var input : Vector2 = Vector2(difference.x, -difference.z)
+	return input.limit_length()
 
 func apply_movement_rotation() -> void:
 	character_body.rotation = Vector3.UP * _move_angle
