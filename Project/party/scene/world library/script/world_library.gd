@@ -57,6 +57,8 @@ func initialize() -> void:
 	
 	var dirAccess : DirAccess = DirAccess.open(MINIGAME_PATH)
 	for file in dirAccess.get_files():
+		if file.ends_with(".remap"):
+			file = file.replace(".remap", "")
 		var resource : Resource = ResourceLoader.load(MINIGAME_PATH + file)
 		if resource is MinigameResource:
 			minigame_list.append(resource)
