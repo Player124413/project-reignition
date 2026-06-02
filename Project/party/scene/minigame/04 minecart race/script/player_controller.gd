@@ -95,12 +95,12 @@ func _physics_process(_delta: float) -> void:
 	if !_is_spawn_finished:
 		return
 	
-	if is_demo_active && is_multiplayer_authority():
+	if is_demo_active:
 		if lever_state == LEVER_STATES.UP && character_animator.get_current_animation() != get_anim_prefix() + "up":
-			rpc("start_player_pump_down")
+			start_player_pump_down()
 		elif !is_demo_pump_finished && path_follower.progress > DEMO_PUMP_PROGRESS:
 			is_demo_pump_finished = true
-			rpc("start_player_pump_up")
+			start_player_pump_up()
 	
 	process_movement_tick()
 	process_pump()
