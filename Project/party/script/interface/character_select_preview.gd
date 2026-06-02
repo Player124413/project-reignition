@@ -73,15 +73,15 @@ func process_model_loading() -> void:
 	if current_model_path.is_empty() || is_instance_valid(instanced_model):
 		return
 	
-	printt("Loading model " + current_model_path, ResourceLoader.load_threaded_get_status(current_model_path))
 	if ResourceLoader.load_threaded_get_status(current_model_path) != ResourceLoader.THREAD_LOAD_LOADED:
 		return
 	
 	# Instance model
+	printt("Loaded model " + current_model_path)
 	var model_scene : PackedScene = ResourceLoader.load_threaded_get(current_model_path) as PackedScene
 	instanced_model = model_scene.instantiate() as CharacterAnimator
 	model_parent.add_child(instanced_model)
-	instanced_model.play_animation("select")
+	instanced_model.play_animation("select", true)
 	instanced_model.play_voice("select")
 	instanced_model.animation_event.connect(Callable(self, "on_select_finished"), CONNECT_ONE_SHOT)
 
