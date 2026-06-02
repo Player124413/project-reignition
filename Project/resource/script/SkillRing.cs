@@ -232,6 +232,9 @@ public class SkillRing
 		if (skill == null) // Skill hasn't been created yet...
 			return false;
 
+		if (DebugManager.Instance.UseDemoSave && skill.Key == SkillKey.Darkspine) // Disables darkspine skill in timeattack mode
+			return false;
+
 		if (DebugManager.Instance.UseDemoSave)
 			return true;
 
