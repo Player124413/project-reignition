@@ -223,6 +223,8 @@ public partial class TimeAttack : Menu
 
 	private void ContinueRun()
 	{
+		SaveManager.ActiveGameData.equippedSkills = SaveManager.TimeData.equippedSkillsContinue;
+		SaveManager.ActiveGameData.equippedAugments = SaveManager.TimeData.equippedAugmentsContinue;
 		TimeAttackManager.Instance.SetRunActive(true);
 		TimeAttackManager.Instance.SetReturnTimes();
 		TimeAttackManager.Instance.LoadLevel(TimeAttackManager.Instance.GetCurrentLevel());
