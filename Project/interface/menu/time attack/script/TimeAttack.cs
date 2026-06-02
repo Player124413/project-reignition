@@ -183,6 +183,7 @@ public partial class TimeAttack : Menu
 					ContinueRun();
 					break;
 				case 3://Single Run
+					base.FadeBgm(0.3f);
 					TimeAttackManager.Instance.SetRunType(TimeAttackManager.RunType.SingleRun);
 					timeAttackAnimator.Play("confirm-3");
 					currentSelection = 1;
