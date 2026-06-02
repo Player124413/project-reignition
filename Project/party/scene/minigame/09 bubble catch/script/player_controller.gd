@@ -9,6 +9,9 @@ extends PartyGameCharacterMover
 @export var bubble_fill_materials : Array[Material]
 @export var bubble_trail_materials : Array[ParticleProcessMaterial]
 @export var bubble_parent : Node3D
+@export var bubble_sfx : GroupSfxPlayer
+@export var pop_sfx : GroupSfxPlayer
+@export var bubble_vfx : GPUParticles3D
 
 var bubbles : Array[Node3D]
 var is_demo_swing : bool
@@ -24,13 +27,19 @@ func pool_bubble(bubble : Node3D) -> void:
 
 @rpc("any_peer", "call_local", "reliable")
 func spawn_bubble(pos : Vector3, size : int, tick : float) -> void:
-	if size == 0 || bubbles.size() == 0: # No bubble :(
+	if bubbles.size() == 0: # No bubble :(
+		return
+	
+	bubble_vfx.RestartGroup()
+	if size == 0:
+		pop_sfx.play_in_group()
 		return
 	
 	var bubble : Node3D = bubbles[0]
 	bubbles.remove_at(0)
 	bubble.spawn(pos, size, tick)
 	is_swing_active = false
+	bubble_sfx.play_in_group()
 
 func on_spawn_finished() -> void:
 	super()

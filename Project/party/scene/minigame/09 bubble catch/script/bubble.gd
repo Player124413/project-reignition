@@ -34,7 +34,6 @@ func spawn(pos : Vector3, size : int, tick : float) -> void:
 	animator.advance(0.0)
 	animator.play("move")
 	_lifetime = BUBBLE_LIFETIME - tick_offset
-	particles.RestartGroup()
 
 func despawn() -> void:
 	top_level = false
