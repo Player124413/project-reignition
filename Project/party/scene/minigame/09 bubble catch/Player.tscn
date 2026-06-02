@@ -1,4 +1,4 @@
-[gd_scene load_steps=48 format=3 uid="uid://bpsepdd02p1mu"]
+[gd_scene load_steps=34 format=3 uid="uid://bpsepdd02p1mu"]
 
 [ext_resource type="Script" uid="uid://dwqpctgwsv6v4" path="res://party/scene/minigame/09 bubble catch/script/player_controller.gd" id="1_1fwt2"]
 [ext_resource type="PackedScene" uid="uid://d0acqwu5fg5qi" path="res://party/scene/minigame/09 bubble catch/model/BubbleMaker.glb" id="2_aq8h0"]
@@ -18,20 +18,7 @@
 [ext_resource type="PackedScene" uid="uid://ccwgyiyqqppfx" path="res://party/scene/minigame/09 bubble catch/Bubble.tscn" id="14_6fp0f"]
 [ext_resource type="Material" uid="uid://iflvokbgfyys" path="res://party/scene/minigame/09 bubble catch/material/Bubble Swirl.tres" id="16_x5h0s"]
 [ext_resource type="Script" uid="uid://c65ffkknyq6gr" path="res://addons/custom_nodes/script/GroupGpuParticles3D.cs" id="17_72nir"]
-[ext_resource type="PackedScene" uid="uid://bdln8dht3adii" path="res://party/resource/character/scene/Amy.tscn" id="17_iuwyq"]
 [ext_resource type="Material" uid="uid://cvqins8ml3b57" path="res://party/scene/minigame/09 bubble catch/material/Bubble Ring.tres" id="18_775jk"]
-[ext_resource type="Animation" uid="uid://cvy1cow4wt0vh" path="res://party/resource/character/model/animation/amy/canoe-draw.res" id="18_6512d"]
-[ext_resource type="Animation" uid="uid://bj7weuvk16fka" path="res://party/resource/character/model/animation/amy/canoe-lose.res" id="19_cm8uj"]
-[ext_resource type="Animation" uid="uid://cn3tkjwh14io2" path="res://party/resource/character/model/animation/amy/canoe-win.res" id="20_x5h0s"]
-[ext_resource type="Animation" uid="uid://ul3eak122kvn" path="res://party/resource/character/model/animation/amy/draw.res" id="21_72nir"]
-[ext_resource type="Animation" uid="uid://dmj4ca7hn2xwr" path="res://party/resource/character/model/animation/amy/fight.res" id="22_775jk"]
-[ext_resource type="Animation" uid="uid://c6m8b6mtr7frf" path="res://party/resource/character/model/animation/amy/lose.res" id="23_ty3ab"]
-[ext_resource type="Animation" uid="uid://de621gpo1bk4w" path="res://party/resource/character/model/animation/amy/RESET.res" id="24_3kmxr"]
-[ext_resource type="Animation" uid="uid://begt4g23shnt3" path="res://party/resource/character/model/animation/amy/select.res" id="25_00d55"]
-[ext_resource type="Animation" uid="uid://c3lsyh6rqgo1a" path="res://party/resource/character/model/animation/amy/win.res" id="26_vnhw8"]
-[ext_resource type="Animation" uid="uid://pwbyjnmuamr8" path="res://party/resource/character/model/animation/amy/jog.res" id="27_aonn0"]
-[ext_resource type="Animation" uid="uid://cqf7ansptodr7" path="res://party/resource/character/model/animation/amy/run.res" id="28_3vjyk"]
-[ext_resource type="AnimationLibrary" uid="uid://1monqcvh5eia" path="res://party/scene/minigame/09 bubble catch/animation/_Library.glb" id="29_x2380"]
 [ext_resource type="AudioStream" uid="uid://j36c67tgikft" path="res://party/scene/minigame/09 bubble catch/sound/pop.wav" id="33_775jk"]
 [ext_resource type="AudioStream" uid="uid://b04njlyi8byq4" path="res://party/scene/minigame/09 bubble catch/sound/bubble.wav" id="33_ty3ab"]
 [ext_resource type="Script" uid="uid://bkwc2atbp4cjd" path="res://party/scene/minigame/00 base/script/group_sfx_player.gd" id="34_ty3ab"]
@@ -94,21 +81,6 @@ top_radius = 1.8
 bottom_radius = 1.8
 cap_top = false
 cap_bottom = false
-
-[sub_resource type="AnimationLibrary" id="AnimationLibrary_8dyqy"]
-_data = {
-&"RESET": ExtResource("24_3kmxr"),
-&"canoe-draw": ExtResource("18_6512d"),
-&"canoe-lose": ExtResource("19_cm8uj"),
-&"canoe-win": ExtResource("20_x5h0s"),
-&"draw": ExtResource("21_72nir"),
-&"fight": ExtResource("22_775jk"),
-&"jog": ExtResource("27_aonn0"),
-&"lose": ExtResource("23_ty3ab"),
-&"run": ExtResource("28_3vjyk"),
-&"select": ExtResource("25_00d55"),
-&"win": ExtResource("26_vnhw8")
-}
 
 [node name="Player" type="Node3D" node_paths=PackedStringArray("hand_attachment", "bubble_maker_mesh", "fill_mesh", "trail_mesh", "bubble_parent", "bubble_sfx", "pop_sfx", "bubble_vfx", "rollback_timer", "character_body", "spawn_position")]
 script = ExtResource("1_1fwt2")
@@ -273,15 +245,4 @@ script = ExtResource("34_ty3ab")
 group = "pop"
 metadata/_custom_type_script = "uid://bkwc2atbp4cjd"
 
-[node name="Amy" parent="." instance=ExtResource("17_iuwyq")]
-visible = false
-
-[node name="AnimationPlayer" parent="Amy/Amy" index="1"]
-libraries = {
-&"": SubResource("AnimationLibrary_8dyqy"),
-&"_Library": ExtResource("29_x2380")
-}
-
 [editable path="HandAttachment/BubbleMaker/BubbleMaker"]
-[editable path="Amy"]
-[editable path="Amy/Amy"]
