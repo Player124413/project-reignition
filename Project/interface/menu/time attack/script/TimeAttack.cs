@@ -186,6 +186,9 @@ public partial class TimeAttack : Menu
 					TimeAttackManager.Instance.SetRunType(TimeAttackManager.RunType.SingleRun);
 					timeAttackAnimator.Play("confirm-3");
 					currentSelection = 1;
+
+					SaveManager.ActiveGameData.equippedSkills = SaveManager.TimeData.equippedSkillsSingle;
+					SaveManager.ActiveGameData.equippedAugments = SaveManager.TimeData.equippedAugmentsSingle;
 					break;
 			}
 			return;
