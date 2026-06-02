@@ -24,6 +24,7 @@ public partial class TimeAttack : Menu
 
 	public override void ShowMenu()
 	{
+		base.FadeBgm(0.5f, true, 1);
 		TimeAttackManager.Instance.SetRunActive(true);
 		SaveManager.ActiveSaveSlotIndex = SaveManager.SaveSlotCount; //Saves skills and presets on a hidden file
 		SaveManager.ActiveSkillRing.LoadFromActiveData();
@@ -198,7 +199,10 @@ public partial class TimeAttack : Menu
 		switch (currentSelection)
 		{
 			case 2://Single Run
+				base.FadeBgm(0.5f);
 				TimeAttackManager.Instance.SetRunType(TimeAttackManager.RunType.SingleRun);
+				SaveManager.ActiveGameData.equippedSkills = SaveManager.TimeData.equippedSkillsSingle;
+				SaveManager.ActiveGameData.equippedAugments = SaveManager.TimeData.equippedAugmentsSingle;
 				break;
 		}
 		timeAttackAnimator.Play("confirm-" + currentSelection);
