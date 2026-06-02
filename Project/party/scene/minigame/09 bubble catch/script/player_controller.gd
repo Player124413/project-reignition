@@ -30,15 +30,15 @@ func spawn_bubble(pos : Vector3, size : int, tick : float) -> void:
 	if bubbles.size() == 0: # No bubble :(
 		return
 	
+	is_swing_active = false
 	bubble_vfx.RestartGroup()
-	if size == 0:
+	if size == ANIM_BUBBLE_SIZE_FAIL:
 		pop_sfx.play_in_group()
 		return
 	
 	var bubble : Node3D = bubbles[0]
 	bubbles.remove_at(0)
 	bubble.spawn(pos, size, tick)
-	is_swing_active = false
 	bubble_sfx.play_in_group()
 
 func on_spawn_finished() -> void:
@@ -75,11 +75,16 @@ const ANIM_SHOT_FINISH : int = 0
 const ANIM_BUBBLE_SIZE_SMALL : int = 1
 const ANIM_BUBBLE_SIZE_MEDIUM : int = 2
 const ANIM_BUBBLE_SIZE_LARGE : int = 3
-const ANIM_BUBBLE_SPAWN : int = 4
+const ANIM_BUBBLE_SIZE_FAIL : int = 4
+
+const ANIM_SWING_LEFT : int = 5
+const ANIM_SWING_RIGHT : int = 6
+
 const ANIM_TRAIL_START : int = 8
 const ANIM_TRAIL_STOP : int = 9
 const ANIM_STEP_LEFT : int = 10
 const ANIM_STEP_RIGHT : int = 11
+
 func process_animation() -> void:
 	if is_swing_active:
 		apply_movement_rotation()
@@ -89,10 +94,10 @@ func process_animation() -> void:
 func process_animation_event(event : int) -> void:
 	if event == ANIM_SHOT_FINISH: # Finished swinging
 		is_swing_active = false
-	elif event == ANIM_BUBBLE_SPAWN:
-		# TODO Spawn bubble
-		pass
-	elif event >= ANIM_BUBBLE_SIZE_SMALL && event <= ANIM_BUBBLE_SIZE_LARGE:
+	elif event == ANIM_SWING_LEFT || event == ANIM_SWING_RIGHT:
+		swing_power = ANIM_BUBBLE_SIZE_FAIL
+		start_swing_animation(event == ANIM_SWING_RIGHT)
+	elif event >= ANIM_BUBBLE_SIZE_SMALL && event <= ANIM_BUBBLE_SIZE_FAIL:
 		swing_power = event
 		if is_demo_swing:
 			if event == ANIM_BUBBLE_SIZE_LARGE:
@@ -204,17 +209,20 @@ func calculate_target_butterfly_index() -> int:
 
 @rpc("any_peer", "call_local", "reliable")
 func start_swing(tick : float, dir : int) -> void:
-	swing_power = 0
+	swing_power = ANIM_BUBBLE_SIZE_FAIL
 	is_swing_active = true
-	var target_anim : StringName
-	if dir == 1:
-		target_anim = get_anim_prefix() + "swing-r"
-	else:
-		target_anim = get_anim_prefix() + "swing-l"
-	character_animator.play_minigame_animation(target_anim, 0, 1.4, 0, tick)
+	var target_anim : StringName = "wait-r" if dir == 1 else "wait-l"
+	target_anim = get_anim_prefix() + target_anim
+	character_animator.play_minigame_animation(target_anim, 0.1, 1.4, 0, tick)
 	if NetworkManager.is_hosting_game && is_cpu():
 		if get_cpu_difficulty() < PlayerData.CPU_DIFFICULTY_ENUM.NORMAL: # Easier cpus jump to a different butterfly
 			rpc("update_target_butterfly", -1)
+
+func start_swing_animation(is_right_swing : bool) -> void:
+	if !is_swing_active:
+		return
+	var target_anim : String = "swing-r" if is_right_swing else "swing-l"
+	character_animator.play_minigame_animation(get_anim_prefix() + target_anim, 0.1)
 
 func get_target_animation() -> StringName:
 	var base : StringName = super()
