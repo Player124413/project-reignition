@@ -38,18 +38,27 @@ func process_animation() -> void:
 	if _state == STATE.IDLE:
 		super ()
 
+func process_movement_tick() -> void:
+	process_invincibility()
+	super ()
+
 const ANIM_SWING_FINISH: int = 0
 const ANIM_SWING_START: int = 1
 const ANIM_DAMAGE_START: int = 2
 const ANIM_DAMAGE_FINISH: int = 3
+const ANIM_INVINCIBILITY_START: int = 4
 
 func process_animation_event(event: int) -> void:
 	if event == ANIM_SWING_FINISH: # Finished swinging
 		_state = STATE.IDLE
 	elif event == ANIM_SWING_START:
 		_state = STATE.SWING
+	elif event == ANIM_DAMAGE_START:
+		_state = STATE.DAMAGE
 	elif event == ANIM_DAMAGE_FINISH:
 		_state = STATE.IDLE
+	elif event == ANIM_INVINCIBILITY_START:
+		request_invincibility(1)
 	
 
 func process_inputs() -> void:
@@ -70,7 +79,7 @@ func start_swing(tick: float) -> void:
 
 @rpc("any_peer", "call_local", "reliable")
 func take_damage() -> void:
-	if _state == STATE.DAMAGE: # Makes it so we can't be combo'd
+	if _state == STATE.DAMAGE:
 		return
 	character_animator.play_minigame_animation(get_anim_prefix() + "hurt")
 	_state = STATE.DAMAGE
