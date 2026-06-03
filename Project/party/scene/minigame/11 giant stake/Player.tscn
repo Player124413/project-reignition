@@ -1,26 +1,56 @@
-[gd_scene load_steps=5 format=3 uid="uid://cq28dycahd23h"]
+[gd_scene load_steps=19 format=3 uid="uid://cq28dycahd23h"]
 
 [ext_resource type="Script" uid="uid://bbddgqgqev64x" path="res://party/scene/minigame/11 giant stake/script/player_controller.gd" id="1_yl5s7"]
 [ext_resource type="Script" uid="uid://ds056nimfywwr" path="res://party/script/core/rollback_timer.gd" id="2_3d660"]
 [ext_resource type="PackedScene" uid="uid://c3oef1iwj8cvk" path="res://party/scene/minigame/11 giant stake/model/Hammer.glb" id="3_30hdn"]
+[ext_resource type="PackedScene" uid="uid://cacdy75rk2056" path="res://party/resource/character/scene/Sonic.tscn" id="4_icms6"]
+[ext_resource type="Animation" uid="uid://bxob8r1dswyhd" path="res://party/resource/character/model/animation/sonic/RESET.res" id="5_rf7bu"]
+[ext_resource type="Animation" uid="uid://cb6qwj5rom7pc" path="res://party/resource/character/model/animation/sonic/win.res" id="6_eqj5n"]
+[ext_resource type="Animation" uid="uid://tpew65wdwk3j" path="res://party/resource/character/model/animation/sonic/lose.res" id="7_5mk4o"]
+[ext_resource type="Animation" uid="uid://cp0u1wb4am5rj" path="res://party/resource/character/model/animation/sonic/draw.res" id="8_6vyfq"]
+[ext_resource type="Animation" uid="uid://c62k71m2h3tdm" path="res://party/resource/character/model/animation/sonic/select.res" id="9_8iiu8"]
+[ext_resource type="Animation" uid="uid://dy37nykesmm40" path="res://party/resource/character/model/animation/sonic/canoe-win.res" id="10_r5s2n"]
+[ext_resource type="Animation" uid="uid://dkoovfjabi3iq" path="res://party/resource/character/model/animation/sonic/canoe-lose.res" id="11_aamjh"]
+[ext_resource type="Animation" uid="uid://d3enu86q1hevb" path="res://party/resource/character/model/animation/sonic/canoe-draw.res" id="12_tnhsg"]
+[ext_resource type="Animation" uid="uid://c5xvjd0kl7mca" path="res://party/resource/character/model/animation/sonic/fight.res" id="13_0rmpa"]
+[ext_resource type="Animation" uid="uid://dmjw8hm1ssvk8" path="res://party/resource/character/model/animation/sonic/run.res" id="14_fpy81"]
+[ext_resource type="AnimationLibrary" uid="uid://cqr4d1pvoi7qk" path="res://party/scene/minigame/11 giant stake/animation/_Library.glb" id="15_hgcqa"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_3d660"]
 radius = 3.0
 height = 8.0
 
-[node name="Player" type="Node3D" node_paths=PackedStringArray("hand_attachment", "rollback_timer", "character_body", "spawn_position")]
+[sub_resource type="BoxShape3D" id="BoxShape3D_1e1fc"]
+size = Vector3(1.0454712, 3.6560059, 3.8029785)
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_3t3jg"]
+_data = {
+&"RESET": ExtResource("5_rf7bu"),
+&"canoe-draw": ExtResource("12_tnhsg"),
+&"canoe-lose": ExtResource("11_aamjh"),
+&"canoe-win": ExtResource("10_r5s2n"),
+&"draw": ExtResource("8_6vyfq"),
+&"fight": ExtResource("13_0rmpa"),
+&"lose": ExtResource("7_5mk4o"),
+&"run": ExtResource("14_fpy81"),
+&"select": ExtResource("9_8iiu8"),
+&"win": ExtResource("6_eqj5n")
+}
+
+[node name="Player" type="Node3D" node_paths=PackedStringArray("hand_attachment", "hammer_collision", "rollback_timer", "character_body", "spawn_position")]
 script = ExtResource("1_yl5s7")
 hand_attachment = NodePath("HandAttachment")
+hammer_collision = NodePath("HandAttachment/Hammer/Area3D/CollisionShape3D")
 rollback_timer = NodePath("Rollback")
-character_body = NodePath("CharacterBody3D")
+character_body = NodePath("PlayerCollision")
 allow_braking = false
 run_speed = 35.0
 friction = 230.0
-spawn_position = NodePath("CharacterBody3D")
+spawn_position = NodePath("PlayerCollision")
 
-[node name="CharacterBody3D" type="CharacterBody3D" parent="."]
+[node name="PlayerCollision" type="CharacterBody3D" parent="."]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="CharacterBody3D"]
+[node name="PlayerCollider" type="CollisionShape3D" parent="PlayerCollision"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4, 0)
 shape = SubResource("CapsuleShape3D_3d660")
 
@@ -31,8 +61,34 @@ bone_idx = 89
 
 [node name="Hammer" parent="HandAttachment" instance=ExtResource("3_30hdn")]
 
+[node name="Area3D" type="Area3D" parent="HandAttachment/Hammer" groups=["crusher"]]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="HandAttachment/Hammer/Area3D"]
+transform = Transform3D(1, 0, -2.3841858e-07, -1.4901161e-08, 1, 1.1920929e-07, -1.4901161e-08, -2.9802322e-08, 0.9999998, 3.2162585, 5.7116776, 0.058762312)
+shape = SubResource("BoxShape3D_1e1fc")
+disabled = true
+
 [node name="Rollback" type="Node" parent="."]
 script = ExtResource("2_3d660")
 enable_lag_compensation = false
 param_count = 10
 rollback_interval = 0.0
+
+[node name="Sonic" parent="." instance=ExtResource("4_icms6")]
+visible = false
+
+[node name="GeneralSkeleton" parent="Sonic/Sonic/CharacterRoot" index="0"]
+bones/67/rotation = Quaternion(0.6344744, -0.6344744, 0.31215754, 0.3121575)
+bones/68/rotation = Quaternion(-0.62526655, 0.6252665, 0.3302148, 0.33021486)
+
+[node name="AnimationPlayer" parent="Sonic/Sonic" index="1"]
+libraries = {
+&"": SubResource("AnimationLibrary_3t3jg"),
+&"_Library": ExtResource("15_hgcqa")
+}
+next/_Library/hammer-up = &""
+
+[connection signal="area_entered" from="HandAttachment/Hammer/Area3D" to="." method="_on_area_3d_area_entered"]
+
+[editable path="Sonic"]
+[editable path="Sonic/Sonic"]
