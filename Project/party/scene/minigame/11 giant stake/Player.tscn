@@ -1,4 +1,4 @@
-[gd_scene load_steps=19 format=3 uid="uid://cq28dycahd23h"]
+[gd_scene load_steps=20 format=3 uid="uid://cq28dycahd23h"]
 
 [ext_resource type="Script" uid="uid://bbddgqgqev64x" path="res://party/scene/minigame/11 giant stake/script/player_controller.gd" id="1_yl5s7"]
 [ext_resource type="Script" uid="uid://ds056nimfywwr" path="res://party/script/core/rollback_timer.gd" id="2_3d660"]
@@ -20,6 +20,9 @@
 radius = 3.0
 height = 8.0
 
+[sub_resource type="BoxShape3D" id="BoxShape3D_icms6"]
+size = Vector3(3.4075928, 10.356323, 4.692322)
+
 [sub_resource type="BoxShape3D" id="BoxShape3D_1e1fc"]
 size = Vector3(1.0454712, 3.6560059, 3.8029785)
 
@@ -37,10 +40,11 @@ _data = {
 &"win": ExtResource("6_eqj5n")
 }
 
-[node name="Player" type="Node3D" node_paths=PackedStringArray("hand_attachment", "hammer_collision", "rollback_timer", "character_body", "spawn_position")]
+[node name="Player" type="Node3D" node_paths=PackedStringArray("hand_attachment", "hammer_collision", "player_hitbox", "rollback_timer", "character_body", "spawn_position")]
 script = ExtResource("1_yl5s7")
 hand_attachment = NodePath("HandAttachment")
 hammer_collision = NodePath("HandAttachment/Hammer/Area3D/CollisionShape3D")
+player_hitbox = NodePath("PlayerHitbox/hitbox")
 rollback_timer = NodePath("Rollback")
 character_body = NodePath("PlayerCollision")
 allow_braking = false
@@ -53,6 +57,13 @@ spawn_position = NodePath("PlayerCollision")
 [node name="PlayerCollider" type="CollisionShape3D" parent="PlayerCollision"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4, 0)
 shape = SubResource("CapsuleShape3D_3d660")
+
+[node name="PlayerHitbox" type="Area3D" parent="." groups=["player"]]
+
+[node name="hitbox" type="CollisionShape3D" parent="PlayerHitbox"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.08868599, 4.8506246, -0.61441994)
+shape = SubResource("BoxShape3D_icms6")
+debug_color = Color(1, 0, 0, 0.41960785)
 
 [node name="HandAttachment" type="BoneAttachment3D" parent="."]
 transform = Transform3D(-0.055639148, 0.82801193, 0.5579431, -0.9488646, -0.21776418, 0.22854908, 0.3107414, -0.51669616, 0.7977873, -0.11048618, 3.0883198, 1.8606191)
@@ -79,14 +90,13 @@ visible = false
 
 [node name="GeneralSkeleton" parent="Sonic/Sonic/CharacterRoot" index="0"]
 bones/67/rotation = Quaternion(0.6344744, -0.6344744, 0.31215754, 0.3121575)
-bones/68/rotation = Quaternion(-0.62526655, 0.6252665, 0.3302148, 0.33021486)
+bones/68/rotation = Quaternion(-0.62526655, 0.6252665, 0.33021483, 0.33021483)
 
 [node name="AnimationPlayer" parent="Sonic/Sonic" index="1"]
 libraries = {
 &"": SubResource("AnimationLibrary_3t3jg"),
 &"_Library": ExtResource("15_hgcqa")
 }
-next/_Library/hammer-up = &""
 
 [connection signal="area_entered" from="HandAttachment/Hammer/Area3D" to="." method="_on_area_3d_area_entered"]
 
