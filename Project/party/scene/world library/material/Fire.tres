@@ -1,8 +1,75 @@
-[gd_resource type="StandardMaterial3D" load_steps=2 format=3 uid="uid://cnp1quciuylh6"]
+[gd_resource type="ShaderMaterial" load_steps=3 format=3 uid="uid://cnp1quciuylh6"]
 
-[ext_resource type="Texture2D" uid="uid://cc11onnrmkghm" path="res://party/scene/world library/texture/fire01.png" id="1_mpmu8"]
+[ext_resource type="Texture2D" uid="uid://cc11onnrmkghm" path="res://party/scene/world library/texture/fire.png" id="1_mpmu8"]
+
+[sub_resource type="Shader" id="Shader_mpmu8"]
+code = "shader_type spatial;
+
+uniform vec4 albedo : source_color;
+uniform sampler2D texture_albedo : source_color;
+
+uniform int particles_anim_h_frames : hint_range(1, 128);
+uniform int particles_anim_v_frames : hint_range(1, 128);
+uniform bool particles_anim_loop;
+
+uniform sampler2D texture_emission : source_color, hint_default_white;
+uniform vec4 emission : source_color;
+uniform float emission_energy : hint_range(0.0, 100.0, 0.01);
+
+void vertex() {
+	// Billboard Mode: Particles
+	MODELVIEW_MATRIX = VIEW_MATRIX * mat4(
+			vec4(normalize(cross(vec3(0.0, 1.0, 0.0), MAIN_CAM_INV_VIEW_MATRIX[2].xyz)), 0.0),
+			vec4(0.0, 1.0, 0.0, 0.0),
+			vec4(normalize(cross(MAIN_CAM_INV_VIEW_MATRIX[0].xyz, vec3(0.0, 1.0, 0.0))), 0.0),
+			MODEL_MATRIX[3]);
+	MODELVIEW_NORMAL_MATRIX = mat3(MODELVIEW_MATRIX);
+
+	// Billboard Keep Scale: Enabled
+	MODELVIEW_MATRIX = MODELVIEW_MATRIX * mat4(
+			vec4(length(MODEL_MATRIX[0].xyz), 0.0, 0.0, 0.0),
+			vec4(0.0, length(MODEL_MATRIX[1].xyz), 0.0, 0.0),
+			vec4(0.0, 0.0, length(MODEL_MATRIX[2].xyz), 0.0),
+			vec4(0.0, 0.0, 0.0, 1.0));
+
+	MODELVIEW_NORMAL_MATRIX = mat3(MODELVIEW_MATRIX);
+
+	float h_frames = float(particles_anim_h_frames);
+	float v_frames = float(particles_anim_v_frames);
+	float particle_total_frames = float(particles_anim_h_frames * particles_anim_v_frames);
+	float particle_frame = floor(INSTANCE_CUSTOM.z * float(particle_total_frames));
+	if (!particles_anim_loop) {
+		particle_frame = clamp(particle_frame, 0.0, particle_total_frames - 1.0);
+	} else {
+		particle_frame = mod(particle_frame, particle_total_frames);
+	}
+	UV /= vec2(h_frames, v_frames);
+	UV += vec2(mod(particle_frame, h_frames) / h_frames, floor((particle_frame + 0.5) / h_frames) / v_frames);
+}
+
+void fragment() {
+	vec2 base_uv = UV;
+
+	vec4 albedo_tex = texture(texture_albedo, base_uv);
+	ALBEDO = albedo.rgb * albedo_tex.rgb * COLOR.rgb;
+
+	// Emission: Enabled
+	vec3 emission_tex = texture(texture_emission, base_uv).rgb;
+	// Emission Operator: Add
+	EMISSION = (emission.rgb + emission_tex) * emission_energy;
+	ALPHA *= albedo.a * albedo_tex.a * COLOR.a;
+}
+"
 
 [resource]
 resource_name = "Fire"
-transparency = 1
-albedo_texture = ExtResource("1_mpmu8")
+render_priority = 1
+shader = SubResource("Shader_mpmu8")
+shader_parameter/albedo = Color(1, 1, 1, 1)
+shader_parameter/texture_albedo = ExtResource("1_mpmu8")
+shader_parameter/particles_anim_h_frames = 2
+shader_parameter/particles_anim_v_frames = 3
+shader_parameter/particles_anim_loop = true
+shader_parameter/texture_emission = ExtResource("1_mpmu8")
+shader_parameter/emission = Color(0, 0, 0, 1)
+shader_parameter/emission_energy = 1.0

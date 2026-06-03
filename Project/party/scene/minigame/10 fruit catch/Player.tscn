@@ -1,0 +1,75 @@
+[gd_scene load_steps=17 format=3 uid="uid://pwp0iw4eqwns"]
+
+[ext_resource type="PackedScene" uid="uid://c35p8v62qdykg" path="res://party/scene/minigame/10 fruit catch/Environment.tscn" id="1_lwkkx"]
+[ext_resource type="PackedScene" uid="uid://bdln8dht3adii" path="res://party/resource/character/scene/Amy.tscn" id="2_rkm5s"]
+[ext_resource type="Animation" uid="uid://cvy1cow4wt0vh" path="res://party/resource/character/model/animation/amy/canoe-draw.res" id="3_7r6vs"]
+[ext_resource type="PackedScene" uid="uid://bkkrc2d0tht7q" path="res://party/scene/minigame/10 fruit catch/model/Rapier.glb" id="3_xx30g"]
+[ext_resource type="Animation" uid="uid://bj7weuvk16fka" path="res://party/resource/character/model/animation/amy/canoe-lose.res" id="4_xx30g"]
+[ext_resource type="Animation" uid="uid://cn3tkjwh14io2" path="res://party/resource/character/model/animation/amy/canoe-win.res" id="5_yabja"]
+[ext_resource type="Animation" uid="uid://ul3eak122kvn" path="res://party/resource/character/model/animation/amy/draw.res" id="6_bis70"]
+[ext_resource type="Animation" uid="uid://dmj4ca7hn2xwr" path="res://party/resource/character/model/animation/amy/fight.res" id="7_k0xs7"]
+[ext_resource type="Animation" uid="uid://c6m8b6mtr7frf" path="res://party/resource/character/model/animation/amy/lose.res" id="8_ib5to"]
+[ext_resource type="Animation" uid="uid://de621gpo1bk4w" path="res://party/resource/character/model/animation/amy/RESET.res" id="9_i3q00"]
+[ext_resource type="Animation" uid="uid://begt4g23shnt3" path="res://party/resource/character/model/animation/amy/select.res" id="10_psrdw"]
+[ext_resource type="Animation" uid="uid://c3lsyh6rqgo1a" path="res://party/resource/character/model/animation/amy/win.res" id="11_qwoc1"]
+[ext_resource type="Animation" uid="uid://pwbyjnmuamr8" path="res://party/resource/character/model/animation/amy/jog.res" id="12_4msxe"]
+[ext_resource type="Animation" uid="uid://cqf7ansptodr7" path="res://party/resource/character/model/animation/amy/run.res" id="13_4iaoh"]
+[ext_resource type="AnimationLibrary" uid="uid://gmvp88dtk42h" path="res://party/scene/minigame/10 fruit catch/animation/_Library.glb" id="14_sxl8t"]
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_8dyqy"]
+_data = {
+&"RESET": ExtResource("9_i3q00"),
+&"canoe-draw": ExtResource("3_7r6vs"),
+&"canoe-lose": ExtResource("4_xx30g"),
+&"canoe-win": ExtResource("5_yabja"),
+&"draw": ExtResource("6_bis70"),
+&"fight": ExtResource("7_k0xs7"),
+&"jog": ExtResource("12_4msxe"),
+&"lose": ExtResource("8_ib5to"),
+&"run": ExtResource("13_4iaoh"),
+&"select": ExtResource("10_psrdw"),
+&"win": ExtResource("11_qwoc1")
+}
+
+[node name="Player" instance=ExtResource("1_lwkkx")]
+
+[node name="SpawnPosition" type="Node3D" parent="." index="8"]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, 0, 0)
+
+[node name="Amy" parent="SpawnPosition" index="0" instance=ExtResource("2_rkm5s")]
+
+[node name="GeneralSkeleton" parent="SpawnPosition/Amy/Amy/CharacterRoot" index="0"]
+bones/5/position = Vector3(0.56104374, 2.980235e-08, 0.00056391954)
+
+[node name="Shoulder" type="BoneAttachment3D" parent="SpawnPosition/Amy/Amy/CharacterRoot/GeneralSkeleton" index="21"]
+transform = Transform3D(-0.99998033, -0.0062316507, 1.1629129e-07, -4.8038066e-07, 9.575629e-05, 0.9999997, -0.006231725, 0.99998045, -9.575749e-05, -0.55589783, -3.1500207e-05, -6.1182175)
+bone_name = "shoulder_r"
+bone_idx = 43
+
+[node name="Elbow" type="BoneAttachment3D" parent="SpawnPosition/Amy/Amy/CharacterRoot/GeneralSkeleton" index="22"]
+transform = Transform3D(-0.9999798, -0.006231762, 0.0010547126, 0.0010541362, 9.57563e-05, 0.99999917, -0.0062319343, 0.99998045, -8.9185254e-05, -1.6765809, -3.2145916e-05, -6.1252017)
+bone_name = "elbow_r"
+bone_idx = 44
+
+[node name="Stomach" type="BoneAttachment3D" parent="SpawnPosition/Amy/Amy/CharacterRoot/GeneralSkeleton" index="23"]
+transform = Transform3D(9.144688e-11, 0.9999999, -1.1920925e-07, 0.0007669926, -1.19209275e-07, -0.99999964, -0.9999997, 1.9430277e-17, -0.0007669927, 2.9795405e-07, 0.23830868, -4.808929)
+bone_name = "stomach"
+bone_idx = 5
+override_pose = true
+
+[node name="Hand" type="BoneAttachment3D" parent="SpawnPosition/Amy/Amy/CharacterRoot/GeneralSkeleton" index="24"]
+transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, 0, 0, 0)
+bone_name = "hand_attachment"
+bone_idx = 89
+
+[node name="Rapier" parent="SpawnPosition/Amy/Amy/CharacterRoot/GeneralSkeleton/Hand" index="0" instance=ExtResource("3_xx30g")]
+
+[node name="AnimationPlayer" parent="SpawnPosition/Amy/Amy" index="1"]
+libraries = {
+&"": SubResource("AnimationLibrary_8dyqy"),
+&"_Library": ExtResource("14_sxl8t")
+}
+
+[editable path="Environment"]
+[editable path="SpawnPosition/Amy"]
+[editable path="SpawnPosition/Amy/Amy"]
