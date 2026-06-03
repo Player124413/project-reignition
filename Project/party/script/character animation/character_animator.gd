@@ -8,8 +8,22 @@ signal animation_event(info : int)
 @export var voice_player : AudioStreamPlayer
 @export var data : PartyCharacterResource
 
+@export var invincibility_animator : AnimationPlayer
+@export var invincibility_animation_curve : Curve
+
 ## The index of this character
 var player_index : int
+
+## Updates the invincibility animator.
+func process_invincibility_timer(time_remaining : float) -> void:
+	if is_zero_approx(time_remaining):
+		invincibility_animator.play("RESET")
+		invincibility_animator.advance(0.0)
+		return
+	
+	if invincibility_animator.current_animation != "loop":
+		invincibility_animator.play("loop")
+	invincibility_animator.speed_scale = invincibility_animation_curve.sample(time_remaining)
 
 ## Plays a voice clip.
 func play_voice(key : String, index : int = -1) -> void:

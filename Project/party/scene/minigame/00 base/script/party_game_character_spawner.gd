@@ -13,6 +13,38 @@ class_name PartyGameCharacterSpawner extends Node3D
 var _is_spawn_finished : bool
 var _is_gameplay_finished : bool
 
+##########################
+### Invincibility Code ###
+##########################
+## How much longer the player should be invincible.
+var _invincibility_timer : float
+## Returns whether this character is invincible or not.
+func is_invincible() -> bool:
+	return !is_zero_approx(_invincibility_timer)
+
+## Override for setting a player's invincibility without manually calling the RPC.
+func request_invincibility(duration : float = 2.0) -> void:
+	if !is_multiplayer_authority():
+		return
+	
+	rpc("start_invincibility", duration, NetworkTimeSynchronizer.get_time())
+
+## Sets the player's invincibility timer.
+@rpc("any_peer", "call_local", "reliable")
+func start_invincibility(duration : float, tick : float) -> void:
+	_invincibility_timer = duration - (NetworkTimeSynchronizer.get_time() - tick)
+	process_invincibility()
+
+@rpc("any_peer", "call_local", "reliable")
+func cancel_invincibility() -> void:
+	_invincibility_timer = 0.0
+	process_invincibility()
+
+## Updates the invincibility timer. Call this from process_movement_tick().
+func process_invincibility() -> void:
+	character_animator.process_invincibility_timer(_invincibility_timer)
+	_invincibility_timer = move_toward(_invincibility_timer, 0.0, get_physics_process_delta_time())
+
 func initialize_animation_tree(anim_prefix : String, anim_list : PackedStringArray) -> void:
 	animation_tree.anim_player = animation_tree.get_path_to(character_animator.animator)
 	var root : AnimationNodeBlendTree = animation_tree.tree_root as AnimationNodeBlendTree
