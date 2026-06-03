@@ -1,9 +1,11 @@
-[gd_scene load_steps=6 format=3 uid="uid://c35p8v62qdykg"]
+[gd_scene load_steps=22 format=3 uid="uid://c35p8v62qdykg"]
 
 [ext_resource type="PackedScene" uid="uid://5id56kgo0rka" path="res://party/scene/minigame/10 fruit catch/model/Environment.glb" id="1_6kaxa"]
+[ext_resource type="Script" uid="uid://bf82prgf8lewt" path="res://party/scene/minigame/10 fruit catch/script/player_controller.gd" id="1_qlpbs"]
 [ext_resource type="PackedScene" uid="uid://fqfrgeoixshr" path="res://party/scene/world library/CommonPartyFire.tscn" id="2_8em1r"]
 [ext_resource type="PackedScene" uid="uid://cho38gsk705f8" path="res://party/resource/character/scene/Omochao.tscn" id="3_8em1r"]
 [ext_resource type="Script" uid="uid://bgxo1jobmw4co" path="res://party/scene/minigame/10 fruit catch/script/omochao_manager.gd" id="3_djtaf"]
+[ext_resource type="PackedScene" uid="uid://bkkrc2d0tht7q" path="res://party/scene/minigame/10 fruit catch/model/Rapier.glb" id="4_aoec8"]
 
 [sub_resource type="Environment" id="Environment_6kaxa"]
 background_mode = 1
@@ -12,7 +14,78 @@ ambient_light_color = Color(0.45452422, 0.45452428, 0.45452422, 1)
 tonemap_mode = 2
 glow_enabled = true
 
-[node name="Environment" type="Node3D"]
+[sub_resource type="SphereShape3D" id="SphereShape3D_aoec8"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_aoec8"]
+radius = 0.25
+height = 25.0
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_w6lhc"]
+animation = &"MINIGAME/aim-neutral"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_ry6b1"]
+animation = &"MINIGAME/aim-up"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_onisx"]
+animation = &"MINIGAME/aim-down"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_2tt17"]
+animation = &"MINIGAME/aim-left"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_y2qp1"]
+animation = &"MINIGAME/aim-right"
+
+[sub_resource type="AnimationNodeBlendSpace2D" id="AnimationNodeBlendSpace2D_287b0"]
+blend_point_0/node = SubResource("AnimationNodeAnimation_w6lhc")
+blend_point_0/pos = Vector2(0, 0)
+blend_point_1/node = SubResource("AnimationNodeAnimation_ry6b1")
+blend_point_1/pos = Vector2(0, 1)
+blend_point_2/node = SubResource("AnimationNodeAnimation_onisx")
+blend_point_2/pos = Vector2(0, -1)
+blend_point_3/node = SubResource("AnimationNodeAnimation_2tt17")
+blend_point_3/pos = Vector2(-1, 0)
+blend_point_4/node = SubResource("AnimationNodeAnimation_y2qp1")
+blend_point_4/pos = Vector2(1, 0)
+sync = true
+
+[sub_resource type="AnimationNodeBlend2" id="AnimationNodeBlend2_ggd4j"]
+filter_enabled = true
+filters = ["%GeneralSkeleton:elbow_r", "%GeneralSkeleton:head", "%GeneralSkeleton:shoulder_r", "%GeneralSkeleton:stomach", "%GeneralSkeleton:wrist_r"]
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_287b0"]
+animation = &"MINIGAME/hurt"
+
+[sub_resource type="AnimationNodeTimeSeek" id="AnimationNodeTimeSeek_ggd4j"]
+
+[sub_resource type="AnimationNodeOneShot" id="AnimationNodeOneShot_ggd4j"]
+fadein_time = 0.05
+fadeout_time = 0.1
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_ggd4j"]
+animation = &"MINIGAME/wait"
+
+[sub_resource type="AnimationNodeBlendTree" id="AnimationNodeBlendTree_y30lh"]
+graph_offset = Vector2(-925.8203, 116.272705)
+nodes/output/position = Vector2(220, 140)
+nodes/wait_anim/node = SubResource("AnimationNodeAnimation_ggd4j")
+nodes/wait_anim/position = Vector2(-520, 40)
+nodes/aim_blend/node = SubResource("AnimationNodeBlendSpace2D_287b0")
+nodes/aim_blend/position = Vector2(-520, 220)
+nodes/aim_blend_const/node = SubResource("AnimationNodeBlend2_ggd4j")
+nodes/aim_blend_const/position = Vector2(-220, 120)
+nodes/hurt_trigger/node = SubResource("AnimationNodeOneShot_ggd4j")
+nodes/hurt_trigger/position = Vector2(60, 140)
+nodes/hurt_anim/node = SubResource("AnimationNodeAnimation_287b0")
+nodes/hurt_anim/position = Vector2(-320, 400)
+nodes/hurt_seek/node = SubResource("AnimationNodeTimeSeek_ggd4j")
+nodes/hurt_seek/position = Vector2(-100, 380)
+node_connections = [&"output", 0, &"hurt_trigger", &"aim_blend_const", 0, &"wait_anim", &"aim_blend_const", 1, &"aim_blend", &"hurt_trigger", 0, &"aim_blend_const", &"hurt_trigger", 1, &"hurt_seek", &"hurt_seek", 0, &"hurt_anim"]
+
+[node name="Environment" type="Node3D" node_paths=PackedStringArray("bone_attachment", "spawn_position", "animation_tree")]
+script = ExtResource("1_qlpbs")
+bone_attachment = NodePath("SpawnPosition/RapierBone")
+spawn_position = NodePath("SpawnPosition")
+animation_tree = NodePath("SpawnPosition/AnimationTree")
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_6kaxa")
@@ -159,8 +232,47 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.3836555, -4.3, -2.9802322e-
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.383656, -7.5, -2.9802322e-08)
 
 [node name="GameCamera" type="Camera3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 7, 0)
+transform = Transform3D(1, 0, 0, 0, 0.90630776, -0.42261827, 0, 0.42261827, 0.90630776, 0, 3, 15)
 cull_mask = 1061
+current = true
+fov = 50.0
+
+[node name="SpawnPosition" type="Node3D" parent="."]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, 0, 0)
+
+[node name="RapierBone" type="BoneAttachment3D" parent="SpawnPosition"]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 0, 0, 0)
+bone_name = "wrist_r"
+bone_idx = 45
+
+[node name="Rapier" parent="SpawnPosition/RapierBone" instance=ExtResource("4_aoec8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 0, -0.5)
+
+[node name="StabTrigger" type="Area3D" parent="SpawnPosition/RapierBone/Rapier"]
+collision_layer = 8
+collision_mask = 0
+monitoring = false
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="SpawnPosition/RapierBone/Rapier/StabTrigger"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 28, 0)
+shape = SubResource("SphereShape3D_aoec8")
+
+[node name="StickCollision" type="StaticBody3D" parent="SpawnPosition/RapierBone/Rapier"]
+physics_interpolation_mode = 1
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="SpawnPosition/RapierBone/Rapier/StickCollision"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 14.884376, 0)
+shape = SubResource("CapsuleShape3D_aoec8")
+
+[node name="AnimationTree" type="AnimationTree" parent="SpawnPosition"]
+active = false
+tree_root = SubResource("AnimationNodeBlendTree_y30lh")
+parameters/aim_blend/blend_position = Vector2(0, 0)
+parameters/aim_blend_const/blend_amount = 1.0
+parameters/hurt_trigger/active = false
+parameters/hurt_trigger/internal_active = false
+parameters/hurt_trigger/request = 0
+parameters/hurt_seek/seek_request = -1.0
 
 [node name="Omochaos" type="Node3D" parent="." node_paths=PackedStringArray("omochaos")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 20, -67)

@@ -41,6 +41,7 @@ func _ready() -> void:
 ## Kick off the demo by spawning a ball.
 func start_demo() -> void:
 	is_active = true
+	await get_tree().create_timer(NetworkManager.calculate_transition_tick()).timeout
 	start_falling(global_position)
 	reset_physics_interpolation()
 	spawn()
