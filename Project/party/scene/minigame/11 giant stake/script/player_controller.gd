@@ -19,16 +19,17 @@ var _state: STATE
 enum STATE {
 	IDLE,
 	SWING,
-	DAMAGE
+	DAMAGE,
+	INVINCIBLE
 }
 
 
 func process_rotation(target_angle: float) -> void:
-	if _state == STATE.IDLE:
+	if _state == STATE.IDLE || _state == STATE.INVINCIBLE:
 		super (target_angle)
 
 func process_speed() -> void:
-	if _state == STATE.IDLE || _state == STATE.DAMAGE:
+	if _state == STATE.IDLE || _state == STATE.INVINCIBLE:
 		super ()
 		return
 	
@@ -40,29 +41,34 @@ func process_animation() -> void:
 
 func process_movement_tick() -> void:
 	process_invincibility()
+	
+	if _state == STATE.INVINCIBLE && !is_invincible():
+		print("Invincibility finished")
+		_state = STATE.IDLE
+		#player_hitbox.set_deferred("disabled", false)
 	super ()
+
 
 const ANIM_SWING_FINISH: int = 0
 const ANIM_SWING_START: int = 1
 const ANIM_DAMAGE_START: int = 2
-const ANIM_DAMAGE_FINISH: int = 3
 const ANIM_INVINCIBILITY_START: int = 4
 
 func process_animation_event(event: int) -> void:
 	if event == ANIM_SWING_FINISH: # Finished swinging
 		_state = STATE.IDLE
+		hammer_collision.set_deferred("disabled", true)
 	elif event == ANIM_SWING_START:
 		_state = STATE.SWING
 	elif event == ANIM_DAMAGE_START:
 		_state = STATE.DAMAGE
-	elif event == ANIM_DAMAGE_FINISH:
-		_state = STATE.IDLE
 	elif event == ANIM_INVINCIBILITY_START:
+		_state = STATE.INVINCIBLE
 		request_invincibility(1)
 	
 
 func process_inputs() -> void:
-	if !is_cpu() && _state == STATE.IDLE:
+	if !is_cpu() && _state == STATE.IDLE || _state == STATE.INVINCIBLE:
 		if Input.is_action_just_pressed("button_primary%s" % get_input_suffix()):
 			rpc("start_swing", NetworkTimeSynchronizer.get_time())
 		if Input.is_action_just_pressed("button_secondary%s" % get_input_suffix()):
@@ -71,7 +77,7 @@ func process_inputs() -> void:
 
 @rpc("any_peer", "call_local", "reliable")
 func start_swing(tick: float) -> void:
-	hammer_collision.disabled = false
+	hammer_collision.set_deferred("disabled", false)
 	_state = STATE.SWING
 	var target_anim: StringName
 	target_anim = get_anim_prefix() + "hammer-down"
@@ -79,10 +85,15 @@ func start_swing(tick: float) -> void:
 
 @rpc("any_peer", "call_local", "reliable")
 func take_damage() -> void:
-	if _state == STATE.DAMAGE:
-		return
 	character_animator.play_minigame_animation(get_anim_prefix() + "hurt")
 	_state = STATE.DAMAGE
+
+func request_damage() -> void:
+	if !is_multiplayer_authority():
+		return
+	if _state == STATE.DAMAGE || is_invincible():
+		return
+	rpc("take_damage")
 
 ##The hitbox for the hammer
 func _on_area_3d_area_entered(area: Area3D) -> void:
@@ -96,7 +107,7 @@ func _on_area_3d_area_entered(area: Area3D) -> void:
 		return
 
 	if area.is_in_group("enemy") || area.is_in_group("player"):
-		hammer_collision.disabled = true
+		hammer_collision.set_deferred("disabled", true)
 
 	if area.is_in_group("player"):
-		area.get_parent().rpc("take_damage")
+		area.get_parent().get_parent().request_damage()
