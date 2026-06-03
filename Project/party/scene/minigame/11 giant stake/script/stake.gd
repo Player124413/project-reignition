@@ -3,7 +3,7 @@ class_name GiantStake extends Node
 @export var animator: AnimationPlayer
 ### If true, start already spawned
 @export var starting_stake: bool = false
-@export var collision: CollisionShape3D
+@export var collision: Area3D
 
 ### How many hits for wood type
 const MAX_HITS_WOOD: int = 3
@@ -32,15 +32,15 @@ func initialize_stake() -> void:
 	return
 
 func spawn_stake() -> void:
+	if is_fallen:
+		return
+
 	is_fallen = true
 	
 	if is_bonus:
 		animator.play("metal_fall")
 	else:
 		animator.play("wood_fall")
-
-	
-	return
 
 @rpc("any_peer", "call_local", "reliable")
 func hit_stake() -> void:
@@ -75,3 +75,8 @@ func set_bonus() -> void:
 		is_bonus = true
 	else:
 		is_bonus = false
+
+func _on_area_3d_area_entered(area: Area3D) -> void:
+	if area.is_in_group("crusher"):
+		hit_stake()
+	pass # Replace with function body.

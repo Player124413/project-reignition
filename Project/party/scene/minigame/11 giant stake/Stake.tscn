@@ -1,4 +1,4 @@
-[gd_scene load_steps=22 format=3 uid="uid://dgpa1n80e4hkd"]
+[gd_scene load_steps=23 format=3 uid="uid://dgpa1n80e4hkd"]
 
 [ext_resource type="PackedScene" uid="uid://6y0vben3tykf" path="res://party/scene/minigame/11 giant stake/model/metal_stake.tscn" id="1_7gsve"]
 [ext_resource type="Script" uid="uid://b0kejedoxpdit" path="res://party/scene/minigame/11 giant stake/script/stake.gd" id="1_ghnyn"]
@@ -84,14 +84,14 @@ tracks/5/keys = {
 tracks/6/type = "value"
 tracks/6/imported = false
 tracks/6/enabled = true
-tracks/6/path = NodePath("StaticBody3D/CollisionShape3D:disabled")
+tracks/6/path = NodePath("StakeCollision/StakeCollider:disabled")
 tracks/6/interp = 1
 tracks/6/loop_wrap = true
 tracks/6/keys = {
-"times": PackedFloat32Array(0),
+"times": PackedFloat32Array(-0.033333335),
 "transitions": PackedFloat32Array(1),
 "update": 1,
-"values": [false]
+"values": [true]
 }
 
 [sub_resource type="Animation" id="Animation_vy42k"]
@@ -160,6 +160,18 @@ tracks/4/keys = {
 "method": &"play"
 }]
 }
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("StakeCollision/StakeCollider:disabled")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(4),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
 
 [sub_resource type="Animation" id="Animation_g3nfu"]
 resource_name = "metal_stage_0"
@@ -192,7 +204,7 @@ tracks/1/keys = {
 tracks/2/type = "value"
 tracks/2/imported = false
 tracks/2/enabled = true
-tracks/2/path = NodePath("StaticBody3D/CollisionShape3D:disabled")
+tracks/2/path = NodePath("StakeCollision/StakeCollider:disabled")
 tracks/2/interp = 1
 tracks/2/loop_wrap = true
 tracks/2/keys = {
@@ -289,7 +301,7 @@ tracks/0/keys = {
 tracks/1/type = "value"
 tracks/1/imported = false
 tracks/1/enabled = true
-tracks/1/path = NodePath("StaticBody3D/CollisionShape3D:disabled")
+tracks/1/path = NodePath("StakeCollision/StakeCollider:disabled")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/keys = {
@@ -442,6 +454,18 @@ tracks/5/keys = {
 "method": &"play"
 }]
 }
+tracks/6/type = "value"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("StakeCollision/StakeCollider:disabled")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"times": PackedFloat32Array(4),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
 
 [sub_resource type="Animation" id="Animation_be8it"]
 resource_name = "wood_stage_0"
@@ -473,7 +497,7 @@ tracks/1/keys = {
 tracks/2/type = "value"
 tracks/2/imported = false
 tracks/2/enabled = true
-tracks/2/path = NodePath("StaticBody3D/CollisionShape3D:disabled")
+tracks/2/path = NodePath("StakeCollision/StakeCollider:disabled")
 tracks/2/interp = 1
 tracks/2/loop_wrap = true
 tracks/2/keys = {
@@ -546,7 +570,7 @@ tracks/0/keys = {
 tracks/1/type = "value"
 tracks/1/imported = false
 tracks/1/enabled = true
-tracks/1/path = NodePath("StaticBody3D/CollisionShape3D:disabled")
+tracks/1/path = NodePath("StakeCollision/StakeCollider:disabled")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/keys = {
@@ -574,13 +598,17 @@ _data = {
 &"wood_stage_3": SubResource("Animation_puwvs")
 }
 
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_ghnyn"]
+radius = 2.4594727
+height = 9.128906
+
 [sub_resource type="BoxShape3D" id="BoxShape3D_ghnyn"]
-size = Vector3(5.1394043, 6.956299, 5.1796303)
+size = Vector3(4.49263, 0.85217285, 4.5392914)
 
 [node name="Stake" type="Node3D" node_paths=PackedStringArray("animator", "collision")]
 script = ExtResource("1_ghnyn")
 animator = NodePath("AnimationPlayer")
-collision = NodePath("StaticBody3D/CollisionShape3D")
+collision = NodePath("StakeCollision/StakeCollider")
 
 [node name="Metal Stake" parent="." instance=ExtResource("1_7gsve")]
 visible = false
@@ -600,8 +628,24 @@ libraries = {
 &"": SubResource("AnimationLibrary_be8it")
 }
 
-[node name="StaticBody3D" type="StaticBody3D" parent="."]
+[node name="StakeCollision" type="StaticBody3D" parent="."]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.06213379, -0.18684292, -0.016562939)
+[node name="StakeCollider" type="CollisionShape3D" parent="StakeCollision"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.029512405, 5.1323447, -0.06368923)
+shape = SubResource("CapsuleShape3D_ghnyn")
+disabled = true
+
+[node name="Area3D" type="Area3D" parent="." groups=["enemy"]]
+
+[node name="hitbox" type="CollisionShape3D" parent="Area3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.10059738, 7.443321, -0.040504456)
 shape = SubResource("BoxShape3D_ghnyn")
+debug_color = Color(1, 0, 0, 1)
+
+[node name="hitbox_falling" type="CollisionShape3D" parent="Area3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.10059738, 1.5790596, -0.040504456)
+shape = SubResource("BoxShape3D_ghnyn")
+disabled = true
+debug_color = Color(1, 0, 0, 1)
+
+[connection signal="area_entered" from="Area3D" to="." method="_on_area_3d_area_entered"]
