@@ -4,6 +4,7 @@ class_name GiantStake extends Node
 ### If true, start already spawned
 @export var starting_stake: bool = false
 @export var collision: Area3D
+@export var materials: Array[Material]
 
 ### How many hits for wood type
 const MAX_HITS_WOOD: int = 3
@@ -19,17 +20,16 @@ var is_bonus: bool = false
 var is_enabled: bool = false
 var is_fallen: bool = false
 var is_chosen: bool = false
-
+var rng
 func _ready() -> void:
-	initialize_stake()
+	rng = RandomNumberGenerator.new()
+	set_starting_stake()
 
-func initialize_stake() -> void:
+func set_starting_stake():
 	if !starting_stake:
 		animator.play("standby")
 	else:
 		animator.play("wood_stage_0")
-
-	return
 
 func spawn_stake() -> void:
 	if is_fallen:
@@ -68,9 +68,8 @@ func update_stake() -> void:
 func set_fall(fall: bool) -> void:
 	is_fallen = fall
 
-func set_bonus() -> void:
-	var rng = RandomNumberGenerator.new()
 
+func set_bonus():
 	if rng.randi_range(1, CHANCE_FOR_BONUS) == 1:
 		is_bonus = true
 	else:
@@ -78,5 +77,5 @@ func set_bonus() -> void:
 
 func _on_area_3d_area_entered(area: Area3D) -> void:
 	if area.is_in_group("crusher"):
-		hit_stake()
+		rpc("hit_stake")
 	pass # Replace with function body.
