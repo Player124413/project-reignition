@@ -9,14 +9,21 @@ class_name StakeSpawner extends Node
 @export var total_spawn_length: float = 40
 ### How long of a pause should there be between stakes in the same group
 @export var time_between_stakes: float = 0.3
+### Minimum amount of time till the next group
+@export var min_time_between_groups: float = 0.5
+### Maximum amount of time till the next group
+@export var max_time_between_groups: float = 5
+### How long until the first group spawns
+@export var time_before_first_spawn: float = 5
+var can_spawn: bool = false
+
 ### Chance of stake becoming metal (eg: 5 = 1/5 chance)
-const CHANCE_FOR_BONUS : int = 5
-var rng : RandomNumberGenerator
+const CHANCE_FOR_BONUS: int = 5
+var rng: RandomNumberGenerator
 
 func _ready() -> void:
 	rng = RandomNumberGenerator.new()
 	initialize_stakes()
-	set_physics_process(true)
 	if !NetworkManager.is_hosting_game:
 		return
 	MinigameManager.instance.gameplay_started.connect(Callable(self , "start_spawning"))
@@ -32,6 +39,10 @@ func initialize_stakes() -> void:
 
 func start_spawning() -> void:
 	set_physics_process(true)
+	await get_tree().create_timer(time_before_first_spawn).timeout
+	request_spawn() # Requests the first group
+	can_spawn = true
+	process_spawns()
 	return
 
 func start_new_spawn(new_stakes: Array[Vector2i]):
@@ -49,7 +60,16 @@ func start_new_spawn(new_stakes: Array[Vector2i]):
 	
 	print("-----------------------")
 
-
+func process_spawns() -> void:
+	if !NetworkManager.is_hosting_game:
+		return
+	if !can_spawn:
+		return
+	await get_tree().create_timer(rng.randf_range(min_time_between_groups, max_time_between_groups)).timeout
+	request_spawn()
+	process_spawns()
+	
+	
 ## Minimum number of stakes to spawn
 const MIN_STAKES: int = 1
 ## Maximum number of stakes to spawn
