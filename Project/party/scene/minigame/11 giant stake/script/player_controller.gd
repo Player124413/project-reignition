@@ -111,3 +111,14 @@ func _on_area_3d_area_entered(area: Area3D) -> void:
 
 	if area.is_in_group("player"):
 		area.get_parent().get_parent().request_damage()
+
+#####################
+### ROLLBACK CODE ###
+#####################
+const RB_STE: int = 0
+
+func on_rollback_applied(rb_params: Array) -> void:
+	_state = rb_params[RB_STE]
+
+func process_rollback() -> void:
+	rollback_timer.set_param(RB_STE, _state)
