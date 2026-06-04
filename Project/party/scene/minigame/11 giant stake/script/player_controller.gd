@@ -7,12 +7,12 @@ extends PartyGameCharacterMover
 @export var player_hitbox: CollisionShape3D
 
 func on_spawn_finished() -> void:
-	super()
+	super ()
 	hand_attachment.reparent(character_animator.skeleton)
 	_state = STATE.IDLE
 
 func on_minigame_finished() -> void:
-	super()
+	super ()
 	hand_attachment.visible = false
 
 var _state: STATE
@@ -71,8 +71,6 @@ func process_inputs() -> void:
 	if !is_cpu() && _state == STATE.IDLE || _state == STATE.INVINCIBLE:
 		if Input.is_action_just_pressed("button_primary%s" % get_input_suffix()):
 			rpc("start_swing", NetworkTimeSynchronizer.get_time())
-		if Input.is_action_just_pressed("button_secondary%s" % get_input_suffix()):
-			stake_spawner.request_spawn()
 		super ()
 
 @rpc("any_peer", "call_local", "reliable")
@@ -118,8 +116,8 @@ func _on_area_3d_area_entered(area: Area3D) -> void:
 const RB_STATE: int = 4
 func on_rollback_applied(rb_params: Array) -> void:
 	_state = rb_params[RB_STATE]
-	super(rb_params)
+	super (rb_params)
 
 func process_rollback() -> void:
 	rollback_timer.set_param(RB_STATE, _state)
-	super()
+	super ()
