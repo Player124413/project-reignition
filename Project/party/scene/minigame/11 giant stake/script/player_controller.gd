@@ -115,10 +115,11 @@ func _on_area_3d_area_entered(area: Area3D) -> void:
 #####################
 ### ROLLBACK CODE ###
 #####################
-const RB_STE: int = 0
-
+const RB_STATE: int = 4
 func on_rollback_applied(rb_params: Array) -> void:
-	_state = rb_params[RB_STE]
+	_state = rb_params[RB_STATE]
+	super(rb_params)
 
 func process_rollback() -> void:
-	rollback_timer.set_param(RB_STE, _state)
+	rollback_timer.set_param(RB_STATE, _state)
+	super()
