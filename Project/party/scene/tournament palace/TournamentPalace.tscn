@@ -1,59 +1,152 @@
-[gd_scene load_steps=2 format=3 uid="uid://bm6fo8bvadvpb"]
+[gd_scene load_steps=11 format=3 uid="uid://bm6fo8bvadvpb"]
 
+[ext_resource type="Script" uid="uid://ckdfwmi1cjlxd" path="res://party/scene/tournament palace/script/tournament_palace.gd" id="1_aybhk"]
 [ext_resource type="PackedScene" uid="uid://cco4sa2j8ev1r" path="res://party/scene/tournament palace/model/Map.glb" id="1_irl16"]
+[ext_resource type="PackedScene" uid="uid://bl5yb5uhs6url" path="res://party/scene/tournament palace/model/Balcony.glb" id="3_c5w31"]
+[ext_resource type="PackedScene" uid="uid://de2luvyum7x2q" path="res://party/scene/tournament palace/model/Door.glb" id="4_hcjpf"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_aybhk"]
+sky_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
+ground_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
+
+[sub_resource type="Sky" id="Sky_c5w31"]
+sky_material = SubResource("ProceduralSkyMaterial_aybhk")
+
+[sub_resource type="Environment" id="Environment_hcjpf"]
+sky = SubResource("Sky_c5w31")
+ambient_light_source = 2
+ambient_light_color = Color(0.41292238, 0.4088955, 0.7221244, 1)
+tonemap_mode = 1
+tonemap_exposure = 1.8
+glow_enabled = true
+adjustment_enabled = true
+
+[sub_resource type="Animation" id="Animation_c5w31"]
+resource_name = "start"
+length = 2.0
+step = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Camera/Camera:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 1, 2),
+"transitions": PackedFloat32Array(2, 0.5, 1),
+"update": 0,
+"values": [Vector3(0, 0, 200), Vector3(0, 0, 135), Vector3(0, 0, 70)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Camera/Camera:rotation")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 1),
+"transitions": PackedFloat32Array(2, 0.5),
+"update": 0,
+"values": [Vector3(0, 0, 0), Vector3(0, 0, 0)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Camera:rotation")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 1, 2),
+"transitions": PackedFloat32Array(2, 0.5, 1),
+"update": 0,
+"values": [Vector3(0, 0, 0), Vector3(0.04363323, 0, 0), Vector3(0.08726646, 0, 0)]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("Camera:position")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0, 1, 2),
+"transitions": PackedFloat32Array(2, 0.5, 1),
+"update": 0,
+"values": [Vector3(0, 50, 0), Vector3(0, 35, 0), Vector3(0, 20, 0)]
+}
+
+[sub_resource type="Animation" id="Animation_hcjpf"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Camera/Camera:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0, 0, 80)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Camera/Camera:rotation")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0, 0, 0)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Camera:rotation")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0, 0, 0)]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("Camera:position")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0, 20, 0)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_vrx6g"]
+_data = {
+&"RESET": SubResource("Animation_hcjpf"),
+&"start": SubResource("Animation_c5w31")
+}
 
 [node name="TournamentPalace" type="Node3D"]
+script = ExtResource("1_aybhk")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_hcjpf")
+
+[node name="Sun" type="DirectionalLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.25881907, 0.9659258, 0, -0.9659258, 0.25881907, 0, 0, 0)
+layers = 1024
+light_color = Color(1, 0.81666666, 0.75, 1)
+light_specular = 0.0
+light_cull_mask = 30
+directional_shadow_max_distance = 300.0
 
 [node name="Map" parent="." instance=ExtResource("1_irl16")]
-
-[node name="Skeleton3D" parent="Map/MapRoot" index="0"]
-bones/4/rotation = Quaternion(9.03666e-10, 0.9986051, -1.7090397e-08, -0.052801877)
-bones/21/rotation = Quaternion(9.03666e-10, 0.9986051, -1.7090397e-08, -0.052801877)
-bones/22/rotation = Quaternion(9.03666e-10, 0.9986051, -1.7090397e-08, -0.052801877)
-bones/23/rotation = Quaternion(9.03666e-10, 0.9986051, -1.7090397e-08, -0.052801877)
-bones/41/rotation = Quaternion(-1.5311883e-08, -0.44669735, 7.644902e-09, 0.89468515)
-bones/42/rotation = Quaternion(-1.5311883e-08, -0.44669735, 7.644902e-09, 0.89468515)
-bones/43/rotation = Quaternion(-1.5311883e-08, -0.4466974, 7.644899e-09, 0.8946852)
-bones/55/rotation = Quaternion(-7.463319e-10, 0.9990487, -1.7097994e-08, 0.043608736)
-bones/56/rotation = Quaternion(8.155743e-09, 0.8791495, -1.5046e-08, -0.47654632)
-bones/57/rotation = Quaternion(-7.463319e-10, 0.9990487, -1.7097994e-08, 0.043608736)
-bones/60/rotation = Quaternion(-7.463319e-10, 0.9990487, -1.7097994e-08, 0.043608736)
-bones/62/rotation = Quaternion(-1.7114271e-08, 0, 0, 1)
-bones/64/rotation = Quaternion(-7.463319e-10, 0.9990487, -1.7097994e-08, 0.043608736)
-bones/68/rotation = Quaternion(-1.7114271e-08, 0, 0, 1)
-bones/69/rotation = Quaternion(-1.7114271e-08, 0, 0, 1)
-bones/71/rotation = Quaternion(-1.7114271e-08, 0, 0, 1)
-bones/72/rotation = Quaternion(0, 0.8791425, 0, -0.47655916)
-bones/135/rotation = Quaternion(-3.3916986e-05, 0.7071068, -0.7071068, -3.391698e-05)
-bones/136/rotation = Quaternion(-1.7114271e-08, 0, 0, 1)
-bones/137/rotation = Quaternion(-1.7114271e-08, 0, 0, 1)
-bones/138/rotation = Quaternion(-1.7114271e-08, 0, 0, 1)
-bones/140/rotation = Quaternion(-0.3535534, 0.35355332, 0.14644657, 0.8535534)
-bones/142/rotation = Quaternion(4.38207e-08, -6.2486043e-09, -0.056535322, 0.9984006)
-bones/143/rotation = Quaternion(1.705347e-08, -5.9604645e-08, -4.440892e-15, 1)
-bones/144/rotation = Quaternion(1.7053685e-08, 1.788139e-07, -7.993605e-15, 1)
-bones/145/rotation = Quaternion(-0.49999997, 0.5, 0.5, 0.5)
-bones/146/position = Vector3(-3.0994415e-06, 0.21036696, 0.21037726)
-bones/146/rotation = Quaternion(-1, 5.551136e-17, 0, 4.371139e-08)
-bones/147/position = Vector3(4.6031785, -1.6849859e-07, -1.1116495e-05)
-bones/147/rotation = Quaternion(-3.694314e-13, 1.5916159e-12, -0.08011255, 0.99678594)
-bones/148/position = Vector3(-1.04904175e-05, 12.505043, 12.505057)
-bones/148/rotation = Quaternion(-1, 5.551136e-17, 0, 4.371139e-08)
-bones/149/position = Vector3(-1.0609627e-05, -12.369809, -12.369812)
-bones/149/rotation = Quaternion(-0.70581746, 3.0964873e-08, 0.7083938, 3.0852256e-08)
-bones/150/position = Vector3(12.229782, 0.071614504, -12.347353)
-bones/150/rotation = Quaternion(0.3535534, -0.35355344, 0.14644665, 0.8535534)
-bones/151/rotation = Quaternion(-1.7114271e-08, 0, 0, 1)
-bones/152/rotation = Quaternion(-1.7114271e-08, 0, 0, 1)
-bones/153/rotation = Quaternion(-1.1911619e-08, -0.71803683, 1.2288675e-08, 0.6960051)
-bones/154/rotation = Quaternion(-1.5311883e-08, -0.44669738, 7.644901e-09, 0.89468515)
-bones/175/rotation = Quaternion(4.5791516e-08, 0, -7.54805e-09, 1)
-bones/176/rotation = Quaternion(4.6269207e-16, 0.9848077, 2.6240553e-15, -0.17364833)
-bones/177/rotation = Quaternion(0, 0.98480785, 0, -0.1736482)
-bones/179/rotation = Quaternion(8.706415e-08, 2.9802322e-08, 4.194089e-08, 1)
-bones/180/position = Vector3(-0.13629787, -2.2051936e-06, 0.402544)
-bones/180/rotation = Quaternion(1.5951395e-15, 0.98480785, -1.1831463e-15, -0.17364821)
-bones/181/rotation = Quaternion(0, 0.9848077, 0, -0.17364822)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -54, 0, 0)
 
 [node name="pt_02_map_Mesh_0000_001" parent="Map/MapRoot/Skeleton3D" index="0"]
 layers = 2
@@ -208,4 +301,203 @@ layers = 2
 [node name="AnimationPlayer" parent="Map" index="1"]
 autoplay = "map"
 
+[node name="FirstFloor" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 25.4, -1)
+
+[node name="BalconyLL" type="Node3D" parent="FirstFloor"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -48, 0, 0)
+
+[node name="PlayerPosition" type="Node3D" parent="FirstFloor/BalconyLL"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.7999992, 0)
+
+[node name="Balcony" parent="FirstFloor/BalconyLL" instance=ExtResource("3_c5w31")]
+
+[node name="BalconyPiece01Mesh" parent="FirstFloor/BalconyLL/Balcony/BalconyRoot/Skeleton3D" index="0"]
+layers = 2
+
+[node name="BalconyPiece02Mesh" parent="FirstFloor/BalconyLL/Balcony/BalconyRoot/Skeleton3D" index="1"]
+layers = 2
+
+[node name="BalconyPiece03Mesh" parent="FirstFloor/BalconyLL/Balcony/BalconyRoot/Skeleton3D" index="2"]
+layers = 2
+
+[node name="BalconyPiece04Mesh" parent="FirstFloor/BalconyLL/Balcony/BalconyRoot/Skeleton3D" index="3"]
+layers = 2
+
+[node name="BalconyPiece05Mesh" parent="FirstFloor/BalconyLL/Balcony/BalconyRoot/Skeleton3D" index="4"]
+layers = 2
+
+[node name="BalconyPiece06Mesh" parent="FirstFloor/BalconyLL/Balcony/BalconyRoot/Skeleton3D" index="5"]
+layers = 2
+
+[node name="Door" parent="FirstFloor/BalconyLL" instance=ExtResource("4_hcjpf")]
+transform = Transform3D(0.75, 0, 0, 0, 0.75, 0, 0, 0, 0.75, 0, 9.000002, 0)
+
+[node name="DoorMesh" parent="FirstFloor/BalconyLL/Door/DoorRoot/Skeleton3D" index="0"]
+layers = 2
+
+[node name="BalconyLR" type="Node3D" parent="FirstFloor"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -27.25, 0, 0)
+
+[node name="PlayerPosition" type="Node3D" parent="FirstFloor/BalconyLR"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.7999992, 0)
+
+[node name="Balcony" parent="FirstFloor/BalconyLR" instance=ExtResource("3_c5w31")]
+
+[node name="BalconyPiece01Mesh" parent="FirstFloor/BalconyLR/Balcony/BalconyRoot/Skeleton3D" index="0"]
+layers = 2
+
+[node name="BalconyPiece02Mesh" parent="FirstFloor/BalconyLR/Balcony/BalconyRoot/Skeleton3D" index="1"]
+layers = 2
+
+[node name="BalconyPiece03Mesh" parent="FirstFloor/BalconyLR/Balcony/BalconyRoot/Skeleton3D" index="2"]
+layers = 2
+
+[node name="BalconyPiece04Mesh" parent="FirstFloor/BalconyLR/Balcony/BalconyRoot/Skeleton3D" index="3"]
+layers = 2
+
+[node name="BalconyPiece05Mesh" parent="FirstFloor/BalconyLR/Balcony/BalconyRoot/Skeleton3D" index="4"]
+layers = 2
+
+[node name="BalconyPiece06Mesh" parent="FirstFloor/BalconyLR/Balcony/BalconyRoot/Skeleton3D" index="5"]
+layers = 2
+
+[node name="Door" parent="FirstFloor/BalconyLR" instance=ExtResource("4_hcjpf")]
+transform = Transform3D(0.75, 0, 0, 0, 0.75, 0, 0, 0, 0.75, 0, 9.000002, 0)
+
+[node name="DoorMesh" parent="FirstFloor/BalconyLR/Door/DoorRoot/Skeleton3D" index="0"]
+layers = 2
+
+[node name="BalconyRL" type="Node3D" parent="FirstFloor"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 27.25, 0, 0)
+
+[node name="PlayerPosition" type="Node3D" parent="FirstFloor/BalconyRL"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.7999992, 0)
+
+[node name="Balcony" parent="FirstFloor/BalconyRL" instance=ExtResource("3_c5w31")]
+
+[node name="BalconyPiece01Mesh" parent="FirstFloor/BalconyRL/Balcony/BalconyRoot/Skeleton3D" index="0"]
+layers = 2
+
+[node name="BalconyPiece02Mesh" parent="FirstFloor/BalconyRL/Balcony/BalconyRoot/Skeleton3D" index="1"]
+layers = 2
+
+[node name="BalconyPiece03Mesh" parent="FirstFloor/BalconyRL/Balcony/BalconyRoot/Skeleton3D" index="2"]
+layers = 2
+
+[node name="BalconyPiece04Mesh" parent="FirstFloor/BalconyRL/Balcony/BalconyRoot/Skeleton3D" index="3"]
+layers = 2
+
+[node name="BalconyPiece05Mesh" parent="FirstFloor/BalconyRL/Balcony/BalconyRoot/Skeleton3D" index="4"]
+layers = 2
+
+[node name="BalconyPiece06Mesh" parent="FirstFloor/BalconyRL/Balcony/BalconyRoot/Skeleton3D" index="5"]
+layers = 2
+
+[node name="Door" parent="FirstFloor/BalconyRL" instance=ExtResource("4_hcjpf")]
+transform = Transform3D(0.75, 0, 0, 0, 0.75, 0, 0, 0, 0.75, 0, 9.000002, 0)
+
+[node name="DoorMesh" parent="FirstFloor/BalconyRL/Door/DoorRoot/Skeleton3D" index="0"]
+layers = 2
+
+[node name="BalconyRR" type="Node3D" parent="FirstFloor"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 48, 0, 0)
+
+[node name="PlayerPosition" type="Node3D" parent="FirstFloor/BalconyRR"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.7999992, 0)
+
+[node name="Balcony" parent="FirstFloor/BalconyRR" instance=ExtResource("3_c5w31")]
+
+[node name="BalconyPiece01Mesh" parent="FirstFloor/BalconyRR/Balcony/BalconyRoot/Skeleton3D" index="0"]
+layers = 2
+
+[node name="BalconyPiece02Mesh" parent="FirstFloor/BalconyRR/Balcony/BalconyRoot/Skeleton3D" index="1"]
+layers = 2
+
+[node name="BalconyPiece03Mesh" parent="FirstFloor/BalconyRR/Balcony/BalconyRoot/Skeleton3D" index="2"]
+layers = 2
+
+[node name="BalconyPiece04Mesh" parent="FirstFloor/BalconyRR/Balcony/BalconyRoot/Skeleton3D" index="3"]
+layers = 2
+
+[node name="BalconyPiece05Mesh" parent="FirstFloor/BalconyRR/Balcony/BalconyRoot/Skeleton3D" index="4"]
+layers = 2
+
+[node name="BalconyPiece06Mesh" parent="FirstFloor/BalconyRR/Balcony/BalconyRoot/Skeleton3D" index="5"]
+layers = 2
+
+[node name="Door" parent="FirstFloor/BalconyRR" instance=ExtResource("4_hcjpf")]
+transform = Transform3D(0.75, 0, 0, 0, 0.75, 0, 0, 0, 0.75, 0, 9.000002, 0)
+
+[node name="DoorMesh" parent="FirstFloor/BalconyRR/Door/DoorRoot/Skeleton3D" index="0"]
+layers = 2
+
+[node name="SecondFloor" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 51.4, -7)
+
+[node name="BalconyL" type="Node3D" parent="SecondFloor"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -31.85, 0, 0)
+
+[node name="PlayerPosition" type="Node3D" parent="SecondFloor/BalconyL"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.7999992, 0)
+
+[node name="Door" parent="SecondFloor/BalconyL" instance=ExtResource("4_hcjpf")]
+transform = Transform3D(0.9, 0, 0, 0, 0.9, 0, 0, 0, 0.9, 0, 10.4, 0)
+
+[node name="DoorMesh" parent="SecondFloor/BalconyL/Door/DoorRoot/Skeleton3D" index="0"]
+layers = 2
+
+[node name="BalconyR" type="Node3D" parent="SecondFloor"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 33, 0, 0)
+
+[node name="PlayerPosition" type="Node3D" parent="SecondFloor/BalconyR"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.7999992, 0)
+
+[node name="Door" parent="SecondFloor/BalconyR" instance=ExtResource("4_hcjpf")]
+transform = Transform3D(0.9, 0, 0, 0, 0.9, 0, 0, 0, 0.9, 0, 10.4, 0)
+
+[node name="DoorMesh" parent="SecondFloor/BalconyR/Door/DoorRoot/Skeleton3D" index="0"]
+layers = 2
+
+[node name="TopFloor" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 51.4, -7)
+
+[node name="Balcony" type="Node3D" parent="TopFloor"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 9, 2)
+
+[node name="PlayerPosition" type="Node3D" parent="TopFloor/Balcony"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.7999992, 0)
+
+[node name="Door" parent="TopFloor/Balcony" instance=ExtResource("4_hcjpf")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 9.5, 0)
+
+[node name="DoorMesh" parent="TopFloor/Balcony/Door/DoorRoot/Skeleton3D" index="0"]
+layers = 2
+
+[node name="Camera" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 20, 0)
+
+[node name="Camera" type="Camera3D" parent="Camera"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 80)
+cull_mask = 1151
+current = true
+fov = 45.0
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Camera"]
+root_node = NodePath("../..")
+libraries = {
+&"": SubResource("AnimationLibrary_vrx6g")
+}
+
 [editable path="Map"]
+[editable path="FirstFloor/BalconyLL/Balcony"]
+[editable path="FirstFloor/BalconyLL/Door"]
+[editable path="FirstFloor/BalconyLR/Balcony"]
+[editable path="FirstFloor/BalconyLR/Door"]
+[editable path="FirstFloor/BalconyRL/Balcony"]
+[editable path="FirstFloor/BalconyRL/Door"]
+[editable path="FirstFloor/BalconyRR/Balcony"]
+[editable path="FirstFloor/BalconyRR/Door"]
+[editable path="SecondFloor/BalconyL/Door"]
+[editable path="SecondFloor/BalconyR/Door"]
+[editable path="TopFloor/Balcony/Door"]
