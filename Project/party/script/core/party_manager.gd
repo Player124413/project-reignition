@@ -125,6 +125,17 @@ func initialize_online_player_data() -> void:
 			rpc("set_player_indexes", i, i - peers.size(), 0, 1)
 	rpc("finish_initializing_players")
 
+## Called when running a mini-game from the editor. Loads 4 default characters.
+func initialize_debug_characters() -> void:
+	print("Initializing default characters for debug mode.")
+	for i in PartyManager.MAX_PLAYER_COUNT:
+		# Simply add characters based on their index order
+		var data : PartyCharacterResource = PartyManager.character_data.get(i)
+		PartyManager.set_character_data(i, data.character_name)
+		PartyManager.set_player_indexes(i, i, 1 if i == 0 else 0, 1) # Set everyone to a cpu except for p1
+		if i > 0:
+			PartyManager.set_difficulty(i, i) # Set this to i - 1 if you need to test easy cpus
+
 @rpc("authority", "call_local", "reliable")
 func set_player_indexes(index : int, player_index : int, device : int, local_player_index : int) -> void:
 	_player_data[index].player_index = player_index

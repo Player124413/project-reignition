@@ -109,7 +109,7 @@ func _init() -> void:
 	
 	if !PartyManager.is_player_data_initialized():
 		PartyManager.initialize_offline_player_data()
-		initialize_debug_characters()
+		PartyManager.initialize_debug_characters()
 
 func _ready() -> void:
 	for i in range(INITIAL_SCORE_POPUP_POOL_SIZE):
@@ -127,29 +127,18 @@ func _ready() -> void:
 		animator.advance(0.0)
 	
 	if NetworkManager.is_online:
-		NetworkManager.party_game_started.connect(Callable(self, "start_party_game"), CONNECT_DEFERRED)
+		NetworkManager.peers_loaded.connect(Callable(self, "start_party_game"), CONNECT_DEFERRED)
 	else:
 		call_deferred("start_party_game")
 
 func _exit_tree() -> void:
-	if NetworkManager.party_game_started.is_connected(Callable(self, "start_party_game")):
-		NetworkManager.party_game_started.disconnect(Callable(self, "start_party_game"))
+	if NetworkManager.peers_loaded.is_connected(Callable(self, "start_party_game")):
+		NetworkManager.peers_loaded.disconnect(Callable(self, "start_party_game"))
 
 func start_party_game() -> void:
 	peers_loaded.emit()
 	if is_instance_valid(intro_animator) && intro_animator.has_animation("intro"):
 		intro_animator.play("intro")
-
-## Called when running a mini-game from the editor. Loads 4 default characters.
-func initialize_debug_characters() -> void:
-	print("Initializing default characters for debug mode.")
-	for i in PartyManager.MAX_PLAYER_COUNT:
-		# Simply add characters based on their index order
-		var character_data : PartyCharacterResource = PartyManager.character_data.get(i)
-		PartyManager.set_character_data(i, character_data.character_name)
-		PartyManager.set_player_indexes(i, i, 1 if i == 0 else 0, 1) # Set everyone to a cpu except for p1
-		if i > 0:
-			PartyManager.set_difficulty(i, i) # Set this to i - 1 if you need to test easy cpus
 
 func load_character_model(player_index : int) -> CharacterAnimator:
 	var scene : PackedScene = load(PartyManager.get_player_data(player_index).character_data.model_file) as PackedScene

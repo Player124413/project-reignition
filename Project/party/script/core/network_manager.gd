@@ -13,7 +13,7 @@ signal attraction_unloaded()
 signal attraction_loaded() # NOTE: This is also emitted when a mini-game finishes.
 signal party_game_loaded()
 ## Emitted when the party game actually starts.
-signal party_game_started()
+signal peers_loaded()
 
 ## Emitted when a connection attempt either succeeds or fails.
 signal connection_attempt_finished(err : String)
@@ -133,7 +133,7 @@ func set_loading(peer_id : int, is_loading : bool) -> void:
 func finish_loading(target_tick : float) -> void:
 	await get_tree().create_timer(calculate_transition_delay(target_tick)).timeout
 	get_tree().paused = false
-	party_game_started.emit()
+	peers_loaded.emit()
 
 ## How much extra time to delay during scene changes. A safe-guard in case the jitter spikes after loading.
 const TRANSITION_SYNC_DELAY : float = 0.2
