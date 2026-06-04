@@ -5,6 +5,7 @@ class_name GiantStake extends Node3D
 ### If true, start already spawned
 @export var starting_stake: bool = false
 @export var collision: Area3D
+@export var hitbox_falling: CollisionShape3D
 @export var materials: Array[Material]
 
 ### How many hits for wood type
@@ -64,6 +65,12 @@ func _on_area_3d_area_entered(area: Area3D) -> void:
 	
 	if area.is_in_group("crusher"):
 		rpc("hit_stake", node.player_index)
+	
+	if area.is_in_group("player"):
+		if hitbox_falling.disabled == false:
+			rotate(Vector3(0, 1, 0), randf_range(0, TAU))
+			animator.play("damaged")
+			node.request_damage()
 	pass # Replace with function body.
 
 @rpc("any_peer", "call_local", "reliable")
