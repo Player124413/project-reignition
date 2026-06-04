@@ -10,7 +10,7 @@ class_name StakeSpawner extends Node
 ### How long of a pause should there be between stakes in the same group
 @export var time_between_stakes: float = 0.3
 ### Minimum amount of time till the next group
-@export var min_time_between_groups: float = 0.5
+@export var min_time_between_groups: float = 1
 ### Maximum amount of time till the next group
 @export var max_time_between_groups: float = 5
 ### How long until the first group spawns
@@ -80,6 +80,8 @@ const SHAPE_CHANCE: int = 3
 const MAX_ROWS: int = 10
 ## How many columns
 const MAX_COLS: int = 11
+## How many times should next_valid_spawn be called until giving up?
+const FAILSAFE: int = 50
 
 enum DIRECTION {
 	NORTH,
@@ -266,13 +268,19 @@ func is_valid_direction(row: int, col: int):
 		return false
 	return true
 
+var num_checks: int = 0
 func get_next_valid_spawn(row: int, col: int, direction: DIRECTION) -> Vector2i:
+	num_checks += 1
+	if num_checks >= FAILSAFE:
+		return Vector2i(0, 0)
+	
 	var rng = RandomNumberGenerator.new()
 	match direction:
 		DIRECTION.NORTH:
 			for i in range(MAX_ROWS, 0):
 				if i < row: # Start checking rows past our current row
 					if is_valid_spawn(i, col):
+						num_checks = 0 # Resets the check counter upon a successful spawn
 						return Vector2i(i, col)
 					if i == 0: # Call this method again if we reached the end of our search, and choose another direction
 						return get_next_valid_spawn(0, col, rng.randi_range(3, 4) as DIRECTION) # Chooses EAST or WEST randomly
@@ -281,6 +289,7 @@ func get_next_valid_spawn(row: int, col: int, direction: DIRECTION) -> Vector2i:
 			for i in range(0, MAX_ROWS):
 				if i > row:
 					if is_valid_spawn(i, col):
+						num_checks = 0
 						return Vector2i(i, col)
 					if i == MAX_ROWS:
 						return get_next_valid_spawn(MAX_ROWS, col, rng.randi_range(3, 4) as DIRECTION)
@@ -288,6 +297,7 @@ func get_next_valid_spawn(row: int, col: int, direction: DIRECTION) -> Vector2i:
 			for i in range(0, MAX_COLS):
 				if i > col:
 					if is_valid_spawn(row, i):
+						num_checks = 0
 						return Vector2i(row, i)
 					if i == MAX_COLS:
 						return get_next_valid_spawn(row, MAX_COLS, rng.randi_range(1, 2) as DIRECTION)
@@ -295,6 +305,7 @@ func get_next_valid_spawn(row: int, col: int, direction: DIRECTION) -> Vector2i:
 			for i in range(MAX_COLS, 0):
 				if i < col:
 					if is_valid_spawn(row, i):
+						num_checks = 0
 						return Vector2i(row, i)
 					if i == 0:
 						return get_next_valid_spawn(row, 0, rng.randi_range(1, 2))
