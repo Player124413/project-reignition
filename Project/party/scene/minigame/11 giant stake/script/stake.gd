@@ -1,6 +1,7 @@
 class_name GiantStake extends Node
 
 @export var animator: AnimationPlayer
+@export var root: Node3D
 ### If true, start already spawned
 @export var starting_stake: bool = false
 @export var collision: Area3D
@@ -10,70 +11,45 @@ class_name GiantStake extends Node
 const MAX_HITS_WOOD: int = 3
 ### How many hits for metal type
 const MAX_HITS_BONUS: int = 5
-### Chance of stake becoming metal (eg: 5 = 1/5 chance)
-const CHANCE_FOR_BONUS: int = 5
+
+### The visual height of a stake.
+const STAKE_HEIGHT: float = 5.0
+
 ### Current number of hits
 var num_hits: int = 0
-### Is this stake a bonus stake	
+### Is this stake a bonus stake?
 var is_bonus: bool = false
 ### Can we currently hit this stake
 var is_enabled: bool = false
 var is_fallen: bool = false
 var is_chosen: bool = false
-var rng
+
 func _ready() -> void:
-	rng = RandomNumberGenerator.new()
-	set_starting_stake()
+	animator.play("started" if starting_stake else "standby")
 
-func set_starting_stake():
-	if !starting_stake:
-		animator.play("standby")
-	else:
-		animator.play("wood_stage_0")
-
-func spawn_stake() -> void:
+@rpc("any_peer", "call_local", "reliable")
+func spawn_stake(bonus : bool) -> void:
 	if is_fallen:
 		return
+	
+	is_bonus = bonus
+	animator.play("metal" if is_bonus else "wood")
+	animator.advance(0.0)
 
 	is_fallen = true
-	
-	if is_bonus:
-		animator.play("metal_fall")
-	else:
-		animator.play("wood_fall")
+	animator.play("fall")
+	animator.queue("started")
+	animator.advance(0.0)
+	reset_physics_interpolation()
 
 @rpc("any_peer", "call_local", "reliable")
 func hit_stake() -> void:
+	var max_hits : int = MAX_HITS_BONUS if is_bonus else MAX_HITS_WOOD
 	num_hits += 1
-	
-	if !is_bonus:
-		if num_hits >= MAX_HITS_WOOD:
-			is_enabled = false
-	else:
-		if num_hits >= MAX_HITS_BONUS:
-			is_enabled = false
-	
-	update_stake()
-	return
-
-@rpc("any_peer", "call_local", "reliable")
-func update_stake() -> void:
-	if !is_bonus:
-		animator.play("wood_stage_" + str(num_hits))
-	else:
-		animator.play("metal_stage_" + str(num_hits))
-
-	return
-
-func set_fall(fall: bool) -> void:
-	is_fallen = fall
-
-
-func set_bonus():
-	if rng.randi_range(1, CHANCE_FOR_BONUS) == 1:
-		is_bonus = true
-	else:
-		is_bonus = false
+	if num_hits >= max_hits:
+		is_enabled = false
+		animator.play("finished")
+	root.position = Vector3.DOWN * (num_hits / (max_hits as float)) * STAKE_HEIGHT
 
 func _on_area_3d_area_entered(area: Area3D) -> void:
 	if area.is_in_group("crusher"):

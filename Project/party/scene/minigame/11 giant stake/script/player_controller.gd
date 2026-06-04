@@ -7,12 +7,12 @@ extends PartyGameCharacterMover
 @export var player_hitbox: CollisionShape3D
 
 func on_spawn_finished() -> void:
-	super ()
+	super()
 	hand_attachment.reparent(character_animator.skeleton)
 	_state = STATE.IDLE
 
 func on_minigame_finished() -> void:
-	super ()
+	super()
 	hand_attachment.visible = false
 
 var _state: STATE

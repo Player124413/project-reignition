@@ -1,19 +1,26 @@
-[gd_scene load_steps=24 format=3 uid="uid://dgpa1n80e4hkd"]
+[gd_scene load_steps=17 format=3 uid="uid://b773qdg0max3o"]
 
-[ext_resource type="PackedScene" uid="uid://6y0vben3tykf" path="res://party/scene/minigame/11 giant stake/model/metal_stake.tscn" id="1_7gsve"]
-[ext_resource type="Script" uid="uid://b0kejedoxpdit" path="res://party/scene/minigame/11 giant stake/script/stake.gd" id="1_ghnyn"]
-[ext_resource type="Material" uid="uid://2blr2n24p5j4" path="res://party/scene/minigame/11 giant stake/material/Wood Stake.tres" id="2_be8it"]
-[ext_resource type="PackedScene" uid="uid://cc8lh17eetd5b" path="res://party/scene/minigame/11 giant stake/model/wood_stake.tscn" id="2_ghnyn"]
-[ext_resource type="Material" uid="uid://6e7jn3ajuqst" path="res://party/scene/minigame/11 giant stake/material/Stake Shadow.tres" id="3_7gsve"]
+[ext_resource type="Script" uid="uid://b0kejedoxpdit" path="res://party/scene/minigame/11 giant stake/script/stake.gd" id="1_2u3uv"]
+[ext_resource type="Material" uid="uid://2blr2n24p5j4" path="res://party/scene/minigame/11 giant stake/material/Wood Stake.tres" id="2_cor2m"]
+[ext_resource type="PackedScene" path="res://party/scene/minigame/11 giant stake/model/metal_stake.tscn" id="3_4ggf6"]
+[ext_resource type="PackedScene" path="res://party/scene/minigame/11 giant stake/model/wood_stake.tscn" id="4_c84m1"]
+[ext_resource type="Material" path="res://party/scene/minigame/11 giant stake/material/Stake Shadow.tres" id="5_ejl10"]
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_ghnyn"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_ghnyn"]
+radius = 2.4594727
+height = 9.128906
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_ghnyn"]
+size = Vector3(4.49263, 0.85217285, 4.5392914)
 
 [sub_resource type="Animation" id="Animation_ghnyn"]
 length = 0.001
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("Metal Stake:visible")
+tracks/0/path = NodePath("Root/MetalStake:visible")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
@@ -25,71 +32,71 @@ tracks/0/keys = {
 tracks/1/type = "value"
 tracks/1/imported = false
 tracks/1/enabled = true
-tracks/1/path = NodePath("Wood Stake:visible")
+tracks/1/path = NodePath("Root/WoodStake:visible")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/keys = {
-"times": PackedFloat32Array(-0.033333335),
+"times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 1,
-"values": [false]
+"values": [true]
 }
 tracks/2/type = "value"
 tracks/2/imported = false
 tracks/2/enabled = true
-tracks/2/path = NodePath("Wood Stake:position")
+tracks/2/path = NodePath("shadow:scale")
 tracks/2/interp = 1
 tracks/2/loop_wrap = true
 tracks/2/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 0,
-"values": [Vector3(0, 0, 0)]
+"values": [Vector3(3.1451228, 0.7, 3.1451228)]
 }
 tracks/3/type = "value"
 tracks/3/imported = false
 tracks/3/enabled = true
-tracks/3/path = NodePath("shadow:scale")
+tracks/3/path = NodePath("shadow:visible")
 tracks/3/interp = 1
 tracks/3/loop_wrap = true
 tracks/3/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [Vector3(3.1451228, 0.7, 3.1451228)]
+"update": 1,
+"values": [false]
 }
 tracks/4/type = "value"
 tracks/4/imported = false
 tracks/4/enabled = true
-tracks/4/path = NodePath("shadow:visible")
+tracks/4/path = NodePath("StakeCollision/StakeCollider:disabled")
 tracks/4/interp = 1
 tracks/4/loop_wrap = true
 tracks/4/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 1,
-"values": [false]
+"values": [true]
 }
 tracks/5/type = "value"
 tracks/5/imported = false
 tracks/5/enabled = true
-tracks/5/path = NodePath("Metal Stake:position")
+tracks/5/path = NodePath("Area3D/hitbox:disabled")
 tracks/5/interp = 1
 tracks/5/loop_wrap = true
 tracks/5/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [Vector3(0, 0, 0)]
+"update": 1,
+"values": [true]
 }
 tracks/6/type = "value"
 tracks/6/imported = false
 tracks/6/enabled = true
-tracks/6/path = NodePath("StakeCollision/StakeCollider:disabled")
+tracks/6/path = NodePath("Area3D/hitbox_falling:disabled")
 tracks/6/interp = 1
 tracks/6/loop_wrap = true
 tracks/6/keys = {
-"times": PackedFloat32Array(-0.033333335),
+"times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 1,
 "values": [true]
@@ -97,19 +104,19 @@ tracks/6/keys = {
 tracks/7/type = "value"
 tracks/7/imported = false
 tracks/7/enabled = true
-tracks/7/path = NodePath("Area3D/hitbox:disabled")
+tracks/7/path = NodePath("Root:position")
 tracks/7/interp = 1
 tracks/7/loop_wrap = true
 tracks/7/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [true]
+"update": 0,
+"values": [Vector3(0, 0, 0)]
 }
 tracks/8/type = "value"
 tracks/8/imported = false
 tracks/8/enabled = true
-tracks/8/path = NodePath("Area3D/hitbox_falling:disabled")
+tracks/8/path = NodePath("Root:visible")
 tracks/8/interp = 1
 tracks/8/loop_wrap = true
 tracks/8/keys = {
@@ -120,237 +127,102 @@ tracks/8/keys = {
 }
 
 [sub_resource type="Animation" id="Animation_vy42k"]
-resource_name = "metal_fall"
-length = 4.0
+resource_name = "fall"
+length = 3.5
 step = 0.1
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("Metal Stake:visible")
+tracks/0/path = NodePath("shadow:scale")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [true]
-}
-tracks/1/type = "value"
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/path = NodePath("shadow:scale")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
-tracks/1/keys = {
 "times": PackedFloat32Array(0, 3),
 "transitions": PackedFloat32Array(1, 1),
 "update": 0,
 "values": [Vector3(0, 0, 0), Vector3(3.1451228, 0.7, 3.1451228)]
 }
-tracks/2/type = "value"
-tracks/2/imported = false
-tracks/2/enabled = true
-tracks/2/path = NodePath("Metal Stake:position")
-tracks/2/interp = 1
-tracks/2/loop_wrap = true
-tracks/2/keys = {
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Root:position")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
 "times": PackedFloat32Array(0, 3, 3.2),
 "transitions": PackedFloat32Array(1, 1, 1),
 "update": 0,
-"values": [Vector3(0, 50, 0), Vector3(0, 50, 0), Vector3(0, 0, 0)]
+"values": [Vector3(0, 80, 0), Vector3(0, 80, 0), Vector3(0, 0, 0)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("shadow:visible")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
 }
 tracks/3/type = "value"
 tracks/3/imported = false
 tracks/3/enabled = true
-tracks/3/path = NodePath("shadow:visible")
+tracks/3/path = NodePath("StakeCollision/StakeCollider:disabled")
 tracks/3/interp = 1
 tracks/3/loop_wrap = true
 tracks/3/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 1,
-"values": [true]
+"values": [false]
 }
-tracks/4/type = "method"
+tracks/4/type = "value"
 tracks/4/imported = false
 tracks/4/enabled = true
-tracks/4/path = NodePath("AnimationPlayer")
+tracks/4/path = NodePath("Area3D/hitbox_falling:disabled")
 tracks/4/interp = 1
 tracks/4/loop_wrap = true
 tracks/4/keys = {
-"times": PackedFloat32Array(3.2),
-"transitions": PackedFloat32Array(1),
-"values": [{
-"args": [&"metal_stage_0", -1, 1.0, false],
-"method": &"play"
-}]
-}
-tracks/5/type = "value"
-tracks/5/imported = false
-tracks/5/enabled = true
-tracks/5/path = NodePath("StakeCollision/StakeCollider:disabled")
-tracks/5/interp = 1
-tracks/5/loop_wrap = true
-tracks/5/keys = {
-"times": PackedFloat32Array(4),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [false]
-}
-tracks/6/type = "value"
-tracks/6/imported = false
-tracks/6/enabled = true
-tracks/6/path = NodePath("Area3D/hitbox_falling:disabled")
-tracks/6/interp = 1
-tracks/6/loop_wrap = true
-tracks/6/keys = {
-"times": PackedFloat32Array(0, 3, 3.3),
+"times": PackedFloat32Array(0, 3, 3.2),
 "transitions": PackedFloat32Array(1, 1, 1),
 "update": 1,
 "values": [true, false, true]
 }
-
-[sub_resource type="Animation" id="Animation_g3nfu"]
-resource_name = "metal_stage_0"
-length = 0.1
-step = 0.1
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("Metal Stake:position")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [Vector3(0, 0, 0)]
-}
-tracks/1/type = "value"
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/path = NodePath("Metal Stake:visible")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
-tracks/1/keys = {
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("Root:visible")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 1,
 "values": [true]
-}
-tracks/2/type = "value"
-tracks/2/imported = false
-tracks/2/enabled = true
-tracks/2/path = NodePath("StakeCollision/StakeCollider:disabled")
-tracks/2/interp = 1
-tracks/2/loop_wrap = true
-tracks/2/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [false]
-}
-tracks/3/type = "value"
-tracks/3/imported = false
-tracks/3/enabled = true
-tracks/3/path = NodePath("Area3D/hitbox:disabled")
-tracks/3/interp = 1
-tracks/3/loop_wrap = true
-tracks/3/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [false]
-}
-
-[sub_resource type="Animation" id="Animation_t5j0f"]
-resource_name = "metal_stage_1"
-length = 0.1
-step = 0.1
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("Metal Stake:position")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [Vector3(0, -1, 0)]
-}
-
-[sub_resource type="Animation" id="Animation_7qwuh"]
-resource_name = "metal_stage_2"
-length = 0.1
-step = 0.1
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("Metal Stake:position")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [Vector3(0, -2, 0)]
-}
-
-[sub_resource type="Animation" id="Animation_ucbua"]
-resource_name = "metal_stage_3"
-length = 0.1
-step = 0.1
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("Metal Stake:position")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [Vector3(0, -3, 0)]
-}
-
-[sub_resource type="Animation" id="Animation_qdsmy"]
-resource_name = "metal_stage_4"
-length = 0.1
-step = 0.1
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("Metal Stake:position")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [Vector3(0, -4, 0)]
 }
 
 [sub_resource type="Animation" id="Animation_8aoqg"]
-resource_name = "metal_stage_5"
+resource_name = "finished"
 length = 0.1
 step = 0.1
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("Metal Stake:position")
+tracks/0/path = NodePath("StakeCollision/StakeCollider:disabled")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [Vector3(0, -5, 0)]
+"update": 1,
+"values": [true]
 }
 tracks/1/type = "value"
 tracks/1/imported = false
 tracks/1/enabled = true
-tracks/1/path = NodePath("StakeCollision/StakeCollider:disabled")
+tracks/1/path = NodePath("Area3D/hitbox:disabled")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/keys = {
@@ -359,92 +231,85 @@ tracks/1/keys = {
 "update": 1,
 "values": [true]
 }
-tracks/2/type = "value"
-tracks/2/imported = false
-tracks/2/enabled = true
-tracks/2/path = NodePath("Area3D/hitbox:disabled")
-tracks/2/interp = 1
-tracks/2/loop_wrap = true
-tracks/2/keys = {
+
+[sub_resource type="Animation" id="Animation_gbcon"]
+resource_name = "metal"
+length = 0.001
+step = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Root/MetalStake:visible")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 1,
 "values": [true]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Root/WoodStake:visible")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
 }
 
 [sub_resource type="Animation" id="Animation_jqvdu"]
 resource_name = "standby"
-length = 0.1
+length = 0.001
 step = 0.1
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("Metal Stake:visible")
+tracks/0/path = NodePath("shadow:scale")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [false]
-}
-tracks/1/type = "value"
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/path = NodePath("Wood Stake:visible")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
-tracks/1/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [false]
-}
-tracks/2/type = "value"
-tracks/2/imported = false
-tracks/2/enabled = true
-tracks/2/path = NodePath("Wood Stake:position")
-tracks/2/interp = 1
-tracks/2/loop_wrap = true
-tracks/2/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [Vector3(0, 20, 0)]
-}
-tracks/3/type = "value"
-tracks/3/imported = false
-tracks/3/enabled = true
-tracks/3/path = NodePath("shadow:scale")
-tracks/3/interp = 1
-tracks/3/loop_wrap = true
-tracks/3/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 0,
 "values": [Vector3(3.1451228, 0.7, 3.1451228)]
 }
-tracks/4/type = "value"
-tracks/4/imported = false
-tracks/4/enabled = true
-tracks/4/path = NodePath("shadow:visible")
-tracks/4/interp = 1
-tracks/4/loop_wrap = true
-tracks/4/keys = {
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("shadow:visible")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Root:visible")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 1,
 "values": [false]
 }
 
-[sub_resource type="Animation" id="Animation_7gsve"]
-resource_name = "wood_fall"
-length = 4.0
+[sub_resource type="Animation" id="Animation_n1vet"]
+resource_name = "wood"
+length = 0.001
 step = 0.1
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("Metal Stake:visible")
+tracks/0/path = NodePath("Root/MetalStake:visible")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
@@ -456,7 +321,7 @@ tracks/0/keys = {
 tracks/1/type = "value"
 tracks/1/imported = false
 tracks/1/enabled = true
-tracks/1/path = NodePath("Wood Stake:visible")
+tracks/1/path = NodePath("Root/WoodStake:visible")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/keys = {
@@ -464,256 +329,67 @@ tracks/1/keys = {
 "transitions": PackedFloat32Array(1),
 "update": 1,
 "values": [true]
-}
-tracks/2/type = "value"
-tracks/2/imported = false
-tracks/2/enabled = true
-tracks/2/path = NodePath("Wood Stake:position")
-tracks/2/interp = 1
-tracks/2/loop_wrap = true
-tracks/2/keys = {
-"times": PackedFloat32Array(0, 3, 3.2),
-"transitions": PackedFloat32Array(1, 1, 1),
-"update": 0,
-"values": [Vector3(0, 50, 0), Vector3(0, 50, 0), Vector3(0, 0, 0)]
-}
-tracks/3/type = "value"
-tracks/3/imported = false
-tracks/3/enabled = true
-tracks/3/path = NodePath("shadow:scale")
-tracks/3/interp = 1
-tracks/3/loop_wrap = true
-tracks/3/keys = {
-"times": PackedFloat32Array(0, 3),
-"transitions": PackedFloat32Array(1, 1),
-"update": 0,
-"values": [Vector3(0, 0, 0), Vector3(3.1451228, 0.7, 3.1451228)]
-}
-tracks/4/type = "value"
-tracks/4/imported = false
-tracks/4/enabled = true
-tracks/4/path = NodePath("shadow:visible")
-tracks/4/interp = 1
-tracks/4/loop_wrap = true
-tracks/4/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [true]
-}
-tracks/5/type = "method"
-tracks/5/imported = false
-tracks/5/enabled = true
-tracks/5/path = NodePath("AnimationPlayer")
-tracks/5/interp = 1
-tracks/5/loop_wrap = true
-tracks/5/keys = {
-"times": PackedFloat32Array(3.3),
-"transitions": PackedFloat32Array(1),
-"values": [{
-"args": [&"wood_stage_0", -1, 1.0, false],
-"method": &"play"
-}]
-}
-tracks/6/type = "value"
-tracks/6/imported = false
-tracks/6/enabled = true
-tracks/6/path = NodePath("StakeCollision/StakeCollider:disabled")
-tracks/6/interp = 1
-tracks/6/loop_wrap = true
-tracks/6/keys = {
-"times": PackedFloat32Array(4),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [false]
 }
 
 [sub_resource type="Animation" id="Animation_be8it"]
-resource_name = "wood_stage_0"
-length = 0.1
-step = 0.1
+resource_name = "started"
+length = 0.001
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("Wood Stake:position")
+tracks/0/path = NodePath("StakeCollision/StakeCollider:disabled")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [Vector3(0, 0, 0)]
+"update": 1,
+"values": [false]
 }
 tracks/1/type = "value"
 tracks/1/imported = false
 tracks/1/enabled = true
-tracks/1/path = NodePath("Wood Stake:visible")
+tracks/1/path = NodePath("Area3D/hitbox:disabled")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 1,
-"values": [true]
-}
-tracks/2/type = "value"
-tracks/2/imported = false
-tracks/2/enabled = true
-tracks/2/path = NodePath("StakeCollision/StakeCollider:disabled")
-tracks/2/interp = 1
-tracks/2/loop_wrap = true
-tracks/2/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
 "values": [false]
-}
-tracks/3/type = "value"
-tracks/3/imported = false
-tracks/3/enabled = true
-tracks/3/path = NodePath("shadow:visible")
-tracks/3/interp = 1
-tracks/3/loop_wrap = true
-tracks/3/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [true]
-}
-tracks/4/type = "value"
-tracks/4/imported = false
-tracks/4/enabled = true
-tracks/4/path = NodePath("Area3D/hitbox:disabled")
-tracks/4/interp = 1
-tracks/4/loop_wrap = true
-tracks/4/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [false]
-}
-
-[sub_resource type="Animation" id="Animation_dnreb"]
-resource_name = "wood_stage_1"
-step = 0.1
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("Wood Stake:position")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [Vector3(0, -1.5, 0)]
-}
-
-[sub_resource type="Animation" id="Animation_7gcrc"]
-resource_name = "wood_stage_2"
-step = 0.1
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("Wood Stake:position")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [Vector3(0, -3, 0)]
-}
-
-[sub_resource type="Animation" id="Animation_puwvs"]
-resource_name = "wood_stage_3"
-length = 0.1
-step = 0.1
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("Wood Stake:position")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [Vector3(0, -5, 0)]
-}
-tracks/1/type = "value"
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/path = NodePath("StakeCollision/StakeCollider:disabled")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
-tracks/1/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [true]
-}
-tracks/2/type = "value"
-tracks/2/imported = false
-tracks/2/enabled = true
-tracks/2/path = NodePath("Area3D/hitbox:disabled")
-tracks/2/interp = 1
-tracks/2/loop_wrap = true
-tracks/2/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [true]
 }
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_be8it"]
 _data = {
 &"RESET": SubResource("Animation_ghnyn"),
-&"metal_fall": SubResource("Animation_vy42k"),
-&"metal_stage_0": SubResource("Animation_g3nfu"),
-&"metal_stage_1": SubResource("Animation_t5j0f"),
-&"metal_stage_2": SubResource("Animation_7qwuh"),
-&"metal_stage_3": SubResource("Animation_ucbua"),
-&"metal_stage_4": SubResource("Animation_qdsmy"),
-&"metal_stage_5": SubResource("Animation_8aoqg"),
+&"fall": SubResource("Animation_vy42k"),
+&"finished": SubResource("Animation_8aoqg"),
+&"metal": SubResource("Animation_gbcon"),
 &"standby": SubResource("Animation_jqvdu"),
-&"wood_fall": SubResource("Animation_7gsve"),
-&"wood_stage_0": SubResource("Animation_be8it"),
-&"wood_stage_1": SubResource("Animation_dnreb"),
-&"wood_stage_2": SubResource("Animation_7gcrc"),
-&"wood_stage_3": SubResource("Animation_puwvs")
+&"started": SubResource("Animation_be8it"),
+&"wood": SubResource("Animation_n1vet")
 }
 
-[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_ghnyn"]
-radius = 2.4594727
-height = 9.128906
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_ghnyn"]
-size = Vector3(4.49263, 0.85217285, 4.5392914)
-
-[node name="Stake" type="Node3D" node_paths=PackedStringArray("animator", "collision")]
-script = ExtResource("1_ghnyn")
+[node name="Stake" type="Node3D" node_paths=PackedStringArray("animator", "root", "collision")]
+script = ExtResource("1_2u3uv")
 animator = NodePath("AnimationPlayer")
+root = NodePath("Root")
 collision = NodePath("StakeCollision/StakeCollider")
-materials = Array[Material]([ExtResource("2_be8it"), null])
+materials = Array[Material]([ExtResource("2_cor2m"), null])
 
-[node name="Metal Stake" parent="." instance=ExtResource("1_7gsve")]
+[node name="Root" type="Node3D" parent="."]
+
+[node name="MetalStake" parent="Root" instance=ExtResource("3_4ggf6")]
 visible = false
 
-[node name="Wood Stake" parent="." instance=ExtResource("2_ghnyn")]
-visible = false
+[node name="WoodStake" parent="Root" instance=ExtResource("4_c84m1")]
 
 [node name="shadow" type="MeshInstance3D" parent="."]
 transform = Transform3D(3.1451228, 0, 0, 0, 0.7, 0, 0, 0, 3.1451228, 0, 2.5207195, 0)
 visible = false
-material_override = ExtResource("3_7gsve")
+material_override = ExtResource("5_ejl10")
 cast_shadow = 0
 mesh = SubResource("PlaneMesh_ghnyn")
-
-[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
-libraries = {
-&"": SubResource("AnimationLibrary_be8it")
-}
 
 [node name="StakeCollision" type="StaticBody3D" parent="."]
 
@@ -735,5 +411,10 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.10059738, 3.1472836, -0.040
 shape = SubResource("BoxShape3D_ghnyn")
 disabled = true
 debug_color = Color(1, 0, 0, 1)
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+&"": SubResource("AnimationLibrary_be8it")
+}
 
 [connection signal="area_entered" from="Area3D" to="." method="_on_area_3d_area_entered"]

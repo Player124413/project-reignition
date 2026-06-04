@@ -9,12 +9,14 @@ class_name StakeSpawner extends Node
 @export var total_spawn_length: float = 40
 ### How long of a pause should there be between stakes in the same group
 @export var time_between_stakes: float = 0.3
-
+### Chance of stake becoming metal (eg: 5 = 1/5 chance)
+const CHANCE_FOR_BONUS : int = 5
+var rng : RandomNumberGenerator
 
 func _ready() -> void:
+	rng = RandomNumberGenerator.new()
 	initialize_stakes()
 	set_physics_process(true)
-
 	if !NetworkManager.is_hosting_game:
 		return
 	MinigameManager.instance.gameplay_started.connect(Callable(self , "start_spawning"))
@@ -32,7 +34,6 @@ func start_spawning() -> void:
 	set_physics_process(true)
 	return
 
-@rpc("any_peer", "call_local", "reliable")
 func start_new_spawn(new_stakes: Array[Vector2i]):
 	print("-----------------------")
 	for i in range(new_stakes.size()):
@@ -41,12 +42,12 @@ func start_new_spawn(new_stakes: Array[Vector2i]):
 		print("Col: " + str(new_stakes[i].y))
 		
 		var this_stake: GiantStake = get_stake(new_stakes[i].x, new_stakes[i].y) as GiantStake
-		this_stake.set_bonus()
-		this_stake.spawn_stake()
+		if this_stake.is_fallen: # Stake is already spawned
+			continue
+		this_stake.rpc("spawn_stake", rng.randi_range(1, CHANCE_FOR_BONUS) == 1)
 		await get_tree().create_timer(time_between_stakes).timeout
 	
 	print("-----------------------")
-	pass
 
 
 ## Minimum number of stakes to spawn
@@ -80,8 +81,10 @@ enum SHAPE {
 }
 
 func request_spawn():
+	if !NetworkManager.is_hosting_game:
+		return
+	
 	print("requesting spawn")
-	var rng = RandomNumberGenerator.new()
 	var spawn_direction: DIRECTION
 	var shape: SHAPE = rng.randi_range(0, SHAPE.COUNT - 1) as SHAPE
 
@@ -90,7 +93,6 @@ func request_spawn():
 	# The initial starting stake
 	var starting_row: int
 	var starting_col: int
-
 	
 	while true: # Calculate the initial starting stakes
 		print("Getting first stake")
@@ -203,9 +205,8 @@ func request_spawn():
 						if is_valid_direction(starting_row, starting_col - 4):
 							stakes[2] = Vector2i(starting_row, starting_col - 4)
 							break
-
-	rpc("start_new_spawn", start_corrections(stakes, spawn_direction))
-			
+	
+	start_new_spawn(start_corrections(stakes, spawn_direction))
 
 func is_valid_spawn(row: int, col: int) -> bool:
 	if row > rows.size() - 1: # Check if it's in a valid row
