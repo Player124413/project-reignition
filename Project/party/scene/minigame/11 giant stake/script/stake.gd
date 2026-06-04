@@ -1,4 +1,4 @@
-class_name GiantStake extends Node
+class_name GiantStake extends Node3D
 
 @export var animator: AnimationPlayer
 @export var root: Node3D
@@ -28,7 +28,7 @@ func _ready() -> void:
 	animator.play("started" if starting_stake else "standby")
 
 @rpc("any_peer", "call_local", "reliable")
-func spawn_stake(bonus : bool) -> void:
+func spawn_stake(bonus: bool) -> void:
 	if is_fallen:
 		return
 	
@@ -43,15 +43,33 @@ func spawn_stake(bonus : bool) -> void:
 	reset_physics_interpolation()
 
 @rpc("any_peer", "call_local", "reliable")
-func hit_stake() -> void:
-	var max_hits : int = MAX_HITS_BONUS if is_bonus else MAX_HITS_WOOD
+func hit_stake(this_index: int) -> void:
+	var max_hits: int = MAX_HITS_BONUS if is_bonus else MAX_HITS_WOOD
 	num_hits += 1
+
+	var score: int = 3 if is_bonus else 1
+	var projected_position: Vector3 = global_position + Vector3.UP * 2
+	var screen_pos: Vector2 = get_viewport().get_camera_3d().unproject_position(projected_position)
+
 	if num_hits >= max_hits:
 		is_enabled = false
 		animator.play("finished")
+		rpc("request_score_popup", this_index, score, screen_pos)
 	root.position = Vector3.DOWN * (num_hits / (max_hits as float)) * STAKE_HEIGHT
 
 func _on_area_3d_area_entered(area: Area3D) -> void:
+	var node = area
+	while (node is not PartyGameCharacterSpawner):
+		node = node.get_parent()
+	
 	if area.is_in_group("crusher"):
-		rpc("hit_stake")
+		rpc("hit_stake", node.player_index)
 	pass # Replace with function body.
+
+@rpc("any_peer", "call_local", "reliable")
+func request_score_popup(player_index: int, score: int, screen_pos: Vector2) -> void:
+	if !NetworkManager.is_hosting_game:
+		return
+	
+	MinigameManager.instance.request_score_popup(player_index, score, screen_pos)
+	MinigameManager.instance.request_score_change(player_index, score)
