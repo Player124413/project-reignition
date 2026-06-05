@@ -123,8 +123,13 @@ func _ready() -> void:
 	character_animator.connect("animation_event", Callable.create(self, "process_animation_event"))
 	on_spawn_finished()
 	
-	if player_index == 0 && NetworkManager.is_hosting_game: # Only generate queue on player 1
+	if is_minigame_host():
 		on_host_spawned()
+
+## Returns whether this player is the minigame host.
+## Due to Tournament Palace, this is not the same as the network host.
+func is_minigame_host() -> bool:
+	return player_index == PartyManager.minigame_players[0]
 
 ## Called after the host has spawned.
 func on_host_spawned() -> void:
