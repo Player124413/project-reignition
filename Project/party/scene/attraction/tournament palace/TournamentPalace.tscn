@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=3 uid="uid://bm6fo8bvadvpb"]
+[gd_scene load_steps=33 format=3 uid="uid://bm6fo8bvadvpb"]
 
 [ext_resource type="Script" uid="uid://ckdfwmi1cjlxd" path="res://party/scene/attraction/tournament palace/script/tournament_palace.gd" id="1_aybhk"]
 [ext_resource type="PackedScene" uid="uid://cco4sa2j8ev1r" path="res://party/scene/attraction/tournament palace/model/Map.glb" id="1_irl16"]
@@ -7,6 +7,17 @@
 [ext_resource type="PackedScene" uid="uid://c3j3nqtlwq81p" path="res://party/scene/attraction/base/AttractionPartyCharacter.tscn" id="5_2uwrk"]
 [ext_resource type="PackedScene" uid="uid://bqaafoua436c8" path="res://interface/menu/DescriptionParty.tscn" id="6_mj2ip"]
 [ext_resource type="PackedScene" uid="uid://cho38gsk705f8" path="res://party/resource/character/scene/Omochao.tscn" id="7_3bik3"]
+[ext_resource type="Texture2D" uid="uid://d1xgkig60sglx" path="res://party/scene/attraction/tournament palace/interface/round banner.png" id="7_vn6d0"]
+[ext_resource type="LabelSettings" uid="uid://cw722xgojxoo" path="res://party/font/TournamentPalaceRoundOutline.tres" id="8_07ckt"]
+[ext_resource type="Script" uid="uid://qvplfr0cibu5" path="res://party/script/interface/synced_label.gd" id="9_j6s7f"]
+[ext_resource type="LabelSettings" uid="uid://d887xwcdcdqu" path="res://party/font/TournamentPalaceRoundFill.tres" id="10_07ckt"]
+[ext_resource type="LabelSettings" uid="uid://dukge6ihruibt" path="res://party/font/minigame/MinigameResultsFill.tres" id="10_m56w7"]
+[ext_resource type="Texture2D" uid="uid://cm4dsrfm8yxab" path="res://party/font/minigame/MinigameGradientFill.tres" id="11_wfjx1"]
+[ext_resource type="LabelSettings" uid="uid://cqgp6rvtwclbe" path="res://party/font/minigame/MinigameResultOutline.tres" id="12_m56w7"]
+[ext_resource type="Texture2D" uid="uid://tku4oppyoj5x" path="res://party/scene/attraction/tournament palace/interface/name border.png" id="14_wfjx1"]
+[ext_resource type="Material" uid="uid://bhbsafmnnhtdb" path="res://effect/material/Canvas Item Add.tres" id="15_m1u60"]
+[ext_resource type="LabelSettings" uid="uid://b6gq5k0uvvw5g" path="res://party/font/MinigameSelectionName.tres" id="16_alhyr"]
+[ext_resource type="SpriteFrames" uid="uid://bxftujxr44yuv" path="res://party/scene/rule manager/texture/RuleFlames.tres" id="17_kwcrk"]
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_2uwrk"]
 
@@ -91,7 +102,7 @@ tracks/4/keys = {
 tracks/5/type = "value"
 tracks/5/imported = false
 tracks/5/enabled = true
-tracks/5/path = NodePath("Omochao/Omochao:position")
+tracks/5/path = NodePath("IngameOmochao/Omochao:position")
 tracks/5/interp = 1
 tracks/5/loop_wrap = true
 tracks/5/keys = {
@@ -103,7 +114,7 @@ tracks/5/keys = {
 tracks/6/type = "value"
 tracks/6/imported = false
 tracks/6/enabled = true
-tracks/6/path = NodePath("Omochao/Omochao:visible")
+tracks/6/path = NodePath("IngameOmochao/Omochao:visible")
 tracks/6/interp = 1
 tracks/6/loop_wrap = true
 tracks/6/keys = {
@@ -111,213 +122,6 @@ tracks/6/keys = {
 "transitions": PackedFloat32Array(1),
 "update": 1,
 "values": [false]
-}
-
-[sub_resource type="Animation" id="Animation_mj2ip"]
-resource_name = "init"
-length = 0.001
-step = 0.1
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("Camera/Camera:position")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(2),
-"update": 0,
-"values": [Vector3(0, 0, 180)]
-}
-tracks/1/type = "value"
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/path = NodePath("Camera/Camera:rotation")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
-tracks/1/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(2),
-"update": 0,
-"values": [Vector3(0, 0, 0)]
-}
-tracks/2/type = "value"
-tracks/2/imported = false
-tracks/2/enabled = true
-tracks/2/path = NodePath("Camera:rotation")
-tracks/2/interp = 1
-tracks/2/loop_wrap = true
-tracks/2/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(2),
-"update": 0,
-"values": [Vector3(0, 0, 0)]
-}
-tracks/3/type = "value"
-tracks/3/imported = false
-tracks/3/enabled = true
-tracks/3/path = NodePath("Camera:position")
-tracks/3/interp = 1
-tracks/3/loop_wrap = true
-tracks/3/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(2),
-"update": 0,
-"values": [Vector3(0, 50, 0)]
-}
-tracks/4/type = "value"
-tracks/4/imported = false
-tracks/4/enabled = true
-tracks/4/path = NodePath("Camera/Camera:fov")
-tracks/4/interp = 1
-tracks/4/loop_wrap = true
-tracks/4/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [50.0]
-}
-tracks/5/type = "value"
-tracks/5/imported = false
-tracks/5/enabled = true
-tracks/5/path = NodePath("Omochao/Omochao:visible")
-tracks/5/interp = 1
-tracks/5/loop_wrap = true
-tracks/5/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [false]
-}
-
-[sub_resource type="Animation" id="Animation_c5w31"]
-resource_name = "start"
-length = 6.0
-step = 0.1
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("Camera/Camera:position")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0, 1, 2, 3, 3.3, 3.6, 5, 5.3, 5.6),
-"transitions": PackedFloat32Array(2, 0.5, 1, 2, 0.5, 1, 2, 0.5, 2),
-"update": 0,
-"values": [Vector3(0, 0, 180), Vector3(0, 0, 130), Vector3(0, 0, 80), Vector3(0, 0, 80), Vector3(0, 0, 70), Vector3(0, 0, 60), Vector3(0, 0, 60), Vector3(0, 0, 70), Vector3(0, 0, 80)]
-}
-tracks/1/type = "value"
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/path = NodePath("Camera/Camera:rotation")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
-tracks/1/keys = {
-"times": PackedFloat32Array(0, 1),
-"transitions": PackedFloat32Array(2, 0.5),
-"update": 0,
-"values": [Vector3(0, 0, 0), Vector3(0, 0, 0)]
-}
-tracks/2/type = "value"
-tracks/2/imported = false
-tracks/2/enabled = true
-tracks/2/path = NodePath("Camera:rotation")
-tracks/2/interp = 1
-tracks/2/loop_wrap = true
-tracks/2/keys = {
-"times": PackedFloat32Array(0, 1, 2, 3, 3.3, 3.6000001, 5, 5.3, 5.6),
-"transitions": PackedFloat32Array(2, 0.5, 1, 2, 0.5, 1, 2, 0.5, 2),
-"update": 0,
-"values": [Vector3(0, 0, 0), Vector3(0.06981317, 0, 0), Vector3(0.13962634, 0, 0), Vector3(0.13962634, 0, 0), Vector3(0.10471976, 0, 0), Vector3(0.06981317, 0, 0), Vector3(0.06981317, 0, 0), Vector3(0.10471976, 0, 0), Vector3(0.13962634, 0, 0)]
-}
-tracks/3/type = "value"
-tracks/3/imported = false
-tracks/3/enabled = true
-tracks/3/path = NodePath("Camera:position")
-tracks/3/interp = 1
-tracks/3/loop_wrap = true
-tracks/3/keys = {
-"times": PackedFloat32Array(0, 1, 2, 3, 3.3, 3.6000001, 5, 5.3, 5.6),
-"transitions": PackedFloat32Array(2, 0.5, 1, 2, 0.5, 2, 2, 0.5, 2),
-"update": 0,
-"values": [Vector3(0, 50, 0), Vector3(0, 35, 0), Vector3(0, 20, 0), Vector3(0, 20, 0), Vector3(0, 19, 0), Vector3(0, 18, 0), Vector3(0, 18, 0), Vector3(0, 19, 0), Vector3(0, 20, 0)]
-}
-tracks/4/type = "value"
-tracks/4/imported = false
-tracks/4/enabled = true
-tracks/4/path = NodePath("Camera/Camera:fov")
-tracks/4/interp = 1
-tracks/4/loop_wrap = true
-tracks/4/keys = {
-"times": PackedFloat32Array(0, 2, 3, 3.3, 3.6, 5, 5.3, 5.6),
-"transitions": PackedFloat32Array(1, 1, 2, 0.5, 1, 2, 0.5, 2),
-"update": 0,
-"values": [50.0, 40.0, 40.0, 35.0, 30.0, 30.0, 35.0, 40.0]
-}
-tracks/5/type = "method"
-tracks/5/imported = false
-tracks/5/enabled = true
-tracks/5/path = NodePath(".")
-tracks/5/interp = 1
-tracks/5/loop_wrap = true
-tracks/5/keys = {
-"times": PackedFloat32Array(5.6),
-"transitions": PackedFloat32Array(1),
-"values": [{
-"args": [],
-"method": &"start_omochao"
-}]
-}
-tracks/6/type = "value"
-tracks/6/imported = false
-tracks/6/enabled = true
-tracks/6/path = NodePath("Omochao/Omochao:position")
-tracks/6/interp = 1
-tracks/6/loop_wrap = true
-tracks/6/keys = {
-"times": PackedFloat32Array(3.6, 4),
-"transitions": PackedFloat32Array(0.5, 1),
-"update": 0,
-"values": [Vector3(0, -5, 12), Vector3(0, 12, 12)]
-}
-tracks/7/type = "value"
-tracks/7/imported = false
-tracks/7/enabled = true
-tracks/7/path = NodePath("Omochao/Omochao:visible")
-tracks/7/interp = 1
-tracks/7/loop_wrap = true
-tracks/7/keys = {
-"times": PackedFloat32Array(0, 3.4, 3.6),
-"transitions": PackedFloat32Array(1, 1, 1),
-"update": 1,
-"values": [false, false, true]
-}
-tracks/8/type = "animation"
-tracks/8/imported = false
-tracks/8/enabled = false
-tracks/8/path = NodePath("Omochao/Omochao/Omochao/AnimationPlayer")
-tracks/8/interp = 1
-tracks/8/loop_wrap = true
-tracks/8/keys = {
-"clips": PackedStringArray("backflip", "select"),
-"times": PackedFloat32Array(3.6, 5.1)
-}
-tracks/9/type = "method"
-tracks/9/imported = false
-tracks/9/enabled = true
-tracks/9/path = NodePath("Omochao/Omochao")
-tracks/9/interp = 1
-tracks/9/loop_wrap = true
-tracks/9/keys = {
-"times": PackedFloat32Array(3.6, 4.8),
-"transitions": PackedFloat32Array(1, 1),
-"values": [{
-"args": [&"backflip", false, 0.0],
-"method": &"play_animation"
-}, {
-"args": [&"select", false, 0.19999999999708962],
-"method": &"play_animation"
-}]
 }
 
 [sub_resource type="Animation" id="Animation_3bik3"]
@@ -408,15 +212,804 @@ tracks/5/keys = {
 }]
 }
 
+[sub_resource type="Animation" id="Animation_mj2ip"]
+resource_name = "init"
+length = 0.001
+step = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Camera/Camera:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(2),
+"update": 0,
+"values": [Vector3(0, 0, 180)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Camera/Camera:rotation")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(2),
+"update": 0,
+"values": [Vector3(0, 0, 0)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Camera:rotation")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(2),
+"update": 0,
+"values": [Vector3(0, 0, 0)]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("Camera:position")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(2),
+"update": 0,
+"values": [Vector3(0, 50, 0)]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("Camera/Camera:fov")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [50.0]
+}
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("IngameOmochao/Omochao:visible")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+
+[sub_resource type="Animation" id="Animation_vn6d0"]
+resource_name = "round1"
+step = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Camera/Camera:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 1),
+"transitions": PackedFloat32Array(2, 1),
+"update": 0,
+"values": [Vector3(0, 0, 180), Vector3(0, 0, 66)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Camera/Camera:rotation")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(),
+"transitions": PackedFloat32Array(),
+"update": 0,
+"values": []
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Camera:rotation")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 1),
+"transitions": PackedFloat32Array(2, 1),
+"update": 0,
+"values": [Vector3(0, 0, 0), Vector3(0.06981317, 0, 0)]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("Camera:position")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0, 1),
+"transitions": PackedFloat32Array(2, 1),
+"update": 0,
+"values": [Vector3(0, 50, 0), Vector3(-38, 33, 0)]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("Camera/Camera:fov")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0, 1),
+"transitions": PackedFloat32Array(2, 1),
+"update": 0,
+"values": [50.0, 40.0]
+}
+tracks/5/type = "method"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath(".")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(1),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [1],
+"method": &"start_round"
+}]
+}
+
+[sub_resource type="Animation" id="Animation_c5w31"]
+resource_name = "start"
+length = 6.0
+step = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Camera/Camera:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 1, 2, 3, 3.3, 3.6, 5, 5.3, 5.6),
+"transitions": PackedFloat32Array(2, 0.5, 1, 2, 0.5, 1, 2, 0.5, 2),
+"update": 0,
+"values": [Vector3(0, 0, 180), Vector3(0, 0, 130), Vector3(0, 0, 80), Vector3(0, 0, 80), Vector3(0, 0, 70), Vector3(0, 0, 60), Vector3(0, 0, 60), Vector3(0, 0, 70), Vector3(0, 0, 80)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Camera/Camera:rotation")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 1),
+"transitions": PackedFloat32Array(2, 0.5),
+"update": 0,
+"values": [Vector3(0, 0, 0), Vector3(0, 0, 0)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Camera:rotation")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 1, 2, 3, 3.3, 3.6000001, 5, 5.3, 5.6),
+"transitions": PackedFloat32Array(2, 0.5, 1, 2, 0.5, 1, 2, 0.5, 2),
+"update": 0,
+"values": [Vector3(0, 0, 0), Vector3(0.06981317, 0, 0), Vector3(0.13962634, 0, 0), Vector3(0.13962634, 0, 0), Vector3(0.10471976, 0, 0), Vector3(0.06981317, 0, 0), Vector3(0.06981317, 0, 0), Vector3(0.10471976, 0, 0), Vector3(0.13962634, 0, 0)]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("Camera:position")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0, 1, 2, 3, 3.3, 3.6000001, 5, 5.3, 5.6),
+"transitions": PackedFloat32Array(2, 0.5, 1, 2, 0.5, 2, 2, 0.5, 2),
+"update": 0,
+"values": [Vector3(0, 50, 0), Vector3(0, 35, 0), Vector3(0, 20, 0), Vector3(0, 20, 0), Vector3(0, 19, 0), Vector3(0, 18, 0), Vector3(0, 18, 0), Vector3(0, 19, 0), Vector3(0, 20, 0)]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("Camera/Camera:fov")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0, 2, 3, 3.3, 3.6, 5, 5.3, 5.6),
+"transitions": PackedFloat32Array(1, 1, 2, 0.5, 1, 2, 0.5, 2),
+"update": 0,
+"values": [50.0, 40.0, 40.0, 35.0, 30.0, 30.0, 35.0, 40.0]
+}
+tracks/5/type = "method"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath(".")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(5.6),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"start_omochao"
+}]
+}
+tracks/6/type = "value"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("IngameOmochao/Omochao:position")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"times": PackedFloat32Array(3.6, 4),
+"transitions": PackedFloat32Array(0.5, 1),
+"update": 0,
+"values": [Vector3(0, -5, 12), Vector3(0, 12, 12)]
+}
+tracks/7/type = "value"
+tracks/7/imported = false
+tracks/7/enabled = true
+tracks/7/path = NodePath("IngameOmochao/Omochao:visible")
+tracks/7/interp = 1
+tracks/7/loop_wrap = true
+tracks/7/keys = {
+"times": PackedFloat32Array(0, 3.4, 3.6),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 1,
+"values": [false, false, true]
+}
+tracks/8/type = "animation"
+tracks/8/imported = false
+tracks/8/enabled = false
+tracks/8/path = NodePath("IngameOmochao/Omochao/Omochao/AnimationPlayer")
+tracks/8/interp = 1
+tracks/8/loop_wrap = true
+tracks/8/keys = {
+"clips": PackedStringArray("backflip", "select"),
+"times": PackedFloat32Array(3.6, 5.1)
+}
+tracks/9/type = "method"
+tracks/9/imported = false
+tracks/9/enabled = true
+tracks/9/path = NodePath("IngameOmochao/Omochao")
+tracks/9/interp = 1
+tracks/9/loop_wrap = true
+tracks/9/keys = {
+"times": PackedFloat32Array(3.6, 4.8),
+"transitions": PackedFloat32Array(1, 1),
+"values": [{
+"args": [&"backflip", false, 0.0],
+"method": &"play_animation"
+}, {
+"args": [&"select", false, 0.1999999999970896],
+"method": &"play_animation"
+}]
+}
+
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_vrx6g"]
 _data = {
 &"RESET": SubResource("Animation_hcjpf"),
 &"first-floor": SubResource("Animation_3bik3"),
 &"init": SubResource("Animation_mj2ip"),
+&"round1": SubResource("Animation_vn6d0"),
 &"start": SubResource("Animation_c5w31")
 }
 
-[node name="TournamentPalace" type="Control" node_paths=PackedStringArray("rule_positions", "entry_positions", "balcony_parents", "attraction_animator", "description", "omochao")]
+[sub_resource type="Animation" id="Animation_kwcrk"]
+resource_name = "start"
+length = 7.0
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("RoundBanner:anchor_top")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.6, 0.8000001, 1.0000001),
+"transitions": PackedFloat32Array(1, 2, 0.5, 1),
+"update": 0,
+"values": [0.5, 0.5, 0.25, 0.0]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("RoundBanner:anchor_bottom")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.6, 0.8000001, 1.0000001),
+"transitions": PackedFloat32Array(1, 2, 0.5, 1),
+"update": 0,
+"values": [0.5, 0.5, 0.25, 0.0]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath(".:visible")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("RoundBanner:scale")
+tracks/3/interp = 2
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0, 0.13333333, 0.20000002, 0.3),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 0,
+"values": [Vector2(2, 2), Vector2(1.5, -1), Vector2(1, 0), Vector2(1, 1)]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("RoundBanner:modulate")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0, 0.19999999),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 1)]
+}
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("RoundBanner/VBoxContainer/NumberLabel:modulate")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0, 0.3, 0.6),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 0), Color(1, 1, 1, 1)]
+}
+tracks/6/type = "value"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("Name:modulate")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"times": PackedFloat32Array(0, 1.2, 1.5000001),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 0), Color(1, 1, 1, 1)]
+}
+tracks/7/type = "value"
+tracks/7/imported = false
+tracks/7/enabled = true
+tracks/7/path = NodePath("Name/NameTexture:scale")
+tracks/7/interp = 1
+tracks/7/loop_wrap = true
+tracks/7/keys = {
+"times": PackedFloat32Array(1.5000001, 1.7, 1.8000001, 1.9, 2),
+"transitions": PackedFloat32Array(0.5, 1, 2, 0.5, 1),
+"update": 0,
+"values": [Vector2(0, 0.1), Vector2(1, 0.1), Vector2(1, 0.1), Vector2(1, 1.2), Vector2(1, 1)]
+}
+tracks/8/type = "value"
+tracks/8/imported = false
+tracks/8/enabled = true
+tracks/8/path = NodePath("Name/P2Label/Flash:modulate")
+tracks/8/interp = 1
+tracks/8/loop_wrap = true
+tracks/8/keys = {
+"times": PackedFloat32Array(2, 2.2, 2.4),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 0.5882353), Color(1, 1, 1, 0)]
+}
+tracks/9/type = "value"
+tracks/9/imported = false
+tracks/9/enabled = true
+tracks/9/path = NodePath("Name/P2Label/Flash:scale")
+tracks/9/interp = 1
+tracks/9/loop_wrap = true
+tracks/9/keys = {
+"times": PackedFloat32Array(2, 2.4),
+"transitions": PackedFloat32Array(0.5, 1),
+"update": 0,
+"values": [Vector2(1, 1), Vector2(2, 2)]
+}
+tracks/10/type = "value"
+tracks/10/imported = false
+tracks/10/enabled = true
+tracks/10/path = NodePath("Name/P2Label:position")
+tracks/10/interp = 1
+tracks/10/loop_wrap = true
+tracks/10/keys = {
+"times": PackedFloat32Array(1.5000001, 1.7, 1.8000001, 1.9000001, 2),
+"transitions": PackedFloat32Array(0.5, 1, 0.5, 1, 1),
+"update": 0,
+"values": [Vector2(0, -256), Vector2(1088, -256), Vector2(1088, -256), Vector2(1088, -128), Vector2(1087.9999, -136)]
+}
+tracks/11/type = "value"
+tracks/11/imported = false
+tracks/11/enabled = true
+tracks/11/path = NodePath("Name/P2Label:modulate")
+tracks/11/interp = 1
+tracks/11/loop_wrap = true
+tracks/11/keys = {
+"times": PackedFloat32Array(1.5000001, 1.7),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 1)]
+}
+tracks/12/type = "value"
+tracks/12/imported = false
+tracks/12/enabled = true
+tracks/12/path = NodePath("Name/P1Label:position")
+tracks/12/interp = 1
+tracks/12/loop_wrap = true
+tracks/12/keys = {
+"times": PackedFloat32Array(1.5000001, 1.7, 1.8000001, 1.9000001, 2),
+"transitions": PackedFloat32Array(0.5, 1, 0.5, 1, 1),
+"update": 0,
+"values": [Vector2(1088, -136), Vector2(0, -136), Vector2(0, -136), Vector2(0, -270), Vector2(0, -256)]
+}
+tracks/13/type = "value"
+tracks/13/imported = false
+tracks/13/enabled = true
+tracks/13/path = NodePath("Name/P1Label:modulate")
+tracks/13/interp = 1
+tracks/13/loop_wrap = true
+tracks/13/keys = {
+"times": PackedFloat32Array(1.5000001, 1.7),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 1)]
+}
+tracks/14/type = "value"
+tracks/14/imported = false
+tracks/14/enabled = true
+tracks/14/path = NodePath("Name/P1Label/Flash:scale")
+tracks/14/interp = 1
+tracks/14/loop_wrap = true
+tracks/14/keys = {
+"times": PackedFloat32Array(2, 2.4),
+"transitions": PackedFloat32Array(0.5, 1),
+"update": 0,
+"values": [Vector2(1, 1), Vector2(2, 2)]
+}
+tracks/15/type = "value"
+tracks/15/imported = false
+tracks/15/enabled = true
+tracks/15/path = NodePath("Name/P1Label/Flash:modulate")
+tracks/15/interp = 1
+tracks/15/loop_wrap = true
+tracks/15/keys = {
+"times": PackedFloat32Array(2, 2.2, 2.4),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 0.5882353), Color(1, 1, 1, 0)]
+}
+tracks/16/type = "value"
+tracks/16/imported = false
+tracks/16/enabled = true
+tracks/16/path = NodePath("Name/Flames:scale")
+tracks/16/interp = 1
+tracks/16/loop_wrap = true
+tracks/16/keys = {
+"times": PackedFloat32Array(2.0044622, 2.2),
+"transitions": PackedFloat32Array(0.5, 1),
+"update": 0,
+"values": [Vector2(1, 1), Vector2(2, 1)]
+}
+tracks/17/type = "value"
+tracks/17/imported = false
+tracks/17/enabled = true
+tracks/17/path = NodePath("Name/Flames:modulate")
+tracks/17/interp = 1
+tracks/17/loop_wrap = true
+tracks/17/keys = {
+"times": PackedFloat32Array(2.0044622, 2.2),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 1), Color(1, 1, 1, 0)]
+}
+tracks/18/type = "value"
+tracks/18/imported = false
+tracks/18/enabled = true
+tracks/18/path = NodePath("MinigameName:modulate")
+tracks/18/interp = 1
+tracks/18/loop_wrap = true
+tracks/18/keys = {
+"times": PackedFloat32Array(0, 5, 5.5),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 0), Color(1, 1, 1, 1)]
+}
+tracks/19/type = "method"
+tracks/19/imported = false
+tracks/19/enabled = true
+tracks/19/path = NodePath("..")
+tracks/19/interp = 1
+tracks/19/loop_wrap = true
+tracks/19/keys = {
+"times": PackedFloat32Array(1.8, 7),
+"transitions": PackedFloat32Array(1, 1),
+"values": [{
+"args": [],
+"method": &"start_omochao_minigame_throw"
+}, {
+"args": [],
+"method": &"request_minigame_load"
+}]
+}
+
+[sub_resource type="Animation" id="Animation_nnwk7"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("RoundBanner:anchor_top")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.0]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("RoundBanner:anchor_bottom")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.0]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath(".:visible")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("RoundBanner:scale")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(1, 1)]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("RoundBanner:modulate")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("RoundBanner/VBoxContainer/NumberLabel:modulate")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+tracks/6/type = "value"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("Name:modulate")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+tracks/7/type = "value"
+tracks/7/imported = false
+tracks/7/enabled = true
+tracks/7/path = NodePath("Name/NameTexture:scale")
+tracks/7/interp = 1
+tracks/7/loop_wrap = true
+tracks/7/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(1, 1)]
+}
+tracks/8/type = "value"
+tracks/8/imported = false
+tracks/8/enabled = true
+tracks/8/path = NodePath("Name/P2Label/Flash:modulate")
+tracks/8/interp = 1
+tracks/8/loop_wrap = true
+tracks/8/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+tracks/9/type = "value"
+tracks/9/imported = false
+tracks/9/enabled = true
+tracks/9/path = NodePath("Name/P2Label/Flash:scale")
+tracks/9/interp = 1
+tracks/9/loop_wrap = true
+tracks/9/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(1, 1)]
+}
+tracks/10/type = "value"
+tracks/10/imported = false
+tracks/10/enabled = true
+tracks/10/path = NodePath("Name/P2Label:position")
+tracks/10/interp = 1
+tracks/10/loop_wrap = true
+tracks/10/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(1087.9999, -136)]
+}
+tracks/11/type = "value"
+tracks/11/imported = false
+tracks/11/enabled = true
+tracks/11/path = NodePath("Name/P2Label:modulate")
+tracks/11/interp = 1
+tracks/11/loop_wrap = true
+tracks/11/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+tracks/12/type = "value"
+tracks/12/imported = false
+tracks/12/enabled = true
+tracks/12/path = NodePath("Name/P1Label:position")
+tracks/12/interp = 1
+tracks/12/loop_wrap = true
+tracks/12/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(0, -256)]
+}
+tracks/13/type = "value"
+tracks/13/imported = false
+tracks/13/enabled = true
+tracks/13/path = NodePath("Name/P1Label:modulate")
+tracks/13/interp = 1
+tracks/13/loop_wrap = true
+tracks/13/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+tracks/14/type = "value"
+tracks/14/imported = false
+tracks/14/enabled = true
+tracks/14/path = NodePath("Name/P1Label/Flash:scale")
+tracks/14/interp = 1
+tracks/14/loop_wrap = true
+tracks/14/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(1, 1)]
+}
+tracks/15/type = "value"
+tracks/15/imported = false
+tracks/15/enabled = true
+tracks/15/path = NodePath("Name/P1Label/Flash:modulate")
+tracks/15/interp = 1
+tracks/15/loop_wrap = true
+tracks/15/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+tracks/16/type = "value"
+tracks/16/imported = false
+tracks/16/enabled = true
+tracks/16/path = NodePath("Name/Flames:scale")
+tracks/16/interp = 1
+tracks/16/loop_wrap = true
+tracks/16/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(1, 1)]
+}
+tracks/17/type = "value"
+tracks/17/imported = false
+tracks/17/enabled = true
+tracks/17/path = NodePath("Name/Flames:modulate")
+tracks/17/interp = 1
+tracks/17/loop_wrap = true
+tracks/17/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+tracks/18/type = "value"
+tracks/18/imported = false
+tracks/18/enabled = true
+tracks/18/path = NodePath("MinigameName:modulate")
+tracks/18/interp = 1
+tracks/18/loop_wrap = true
+tracks/18/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+
+[sub_resource type="Animation" id="Animation_qmbpp"]
+resource_name = "init"
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:visible")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_qmbpp"]
+_data = {
+&"RESET": SubResource("Animation_nnwk7"),
+&"init": SubResource("Animation_qmbpp"),
+&"start": SubResource("Animation_kwcrk")
+}
+
+[node name="TournamentPalace" type="Control" node_paths=PackedStringArray("rule_positions", "entry_positions", "balcony_parents", "minigame_start_animator", "minigame_book_animator", "attraction_animator", "description", "omochao", "omochao_minigame_position")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -427,9 +1020,12 @@ script = ExtResource("1_aybhk")
 rule_positions = [NodePath("Positions/Rule1"), NodePath("Positions/Rule2"), NodePath("Positions/Rule3"), NodePath("Positions/Rule4")]
 entry_positions = [NodePath("Positions/EntryChoke"), NodePath("Positions/EntryEnd")]
 balcony_parents = [NodePath("Environment/Floors/FirstFloor/BalconyLL"), NodePath("Environment/Floors/FirstFloor/BalconyLR"), NodePath("Environment/Floors/FirstFloor/BalconyRL"), NodePath("Environment/Floors/FirstFloor/BalconyRR"), NodePath("Environment/Floors/SecondFloor/BalconyL"), NodePath("Environment/Floors/SecondFloor/BalconyR"), NodePath("Environment/Floors/TopFloor/Balcony")]
+minigame_start_animator = NodePath("MinigameStartTransition/AnimationPlayer")
+minigame_book_animator = NodePath("IngameOmochao/Omochao/Book/BookAnimationPlayer")
 attraction_animator = NodePath("AnimationPlayer")
 description = NodePath("DescriptionParty")
-omochao = NodePath("Omochao/Omochao")
+omochao = NodePath("IngameOmochao/Omochao")
+omochao_minigame_position = NodePath("Camera/Camera/OmochaoMinigamePosition")
 
 [node name="Environment" type="Node3D" parent="."]
 
@@ -837,13 +1433,13 @@ gizmo_extents = 5.0
 transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, 0, -110)
 gizmo_extents = 5.0
 
-[node name="Omochao" type="Node3D" parent="."]
+[node name="IngameOmochao" type="Node3D" parent="."]
 
-[node name="StartPosition" type="Marker3D" parent="Omochao"]
+[node name="StartPosition" type="Marker3D" parent="IngameOmochao"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 13, 12)
 gizmo_extents = 1.0
 
-[node name="Omochao" parent="Omochao" instance=ExtResource("7_3bik3")]
+[node name="Omochao" parent="IngameOmochao" instance=ExtResource("7_3bik3")]
 transform = Transform3D(0.3, 0, 0, 0, 0.3, 0, 0, 0, 0.3, 0, 12, 12)
 visible = false
 
@@ -856,11 +1452,15 @@ cull_mask = 1151
 current = true
 fov = 35.0
 
+[node name="OmochaoMinigamePosition" type="Node3D" parent="Camera/Camera"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -20)
+
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 libraries = {
 &"": SubResource("AnimationLibrary_vrx6g")
 }
 autoplay = "init"
+next/first-floor = &"round1"
 
 [node name="MinigameStartTransition" type="Control" parent="."]
 layout_mode = 1
@@ -869,6 +1469,377 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+
+[node name="RoundBanner" type="Control" parent="MinigameStartTransition"]
+layout_mode = 1
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -960.0
+offset_top = 32.0
+offset_right = 960.0
+offset_bottom = 32.0
+grow_horizontal = 2
+grow_vertical = 2
+pivot_offset = Vector2(960, 96)
+
+[node name="BannerTexture" type="TextureRect" parent="MinigameStartTransition/RoundBanner"]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 1.0
+offset_left = 256.0
+offset_right = -256.0
+offset_bottom = 192.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("7_vn6d0")
+stretch_mode = 5
+
+[node name="VBoxContainer" type="HBoxContainer" parent="MinigameStartTransition/RoundBanner"]
+layout_mode = 1
+anchors_preset = -1
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = 576.0
+offset_right = -576.0
+offset_bottom = 161.0
+grow_horizontal = 2
+grow_vertical = 2
+alignment = 1
+
+[node name="WinLabel" type="Label" parent="MinigameStartTransition/RoundBanner/VBoxContainer"]
+layout_mode = 2
+text = "ROUND"
+label_settings = ExtResource("8_07ckt")
+vertical_alignment = 1
+uppercase = true
+script = ExtResource("9_j6s7f")
+metadata/_custom_type_script = "uid://qvplfr0cibu5"
+
+[node name="OutlineLabel" type="Label" parent="MinigameStartTransition/RoundBanner/VBoxContainer/WinLabel"]
+clip_children = 1
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "ROUND"
+label_settings = ExtResource("10_07ckt")
+vertical_alignment = 1
+uppercase = true
+
+[node name="Gradient" type="TextureRect" parent="MinigameStartTransition/RoundBanner/VBoxContainer/WinLabel/OutlineLabel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("11_wfjx1")
+
+[node name="NumberLabel" type="Label" parent="MinigameStartTransition/RoundBanner/VBoxContainer"]
+layout_mode = 2
+text = " 01"
+label_settings = ExtResource("8_07ckt")
+vertical_alignment = 1
+uppercase = true
+script = ExtResource("9_j6s7f")
+metadata/_custom_type_script = "uid://qvplfr0cibu5"
+
+[node name="OutlineLabel" type="Label" parent="MinigameStartTransition/RoundBanner/VBoxContainer/NumberLabel"]
+clip_children = 1
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+text = " 01"
+label_settings = ExtResource("10_07ckt")
+vertical_alignment = 1
+uppercase = true
+
+[node name="Gradient" type="TextureRect" parent="MinigameStartTransition/RoundBanner/VBoxContainer/NumberLabel/OutlineLabel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("11_wfjx1")
+
+[node name="Name" type="Control" parent="MinigameStartTransition"]
+layout_mode = 1
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -960.0
+offset_top = -32.0
+offset_right = 960.0
+offset_bottom = -32.0
+grow_horizontal = 2
+grow_vertical = 0
+
+[node name="NameTexture" type="TextureRect" parent="MinigameStartTransition/Name"]
+layout_mode = 1
+anchors_preset = -1
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -312.0
+grow_horizontal = 2
+grow_vertical = 0
+pivot_offset = Vector2(960, 156)
+texture = ExtResource("14_wfjx1")
+expand_mode = 1
+
+[node name="P1Label" type="Label" parent="MinigameStartTransition/Name"]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 0.21700001
+offset_top = -256.0
+offset_right = 1247.3741
+offset_bottom = -57.0
+scale = Vector2(0.5, 0.5)
+text = "SONIC"
+label_settings = ExtResource("12_m56w7")
+horizontal_alignment = 1
+vertical_alignment = 1
+uppercase = true
+script = ExtResource("9_j6s7f")
+metadata/_custom_type_script = "uid://qvplfr0cibu5"
+
+[node name="OutlineLabel" type="Label" parent="MinigameStartTransition/Name/P1Label"]
+clip_children = 1
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "SONIC"
+label_settings = ExtResource("10_m56w7")
+horizontal_alignment = 1
+vertical_alignment = 1
+uppercase = true
+
+[node name="Gradient" type="TextureRect" parent="MinigameStartTransition/Name/P1Label/OutlineLabel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("11_wfjx1")
+
+[node name="Flash" type="Label" parent="MinigameStartTransition/Name/P1Label"]
+material = ExtResource("15_m1u60")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+pivot_offset = Vector2(832, 99.5)
+text = "SONIC"
+label_settings = ExtResource("12_m56w7")
+horizontal_alignment = 1
+vertical_alignment = 1
+uppercase = true
+
+[node name="OutlineLabel" type="Label" parent="MinigameStartTransition/Name/P1Label/Flash"]
+clip_children = 1
+material = ExtResource("15_m1u60")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "SONIC"
+label_settings = ExtResource("10_m56w7")
+horizontal_alignment = 1
+vertical_alignment = 1
+uppercase = true
+
+[node name="Gradient" type="TextureRect" parent="MinigameStartTransition/Name/P1Label/Flash/OutlineLabel"]
+material = ExtResource("15_m1u60")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("11_wfjx1")
+
+[node name="P2Label" type="Label" parent="MinigameStartTransition/Name"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.775
+anchor_right = 0.77500004
+offset_left = -400.00012
+offset_top = -136.0
+offset_right = 1264.0004
+offset_bottom = 63.0
+scale = Vector2(0.5, 0.5)
+text = "SHADOW"
+label_settings = ExtResource("12_m56w7")
+horizontal_alignment = 1
+vertical_alignment = 1
+uppercase = true
+script = ExtResource("9_j6s7f")
+metadata/_custom_type_script = "uid://qvplfr0cibu5"
+
+[node name="OutlineLabel" type="Label" parent="MinigameStartTransition/Name/P2Label"]
+clip_children = 1
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "SHADOW"
+label_settings = ExtResource("10_m56w7")
+horizontal_alignment = 1
+vertical_alignment = 1
+uppercase = true
+
+[node name="Gradient" type="TextureRect" parent="MinigameStartTransition/Name/P2Label/OutlineLabel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("11_wfjx1")
+
+[node name="Flash" type="Label" parent="MinigameStartTransition/Name/P2Label"]
+material = ExtResource("15_m1u60")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+pivot_offset = Vector2(832, 99.5)
+text = "SHADOW"
+label_settings = ExtResource("12_m56w7")
+horizontal_alignment = 1
+vertical_alignment = 1
+uppercase = true
+
+[node name="OutlineLabel" type="Label" parent="MinigameStartTransition/Name/P2Label/Flash"]
+clip_children = 1
+material = ExtResource("15_m1u60")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "SHADOW"
+label_settings = ExtResource("10_m56w7")
+horizontal_alignment = 1
+vertical_alignment = 1
+uppercase = true
+
+[node name="Gradient" type="TextureRect" parent="MinigameStartTransition/Name/P2Label/Flash/OutlineLabel"]
+material = ExtResource("15_m1u60")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("11_wfjx1")
+
+[node name="VSLabel" type="Label" parent="MinigameStartTransition/Name"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -192.0
+offset_top = -264.0
+offset_right = 192.0
+offset_bottom = -65.0
+grow_horizontal = 2
+grow_vertical = 0
+text = "VS"
+label_settings = ExtResource("8_07ckt")
+horizontal_alignment = 1
+vertical_alignment = 1
+uppercase = true
+script = ExtResource("9_j6s7f")
+metadata/_custom_type_script = "uid://qvplfr0cibu5"
+
+[node name="OutlineLabel" type="Label" parent="MinigameStartTransition/Name/VSLabel"]
+clip_children = 1
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "VS"
+label_settings = ExtResource("10_07ckt")
+horizontal_alignment = 1
+vertical_alignment = 1
+uppercase = true
+
+[node name="Gradient" type="TextureRect" parent="MinigameStartTransition/Name/VSLabel/OutlineLabel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("11_wfjx1")
+
+[node name="Flames" type="Control" parent="MinigameStartTransition/Name"]
+layout_mode = 1
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_top = -152.0
+offset_bottom = -152.0
+grow_horizontal = 2
+grow_vertical = 0
+
+[node name="Flames" type="AnimatedSprite2D" parent="MinigameStartTransition/Name/Flames"]
+position = Vector2(0, -232)
+scale = Vector2(5, 5)
+sprite_frames = ExtResource("17_kwcrk")
+autoplay = "default"
+
+[node name="MinigameName" type="Label" parent="MinigameStartTransition"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -463.5
+offset_top = -220.0
+offset_right = 463.5
+offset_bottom = 33.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "Aye, aye Captain!
+Pirate Flag"
+label_settings = ExtResource("16_alhyr")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="MinigameStartTransition"]
+libraries = {
+&"": SubResource("AnimationLibrary_qmbpp")
+}
+autoplay = "init"
 
 [node name="DescriptionParty" parent="." instance=ExtResource("6_mj2ip")]
 layout_mode = 1
@@ -886,5 +1857,6 @@ draw_characters = true
 [editable path="Environment/Floors/SecondFloor/BalconyL/Door"]
 [editable path="Environment/Floors/SecondFloor/BalconyR/Door"]
 [editable path="Environment/Floors/TopFloor/Balcony/Door"]
-[editable path="Omochao/Omochao"]
-[editable path="Omochao/Omochao/Omochao"]
+[editable path="IngameOmochao/Omochao"]
+[editable path="IngameOmochao/Omochao/Omochao"]
+[editable path="IngameOmochao/Omochao/Book"]

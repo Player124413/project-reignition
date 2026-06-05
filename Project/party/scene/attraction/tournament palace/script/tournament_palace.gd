@@ -28,7 +28,6 @@ func initialize_attraction() -> void:
 		new_data.door_animator = balcony_parents[i].get_node("Door/AnimationPlayer")
 		new_data.player_position = balcony_parents[i].get_node("PlayerPosition")
 		balcony_data.append(new_data)
-		printt(new_data.player_position, new_data.door_animator, new_data.balcony_animator)
 	
 	if NetworkManager.is_hosting_game:
 		# Determine bracket order
@@ -124,6 +123,23 @@ func show_first_floor_player(balcony_index : int) -> void:
 func first_floor_prefight(player_index : int) -> void:
 	_players[player_index].character_animator.play_animation("fight", false, 0.1)
 	_players[player_index].character_animator.play_voice("select")
+
+## Starts a round between the two players
+func start_round(round_index : int) -> void:
+	var p1 : int = 0
+	var p2 : int = 0
+	if round_index == 1:
+		p1 = bracket_order[0]
+		p2 = bracket_order[1]
+	var offset : Vector3 = _players[p1].global_position - _players[p2].global_position
+	var angle : float = Vector3.FORWARD.signed_angle_to(offset, Vector3.UP)
+	_players[p1].start_rotation(angle, NetworkTimeSynchronizer.get_time())
+	_players[p1].character_animator.play_animation("fight", true)
+	offset *= -1
+	angle = Vector3.FORWARD.signed_angle_to(offset, Vector3.UP)
+	_players[p2].start_rotation(angle, NetworkTimeSynchronizer.get_time())
+	_players[p2].character_animator.play_animation("fight", true)
+	minigame_start_animator.play("start")
 
 class BalconyData:
 	var balcony_animator : AnimationPlayer

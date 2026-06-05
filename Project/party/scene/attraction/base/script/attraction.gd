@@ -1,6 +1,8 @@
 class_name Attraction extends Node
 
 static var instance : Attraction
+@export var minigame_start_animator : AnimationPlayer
+@export var minigame_book_animator : AnimationPlayer
 @export var attraction_animator : AnimationPlayer
 @export var description : DescriptionBox
 @export var omochao : CharacterAnimator
@@ -61,6 +63,19 @@ func start_attraction(tick : float) -> void:
 
 func on_attraction_started() -> void:
 	pass
+
+@export var omochao_minigame_position : Node3D
+func start_omochao_minigame_throw() -> void:
+	omochao.reparent(omochao_minigame_position)
+	omochao.position = Vector3.DOWN * 10
+	omochao.visible = true
+	var tween : Tween = create_tween()
+	tween.tween_property(omochao, "position", Vector3.ZERO, 1.5).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_CUBIC)
+	omochao.play_animation("backflip")
+	omochao.queue_minigame_animation("hover")
+	minigame_book_animator.play("RESET")
+	minigame_book_animator.advance(0.0)
+	tween.tween_callback(Callable(minigame_book_animator, "play").bind("open"))
 
 ## Loads a random minigame.
 func request_minigame_load() -> void:
