@@ -6,6 +6,7 @@ extends Attraction
 @export var balcony_parents : Array[Node]
 @export var player_labels : Array[SyncedLabel]
 @export var round_label : SyncedLabel
+@export var minigame_label : Label
 
 var bracket_order : Array[int]
 var balcony_data : Array[BalconyData]
@@ -173,8 +174,12 @@ func start_bracket_round() -> void:
 
 func advance_round() -> void:
 	round_index += 1
+	request_queue_minigame()
 	round_label.set_synced_text("%02d" % round_index)
 	minigame_start_animator.play("start-pregame" if round_index == 1 else "start-ingame")
+
+func on_minigame_queued() -> void:
+	minigame_label.text = PartyManager.unlocked_minigame_list[_minigame_index].localization_key
 
 func process_round_results() -> void:
 	pass

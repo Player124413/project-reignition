@@ -1,6 +1,7 @@
 class_name Attraction extends Control
 
 static var instance : Attraction
+
 @export var minigame_start_animator : AnimationPlayer
 ## Subviewport to separate attraction world from minigame worlds.
 ## Might need to apply transforms in blender to avoid broken orientations.
@@ -9,6 +10,9 @@ static var instance : Attraction
 @export var attraction_animator : AnimationPlayer
 @export var description : DescriptionBox
 @export var omochao : CharacterAnimator
+
+## The index of the next queued minigame.
+var _minigame_index : int
 
 var _is_processing_inputs : bool
 func enable_inputs() -> void:
@@ -36,8 +40,12 @@ func update_viewport_size() -> void:
 
 func _ready() -> void:
 	initialize_attraction()
-	get_tree().root.get_viewport().size_changed.connect(Callable(self, "update_viewport_size"))
+	
+	if !sub_viewport.own_world_3d:
+		printerr("Subviewport isn't set to be a unique world! This will cause issues with minigames!")
 	update_viewport_size()
+	get_tree().root.get_viewport().size_changed.connect(Callable(self, "update_viewport_size"))
+	
 	description.draw_started.connect(Callable(self, "disable_inputs"))
 	description.draw_finished.connect(Callable(self, "enable_inputs"))
 	printt("READ Attraction.", NetworkManager.is_online)
@@ -86,12 +94,25 @@ func start_omochao_minigame_throw() -> void:
 	minigame_book_animator.advance(0.0)
 	tween.tween_callback(Callable(minigame_book_animator, "play").bind("open"))
 
-## Loads a random minigame.
+## Queues a random minigame.
+func request_queue_minigame() -> void:
+	rpc("queue_minigame", randi_range(0, PartyManager.unlocked_minigame_list.size() - 1))
+
+@rpc("any_peer", "call_local", "reliable")
+func queue_minigame(index : int) -> void:
+	_minigame_index = index
+	on_minigame_queued()
+
+## Overridable local function called after a minigame is queued.
+## Typically you should update the UI here.
+func on_minigame_queued() -> void:
+	pass
+
+## Loads a queued minigame.
 func request_minigame_load() -> void:
 	if !NetworkManager.is_hosting_game:
 		return
-	var minigame_index : int = randi_range(0, PartyManager.unlocked_minigame_list.size() - 1)
-	rpc("load_minigame", 6)
+	rpc("load_minigame", _minigame_index)
 
 @rpc("any_peer", "call_local", "reliable")
 func load_minigame(minigame_index : int) -> void:
