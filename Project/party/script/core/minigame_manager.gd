@@ -147,7 +147,9 @@ func _exit_tree() -> void:
 
 func start_party_game() -> void:
 	peers_loaded.emit()
+	print("peers are loaded!")
 	if is_instance_valid(intro_animator) && intro_animator.has_animation("intro"):
+		print("playing intro animation!")
 		intro_animator.play("intro")
 
 func load_character_model(player_index : int) -> CharacterAnimator:

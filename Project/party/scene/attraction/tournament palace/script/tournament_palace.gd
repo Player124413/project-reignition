@@ -5,9 +5,26 @@ extends Attraction
 @export var entry_positions : Array[Node3D]
 @export var balcony_parents : Array[Node]
 @export var player_labels : Array[SyncedLabel]
+@export var round_label : SyncedLabel
 
 var bracket_order : Array[int]
 var balcony_data : Array[BalconyData]
+
+####################
+##### Settings #####
+####################
+## Number of wins needed to progress through the bracket.
+var win_count : int = 2
+## Watch cpu players' games?
+var view_cpu : bool = true
+
+## Tracks which fight we're doing in the bracket.
+var bracket_index : int
+## Tracks which round we're on for the current index.
+var round_index : int
+## Tracks which player made it to [semi-finals (left), semi-finals (right)]
+var minigame_result_indexes : PackedInt32Array
+
 
 var current_state : STATE
 var dialog_index : int
@@ -128,14 +145,19 @@ func first_floor_prefight(player_index : int) -> void:
 	_players[player_index].character_animator.play_animation("fight", false, 0.1)
 	_players[player_index].character_animator.play_voice("select")
 
-## Starts a round between the two players
-func start_round(round_index : int) -> void:
+## Starts a bracket round between the two players.
+func start_bracket_round() -> void:
 	var p1 : int = 0
 	var p2 : int = 0
-	if round_index == 1:
+	
+	round_index = 0
+	bracket_index += 1
+	if bracket_index == 1:
 		p1 = bracket_order[0]
 		p2 = bracket_order[1]
-	
+	elif bracket_index == 2:
+		p1 = bracket_order[2]
+		p2 = bracket_order[3]
 	PartyManager.set_minigame_players([p1, p2])
 	player_labels[0].set_synced_text(PartyManager.get_player_data(p1).character_data.character_name)
 	player_labels[1].set_synced_text(PartyManager.get_player_data(p2).character_data.character_name)
@@ -147,7 +169,15 @@ func start_round(round_index : int) -> void:
 	angle = Vector3.FORWARD.signed_angle_to(offset, Vector3.UP)
 	_players[p2].start_rotation(angle, NetworkTimeSynchronizer.get_time())
 	_players[p2].character_animator.play_animation("fight", true)
-	minigame_start_animator.play("start")
+	advance_round()
+
+func advance_round() -> void:
+	round_index += 1
+	round_label.set_synced_text("%02d" % round_index)
+	minigame_start_animator.play("start-pregame" if round_index == 1 else "start-ingame")
+
+func process_round_results() -> void:
+	pass
 
 class BalconyData:
 	var balcony_animator : AnimationPlayer

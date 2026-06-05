@@ -1,9 +1,10 @@
-class_name Attraction extends Node
+class_name Attraction extends Control
 
 static var instance : Attraction
-@export var control_root : Control
-@export var node3d_root : Node3D
 @export var minigame_start_animator : AnimationPlayer
+## Subviewport to separate attraction world from minigame worlds.
+## Might need to apply transforms in blender to avoid broken orientations.
+@export var sub_viewport : SubViewport
 @export var minigame_book_animator : AnimationPlayer
 @export var attraction_animator : AnimationPlayer
 @export var description : DescriptionBox
@@ -30,8 +31,13 @@ func _init() -> void:
 func initialize_attraction() -> void:
 	pass
 
+func update_viewport_size() -> void:
+	sub_viewport.size = get_tree().root.get_viewport().get_visible_rect().size
+
 func _ready() -> void:
 	initialize_attraction()
+	get_tree().root.get_viewport().size_changed.connect(Callable(self, "update_viewport_size"))
+	update_viewport_size()
 	description.draw_started.connect(Callable(self, "disable_inputs"))
 	description.draw_finished.connect(Callable(self, "enable_inputs"))
 	printt("READ Attraction.", NetworkManager.is_online)
@@ -69,6 +75,7 @@ func on_attraction_started() -> void:
 @export var omochao_minigame_position : Node3D
 func start_omochao_minigame_throw() -> void:
 	omochao.reparent(omochao_minigame_position)
+	omochao.transform = Transform3D.IDENTITY
 	omochao.position = Vector3.DOWN * 10
 	omochao.visible = true
 	var tween : Tween = create_tween()
@@ -84,7 +91,7 @@ func request_minigame_load() -> void:
 	if !NetworkManager.is_hosting_game:
 		return
 	var minigame_index : int = randi_range(0, PartyManager.unlocked_minigame_list.size() - 1)
-	rpc("load_minigame", 1)
+	rpc("load_minigame", 6)
 
 @rpc("any_peer", "call_local", "reliable")
 func load_minigame(minigame_index : int) -> void:
@@ -95,11 +102,9 @@ func load_minigame(minigame_index : int) -> void:
 	NetworkManager.attraction_loaded.connect(Callable(self, "show_attraction"), ConnectFlags.CONNECT_ONE_SHOT)
 
 func hide_attraction() -> void:
-	control_root.visible = false
-	node3d_root.visible = false
+	visible = false
 	process_mode = Node.PROCESS_MODE_DISABLED
 
 func show_attraction() -> void:
-	control_root.visible = true
-	node3d_root.visible = true
+	visible = true
 	process_mode = Node.PROCESS_MODE_INHERIT
