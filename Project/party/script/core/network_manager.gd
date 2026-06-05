@@ -73,7 +73,7 @@ func load_scene(scene_path : String, type : TRANSITION_TYPE_ENUM) -> void:
 	var scene_node : Node = scene.instantiate() as Node
 	scene_dictionary[scene_path] = scene_node # Add to the dictionary
 	print("Loaded scene %s" % scene_path)
-	add_child(scene_node)
+	call_deferred("add_child", scene_node)
 	emit_scene_signals(type)
 	
 	rpc_id(1, "set_loading", multiplayer.get_unique_id(), false) # Let the host know we're done loading

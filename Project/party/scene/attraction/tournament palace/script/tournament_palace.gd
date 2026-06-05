@@ -4,6 +4,7 @@ extends Attraction
 @export var rule_positions : Array[Node3D]
 @export var entry_positions : Array[Node3D]
 @export var balcony_parents : Array[Node]
+@export var player_labels : Array[SyncedLabel]
 
 var bracket_order : Array[int]
 var balcony_data : Array[BalconyData]
@@ -136,6 +137,8 @@ func start_round(round_index : int) -> void:
 		p2 = bracket_order[1]
 	
 	PartyManager.set_minigame_players([p1, p2])
+	player_labels[0].set_synced_text(PartyManager.get_player_data(p1).character_data.character_name)
+	player_labels[1].set_synced_text(PartyManager.get_player_data(p2).character_data.character_name)
 	var offset : Vector3 = _players[p1].global_position - _players[p2].global_position
 	var angle : float = Vector3.FORWARD.signed_angle_to(offset, Vector3.UP)
 	_players[p1].start_rotation(angle, NetworkTimeSynchronizer.get_time())
