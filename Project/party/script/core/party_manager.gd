@@ -20,19 +20,26 @@ func set_current_mode(mode : CURRENT_MODE_ENUM) -> void:
 
 ## The minigame resource currently queued to play.
 var queued_minigame : MinigameResource
-
 signal players_initialized
 
 ## An array containing all possible character datas.
 var character_data : Array[PartyCharacterResource]
+## The complete list of loaded minigames.
+var minigame_list : Array[MinigameResource]
+## The list of unlocked minigames, based on save data. Use this for attractions.
+var unlocked_minigame_list : Array[MinigameResource]
+
 
 func get_character_count() -> int:
 	return character_data.size()
 
 const CHARACTER_DATA_FOLDER = "res://party/resource/character/"
+## Path to all standard minigame resources.
+const MINIGAME_DATA_PATH : String = "res://party/resource/minigame/"
 
 func _init() -> void:
 	load_characters()
+	load_minigames()
 	## TODO Load modded character data here
 
 func load_characters() -> void:
@@ -58,6 +65,17 @@ func load_characters() -> void:
 	for i in range(character_data.size(), 0):
 		if character_data[i] == null:
 			character_data.remove_at(i)
+
+func load_minigames() -> void:
+	var dirAccess : DirAccess = DirAccess.open(MINIGAME_DATA_PATH)
+	for file in dirAccess.get_files():
+		if file.ends_with(".remap"):
+			file = file.replace(".remap", "")
+		var resource : Resource = ResourceLoader.load(MINIGAME_DATA_PATH + file)
+		if resource is MinigameResource:
+			minigame_list.append(resource)
+	# TODO Determine this from save data.
+	unlocked_minigame_list = minigame_list.duplicate()
 
 ## Identifies a character data's index based on its name.
 func find_character_index_by_name(character_name : String) -> int:
