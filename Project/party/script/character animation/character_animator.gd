@@ -26,6 +26,7 @@ func process_invincibility_timer(time_remaining : float) -> void:
 	invincibility_animator.speed_scale = invincibility_animation_curve.sample(time_remaining)
 
 ## Plays a voice clip.
+@rpc("any_peer", "call_local", "reliable")
 func play_voice(key : String, index : int = -1) -> void:
 	if data == null || data.voice_library == null:
 		return
