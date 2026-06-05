@@ -19,7 +19,10 @@ enum STATE {
 }
 
 func initialize_attraction() -> void:
-	print("initializing attraction")
+	# For editor start
+	PartyManager.current_mode = PartyManager.CURRENT_MODE_ENUM.TOURNAMENT_PALACE
+	
+	# Load balconies
 	for i in balcony_parents.size():
 		# All balconies have the same node structure.
 		var new_data : BalconyData = BalconyData.new()
@@ -131,6 +134,8 @@ func start_round(round_index : int) -> void:
 	if round_index == 1:
 		p1 = bracket_order[0]
 		p2 = bracket_order[1]
+	
+	PartyManager.set_minigame_players([p1, p2])
 	var offset : Vector3 = _players[p1].global_position - _players[p2].global_position
 	var angle : float = Vector3.FORWARD.signed_angle_to(offset, Vector3.UP)
 	_players[p1].start_rotation(angle, NetworkTimeSynchronizer.get_time())

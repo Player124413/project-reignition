@@ -29,6 +29,9 @@ var minigame_list : Array[MinigameResource]
 ## The list of unlocked minigames, based on save data. Use this for attractions.
 var unlocked_minigame_list : Array[MinigameResource]
 
+## Tracks who's playing the minigame. Used for tournament palace.
+var minigame_players : PackedInt32Array = DEFAULT_MINIGAME_PLAYERS
+const DEFAULT_MINIGAME_PLAYERS : PackedInt32Array = [0, 1, 2, 3]
 
 func get_character_count() -> int:
 	return character_data.size()
@@ -168,6 +171,9 @@ func set_difficulty(index : int, difficulty : int) -> void:
 @rpc("authority", "call_local", "reliable")
 func finish_initializing_players() -> void:
 	players_initialized.emit()
+
+func set_minigame_players(players : PackedInt32Array) -> void:
+	minigame_players = players
 
 @rpc("authority", "call_local", "reliable")
 func set_minigame_placement(index : int, placement : int) -> void:

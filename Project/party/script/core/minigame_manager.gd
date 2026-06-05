@@ -49,6 +49,7 @@ enum SCREEN_MODE {
 	SHARED, # A single screen for everybody. Use this for sequential or group mini-games.
 	SPLITSCREEN # Each player gets a corner of the screen. Use this for simultaneous screens.
 }
+@export var use_horizontal_duel_screen : bool
 ## Transition to use when exiting demo.
 @export var demo_transition_mode : DEMO_TRANSITION
 enum DEMO_TRANSITION {
@@ -58,8 +59,8 @@ enum DEMO_TRANSITION {
 
 ## Disable this if you have something in the game that needs to finish before we can play the results.
 @export var autoplay_results : bool = true
-## Number of players that must "complete" the game the minigame to auto-complete.
-@export var autocomplete_player_count : int = 4
+## Number of "survivors" that must be left for the minigame to autocomplete.
+@export_range(0, 3, 1) var autocomplete_survivor_count : int = 0
 ## Tracks whether we're ready to play the results screen or not (based on non-game elements).
 var is_results_queued : bool
 
@@ -118,8 +119,11 @@ func _ready() -> void:
 	for i in results_location.size():
 		results_location[i].visible = false
 	
-	# TODO Change splitscreen mode if in Tournament Palace (2 players)
-	animator.play("free-for-all")
+	if PartyManager.current_mode == PartyManager.CURRENT_MODE_ENUM.TOURNAMENT_PALACE:
+		# Change splitscreen mode if in Tournament Palace (2 players)
+		animator.play("duel_horizontal" if use_horizontal_duel_screen else "duel_vertical")
+	else:
+		animator.play("free-for-all")
 	animator.advance(0.0)
 	
 	if screen_mode == SCREEN_MODE.SHARED || demo_transition_mode == DEMO_TRANSITION.FULLSCREEN:
@@ -130,6 +134,12 @@ func _ready() -> void:
 		NetworkManager.peers_loaded.connect(Callable(self, "start_party_game"), CONNECT_DEFERRED)
 	else:
 		call_deferred("start_party_game")
+
+## Disables a splitscreen player.  
+func disable_splitscreen_player(index : int) -> void:
+	subviewport_worlds[index].get_parent().visible = false
+	subviewport_worlds[index].set_process(false)
+	subviewport_worlds[index].set_physics_process(false)
 
 func _exit_tree() -> void:
 	if NetworkManager.peers_loaded.is_connected(Callable(self, "start_party_game")):
@@ -223,7 +233,7 @@ func _change_time(player_index : int, time : float) -> void:
 ## Adds one completed player and checks whether we should finish the mini-game.
 func register_completed_player() -> void:
 	completed_player_count += 1
-	if completed_player_count >= autocomplete_player_count:
+	if completed_player_count >= PartyManager.minigame_players.size() - autocomplete_survivor_count:
 		request_minigame_finish()
 
 func request_minigame_start() -> void:

@@ -99,12 +99,19 @@ func _ready() -> void:
 		# This is a demo character
 		on_demo_spawned()
 	else:
+		if !PartyManager.minigame_players.has(player_index):
+			# This player index is not being used. (i.e. tournament palace)
+			visible = false
+			set_process(false)
+			set_physics_process(false)
+			MinigameManager.instance.disable_splitscreen_player(player_index)
+			return
+		
+		set_physics_process(false)
 		# Instance Player Model
 		character_animator = MinigameManager.instance.load_character_model(player_index)
 		spawn_position.add_child(character_animator)
 		
-		# TODO Check if this player index is actually being used. (i.e. duel minigames)
-		set_physics_process(false)
 		MinigameManager.instance.gameplay_started.connect(Callable.create(self, "activate"))
 		MinigameManager.instance.gameplay_finished.connect(Callable.create(self, "on_gameplay_finished"))
 		MinigameManager.instance.minigame_finished.connect(Callable.create(self, "on_minigame_finished"))

@@ -1,6 +1,8 @@
 class_name Attraction extends Node
 
 static var instance : Attraction
+@export var control_root : Control
+@export var node3d_root : Node3D
 @export var minigame_start_animator : AnimationPlayer
 @export var minigame_book_animator : AnimationPlayer
 @export var attraction_animator : AnimationPlayer
@@ -79,13 +81,25 @@ func start_omochao_minigame_throw() -> void:
 
 ## Loads a random minigame.
 func request_minigame_load() -> void:
-	rpc("load_minigame", PartyManager.get_random_minigame())
+	if !NetworkManager.is_hosting_game:
+		return
+	var minigame_index : int = randi_range(0, PartyManager.unlocked_minigame_list.size() - 1)
+	rpc("load_minigame", 1)
 
 @rpc("any_peer", "call_local", "reliable")
 func load_minigame(minigame_index : int) -> void:
-	#PartyManager.queued_minigame = minigame_list[minigame_index]
-	#hide_menu()
-	#disable_processing()
+	PartyManager.queued_minigame = PartyManager.unlocked_minigame_list[minigame_index]
+	hide_attraction()
 	RuleManager.cancelled.connect(Callable(self, "show_menu"), ConnectFlags.CONNECT_ONE_SHOT)
 	RuleManager.show_menu()
-	NetworkManager.attraction_loaded.connect(Callable(self, "show_menu"), ConnectFlags.CONNECT_ONE_SHOT)
+	NetworkManager.attraction_loaded.connect(Callable(self, "show_attraction"), ConnectFlags.CONNECT_ONE_SHOT)
+
+func hide_attraction() -> void:
+	control_root.visible = false
+	node3d_root.visible = false
+	process_mode = Node.PROCESS_MODE_DISABLED
+
+func show_attraction() -> void:
+	control_root.visible = true
+	node3d_root.visible = true
+	process_mode = Node.PROCESS_MODE_INHERIT
