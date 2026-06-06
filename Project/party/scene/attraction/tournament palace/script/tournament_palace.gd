@@ -39,8 +39,12 @@ func request_minigame_load() -> void:
 	var p2_placement : int = -PartyManager.get_player_data(p2).cpu_difficulty
 	if p1_placement == p2_placement:
 		p1_placement += 1 if randf() > 0.5 else -1
-	PartyManager.rpc("set_minigame_placement", p1, p1_placement)
-	PartyManager.rpc("set_minigame_placement", p2, p2_placement)
+	rpc("on_cpu_minigame_skipped", p1_placement, p2_placement)
+
+@rpc("any_peer", "call_local", "reliable")
+func on_cpu_minigame_skipped(p1_placement : int, p2_placement : int) -> void:
+	PartyManager.set_minigame_placement(p1, p1_placement)
+	PartyManager.set_minigame_placement(p2, p2_placement)
 	await get_tree().create_timer(1, false, true).timeout
 	show_attraction()
 
@@ -182,16 +186,14 @@ func finalize_bracket_round() -> void:
 	reset_camera()
 	await get_tree().create_timer(2, false, true).timeout
 	if final_results.size() != PartyManager.MAX_PLAYER_COUNT:
-		if bracket_index == 2:
-			interface_animator.play("start-consolation")
-		else:
-			start_bracket_round() # Start the next round
+		start_bracket_round() # Start the next round
 	else:
 		print("SHOW RESULTS!")
 
-func start_consolation_prefight_animation(is_p1 : bool) -> void:
+func start_special_prefight_animation(is_p1 : bool) -> void:
 	var player_index : int = p1 if is_p1 else p2
 	var balcony_index : int = balcony_indexes.find(player_index)
+	print("balcony%s" % balcony_index)
 	attraction_animator.play("balcony%s" % balcony_index)
 	_players[player_index].character_animator.play_animation("fight", true)
 	if NetworkManager.is_hosting_game:
@@ -203,21 +205,25 @@ func start_consolation_prefight_animation(is_p1 : bool) -> void:
 func reset_camera() -> void:
 	attraction_animator.play_with_capture("default-view")
 
-func start_consolation_camera() -> void:
-	attraction_animator.play_with_capture("round3")
+func start_round_camera() -> void:
+	attraction_animator.play_with_capture("round%s" % bracket_index)
 
 ## Starts a bracket round between the two players.
 func start_bracket_round() -> void:
 	round_index = 0
+	bracket_index += 1
+	if bracket_index >= 3:
+		interface_animator.play("start-consolation" if bracket_index == 3 else "start-championship")
+		await get_tree().create_timer(1, false, true).timeout
+	
 	score_counter_p1.reset_wins()
 	score_counter_p2.reset_wins()
-	bracket_index += 1
 	update_player_indexes()
 	PartyManager.set_minigame_players([p1, p2])
 	player_labels[0].set_synced_text(PartyManager.get_player_data(p1).character_data.character_name)
 	player_labels[1].set_synced_text(PartyManager.get_player_data(p2).character_data.character_name)
-	if bracket_index != 3:
-		attraction_animator.play_with_capture("round%s" % bracket_index)
+	if bracket_index < 3:
+		start_round_camera()
 		await get_tree().create_timer(1, false, true).timeout
 		var offset : Vector3 = _players[p1].global_position - _players[p2].global_position
 		var angle : float = Vector3.FORWARD.signed_angle_to(offset, Vector3.UP)
@@ -265,7 +271,7 @@ func advance_round() -> void:
 		_players[p2].character_animator.play_animation("fight", true)
 		interface_animator.play("start-ingame")
 	else:
-		interface_animator.play("start-pregame-consolation" if bracket_index == 3 else "start-pregame")
+		interface_animator.play("start-pregame-special" if bracket_index >= 3 else "start-pregame")
 
 func on_minigame_queued() -> void:
 	minigame_label.text = PartyManager.unlocked_minigame_list[_minigame_index].localization_key
@@ -323,7 +329,7 @@ func advance_player(winner : int, loser : int) -> void:
 		await get_tree().create_timer(1, false, true).timeout
 		balcony_data[loser_balcony].balcony_animator.play("shatter")
 		_players[loser].character_animator.play_animation("%s/fall-start" % AttractionPartyCharacter.PARTY_LIBRARY_ANIMATION)
-		_players[loser].character_animator.queue_minigame_animation("%s/fall" % AttractionPartyCharacter.PARTY_LIBRARY_ANIMATION)
+		_players[loser].character_animator.queue_minigame_animation("%s/fall" % AttractionPartyCharacter.PARTY_LIBRARY_ANIMATION, 0.2)
 		await get_tree().create_timer(0.8, false, true).timeout
 		var tween : Tween = create_tween()
 		var end_pos : Vector3 = _players[loser].global_position
@@ -336,8 +342,7 @@ func advance_player(winner : int, loser : int) -> void:
 		finalize_bracket_round()
 		return
 	
-	if NetworkManager.is_hosting_game:
-		# Walk inside
+	if NetworkManager.is_hosting_game: # Walk inside
 		var in_pos : Vector3 = balcony_data[winner_balcony].get_inside_position()
 		var out_pos : Vector3 = balcony_data[winner_balcony].get_outside_position()
 		_players[winner].request_movement(in_pos, false, out_pos)
@@ -352,8 +357,7 @@ func advance_player(winner : int, loser : int) -> void:
 		final_results.append(winner)
 		final_results.append(loser)
 		attraction_animator.play_with_capture("balcony-top")
-		return
-	if bracket_index == 1:
+	elif bracket_index == 1:
 		attraction_animator.play_with_capture("balcony-l")
 	elif bracket_index == 2:
 		attraction_animator.play_with_capture("balcony-r")
