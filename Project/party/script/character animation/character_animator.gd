@@ -114,7 +114,7 @@ func queue_minigame_animation(anim : StringName, blend : float = 0.0) -> void:
 
 ## Warps this animator to the correct results location.
 func on_minigame_finished() -> void:
-	if player_index == -1:
+	if !PartyManager.minigame_players.has(player_index):
 		return
 	
 	reparent(MinigameManager.instance.results_location[player_index])
@@ -123,7 +123,7 @@ func on_minigame_finished() -> void:
 
 ## Play victory or loss animation
 func on_results_started() -> void:
-	if player_index == -1:
+	if !PartyManager.minigame_players.has(player_index):
 		return
 	
 	set_speed(1)

@@ -7,6 +7,8 @@ extends Attraction
 @export var player_labels : Array[SyncedLabel]
 @export var round_label : SyncedLabel
 @export var minigame_label : Label
+@export var score_counter_p1 : TournamentPalaceWinCounter
+@export var score_counter_p2 : TournamentPalaceWinCounter
 
 var bracket_order : Array[int]
 var balcony_data : Array[BalconyData]
@@ -19,13 +21,15 @@ var win_count : int = 2
 ## Watch cpu players' games?
 var view_cpu : bool = true
 
+################
+##### DATA #####
+################
+var p1 : int
+var p2 : int
 ## Tracks which fight we're doing in the bracket.
 var bracket_index : int
 ## Tracks which round we're on for the current index.
 var round_index : int
-## Tracks which player made it to [semi-finals (left), semi-finals (right)]
-var minigame_result_indexes : PackedInt32Array
-
 
 var current_state : STATE
 var dialog_index : int
@@ -71,7 +75,6 @@ func on_attraction_started() -> void:
 	for i in _players.size():
 		_players[i].request_movement(rule_positions[i].global_position, false)
 
-
 func start_omochao() -> void:
 	if !NetworkManager.is_hosting_game:
 		return
@@ -106,6 +109,8 @@ func skip_explanation() -> void:
 
 func start_gameplay() -> void:
 	current_state = STATE.GAME
+	score_counter_p1.set_max_win(win_count)
+	score_counter_p2.set_max_win(win_count)
 	disable_inputs()
 	rpc("start_first_floor_preview", NetworkTimeSynchronizer.get_time())
 	for i in _players.size():
@@ -148,9 +153,6 @@ func first_floor_prefight(player_index : int) -> void:
 
 ## Starts a bracket round between the two players.
 func start_bracket_round() -> void:
-	var p1 : int = 0
-	var p2 : int = 0
-	
 	round_index = 0
 	bracket_index += 1
 	if bracket_index == 1:
@@ -173,15 +175,37 @@ func start_bracket_round() -> void:
 	advance_round()
 
 func advance_round() -> void:
-	round_index += 1
 	request_queue_minigame()
+	round_index += 1
 	round_label.set_synced_text("%02d" % round_index)
-	minigame_start_animator.play("start-pregame" if round_index == 1 else "start-ingame")
+	interface_animator.play("start-pregame" if round_index == 1 else "start-ingame")
 
 func on_minigame_queued() -> void:
 	minigame_label.text = PartyManager.unlocked_minigame_list[_minigame_index].localization_key
 
-func process_round_results() -> void:
+func show_attraction() -> void:
+	super()
+	interface_animator.play("start-result")
+	var placement_p1 : int = PartyManager.get_player_data(p1).minigame_placement
+	var placement_p2 : int = PartyManager.get_player_data(p2).minigame_placement
+	_players[p1].character_animator.play_animation("lose" if placement_p1 >= placement_p2 else "win", true)
+	_players[p2].character_animator.play_animation("lose" if placement_p2 >= placement_p1 else "win", true)
+	if NetworkManager.is_hosting_game:
+		_players[p1].request_rotation(0)
+		_players[p2].request_rotation(0)
+	if placement_p1 == placement_p2:
+		# Draw
+		await get_tree().create_timer(3, false, true).timeout
+		advance_round()
+	else:
+		if placement_p1 < placement_p2:
+			score_counter_p1.set_win()
+		else:
+			score_counter_p2.set_win()
+
+## Starts all the animations needed to move a player to the next floor.
+func advance_player(player_index : int) -> void:
+	#attraction_animator.play_with_capture("return")
 	pass
 
 class BalconyData:

@@ -71,6 +71,7 @@ const SHAKE_AMOUNT : float = 1.0
 const GRAVITY_SCALE : float = 100.0
 
 func on_spawn_finished() -> void:
+	super()
 	rollback_timer.register_target(self)
 	for child in platform_parent.get_children():
 		register_rigidbody(child.get_child(0) as RigidBody3D)

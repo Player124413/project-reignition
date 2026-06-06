@@ -40,6 +40,7 @@ var _is_walking : bool = false
 var _is_start_turning : bool = false
 
 func on_spawn_finished() -> void:
+	super()
 	_move_angle = rotation.y
 	global_rotation = Vector3.ZERO
 	process_animation()

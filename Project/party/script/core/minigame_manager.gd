@@ -182,7 +182,7 @@ func on_repool_score_popup(popup : ScorePopup) -> void:
 		active_popups.remove_at(index)
 
 func request_score_popup(player_index : int, amount : int, pos : Vector2) -> void:
-	if player_index < 0 || player_index > PartyManager.MAX_PLAYER_COUNT:
+	if !PartyManager.minigame_players.has(player_index):
 		return
 	
 	if screen_mode == SCREEN_MODE.SPLITSCREEN: # Account for splitscreen

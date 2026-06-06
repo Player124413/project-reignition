@@ -73,7 +73,8 @@ func process_rollback() -> void:
 	rollback_timer.process_rollback()
 
 func on_spawn_finished() -> void:
-	set_physics_process(true)
+	super()
+	set_physics_process(is_player_valid())
 	rollback_timer.register_target(self)
 	
 	initialize_majin()

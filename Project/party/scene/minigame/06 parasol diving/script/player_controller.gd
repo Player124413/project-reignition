@@ -38,6 +38,7 @@ const SHAKE_TRANSITION : StringName = "parameters/shake-transition/transition_re
 const STUCK_TRANSITION : StringName = "parameters/stuck-transition/transition_request"
 
 func on_spawn_finished() -> void:
+	super()
 	rollback_timer.register_target(self)
 	initialize_animation_tree(get_anim_prefix(), ANIM_LIST)
 	hand_attachment.reparent(character_animator.skeleton)

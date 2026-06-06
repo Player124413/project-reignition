@@ -1,4 +1,4 @@
-[gd_scene load_steps=34 format=3 uid="uid://bm6fo8bvadvpb"]
+[gd_scene load_steps=41 format=3 uid="uid://bm6fo8bvadvpb"]
 
 [ext_resource type="Script" uid="uid://ckdfwmi1cjlxd" path="res://party/scene/attraction/tournament palace/script/tournament_palace.gd" id="1_aybhk"]
 [ext_resource type="PackedScene" uid="uid://cco4sa2j8ev1r" path="res://party/scene/attraction/tournament palace/model/Map.glb" id="1_irl16"]
@@ -18,6 +18,8 @@
 [ext_resource type="Material" uid="uid://bhbsafmnnhtdb" path="res://effect/material/Canvas Item Add.tres" id="15_m1u60"]
 [ext_resource type="LabelSettings" uid="uid://b6gq5k0uvvw5g" path="res://party/font/MinigameSelectionName.tres" id="16_alhyr"]
 [ext_resource type="SpriteFrames" uid="uid://bxftujxr44yuv" path="res://party/scene/rule manager/texture/RuleFlames.tres" id="17_kwcrk"]
+[ext_resource type="Texture2D" uid="uid://r1jdsaivtfke" path="res://party/scene/minigame/00 base/interface/draw.png" id="17_qmbpp"]
+[ext_resource type="PackedScene" uid="uid://ctebu6qgpc6qu" path="res://party/scene/attraction/tournament palace/WinCounterController.tscn" id="18_nnwk7"]
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_2uwrk"]
 
@@ -289,6 +291,71 @@ tracks/5/keys = {
 "values": [false]
 }
 
+[sub_resource type="Animation" id="Animation_53gg1"]
+resource_name = "return"
+step = 0.1
+capture_included = true
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("SubViewportContainer/SubViewport/World/Camera/Camera:position")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(1),
+"transitions": PackedFloat32Array(1),
+"update": 2,
+"values": [Vector3(0, 0, 180)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("SubViewportContainer/SubViewport/World/Camera/Camera:rotation")
+tracks/1/interp = 2
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(1),
+"transitions": PackedFloat32Array(1),
+"update": 2,
+"values": [Vector3(0, 0, 0)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("SubViewportContainer/SubViewport/World/Camera:rotation")
+tracks/2/interp = 2
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(1),
+"transitions": PackedFloat32Array(1),
+"update": 2,
+"values": [Vector3(0, 0, 0)]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("SubViewportContainer/SubViewport/World/Camera:position")
+tracks/3/interp = 2
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(1),
+"transitions": PackedFloat32Array(1),
+"update": 2,
+"values": [Vector3(0, 50, 0)]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("SubViewportContainer/SubViewport/World/Camera/Camera:fov")
+tracks/4/interp = 2
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(1),
+"transitions": PackedFloat32Array(1),
+"update": 2,
+"values": [50.0]
+}
+
 [sub_resource type="Animation" id="Animation_vn6d0"]
 resource_name = "round1"
 step = 0.1
@@ -497,13 +564,156 @@ tracks/9/keys = {
 }]
 }
 
+[sub_resource type="Animation" id="Animation_k3f2h"]
+resource_name = "win-ll"
+step = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("SubViewportContainer/SubViewport/World/Camera/Camera:position")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector3(0, 0, 66), Vector3(0, 0, 40)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("SubViewportContainer/SubViewport/World/Camera/Camera:rotation")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(),
+"transitions": PackedFloat32Array(),
+"update": 0,
+"values": []
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("SubViewportContainer/SubViewport/World/Camera:rotation")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0.06981317, 0, 0)]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("SubViewportContainer/SubViewport/World/Camera:position")
+tracks/3/interp = 2
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0, 1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector3(-38, 33, 0), Vector3(-48, 33, 0)]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("SubViewportContainer/SubViewport/World/Camera/Camera:fov")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [40.0]
+}
+
+[sub_resource type="Animation" id="Animation_5wmps"]
+resource_name = "win-lr"
+length = 5.0
+step = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("SubViewportContainer/SubViewport/World/Camera/Camera:position")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector3(0, 0, 66), Vector3(0, 0, 40)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("SubViewportContainer/SubViewport/World/Camera/Camera:rotation")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(),
+"transitions": PackedFloat32Array(),
+"update": 0,
+"values": []
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("SubViewportContainer/SubViewport/World/Camera:rotation")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0.06981317, 0, 0)]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("SubViewportContainer/SubViewport/World/Camera:position")
+tracks/3/interp = 2
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0, 1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector3(-38, 33, 0), Vector3(-28, 33, 0)]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("SubViewportContainer/SubViewport/World/Camera/Camera:fov")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [40.0]
+}
+tracks/5/type = "method"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath(".")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(),
+"transitions": PackedFloat32Array(),
+"values": []
+}
+
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_vrx6g"]
 _data = {
 &"RESET": SubResource("Animation_hcjpf"),
 &"first-floor": SubResource("Animation_3bik3"),
 &"init": SubResource("Animation_mj2ip"),
+&"return": SubResource("Animation_53gg1"),
 &"round1": SubResource("Animation_vn6d0"),
-&"start": SubResource("Animation_c5w31")
+&"start": SubResource("Animation_c5w31"),
+&"win-ll": SubResource("Animation_k3f2h"),
+&"win-lr": SubResource("Animation_5wmps")
 }
 
 [sub_resource type="Animation" id="Animation_nnwk7"]
@@ -735,6 +945,192 @@ tracks/18/keys = {
 "transitions": PackedFloat32Array(1),
 "update": 0,
 "values": [Color(1, 1, 1, 1)]
+}
+tracks/19/type = "value"
+tracks/19/imported = false
+tracks/19/enabled = true
+tracks/19/path = NodePath("RoundBanner:visible")
+tracks/19/interp = 1
+tracks/19/loop_wrap = true
+tracks/19/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/20/type = "value"
+tracks/20/imported = false
+tracks/20/enabled = true
+tracks/20/path = NodePath("Name:visible")
+tracks/20/interp = 1
+tracks/20/loop_wrap = true
+tracks/20/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/21/type = "value"
+tracks/21/imported = false
+tracks/21/enabled = true
+tracks/21/path = NodePath("Draw:scale")
+tracks/21/interp = 1
+tracks/21/loop_wrap = true
+tracks/21/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(1, 1)]
+}
+tracks/22/type = "value"
+tracks/22/imported = false
+tracks/22/enabled = true
+tracks/22/path = NodePath("Draw:visible")
+tracks/22/interp = 1
+tracks/22/loop_wrap = true
+tracks/22/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/23/type = "value"
+tracks/23/imported = false
+tracks/23/enabled = true
+tracks/23/path = NodePath("Draw:modulate")
+tracks/23/interp = 1
+tracks/23/loop_wrap = true
+tracks/23/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+tracks/24/type = "value"
+tracks/24/imported = false
+tracks/24/enabled = true
+tracks/24/path = NodePath("WinCounterControllerP1:modulate")
+tracks/24/interp = 1
+tracks/24/loop_wrap = true
+tracks/24/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 0)]
+}
+tracks/25/type = "value"
+tracks/25/imported = false
+tracks/25/enabled = true
+tracks/25/path = NodePath("WinCounterControllerP2:modulate")
+tracks/25/interp = 1
+tracks/25/loop_wrap = true
+tracks/25/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 0)]
+}
+
+[sub_resource type="Animation" id="Animation_3rqj4"]
+resource_name = "draw"
+length = 2.0
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:visible")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("RoundBanner:visible")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Name:visible")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("MinigameName:modulate")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 0)]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("Draw:scale")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0, 0.20000002),
+"transitions": PackedFloat32Array(0.5, 1),
+"update": 0,
+"values": [Vector2(0, 1), Vector2(1, 1)]
+}
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("Draw:visible")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0, 1.5, 1.8),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 1,
+"values": [true, true, false]
+}
+tracks/6/type = "value"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("Draw:modulate")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"times": PackedFloat32Array(0, 0.20000002, 1.5, 1.8),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 1), Color(1, 1, 1, 1), Color(1, 1, 1, 0)]
+}
+tracks/7/type = "method"
+tracks/7/imported = false
+tracks/7/enabled = true
+tracks/7/path = NodePath("..")
+tracks/7/interp = 1
+tracks/7/loop_wrap = true
+tracks/7/keys = {
+"times": PackedFloat32Array(2),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"advance_round"
+}]
 }
 
 [sub_resource type="Animation" id="Animation_qmbpp"]
@@ -1119,15 +1515,45 @@ tracks/19/keys = {
 }]
 }
 
+[sub_resource type="Animation" id="Animation_a5jg7"]
+resource_name = "start-result"
+length = 0.5
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("WinCounterControllerP1:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.5),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 1)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("WinCounterControllerP2:modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.5),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 1)]
+}
+
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_qmbpp"]
 _data = {
 &"RESET": SubResource("Animation_nnwk7"),
+&"draw": SubResource("Animation_3rqj4"),
 &"init": SubResource("Animation_qmbpp"),
 &"start-ingame": SubResource("Animation_kwcrk"),
-&"start-pregame": SubResource("Animation_aqh4a")
+&"start-pregame": SubResource("Animation_aqh4a"),
+&"start-result": SubResource("Animation_a5jg7")
 }
 
-[node name="TournamentPalace" type="Control" node_paths=PackedStringArray("rule_positions", "entry_positions", "balcony_parents", "player_labels", "round_label", "minigame_label", "minigame_start_animator", "sub_viewport", "minigame_book_animator", "attraction_animator", "description", "omochao", "omochao_minigame_position")]
+[node name="TournamentPalace" type="Control" node_paths=PackedStringArray("rule_positions", "entry_positions", "balcony_parents", "player_labels", "round_label", "minigame_label", "score_counter_p1", "score_counter_p2", "interface_animator", "sub_viewport", "minigame_book_animator", "attraction_animator", "description", "omochao", "omochao_minigame_position")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -1138,10 +1564,12 @@ script = ExtResource("1_aybhk")
 rule_positions = [NodePath("SubViewportContainer/SubViewport/World/Positions/Rule1"), NodePath("SubViewportContainer/SubViewport/World/Positions/Rule2"), NodePath("SubViewportContainer/SubViewport/World/Positions/Rule3"), NodePath("SubViewportContainer/SubViewport/World/Positions/Rule4")]
 entry_positions = [NodePath("SubViewportContainer/SubViewport/World/Positions/EntryChoke"), NodePath("SubViewportContainer/SubViewport/World/Positions/EntryEnd")]
 balcony_parents = [NodePath("SubViewportContainer/SubViewport/World/Environment/Floors/FirstFloor/BalconyLL"), NodePath("SubViewportContainer/SubViewport/World/Environment/Floors/FirstFloor/BalconyLR"), NodePath("SubViewportContainer/SubViewport/World/Environment/Floors/FirstFloor/BalconyRL"), NodePath("SubViewportContainer/SubViewport/World/Environment/Floors/FirstFloor/BalconyRR"), NodePath("SubViewportContainer/SubViewport/World/Environment/Floors/SecondFloor/BalconyL"), NodePath("SubViewportContainer/SubViewport/World/Environment/Floors/SecondFloor/BalconyR"), NodePath("SubViewportContainer/SubViewport/World/Environment/Floors/TopFloor/Balcony")]
-player_labels = [NodePath("MinigameStartTransition/Name/P1Label"), NodePath("MinigameStartTransition/Name/P2Label")]
-round_label = NodePath("MinigameStartTransition/RoundBanner/VBoxContainer/NumberLabel")
-minigame_label = NodePath("MinigameStartTransition/MinigameName")
-minigame_start_animator = NodePath("MinigameStartTransition/AnimationPlayer")
+player_labels = [NodePath("MinigameStartInterface/Name/P1Label"), NodePath("MinigameStartInterface/Name/P2Label")]
+round_label = NodePath("MinigameStartInterface/RoundBanner/VBoxContainer/NumberLabel")
+minigame_label = NodePath("MinigameStartInterface/MinigameName")
+score_counter_p1 = NodePath("MinigameStartInterface/WinCounterControllerP1")
+score_counter_p2 = NodePath("MinigameStartInterface/WinCounterControllerP2")
+interface_animator = NodePath("MinigameStartInterface/AnimationPlayer")
 sub_viewport = NodePath("SubViewportContainer/SubViewport")
 minigame_book_animator = NodePath("SubViewportContainer/SubViewport/World/IngameOmochao/Omochao/Book/BookAnimationPlayer")
 attraction_animator = NodePath("AnimationPlayer")
@@ -1156,6 +1584,7 @@ offset_bottom = 40.0
 
 [node name="SubViewport" type="SubViewport" parent="SubViewportContainer"]
 own_world_3d = true
+handle_input_locally = false
 screen_space_aa = 1
 size = Vector2i(1920, 1080)
 render_target_update_mode = 4
@@ -1597,7 +2026,7 @@ libraries = {
 autoplay = "init"
 next/first-floor = &"round1"
 
-[node name="MinigameStartTransition" type="Control" parent="."]
+[node name="MinigameStartInterface" type="Control" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -1605,7 +2034,8 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="RoundBanner" type="Control" parent="MinigameStartTransition"]
+[node name="RoundBanner" type="Control" parent="MinigameStartInterface"]
+visible = false
 layout_mode = 1
 anchor_left = 0.5
 anchor_right = 0.5
@@ -1617,7 +2047,7 @@ grow_horizontal = 2
 grow_vertical = 2
 pivot_offset = Vector2(960, 96)
 
-[node name="BannerTexture" type="TextureRect" parent="MinigameStartTransition/RoundBanner"]
+[node name="BannerTexture" type="TextureRect" parent="MinigameStartInterface/RoundBanner"]
 layout_mode = 1
 anchors_preset = -1
 anchor_right = 1.0
@@ -1629,7 +2059,7 @@ grow_vertical = 2
 texture = ExtResource("7_vn6d0")
 stretch_mode = 5
 
-[node name="VBoxContainer" type="HBoxContainer" parent="MinigameStartTransition/RoundBanner"]
+[node name="VBoxContainer" type="HBoxContainer" parent="MinigameStartInterface/RoundBanner"]
 layout_mode = 1
 anchors_preset = -1
 anchor_top = 0.5
@@ -1642,7 +2072,7 @@ grow_horizontal = 2
 grow_vertical = 2
 alignment = 1
 
-[node name="WinLabel" type="Label" parent="MinigameStartTransition/RoundBanner/VBoxContainer"]
+[node name="WinLabel" type="Label" parent="MinigameStartInterface/RoundBanner/VBoxContainer"]
 layout_mode = 2
 text = "ROUND "
 label_settings = ExtResource("8_07ckt")
@@ -1651,7 +2081,7 @@ uppercase = true
 script = ExtResource("9_j6s7f")
 metadata/_custom_type_script = "uid://qvplfr0cibu5"
 
-[node name="OutlineLabel" type="Label" parent="MinigameStartTransition/RoundBanner/VBoxContainer/WinLabel"]
+[node name="OutlineLabel" type="Label" parent="MinigameStartInterface/RoundBanner/VBoxContainer/WinLabel"]
 clip_children = 1
 layout_mode = 1
 anchors_preset = 15
@@ -1664,7 +2094,7 @@ label_settings = ExtResource("10_07ckt")
 vertical_alignment = 1
 uppercase = true
 
-[node name="Gradient" type="TextureRect" parent="MinigameStartTransition/RoundBanner/VBoxContainer/WinLabel/OutlineLabel"]
+[node name="Gradient" type="TextureRect" parent="MinigameStartInterface/RoundBanner/VBoxContainer/WinLabel/OutlineLabel"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -1673,7 +2103,7 @@ grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("11_wfjx1")
 
-[node name="NumberLabel" type="Label" parent="MinigameStartTransition/RoundBanner/VBoxContainer"]
+[node name="NumberLabel" type="Label" parent="MinigameStartInterface/RoundBanner/VBoxContainer"]
 layout_mode = 2
 text = "01"
 label_settings = ExtResource("8_07ckt")
@@ -1682,7 +2112,7 @@ uppercase = true
 script = ExtResource("9_j6s7f")
 metadata/_custom_type_script = "uid://qvplfr0cibu5"
 
-[node name="OutlineLabel" type="Label" parent="MinigameStartTransition/RoundBanner/VBoxContainer/NumberLabel"]
+[node name="OutlineLabel" type="Label" parent="MinigameStartInterface/RoundBanner/VBoxContainer/NumberLabel"]
 clip_children = 1
 layout_mode = 1
 anchors_preset = 15
@@ -1695,7 +2125,7 @@ label_settings = ExtResource("10_07ckt")
 vertical_alignment = 1
 uppercase = true
 
-[node name="Gradient" type="TextureRect" parent="MinigameStartTransition/RoundBanner/VBoxContainer/NumberLabel/OutlineLabel"]
+[node name="Gradient" type="TextureRect" parent="MinigameStartInterface/RoundBanner/VBoxContainer/NumberLabel/OutlineLabel"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -1704,7 +2134,7 @@ grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("11_wfjx1")
 
-[node name="Name" type="Control" parent="MinigameStartTransition"]
+[node name="Name" type="Control" parent="MinigameStartInterface"]
 layout_mode = 1
 anchor_left = 0.5
 anchor_top = 1.0
@@ -1717,7 +2147,7 @@ offset_bottom = -32.0
 grow_horizontal = 2
 grow_vertical = 0
 
-[node name="NameTexture" type="TextureRect" parent="MinigameStartTransition/Name"]
+[node name="NameTexture" type="TextureRect" parent="MinigameStartInterface/Name"]
 layout_mode = 1
 anchors_preset = -1
 anchor_top = 1.0
@@ -1730,7 +2160,7 @@ pivot_offset = Vector2(960, 156)
 texture = ExtResource("14_wfjx1")
 expand_mode = 1
 
-[node name="P1Label" type="Label" parent="MinigameStartTransition/Name"]
+[node name="P1Label" type="Label" parent="MinigameStartInterface/Name"]
 layout_mode = 1
 anchors_preset = -1
 anchor_right = 0.21700001
@@ -1746,7 +2176,7 @@ uppercase = true
 script = ExtResource("9_j6s7f")
 metadata/_custom_type_script = "uid://qvplfr0cibu5"
 
-[node name="OutlineLabel" type="Label" parent="MinigameStartTransition/Name/P1Label"]
+[node name="OutlineLabel" type="Label" parent="MinigameStartInterface/Name/P1Label"]
 clip_children = 1
 layout_mode = 1
 anchors_preset = 15
@@ -1760,7 +2190,7 @@ horizontal_alignment = 1
 vertical_alignment = 1
 uppercase = true
 
-[node name="Gradient" type="TextureRect" parent="MinigameStartTransition/Name/P1Label/OutlineLabel"]
+[node name="Gradient" type="TextureRect" parent="MinigameStartInterface/Name/P1Label/OutlineLabel"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -1769,7 +2199,7 @@ grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("11_wfjx1")
 
-[node name="Flash" type="Label" parent="MinigameStartTransition/Name/P1Label"]
+[node name="Flash" type="Label" parent="MinigameStartInterface/Name/P1Label"]
 material = ExtResource("15_m1u60")
 layout_mode = 1
 anchors_preset = 15
@@ -1784,7 +2214,7 @@ horizontal_alignment = 1
 vertical_alignment = 1
 uppercase = true
 
-[node name="OutlineLabel" type="Label" parent="MinigameStartTransition/Name/P1Label/Flash"]
+[node name="OutlineLabel" type="Label" parent="MinigameStartInterface/Name/P1Label/Flash"]
 clip_children = 1
 material = ExtResource("15_m1u60")
 layout_mode = 1
@@ -1799,7 +2229,7 @@ horizontal_alignment = 1
 vertical_alignment = 1
 uppercase = true
 
-[node name="Gradient" type="TextureRect" parent="MinigameStartTransition/Name/P1Label/Flash/OutlineLabel"]
+[node name="Gradient" type="TextureRect" parent="MinigameStartInterface/Name/P1Label/Flash/OutlineLabel"]
 material = ExtResource("15_m1u60")
 layout_mode = 1
 anchors_preset = 15
@@ -1809,7 +2239,7 @@ grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("11_wfjx1")
 
-[node name="P2Label" type="Label" parent="MinigameStartTransition/Name"]
+[node name="P2Label" type="Label" parent="MinigameStartInterface/Name"]
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.775
@@ -1827,7 +2257,7 @@ uppercase = true
 script = ExtResource("9_j6s7f")
 metadata/_custom_type_script = "uid://qvplfr0cibu5"
 
-[node name="OutlineLabel" type="Label" parent="MinigameStartTransition/Name/P2Label"]
+[node name="OutlineLabel" type="Label" parent="MinigameStartInterface/Name/P2Label"]
 clip_children = 1
 layout_mode = 1
 anchors_preset = 15
@@ -1841,7 +2271,7 @@ horizontal_alignment = 1
 vertical_alignment = 1
 uppercase = true
 
-[node name="Gradient" type="TextureRect" parent="MinigameStartTransition/Name/P2Label/OutlineLabel"]
+[node name="Gradient" type="TextureRect" parent="MinigameStartInterface/Name/P2Label/OutlineLabel"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -1850,7 +2280,7 @@ grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("11_wfjx1")
 
-[node name="Flash" type="Label" parent="MinigameStartTransition/Name/P2Label"]
+[node name="Flash" type="Label" parent="MinigameStartInterface/Name/P2Label"]
 material = ExtResource("15_m1u60")
 layout_mode = 1
 anchors_preset = 15
@@ -1865,7 +2295,7 @@ horizontal_alignment = 1
 vertical_alignment = 1
 uppercase = true
 
-[node name="OutlineLabel" type="Label" parent="MinigameStartTransition/Name/P2Label/Flash"]
+[node name="OutlineLabel" type="Label" parent="MinigameStartInterface/Name/P2Label/Flash"]
 clip_children = 1
 material = ExtResource("15_m1u60")
 layout_mode = 1
@@ -1880,7 +2310,7 @@ horizontal_alignment = 1
 vertical_alignment = 1
 uppercase = true
 
-[node name="Gradient" type="TextureRect" parent="MinigameStartTransition/Name/P2Label/Flash/OutlineLabel"]
+[node name="Gradient" type="TextureRect" parent="MinigameStartInterface/Name/P2Label/Flash/OutlineLabel"]
 material = ExtResource("15_m1u60")
 layout_mode = 1
 anchors_preset = 15
@@ -1890,7 +2320,7 @@ grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("11_wfjx1")
 
-[node name="VSLabel" type="Label" parent="MinigameStartTransition/Name"]
+[node name="VSLabel" type="Label" parent="MinigameStartInterface/Name"]
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.5
@@ -1911,7 +2341,7 @@ uppercase = true
 script = ExtResource("9_j6s7f")
 metadata/_custom_type_script = "uid://qvplfr0cibu5"
 
-[node name="OutlineLabel" type="Label" parent="MinigameStartTransition/Name/VSLabel"]
+[node name="OutlineLabel" type="Label" parent="MinigameStartInterface/Name/VSLabel"]
 clip_children = 1
 layout_mode = 1
 anchors_preset = 15
@@ -1925,7 +2355,7 @@ horizontal_alignment = 1
 vertical_alignment = 1
 uppercase = true
 
-[node name="Gradient" type="TextureRect" parent="MinigameStartTransition/Name/VSLabel/OutlineLabel"]
+[node name="Gradient" type="TextureRect" parent="MinigameStartInterface/Name/VSLabel/OutlineLabel"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -1934,7 +2364,7 @@ grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("11_wfjx1")
 
-[node name="Flames" type="Control" parent="MinigameStartTransition/Name"]
+[node name="Flames" type="Control" parent="MinigameStartInterface/Name"]
 layout_mode = 1
 anchor_left = 0.5
 anchor_top = 1.0
@@ -1945,13 +2375,70 @@ offset_bottom = -152.0
 grow_horizontal = 2
 grow_vertical = 0
 
-[node name="Flames" type="AnimatedSprite2D" parent="MinigameStartTransition/Name/Flames"]
+[node name="Flames" type="AnimatedSprite2D" parent="MinigameStartInterface/Name/Flames"]
 position = Vector2(0, -232)
 scale = Vector2(5, 5)
 sprite_frames = ExtResource("17_kwcrk")
 autoplay = "default"
 
-[node name="MinigameName" type="Label" parent="MinigameStartTransition"]
+[node name="Draw" type="TextureRect" parent="MinigameStartInterface"]
+visible = false
+layout_mode = 1
+anchors_preset = -1
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -648.0
+offset_bottom = -336.0
+grow_horizontal = 2
+grow_vertical = 0
+pivot_offset = Vector2(960, 156)
+texture = ExtResource("17_qmbpp")
+expand_mode = 1
+
+[node name="DrawLabel" type="Label" parent="MinigameStartInterface/Draw"]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = 12.0
+offset_bottom = 12.0
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(0.6, 0.6)
+pivot_offset = Vector2(960, 150)
+text = "minigame_draw"
+label_settings = ExtResource("12_m56w7")
+horizontal_alignment = 1
+vertical_alignment = 1
+uppercase = true
+script = ExtResource("9_j6s7f")
+metadata/_custom_type_script = "uid://qvplfr0cibu5"
+
+[node name="OutlineLabel" type="Label" parent="MinigameStartInterface/Draw/DrawLabel"]
+clip_children = 1
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "minigame_draw"
+label_settings = ExtResource("10_m56w7")
+horizontal_alignment = 1
+vertical_alignment = 1
+uppercase = true
+
+[node name="Gradient" type="TextureRect" parent="MinigameStartInterface/Draw/DrawLabel/OutlineLabel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("11_wfjx1")
+
+[node name="MinigameName" type="Label" parent="MinigameStartInterface"]
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.5
@@ -1970,7 +2457,33 @@ label_settings = ExtResource("16_alhyr")
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="MinigameStartTransition"]
+[node name="WinCounterControllerP1" parent="MinigameStartInterface" instance=ExtResource("18_nnwk7")]
+modulate = Color(1, 1, 1, 0)
+layout_mode = 1
+anchor_left = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.0
+offset_left = -416.0
+offset_top = 256.0
+offset_right = -32.0
+offset_bottom = 384.0
+grow_horizontal = 1
+grow_vertical = 1
+
+[node name="WinCounterControllerP2" parent="MinigameStartInterface" instance=ExtResource("18_nnwk7")]
+modulate = Color(1, 1, 1, 0)
+layout_mode = 1
+anchor_left = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.0
+offset_left = 48.0
+offset_top = 256.0
+offset_right = 432.0
+offset_bottom = 384.0
+grow_horizontal = 1
+grow_vertical = 1
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="MinigameStartInterface"]
 libraries = {
 &"": SubResource("AnimationLibrary_qmbpp")
 }

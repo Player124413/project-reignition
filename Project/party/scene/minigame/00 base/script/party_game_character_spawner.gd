@@ -99,26 +99,25 @@ func _ready() -> void:
 		# This is a demo character
 		on_demo_spawned()
 	else:
-		if !PartyManager.minigame_players.has(player_index):
+		set_physics_process(false)
+		
+		if is_player_valid():
+			MinigameManager.instance.gameplay_started.connect(Callable.create(self, "activate"))
+			MinigameManager.instance.gameplay_finished.connect(Callable.create(self, "on_gameplay_finished"))
+			MinigameManager.instance.minigame_finished.connect(Callable.create(self, "on_minigame_finished"))
+		else:
 			# This player index is not being used. (i.e. tournament palace)
 			visible = false
 			set_process(false)
-			set_physics_process(false)
 			MinigameManager.instance.disable_splitscreen_player(player_index)
-			return
 		
-		set_physics_process(false)
 		# Instance Player Model
 		character_animator = MinigameManager.instance.load_character_model(player_index)
 		spawn_position.add_child(character_animator)
 		
-		MinigameManager.instance.gameplay_started.connect(Callable.create(self, "activate"))
-		MinigameManager.instance.gameplay_finished.connect(Callable.create(self, "on_gameplay_finished"))
-		MinigameManager.instance.minigame_finished.connect(Callable.create(self, "on_minigame_finished"))
-		
 		if is_instance_valid(score_counter):
 			# Initialize the score counter
-			score_counter.set_player_index(player_index)
+			score_counter.initialize_score_counter(player_index)
 	
 	character_animator.connect("animation_event", Callable.create(self, "process_animation_event"))
 	on_spawn_finished()
@@ -131,6 +130,9 @@ func _ready() -> void:
 func is_minigame_host() -> bool:
 	return player_index == PartyManager.minigame_players[0]
 
+func is_player_valid() -> bool:
+	return PartyManager.minigame_players.has(player_index)
+
 ## Called after the host has spawned.
 func on_host_spawned() -> void:
 	pass
@@ -138,6 +140,8 @@ func on_host_spawned() -> void:
 ## Called after spawn logic has finished.
 func on_spawn_finished() -> void:
 	_is_spawn_finished = true
+	if !is_player_valid() && player_index != -1:
+		queue_free()
 
 func on_gameplay_finished() -> void:
 	_is_gameplay_finished = true

@@ -43,7 +43,7 @@ const MINIGAME_DATA_PATH : String = "res://party/resource/minigame/"
 func _init() -> void:
 	load_characters()
 	load_minigames()
-	## TODO Load modded character data here
+	## TODO Load modded character and minigame data here
 
 func load_characters() -> void:
 	# Load character data from resource files
