@@ -41,6 +41,7 @@ func is_voice_playing() -> bool:
 # TODO Add support for more complex character animations (i.e. blending)
 func _ready() -> void:
 	player_index = PartyManager.get_character_index(data)
+	animator.deterministic = true
 	
 	if player_index == -1:
 		return

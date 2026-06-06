@@ -95,9 +95,9 @@ func start_omochao_minigame_throw() -> void:
 ## Queues a random minigame.
 func request_queue_minigame() -> void:
 	if NetworkManager.is_hosting_game:
-		# TODO use actual random index instead of minecart game
+		# TODO use actual random index
 		# Actual random game: randi_range(0, PartyManager.unlocked_minigame_list.size() - 1))
-		rpc("queue_minigame", 3)
+		rpc("queue_minigame", 7)
 
 @rpc("any_peer", "call_local", "reliable")
 func queue_minigame(index : int) -> void:
@@ -119,7 +119,6 @@ func request_minigame_load() -> void:
 func load_minigame(minigame_index : int) -> void:
 	PartyManager.queued_minigame = PartyManager.unlocked_minigame_list[minigame_index]
 	hide_attraction()
-	RuleManager.cancelled.connect(Callable(self, "show_menu"), ConnectFlags.CONNECT_ONE_SHOT)
 	RuleManager.show_menu()
 	NetworkManager.attraction_loaded.connect(Callable(self, "show_attraction"), ConnectFlags.CONNECT_ONE_SHOT)
 
@@ -129,8 +128,9 @@ func hide_attraction() -> void:
 
 func show_attraction() -> void:
 	visible = true
+	omochao.visible = false
 	process_mode = Node.PROCESS_MODE_INHERIT
 	minigame_book_animator.play("RESET")
 	minigame_book_animator.advance(0.0)
-	interface_animator.play("RESET")
-	minigame_book_animator.advance(0.0)
+	interface_animator.play("init")
+	interface_animator.advance(0.0)

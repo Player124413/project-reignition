@@ -6,20 +6,43 @@ extends Attraction
 @export var balcony_parents : Array[Node]
 @export var player_labels : Array[SyncedLabel]
 @export var round_label : SyncedLabel
+@export var winner_label : SyncedLabel
 @export var minigame_label : Label
 @export var score_counter_p1 : TournamentPalaceWinCounter
 @export var score_counter_p2 : TournamentPalaceWinCounter
 
-var bracket_order : Array[int]
+## Tracks which balcony each player is at.
+var balcony_indexes : Array[int]
 var balcony_data : Array[BalconyData]
 
 ####################
 ##### Settings #####
 ####################
 ## Number of wins needed to progress through the bracket.
-var win_count : int = 2
+var win_count : int = 1
 ## Watch cpu players' games?
-var view_cpu : bool = true
+var view_cpu : bool = false
+
+## Final results, from loser to winner.
+var final_results : PackedInt32Array
+
+func request_minigame_load() -> void:
+	if !NetworkManager.is_hosting_game:
+		return
+	
+	if view_cpu || !PartyManager.get_player_data(p1).is_cpu_player() || !PartyManager.get_player_data(p2).is_cpu_player():
+		super()
+		return
+	
+	# Skip cpu games.
+	var p1_placement : int = -PartyManager.get_player_data(p1).cpu_difficulty
+	var p2_placement : int = -PartyManager.get_player_data(p2).cpu_difficulty
+	if p1_placement == p2_placement:
+		p1_placement += 1 if randf() > 0.5 else -1
+	PartyManager.rpc("set_minigame_placement", p1, p1_placement)
+	PartyManager.rpc("set_minigame_placement", p2, p2_placement)
+	await get_tree().create_timer(1, false, true).timeout
+	show_attraction()
 
 ################
 ##### DATA #####
@@ -58,8 +81,8 @@ func initialize_attraction() -> void:
 	if NetworkManager.is_hosting_game:
 		# Determine bracket order
 		for i in _players.size():
-			bracket_order.append(i)
-		bracket_order.shuffle()
+			balcony_indexes.append(i)
+		balcony_indexes.shuffle()
 
 func enable_inputs() -> void:
 	super()
@@ -134,81 +157,214 @@ func calculate_max_dialog_index() -> int:
 		return RULE_LENGTH
 	return 0
 
-func show_first_floor_player(balcony_index : int) -> void:
+func exit_balcony(balcony_index : int) -> void:
 	balcony_data[balcony_index].door_animator.play("open")
-	var end_pos : Vector3 = balcony_data[balcony_index].player_position.global_position
-	var start_pos : Vector3 = end_pos + Vector3.FORWARD * 30
-	var pre_fight_callable : Callable = Callable(self, "first_floor_prefight").bind(bracket_order[balcony_index])
-	_players[bracket_order[balcony_index]].movement_finished.connect(pre_fight_callable)
-	_players[bracket_order[balcony_index]]._end_rotation = 0
-	_players[bracket_order[balcony_index]].global_rotation = Vector3.ZERO
-	_players[bracket_order[balcony_index]].cancel_movement()
+	if bracket_index == 0:
+		# Prefight animations
+		var pre_fight_callable : Callable = Callable(self, "first_floor_prefight").bind(balcony_indexes[balcony_index])
+		_players[balcony_indexes[balcony_index]].movement_finished.connect(pre_fight_callable, CONNECT_ONE_SHOT)
+	
+	reset_player_animations(balcony_indexes[balcony_index])
+	
 	if NetworkManager.is_hosting_game:
-		_players[bracket_order[balcony_index]].request_movement(end_pos, false, start_pos)
-		_players[bracket_order[balcony_index]].request_rotation(0)
+		# Walk out
+		var in_pos : Vector3 = balcony_data[balcony_index].get_inside_position()
+		var out_pos : Vector3 = balcony_data[balcony_index].get_outside_position()
+		_players[balcony_indexes[balcony_index]].request_movement(out_pos, false, in_pos)
+		_players[balcony_indexes[balcony_index]].request_rotation(0)
 
 func first_floor_prefight(player_index : int) -> void:
 	_players[player_index].character_animator.play_animation("fight", false, 0.1)
 	_players[player_index].character_animator.play_voice("select")
 
+## Called after a bracket round has completed.
+func finalize_bracket_round() -> void:
+	reset_camera()
+	await get_tree().create_timer(2, false, true).timeout
+	if final_results.size() != PartyManager.MAX_PLAYER_COUNT:
+		if bracket_index == 2:
+			interface_animator.play("start-consolation")
+		else:
+			start_bracket_round() # Start the next round
+	else:
+		print("SHOW RESULTS!")
+
+func start_consolation_prefight_animation(is_p1 : bool) -> void:
+	var player_index : int = p1 if is_p1 else p2
+	var balcony_index : int = balcony_indexes.find(player_index)
+	attraction_animator.play("balcony%s" % balcony_index)
+	_players[player_index].character_animator.play_animation("fight", true)
+	if NetworkManager.is_hosting_game:
+		var target_rotation : float = PI * 0.5
+		if !is_p1:
+			target_rotation *= -1
+		_players[player_index].request_rotation(target_rotation)
+
+func reset_camera() -> void:
+	attraction_animator.play_with_capture("default-view")
+
+func start_consolation_camera() -> void:
+	attraction_animator.play_with_capture("round3")
+
 ## Starts a bracket round between the two players.
 func start_bracket_round() -> void:
 	round_index = 0
+	score_counter_p1.reset_wins()
+	score_counter_p2.reset_wins()
 	bracket_index += 1
-	if bracket_index == 1:
-		p1 = bracket_order[0]
-		p2 = bracket_order[1]
-	elif bracket_index == 2:
-		p1 = bracket_order[2]
-		p2 = bracket_order[3]
+	update_player_indexes()
 	PartyManager.set_minigame_players([p1, p2])
 	player_labels[0].set_synced_text(PartyManager.get_player_data(p1).character_data.character_name)
 	player_labels[1].set_synced_text(PartyManager.get_player_data(p2).character_data.character_name)
-	var offset : Vector3 = _players[p1].global_position - _players[p2].global_position
-	var angle : float = Vector3.FORWARD.signed_angle_to(offset, Vector3.UP)
-	_players[p1].start_rotation(angle, NetworkTimeSynchronizer.get_time())
-	_players[p1].character_animator.play_animation("fight", true)
-	offset *= -1
-	angle = Vector3.FORWARD.signed_angle_to(offset, Vector3.UP)
-	_players[p2].start_rotation(angle, NetworkTimeSynchronizer.get_time())
-	_players[p2].character_animator.play_animation("fight", true)
+	if bracket_index != 3:
+		attraction_animator.play_with_capture("round%s" % bracket_index)
+		await get_tree().create_timer(1, false, true).timeout
+		var offset : Vector3 = _players[p1].global_position - _players[p2].global_position
+		var angle : float = Vector3.FORWARD.signed_angle_to(offset, Vector3.UP)
+		_players[p1].start_rotation(angle, NetworkTimeSynchronizer.get_time())
+		_players[p1].character_animator.play_animation("fight", true)
+		offset *= -1
+		angle = Vector3.FORWARD.signed_angle_to(offset, Vector3.UP)
+		_players[p2].start_rotation(angle, NetworkTimeSynchronizer.get_time())
+		_players[p2].character_animator.play_animation("fight", true)
 	advance_round()
+
+func update_player_indexes() -> void:
+	if bracket_index == 1:
+		p1 = balcony_indexes[0]
+		p2 = balcony_indexes[1]
+	elif bracket_index == 2:
+		p1 = balcony_indexes[2]
+		p2 = balcony_indexes[3]
+	elif bracket_index == 3:
+		# Get who's fighing in the consolation match.
+		p1 = -1
+		p2 = -1
+		var balcony_index : int = 0
+		while p1 == -1 || p2 == -1:
+			if balcony_indexes[balcony_index] == -1:
+				balcony_index += 1
+				continue
+			if p1 == -1:
+				p1 = balcony_indexes[balcony_index]
+			else:
+				p2 = balcony_indexes[balcony_index]
+				break
+			balcony_index += 1
+	elif bracket_index == 4:
+		# Championship match
+		p1 = balcony_indexes[4]
+		p2 = balcony_indexes[5]
 
 func advance_round() -> void:
 	request_queue_minigame()
 	round_index += 1
 	round_label.set_synced_text("%02d" % round_index)
-	interface_animator.play("start-pregame" if round_index == 1 else "start-ingame")
+	if round_index != 1:
+		_players[p1].character_animator.play_animation("fight", true)
+		_players[p2].character_animator.play_animation("fight", true)
+		interface_animator.play("start-ingame")
+	else:
+		interface_animator.play("start-pregame-consolation" if bracket_index == 3 else "start-pregame")
 
 func on_minigame_queued() -> void:
 	minigame_label.text = PartyManager.unlocked_minigame_list[_minigame_index].localization_key
 
+	# Reset animations
+func reset_player_animations(index : int) -> void:
+	_players[index]._end_rotation = 0
+	_players[index].global_rotation = Vector3.ZERO
+	_players[index].character_animator.play_animation("%s/wait" % AttractionPartyCharacter.COMMON_LIBRARY_ANIMATION)
+	_players[index].cancel_movement()
+
 func show_attraction() -> void:
 	super()
+	for i in _players.size():
+		reset_player_animations(i)
+	
 	interface_animator.play("start-result")
 	var placement_p1 : int = PartyManager.get_player_data(p1).minigame_placement
 	var placement_p2 : int = PartyManager.get_player_data(p2).minigame_placement
-	_players[p1].character_animator.play_animation("lose" if placement_p1 >= placement_p2 else "win", true)
-	_players[p2].character_animator.play_animation("lose" if placement_p2 >= placement_p1 else "win", true)
-	if NetworkManager.is_hosting_game:
-		_players[p1].request_rotation(0)
-		_players[p2].request_rotation(0)
-	if placement_p1 == placement_p2:
-		# Draw
-		await get_tree().create_timer(3, false, true).timeout
-		advance_round()
-	else:
+	_players[p1].character_animator.play_animation("draw" if placement_p1 >= placement_p2 else "select", true)
+	_players[p2].character_animator.play_animation("draw" if placement_p2 >= placement_p1 else "select", true)
+	if placement_p1 != placement_p2:
 		if placement_p1 < placement_p2:
 			score_counter_p1.set_win()
 		else:
 			score_counter_p2.set_win()
+	
+	await get_tree().create_timer(2, false, true).timeout
+	if score_counter_p1.win_count != win_count && score_counter_p2.win_count != win_count:
+		advance_round()
+	else:
+		if score_counter_p1.win_count > score_counter_p2.win_count:
+			advance_player(p1, p2)
+		else:
+			advance_player(p2, p1)
 
-## Starts all the animations needed to move a player to the next floor.
-func advance_player(player_index : int) -> void:
-	#attraction_animator.play_with_capture("return")
-	pass
+## Starts all the animations needed to move a player to the next floor
+## (or in the case of the consolation match, fall to the floor)
+func advance_player(winner : int, loser : int) -> void:
+	winner_label.set_synced_text(_players[winner].character_animator.data.character_name)
+	var winner_balcony : int = balcony_indexes.find(winner)
+	var loser_balcony : int = balcony_indexes.find(loser)
+	_players[winner].character_animator.play_animation("win", true)
+	_players[loser].character_animator.play_animation("lose", true)
+	interface_animator.play("start-win")
+	attraction_animator.play("balcony%s"%winner_balcony)
+	await get_tree().create_timer(5, false, true).timeout
+	
+	if bracket_index == 3: # Consolation result
+		# Register results of consolation match
+		final_results.append(winner)
+		final_results.append(loser)
+		
+		attraction_animator.play("balcony%s"%loser_balcony)
+		await get_tree().create_timer(1, false, true).timeout
+		balcony_data[loser_balcony].balcony_animator.play("shatter")
+		_players[loser].character_animator.play_animation("%s/fall-start" % AttractionPartyCharacter.PARTY_LIBRARY_ANIMATION)
+		_players[loser].character_animator.queue_minigame_animation("%s/fall" % AttractionPartyCharacter.PARTY_LIBRARY_ANIMATION)
+		await get_tree().create_timer(0.8, false, true).timeout
+		var tween : Tween = create_tween()
+		var end_pos : Vector3 = _players[loser].global_position
+		end_pos.y = 0
+		tween.tween_property(_players[loser], "global_position", end_pos, 0.8).set_ease(Tween.EASE_IN).set_trans(Tween.TRANS_BACK)
+		tween.tween_callback(Callable(_players[loser].character_animator, "play_animation").bind("%s/crash-land" % AttractionPartyCharacter.PARTY_LIBRARY_ANIMATION))
+		await get_tree().create_timer(0.5, false, true).timeout
+		attraction_animator.play_with_capture("fallen")
+		await get_tree().create_timer(2, false, true).timeout
+		finalize_bracket_round()
+		return
+	
+	if NetworkManager.is_hosting_game:
+		# Walk inside
+		var in_pos : Vector3 = balcony_data[winner_balcony].get_inside_position()
+		var out_pos : Vector3 = balcony_data[winner_balcony].get_outside_position()
+		_players[winner].request_movement(in_pos, false, out_pos)
+	await get_tree().create_timer(1, false, true).timeout
+	balcony_data[winner_balcony].door_animator.play("close")
+	balcony_indexes[winner_balcony] = -1
+	balcony_indexes.append(winner)
+	winner_balcony = balcony_indexes.size() - 1
+	reset_camera()
+	await get_tree().create_timer(1, false, true).timeout
+	if bracket_index == 4: # TODO Champion
+		final_results.append(winner)
+		final_results.append(loser)
+		attraction_animator.play_with_capture("balcony-top")
+		return
+	if bracket_index == 1:
+		attraction_animator.play_with_capture("balcony-l")
+	elif bracket_index == 2:
+		attraction_animator.play_with_capture("balcony-r")
+	exit_balcony(winner_balcony)
 
 class BalconyData:
 	var balcony_animator : AnimationPlayer
 	var door_animator : AnimationPlayer
 	var player_position : Node3D
+	const BALCONY_INSIDE_OFFSET : float = 30.0
+	func get_outside_position() -> Vector3:
+		return player_position.global_position
+	func get_inside_position() -> Vector3:
+		return get_outside_position() + Vector3.FORWARD * BALCONY_INSIDE_OFFSET
