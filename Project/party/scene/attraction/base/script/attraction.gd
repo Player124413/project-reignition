@@ -40,6 +40,7 @@ func update_viewport_size() -> void:
 
 func _ready() -> void:
 	initialize_attraction()
+	NetworkManager.register_scene(scene_file_path, self)
 	
 	if !sub_viewport.own_world_3d:
 		printerr("Subviewport isn't set to be a unique world! This will cause issues with minigames!")
@@ -121,6 +122,14 @@ func load_minigame(minigame_index : int) -> void:
 	hide_attraction()
 	RuleManager.show_menu()
 	NetworkManager.attraction_loaded.connect(Callable(self, "show_attraction"), ConnectFlags.CONNECT_ONE_SHOT)
+
+func reload_attraction() -> void:
+	if NetworkManager.is_hosting_game:
+		NetworkManager.rpc("load_scene", scene_file_path, NetworkManager.TRANSITION_TYPE_ENUM.ATTRACTION_SELECTOR)
+
+func return_to_attraction_menu() -> void:
+	if NetworkManager.is_hosting_game:
+		NetworkManager.rpc("unload_scene", scene_file_path, NetworkManager.TRANSITION_TYPE_ENUM.ATTRACTION_SELECTOR)
 
 func hide_attraction() -> void:
 	visible = false

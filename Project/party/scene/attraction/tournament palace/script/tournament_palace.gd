@@ -6,6 +6,7 @@ extends Attraction
 @export var balcony_parents : Array[Node]
 @export var player_labels : Array[SyncedLabel]
 @export var round_label : SyncedLabel
+@export var placement_label : SyncedLabel
 @export var winner_label : SyncedLabel
 @export var minigame_label : Label
 @export var score_counter_p1 : TournamentPalaceWinCounter
@@ -87,6 +88,11 @@ func initialize_attraction() -> void:
 		for i in _players.size():
 			balcony_indexes.append(i)
 		balcony_indexes.shuffle()
+		rpc("send_balcony_indexes", balcony_indexes)
+
+@rpc("any_peer", "call_remote", "reliable")
+func send_balcony_indexes(indexes : Array[int]) -> void:
+	balcony_indexes = indexes
 
 func enable_inputs() -> void:
 	super()
@@ -129,7 +135,7 @@ func advance_dialog() -> void:
 				description.connect("confirmed", Callable(self, "show_rules"), CONNECT_ONE_SHOT)
 				description.connect("cancelled", Callable(self, "start_gameplay"), CONNECT_ONE_SHOT)
 			description.rpc("set_text", "tp_rule_%s" % dialog_index, show_dialog_box)
-	
+
 func skip_explanation() -> void:
 	dialog_index += EXPLAIN_LENGTH
 	advance_dialog()
@@ -174,7 +180,7 @@ func exit_balcony(balcony_index : int) -> void:
 		# Walk out
 		var in_pos : Vector3 = balcony_data[balcony_index].get_inside_position()
 		var out_pos : Vector3 = balcony_data[balcony_index].get_outside_position()
-		_players[balcony_indexes[balcony_index]].request_movement(out_pos, false, in_pos)
+		_players[balcony_indexes[balcony_index]].queue_movement(in_pos, out_pos, false, NetworkTimeSynchronizer.get_time())
 		_players[balcony_indexes[balcony_index]].request_rotation(0)
 
 func first_floor_prefight(player_index : int) -> void:
@@ -188,7 +194,7 @@ func finalize_bracket_round() -> void:
 	if final_results.size() != PartyManager.MAX_PLAYER_COUNT:
 		start_bracket_round() # Start the next round
 	else:
-		print("SHOW RESULTS!")
+		start_results()
 
 func start_special_prefight_animation(is_p1 : bool) -> void:
 	var player_index : int = p1 if is_p1 else p2
@@ -322,8 +328,8 @@ func advance_player(winner : int, loser : int) -> void:
 	
 	if bracket_index == 3: # Consolation result
 		# Register results of consolation match
-		final_results.append(winner)
 		final_results.append(loser)
+		final_results.append(winner)
 		
 		attraction_animator.play("balcony%s"%loser_balcony)
 		await get_tree().create_timer(1, false, true).timeout
@@ -334,10 +340,10 @@ func advance_player(winner : int, loser : int) -> void:
 		var tween : Tween = create_tween()
 		var end_pos : Vector3 = _players[loser].global_position
 		end_pos.y = 0
-		tween.tween_property(_players[loser], "global_position", end_pos, 0.8).set_ease(Tween.EASE_IN).set_trans(Tween.TRANS_BACK)
+		tween.tween_property(_players[loser], "global_position", end_pos, 0.6).set_ease(Tween.EASE_IN).set_trans(Tween.TRANS_BACK)
 		tween.tween_callback(Callable(_players[loser].character_animator, "play_animation").bind("%s/crash-land" % AttractionPartyCharacter.PARTY_LIBRARY_ANIMATION))
 		await get_tree().create_timer(0.5, false, true).timeout
-		attraction_animator.play_with_capture("fallen")
+		attraction_animator.play_with_capture("fallen%s" % loser_balcony)
 		await get_tree().create_timer(2, false, true).timeout
 		finalize_bracket_round()
 		return
@@ -353,15 +359,45 @@ func advance_player(winner : int, loser : int) -> void:
 	winner_balcony = balcony_indexes.size() - 1
 	reset_camera()
 	await get_tree().create_timer(1, false, true).timeout
-	if bracket_index == 4: # TODO Champion
-		final_results.append(winner)
+	if bracket_index == 4:
 		final_results.append(loser)
+		final_results.append(winner)
 		attraction_animator.play_with_capture("balcony-top")
 	elif bracket_index == 1:
 		attraction_animator.play_with_capture("balcony-l")
 	elif bracket_index == 2:
 		attraction_animator.play_with_capture("balcony-r")
 	exit_balcony(winner_balcony)
+
+func start_results() -> void:
+	for i in _players.size():
+		reset_player_animations(i)
+	
+	attraction_animator.speed_scale = 2.0
+	for i in final_results.size():
+		var balcony_index : int = balcony_indexes.find(final_results[i])
+		placement_label.set_synced_text("party_placement%s" % (final_results.size() - i))
+		winner_label.set_synced_text(_players[final_results[i]].character_animator.data.character_name)
+		attraction_animator.play_with_capture(("fallen%s" if i == 0 else "balcony%s") % balcony_index)
+		await get_tree().create_timer(0.5, false, true).timeout
+		if i == final_results.size() - 1:
+			_players[i].character_animator.play_animation("win", true)
+			interface_animator.play("result-win")
+		else:
+			interface_animator.play("result-lose")
+			_players[i].character_animator.play_animation("lose" if i == 0 else "draw", true)
+		await get_tree().create_timer(3, false, true).timeout
+	
+	await get_tree().create_timer(2, false, true).timeout
+	reset_camera()
+	current_state = STATE.REPLAY
+	attraction_animator.speed_scale = 1.0
+	await get_tree().create_timer(1, false, true).timeout
+	description.rpc("show_description")
+	description.connect("confirmed", Callable(self, "reload_attraction"), CONNECT_ONE_SHOT)
+	description.connect("cancelled", Callable(self, "return_to_attraction_menu"), CONNECT_ONE_SHOT)
+	description.rpc("set_text", "tp_again", true)
+	enable_inputs()
 
 class BalconyData:
 	var balcony_animator : AnimationPlayer

@@ -44,7 +44,8 @@ var scene_dictionary : Dictionary = {}
 enum TRANSITION_TYPE_ENUM {
 	ATTRACTION,
 	PARTY_GAME,
-	ATTRACTION_SELECTOR
+	ATTRACTION_SELECTOR,
+	RELOAD
 }
 
 func _ready() -> void:
@@ -58,6 +59,10 @@ func initialize_loggers() -> void:
 		loggers.append(new_log)
 		log_parent.add_child(new_log)
 
+func register_scene(path : String, root : Node) -> void:
+	if !scene_dictionary.has(path):
+		scene_dictionary[path] = root
+
 ## Queues a scene change.
 @rpc("any_peer", "call_local", "reliable")
 func load_scene(scene_path : String, type : TRANSITION_TYPE_ENUM) -> void:
@@ -65,6 +70,11 @@ func load_scene(scene_path : String, type : TRANSITION_TYPE_ENUM) -> void:
 	
 	rpc_id(1, "set_loading", multiplayer.get_unique_id(), true) # Let the host know we're loading
 	# TODO Add Fade Transitions
+	
+	if scene_dictionary.has(scene_path):
+		print("Reloading stage!")
+		unload_scene(scene_path, TRANSITION_TYPE_ENUM.RELOAD) # Must be reloading an attraction
+
 	ResourceLoader.load_threaded_request(scene_path)
 	while ResourceLoader.load_threaded_get_status(scene_path) == ResourceLoader.ThreadLoadStatus.THREAD_LOAD_IN_PROGRESS:
 		await get_tree().create_timer(0.1).timeout
@@ -91,15 +101,16 @@ func emit_scene_signals(type : TRANSITION_TYPE_ENUM) -> void:
 func unload_scene(scene_path : String, type : TRANSITION_TYPE_ENUM) -> void:
 	scene_path = format_scene_path(scene_path)
 	if !scene_dictionary.has(scene_path):
-		print("FATAL: Tried to unload scene that was never loaded. Returning to Main Menu.")
+		printerr("FATAL: Tried to unload scene that was never loaded. Returning to Main Menu.")
 		print("Attempted scene was %s" % scene_path)
 		return_to_main_menu()
 		return
 	
 	scene_dictionary[scene_path].queue_free() # Delete the node associated with the scene
 	scene_dictionary.erase(scene_path) # Register the scene as unloaded
-	get_tree().paused = false
-	emit_scene_signals(type)
+	if type != TRANSITION_TYPE_ENUM.RELOAD:
+		get_tree().paused = false
+		emit_scene_signals(type)
 
 func format_scene_path(scene_path : String) -> String:
 	if scene_path.begins_with("uid://"):
