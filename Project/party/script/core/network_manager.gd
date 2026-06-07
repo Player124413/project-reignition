@@ -44,8 +44,7 @@ var scene_dictionary : Dictionary = {}
 enum TRANSITION_TYPE_ENUM {
 	ATTRACTION,
 	PARTY_GAME,
-	ATTRACTION_SELECTOR,
-	RELOAD
+	ATTRACTION_SELECTOR
 }
 
 func _ready() -> void:
@@ -72,8 +71,9 @@ func load_scene(scene_path : String, type : TRANSITION_TYPE_ENUM) -> void:
 	# TODO Add Fade Transitions
 	
 	if scene_dictionary.has(scene_path):
-		print("Reloading stage!")
-		unload_scene(scene_path, TRANSITION_TYPE_ENUM.RELOAD) # Must be reloading an attraction
+		# Must be reloading an attraction
+		push_warning("Reloading stage!")
+		scene_dictionary[scene_path].queue_free() # Delete the existing node associated with the scene
 
 	ResourceLoader.load_threaded_request(scene_path)
 	while ResourceLoader.load_threaded_get_status(scene_path) == ResourceLoader.ThreadLoadStatus.THREAD_LOAD_IN_PROGRESS:
@@ -108,9 +108,8 @@ func unload_scene(scene_path : String, type : TRANSITION_TYPE_ENUM) -> void:
 	
 	scene_dictionary[scene_path].queue_free() # Delete the node associated with the scene
 	scene_dictionary.erase(scene_path) # Register the scene as unloaded
-	if type != TRANSITION_TYPE_ENUM.RELOAD:
-		get_tree().paused = false
-		emit_scene_signals(type)
+	get_tree().paused = false
+	emit_scene_signals(type)
 
 func format_scene_path(scene_path : String) -> String:
 	if scene_path.begins_with("uid://"):

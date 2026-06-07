@@ -49,9 +49,8 @@ func _ready() -> void:
 	
 	description.draw_started.connect(Callable(self, "disable_inputs"))
 	description.draw_finished.connect(Callable(self, "enable_inputs"))
-	printt("READ Attraction.", NetworkManager.is_online)
 	if NetworkManager.is_online:
-		NetworkManager.peers_loaded.connect(Callable(self, "request_attraction_start"))
+		NetworkManager.peers_loaded.connect(Callable(self, "request_attraction_start"), CONNECT_ONE_SHOT)
 	else:
 		request_attraction_start()
 
@@ -124,10 +123,14 @@ func load_minigame(minigame_index : int) -> void:
 	NetworkManager.attraction_loaded.connect(Callable(self, "show_attraction"), ConnectFlags.CONNECT_ONE_SHOT)
 
 func reload_attraction() -> void:
+	disable_inputs()
+	description.disconnect_all_signals()
 	if NetworkManager.is_hosting_game:
-		NetworkManager.rpc("load_scene", scene_file_path, NetworkManager.TRANSITION_TYPE_ENUM.ATTRACTION_SELECTOR)
+		NetworkManager.rpc("load_scene", scene_file_path, NetworkManager.TRANSITION_TYPE_ENUM.ATTRACTION)
 
 func return_to_attraction_menu() -> void:
+	disable_inputs()
+	description.disconnect_all_signals()
 	if NetworkManager.is_hosting_game:
 		NetworkManager.rpc("unload_scene", scene_file_path, NetworkManager.TRANSITION_TYPE_ENUM.ATTRACTION_SELECTOR)
 
@@ -137,8 +140,8 @@ func hide_attraction() -> void:
 
 func show_attraction() -> void:
 	visible = true
-	omochao.visible = false
 	process_mode = Node.PROCESS_MODE_INHERIT
+	omochao.visible = false
 	minigame_book_animator.play("RESET")
 	minigame_book_animator.advance(0.0)
 	interface_animator.play("init")

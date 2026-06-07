@@ -31,6 +31,7 @@ func request_minigame_load() -> void:
 	if !NetworkManager.is_hosting_game:
 		return
 	
+	# Comment this block out if you want to skip all minigames for debugging.
 	if view_cpu || !PartyManager.get_player_data(p1).is_cpu_player() || !PartyManager.get_player_data(p2).is_cpu_player():
 		super()
 		return
@@ -133,30 +134,34 @@ func advance_dialog() -> void:
 		else:
 			if show_dialog_box:
 				description.connect("confirmed", Callable(self, "show_rules"), CONNECT_ONE_SHOT)
-				description.connect("cancelled", Callable(self, "start_gameplay"), CONNECT_ONE_SHOT)
+				description.connect("cancelled", Callable(self, "request_start_gameplay"), CONNECT_ONE_SHOT)
 			description.rpc("set_text", "tp_rule_%s" % dialog_index, show_dialog_box)
 
 func skip_explanation() -> void:
+	description.disconnect_all_signals()
 	dialog_index += EXPLAIN_LENGTH
 	advance_dialog()
 
-func start_gameplay() -> void:
+func request_start_gameplay() -> void:
+	description.disconnect_all_signals()
+	if !NetworkManager.is_hosting_game:
+		return
+	rpc("start_gameplay", NetworkTimeSynchronizer.get_time())
+
+@rpc("any_peer", "call_local", "reliable")
+func start_gameplay(tick : float) -> void:
 	current_state = STATE.GAME
 	score_counter_p1.set_max_win(win_count)
 	score_counter_p2.set_max_win(win_count)
 	disable_inputs()
-	rpc("start_first_floor_preview", NetworkTimeSynchronizer.get_time())
+	attraction_animator.play("first-floor")
+	attraction_animator.seek(NetworkTimeSynchronizer.get_time() - tick)
+	description.hide_description()
 	for i in _players.size():
 		if i > 0:
 			await get_tree().create_timer(0.3, false, true).timeout # Prevent players from crowding entry
 		_players[i].request_movement(entry_positions[0].global_position, true, rule_positions[i].global_position)
 		_players[i].request_movement(entry_positions[1].global_position, true, entry_positions[0].global_position)
-
-@rpc("any_peer", "call_local", "reliable")
-func start_first_floor_preview(tick : float) -> void:
-	attraction_animator.play("first-floor")
-	attraction_animator.seek(NetworkTimeSynchronizer.get_time() - tick)
-	description.hide_description()
 
 const EXPLAIN_LENGTH : int = 4
 const RULE_LENGTH : int = 3
@@ -175,13 +180,11 @@ func exit_balcony(balcony_index : int) -> void:
 		_players[balcony_indexes[balcony_index]].movement_finished.connect(pre_fight_callable, CONNECT_ONE_SHOT)
 	
 	reset_player_animations(balcony_indexes[balcony_index])
-	
-	if NetworkManager.is_hosting_game:
-		# Walk out
-		var in_pos : Vector3 = balcony_data[balcony_index].get_inside_position()
-		var out_pos : Vector3 = balcony_data[balcony_index].get_outside_position()
-		_players[balcony_indexes[balcony_index]].queue_movement(in_pos, out_pos, false, NetworkTimeSynchronizer.get_time())
-		_players[balcony_indexes[balcony_index]].request_rotation(0)
+	# Walk out
+	var in_pos : Vector3 = balcony_data[balcony_index].get_inside_position()
+	var out_pos : Vector3 = balcony_data[balcony_index].get_outside_position()
+	_players[balcony_indexes[balcony_index]].queue_movement(in_pos, out_pos, false, NetworkTimeSynchronizer.get_time())
+	_players[balcony_indexes[balcony_index]].request_rotation(0)
 
 func first_floor_prefight(player_index : int) -> void:
 	_players[player_index].character_animator.play_animation("fight", false, 0.1)
@@ -199,7 +202,6 @@ func finalize_bracket_round() -> void:
 func start_special_prefight_animation(is_p1 : bool) -> void:
 	var player_index : int = p1 if is_p1 else p2
 	var balcony_index : int = balcony_indexes.find(player_index)
-	print("balcony%s" % balcony_index)
 	attraction_animator.play("balcony%s" % balcony_index)
 	_players[player_index].character_animator.play_animation("fight", true)
 	if NetworkManager.is_hosting_game:
@@ -348,10 +350,10 @@ func advance_player(winner : int, loser : int) -> void:
 		finalize_bracket_round()
 		return
 	
-	if NetworkManager.is_hosting_game: # Walk inside
-		var in_pos : Vector3 = balcony_data[winner_balcony].get_inside_position()
-		var out_pos : Vector3 = balcony_data[winner_balcony].get_outside_position()
-		_players[winner].request_movement(in_pos, false, out_pos)
+	# Walk inside
+	var in_pos : Vector3 = balcony_data[winner_balcony].get_inside_position()
+	var out_pos : Vector3 = balcony_data[winner_balcony].get_outside_position()
+	_players[winner].queue_movement(out_pos, in_pos, false, NetworkTimeSynchronizer.get_time())
 	await get_tree().create_timer(1, false, true).timeout
 	balcony_data[winner_balcony].door_animator.play("close")
 	balcony_indexes[winner_balcony] = -1
@@ -370,6 +372,7 @@ func advance_player(winner : int, loser : int) -> void:
 	exit_balcony(winner_balcony)
 
 func start_results() -> void:
+	disable_inputs()
 	for i in _players.size():
 		reset_player_animations(i)
 	
@@ -381,11 +384,11 @@ func start_results() -> void:
 		attraction_animator.play_with_capture(("fallen%s" if i == 0 else "balcony%s") % balcony_index)
 		await get_tree().create_timer(0.5, false, true).timeout
 		if i == final_results.size() - 1:
-			_players[i].character_animator.play_animation("win", true)
 			interface_animator.play("result-win")
+			_players[final_results[i]].character_animator.play_animation("win", true)
 		else:
 			interface_animator.play("result-lose")
-			_players[i].character_animator.play_animation("lose" if i == 0 else "draw", true)
+			_players[final_results[i]].character_animator.play_animation("lose" if i == 0 else "draw", true)
 		await get_tree().create_timer(3, false, true).timeout
 	
 	await get_tree().create_timer(2, false, true).timeout

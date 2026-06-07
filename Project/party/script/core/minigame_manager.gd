@@ -320,20 +320,26 @@ func start_results() -> void:
 		if rank_mode == RANK_MODE.TIME:
 			for i in player_times.size():
 				var rank : int = 0
-				for j in i:
-					if player_times[j] < player_times[i]:
-						rank += 1
-					else:
-						rankings[j] += 1
+				if !PartyManager.minigame_players.has(i):
+					rank = PartyManager.MAX_PLAYER_COUNT
+				else:
+					for j in i:
+						if player_times[j] < player_times[i]:
+							rank += 1
+						else:
+							rankings[j] += 1
 				rankings[i] = rank
 		else:
 			for i in player_scores.size():
 				var rank : int = 0
-				for j in i:
-					if player_scores[j] > player_scores[i]:
-						rank += 1
-					elif player_scores[j] < player_scores[i]:
-						rankings[j] += 1
+				if !PartyManager.minigame_players.has(i):
+					rank = PartyManager.MAX_PLAYER_COUNT
+				else:
+					for j in i:
+						if player_scores[j] > player_scores[i]:
+							rank += 1
+						elif player_scores[j] < player_scores[i]:
+							rankings[j] += 1
 				rankings[i] = rank
 	
 	# Store rankings to PartyManager

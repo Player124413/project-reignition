@@ -8,6 +8,7 @@ signal confirmed
 ## Emitted when the player selects "no."
 signal cancelled
 
+@export var allow_canceling : bool = true
 @export var label : Label
 @export var draw_characters : bool
 @export var cursor_animator : AnimationPlayer
@@ -21,7 +22,7 @@ func process_cursor() -> void:
 		return
 	
 	if is_action_just_pressed("button_primary", "sys_select", "ui_select"):
-		finish_drawing()
+		rpc("finish_drawing")
 		return
 	
 	draw_timer -= get_physics_process_delta_time()
@@ -29,8 +30,9 @@ func process_cursor() -> void:
 		draw_timer = DRAW_INTERVAL
 		label.visible_characters += 1
 		if label.visible_characters >= tr(label.text).length():
-			finish_drawing()
+			rpc("finish_drawing")
 
+@rpc("any_peer", "call_local", "reliable")
 func finish_drawing() -> void:
 	label.visible_characters = -1
 	_is_drawing = false
@@ -59,8 +61,10 @@ func set_text(text : String, queue_menu : bool = false) -> void:
 
 @rpc("any_peer", "call_local", "reliable")
 func show_description() -> void:
+	animator.play("init")
+	animator.advance(0.0)
 	animator.play("show")
-	animator.seek(0, true)
+	animator.advance(0.0)
 
 func show_button() -> void:
 	animator.play("show-button")
@@ -86,6 +90,8 @@ func confirm() -> void:
 	rpc("apply_selection", current_selection.y)
 
 func cancel() -> void:
+	if !allow_canceling:
+		return
 	disable_processing()
 	rpc("apply_selection", 1)
 

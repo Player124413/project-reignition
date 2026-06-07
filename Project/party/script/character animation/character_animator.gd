@@ -60,7 +60,6 @@ func has_animation(anim : StringName) -> bool:
 
 ## Plays an animation locally.
 func play_animation(anim : StringName, reset : bool = false, blend : float = 0.0) -> void:
-	print("playing anim %s" % anim)
 	if animator == null || !has_animation(anim):
 		return
 	
