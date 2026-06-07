@@ -11,6 +11,7 @@ extends Attraction
 @export var minigame_label : Label
 @export var score_counter_p1 : TournamentPalaceWinCounter
 @export var score_counter_p2 : TournamentPalaceWinCounter
+@export var setting_menu : AttractionSettingMenu
 
 ## Tracks which balcony each player is at.
 var balcony_indexes : Array[int]
@@ -20,9 +21,19 @@ var balcony_data : Array[BalconyData]
 ##### Settings #####
 ####################
 ## Number of wins needed to progress through the bracket.
-var win_count : int = 1
+var win_count : int = 2
 ## Watch cpu players' games?
-var view_cpu : bool = false
+var view_cpu : bool = true
+
+func initialize_setting_menu() -> void:
+	setting_menu.options[0].set_selection(win_count - 1)
+	setting_menu.options[1].set_selection(0 if view_cpu else 1)
+
+func change_setting(selection : Vector2i) -> void:
+	if selection.y == 0:
+		win_count = selection.x
+	elif selection.y == 1:
+		view_cpu = selection.x == 0
 
 ## Final results, from loser to winner.
 var final_results : PackedInt32Array
@@ -106,6 +117,7 @@ func disable_inputs() -> void:
 		omochao.play_animation("talk", false, 0.2)
 
 func on_attraction_started() -> void:
+	initialize_setting_menu()
 	for i in _players.size():
 		_players[i].request_movement(rule_positions[i].global_position, false)
 
@@ -128,14 +140,21 @@ func advance_dialog() -> void:
 		var show_dialog_box : bool = dialog_index == 1
 		if current_state == STATE.EXPLAIN:
 			if show_dialog_box:
-				description.connect("confirmed", Callable(self, "advance_dialog"), CONNECT_ONE_SHOT)
-				description.connect("cancelled", Callable(self, "skip_explanation"), CONNECT_ONE_SHOT)
+				description.confirmed.connect(Callable(self, "advance_dialog"), CONNECT_ONE_SHOT)
+				description.cancelled.connect(Callable(self, "skip_explanation"), CONNECT_ONE_SHOT)
 			description.rpc("set_text", "tp_explain_%s" % dialog_index, show_dialog_box)
 		else:
 			if show_dialog_box:
-				description.connect("confirmed", Callable(self, "show_rules"), CONNECT_ONE_SHOT)
-				description.connect("cancelled", Callable(self, "request_start_gameplay"), CONNECT_ONE_SHOT)
+				description.confirmed.connect(Callable(self, "show_settings"), CONNECT_ONE_SHOT)
+				description.cancelled.connect(Callable(self, "request_start_gameplay"), CONNECT_ONE_SHOT)
 			description.rpc("set_text", "tp_rule_%s" % dialog_index, show_dialog_box)
+
+func show_settings() -> void:
+	setting_menu.menu_finished.connect(Callable(self, "request_start_gameplay"), CONNECT_ONE_SHOT)
+	description.hide_description()
+	description.disconnect_all_signals()
+	setting_menu.show_menu()
+	disable_inputs()
 
 func skip_explanation() -> void:
 	description.disconnect_all_signals()
