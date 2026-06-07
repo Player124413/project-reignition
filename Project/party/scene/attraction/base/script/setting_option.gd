@@ -12,6 +12,7 @@ func _ready() -> void:
 	animator.play("option%s" % option_count)
 	animator.advance(0.0)
 
+@rpc("any_peer", "call_local", "reliable")
 func set_selection(index : int) -> void:
 	if _current_selection < double_option_selections.size():
 		double_option_selections[_current_selection].visible = false

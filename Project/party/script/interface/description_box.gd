@@ -15,13 +15,19 @@ signal cancelled
 var draw_timer : float = DRAW_INTERVAL
 const DRAW_INTERVAL : float = 0.05
 var _is_drawing : bool
+var _is_ignoring_skip_input : bool = true
 var _is_menu_queued : bool
+var _is_visible : bool
 
 func process_cursor() -> void:
 	if !draw_characters || !_is_drawing:
 		return
 	
+	if _is_ignoring_skip_input:
+		return
+	
 	if is_action_just_pressed("button_primary", "sys_select", "ui_select"):
+		_is_ignoring_skip_input = true
 		rpc("finish_drawing")
 		return
 	
@@ -30,12 +36,14 @@ func process_cursor() -> void:
 		draw_timer = DRAW_INTERVAL
 		label.visible_characters += 1
 		if label.visible_characters >= tr(label.text).length():
+			_is_ignoring_skip_input = true
 			rpc("finish_drawing")
 
 @rpc("any_peer", "call_local", "reliable")
 func finish_drawing() -> void:
 	label.visible_characters = -1
 	_is_drawing = false
+	_is_ignoring_skip_input = false
 	draw_finished.emit()
 	if _is_menu_queued:
 		_is_menu_queued = false
@@ -55,12 +63,14 @@ func set_text(text : String, queue_menu : bool = false) -> void:
 	label.text = text
 	if draw_characters:
 		_is_drawing = true
+		_is_ignoring_skip_input = false
 		_is_menu_queued = queue_menu
 		label.visible_characters = 0
 		draw_started.emit()
 
 @rpc("any_peer", "call_local", "reliable")
 func show_description() -> void:
+	_is_visible = true
 	animator.play("init")
 	animator.advance(0.0)
 	animator.play("show")
@@ -76,6 +86,9 @@ func hide_button() -> void:
 
 @rpc("any_peer", "call_local", "reliable")
 func hide_description() -> void:
+	if !_is_visible:
+		return
+	_is_visible = false
 	animator.play("hide")
 	animator.seek(0, true)
 

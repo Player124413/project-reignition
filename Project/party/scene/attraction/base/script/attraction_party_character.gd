@@ -109,7 +109,7 @@ func start_movement(use_tick : bool) -> void:
 	global_position = _movement_queue[0].start_pos
 	if _movement_queue[0].is_running:
 		_move_speed = RUN_SPEED
-		character_animator.play_animation("%s/run" % COMMON_LIBRARY_ANIMATION, true, 0.2)
+		character_animator.play_animation("run", true, 0.2)
 	else:
 		_move_speed = WALK_SPEED
 		character_animator.play_animation("%s/walk" % COMMON_LIBRARY_ANIMATION, true, 0.2)

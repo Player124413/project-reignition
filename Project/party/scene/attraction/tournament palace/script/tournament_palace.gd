@@ -28,10 +28,11 @@ var view_cpu : bool = true
 func initialize_setting_menu() -> void:
 	setting_menu.options[0].set_selection(win_count - 1)
 	setting_menu.options[1].set_selection(0 if view_cpu else 1)
+	setting_menu.selection_changed.connect(Callable(self, "change_setting"))
 
 func change_setting(selection : Vector2i) -> void:
 	if selection.y == 0:
-		win_count = selection.x
+		win_count = selection.x + 1
 	elif selection.y == 1:
 		view_cpu = selection.x == 0
 
@@ -126,7 +127,7 @@ func start_omochao() -> void:
 		return
 	description.rpc("show_description")
 	description.rpc("set_text", "tp_intro_1")
-	enable_inputs()
+	disable_inputs()
 
 func advance_dialog() -> void:
 	dialog_index += 1
@@ -145,10 +146,15 @@ func advance_dialog() -> void:
 			description.rpc("set_text", "tp_explain_%s" % dialog_index, show_dialog_box)
 		else:
 			if show_dialog_box:
-				description.confirmed.connect(Callable(self, "show_settings"), CONNECT_ONE_SHOT)
+				description.confirmed.connect(Callable(self, "request_show_settings"), CONNECT_ONE_SHOT)
 				description.cancelled.connect(Callable(self, "request_start_gameplay"), CONNECT_ONE_SHOT)
 			description.rpc("set_text", "tp_rule_%s" % dialog_index, show_dialog_box)
 
+func request_show_settings() -> void:
+	if NetworkManager.is_hosting_game:
+		rpc("show_settings")
+
+@rpc("any_peer", "call_local", "reliable")
 func show_settings() -> void:
 	setting_menu.menu_finished.connect(Callable(self, "request_start_gameplay"), CONNECT_ONE_SHOT)
 	description.hide_description()
