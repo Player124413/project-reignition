@@ -92,7 +92,12 @@ func start_omochao_minigame_throw() -> void:
 	omochao.queue_minigame_animation("hover")
 	minigame_book_animator.play("RESET")
 	minigame_book_animator.advance(0.0)
-	tween.tween_callback(Callable(minigame_book_animator, "play").bind("open"))
+	tween.tween_callback(Callable(self, "open_minigame_book"))
+	#tween.tween_property(minigame_book, "scale", Vector3.ONE)
+
+func open_minigame_book() -> void:
+	minigame_book_animator.play("open")
+	omochao.play_voice("minigame start")
 
 ## Queues a random minigame.
 func request_queue_minigame() -> void:
@@ -130,9 +135,19 @@ func reload_attraction() -> void:
 
 func return_to_attraction_menu() -> void:
 	disable_inputs()
+	omochao.play_voice("attraction exit")
 	description.disconnect_all_signals()
+	await get_tree().create_timer(1, false, true).timeout
 	if NetworkManager.is_hosting_game:
 		NetworkManager.rpc("unload_scene", scene_file_path, NetworkManager.TRANSITION_TYPE_ENUM.ATTRACTION_SELECTOR)
+
+func start_replay_menu() -> void:
+	omochao.play_voice("play again")
+	description.rpc("show_description")
+	description.connect("confirmed", Callable(self, "reload_attraction"), CONNECT_ONE_SHOT)
+	description.connect("cancelled", Callable(self, "return_to_attraction_menu"), CONNECT_ONE_SHOT)
+	description.rpc("set_text", "tp_again", true)
+	enable_inputs()
 
 func hide_attraction() -> void:
 	bgm.QueueBgmFade()

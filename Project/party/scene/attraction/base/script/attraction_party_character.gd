@@ -18,9 +18,9 @@ func is_travelling() -> bool:
 ## Tracks whether this character is rotating or not.
 var _is_rotating : bool
 
-const ROTATION_SPEED : float = 5.0
+const ROTATION_SPEED : float = 10.0
 const WALK_SPEED : float = 30.0
-const RUN_SPEED : float = 50.0
+const RUN_SPEED : float = 60.0
 
 const COMMON_LIBRARY_ANIMATION : String = "COMMON"
 const PARTY_LIBRARY_ANIMATION : String = "PARTY"

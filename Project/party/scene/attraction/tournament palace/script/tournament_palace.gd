@@ -127,6 +127,7 @@ func start_omochao() -> void:
 		return
 	description.rpc("show_description")
 	description.rpc("set_text", "tp_intro_1")
+	omochao.play_voice("attraction intro")
 	disable_inputs()
 
 func advance_dialog() -> void:
@@ -262,10 +263,12 @@ func start_bracket_round() -> void:
 		var angle : float = Vector3.FORWARD.signed_angle_to(offset, Vector3.UP)
 		_players[p1].start_rotation(angle, NetworkTimeSynchronizer.get_time())
 		_players[p1].character_animator.play_animation("fight", true)
+		_players[p1].character_animator.play_voice("select")
 		offset *= -1
 		angle = Vector3.FORWARD.signed_angle_to(offset, Vector3.UP)
 		_players[p2].start_rotation(angle, NetworkTimeSynchronizer.get_time())
 		_players[p2].character_animator.play_animation("fight", true)
+		_players[p2].character_animator.play_voice("select")
 	advance_round()
 
 func update_player_indexes() -> void:
@@ -326,6 +329,8 @@ func show_attraction() -> void:
 	var placement_p2 : int = PartyManager.get_player_data(p2).minigame_placement
 	_players[p1].character_animator.play_animation("draw" if placement_p1 >= placement_p2 else "select", true)
 	_players[p2].character_animator.play_animation("draw" if placement_p2 >= placement_p1 else "select", true)
+	_players[p1].character_animator.play_voice("draw" if placement_p1 >= placement_p2 else "celebrate1")
+	_players[p2].character_animator.play_voice("draw" if placement_p2 >= placement_p1 else "celebrate1")
 	if placement_p1 != placement_p2:
 		if placement_p1 < placement_p2:
 			score_counter_p1.set_win()
@@ -348,6 +353,7 @@ func advance_player(winner : int, loser : int) -> void:
 	var winner_balcony : int = balcony_indexes.find(winner)
 	var loser_balcony : int = balcony_indexes.find(loser)
 	_players[winner].character_animator.play_animation("win", true)
+	_players[winner].character_animator.play_voice("celebrate2")
 	_players[loser].character_animator.play_animation("lose", true)
 	interface_animator.play("start-win")
 	attraction_animator.play("balcony%s"%winner_balcony)
@@ -362,6 +368,7 @@ func advance_player(winner : int, loser : int) -> void:
 		await get_tree().create_timer(1, false, true).timeout
 		balcony_data[loser_balcony].balcony_animator.play("shatter")
 		_players[loser].character_animator.play_animation("%s/fall-start" % AttractionPartyCharacter.PARTY_LIBRARY_ANIMATION)
+		_players[winner].character_animator.play_voice("balance")
 		_players[loser].character_animator.queue_minigame_animation("%s/fall" % AttractionPartyCharacter.PARTY_LIBRARY_ANIMATION, 0.2)
 		await get_tree().create_timer(0.8, false, true).timeout
 		var tween : Tween = create_tween()
@@ -369,6 +376,7 @@ func advance_player(winner : int, loser : int) -> void:
 		end_pos.y = 0
 		tween.tween_property(_players[loser], "global_position", end_pos, 0.6).set_ease(Tween.EASE_IN).set_trans(Tween.TRANS_BACK)
 		tween.tween_callback(Callable(_players[loser].character_animator, "play_animation").bind("%s/crash-land" % AttractionPartyCharacter.PARTY_LIBRARY_ANIMATION))
+		_players[winner].character_animator.play_voice("hurt1")
 		await get_tree().create_timer(0.5, false, true).timeout
 		attraction_animator.play_with_capture("fallen%s" % loser_balcony)
 		await get_tree().create_timer(2, false, true).timeout
@@ -411,21 +419,19 @@ func start_results() -> void:
 		if i == final_results.size() - 1:
 			interface_animator.play("result-win")
 			_players[final_results[i]].character_animator.play_animation("win", true)
+			_players[final_results[i]].character_animator.play_voice("win2")
 		else:
 			interface_animator.play("result-lose")
 			_players[final_results[i]].character_animator.play_animation("lose" if i == 0 else "draw", true)
+			_players[final_results[i]].character_animator.play_voice("fail" if i == 0 else "draw")
 		await get_tree().create_timer(3, false, true).timeout
 	
 	await get_tree().create_timer(2, false, true).timeout
-	reset_camera()
 	current_state = STATE.REPLAY
 	attraction_animator.speed_scale = 1.0
+	reset_camera()
 	await get_tree().create_timer(1, false, true).timeout
-	description.rpc("show_description")
-	description.connect("confirmed", Callable(self, "reload_attraction"), CONNECT_ONE_SHOT)
-	description.connect("cancelled", Callable(self, "return_to_attraction_menu"), CONNECT_ONE_SHOT)
-	description.rpc("set_text", "tp_again", true)
-	enable_inputs()
+	start_replay_menu()
 
 class BalconyData:
 	var balcony_animator : AnimationPlayer
