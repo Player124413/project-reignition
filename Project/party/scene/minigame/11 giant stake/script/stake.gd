@@ -1,12 +1,16 @@
 class_name GiantStake extends Node3D
 
 @export var animator: AnimationPlayer
+@export var slam_animator: AnimationPlayer
 @export var root: Node3D
 ### If true, start already spawned
 @export var starting_stake: bool = false
 @export var collision: Area3D
 @export var hitbox_falling: CollisionShape3D
-@export var materials: Array[Material]
+@export var smoke: GPUParticles3D
+@export var sfx_hit_wood: GroupSfxPlayer
+@export var sfx_hit_metal: GroupSfxPlayer
+@export var sfx_hit_final: GroupSfxPlayer
 
 ### How many hits for wood type
 const MAX_HITS_WOOD: int = 3
@@ -52,11 +56,19 @@ func hit_stake(this_index: int) -> void:
 	var projected_position: Vector3 = global_position + Vector3.UP * 2
 	var screen_pos: Vector2 = get_viewport().get_camera_3d().unproject_position(projected_position)
 
+	if is_bonus:
+		sfx_hit_metal.play()
+	else:
+		sfx_hit_wood.play()
+
 	if num_hits >= max_hits:
+		smoke.emitting = true
 		is_enabled = false
 		animator.play("finished")
+		sfx_hit_final.play()
 		rpc("request_score_popup", this_index, score, screen_pos)
 	root.position = Vector3.DOWN * (num_hits / (max_hits as float)) * STAKE_HEIGHT
+	slam_animator.play("slam")
 
 func _on_area_3d_area_entered(area: Area3D) -> void:
 	var node = area
@@ -72,6 +84,11 @@ func _on_area_3d_area_entered(area: Area3D) -> void:
 			animator.play("damaged")
 			node.request_damage()
 	pass # Replace with function body.
+
+##Removes stake from end screen
+func remove_stake() -> void:
+	animator.play("remove")
+
 
 @rpc("any_peer", "call_local", "reliable")
 func request_score_popup(player_index: int, score: int, screen_pos: Vector2) -> void:
