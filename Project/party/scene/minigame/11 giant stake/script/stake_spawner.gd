@@ -27,6 +27,7 @@ func _ready() -> void:
 	if !NetworkManager.is_hosting_game:
 		return
 	MinigameManager.instance.gameplay_started.connect(Callable(self , "start_spawning"))
+	MinigameManager.instance.gameplay_finished.connect(Callable(self , "finish_spawning"))
 	MinigameManager.instance.request_minigame_start()
 
 ### Spreads the stakes out evenly so we don't have to do it by hand
@@ -42,8 +43,25 @@ func start_spawning() -> void:
 	await get_tree().create_timer(time_before_first_spawn).timeout
 	request_spawn() # Requests the first group
 	can_spawn = true
-	process_spawns()
+
+	if can_spawn:
+		process_spawns()
 	return
+
+func finish_spawning() -> void:
+	can_spawn = false
+
+	#Removes the un-hit stakes
+	for i in range(0, rows.size()):
+		for j in range(rows[i].get_children().size()):
+			var stake = rows[i].get_child(j) as GiantStake
+
+			if stake.is_bonus:
+				if stake.num_hits < 5:
+					stake.remove_stake()
+			else:
+				if stake.num_hits < 3:
+					stake.remove_stake()
 
 func start_new_spawn(new_stakes: Array[Vector2i]):
 	print("-----------------------")
