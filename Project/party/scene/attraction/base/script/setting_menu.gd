@@ -4,6 +4,7 @@ signal selection_changed (selection : Vector2i)
 signal menu_finished
 
 @export var cursor : Control
+@export var select_sfx : AudioStreamPlayer
 @export var options : Array[AttractionSettingOption]
 @export var description : DescriptionBox
 @export var description_prefix : String
@@ -36,9 +37,15 @@ func update_selection() -> void:
 	old_selection = current_selection.x
 	current_selection.x = (current_selection.x + input_axis.x) % options[current_selection.y].option_count
 	if old_selection != current_selection.x:
-		options[current_selection.y].rpc("set_selection", current_selection.x)
+		rpc("set_horizontal_selection", current_selection)
 		selection_changed.emit(current_selection)
 		start_selection_timer()
+
+@rpc("any_peer", "call_local", "reliable")
+func set_horizontal_selection(selection : Vector2i) -> void:
+	current_selection = selection
+	options[selection.y].rpc("set_selection", selection.x)
+	select_sfx.play()
 
 @rpc("any_peer", "call_local", "reliable")
 func set_vertical_selection(selection : int) -> void:
@@ -61,6 +68,7 @@ func update_description_text() -> void:
 
 @rpc("any_peer", "call_local", "reliable")
 func rpc_hide_menu() -> void:
+	select_sfx.play()
 	hide_menu()
 
 func hide_menu() -> void:

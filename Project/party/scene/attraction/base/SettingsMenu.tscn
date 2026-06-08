@@ -1,4 +1,4 @@
-[gd_scene load_steps=19 format=3 uid="uid://kf178vkqhx10"]
+[gd_scene load_steps=20 format=3 uid="uid://kf178vkqhx10"]
 
 [ext_resource type="Script" uid="uid://bbfg1s7xewcwc" path="res://party/scene/attraction/base/script/setting_menu.gd" id="1_474ca"]
 [ext_resource type="Texture2D" uid="uid://cdhdhl38x1m1x" path="res://party/scene/attraction/base/texture/settings border.png" id="1_cbrtg"]
@@ -10,6 +10,7 @@
 [ext_resource type="LabelSettings" uid="uid://blh0htres61mf" path="res://party/font/attraction/AttractionRulesOutline.tres" id="4_nafbp"]
 [ext_resource type="Texture2D" uid="uid://dpsxmm38mmh1d" path="res://party/font/GreenGradientFill.tres" id="6_b6yht"]
 [ext_resource type="LabelSettings" uid="uid://ccrm5au76p0yo" path="res://party/font/attraction/AttractionRulesFill.tres" id="6_nafbp"]
+[ext_resource type="AudioStream" uid="uid://5wlulaqfi75u" path="res://party/sound/sfx/system/attraction rule change.wav" id="11_474ca"]
 
 [sub_resource type="Animation" id="Animation_tpbik"]
 length = 0.001
@@ -313,7 +314,7 @@ _data = {
 &"show": SubResource("Animation_474ca")
 }
 
-[node name="SettingsMenu" type="Control" node_paths=PackedStringArray("cursor", "description", "animator")]
+[node name="SettingsMenu" type="Control" node_paths=PackedStringArray("cursor", "select_sfx", "description", "animator")]
 z_index = 10
 layout_mode = 3
 anchors_preset = 15
@@ -323,6 +324,7 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_474ca")
 cursor = NodePath("Cursor")
+select_sfx = NodePath("RuleChange")
 description = NodePath("DescriptionParty")
 animator = NodePath("AnimationPlayer")
 player_index = 0
@@ -496,3 +498,7 @@ libraries = {
 &"": SubResource("AnimationLibrary_joj3a")
 }
 autoplay = "init"
+
+[node name="RuleChange" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("11_474ca")
+bus = &"GAME SFX"

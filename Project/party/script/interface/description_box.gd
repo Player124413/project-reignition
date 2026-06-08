@@ -12,6 +12,8 @@ signal cancelled
 @export var label : Label
 @export var draw_characters : bool
 @export var cursor_animator : AnimationPlayer
+@export var text_draw_sfx : AudioStreamPlayer
+
 var draw_timer : float = DRAW_INTERVAL
 const DRAW_INTERVAL : float = 0.05
 var _is_drawing : bool
@@ -43,6 +45,7 @@ func process_cursor() -> void:
 func finish_drawing() -> void:
 	label.visible_characters = -1
 	_is_drawing = false
+	text_draw_sfx.stop()
 	_is_ignoring_skip_input = false
 	draw_finished.emit()
 	if _is_menu_queued:
@@ -63,6 +66,7 @@ func set_text(text : String, queue_menu : bool = false) -> void:
 	label.text = text
 	if draw_characters:
 		_is_drawing = true
+		text_draw_sfx.play()
 		_is_ignoring_skip_input = false
 		_is_menu_queued = queue_menu
 		label.visible_characters = 0

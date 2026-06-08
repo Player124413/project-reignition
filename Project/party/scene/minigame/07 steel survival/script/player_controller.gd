@@ -222,7 +222,7 @@ func process_cpu_input() -> void:
 
 func calculate_cpu_target() -> int:
 	for i in range(cpu_remaining_targets.size() - 1, -1, -1):
-		if MinigameManager.instance.player_scores[cpu_remaining_targets[i].player_index] == 0 || !is_instance_valid(cpu_remaining_targets[i]):
+		if !is_instance_valid(cpu_remaining_targets[i]) || MinigameManager.instance.player_scores[cpu_remaining_targets[i].player_index] == 0:
 			# This target has been defeated
 			cpu_remaining_targets.remove_at(i)
 	return randi_range(0, cpu_remaining_targets.size() - 1)

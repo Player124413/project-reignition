@@ -1,6 +1,8 @@
-[gd_scene load_steps=6 format=3 uid="uid://bch3nyv8gw1ba"]
+[gd_scene load_steps=8 format=3 uid="uid://bch3nyv8gw1ba"]
 
 [ext_resource type="Script" uid="uid://dbxayp3ci1wa5" path="res://party/script/character animation/character_animator.gd" id="1_8bfm4"]
+[ext_resource type="AudioStream" uid="uid://d1cthcctagm6l" path="res://party/sound/sfx/player/step pavement.wav" id="2_a7nq3"]
+[ext_resource type="Script" uid="uid://bkwc2atbp4cjd" path="res://party/scene/minigame/00 base/script/group_sfx_player.gd" id="3_bkkfq"]
 
 [sub_resource type="Curve" id="Curve_a7nq3"]
 _limits = [0.0, 3.0, 0.0, 1.0]
@@ -58,3 +60,14 @@ bus = &"VOICE"
 libraries = {
 &"": SubResource("AnimationLibrary_rxo6c")
 }
+
+[node name="SFX" type="Node" parent="."]
+
+[node name="StepPavement" type="AudioStreamPlayer" parent="SFX"]
+stream = ExtResource("2_a7nq3")
+max_polyphony = 2
+bus = &"GAME SFX"
+script = ExtResource("3_bkkfq")
+group = "step_pavement"
+min_volume = 0.5
+lockout_time = 0.1

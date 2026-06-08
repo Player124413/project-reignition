@@ -13,6 +13,9 @@ extends Attraction
 @export var score_counter_p2 : TournamentPalaceWinCounter
 @export var setting_menu : AttractionSettingMenu
 
+@export var fall_shatter_sfx : AudioStreamPlayer
+@export var fall_impact_sfx : AudioStreamPlayer
+
 ## Tracks which balcony each player is at.
 var balcony_indexes : Array[int]
 var balcony_data : Array[BalconyData]
@@ -106,6 +109,12 @@ func initialize_attraction() -> void:
 @rpc("any_peer", "call_remote", "reliable")
 func send_balcony_indexes(indexes : Array[int]) -> void:
 	balcony_indexes = indexes
+
+func start_omochao_minigame_throw() -> void:
+	if round_index != 1:
+		_players[p1].character_animator.play_animation("fight", true)
+		_players[p2].character_animator.play_animation("fight", true)
+	super()
 
 func enable_inputs() -> void:
 	super()
@@ -230,6 +239,7 @@ func start_special_prefight_animation(is_p1 : bool) -> void:
 	var balcony_index : int = balcony_indexes.find(player_index)
 	attraction_animator.play("balcony%s" % balcony_index)
 	_players[player_index].character_animator.play_animation("fight", true)
+	_players[player_index].character_animator.play_voice("select")
 	if NetworkManager.is_hosting_game:
 		var target_rotation : float = PI * 0.5
 		if !is_p1:
@@ -303,8 +313,6 @@ func advance_round() -> void:
 	round_index += 1
 	round_label.set_synced_text("%02d" % round_index)
 	if round_index != 1:
-		_players[p1].character_animator.play_animation("fight", true)
-		_players[p2].character_animator.play_animation("fight", true)
 		interface_animator.play("start-ingame")
 	else:
 		interface_animator.play("start-pregame-special" if bracket_index >= 3 else "start-pregame")
@@ -367,16 +375,19 @@ func advance_player(winner : int, loser : int) -> void:
 		attraction_animator.play("balcony%s"%loser_balcony)
 		await get_tree().create_timer(1, false, true).timeout
 		balcony_data[loser_balcony].balcony_animator.play("shatter")
+		fall_shatter_sfx.play()
 		_players[loser].character_animator.play_animation("%s/fall-start" % AttractionPartyCharacter.PARTY_LIBRARY_ANIMATION)
-		_players[winner].character_animator.play_voice("balance")
+		_players[loser].character_animator.play_voice("balance")
 		_players[loser].character_animator.queue_minigame_animation("%s/fall" % AttractionPartyCharacter.PARTY_LIBRARY_ANIMATION, 0.2)
 		await get_tree().create_timer(0.8, false, true).timeout
 		var tween : Tween = create_tween()
 		var end_pos : Vector3 = _players[loser].global_position
 		end_pos.y = 0
 		tween.tween_property(_players[loser], "global_position", end_pos, 0.6).set_ease(Tween.EASE_IN).set_trans(Tween.TRANS_BACK)
-		tween.tween_callback(Callable(_players[loser].character_animator, "play_animation").bind("%s/crash-land" % AttractionPartyCharacter.PARTY_LIBRARY_ANIMATION))
-		_players[winner].character_animator.play_voice("hurt1")
+		await get_tree().create_timer(0.6, false, true).timeout
+		_players[loser].character_animator.play_animation("%s/crash-land" % AttractionPartyCharacter.PARTY_LIBRARY_ANIMATION)
+		_players[loser].character_animator.play_voice("hurt1")
+		fall_impact_sfx.play()
 		await get_tree().create_timer(0.5, false, true).timeout
 		attraction_animator.play_with_capture("fallen%s" % loser_balcony)
 		await get_tree().create_timer(2, false, true).timeout
@@ -425,13 +436,8 @@ func start_results() -> void:
 			_players[final_results[i]].character_animator.play_animation("lose" if i == 0 else "draw", true)
 			_players[final_results[i]].character_animator.play_voice("fail" if i == 0 else "draw")
 		await get_tree().create_timer(3, false, true).timeout
-	
-	await get_tree().create_timer(2, false, true).timeout
 	current_state = STATE.REPLAY
 	attraction_animator.speed_scale = 1.0
-	reset_camera()
-	await get_tree().create_timer(1, false, true).timeout
-	start_replay_menu()
 
 class BalconyData:
 	var balcony_animator : AnimationPlayer

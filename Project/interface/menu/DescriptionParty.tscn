@@ -1,4 +1,4 @@
-[gd_scene load_steps=32 format=3 uid="uid://bqaafoua436c8"]
+[gd_scene load_steps=33 format=3 uid="uid://bqaafoua436c8"]
 
 [ext_resource type="Script" uid="uid://bheef5pyjpb1a" path="res://party/script/interface/description_box.gd" id="1_1ltsa"]
 [ext_resource type="Texture2D" uid="uid://dx4vxnhtgd13t" path="res://interface/menu/common/common menu atlas.png" id="2_ruhjc"]
@@ -11,6 +11,7 @@
 [ext_resource type="Texture2D" uid="uid://dkuw6tvtqmh1r" path="res://party/scene/party menu/resource/ConfimationBoxGradient.tres" id="8_clivu"]
 [ext_resource type="Texture2D" uid="uid://dnys6b7ntwl7j" path="res://party/scene/party menu/texture/confirmation cursor.png" id="9_2lqrv"]
 [ext_resource type="LabelSettings" uid="uid://c2ppn463q7sif" path="res://interface/font/PauseOptionFont.tres" id="10_wh703"]
+[ext_resource type="AudioStream" uid="uid://bnf2k1xe7rirf" path="res://party/sound/sfx/system/text draw.wav" id="12_2nt74"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_ss5tr"]
 shader = ExtResource("5_ual53")
@@ -644,7 +645,7 @@ _data = {
 &"show-confirmation": SubResource("Animation_ywryd")
 }
 
-[node name="DescriptionParty" type="Control" node_paths=PackedStringArray("label", "cursor_animator", "animator")]
+[node name="DescriptionParty" type="Control" node_paths=PackedStringArray("label", "cursor_animator", "text_draw_sfx", "animator")]
 modulate = Color(1, 1, 1, 0)
 custom_minimum_size = Vector2(1152, 256)
 layout_mode = 3
@@ -658,6 +659,7 @@ mouse_filter = 2
 script = ExtResource("1_1ltsa")
 label = NodePath("Border/Background/Label")
 cursor_animator = NodePath("Confirmation/ConfirmationBox/CursorRoot/AnimationPlayer")
+text_draw_sfx = NodePath("SFX")
 animator = NodePath("AnimationPlayer")
 metadata/_edit_group_ = true
 
@@ -961,5 +963,9 @@ libraries = {
 autoplay = "init"
 next/select-no = &"hide-confirmation"
 next/select-yes = &"hide-confirmation"
+
+[node name="SFX" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("12_2nt74")
+bus = &"GAME SFX"
 
 [editable path="Border/NavigationButton"]

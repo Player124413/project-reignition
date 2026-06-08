@@ -7,10 +7,12 @@ static var instance : Attraction
 ## Subviewport to separate attraction world from minigame worlds.
 ## Might need to apply transforms in blender to avoid broken orientations.
 @export var sub_viewport : SubViewport
+@export var minigame_book_root : Node3D
 @export var minigame_book_animator : AnimationPlayer
 @export var attraction_animator : AnimationPlayer
 @export var description : DescriptionBox
 @export var omochao : CharacterAnimator
+@export var camera : Camera3D
 
 ## The index of the next queued minigame.
 var _minigame_index : int
@@ -93,7 +95,16 @@ func start_omochao_minigame_throw() -> void:
 	minigame_book_animator.play("RESET")
 	minigame_book_animator.advance(0.0)
 	tween.tween_callback(Callable(self, "open_minigame_book"))
-	#tween.tween_property(minigame_book, "scale", Vector3.ONE)
+	minigame_book_root.global_position = omochao.global_position
+	minigame_book_root.rotation = Vector3.RIGHT * PI * -0.5 # Face upwards
+	minigame_book_root.scale = Vector3.ZERO
+	var target_minigame_book_position : Vector3 = camera.global_position
+	target_minigame_book_position -= camera.basis.z * 10
+	target_minigame_book_position.y += 0.5
+	tween.set_parallel()
+	tween.tween_property(minigame_book_root, "global_position", target_minigame_book_position, 1).set_trans(Tween.TRANS_CUBIC)
+	tween.tween_property(minigame_book_root, "scale", Vector3.ONE, 1).set_trans(Tween.TRANS_CUBIC)
+	tween.tween_property(minigame_book_root, "rotation", Vector3.ZERO, 1).set_trans(Tween.TRANS_CUBIC)
 
 func open_minigame_book() -> void:
 	minigame_book_animator.play("open")

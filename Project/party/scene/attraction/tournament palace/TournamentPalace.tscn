@@ -1,9 +1,9 @@
-[gd_scene load_steps=78 format=3 uid="uid://bm6fo8bvadvpb"]
+[gd_scene load_steps=86 format=3 uid="uid://bm6fo8bvadvpb"]
 
 [ext_resource type="Script" uid="uid://ckdfwmi1cjlxd" path="res://party/scene/attraction/tournament palace/script/tournament_palace.gd" id="1_aybhk"]
 [ext_resource type="PackedScene" uid="uid://cco4sa2j8ev1r" path="res://party/scene/attraction/tournament palace/model/Map.glb" id="1_irl16"]
 [ext_resource type="PackedScene" uid="uid://bl5yb5uhs6url" path="res://party/scene/attraction/tournament palace/model/Balcony.glb" id="3_c5w31"]
-[ext_resource type="PackedScene" uid="uid://de2luvyum7x2q" path="res://party/scene/attraction/tournament palace/model/Door.glb" id="4_hcjpf"]
+[ext_resource type="PackedScene" uid="uid://cdmjxbvekwhmf" path="res://party/scene/attraction/tournament palace/Door.tscn" id="4_se1s3"]
 [ext_resource type="PackedScene" uid="uid://c3j3nqtlwq81p" path="res://party/scene/attraction/base/AttractionPartyCharacter.tscn" id="5_2uwrk"]
 [ext_resource type="PackedScene" uid="uid://bqaafoua436c8" path="res://interface/menu/DescriptionParty.tscn" id="6_mj2ip"]
 [ext_resource type="PackedScene" uid="uid://cho38gsk705f8" path="res://party/resource/character/scene/Omochao.tscn" id="7_3bik3"]
@@ -30,7 +30,15 @@
 [ext_resource type="PackedScene" uid="uid://kf178vkqhx10" path="res://party/scene/attraction/base/SettingsMenu.tscn" id="27_jp4my"]
 [ext_resource type="PackedScene" uid="uid://bhhpkdlcw5siw" path="res://party/scene/attraction/base/SettingOption.tscn" id="28_psyyl"]
 [ext_resource type="Script" uid="uid://cj76gvi7tbku6" path="res://sound/script/BGMPlayer.cs" id="30_dl8nm"]
+[ext_resource type="Script" uid="uid://cmtsm05dcuuff" path="res://party/scene/minigame/00 base/script/group_sfx_manager.gd" id="31_g4ix4"]
+[ext_resource type="AudioStream" uid="uid://cssm7wjycsy3a" path="res://party/sound/sfx/system/round start.wav" id="32_31nme"]
+[ext_resource type="AudioStream" uid="uid://c0cwuvnd1tpug" path="res://party/sound/sfx/tournament/fall shatter.wav" id="32_ivv24"]
+[ext_resource type="AudioStream" uid="uid://dkmjvhpdq1xg" path="res://party/sound/sfx/system/omochao entrance.wav" id="32_osuyg"]
 [ext_resource type="Resource" uid="uid://cmi7vv7bocpqn" path="res://party/resource/bgm/Attraction.tres" id="32_se1s3"]
+[ext_resource type="AudioStream" uid="uid://ctb5d8n7b1lma" path="res://party/sound/sfx/tournament/fall impact.wav" id="33_14uyf"]
+[ext_resource type="AudioStream" uid="uid://bxs5e4yiau0ol" path="res://party/sound/sfx/system/attraction applause.wav" id="34_hjro3"]
+[ext_resource type="AudioStream" uid="uid://88n4k7dvms5q" path="res://party/sound/sfx/system/attraction fireworks.wav" id="35_wyxy4"]
+[ext_resource type="AudioStream" uid="uid://bmwgtgetkeo88" path="res://party/sound/jingle/win.ogg" id="36_wyxy4"]
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_2uwrk"]
 
@@ -139,6 +147,7 @@ tracks/6/keys = {
 
 [sub_resource type="Animation" id="Animation_dcr4k"]
 resource_name = "balcony-l"
+length = 2.0
 step = 0.1
 capture_included = true
 tracks/0/type = "value"
@@ -208,7 +217,7 @@ tracks/5/path = NodePath(".")
 tracks/5/interp = 1
 tracks/5/loop_wrap = true
 tracks/5/keys = {
-"times": PackedFloat32Array(1),
+"times": PackedFloat32Array(2),
 "transitions": PackedFloat32Array(1),
 "values": [{
 "args": [],
@@ -218,6 +227,7 @@ tracks/5/keys = {
 
 [sub_resource type="Animation" id="Animation_jp4my"]
 resource_name = "balcony-r"
+length = 2.0
 step = 0.1
 capture_included = true
 tracks/0/type = "value"
@@ -227,7 +237,7 @@ tracks/0/path = NodePath("SubViewportContainer/SubViewport/World/Camera/Camera:p
 tracks/0/interp = 2
 tracks/0/loop_wrap = true
 tracks/0/keys = {
-"times": PackedFloat32Array(0, 1),
+"times": PackedFloat32Array(0, 0.5),
 "transitions": PackedFloat32Array(1, 1),
 "update": 2,
 "values": [Vector3(0, 0, 180), Vector3(0, 0, 40)]
@@ -287,7 +297,7 @@ tracks/5/path = NodePath(".")
 tracks/5/interp = 1
 tracks/5/loop_wrap = true
 tracks/5/keys = {
-"times": PackedFloat32Array(1),
+"times": PackedFloat32Array(2),
 "transitions": PackedFloat32Array(1),
 "values": [{
 "args": [],
@@ -297,6 +307,7 @@ tracks/5/keys = {
 
 [sub_resource type="Animation" id="Animation_se1s3"]
 resource_name = "balcony-top"
+length = 2.0
 step = 0.1
 capture_included = true
 tracks/0/type = "value"
@@ -366,7 +377,7 @@ tracks/5/path = NodePath(".")
 tracks/5/interp = 1
 tracks/5/loop_wrap = true
 tracks/5/keys = {
-"times": PackedFloat32Array(1),
+"times": PackedFloat32Array(2),
 "transitions": PackedFloat32Array(1),
 "values": [{
 "args": [],
@@ -1683,7 +1694,7 @@ tracks/6/path = NodePath("SubViewportContainer/SubViewport/World/IngameOmochao/O
 tracks/6/interp = 1
 tracks/6/loop_wrap = true
 tracks/6/keys = {
-"times": PackedFloat32Array(3.6, 4),
+"times": PackedFloat32Array(4, 4.4),
 "transitions": PackedFloat32Array(0.5, 1),
 "update": 0,
 "values": [Vector3(0, -5, 12), Vector3(0, 12, 12)]
@@ -1695,7 +1706,7 @@ tracks/7/path = NodePath("SubViewportContainer/SubViewport/World/IngameOmochao/O
 tracks/7/interp = 1
 tracks/7/loop_wrap = true
 tracks/7/keys = {
-"times": PackedFloat32Array(0, 3.4, 3.6),
+"times": PackedFloat32Array(0, 3.4, 4),
 "transitions": PackedFloat32Array(1, 1, 1),
 "update": 1,
 "values": [false, false, true]
@@ -1708,7 +1719,7 @@ tracks/8/interp = 1
 tracks/8/loop_wrap = true
 tracks/8/keys = {
 "clips": PackedStringArray("backflip", "select"),
-"times": PackedFloat32Array(3.6, 5.1)
+"times": PackedFloat32Array(4, 5.5)
 }
 tracks/9/type = "method"
 tracks/9/imported = false
@@ -1717,7 +1728,7 @@ tracks/9/path = NodePath("SubViewportContainer/SubViewport/World/IngameOmochao/O
 tracks/9/interp = 1
 tracks/9/loop_wrap = true
 tracks/9/keys = {
-"times": PackedFloat32Array(3.6, 4.8),
+"times": PackedFloat32Array(4, 5.2000003),
 "transitions": PackedFloat32Array(1, 1),
 "values": [{
 "args": [&"backflip", false, 0.0],
@@ -1725,6 +1736,20 @@ tracks/9/keys = {
 }, {
 "args": [&"select", false, 0.1999999999970896],
 "method": &"play_animation"
+}]
+}
+tracks/10/type = "method"
+tracks/10/imported = false
+tracks/10/enabled = true
+tracks/10/path = NodePath("SFX/Appear")
+tracks/10/interp = 1
+tracks/10/loop_wrap = true
+tracks/10/keys = {
+"times": PackedFloat32Array(4),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [0.0],
+"method": &"play"
 }]
 }
 
@@ -2431,6 +2456,30 @@ tracks/7/keys = {
 "method": &"advance_round"
 }]
 }
+tracks/8/type = "value"
+tracks/8/imported = false
+tracks/8/enabled = true
+tracks/8/path = NodePath("WinCounterControllerP1:modulate")
+tracks/8/interp = 1
+tracks/8/loop_wrap = true
+tracks/8/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+tracks/9/type = "value"
+tracks/9/imported = false
+tracks/9/enabled = true
+tracks/9/path = NodePath("WinCounterControllerP2:modulate")
+tracks/9/interp = 1
+tracks/9/loop_wrap = true
+tracks/9/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
 
 [sub_resource type="Animation" id="Animation_qmbpp"]
 resource_name = "init"
@@ -2658,7 +2707,7 @@ tracks/12/keys = {
 
 [sub_resource type="Animation" id="Animation_obqdp"]
 resource_name = "result-win"
-length = 3.5
+length = 6.0
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
@@ -2864,6 +2913,74 @@ tracks/16/keys = {
 "transitions": PackedFloat32Array(1),
 "update": 0,
 "values": [Vector2(0, 0)]
+}
+tracks/17/type = "method"
+tracks/17/imported = false
+tracks/17/enabled = true
+tracks/17/path = NodePath("../SFX/Applause")
+tracks/17/interp = 1
+tracks/17/loop_wrap = true
+tracks/17/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [0.0],
+"method": &"play"
+}]
+}
+tracks/18/type = "method"
+tracks/18/imported = false
+tracks/18/enabled = true
+tracks/18/path = NodePath("../SFX/Fireworks")
+tracks/18/interp = 1
+tracks/18/loop_wrap = true
+tracks/18/keys = {
+"times": PackedFloat32Array(3.5, 4.5, 5, 5.5),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"values": [{
+"args": [0.0],
+"method": &"play"
+}, {
+"args": [0.0],
+"method": &"play"
+}, {
+"args": [0.0],
+"method": &"play"
+}, {
+"args": [0.0],
+"method": &"play"
+}]
+}
+tracks/19/type = "method"
+tracks/19/imported = false
+tracks/19/enabled = true
+tracks/19/path = NodePath("..")
+tracks/19/interp = 1
+tracks/19/loop_wrap = true
+tracks/19/keys = {
+"times": PackedFloat32Array(3, 6),
+"transitions": PackedFloat32Array(1, 1),
+"values": [{
+"args": [],
+"method": &"reset_camera"
+}, {
+"args": [],
+"method": &"start_replay_menu"
+}]
+}
+tracks/20/type = "method"
+tracks/20/imported = false
+tracks/20/enabled = true
+tracks/20/path = NodePath("../SFX/Champion")
+tracks/20/interp = 1
+tracks/20/loop_wrap = true
+tracks/20/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [0.0],
+"method": &"play"
+}]
 }
 
 [sub_resource type="Animation" id="Animation_wyxy4"]
@@ -3095,6 +3212,20 @@ tracks/11/keys = {
 "transitions": PackedFloat32Array(1),
 "update": 0,
 "values": [Color(1, 1, 1, 0)]
+}
+tracks/12/type = "method"
+tracks/12/imported = false
+tracks/12/enabled = true
+tracks/12/path = NodePath("RoundStart")
+tracks/12/interp = 1
+tracks/12/loop_wrap = true
+tracks/12/keys = {
+"times": PackedFloat32Array(0.23333333),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [0.0],
+"method": &"play"
+}]
 }
 
 [sub_resource type="Animation" id="Animation_aqh4a"]
@@ -3368,6 +3499,23 @@ tracks/21/keys = {
 "transitions": PackedFloat32Array(1),
 "update": 1,
 "values": [true]
+}
+tracks/22/type = "method"
+tracks/22/imported = false
+tracks/22/enabled = true
+tracks/22/path = NodePath("RoundStart")
+tracks/22/interp = 1
+tracks/22/loop_wrap = true
+tracks/22/keys = {
+"times": PackedFloat32Array(0.23333333, 1.5666667),
+"transitions": PackedFloat32Array(1, 1),
+"values": [{
+"args": [0.0],
+"method": &"play"
+}, {
+"args": [0.0],
+"method": &"play"
+}]
 }
 
 [sub_resource type="Animation" id="Animation_ivv24"]
@@ -3652,6 +3800,26 @@ tracks/21/keys = {
 "update": 1,
 "values": [true]
 }
+tracks/22/type = "method"
+tracks/22/imported = false
+tracks/22/enabled = true
+tracks/22/path = NodePath("RoundStart")
+tracks/22/interp = 1
+tracks/22/loop_wrap = true
+tracks/22/keys = {
+"times": PackedFloat32Array(0.23333333, 1.5, 3),
+"transitions": PackedFloat32Array(1, 1, 1),
+"values": [{
+"args": [0.0],
+"method": &"play"
+}, {
+"args": [0.0],
+"method": &"play"
+}, {
+"args": [0.0],
+"method": &"play"
+}]
+}
 
 [sub_resource type="Animation" id="Animation_a5jg7"]
 resource_name = "start-result"
@@ -3859,7 +4027,7 @@ _data = {
 &"start-win": SubResource("Animation_dl8nm")
 }
 
-[node name="TournamentPalace" type="Control" node_paths=PackedStringArray("rule_positions", "entry_positions", "balcony_parents", "player_labels", "round_label", "placement_label", "winner_label", "minigame_label", "score_counter_p1", "score_counter_p2", "setting_menu", "bgm", "interface_animator", "sub_viewport", "minigame_book_animator", "attraction_animator", "description", "omochao", "omochao_minigame_position")]
+[node name="TournamentPalace" type="Control" node_paths=PackedStringArray("rule_positions", "entry_positions", "balcony_parents", "player_labels", "round_label", "placement_label", "winner_label", "minigame_label", "score_counter_p1", "score_counter_p2", "setting_menu", "fall_shatter_sfx", "fall_impact_sfx", "bgm", "interface_animator", "sub_viewport", "minigame_book_root", "minigame_book_animator", "attraction_animator", "description", "omochao", "camera", "omochao_minigame_position")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -3878,13 +4046,17 @@ minigame_label = NodePath("MinigameStartInterface/MinigameName")
 score_counter_p1 = NodePath("MinigameStartInterface/WinCounterControllerP1")
 score_counter_p2 = NodePath("MinigameStartInterface/WinCounterControllerP2")
 setting_menu = NodePath("SettingsMenu")
+fall_shatter_sfx = NodePath("SFX/FallShatter")
+fall_impact_sfx = NodePath("SFX/FallImpact")
 bgm = NodePath("BGM")
 interface_animator = NodePath("MinigameStartInterface/AnimationPlayer")
 sub_viewport = NodePath("SubViewportContainer/SubViewport")
+minigame_book_root = NodePath("SubViewportContainer/SubViewport/World/IngameOmochao/Omochao/Book/BookRoot")
 minigame_book_animator = NodePath("SubViewportContainer/SubViewport/World/IngameOmochao/Omochao/Book/BookAnimationPlayer")
 attraction_animator = NodePath("AnimationPlayer")
 description = NodePath("DescriptionParty")
 omochao = NodePath("SubViewportContainer/SubViewport/World/IngameOmochao/Omochao")
+camera = NodePath("SubViewportContainer/SubViewport/World/Camera/Camera")
 omochao_minigame_position = NodePath("SubViewportContainer/SubViewport/World/Camera/Camera/OmochaoMinigamePosition")
 
 [node name="SubViewportContainer" type="SubViewportContainer" parent="."]
@@ -4096,11 +4268,8 @@ layers = 2
 [node name="BalconyPiece06Mesh" parent="SubViewportContainer/SubViewport/World/Environment/Floors/FirstFloor/BalconyLL/Balcony/BalconyRoot/Skeleton3D" index="5"]
 layers = 2
 
-[node name="Door" parent="SubViewportContainer/SubViewport/World/Environment/Floors/FirstFloor/BalconyLL" instance=ExtResource("4_hcjpf")]
+[node name="Door" parent="SubViewportContainer/SubViewport/World/Environment/Floors/FirstFloor/BalconyLL" instance=ExtResource("4_se1s3")]
 transform = Transform3D(0.75, 0, 0, 0, 0.75, 0, 0, 0, 0.75, 0, 9.000002, 0)
-
-[node name="DoorMesh" parent="SubViewportContainer/SubViewport/World/Environment/Floors/FirstFloor/BalconyLL/Door/DoorRoot/Skeleton3D" index="0"]
-layers = 2
 
 [node name="BalconyLR" type="Node3D" parent="SubViewportContainer/SubViewport/World/Environment/Floors/FirstFloor"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -27.25, 0, 0)
@@ -4128,11 +4297,8 @@ layers = 2
 [node name="BalconyPiece06Mesh" parent="SubViewportContainer/SubViewport/World/Environment/Floors/FirstFloor/BalconyLR/Balcony/BalconyRoot/Skeleton3D" index="5"]
 layers = 2
 
-[node name="Door" parent="SubViewportContainer/SubViewport/World/Environment/Floors/FirstFloor/BalconyLR" instance=ExtResource("4_hcjpf")]
+[node name="Door" parent="SubViewportContainer/SubViewport/World/Environment/Floors/FirstFloor/BalconyLR" instance=ExtResource("4_se1s3")]
 transform = Transform3D(0.75, 0, 0, 0, 0.75, 0, 0, 0, 0.75, 0, 9.000002, 0)
-
-[node name="DoorMesh" parent="SubViewportContainer/SubViewport/World/Environment/Floors/FirstFloor/BalconyLR/Door/DoorRoot/Skeleton3D" index="0"]
-layers = 2
 
 [node name="BalconyRL" type="Node3D" parent="SubViewportContainer/SubViewport/World/Environment/Floors/FirstFloor"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 27.25, 0, 0)
@@ -4160,11 +4326,8 @@ layers = 2
 [node name="BalconyPiece06Mesh" parent="SubViewportContainer/SubViewport/World/Environment/Floors/FirstFloor/BalconyRL/Balcony/BalconyRoot/Skeleton3D" index="5"]
 layers = 2
 
-[node name="Door" parent="SubViewportContainer/SubViewport/World/Environment/Floors/FirstFloor/BalconyRL" instance=ExtResource("4_hcjpf")]
+[node name="Door" parent="SubViewportContainer/SubViewport/World/Environment/Floors/FirstFloor/BalconyRL" instance=ExtResource("4_se1s3")]
 transform = Transform3D(0.75, 0, 0, 0, 0.75, 0, 0, 0, 0.75, 0, 9.000002, 0)
-
-[node name="DoorMesh" parent="SubViewportContainer/SubViewport/World/Environment/Floors/FirstFloor/BalconyRL/Door/DoorRoot/Skeleton3D" index="0"]
-layers = 2
 
 [node name="BalconyRR" type="Node3D" parent="SubViewportContainer/SubViewport/World/Environment/Floors/FirstFloor"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 48, 0, 0)
@@ -4192,11 +4355,8 @@ layers = 2
 [node name="BalconyPiece06Mesh" parent="SubViewportContainer/SubViewport/World/Environment/Floors/FirstFloor/BalconyRR/Balcony/BalconyRoot/Skeleton3D" index="5"]
 layers = 2
 
-[node name="Door" parent="SubViewportContainer/SubViewport/World/Environment/Floors/FirstFloor/BalconyRR" instance=ExtResource("4_hcjpf")]
+[node name="Door" parent="SubViewportContainer/SubViewport/World/Environment/Floors/FirstFloor/BalconyRR" instance=ExtResource("4_se1s3")]
 transform = Transform3D(0.75, 0, 0, 0, 0.75, 0, 0, 0, 0.75, 0, 9.000002, 0)
-
-[node name="DoorMesh" parent="SubViewportContainer/SubViewport/World/Environment/Floors/FirstFloor/BalconyRR/Door/DoorRoot/Skeleton3D" index="0"]
-layers = 2
 
 [node name="SecondFloor" type="Node3D" parent="SubViewportContainer/SubViewport/World/Environment/Floors"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 51.4, -7)
@@ -4207,11 +4367,8 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -31.85, 0, 0)
 [node name="PlayerPosition" type="Node3D" parent="SubViewportContainer/SubViewport/World/Environment/Floors/SecondFloor/BalconyL"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.8, 5)
 
-[node name="Door" parent="SubViewportContainer/SubViewport/World/Environment/Floors/SecondFloor/BalconyL" instance=ExtResource("4_hcjpf")]
-transform = Transform3D(0.9, 0, 0, 0, 0.9, 0, 0, 0, 0.9, 0, 10.4, 0)
-
-[node name="DoorMesh" parent="SubViewportContainer/SubViewport/World/Environment/Floors/SecondFloor/BalconyL/Door/DoorRoot/Skeleton3D" index="0"]
-layers = 2
+[node name="Door" parent="SubViewportContainer/SubViewport/World/Environment/Floors/SecondFloor/BalconyL" instance=ExtResource("4_se1s3")]
+transform = Transform3D(0.9, 0, 0, 0, 0.9, 0, 0, 0, 0.9, 0, 10.400002, 0)
 
 [node name="BalconyR" type="Node3D" parent="SubViewportContainer/SubViewport/World/Environment/Floors/SecondFloor"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 33, 0, 0)
@@ -4219,11 +4376,8 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 33, 0, 0)
 [node name="PlayerPosition" type="Node3D" parent="SubViewportContainer/SubViewport/World/Environment/Floors/SecondFloor/BalconyR"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.8, 5)
 
-[node name="Door" parent="SubViewportContainer/SubViewport/World/Environment/Floors/SecondFloor/BalconyR" instance=ExtResource("4_hcjpf")]
-transform = Transform3D(0.9, 0, 0, 0, 0.9, 0, 0, 0, 0.9, 0, 10.4, 0)
-
-[node name="DoorMesh" parent="SubViewportContainer/SubViewport/World/Environment/Floors/SecondFloor/BalconyR/Door/DoorRoot/Skeleton3D" index="0"]
-layers = 2
+[node name="Door" parent="SubViewportContainer/SubViewport/World/Environment/Floors/SecondFloor/BalconyR" instance=ExtResource("4_se1s3")]
+transform = Transform3D(0.9, 0, 0, 0, 0.9, 0, 0, 0, 0.9, 0, 10.400002, 0)
 
 [node name="TopFloor" type="Node3D" parent="SubViewportContainer/SubViewport/World/Environment/Floors"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 51.4, -7)
@@ -4234,11 +4388,8 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 9.8, 2)
 [node name="PlayerPosition" type="Node3D" parent="SubViewportContainer/SubViewport/World/Environment/Floors/TopFloor/Balcony"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 5)
 
-[node name="Door" parent="SubViewportContainer/SubViewport/World/Environment/Floors/TopFloor/Balcony" instance=ExtResource("4_hcjpf")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 9.5, 0)
-
-[node name="DoorMesh" parent="SubViewportContainer/SubViewport/World/Environment/Floors/TopFloor/Balcony/Door/DoorRoot/Skeleton3D" index="0"]
-layers = 2
+[node name="Door" parent="SubViewportContainer/SubViewport/World/Environment/Floors/TopFloor/Balcony" instance=ExtResource("4_se1s3")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 9.499996, 0)
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="SubViewportContainer/SubViewport/World/Environment"]
 environment = SubResource("Environment_hcjpf")
@@ -4474,7 +4625,7 @@ layout_mode = 1
 anchors_preset = -1
 anchor_right = 0.21700001
 offset_top = -256.0
-offset_right = 1247.3824
+offset_right = 1247.3834
 offset_bottom = -57.0
 scale = Vector2(0.5, 0.5)
 text = "SONIC"
@@ -4555,7 +4706,7 @@ anchor_left = 0.775
 anchor_right = 0.77500004
 offset_left = -400.00012
 offset_top = -136.0
-offset_right = 1264.0023
+offset_right = 1264.0018
 offset_bottom = 63.0
 scale = Vector2(0.5, 0.5)
 text = "SHADOW"
@@ -5187,6 +5338,10 @@ offset_bottom = 320.0
 grow_horizontal = 1
 grow_vertical = 1
 
+[node name="RoundStart" type="AudioStreamPlayer" parent="MinigameStartInterface"]
+stream = ExtResource("32_31nme")
+bus = &"SFX"
+
 [node name="AnimationPlayer" type="AnimationPlayer" parent="MinigameStartInterface"]
 libraries = {
 &"": SubResource("AnimationLibrary_qmbpp")
@@ -5220,6 +5375,34 @@ layout_mode = 1
 allow_canceling = false
 draw_characters = true
 
+[node name="SFX" type="Node" parent="."]
+script = ExtResource("31_g4ix4")
+
+[node name="Appear" type="AudioStreamPlayer" parent="SFX"]
+stream = ExtResource("32_osuyg")
+bus = &"SFX"
+
+[node name="FallShatter" type="AudioStreamPlayer" parent="SFX"]
+stream = ExtResource("32_ivv24")
+bus = &"SFX"
+
+[node name="FallImpact" type="AudioStreamPlayer" parent="SFX"]
+stream = ExtResource("33_14uyf")
+bus = &"SFX"
+
+[node name="Applause" type="AudioStreamPlayer" parent="SFX"]
+stream = ExtResource("34_hjro3")
+bus = &"SFX"
+
+[node name="Fireworks" type="AudioStreamPlayer" parent="SFX"]
+stream = ExtResource("35_wyxy4")
+max_polyphony = 5
+bus = &"SFX"
+
+[node name="Champion" type="AudioStreamPlayer" parent="SFX"]
+stream = ExtResource("36_wyxy4")
+bus = &"SFX"
+
 [node name="BGM" type="AudioStreamPlayer" parent="."]
 bus = &"BGM"
 script = ExtResource("30_dl8nm")
@@ -5227,16 +5410,9 @@ bgmResource = ExtResource("32_se1s3")
 
 [editable path="SubViewportContainer/SubViewport/World/Environment/Map"]
 [editable path="SubViewportContainer/SubViewport/World/Environment/Floors/FirstFloor/BalconyLL/Balcony"]
-[editable path="SubViewportContainer/SubViewport/World/Environment/Floors/FirstFloor/BalconyLL/Door"]
 [editable path="SubViewportContainer/SubViewport/World/Environment/Floors/FirstFloor/BalconyLR/Balcony"]
-[editable path="SubViewportContainer/SubViewport/World/Environment/Floors/FirstFloor/BalconyLR/Door"]
 [editable path="SubViewportContainer/SubViewport/World/Environment/Floors/FirstFloor/BalconyRL/Balcony"]
-[editable path="SubViewportContainer/SubViewport/World/Environment/Floors/FirstFloor/BalconyRL/Door"]
 [editable path="SubViewportContainer/SubViewport/World/Environment/Floors/FirstFloor/BalconyRR/Balcony"]
-[editable path="SubViewportContainer/SubViewport/World/Environment/Floors/FirstFloor/BalconyRR/Door"]
-[editable path="SubViewportContainer/SubViewport/World/Environment/Floors/SecondFloor/BalconyL/Door"]
-[editable path="SubViewportContainer/SubViewport/World/Environment/Floors/SecondFloor/BalconyR/Door"]
-[editable path="SubViewportContainer/SubViewport/World/Environment/Floors/TopFloor/Balcony/Door"]
 [editable path="SubViewportContainer/SubViewport/World/IngameOmochao/Omochao"]
 [editable path="SubViewportContainer/SubViewport/World/IngameOmochao/Omochao/Omochao"]
 [editable path="SubViewportContainer/SubViewport/World/IngameOmochao/Omochao/Book"]
