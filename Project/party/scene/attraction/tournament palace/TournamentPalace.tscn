@@ -1,4 +1,4 @@
-[gd_scene load_steps=76 format=3 uid="uid://bm6fo8bvadvpb"]
+[gd_scene load_steps=78 format=3 uid="uid://bm6fo8bvadvpb"]
 
 [ext_resource type="Script" uid="uid://ckdfwmi1cjlxd" path="res://party/scene/attraction/tournament palace/script/tournament_palace.gd" id="1_aybhk"]
 [ext_resource type="PackedScene" uid="uid://cco4sa2j8ev1r" path="res://party/scene/attraction/tournament palace/model/Map.glb" id="1_irl16"]
@@ -29,6 +29,8 @@
 [ext_resource type="LabelSettings" uid="uid://bxwdcpuvt0t1i" path="res://party/font/attraction/TournamentPalaceCongratulations.tres" id="24_dcr4k"]
 [ext_resource type="PackedScene" uid="uid://kf178vkqhx10" path="res://party/scene/attraction/base/SettingsMenu.tscn" id="27_jp4my"]
 [ext_resource type="PackedScene" uid="uid://bhhpkdlcw5siw" path="res://party/scene/attraction/base/SettingOption.tscn" id="28_psyyl"]
+[ext_resource type="Script" uid="uid://cj76gvi7tbku6" path="res://sound/script/BGMPlayer.cs" id="30_dl8nm"]
+[ext_resource type="Resource" uid="uid://cmi7vv7bocpqn" path="res://party/resource/bgm/Attraction.tres" id="32_se1s3"]
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_2uwrk"]
 
@@ -3857,7 +3859,7 @@ _data = {
 &"start-win": SubResource("Animation_dl8nm")
 }
 
-[node name="TournamentPalace" type="Control" node_paths=PackedStringArray("rule_positions", "entry_positions", "balcony_parents", "player_labels", "round_label", "placement_label", "winner_label", "minigame_label", "score_counter_p1", "score_counter_p2", "setting_menu", "interface_animator", "sub_viewport", "minigame_book_animator", "attraction_animator", "description", "omochao", "omochao_minigame_position")]
+[node name="TournamentPalace" type="Control" node_paths=PackedStringArray("rule_positions", "entry_positions", "balcony_parents", "player_labels", "round_label", "placement_label", "winner_label", "minigame_label", "score_counter_p1", "score_counter_p2", "setting_menu", "bgm", "interface_animator", "sub_viewport", "minigame_book_animator", "attraction_animator", "description", "omochao", "omochao_minigame_position")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -3876,6 +3878,7 @@ minigame_label = NodePath("MinigameStartInterface/MinigameName")
 score_counter_p1 = NodePath("MinigameStartInterface/WinCounterControllerP1")
 score_counter_p2 = NodePath("MinigameStartInterface/WinCounterControllerP2")
 setting_menu = NodePath("SettingsMenu")
+bgm = NodePath("BGM")
 interface_animator = NodePath("MinigameStartInterface/AnimationPlayer")
 sub_viewport = NodePath("SubViewportContainer/SubViewport")
 minigame_book_animator = NodePath("SubViewportContainer/SubViewport/World/IngameOmochao/Omochao/Book/BookAnimationPlayer")
@@ -5216,6 +5219,11 @@ layout_mode = 2
 layout_mode = 1
 allow_canceling = false
 draw_characters = true
+
+[node name="BGM" type="AudioStreamPlayer" parent="."]
+bus = &"BGM"
+script = ExtResource("30_dl8nm")
+bgmResource = ExtResource("32_se1s3")
 
 [editable path="SubViewportContainer/SubViewport/World/Environment/Map"]
 [editable path="SubViewportContainer/SubViewport/World/Environment/Floors/FirstFloor/BalconyLL/Balcony"]

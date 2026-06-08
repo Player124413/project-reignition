@@ -66,7 +66,6 @@ public partial class BGMPlayer : AudioStreamPlayer
 
 	private AudioStream GetAudioStream()
 	{
-
 		if (bgmResource.StreamPath.StartsWith("uid://"))
 			return ResourceLoader.Load<AudioStream>(bgmResource.StreamPath);
 
@@ -111,6 +110,8 @@ public partial class BGMPlayer : AudioStreamPlayer
 		if (bgmResource == null)
 			return;
 
+		VolumeLinear = 1f;
+		isFadingBgm = false;
 		Play(bgmResource.StartPosition);
 	}
 

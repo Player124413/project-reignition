@@ -2,6 +2,7 @@ class_name Attraction extends Control
 
 static var instance : Attraction
 
+@export var bgm : AudioStreamPlayer
 @export var interface_animator : AnimationPlayer
 ## Subviewport to separate attraction world from minigame worlds.
 ## Might need to apply transforms in blender to avoid broken orientations.
@@ -71,6 +72,7 @@ func request_attraction_start() -> void:
 
 @rpc("any_peer", "call_local", "reliable")
 func start_attraction(tick : float) -> void:
+	bgm.Play()
 	await get_tree().create_timer(NetworkTimeSynchronizer.get_time() - tick).timeout
 	attraction_animator.play("start")
 	on_attraction_started()
@@ -95,9 +97,7 @@ func start_omochao_minigame_throw() -> void:
 ## Queues a random minigame.
 func request_queue_minigame() -> void:
 	if NetworkManager.is_hosting_game:
-		# TODO use actual random index
-		# Actual random game: randi_range(0, PartyManager.unlocked_minigame_list.size() - 1))
-		rpc("queue_minigame", 7)
+		rpc("queue_minigame", randi_range(0, PartyManager.unlocked_minigame_list.size() - 1))
 
 @rpc("any_peer", "call_local", "reliable")
 func queue_minigame(index : int) -> void:
@@ -135,10 +135,12 @@ func return_to_attraction_menu() -> void:
 		NetworkManager.rpc("unload_scene", scene_file_path, NetworkManager.TRANSITION_TYPE_ENUM.ATTRACTION_SELECTOR)
 
 func hide_attraction() -> void:
+	bgm.QueueBgmFade()
 	visible = false
 	process_mode = Node.PROCESS_MODE_DISABLED
 
 func show_attraction() -> void:
+	bgm.Play()
 	visible = true
 	process_mode = Node.PROCESS_MODE_INHERIT
 	omochao.visible = false
