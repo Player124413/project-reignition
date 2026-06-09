@@ -122,8 +122,18 @@ namespace Project.Gameplay
 		/// <summary> Is the pathfollower ahead of the reference point? </summary>
 		public bool IsAheadOfPoint(Vector3 pos)
 		{
-			if (Progress > GetProgress(pos))
+			float posProgress = GetProgress(pos);
+			if (Progress > posProgress)
+			{
+				if (ActivePath.Curve.Closed) // Handle looping paths
+				{
+					float totalLength = ActivePath.Curve.GetBakedLength();
+					if (Mathf.Abs(Progress - posProgress) > totalLength * 0.8f)
+						return Progress - totalLength > posProgress;
+				}
+
 				return true;
+			}
 
 			// Fallback -- Check the previous position
 			float comparisionPoint = Progress - progressDelta + progressDelta;

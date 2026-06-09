@@ -66,6 +66,16 @@ public partial class DarkspineSpinState : PlayerState
 
 	protected override void ProcessGravity()
 	{
+		if (Player.IsOnGround)
+			return;
+
+		if (Player.Skills.IsSpeedBreakActive)
+		{
+			// Slight gravity to prevent breaking stages
+			Player.VerticalSpeed = Mathf.MoveToward(Player.VerticalSpeed, Runtime.MaxGravity, Runtime.Gravity * 0.5f * PhysicsManager.physicsDelta);
+			return;
+		}
+
 		Player.VerticalSpeed = Mathf.MoveToward(Player.VerticalSpeed, 0, SpeedLoss * PhysicsManager.physicsDelta);
 		if (Player.VerticalSpeed > 0f) // Kill upward speed faster
 			Player.VerticalSpeed *= 0.5f;
@@ -103,5 +113,4 @@ public partial class DarkspineSpinState : PlayerState
 
 		return false;
 	}
-
 }

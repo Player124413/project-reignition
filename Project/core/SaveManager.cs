@@ -1118,7 +1118,7 @@ public partial class SaveManager : Node
 			if (isLocked)
 				return maxSoulPower;
 
-			maxSoulPower += Mathf.FloorToInt(CalculateSoulGaugeLevelRatio() * 5f) * 20; // Soul Gauge size increases by 20 every 5 levels, so it caps at 300
+			maxSoulPower += Mathf.FloorToInt(CalculateSoulGaugeLevelRatio() * 5f) * 40; // Soul Gauge size increases by 40 every 5 levels, so it caps at 300
 			return maxSoulPower;
 		}
 
@@ -1159,7 +1159,7 @@ public partial class SaveManager : Node
 		}
 
 		/// <summary> Checks if a world is unlocked. </summary>
-		public bool IsWorldUnlocked(WorldEnum world) => worldsUnlocked.Contains(world);
+		public bool IsWorldUnlocked(WorldEnum world) => worldsUnlocked.Contains(world) || world == WorldEnum.Mods;
 		/// <summary> Checks if a world ring was obtained. </summary>
 		public bool IsWorldRingObtained(WorldEnum world) => worldRingsCollected.Contains(world);
 		public void UnlockWorld(WorldEnum world)

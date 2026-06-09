@@ -210,7 +210,7 @@ public partial class FlowerMajin : Enemy
 		switch (currentState)
 		{
 			case State.Passive:
-				if (!Mathf.IsZeroApprox(passiveLength) && stateTimer >= passiveLength)
+				if (!disableAttacking && !Mathf.IsZeroApprox(passiveLength) && stateTimer >= passiveLength)
 					StartAggressiveState();
 				break;
 			case State.PreAttack:

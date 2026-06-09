@@ -129,7 +129,9 @@ public partial class StageSettings : Node3D
 
 			if (bgmID.GetExtension() != "wav" && bgmID.GetExtension() != "ogg" && bgmID.GetExtension() != "mp3")
 			{
-				currentBGM = (BGMResource)ResourceLoader.Load(ResourceUid.GetIdPath(ResourceUid.TextToId(bgmID)));
+				string path = ResourceUid.GetIdPath(ResourceUid.TextToId(bgmID));
+				path = path.Replace(".remap", string.Empty);
+				currentBGM = (BGMResource)ResourceLoader.Load(path);
 			}
 			else
 			{
