@@ -91,7 +91,7 @@ public partial class Erazor : Node3D
 	/// <summary> The distance at which the Duel Windup comes out. </summary>
 	private readonly float DuelWindupDistance = 25f;
 	/// <summary> How long before Erazor lunges towards Sonic in the duel. Retail is 6 seconds. </summary>
-	private readonly float DuelAttackStartup = 5f;
+	private readonly float DuelAttackStartup = 6f;
 
 	/// ANIMATION PARAMETERS
 	private readonly string IntroCutsceneID = "np_boss_intro";
