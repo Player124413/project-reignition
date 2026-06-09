@@ -1118,7 +1118,7 @@ public partial class SaveManager : Node
 			if (isLocked)
 				return maxSoulPower;
 
-			maxSoulPower += Mathf.FloorToInt(CalculateSoulGaugeLevelRatio() * 5f) * 20; // Soul Gauge size increases by 20 every 5 levels, so it caps at 300
+			maxSoulPower += Mathf.FloorToInt(CalculateSoulGaugeLevelRatio() * 5f) * 40; // Soul Gauge size increases by 40 every 5 levels, so it caps at 300
 			return maxSoulPower;
 		}
 
