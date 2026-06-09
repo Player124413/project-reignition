@@ -18,7 +18,6 @@ func play_in_group() -> void:
 	if !is_zero_approx(lockout_time) && GroupSfxManager.instance.is_group_locked(group, lockout_time):
 		return
 	
-	print("Playing audio!")
 	GroupSfxManager.instance.register_player(self, group)
 	play()
 

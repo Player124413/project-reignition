@@ -1,0 +1,147 @@
+[gd_scene load_steps=19 format=3 uid="uid://b2xlt3lxdng81"]
+
+[ext_resource type="Material" uid="uid://w8fgneuks8lo" path="res://party/scene/attraction/base/material/Firework Spark.tres" id="1_shoqu"]
+[ext_resource type="Script" uid="uid://c65ffkknyq6gr" path="res://addons/custom_nodes/script/GroupGpuParticles3D.cs" id="2_fsdb3"]
+[ext_resource type="Material" uid="uid://cv4owp1qatj3x" path="res://party/scene/attraction/base/material/Firework Dust.tres" id="3_ch7f7"]
+[ext_resource type="Material" uid="uid://ph7gwhlyucdx" path="res://effect/particle/material/environment/Common Dust Add.tres" id="4_x3oo5"]
+[ext_resource type="Material" uid="uid://bmqg22jfddbnu" path="res://party/scene/attraction/base/material/Dust Heavy.tres" id="5_2xurx"]
+
+[sub_resource type="Curve" id="Curve_md5l1"]
+_data = [Vector2(0, 0), 0.0, 22.800007, 0, 0, Vector2(0.1, 1), 0.0, 0.0, 0, 0, Vector2(0.7, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 4
+
+[sub_resource type="CurveTexture" id="CurveTexture_f6ahb"]
+width = 64
+curve = SubResource("Curve_md5l1")
+
+[sub_resource type="Gradient" id="Gradient_j7jtr"]
+offsets = PackedFloat32Array(0, 0.19221412, 1)
+colors = PackedColorArray(1, 1, 1, 1, 3.2944162, 3.2944162, 3.2944162, 1, 1, 1, 1, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_md5l1"]
+gradient = SubResource("Gradient_j7jtr")
+width = 64
+use_hdr = true
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_8lsxw"]
+lifetime_randomness = 0.4
+spread = 180.0
+initial_velocity_min = 60.0
+initial_velocity_max = 80.0
+gravity = Vector3(0, 0, 0)
+damping_min = 50.000004
+damping_max = 50.000004
+scale_min = 3.0
+scale_max = 8.0
+color_ramp = SubResource("GradientTexture1D_md5l1")
+alpha_curve = SubResource("CurveTexture_f6ahb")
+hue_variation_min = -0.13000003
+hue_variation_max = 0.12999998
+
+[sub_resource type="QuadMesh" id="QuadMesh_j7jtr"]
+
+[sub_resource type="Gradient" id="Gradient_f6ahb"]
+interpolation_mode = 1
+offsets = PackedFloat32Array(0, 0.15085158, 0.34306568, 0.513382, 0.6958637, 0.8564477)
+colors = PackedColorArray(1, 1, 0, 1, 0.49019608, 0, 1, 1, 1, 0, 1, 1, 1, 0, 0, 1, 1, 0.49019608, 0, 1, 1, 1, 1, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_6jeh3"]
+gradient = SubResource("Gradient_f6ahb")
+width = 64
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_6jeh3"]
+lifetime_randomness = 0.4
+spread = 180.0
+initial_velocity_min = 40.0
+initial_velocity_max = 50.0
+gravity = Vector3(0, 0, 0)
+scale_max = 3.0
+color_initial_ramp = SubResource("GradientTexture1D_6jeh3")
+alpha_curve = SubResource("CurveTexture_f6ahb")
+
+[sub_resource type="Curve" id="Curve_f6ahb"]
+_data = [Vector2(0, 0.2), 0.0, 2.29775, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_6jeh3"]
+width = 64
+curve = SubResource("Curve_f6ahb")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_so6om"]
+lifetime_randomness = 0.4
+emission_shape = 2
+emission_sphere_radius = 4.0
+angle_min = 1.0728836e-05
+angle_max = 360.00003
+spread = 180.0
+initial_velocity_min = 20.0
+initial_velocity_max = 40.0
+gravity = Vector3(0, 0, 0)
+scale_min = 10.0
+scale_max = 20.0
+scale_curve = SubResource("CurveTexture_6jeh3")
+alpha_curve = SubResource("CurveTexture_f6ahb")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_obqdp"]
+lifetime_randomness = 0.4
+angle_min = 1.0728836e-05
+angle_max = 360.00003
+spread = 180.0
+initial_velocity_min = 20.0
+initial_velocity_max = 40.0
+gravity = Vector3(0, 0, 0)
+scale_min = 20.0
+scale_max = 30.0
+scale_curve = SubResource("CurveTexture_6jeh3")
+alpha_curve = SubResource("CurveTexture_f6ahb")
+
+[node name="Firework" type="GPUParticles3D" node_paths=PackedStringArray("subSystems")]
+material_override = ExtResource("1_shoqu")
+emitting = false
+amount = 32
+one_shot = true
+explosiveness = 0.8
+fixed_fps = 0
+fract_delta = false
+visibility_aabb = AABB(-20, -20, -20, 40, 40, 40)
+process_material = SubResource("ParticleProcessMaterial_8lsxw")
+draw_pass_1 = SubResource("QuadMesh_j7jtr")
+script = ExtResource("2_fsdb3")
+subSystems = [NodePath("Dust"), NodePath("CommonDust"), NodePath("DustHeavy")]
+
+[node name="Dust" type="GPUParticles3D" parent="."]
+material_override = ExtResource("3_ch7f7")
+emitting = false
+amount = 32
+one_shot = true
+explosiveness = 0.8
+fixed_fps = 0
+fract_delta = false
+visibility_aabb = AABB(-20, -20, -20, 40, 40, 40)
+process_material = SubResource("ParticleProcessMaterial_6jeh3")
+draw_pass_1 = SubResource("QuadMesh_j7jtr")
+
+[node name="CommonDust" type="GPUParticles3D" parent="."]
+material_override = ExtResource("4_x3oo5")
+emitting = false
+amount = 16
+lifetime = 0.6
+one_shot = true
+explosiveness = 0.8
+fixed_fps = 0
+fract_delta = false
+visibility_aabb = AABB(-20, -20, -20, 40, 40, 40)
+process_material = SubResource("ParticleProcessMaterial_so6om")
+draw_pass_1 = SubResource("QuadMesh_j7jtr")
+
+[node name="DustHeavy" type="GPUParticles3D" parent="."]
+material_override = ExtResource("5_2xurx")
+emitting = false
+lifetime = 0.2
+one_shot = true
+explosiveness = 0.8
+fixed_fps = 0
+fract_delta = false
+visibility_aabb = AABB(-20, -20, -20, 40, 40, 40)
+process_material = SubResource("ParticleProcessMaterial_obqdp")
+draw_pass_1 = SubResource("QuadMesh_j7jtr")

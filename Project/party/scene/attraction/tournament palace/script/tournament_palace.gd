@@ -15,6 +15,7 @@ extends Attraction
 
 @export var fall_shatter_sfx : AudioStreamPlayer
 @export var fall_impact_sfx : AudioStreamPlayer
+@export var daze_vfx : GPUParticles3D
 
 ## Tracks which balcony each player is at.
 var balcony_indexes : Array[int]
@@ -390,7 +391,10 @@ func advance_player(winner : int, loser : int) -> void:
 		fall_impact_sfx.play()
 		await get_tree().create_timer(0.5, false, true).timeout
 		attraction_animator.play_with_capture("fallen%s" % loser_balcony)
+		daze_vfx.global_position = _players[loser].global_position + Vector3.UP * 5
+		daze_vfx.emitting = true
 		await get_tree().create_timer(2, false, true).timeout
+		daze_vfx.emitting = false
 		finalize_bracket_round()
 		return
 	
@@ -420,7 +424,7 @@ func start_results() -> void:
 	for i in _players.size():
 		reset_player_animations(i)
 	
-	attraction_animator.speed_scale = 2.0
+	attraction_animator.speed_scale = 1.5
 	for i in final_results.size():
 		var balcony_index : int = balcony_indexes.find(final_results[i])
 		placement_label.set_synced_text("party_placement%s" % (final_results.size() - i))
@@ -429,6 +433,7 @@ func start_results() -> void:
 		await get_tree().create_timer(0.5, false, true).timeout
 		if i == final_results.size() - 1:
 			interface_animator.play("result-win")
+			bgm.stop()
 			_players[final_results[i]].character_animator.play_animation("win", true)
 			_players[final_results[i]].character_animator.play_voice("win2")
 		else:

@@ -8,7 +8,7 @@ static var instance : Attraction
 ## Might need to apply transforms in blender to avoid broken orientations.
 @export var sub_viewport : SubViewport
 @export var minigame_book_root : Node3D
-@export var minigame_book_animator : AnimationPlayer
+@export var omochao_animator : AnimationPlayer
 @export var attraction_animator : AnimationPlayer
 @export var description : DescriptionBox
 @export var omochao : CharacterAnimator
@@ -82,6 +82,9 @@ func start_attraction(tick : float) -> void:
 func on_attraction_started() -> void:
 	pass
 
+func show_omochao_fx() -> void:
+	omochao_animator.play("show")
+
 @export var omochao_minigame_position : Node3D
 func start_omochao_minigame_throw() -> void:
 	omochao.reparent(omochao_minigame_position)
@@ -92,22 +95,21 @@ func start_omochao_minigame_throw() -> void:
 	tween.tween_property(omochao, "position", Vector3.ZERO, 1.5).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_CUBIC)
 	omochao.play_animation("backflip")
 	omochao.queue_minigame_animation("hover")
-	minigame_book_animator.play("RESET")
-	minigame_book_animator.advance(0.0)
+	omochao_animator.play("RESET")
+	omochao_animator.advance(0.0)
 	tween.tween_callback(Callable(self, "open_minigame_book"))
 	minigame_book_root.global_position = omochao.global_position
 	minigame_book_root.rotation = Vector3.RIGHT * PI * -0.5 # Face upwards
 	minigame_book_root.scale = Vector3.ZERO
 	var target_minigame_book_position : Vector3 = camera.global_position
-	target_minigame_book_position -= camera.basis.z * 10
-	target_minigame_book_position.y += 0.5
+	target_minigame_book_position -= camera.basis.z * 20
 	tween.set_parallel()
 	tween.tween_property(minigame_book_root, "global_position", target_minigame_book_position, 1).set_trans(Tween.TRANS_CUBIC)
 	tween.tween_property(minigame_book_root, "scale", Vector3.ONE, 1).set_trans(Tween.TRANS_CUBIC)
 	tween.tween_property(minigame_book_root, "rotation", Vector3.ZERO, 1).set_trans(Tween.TRANS_CUBIC)
 
 func open_minigame_book() -> void:
-	minigame_book_animator.play("open")
+	omochao_animator.play("open")
 	omochao.play_voice("minigame start")
 
 ## Queues a random minigame.
@@ -170,7 +172,7 @@ func show_attraction() -> void:
 	visible = true
 	process_mode = Node.PROCESS_MODE_INHERIT
 	omochao.visible = false
-	minigame_book_animator.play("RESET")
-	minigame_book_animator.advance(0.0)
+	omochao_animator.play("RESET")
+	omochao_animator.advance(0.0)
 	interface_animator.play("init")
 	interface_animator.advance(0.0)

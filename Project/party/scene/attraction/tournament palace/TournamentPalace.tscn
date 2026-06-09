@@ -1,14 +1,16 @@
-[gd_scene load_steps=86 format=3 uid="uid://bm6fo8bvadvpb"]
+[gd_scene load_steps=108 format=3 uid="uid://bm6fo8bvadvpb"]
 
 [ext_resource type="Script" uid="uid://ckdfwmi1cjlxd" path="res://party/scene/attraction/tournament palace/script/tournament_palace.gd" id="1_aybhk"]
 [ext_resource type="PackedScene" uid="uid://cco4sa2j8ev1r" path="res://party/scene/attraction/tournament palace/model/Map.glb" id="1_irl16"]
 [ext_resource type="PackedScene" uid="uid://bl5yb5uhs6url" path="res://party/scene/attraction/tournament palace/model/Balcony.glb" id="3_c5w31"]
 [ext_resource type="PackedScene" uid="uid://cdmjxbvekwhmf" path="res://party/scene/attraction/tournament palace/Door.tscn" id="4_se1s3"]
 [ext_resource type="PackedScene" uid="uid://c3j3nqtlwq81p" path="res://party/scene/attraction/base/AttractionPartyCharacter.tscn" id="5_2uwrk"]
+[ext_resource type="PackedScene" uid="uid://gpujyr046r8q" path="res://party/scene/attraction/base/AttractionOmochao.tscn" id="6_g4ix4"]
 [ext_resource type="PackedScene" uid="uid://bqaafoua436c8" path="res://interface/menu/DescriptionParty.tscn" id="6_mj2ip"]
-[ext_resource type="PackedScene" uid="uid://cho38gsk705f8" path="res://party/resource/character/scene/Omochao.tscn" id="7_3bik3"]
 [ext_resource type="Texture2D" uid="uid://d1xgkig60sglx" path="res://party/scene/attraction/base/texture/round banner.png" id="7_vn6d0"]
+[ext_resource type="Material" uid="uid://c04iw0we7ha16" path="res://party/scene/attraction/base/material/Confetti.tres" id="8_2hcku"]
 [ext_resource type="LabelSettings" uid="uid://cw722xgojxoo" path="res://party/font/attraction/TournamentPalaceRoundOutline.tres" id="8_07ckt"]
+[ext_resource type="Script" uid="uid://c65ffkknyq6gr" path="res://addons/custom_nodes/script/GroupGpuParticles3D.cs" id="8_8lsxw"]
 [ext_resource type="Script" uid="uid://qvplfr0cibu5" path="res://party/script/interface/synced_label.gd" id="9_j6s7f"]
 [ext_resource type="LabelSettings" uid="uid://d887xwcdcdqu" path="res://party/font/attraction/TournamentPalaceRoundFill.tres" id="10_07ckt"]
 [ext_resource type="LabelSettings" uid="uid://dukge6ihruibt" path="res://party/font/minigame/MinigameResultsFill.tres" id="10_m56w7"]
@@ -33,12 +35,14 @@
 [ext_resource type="Script" uid="uid://cmtsm05dcuuff" path="res://party/scene/minigame/00 base/script/group_sfx_manager.gd" id="31_g4ix4"]
 [ext_resource type="AudioStream" uid="uid://cssm7wjycsy3a" path="res://party/sound/sfx/system/round start.wav" id="32_31nme"]
 [ext_resource type="AudioStream" uid="uid://c0cwuvnd1tpug" path="res://party/sound/sfx/tournament/fall shatter.wav" id="32_ivv24"]
-[ext_resource type="AudioStream" uid="uid://dkmjvhpdq1xg" path="res://party/sound/sfx/system/omochao entrance.wav" id="32_osuyg"]
 [ext_resource type="Resource" uid="uid://cmi7vv7bocpqn" path="res://party/resource/bgm/Attraction.tres" id="32_se1s3"]
 [ext_resource type="AudioStream" uid="uid://ctb5d8n7b1lma" path="res://party/sound/sfx/tournament/fall impact.wav" id="33_14uyf"]
 [ext_resource type="AudioStream" uid="uid://bxs5e4yiau0ol" path="res://party/sound/sfx/system/attraction applause.wav" id="34_hjro3"]
 [ext_resource type="AudioStream" uid="uid://88n4k7dvms5q" path="res://party/sound/sfx/system/attraction fireworks.wav" id="35_wyxy4"]
 [ext_resource type="AudioStream" uid="uid://bmwgtgetkeo88" path="res://party/sound/jingle/win.ogg" id="36_wyxy4"]
+[ext_resource type="Material" uid="uid://cyw2v0uxvrf7r" path="res://party/scene/attraction/base/material/Daze.tres" id="39_g4ix4"]
+[ext_resource type="PackedScene" uid="uid://b2xlt3lxdng81" path="res://party/scene/attraction/tournament palace/Firework.tscn" id="42_j7jtr"]
+[ext_resource type="Material" uid="uid://cv4owp1qatj3x" path="res://party/scene/attraction/base/material/Firework Dust.tres" id="43_md5l1"]
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_2uwrk"]
 
@@ -57,6 +61,97 @@ tonemap_mode = 1
 tonemap_exposure = 1.8
 glow_enabled = true
 adjustment_enabled = true
+
+[sub_resource type="Curve" id="Curve_8lsxw"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.14416476, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_j7jtr"]
+width = 64
+texture_mode = 1
+curve = SubResource("Curve_8lsxw")
+
+[sub_resource type="Curve" id="Curve_2hcku"]
+_data = [Vector2(0, 0), 0.0, 12.951669, 0, 0, Vector2(0.2, 1), 0.0, 0.0, 0, 0, Vector2(0.99999, 0.5), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_8lsxw"]
+width = 64
+curve = SubResource("Curve_2hcku")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_2hcku"]
+emission_shape = 3
+emission_box_extents = Vector3(3, 0, 0)
+angle_min = 1.0728836e-05
+angle_max = 360.00003
+gravity = Vector3(0, 0, 0)
+scale_min = 2.0
+scale_max = 5.0
+scale_curve = SubResource("CurveTexture_8lsxw")
+alpha_curve = SubResource("CurveTexture_j7jtr")
+
+[sub_resource type="QuadMesh" id="QuadMesh_8lsxw"]
+
+[sub_resource type="Curve" id="Curve_md5l1"]
+_data = [Vector2(0, 0), 0.0, 22.800007, 0, 0, Vector2(0.1, 1), 0.0, 0.0, 0, 0, Vector2(0.7, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 4
+
+[sub_resource type="CurveTexture" id="CurveTexture_f6ahb"]
+width = 64
+curve = SubResource("Curve_md5l1")
+
+[sub_resource type="Gradient" id="Gradient_f6ahb"]
+interpolation_mode = 1
+offsets = PackedFloat32Array(0, 0.15085158, 0.34306568, 0.513382, 0.6958637, 0.8564477)
+colors = PackedColorArray(1, 1, 0, 1, 0.49019608, 0, 1, 1, 1, 0, 1, 1, 1, 0, 0, 1, 1, 0.49019608, 0, 1, 1, 1, 1, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_6jeh3"]
+gradient = SubResource("Gradient_f6ahb")
+width = 64
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_md5l1"]
+lifetime_randomness = 0.4
+direction = Vector3(0, 1, 0)
+spread = 30.0
+initial_velocity_min = 80.0
+initial_velocity_max = 150.0
+gravity = Vector3(0, 0, 0)
+scale_max = 3.0
+color_initial_ramp = SubResource("GradientTexture1D_6jeh3")
+alpha_curve = SubResource("CurveTexture_f6ahb")
+
+[sub_resource type="QuadMesh" id="QuadMesh_j7jtr"]
+
+[sub_resource type="Curve" id="Curve_j7jtr"]
+_data = [Vector2(0, 0), 0.0, 31.04731, 0, 0, Vector2(0.1, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_u7wql"]
+width = 64
+texture_mode = 1
+curve = SubResource("Curve_j7jtr")
+
+[sub_resource type="Gradient" id="Gradient_md5l1"]
+interpolation_mode = 1
+offsets = PackedFloat32Array(0, 0.25790754, 0.5377129, 0.7931873)
+colors = PackedColorArray(1, 0, 0, 1, 0, 1, 0, 1, 0, 0, 1, 1, 1, 1, 0, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_u7wql"]
+gradient = SubResource("Gradient_md5l1")
+width = 64
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_f6ahb"]
+lifetime_randomness = 0.4
+direction = Vector3(0, 1, 0)
+initial_velocity_min = 50.0
+initial_velocity_max = 100.0
+angular_velocity_min = -1.6093254e-05
+angular_velocity_max = 719.99994
+gravity = Vector3(0, -80, 0)
+color_initial_ramp = SubResource("GradientTexture1D_u7wql")
+alpha_curve = SubResource("CurveTexture_u7wql")
+
+[sub_resource type="QuadMesh" id="QuadMesh_6jeh3"]
 
 [sub_resource type="Animation" id="Animation_hcjpf"]
 length = 0.001
@@ -119,30 +214,6 @@ tracks/4/keys = {
 "transitions": PackedFloat32Array(1),
 "update": 0,
 "values": [35.0]
-}
-tracks/5/type = "value"
-tracks/5/imported = false
-tracks/5/enabled = true
-tracks/5/path = NodePath("SubViewportContainer/SubViewport/World/IngameOmochao/Omochao:position")
-tracks/5/interp = 1
-tracks/5/loop_wrap = true
-tracks/5/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [Vector3(0, 12, 12)]
-}
-tracks/6/type = "value"
-tracks/6/imported = false
-tracks/6/enabled = true
-tracks/6/path = NodePath("SubViewportContainer/SubViewport/World/IngameOmochao/Omochao:visible")
-tracks/6/interp = 1
-tracks/6/loop_wrap = true
-tracks/6/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [false]
 }
 
 [sub_resource type="Animation" id="Animation_dcr4k"]
@@ -1680,9 +1751,12 @@ tracks/5/path = NodePath(".")
 tracks/5/interp = 1
 tracks/5/loop_wrap = true
 tracks/5/keys = {
-"times": PackedFloat32Array(5.6),
-"transitions": PackedFloat32Array(1),
+"times": PackedFloat32Array(4, 5.6),
+"transitions": PackedFloat32Array(1, 1),
 "values": [{
+"args": [],
+"method": &"show_omochao_fx"
+}, {
 "args": [],
 "method": &"start_omochao"
 }]
@@ -1736,20 +1810,6 @@ tracks/9/keys = {
 }, {
 "args": [&"select", false, 0.1999999999970896],
 "method": &"play_animation"
-}]
-}
-tracks/10/type = "method"
-tracks/10/imported = false
-tracks/10/enabled = true
-tracks/10/path = NodePath("SFX/Appear")
-tracks/10/interp = 1
-tracks/10/loop_wrap = true
-tracks/10/keys = {
-"times": PackedFloat32Array(4),
-"transitions": PackedFloat32Array(1),
-"values": [{
-"args": [0.0],
-"method": &"play"
 }]
 }
 
@@ -2708,6 +2768,7 @@ tracks/12/keys = {
 [sub_resource type="Animation" id="Animation_obqdp"]
 resource_name = "result-win"
 length = 6.0
+step = 0.1
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
@@ -2935,9 +2996,12 @@ tracks/18/path = NodePath("../SFX/Fireworks")
 tracks/18/interp = 1
 tracks/18/loop_wrap = true
 tracks/18/keys = {
-"times": PackedFloat32Array(3.5, 4.5, 5, 5.5),
-"transitions": PackedFloat32Array(1, 1, 1, 1),
+"times": PackedFloat32Array(2.5, 3.3, 3.6, 4.3, 5.3),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
 "values": [{
+"args": [0.0],
+"method": &"play"
+}, {
 "args": [0.0],
 "method": &"play"
 }, {
@@ -2980,6 +3044,132 @@ tracks/20/keys = {
 "values": [{
 "args": [0.0],
 "method": &"play"
+}]
+}
+tracks/21/type = "method"
+tracks/21/imported = false
+tracks/21/enabled = true
+tracks/21/path = NodePath("../SubViewportContainer/SubViewport/ChampionFX/Firework1")
+tracks/21/interp = 1
+tracks/21/loop_wrap = true
+tracks/21/keys = {
+"times": PackedFloat32Array(2.7),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"RestartGroup"
+}]
+}
+tracks/22/type = "method"
+tracks/22/imported = false
+tracks/22/enabled = true
+tracks/22/path = NodePath("../SubViewportContainer/SubViewport/ChampionFX/Firework2")
+tracks/22/interp = 1
+tracks/22/loop_wrap = true
+tracks/22/keys = {
+"times": PackedFloat32Array(3.5),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"RestartGroup"
+}]
+}
+tracks/23/type = "method"
+tracks/23/imported = false
+tracks/23/enabled = true
+tracks/23/path = NodePath("../SubViewportContainer/SubViewport/ChampionFX/Firework3")
+tracks/23/interp = 1
+tracks/23/loop_wrap = true
+tracks/23/keys = {
+"times": PackedFloat32Array(3.8),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"RestartGroup"
+}]
+}
+tracks/24/type = "method"
+tracks/24/imported = false
+tracks/24/enabled = true
+tracks/24/path = NodePath("../SubViewportContainer/SubViewport/ChampionFX/Firework4")
+tracks/24/interp = 1
+tracks/24/loop_wrap = true
+tracks/24/keys = {
+"times": PackedFloat32Array(4.5),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"RestartGroup"
+}]
+}
+tracks/25/type = "method"
+tracks/25/imported = false
+tracks/25/enabled = true
+tracks/25/path = NodePath("../SubViewportContainer/SubViewport/ChampionFX/Firework5")
+tracks/25/interp = 1
+tracks/25/loop_wrap = true
+tracks/25/keys = {
+"times": PackedFloat32Array(5.5),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"RestartGroup"
+}]
+}
+tracks/26/type = "method"
+tracks/26/imported = false
+tracks/26/enabled = true
+tracks/26/path = NodePath("../SubViewportContainer/SubViewport/ChampionFX/FireworkDust1")
+tracks/26/interp = 1
+tracks/26/loop_wrap = true
+tracks/26/keys = {
+"times": PackedFloat32Array(3.2),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [false],
+"method": &"restart"
+}]
+}
+tracks/27/type = "method"
+tracks/27/imported = false
+tracks/27/enabled = true
+tracks/27/path = NodePath("../SubViewportContainer/SubViewport/ChampionFX/FireworkDust2")
+tracks/27/interp = 1
+tracks/27/loop_wrap = true
+tracks/27/keys = {
+"times": PackedFloat32Array(3.8999999),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [false],
+"method": &"restart"
+}]
+}
+tracks/28/type = "method"
+tracks/28/imported = false
+tracks/28/enabled = true
+tracks/28/path = NodePath("../SubViewportContainer/SubViewport/ChampionFX/FireworkDust3")
+tracks/28/interp = 1
+tracks/28/loop_wrap = true
+tracks/28/keys = {
+"times": PackedFloat32Array(4.5999994),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [false],
+"method": &"restart"
+}]
+}
+tracks/29/type = "method"
+tracks/29/imported = false
+tracks/29/enabled = true
+tracks/29/path = NodePath("../SubViewportContainer/SubViewport/ChampionFX/Champion")
+tracks/29/interp = 1
+tracks/29/loop_wrap = true
+tracks/29/keys = {
+"times": PackedFloat32Array(0.1),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"RestartGroup"
 }]
 }
 
@@ -4027,7 +4217,7 @@ _data = {
 &"start-win": SubResource("Animation_dl8nm")
 }
 
-[node name="TournamentPalace" type="Control" node_paths=PackedStringArray("rule_positions", "entry_positions", "balcony_parents", "player_labels", "round_label", "placement_label", "winner_label", "minigame_label", "score_counter_p1", "score_counter_p2", "setting_menu", "fall_shatter_sfx", "fall_impact_sfx", "bgm", "interface_animator", "sub_viewport", "minigame_book_root", "minigame_book_animator", "attraction_animator", "description", "omochao", "camera", "omochao_minigame_position")]
+[node name="TournamentPalace" type="Control" node_paths=PackedStringArray("rule_positions", "entry_positions", "balcony_parents", "player_labels", "round_label", "placement_label", "winner_label", "minigame_label", "score_counter_p1", "score_counter_p2", "setting_menu", "fall_shatter_sfx", "fall_impact_sfx", "daze_vfx", "bgm", "interface_animator", "sub_viewport", "minigame_book_root", "omochao_animator", "attraction_animator", "description", "omochao", "camera", "omochao_minigame_position")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -4048,11 +4238,12 @@ score_counter_p2 = NodePath("MinigameStartInterface/WinCounterControllerP2")
 setting_menu = NodePath("SettingsMenu")
 fall_shatter_sfx = NodePath("SFX/FallShatter")
 fall_impact_sfx = NodePath("SFX/FallImpact")
+daze_vfx = NodePath("SubViewportContainer/SubViewport/World/Daze")
 bgm = NodePath("BGM")
 interface_animator = NodePath("MinigameStartInterface/AnimationPlayer")
 sub_viewport = NodePath("SubViewportContainer/SubViewport")
 minigame_book_root = NodePath("SubViewportContainer/SubViewport/World/IngameOmochao/Omochao/Book/BookRoot")
-minigame_book_animator = NodePath("SubViewportContainer/SubViewport/World/IngameOmochao/Omochao/Book/BookAnimationPlayer")
+omochao_animator = NodePath("SubViewportContainer/SubViewport/World/IngameOmochao/Omochao/AnimationPlayer")
 attraction_animator = NodePath("AnimationPlayer")
 description = NodePath("DescriptionParty")
 omochao = NodePath("SubViewportContainer/SubViewport/World/IngameOmochao/Omochao")
@@ -4458,14 +4649,27 @@ gizmo_extents = 5.0
 transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, 0, -110)
 gizmo_extents = 5.0
 
+[node name="Daze" type="GPUParticles3D" parent="SubViewportContainer/SubViewport/World"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 10, 0)
+layers = 32
+material_override = ExtResource("39_g4ix4")
+cast_shadow = 0
+emitting = false
+lifetime = 0.6
+fixed_fps = 0
+fract_delta = false
+local_coords = true
+process_material = SubResource("ParticleProcessMaterial_2hcku")
+draw_pass_1 = SubResource("QuadMesh_8lsxw")
+
 [node name="IngameOmochao" type="Node3D" parent="SubViewportContainer/SubViewport/World"]
 
 [node name="StartPosition" type="Marker3D" parent="SubViewportContainer/SubViewport/World/IngameOmochao"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 13, 12)
 gizmo_extents = 1.0
 
-[node name="Omochao" parent="SubViewportContainer/SubViewport/World/IngameOmochao" instance=ExtResource("7_3bik3")]
-transform = Transform3D(0.3, 0, 0, 0, 0.3, 0, 0, 0, 0.3, 0, 12, 12)
+[node name="Omochao" parent="SubViewportContainer/SubViewport/World/IngameOmochao" instance=ExtResource("6_g4ix4")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -5, 12)
 visible = false
 
 [node name="Camera" type="Node3D" parent="SubViewportContainer/SubViewport/World"]
@@ -4478,7 +4682,103 @@ current = true
 fov = 35.0
 
 [node name="OmochaoMinigamePosition" type="Marker3D" parent="SubViewportContainer/SubViewport/World/Camera/Camera"]
-transform = Transform3D(0.1, 0, 0, 0, 0.1, 0, 0, 0, 0.1, 0, 0, -15)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -3, -50)
+
+[node name="ChampionFX" type="Node3D" parent="SubViewportContainer/SubViewport"]
+
+[node name="FireworkDust1" type="GPUParticles3D" parent="SubViewportContainer/SubViewport/ChampionFX"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -33, 3, 46)
+material_override = ExtResource("43_md5l1")
+emitting = false
+amount = 64
+one_shot = true
+explosiveness = 0.8
+fixed_fps = 0
+fract_delta = false
+visibility_aabb = AABB(-20, -20, -20, 40, 40, 40)
+process_material = SubResource("ParticleProcessMaterial_md5l1")
+draw_pass_1 = SubResource("QuadMesh_j7jtr")
+
+[node name="FireworkDust2" type="GPUParticles3D" parent="SubViewportContainer/SubViewport/ChampionFX"]
+transform = Transform3D(0.9659258, 0.25881904, 0, -0.25881904, 0.9659258, 0, 0, 0, 1, -15, 3, 46)
+material_override = ExtResource("43_md5l1")
+emitting = false
+amount = 64
+one_shot = true
+explosiveness = 0.8
+fixed_fps = 0
+fract_delta = false
+visibility_aabb = AABB(-20, -20, -20, 40, 40, 40)
+process_material = SubResource("ParticleProcessMaterial_md5l1")
+draw_pass_1 = SubResource("QuadMesh_j7jtr")
+
+[node name="FireworkDust3" type="GPUParticles3D" parent="SubViewportContainer/SubViewport/ChampionFX"]
+transform = Transform3D(0.86602545, 0.50000006, 0, -0.50000006, 0.86602545, 0, 0, 0, 1, 0, 3, 46)
+material_override = ExtResource("43_md5l1")
+emitting = false
+amount = 64
+one_shot = true
+explosiveness = 0.8
+fixed_fps = 0
+fract_delta = false
+visibility_aabb = AABB(-20, -20, -20, 40, 40, 40)
+process_material = SubResource("ParticleProcessMaterial_md5l1")
+draw_pass_1 = SubResource("QuadMesh_j7jtr")
+
+[node name="Firework1" parent="SubViewportContainer/SubViewport/ChampionFX" instance=ExtResource("42_j7jtr")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -33, 127, 10)
+
+[node name="Firework2" parent="SubViewportContainer/SubViewport/ChampionFX" instance=ExtResource("42_j7jtr")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 37, 110, 10)
+
+[node name="Firework3" parent="SubViewportContainer/SubViewport/ChampionFX" instance=ExtResource("42_j7jtr")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 52, 127, 10)
+
+[node name="Firework4" parent="SubViewportContainer/SubViewport/ChampionFX" instance=ExtResource("42_j7jtr")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 152, 10)
+
+[node name="Firework5" parent="SubViewportContainer/SubViewport/ChampionFX" instance=ExtResource("42_j7jtr")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 60, 150, 10)
+
+[node name="Champion" type="GPUParticles3D" parent="SubViewportContainer/SubViewport/ChampionFX" node_paths=PackedStringArray("subSystems")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 50, 0)
+layers = 32
+script = ExtResource("8_8lsxw")
+subSystems = [NodePath("ConfettiL"), NodePath("ConfettiR")]
+
+[node name="ConfettiL" type="GPUParticles3D" parent="SubViewportContainer/SubViewport/ChampionFX/Champion"]
+transform = Transform3D(0.70710677, 0.70710677, 0, -0.70710677, 0.70710677, 0, 0, 0, 1, -25, 0, 0)
+layers = 32
+material_override = ExtResource("8_2hcku")
+cast_shadow = 0
+extra_cull_margin = 16384.0
+emitting = false
+amount = 32
+lifetime = 3.0
+one_shot = true
+explosiveness = 0.7
+fixed_fps = 0
+fract_delta = false
+transform_align = 2
+process_material = SubResource("ParticleProcessMaterial_f6ahb")
+draw_pass_1 = SubResource("QuadMesh_6jeh3")
+
+[node name="ConfettiR" type="GPUParticles3D" parent="SubViewportContainer/SubViewport/ChampionFX/Champion"]
+transform = Transform3D(0.7071067, -0.7071067, 0, 0.7071067, 0.7071067, 0, 0, 0, 1, 25, 0, 0)
+layers = 32
+material_override = ExtResource("8_2hcku")
+cast_shadow = 0
+extra_cull_margin = 16384.0
+emitting = false
+amount = 32
+lifetime = 3.0
+one_shot = true
+explosiveness = 0.7
+fixed_fps = 0
+fract_delta = false
+transform_align = 2
+process_material = SubResource("ParticleProcessMaterial_f6ahb")
+draw_pass_1 = SubResource("QuadMesh_6jeh3")
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 libraries = {
@@ -5377,10 +5677,6 @@ draw_characters = true
 
 [node name="SFX" type="Node" parent="."]
 script = ExtResource("31_g4ix4")
-
-[node name="Appear" type="AudioStreamPlayer" parent="SFX"]
-stream = ExtResource("32_osuyg")
-bus = &"SFX"
 
 [node name="FallShatter" type="AudioStreamPlayer" parent="SFX"]
 stream = ExtResource("32_ivv24")
