@@ -55,22 +55,14 @@ func finish_spawning() -> void:
 	process_mode = Node.PROCESS_MODE_DISABLED
 
 func start_new_spawn(new_stakes: Array[Vector2i]):
-	print("-----------------------")
 	for i in range(new_stakes.size()):
-		print("Launching Stake: " + str(i))
-		print("Row: " + str(new_stakes[i].x))
-		print("Col: " + str(new_stakes[i].y))
-		
 		var this_stake: GiantStake = get_stake(new_stakes[i].x, new_stakes[i].y) as GiantStake
 		if this_stake.is_fallen: # Stake is already spawned
 			continue
 		this_stake.rpc("spawn_stake", rng.randi_range(1, CHANCE_FOR_BONUS) == 1)
 		await get_tree().create_timer(time_between_stakes).timeout
-	
-	print("-----------------------")
 
 func process_spawns() -> void:
-	print("Can spawn?: " + str(can_spawn))
 	if !NetworkManager.is_hosting_game:
 		return
 	if !can_spawn:
@@ -82,18 +74,14 @@ func process_spawns() -> void:
 func get_closest_stake(player_pos: Vector3) -> GiantStake:
 	var closest_stake: GiantStake # No need to initialize bc it will be overridden on the first iteration
 	var min_distance: float = INF
-	print("Getting closest stake")
 	for i in rows.size():
 		var children: Array[Node] = rows[i].get_children()
 		for stake: GiantStake in children:
 			if stake.is_fallen && stake.is_enabled:
 				var distance = player_pos.distance_squared_to(stake.global_position)
-				printt(distance, min_distance, distance < min_distance)
 				if distance < min_distance:
-					print("Closest stake set to %s" % stake.name)
 					min_distance = distance
 					closest_stake = stake
-	print(closest_stake)
 	return closest_stake
 	
 ## Minimum number of stakes to spawn
@@ -132,7 +120,6 @@ func request_spawn():
 	if !NetworkManager.is_hosting_game:
 		return
 	
-	print("requesting spawn")
 	var spawn_direction: DIRECTION
 	var shape: SHAPE = rng.randi_range(0, SHAPE.COUNT - 1) as SHAPE
 
@@ -143,18 +130,14 @@ func request_spawn():
 	var starting_col: int = -1
 	
 	while !is_valid_spawn(starting_row, starting_col): # Calculate the initial starting stakes
-		print("Getting first stake")
-		print("Shape: " + str(shape))
 		starting_col = rng.randi_range(0, MAX_COLS - 1)
 		starting_row = rng.randi_range(0, MAX_ROWS - 1)
 		stakes.resize(1)
 
 		if is_valid_spawn(starting_row, starting_col): # If the stake is not valid, then repeat the rng
-			print("valid spawn, setting first stake")
 			stakes[0] = Vector2i(starting_row, starting_col)
 			break
 
-	print("calculating shape")
 	spawn_direction = rng.randi_range(1, 3) as DIRECTION
 	if shape == SHAPE.DOUBLE:
 		stakes.resize(2)
@@ -282,10 +265,8 @@ func is_valid_direction(row: int, col: int):
 
 var num_checks: int = 0
 func get_next_valid_spawn(row: int, col: int, direction: DIRECTION) -> Vector2i:
-	print("GETTING NEXT VALID SPAWN FOR (" + str(row) + "," + str(col) + ")")
 	num_checks += 1
 	if num_checks >= FAILSAFE:
-		print("TRIGGERING FAILSAFE")
 		return Vector2i(0, 0)
 	
 	match direction:

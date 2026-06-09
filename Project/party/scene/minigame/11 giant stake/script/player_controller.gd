@@ -77,14 +77,11 @@ func start_swing(tick: float) -> void:
 
 	for area in collisions:
 		if area.is_in_group("player"):
-			print("Hitting player")
 			var node = area
 			while (node is not PartyGameCharacterSpawner):
 				node = node.get_parent()
 			node.rpc("request_damage")
-
-		if area.is_in_group("enemy"):
-			print("Hitting stake")
+		elif area.is_in_group("enemy"):
 			var node = area
 			while (node is not GiantStake):
 				node = node.get_parent()
