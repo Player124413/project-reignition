@@ -6,6 +6,8 @@ extends PartyGameCharacterMover
 @export var hammer_collision: CollisionShape3D
 @export var player_hitbox: CollisionShape3D
 
+var collisions: Array[Area3D]
+
 func on_spawn_finished() -> void:
 	super ()
 	hand_attachment.reparent(character_animator.skeleton)
@@ -53,7 +55,6 @@ const ANIM_INVINCIBILITY_START: int = 4
 func process_animation_event(event: int) -> void:
 	if event == ANIM_SWING_FINISH: # Finished swinging
 		_state = STATE.IDLE
-		hammer_collision.set_deferred("disabled", true)
 	elif event == ANIM_SWING_START:
 		_state = STATE.SWING
 	elif event == ANIM_DAMAGE_START:
@@ -69,16 +70,29 @@ func process_inputs() -> void:
 	super ()
 
 func start_swing(tick: float) -> void:
-	hammer_collision.set_deferred("disabled", false)
 	_state = STATE.SWING
 	var target_anim: StringName
 	target_anim = get_anim_prefix() + "hammer-down"
 	character_animator.rpc("play_minigame_animation", target_anim, 0, 1, 0, tick)
 
+	for area in collisions:
+		if area.is_in_group("player"):
+			print("Hitting player")
+			var node = area
+			while (node is not PartyGameCharacterSpawner):
+				node = node.get_parent()
+			node.rpc("request_damage")
+
+		if area.is_in_group("enemy"):
+			print("Hitting stake")
+			var node = area
+			while (node is not GiantStake):
+				node = node.get_parent()
+			node.rpc("hit_stake", player_index)
+
 func take_damage(tick: float) -> void:
 	var target_anim: StringName = get_anim_prefix() + "hurt"
 	character_animator.rpc("play_minigame_animation", target_anim, 0, 1, 0, tick)
-	hammer_collision.set_deferred("disabled", true)
 	_state = STATE.DAMAGE
 
 @rpc("any_peer", "call_local", "reliable")
@@ -91,19 +105,29 @@ func request_damage() -> void:
 
 ##The hitbox for the hammer
 func _on_area_3d_area_entered(area: Area3D) -> void:
-	if _state != STATE.SWING:
-		return
-	
 	if !is_multiplayer_authority():
 		return
 	
 	if area == player_hitbox:
 		return
 	
-	if area.is_in_group("player"):
-		if area.get_parent().get_parent() == self:
-			return
-		area.get_parent().get_parent().rpc("request_damage")
+	if area.get_parent().get_parent() == self:
+		return
+	collisions.append(area)
+
+func _on_hammer_hitbox_area_exited(area: Area3D) -> void:
+	if !is_multiplayer_authority():
+		return
+	
+	if area == player_hitbox:
+		return
+	
+	if area.get_parent().get_parent() == self:
+		return
+
+	var index: int = collisions.find(area)
+	if index != -1:
+		collisions.remove_at(index)
 
 #####################
 ### ROLLBACK CODE ###

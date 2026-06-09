@@ -82,9 +82,6 @@ func _on_area_3d_area_entered(area: Area3D) -> void:
 	while (node is not PartyGameCharacterSpawner):
 		node = node.get_parent()
 	
-	if area.is_in_group("crusher"):
-		rpc("hit_stake", node.player_index)
-	
 	if area.is_in_group("player"):
 		if !hitbox_falling.disabled:
 			rotate(Vector3(0, 1, 0), randf_range(0, TAU))
