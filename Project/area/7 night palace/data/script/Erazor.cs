@@ -417,6 +417,7 @@ public partial class Erazor : Node3D
 
 	private void UpdatePosition()
 	{
+		float currentProgress = bossPathFollower.Progress;
 		float targetProgress = PlayerPathFollower.Progress + currentDistance;
 		float smoothing = DistanceSmoothing;
 		if (Player.IsHomingAttacking || CurrentFightState == FightState.Hitstun || PlayerPathFollower.IsAheadOfPoint(GlobalPosition))
@@ -429,7 +430,17 @@ public partial class Erazor : Node3D
 			smoothing = BackflipSmoothing;
 		}
 
-		bossPathFollower.Progress = ExtensionMethods.SmoothDamp(bossPathFollower.Progress, targetProgress, ref distanceVelocity, smoothing * PhysicsManager.physicsDelta);
+		float pathLength = PlayerPathFollower.ActivePath.Curve.GetBakedLength();
+		if (Mathf.Abs(currentProgress - targetProgress) > pathLength * 0.8f)
+		{
+			if (currentProgress > targetProgress)
+				currentProgress -= pathLength;
+			else
+				currentProgress += pathLength;
+		}
+
+		currentProgress = ExtensionMethods.SmoothDamp(currentProgress, targetProgress, ref distanceVelocity, smoothing * PhysicsManager.physicsDelta);
+		bossPathFollower.Progress = currentProgress;
 
 		float targetHorizontalTracking = bossPathFollower.HOffset;
 		if (isTrackingHorizontal)
