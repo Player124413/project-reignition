@@ -543,6 +543,7 @@ public partial class Erazor : Node3D
 			color = Colors.Black
 		});
 		TransitionManager.FinishTransition();
+		Player.GlobalPosition = PlayerPathFollower.GlobalPosition; // Recenter player instantly
 		duelCamera.Activate();
 		duelCameraResource.distance = DuelInitialDistance;
 		recenterLockout.Activate();
@@ -574,6 +575,10 @@ public partial class Erazor : Node3D
 
 	private void StartDuelResultAnimation(bool isSuccess)
 	{
+		Player.GlobalTransform = PlayerPathFollower.GlobalTransform; // Recenter player instantly
+		Player.MovementAngle = PlayerPathFollower.ForwardAngle;
+		Player.Animator.SnapRotation(Player.MovementAngle);
+
 		if (isSuccess)
 			AttackStatePlayback.Start($"attack-d-damage");
 		else
