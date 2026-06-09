@@ -86,18 +86,16 @@ func _on_area_3d_area_entered(area: Area3D) -> void:
 		rpc("hit_stake", node.player_index)
 	
 	if area.is_in_group("player"):
-		if hitbox_falling.disabled == false:
+		if !hitbox_falling.disabled:
 			rotate(Vector3(0, 1, 0), randf_range(0, TAU))
 			is_enabled = false
 			is_fallen = false
 			animator.play("damaged")
 			node.rpc("request_damage")
-	pass # Replace with function body.
 
 ##Removes stake from end screen
 func remove_stake() -> void:
 	animator.play("remove")
-
 
 @rpc("any_peer", "call_local", "reliable")
 func request_score_popup(player_index: int, score: int, screen_pos: Vector2) -> void:

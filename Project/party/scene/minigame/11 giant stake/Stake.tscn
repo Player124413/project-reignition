@@ -332,7 +332,7 @@ tracks/4/keys = {
 tracks/5/type = "value"
 tracks/5/imported = false
 tracks/5/enabled = true
-tracks/5/path = NodePath("Area3D/hitbox:disabled")
+tracks/5/path = NodePath("Hitbox/hitbox:disabled")
 tracks/5/interp = 1
 tracks/5/loop_wrap = true
 tracks/5/keys = {
@@ -344,7 +344,7 @@ tracks/5/keys = {
 tracks/6/type = "value"
 tracks/6/imported = false
 tracks/6/enabled = true
-tracks/6/path = NodePath("Area3D/hitbox_falling:disabled")
+tracks/6/path = NodePath("Hitbox/hitbox_falling:disabled")
 tracks/6/interp = 1
 tracks/6/loop_wrap = true
 tracks/6/keys = {
@@ -409,7 +409,7 @@ tracks/1/keys = {
 tracks/2/type = "value"
 tracks/2/imported = false
 tracks/2/enabled = true
-tracks/2/path = NodePath("Area3D/hitbox:disabled")
+tracks/2/path = NodePath("Hitbox/hitbox:disabled")
 tracks/2/interp = 1
 tracks/2/loop_wrap = true
 tracks/2/keys = {
@@ -421,7 +421,7 @@ tracks/2/keys = {
 tracks/3/type = "value"
 tracks/3/imported = false
 tracks/3/enabled = true
-tracks/3/path = NodePath("Area3D/hitbox_falling:disabled")
+tracks/3/path = NodePath("Hitbox/hitbox_falling:disabled")
 tracks/3/interp = 1
 tracks/3/loop_wrap = true
 tracks/3/keys = {
@@ -510,7 +510,7 @@ tracks/3/keys = {
 tracks/4/type = "value"
 tracks/4/imported = false
 tracks/4/enabled = true
-tracks/4/path = NodePath("Area3D/hitbox_falling:disabled")
+tracks/4/path = NodePath("Hitbox/hitbox_falling:disabled")
 tracks/4/interp = 1
 tracks/4/loop_wrap = true
 tracks/4/keys = {
@@ -579,7 +579,7 @@ tracks/0/keys = {
 tracks/1/type = "value"
 tracks/1/imported = false
 tracks/1/enabled = true
-tracks/1/path = NodePath("Area3D/hitbox:disabled")
+tracks/1/path = NodePath("Hitbox/hitbox:disabled")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/keys = {
@@ -705,7 +705,7 @@ tracks/0/keys = {
 tracks/1/type = "value"
 tracks/1/imported = false
 tracks/1/enabled = true
-tracks/1/path = NodePath("Area3D/hitbox:disabled")
+tracks/1/path = NodePath("Hitbox/hitbox:disabled")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/keys = {
@@ -763,7 +763,7 @@ animator = NodePath("AnimationPlayer")
 slam_animator = NodePath("Root/SlamAnimator")
 root = NodePath("Root")
 collision = NodePath("StakeCollision/StakeCollider")
-hitbox_falling = NodePath("Area3D/hitbox_falling")
+hitbox_falling = NodePath("Hitbox/hitbox_falling")
 smoke = NodePath("Root/Smoke")
 sfx_hit_wood = NodePath("SFX/StakeHitMetal")
 sfx_hit_metal = NodePath("SFX/StakeHitBase")
@@ -867,15 +867,15 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.029512405, 5.1323447, -0.0
 shape = SubResource("CapsuleShape3D_ghnyn")
 disabled = true
 
-[node name="Area3D" type="Area3D" parent="." groups=["enemy"]]
+[node name="Hitbox" type="Area3D" parent="." groups=["enemy"]]
 
-[node name="hitbox" type="CollisionShape3D" parent="Area3D"]
+[node name="hitbox" type="CollisionShape3D" parent="Hitbox"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.10059738, 7.443321, -0.040504456)
 shape = SubResource("BoxShape3D_ghnyn")
 disabled = true
 debug_color = Color(1, 0, 0, 1)
 
-[node name="hitbox_falling" type="CollisionShape3D" parent="Area3D"]
+[node name="hitbox_falling" type="CollisionShape3D" parent="Hitbox"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.10059738, 3.1472836, -0.040504456)
 shape = SubResource("BoxShape3D_ghnyn")
 disabled = true
@@ -922,4 +922,4 @@ base_volume = 0.8
 min_volume = 0.5
 metadata/_custom_type_script = "uid://bkwc2atbp4cjd"
 
-[connection signal="area_entered" from="Area3D" to="." method="_on_area_3d_area_entered"]
+[connection signal="area_entered" from="Hitbox" to="." method="_on_area_3d_area_entered"]

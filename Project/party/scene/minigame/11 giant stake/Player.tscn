@@ -11,13 +11,14 @@ height = 8.0
 [sub_resource type="BoxShape3D" id="BoxShape3D_icms6"]
 size = Vector3(3.4075928, 10.356323, 4.692322)
 
-[sub_resource type="BoxShape3D" id="BoxShape3D_1e1fc"]
-size = Vector3(1.0454712, 3.6560059, 3.8029785)
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_1e1fc"]
+height = 10.0
+radius = 5.0
 
 [node name="Player" type="Node3D" node_paths=PackedStringArray("hand_attachment", "hammer_collision", "player_hitbox", "rollback_timer", "character_body", "spawn_position")]
 script = ExtResource("1_yl5s7")
 hand_attachment = NodePath("HandAttachment")
-hammer_collision = NodePath("HandAttachment/Hammer/Area3D/CollisionShape3D")
+hammer_collision = NodePath("PlayerCollision/HammerHitbox/CollisionShape3D")
 player_hitbox = NodePath("PlayerCollision/PlayerHitbox/hitbox")
 rollback_timer = NodePath("Rollback")
 character_body = NodePath("PlayerCollision")
@@ -33,11 +34,19 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4, 0)
 shape = SubResource("CapsuleShape3D_3d660")
 
 [node name="PlayerHitbox" type="Area3D" parent="PlayerCollision" groups=["player"]]
+monitoring = false
 
 [node name="hitbox" type="CollisionShape3D" parent="PlayerCollision/PlayerHitbox"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.08868599, 4.8506246, -0.61441994)
 shape = SubResource("BoxShape3D_icms6")
 debug_color = Color(1, 0, 0, 0.41960785)
+
+[node name="HammerHitbox" type="Area3D" parent="PlayerCollision" groups=["crusher"]]
+transform = Transform3D(0.9999999, 0, 0, 0, 1.0000001, 0, 0, 0, 0.9999999, 0, 5.0000005, 3.9999995)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="PlayerCollision/HammerHitbox"]
+shape = SubResource("CylinderShape3D_1e1fc")
+disabled = true
 
 [node name="HandAttachment" type="BoneAttachment3D" parent="."]
 transform = Transform3D(-0.055639148, 0.82801193, 0.5579431, -0.9488646, -0.21776418, 0.22854908, 0.3107414, -0.51669616, 0.7977873, -0.11048618, 3.0883198, 1.8606191)
@@ -46,17 +55,10 @@ bone_idx = 89
 
 [node name="Hammer" parent="HandAttachment" instance=ExtResource("3_30hdn")]
 
-[node name="Area3D" type="Area3D" parent="HandAttachment/Hammer" groups=["crusher"]]
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="HandAttachment/Hammer/Area3D"]
-transform = Transform3D(1, 0, -2.3841858e-07, -1.4901161e-08, 1, 1.1920929e-07, -1.4901161e-08, -2.9802322e-08, 0.9999998, 3.2162585, 5.7116776, 0.058762312)
-shape = SubResource("BoxShape3D_1e1fc")
-disabled = true
-
 [node name="Rollback" type="Node" parent="."]
 script = ExtResource("2_3d660")
 enable_lag_compensation = false
 param_count = 10
 rollback_interval = 0.0
 
-[connection signal="area_entered" from="HandAttachment/Hammer/Area3D" to="." method="_on_area_3d_area_entered"]
+[connection signal="area_entered" from="PlayerCollision/HammerHitbox" to="." method="_on_area_3d_area_entered"]

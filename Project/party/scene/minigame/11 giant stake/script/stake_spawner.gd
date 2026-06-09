@@ -1,4 +1,4 @@
-class_name StakeSpawner extends Node
+class_name StakeSpawner extends Node3D
 
 ### The nodes containing the stakes
 @export var rows: Array[Node3D]
@@ -27,9 +27,8 @@ func _ready() -> void:
 	if !NetworkManager.is_hosting_game:
 		return
 	MinigameManager.instance.gameplay_started.connect(Callable(self , "start_spawning"))
-	MinigameManager.instance.gameplay_finished.connect(Callable(self , "finish_spawning"))
+	MinigameManager.instance.minigame_finished.connect(Callable(self , "finish_spawning"))
 
-	
 ### Spreads the stakes out evenly so we don't have to do it by hand
 func initialize_stakes() -> void:
 	var stake_original: GiantStake = rows[0].get_child(0)
@@ -50,18 +49,10 @@ func start_spawning() -> void:
 
 func finish_spawning() -> void:
 	can_spawn = false
-
-	#Removes the un-hit stakes
-	for i in range(0, rows.size()):
-		for j in range(rows[i].get_children().size()):
-			var stake = rows[i].get_child(j) as GiantStake
-
-			if stake.is_bonus:
-				if stake.num_hits < stake.MAX_HITS_BONUS:
-					stake.remove_stake()
-			else:
-				if stake.num_hits < stake.MAX_HITS_WOOD:
-					stake.remove_stake()
+	visible = false
+	set_process(false)
+	set_physics_process(false)
+	process_mode = Node.PROCESS_MODE_DISABLED
 
 func start_new_spawn(new_stakes: Array[Vector2i]):
 	print("-----------------------")

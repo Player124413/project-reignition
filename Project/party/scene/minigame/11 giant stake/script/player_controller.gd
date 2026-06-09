@@ -35,18 +35,15 @@ func process_speed() -> void:
 	_move_speed = move_toward(_move_speed, 0, brake_friction * get_physics_process_delta_time())
 
 func process_animation() -> void:
-	if _state == STATE.IDLE:
+	if _state == STATE.IDLE || _state == STATE.INVINCIBLE:
 		super ()
 
 func process_movement_tick() -> void:
 	process_invincibility()
 	
 	if _state == STATE.INVINCIBLE && !is_invincible():
-		print("Invincibility finished")
 		_state = STATE.IDLE
-		#player_hitbox.set_deferred("disabled", false)
 	super ()
-
 
 const ANIM_SWING_FINISH: int = 0
 const ANIM_SWING_START: int = 1
@@ -64,7 +61,6 @@ func process_animation_event(event: int) -> void:
 	elif event == ANIM_INVINCIBILITY_START:
 		_state = STATE.INVINCIBLE
 		request_invincibility(1)
-	
 
 func process_inputs() -> void:
 	if !is_cpu() && _state == STATE.IDLE || _state == STATE.INVINCIBLE:
@@ -82,7 +78,7 @@ func start_swing(tick: float) -> void:
 func take_damage(tick: float) -> void:
 	var target_anim: StringName = get_anim_prefix() + "hurt"
 	character_animator.rpc("play_minigame_animation", target_anim, 0, 1, 0, tick)
-
+	hammer_collision.set_deferred("disabled", true)
 	_state = STATE.DAMAGE
 
 @rpc("any_peer", "call_local", "reliable")
@@ -103,13 +99,11 @@ func _on_area_3d_area_entered(area: Area3D) -> void:
 	
 	if area == player_hitbox:
 		return
-
-	if area.is_in_group("enemy") || area.is_in_group("player"):
-		hammer_collision.set_deferred("disabled", true)
-
+	
 	if area.is_in_group("player"):
+		if area.get_parent().get_parent() == self:
+			return
 		area.get_parent().get_parent().rpc("request_damage")
-
 
 #####################
 ### ROLLBACK CODE ###
@@ -129,8 +123,8 @@ func process_rollback() -> void:
 
 var target_stake: GiantStake
 var cpu_swing_timer: float
-const CPU_SWING_INTERVAL: float = 0.4
-const CPU_SWING_INTERVAL_VARIANCE: float = 0.2
+const CPU_SWING_INTERVAL: float = 0.2
+const CPU_SWING_INTERVAL_VARIANCE: float = 0.1
 const CPU_SWING_RANGE: int = 6
 
 func update_target_stake() -> void:
@@ -139,9 +133,6 @@ func update_target_stake() -> void:
 	target_stake = stake_spawner.get_closest_stake(global_position)
 
 func calculate_cpu_input() -> Vector2:
-	#if player_index != 1: # DEBUG: Only programming a single cpu (player 2)
-		#return Vector2.ZERO
-	#cpu_interval_timer = 0
 	if NetworkManager.is_hosting_game:
 		update_target_stake()
 	
@@ -162,11 +153,11 @@ func calculate_cpu_input() -> Vector2:
 				cpu_swing_timer += randf() * CPU_SWING_INTERVAL_VARIANCE
 				start_swing(NetworkTimeSynchronizer.get_time())
 			else:
+				cpu_interval_timer = 0 # Harder cpus spam the swing button
 				cpu_swing_timer += (1.0 - randf() * 2.0) * CPU_SWING_INTERVAL_VARIANCE
 				remaining_distance = remaining_distance.rotated(Vector3.UP, -_move_angle)
 				start_swing(NetworkTimeSynchronizer.get_time())
 			return Vector2.ZERO
-
 		if remaining_distance.length() > CPU_SWING_RANGE:
 			return cpu_chase_position(target_position)
 	return Vector2.ZERO

@@ -149,6 +149,7 @@ func on_gameplay_finished() -> void:
 		deactivate()
 
 func on_minigame_finished() -> void:
+	cancel_invincibility()
 	disable_tree()
 	deactivate()
 
