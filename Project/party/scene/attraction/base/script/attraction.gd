@@ -103,6 +103,7 @@ func start_omochao_minigame_throw() -> void:
 	minigame_book_root.scale = Vector3.ZERO
 	var target_minigame_book_position : Vector3 = camera.global_position
 	target_minigame_book_position -= camera.basis.z * 20
+	target_minigame_book_position.y += 0.5
 	tween.set_parallel()
 	tween.tween_property(minigame_book_root, "global_position", target_minigame_book_position, 1).set_trans(Tween.TRANS_CUBIC)
 	tween.tween_property(minigame_book_root, "scale", Vector3.ONE, 1).set_trans(Tween.TRANS_CUBIC)
