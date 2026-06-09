@@ -7,12 +7,12 @@ extends PartyGameCharacterMover
 @export var player_hitbox: CollisionShape3D
 
 func on_spawn_finished() -> void:
-	super()
+	super ()
 	hand_attachment.reparent(character_animator.skeleton)
 	_state = STATE.IDLE
 
 func on_minigame_finished() -> void:
-	super()
+	super ()
 	hand_attachment.visible = false
 
 var _state: STATE
@@ -25,18 +25,18 @@ enum STATE {
 
 func process_rotation(target_angle: float) -> void:
 	if _state == STATE.IDLE || _state == STATE.INVINCIBLE:
-		super(target_angle)
+		super (target_angle)
 
 func process_speed() -> void:
 	if _state == STATE.IDLE || _state == STATE.INVINCIBLE:
-		super()
+		super ()
 		return
 	
 	_move_speed = move_toward(_move_speed, 0, brake_friction * get_physics_process_delta_time())
 
 func process_animation() -> void:
 	if _state == STATE.IDLE:
-		super()
+		super ()
 
 func process_movement_tick() -> void:
 	process_invincibility()
@@ -45,7 +45,7 @@ func process_movement_tick() -> void:
 		print("Invincibility finished")
 		_state = STATE.IDLE
 		#player_hitbox.set_deferred("disabled", false)
-	super()
+	super ()
 
 
 const ANIM_SWING_FINISH: int = 0
@@ -70,7 +70,7 @@ func process_inputs() -> void:
 	if !is_cpu() && _state == STATE.IDLE || _state == STATE.INVINCIBLE:
 		if Input.is_action_just_pressed("button_primary%s" % get_input_suffix()):
 			rpc("start_swing", NetworkTimeSynchronizer.get_time())
-	super()
+	super ()
 
 @rpc("any_peer", "call_local", "reliable")
 func start_swing(tick: float) -> void:
@@ -116,11 +116,11 @@ func _on_area_3d_area_entered(area: Area3D) -> void:
 const RB_STATE: int = 4
 func on_rollback_applied(rb_params: Array) -> void:
 	_state = rb_params[RB_STATE]
-	super(rb_params)
+	super (rb_params)
 
 func process_rollback() -> void:
 	rollback_timer.set_param(RB_STATE, _state)
-	super()
+	super ()
 
 ################
 ### CPU CODE ###
@@ -138,10 +138,9 @@ func update_target_stake() -> void:
 	target_stake = stake_spawner.get_closest_stake(global_position)
 
 func calculate_cpu_input() -> Vector2:
-	if player_index != 1: # DEBUG: Only programming a single cpu (player 2)
-		return Vector2.ZERO
-	
-	cpu_interval_timer = 0
+	#if player_index != 1: # DEBUG: Only programming a single cpu (player 2)
+		#return Vector2.ZERO
+	#cpu_interval_timer = 0
 	if NetworkManager.is_hosting_game:
 		update_target_stake()
 	

@@ -10,9 +10,9 @@ class_name StakeSpawner extends Node
 ### How long of a pause should there be between stakes in the same group
 @export var time_between_stakes: float = 0.3
 ### Minimum amount of time till the next group
-@export var min_time_between_groups: float = 1
+@export var min_time_between_groups: float = 0.5
 ### Maximum amount of time till the next group
-@export var max_time_between_groups: float = 5
+@export var max_time_between_groups: float = 3
 ### How long until the first group spawns
 @export var time_before_first_spawn: float = 5
 var can_spawn: bool = false
@@ -89,12 +89,12 @@ func process_spawns() -> void:
 	process_spawns()
 
 func get_closest_stake(player_pos: Vector3) -> GiantStake:
-	var closest_stake : GiantStake # No need to initialize bc it will be overridden on the first iteration
-	var min_distance : float = INF
+	var closest_stake: GiantStake # No need to initialize bc it will be overridden on the first iteration
+	var min_distance: float = INF
 	print("Getting closest stake")
 	for i in rows.size():
-		var children : Array[Node] = rows[i].get_children()
-		for stake : GiantStake in children:
+		var children: Array[Node] = rows[i].get_children()
+		for stake: GiantStake in children:
 			if stake.is_fallen && stake.is_enabled:
 				var distance = player_pos.distance_squared_to(stake.global_position)
 				printt(distance, min_distance, distance < min_distance)
@@ -104,7 +104,6 @@ func get_closest_stake(player_pos: Vector3) -> GiantStake:
 					closest_stake = stake
 	print(closest_stake)
 	return closest_stake
-	
 	
 ## Minimum number of stakes to spawn
 const MIN_STAKES: int = 1
@@ -149,124 +148,110 @@ func request_spawn():
 	var stakes: Array[Vector2i]
 
 	# The initial starting stake
-	var starting_row: int
-	var starting_col: int
+	var starting_row: int = -1
+	var starting_col: int = -1
 	
-	while true: # Calculate the initial starting stakes
+	while !is_valid_spawn(starting_row, starting_col): # Calculate the initial starting stakes
 		print("Getting first stake")
 		print("Shape: " + str(shape))
-		starting_col = rng.randi_range(1, rows.size())
-		starting_row = rng.randi_range(1, rows[0].get_child_count())
+		starting_col = rng.randi_range(0, MAX_COLS - 1)
+		starting_row = rng.randi_range(0, MAX_ROWS - 1)
 		stakes.resize(1)
 
 		if is_valid_spawn(starting_row, starting_col): # If the stake is not valid, then repeat the rng
+			print("valid spawn, setting first stake")
 			stakes[0] = Vector2i(starting_row, starting_col)
 			break
 
+	print("calculating shape")
+	spawn_direction = rng.randi_range(1, 3) as DIRECTION
+	if shape == SHAPE.DOUBLE:
+		stakes.resize(2)
+		match spawn_direction:
+			DIRECTION.NORTH:
+				if is_valid_spawn(starting_row - 1, starting_col):
+					stakes[1] = Vector2i(starting_row - 1, starting_col)
+			DIRECTION.SOUTH:
+				if is_valid_spawn(starting_row + 1, starting_col):
+					stakes[1] = Vector2i(starting_row + 1, starting_col)
+			DIRECTION.EAST:
+				if is_valid_spawn(starting_row, starting_col + 1):
+					stakes[1] = Vector2i(starting_row, starting_col + 1)
+			DIRECTION.WEST:
+				if is_valid_spawn(starting_row, starting_col - 1):
+					stakes[1] = Vector2i(starting_row, starting_col - 1)
 		
-	while true: # Calculate all possible shapes
-		spawn_direction = rng.randi_range(0, 3) as DIRECTION
-		
-		if shape == SHAPE.SINGLE:
-			break
-		
-		if shape == SHAPE.DOUBLE:
-			stakes.resize(2)
-			match spawn_direction:
-				DIRECTION.NORTH:
-					if is_valid_spawn(starting_row - 1, starting_col):
-						stakes[1] = Vector2i(starting_row - 1, starting_col)
-						break
-				DIRECTION.SOUTH:
-					if is_valid_spawn(starting_row + 1, starting_col):
-						stakes[1] = Vector2i(starting_row + 1, starting_col)
-						break
-				DIRECTION.EAST:
-					if is_valid_spawn(starting_row, starting_col + 1):
-						stakes[1] = Vector2i(starting_row, starting_col + 1)
-						break
-				DIRECTION.WEST:
-					if is_valid_spawn(starting_row, starting_col - 1):
-						stakes[1] = Vector2i(starting_row, starting_col - 1)
-						break
-		
-		if shape == SHAPE.DOUBLE_SPACE:
-			stakes.resize(2)
-			match spawn_direction:
-				DIRECTION.NORTH:
+	if shape == SHAPE.DOUBLE_SPACE:
+		stakes.resize(2)
+		match spawn_direction:
+			DIRECTION.NORTH:
+				if is_valid_spawn(starting_row - 2, starting_col):
+					stakes[1] = Vector2i(starting_row - 2, starting_col)
+			DIRECTION.SOUTH:
+				if is_valid_spawn(starting_row + 2, starting_col):
+					stakes[1] = Vector2i(starting_row + 2, starting_col)
+			DIRECTION.EAST:
+				if is_valid_spawn(starting_row, starting_col + 2):
+					stakes[1] = Vector2i(starting_row, starting_col + 2)
+			DIRECTION.WEST:
+				if is_valid_spawn(starting_row, starting_col - 2):
+					stakes[1] = Vector2i(starting_row, starting_col - 2)
+
+	if shape == SHAPE.TRIPLE:
+		stakes.resize(3)
+		match spawn_direction:
+			DIRECTION.NORTH:
+				if is_valid_spawn(starting_row - 1, starting_col):
+					stakes[1] = Vector2i(starting_row - 1, starting_col)
 					if is_valid_spawn(starting_row - 2, starting_col):
-						stakes[1] = Vector2i(starting_row - 2, starting_col)
-						break
-				DIRECTION.SOUTH:
+						stakes[2] = Vector2i(starting_row - 2, starting_col)
+			DIRECTION.SOUTH:
+				if is_valid_spawn(starting_row + 1, starting_col):
+					stakes[1] = Vector2i(starting_row + 1, starting_col)
 					if is_valid_spawn(starting_row + 2, starting_col):
-						stakes[1] = Vector2i(starting_row + 2, starting_col)
-						break
-				DIRECTION.EAST:
+						stakes[2] = Vector2i(starting_row + 2, starting_col)
+			DIRECTION.EAST:
+				if is_valid_spawn(starting_row, starting_col + 1):
+					stakes[1] = Vector2i(starting_row, starting_col + 1)
 					if is_valid_spawn(starting_row, starting_col + 2):
-						stakes[1] = Vector2i(starting_row, starting_col + 2)
-						break
-				DIRECTION.WEST:
+						stakes[2] = Vector2i(starting_row, starting_col + 2)
+			DIRECTION.WEST:
+				if is_valid_spawn(starting_row, starting_col - 1):
+					stakes[1] = Vector2i(starting_row, starting_col - 1)
 					if is_valid_spawn(starting_row, starting_col - 2):
-						stakes[1] = Vector2i(starting_row, starting_col - 2)
-						break
-		if shape == SHAPE.TRIPLE:
-			stakes.resize(3)
-			match spawn_direction:
-				DIRECTION.NORTH:
-					if is_valid_spawn(starting_row - 1, starting_col):
-						stakes[1] = Vector2i(starting_row - 1, starting_col)
-						if is_valid_spawn(starting_row - 2, starting_col):
-							stakes[2] = Vector2i(starting_row - 2, starting_col)
-							break
-				DIRECTION.SOUTH:
-					if is_valid_spawn(starting_row + 1, starting_col):
-						stakes[1] = Vector2i(starting_row + 1, starting_col)
-						if is_valid_spawn(starting_row + 2, starting_col):
-							stakes[2] = Vector2i(starting_row + 2, starting_col)
-							break
-				DIRECTION.EAST:
-					if is_valid_spawn(starting_row, starting_col + 1):
-						stakes[1] = Vector2i(starting_row, starting_col + 1)
-						if is_valid_spawn(starting_row, starting_col + 2):
-							stakes[2] = Vector2i(starting_row, starting_col + 2)
-							break
-				DIRECTION.WEST:
-					if is_valid_spawn(starting_row, starting_col - 1):
-						stakes[1] = Vector2i(starting_row, starting_col - 1)
-						if is_valid_spawn(starting_row, starting_col - 2):
-							stakes[2] = Vector2i(starting_row, starting_col - 2)
-							break
-		if shape == SHAPE.TRIPLE_SPACE:
-			stakes.resize(3)
-			match spawn_direction:
-				DIRECTION.NORTH:
-					if is_valid_direction(starting_row - 2, starting_col):
-						stakes[1] = Vector2i(starting_row - 2, starting_col)
-						if is_valid_direction(starting_row - 4, starting_col):
-							stakes[2] = Vector2i(starting_row - 4, starting_col)
-							break
-				DIRECTION.SOUTH:
-					if is_valid_direction(starting_row + 2, starting_col):
-						stakes[1] = Vector2i(starting_row + 2, starting_col)
-						if is_valid_direction(starting_row + 4, starting_col):
-							stakes[2] = Vector2i(starting_row + 4, starting_col)
-							break
-				DIRECTION.EAST:
-					if is_valid_direction(starting_row, starting_col + 2):
-						stakes[1] = Vector2i(starting_row, starting_col + 2)
-						if is_valid_direction(starting_row, starting_col + 4):
-							stakes[2] = Vector2i(starting_row, starting_col + 4)
-							break
-				DIRECTION.WEST:
-					if is_valid_direction(starting_row, starting_col - 2):
-						stakes[1] = Vector2i(starting_row, starting_col - 2)
-						if is_valid_direction(starting_row, starting_col - 4):
-							stakes[2] = Vector2i(starting_row, starting_col - 4)
-							break
-	
+						stakes[2] = Vector2i(starting_row, starting_col - 2)
+	if shape == SHAPE.TRIPLE_SPACE:
+		stakes.resize(3)
+		match spawn_direction:
+			DIRECTION.NORTH:
+				if is_valid_direction(starting_row - 2, starting_col):
+					stakes[1] = Vector2i(starting_row - 2, starting_col)
+					if is_valid_direction(starting_row - 4, starting_col):
+						stakes[2] = Vector2i(starting_row - 4, starting_col)
+			DIRECTION.SOUTH:
+				if is_valid_direction(starting_row + 2, starting_col):
+					stakes[1] = Vector2i(starting_row + 2, starting_col)
+					if is_valid_direction(starting_row + 4, starting_col):
+						stakes[2] = Vector2i(starting_row + 4, starting_col)
+			DIRECTION.EAST:
+				if is_valid_direction(starting_row, starting_col + 2):
+					stakes[1] = Vector2i(starting_row, starting_col + 2)
+					if is_valid_direction(starting_row, starting_col + 4):
+						stakes[2] = Vector2i(starting_row, starting_col + 4)
+			DIRECTION.WEST:
+				if is_valid_direction(starting_row, starting_col - 2):
+					stakes[1] = Vector2i(starting_row, starting_col - 2)
+					if is_valid_direction(starting_row, starting_col - 4):
+						stakes[2] = Vector2i(starting_row, starting_col - 4)
 	start_new_spawn(start_corrections(stakes, spawn_direction))
 
 func is_valid_spawn(row: int, col: int) -> bool:
+	if row == -1:
+		return false
+	
+	if col == -1:
+		return false
+		
 	if row > rows.size() - 1: # Check if it's in a valid row
 		return false
 	
@@ -306,8 +291,10 @@ func is_valid_direction(row: int, col: int):
 
 var num_checks: int = 0
 func get_next_valid_spawn(row: int, col: int, direction: DIRECTION) -> Vector2i:
+	print("GETTING NEXT VALID SPAWN FOR (" + str(row) + "," + str(col) + ")")
 	num_checks += 1
 	if num_checks >= FAILSAFE:
+		print("TRIGGERING FAILSAFE")
 		return Vector2i(0, 0)
 	
 	match direction:
