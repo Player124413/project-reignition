@@ -28,22 +28,23 @@ func _ready() -> void:
 		return
 	MinigameManager.instance.gameplay_started.connect(Callable(self , "start_spawning"))
 	MinigameManager.instance.gameplay_finished.connect(Callable(self , "finish_spawning"))
-	MinigameManager.instance.request_minigame_start()
 
+	
 ### Spreads the stakes out evenly so we don't have to do it by hand
 func initialize_stakes() -> void:
 	var stake_original: GiantStake = rows[0].get_child(0)
 	for i in range(rows.size()):
 		for j in range(rows[i].get_children().size()):
 			var stake = rows[i].get_child(j)
+			print(rows[i].get_children()[j].name)
 			stake.position = Vector3(stake_original.position.x + (stake_distance_horiz * j), stake_original.position.y, stake_original.position.z + (stake_distance_vert * i))
 
 func start_spawning() -> void:
 	set_physics_process(true)
 	await get_tree().create_timer(time_before_first_spawn).timeout
 	request_spawn() # Requests the first group
-	can_spawn = true
 
+	can_spawn = true
 	if can_spawn:
 		process_spawns()
 	return
@@ -57,10 +58,10 @@ func finish_spawning() -> void:
 			var stake = rows[i].get_child(j) as GiantStake
 
 			if stake.is_bonus:
-				if stake.num_hits < 5:
+				if stake.num_hits < stake.MAX_HITS_BONUS:
 					stake.remove_stake()
 			else:
-				if stake.num_hits < 3:
+				if stake.num_hits < stake.MAX_HITS_WOOD:
 					stake.remove_stake()
 
 func start_new_spawn(new_stakes: Array[Vector2i]):
@@ -79,6 +80,7 @@ func start_new_spawn(new_stakes: Array[Vector2i]):
 	print("-----------------------")
 
 func process_spawns() -> void:
+	print("Can spawn?: " + str(can_spawn))
 	if !NetworkManager.is_hosting_game:
 		return
 	if !can_spawn:
@@ -86,6 +88,26 @@ func process_spawns() -> void:
 	await get_tree().create_timer(rng.randf_range(min_time_between_groups, max_time_between_groups)).timeout
 	request_spawn()
 	process_spawns()
+
+func get_closest_stake(playerPOS: Vector3) -> GiantStake:
+	var closest_stake: GiantStake = rows[0].get_children()[0] as GiantStake
+	var min_distance: float = INF
+	print("Getting closest stake")
+	for i in rows.size():
+		for j in rows[i].get_children().size():
+			var stake: GiantStake = rows[i].get_children()[j]
+			var distance = playerPOS.distance_squared_to(stake.global_position)
+			print(stake.name)
+			if stake.is_fallen && stake.is_enabled:
+				printt(distance, min_distance, distance < min_distance)
+				if distance < min_distance:
+					print("Found new closest stake")
+					min_distance = distance
+					closest_stake = stake
+	
+	
+	print("Got closest stake")
+	return closest_stake
 	
 	
 ## Minimum number of stakes to spawn

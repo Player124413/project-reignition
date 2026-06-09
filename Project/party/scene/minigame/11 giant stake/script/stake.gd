@@ -30,13 +30,17 @@ var is_fallen: bool = false
 var is_chosen: bool = false
 
 func _ready() -> void:
-	animator.play("started" if starting_stake else "standby")
+	animator.play("standby")
 
 @rpc("any_peer", "call_local", "reliable")
 func spawn_stake(bonus: bool) -> void:
 	if is_fallen:
 		return
 	
+	if starting_stake:
+		animator.speed_scale = 2.5
+
+
 	is_bonus = bonus
 	animator.play("metal" if is_bonus else "wood")
 	animator.advance(0.0)
@@ -81,6 +85,8 @@ func _on_area_3d_area_entered(area: Area3D) -> void:
 	if area.is_in_group("player"):
 		if hitbox_falling.disabled == false:
 			rotate(Vector3(0, 1, 0), randf_range(0, TAU))
+			is_enabled = false
+			is_fallen = false
 			animator.play("damaged")
 			node.request_damage()
 	pass # Replace with function body.

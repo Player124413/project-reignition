@@ -122,3 +122,42 @@ func on_rollback_applied(rb_params: Array) -> void:
 func process_rollback() -> void:
 	rollback_timer.set_param(RB_STATE, _state)
 	super ()
+
+################
+### CPU CODE ###
+################
+
+var target_stake: GiantStake
+var cpu_swing_timer: float
+const CPU_SWING_INTERVAL: float = 0.4
+const CPU_SWING_INTERVAL_VARIANCE: float = 0.2
+const CPU_SWING_RANGE: int = 6
+
+func update_target_stake() -> void:
+	var target_stake: GiantStake = stake_spawner.get_closest_stake(global_position)
+
+func calculate_cpu_input() -> Vector2:
+	cpu_interval_timer = 0
+	if NetworkManager.is_hosting_game:
+		update_target_stake
+	
+	print(target_stake)
+	var target_position: Vector3 = target_stake.global_position
+
+	if is_multiplayer_authority():
+		cpu_swing_timer = move_toward(cpu_swing_timer, 0, get_physics_process_delta_time())
+		var remaining_distance: Vector3 = target_position - character_body.global_position
+		var diff: PlayerData.CPU_DIFFICULTY_ENUM = get_cpu_difficulty()
+		remaining_distance.y = 0
+		if is_zero_approx(cpu_swing_timer) && remaining_distance.length() < CPU_SWING_RANGE:
+			cpu_swing_timer = CPU_SWING_INTERVAL
+			if diff <= PlayerData.CPU_DIFFICULTY_ENUM.NORMAL:
+				cpu_swing_timer += randf() * CPU_SWING_INTERVAL_VARIANCE
+				rpc("start_swing", NetworkTimeSynchronizer.get_time(), 1 if randf() > 0.5 else -1)
+			else:
+				cpu_swing_timer += (1.0 - randf() * 2.0) * CPU_SWING_INTERVAL_VARIANCE
+				remaining_distance = remaining_distance.rotated(Vector3.UP, -_move_angle)
+				rpc("start_swing", NetworkTimeSynchronizer.get_time(), sign(remaining_distance.x))
+			return Vector2.ZERO
+
+	return cpu_chase_position(target_position)
