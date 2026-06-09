@@ -1159,7 +1159,7 @@ public partial class SaveManager : Node
 		}
 
 		/// <summary> Checks if a world is unlocked. </summary>
-		public bool IsWorldUnlocked(WorldEnum world) => worldsUnlocked.Contains(world);
+		public bool IsWorldUnlocked(WorldEnum world) => worldsUnlocked.Contains(world) || world == WorldEnum.Mods;
 		/// <summary> Checks if a world ring was obtained. </summary>
 		public bool IsWorldRingObtained(WorldEnum world) => worldRingsCollected.Contains(world);
 		public void UnlockWorld(WorldEnum world)
