@@ -45,11 +45,15 @@ func spawn_stake(bonus: bool) -> void:
 	animator.play("metal" if is_bonus else "wood")
 	animator.advance(0.0)
 
-	is_fallen = true
 	animator.play("fall")
 	animator.queue("started")
 	animator.advance(0.0)
 	reset_physics_interpolation()
+
+## Called from the fall animation
+func on_stake_landed() -> void:
+	is_fallen = true
+	is_enabled = true
 
 @rpc("any_peer", "call_local", "reliable")
 func hit_stake(this_index: int) -> void:

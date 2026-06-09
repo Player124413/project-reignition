@@ -36,7 +36,6 @@ func initialize_stakes() -> void:
 	for i in range(rows.size()):
 		for j in range(rows[i].get_children().size()):
 			var stake = rows[i].get_child(j)
-			print(rows[i].get_children()[j].name)
 			stake.position = Vector3(stake_original.position.x + (stake_distance_horiz * j), stake_original.position.y, stake_original.position.z + (stake_distance_vert * i))
 
 func start_spawning() -> void:
@@ -89,24 +88,21 @@ func process_spawns() -> void:
 	request_spawn()
 	process_spawns()
 
-func get_closest_stake(playerPOS: Vector3) -> GiantStake:
-	var closest_stake: GiantStake = rows[0].get_children()[0] as GiantStake
-	var min_distance: float = INF
+func get_closest_stake(player_pos: Vector3) -> GiantStake:
+	var closest_stake : GiantStake # No need to initialize bc it will be overridden on the first iteration
+	var min_distance : float = INF
 	print("Getting closest stake")
 	for i in rows.size():
-		for j in rows[i].get_children().size():
-			var stake: GiantStake = rows[i].get_children()[j]
-			var distance = playerPOS.distance_squared_to(stake.global_position)
-			print(stake.name)
+		var children : Array[Node] = rows[i].get_children()
+		for stake : GiantStake in children:
 			if stake.is_fallen && stake.is_enabled:
+				var distance = player_pos.distance_squared_to(stake.global_position)
 				printt(distance, min_distance, distance < min_distance)
 				if distance < min_distance:
-					print("Found new closest stake")
+					print("Closest stake set to %s" % stake.name)
 					min_distance = distance
 					closest_stake = stake
-	
-	
-	print("Got closest stake")
+	print(closest_stake)
 	return closest_stake
 	
 	
@@ -314,7 +310,6 @@ func get_next_valid_spawn(row: int, col: int, direction: DIRECTION) -> Vector2i:
 	if num_checks >= FAILSAFE:
 		return Vector2i(0, 0)
 	
-	var rng = RandomNumberGenerator.new()
 	match direction:
 		DIRECTION.NORTH:
 			for i in range(MAX_ROWS, 0):
@@ -324,7 +319,6 @@ func get_next_valid_spawn(row: int, col: int, direction: DIRECTION) -> Vector2i:
 						return Vector2i(i, col)
 					if i == 0: # Call this method again if we reached the end of our search, and choose another direction
 						return get_next_valid_spawn(0, col, rng.randi_range(3, 4) as DIRECTION) # Chooses EAST or WEST randomly
-
 		DIRECTION.SOUTH:
 			for i in range(0, MAX_ROWS):
 				if i > row:
