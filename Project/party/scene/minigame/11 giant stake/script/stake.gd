@@ -74,7 +74,8 @@ func hit_stake(this_index: int) -> void:
 		is_enabled = false
 		animator.play("finished")
 		sfx_hit_final.play()
-		rpc("request_score_popup", this_index, score, screen_pos)
+		request_score_popup(this_index, score, screen_pos)
+		#rpc("request_score_popup", this_index, score, screen_pos)
 	root.position = Vector3.DOWN * (num_hits / (max_hits as float)) * STAKE_HEIGHT
 	slam_animator.play("slam")
 
@@ -92,7 +93,7 @@ func _on_area_3d_area_entered(area: Area3D) -> void:
 			is_enabled = false
 			is_fallen = false
 			animator.play("damaged")
-			node.request_damage()
+			node.rpc("request_damage")
 	pass # Replace with function body.
 
 ##Removes stake from end screen

@@ -69,10 +69,9 @@ func process_animation_event(event: int) -> void:
 func process_inputs() -> void:
 	if !is_cpu() && _state == STATE.IDLE || _state == STATE.INVINCIBLE:
 		if Input.is_action_just_pressed("button_primary%s" % get_input_suffix()):
-			rpc("start_swing", NetworkTimeSynchronizer.get_time())
+			start_swing(NetworkTimeSynchronizer.get_time())
 	super ()
 
-@rpc("any_peer", "call_local", "reliable")
 func start_swing(tick: float) -> void:
 	hammer_collision.set_deferred("disabled", false)
 	_state = STATE.SWING
@@ -80,17 +79,19 @@ func start_swing(tick: float) -> void:
 	target_anim = get_anim_prefix() + "hammer-down"
 	character_animator.rpc("play_minigame_animation", target_anim, 0, 1, 0, tick)
 
-@rpc("any_peer", "call_local", "reliable")
-func take_damage() -> void:
-	character_animator.play_minigame_animation(get_anim_prefix() + "hurt")
+func take_damage(tick: float) -> void:
+	var target_anim: StringName = get_anim_prefix() + "hurt"
+	character_animator.rpc("play_minigame_animation", target_anim, 0, 1, 0, tick)
+
 	_state = STATE.DAMAGE
 
+@rpc("any_peer", "call_local", "reliable")
 func request_damage() -> void:
 	if !is_multiplayer_authority():
 		return
 	if _state == STATE.DAMAGE || is_invincible():
 		return
-	rpc("take_damage")
+	take_damage(NetworkTimeSynchronizer.get_time())
 
 ##The hitbox for the hammer
 func _on_area_3d_area_entered(area: Area3D) -> void:
@@ -107,7 +108,7 @@ func _on_area_3d_area_entered(area: Area3D) -> void:
 		hammer_collision.set_deferred("disabled", true)
 
 	if area.is_in_group("player"):
-		area.get_parent().get_parent().request_damage()
+		area.get_parent().get_parent().rpc("request_damage")
 
 
 #####################
@@ -159,11 +160,11 @@ func calculate_cpu_input() -> Vector2:
 			cpu_swing_timer = CPU_SWING_INTERVAL
 			if diff <= PlayerData.CPU_DIFFICULTY_ENUM.NORMAL:
 				cpu_swing_timer += randf() * CPU_SWING_INTERVAL_VARIANCE
-				rpc("start_swing", NetworkTimeSynchronizer.get_time())
+				start_swing(NetworkTimeSynchronizer.get_time())
 			else:
 				cpu_swing_timer += (1.0 - randf() * 2.0) * CPU_SWING_INTERVAL_VARIANCE
 				remaining_distance = remaining_distance.rotated(Vector3.UP, -_move_angle)
-				rpc("start_swing", NetworkTimeSynchronizer.get_time())
+				start_swing(NetworkTimeSynchronizer.get_time())
 			return Vector2.ZERO
 
 		if remaining_distance.length() > CPU_SWING_RANGE:
