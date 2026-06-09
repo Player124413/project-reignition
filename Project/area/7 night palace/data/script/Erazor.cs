@@ -174,6 +174,7 @@ public partial class Erazor : Node3D
 		HeadsUpDisplay.Instance.SetVisibility(false);
 		Player.Skills.DisableBreakSkills();
 		Player.Animator.PlayOneshotAnimation(IntroCutsceneID);
+		Player.Animator.SnapRotation(Player.MovementAngle);
 		stopLockout.Activate();
 
 		EmitSignal(SignalName.CutsceneStarted);
