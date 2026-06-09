@@ -146,7 +146,7 @@ func calculate_cpu_input() -> Vector2:
 	
 	if target_stake == null: # No target
 		return Vector2.ZERO
-	
+
 	var target_position: Vector3 = target_stake.global_position
 
 	if is_multiplayer_authority():
@@ -154,6 +154,7 @@ func calculate_cpu_input() -> Vector2:
 		var remaining_distance: Vector3 = target_position - character_body.global_position
 		var diff: PlayerData.CPU_DIFFICULTY_ENUM = get_cpu_difficulty()
 		remaining_distance.y = 0
+
 		if is_zero_approx(cpu_swing_timer) && remaining_distance.length() < CPU_SWING_RANGE:
 			cpu_swing_timer = CPU_SWING_INTERVAL
 			if diff <= PlayerData.CPU_DIFFICULTY_ENUM.NORMAL:
@@ -165,4 +166,6 @@ func calculate_cpu_input() -> Vector2:
 				rpc("start_swing", NetworkTimeSynchronizer.get_time())
 			return Vector2.ZERO
 
-	return cpu_chase_position(target_position)
+		if remaining_distance.length() > CPU_SWING_RANGE:
+			return cpu_chase_position(target_position)
+	return Vector2.ZERO
