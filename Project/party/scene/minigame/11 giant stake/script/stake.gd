@@ -64,18 +64,16 @@ func hit_stake(this_index: int) -> void:
 	var projected_position: Vector3 = global_position + Vector3.UP * 2
 	var screen_pos: Vector2 = get_viewport().get_camera_3d().unproject_position(projected_position)
 
+	sfx_hit_wood.play_in_group()
 	if is_bonus:
-		sfx_hit_metal.play()
-	else:
-		sfx_hit_wood.play()
+		sfx_hit_metal.play_in_group()
 
 	if num_hits >= max_hits:
-		smoke.emitting = true
+		smoke.RestartGroup()
 		is_enabled = false
 		animator.play("finished")
-		sfx_hit_final.play()
+		sfx_hit_final.play_in_group()
 		request_score_popup(this_index, score, screen_pos)
-		#rpc("request_score_popup", this_index, score, screen_pos)
 	root.position = Vector3.DOWN * (num_hits / (max_hits as float)) * STAKE_HEIGHT
 	slam_animator.play("slam")
 
