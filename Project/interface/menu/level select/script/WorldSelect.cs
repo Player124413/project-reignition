@@ -97,7 +97,6 @@ public partial class WorldSelect : Menu
 		PreviousVideoPlayer = null;
 		UpdateActiveVideoPlayer();
 		UpdateStoryIndicator(false);
-		SetVideoVisibility();
 	}
 
 	public override void _Process(double _)
@@ -161,8 +160,6 @@ public partial class WorldSelect : Menu
 		animator.Seek(0.0, true);
 		DisableProcessing();
 		UpdateStoryIndicator(false);
-
-		SetVideoVisibility();
 	}
 
 	private void UpdateStoryIndicator(bool forceClose)
@@ -245,18 +242,14 @@ public partial class WorldSelect : Menu
 
 	private void UpdateActiveVideoPlayer()
 	{
-		ActiveVideoPlayer = videoPlayers[VerticalSelection];
+		if (VerticalSelection == (int)SaveManager.WorldEnum.Mods)
+			ActiveVideoPlayer = videoPlayers[0];
+		else
+			ActiveVideoPlayer = videoPlayers[VerticalSelection];
+
 		ActiveVideoPlayer.Paused = false;
 		if (!ActiveVideoPlayer.IsPlaying())
 			ActiveVideoPlayer.Play();
-	}
-
-	private void SetVideoVisibility()
-	{
-		if (VerticalSelection == (int)SaveManager.WorldEnum.Mods) //Selected Mods world?
-			ActiveVideoPlayer.Visible = false;
-		else
-			ActiveVideoPlayer.Visible = true;
 	}
 
 	public void UpdateLevelText()
@@ -276,13 +269,12 @@ public partial class WorldSelect : Menu
 			selectionIndex = levelSpriteRegions.Count - 1;
 
 		if (!TimeAttackManager.Instance.IsRunActive)
-			_levelNewSprites[spriteIndex].Visible = newLevelList.Contains(selectionIndex);// Update new notifications
+			_levelNewSprites[spriteIndex].Visible = newLevelList.Contains(selectionIndex); // Update new notifications
 		else
 			_levelNewSprites[spriteIndex].Visible = false;
 
 		_levelTextSprites[spriteIndex].RegionRect = levelSpriteRegions[selectionIndex];
 
-		GD.Print(levelDescriptionKeys[selectionIndex]);
 		if (spriteIndex == 1) // Updating primary selection
 		{
 			description.ShowDescription();
