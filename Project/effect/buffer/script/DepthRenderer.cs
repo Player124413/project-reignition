@@ -2,76 +2,76 @@ using Godot;
 using Godot.Collections;
 using Project.Core;
 
-namespace Project.Gameplay
+namespace Project.Gameplay;
+
+public partial class DepthRenderer : Node
 {
-	public partial class DepthRenderer : Node
+	//KNOWN BUG: Viewports are unable to render HDR images, so depth texture gets corrupted
+	public static ViewportTexture DepthTexture { get; private set; }
+	public static readonly string DEPTH_PARAMETER = "depth_texture"; //All shaders that use depth must have this parameter
+	public static readonly string FAR_CLIP_PARAMETER = "far_clip_distance";
+
+	[Export] private Camera3D depthCamera; // Used to get the depth texture to determine whether the sun is occluded
+	[Export] private SubViewport depthViewport;
+	[Export] private ShaderMaterial depthMaterial;
+	[Export] private Control depthViewportContainer;
+
+	[Export] public Array<ShaderMaterial> depthMaterials; //List of materials that use depth_texture
+
+	private Camera3D Camera => GetViewport().GetCamera3D();
+	private Callable ApplyTextureCallable => new(this, MethodName.ApplyTexture);
+
+	public override void _Ready()
 	{
-		//KNOWN BUG: Viewports are unable to render HDR images, so depth texture gets corrupted
-		public static ViewportTexture DepthTexture { get; private set; }
-		public static readonly string DEPTH_PARAMETER = "depth_texture"; //All shaders that use depth must have this parameter
-		public static readonly string FAR_CLIP_PARAMETER = "far_clip_distance";
+		if (!RenderingServer.Singleton.IsConnected(RenderingServer.SignalName.FramePostDraw, ApplyTextureCallable))
+			RenderingServer.Singleton.Connect(RenderingServer.SignalName.FramePostDraw, ApplyTextureCallable);
 
-		[Export] private Camera3D depthCamera; // Used to get the depth texture to determine whether the sun is occluded
-		[Export] private SubViewport depthViewport;
-		[Export] private ShaderMaterial depthMaterial;
-		[Export] private Control depthViewportContainer;
+		depthCamera.Visible = true;
+		PhysicsInterpolationMode = PhysicsInterpolationModeEnum.Off;
+		ProcessMode = ProcessModeEnum.Always;
+	}
 
-		[Export] public Array<ShaderMaterial> depthMaterials; //List of materials that use depth_texture
+	public override void _ExitTree()
+	{
+		if (RenderingServer.Singleton.IsConnected(RenderingServer.SignalName.FramePostDraw, ApplyTextureCallable))
+			RenderingServer.Singleton.Disconnect(RenderingServer.SignalName.FramePostDraw, ApplyTextureCallable);
 
-		private Camera3D Camera => GetViewport().GetCamera3D();
-		private Callable ApplyTextureCallable => new(this, MethodName.ApplyTexture);
+		DepthTexture = null;
+	}
 
-		public override void _Ready()
-		{
-			if (!RenderingServer.Singleton.IsConnected(RenderingServer.SignalName.FramePostDraw, ApplyTextureCallable))
-				RenderingServer.Singleton.Connect(RenderingServer.SignalName.FramePostDraw, ApplyTextureCallable);
+	public override void _Process(double _)
+	{
+		depthCamera.Fov = Camera.Fov;
+		depthCamera.Size = Camera.Size;
+		depthCamera.Projection = Camera.Projection;
 
-			depthCamera.Visible = true;
-			PhysicsInterpolationMode = PhysicsInterpolationModeEnum.Off;
-		}
+		depthCamera.Near = Camera.Near;
 
-		public override void _ExitTree()
-		{
-			if (RenderingServer.Singleton.IsConnected(RenderingServer.SignalName.FramePostDraw, ApplyTextureCallable))
-				RenderingServer.Singleton.Disconnect(RenderingServer.SignalName.FramePostDraw, ApplyTextureCallable);
+		depthCamera.Far = Camera.Far;
+		depthCamera.GlobalTransform = Camera.GetGlobalTransformInterpolated();
 
-			DepthTexture = null;
-		}
+		depthViewport.Size = Runtime.HalfScreenSize;
+		depthViewport.RenderTargetUpdateMode = SubViewport.UpdateMode.Once;
 
-		public override void _Process(double _)
-		{
-			depthCamera.Fov = Camera.Fov;
-			depthCamera.Size = Camera.Size;
-			depthCamera.Projection = Camera.Projection;
+		depthMaterial.Set(FAR_CLIP_PARAMETER, depthCamera.Far);
+	}
 
-			depthCamera.Near = Camera.Near;
+	public override void _Input(InputEvent e)
+	{
+		if (!OS.IsDebugBuild())
+			return;
 
-			depthCamera.Far = Camera.Far;
-			depthCamera.GlobalTransform = Camera.GetGlobalTransformInterpolated();
+		if (Input.IsActionJustPressed("debug_reflection"))
+			depthViewportContainer.Visible = !depthViewportContainer.Visible;
+	}
 
-			depthViewport.Size = Runtime.HalfScreenSize;
-			depthViewport.RenderTargetUpdateMode = SubViewport.UpdateMode.Once;
+	private void ApplyTexture()
+	{
+		DepthTexture = depthViewport.GetTexture();
+		if (depthMaterials == null)
+			return;
 
-			depthMaterial.Set(FAR_CLIP_PARAMETER, depthCamera.Far);
-		}
-
-		public override void _Input(InputEvent e)
-		{
-			if (!OS.IsDebugBuild())
-				return;
-
-			if (Input.IsActionJustPressed("debug_reflection"))
-				depthViewportContainer.Visible = !depthViewportContainer.Visible;
-		}
-
-		private void ApplyTexture()
-		{
-			DepthTexture = depthViewport.GetTexture();
-			if (depthMaterials == null)
-				return;
-
-			for (int i = 0; i < depthMaterials.Count; i++)
-				depthMaterials[i].SetShaderParameter(DEPTH_PARAMETER, DepthTexture);
-		}
+		for (int i = 0; i < depthMaterials.Count; i++)
+			depthMaterials[i].SetShaderParameter(DEPTH_PARAMETER, DepthTexture);
 	}
 }
