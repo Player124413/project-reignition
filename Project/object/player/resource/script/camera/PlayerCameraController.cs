@@ -1306,6 +1306,7 @@ public partial class PlayerCameraController : Node3D
 				if (Input.IsKeyPressed(Key.Ctrl))
 				{
 					freeCamFov = Mathf.Min(freeCamFov + 2, 179);
+					Camera.Fov = freeCamFov;
 					GD.Print($"FOV set to {freeCamFov}.");
 				}
 				else
@@ -1319,6 +1320,7 @@ public partial class PlayerCameraController : Node3D
 				if (Input.IsKeyPressed(Key.Ctrl))
 				{
 					freeCamFov = Mathf.Max(freeCamFov - 2, 0);
+					Camera.Fov = freeCamFov;
 					GD.Print($"FOV set to {freeCamFov}.");
 				}
 				else
