@@ -527,6 +527,8 @@ public partial class PlayerCameraController : Node3D
 				cameraRoot.ResetPhysicsInterpolation();
 		}
 
+		if (IsFreeCamActive)
+			fov = freeCamFov;
 		Camera.Fov = fov; // Update fov
 	}
 
@@ -1140,6 +1142,7 @@ public partial class PlayerCameraController : Node3D
 	private bool isFreeCamTilting;
 
 	private bool isFreeCamLocked;
+	private float freeCamFov;
 	private Vector3 freeCamPosition;
 	private Vector3 freeCamRotation;
 
@@ -1172,6 +1175,7 @@ public partial class PlayerCameraController : Node3D
 		{
 			Camera.Rotation = FreeCamRoot.GlobalRotation.RemoveVertical();
 			FreeCamRoot.GlobalRotation = new(0, FreeCamRoot.GlobalRotation.Y, 0);
+			freeCamFov = Camera.Fov;
 		}
 		else
 		{
@@ -1299,15 +1303,29 @@ public partial class PlayerCameraController : Node3D
 		{
 			if (emb.ButtonIndex == MouseButton.WheelUp)
 			{
-				freecamMovespeed += 2;
-				GD.Print($"Free cam Speed set to {freecamMovespeed}.");
+				if (Input.IsKeyPressed(Key.Ctrl))
+				{
+					freeCamFov = Mathf.Min(freeCamFov + 2, 179);
+					GD.Print($"FOV set to {freeCamFov}.");
+				}
+				else
+				{
+					freecamMovespeed += 2;
+					GD.Print($"Free cam Speed set to {freecamMovespeed}.");
+				}
 			}
 			if (emb.ButtonIndex == MouseButton.WheelDown)
 			{
-				freecamMovespeed -= 2;
-				if (freecamMovespeed < 0)
-					freecamMovespeed = 0;
-				GD.Print($"Free cam Speed set to {freecamMovespeed}.");
+				if (Input.IsKeyPressed(Key.Ctrl))
+				{
+					freeCamFov = Mathf.Max(freeCamFov - 2, 0);
+					GD.Print($"FOV set to {freeCamFov}.");
+				}
+				else
+				{
+					freecamMovespeed = Mathf.Max(freecamMovespeed - 2, 0);
+					GD.Print($"Free cam Speed set to {freecamMovespeed}.");
+				}
 			}
 		}
 	}
