@@ -14,20 +14,21 @@ ambient_light_color = Color(0.45452422, 0.45452428, 0.45452422, 1)
 tonemap_mode = 2
 glow_enabled = true
 
-[sub_resource type="SphereShape3D" id="SphereShape3D_aoec8"]
+[sub_resource type="SphereShape3D" id="SphereShape3D_kmx01"]
 
-[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_kmx01"]
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_a8ckg"]
 radius = 0.25
 height = 25.0
 
-[sub_resource type="BoxMesh" id="BoxMesh_qh6t2"]
-
-[node name="Environment" type="Node3D" unique_id=458310397 node_paths=PackedStringArray("stomach_attachment", "rapier_attachment", "shoulder_inherited_attachment", "shoulder_override_attachment", "spawn_position")]
+[node name="Environment" type="Node3D" unique_id=458310397 node_paths=PackedStringArray("hand_end", "pole", "rapier_tip", "lookat", "twist_disperser", "two_bone_ik", "copy_transform_modifier", "spawn_position")]
 script = ExtResource("1_qlpbs")
-stomach_attachment = NodePath("SpawnPosition/Stomach")
-rapier_attachment = NodePath("SpawnPosition/RapierBone")
-shoulder_inherited_attachment = NodePath("SpawnPosition/ShoulderInherit")
-shoulder_override_attachment = NodePath("SpawnPosition/Stomach/ShoulderOverride")
+hand_end = NodePath("SpawnPosition/HandEnd")
+pole = NodePath("SpawnPosition/Pole")
+rapier_tip = NodePath("SpawnPosition/HandEnd/Rapier/StabTrigger/CollisionShape3D")
+lookat = NodePath("SpawnPosition/Lookat")
+twist_disperser = NodePath("SpawnPosition/TwistDisperser")
+two_bone_ik = NodePath("SpawnPosition/TwoBoneIK")
+copy_transform_modifier = NodePath("SpawnPosition/HandEndCopyModifier")
 spawn_position = NodePath("SpawnPosition")
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1148311159]
@@ -35,38 +36,38 @@ environment = SubResource("Environment_6kaxa")
 
 [node name="Environment" parent="." unique_id=1412730873 instance=ExtResource("1_6kaxa")]
 
-[node name="st_118_map_Mesh_0000" parent="Environment" index="0" unique_id=1901487524]
+[node name="st_118_map_Mesh_0000" parent="Environment" index="0" unique_id=870154180]
 layers = 4
 
-[node name="st_118_map_Mesh_0005" parent="Environment" index="1" unique_id=1168112257]
+[node name="st_118_map_Mesh_0005" parent="Environment" index="1" unique_id=1546740058]
 layers = 4
 
-[node name="st_118_map_Mesh_0006" parent="Environment" index="2" unique_id=62170544]
+[node name="st_118_map_Mesh_0006" parent="Environment" index="2" unique_id=1938979938]
 layers = 4
 
-[node name="st_118_map_Mesh_0007" parent="Environment" index="3" unique_id=1336229234]
+[node name="st_118_map_Mesh_0007" parent="Environment" index="3" unique_id=385265749]
 layers = 4
 
-[node name="st_118_map_Mesh_0011" parent="Environment" index="4" unique_id=2143658208]
+[node name="st_118_map_Mesh_0011" parent="Environment" index="4" unique_id=1175890670]
 layers = 4
 
-[node name="st_118_map_Mesh_0015" parent="Environment" index="5" unique_id=921198218]
+[node name="st_118_map_Mesh_0015" parent="Environment" index="5" unique_id=352656064]
 layers = 4
 
-[node name="st_118_map_Mesh_0018" parent="Environment" index="6" unique_id=1003101280]
+[node name="st_118_map_Mesh_0018" parent="Environment" index="6" unique_id=501720757]
 layers = 4
 
-[node name="st_118_map_Mesh_0020" parent="Environment" index="7" unique_id=1967449721]
+[node name="st_118_map_Mesh_0020" parent="Environment" index="7" unique_id=1731303799]
 layers = 4
 
-[node name="st_118_map_Mesh_0021" parent="Environment" index="8" unique_id=1188113046]
+[node name="st_118_map_Mesh_0021" parent="Environment" index="8" unique_id=905223583]
 layers = 4
 
-[node name="st_118_map_Mesh_0031" parent="Environment" index="9" unique_id=1182367953]
+[node name="st_118_map_Mesh_0031" parent="Environment" index="9" unique_id=1897693744]
 visible = false
 layers = 4
 
-[node name="st_118_map_Mesh_0035" parent="Environment" index="10" unique_id=2027261212]
+[node name="st_118_map_Mesh_0035" parent="Environment" index="10" unique_id=629002444]
 layers = 4
 
 [node name="Fire1" parent="." unique_id=589886147 instance=ExtResource("2_8em1r")]
@@ -183,50 +184,79 @@ fov = 50.0
 [node name="SpawnPosition" type="Node3D" parent="." unique_id=465451725]
 transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, 0, 0)
 
-[node name="RapierBone" type="BoneAttachment3D" parent="SpawnPosition" unique_id=1434115486]
-transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 0, 0, 0)
-bone_name = "wrist_r"
-bone_idx = 45
+[node name="HandEnd" type="Marker3D" parent="SpawnPosition" unique_id=1453479841]
+transform = Transform3D(0.92387944, -0.33141363, 0.19134176, 0, 0.5, 0.8660256, -0.38268343, -0.8001033, 0.46193984, 2.4999998, 7, -3.0000002)
+top_level = true
 
-[node name="Rapier" parent="SpawnPosition/RapierBone" unique_id=1089770171 instance=ExtResource("4_aoec8")]
-transform = Transform3D(0.5003372, 0.19806774, -0.84287095, 0.008750528, 0.9722759, 0.23367134, 0.8657861, -0.124290094, 0.48473278, 0.6824806, 0.028223619, 0.50768447)
+[node name="Rapier" parent="SpawnPosition/HandEnd" unique_id=151744692 instance=ExtResource("4_aoec8")]
+transform = Transform3D(0.92087954, 0.26672012, 0.2843248, -0.30305073, 0.9485508, 0.0917107, -0.24523552, -0.1706194, 0.9543313, 0.7965939, -0.11329651, -0.46027803)
 
-[node name="StabTrigger" type="Area3D" parent="SpawnPosition/RapierBone/Rapier" unique_id=760324065]
+[node name="StabTrigger" type="Area3D" parent="SpawnPosition/HandEnd/Rapier" unique_id=1968459411]
 collision_layer = 8
 collision_mask = 0
 monitoring = false
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="SpawnPosition/RapierBone/Rapier/StabTrigger" unique_id=504322546]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="SpawnPosition/HandEnd/Rapier/StabTrigger" unique_id=1856740745]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 28, 0)
-shape = SubResource("SphereShape3D_aoec8")
+shape = SubResource("SphereShape3D_kmx01")
 
-[node name="StickCollision" type="StaticBody3D" parent="SpawnPosition/RapierBone/Rapier" unique_id=1924850419]
+[node name="StickCollision" type="StaticBody3D" parent="SpawnPosition/HandEnd/Rapier" unique_id=1368285645]
 physics_interpolation_mode = 1
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="SpawnPosition/RapierBone/Rapier/StickCollision" unique_id=507360246]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="SpawnPosition/HandEnd/Rapier/StickCollision" unique_id=1938060747]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 14.884376, 0)
-shape = SubResource("CapsuleShape3D_kmx01")
+shape = SubResource("CapsuleShape3D_a8ckg")
 
-[node name="ShoulderInherit" type="BoneAttachment3D" parent="SpawnPosition" unique_id=117061831]
-transform = Transform3D(-0.5430404, 0.83656126, 0.072612, 0.7697735, 0.4614009, 0.4410872, 0.33549315, 0.29542294, -0.89452225, -1.4326147, 0.24316159, -7.197843)
-bone_name = "shoulder_r"
-bone_idx = 43
+[node name="Pole" type="Marker3D" parent="SpawnPosition" unique_id=1239897125]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 0, -5)
 
-[node name="Stomach" type="BoneAttachment3D" parent="SpawnPosition" unique_id=681614948]
-transform = Transform3D(9.1446885e-11, 0.99999994, -1.19209254e-07, 0.0007669927, -1.1920928e-07, -0.9999997, -0.99999964, 1.943215e-17, -0.0007669926, 2.9792213e-07, 0.23804058, -5.494179)
-bone_name = "stomach"
-bone_idx = 5
+[node name="Lookat" type="LookAtModifier3D" parent="SpawnPosition" unique_id=882356382]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 0, 0, 0)
+influence = 0.3
+target_node = NodePath("../HandEnd/Rapier/StabTrigger/CollisionShape3D")
+bone_name = "head"
+bone = 7
+forward_axis = 5
+primary_rotation_axis = 0
 
-[node name="ShoulderOverride" type="BoneAttachment3D" parent="SpawnPosition/Stomach" unique_id=486793441]
-transform = Transform3D(-0.3349026, -0.29506898, 0.8948604, -0.54304063, 0.8365615, 0.07261205, -0.7700307, -0.4616274, -0.44040084, 1.7036686, -1.4326153, -0.003814131)
-bone_name = "shoulder_r"
-bone_idx = 43
-override_pose = true
-use_external_skeleton = true
-external_skeleton = NodePath("")
+[node name="TwistDisperser" type="BoneTwistDisperser3D" parent="SpawnPosition" unique_id=1091963092]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 0, 0, 0)
+setting_count = 1
+settings/0/root_bone_name = "hips"
+settings/0/root_bone = 4
+settings/0/end_bone_name = "head"
+settings/0/end_bone = 7
+settings/0/extend_end_bone = true
+settings/0/end_bone_direction = 6
+settings/0/twist_from_rest = true
+settings/0/disperse_mode = 0
+settings/0/joint_count = 0
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="SpawnPosition/Stomach/ShoulderOverride" unique_id=817338000]
-mesh = SubResource("BoxMesh_qh6t2")
+[node name="TwoBoneIK" type="TwoBoneIK3D" parent="SpawnPosition" unique_id=1704871263]
+setting_count = 1
+settings/0/target_node = NodePath("../HandEnd")
+settings/0/pole_node = NodePath("../Pole")
+settings/0/root_bone_name = "shoulder_r"
+settings/0/root_bone = 43
+settings/0/middle_bone_name = "elbow_r"
+settings/0/middle_bone = 44
+settings/0/pole_direction = 0
+settings/0/end_bone_name = "wrist_r"
+settings/0/end_bone = 45
+settings/0/use_virtual_end = false
+settings/0/extend_end_bone = false
+
+[node name="HandEndCopyModifier" type="CopyTransformModifier3D" parent="SpawnPosition" unique_id=996867364]
+setting_count = 1
+settings/0/amount = 1.0
+settings/0/apply_bone_name = "wrist_r"
+settings/0/apply_bone = 45
+settings/0/reference_type = 1
+settings/0/reference_node = NodePath("../HandEnd")
+settings/0/copy = 2
+settings/0/axes = 7
+settings/0/invert = 0
+settings/0/additive = false
 
 [node name="Omochaos" type="Node3D" parent="." unique_id=1254267859 node_paths=PackedStringArray("omochaos")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 20, -67)
