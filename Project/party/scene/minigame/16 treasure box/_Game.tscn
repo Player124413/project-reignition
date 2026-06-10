@@ -1,0 +1,137 @@
+[gd_scene format=3 uid="uid://ndqgk7nj46gh"]
+
+[ext_resource type="PackedScene" uid="uid://dsbufs8tjchk7" path="res://party/scene/minigame/00 base/MinigameBase.tscn" id="1_6bxmt"]
+[ext_resource type="PackedScene" uid="uid://yhtgvy8yvkva" path="res://party/scene/minigame/16 treasure box/model/Collision.glb" id="1_dj3lj"]
+[ext_resource type="PackedScene" uid="uid://dntjlg1oakgpq" path="res://party/scene/minigame/16 treasure box/model/Map.glb" id="1_made5"]
+[ext_resource type="Resource" uid="uid://bhqd72enin16y" path="res://party/resource/minigame/16TreasureBox.tres" id="2_17dlv"]
+[ext_resource type="PackedScene" uid="uid://f5w7fq20xmd1" path="res://party/scene/minigame/00 base/Time.tscn" id="2_ko22q"]
+
+[sub_resource type="Environment" id="Environment_e2t8q"]
+background_mode = 1
+ambient_light_source = 2
+ambient_light_color = Color(0.42485788, 0.46608162, 0.7735687, 1)
+tonemap_mode = 1
+tonemap_exposure = 1.2
+tonemap_white = 1.2
+glow_enabled = true
+glow_normalized = true
+
+[node name="Game" type="Node3D" unique_id=1400613880]
+
+[node name="Minigame" parent="." unique_id=600998337 node_paths=PackedStringArray("results_camera") instance=ExtResource("1_6bxmt")]
+minigame_resource = ExtResource("2_17dlv")
+results_camera = NodePath("../CameraRoot/Results")
+
+[node name="P2" parent="Minigame/ResultsLocation" parent_id_path=PackedInt32Array(600998337, 1428872605) index="1" unique_id=2069217776]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 0, -10)
+
+[node name="P4" parent="Minigame/ResultsLocation" parent_id_path=PackedInt32Array(600998337, 1428872605) index="3" unique_id=13369216]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 15, 0, -10)
+
+[node name="Time" parent="Minigame" unique_id=2069576343 instance=ExtResource("2_ko22q")]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -128.0
+offset_right = 128.0
+grow_horizontal = 2
+max_game_time = 50
+
+[node name="Environment" type="Node3D" parent="." unique_id=2064554480]
+
+[node name="Collision2" parent="Environment" unique_id=428401733 instance=ExtResource("1_dj3lj")]
+visible = false
+
+[node name="Map" parent="Environment" unique_id=805623805 instance=ExtResource("1_made5")]
+
+[node name="st_208_map_Mesh_0000" parent="Environment/Map" index="0" unique_id=74644221]
+layers = 4
+cast_shadow = 0
+
+[node name="st_208_map_Mesh_0001" parent="Environment/Map" index="1" unique_id=1791706852]
+layers = 4
+cast_shadow = 0
+
+[node name="st_208_map_Mesh_0004" parent="Environment/Map" index="2" unique_id=798266300]
+layers = 4
+cast_shadow = 0
+
+[node name="st_208_map_Mesh_0005" parent="Environment/Map" index="3" unique_id=2014735228]
+layers = 4
+cast_shadow = 0
+
+[node name="st_208_map_Mesh_0006" parent="Environment/Map" index="4" unique_id=555668888]
+layers = 4
+cast_shadow = 0
+
+[node name="st_208_map_Mesh_0007" parent="Environment/Map" index="5" unique_id=278821699]
+layers = 4
+cast_shadow = 0
+
+[node name="st_208_map_Mesh_0008" parent="Environment/Map" index="6" unique_id=851126377]
+layers = 4
+cast_shadow = 0
+
+[node name="st_208_map_Mesh_0009" parent="Environment/Map" index="7" unique_id=1692438455]
+layers = 4
+cast_shadow = 0
+
+[node name="st_208_map_Mesh_0010" parent="Environment/Map" index="8" unique_id=53146560]
+layers = 4
+cast_shadow = 0
+
+[node name="st_208_map_Mesh_0011" parent="Environment/Map" index="9" unique_id=179968596]
+layers = 4
+cast_shadow = 0
+
+[node name="st_208_map_Mesh_0012" parent="Environment/Map" index="10" unique_id=1870733972]
+layers = 4
+cast_shadow = 0
+
+[node name="st_208_map_Mesh_0013" parent="Environment/Map" index="11" unique_id=1390456570]
+layers = 4
+cast_shadow = 0
+
+[node name="st_208_map_Mesh_0014" parent="Environment/Map" index="12" unique_id=846940101]
+layers = 4
+cast_shadow = 0
+
+[node name="st_208_map_Mesh_0020" parent="Environment/Map" index="13" unique_id=939823246]
+layers = 4
+cast_shadow = 0
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="Environment" unique_id=2113272218]
+environment = SubResource("Environment_e2t8q")
+
+[node name="MainLight" type="DirectionalLight3D" parent="Environment" unique_id=665714664]
+transform = Transform3D(0.7071067, -0.50000006, 0.5000001, -0.3535534, 0.36237252, 0.86237246, -0.61237246, -0.7865661, 0.07945933, 0, 3, 0)
+layers = 1024
+light_color = Color(0.768383, 0.99148196, 1, 1)
+light_specular = 0.0
+light_cull_mask = 4
+shadow_enabled = true
+shadow_caster_mask = 1
+
+[node name="Fill" type="DirectionalLight3D" parent="Environment" unique_id=1654751750]
+transform = Transform3D(1, 0, 0, 0, 0.90630776, -0.42261827, 0, 0.42261827, 0.90630776, 0, 3, 0)
+layers = 1024
+light_color = Color(0.8325902, 0.93651986, 0.97084445, 1)
+light_energy = 3.0
+light_specular = 0.0
+light_cull_mask = 4
+
+[node name="CameraRoot" type="Node3D" parent="." unique_id=1531456481]
+transform = Transform3D(1, 0, 0, 0, 0.9659258, 0.25881904, 0, -0.25881904, 0.9659258, 2, 15, 0)
+
+[node name="IngameCamera" type="Camera3D" parent="CameraRoot" unique_id=676078425]
+transform = Transform3D(1, 0, 0, 0, 1.0000001, 2.9802322e-08, 0, -2.9802322e-08, 1.0000001, 0, 0, 190)
+fov = 25.0
+
+[node name="Results" type="Camera3D" parent="CameraRoot" unique_id=877250449]
+transform = Transform3D(1, 0, 0, 0, 1.0000001, 2.9802322e-08, 0, -2.9802322e-08, 1.0000001, 0, 0, 100)
+fov = 25.0
+
+[editable path="Minigame"]
+[editable path="Environment/Collision2"]
+[editable path="Environment/Map"]
