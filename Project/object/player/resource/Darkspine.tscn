@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=3 uid="uid://dptuidi8u81gt"]
+[gd_scene format=3 uid="uid://dptuidi8u81gt"]
 
 [ext_resource type="PackedScene" uid="uid://cv14b3r1pov0q" path="res://object/player/resource/BaseModel.tscn" id="1_jhqf8"]
 [ext_resource type="PackedScene" uid="uid://duwx0ivxtnwka" path="res://object/player/resource/model/Darkspine.gltf" id="2_vyvmq"]
@@ -69,12 +69,12 @@ material = ExtResource("5_6ie6c")
 size = Vector2(1, 4)
 center_offset = Vector3(0, 1, 0)
 
-[node name="Model" instance=ExtResource("1_jhqf8")]
+[node name="Model" unique_id=961591860 instance=ExtResource("1_jhqf8")]
 speedbreakOverlayMaterial = ExtResource("3_vyvmq")
 
-[node name="Root" parent="." index="0" instance=ExtResource("2_vyvmq")]
+[node name="Root" parent="." index="0" unique_id=831976768 instance=ExtResource("2_vyvmq")]
 
-[node name="GeneralSkeleton" parent="Root/DSRoot" index="0"]
+[node name="GeneralSkeleton" parent="Root/DSRoot" parent_id_path=PackedInt32Array(831976768, 602054419) index="0" unique_id=1430795273]
 bones/0/rotation = Quaternion(-0.7071068, 0, 0, 0.7071068)
 bones/3/position = Vector3(0.30632782, 0.005206049, 0.6121043)
 bones/3/rotation = Quaternion(0.0045903493, 0.0045903493, -0.7070919, 0.7070918)
@@ -180,50 +180,36 @@ bones/68/scale = Vector3(1, 1, 0.99999803)
 bones/73/rotation = Quaternion(-0.7071068, 0, 0, 0.7071068)
 bones/74/rotation = Quaternion(-0.7071068, 0, 0, 0.7071068)
 
-[node name="DarkspineMesh" parent="Root/DSRoot/GeneralSkeleton" index="0"]
+[node name="DarkspineMesh" parent="Root/DSRoot/GeneralSkeleton" index="0" unique_id=995538443]
 layers = 64
 material_overlay = ExtResource("3_vyvmq")
 
-[node name="DarkspineRingsMesh" parent="Root/DSRoot/GeneralSkeleton" index="1"]
+[node name="DarkspineRingsMesh" parent="Root/DSRoot/GeneralSkeleton" index="1" unique_id=1002395354]
 layers = 64
 
-[node name="ChestAttachment" parent="." index="2"]
+[node name="ChestAttachment" parent="." index="2" unique_id=1656334189]
 external_skeleton = NodePath("../Root/DSRoot/GeneralSkeleton")
 
-[node name="FlameOffset" parent="ChestAttachment" index="0"]
+[node name="FlameOffset" parent="ChestAttachment" index="0" unique_id=820377634]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
 
-[node name="RFoot" parent="." index="3"]
+[node name="RFoot" parent="." index="3" unique_id=417731183]
 external_skeleton = NodePath("../Root/DSRoot/GeneralSkeleton")
 
-[node name="LFoot" parent="." index="4"]
+[node name="LFoot" parent="." index="4" unique_id=1634768111]
 external_skeleton = NodePath("../Root/DSRoot/GeneralSkeleton")
 
-[node name="AnimationPlayer" parent="." index="6"]
+[node name="AnimationPlayer" parent="." index="7" unique_id=1818809983]
 root_node = NodePath("../Root/DSRoot")
 
-[node name="AnimationTree" parent="." index="8"]
-root_node = NodePath("../Root/DSRoot")
-parameters/air_tree/jump_accel_trigger/active = true
-parameters/air_tree/jump_accel_trigger/internal_active = true
-parameters/air_tree/ds-jump-accel-transition/current_state = "disabled"
-parameters/air_tree/ds-jump-accel-transition/transition_request = ""
-parameters/air_tree/ds-jump-accel-transition/current_index = 0
-parameters/ground_tree/ds-backstep-transition/current_state = "disabled"
-parameters/ground_tree/ds-backstep-transition/current_index = 0
-parameters/ground_tree/ds-idle-transition/current_state = "disabled"
-parameters/ground_tree/ds-idle-transition/current_index = 0
-parameters/ground_tree/ds-forward-transition/current_state = "enabled"
-parameters/ground_tree/ds-forward-transition/current_index = 1
-
-[node name="HandL" type="BoneAttachment3D" parent="." index="9"]
+[node name="HandL" type="BoneAttachment3D" parent="." index="9" unique_id=2083143146]
 transform = Transform3D(-1.1920771e-07, 0.9999969, -9.313154e-10, -0.012983023, -9.3131974e-10, 0.99990803, 0.9999024, 1.1920893e-07, 0.012983095, 0.30632782, 0.6121043, -0.0031499048)
 bone_name = "l_hand_ik"
 bone_idx = 3
 use_external_skeleton = true
 external_skeleton = NodePath("../Root/DSRoot/GeneralSkeleton")
 
-[node name="PunchTrail" type="GPUParticles3D" parent="HandL" index="0"]
+[node name="PunchTrail" type="GPUParticles3D" parent="HandL" index="0" unique_id=1910490924]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.15, 0)
 layers = 32
 cast_shadow = 0
@@ -236,14 +222,14 @@ transform_align = 3
 process_material = SubResource("ParticleProcessMaterial_6ie6c")
 draw_pass_1 = SubResource("QuadMesh_80myo")
 
-[node name="HandR" type="BoneAttachment3D" parent="." index="10"]
+[node name="HandR" type="BoneAttachment3D" parent="." index="10" unique_id=633075253]
 transform = Transform3D(-1.192093e-07, -0.9999999, 9.31322e-10, 0.012983196, -9.313225e-10, 0.9999151, -0.9999158, 1.1920928e-07, 0.012983187, -0.30632782, 0.6121043, -0.0031499048)
 bone_name = "r_hand_ik"
 bone_idx = 4
 use_external_skeleton = true
 external_skeleton = NodePath("../Root/DSRoot/GeneralSkeleton")
 
-[node name="PunchTrail" type="GPUParticles3D" parent="HandR" index="0"]
+[node name="PunchTrail" type="GPUParticles3D" parent="HandR" index="0" unique_id=1489925294]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.15, 0)
 layers = 32
 cast_shadow = 0
@@ -256,14 +242,14 @@ transform_align = 3
 process_material = SubResource("ParticleProcessMaterial_6ie6c")
 draw_pass_1 = SubResource("QuadMesh_80myo")
 
-[node name="FootL" type="BoneAttachment3D" parent="." index="11"]
+[node name="FootL" type="BoneAttachment3D" parent="." index="11" unique_id=403283982]
 transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, 0.03972758, 0.15546903, 0.0020561293)
 bone_name = "l_foot_ik"
 bone_idx = 7
 use_external_skeleton = true
 external_skeleton = NodePath("../Root/DSRoot/GeneralSkeleton")
 
-[node name="PunchTrail" type="GPUParticles3D" parent="FootL" index="0"]
+[node name="PunchTrail" type="GPUParticles3D" parent="FootL" index="0" unique_id=1660118675]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.1, -0.1)
 layers = 32
 cast_shadow = 0
@@ -276,14 +262,14 @@ transform_align = 3
 process_material = SubResource("ParticleProcessMaterial_6ie6c")
 draw_pass_1 = SubResource("QuadMesh_80myo")
 
-[node name="FootR" type="BoneAttachment3D" parent="." index="12"]
+[node name="FootR" type="BoneAttachment3D" parent="." index="12" unique_id=1810289685]
 transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, -0.03972758, 0.15546903, 0.0020561293)
 bone_name = "r_foot_ik"
 bone_idx = 8
 use_external_skeleton = true
 external_skeleton = NodePath("../Root/DSRoot/GeneralSkeleton")
 
-[node name="PunchTrail" type="GPUParticles3D" parent="FootR" index="0"]
+[node name="PunchTrail" type="GPUParticles3D" parent="FootR" index="0" unique_id=658403239]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.1, -0.1)
 layers = 32
 cast_shadow = 0
@@ -296,7 +282,7 @@ transform_align = 3
 process_material = SubResource("ParticleProcessMaterial_6ie6c")
 draw_pass_1 = SubResource("QuadMesh_80myo")
 
-[node name="PunchPower" type="GPUParticles3D" parent="." index="13"]
+[node name="PunchPower" type="GPUParticles3D" parent="." index="13" unique_id=1337599957]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.55, 0)
 layers = 32
 cast_shadow = 0
@@ -310,5 +296,19 @@ interpolate = false
 transform_align = 3
 process_material = SubResource("ParticleProcessMaterial_dxuof")
 draw_pass_1 = SubResource("QuadMesh_dxuof")
+
+[node name="AnimationTree" parent="." index="14" unique_id=859972339]
+root_node = NodePath("../Root/DSRoot")
+parameters/air_tree/jump_accel_trigger/active = true
+parameters/air_tree/jump_accel_trigger/internal_active = true
+parameters/air_tree/ds-jump-accel-transition/current_state = "disabled"
+parameters/air_tree/ds-jump-accel-transition/transition_request = ""
+parameters/air_tree/ds-jump-accel-transition/current_index = 0
+parameters/ground_tree/ds-backstep-transition/current_state = "disabled"
+parameters/ground_tree/ds-backstep-transition/current_index = 0
+parameters/ground_tree/ds-idle-transition/current_state = "disabled"
+parameters/ground_tree/ds-idle-transition/current_index = 0
+parameters/ground_tree/ds-forward-transition/current_state = "enabled"
+parameters/ground_tree/ds-forward-transition/current_index = 1
 
 [editable path="Root"]

@@ -26,6 +26,7 @@ func process_invincibility_timer(time_remaining : float) -> void:
 	invincibility_animator.speed_scale = invincibility_animation_curve.sample(time_remaining)
 
 ## Plays a voice clip.
+@rpc("any_peer", "call_local", "reliable")
 func play_voice(key : String, index : int = -1) -> void:
 	if data == null || data.voice_library == null:
 		return
@@ -40,6 +41,7 @@ func is_voice_playing() -> bool:
 # TODO Add support for more complex character animations (i.e. blending)
 func _ready() -> void:
 	player_index = PartyManager.get_character_index(data)
+	animator.deterministic = true
 	
 	if player_index == -1:
 		return
@@ -112,7 +114,7 @@ func queue_minigame_animation(anim : StringName, blend : float = 0.0) -> void:
 
 ## Warps this animator to the correct results location.
 func on_minigame_finished() -> void:
-	if player_index == -1:
+	if !PartyManager.minigame_players.has(player_index):
 		return
 	
 	reparent(MinigameManager.instance.results_location[player_index])
@@ -121,7 +123,7 @@ func on_minigame_finished() -> void:
 
 ## Play victory or loss animation
 func on_results_started() -> void:
-	if player_index == -1:
+	if !PartyManager.minigame_players.has(player_index):
 		return
 	
 	set_speed(1)

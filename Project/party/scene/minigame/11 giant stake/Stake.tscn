@@ -1,0 +1,921 @@
+[gd_scene format=3 uid="uid://dc4f0k41f3i27"]
+
+[ext_resource type="Script" uid="uid://b0kejedoxpdit" path="res://party/scene/minigame/11 giant stake/script/stake.gd" id="1_2u3uv"]
+[ext_resource type="PackedScene" uid="uid://6y0vben3tykf" path="res://party/scene/minigame/11 giant stake/model/metal_stake.tscn" id="3_4ggf6"]
+[ext_resource type="PackedScene" uid="uid://cc8lh17eetd5b" path="res://party/scene/minigame/11 giant stake/model/wood_stake.tscn" id="4_c84m1"]
+[ext_resource type="Material" uid="uid://dfv7u475orc7p" path="res://party/scene/minigame/11 giant stake/particles/Cloud1.tres" id="5_dnreb"]
+[ext_resource type="Material" uid="uid://6e7jn3ajuqst" path="res://party/scene/minigame/11 giant stake/material/Stake Shadow.tres" id="5_ejl10"]
+[ext_resource type="Script" uid="uid://c65ffkknyq6gr" path="res://addons/custom_nodes/script/GroupGpuParticles3D.cs" id="5_ucbua"]
+[ext_resource type="Material" uid="uid://bas5rjp3ogmu1" path="res://party/scene/minigame/11 giant stake/particles/slam_ring.tres" id="6_puwvs"]
+[ext_resource type="Material" uid="uid://uuyf13nwhteq" path="res://party/scene/minigame/11 giant stake/particles/slam_particle.tres" id="7_puwvs"]
+[ext_resource type="Material" uid="uid://btlea54srir75" path="res://party/scene/minigame/11 giant stake/particles/Cloud2.tres" id="7_qdsmy"]
+[ext_resource type="Material" uid="uid://b1ayp28kedo2s" path="res://party/scene/minigame/11 giant stake/particles/slam_particle_light.tres" id="8_7qwuh"]
+[ext_resource type="Material" uid="uid://n28w5281vih" path="res://party/scene/minigame/11 giant stake/particles/Cloud3.tres" id="8_8aoqg"]
+[ext_resource type="AudioStream" uid="uid://dj4erl0c4h0bt" path="res://party/scene/minigame/11 giant stake/sound/stake hit metal.wav" id="9_g3nfu"]
+[ext_resource type="Script" uid="uid://bkwc2atbp4cjd" path="res://party/scene/minigame/00 base/script/group_sfx_player.gd" id="10_t5j0f"]
+[ext_resource type="AudioStream" uid="uid://qrip7kidvsfu" path="res://party/scene/minigame/11 giant stake/sound/stake hit base.wav" id="11_qdsmy"]
+[ext_resource type="AudioStream" uid="uid://dnyo6d048x2p2" path="res://party/scene/minigame/11 giant stake/sound/stake_hit_final.wav" id="11_t5j0f"]
+[ext_resource type="AudioStream" uid="uid://dtqtexlb4shn" path="res://party/scene/minigame/11 giant stake/sound/stake_land.wav" id="12_7qwuh"]
+
+[sub_resource type="Curve" id="Curve_7qwuh"]
+_data = [Vector2(0, 0), 0.0, 17.129793, 0, 0, Vector2(0.2, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_ucbua"]
+width = 64
+texture_mode = 1
+curve = SubResource("Curve_7qwuh")
+
+[sub_resource type="Curve" id="Curve_ucbua"]
+_data = [Vector2(0, 0.2), 0.0, 2.1647105, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_qdsmy"]
+width = 64
+curve = SubResource("Curve_ucbua")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_puwvs"]
+lifetime_randomness = 0.4
+emission_shape = 6
+emission_ring_axis = Vector3(0, 0, 1)
+emission_ring_height = 1.0
+emission_ring_radius = 5.57
+emission_ring_inner_radius = 4.4
+emission_ring_cone_angle = 90.0
+angle_min = 1.0728836e-05
+angle_max = 360.00003
+angular_velocity_min = -1.6093254e-05
+angular_velocity_max = -1.6093254e-05
+radial_velocity_min = -2.2351742e-05
+radial_velocity_max = 6.2499776
+gravity = Vector3(0, 30, 0)
+scale_max = 2.0
+scale_curve = SubResource("CurveTexture_qdsmy")
+alpha_curve = SubResource("CurveTexture_ucbua")
+
+[sub_resource type="QuadMesh" id="QuadMesh_7gcrc"]
+material = ExtResource("5_dnreb")
+size = Vector2(5, 5)
+
+[sub_resource type="Curve" id="Curve_8aoqg"]
+_data = [Vector2(0, 0), 0.0, 24.739298, 0, 0, Vector2(0.1, 1), 0.0, 0.0, 0, 0, Vector2(0.7, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 4
+
+[sub_resource type="CurveTexture" id="CurveTexture_gbcon"]
+width = 64
+texture_mode = 1
+curve = SubResource("Curve_8aoqg")
+
+[sub_resource type="Curve" id="Curve_qdsmy"]
+_data = [Vector2(0, 0.1), 0.0, 2.5651064, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_8aoqg"]
+width = 64
+curve = SubResource("Curve_qdsmy")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_7qwuh"]
+lifetime_randomness = 0.4
+emission_shape_scale = Vector3(3, 1, 3)
+direction = Vector3(0, 1, 0)
+spread = 70.0
+initial_velocity_min = 1.0
+initial_velocity_max = 10.0
+gravity = Vector3(0, 0, 0)
+radial_accel_min = -2.2351742e-06
+radial_accel_max = -2.2351742e-06
+scale_min = 4.0
+scale_max = 8.0
+scale_curve = SubResource("CurveTexture_8aoqg")
+color = Color(1.5720325, 1.2273029, 1.5720325, 0.5882353)
+alpha_curve = SubResource("CurveTexture_gbcon")
+turbulence_noise_scale = 0.473
+
+[sub_resource type="QuadMesh" id="QuadMesh_7qwuh"]
+material = ExtResource("8_7qwuh")
+size = Vector2(1, 1.5)
+center_offset = Vector3(0, 0.5, 0)
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_vy42k"]
+
+[sub_resource type="Animation" id="Animation_g3nfu"]
+resource_name = "RESET"
+length = 0.1
+step = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("SlamRing:visible")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("SlamParticle:visible")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("SlamRing:scale")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(1, 1, 1)]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("SlamParticle:scale")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(1, 1, 1)]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("SlamRing:transparency")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.0]
+}
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("SlamParticle:transparency")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.0]
+}
+
+[sub_resource type="Animation" id="Animation_puwvs"]
+resource_name = "slam"
+length = 0.2
+step = 0.05
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("SlamRing:visible")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("SlamParticle:visible")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("SlamRing:scale")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 0.05),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector3(4, 4, 4), Vector3(6, 6, 6)]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("SlamParticle:scale")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0, 0.05, 0.15),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector3(4, 4, 4), Vector3(6, 6, 6), Vector3(4, 4, 4)]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("SlamRing:transparency")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [0.0, 0.0, 1.0]
+}
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("SlamParticle:transparency")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [0.0, 0.0, 1.0]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_jqvdu"]
+_data = {
+&"RESET": SubResource("Animation_g3nfu"),
+&"slam": SubResource("Animation_puwvs")
+}
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_ghnyn"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_ghnyn"]
+radius = 2.4594727
+height = 9.128906
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_ghnyn"]
+size = Vector3(4.49263, 0.85217285, 4.5392914)
+
+[sub_resource type="Animation" id="Animation_ghnyn"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Root/MetalStake:visible")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Root/WoodStake:visible")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("shadow:scale")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(3.1451228, 0.7, 3.1451228)]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("shadow:visible")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("StakeCollision/StakeCollider:disabled")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("Hitbox/hitbox:disabled")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/6/type = "value"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("Hitbox/hitbox_falling:disabled")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/7/type = "value"
+tracks/7/imported = false
+tracks/7/enabled = true
+tracks/7/path = NodePath("Root:position")
+tracks/7/interp = 1
+tracks/7/loop_wrap = true
+tracks/7/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0, 0, 0)]
+}
+tracks/8/type = "value"
+tracks/8/imported = false
+tracks/8/enabled = true
+tracks/8/path = NodePath("Root:visible")
+tracks/8/interp = 1
+tracks/8/loop_wrap = true
+tracks/8/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+
+[sub_resource type="Animation" id="Animation_dnreb"]
+resource_name = "damaged"
+length = 0.5
+step = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Root:position")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.25, 0.5),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector3(0, 9.68, 0), Vector3(-13.401, 19.85, 0), Vector3(-20.68, 9.68, 0)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("StakeCollision/StakeCollider:disabled")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Hitbox/hitbox:disabled")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("Hitbox/hitbox_falling:disabled")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("Root:visible")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0.5),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("shadow:visible")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+
+[sub_resource type="Animation" id="Animation_vy42k"]
+resource_name = "fall"
+length = 3.5
+step = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("shadow:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 3),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector3(0, 0, 0), Vector3(3.1451228, 0.7, 3.1451228)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Root:position")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 3, 3.2),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector3(0, 80, 0), Vector3(0, 80, 0), Vector3(0, 0, 0)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("shadow:visible")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("StakeCollision/StakeCollider:disabled")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0, 3.2),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [true, false]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("Hitbox/hitbox_falling:disabled")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0, 3.1, 3.2),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 1,
+"values": [true, false, true]
+}
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("Root:visible")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/6/type = "method"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("SFX/StakeLand")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"times": PackedFloat32Array(3.2),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"play_in_group"
+}]
+}
+tracks/7/type = "method"
+tracks/7/imported = false
+tracks/7/enabled = true
+tracks/7/path = NodePath(".")
+tracks/7/interp = 1
+tracks/7/loop_wrap = true
+tracks/7/keys = {
+"times": PackedFloat32Array(3.2),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"on_stake_landed"
+}]
+}
+
+[sub_resource type="Animation" id="Animation_8aoqg"]
+resource_name = "finished"
+length = 0.1
+step = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("StakeCollision/StakeCollider:disabled")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Hitbox/hitbox:disabled")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+
+[sub_resource type="Animation" id="Animation_gbcon"]
+resource_name = "metal"
+length = 0.001
+step = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Root/MetalStake:visible")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Root/WoodStake:visible")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+
+[sub_resource type="Animation" id="Animation_7gcrc"]
+resource_name = "remove"
+length = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Root:visible")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("shadow:visible")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+
+[sub_resource type="Animation" id="Animation_jqvdu"]
+resource_name = "standby"
+length = 0.001
+step = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("shadow:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(3.1451228, 0.7, 3.1451228)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("shadow:visible")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Root:visible")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+
+[sub_resource type="Animation" id="Animation_be8it"]
+resource_name = "started"
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("StakeCollision/StakeCollider:disabled")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Hitbox/hitbox:disabled")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+
+[sub_resource type="Animation" id="Animation_n1vet"]
+resource_name = "wood"
+length = 0.001
+step = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Root/MetalStake:visible")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Root/WoodStake:visible")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_be8it"]
+_data = {
+&"RESET": SubResource("Animation_ghnyn"),
+&"damaged": SubResource("Animation_dnreb"),
+&"fall": SubResource("Animation_vy42k"),
+&"finished": SubResource("Animation_8aoqg"),
+&"metal": SubResource("Animation_gbcon"),
+&"remove": SubResource("Animation_7gcrc"),
+&"standby": SubResource("Animation_jqvdu"),
+&"started": SubResource("Animation_be8it"),
+&"wood": SubResource("Animation_n1vet")
+}
+
+[node name="Stake" type="Node3D" unique_id=1813216196 node_paths=PackedStringArray("animator", "slam_animator", "root", "collision", "hitbox_falling", "smoke", "sfx_hit_wood", "sfx_hit_metal", "sfx_hit_final")]
+script = ExtResource("1_2u3uv")
+animator = NodePath("AnimationPlayer")
+slam_animator = NodePath("Root/SlamAnimator")
+root = NodePath("Root")
+collision = NodePath("StakeCollision/StakeCollider")
+hitbox_falling = NodePath("Hitbox/hitbox_falling")
+smoke = NodePath("Root/Smoke")
+sfx_hit_wood = NodePath("SFX/StakeHitMetal")
+sfx_hit_metal = NodePath("SFX/StakeHitBase")
+sfx_hit_final = NodePath("SFX/StakeHitFinal")
+
+[node name="Root" type="Node3D" parent="." unique_id=400994859]
+
+[node name="MetalStake" parent="Root" unique_id=1307334654 instance=ExtResource("3_4ggf6")]
+visible = false
+
+[node name="WoodStake" parent="Root" unique_id=849408743 instance=ExtResource("4_c84m1")]
+
+[node name="Smoke" type="GPUParticles3D" parent="Root" unique_id=860282031 node_paths=PackedStringArray("subSystems")]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 7.4965754, 0)
+layers = 32
+cast_shadow = 0
+emitting = false
+amount = 16
+lifetime = 0.4
+one_shot = true
+explosiveness = 1.0
+fixed_fps = 0
+fract_delta = false
+process_material = SubResource("ParticleProcessMaterial_puwvs")
+draw_pass_1 = SubResource("QuadMesh_7gcrc")
+script = ExtResource("5_ucbua")
+subSystems = [NodePath("SlamLight"), NodePath("Cloud2"), NodePath("Cloud3")]
+
+[node name="SlamLight" type="GPUParticles3D" parent="Root/Smoke" unique_id=1108312728]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 4.3711395e-08, -1)
+layers = 32
+emitting = false
+amount = 64
+lifetime = 0.6
+one_shot = true
+explosiveness = 0.8
+fixed_fps = 0
+fract_delta = false
+transform_align = 2
+process_material = SubResource("ParticleProcessMaterial_7qwuh")
+draw_pass_1 = SubResource("QuadMesh_7qwuh")
+
+[node name="Cloud2" type="GPUParticles3D" parent="Root/Smoke" unique_id=618989311]
+layers = 32
+material_override = ExtResource("7_qdsmy")
+cast_shadow = 0
+emitting = false
+amount = 16
+lifetime = 0.4
+one_shot = true
+explosiveness = 1.0
+fixed_fps = 0
+fract_delta = false
+process_material = SubResource("ParticleProcessMaterial_puwvs")
+draw_pass_1 = SubResource("QuadMesh_7gcrc")
+
+[node name="Cloud3" type="GPUParticles3D" parent="Root/Smoke" unique_id=1201767036]
+layers = 32
+material_override = ExtResource("8_8aoqg")
+cast_shadow = 0
+emitting = false
+amount = 16
+lifetime = 0.4
+one_shot = true
+explosiveness = 1.0
+fixed_fps = 0
+fract_delta = false
+process_material = SubResource("ParticleProcessMaterial_puwvs")
+draw_pass_1 = SubResource("QuadMesh_7gcrc")
+
+[node name="SlamRing" type="MeshInstance3D" parent="Root" unique_id=1237058412]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8.276726, 0)
+visible = false
+layers = 32
+material_override = ExtResource("6_puwvs")
+mesh = SubResource("PlaneMesh_vy42k")
+
+[node name="SlamParticle" type="MeshInstance3D" parent="Root" unique_id=1066841502]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8.276726, 0)
+visible = false
+layers = 32
+material_override = ExtResource("7_puwvs")
+mesh = SubResource("PlaneMesh_vy42k")
+
+[node name="SlamAnimator" type="AnimationPlayer" parent="Root" unique_id=1700550615]
+libraries/ = SubResource("AnimationLibrary_jqvdu")
+
+[node name="shadow" type="MeshInstance3D" parent="." unique_id=154738629]
+transform = Transform3D(3.1451228, 0, 0, 0, 0.7, 0, 0, 0, 3.1451228, 0, 2.5207195, 0)
+visible = false
+material_override = ExtResource("5_ejl10")
+cast_shadow = 0
+mesh = SubResource("PlaneMesh_ghnyn")
+
+[node name="StakeCollision" type="StaticBody3D" parent="." unique_id=1074165034]
+
+[node name="StakeCollider" type="CollisionShape3D" parent="StakeCollision" unique_id=1683052239]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.029512405, 5.1323447, -0.06368923)
+shape = SubResource("CapsuleShape3D_ghnyn")
+disabled = true
+
+[node name="Hitbox" type="Area3D" parent="." unique_id=2097427269 groups=["enemy"]]
+
+[node name="hitbox" type="CollisionShape3D" parent="Hitbox" unique_id=1773299759]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.10059738, 7.443321, -0.040504456)
+shape = SubResource("BoxShape3D_ghnyn")
+disabled = true
+debug_color = Color(1, 0, 0, 1)
+
+[node name="hitbox_falling" type="CollisionShape3D" parent="Hitbox" unique_id=564601209]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.10059738, 3.1472836, -0.040504456)
+shape = SubResource("BoxShape3D_ghnyn")
+disabled = true
+debug_color = Color(1, 0, 0, 1)
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=88223073]
+libraries/ = SubResource("AnimationLibrary_be8it")
+
+[node name="SFX" type="Node" parent="." unique_id=1232494140]
+
+[node name="StakeHitBase" type="AudioStreamPlayer" parent="SFX" unique_id=1433743243]
+stream = ExtResource("11_qdsmy")
+bus = &"GAME SFX"
+script = ExtResource("10_t5j0f")
+group = "stake base"
+min_volume = 0.8
+metadata/_custom_type_script = "uid://bkwc2atbp4cjd"
+
+[node name="StakeHitMetal" type="AudioStreamPlayer" parent="SFX" unique_id=871946411]
+stream = ExtResource("9_g3nfu")
+bus = &"GAME SFX"
+script = ExtResource("10_t5j0f")
+group = "stake metal"
+base_volume = 0.8
+min_volume = 0.6000000000000001
+metadata/_custom_type_script = "uid://bkwc2atbp4cjd"
+
+[node name="StakeHitFinal" type="AudioStreamPlayer" parent="SFX" unique_id=1746971018]
+stream = ExtResource("11_t5j0f")
+bus = &"GAME SFX"
+script = ExtResource("10_t5j0f")
+group = "stake final"
+min_volume = 0.8
+metadata/_custom_type_script = "uid://bkwc2atbp4cjd"
+
+[node name="StakeLand" type="AudioStreamPlayer" parent="SFX" unique_id=464695735]
+stream = ExtResource("12_7qwuh")
+bus = &"GAME SFX"
+script = ExtResource("10_t5j0f")
+group = "stake land"
+base_volume = 0.8
+min_volume = 0.5
+metadata/_custom_type_script = "uid://bkwc2atbp4cjd"
+
+[connection signal="area_entered" from="Hitbox" to="." method="_on_area_3d_area_entered"]

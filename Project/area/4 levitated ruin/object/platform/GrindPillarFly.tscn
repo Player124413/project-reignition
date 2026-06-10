@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3 uid="uid://x3scwb5r13dw"]
+[gd_scene format=3 uid="uid://x3scwb5r13dw"]
 
 [ext_resource type="Script" uid="uid://d4kukq76r26tq" path="res://area/4 levitated ruin/data/script/FlyingDestructableObject.cs" id="1_nmd6a"]
 [ext_resource type="PackedScene" uid="uid://vdrt1jk4o1vd" path="res://area/4 levitated ruin/object/model/platform/GrindPillar.gltf" id="2_me0lf"]
@@ -203,7 +203,7 @@ _data = {
 &"shatter": SubResource("Animation_yrfwa")
 }
 
-[node name="GrindPillarFly" type="Node3D" node_paths=PackedStringArray("rotationRoot", "root", "pieceRoot", "animator")]
+[node name="GrindPillarFly" type="Node3D" unique_id=838035487 node_paths=PackedStringArray("rotationRoot", "root", "pieceRoot", "animator")]
 script = ExtResource("1_nmd6a")
 rotationRoot = NodePath("Root/Rotation")
 pieceMass = 0.5
@@ -213,34 +213,34 @@ root = NodePath("Root")
 pieceRoot = NodePath("GrindPillarPieces")
 animator = NodePath("AnimationPlayer")
 
-[node name="Root" type="Node3D" parent="."]
+[node name="Root" type="Node3D" parent="." unique_id=1688724249]
 
-[node name="Rotation" type="Node3D" parent="Root"]
+[node name="Rotation" type="Node3D" parent="Root" unique_id=2014062382]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.3, 0)
 
-[node name="Trigger" type="Area3D" parent="Root/Rotation"]
+[node name="Trigger" type="Area3D" parent="Root/Rotation" unique_id=98265241]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.3, 0)
 collision_layer = 0
 collision_mask = 2
 monitorable = false
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Root/Rotation/Trigger"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Root/Rotation/Trigger" unique_id=1897620907]
 shape = SubResource("ConcavePolygonShape3D_7cx07")
 
-[node name="GrindPillar" parent="Root/Rotation" instance=ExtResource("2_me0lf")]
+[node name="GrindPillar" parent="Root/Rotation" unique_id=834069133 instance=ExtResource("2_me0lf")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.3, 0)
 
-[node name="GrindPillarCollision" parent="Root/Rotation/GrindPillar" index="1"]
+[node name="GrindPillarCollision" parent="Root/Rotation/GrindPillar" index="1" unique_id=932279833]
 visible = false
 
-[node name="StaticBody3D" parent="Root/Rotation/GrindPillar/GrindPillarCollision" index="0" groups=["wall"]]
+[node name="StaticBody3D" parent="Root/Rotation/GrindPillar/GrindPillarCollision" index="0" unique_id=1487512341 groups=["wall"]]
 collision_layer = 8
 collision_mask = 0
 
-[node name="GrindPillarPieces" parent="." instance=ExtResource("4_wggd5")]
+[node name="GrindPillarPieces" parent="." unique_id=11748831 instance=ExtResource("4_wggd5")]
 visible = false
 
-[node name="LaunchSFX" type="AudioStreamPlayer3D" parent="."]
+[node name="LaunchSFX" type="AudioStreamPlayer3D" parent="." unique_id=1806625273]
 stream = ExtResource("4_f8eqs")
 max_db = 0.0
 max_distance = 200.0
@@ -248,7 +248,7 @@ bus = &"GAME SFX"
 script = ExtResource("5_dppsv")
 groupKey = &"pillar launch"
 
-[node name="ShatterSFX" type="AudioStreamPlayer3D" parent="."]
+[node name="ShatterSFX" type="AudioStreamPlayer3D" parent="." unique_id=1297332009]
 stream = ExtResource("6_5s8y3")
 max_db = 0.0
 max_distance = 200.0
@@ -256,10 +256,8 @@ bus = &"GAME SFX"
 script = ExtResource("5_dppsv")
 groupKey = &"pillar shatter"
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
-libraries = {
-&"": SubResource("AnimationLibrary_pmcqp")
-}
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=582105601]
+libraries/ = SubResource("AnimationLibrary_pmcqp")
 
 [connection signal="Shattered" from="." to="ShatterSFX" method="PlayInGroup"]
 [connection signal="StartedFlying" from="." to="LaunchSFX" method="PlayInGroup"]

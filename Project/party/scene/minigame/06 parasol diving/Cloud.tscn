@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=3 uid="uid://hdd7tlt77uqu"]
+[gd_scene format=3 uid="uid://hdd7tlt77uqu"]
 
 [ext_resource type="Script" uid="uid://bdqr8rerf3ru6" path="res://party/scene/minigame/06 parasol diving/script/cloud.gd" id="1_6g2bd"]
 [ext_resource type="PackedScene" uid="uid://xq7x7nwhvjdr" path="res://party/scene/minigame/06 parasol diving/model/Cloud.glb" id="2_scrxx"]
@@ -197,7 +197,7 @@ _data = {
 &"spawn": SubResource("Animation_55xsp")
 }
 
-[node name="Cloud" type="Area3D" node_paths=PackedStringArray("animator", "catch_sfx", "explode_sfx") groups=["enemy"]]
+[node name="Cloud" type="Area3D" unique_id=21075766 node_paths=PackedStringArray("animator", "catch_sfx", "explode_sfx") groups=["enemy"]]
 collision_layer = 8
 collision_mask = 0
 monitoring = false
@@ -206,15 +206,15 @@ animator = NodePath("AnimationPlayer")
 catch_sfx = NodePath("Catch")
 explode_sfx = NodePath("Explode")
 
-[node name="Cloud" parent="." instance=ExtResource("2_scrxx")]
+[node name="Cloud" parent="." unique_id=858703996 instance=ExtResource("2_scrxx")]
 
-[node name="AnimationPlayer" parent="Cloud" index="1"]
-autoplay = "cloud"
+[node name="AnimationPlayer" parent="Cloud" index="1" unique_id=1205864564]
+autoplay = &"cloud"
 
-[node name="CloudExplosion" parent="." instance=ExtResource("3_scrxx")]
+[node name="CloudExplosion" parent="." unique_id=1642315336 instance=ExtResource("3_scrxx")]
 visible = false
 
-[node name="Skeleton3D" parent="CloudExplosion/CloudExplosionRoot" index="0"]
+[node name="Skeleton3D" parent="CloudExplosion/CloudExplosionRoot" parent_id_path=PackedInt32Array(1642315336, 468710877) index="0" unique_id=1313661929]
 bones/2/position = Vector3(-4.0922527, 4.4330273, 7.218441)
 bones/2/rotation = Quaternion(0, 0, 0.9945196, 0.10455063)
 bones/2/scale = Vector3(2.0000007, 2.0000007, 2)
@@ -261,11 +261,11 @@ bones/18/scale = Vector3(0, 0, 0)
 bones/19/position = Vector3(11.696993, -2.2412, 1.4267648)
 bones/19/scale = Vector3(0, 0, 0)
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=1887776230]
 transform = Transform3D(-4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 0, 0, 1, 0, 0, 0)
 shape = SubResource("CapsuleShape3D_gs8sf")
 
-[node name="ExplodeVFX" type="GPUParticles3D" parent="."]
+[node name="ExplodeVFX" type="GPUParticles3D" parent="." unique_id=1928965548]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 4)
 layers = 32
 material_override = ExtResource("4_gs8sf")
@@ -279,17 +279,15 @@ fract_delta = false
 process_material = SubResource("ParticleProcessMaterial_gs8sf")
 draw_pass_1 = SubResource("QuadMesh_qvlrk")
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
-libraries = {
-&"": SubResource("AnimationLibrary_fiqw7")
-}
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=3510658]
+libraries/ = SubResource("AnimationLibrary_fiqw7")
 
-[node name="Catch" type="AudioStreamPlayer" parent="."]
+[node name="Catch" type="AudioStreamPlayer" parent="." unique_id=1081096987]
 stream = ExtResource("5_fiqw7")
 volume_db = 6.0
 bus = &"GAME SFX"
 
-[node name="Explode" type="AudioStreamPlayer" parent="."]
+[node name="Explode" type="AudioStreamPlayer" parent="." unique_id=1225011736]
 stream = ExtResource("6_115sd")
 volume_db = 6.0
 bus = &"GAME SFX"

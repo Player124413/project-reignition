@@ -1,0 +1,38 @@
+[gd_scene format=3 uid="uid://ctebu6qgpc6qu"]
+
+[ext_resource type="Script" uid="uid://dgbj5cm032612" path="res://party/scene/attraction/tournament palace/script/win_counter_controller.gd" id="1_00vdi"]
+[ext_resource type="PackedScene" uid="uid://bti46u4h0ajqv" path="res://party/scene/attraction/tournament palace/WinCounter.tscn" id="1_lag1k"]
+[ext_resource type="AudioStream" uid="uid://ccmxtcjowepf" path="res://party/sound/sfx/system/round win.wav" id="3_7s060"]
+[ext_resource type="AudioStream" uid="uid://cuhukkv1b17rq" path="res://party/sound/jingle/party win.ogg" id="4_7s060"]
+
+[node name="WinCounterController" type="HBoxContainer" unique_id=2048324682 node_paths=PackedStringArray("round_win", "bracket_win", "win_counters")]
+anchors_preset = -1
+offset_right = 192.0
+offset_bottom = 64.0
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(2, 2)
+theme_override_constants/separation = 0
+alignment = 1
+script = ExtResource("1_00vdi")
+round_win = NodePath("RoundWin")
+bracket_win = NodePath("BracketWin")
+win_counters = [NodePath("WinCounter1"), NodePath("WinCounter2"), NodePath("WinCounter3")]
+
+[node name="WinCounter1" parent="." unique_id=2102980515 instance=ExtResource("1_lag1k")]
+layout_mode = 2
+
+[node name="WinCounter2" parent="." unique_id=372802890 instance=ExtResource("1_lag1k")]
+layout_mode = 2
+
+[node name="WinCounter3" parent="." unique_id=1275818221 instance=ExtResource("1_lag1k")]
+layout_mode = 2
+
+[node name="RoundWin" type="AudioStreamPlayer" parent="." unique_id=901013826]
+stream = ExtResource("3_7s060")
+bus = &"SFX"
+
+[node name="BracketWin" type="AudioStreamPlayer" parent="." unique_id=1005044652]
+stream = ExtResource("4_7s060")
+volume_db = 3.0
+bus = &"SFX"

@@ -1,4 +1,4 @@
-[gd_scene load_steps=41 format=4 uid="uid://brtel7tjfbqu1"]
+[gd_scene format=4 uid="uid://brtel7tjfbqu1"]
 
 [ext_resource type="Script" uid="uid://dtkbvehtmy3em" path="res://object/stage/StageSettings.cs" id="1_usvxm"]
 [ext_resource type="PackedScene" uid="uid://l2gs3bhjao6b" path="res://area/1 sand oasis/boss/environment/SOBoss.tscn" id="1_xgd2p"]
@@ -446,7 +446,6 @@ ssil_normal_rejection = 0.8
 glow_enabled = true
 glow_normalized = true
 glow_intensity = 6.0
-glow_blend_mode = 1
 glow_hdr_threshold = 3.5
 glow_hdr_scale = 1.0
 glow_map_strength = 1.0
@@ -573,7 +572,7 @@ func _process(_delta: float) -> void:
 	material.set_shader_parameter(\"camera_dir\", cam_forward)
 "
 
-[node name="Static" type="Node3D" node_paths=PackedStringArray("pathParent", "completionAnimator", "Environment")]
+[node name="Static" type="Node3D" unique_id=1565891011 node_paths=PackedStringArray("pathParent", "completionAnimator", "Environment")]
 script = ExtResource("1_usvxm")
 DefaultBgm = ExtResource("14_6nwdp")
 dialogLibrary = ExtResource("2_i4068")
@@ -581,14 +580,14 @@ pathParent = NodePath("Path")
 completionAnimator = NodePath("DemoCamera/AnimationPlayer")
 Environment = NodePath("WorldEnvironment")
 
-[node name="Collision" parent="." instance=ExtResource("3_7yi4a")]
+[node name="Collision" parent="." unique_id=966666124 instance=ExtResource("3_7yi4a")]
 visible = false
 
-[node name="Visuals" type="Node3D" parent="."]
+[node name="Visuals" type="Node3D" parent="." unique_id=236862974]
 
-[node name="SOBoss" parent="Visuals" instance=ExtResource("1_xgd2p")]
+[node name="SOBoss" parent="Visuals" unique_id=1877761598 instance=ExtResource("1_xgd2p")]
 
-[node name="EnvironmentLight" type="DirectionalLight3D" parent="Visuals"]
+[node name="EnvironmentLight" type="DirectionalLight3D" parent="Visuals" unique_id=58623366]
 transform = Transform3D(0.86697316, -0.4069, -0.28773078, -0.2770803, -0.87346846, 0.40034878, -0.41422567, -0.26736748, -0.87001765, 0, 2.02091, 0)
 layers = 1024
 light_color = Color(1, 0.9098039, 0.39607844, 1)
@@ -602,24 +601,24 @@ directional_shadow_split_2 = 0.16
 directional_shadow_split_3 = 0.45
 directional_shadow_max_distance = 150.0
 
-[node name="ObjectLight" type="DirectionalLight3D" parent="Visuals"]
+[node name="ObjectLight" type="DirectionalLight3D" parent="Visuals" unique_id=270943329]
 transform = Transform3D(0.693093, -0.495387, -0.523654, -0.270536, -0.852102, 0.448032, -0.668155, -0.168861, -0.724606, 0, 2.02091, 0)
 layers = 1024
 light_color = Color(1, 0.936, 0.52, 1)
 light_cull_mask = 4293918785
 shadow_opacity = 0.95
 
-[node name="Sun" parent="Visuals" instance=ExtResource("6_3vtxx")]
+[node name="Sun" parent="Visuals" unique_id=88224265 instance=ExtResource("6_3vtxx")]
 transform = Transform3D(1.22226, 0, 0.549254, 0, 1.34, 0, -0.549254, 0, 1.22226, -567.578, 247.887, -1933.97)
 
-[node name="Skybox" type="MeshInstance3D" parent="Visuals"]
+[node name="Skybox" type="MeshInstance3D" parent="Visuals" unique_id=860070800]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 120, -100, 20)
 layers = 16
 cast_shadow = 0
 mesh = SubResource("SphereMesh_oh7xe")
 skeleton = NodePath("../..")
 
-[node name="HighClouds" type="MeshInstance3D" parent="Visuals/Skybox"]
+[node name="HighClouds" type="MeshInstance3D" parent="Visuals/Skybox" unique_id=158379681]
 transform = Transform3D(0.81, 0, 0, 0, 0.81, 0, 0, 0, 0.81, -120, 33.7368, -20)
 layers = 16
 gi_mode = 0
@@ -627,7 +626,7 @@ mesh = SubResource("ArrayMesh_vvpu8")
 skin = SubResource("Skin_6fngp")
 skeleton = NodePath("../..")
 
-[node name="LowClouds" type="MeshInstance3D" parent="Visuals/Skybox"]
+[node name="LowClouds" type="MeshInstance3D" parent="Visuals/Skybox" unique_id=1724297964]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -120, -178.773, -20)
 layers = 16
 gi_mode = 0
@@ -635,9 +634,9 @@ mesh = SubResource("ArrayMesh_dvrhv")
 skin = SubResource("Skin_c5mqb")
 skeleton = NodePath("../..")
 
-[node name="ReflectionProbe" type="Node3D" parent="."]
+[node name="ReflectionProbe" type="Node3D" parent="." unique_id=554064378]
 
-[node name="PlayerProbe" type="ReflectionProbe" parent="ReflectionProbe"]
+[node name="PlayerProbe" type="ReflectionProbe" parent="ReflectionProbe" unique_id=1692636136]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 150.704, 0, 5.41309)
 layers = 1024
 size = Vector3(338.956, 20, 408.637)
@@ -648,7 +647,7 @@ ambient_mode = 2
 ambient_color = Color(0.77, 0.487025, 0.3927, 1)
 ambient_color_energy = 0.5
 
-[node name="ObjectProbe" type="ReflectionProbe" parent="ReflectionProbe"]
+[node name="ObjectProbe" type="ReflectionProbe" parent="ReflectionProbe" unique_id=1770578040]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 150.704, 0, 5.41309)
 layers = 1024
 size = Vector3(338.956, 20, 408.637)
@@ -659,35 +658,33 @@ ambient_mode = 2
 ambient_color = Color(1, 0.783, 0.69, 1)
 ambient_color_energy = 0.4
 
-[node name="Path" type="Node3D" parent="."]
+[node name="Path" type="Node3D" parent="." unique_id=1920291754]
 
-[node name="MainPath" type="Path3D" parent="Path"]
+[node name="MainPath" type="Path3D" parent="Path" unique_id=1259209553]
 curve = ExtResource("4_nrma0")
 
-[node name="BossPathFollower" type="PathFollow3D" parent="Path/MainPath"]
+[node name="BossPathFollower" type="PathFollow3D" parent="Path/MainPath" unique_id=2069063420]
 transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 0, 0, -60)
 progress = 60.0
 use_model_front = true
 cubic_interp = false
 
-[node name="DemoCamera" type="Node3D" parent="."]
+[node name="DemoCamera" type="Node3D" parent="." unique_id=1656000018]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16, -3, -225)
 
-[node name="Camera" type="Camera3D" parent="DemoCamera"]
+[node name="Camera" type="Camera3D" parent="DemoCamera" unique_id=32279639]
 cull_mask = 1054
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="DemoCamera"]
-libraries = {
-&"": SubResource("AnimationLibrary_vh30f")
-}
+[node name="AnimationPlayer" type="AnimationPlayer" parent="DemoCamera" unique_id=2146159192]
+libraries/ = SubResource("AnimationLibrary_vh30f")
 next/demo1 = &"demo2"
 next/demo2 = &"demo3"
 next/demo3 = &"demo1"
 
-[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=628164445]
 environment = SubResource("Environment_nt3em")
 
-[node name="DepthRenderer" type="Node" parent="." node_paths=PackedStringArray("depthCamera", "depthViewport", "depthViewportContainer")]
+[node name="DepthRenderer" type="Node" parent="." unique_id=401489034 node_paths=PackedStringArray("depthCamera", "depthViewport", "depthViewportContainer")]
 script = ExtResource("13_6xg2l")
 depthCamera = NodePath("Viewport/DepthPreview/DepthViewport/DepthCamera")
 depthViewport = NodePath("Viewport/DepthPreview/DepthViewport")
@@ -695,7 +692,7 @@ depthMaterial = ExtResource("14_n33qe")
 depthViewportContainer = NodePath("Viewport")
 depthMaterials = []
 
-[node name="Viewport" type="Control" parent="DepthRenderer"]
+[node name="Viewport" type="Control" parent="DepthRenderer" unique_id=576337062]
 visible = false
 layout_mode = 3
 anchors_preset = 15
@@ -704,7 +701,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="DepthPreview" type="SubViewportContainer" parent="DepthRenderer/Viewport"]
+[node name="DepthPreview" type="SubViewportContainer" parent="DepthRenderer/Viewport" unique_id=2002033518]
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 1.0
@@ -719,7 +716,7 @@ grow_vertical = 0
 scale = Vector2(0.5, 0.5)
 pivot_offset = Vector2(0, 540)
 
-[node name="DepthViewport" type="SubViewport" parent="DepthRenderer/Viewport/DepthPreview"]
+[node name="DepthViewport" type="SubViewport" parent="DepthRenderer/Viewport/DepthPreview" unique_id=1756308034]
 transparent_bg = true
 handle_input_locally = false
 scaling_3d_scale = 0.25
@@ -735,21 +732,21 @@ canvas_cull_mask = 0
 size = Vector2i(256, 256)
 render_target_update_mode = 0
 
-[node name="DepthCamera" type="Camera3D" parent="DepthRenderer/Viewport/DepthPreview/DepthViewport"]
+[node name="DepthCamera" type="Camera3D" parent="DepthRenderer/Viewport/DepthPreview/DepthViewport" unique_id=613588358]
 cull_mask = 262215
 current = true
 
-[node name="DepthRenderer" type="MeshInstance3D" parent="DepthRenderer/Viewport/DepthPreview/DepthViewport/DepthCamera"]
+[node name="DepthRenderer" type="MeshInstance3D" parent="DepthRenderer/Viewport/DepthPreview/DepthViewport/DepthCamera" unique_id=2120862180]
 layers = 262144
 material_override = ExtResource("14_n33qe")
 cast_shadow = 0
 extra_cull_margin = 16384.0
 mesh = SubResource("QuadMesh_6xg2l")
 
-[node name="CanvasLayerLightShafts" type="CanvasLayer" parent="DepthRenderer"]
+[node name="CanvasLayerLightShafts" type="CanvasLayer" parent="DepthRenderer" unique_id=54833634]
 layer = -1
 
-[node name="ColorRect_LightRays" type="ColorRect" parent="DepthRenderer/CanvasLayerLightShafts"]
+[node name="ColorRect_LightRays" type="ColorRect" parent="DepthRenderer/CanvasLayerLightShafts" unique_id=1346284436]
 material = SubResource("ShaderMaterial_6nwdp")
 anchors_preset = 15
 anchor_right = 1.0

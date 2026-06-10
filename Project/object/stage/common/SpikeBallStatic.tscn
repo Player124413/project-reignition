@@ -1,4 +1,4 @@
-[gd_scene load_steps=5 format=3 uid="uid://cxb1fxhrsja13"]
+[gd_scene format=3 uid="uid://cxb1fxhrsja13"]
 
 [ext_resource type="Script" uid="uid://pnh70abopq8e" path="res://object/stage/common/resource/script/Hazard.cs" id="2_4f10c"]
 [ext_resource type="PackedScene" uid="uid://bpd06h3747m1d" path="res://object/stage/common/resource/model/SpikeBall.gltf" id="3_dofjj"]
@@ -9,26 +9,26 @@ radius = 0.85
 [sub_resource type="SphereShape3D" id="2"]
 radius = 0.9
 
-[node name="SpikeBallStatic" type="Node3D"]
+[node name="SpikeBallStatic" type="Node3D" unique_id=1823050288]
 script = ExtResource("2_4f10c")
 
-[node name="SpikeBall" parent="." instance=ExtResource("3_dofjj")]
+[node name="SpikeBall" parent="." unique_id=1214124476 instance=ExtResource("3_dofjj")]
 transform = Transform3D(0.999996, 0, 0, 0, 1, 0, 0, 0, 0.999996, 0, 0, 0)
 
-[node name="StaticBody3D" type="StaticBody3D" parent="." groups=["grind wall"]]
+[node name="StaticBody3D" type="StaticBody3D" parent="." unique_id=1633522526 groups=["grind wall"]]
 transform = Transform3D(0.999996, 0, 0, 0, 1, 0, 0, 0, 0.999996, 0, 0, 0)
 collision_layer = 24
 collision_mask = 0
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D" unique_id=1119168785]
 shape = SubResource("3")
 
-[node name="Hitbox" type="Area3D" parent="."]
+[node name="Hitbox" type="Area3D" parent="." unique_id=1189312066]
 collision_layer = 0
 collision_mask = 2
 monitorable = false
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Hitbox"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Hitbox" unique_id=258372117]
 shape = SubResource("2")
 
 [connection signal="area_entered" from="Hitbox" to="." method="OnEntered"]

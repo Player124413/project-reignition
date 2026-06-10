@@ -1,4 +1,4 @@
-[gd_scene load_steps=40 format=3 uid="uid://bpym1aa2ews4w"]
+[gd_scene format=3 uid="uid://bpym1aa2ews4w"]
 
 [ext_resource type="Script" uid="uid://01bsn0f21qa0" path="res://object/stage/common/resource/script/BombMissile.cs" id="1_3d80n"]
 [ext_resource type="PackedScene" uid="uid://bmrns4285t26c" path="res://area/5 pirate storm/object/model/Bomb.gltf" id="2_ajc4d"]
@@ -361,7 +361,7 @@ _data = {
 &"init": SubResource("Animation_wr0f1")
 }
 
-[node name="Bomb" type="Node3D" node_paths=PackedStringArray("root", "animator")]
+[node name="Bomb" type="Node3D" unique_id=1153649899 node_paths=PackedStringArray("root", "animator")]
 script = ExtResource("1_3d80n")
 alignModelForward = true
 root = NodePath("Bomb")
@@ -370,9 +370,9 @@ animator = NodePath("AnimationPlayer")
 "Launch Settings/Starting Offset" = Vector3(0, 30, 0)
 "Launch Settings/Middle Height" = 2.0
 
-[node name="Bomb" parent="." instance=ExtResource("2_ajc4d")]
+[node name="Bomb" parent="." unique_id=311109860 instance=ExtResource("2_ajc4d")]
 
-[node name="TravelFlames" type="GPUParticles3D" parent="Bomb"]
+[node name="TravelFlames" type="GPUParticles3D" parent="Bomb" unique_id=273040744]
 layers = 32
 cast_shadow = 0
 emitting = false
@@ -384,7 +384,7 @@ visibility_aabb = AABB(-3, -3, -2, 6, 6, 20)
 process_material = SubResource("ParticleProcessMaterial_22xyj")
 draw_pass_1 = SubResource("QuadMesh_6fpuu")
 
-[node name="TravelEmbers" type="GPUParticles3D" parent="Bomb"]
+[node name="TravelEmbers" type="GPUParticles3D" parent="Bomb" unique_id=466543417]
 layers = 32
 cast_shadow = 0
 emitting = false
@@ -397,7 +397,7 @@ local_coords = true
 process_material = SubResource("ParticleProcessMaterial_v0mmn")
 draw_pass_1 = SubResource("QuadMesh_di570")
 
-[node name="ImpactSfx" type="AudioStreamPlayer3D" parent="Bomb"]
+[node name="ImpactSfx" type="AudioStreamPlayer3D" parent="Bomb" unique_id=442098874]
 stream = ExtResource("5_aawgb")
 unit_size = 20.0
 max_db = 0.0
@@ -409,7 +409,7 @@ script = ExtResource("6_oo16f")
 groupKey = &"bomb impact"
 audioLengthOverride = 0.5
 
-[node name="TravelSfx" type="AudioStreamPlayer3D" parent="Bomb"]
+[node name="TravelSfx" type="AudioStreamPlayer3D" parent="Bomb" unique_id=639120528]
 stream = ExtResource("8_lfh8r")
 unit_size = 50.0
 max_db = 0.0
@@ -419,7 +419,7 @@ attenuation_filter_cutoff_hz = 20500.0
 script = ExtResource("6_oo16f")
 groupKey = &"bomb travel"
 
-[node name="ExplosionEmbers" type="GPUParticles3D" parent="." node_paths=PackedStringArray("subSystems")]
+[node name="ExplosionEmbers" type="GPUParticles3D" parent="." unique_id=721183403 node_paths=PackedStringArray("subSystems")]
 layers = 32
 cast_shadow = 0
 emitting = false
@@ -435,7 +435,7 @@ draw_pass_1 = SubResource("QuadMesh_di570")
 script = ExtResource("9_buihu")
 subSystems = [NodePath("Splatter"), NodePath("Flash"), NodePath("Dust")]
 
-[node name="Splatter" type="GPUParticles3D" parent="ExplosionEmbers"]
+[node name="Splatter" type="GPUParticles3D" parent="ExplosionEmbers" unique_id=1185443281]
 layers = 32
 cast_shadow = 0
 emitting = false
@@ -450,7 +450,7 @@ local_coords = true
 process_material = SubResource("ParticleProcessMaterial_di570")
 draw_pass_1 = SubResource("QuadMesh_wr0f1")
 
-[node name="Flash" type="GPUParticles3D" parent="ExplosionEmbers"]
+[node name="Flash" type="GPUParticles3D" parent="ExplosionEmbers" unique_id=1764505803]
 layers = 32
 cast_shadow = 0
 emitting = false
@@ -465,7 +465,7 @@ local_coords = true
 process_material = SubResource("ParticleProcessMaterial_wr0f1")
 draw_pass_1 = SubResource("QuadMesh_nihrx")
 
-[node name="Dust" type="GPUParticles3D" parent="ExplosionEmbers"]
+[node name="Dust" type="GPUParticles3D" parent="ExplosionEmbers" unique_id=1165895671]
 layers = 32
 cast_shadow = 0
 emitting = false
@@ -480,10 +480,8 @@ local_coords = true
 process_material = SubResource("ParticleProcessMaterial_nihrx")
 draw_pass_1 = SubResource("QuadMesh_u3ac2")
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=1071993281]
 deterministic = true
-libraries = {
-&"": SubResource("AnimationLibrary_rsyn7")
-}
+libraries/ = SubResource("AnimationLibrary_rsyn7")
 
 [editable path="Bomb"]

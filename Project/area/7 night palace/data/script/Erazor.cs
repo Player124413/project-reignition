@@ -91,7 +91,7 @@ public partial class Erazor : Node3D
 	/// <summary> The distance at which the Duel Windup comes out. </summary>
 	private readonly float DuelWindupDistance = 25f;
 	/// <summary> How long before Erazor lunges towards Sonic in the duel. Retail is 6 seconds. </summary>
-	private readonly float DuelAttackStartup = 5f;
+	private readonly float DuelAttackStartup = 6f;
 
 	/// ANIMATION PARAMETERS
 	private readonly string IntroCutsceneID = "np_boss_intro";
@@ -174,6 +174,7 @@ public partial class Erazor : Node3D
 		HeadsUpDisplay.Instance.SetVisibility(false);
 		Player.Skills.DisableBreakSkills();
 		Player.Animator.PlayOneshotAnimation(IntroCutsceneID);
+		Player.Animator.SnapRotation(Player.MovementAngle);
 		stopLockout.Activate();
 
 		EmitSignal(SignalName.CutsceneStarted);
@@ -417,6 +418,7 @@ public partial class Erazor : Node3D
 
 	private void UpdatePosition()
 	{
+		float currentProgress = bossPathFollower.Progress;
 		float targetProgress = PlayerPathFollower.Progress + currentDistance;
 		float smoothing = DistanceSmoothing;
 		if (Player.IsHomingAttacking || CurrentFightState == FightState.Hitstun || PlayerPathFollower.IsAheadOfPoint(GlobalPosition))
@@ -429,7 +431,17 @@ public partial class Erazor : Node3D
 			smoothing = BackflipSmoothing;
 		}
 
-		bossPathFollower.Progress = ExtensionMethods.SmoothDamp(bossPathFollower.Progress, targetProgress, ref distanceVelocity, smoothing * PhysicsManager.physicsDelta);
+		float pathLength = PlayerPathFollower.ActivePath.Curve.GetBakedLength();
+		if (Mathf.Abs(currentProgress - targetProgress) > pathLength * 0.8f)
+		{
+			if (currentProgress > targetProgress)
+				currentProgress -= pathLength;
+			else
+				currentProgress += pathLength;
+		}
+
+		currentProgress = ExtensionMethods.SmoothDamp(currentProgress, targetProgress, ref distanceVelocity, smoothing * PhysicsManager.physicsDelta);
+		bossPathFollower.Progress = currentProgress;
 
 		float targetHorizontalTracking = bossPathFollower.HOffset;
 		if (isTrackingHorizontal)
@@ -532,6 +544,7 @@ public partial class Erazor : Node3D
 			color = Colors.Black
 		});
 		TransitionManager.FinishTransition();
+		Player.GlobalPosition = PlayerPathFollower.GlobalPosition; // Recenter player instantly
 		duelCamera.Activate();
 		duelCameraResource.distance = DuelInitialDistance;
 		recenterLockout.Activate();
@@ -563,6 +576,10 @@ public partial class Erazor : Node3D
 
 	private void StartDuelResultAnimation(bool isSuccess)
 	{
+		Player.GlobalTransform = PlayerPathFollower.GlobalTransform; // Recenter player instantly
+		Player.MovementAngle = PlayerPathFollower.ForwardAngle;
+		Player.Animator.SnapRotation(Player.MovementAngle);
+
 		if (isSuccess)
 			AttackStatePlayback.Start($"attack-d-damage");
 		else

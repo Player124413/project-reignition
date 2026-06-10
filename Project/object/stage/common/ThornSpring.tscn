@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://b8s2qjmlhu5tc"]
+[gd_scene format=3 uid="uid://b8s2qjmlhu5tc"]
 
 [ext_resource type="PackedScene" uid="uid://cxa3qctptxfxy" path="res://object/stage/common/resource/model/ThornSpring.gltf" id="1_4dkds"]
 [ext_resource type="Script" uid="uid://cdr0x4jwhpdsl" path="res://object/stage/common/resource/script/ThornSpring.cs" id="1_xlrx0"]
@@ -229,7 +229,7 @@ _data = {
 &"loop": SubResource("Animation_wtclb")
 }
 
-[node name="ThornSpring" type="Node3D" node_paths=PackedStringArray("animator")]
+[node name="ThornSpring" type="Node3D" unique_id=653175552 node_paths=PackedStringArray("animator")]
 script = ExtResource("1_xlrx0")
 rotationTime = 2.0
 staticTime = 2.0
@@ -241,29 +241,29 @@ LauncherDirection = 1
 sfxPlayer = NodePath("SFX")
 voiceKey = &""
 
-[node name="ActivationTrigger" type="Area3D" parent="."]
+[node name="ActivationTrigger" type="Area3D" parent="." unique_id=645904758]
 collision_layer = 4
 collision_mask = 2
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="ActivationTrigger"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="ActivationTrigger" unique_id=710445887]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.4, 0)
 shape = SubResource("SphereShape3D_acfah")
 
-[node name="ThornSpring" parent="." instance=ExtResource("1_4dkds")]
+[node name="ThornSpring" parent="." unique_id=585699410 instance=ExtResource("1_4dkds")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.3, 0)
 
-[node name="Hitbox" type="Area3D" parent="."]
+[node name="Hitbox" type="Area3D" parent="." unique_id=1161705041]
 collision_layer = 0
 collision_mask = 2
 monitorable = false
 script = ExtResource("4_yuvu2")
 isDisabled = true
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Hitbox"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Hitbox" unique_id=1106758433]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.4, 0)
 shape = SubResource("SphereShape3D_acfah")
 
-[node name="SFX" type="AudioStreamPlayer3D" parent="."]
+[node name="SFX" type="AudioStreamPlayer3D" parent="." unique_id=1468019056]
 process_mode = 1
 stream = ExtResource("3_dbxep")
 unit_size = 20.0
@@ -272,11 +272,9 @@ max_distance = 150.0
 bus = &"GAME SFX"
 attenuation_filter_cutoff_hz = 20500.0
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=1282923456]
 callback_mode_process = 0
-libraries = {
-&"": SubResource("AnimationLibrary_aox05")
-}
+libraries/ = SubResource("AnimationLibrary_aox05")
 
 [connection signal="area_entered" from="ActivationTrigger" to="." method="Activate"]
 [connection signal="area_entered" from="Hitbox" to="Hitbox" method="OnEntered"]

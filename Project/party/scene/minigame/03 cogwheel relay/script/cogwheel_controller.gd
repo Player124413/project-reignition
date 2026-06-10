@@ -73,7 +73,8 @@ func process_rollback() -> void:
 	rollback_timer.process_rollback()
 
 func on_spawn_finished() -> void:
-	set_physics_process(true)
+	super()
+	set_physics_process(is_player_valid())
 	rollback_timer.register_target(self)
 	
 	initialize_majin()
@@ -94,7 +95,7 @@ func complete_demo() -> void:
 	is_demo_complete = true
 	set_physics_process(false)
 	
-	if NetworkManager.is_hosting_game:
+	if is_minigame_host():
 		var start_callable : Callable = Callable.create(MinigameManager.instance, "request_minigame_start")
 		get_tree().create_timer(1).timeout.connect(start_callable)
 

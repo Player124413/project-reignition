@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3 uid="uid://dopa8mdu5d47j"]
+[gd_scene format=3 uid="uid://dopa8mdu5d47j"]
 
 [ext_resource type="Script" uid="uid://d4kukq76r26tq" path="res://area/4 levitated ruin/data/script/FlyingDestructableObject.cs" id="1_pi27e"]
 [ext_resource type="PackedScene" uid="uid://chnb73uwcyvur" path="res://area/4 levitated ruin/object/model/platform/RoundPillarFly.gltf" id="2_nxcas"]
@@ -180,7 +180,7 @@ _data = {
 &"shatter": SubResource("Animation_yrfwa")
 }
 
-[node name="GrindPillarFly" type="Node3D" node_paths=PackedStringArray("rotationRoot", "root", "pieceRoot", "animator")]
+[node name="GrindPillarFly" type="Node3D" unique_id=1355196633 node_paths=PackedStringArray("rotationRoot", "root", "pieceRoot", "animator")]
 script = ExtResource("1_pi27e")
 rotationRoot = NodePath("Root/RoundPillarFly/RoundPillarFlyMesh")
 pieceMass = 0.5
@@ -190,34 +190,34 @@ root = NodePath("Root")
 pieceRoot = NodePath("RoundPillarPieces")
 animator = NodePath("AnimationPlayer")
 
-[node name="Root" type="Node3D" parent="."]
+[node name="Root" type="Node3D" parent="." unique_id=2124934136]
 
-[node name="RoundPillarFly" parent="Root" instance=ExtResource("2_nxcas")]
+[node name="RoundPillarFly" parent="Root" unique_id=666880800 instance=ExtResource("2_nxcas")]
 
-[node name="Trigger" type="Area3D" parent="Root/RoundPillarFly/RoundPillarFlyMesh" index="0"]
+[node name="Trigger" type="Area3D" parent="Root/RoundPillarFly/RoundPillarFlyMesh" parent_id_path=PackedInt32Array(666880800, 1442632100) index="0" unique_id=227647688]
 collision_layer = 0
 collision_mask = 2
 monitorable = false
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Root/RoundPillarFly/RoundPillarFlyMesh/Trigger"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Root/RoundPillarFly/RoundPillarFlyMesh/Trigger" unique_id=1422232639]
 shape = SubResource("CylinderShape3D_lmpj0")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Root/RoundPillarFly/RoundPillarFlyMesh" index="1" groups=["wall"]]
+[node name="StaticBody3D" type="StaticBody3D" parent="Root/RoundPillarFly/RoundPillarFlyMesh" parent_id_path=PackedInt32Array(666880800, 1442632100) index="1" unique_id=503312082 groups=["wall"]]
 collision_layer = 8
 collision_mask = 0
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Root/RoundPillarFly/RoundPillarFlyMesh/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Root/RoundPillarFly/RoundPillarFlyMesh/StaticBody3D" unique_id=1241339638]
 shape = SubResource("CylinderShape3D_lmpj0")
 
-[node name="RoundPillarWallCollisionMesh" parent="Root/RoundPillarFly" index="2"]
+[node name="RoundPillarWallCollisionMesh" parent="Root/RoundPillarFly" index="2" unique_id=1301893340]
 visible = false
 
-[node name="StaticBody3D" parent="Root/RoundPillarFly/RoundPillarWallCollisionMesh" index="0" groups=["splash jump", "wall"]]
+[node name="StaticBody3D" parent="Root/RoundPillarFly/RoundPillarWallCollisionMesh" index="0" unique_id=2126200046 groups=["splash jump", "wall"]]
 
-[node name="RoundPillarPieces" parent="." instance=ExtResource("3_56y5h")]
+[node name="RoundPillarPieces" parent="." unique_id=473559536 instance=ExtResource("3_56y5h")]
 visible = false
 
-[node name="LaunchSFX" type="AudioStreamPlayer3D" parent="."]
+[node name="LaunchSFX" type="AudioStreamPlayer3D" parent="." unique_id=1157396872]
 stream = ExtResource("4_ygarv")
 max_db = 0.0
 max_distance = 200.0
@@ -225,7 +225,7 @@ bus = &"GAME SFX"
 script = ExtResource("5_d4y0l")
 groupKey = &"pillar launch"
 
-[node name="ShatterSFX" type="AudioStreamPlayer3D" parent="."]
+[node name="ShatterSFX" type="AudioStreamPlayer3D" parent="." unique_id=379994100]
 stream = ExtResource("6_l50lk")
 max_db = 0.0
 max_distance = 200.0
@@ -233,10 +233,8 @@ bus = &"GAME SFX"
 script = ExtResource("5_d4y0l")
 groupKey = &"pillar shatter"
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
-libraries = {
-&"": SubResource("AnimationLibrary_pmcqp")
-}
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=391872908]
+libraries/ = SubResource("AnimationLibrary_pmcqp")
 
 [connection signal="Shattered" from="." to="ShatterSFX" method="PlayInGroup"]
 [connection signal="StartedFlying" from="." to="LaunchSFX" method="PlayInGroup"]

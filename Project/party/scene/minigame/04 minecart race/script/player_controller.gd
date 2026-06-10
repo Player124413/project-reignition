@@ -78,7 +78,7 @@ func on_spawn_finished() -> void:
 	
 	current_speed = INITIAL_SPEED
 	MinigameManager.instance.gameplay_started.connect(Callable(self, "on_gamplay_started"))
-	set_physics_process(true) # Movement is needed during the demo
+	set_physics_process(is_player_valid()) # Movement is needed during the demo
 	
 	# Randomize sfx time so they aren't all overlapping
 	get_tree().create_timer(randf()).timeout.connect(Callable(cart_roll_sfx, "play_in_group"))

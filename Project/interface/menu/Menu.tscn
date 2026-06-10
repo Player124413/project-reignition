@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3 uid="uid://dsougvfwmdiun"]
+[gd_scene format=3 uid="uid://dsougvfwmdiun"]
 
 [ext_resource type="Texture2D" uid="uid://cno436k6axxi5" path="res://interface/menu/main/texture/background.png" id="1_mkeet"]
 [ext_resource type="Script" uid="uid://v0xr7h3y4olt" path="res://interface/menu/MenuAspectController.cs" id="1_p2s00"]
@@ -11,7 +11,7 @@
 [ext_resource type="Script" uid="uid://cj76gvi7tbku6" path="res://sound/script/BGMPlayer.cs" id="7_25e2d"]
 [ext_resource type="Resource" uid="uid://bj3xuo0c1pcof" path="res://resource/bgm/menu/main menu.tres" id="11_0h3n4"]
 
-[node name="Menu" type="AspectRatioContainer"]
+[node name="Menu" type="AspectRatioContainer" unique_id=1306256495]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -23,12 +23,12 @@ stretch_mode = 1
 alignment_horizontal = 0
 script = ExtResource("1_p2s00")
 
-[node name="Clip" type="ColorRect" parent="."]
+[node name="Clip" type="ColorRect" parent="." unique_id=235792682]
 clip_children = 1
 layout_mode = 2
 mouse_filter = 2
 
-[node name="Background" type="TextureRect" parent="Clip"]
+[node name="Background" type="TextureRect" parent="Clip" unique_id=469715684]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -40,7 +40,7 @@ texture = ExtResource("1_mkeet")
 expand_mode = 2
 stretch_mode = 6
 
-[node name="Char" type="TextureRect" parent="Clip"]
+[node name="Char" type="TextureRect" parent="Clip" unique_id=116110420]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -50,32 +50,32 @@ grow_vertical = 2
 mouse_filter = 2
 texture = ExtResource("3_al5xi")
 
-[node name="MainMenu" parent="Clip" node_paths=PackedStringArray("parentMenu", "bgm") instance=ExtResource("3")]
+[node name="MainMenu" parent="Clip" unique_id=729203793 node_paths=PackedStringArray("parentMenu", "bgm") instance=ExtResource("3")]
 layout_mode = 1
 parentMenu = NodePath("../Title")
 submenus = [NodePath("../SaveSelect")]
 bgm = NodePath("../MainMenuBGM")
 
-[node name="WorldSelect" parent="Clip" node_paths=PackedStringArray("parentMenu") instance=ExtResource("3_ftqsn")]
+[node name="WorldSelect" parent="Clip" unique_id=1329788002 node_paths=PackedStringArray("parentMenu") instance=ExtResource("3_ftqsn")]
 layout_mode = 1
 parentMenu = NodePath("../MainMenu")
 
-[node name="Flames" parent="Clip" instance=ExtResource("5_7t67l")]
+[node name="Flames" parent="Clip" unique_id=1914181482 instance=ExtResource("5_7t67l")]
 layout_mode = 1
 
-[node name="SaveSelect" parent="Clip" node_paths=PackedStringArray("parentMenu", "bgm") instance=ExtResource("4_2j1w0")]
+[node name="SaveSelect" parent="Clip" unique_id=453250415 node_paths=PackedStringArray("parentMenu", "bgm") instance=ExtResource("4_2j1w0")]
 layout_mode = 1
 descriptionText = "sys_save_select"
 parentMenu = NodePath("../MainMenu")
 submenus = Array[NodePath]([NodePath("../WorldSelect")])
 bgm = NodePath("../MainMenuBGM")
 
-[node name="Title" parent="Clip" node_paths=PackedStringArray("bgm") instance=ExtResource("5")]
+[node name="Title" parent="Clip" unique_id=282745171 node_paths=PackedStringArray("bgm") instance=ExtResource("5")]
 layout_mode = 1
 submenus = [NodePath("../MainMenu")]
 bgm = NodePath("../MainMenuBGM")
 
-[node name="MainMenuBGM" type="AudioStreamPlayer" parent="Clip"]
+[node name="MainMenuBGM" type="AudioStreamPlayer" parent="Clip" unique_id=485400721]
 bus = &"BGM"
 script = ExtResource("7_25e2d")
 bgmResource = ExtResource("11_0h3n4")

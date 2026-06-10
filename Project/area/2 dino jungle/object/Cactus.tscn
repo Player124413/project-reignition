@@ -1,4 +1,4 @@
-[gd_scene load_steps=19 format=3 uid="uid://dhb5ti1oiktuk"]
+[gd_scene format=3 uid="uid://dhb5ti1oiktuk"]
 
 [ext_resource type="PackedScene" uid="uid://c0lo56q5efgix" path="res://area/2 dino jungle/object/model/Cactus.gltf" id="1_ak5kj"]
 [ext_resource type="Script" uid="uid://bj7jhdknn12cl" path="res://object/stage/destructable/resource/script/DestructableObject.cs" id="1_jgpvl"]
@@ -6,7 +6,6 @@
 [ext_resource type="PackedScene" uid="uid://dedeevpox2rih" path="res://area/2 dino jungle/object/model/CactusPieces.gltf" id="3_865ei"]
 [ext_resource type="Material" uid="uid://bq1q3tp1cq76v" path="res://effect/particle/material/explosion/Explosion Smoke Add.tres" id="5_ffo6u"]
 [ext_resource type="Material" uid="uid://c44vqexptrgf5" path="res://effect/particle/material/object/Cactus Splatter Add.tres" id="6_x5bkb"]
-
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_717xn"]
 radius = 1.0
@@ -195,50 +194,48 @@ alpha_curve = SubResource("CurveTexture_mxdjc")
 [sub_resource type="QuadMesh" id="QuadMesh_8w7ci"]
 material = ExtResource("6_x5bkb")
 
-[node name="Cactus" type="Node3D" node_paths=PackedStringArray("root", "pieceRoot", "animator")]
+[node name="Cactus" type="Node3D" unique_id=139130156 node_paths=PackedStringArray("root", "pieceRoot", "animator")]
 script = ExtResource("1_jgpvl")
 pieceMass = 0.2
 damagePlayer = true
+shatterFlags = 18
 root = NodePath("Root")
 pieceRoot = NodePath("CactusPieces")
 animator = NodePath("AnimationPlayer")
-shatterFlags = 18
 
-[node name="Root" type="StaticBody3D" parent="." groups=["wall"]]
+[node name="Root" type="StaticBody3D" parent="." unique_id=1247528626 groups=["wall"]]
 collision_layer = 72
 collision_mask = 0
 
-[node name="Cactus" parent="Root" instance=ExtResource("1_ak5kj")]
+[node name="Cactus" parent="Root" unique_id=643783221 instance=ExtResource("1_ak5kj")]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Root"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Root" unique_id=139953339]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, 0)
 shape = SubResource("SphereShape3D_717xn")
 
-[node name="CactusPieces" parent="." instance=ExtResource("3_865ei")]
+[node name="CactusPieces" parent="." unique_id=695988559 instance=ExtResource("3_865ei")]
 visible = false
 
-[node name="Trigger" type="Area3D" parent="."]
+[node name="Trigger" type="Area3D" parent="." unique_id=1872525600]
 collision_layer = 0
 collision_mask = 10
 monitorable = false
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Trigger"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Trigger" unique_id=175074035]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, 0)
 shape = SubResource("SphereShape3D_717xn")
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
-libraries = {
-"": SubResource("AnimationLibrary_xs2lq")
-}
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=875645794]
+libraries/ = SubResource("AnimationLibrary_xs2lq")
 
-[node name="Shatter" type="AudioStreamPlayer3D" parent="."]
+[node name="Shatter" type="AudioStreamPlayer3D" parent="." unique_id=1016512195]
+process_mode = 1
 stream = ExtResource("3_4bbtf")
 max_db = 0.0
 max_distance = 100.0
 bus = &"GAME SFX"
-process_mode = 1
 
-[node name="Explosion" type="GPUParticles3D" parent="."]
+[node name="Explosion" type="GPUParticles3D" parent="." unique_id=711166808]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
 layers = 32
 cast_shadow = 0
@@ -251,7 +248,7 @@ visibility_aabb = AABB(-8, -4, -8, 16, 16, 16)
 process_material = SubResource("ParticleProcessMaterial_svviv")
 draw_pass_1 = SubResource("QuadMesh_ecu6k")
 
-[node name="Drops" type="GPUParticles3D" parent="."]
+[node name="Drops" type="GPUParticles3D" parent="." unique_id=365787489]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, 0)
 layers = 32
 cast_shadow = 0

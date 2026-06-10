@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=3 uid="uid://q0b2gswncxck"]
+[gd_scene format=3 uid="uid://q0b2gswncxck"]
 
 [ext_resource type="Script" uid="uid://dis0cioesdw57" path="res://object/player/resource/script/PlayerLockonController.cs" id="1_rsvmh"]
 [ext_resource type="Shader" uid="uid://rocx3mu1sulb" path="res://effect/shader/interface/Lockon.tres" id="2_b1ype"]
@@ -1004,7 +1004,7 @@ _data = {
 &"loop": SubResource("134")
 }
 
-[node name="Lockon" type="Area3D" node_paths=PackedStringArray("lockonReticle", "lockonAnimator")]
+[node name="Lockon" type="Area3D" unique_id=457983660 node_paths=PackedStringArray("lockonReticle", "lockonAnimator")]
 collision_layer = 0
 collision_mask = 4
 monitorable = false
@@ -1012,97 +1012,93 @@ script = ExtResource("1_rsvmh")
 lockonReticle = NodePath("LockonReticle")
 lockonAnimator = NodePath("LockonReticle/Root/LockonAnimator")
 
-[node name="Collision" type="CollisionShape3D" parent="."]
+[node name="Collision" type="CollisionShape3D" parent="." unique_id=1942897442]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.3)
 shape = SubResource("130")
 
-[node name="LockonReticle" type="Node2D" parent="."]
+[node name="LockonReticle" type="Node2D" parent="." unique_id=1320797440]
 physics_interpolation_mode = 2
 scale = Vector2(2, 2)
 
-[node name="Root" type="Node2D" parent="LockonReticle"]
+[node name="Root" type="Node2D" parent="LockonReticle" unique_id=1458945702]
 visible = false
 
-[node name="Main" type="Sprite2D" parent="LockonReticle/Root"]
+[node name="Main" type="Sprite2D" parent="LockonReticle/Root" unique_id=1615252279]
 material = SubResource("ShaderMaterial_tq0uy")
 texture = ExtResource("3_hvl8j")
 region_enabled = true
 region_rect = Rect2(280, 50, 21, 22)
 
-[node name="Surround" type="Sprite2D" parent="LockonReticle/Root/Main"]
+[node name="Surround" type="Sprite2D" parent="LockonReticle/Root/Main" unique_id=1983362063]
 modulate = Color(1, 1, 1, 0.588235)
 scale = Vector2(1.25, 1.25)
 texture = ExtResource("3_hvl8j")
 region_enabled = true
 region_rect = Rect2(128, 0, 128, 128)
 
-[node name="Reticle" type="Sprite2D" parent="LockonReticle/Root/Main"]
+[node name="Reticle" type="Sprite2D" parent="LockonReticle/Root/Main" unique_id=787766290]
 use_parent_material = true
 scale = Vector2(1.3, 1.3)
 texture = ExtResource("3_hvl8j")
 region_enabled = true
 region_rect = Rect2(15, 15, 98, 98)
 
-[node name="Fade" type="Sprite2D" parent="LockonReticle/Root/Main"]
+[node name="Fade" type="Sprite2D" parent="LockonReticle/Root/Main" unique_id=1037767197]
 modulate = Color(1, 1, 1, 0.588235)
 scale = Vector2(1.25, 1.25)
 texture = ExtResource("3_hvl8j")
 region_enabled = true
 region_rect = Rect2(128, 0, 128, 128)
 
-[node name="PerfectHomingAttack" type="Node2D" parent="LockonReticle/Root"]
+[node name="PerfectHomingAttack" type="Node2D" parent="LockonReticle/Root" unique_id=1888592748]
 visible = false
 rotation = -3.14159
 
-[node name="1" type="Sprite2D" parent="LockonReticle/Root/PerfectHomingAttack"]
+[node name="1" type="Sprite2D" parent="LockonReticle/Root/PerfectHomingAttack" unique_id=514119330]
 position = Vector2(-16, -16)
 rotation = 0.785398
 texture = ExtResource("3_hvl8j")
 region_enabled = true
 region_rect = Rect2(263, 20, 42, 14)
 
-[node name="2" type="Sprite2D" parent="LockonReticle/Root/PerfectHomingAttack"]
+[node name="2" type="Sprite2D" parent="LockonReticle/Root/PerfectHomingAttack" unique_id=1140363984]
 position = Vector2(-16, 16)
 rotation = 5.49779
 texture = ExtResource("3_hvl8j")
 region_enabled = true
 region_rect = Rect2(263, 20, 42, 14)
 
-[node name="3" type="Sprite2D" parent="LockonReticle/Root/PerfectHomingAttack"]
+[node name="3" type="Sprite2D" parent="LockonReticle/Root/PerfectHomingAttack" unique_id=1248222214]
 position = Vector2(16, -16)
 rotation = 2.35619
 texture = ExtResource("3_hvl8j")
 region_enabled = true
 region_rect = Rect2(263, 20, 42, 14)
 
-[node name="4" type="Sprite2D" parent="LockonReticle/Root/PerfectHomingAttack"]
+[node name="4" type="Sprite2D" parent="LockonReticle/Root/PerfectHomingAttack" unique_id=1607926484]
 position = Vector2(16, 16)
 rotation = 3.92699
 texture = ExtResource("3_hvl8j")
 region_enabled = true
 region_rect = Rect2(263, 20, 42, 14)
 
-[node name="LockonAnimator" type="AnimationPlayer" parent="LockonReticle/Root"]
-libraries = {
-&"": SubResource("AnimationLibrary_r77q1")
-}
+[node name="LockonAnimator" type="AnimationPlayer" parent="LockonReticle/Root" unique_id=1940518501]
+libraries/ = SubResource("AnimationLibrary_r77q1")
 next/enable = &"loop"
 blend_times = [&"perfect-enable", &"perfect-strike", 0.1]
 
-[node name="RotationAnimator" type="AnimationPlayer" parent="LockonReticle/Root"]
-libraries = {
-&"": SubResource("AnimationLibrary_jbwmb")
-}
-autoplay = "loop"
+[node name="RotationAnimator" type="AnimationPlayer" parent="LockonReticle/Root" unique_id=60501110]
+libraries/ = SubResource("AnimationLibrary_jbwmb")
+autoplay = &"loop"
 
-[node name="SFX" type="Node" parent="."]
+[node name="SFX" type="Node" parent="." unique_id=680553542]
 
-[node name="Lockon" type="AudioStreamPlayer" parent="SFX"]
+[node name="Lockon" type="AudioStreamPlayer" parent="SFX" unique_id=1809163066]
 process_mode = 1
 stream = ExtResource("4_hkdji")
 bus = &"GAME SFX"
 
-[node name="PerfectStrike" type="AudioStreamPlayer" parent="SFX"]
+[node name="PerfectStrike" type="AudioStreamPlayer" parent="SFX" unique_id=917480133]
 process_mode = 1
 stream = ExtResource("5_081jb")
 bus = &"GAME SFX"

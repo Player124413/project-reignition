@@ -1,4 +1,4 @@
-[gd_scene load_steps=21 format=3 uid="uid://dc71lk7uqcn4p"]
+[gd_scene format=3 uid="uid://dc71lk7uqcn4p"]
 
 [ext_resource type="PackedScene" uid="uid://bm61nw4o1jcrb" path="res://area/4 levitated ruin/act 1/Static.tscn" id="1_4lcmv"]
 [ext_resource type="Resource" uid="uid://d1b7gjmlic4uf" path="res://resource/level data/levitated ruin/Act1Perfect.tres" id="2_1m1yq"]
@@ -20,38 +20,129 @@
 [ext_resource type="PackedScene" uid="uid://bqvtcp8tkbfyt" path="res://object/stage/common/SpikeBall.tscn" id="15_vukwr"]
 [ext_resource type="PackedScene" uid="uid://dxepb172kmp8n" path="res://object/stage/common/Goal.tscn" id="16_ceh3i"]
 
+[sub_resource type="Shader" id="Shader_cl5sw"]
+code = "shader_type canvas_item;
+render_mode unshaded, blend_add;
+
+uniform sampler2D depth_tex : filter_linear;
+uniform sampler2D screen_texture : hint_screen_texture, filter_linear;
+uniform sampler2D light_color : hint_default_white;
+uniform vec4 ray_color : source_color = vec4(1.0, 1.0, 1.0, 1.0);
+uniform float ray_length : hint_range(0.0, 1.0) = 1.0;
+uniform float ray_intensity : hint_range(0.0, 1.0) = 1.0;
+uniform float light_source_scale = 1.0;
+uniform float light_source_feather = 2.0;
+uniform float noise_strength : hint_range(0.0, 1.0) = 0.2;
+uniform vec2 light_source_pos = vec2(0.0, 0.0);
+uniform vec3 light_source_dir = vec3(0.5, -1.0, 0.25);
+uniform float mask_threshold : hint_range(0.0, 1.0) = 0.5;
+uniform float mask_softness : hint_range(0.01, 0.5) = 0.15;
+uniform float mask_radius : hint_range(0.01, 0.5) = 0.15;
+uniform bool debug_mode = false;
+uniform float debug_dot_radius : hint_range(0.001, 0.05) = 0.01;
+
+const int SAMPLE_COUNT = 120;
+
+float random(vec2 uv) {
+	return fract(sin(dot(uv.xy, vec2(12.9898, 78.233))) * 43758.5453123);
+}
+
+void fragment() {
+	vec2 light_pos = light_source_pos;
+	vec2 ratio = vec2(SCREEN_PIXEL_SIZE.x / SCREEN_PIXEL_SIZE.y, 1.0);
+
+	if (debug_mode) {
+		vec2 diff = (UV - light_pos) / ratio;
+		float dist = length(diff);
+		float dot_mask = smoothstep(debug_dot_radius, debug_dot_radius * 0.5, dist);
+		COLOR.rgb = vec3(dot_mask);
+		COLOR.a = 1.0;
+	} else {
+		vec2 dir = UV - light_pos;
+		vec2 dir2 = UV / ratio - light_pos / ratio;
+		float light_rays = 0.0;
+		vec2 uv2;
+		float scale, l;
+
+		for (int i = 0; i < SAMPLE_COUNT; i++) {
+			scale = 1.0 - ray_length * (float(i) / float(SAMPLE_COUNT - 1));
+			vec2 sample_uv = dir * scale + light_pos;
+			l = 1.0 - texture(depth_tex, sample_uv).a;
+			uv2 = dir2 * scale * pow(light_source_scale, 2.0);
+			l *= smoothstep(1.0, 0.999 - light_source_feather, dot(uv2, uv2) * 4.0);
+			light_rays += l / float(SAMPLE_COUNT);
+		}
+
+		float n = 1.0 - random(UV) * noise_strength * smoothstep(0.999 - 1.25, 1.0, dot(dir2, dir2) * 2.0);
+		light_rays *= n;
+
+		vec3 screen_col = texture(screen_texture, SCREEN_UV).rgb;
+		float brightness = max(screen_col.r, max(screen_col.g, screen_col.b));
+		float moon_mask = smoothstep(mask_threshold, mask_threshold + mask_softness, brightness);
+
+		float dist_to_light = length((UV - light_pos) / ratio);
+		float proximity = 1.0 - smoothstep(0.0, mask_radius, dist_to_light);
+		moon_mask *= proximity;
+
+		light_rays *= (1.0 - moon_mask);
+
+		COLOR.rgb = vec3(light_rays * ray_intensity) * texture(light_color, UV).rgb * ray_color.rgb;
+		COLOR.a = ray_color.a;
+	}
+}"
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_n72jt"]
+resource_local_to_scene = true
+shader = SubResource("Shader_cl5sw")
+shader_parameter/ray_color = Color(0.92156863, 0.74509805, 0.3372549, 1)
+shader_parameter/ray_length = 0.8000000380000001
+shader_parameter/ray_intensity = 0.350000016625
+shader_parameter/light_source_scale = 1.1999999999970896
+shader_parameter/light_source_feather = 1.4499999999970896
+shader_parameter/noise_strength = 0.10000000475
+shader_parameter/light_source_pos = Vector2(0, 0)
+shader_parameter/light_source_dir = Vector3(0.5, -1, 0.25)
+shader_parameter/mask_threshold = 0.78400003724
+shader_parameter/mask_softness = 0.16900000732898002
+shader_parameter/mask_radius = 0.5
+shader_parameter/debug_mode = false
+shader_parameter/debug_dot_radius = 0.01
+
 [sub_resource type="BoxShape3D" id="BoxShape3D_isgee"]
 size = Vector3(10, 20, 2.5)
 
-[node name="PerfectAct" type="Node"]
+[node name="PerfectAct" type="Node" unique_id=1457834179]
 
-[node name="Static" parent="." instance=ExtResource("1_4lcmv")]
+[node name="Static" parent="." unique_id=1997068680 instance=ExtResource("1_4lcmv")]
 Data = ExtResource("2_1m1yq")
 
-[node name="Rukh1" parent="Static/Visuals" index="1"]
+[node name="Rukh1" parent="Static/Visuals" parent_id_path=PackedInt32Array(1997068680, 1338210614) index="1" unique_id=312851601]
 startEnabled = false
 
-[node name="Rukh4LOD" parent="Static/Visuals" index="10"]
+[node name="Rukh4LOD" parent="Static/Visuals" parent_id_path=PackedInt32Array(1997068680, 1338210614) index="10" unique_id=56817123]
 startEnabled = true
 
-[node name="Rukh5" parent="Static/Visuals" index="11"]
+[node name="Rukh5" parent="Static/Visuals" parent_id_path=PackedInt32Array(1997068680, 1338210614) index="11" unique_id=2124857084]
 startEnabled = true
 
-[node name="Rukh5LOD" parent="Static/Visuals" index="12"]
+[node name="Rukh5LOD" parent="Static/Visuals" parent_id_path=PackedInt32Array(1997068680, 1338210614) index="12" unique_id=1887577329]
 startEnabled = false
 
-[node name="SpawnPosition" type="Node3D" parent="."]
+[node name="ColorRect_LightRays" parent="Static/Visuals/LRSky/DepthRenderer/CanvasLayerLightShafts" parent_id_path=PackedInt32Array(1997068680, 707065977) index="0" unique_id=1619946167]
+material = SubResource("ShaderMaterial_n72jt")
+
+[node name="SpawnPosition" type="Node3D" parent="." unique_id=1280271247]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 250, -37.9, -1219)
 
-[node name="CharacterSpawn" parent="SpawnPosition" instance=ExtResource("2_mlg15")]
+[node name="CharacterSpawn" parent="SpawnPosition" unique_id=413801581 instance=ExtResource("2_mlg15")]
 
-[node name="Exterior" type="Node3D" parent="."]
+[node name="Exterior" type="Node3D" parent="." unique_id=1183875428]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 250, -38, -1219)
 
-[node name="SpikePanelGroup1" type="Node3D" parent="Exterior"]
+[node name="SpikePanelGroup1" type="Node3D" parent="Exterior" unique_id=882425838]
 transform = Transform3D(1, 0, 0, 0, 0.996195, -0.0871557, 0, 0.0871557, 0.996195, 0, 2.1, -15)
 
-[node name="SpikePanelL" parent="Exterior/SpikePanelGroup1" instance=ExtResource("4_12pdf")]
+[node name="SpikePanelL" parent="Exterior/SpikePanelGroup1" unique_id=1710995089 instance=ExtResource("4_12pdf")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, 0, 0)
 stateLengths = PackedFloat32Array(0.5, 0.2, 0.4)
 "Start Paused" = false
@@ -59,14 +150,14 @@ stateLengths = PackedFloat32Array(0.5, 0.2, 0.4)
 "State Lengths/warning" = 0.2
 "State Lengths/active" = 0.4
 
-[node name="SpikePanelM" parent="Exterior/SpikePanelGroup1" instance=ExtResource("4_12pdf")]
+[node name="SpikePanelM" parent="Exterior/SpikePanelGroup1" unique_id=1472126916 instance=ExtResource("4_12pdf")]
 stateLengths = PackedFloat32Array(0.5, 0.2, 0.4)
 "Start Paused" = false
 "State Lengths/inactive" = 0.5
 "State Lengths/warning" = 0.2
 "State Lengths/active" = 0.4
 
-[node name="SpikePanelR" parent="Exterior/SpikePanelGroup1" instance=ExtResource("4_12pdf")]
+[node name="SpikePanelR" parent="Exterior/SpikePanelGroup1" unique_id=1486948914 instance=ExtResource("4_12pdf")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5, 0, 0)
 stateLengths = PackedFloat32Array(0.5, 0.2, 0.4)
 "Start Paused" = false
@@ -74,10 +165,10 @@ stateLengths = PackedFloat32Array(0.5, 0.2, 0.4)
 "State Lengths/warning" = 0.2
 "State Lengths/active" = 0.4
 
-[node name="SpikePanelGroup2" type="Node3D" parent="Exterior"]
+[node name="SpikePanelGroup2" type="Node3D" parent="Exterior" unique_id=212804311]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.6, -20)
 
-[node name="SpikePanelL" parent="Exterior/SpikePanelGroup2" instance=ExtResource("4_12pdf")]
+[node name="SpikePanelL" parent="Exterior/SpikePanelGroup2" unique_id=232227352 instance=ExtResource("4_12pdf")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, 0, 0)
 stateLengths = PackedFloat32Array(0.5, 0.2, 0.4)
 "Start Paused" = false
@@ -85,14 +176,14 @@ stateLengths = PackedFloat32Array(0.5, 0.2, 0.4)
 "State Lengths/warning" = 0.2
 "State Lengths/active" = 0.4
 
-[node name="SpikePanelM" parent="Exterior/SpikePanelGroup2" instance=ExtResource("4_12pdf")]
+[node name="SpikePanelM" parent="Exterior/SpikePanelGroup2" unique_id=1322080140 instance=ExtResource("4_12pdf")]
 stateLengths = PackedFloat32Array(0.5, 0.2, 0.4)
 "Start Paused" = false
 "State Lengths/inactive" = 0.5
 "State Lengths/warning" = 0.2
 "State Lengths/active" = 0.4
 
-[node name="SpikePanelR" parent="Exterior/SpikePanelGroup2" instance=ExtResource("4_12pdf")]
+[node name="SpikePanelR" parent="Exterior/SpikePanelGroup2" unique_id=824829739 instance=ExtResource("4_12pdf")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5, 0, 0)
 stateLengths = PackedFloat32Array(0.5, 0.2, 0.4)
 "Start Paused" = false
@@ -100,10 +191,10 @@ stateLengths = PackedFloat32Array(0.5, 0.2, 0.4)
 "State Lengths/warning" = 0.2
 "State Lengths/active" = 0.4
 
-[node name="SpikePanelGroup3" type="Node3D" parent="Exterior"]
+[node name="SpikePanelGroup3" type="Node3D" parent="Exterior" unique_id=932501233]
 transform = Transform3D(1, 0, 0, 0, 0.996195, 0.0871557, 0, -0.0871557, 0.996195, 0, 2.4, -24)
 
-[node name="SpikePanelL" parent="Exterior/SpikePanelGroup3" instance=ExtResource("4_12pdf")]
+[node name="SpikePanelL" parent="Exterior/SpikePanelGroup3" unique_id=947680619 instance=ExtResource("4_12pdf")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, 0, 0)
 stateLengths = PackedFloat32Array(0.5, 0.2, 0.4)
 "Start Paused" = false
@@ -111,14 +202,14 @@ stateLengths = PackedFloat32Array(0.5, 0.2, 0.4)
 "State Lengths/warning" = 0.2
 "State Lengths/active" = 0.4
 
-[node name="SpikePanelM" parent="Exterior/SpikePanelGroup3" instance=ExtResource("4_12pdf")]
+[node name="SpikePanelM" parent="Exterior/SpikePanelGroup3" unique_id=22656211 instance=ExtResource("4_12pdf")]
 stateLengths = PackedFloat32Array(0.5, 0.2, 0.4)
 "Start Paused" = false
 "State Lengths/inactive" = 0.5
 "State Lengths/warning" = 0.2
 "State Lengths/active" = 0.4
 
-[node name="SpikePanelR" parent="Exterior/SpikePanelGroup3" instance=ExtResource("4_12pdf")]
+[node name="SpikePanelR" parent="Exterior/SpikePanelGroup3" unique_id=1921970571 instance=ExtResource("4_12pdf")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5, 0, 0)
 stateLengths = PackedFloat32Array(0.5, 0.2, 0.4)
 "Start Paused" = false
@@ -126,10 +217,10 @@ stateLengths = PackedFloat32Array(0.5, 0.2, 0.4)
 "State Lengths/warning" = 0.2
 "State Lengths/active" = 0.4
 
-[node name="SpikePanelGroup4" type="Node3D" parent="Exterior"]
+[node name="SpikePanelGroup4" type="Node3D" parent="Exterior" unique_id=1153372001]
 transform = Transform3D(1, 0, 0, 0, 0.996195, -0.0871557, 0, 0.0871557, 0.996195, 0, 2.4, -29)
 
-[node name="SpikePanelL" parent="Exterior/SpikePanelGroup4" instance=ExtResource("4_12pdf")]
+[node name="SpikePanelL" parent="Exterior/SpikePanelGroup4" unique_id=1424624112 instance=ExtResource("4_12pdf")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, 0, 0)
 stateLengths = PackedFloat32Array(0.5, 0.2, 0.4)
 "Start Paused" = false
@@ -137,14 +228,14 @@ stateLengths = PackedFloat32Array(0.5, 0.2, 0.4)
 "State Lengths/warning" = 0.2
 "State Lengths/active" = 0.4
 
-[node name="SpikePanelM" parent="Exterior/SpikePanelGroup4" instance=ExtResource("4_12pdf")]
+[node name="SpikePanelM" parent="Exterior/SpikePanelGroup4" unique_id=738368427 instance=ExtResource("4_12pdf")]
 stateLengths = PackedFloat32Array(0.5, 0.2, 0.4)
 "Start Paused" = false
 "State Lengths/inactive" = 0.5
 "State Lengths/warning" = 0.2
 "State Lengths/active" = 0.4
 
-[node name="SpikePanelR" parent="Exterior/SpikePanelGroup4" instance=ExtResource("4_12pdf")]
+[node name="SpikePanelR" parent="Exterior/SpikePanelGroup4" unique_id=191103770 instance=ExtResource("4_12pdf")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5, 0, 0)
 stateLengths = PackedFloat32Array(0.5, 0.2, 0.4)
 "Start Paused" = false
@@ -152,17 +243,17 @@ stateLengths = PackedFloat32Array(0.5, 0.2, 0.4)
 "State Lengths/warning" = 0.2
 "State Lengths/active" = 0.4
 
-[node name="StoneGroup" type="Node3D" parent="Exterior"]
+[node name="StoneGroup" type="Node3D" parent="Exterior" unique_id=971955284]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4, -40)
 
-[node name="Grindrail" parent="Exterior/StoneGroup" instance=ExtResource("5_re1po")]
+[node name="Grindrail" parent="Exterior/StoneGroup" unique_id=1095128682 instance=ExtResource("5_re1po")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3, 30)
 railModel = NodePath("")
 startCap = NodePath("")
 endCap = NodePath("")
 collider = NodePath("")
 
-[node name="PearlsL" type="Node3D" parent="Exterior/StoneGroup/Grindrail"]
+[node name="PearlsL" type="Node3D" parent="Exterior/StoneGroup/Grindrail" unique_id=38769089]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.3, 0.5, -2)
 script = ExtResource("6_yyx0c")
 Source = ExtResource("7_u2nl3")
@@ -173,39 +264,39 @@ Spacing = 2.2
 "Horizontal Offset" = null
 "Vertical Offset" = null
 
-[node name="Child01" parent="Exterior/StoneGroup/Grindrail/PearlsL" instance=ExtResource("7_u2nl3")]
+[node name="Child01" parent="Exterior/StoneGroup/Grindrail/PearlsL" unique_id=1677869699 instance=ExtResource("7_u2nl3")]
 
-[node name="Child02" parent="Exterior/StoneGroup/Grindrail/PearlsL" instance=ExtResource("7_u2nl3")]
+[node name="Child02" parent="Exterior/StoneGroup/Grindrail/PearlsL" unique_id=176139412 instance=ExtResource("7_u2nl3")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2.2)
 
-[node name="Child03" parent="Exterior/StoneGroup/Grindrail/PearlsL" instance=ExtResource("7_u2nl3")]
+[node name="Child03" parent="Exterior/StoneGroup/Grindrail/PearlsL" unique_id=393418430 instance=ExtResource("7_u2nl3")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -4.4)
 
-[node name="Child04" parent="Exterior/StoneGroup/Grindrail/PearlsL" instance=ExtResource("7_u2nl3")]
+[node name="Child04" parent="Exterior/StoneGroup/Grindrail/PearlsL" unique_id=2116851938 instance=ExtResource("7_u2nl3")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -6.6)
 
-[node name="Child05" parent="Exterior/StoneGroup/Grindrail/PearlsL" instance=ExtResource("7_u2nl3")]
+[node name="Child05" parent="Exterior/StoneGroup/Grindrail/PearlsL" unique_id=695565404 instance=ExtResource("7_u2nl3")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -8.8)
 
-[node name="Child06" parent="Exterior/StoneGroup/Grindrail/PearlsL" instance=ExtResource("7_u2nl3")]
+[node name="Child06" parent="Exterior/StoneGroup/Grindrail/PearlsL" unique_id=1082908787 instance=ExtResource("7_u2nl3")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -11)
 
-[node name="Child07" parent="Exterior/StoneGroup/Grindrail/PearlsL" instance=ExtResource("7_u2nl3")]
+[node name="Child07" parent="Exterior/StoneGroup/Grindrail/PearlsL" unique_id=559118926 instance=ExtResource("7_u2nl3")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -13.2)
 
-[node name="Child08" parent="Exterior/StoneGroup/Grindrail/PearlsL" instance=ExtResource("7_u2nl3")]
+[node name="Child08" parent="Exterior/StoneGroup/Grindrail/PearlsL" unique_id=879050068 instance=ExtResource("7_u2nl3")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -15.4)
 
-[node name="Child09" parent="Exterior/StoneGroup/Grindrail/PearlsL" instance=ExtResource("7_u2nl3")]
+[node name="Child09" parent="Exterior/StoneGroup/Grindrail/PearlsL" unique_id=1876805219 instance=ExtResource("7_u2nl3")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -17.6)
 
-[node name="Child10" parent="Exterior/StoneGroup/Grindrail/PearlsL" instance=ExtResource("7_u2nl3")]
+[node name="Child10" parent="Exterior/StoneGroup/Grindrail/PearlsL" unique_id=1681453961 instance=ExtResource("7_u2nl3")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -19.8)
 
-[node name="Child11" parent="Exterior/StoneGroup/Grindrail/PearlsL" instance=ExtResource("7_u2nl3")]
+[node name="Child11" parent="Exterior/StoneGroup/Grindrail/PearlsL" unique_id=1232939138 instance=ExtResource("7_u2nl3")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -22)
 
-[node name="PearlsR" type="Node3D" parent="Exterior/StoneGroup/Grindrail"]
+[node name="PearlsR" type="Node3D" parent="Exterior/StoneGroup/Grindrail" unique_id=2072689542]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.3, 0.5, -2)
 script = ExtResource("6_yyx0c")
 Source = ExtResource("7_u2nl3")
@@ -216,54 +307,54 @@ Spacing = 2.2
 "Horizontal Offset" = null
 "Vertical Offset" = null
 
-[node name="Child01" parent="Exterior/StoneGroup/Grindrail/PearlsR" instance=ExtResource("7_u2nl3")]
+[node name="Child01" parent="Exterior/StoneGroup/Grindrail/PearlsR" unique_id=1653007644 instance=ExtResource("7_u2nl3")]
 
-[node name="Child02" parent="Exterior/StoneGroup/Grindrail/PearlsR" instance=ExtResource("7_u2nl3")]
+[node name="Child02" parent="Exterior/StoneGroup/Grindrail/PearlsR" unique_id=122215707 instance=ExtResource("7_u2nl3")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2.2)
 
-[node name="Child03" parent="Exterior/StoneGroup/Grindrail/PearlsR" instance=ExtResource("7_u2nl3")]
+[node name="Child03" parent="Exterior/StoneGroup/Grindrail/PearlsR" unique_id=1978290343 instance=ExtResource("7_u2nl3")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -4.4)
 
-[node name="Child04" parent="Exterior/StoneGroup/Grindrail/PearlsR" instance=ExtResource("7_u2nl3")]
+[node name="Child04" parent="Exterior/StoneGroup/Grindrail/PearlsR" unique_id=223256729 instance=ExtResource("7_u2nl3")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -6.6)
 
-[node name="Child05" parent="Exterior/StoneGroup/Grindrail/PearlsR" instance=ExtResource("7_u2nl3")]
+[node name="Child05" parent="Exterior/StoneGroup/Grindrail/PearlsR" unique_id=1281540158 instance=ExtResource("7_u2nl3")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -8.8)
 
-[node name="Child06" parent="Exterior/StoneGroup/Grindrail/PearlsR" instance=ExtResource("7_u2nl3")]
+[node name="Child06" parent="Exterior/StoneGroup/Grindrail/PearlsR" unique_id=1444682107 instance=ExtResource("7_u2nl3")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -11)
 
-[node name="Child07" parent="Exterior/StoneGroup/Grindrail/PearlsR" instance=ExtResource("7_u2nl3")]
+[node name="Child07" parent="Exterior/StoneGroup/Grindrail/PearlsR" unique_id=865515284 instance=ExtResource("7_u2nl3")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -13.2)
 
-[node name="Child08" parent="Exterior/StoneGroup/Grindrail/PearlsR" instance=ExtResource("7_u2nl3")]
+[node name="Child08" parent="Exterior/StoneGroup/Grindrail/PearlsR" unique_id=814647728 instance=ExtResource("7_u2nl3")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -15.4)
 
-[node name="Child09" parent="Exterior/StoneGroup/Grindrail/PearlsR" instance=ExtResource("7_u2nl3")]
+[node name="Child09" parent="Exterior/StoneGroup/Grindrail/PearlsR" unique_id=249568065 instance=ExtResource("7_u2nl3")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -17.6)
 
-[node name="Child10" parent="Exterior/StoneGroup/Grindrail/PearlsR" instance=ExtResource("7_u2nl3")]
+[node name="Child10" parent="Exterior/StoneGroup/Grindrail/PearlsR" unique_id=2006225638 instance=ExtResource("7_u2nl3")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -19.8)
 
-[node name="Child11" parent="Exterior/StoneGroup/Grindrail/PearlsR" instance=ExtResource("7_u2nl3")]
+[node name="Child11" parent="Exterior/StoneGroup/Grindrail/PearlsR" unique_id=122589983 instance=ExtResource("7_u2nl3")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -22)
 
-[node name="Stone1" parent="Exterior/StoneGroup" instance=ExtResource("6_w7ivv")]
+[node name="Stone1" parent="Exterior/StoneGroup" unique_id=113772777 instance=ExtResource("6_w7ivv")]
 
-[node name="Stone2" parent="Exterior/StoneGroup" instance=ExtResource("6_w7ivv")]
+[node name="Stone2" parent="Exterior/StoneGroup" unique_id=215080969 instance=ExtResource("6_w7ivv")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 0)
 
-[node name="Stone3" parent="Exterior/StoneGroup" instance=ExtResource("6_w7ivv")]
+[node name="Stone3" parent="Exterior/StoneGroup" unique_id=315580606 instance=ExtResource("6_w7ivv")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4, 0)
 
-[node name="SpikePanel" parent="Exterior/StoneGroup" instance=ExtResource("4_12pdf")]
+[node name="SpikePanel" parent="Exterior/StoneGroup" unique_id=1023253945 instance=ExtResource("4_12pdf")]
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 4, 1.09998)
 stateLengths = PackedFloat32Array(0, 0, 1)
 "Current State" = 2
 "Auto Advance" = false
 "Start Paused" = false
 
-[node name="RedMajin1" parent="Exterior" instance=ExtResource("9_466sb")]
+[node name="RedMajin1" parent="Exterior" unique_id=676140936 instance=ExtResource("9_466sb")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 6, -78)
 "Spawn Settings/Spawn Travel Time" = 0.5
 "Spawn Settings/Spawn Delay" = 0.0
@@ -277,7 +368,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 6, -78)
 "Attack Settings/Attack Instantly" = true
 rangeOverride = 40
 
-[node name="RedMajin2" parent="Exterior" instance=ExtResource("9_466sb")]
+[node name="RedMajin2" parent="Exterior" unique_id=2080084883 instance=ExtResource("9_466sb")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 6, -85)
 "Spawn Settings/Spawn Travel Time" = 0.5
 "Spawn Settings/Spawn Delay" = 0.0
@@ -291,54 +382,54 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 6, -85)
 "Attack Settings/Attack Instantly" = true
 rangeOverride = 40
 
-[node name="Gargoyle1" parent="Exterior" instance=ExtResource("9_jxta5")]
+[node name="Gargoyle1" parent="Exterior" unique_id=1906974714 instance=ExtResource("9_jxta5")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 6.3, -100)
 useTeleportSpawn = true
 SpawnMode = 2
 
-[node name="Gargoyle2" parent="Exterior" instance=ExtResource("9_jxta5")]
+[node name="Gargoyle2" parent="Exterior" unique_id=1565244388 instance=ExtResource("9_jxta5")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 7, -130)
 useTeleportSpawn = true
 SpawnMode = 2
 
-[node name="EnemyStone" parent="Exterior" instance=ExtResource("10_7xgyf")]
+[node name="EnemyStone" parent="Exterior" unique_id=288520352 instance=ExtResource("10_7xgyf")]
 transform = Transform3D(4, 0, 0, 0, 4, 0, 0, 0, 4, 0, 11, -139)
 enemyCount = 1
 
-[node name="Interior" type="Node3D" parent="."]
+[node name="Interior" type="Node3D" parent="." unique_id=2122856480]
 transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 250, -30, -1375)
 
-[node name="TriggerData" type="Node3D" parent="Interior"]
+[node name="TriggerData" type="Node3D" parent="Interior" unique_id=1835211363]
 
-[node name="LoopPath" type="Node3D" parent="Interior/TriggerData" node_paths=PackedStringArray("path")]
+[node name="LoopPath" type="Node3D" parent="Interior/TriggerData" unique_id=1590626431 node_paths=PackedStringArray("path")]
 script = ExtResource("12_mdvko")
 path = NodePath("../../../Static/Paths/TowerPath")
 affectCamera = false
 
-[node name="LoopLockout" type="Node3D" parent="Interior/TriggerData"]
+[node name="LoopLockout" type="Node3D" parent="Interior/TriggerData" unique_id=973552747]
 script = ExtResource("13_cakp7")
 lockoutData = ExtResource("14_0x60c")
 
-[node name="TopPath" type="Node3D" parent="Interior/TriggerData" node_paths=PackedStringArray("path")]
+[node name="TopPath" type="Node3D" parent="Interior/TriggerData" unique_id=932297519 node_paths=PackedStringArray("path")]
 script = ExtResource("12_mdvko")
 path = NodePath("../../../Static/Paths/TowerTopPath")
 
-[node name="Spring1" parent="Interior" instance=ExtResource("12_7g768")]
+[node name="Spring1" parent="Interior" unique_id=1375602380 instance=ExtResource("12_7g768")]
 transform = Transform3D(1, 7.61939e-09, -3.32669e-10, -7.61939e-09, 0.996195, -0.0871557, -3.32669e-10, 0.0871557, 0.996195, 0, 0.299999, 0)
 MiddleHeight = 9.0
 FinalHeight = 7.5
 Distance = 8.0
 
-[node name="Gate" parent="Interior" instance=ExtResource("13_8w21s")]
+[node name="Gate" parent="Interior" unique_id=1228102156 instance=ExtResource("13_8w21s")]
 transform = Transform3D(-1, 0, 8.74228e-08, 0, 2, 0, -8.74228e-08, 0, -1, 0, 0, 9.5)
 
-[node name="Gate1" parent="Interior" instance=ExtResource("13_8w21s")]
+[node name="Gate1" parent="Interior" unique_id=40237471 instance=ExtResource("13_8w21s")]
 transform = Transform3D(0.353553, 0, 0.707107, 0, 2.1, 0, -0.353553, 0, 0.707107, 3.625, 8.00487, -7.25)
 
-[node name="SpikePanelGroup1" type="Node3D" parent="Interior"]
+[node name="SpikePanelGroup1" type="Node3D" parent="Interior" unique_id=135676039]
 transform = Transform3D(-0.707107, 0, -0.707107, 0, 1, 0, 0.707107, 0, -0.707107, 5.6364, 8.1, 5.22217)
 
-[node name="SpikePanelL" parent="Interior/SpikePanelGroup1" instance=ExtResource("4_12pdf")]
+[node name="SpikePanelL" parent="Interior/SpikePanelGroup1" unique_id=988226170 instance=ExtResource("4_12pdf")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, 0, 0)
 stateLengths = PackedFloat32Array(0.5, 0.2, 0.4)
 "Start Paused" = false
@@ -346,14 +437,14 @@ stateLengths = PackedFloat32Array(0.5, 0.2, 0.4)
 "State Lengths/warning" = 0.2
 "State Lengths/active" = 0.4
 
-[node name="SpikePanelM" parent="Interior/SpikePanelGroup1" instance=ExtResource("4_12pdf")]
+[node name="SpikePanelM" parent="Interior/SpikePanelGroup1" unique_id=706207598 instance=ExtResource("4_12pdf")]
 stateLengths = PackedFloat32Array(0.5, 0.2, 0.4)
 "Start Paused" = false
 "State Lengths/inactive" = 0.5
 "State Lengths/warning" = 0.2
 "State Lengths/active" = 0.4
 
-[node name="SpikePanelR" parent="Interior/SpikePanelGroup1" instance=ExtResource("4_12pdf")]
+[node name="SpikePanelR" parent="Interior/SpikePanelGroup1" unique_id=91775362 instance=ExtResource("4_12pdf")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5, 0, 0)
 stateLengths = PackedFloat32Array(0.5, 0.2, 0.4)
 "Start Paused" = false
@@ -361,62 +452,62 @@ stateLengths = PackedFloat32Array(0.5, 0.2, 0.4)
 "State Lengths/warning" = 0.2
 "State Lengths/active" = 0.4
 
-[node name="RedMajin" parent="Interior" instance=ExtResource("9_466sb")]
+[node name="RedMajin" parent="Interior" unique_id=1578455379 instance=ExtResource("9_466sb")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.79999, 8, 0)
 "Attack Settings/Flame Active Time" = 2.0
 "Attack Settings/Flame Inactive Time" = 1.0
 rangeOverride = 10
 
-[node name="Spring2" parent="Interior" instance=ExtResource("12_7g768")]
+[node name="Spring2" parent="Interior" unique_id=713583499 instance=ExtResource("12_7g768")]
 transform = Transform3D(1.31134e-07, 0, 1, 0, 1, 0, -1, 0, 1.31134e-07, -1.3, 8.225, -7.79993)
 MiddleHeight = 10.0
 FinalHeight = 7.5
 Distance = 2.5
 
-[node name="Gate2" parent="Interior" instance=ExtResource("13_8w21s")]
+[node name="Gate2" parent="Interior" unique_id=356177373 instance=ExtResource("13_8w21s")]
 transform = Transform3D(-5.96046e-08, 0, 1, 0, 2.1, 0, -0.5, 0, -1.19209e-07, 0, 8.00489, -7.75)
 
-[node name="Ivy1" parent="Interior" instance=ExtResource("14_blbqg")]
+[node name="Ivy1" parent="Interior" unique_id=535084048 instance=ExtResource("14_blbqg")]
 transform = Transform3D(0.920505, 0, -0.390731, 0, 1, 0, 0.390731, 0, 0.920505, 7.7, 22.5, 0)
 "Secondary Settings/Middle Height" = 1.0
 "Secondary Settings/Final Height" = 0.0
 "Secondary Settings/Distance" = 4.0
 
-[node name="SpikeBall1" parent="Interior" instance=ExtResource("15_vukwr")]
+[node name="SpikeBall1" parent="Interior" unique_id=1770454634 instance=ExtResource("15_vukwr")]
 transform = Transform3D(0.7047695, 0, -0.25651512, 0, 0.75, 0, 0.25651512, 0, 0.7047695, 6.571098, 17.5, 2.7801929)
 "Movement/Cycle Length" = 3.0
 Movement/Distance = 4.0
 "Vertical Orientation" = true
 
-[node name="Ivy2" parent="Interior" instance=ExtResource("14_blbqg")]
+[node name="Ivy2" parent="Interior" unique_id=1193727113 instance=ExtResource("14_blbqg")]
 transform = Transform3D(0.406737, 0, -0.913545, 0, 1, 0, 0.913545, 0, 0.406737, 5.39999, 22.5, 5.40002)
 "Secondary Settings/Middle Height" = 1.0
 "Secondary Settings/Final Height" = 0.0
 "Secondary Settings/Distance" = 4.0
 
-[node name="SpikeBall2" parent="Interior" instance=ExtResource("15_vukwr")]
+[node name="SpikeBall2" parent="Interior" unique_id=1771398622 instance=ExtResource("15_vukwr")]
 transform = Transform3D(0.75, 0, 0, 0, 0.75, 0, 0, 0, 0.75, 2.89999, 17.5, 6.8999)
 "Movement/Cycle Length" = 3.0
 "Movement/Starting Offset" = 0.5
 Movement/Distance = 4.0
 "Vertical Orientation" = true
 
-[node name="Ivy3" parent="Interior" instance=ExtResource("14_blbqg")]
+[node name="Ivy3" parent="Interior" unique_id=423468246 instance=ExtResource("14_blbqg")]
 transform = Transform3D(-0.374607, 0, -0.927184, 0, 1, 0, 0.927184, 0, -0.374607, 0, 22.5, 7.80005)
 "Secondary Settings/Middle Height" = 1.0
 "Secondary Settings/Final Height" = 0.0
 "Secondary Settings/Distance" = 2.0
 
-[node name="Spring3" parent="Interior" instance=ExtResource("12_7g768")]
+[node name="Spring3" parent="Interior" unique_id=818864985 instance=ExtResource("12_7g768")]
 transform = Transform3D(-1, 0, 1.47027e-07, 0, 1, 0, -1.47027e-07, 0, -1, -7.59998, 16.225, 1.50012)
 MiddleHeight = 10.0
 FinalHeight = 7.5
 Distance = 2.5
 
-[node name="Gate3" parent="Interior" instance=ExtResource("13_8w21s")]
+[node name="Gate3" parent="Interior" unique_id=79749439 instance=ExtResource("13_8w21s")]
 transform = Transform3D(-0.5, 0, -1.62921e-07, 0, 2.1, 0, 8.14603e-08, 0, -1, -7.79999, 16.04, 0)
 
-[node name="Pearls1" type="Node3D" parent="Interior"]
+[node name="Pearls1" type="Node3D" parent="Interior" unique_id=1536105928]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.60001, 24.8, -5)
 script = ExtResource("6_yyx0c")
 Source = ExtResource("7_u2nl3")
@@ -430,37 +521,37 @@ Spacing = 1.2
 "Horizontal Offset" = null
 "Vertical Offset" = null
 
-[node name="Child01" parent="Interior/Pearls1" instance=ExtResource("7_u2nl3")]
+[node name="Child01" parent="Interior/Pearls1" unique_id=129439965 instance=ExtResource("7_u2nl3")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.000167847, 0, 0.00012207)
 
-[node name="Child02" parent="Interior/Pearls1" instance=ExtResource("7_u2nl3")]
+[node name="Child02" parent="Interior/Pearls1" unique_id=371725434 instance=ExtResource("7_u2nl3")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.847198, 0, -0.843506)
 
-[node name="Child03" parent="Interior/Pearls1" instance=ExtResource("7_u2nl3")]
+[node name="Child03" parent="Interior/Pearls1" unique_id=1193272694 instance=ExtResource("7_u2nl3")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.70738, 0, -1.67078)
 
-[node name="Child04" parent="Interior/Pearls1" instance=ExtResource("7_u2nl3")]
+[node name="Child04" parent="Interior/Pearls1" unique_id=1958773849 instance=ExtResource("7_u2nl3")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.53238, 0, -2.39563)
 
-[node name="Child05" parent="Interior/Pearls1" instance=ExtResource("7_u2nl3")]
+[node name="Child05" parent="Interior/Pearls1" unique_id=1009558067 instance=ExtResource("7_u2nl3")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.61737, 0, -2.4679)
 
-[node name="Child06" parent="Interior/Pearls1" instance=ExtResource("7_u2nl3")]
+[node name="Child06" parent="Interior/Pearls1" unique_id=475259379 instance=ExtResource("7_u2nl3")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.81082, 0, -2.49072)
 
-[node name="Child07" parent="Interior/Pearls1" instance=ExtResource("7_u2nl3")]
+[node name="Child07" parent="Interior/Pearls1" unique_id=39517469 instance=ExtResource("7_u2nl3")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.00665, 0, -2.49316)
 
-[node name="Child08" parent="Interior/Pearls1" instance=ExtResource("7_u2nl3")]
+[node name="Child08" parent="Interior/Pearls1" unique_id=985174307 instance=ExtResource("7_u2nl3")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.20123, 0, -2.47729)
 
-[node name="Child09" parent="Interior/Pearls1" instance=ExtResource("7_u2nl3")]
+[node name="Child09" parent="Interior/Pearls1" unique_id=1656478737 instance=ExtResource("7_u2nl3")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.38353, 0, -2.42737)
 
-[node name="Child10" parent="Interior/Pearls1" instance=ExtResource("7_u2nl3")]
+[node name="Child10" parent="Interior/Pearls1" unique_id=2072159646 instance=ExtResource("7_u2nl3")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.21855, 0, -1.92322)
 
-[node name="Pearls2" type="Node3D" parent="Interior"]
+[node name="Pearls2" type="Node3D" parent="Interior" unique_id=1181363075]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.5, 24.8, 0)
 script = ExtResource("6_yyx0c")
 Source = ExtResource("7_u2nl3")
@@ -474,46 +565,46 @@ Spacing = 1.2
 "Horizontal Offset" = null
 "Vertical Offset" = null
 
-[node name="Child01" parent="Interior/Pearls2" instance=ExtResource("7_u2nl3")]
+[node name="Child01" parent="Interior/Pearls2" unique_id=1313663890 instance=ExtResource("7_u2nl3")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.000244141)
 
-[node name="Child02" parent="Interior/Pearls2" instance=ExtResource("7_u2nl3")]
+[node name="Child02" parent="Interior/Pearls2" unique_id=1762974576 instance=ExtResource("7_u2nl3")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0090332, 0, 1.19531)
 
-[node name="Child03" parent="Interior/Pearls2" instance=ExtResource("7_u2nl3")]
+[node name="Child03" parent="Interior/Pearls2" unique_id=1119297183 instance=ExtResource("7_u2nl3")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0428925, 0, 2.3822)
 
-[node name="Child04" parent="Interior/Pearls2" instance=ExtResource("7_u2nl3")]
+[node name="Child04" parent="Interior/Pearls2" unique_id=986804889 instance=ExtResource("7_u2nl3")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.301483, 0, 3.31616)
 
-[node name="Child05" parent="Interior/Pearls2" instance=ExtResource("7_u2nl3")]
+[node name="Child05" parent="Interior/Pearls2" unique_id=707596797 instance=ExtResource("7_u2nl3")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.10571, 0, 4.18848)
 
-[node name="Child06" parent="Interior/Pearls2" instance=ExtResource("7_u2nl3")]
+[node name="Child06" parent="Interior/Pearls2" unique_id=1626243559 instance=ExtResource("7_u2nl3")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.93994, 0, 5.04419)
 
-[node name="Child07" parent="Interior/Pearls2" instance=ExtResource("7_u2nl3")]
+[node name="Child07" parent="Interior/Pearls2" unique_id=607750580 instance=ExtResource("7_u2nl3")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.78613, 0, 5.89539)
 
-[node name="Child08" parent="Interior/Pearls2" instance=ExtResource("7_u2nl3")]
+[node name="Child08" parent="Interior/Pearls2" unique_id=1047276439 instance=ExtResource("7_u2nl3")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.63206, 0, 6.73669)
 
-[node name="Child09" parent="Interior/Pearls2" instance=ExtResource("7_u2nl3")]
+[node name="Child09" parent="Interior/Pearls2" unique_id=393365654 instance=ExtResource("7_u2nl3")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.46024, 0, 7.40637)
 
-[node name="Child10" parent="Interior/Pearls2" instance=ExtResource("7_u2nl3")]
+[node name="Child10" parent="Interior/Pearls2" unique_id=1178328709 instance=ExtResource("7_u2nl3")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.57312, 0, 7.47339)
 
-[node name="Spring4" parent="Interior" instance=ExtResource("12_7g768")]
+[node name="Spring4" parent="Interior" unique_id=1248071789 instance=ExtResource("12_7g768")]
 transform = Transform3D(-0.707107, 0, -0.707107, 0, 1, 0, 0.707107, 0, -0.707107, -4.31714, 24.225, 6.50012)
 MiddleHeight = 10.0
 FinalHeight = 7.5
 Distance = 2.5
 
-[node name="Gate4" parent="Interior" instance=ExtResource("13_8w21s")]
+[node name="Gate4" parent="Interior" unique_id=889493448 instance=ExtResource("13_8w21s")]
 transform = Transform3D(-0.353553, 0, -0.707107, 0, 2.1, 0, 0.353553, 0, -0.707107, -5.679, 24, 5.65698)
 
-[node name="SpikeBall" parent="Interior" instance=ExtResource("15_vukwr")]
+[node name="SpikeBall" parent="Interior" unique_id=1649889016 instance=ExtResource("15_vukwr")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 36, 0)
 Movement/Mode = 2
 "Movement/Cycle Length" = 3.0
@@ -521,17 +612,17 @@ Movement/Mode = 2
 "Movement/Vertical Size" = 0.0
 Movement/Radius = 8.0
 
-[node name="SpikePanelGroup2" type="Node3D" parent="Interior"]
+[node name="SpikePanelGroup2" type="Node3D" parent="Interior" unique_id=1666752806]
 transform = Transform3D(-0.707107, 0, 0.707107, 0, 1, 0, -0.707107, 0, -0.707107, -6, 32.1, -4.80005)
 
-[node name="SpikePanel1" parent="Interior/SpikePanelGroup2" instance=ExtResource("4_12pdf")]
+[node name="SpikePanel1" parent="Interior/SpikePanelGroup2" unique_id=1170708114 instance=ExtResource("4_12pdf")]
 stateLengths = PackedFloat32Array(0.5, 0.2, 0.4)
 "Start Paused" = false
 "State Lengths/inactive" = 0.5
 "State Lengths/warning" = 0.2
 "State Lengths/active" = 0.4
 
-[node name="SpikePanel2" parent="Interior/SpikePanelGroup2" instance=ExtResource("4_12pdf")]
+[node name="SpikePanel2" parent="Interior/SpikePanelGroup2" unique_id=1653508395 instance=ExtResource("4_12pdf")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1.5)
 stateLengths = PackedFloat32Array(0.5, 0.2, 0.4)
 "Start Paused" = false
@@ -539,17 +630,17 @@ stateLengths = PackedFloat32Array(0.5, 0.2, 0.4)
 "State Lengths/warning" = 0.2
 "State Lengths/active" = 0.4
 
-[node name="SpikePanelGroup3" type="Node3D" parent="Interior"]
+[node name="SpikePanelGroup3" type="Node3D" parent="Interior" unique_id=1055162594]
 transform = Transform3D(1.31134e-07, 0, 1, 0, 1, 0, -1, 0, 1.31134e-07, -0.75, 32.1, -7.65002)
 
-[node name="SpikePanel1" parent="Interior/SpikePanelGroup3" instance=ExtResource("4_12pdf")]
+[node name="SpikePanel1" parent="Interior/SpikePanelGroup3" unique_id=154678315 instance=ExtResource("4_12pdf")]
 stateLengths = PackedFloat32Array(0.5, 0.2, 0.4)
 "Start Paused" = false
 "State Lengths/inactive" = 0.5
 "State Lengths/warning" = 0.2
 "State Lengths/active" = 0.4
 
-[node name="SpikePanel2" parent="Interior/SpikePanelGroup3" instance=ExtResource("4_12pdf")]
+[node name="SpikePanel2" parent="Interior/SpikePanelGroup3" unique_id=301722315 instance=ExtResource("4_12pdf")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1.5)
 stateLengths = PackedFloat32Array(0.5, 0.2, 0.4)
 "Start Paused" = false
@@ -557,19 +648,19 @@ stateLengths = PackedFloat32Array(0.5, 0.2, 0.4)
 "State Lengths/warning" = 0.2
 "State Lengths/active" = 0.4
 
-[node name="Spring5" parent="Interior" instance=ExtResource("12_7g768")]
+[node name="Spring5" parent="Interior" unique_id=1641246592 instance=ExtResource("12_7g768")]
 transform = Transform3D(0.866025, 0, 0.5, 0, 1, 0, -0.5, 0, 0.866025, 6.5, 32.3, -4.5)
 MiddleHeight = 10.0
 FinalHeight = 7.5
 Distance = 2.5
 
-[node name="Gate5" parent="Interior" instance=ExtResource("13_8w21s")]
+[node name="Gate5" parent="Interior" unique_id=721708487 instance=ExtResource("13_8w21s")]
 transform = Transform3D(-0.469847, 0, -0.34202, 0, 2.1, 0, 0.17101, 0, -0.939692, 7.74001, 32.005, -3)
 
-[node name="Goal" parent="Interior" instance=ExtResource("16_ceh3i")]
+[node name="Goal" parent="Interior" unique_id=1190992838 instance=ExtResource("16_ceh3i")]
 transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 48, 16)
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Interior/Goal"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Interior/Goal" unique_id=1215864381]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -4, 3)
 shape = SubResource("BoxShape3D_isgee")
 

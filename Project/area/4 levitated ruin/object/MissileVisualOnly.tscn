@@ -1,4 +1,4 @@
-[gd_scene load_steps=44 format=3 uid="uid://bk8kcbkrf6c4h"]
+[gd_scene format=3 uid="uid://bk8kcbkrf6c4h"]
 
 [ext_resource type="PackedScene" uid="uid://e6oju4xygbmm" path="res://area/4 levitated ruin/object/model/obstacle/MissileSimple.gltf" id="1_d71x5"]
 [ext_resource type="Script" uid="uid://c27oe48qjsjv4" path="res://area/4 levitated ruin/data/script/Missile.cs" id="2_fjj5w"]
@@ -359,13 +359,13 @@ _data = {
 &"launch": SubResource("Animation_71aoi")
 }
 
-[node name="MissileVisualOnly" node_paths=PackedStringArray("animator") instance=ExtResource("1_d71x5")]
+[node name="MissileVisualOnly" unique_id=625825369 node_paths=PackedStringArray("animator") instance=ExtResource("1_d71x5")]
 physics_interpolation_mode = 2
 script = ExtResource("2_fjj5w")
 disableHitboxes = true
 animator = NodePath("AnimationPlayer")
 
-[node name="Trail" type="GPUParticles3D" parent="." index="1"]
+[node name="Trail" type="GPUParticles3D" parent="." index="1" unique_id=689421774]
 layers = 32
 cast_shadow = 0
 extra_cull_margin = 16384.0
@@ -378,7 +378,7 @@ visibility_aabb = AABB(-12, -12, -35, 24, 24, 40)
 process_material = SubResource("ParticleProcessMaterial_nlsiu")
 draw_pass_1 = SubResource("QuadMesh_yvuiw")
 
-[node name="Explosion" type="GPUParticles3D" parent="." index="2" node_paths=PackedStringArray("subSystems")]
+[node name="Explosion" type="GPUParticles3D" parent="." index="2" unique_id=819600326 node_paths=PackedStringArray("subSystems")]
 layers = 32
 cast_shadow = 0
 extra_cull_margin = 16384.0
@@ -394,7 +394,7 @@ draw_pass_1 = SubResource("QuadMesh_rsjo8")
 script = ExtResource("5_18hhr")
 subSystems = [NodePath("Flash"), NodePath("HitSpark"), NodePath("EmberBlue"), NodePath("CommonDust")]
 
-[node name="Flash" type="GPUParticles3D" parent="Explosion" index="0"]
+[node name="Flash" type="GPUParticles3D" parent="Explosion" index="0" unique_id=724827635]
 layers = 32
 cast_shadow = 0
 extra_cull_margin = 16384.0
@@ -409,7 +409,7 @@ visibility_aabb = AABB(0, 0, 0, 0, 0, 0)
 process_material = SubResource("ParticleProcessMaterial_8f0u4")
 draw_pass_1 = SubResource("QuadMesh_3qqin")
 
-[node name="HitSpark" type="GPUParticles3D" parent="Explosion" index="1"]
+[node name="HitSpark" type="GPUParticles3D" parent="Explosion" index="1" unique_id=766099336]
 layers = 32
 cast_shadow = 0
 extra_cull_margin = 16384.0
@@ -425,7 +425,7 @@ visibility_aabb = AABB(0, 0, 0, 0, 0, 0)
 process_material = SubResource("ParticleProcessMaterial_c3epw")
 draw_pass_1 = SubResource("QuadMesh_2h058")
 
-[node name="EmberBlue" type="GPUParticles3D" parent="Explosion" index="2"]
+[node name="EmberBlue" type="GPUParticles3D" parent="Explosion" index="2" unique_id=127129025]
 layers = 32
 cast_shadow = 0
 extra_cull_margin = 16384.0
@@ -439,7 +439,7 @@ visibility_aabb = AABB(0, 0, 0, 0, 0, 0)
 process_material = SubResource("ParticleProcessMaterial_iwvdj")
 draw_pass_1 = SubResource("QuadMesh_1nc1f")
 
-[node name="CommonDust" type="GPUParticles3D" parent="Explosion" index="3"]
+[node name="CommonDust" type="GPUParticles3D" parent="Explosion" index="3" unique_id=229331461]
 layers = 32
 cast_shadow = 0
 extra_cull_margin = 16384.0
@@ -454,7 +454,7 @@ visibility_aabb = AABB(0, 0, 0, 0, 0, 0)
 process_material = SubResource("ParticleProcessMaterial_0hda6")
 draw_pass_1 = SubResource("QuadMesh_yndoj")
 
-[node name="LaunchSFX" type="AudioStreamPlayer3D" parent="." index="3"]
+[node name="LaunchSFX" type="AudioStreamPlayer3D" parent="." index="3" unique_id=522813914]
 stream = ExtResource("10_17phy")
 max_db = -6.0
 max_distance = 500.0
@@ -465,7 +465,7 @@ script = ExtResource("11_o256i")
 groupKey = &"simple missile visual launch"
 audioLengthOverride = 1.2
 
-[node name="ExplosionSFX" type="AudioStreamPlayer3D" parent="." index="4"]
+[node name="ExplosionSFX" type="AudioStreamPlayer3D" parent="." index="4" unique_id=1287324564]
 stream = ExtResource("12_70bcd")
 unit_size = 20.0
 max_db = -6.0
@@ -477,9 +477,7 @@ script = ExtResource("11_o256i")
 groupKey = &"simple missile visual explosion"
 audioLengthOverride = 0.8
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="." index="5"]
-libraries = {
-&"": SubResource("AnimationLibrary_tfwu0")
-}
-autoplay = "fly"
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." index="5" unique_id=598172937]
+libraries/ = SubResource("AnimationLibrary_tfwu0")
+autoplay = &"fly"
 next/launch = &"fly"

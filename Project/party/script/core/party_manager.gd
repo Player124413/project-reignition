@@ -20,20 +20,30 @@ func set_current_mode(mode : CURRENT_MODE_ENUM) -> void:
 
 ## The minigame resource currently queued to play.
 var queued_minigame : MinigameResource
-
 signal players_initialized
 
 ## An array containing all possible character datas.
 var character_data : Array[PartyCharacterResource]
+## The complete list of loaded minigames.
+var minigame_list : Array[MinigameResource]
+## The list of unlocked minigames, based on save data. Use this for attractions.
+var unlocked_minigame_list : Array[MinigameResource]
+
+## Tracks who's playing the minigame. Used for tournament palace.
+var minigame_players : PackedInt32Array = DEFAULT_MINIGAME_PLAYERS
+const DEFAULT_MINIGAME_PLAYERS : PackedInt32Array = [0, 1, 2, 3]
 
 func get_character_count() -> int:
 	return character_data.size()
 
 const CHARACTER_DATA_FOLDER = "res://party/resource/character/"
+## Path to all standard minigame resources.
+const MINIGAME_DATA_PATH : String = "res://party/resource/minigame/"
 
 func _init() -> void:
 	load_characters()
-	## TODO Load modded character data here
+	load_minigames()
+	## TODO Load modded character and minigame data here
 
 func load_characters() -> void:
 	# Load character data from resource files
@@ -58,6 +68,17 @@ func load_characters() -> void:
 	for i in range(character_data.size(), 0):
 		if character_data[i] == null:
 			character_data.remove_at(i)
+
+func load_minigames() -> void:
+	var dirAccess : DirAccess = DirAccess.open(MINIGAME_DATA_PATH)
+	for file in dirAccess.get_files():
+		if file.ends_with(".remap"):
+			file = file.replace(".remap", "")
+		var resource : Resource = ResourceLoader.load(MINIGAME_DATA_PATH + file)
+		if resource is MinigameResource:
+			minigame_list.append(resource)
+	# TODO Determine this from save data.
+	unlocked_minigame_list = minigame_list.duplicate()
 
 ## Identifies a character data's index based on its name.
 func find_character_index_by_name(character_name : String) -> int:
@@ -125,6 +146,17 @@ func initialize_online_player_data() -> void:
 			rpc("set_player_indexes", i, i - peers.size(), 0, 1)
 	rpc("finish_initializing_players")
 
+## Called when running a mini-game from the editor. Loads 4 default characters.
+func initialize_debug_characters() -> void:
+	print("Initializing default characters for debug mode.")
+	for i in PartyManager.MAX_PLAYER_COUNT:
+		# Simply add characters based on their index order
+		var data : PartyCharacterResource = PartyManager.character_data.get(i)
+		PartyManager.set_character_data(i, data.character_name)
+		PartyManager.set_player_indexes(i, i, 1 if i == 0 else 0, 1) # Set everyone to a cpu except for p1
+		if i > 0:
+			PartyManager.set_difficulty(i, i) # Set this to i - 1 if you need to test easy cpus
+
 @rpc("authority", "call_local", "reliable")
 func set_player_indexes(index : int, player_index : int, device : int, local_player_index : int) -> void:
 	_player_data[index].player_index = player_index
@@ -139,6 +171,9 @@ func set_difficulty(index : int, difficulty : int) -> void:
 @rpc("authority", "call_local", "reliable")
 func finish_initializing_players() -> void:
 	players_initialized.emit()
+
+func set_minigame_players(players : PackedInt32Array) -> void:
+	minigame_players = players
 
 @rpc("authority", "call_local", "reliable")
 func set_minigame_placement(index : int, placement : int) -> void:

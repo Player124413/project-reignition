@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3 uid="uid://cfcqcvct272ct"]
+[gd_scene format=3 uid="uid://cfcqcvct272ct"]
 
 [ext_resource type="Script" uid="uid://d4kukq76r26tq" path="res://area/4 levitated ruin/data/script/FlyingDestructableObject.cs" id="1_2cduu"]
 [ext_resource type="PackedScene" uid="uid://bhqoe78kgcy60" path="res://area/4 levitated ruin/object/model/platform/SquarePillarFly.gltf" id="2_xkydh"]
@@ -178,7 +178,7 @@ _data = {
 &"shatter": SubResource("Animation_yrfwa")
 }
 
-[node name="SquarePillarFly" type="Node3D" node_paths=PackedStringArray("rotationRoot", "root", "pieceRoot", "animator")]
+[node name="SquarePillarFly" type="Node3D" unique_id=18725653 node_paths=PackedStringArray("rotationRoot", "root", "pieceRoot", "animator")]
 script = ExtResource("1_2cduu")
 rotationRoot = NodePath("Root/SquarePillarFly/SquarePillarFlyMesh")
 pieceMass = 0.5
@@ -188,44 +188,44 @@ root = NodePath("Root")
 pieceRoot = NodePath("SquarePillarPieces")
 animator = NodePath("AnimationPlayer")
 
-[node name="Root" type="Node3D" parent="."]
+[node name="Root" type="Node3D" parent="." unique_id=1795592098]
 
-[node name="SquarePillarFly" parent="Root" instance=ExtResource("2_xkydh")]
+[node name="SquarePillarFly" parent="Root" unique_id=1433891175 instance=ExtResource("2_xkydh")]
 
-[node name="SquarePillarFlyMesh" parent="Root/SquarePillarFly" index="0"]
+[node name="SquarePillarFlyMesh" parent="Root/SquarePillarFly" index="0" unique_id=994813895]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5, 0)
 
-[node name="Trigger" type="Area3D" parent="Root/SquarePillarFly/SquarePillarFlyMesh" index="0"]
+[node name="Trigger" type="Area3D" parent="Root/SquarePillarFly/SquarePillarFlyMesh" index="0" unique_id=1150275772]
 collision_layer = 0
 collision_mask = 2
 monitorable = false
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Root/SquarePillarFly/SquarePillarFlyMesh/Trigger"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Root/SquarePillarFly/SquarePillarFlyMesh/Trigger" unique_id=1264918449]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.25, 8.52651e-14)
 shape = SubResource("BoxShape3D_x3idx")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Root/SquarePillarFly/SquarePillarFlyMesh" index="1" groups=["wall"]]
+[node name="StaticBody3D" type="StaticBody3D" parent="Root/SquarePillarFly/SquarePillarFlyMesh" index="1" unique_id=343835423 groups=["wall"]]
 collision_layer = 8
 collision_mask = 0
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Root/SquarePillarFly/SquarePillarFlyMesh/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Root/SquarePillarFly/SquarePillarFlyMesh/StaticBody3D" unique_id=304375357]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.25, 8.52651e-14)
 shape = SubResource("BoxShape3D_x3idx")
 
-[node name="SquarePillarWallCollision" parent="Root/SquarePillarFly" index="2"]
+[node name="SquarePillarWallCollision" parent="Root/SquarePillarFly" index="2" unique_id=1667672584]
 visible = false
 
-[node name="StaticBody3D" parent="Root/SquarePillarFly/SquarePillarWallCollision" index="0" groups=["splash jump", "wall"]]
+[node name="StaticBody3D" parent="Root/SquarePillarFly/SquarePillarWallCollision" index="0" unique_id=1191503640 groups=["splash jump", "wall"]]
 
-[node name="SquarePillarFloorCollision" parent="Root/SquarePillarFly" index="3"]
+[node name="SquarePillarFloorCollision" parent="Root/SquarePillarFly" index="3" unique_id=2057446391]
 visible = false
 
-[node name="StaticBody3D" parent="Root/SquarePillarFly/SquarePillarFloorCollision" index="0" groups=["floor"]]
+[node name="StaticBody3D" parent="Root/SquarePillarFly/SquarePillarFloorCollision" index="0" unique_id=1614303501 groups=["floor"]]
 
-[node name="SquarePillarPieces" parent="." instance=ExtResource("4_dsw7f")]
+[node name="SquarePillarPieces" parent="." unique_id=1887140611 instance=ExtResource("4_dsw7f")]
 visible = false
 
-[node name="LaunchSFX" type="AudioStreamPlayer3D" parent="."]
+[node name="LaunchSFX" type="AudioStreamPlayer3D" parent="." unique_id=2019614636]
 stream = ExtResource("4_s4wjp")
 max_db = 0.0
 max_distance = 200.0
@@ -233,7 +233,7 @@ bus = &"GAME SFX"
 script = ExtResource("5_ds61p")
 groupKey = &"pillar launch"
 
-[node name="ShatterSFX" type="AudioStreamPlayer3D" parent="."]
+[node name="ShatterSFX" type="AudioStreamPlayer3D" parent="." unique_id=1067754326]
 stream = ExtResource("6_6ahki")
 max_db = 0.0
 max_distance = 200.0
@@ -241,10 +241,8 @@ bus = &"GAME SFX"
 script = ExtResource("5_ds61p")
 groupKey = &"pillar shatter"
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
-libraries = {
-&"": SubResource("AnimationLibrary_pmcqp")
-}
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=288444403]
+libraries/ = SubResource("AnimationLibrary_pmcqp")
 
 [connection signal="Shattered" from="." to="ShatterSFX" method="PlayInGroup"]
 [connection signal="StartedFlying" from="." to="LaunchSFX" method="PlayInGroup"]

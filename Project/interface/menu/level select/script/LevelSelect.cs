@@ -39,6 +39,9 @@ public partial class LevelSelect : Menu
 
 	public bool HasNewLevel()
 	{
+		if (world == SaveManager.WorldEnum.Mods) // Don't track mod levels
+			return false;
+
 		foreach (Node node in options.GetChildren())
 		{
 			if (node is LevelOption levelOption)

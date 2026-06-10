@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3 uid="uid://c1o8jxmiiryrj"]
+[gd_scene format=3 uid="uid://c1o8jxmiiryrj"]
 
 [ext_resource type="Script" uid="uid://cwhogw8cf0vdp" path="res://object/stage/common/resource/script/JumpCarpet.cs" id="1_7j8ed"]
 [ext_resource type="PackedScene" uid="uid://7jb7tlxafgo8" path="res://object/stage/common/resource/model/JumpCarpet.gltf" id="2_vapfi"]
@@ -185,7 +185,7 @@ _data = {
 &"launch": SubResource("Animation_hkoeb")
 }
 
-[node name="JumpCarpet" type="Node3D" node_paths=PackedStringArray("animator")]
+[node name="JumpCarpet" type="Node3D" unique_id=809001346 node_paths=PackedStringArray("animator")]
 script = ExtResource("1_7j8ed")
 animator = NodePath("AnimationPlayer")
 "Secondary Settings/Enabled" = true
@@ -198,26 +198,26 @@ AllowJumpDashing = true
 sfxPlayer = NodePath("SFX")
 voiceKey = &""
 
-[node name="ActivationTrigger" type="Area3D" parent="."]
+[node name="ActivationTrigger" type="Area3D" parent="." unique_id=1500765965]
 collision_layer = 4
 collision_mask = 2
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="ActivationTrigger"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="ActivationTrigger" unique_id=1707843845]
 shape = SubResource("BoxShape3D_bqhir")
 
-[node name="JumpCarpet" parent="." instance=ExtResource("2_vapfi")]
+[node name="JumpCarpet" parent="." unique_id=214664004 instance=ExtResource("2_vapfi")]
 
-[node name="CarpetBottomMesh" parent="JumpCarpet" index="0"]
+[node name="CarpetBottomMesh" parent="JumpCarpet" index="0" unique_id=1007663438]
 instance_shader_parameters/bounce_blend = 0.0
 instance_shader_parameters/bounce_displacement_strength = 0.4
 instance_shader_parameters/bounce_phase = 0.0
 
-[node name="CarpetTopMesh" parent="JumpCarpet" index="1"]
+[node name="CarpetTopMesh" parent="JumpCarpet" index="1" unique_id=1591526420]
 instance_shader_parameters/bounce_blend = 0.0
 instance_shader_parameters/bounce_displacement_strength = 0.4
 instance_shader_parameters/bounce_phase = 0.0
 
-[node name="SFX" type="AudioStreamPlayer3D" parent="."]
+[node name="SFX" type="AudioStreamPlayer3D" parent="." unique_id=1932339862]
 process_mode = 1
 stream = ExtResource("3_kgplj")
 max_db = -3.0
@@ -225,7 +225,7 @@ max_distance = 100.0
 bus = &"GAME SFX"
 attenuation_filter_cutoff_hz = 20500.0
 
-[node name="VFX" type="GPUParticles3D" parent="."]
+[node name="VFX" type="GPUParticles3D" parent="." unique_id=87710476]
 layers = 32
 emitting = false
 amount = 16
@@ -238,10 +238,8 @@ visibility_aabb = AABB(-2, -1, -2, 4, 4, 4)
 process_material = ExtResource("4_kikgc")
 draw_pass_1 = SubResource("PlaneMesh_47mcu")
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
-libraries = {
-&"": SubResource("AnimationLibrary_ymtvi")
-}
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=754249521]
+libraries/ = SubResource("AnimationLibrary_ymtvi")
 
 [connection signal="area_entered" from="ActivationTrigger" to="." method="Activate"]
 

@@ -142,7 +142,8 @@ func update_target_butterfly(index : int) -> void:
 
 func calculate_cpu_input() -> Vector2:
 	if !is_instance_valid(target_butterfly) || !target_butterfly.is_cpu_targetable():
-		if NetworkManager.is_hosting_game:
+		if is_multiplayer_authority():
+			print("calculating butterfly index")
 			rpc("update_target_butterfly", calculate_target_butterfly_index())
 		return Vector2.ZERO
 	
@@ -177,7 +178,7 @@ func get_cpu_interval() -> float:
 	return 0.0 # Don't use cpu intervals for this minigame
 
 func check_cpu_bubble_spawn() -> bool:
-	if !NetworkManager.is_hosting_game:
+	if !is_multiplayer_authority():
 		return false
 	
 	var diff : PlayerData.CPU_DIFFICULTY_ENUM = get_cpu_difficulty()
@@ -214,7 +215,7 @@ func start_swing(tick : float, dir : int) -> void:
 	var target_anim : StringName = "wait-r" if dir == 1 else "wait-l"
 	target_anim = get_anim_prefix() + target_anim
 	character_animator.play_minigame_animation(target_anim, 0.1, 1.4, 0, tick)
-	if NetworkManager.is_hosting_game && is_cpu():
+	if is_multiplayer_authority() && is_cpu():
 		if get_cpu_difficulty() < PlayerData.CPU_DIFFICULTY_ENUM.NORMAL: # Easier cpus jump to a different butterfly
 			rpc("update_target_butterfly", -1)
 

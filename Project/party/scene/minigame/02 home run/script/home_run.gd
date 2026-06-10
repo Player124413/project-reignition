@@ -89,6 +89,7 @@ const PITCH_COUNT : int = 10
 const BALL_SCALE_DISTANCE : float = 80
 
 func on_spawn_finished() -> void:
+	super()
 	ball.visible = false
 	bat_attachment.reparent(character_animator.skeleton)
 	character_animator.play_animation(get_anim_prefix() + "wait")

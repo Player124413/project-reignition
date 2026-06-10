@@ -1,4 +1,4 @@
-[gd_scene load_steps=39 format=3 uid="uid://dtf23iudr7saa"]
+[gd_scene format=3 uid="uid://dtf23iudr7saa"]
 
 [ext_resource type="Script" uid="uid://c2mk6oc4phgi2" path="res://object/enemy/gargoyle/data/GargoyleSkyroad.cs" id="1_b2tip"]
 [ext_resource type="PackedScene" uid="uid://brhbgxve4dsf1" path="res://object/enemy/gargoyle/data/model/GargoyleSkyroad.gltf" id="2_bjje6"]
@@ -10,7 +10,6 @@
 [ext_resource type="AudioStream" uid="uid://cttipl3ihmbr5" path="res://sound/sfx/enemy/majin/majin travel.wav" id="7_lb2pe"]
 [ext_resource type="Material" uid="uid://ev5ys13lygcu" path="res://effect/particle/material/environment/Water Splatter Add.tres" id="7_yi8bl"]
 [ext_resource type="Script" uid="uid://dnrfeyqvx8aq" path="res://addons/custom_nodes/script/GroupAudioStreamPlayer3D.cs" id="8_lb2pe"]
-
 
 [sub_resource type="Curve" id="Curve_38m7k"]
 _data = [Vector2(0, 0.2), 0.0, 3.0, 0, 0, Vector2(0.7, 1), 0.0, 0.0, 0, 0, Vector2(1, 0.2), -5.66667, 0.0, 0, 0]
@@ -372,9 +371,9 @@ nodes/flap_transition/node = SubResource("AnimationNodeTransition_mrmwx")
 nodes/flap_transition/position = Vector2(80, 140)
 nodes/glide-anim/node = SubResource("AnimationNodeAnimation_vgspr")
 nodes/glide-anim/position = Vector2(-160, 280)
-node_connections = [&"flap_speed", 0, &"flap-anim", &"flap_transition", 0, &"flap_speed", &"flap_transition", 1, &"glide-anim", &"output", 0, &"flap_transition"]
+node_connections = [&"output", 0, &"flap_transition", &"flap_speed", 0, &"flap-anim", &"flap_transition", 0, &"flap_speed", &"flap_transition", 1, &"glide-anim"]
 
-[node name="GargoyleSkyroad" type="PathFollow3D" node_paths=PackedStringArray("paths", "root", "animator", "animationTree")]
+[node name="GargoyleSkyroad" type="PathFollow3D" unique_id=1118958318 node_paths=PackedStringArray("paths", "root", "animator", "animationTree")]
 use_model_front = true
 loop = false
 script = ExtResource("1_b2tip")
@@ -383,15 +382,15 @@ root = NodePath("GargoyleSkyroad")
 animator = NodePath("AnimationPlayer")
 animationTree = NodePath("AnimationTree")
 
-[node name="GargoyleSkyroad" parent="." instance=ExtResource("2_bjje6")]
+[node name="GargoyleSkyroad" parent="." unique_id=654970616 instance=ExtResource("2_bjje6")]
 
-[node name="Skeleton3D" parent="GargoyleSkyroad/GargoyleSkyroadRoot" index="0"]
+[node name="Skeleton3D" parent="GargoyleSkyroad/GargoyleSkyroadRoot" parent_id_path=PackedInt32Array(654970616, 1405829026) index="0" unique_id=433479275]
 bones/4/rotation = Quaternion(-0.0383763, -1.02244e-06, 2.90416e-07, 0.999263)
 bones/8/rotation = Quaternion(-1.09807e-21, 5.62898e-22, 6.44043e-08, 1)
 bones/15/scale = Vector3(0.999994, 0.999994, 1)
 bones/19/rotation = Quaternion(-0.707107, 0, 4.39029e-08, 0.707107)
 
-[node name="SpawnParticle" type="GPUParticles3D" parent="GargoyleSkyroad/GargoyleSkyroadRoot" index="1" node_paths=PackedStringArray("subSystems")]
+[node name="SpawnParticle" type="GPUParticles3D" parent="GargoyleSkyroad/GargoyleSkyroadRoot" parent_id_path=PackedInt32Array(654970616, 1405829026) index="1" unique_id=901717771 node_paths=PackedStringArray("subSystems")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
 layers = 32
 cast_shadow = 0
@@ -408,7 +407,7 @@ draw_pass_1 = SubResource("QuadMesh_q2kyu")
 script = ExtResource("4_08iss")
 subSystems = [NodePath("Flash"), NodePath("Dust")]
 
-[node name="Flash" type="GPUParticles3D" parent="GargoyleSkyroad/GargoyleSkyroadRoot/SpawnParticle"]
+[node name="Flash" type="GPUParticles3D" parent="GargoyleSkyroad/GargoyleSkyroadRoot/SpawnParticle" unique_id=989274294]
 layers = 32
 cast_shadow = 0
 extra_cull_margin = 16384.0
@@ -423,7 +422,7 @@ visibility_aabb = AABB(0, 0, 0, 0, 0, 0)
 process_material = SubResource("ParticleProcessMaterial_nihhe")
 draw_pass_1 = SubResource("QuadMesh_c2pus")
 
-[node name="Dust" type="GPUParticles3D" parent="GargoyleSkyroad/GargoyleSkyroadRoot/SpawnParticle"]
+[node name="Dust" type="GPUParticles3D" parent="GargoyleSkyroad/GargoyleSkyroadRoot/SpawnParticle" unique_id=428892346]
 layers = 32
 cast_shadow = 0
 extra_cull_margin = 16384.0
@@ -438,7 +437,7 @@ visibility_aabb = AABB(0, 0, 0, 0, 0, 0)
 process_material = SubResource("ParticleProcessMaterial_ll6hy")
 draw_pass_1 = SubResource("QuadMesh_35ra7")
 
-[node name="SpawnSFX" type="AudioStreamPlayer3D" parent="GargoyleSkyroad/GargoyleSkyroadRoot/SpawnParticle"]
+[node name="SpawnSFX" type="AudioStreamPlayer3D" parent="GargoyleSkyroad/GargoyleSkyroadRoot/SpawnParticle" unique_id=352329199]
 process_mode = 1
 stream = ExtResource("7_lb2pe")
 volume_db = -12.0
@@ -450,7 +449,7 @@ attenuation_filter_cutoff_hz = 20500.0
 script = ExtResource("8_lb2pe")
 groupKey = &"majin_travel"
 
-[node name="DespawnParticle" type="GPUParticles3D" parent="GargoyleSkyroad/GargoyleSkyroadRoot" index="2" node_paths=PackedStringArray("subSystems")]
+[node name="DespawnParticle" type="GPUParticles3D" parent="GargoyleSkyroad/GargoyleSkyroadRoot" parent_id_path=PackedInt32Array(654970616, 1405829026) index="2" unique_id=840998972 node_paths=PackedStringArray("subSystems")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
 layers = 32
 cast_shadow = 0
@@ -467,7 +466,7 @@ draw_pass_1 = SubResource("QuadMesh_q2kyu")
 script = ExtResource("4_08iss")
 subSystems = [NodePath("Flash"), NodePath("Dust"), NodePath("Splatter")]
 
-[node name="Flash" type="GPUParticles3D" parent="GargoyleSkyroad/GargoyleSkyroadRoot/DespawnParticle"]
+[node name="Flash" type="GPUParticles3D" parent="GargoyleSkyroad/GargoyleSkyroadRoot/DespawnParticle" unique_id=1169400928]
 layers = 32
 cast_shadow = 0
 extra_cull_margin = 16384.0
@@ -482,7 +481,7 @@ visibility_aabb = AABB(0, 0, 0, 0, 0, 0)
 process_material = SubResource("ParticleProcessMaterial_nihhe")
 draw_pass_1 = SubResource("QuadMesh_c2pus")
 
-[node name="Dust" type="GPUParticles3D" parent="GargoyleSkyroad/GargoyleSkyroadRoot/DespawnParticle"]
+[node name="Dust" type="GPUParticles3D" parent="GargoyleSkyroad/GargoyleSkyroadRoot/DespawnParticle" unique_id=148345591]
 layers = 32
 cast_shadow = 0
 extra_cull_margin = 16384.0
@@ -497,7 +496,7 @@ visibility_aabb = AABB(0, 0, 0, 0, 0, 0)
 process_material = SubResource("ParticleProcessMaterial_23v60")
 draw_pass_1 = SubResource("QuadMesh_35ra7")
 
-[node name="Splatter" type="GPUParticles3D" parent="GargoyleSkyroad/GargoyleSkyroadRoot/DespawnParticle"]
+[node name="Splatter" type="GPUParticles3D" parent="GargoyleSkyroad/GargoyleSkyroadRoot/DespawnParticle" unique_id=60085834]
 layers = 32
 cast_shadow = 0
 extra_cull_margin = 16384.0
@@ -511,7 +510,7 @@ visibility_aabb = AABB(0, 0, 0, 0, 0, 0)
 process_material = SubResource("ParticleProcessMaterial_kkx8r")
 draw_pass_1 = SubResource("QuadMesh_myhi4")
 
-[node name="DespawnSFX" type="AudioStreamPlayer3D" parent="GargoyleSkyroad/GargoyleSkyroadRoot/DespawnParticle"]
+[node name="DespawnSFX" type="AudioStreamPlayer3D" parent="GargoyleSkyroad/GargoyleSkyroadRoot/DespawnParticle" unique_id=1829071437]
 process_mode = 1
 stream = ExtResource("7_4makg")
 unit_size = 20.0
@@ -522,12 +521,10 @@ attenuation_filter_cutoff_hz = 20500.0
 script = ExtResource("8_lb2pe")
 groupKey = &"majin_spawn"
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
-libraries = {
-&"": SubResource("AnimationLibrary_v4rfn")
-}
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=1492383224]
+libraries/ = SubResource("AnimationLibrary_v4rfn")
 
-[node name="AnimationTree" type="AnimationTree" parent="."]
+[node name="AnimationTree" type="AnimationTree" parent="." unique_id=604745048]
 active = false
 root_node = NodePath("../GargoyleSkyroad")
 tree_root = SubResource("AnimationNodeBlendTree_ve3gn")

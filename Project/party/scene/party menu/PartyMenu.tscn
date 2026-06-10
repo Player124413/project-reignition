@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3 uid="uid://dmkjjww7kn783"]
+[gd_scene format=3 uid="uid://dmkjjww7kn783"]
 
 [ext_resource type="Script" uid="uid://cj76gvi7tbku6" path="res://sound/script/BGMPlayer.cs" id="1_kuydi"]
 [ext_resource type="Script" uid="uid://cbp5ma871burm" path="res://party/script/interface/party_menu.gd" id="1_p7aet"]
@@ -10,7 +10,7 @@
 [ext_resource type="PackedScene" uid="uid://xskcm1oi838i" path="res://party/scene/attraction menu/AttractionMenu.tscn" id="5_6ywlm"]
 [ext_resource type="PackedScene" uid="uid://dfmawxqsw6v4d" path="res://interface/menu/DescriptionTall.tscn" id="9_57rwm"]
 
-[node name="PartyMenu" type="Control"]
+[node name="PartyMenu" type="Control" unique_id=2049639981]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -20,7 +20,7 @@ grow_vertical = 2
 mouse_filter = 2
 script = ExtResource("1_p7aet")
 
-[node name="Background" type="TextureRect" parent="."]
+[node name="Background" type="TextureRect" parent="." unique_id=1641082644]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -29,31 +29,34 @@ grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("4_ewsja")
 
-[node name="OnlineMenu" parent="." node_paths=PackedStringArray("player_count_menu") instance=ExtResource("2_57rwm")]
+[node name="OnlineMenu" parent="." unique_id=1602609419 node_paths=PackedStringArray("player_count_menu") instance=ExtResource("2_57rwm")]
 layout_mode = 1
 player_count_menu = NodePath("../PlayerCountMenu")
 
-[node name="PlayerCountMenu" parent="." node_paths=PackedStringArray("online_menu", "character_select_menu") instance=ExtResource("3_70dmd")]
+[node name="PlayerCountMenu" parent="." unique_id=68121765 node_paths=PackedStringArray("online_menu", "character_select_menu") instance=ExtResource("3_70dmd")]
 layout_mode = 1
 online_menu = NodePath("../OnlineMenu")
 character_select_menu = NodePath("../CharacterSelectMenu")
 
-[node name="CharacterSelectMenu" parent="." node_paths=PackedStringArray("player_count_menu", "attraction_menu") instance=ExtResource("4_wfe3t")]
+[node name="CharacterSelectMenu" parent="." unique_id=2012607361 node_paths=PackedStringArray("player_count_menu", "attraction_menu") instance=ExtResource("4_wfe3t")]
 layout_mode = 1
 player_count_menu = NodePath("../PlayerCountMenu")
 attraction_menu = NodePath("../AttractionMenu")
 
-[node name="AttractionMenu" parent="." instance=ExtResource("5_6ywlm")]
+[node name="AttractionMenu" parent="." unique_id=536339272 instance=ExtResource("5_6ywlm")]
 layout_mode = 1
 
-[node name="BGM" type="AudioStreamPlayer" parent="."]
+[node name="BGM" type="AudioStreamPlayer" parent="." unique_id=1805161727]
 autoplay = true
 bus = &"BGM"
 script = ExtResource("1_kuydi")
 bgmResource = ExtResource("2_mtme2")
 
-[node name="DescriptionTall" parent="." instance=ExtResource("9_57rwm")]
+[node name="DescriptionTall" parent="." unique_id=987212737 instance=ExtResource("9_57rwm")]
 layout_mode = 1
+
+[node name="Border" parent="DescriptionTall" index="0" unique_id=859722956]
+grow_horizontal = 2
 
 [editable path="DescriptionTall"]
 [editable path="DescriptionTall/Border/NavigationButton"]

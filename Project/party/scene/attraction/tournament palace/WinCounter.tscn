@@ -1,0 +1,100 @@
+[gd_scene format=3 uid="uid://bti46u4h0ajqv"]
+
+[ext_resource type="Texture2D" uid="uid://b5qk657743v4k" path="res://party/scene/attraction/base/texture/highlighted.png" id="1_g03tb"]
+[ext_resource type="Texture2D" uid="uid://ckeyap45xi1qj" path="res://party/scene/attraction/base/texture/unhighlighted.png" id="1_l6oyi"]
+[ext_resource type="Material" uid="uid://bhbsafmnnhtdb" path="res://effect/material/Canvas Item Add.tres" id="2_mlvrd"]
+
+[sub_resource type="Animation" id="Animation_mlvrd"]
+resource_name = "RESET"
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("State/Flash:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 0)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("State:texture")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [ExtResource("1_l6oyi")]
+}
+
+[sub_resource type="Animation" id="Animation_t16vg"]
+resource_name = "win"
+length = 0.5
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("State/Flash:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.06666666, 0.5),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 1), Color(1, 1, 1, 0)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("State:texture")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.06666667),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [ExtResource("1_l6oyi"), ExtResource("1_g03tb")]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_gwwpo"]
+_data = {
+&"RESET": SubResource("Animation_mlvrd"),
+&"win": SubResource("Animation_t16vg")
+}
+
+[node name="WinCounter" type="Control" unique_id=536085927]
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 3
+anchor_right = 0.033
+anchor_bottom = 0.060000002
+offset_right = -63.36
+offset_bottom = -64.8
+
+[node name="State" type="TextureRect" parent="." unique_id=1083105846]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("1_l6oyi")
+stretch_mode = 5
+
+[node name="Flash" type="TextureRect" parent="State" unique_id=1509078729]
+modulate = Color(1, 1, 1, 0)
+material = ExtResource("2_mlvrd")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("1_g03tb")
+stretch_mode = 5
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=1295757174]
+libraries/ = SubResource("AnimationLibrary_gwwpo")

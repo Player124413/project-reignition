@@ -1,4 +1,4 @@
-[gd_scene load_steps=31 format=3 uid="uid://chv67k88pbmx2"]
+[gd_scene format=3 uid="uid://chv67k88pbmx2"]
 
 [ext_resource type="PackedScene" uid="uid://bnps6pgfyd6po" path="res://party/scene/minigame/07 steel survival/model/PlatformTop.glb" id="1_fs2wc"]
 [ext_resource type="Script" uid="uid://ds2yfogl28fbh" path="res://party/scene/minigame/07 steel survival/script/player_controller.gd" id="1_mtgim"]
@@ -12,7 +12,7 @@
 [ext_resource type="AudioStream" uid="uid://blyb8633pxs26" path="res://party/scene/minigame/07 steel survival/sound/spin.wav" id="10_yad88"]
 [ext_resource type="AudioStream" uid="uid://dljn132bxklq2" path="res://party/scene/minigame/07 steel survival/sound/throw.wav" id="11_2rdul"]
 [ext_resource type="AudioStream" uid="uid://c3yim17vgk0xg" path="res://party/scene/minigame/07 steel survival/sound/crumble.wav" id="12_2t2bk"]
-[ext_resource type="ArrayMesh" uid="uid://1bft2pj424ei" path="res://party/scene/minigame/07 steel survival/model/Shatter_ShatterMesh.res" id="13_2t2bk"]
+[ext_resource type="ArrayMesh" uid="uid://bvc563meriri4" path="res://party/scene/minigame/07 steel survival/model/Shatter_ShatterMesh.res" id="13_2t2bk"]
 [ext_resource type="Script" uid="uid://c65ffkknyq6gr" path="res://addons/custom_nodes/script/GroupGpuParticles3D.cs" id="14_6yavx"]
 [ext_resource type="Material" uid="uid://ce4407ug83g0b" path="res://effect/particle/material/Ember Orange Billboard.tres" id="15_7ed68"]
 [ext_resource type="Material" uid="uid://c2lqqtvy2q1xp" path="res://effect/particle/material/environment/Common Dust.tres" id="16_uekia"]
@@ -111,7 +111,7 @@ alpha_curve = SubResource("CurveTexture_30kef")
 height = 90.0
 radius = 23.0
 
-[node name="Player" type="Node3D" node_paths=PackedStringArray("rollback_timer", "character_physics_parent", "surface_platform", "spike_ball_rotation", "spike_ball_position", "spike_ball", "hurtbox", "platform_parent", "spin_sfx", "hit_sfx", "throw_sfx", "crumble_sfx", "chain_parent", "hand_attachment", "chain_origin", "spawn_position")]
+[node name="Player" type="Node3D" unique_id=620529154 node_paths=PackedStringArray("rollback_timer", "character_physics_parent", "surface_platform", "spike_ball_rotation", "spike_ball_position", "spike_ball", "hurtbox", "platform_parent", "spin_sfx", "hit_sfx", "throw_sfx", "crumble_sfx", "chain_parent", "hand_attachment", "chain_origin", "spawn_position")]
 script = ExtResource("1_mtgim")
 rollback_timer = NodePath("Rollback")
 character_physics_parent = NodePath("CharacterPhysics")
@@ -133,31 +133,31 @@ chain_origin = NodePath("HandAttachment/ChainOrigin")
 spawn_position = NodePath("CharacterPhysics/CharacterSpawn")
 deactivate_on_gameplay_finished = false
 
-[node name="PlatformTop" parent="." instance=ExtResource("1_fs2wc")]
+[node name="PlatformTop" parent="." unique_id=1844475964 instance=ExtResource("1_fs2wc")]
 
-[node name="CharacterPhysics" type="RigidBody3D" parent="."]
+[node name="CharacterPhysics" type="RigidBody3D" parent="." unique_id=302512252]
 transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 15, 0)
 gravity_scale = 50.0
 freeze = true
 
-[node name="CharacterSpawn" type="Node3D" parent="CharacterPhysics"]
+[node name="CharacterSpawn" type="Node3D" parent="CharacterPhysics" unique_id=1764304792]
 
-[node name="SpikeballRotation" type="Node3D" parent="CharacterPhysics"]
+[node name="SpikeballRotation" type="Node3D" parent="CharacterPhysics" unique_id=1009754360]
 transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 2.5, 0)
 
-[node name="SpikeballPosition" type="Node3D" parent="CharacterPhysics/SpikeballRotation"]
+[node name="SpikeballPosition" type="Node3D" parent="CharacterPhysics/SpikeballRotation" unique_id=857350009]
 transform = Transform3D(0.75, 0, 0, 0, -3.278354e-08, -0.75, 0, 0.75, -3.278354e-08, 0, 0, -15)
 
-[node name="Spikeball" parent="CharacterPhysics/SpikeballRotation/SpikeballPosition" instance=ExtResource("5_bhnry")]
+[node name="Spikeball" parent="CharacterPhysics/SpikeballRotation/SpikeballPosition" unique_id=1738378703 instance=ExtResource("5_bhnry")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -11.999998, 0)
 
-[node name="Hitbox" type="Area3D" parent="CharacterPhysics/SpikeballRotation/SpikeballPosition" groups=["enemy"]]
+[node name="Hitbox" type="Area3D" parent="CharacterPhysics/SpikeballRotation/SpikeballPosition" unique_id=175519095 groups=["enemy"]]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -11.999998, 1.9073486e-06)
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="CharacterPhysics/SpikeballRotation/SpikeballPosition/Hitbox"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="CharacterPhysics/SpikeballRotation/SpikeballPosition/Hitbox" unique_id=1832369645]
 shape = SubResource("SphereShape3D_bhnry")
 
-[node name="Chains" type="Node3D" parent="CharacterPhysics/SpikeballRotation"]
+[node name="Chains" type="Node3D" parent="CharacterPhysics/SpikeballRotation" unique_id=836026970]
 transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, -30, 0)
 script = ExtResource("2_mtgim")
 Source = ExtResource("6_ppyg8")
@@ -169,67 +169,67 @@ Spacing = 0.0
 "Vertical Offset" = null
 metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
 
-[node name="Child01" parent="CharacterPhysics/SpikeballRotation/Chains" instance=ExtResource("6_ppyg8")]
+[node name="Child01" parent="CharacterPhysics/SpikeballRotation/Chains" unique_id=2142084714 instance=ExtResource("6_ppyg8")]
 
-[node name="Child02" parent="CharacterPhysics/SpikeballRotation/Chains" instance=ExtResource("6_ppyg8")]
+[node name="Child02" parent="CharacterPhysics/SpikeballRotation/Chains" unique_id=1724271285 instance=ExtResource("6_ppyg8")]
 
-[node name="Child03" parent="CharacterPhysics/SpikeballRotation/Chains" instance=ExtResource("6_ppyg8")]
+[node name="Child03" parent="CharacterPhysics/SpikeballRotation/Chains" unique_id=50311746 instance=ExtResource("6_ppyg8")]
 
-[node name="Child04" parent="CharacterPhysics/SpikeballRotation/Chains" instance=ExtResource("6_ppyg8")]
+[node name="Child04" parent="CharacterPhysics/SpikeballRotation/Chains" unique_id=725576435 instance=ExtResource("6_ppyg8")]
 
-[node name="Child05" parent="CharacterPhysics/SpikeballRotation/Chains" instance=ExtResource("6_ppyg8")]
+[node name="Child05" parent="CharacterPhysics/SpikeballRotation/Chains" unique_id=641565636 instance=ExtResource("6_ppyg8")]
 
-[node name="Child06" parent="CharacterPhysics/SpikeballRotation/Chains" instance=ExtResource("6_ppyg8")]
+[node name="Child06" parent="CharacterPhysics/SpikeballRotation/Chains" unique_id=125742898 instance=ExtResource("6_ppyg8")]
 
-[node name="Child07" parent="CharacterPhysics/SpikeballRotation/Chains" instance=ExtResource("6_ppyg8")]
+[node name="Child07" parent="CharacterPhysics/SpikeballRotation/Chains" unique_id=677920513 instance=ExtResource("6_ppyg8")]
 
-[node name="Child08" parent="CharacterPhysics/SpikeballRotation/Chains" instance=ExtResource("6_ppyg8")]
+[node name="Child08" parent="CharacterPhysics/SpikeballRotation/Chains" unique_id=666600223 instance=ExtResource("6_ppyg8")]
 
-[node name="Child09" parent="CharacterPhysics/SpikeballRotation/Chains" instance=ExtResource("6_ppyg8")]
+[node name="Child09" parent="CharacterPhysics/SpikeballRotation/Chains" unique_id=947946702 instance=ExtResource("6_ppyg8")]
 
-[node name="Child10" parent="CharacterPhysics/SpikeballRotation/Chains" instance=ExtResource("6_ppyg8")]
+[node name="Child10" parent="CharacterPhysics/SpikeballRotation/Chains" unique_id=1631659035 instance=ExtResource("6_ppyg8")]
 
-[node name="Child11" parent="CharacterPhysics/SpikeballRotation/Chains" instance=ExtResource("6_ppyg8")]
+[node name="Child11" parent="CharacterPhysics/SpikeballRotation/Chains" unique_id=1049533502 instance=ExtResource("6_ppyg8")]
 
-[node name="Child12" parent="CharacterPhysics/SpikeballRotation/Chains" instance=ExtResource("6_ppyg8")]
+[node name="Child12" parent="CharacterPhysics/SpikeballRotation/Chains" unique_id=931965214 instance=ExtResource("6_ppyg8")]
 
-[node name="Child13" parent="CharacterPhysics/SpikeballRotation/Chains" instance=ExtResource("6_ppyg8")]
+[node name="Child13" parent="CharacterPhysics/SpikeballRotation/Chains" unique_id=1044795786 instance=ExtResource("6_ppyg8")]
 
-[node name="Child14" parent="CharacterPhysics/SpikeballRotation/Chains" instance=ExtResource("6_ppyg8")]
+[node name="Child14" parent="CharacterPhysics/SpikeballRotation/Chains" unique_id=284390653 instance=ExtResource("6_ppyg8")]
 
-[node name="Child15" parent="CharacterPhysics/SpikeballRotation/Chains" instance=ExtResource("6_ppyg8")]
+[node name="Child15" parent="CharacterPhysics/SpikeballRotation/Chains" unique_id=1549573786 instance=ExtResource("6_ppyg8")]
 
-[node name="Child16" parent="CharacterPhysics/SpikeballRotation/Chains" instance=ExtResource("6_ppyg8")]
+[node name="Child16" parent="CharacterPhysics/SpikeballRotation/Chains" unique_id=1081607539 instance=ExtResource("6_ppyg8")]
 
-[node name="Child17" parent="CharacterPhysics/SpikeballRotation/Chains" instance=ExtResource("6_ppyg8")]
+[node name="Child17" parent="CharacterPhysics/SpikeballRotation/Chains" unique_id=1688495777 instance=ExtResource("6_ppyg8")]
 
-[node name="Child18" parent="CharacterPhysics/SpikeballRotation/Chains" instance=ExtResource("6_ppyg8")]
+[node name="Child18" parent="CharacterPhysics/SpikeballRotation/Chains" unique_id=277406909 instance=ExtResource("6_ppyg8")]
 
-[node name="Child19" parent="CharacterPhysics/SpikeballRotation/Chains" instance=ExtResource("6_ppyg8")]
+[node name="Child19" parent="CharacterPhysics/SpikeballRotation/Chains" unique_id=1968304549 instance=ExtResource("6_ppyg8")]
 
-[node name="Child20" parent="CharacterPhysics/SpikeballRotation/Chains" instance=ExtResource("6_ppyg8")]
+[node name="Child20" parent="CharacterPhysics/SpikeballRotation/Chains" unique_id=932284407 instance=ExtResource("6_ppyg8")]
 
-[node name="Child21" parent="CharacterPhysics/SpikeballRotation/Chains" instance=ExtResource("6_ppyg8")]
+[node name="Child21" parent="CharacterPhysics/SpikeballRotation/Chains" unique_id=1415981864 instance=ExtResource("6_ppyg8")]
 
-[node name="Child22" parent="CharacterPhysics/SpikeballRotation/Chains" instance=ExtResource("6_ppyg8")]
+[node name="Child22" parent="CharacterPhysics/SpikeballRotation/Chains" unique_id=1092790630 instance=ExtResource("6_ppyg8")]
 
-[node name="Child23" parent="CharacterPhysics/SpikeballRotation/Chains" instance=ExtResource("6_ppyg8")]
+[node name="Child23" parent="CharacterPhysics/SpikeballRotation/Chains" unique_id=1685257507 instance=ExtResource("6_ppyg8")]
 
-[node name="Child24" parent="CharacterPhysics/SpikeballRotation/Chains" instance=ExtResource("6_ppyg8")]
+[node name="Child24" parent="CharacterPhysics/SpikeballRotation/Chains" unique_id=499589990 instance=ExtResource("6_ppyg8")]
 
-[node name="Child25" parent="CharacterPhysics/SpikeballRotation/Chains" instance=ExtResource("6_ppyg8")]
+[node name="Child25" parent="CharacterPhysics/SpikeballRotation/Chains" unique_id=1862915126 instance=ExtResource("6_ppyg8")]
 
-[node name="Child26" parent="CharacterPhysics/SpikeballRotation/Chains" instance=ExtResource("6_ppyg8")]
+[node name="Child26" parent="CharacterPhysics/SpikeballRotation/Chains" unique_id=1168242267 instance=ExtResource("6_ppyg8")]
 
-[node name="Child27" parent="CharacterPhysics/SpikeballRotation/Chains" instance=ExtResource("6_ppyg8")]
+[node name="Child27" parent="CharacterPhysics/SpikeballRotation/Chains" unique_id=415647281 instance=ExtResource("6_ppyg8")]
 
-[node name="Child28" parent="CharacterPhysics/SpikeballRotation/Chains" instance=ExtResource("6_ppyg8")]
+[node name="Child28" parent="CharacterPhysics/SpikeballRotation/Chains" unique_id=2068559540 instance=ExtResource("6_ppyg8")]
 
-[node name="Child29" parent="CharacterPhysics/SpikeballRotation/Chains" instance=ExtResource("6_ppyg8")]
+[node name="Child29" parent="CharacterPhysics/SpikeballRotation/Chains" unique_id=1005572715 instance=ExtResource("6_ppyg8")]
 
-[node name="Child30" parent="CharacterPhysics/SpikeballRotation/Chains" instance=ExtResource("6_ppyg8")]
+[node name="Child30" parent="CharacterPhysics/SpikeballRotation/Chains" unique_id=132216925 instance=ExtResource("6_ppyg8")]
 
-[node name="HitVFX" type="GPUParticles3D" parent="." node_paths=PackedStringArray("subSystems")]
+[node name="HitVFX" type="GPUParticles3D" parent="." unique_id=1293601824 node_paths=PackedStringArray("subSystems")]
 layers = 32
 extra_cull_margin = 16384.0
 gi_mode = 0
@@ -245,7 +245,7 @@ draw_pass_1 = ExtResource("13_2t2bk")
 script = ExtResource("14_6yavx")
 subSystems = [NodePath("Embers"), NodePath("Dust")]
 
-[node name="Embers" type="GPUParticles3D" parent="HitVFX"]
+[node name="Embers" type="GPUParticles3D" parent="HitVFX" unique_id=1209537310]
 layers = 32
 material_override = ExtResource("15_7ed68")
 cast_shadow = 0
@@ -259,7 +259,7 @@ fract_delta = false
 process_material = SubResource("ParticleProcessMaterial_7ed68")
 draw_pass_1 = SubResource("QuadMesh_uekia")
 
-[node name="Dust" type="GPUParticles3D" parent="HitVFX"]
+[node name="Dust" type="GPUParticles3D" parent="HitVFX" unique_id=2136827696]
 layers = 32
 material_override = ExtResource("16_uekia")
 cast_shadow = 0
@@ -273,137 +273,137 @@ fract_delta = false
 process_material = SubResource("ParticleProcessMaterial_30kef")
 draw_pass_1 = SubResource("QuadMesh_uekia")
 
-[node name="Blocks" type="Node3D" parent="."]
+[node name="Blocks" type="Node3D" parent="." unique_id=1924980587]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -870, 0)
 
-[node name="Child01" parent="Blocks" instance=ExtResource("3_bhnry")]
+[node name="Child01" parent="Blocks" unique_id=887727577 instance=ExtResource("3_bhnry")]
 
-[node name="Child02" parent="Blocks" instance=ExtResource("3_bhnry")]
+[node name="Child02" parent="Blocks" unique_id=1817244154 instance=ExtResource("3_bhnry")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 30, 0)
 
-[node name="Child03" parent="Blocks" instance=ExtResource("3_bhnry")]
+[node name="Child03" parent="Blocks" unique_id=864578922 instance=ExtResource("3_bhnry")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 60, 0)
 
-[node name="Child04" parent="Blocks" instance=ExtResource("3_bhnry")]
+[node name="Child04" parent="Blocks" unique_id=2145022096 instance=ExtResource("3_bhnry")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 90, 0)
 
-[node name="Child05" parent="Blocks" instance=ExtResource("3_bhnry")]
+[node name="Child05" parent="Blocks" unique_id=1467272791 instance=ExtResource("3_bhnry")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 120, 0)
 
-[node name="Child06" parent="Blocks" instance=ExtResource("3_bhnry")]
+[node name="Child06" parent="Blocks" unique_id=568863351 instance=ExtResource("3_bhnry")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 150, 0)
 
-[node name="Child07" parent="Blocks" instance=ExtResource("3_bhnry")]
+[node name="Child07" parent="Blocks" unique_id=1821351639 instance=ExtResource("3_bhnry")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 180, 0)
 
-[node name="Child08" parent="Blocks" instance=ExtResource("3_bhnry")]
+[node name="Child08" parent="Blocks" unique_id=76051497 instance=ExtResource("3_bhnry")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 210, 0)
 
-[node name="Child09" parent="Blocks" instance=ExtResource("3_bhnry")]
+[node name="Child09" parent="Blocks" unique_id=955068874 instance=ExtResource("3_bhnry")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 240, 0)
 
-[node name="Child10" parent="Blocks" instance=ExtResource("3_bhnry")]
+[node name="Child10" parent="Blocks" unique_id=996047822 instance=ExtResource("3_bhnry")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 270, 0)
 
-[node name="Child11" parent="Blocks" instance=ExtResource("3_bhnry")]
+[node name="Child11" parent="Blocks" unique_id=338538085 instance=ExtResource("3_bhnry")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 300, 0)
 
-[node name="Child12" parent="Blocks" instance=ExtResource("3_bhnry")]
+[node name="Child12" parent="Blocks" unique_id=1627654115 instance=ExtResource("3_bhnry")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 330, 0)
 
-[node name="Child13" parent="Blocks" instance=ExtResource("3_bhnry")]
+[node name="Child13" parent="Blocks" unique_id=522580838 instance=ExtResource("3_bhnry")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 360, 0)
 
-[node name="Child14" parent="Blocks" instance=ExtResource("3_bhnry")]
+[node name="Child14" parent="Blocks" unique_id=863896222 instance=ExtResource("3_bhnry")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 390, 0)
 
-[node name="Child15" parent="Blocks" instance=ExtResource("3_bhnry")]
+[node name="Child15" parent="Blocks" unique_id=1280431144 instance=ExtResource("3_bhnry")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 420, 0)
 
-[node name="Child16" parent="Blocks" instance=ExtResource("3_bhnry")]
+[node name="Child16" parent="Blocks" unique_id=200828455 instance=ExtResource("3_bhnry")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 450, 0)
 
-[node name="Child17" parent="Blocks" instance=ExtResource("3_bhnry")]
+[node name="Child17" parent="Blocks" unique_id=10266258 instance=ExtResource("3_bhnry")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 480, 0)
 
-[node name="Child18" parent="Blocks" instance=ExtResource("3_bhnry")]
+[node name="Child18" parent="Blocks" unique_id=1140570410 instance=ExtResource("3_bhnry")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 510, 0)
 
-[node name="Child19" parent="Blocks" instance=ExtResource("3_bhnry")]
+[node name="Child19" parent="Blocks" unique_id=631809911 instance=ExtResource("3_bhnry")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 540, 0)
 
-[node name="Child20" parent="Blocks" instance=ExtResource("3_bhnry")]
+[node name="Child20" parent="Blocks" unique_id=1503887152 instance=ExtResource("3_bhnry")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 570, 0)
 
-[node name="Child21" parent="Blocks" instance=ExtResource("3_bhnry")]
+[node name="Child21" parent="Blocks" unique_id=1392501989 instance=ExtResource("3_bhnry")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 600, 0)
 
-[node name="Child22" parent="Blocks" instance=ExtResource("3_bhnry")]
+[node name="Child22" parent="Blocks" unique_id=1774726309 instance=ExtResource("3_bhnry")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 630, 0)
 
-[node name="Child23" parent="Blocks" instance=ExtResource("3_bhnry")]
+[node name="Child23" parent="Blocks" unique_id=1362505033 instance=ExtResource("3_bhnry")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 660, 0)
 
-[node name="Child24" parent="Blocks" instance=ExtResource("3_bhnry")]
+[node name="Child24" parent="Blocks" unique_id=58824154 instance=ExtResource("3_bhnry")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 690, 0)
 
-[node name="Child25" parent="Blocks" instance=ExtResource("3_bhnry")]
+[node name="Child25" parent="Blocks" unique_id=1410246163 instance=ExtResource("3_bhnry")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 720, 0)
 
-[node name="Child26" parent="Blocks" instance=ExtResource("3_bhnry")]
+[node name="Child26" parent="Blocks" unique_id=348863959 instance=ExtResource("3_bhnry")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 750, 0)
 
-[node name="Child27" parent="Blocks" instance=ExtResource("3_bhnry")]
+[node name="Child27" parent="Blocks" unique_id=545618018 instance=ExtResource("3_bhnry")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 780, 0)
 
-[node name="Child28" parent="Blocks" instance=ExtResource("3_bhnry")]
+[node name="Child28" parent="Blocks" unique_id=1936794210 instance=ExtResource("3_bhnry")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 810, 0)
 
-[node name="Child29" parent="Blocks" instance=ExtResource("3_bhnry")]
+[node name="Child29" parent="Blocks" unique_id=249490699 instance=ExtResource("3_bhnry")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 840, 0)
 
-[node name="Hurtbox" type="Area3D" parent="."]
+[node name="Hurtbox" type="Area3D" parent="." unique_id=990083728]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -30, 0)
 monitoring = false
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Hurtbox"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Hurtbox" unique_id=126458294]
 shape = SubResource("CylinderShape3D_bhnry")
 
-[node name="HandAttachment" type="BoneAttachment3D" parent="."]
+[node name="HandAttachment" type="BoneAttachment3D" parent="." unique_id=1997435316]
 transform = Transform3D(0.30647463, -0.8422366, -0.44351918, -0.22739112, -0.5172302, 0.8250848, -0.924319, -0.15201524, -0.35003522, -2.1761835, 4.414789, 0.326791)
 bone_name = "hand_open_r_2"
 bone_idx = 46
 
-[node name="ChainOrigin" type="Node3D" parent="HandAttachment"]
+[node name="ChainOrigin" type="Node3D" parent="HandAttachment" unique_id=326151496]
 transform = Transform3D(1, -7.4505806e-08, 8.940697e-08, -8.940697e-08, 1, -9.313226e-08, 0, -2.2351742e-08, 1, -1.3791025, -1.1864777, 1.3001356)
 
-[node name="Rollback" type="Node" parent="."]
+[node name="Rollback" type="Node" parent="." unique_id=557811367]
 script = ExtResource("7_lgll0")
 param_count = 7
 rollback_interval = 0.0
 
-[node name="Hit" type="AudioStreamPlayer" parent="."]
+[node name="Hit" type="AudioStreamPlayer" parent="." unique_id=446671703]
 stream = ExtResource("8_8pcbm")
 bus = &"GAME SFX"
 script = ExtResource("9_yad88")
 group = "hit"
 min_volume = 0.6000000000000001
 
-[node name="Spin" type="AudioStreamPlayer" parent="."]
+[node name="Spin" type="AudioStreamPlayer" parent="." unique_id=260398080]
 stream = ExtResource("10_yad88")
 bus = &"GAME SFX"
 script = ExtResource("9_yad88")
 group = "spin"
 min_volume = 0.6000000000000001
 
-[node name="Throw" type="AudioStreamPlayer" parent="."]
+[node name="Throw" type="AudioStreamPlayer" parent="." unique_id=54084333]
 stream = ExtResource("11_2rdul")
 bus = &"GAME SFX"
 script = ExtResource("9_yad88")
 group = "throw"
 min_volume = 0.6000000000000001
 
-[node name="Crumble" type="AudioStreamPlayer" parent="."]
+[node name="Crumble" type="AudioStreamPlayer" parent="." unique_id=1304214328]
 stream = ExtResource("12_2t2bk")
 bus = &"GAME SFX"
 

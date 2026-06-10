@@ -1,4 +1,4 @@
-[gd_scene load_steps=31 format=3 uid="uid://po4sbijsn5gh"]
+[gd_scene format=3 uid="uid://po4sbijsn5gh"]
 
 [ext_resource type="Script" uid="uid://r4h5dd86iox" path="res://area/8 final chapter/data/script/AlfSlash.cs" id="1_xw2y4"]
 [ext_resource type="Material" uid="uid://byyudgvby883r" path="res://effect/particle/material/environment/Circular Glow Add No Billboard.tres" id="2_hum1e"]
@@ -270,6 +270,46 @@ tracks/1/keys = {
 "values": [true]
 }
 
+[sub_resource type="Animation" id="Animation_utij8"]
+resource_name = "mute"
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("SlashGlowSFX:volume_db")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [-80.0]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("SlashExplosionSFX:volume_db")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [-80.0]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("SlashWindupSFX:volume_db")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [-80.0]
+}
+
 [sub_resource type="Animation" id="Animation_hum1e"]
 resource_name = "strike"
 length = 1.0000033
@@ -382,46 +422,6 @@ tracks/8/keys = {
 "values": [false, true]
 }
 
-[sub_resource type="Animation" id="Animation_utij8"]
-resource_name = "mute"
-length = 0.001
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("SlashGlowSFX:volume_db")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [-80.0]
-}
-tracks/1/type = "value"
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/path = NodePath("SlashExplosionSFX:volume_db")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
-tracks/1/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [-80.0]
-}
-tracks/2/type = "value"
-tracks/2/imported = false
-tracks/2/enabled = true
-tracks/2/path = NodePath("SlashWindupSFX:volume_db")
-tracks/2/interp = 1
-tracks/2/loop_wrap = true
-tracks/2/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [-80.0]
-}
-
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_rlt5j"]
 _data = {
 &"RESET": SubResource("Animation_rlt5j"),
@@ -430,7 +430,7 @@ _data = {
 &"strike": SubResource("Animation_hum1e")
 }
 
-[node name="Strike" type="Area3D" node_paths=PackedStringArray("animator", "childSlashes")]
+[node name="Strike" type="Area3D" unique_id=271349478 node_paths=PackedStringArray("animator", "childSlashes")]
 collision_layer = 0
 collision_mask = 2
 monitorable = false
@@ -439,16 +439,16 @@ animator = NodePath("AnimationPlayer")
 childSlashes = []
 isDisabled = true
 
-[node name="Warning" type="MeshInstance3D" parent="."]
+[node name="Warning" type="MeshInstance3D" parent="." unique_id=2047292916]
 layers = 32
 cast_shadow = 0
 extra_cull_margin = 16384.0
 mesh = SubResource("QuadMesh_ioa7f")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=1620644767]
 shape = SubResource("BoxShape3D_7wf61")
 
-[node name="ExplosionVFX" type="GPUParticles3D" parent="."]
+[node name="ExplosionVFX" type="GPUParticles3D" parent="." unique_id=751860869]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 30, 0)
 layers = 32
 cast_shadow = 0
@@ -464,7 +464,7 @@ local_coords = true
 process_material = SubResource("ParticleProcessMaterial_llial")
 draw_pass_1 = SubResource("QuadMesh_eqbou")
 
-[node name="TipVFX" type="GPUParticles3D" parent="ExplosionVFX"]
+[node name="TipVFX" type="GPUParticles3D" parent="ExplosionVFX" unique_id=661810545]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -15, 0)
 layers = 32
 cast_shadow = 0
@@ -479,23 +479,21 @@ transform_align = 2
 process_material = SubResource("ParticleProcessMaterial_xw2y4")
 draw_pass_1 = SubResource("QuadMesh_vnurs")
 
-[node name="SlashGlowSFX" type="AudioStreamPlayer" parent="."]
+[node name="SlashGlowSFX" type="AudioStreamPlayer" parent="." unique_id=624596480]
 stream = ExtResource("5_vnurs")
 bus = &"GAME SFX"
 
-[node name="SlashExplosionSFX" type="AudioStreamPlayer" parent="."]
+[node name="SlashExplosionSFX" type="AudioStreamPlayer" parent="." unique_id=1349789933]
 stream = ExtResource("6_utij8")
 bus = &"GAME SFX"
 
-[node name="SlashWindupSFX" type="AudioStreamPlayer" parent="."]
+[node name="SlashWindupSFX" type="AudioStreamPlayer" parent="." unique_id=1473006401]
 stream = ExtResource("7_utij8")
 bus = &"GAME SFX"
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
-libraries = {
-&"": SubResource("AnimationLibrary_rlt5j")
-}
-autoplay = "init"
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=2013027144]
+libraries/ = SubResource("AnimationLibrary_rlt5j")
+autoplay = &"init"
 
 [connection signal="area_entered" from="." to="." method="OnEntered"]
 [connection signal="area_exited" from="." to="." method="OnExited"]

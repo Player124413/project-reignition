@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=3 uid="uid://bfljqv8ka17mu"]
+[gd_scene format=3 uid="uid://bfljqv8ka17mu"]
 
 [ext_resource type="Texture2D" uid="uid://cjkycat15g70h" path="res://party/scene/party menu/texture/pc background.png" id="1_nyr7o"]
 [ext_resource type="Script" uid="uid://hq50f1y2i4xf" path="res://party/script/interface/player_count_option.gd" id="2_fuucl"]
@@ -350,9 +350,10 @@ _data = {
 &"switch": SubResource("Animation_fuucl")
 }
 
-[node name="Player" type="Control" node_paths=PackedStringArray("texture_animator", "switch_animator", "player_label")]
+[node name="Player" type="Control" unique_id=1370378241 node_paths=PackedStringArray("texture_animator", "switch_animator", "player_label")]
 custom_minimum_size = Vector2(256, 256)
 layout_mode = 3
+anchors_preset = 0
 offset_right = 256.0
 offset_bottom = 256.0
 mouse_filter = 2
@@ -361,7 +362,7 @@ texture_animator = NodePath("TextureAnimationPlayer")
 switch_animator = NodePath("SwitchAnimationPlayer")
 player_label = NodePath("PlayerLabel")
 
-[node name="Background" type="TextureRect" parent="."]
+[node name="Background" type="TextureRect" parent="." unique_id=1141625975]
 layout_mode = 1
 anchors_preset = -1
 anchor_right = 1.0
@@ -372,7 +373,7 @@ pivot_offset = Vector2(128, 128)
 texture = ExtResource("1_nyr7o")
 flip_h = true
 
-[node name="Player" type="TextureRect" parent="Background"]
+[node name="Player" type="TextureRect" parent="Background" unique_id=1060459541]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -382,7 +383,7 @@ grow_vertical = 2
 texture = ExtResource("2_xfk4d")
 expand_mode = 1
 
-[node name="Frame" type="TextureRect" parent="Background"]
+[node name="Frame" type="TextureRect" parent="Background" unique_id=1711692742]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -391,7 +392,7 @@ grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("3_pjx43")
 
-[node name="PlayerLabel" type="Label" parent="."]
+[node name="PlayerLabel" type="Label" parent="." unique_id=703607542]
 clip_children = 2
 clip_contents = true
 layout_mode = 0
@@ -406,7 +407,7 @@ vertical_alignment = 1
 uppercase = true
 script = ExtResource("5_pjxy2")
 
-[node name="PlayerLabel" type="Label" parent="PlayerLabel"]
+[node name="PlayerLabel" type="Label" parent="PlayerLabel" unique_id=391233381]
 clip_children = 2
 z_index = 1
 clip_contents = true
@@ -422,7 +423,7 @@ horizontal_alignment = 1
 vertical_alignment = 1
 uppercase = true
 
-[node name="TextureRect" type="TextureRect" parent="PlayerLabel/PlayerLabel"]
+[node name="TextureRect" type="TextureRect" parent="PlayerLabel/PlayerLabel" unique_id=1056526478]
 layout_mode = 1
 anchors_preset = -1
 anchor_right = 1.0
@@ -433,15 +434,11 @@ grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("8_rxveb")
 
-[node name="TextureAnimationPlayer" type="AnimationPlayer" parent="."]
+[node name="TextureAnimationPlayer" type="AnimationPlayer" parent="." unique_id=1602945114]
 root_node = NodePath("../Background")
-libraries = {
-&"": SubResource("AnimationLibrary_fuucl")
-}
+libraries/ = SubResource("AnimationLibrary_fuucl")
 
-[node name="SwitchAnimationPlayer" type="AnimationPlayer" parent="."]
+[node name="SwitchAnimationPlayer" type="AnimationPlayer" parent="." unique_id=320320553]
 root_node = NodePath("../Background")
-libraries = {
-&"": SubResource("AnimationLibrary_pjx43")
-}
-autoplay = "init"
+libraries/ = SubResource("AnimationLibrary_pjx43")
+autoplay = &"init"

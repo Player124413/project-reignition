@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3 uid="uid://b2ym415hopd85"]
+[gd_scene format=3 uid="uid://b2ym415hopd85"]
 
 [ext_resource type="Script" uid="uid://c0f78bfayvnvc" path="res://object/stage/common/resource/script/PathTraveller.cs" id="1_imlpk"]
 [ext_resource type="PackedScene" uid="uid://drabhhqncnl47" path="res://area/7 night palace/object/model/Carpet.gltf" id="1_plokg"]
@@ -136,7 +136,7 @@ _data = {
 &"respawn": SubResource("Animation_7w8qu")
 }
 
-[node name="Carpet" type="Node3D" node_paths=PackedStringArray("root", "playerPosition", "animator")]
+[node name="Carpet" type="Node3D" unique_id=909612417 node_paths=PackedStringArray("root", "playerPosition", "animator")]
 script = ExtResource("1_imlpk")
 MaxSpeed = 20.0
 TurnSpeed = 15.0
@@ -147,36 +147,34 @@ root = NodePath("Carpet")
 playerPosition = NodePath("Carpet/FlyingCarpetRoot")
 animator = NodePath("AnimationPlayer")
 
-[node name="Carpet" parent="." instance=ExtResource("1_plokg")]
+[node name="Carpet" parent="." unique_id=972722025 instance=ExtResource("1_plokg")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.2, 0)
 
-[node name="FlyingCarpetMesh" parent="Carpet/FlyingCarpetRoot/Skeleton3D" index="0"]
+[node name="FlyingCarpetMesh" parent="Carpet/FlyingCarpetRoot/Skeleton3D" parent_id_path=PackedInt32Array(972722025, 1400764110) index="0" unique_id=1135341868]
 cast_shadow = 0
 
-[node name="AnimationPlayer" parent="Carpet" index="1"]
-autoplay = "carpet-idle"
+[node name="AnimationPlayer" parent="Carpet" index="1" unique_id=2063879972]
+autoplay = &"carpet-idle"
 
-[node name="Trigger" type="Area3D" parent="."]
+[node name="Trigger" type="Area3D" parent="." unique_id=1576572267]
 collision_layer = 8
 collision_mask = 8
 monitorable = false
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Trigger"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Trigger" unique_id=713282196]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.099999994, 0)
 shape = SubResource("BoxShape3D_7w8qu")
 
-[node name="CollisionShape3D2" type="CollisionShape3D" parent="Trigger"]
+[node name="CollisionShape3D2" type="CollisionShape3D" parent="Trigger" unique_id=1256504233]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.24999997, 0)
 shape = SubResource("CapsuleShape3D_y7b4k")
 
-[node name="WindSFX" type="AudioStreamPlayer" parent="."]
+[node name="WindSFX" type="AudioStreamPlayer" parent="." unique_id=1339214567]
 stream = ExtResource("3_y7b4k")
 bus = &"GAME SFX"
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
-libraries = {
-&"": SubResource("AnimationLibrary_j74o1")
-}
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=923331122]
+libraries/ = SubResource("AnimationLibrary_j74o1")
 
 [connection signal="Activated" from="." to="WindSFX" method="play"]
 [connection signal="Deactivated" from="." to="WindSFX" method="stop"]

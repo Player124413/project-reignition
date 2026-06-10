@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3 uid="uid://c4qk3uy80ub6r"]
+[gd_scene format=3 uid="uid://c4qk3uy80ub6r"]
 
 [ext_resource type="Script" uid="uid://bdlofqc6xiigo" path="res://object/trigger/modules/PlatformTrigger.cs" id="1_ewyp6"]
 [ext_resource type="PackedScene" uid="uid://c7i5mrcfhvvf8" path="res://area/5 pirate storm/object/model/platforms/BridgeSquare.gltf" id="2_2py6p"]
@@ -79,7 +79,7 @@ _data = {
 &"shake": SubResource("Animation_ql22x")
 }
 
-[node name="BridgeSquareFalling" type="Node3D" node_paths=PackedStringArray("floorCalculationRoot", "parentCollider")]
+[node name="BridgeSquareFalling" type="Node3D" unique_id=897485185 node_paths=PackedStringArray("floorCalculationRoot", "parentCollider")]
 script = ExtResource("1_ewyp6")
 floorCalculationRoot = NodePath("Root/Trigger")
 parentCollider = NodePath("Root/Collision")
@@ -90,28 +90,28 @@ parentCollider = NodePath("Root/Collision")
 "Falling Platform Settings/Fall Speed" = 1.0
 "Floating Platform Settings/Enabled" = false
 
-[node name="Root" type="Node3D" parent="."]
+[node name="Root" type="Node3D" parent="." unique_id=387744624]
 
-[node name="BridgeSquare" parent="Root" instance=ExtResource("2_2py6p")]
+[node name="BridgeSquare" parent="Root" unique_id=458121977 instance=ExtResource("2_2py6p")]
 
-[node name="BridgeSquareMesh" parent="Root/BridgeSquare" index="0"]
+[node name="BridgeSquareMesh" parent="Root/BridgeSquare" index="0" unique_id=1935728176]
 layers = 6
 
-[node name="Collision" type="StaticBody3D" parent="Root" groups=["floor", "splash jump", "wall", "wood"]]
+[node name="Collision" type="StaticBody3D" parent="Root" unique_id=541476888 groups=["floor", "splash jump", "wall", "wood"]]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Root/Collision"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Root/Collision" unique_id=543196191]
 shape = SubResource("BoxShape3D_ghye0")
 
-[node name="Trigger" type="Area3D" parent="Root"]
+[node name="Trigger" type="Area3D" parent="Root" unique_id=1079555930]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5, 0)
 collision_layer = 0
 collision_mask = 2
 monitorable = false
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Root/Trigger"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Root/Trigger" unique_id=1752285370]
 shape = SubResource("BoxShape3D_ql22x")
 
-[node name="Sfx" type="AudioStreamPlayer3D" parent="."]
+[node name="Sfx" type="AudioStreamPlayer3D" parent="." unique_id=1658630053]
 stream = ExtResource("3_2py6p")
 unit_size = 30.0
 max_db = 0.0
@@ -120,11 +120,9 @@ bus = &"GAME SFX"
 script = ExtResource("4_7fgj5")
 groupKey = &"ps_destructable"
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=707140260]
 callback_mode_process = 0
-libraries = {
-&"": SubResource("AnimationLibrary_7fgj5")
-}
+libraries/ = SubResource("AnimationLibrary_7fgj5")
 
 [connection signal="area_entered" from="Root/Trigger" to="." method="OnEntered"]
 [connection signal="area_exited" from="Root/Trigger" to="." method="OnExited"]

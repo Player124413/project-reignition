@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://cbpudluma1oux"]
+[gd_scene format=3 uid="uid://cbpudluma1oux"]
 
 [ext_resource type="PackedScene" uid="uid://d2w0v34pt425j" path="res://object/stage/destructable/resource/model/Crate.gltf" id="1_ievg5"]
 [ext_resource type="Script" uid="uid://bj7jhdknn12cl" path="res://object/stage/destructable/resource/script/DestructableObject.cs" id="1_m1iim"]
@@ -155,7 +155,7 @@ _data = {
 &"shatter": SubResource("Animation_7ehdr")
 }
 
-[node name="Crate" type="Node3D" node_paths=PackedStringArray("root", "pieceRoot", "animator")]
+[node name="Crate" type="Node3D" unique_id=1266313375 node_paths=PackedStringArray("root", "pieceRoot", "animator")]
 script = ExtResource("1_m1iim")
 pieceMass = 0.5
 shakeScreenOnShatter = false
@@ -164,26 +164,26 @@ root = NodePath("Root")
 pieceRoot = NodePath("CratePieces")
 animator = NodePath("AnimationPlayer")
 
-[node name="Root" type="RigidBody3D" parent="." groups=["floor", "grind wall", "ignore destructable", "splash jump", "wall"]]
+[node name="Root" type="RigidBody3D" parent="." unique_id=583549783 groups=["floor", "grind wall", "ignore destructable", "splash jump", "wall"]]
 collision_layer = 16
 collision_mask = 59
 
-[node name="Trigger" type="Area3D" parent="Root"]
+[node name="Trigger" type="Area3D" parent="Root" unique_id=2001493024]
 collision_layer = 0
 collision_mask = 26
 monitorable = false
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Root/Trigger"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Root/Trigger" unique_id=818704823]
 shape = SubResource("17")
 
-[node name="Crate" parent="Root" instance=ExtResource("1_ievg5")]
+[node name="Crate" parent="Root" unique_id=744082297 instance=ExtResource("1_ievg5")]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Root"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Root" unique_id=65308752]
 shape = SubResource("17")
 
-[node name="SFX" type="Node3D" parent="Root"]
+[node name="SFX" type="Node3D" parent="Root" unique_id=355282429]
 
-[node name="Shatter" type="AudioStreamPlayer3D" parent="Root/SFX"]
+[node name="Shatter" type="AudioStreamPlayer3D" parent="Root/SFX" unique_id=1010627889]
 process_mode = 1
 stream = ExtResource("4_ngm6l")
 volume_db = -6.0
@@ -193,7 +193,7 @@ bus = &"GAME SFX"
 script = ExtResource("4_ms1x2")
 groupKey = &"crate_shatter"
 
-[node name="Push" type="AudioStreamPlayer3D" parent="Root/SFX"]
+[node name="Push" type="AudioStreamPlayer3D" parent="Root/SFX" unique_id=865349958]
 process_mode = 1
 stream = ExtResource("5_0m3lv")
 max_db = 0.0
@@ -203,13 +203,11 @@ attenuation_filter_cutoff_hz = 20500.0
 script = ExtResource("4_ms1x2")
 groupKey = &"crate_push"
 
-[node name="CratePieces" parent="." instance=ExtResource("2_ekvth")]
+[node name="CratePieces" parent="." unique_id=58938645 instance=ExtResource("2_ekvth")]
 visible = false
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
-libraries = {
-&"": SubResource("AnimationLibrary_vgr4p")
-}
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=880861672]
+libraries/ = SubResource("AnimationLibrary_vgr4p")
 
 [connection signal="body_entered" from="Root" to="." method="OnBodyEntered"]
 [connection signal="area_entered" from="Root/Trigger" to="." method="OnEntered"]

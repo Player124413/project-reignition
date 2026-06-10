@@ -1,4 +1,4 @@
-[gd_scene load_steps=5 format=3 uid="uid://wydcxl4kgcrp"]
+[gd_scene format=3 uid="uid://wydcxl4kgcrp"]
 
 [ext_resource type="PackedScene" uid="uid://dr3exa06xf0nh" path="res://area/5 pirate storm/object/model/destructable/Crate.gltf" id="1_320j4"]
 [ext_resource type="Script" uid="uid://bdlofqc6xiigo" path="res://object/trigger/modules/PlatformTrigger.cs" id="2_spymo"]
@@ -9,7 +9,7 @@ size = Vector3(2, 2, 2)
 [sub_resource type="BoxShape3D" id="BoxShape3D_oecqu"]
 size = Vector3(2, 1, 2)
 
-[node name="CratePlatform" type="Node3D" node_paths=PackedStringArray("floorCalculationRoot", "parentCollider")]
+[node name="CratePlatform" type="Node3D" unique_id=1574472683 node_paths=PackedStringArray("floorCalculationRoot", "parentCollider")]
 script = ExtResource("2_spymo")
 floorCalculationRoot = NodePath("Crate/Trigger")
 parentCollider = NodePath("Crate/Collision")
@@ -20,23 +20,23 @@ parentCollider = NodePath("Crate/Collision")
 "Floating Platform Settings/Initial Force" = 0.0
 "Floating Platform Settings/Initial Height" = 0.0
 
-[node name="Crate" parent="." instance=ExtResource("1_320j4")]
+[node name="Crate" parent="." unique_id=501190156 instance=ExtResource("1_320j4")]
 
-[node name="CrateMesh" parent="Crate" index="0"]
+[node name="CrateMesh" parent="Crate" index="0" unique_id=1658641507]
 layers = 6
 
-[node name="Collision" type="StaticBody3D" parent="Crate" groups=["floor", "splash jump", "wall", "wood"]]
+[node name="Collision" type="StaticBody3D" parent="Crate" unique_id=677256846 groups=["floor", "splash jump", "wall", "wood"]]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Crate/Collision"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Crate/Collision" unique_id=1967817459]
 shape = SubResource("BoxShape3D_1emgr")
 
-[node name="Trigger" type="Area3D" parent="Crate"]
+[node name="Trigger" type="Area3D" parent="Crate" unique_id=2080257808]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
 collision_layer = 0
 collision_mask = 2
 monitorable = false
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Crate/Trigger"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Crate/Trigger" unique_id=784873500]
 shape = SubResource("BoxShape3D_oecqu")
 
 [connection signal="area_entered" from="Crate/Trigger" to="." method="OnEntered"]

@@ -31,7 +31,6 @@ public partial class TimeAttack : Menu
 		SaveManager.ActiveGameData.level = 99;
 		SaveManager.ActiveGameData.UnlockAllWorlds();
 		SaveManager.ActiveSkillRing.UpdateTotalSkillPoints();
-		DebugManager.Instance.ToggleDemoSave(true);
 
 
 		SaveManager.LoadTimeAttackData();//Creates a new timeattack file if there isn't one
@@ -220,7 +219,6 @@ public partial class TimeAttack : Menu
 			return;
 		}
 
-		DebugManager.Instance.ToggleDemoSave(false);
 		SaveManager.SaveTimeAttackData();
 		SaveManager.SaveGameData();
 		TimeAttackManager.Instance.SetRunActive(false);

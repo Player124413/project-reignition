@@ -16,14 +16,10 @@ extends Menu
 ## Cursor used for the minigame menu.
 @export var minigame_cursor : Control
 
-## The complete list of loaded minigames.
-var minigame_list : Array[MinigameResource]
 ## The list of current minigames.
 var current_minigame_list : Array[MinigameResource]
 ## List of selectable minigame options.
 var minigame_option_list : Array[WLMinigameOption]
-## Path to all standard minigame resources.
-const MINIGAME_PATH : String = "res://party/resource/minigame/"
 var max_minigame_selection : int
 
 ## Tracks whether the menu is loading from a minigame or not.
@@ -54,14 +50,6 @@ func initialize() -> void:
 	for child in minigame_option_list_parent.get_children():
 		if child is WLMinigameOption:
 			minigame_option_list.append(child)
-	
-	var dirAccess : DirAccess = DirAccess.open(MINIGAME_PATH)
-	for file in dirAccess.get_files():
-		if file.ends_with(".remap"):
-			file = file.replace(".remap", "")
-		var resource : Resource = ResourceLoader.load(MINIGAME_PATH + file)
-		if resource is MinigameResource:
-			minigame_list.append(resource)
 
 func confirm() -> void:
 	if !NetworkManager.is_hosting_game:
@@ -150,7 +138,7 @@ func process_cancel() -> void:
 func update_minigame_list() -> void:
 	# Build active minigame list
 	current_minigame_list.clear()
-	for minigame in minigame_list: # TODO Filter minigames by type
+	for minigame in PartyManager.unlocked_minigame_list: # TODO Filter minigames by type
 		current_minigame_list.append(minigame)
 	
 	max_minigame_selection = minigame_option_list.size()
@@ -224,7 +212,7 @@ func enable_processing() -> void:
 
 @rpc("any_peer", "call_local", "reliable")
 func load_minigame(minigame_index : int) -> void:
-	PartyManager.queued_minigame = minigame_list[minigame_index]
+	PartyManager.queued_minigame = current_minigame_list[minigame_index]
 	is_loading_from_minigame = true # Store flag for return load
 	hide_menu()
 	disable_processing()

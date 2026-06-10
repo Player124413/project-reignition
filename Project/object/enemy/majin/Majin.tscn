@@ -1,4 +1,4 @@
-[gd_scene load_steps=54 format=3 uid="uid://rh85bh20fk6r"]
+[gd_scene format=3 uid="uid://rh85bh20fk6r"]
 
 [ext_resource type="Script" uid="uid://coe4ch77wt31y" path="res://object/enemy/majin/data/Majin.cs" id="1"]
 [ext_resource type="Script" uid="uid://cp6er04j2b86u" path="res://object/enemy/EnemyHurtbox.cs" id="2_onhwc"]
@@ -1030,7 +1030,7 @@ _data = {
 &"travel": SubResource("Animation_y1q6p")
 }
 
-[node name="Majin" type="Node3D"]
+[node name="Majin" type="Node3D" unique_id=499535698]
 script = ExtResource("1")
 flameRoot = NodePath("FX/FireFX")
 hitboxRoot = NodePath("HitboxRoot")
@@ -1049,57 +1049,57 @@ rangeCollider = NodePath("Range/CollisionShape3D")
 animationTree = NodePath("AnimationTree")
 animationPlayer = NodePath("AnimationPlayer")
 
-[node name="Root" type="Node3D" parent="."]
+[node name="Root" type="Node3D" parent="." unique_id=797600160]
 
-[node name="HitboxRoot" type="Node3D" parent="."]
+[node name="HitboxRoot" type="Node3D" parent="." unique_id=1160604937]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.085, 0)
 
-[node name="Hitbox" type="Area3D" parent="HitboxRoot" node_paths=PackedStringArray("enemy")]
+[node name="Hitbox" type="Area3D" parent="HitboxRoot" unique_id=1077183879 node_paths=PackedStringArray("enemy")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.75753e-20, 0.15, 0)
 collision_layer = 12
 collision_mask = 2
 script = ExtResource("2_onhwc")
 enemy = NodePath("../..")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="HitboxRoot/Hitbox"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="HitboxRoot/Hitbox" unique_id=302112975]
 transform = Transform3D(1, -4.17596e-23, 0, -4.17596e-23, 1, 0, 0, 0, 1, 0, 0.1, 0)
 shape = SubResource("CapsuleShape3D_mlr0h")
 
-[node name="SpinCollisionShape3D" type="CollisionShape3D" parent="HitboxRoot/Hitbox"]
+[node name="SpinCollisionShape3D" type="CollisionShape3D" parent="HitboxRoot/Hitbox" unique_id=562501766]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.4, 0)
 shape = SubResource("CylinderShape3D_xbynq")
 disabled = true
 
-[node name="HitboxAttachment" type="BoneAttachment3D" parent="."]
+[node name="HitboxAttachment" type="BoneAttachment3D" parent="." unique_id=2146904075]
 use_external_skeleton = true
 external_skeleton = NodePath("")
 
-[node name="Range" type="Area3D" parent="."]
+[node name="Range" type="Area3D" parent="." unique_id=754895039]
 visible = false
 collision_layer = 0
 collision_mask = 2
 monitorable = false
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Range"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Range" unique_id=641217070]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5, 0)
 shape = SubResource("CylinderShape3D_ilenc")
 
-[node name="EnvironmentCollider" type="StaticBody3D" parent="." groups=["enemy"]]
+[node name="EnvironmentCollider" type="StaticBody3D" parent="." unique_id=1022457993 groups=["enemy"]]
 collision_layer = 16
 collision_mask = 0
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="EnvironmentCollider"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="EnvironmentCollider" unique_id=221990854]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
 shape = SubResource("SphereShape3D_518xl")
 
-[node name="FX" type="Node3D" parent="."]
+[node name="FX" type="Node3D" parent="." unique_id=1322057109]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
 
-[node name="FireFX" type="Node3D" parent="FX"]
+[node name="FireFX" type="Node3D" parent="FX" unique_id=1881678325]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1, 0)
 visible = false
 
-[node name="EmberCharge" type="GPUParticles3D" parent="FX/FireFX"]
+[node name="EmberCharge" type="GPUParticles3D" parent="FX/FireFX" unique_id=925788047]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.1, 0)
 cast_shadow = 0
 extra_cull_margin = 16384.0
@@ -1116,7 +1116,7 @@ transform_align = 3
 process_material = ExtResource("3_pspvd")
 draw_pass_1 = SubResource("16")
 
-[node name="FlameCharge" type="GPUParticles3D" parent="FX/FireFX"]
+[node name="FlameCharge" type="GPUParticles3D" parent="FX/FireFX" unique_id=1055831264]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5, 0)
 cast_shadow = 0
 extra_cull_margin = 16384.0
@@ -1132,7 +1132,7 @@ visibility_aabb = AABB(0, 0, 0, 0, 0, 8)
 process_material = ExtResource("5_fva2p")
 draw_pass_1 = SubResource("20")
 
-[node name="FlameAttack" type="GPUParticles3D" parent="FX/FireFX"]
+[node name="FlameAttack" type="GPUParticles3D" parent="FX/FireFX" unique_id=1843149331]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, 1)
 cast_shadow = 0
 extra_cull_margin = 16384.0
@@ -1147,7 +1147,7 @@ local_coords = true
 process_material = ExtResource("7_2ja3p")
 draw_pass_1 = SubResource("20")
 
-[node name="FlameHitbox" type="Area3D" parent="FX/FireFX"]
+[node name="FlameHitbox" type="Area3D" parent="FX/FireFX" unique_id=1433527252]
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 1.2, 1)
 collision_layer = 0
 collision_mask = 2
@@ -1155,21 +1155,21 @@ monitorable = false
 script = ExtResource("7_vd724")
 isDisabled = true
 
-[node name="Near" type="CollisionShape3D" parent="FX/FireFX/FlameHitbox"]
+[node name="Near" type="CollisionShape3D" parent="FX/FireFX/FlameHitbox" unique_id=1035234126]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 0)
 shape = SubResource("CylinderShape3D_l57xs")
 
-[node name="Mid" type="CollisionShape3D" parent="FX/FireFX/FlameHitbox"]
+[node name="Mid" type="CollisionShape3D" parent="FX/FireFX/FlameHitbox" unique_id=1054085287]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.5, -2.38419e-07)
 shape = SubResource("CylinderShape3D_6210i")
 disabled = true
 
-[node name="Far" type="CollisionShape3D" parent="FX/FireFX/FlameHitbox"]
+[node name="Far" type="CollisionShape3D" parent="FX/FireFX/FlameHitbox" unique_id=1987093960]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 7, -4.76837e-07)
 shape = SubResource("CylinderShape3D_ft0xj")
 disabled = true
 
-[node name="FlameSFX" type="AudioStreamPlayer3D" parent="FX/FireFX"]
+[node name="FlameSFX" type="AudioStreamPlayer3D" parent="FX/FireFX" unique_id=1218110782]
 process_mode = 1
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
 stream = ExtResource("5_xr0sx")
@@ -1180,10 +1180,10 @@ attenuation_filter_cutoff_hz = 20500.0
 script = ExtResource("9_4bnd7")
 groupKey = &"majin_flame"
 
-[node name="SpawnFX" type="Node3D" parent="FX"]
+[node name="SpawnFX" type="Node3D" parent="FX" unique_id=1093958342]
 visible = false
 
-[node name="SpawnLetter" type="GPUParticles3D" parent="FX/SpawnFX"]
+[node name="SpawnLetter" type="GPUParticles3D" parent="FX/SpawnFX" unique_id=1019334530]
 layers = 32
 cast_shadow = 0
 extra_cull_margin = 16384.0
@@ -1200,7 +1200,7 @@ visibility_aabb = AABB(0, 0, 0, 0, 0, 8)
 process_material = ExtResource("8_awltq")
 draw_pass_1 = SubResource("PlaneMesh_balcf")
 
-[node name="SpawnSmoke" type="GPUParticles3D" parent="FX/SpawnFX"]
+[node name="SpawnSmoke" type="GPUParticles3D" parent="FX/SpawnFX" unique_id=694184416]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1, 0)
 layers = 32
 cast_shadow = 0
@@ -1214,7 +1214,7 @@ visibility_aabb = AABB(0, 0, 0, 0, 0, 8)
 process_material = ExtResource("10_xll44")
 draw_pass_1 = SubResource("QuadMesh_txkmg")
 
-[node name="SpawnSFX" type="AudioStreamPlayer3D" parent="FX/SpawnFX"]
+[node name="SpawnSFX" type="AudioStreamPlayer3D" parent="FX/SpawnFX" unique_id=1834784071]
 process_mode = 1
 stream = ExtResource("8_4kwy5")
 unit_size = 20.0
@@ -1225,10 +1225,10 @@ attenuation_filter_cutoff_hz = 20500.0
 script = ExtResource("9_4bnd7")
 groupKey = &"majin_spawn"
 
-[node name="DefeatFX" type="Node3D" parent="FX"]
+[node name="DefeatFX" type="Node3D" parent="FX" unique_id=2092284529]
 visible = false
 
-[node name="DefeatLetter" type="GPUParticles3D" parent="FX/DefeatFX"]
+[node name="DefeatLetter" type="GPUParticles3D" parent="FX/DefeatFX" unique_id=120595186]
 layers = 32
 cast_shadow = 0
 extra_cull_margin = 16384.0
@@ -1244,7 +1244,7 @@ local_coords = true
 process_material = ExtResource("13_imgj3")
 draw_pass_1 = SubResource("PlaneMesh_balcf")
 
-[node name="DefeatSmoke" type="GPUParticles3D" parent="FX/DefeatFX"]
+[node name="DefeatSmoke" type="GPUParticles3D" parent="FX/DefeatFX" unique_id=491831757]
 layers = 32
 cast_shadow = 0
 extra_cull_margin = 16384.0
@@ -1260,7 +1260,7 @@ local_coords = true
 process_material = ExtResource("14_05hpu")
 draw_pass_1 = SubResource("QuadMesh_p17fq")
 
-[node name="DefeatSplatter" type="GPUParticles3D" parent="FX/DefeatFX"]
+[node name="DefeatSplatter" type="GPUParticles3D" parent="FX/DefeatFX" unique_id=2035417642]
 layers = 32
 cast_shadow = 0
 extra_cull_margin = 16384.0
@@ -1275,7 +1275,7 @@ local_coords = true
 process_material = ExtResource("16_ck7oa")
 draw_pass_1 = SubResource("QuadMesh_bbrsu")
 
-[node name="StaggerSFX" type="AudioStreamPlayer3D" parent="FX"]
+[node name="StaggerSFX" type="AudioStreamPlayer3D" parent="FX" unique_id=1080909651]
 process_mode = 1
 stream = ExtResource("12_2cawu")
 unit_size = 20.0
@@ -1284,7 +1284,7 @@ max_distance = 100.0
 bus = &"GAME SFX"
 attenuation_filter_cutoff_hz = 20500.0
 
-[node name="StrikeSFX" type="AudioStreamPlayer3D" parent="FX"]
+[node name="StrikeSFX" type="AudioStreamPlayer3D" parent="FX" unique_id=919793505]
 process_mode = 1
 stream = ExtResource("13_470oy")
 unit_size = 20.0
@@ -1293,7 +1293,7 @@ max_distance = 100.0
 bus = &"GAME SFX"
 attenuation_filter_cutoff_hz = 20500.0
 
-[node name="TravelSFX" type="AudioStreamPlayer3D" parent="FX"]
+[node name="TravelSFX" type="AudioStreamPlayer3D" parent="FX" unique_id=1106768256]
 process_mode = 1
 stream = ExtResource("14_41brs")
 volume_db = -12.0
@@ -1305,7 +1305,7 @@ attenuation_filter_cutoff_hz = 20500.0
 script = ExtResource("9_4bnd7")
 groupKey = &"majin_travel"
 
-[node name="Flash" type="GPUParticles3D" parent="FX"]
+[node name="Flash" type="GPUParticles3D" parent="FX" unique_id=20718566]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.2, 0)
 layers = 32
 cast_shadow = 0
@@ -1321,7 +1321,7 @@ local_coords = true
 process_material = ExtResource("24_rwypk")
 draw_pass_1 = SubResource("QuadMesh_t1f3y")
 
-[node name="AnimationTree" type="AnimationTree" parent="."]
+[node name="AnimationTree" type="AnimationTree" parent="." unique_id=2000790734]
 active = false
 tree_root = ExtResource("9_osrkc")
 parameters/defeat_transition/current_state = "disabled"
@@ -1357,11 +1357,9 @@ parameters/state_transition/current_state = ""
 parameters/state_transition/transition_request = ""
 parameters/state_transition/current_index = 0
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=1833050956]
 callback_mode_process = 0
-libraries = {
-&"": SubResource("AnimationLibrary_stb46")
-}
+libraries/ = SubResource("AnimationLibrary_stb46")
 next/launch-end = &"explode"
 
 [connection signal="area_entered" from="HitboxRoot/Hitbox" to="." method="OnEntered"]

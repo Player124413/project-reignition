@@ -13,7 +13,7 @@ signal attraction_unloaded()
 signal attraction_loaded() # NOTE: This is also emitted when a mini-game finishes.
 signal party_game_loaded()
 ## Emitted when the party game actually starts.
-signal party_game_started()
+signal peers_loaded()
 
 ## Emitted when a connection attempt either succeeds or fails.
 signal connection_attempt_finished(err : String)
@@ -58,6 +58,10 @@ func initialize_loggers() -> void:
 		loggers.append(new_log)
 		log_parent.add_child(new_log)
 
+func register_scene(path : String, root : Node) -> void:
+	if !scene_dictionary.has(path):
+		scene_dictionary[path] = root
+
 ## Queues a scene change.
 @rpc("any_peer", "call_local", "reliable")
 func load_scene(scene_path : String, type : TRANSITION_TYPE_ENUM) -> void:
@@ -65,6 +69,12 @@ func load_scene(scene_path : String, type : TRANSITION_TYPE_ENUM) -> void:
 	
 	rpc_id(1, "set_loading", multiplayer.get_unique_id(), true) # Let the host know we're loading
 	# TODO Add Fade Transitions
+	
+	if scene_dictionary.has(scene_path):
+		# Must be reloading an attraction
+		push_warning("Reloading stage!")
+		scene_dictionary[scene_path].queue_free() # Delete the existing node associated with the scene
+
 	ResourceLoader.load_threaded_request(scene_path)
 	while ResourceLoader.load_threaded_get_status(scene_path) == ResourceLoader.ThreadLoadStatus.THREAD_LOAD_IN_PROGRESS:
 		await get_tree().create_timer(0.1).timeout
@@ -73,7 +83,7 @@ func load_scene(scene_path : String, type : TRANSITION_TYPE_ENUM) -> void:
 	var scene_node : Node = scene.instantiate() as Node
 	scene_dictionary[scene_path] = scene_node # Add to the dictionary
 	print("Loaded scene %s" % scene_path)
-	add_child(scene_node)
+	call_deferred("add_child", scene_node)
 	emit_scene_signals(type)
 	
 	rpc_id(1, "set_loading", multiplayer.get_unique_id(), false) # Let the host know we're done loading
@@ -91,7 +101,7 @@ func emit_scene_signals(type : TRANSITION_TYPE_ENUM) -> void:
 func unload_scene(scene_path : String, type : TRANSITION_TYPE_ENUM) -> void:
 	scene_path = format_scene_path(scene_path)
 	if !scene_dictionary.has(scene_path):
-		print("FATAL: Tried to unload scene that was never loaded. Returning to Main Menu.")
+		printerr("FATAL: Tried to unload scene that was never loaded. Returning to Main Menu.")
 		print("Attempted scene was %s" % scene_path)
 		return_to_main_menu()
 		return
@@ -133,7 +143,7 @@ func set_loading(peer_id : int, is_loading : bool) -> void:
 func finish_loading(target_tick : float) -> void:
 	await get_tree().create_timer(calculate_transition_delay(target_tick)).timeout
 	get_tree().paused = false
-	party_game_started.emit()
+	peers_loaded.emit()
 
 ## How much extra time to delay during scene changes. A safe-guard in case the jitter spikes after loading.
 const TRANSITION_SYNC_DELAY : float = 0.2

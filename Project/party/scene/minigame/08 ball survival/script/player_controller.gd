@@ -21,7 +21,8 @@ func on_spawn_finished() -> void:
 	super()
 	previous_ball_position = ball_mesh.global_position
 	character_animator.play_minigame_animation(get_anim_prefix() + "walk")
-	BallSurvivalPlatform.instance.register_player(self)
+	if is_player_valid():
+		BallSurvivalPlatform.instance.register_player(self)
 	apply_gravity() # Snap to floor
 	apply_movement()
 

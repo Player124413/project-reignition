@@ -1,4 +1,4 @@
-[gd_scene load_steps=36 format=3 uid="uid://b8vx5vuk7fc1e"]
+[gd_scene format=3 uid="uid://b8vx5vuk7fc1e"]
 
 [ext_resource type="PackedScene" uid="uid://bm61nw4o1jcrb" path="res://area/4 levitated ruin/act 1/Static.tscn" id="1_ld6sm"]
 [ext_resource type="Resource" uid="uid://bo77l8y7n4q4y" path="res://resource/level data/levitated ruin/Act1Race.tres" id="2_4b0he"]
@@ -27,6 +27,94 @@
 [ext_resource type="Script" uid="uid://coiui4qvdxbqe" path="res://object/trigger/modules/EventTrigger.cs" id="21_x27io"]
 [ext_resource type="Resource" uid="uid://fv80hvr2clwy" path="res://area/4 levitated ruin/act 1/camera/race/GrindCam.tres" id="23_b455k"]
 [ext_resource type="PackedScene" uid="uid://dxepb172kmp8n" path="res://object/stage/common/Goal.tscn" id="23_yq5vv"]
+
+[sub_resource type="Shader" id="Shader_cl5sw"]
+code = "shader_type canvas_item;
+render_mode unshaded, blend_add;
+
+uniform sampler2D depth_tex : filter_linear;
+uniform sampler2D screen_texture : hint_screen_texture, filter_linear;
+uniform sampler2D light_color : hint_default_white;
+uniform vec4 ray_color : source_color = vec4(1.0, 1.0, 1.0, 1.0);
+uniform float ray_length : hint_range(0.0, 1.0) = 1.0;
+uniform float ray_intensity : hint_range(0.0, 1.0) = 1.0;
+uniform float light_source_scale = 1.0;
+uniform float light_source_feather = 2.0;
+uniform float noise_strength : hint_range(0.0, 1.0) = 0.2;
+uniform vec2 light_source_pos = vec2(0.0, 0.0);
+uniform vec3 light_source_dir = vec3(0.5, -1.0, 0.25);
+uniform float mask_threshold : hint_range(0.0, 1.0) = 0.5;
+uniform float mask_softness : hint_range(0.01, 0.5) = 0.15;
+uniform float mask_radius : hint_range(0.01, 0.5) = 0.15;
+uniform bool debug_mode = false;
+uniform float debug_dot_radius : hint_range(0.001, 0.05) = 0.01;
+
+const int SAMPLE_COUNT = 120;
+
+float random(vec2 uv) {
+	return fract(sin(dot(uv.xy, vec2(12.9898, 78.233))) * 43758.5453123);
+}
+
+void fragment() {
+	vec2 light_pos = light_source_pos;
+	vec2 ratio = vec2(SCREEN_PIXEL_SIZE.x / SCREEN_PIXEL_SIZE.y, 1.0);
+
+	if (debug_mode) {
+		vec2 diff = (UV - light_pos) / ratio;
+		float dist = length(diff);
+		float dot_mask = smoothstep(debug_dot_radius, debug_dot_radius * 0.5, dist);
+		COLOR.rgb = vec3(dot_mask);
+		COLOR.a = 1.0;
+	} else {
+		vec2 dir = UV - light_pos;
+		vec2 dir2 = UV / ratio - light_pos / ratio;
+		float light_rays = 0.0;
+		vec2 uv2;
+		float scale, l;
+
+		for (int i = 0; i < SAMPLE_COUNT; i++) {
+			scale = 1.0 - ray_length * (float(i) / float(SAMPLE_COUNT - 1));
+			vec2 sample_uv = dir * scale + light_pos;
+			l = 1.0 - texture(depth_tex, sample_uv).a;
+			uv2 = dir2 * scale * pow(light_source_scale, 2.0);
+			l *= smoothstep(1.0, 0.999 - light_source_feather, dot(uv2, uv2) * 4.0);
+			light_rays += l / float(SAMPLE_COUNT);
+		}
+
+		float n = 1.0 - random(UV) * noise_strength * smoothstep(0.999 - 1.25, 1.0, dot(dir2, dir2) * 2.0);
+		light_rays *= n;
+
+		vec3 screen_col = texture(screen_texture, SCREEN_UV).rgb;
+		float brightness = max(screen_col.r, max(screen_col.g, screen_col.b));
+		float moon_mask = smoothstep(mask_threshold, mask_threshold + mask_softness, brightness);
+
+		float dist_to_light = length((UV - light_pos) / ratio);
+		float proximity = 1.0 - smoothstep(0.0, mask_radius, dist_to_light);
+		moon_mask *= proximity;
+
+		light_rays *= (1.0 - moon_mask);
+
+		COLOR.rgb = vec3(light_rays * ray_intensity) * texture(light_color, UV).rgb * ray_color.rgb;
+		COLOR.a = ray_color.a;
+	}
+}"
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_hnmhg"]
+resource_local_to_scene = true
+shader = SubResource("Shader_cl5sw")
+shader_parameter/ray_color = Color(0.92156863, 0.74509805, 0.3372549, 1)
+shader_parameter/ray_length = 0.8000000380000001
+shader_parameter/ray_intensity = 0.350000016625
+shader_parameter/light_source_scale = 1.1999999999970896
+shader_parameter/light_source_feather = 1.4499999999970896
+shader_parameter/noise_strength = 0.10000000475
+shader_parameter/light_source_pos = Vector2(0, 0)
+shader_parameter/light_source_dir = Vector3(0.5, -1, 0.25)
+shader_parameter/mask_threshold = 0.78400003724
+shader_parameter/mask_softness = 0.16900000732898002
+shader_parameter/mask_radius = 0.5
+shader_parameter/debug_mode = false
+shader_parameter/debug_dot_radius = 0.01
 
 [sub_resource type="Animation" id="Animation_v2esd"]
 length = 0.001
@@ -171,50 +259,39 @@ _data = {
 [sub_resource type="BoxShape3D" id="BoxShape3D_syr7h"]
 size = Vector3(20, 20, 5)
 
-[node name="RaceAct" type="Node"]
+[node name="RaceAct" type="Node" unique_id=1339359993]
 
-[node name="Static" parent="." instance=ExtResource("1_ld6sm")]
+[node name="Static" parent="." unique_id=1694630045 instance=ExtResource("1_ld6sm")]
 Data = ExtResource("2_4b0he")
 
-[node name="Lock1" parent="Static/PrisonDoor" index="5"]
-transform = Transform3D(0.939693, -0.34202, 6.70552e-08, 0.321393, 0.883021, -0.342024, 0.116979, 0.321397, 0.939691, 0.516495, 1.86809, 2.10022)
+[node name="ColorRect_LightRays" parent="Static/Visuals/LRSky/DepthRenderer/CanvasLayerLightShafts" parent_id_path=PackedInt32Array(1694630045, 707065977) index="0" unique_id=1619946167]
+material = SubResource("ShaderMaterial_hnmhg")
 
-[node name="Lock2" parent="Static/PrisonDoor" index="6"]
-transform = Transform3D(0.965926, 0.25, -0.0669873, -0.258819, 0.933012, -0.250004, -9.2122e-07, 0.258823, 0.965925, -0.550537, 0.592514, 2.05786)
+[node name="RaceAct" type="Node3D" parent="." unique_id=2147477060]
 
-[node name="Lock3" parent="Static/PrisonDoor" index="7"]
-transform = Transform3D(0.906307, 0.42262, 4.88013e-07, -0.416199, 0.892538, -0.17365, -0.0733884, 0.15738, 0.984807, -0.494125, 1.89076, 2.10291)
-
-[node name="Lock4" parent="Static/PrisonDoor" index="8"]
-transform = Transform3D(0.965926, 0.258819, 5.96046e-07, -0.23457, 0.875426, 0.422618, 0.109381, -0.408217, 0.906308, 0.493484, 0.600325, 2.08044)
-
-[node name="RaceAct" type="Node3D" parent="."]
-
-[node name="SpawnPosition" type="Node3D" parent="RaceAct"]
+[node name="SpawnPosition" type="Node3D" parent="RaceAct" unique_id=1597681194]
 metadata/_edit_lock_ = true
 
-[node name="CharacterSpawn" parent="RaceAct/SpawnPosition" instance=ExtResource("2_rm6v0")]
+[node name="CharacterSpawn" parent="RaceAct/SpawnPosition" unique_id=153582465 instance=ExtResource("2_rm6v0")]
 
-[node name="Uhu" type="Node3D" parent="RaceAct"]
+[node name="Uhu" type="Node3D" parent="RaceAct" unique_id=1901145935]
 
-[node name="UhuPath" type="Path3D" parent="RaceAct/Uhu"]
+[node name="UhuPath" type="Path3D" parent="RaceAct/Uhu" unique_id=1822582207]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 100)
 curve = ExtResource("5_xfomx")
 
-[node name="Uhu" parent="RaceAct/Uhu/UhuPath" node_paths=PackedStringArray("animator") instance=ExtResource("6_4t13k")]
-transform = Transform3D(-0.999834, 0, 0, 0, 0.999816, 0, 0, 0, -0.999847, 0, 0, -100)
+[node name="Uhu" parent="RaceAct/Uhu/UhuPath" unique_id=602946039 node_paths=PackedStringArray("animator") instance=ExtResource("6_4t13k")]
+transform = Transform3D(-0.999834, 0, 0, 0, 0.999816, 0, 0, 0, -0.999847, 0, 0, -100.000015)
 progress = 100.0
 animator = NodePath("../AnimationPlayer")
 maxProgress = 620.0
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="RaceAct/Uhu/UhuPath"]
-libraries = {
-&"": SubResource("AnimationLibrary_ac705")
-}
+[node name="AnimationPlayer" type="AnimationPlayer" parent="RaceAct/Uhu/UhuPath" unique_id=1802436446]
+libraries/ = SubResource("AnimationLibrary_ac705")
 
-[node name="Rukh1" type="Node3D" parent="RaceAct"]
+[node name="Rukh1" type="Node3D" parent="RaceAct" unique_id=1098841685]
 
-[node name="Rings1" type="Node3D" parent="RaceAct/Rukh1"]
+[node name="Rings1" type="Node3D" parent="RaceAct/Rukh1" unique_id=448357643]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.1, -23)
 script = ExtResource("3_mgbh4")
 Source = ExtResource("4_5myds")
@@ -225,115 +302,126 @@ Spacing = 1.5
 "Horizontal Offset" = null
 "Vertical Offset" = null
 
-[node name="Child01" parent="RaceAct/Rukh1/Rings1" instance=ExtResource("4_5myds")]
+[node name="Child01" parent="RaceAct/Rukh1/Rings1" unique_id=644038614 instance=ExtResource("4_5myds")]
 
-[node name="Child02" parent="RaceAct/Rukh1/Rings1" instance=ExtResource("4_5myds")]
+[node name="Child02" parent="RaceAct/Rukh1/Rings1" unique_id=2042570030 instance=ExtResource("4_5myds")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -1.5)
 
-[node name="Child03" parent="RaceAct/Rukh1/Rings1" instance=ExtResource("4_5myds")]
+[node name="Child03" parent="RaceAct/Rukh1/Rings1" unique_id=1481533844 instance=ExtResource("4_5myds")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -3)
 
-[node name="Child04" parent="RaceAct/Rukh1/Rings1" instance=ExtResource("4_5myds")]
+[node name="Child04" parent="RaceAct/Rukh1/Rings1" unique_id=1381189730 instance=ExtResource("4_5myds")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -4.5)
 
-[node name="Child05" parent="RaceAct/Rukh1/Rings1" instance=ExtResource("4_5myds")]
+[node name="Child05" parent="RaceAct/Rukh1/Rings1" unique_id=887217765 instance=ExtResource("4_5myds")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -6)
 
-[node name="SpikePanelGroup1" type="Node3D" parent="RaceAct/Rukh1"]
+[node name="SpikePanelGroup1" type="Node3D" parent="RaceAct/Rukh1" unique_id=1748630263]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.6, 1.4, -43)
 
-[node name="SpikePanelL" parent="RaceAct/Rukh1/SpikePanelGroup1" instance=ExtResource("5_k8qnh")]
+[node name="SpikePanelL" parent="RaceAct/Rukh1/SpikePanelGroup1" unique_id=754022948 instance=ExtResource("5_k8qnh")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.75, 0, 0)
 stateLengths = PackedFloat32Array(0.3, 0.2, 0.4)
+"Start Paused" = false
 "State Lengths/inactive" = 0.3
 "State Lengths/warning" = 0.2
 "State Lengths/active" = 0.4
 
-[node name="SpikePanelR" parent="RaceAct/Rukh1/SpikePanelGroup1" instance=ExtResource("5_k8qnh")]
+[node name="SpikePanelR" parent="RaceAct/Rukh1/SpikePanelGroup1" unique_id=1918011034 instance=ExtResource("5_k8qnh")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.75, 0, 0)
 stateLengths = PackedFloat32Array(0.3, 0.2, 0.4)
+"Start Paused" = false
 "State Lengths/inactive" = 0.3
 "State Lengths/warning" = 0.2
 "State Lengths/active" = 0.4
 
-[node name="SpikePanelGroup2" type="Node3D" parent="RaceAct/Rukh1"]
+[node name="SpikePanelGroup2" type="Node3D" parent="RaceAct/Rukh1" unique_id=886172613]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 2.1, -52)
 
-[node name="SpikePanelL" parent="RaceAct/Rukh1/SpikePanelGroup2" instance=ExtResource("5_k8qnh")]
+[node name="SpikePanelL" parent="RaceAct/Rukh1/SpikePanelGroup2" unique_id=2071374386 instance=ExtResource("5_k8qnh")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.75, 0, 0)
 stateLengths = PackedFloat32Array(0.3, 0.2, 0.4)
+"Start Paused" = false
 "State Lengths/inactive" = 0.3
 "State Lengths/warning" = 0.2
 "State Lengths/active" = 0.4
 
-[node name="SpikePanelR" parent="RaceAct/Rukh1/SpikePanelGroup2" instance=ExtResource("5_k8qnh")]
+[node name="SpikePanelR" parent="RaceAct/Rukh1/SpikePanelGroup2" unique_id=18215318 instance=ExtResource("5_k8qnh")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.75, 0, 0)
 stateLengths = PackedFloat32Array(0.3, 0.2, 0.4)
+"Start Paused" = false
 "State Lengths/inactive" = 0.3
 "State Lengths/warning" = 0.2
 "State Lengths/active" = 0.4
 
-[node name="SpikePanelGroup3" type="Node3D" parent="RaceAct/Rukh1"]
+[node name="SpikePanelGroup3" type="Node3D" parent="RaceAct/Rukh1" unique_id=2105443816]
 transform = Transform3D(1, 0, 0, 0, 0.996195, -0.0871557, 0, 0.0871557, 0.996195, 1, 1.35, -62)
 
-[node name="SpikePanelL" parent="RaceAct/Rukh1/SpikePanelGroup3" instance=ExtResource("5_k8qnh")]
+[node name="SpikePanelL" parent="RaceAct/Rukh1/SpikePanelGroup3" unique_id=1974726073 instance=ExtResource("5_k8qnh")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.75, 0, 0)
 stateLengths = PackedFloat32Array(0.3, 0.2, 0.4)
+"Start Paused" = false
 "State Lengths/inactive" = 0.3
 "State Lengths/warning" = 0.2
 "State Lengths/active" = 0.4
 
-[node name="SpikePanelR" parent="RaceAct/Rukh1/SpikePanelGroup3" instance=ExtResource("5_k8qnh")]
+[node name="SpikePanelR" parent="RaceAct/Rukh1/SpikePanelGroup3" unique_id=1123359207 instance=ExtResource("5_k8qnh")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.75, 0, 0)
 stateLengths = PackedFloat32Array(0.3, 0.2, 0.4)
+"Start Paused" = false
 "State Lengths/inactive" = 0.3
 "State Lengths/warning" = 0.2
 "State Lengths/active" = 0.4
 
-[node name="SpikePanelGroup4" type="Node3D" parent="RaceAct/Rukh1"]
+[node name="SpikePanelGroup4" type="Node3D" parent="RaceAct/Rukh1" unique_id=740799586]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 2.1, -72)
 
-[node name="SpikePanelL" parent="RaceAct/Rukh1/SpikePanelGroup4" instance=ExtResource("5_k8qnh")]
+[node name="SpikePanelL" parent="RaceAct/Rukh1/SpikePanelGroup4" unique_id=514443955 instance=ExtResource("5_k8qnh")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.75, 0, 0)
 stateLengths = PackedFloat32Array(0.3, 0.2, 0.4)
+"Start Paused" = false
 "State Lengths/inactive" = 0.3
 "State Lengths/warning" = 0.2
 "State Lengths/active" = 0.4
 
-[node name="SpikePanelR" parent="RaceAct/Rukh1/SpikePanelGroup4" instance=ExtResource("5_k8qnh")]
+[node name="SpikePanelR" parent="RaceAct/Rukh1/SpikePanelGroup4" unique_id=2132219295 instance=ExtResource("5_k8qnh")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.75, 0, 0)
 stateLengths = PackedFloat32Array(0.3, 0.2, 0.4)
+"Start Paused" = false
 "State Lengths/inactive" = 0.3
 "State Lengths/warning" = 0.2
 "State Lengths/active" = 0.4
 
-[node name="SpikePanelGroup5" type="Node3D" parent="RaceAct/Rukh1"]
+[node name="SpikePanelGroup5" type="Node3D" parent="RaceAct/Rukh1" unique_id=249436013]
 transform = Transform3D(1, 0, 0, 0, 0.996195, -0.0871557, 0, 0.0871557, 0.996195, 0, 4.4, -86)
 
-[node name="SpikePanelL" parent="RaceAct/Rukh1/SpikePanelGroup5" instance=ExtResource("5_k8qnh")]
+[node name="SpikePanelL" parent="RaceAct/Rukh1/SpikePanelGroup5" unique_id=311572115 instance=ExtResource("5_k8qnh")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, 0, 0)
 stateLengths = PackedFloat32Array(0.3, 0.2, 0.4)
+"Start Paused" = false
 "State Lengths/inactive" = 0.3
 "State Lengths/warning" = 0.2
 "State Lengths/active" = 0.4
 
-[node name="SpikePanelM" parent="RaceAct/Rukh1/SpikePanelGroup5" instance=ExtResource("5_k8qnh")]
+[node name="SpikePanelM" parent="RaceAct/Rukh1/SpikePanelGroup5" unique_id=1834916532 instance=ExtResource("5_k8qnh")]
 stateLengths = PackedFloat32Array(0.3, 0.2, 0.4)
+"Start Paused" = false
 "State Lengths/inactive" = 0.3
 "State Lengths/warning" = 0.2
 "State Lengths/active" = 0.4
 
-[node name="SpikePanelR" parent="RaceAct/Rukh1/SpikePanelGroup5" instance=ExtResource("5_k8qnh")]
+[node name="SpikePanelR" parent="RaceAct/Rukh1/SpikePanelGroup5" unique_id=551200963 instance=ExtResource("5_k8qnh")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5, 0, 0)
 stateLengths = PackedFloat32Array(0.3, 0.2, 0.4)
+"Start Paused" = false
 "State Lengths/inactive" = 0.3
 "State Lengths/warning" = 0.2
 "State Lengths/active" = 0.4
 
-[node name="GargoyleStatic1" parent="RaceAct/Rukh1" instance=ExtResource("8_vx42o")]
+[node name="GargoyleStatic1" parent="RaceAct/Rukh1" unique_id=201108308 instance=ExtResource("8_vx42o")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.8, -107)
 
-[node name="SpikeBall" parent="RaceAct/Rukh1/GargoyleStatic1" instance=ExtResource("9_ym8ar")]
+[node name="SpikeBall" parent="RaceAct/Rukh1/GargoyleStatic1" unique_id=1058583002 instance=ExtResource("9_ym8ar")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
 Movement/Mode = 2
 "Movement/Cycle Length" = 1.0
@@ -341,7 +429,7 @@ Movement/Mode = 2
 "Movement/Vertical Size" = 0.0
 Movement/Radius = 2.0
 
-[node name="Rings2" type="Node3D" parent="RaceAct/Rukh1"]
+[node name="Rings2" type="Node3D" parent="RaceAct/Rukh1" unique_id=496864246]
 transform = Transform3D(1, 0, 0, 0, 0.99863, -0.052336, 0, 0.052336, 0.99863, 0, 5.6, -118)
 script = ExtResource("3_mgbh4")
 Source = ExtResource("4_5myds")
@@ -352,30 +440,30 @@ Spacing = 1.5
 "Horizontal Offset" = null
 "Vertical Offset" = null
 
-[node name="Child01" parent="RaceAct/Rukh1/Rings2" instance=ExtResource("4_5myds")]
+[node name="Child01" parent="RaceAct/Rukh1/Rings2" unique_id=94751574 instance=ExtResource("4_5myds")]
 
-[node name="Child02" parent="RaceAct/Rukh1/Rings2" instance=ExtResource("4_5myds")]
+[node name="Child02" parent="RaceAct/Rukh1/Rings2" unique_id=1640276809 instance=ExtResource("4_5myds")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -1.5)
 
-[node name="Child03" parent="RaceAct/Rukh1/Rings2" instance=ExtResource("4_5myds")]
+[node name="Child03" parent="RaceAct/Rukh1/Rings2" unique_id=1551806887 instance=ExtResource("4_5myds")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -3)
 
-[node name="Child04" parent="RaceAct/Rukh1/Rings2" instance=ExtResource("4_5myds")]
+[node name="Child04" parent="RaceAct/Rukh1/Rings2" unique_id=947290003 instance=ExtResource("4_5myds")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -4.5)
 
-[node name="Child05" parent="RaceAct/Rukh1/Rings2" instance=ExtResource("4_5myds")]
+[node name="Child05" parent="RaceAct/Rukh1/Rings2" unique_id=1444923507 instance=ExtResource("4_5myds")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -6)
 
-[node name="GargoyleStatic2" parent="RaceAct/Rukh1" instance=ExtResource("8_vx42o")]
+[node name="GargoyleStatic2" parent="RaceAct/Rukh1" unique_id=335257911 instance=ExtResource("8_vx42o")]
 transform = Transform3D(1, 0, 0, 0, 0.996195, -0.0871557, 0, 0.0871557, 0.996195, -2.5, 5.5, -126)
 
-[node name="GargoyleStatic3" parent="RaceAct/Rukh1" instance=ExtResource("8_vx42o")]
+[node name="GargoyleStatic3" parent="RaceAct/Rukh1" unique_id=1971285629 instance=ExtResource("8_vx42o")]
 transform = Transform3D(1, 0, 0, 0, 0.996195, -0.0871557, 0, 0.0871557, 0.996195, 2.5, 5.5, -126)
 
-[node name="GargoyleStatic4" parent="RaceAct/Rukh1" instance=ExtResource("8_vx42o")]
+[node name="GargoyleStatic4" parent="RaceAct/Rukh1" unique_id=492561899 instance=ExtResource("8_vx42o")]
 transform = Transform3D(1, 0, 0, 0, 0.996195, -0.0871557, 0, 0.0871557, 0.996195, 0, 6.675, -138)
 
-[node name="SpikeBall" parent="RaceAct/Rukh1/GargoyleStatic4" instance=ExtResource("9_ym8ar")]
+[node name="SpikeBall" parent="RaceAct/Rukh1/GargoyleStatic4" unique_id=233031225 instance=ExtResource("9_ym8ar")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, -1.52588e-05)
 Movement/Mode = 2
 "Movement/Cycle Length" = -1.0
@@ -383,7 +471,7 @@ Movement/Mode = 2
 "Movement/Vertical Size" = 0.0
 Movement/Radius = 2.0
 
-[node name="GreenMajin1" parent="RaceAct/Rukh1" instance=ExtResource("10_4v360")]
+[node name="GreenMajin1" parent="RaceAct/Rukh1" unique_id=1128158907 instance=ExtResource("10_4v360")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 11.675, -157)
 "Spawn Settings/Spawn Travel Time" = 0.5
 "Spawn Settings/Spawn Delay" = 0.0
@@ -392,7 +480,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 11.675, -157)
 "Spawn Settings/Spawn Out Offset" = Vector3(0, 0, 0)
 rangeOverride = 25
 
-[node name="GreenMajin2" parent="RaceAct/Rukh1" instance=ExtResource("10_4v360")]
+[node name="GreenMajin2" parent="RaceAct/Rukh1" unique_id=1046045235 instance=ExtResource("10_4v360")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 11.675, -157)
 "Spawn Settings/Spawn Travel Time" = 0.5
 "Spawn Settings/Spawn Delay" = 0.0
@@ -401,7 +489,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 11.675, -157)
 "Spawn Settings/Spawn Out Offset" = Vector3(0, 0, 0)
 rangeOverride = 25
 
-[node name="BlueMajin1" parent="RaceAct/Rukh1" instance=ExtResource("11_6xikx")]
+[node name="BlueMajin1" parent="RaceAct/Rukh1" unique_id=1593803877 instance=ExtResource("11_6xikx")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 12.075, -161)
 "Spawn Settings/Spawn Travel Time" = 0.5
 "Spawn Settings/Spawn Delay" = 0.0
@@ -410,7 +498,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 12.075, -161)
 "Spawn Settings/Spawn Out Offset" = Vector3(0, 0, 0)
 rangeOverride = 20
 
-[node name="RedMajin1" parent="RaceAct/Rukh1" instance=ExtResource("12_02x86")]
+[node name="RedMajin1" parent="RaceAct/Rukh1" unique_id=1218797192 instance=ExtResource("12_02x86")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 10, -176)
 "Spawn Settings/Spawn Travel Time" = 0.5
 "Spawn Settings/Spawn Delay" = 0.0
@@ -425,10 +513,10 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 10, -176)
 "Attack Settings/Attack Instantly" = true
 rangeOverride = 30
 
-[node name="RichRing" parent="RaceAct/Rukh1" instance=ExtResource("12_ma70f")]
+[node name="RichRing" parent="RaceAct/Rukh1" unique_id=1806466325 instance=ExtResource("12_ma70f")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 9.5, -176)
 
-[node name="BlueMajin2" parent="RaceAct/Rukh1" instance=ExtResource("11_6xikx")]
+[node name="BlueMajin2" parent="RaceAct/Rukh1" unique_id=2114382316 instance=ExtResource("11_6xikx")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.3, 9.5, -192.7)
 "Spawn Settings/Spawn Travel Time" = 0.5
 "Spawn Settings/Spawn Delay" = 0.0
@@ -437,7 +525,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.3, 9.5, -192.7)
 "Spawn Settings/Spawn Out Offset" = Vector3(0, 0, 0)
 rangeOverride = 30
 
-[node name="BlueMajin3" parent="RaceAct/Rukh1" instance=ExtResource("11_6xikx")]
+[node name="BlueMajin3" parent="RaceAct/Rukh1" unique_id=1604294933 instance=ExtResource("11_6xikx")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.7, 11.7, -198.7)
 "Spawn Settings/Spawn Travel Time" = 0.5
 "Spawn Settings/Spawn Delay" = 0.0
@@ -446,7 +534,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.7, 11.7, -198.7)
 "Spawn Settings/Spawn Out Offset" = Vector3(0, 0, 0)
 rangeOverride = 30
 
-[node name="BlueMajin4" parent="RaceAct/Rukh1" instance=ExtResource("11_6xikx")]
+[node name="BlueMajin4" parent="RaceAct/Rukh1" unique_id=1972585902 instance=ExtResource("11_6xikx")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 15.7, -206.7)
 "Spawn Settings/Spawn Travel Time" = 0.5
 "Spawn Settings/Spawn Delay" = 0.0
@@ -455,11 +543,11 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 15.7, -206.7)
 "Spawn Settings/Spawn Out Offset" = Vector3(-5, 0, -5)
 rangeOverride = 30
 
-[node name="InvisibleGrindrail" parent="RaceAct/Rukh1" instance=ExtResource("14_kmxr2")]
+[node name="InvisibleGrindrail" parent="RaceAct/Rukh1" unique_id=1812047251 instance=ExtResource("14_kmxr2")]
 transform = Transform3D(0.984808, 0, -0.173648, 0, 1, 0, 0.173648, 0, 0.984808, -3, 16.7, -217.7)
 railLength = 30
 
-[node name="Rings" type="Node3D" parent="RaceAct/Rukh1/InvisibleGrindrail"]
+[node name="Rings" type="Node3D" parent="RaceAct/Rukh1/InvisibleGrindrail" unique_id=1566751617]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.1, -5)
 script = ExtResource("3_mgbh4")
 Source = ExtResource("4_5myds")
@@ -470,31 +558,31 @@ Spacing = 1.5
 "Horizontal Offset" = null
 "Vertical Offset" = null
 
-[node name="Child01" parent="RaceAct/Rukh1/InvisibleGrindrail/Rings" instance=ExtResource("4_5myds")]
+[node name="Child01" parent="RaceAct/Rukh1/InvisibleGrindrail/Rings" unique_id=335597130 instance=ExtResource("4_5myds")]
 
-[node name="Child02" parent="RaceAct/Rukh1/InvisibleGrindrail/Rings" instance=ExtResource("4_5myds")]
+[node name="Child02" parent="RaceAct/Rukh1/InvisibleGrindrail/Rings" unique_id=1017572026 instance=ExtResource("4_5myds")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -1.5)
 
-[node name="Child03" parent="RaceAct/Rukh1/InvisibleGrindrail/Rings" instance=ExtResource("4_5myds")]
+[node name="Child03" parent="RaceAct/Rukh1/InvisibleGrindrail/Rings" unique_id=1774619669 instance=ExtResource("4_5myds")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -3)
 
-[node name="Child04" parent="RaceAct/Rukh1/InvisibleGrindrail/Rings" instance=ExtResource("4_5myds")]
+[node name="Child04" parent="RaceAct/Rukh1/InvisibleGrindrail/Rings" unique_id=1049528657 instance=ExtResource("4_5myds")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -4.5)
 
-[node name="Child05" parent="RaceAct/Rukh1/InvisibleGrindrail/Rings" instance=ExtResource("4_5myds")]
+[node name="Child05" parent="RaceAct/Rukh1/InvisibleGrindrail/Rings" unique_id=1007629782 instance=ExtResource("4_5myds")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -6)
 
-[node name="Child06" parent="RaceAct/Rukh1/InvisibleGrindrail/Rings" instance=ExtResource("4_5myds")]
+[node name="Child06" parent="RaceAct/Rukh1/InvisibleGrindrail/Rings" unique_id=1928393580 instance=ExtResource("4_5myds")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -7.5)
 
-[node name="Child07" parent="RaceAct/Rukh1/InvisibleGrindrail/Rings" instance=ExtResource("4_5myds")]
+[node name="Child07" parent="RaceAct/Rukh1/InvisibleGrindrail/Rings" unique_id=2023432540 instance=ExtResource("4_5myds")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -9)
 
-[node name="SpikeBall" parent="RaceAct/Rukh1/InvisibleGrindrail" instance=ExtResource("9_ym8ar")]
+[node name="SpikeBall" parent="RaceAct/Rukh1/InvisibleGrindrail" unique_id=626320505 instance=ExtResource("9_ym8ar")]
 transform = Transform3D(1, 0, -2.98023e-08, 0, 1, 0, 2.98023e-08, 0, 1, 0, 1, -28)
 Movement/Mode = 0
 
-[node name="RedMajin2" parent="RaceAct/Rukh1" instance=ExtResource("12_02x86")]
+[node name="RedMajin2" parent="RaceAct/Rukh1" unique_id=1345552221 instance=ExtResource("12_02x86")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 9.5, -238)
 "Spawn Settings/Spawn Travel Time" = 0.5
 "Spawn Settings/Spawn Delay" = 0.0
@@ -509,20 +597,20 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 9.5, -238)
 "Attack Settings/Attack Instantly" = true
 rangeOverride = 40
 
-[node name="GrindPillarStatic1" parent="RaceAct/Rukh1" instance=ExtResource("15_82ijd")]
+[node name="GrindPillarStatic1" parent="RaceAct/Rukh1" unique_id=4912003 instance=ExtResource("15_82ijd")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 10.3, -267)
 
-[node name="GrindPillarStatic2" parent="RaceAct/Rukh1" instance=ExtResource("15_82ijd")]
+[node name="GrindPillarStatic2" parent="RaceAct/Rukh1" unique_id=2099432770 instance=ExtResource("15_82ijd")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8.8, -281)
 
-[node name="Grindrail" parent="RaceAct/Rukh1" instance=ExtResource("16_18qlj")]
+[node name="Grindrail" parent="RaceAct/Rukh1" unique_id=1839684390 instance=ExtResource("16_18qlj")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 11.3, -267)
 railModel = NodePath("")
 startCap = NodePath("")
 endCap = NodePath("")
 collider = NodePath("")
 
-[node name="Rings" type="Node3D" parent="RaceAct/Rukh1/Grindrail"]
+[node name="Rings" type="Node3D" parent="RaceAct/Rukh1/Grindrail" unique_id=1221946486]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.1, -30)
 script = ExtResource("3_mgbh4")
 Source = ExtResource("4_5myds")
@@ -533,36 +621,36 @@ Spacing = 4.0
 "Horizontal Offset" = null
 "Vertical Offset" = null
 
-[node name="Child01" parent="RaceAct/Rukh1/Grindrail/Rings" instance=ExtResource("4_5myds")]
+[node name="Child01" parent="RaceAct/Rukh1/Grindrail/Rings" unique_id=806106223 instance=ExtResource("4_5myds")]
 
-[node name="Child02" parent="RaceAct/Rukh1/Grindrail/Rings" instance=ExtResource("4_5myds")]
+[node name="Child02" parent="RaceAct/Rukh1/Grindrail/Rings" unique_id=1696426162 instance=ExtResource("4_5myds")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -4)
 
-[node name="Child03" parent="RaceAct/Rukh1/Grindrail/Rings" instance=ExtResource("4_5myds")]
+[node name="Child03" parent="RaceAct/Rukh1/Grindrail/Rings" unique_id=2122046046 instance=ExtResource("4_5myds")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -8)
 
-[node name="Child04" parent="RaceAct/Rukh1/Grindrail/Rings" instance=ExtResource("4_5myds")]
+[node name="Child04" parent="RaceAct/Rukh1/Grindrail/Rings" unique_id=25924102 instance=ExtResource("4_5myds")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -12)
 
-[node name="Child05" parent="RaceAct/Rukh1/Grindrail/Rings" instance=ExtResource("4_5myds")]
+[node name="Child05" parent="RaceAct/Rukh1/Grindrail/Rings" unique_id=1591748420 instance=ExtResource("4_5myds")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -16)
 
-[node name="Spring" parent="RaceAct/Rukh1/Grindrail" instance=ExtResource("17_g8ucr")]
+[node name="Spring" parent="RaceAct/Rukh1/Grindrail" unique_id=43819555 instance=ExtResource("17_g8ucr")]
 transform = Transform3D(-0.766044, 0, -0.642788, 0, 1, 0, 0.642788, 0, -0.766044, 0, 0.2, -58.6)
 startHidden = true
 MiddleHeight = 15.0
 FinalHeight = -2.0
 Distance = 10.0
 
-[node name="Camera" type="Node3D" parent="RaceAct/Rukh1/Grindrail/Spring"]
+[node name="Camera" type="Node3D" parent="RaceAct/Rukh1/Grindrail/Spring" unique_id=441832405]
 transform = Transform3D(1, 0, 2.98023e-08, 0, 1, 0, -2.98023e-08, 0, 1, 0, 0, 0)
 script = ExtResource("19_7uomv")
 settings = ExtResource("19_m787d")
 
-[node name="RichRing" parent="RaceAct/Rukh1/Grindrail/Spring" instance=ExtResource("12_ma70f")]
+[node name="RichRing" parent="RaceAct/Rukh1/Grindrail/Spring" unique_id=429917378 instance=ExtResource("12_ma70f")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 15, 4.5)
 
-[node name="PearlRing" type="Node3D" parent="RaceAct/Rukh1/Grindrail/Spring"]
+[node name="PearlRing" type="Node3D" parent="RaceAct/Rukh1/Grindrail/Spring" unique_id=1493777466]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 15, 4.5)
 script = ExtResource("3_mgbh4")
 Source = ExtResource("18_mmu0i")
@@ -572,31 +660,31 @@ Orientation = 1
 "Ring Size" = 1.0
 "Ring Ratio" = 1.0
 
-[node name="Child01" parent="RaceAct/Rukh1/Grindrail/Spring/PearlRing" instance=ExtResource("18_mmu0i")]
+[node name="Child01" parent="RaceAct/Rukh1/Grindrail/Spring/PearlRing" unique_id=1417994648 instance=ExtResource("18_mmu0i")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0, 0)
 
-[node name="Child02" parent="RaceAct/Rukh1/Grindrail/Spring/PearlRing" instance=ExtResource("18_mmu0i")]
+[node name="Child02" parent="RaceAct/Rukh1/Grindrail/Spring/PearlRing" unique_id=1812886640 instance=ExtResource("18_mmu0i")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.707107, 0.707107, 0)
 
-[node name="Child03" parent="RaceAct/Rukh1/Grindrail/Spring/PearlRing" instance=ExtResource("18_mmu0i")]
+[node name="Child03" parent="RaceAct/Rukh1/Grindrail/Spring/PearlRing" unique_id=258838378 instance=ExtResource("18_mmu0i")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.37114e-08, 1, 0)
 
-[node name="Child04" parent="RaceAct/Rukh1/Grindrail/Spring/PearlRing" instance=ExtResource("18_mmu0i")]
+[node name="Child04" parent="RaceAct/Rukh1/Grindrail/Spring/PearlRing" unique_id=1552656581 instance=ExtResource("18_mmu0i")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.707107, 0.707107, 0)
 
-[node name="Child05" parent="RaceAct/Rukh1/Grindrail/Spring/PearlRing" instance=ExtResource("18_mmu0i")]
+[node name="Child05" parent="RaceAct/Rukh1/Grindrail/Spring/PearlRing" unique_id=1843794249 instance=ExtResource("18_mmu0i")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, -8.74228e-08, 0)
 
-[node name="Child06" parent="RaceAct/Rukh1/Grindrail/Spring/PearlRing" instance=ExtResource("18_mmu0i")]
+[node name="Child06" parent="RaceAct/Rukh1/Grindrail/Spring/PearlRing" unique_id=700711646 instance=ExtResource("18_mmu0i")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.707107, -0.707107, 0)
 
-[node name="Child07" parent="RaceAct/Rukh1/Grindrail/Spring/PearlRing" instance=ExtResource("18_mmu0i")]
+[node name="Child07" parent="RaceAct/Rukh1/Grindrail/Spring/PearlRing" unique_id=1151562917 instance=ExtResource("18_mmu0i")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.19249e-08, -1, 0)
 
-[node name="Child08" parent="RaceAct/Rukh1/Grindrail/Spring/PearlRing" instance=ExtResource("18_mmu0i")]
+[node name="Child08" parent="RaceAct/Rukh1/Grindrail/Spring/PearlRing" unique_id=1534768718 instance=ExtResource("18_mmu0i")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.707107, -0.707107, 0)
 
-[node name="BlueMajin" parent="RaceAct/Rukh1" instance=ExtResource("11_6xikx")]
+[node name="BlueMajin" parent="RaceAct/Rukh1" unique_id=1016340180 instance=ExtResource("11_6xikx")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 13.3, -329)
 "Spawn Settings/Spawn Travel Time" = 1.0
 "Spawn Settings/Spawn Delay" = 0.0
@@ -604,11 +692,11 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 13.3, -329)
 "Spawn Settings/Spawn In Offset" = Vector3(5, 0, -16)
 "Spawn Settings/Spawn Out Offset" = Vector3(-10, 3, -5)
 
-[node name="InvisibleGrindrail2" parent="RaceAct/Rukh1" instance=ExtResource("14_kmxr2")]
+[node name="InvisibleGrindrail2" parent="RaceAct/Rukh1" unique_id=680568667 instance=ExtResource("14_kmxr2")]
 transform = Transform3D(0.766044, -0.219846, 0.604023, 0, 0.939693, 0.34202, -0.642788, -0.262003, 0.719846, -2, 13, -328)
 railLength = 80
 
-[node name="Rings" type="Node3D" parent="RaceAct/Rukh1/InvisibleGrindrail2"]
+[node name="Rings" type="Node3D" parent="RaceAct/Rukh1/InvisibleGrindrail2" unique_id=1096792936]
 transform = Transform3D(1, 0, 0, -1.49012e-08, 1, 0, 2.98023e-08, -1.49012e-08, 1, 0, 1.1, -15)
 script = ExtResource("3_mgbh4")
 Source = ExtResource("4_5myds")
@@ -619,62 +707,62 @@ Spacing = 1.5
 "Horizontal Offset" = null
 "Vertical Offset" = null
 
-[node name="Child01" parent="RaceAct/Rukh1/InvisibleGrindrail2/Rings" instance=ExtResource("4_5myds")]
+[node name="Child01" parent="RaceAct/Rukh1/InvisibleGrindrail2/Rings" unique_id=1364736028 instance=ExtResource("4_5myds")]
 
-[node name="Child02" parent="RaceAct/Rukh1/InvisibleGrindrail2/Rings" instance=ExtResource("4_5myds")]
+[node name="Child02" parent="RaceAct/Rukh1/InvisibleGrindrail2/Rings" unique_id=417220891 instance=ExtResource("4_5myds")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -1.5)
 
-[node name="Child03" parent="RaceAct/Rukh1/InvisibleGrindrail2/Rings" instance=ExtResource("4_5myds")]
+[node name="Child03" parent="RaceAct/Rukh1/InvisibleGrindrail2/Rings" unique_id=602146219 instance=ExtResource("4_5myds")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -3)
 
-[node name="Child04" parent="RaceAct/Rukh1/InvisibleGrindrail2/Rings" instance=ExtResource("4_5myds")]
+[node name="Child04" parent="RaceAct/Rukh1/InvisibleGrindrail2/Rings" unique_id=773332279 instance=ExtResource("4_5myds")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -4.5)
 
-[node name="Child05" parent="RaceAct/Rukh1/InvisibleGrindrail2/Rings" instance=ExtResource("4_5myds")]
+[node name="Child05" parent="RaceAct/Rukh1/InvisibleGrindrail2/Rings" unique_id=1057224150 instance=ExtResource("4_5myds")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -6)
 
-[node name="Child06" parent="RaceAct/Rukh1/InvisibleGrindrail2/Rings" instance=ExtResource("4_5myds")]
+[node name="Child06" parent="RaceAct/Rukh1/InvisibleGrindrail2/Rings" unique_id=301837486 instance=ExtResource("4_5myds")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -7.5)
 
-[node name="Child07" parent="RaceAct/Rukh1/InvisibleGrindrail2/Rings" instance=ExtResource("4_5myds")]
+[node name="Child07" parent="RaceAct/Rukh1/InvisibleGrindrail2/Rings" unique_id=91384705 instance=ExtResource("4_5myds")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -9)
 
-[node name="Child08" parent="RaceAct/Rukh1/InvisibleGrindrail2/Rings" instance=ExtResource("4_5myds")]
+[node name="Child08" parent="RaceAct/Rukh1/InvisibleGrindrail2/Rings" unique_id=1821819319 instance=ExtResource("4_5myds")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -10.5)
 
-[node name="Child09" parent="RaceAct/Rukh1/InvisibleGrindrail2/Rings" instance=ExtResource("4_5myds")]
+[node name="Child09" parent="RaceAct/Rukh1/InvisibleGrindrail2/Rings" unique_id=1181425448 instance=ExtResource("4_5myds")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -12)
 
-[node name="Child10" parent="RaceAct/Rukh1/InvisibleGrindrail2/Rings" instance=ExtResource("4_5myds")]
+[node name="Child10" parent="RaceAct/Rukh1/InvisibleGrindrail2/Rings" unique_id=724911094 instance=ExtResource("4_5myds")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -13.5)
 
-[node name="Child11" parent="RaceAct/Rukh1/InvisibleGrindrail2/Rings" instance=ExtResource("4_5myds")]
+[node name="Child11" parent="RaceAct/Rukh1/InvisibleGrindrail2/Rings" unique_id=629243252 instance=ExtResource("4_5myds")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -15)
 
-[node name="Child12" parent="RaceAct/Rukh1/InvisibleGrindrail2/Rings" instance=ExtResource("4_5myds")]
+[node name="Child12" parent="RaceAct/Rukh1/InvisibleGrindrail2/Rings" unique_id=2009768891 instance=ExtResource("4_5myds")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -16.5)
 
-[node name="Jump" parent="RaceAct/Rukh1/InvisibleGrindrail2" instance=ExtResource("19_y4dgd")]
+[node name="Jump" parent="RaceAct/Rukh1/InvisibleGrindrail2" unique_id=915946600 instance=ExtResource("19_y4dgd")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -7.62939e-06, -79)
 "Enter Mode" = 0
 
-[node name="Jump" type="Node3D" parent="RaceAct/Rukh1/InvisibleGrindrail2/Jump"]
+[node name="Jump" type="Node3D" parent="RaceAct/Rukh1/InvisibleGrindrail2/Jump" unique_id=175068246]
 transform = Transform3D(1, 1.49012e-08, 0, 1.49012e-08, 1, 0, -2.98023e-08, -1.49012e-08, 1, 1.64192, -4.74081, -4.35986)
 script = ExtResource("20_n7swa")
 jumpHeight = 10.0
 autoAlign = true
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="RaceAct/Rukh1/InvisibleGrindrail2/Jump"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="RaceAct/Rukh1/InvisibleGrindrail2/Jump" unique_id=1886587491]
 shape = SubResource("SphereShape3D_o71pg")
 
-[node name="Camera" type="Node3D" parent="RaceAct/Rukh1/InvisibleGrindrail2"]
+[node name="Camera" type="Node3D" parent="RaceAct/Rukh1/InvisibleGrindrail2" unique_id=983775631]
 script = ExtResource("19_7uomv")
 settings = ExtResource("23_b455k")
 
-[node name="Rukh2" type="Node3D" parent="RaceAct"]
+[node name="Rukh2" type="Node3D" parent="RaceAct" unique_id=1687185378]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -50, -20, -380)
 
-[node name="BlueMajin1" parent="RaceAct/Rukh2" instance=ExtResource("11_6xikx")]
+[node name="BlueMajin1" parent="RaceAct/Rukh2" unique_id=1515747916 instance=ExtResource("11_6xikx")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 5, -2)
 "Spawn Settings/Spawn Travel Time" = 0.5
 "Spawn Settings/Spawn Delay" = 0.0
@@ -686,7 +774,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 5, -2)
 "Defeat Settings/Launch Direction" = Vector3(10, -3, 10)
 "Defeat Settings/Local Transform" = true
 
-[node name="BlueMajin2" parent="RaceAct/Rukh2" instance=ExtResource("11_6xikx")]
+[node name="BlueMajin2" parent="RaceAct/Rukh2" unique_id=401822946 instance=ExtResource("11_6xikx")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 1, -13)
 "Spawn Settings/Spawn Travel Time" = 0.5
 "Spawn Settings/Spawn Delay" = 0.0
@@ -698,7 +786,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 1, -13)
 "Defeat Settings/Launch Direction" = Vector3(-5, 1, 4)
 "Defeat Settings/Local Transform" = true
 
-[node name="RedMajin1" parent="RaceAct/Rukh2" instance=ExtResource("12_02x86")]
+[node name="RedMajin1" parent="RaceAct/Rukh2" unique_id=1174943681 instance=ExtResource("12_02x86")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 1.5, -43)
 "Spawn Settings/Spawn Travel Time" = 0.5
 "Spawn Settings/Spawn Delay" = 0.0
@@ -712,7 +800,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 1.5, -43)
 "Attack Settings/Flame Aggression Radius" = 30
 "Attack Settings/Attack Instantly" = true
 
-[node name="RedMajin2" parent="RaceAct/Rukh2" instance=ExtResource("12_02x86")]
+[node name="RedMajin2" parent="RaceAct/Rukh2" unique_id=584173868 instance=ExtResource("12_02x86")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.5, 1.3, -61)
 "Spawn Settings/Spawn Travel Time" = 0.5
 "Spawn Settings/Spawn Delay" = 0.0
@@ -726,10 +814,10 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.5, 1.3, -61)
 "Attack Settings/Flame Aggression Radius" = 30
 "Attack Settings/Attack Instantly" = true
 
-[node name="GargoyleGroup1" type="Node3D" parent="RaceAct/Rukh2"]
+[node name="GargoyleGroup1" type="Node3D" parent="RaceAct/Rukh2" unique_id=2142997718]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 3.5, -80)
 
-[node name="Event" type="Node3D" parent="RaceAct/Rukh2/GargoyleGroup1" node_paths=PackedStringArray("animator")]
+[node name="Event" type="Node3D" parent="RaceAct/Rukh2/GargoyleGroup1" unique_id=1771410444 node_paths=PackedStringArray("animator")]
 script = ExtResource("21_x27io")
 animator = NodePath("../AnimationPlayer")
 "Trigger Settings/Automatically Respawn" = false
@@ -737,23 +825,21 @@ animator = NodePath("../AnimationPlayer")
 "Trigger Settings/Animation Blending" = 0.0
 "Trigger Settings/Player Stand-in" = NodePath("")
 
-[node name="Stone" parent="RaceAct/Rukh2/GargoyleGroup1" instance=ExtResource("21_3och7")]
+[node name="Stone" parent="RaceAct/Rukh2/GargoyleGroup1" unique_id=403386697 instance=ExtResource("21_3och7")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
 
-[node name="GargoyleStatic" parent="RaceAct/Rukh2/GargoyleGroup1" instance=ExtResource("8_vx42o")]
+[node name="GargoyleStatic" parent="RaceAct/Rukh2/GargoyleGroup1" unique_id=1518084954 instance=ExtResource("8_vx42o")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 0)
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="RaceAct/Rukh2/GargoyleGroup1"]
+[node name="AnimationPlayer" type="AnimationPlayer" parent="RaceAct/Rukh2/GargoyleGroup1" unique_id=468028662]
 root_node = NodePath("../GargoyleStatic")
 callback_mode_process = 0
-libraries = {
-&"": SubResource("AnimationLibrary_r8ogo")
-}
+libraries/ = SubResource("AnimationLibrary_r8ogo")
 
-[node name="GargoyleGroup2" type="Node3D" parent="RaceAct/Rukh2"]
+[node name="GargoyleGroup2" type="Node3D" parent="RaceAct/Rukh2" unique_id=1758723804]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.1, 4.5, -90)
 
-[node name="Event" type="Node3D" parent="RaceAct/Rukh2/GargoyleGroup2" node_paths=PackedStringArray("animator")]
+[node name="Event" type="Node3D" parent="RaceAct/Rukh2/GargoyleGroup2" unique_id=421731552 node_paths=PackedStringArray("animator")]
 script = ExtResource("21_x27io")
 animator = NodePath("../AnimationPlayer")
 "Trigger Settings/Automatically Respawn" = false
@@ -761,23 +847,21 @@ animator = NodePath("../AnimationPlayer")
 "Trigger Settings/Animation Blending" = 0.0
 "Trigger Settings/Player Stand-in" = NodePath("")
 
-[node name="Stone" parent="RaceAct/Rukh2/GargoyleGroup2" instance=ExtResource("21_3och7")]
+[node name="Stone" parent="RaceAct/Rukh2/GargoyleGroup2" unique_id=725055156 instance=ExtResource("21_3och7")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
 
-[node name="GargoyleStatic" parent="RaceAct/Rukh2/GargoyleGroup2" instance=ExtResource("8_vx42o")]
+[node name="GargoyleStatic" parent="RaceAct/Rukh2/GargoyleGroup2" unique_id=1519485573 instance=ExtResource("8_vx42o")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 0)
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="RaceAct/Rukh2/GargoyleGroup2"]
+[node name="AnimationPlayer" type="AnimationPlayer" parent="RaceAct/Rukh2/GargoyleGroup2" unique_id=542909759]
 root_node = NodePath("../GargoyleStatic")
 callback_mode_process = 0
-libraries = {
-&"": SubResource("AnimationLibrary_r8ogo")
-}
+libraries/ = SubResource("AnimationLibrary_r8ogo")
 
-[node name="GargoyleGroup3" type="Node3D" parent="RaceAct/Rukh2"]
+[node name="GargoyleGroup3" type="Node3D" parent="RaceAct/Rukh2" unique_id=1182071431]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.6, 4.4, -100)
 
-[node name="Event" type="Node3D" parent="RaceAct/Rukh2/GargoyleGroup3" node_paths=PackedStringArray("animator")]
+[node name="Event" type="Node3D" parent="RaceAct/Rukh2/GargoyleGroup3" unique_id=48286106 node_paths=PackedStringArray("animator")]
 script = ExtResource("21_x27io")
 animator = NodePath("../AnimationPlayer")
 "Trigger Settings/Automatically Respawn" = false
@@ -785,23 +869,21 @@ animator = NodePath("../AnimationPlayer")
 "Trigger Settings/Animation Blending" = 0.0
 "Trigger Settings/Player Stand-in" = NodePath("")
 
-[node name="Stone" parent="RaceAct/Rukh2/GargoyleGroup3" instance=ExtResource("21_3och7")]
+[node name="Stone" parent="RaceAct/Rukh2/GargoyleGroup3" unique_id=472722889 instance=ExtResource("21_3och7")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
 
-[node name="GargoyleStatic" parent="RaceAct/Rukh2/GargoyleGroup3" instance=ExtResource("8_vx42o")]
+[node name="GargoyleStatic" parent="RaceAct/Rukh2/GargoyleGroup3" unique_id=386825609 instance=ExtResource("8_vx42o")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 0)
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="RaceAct/Rukh2/GargoyleGroup3"]
+[node name="AnimationPlayer" type="AnimationPlayer" parent="RaceAct/Rukh2/GargoyleGroup3" unique_id=1307982997]
 root_node = NodePath("../GargoyleStatic")
 callback_mode_process = 0
-libraries = {
-&"": SubResource("AnimationLibrary_r8ogo")
-}
+libraries/ = SubResource("AnimationLibrary_r8ogo")
 
-[node name="Goal" parent="RaceAct/Rukh2" instance=ExtResource("23_yq5vv")]
+[node name="Goal" parent="RaceAct/Rukh2" unique_id=364769164 instance=ExtResource("23_yq5vv")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 13, -111)
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="RaceAct/Rukh2/Goal"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="RaceAct/Rukh2/Goal" unique_id=1341527169]
 shape = SubResource("BoxShape3D_syr7h")
 
 [connection signal="EventFinished" from="Static/Visuals/Rukh2Event" to="Static/Visuals/Rukh2" method="Activate"]

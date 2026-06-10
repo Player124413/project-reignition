@@ -1,4 +1,4 @@
-[gd_scene load_steps=21 format=3 uid="uid://f5wi8d1pc1ci"]
+[gd_scene format=3 uid="uid://f5wi8d1pc1ci"]
 
 [ext_resource type="Script" uid="uid://cmb5knexcdbc1" path="res://party/scene/minigame/05 parasol ball/script/player_controller.gd" id="1_neto8"]
 [ext_resource type="Script" uid="uid://ds056nimfywwr" path="res://party/script/core/rollback_timer.gd" id="2_neto8"]
@@ -69,7 +69,7 @@ material = ExtResource("5_m4q4r")
 [sub_resource type="BoxShape3D" id="BoxShape3D_tnoa7"]
 size = Vector3(150, 30, 50)
 
-[node name="Player" type="Node3D" node_paths=PackedStringArray("hand_attachment", "collision_raycast", "swing_sfx", "hit_sfx", "rollback_timer", "character_body", "spawn_position")]
+[node name="Player" type="Node3D" unique_id=1376897342 node_paths=PackedStringArray("hand_attachment", "collision_raycast", "swing_sfx", "hit_sfx", "rollback_timer", "character_body", "spawn_position")]
 script = ExtResource("1_neto8")
 hand_attachment = NodePath("HandAttachment")
 collision_raycast = NodePath("CharacterBody3D/RayCast3D")
@@ -79,36 +79,36 @@ rollback_timer = NodePath("Rollback")
 character_body = NodePath("CharacterBody3D")
 spawn_position = NodePath("CharacterBody3D")
 
-[node name="CharacterBody3D" type="CharacterBody3D" parent="."]
+[node name="CharacterBody3D" type="CharacterBody3D" parent="." unique_id=1751837331]
 collision_layer = 2
 collision_mask = 3
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="CharacterBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="CharacterBody3D" unique_id=2074600427]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4, 0)
 shape = SubResource("CapsuleShape3D_neto8")
 
-[node name="HitTrigger" type="Area3D" parent="CharacterBody3D"]
+[node name="HitTrigger" type="Area3D" parent="CharacterBody3D" unique_id=181844687]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5, 3)
 collision_layer = 0
 collision_mask = 8
 monitorable = false
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="CharacterBody3D/HitTrigger"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="CharacterBody3D/HitTrigger" unique_id=883339974]
 shape = SubResource("CylinderShape3D_tnoa7")
 
-[node name="RayCast3D" type="RayCast3D" parent="CharacterBody3D"]
+[node name="RayCast3D" type="RayCast3D" parent="CharacterBody3D" unique_id=2001766653]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5, 0)
 target_position = Vector3(0, 0, 10)
 
-[node name="HandAttachment" type="BoneAttachment3D" parent="."]
+[node name="HandAttachment" type="BoneAttachment3D" parent="." unique_id=1152441804]
 transform = Transform3D(-0.055639148, 0.82801193, 0.5579431, -0.9488646, -0.21776418, 0.22854908, 0.3107414, -0.51669616, 0.7977873, -0.11048618, 3.0883198, 1.8606191)
 bone_name = "hand_attachment"
 bone_idx = 89
 
-[node name="Racket" parent="HandAttachment" instance=ExtResource("3_tnoa7")]
+[node name="Racket" parent="HandAttachment" unique_id=700030928 instance=ExtResource("3_tnoa7")]
 transform = Transform3D(1, 0, 0, 0, -4.3711385e-08, -0.99999994, 0, 0.99999994, -4.3711385e-08, 0, 0, 0)
 
-[node name="HitShock" type="GPUParticles3D" parent="HandAttachment/Racket" node_paths=PackedStringArray("subSystems")]
+[node name="HitShock" type="GPUParticles3D" parent="HandAttachment/Racket" unique_id=262340892 node_paths=PackedStringArray("subSystems")]
 transform = Transform3D(1, 0, -1.4901161e-08, -2.9802322e-08, 0.99999994, -2.9802322e-08, 0, 0, 1, 0, 5, 0)
 layers = 32
 cast_shadow = 0
@@ -124,7 +124,7 @@ draw_pass_1 = SubResource("QuadMesh_kvfl8")
 script = ExtResource("4_4hm0s")
 subSystems = [NodePath("HitSpark")]
 
-[node name="HitSpark" type="GPUParticles3D" parent="HandAttachment/Racket/HitShock"]
+[node name="HitSpark" type="GPUParticles3D" parent="HandAttachment/Racket/HitShock" unique_id=220594462]
 layers = 32
 cast_shadow = 0
 extra_cull_margin = 16384.0
@@ -137,29 +137,29 @@ interpolate = false
 process_material = SubResource("ParticleProcessMaterial_0lsol")
 draw_pass_1 = SubResource("QuadMesh_d54xx")
 
-[node name="CPUParasolDetection" type="Area3D" parent="."]
+[node name="CPUParasolDetection" type="Area3D" parent="." unique_id=472910547]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 40, 0)
 collision_layer = 0
 collision_mask = 8
 monitorable = false
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="CPUParasolDetection"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="CPUParasolDetection" unique_id=1055521078]
 shape = SubResource("BoxShape3D_tnoa7")
 
-[node name="Rollback" type="Node" parent="."]
+[node name="Rollback" type="Node" parent="." unique_id=259402653]
 script = ExtResource("2_neto8")
 enable_lag_compensation = false
 param_count = 5
 rollback_interval = 0.0
 
-[node name="Swing" type="AudioStreamPlayer" parent="."]
+[node name="Swing" type="AudioStreamPlayer" parent="." unique_id=1620344722]
 stream = ExtResource("9_ea410")
 bus = &"GAME SFX"
 script = ExtResource("7_4hm0s")
 group = "swing"
 min_volume = 0.5
 
-[node name="Hit" type="AudioStreamPlayer" parent="."]
+[node name="Hit" type="AudioStreamPlayer" parent="." unique_id=1956644988]
 stream = ExtResource("7_uny2x")
 bus = &"GAME SFX"
 script = ExtResource("7_4hm0s")

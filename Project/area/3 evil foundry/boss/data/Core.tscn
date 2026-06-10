@@ -1,4 +1,4 @@
-[gd_scene load_steps=24 format=3 uid="uid://cayo6pq1qpjyf"]
+[gd_scene format=3 uid="uid://cayo6pq1qpjyf"]
 
 [ext_resource type="Script" uid="uid://bn71y6aq3373y" path="res://area/3 evil foundry/data/script/Core.cs" id="1_b5skn"]
 [ext_resource type="PackedScene" uid="uid://db40cw21e0jlv" path="res://area/3 evil foundry/boss/data/model/GolemCore.gltf" id="1_ex3l5"]
@@ -7,7 +7,6 @@
 [ext_resource type="AudioStream" uid="uid://2xm2qs657b3u" path="res://sound/boss/ifrit golem/core destroyed.wav" id="5_gnejk"]
 [ext_resource type="Script" uid="uid://dnrfeyqvx8aq" path="res://addons/custom_nodes/script/GroupAudioStreamPlayer3D.cs" id="6_rtt7c"]
 [ext_resource type="AudioStream" uid="uid://cfteos8s62o2" path="res://sound/boss/ifrit golem/core base.wav" id="7_iq5t3"]
-
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_pvw8k"]
 radius = 0.4
@@ -376,7 +375,7 @@ material = ExtResource("4_iisby")
 size = Vector2(0.1, 1)
 center_offset = Vector3(0, 0.3, 0)
 
-[node name="GolemCore" type="Area3D"]
+[node name="GolemCore" type="Area3D" unique_id=1441078859]
 collision_layer = 4
 collision_mask = 2
 monitoring = false
@@ -384,22 +383,20 @@ monitorable = false
 script = ExtResource("1_b5skn")
 animator = NodePath("AnimationPlayer")
 
-[node name="GolemCore" parent="." instance=ExtResource("1_ex3l5")]
+[node name="GolemCore" parent="." unique_id=285270961 instance=ExtResource("1_ex3l5")]
 
-[node name="CoreGlowMesh" parent="GolemCore" index="0"]
+[node name="CoreGlowMesh" parent="GolemCore" index="0" unique_id=357298711]
 transparency = 1.0
 cast_shadow = 0
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=12889273]
 transform = Transform3D(-4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 0.4, 1.74846e-08, 0)
 shape = SubResource("CapsuleShape3D_pvw8k")
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
-libraries = {
-"": SubResource("AnimationLibrary_23op2")
-}
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=205388018]
+libraries/ = SubResource("AnimationLibrary_23op2")
 
-[node name="Glow1" type="GPUParticles3D" parent="."]
+[node name="Glow1" type="GPUParticles3D" parent="." unique_id=1291921714]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.1, 0.226698, 0.233727)
 layers = 32
 emitting = false
@@ -412,7 +409,7 @@ transform_align = 3
 process_material = SubResource("ParticleProcessMaterial_uw28x")
 draw_pass_1 = SubResource("QuadMesh_h1pam")
 
-[node name="Glow2" type="GPUParticles3D" parent="."]
+[node name="Glow2" type="GPUParticles3D" parent="." unique_id=1720079100]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.1, -0.173303, -0.266273)
 layers = 32
 emitting = false
@@ -425,7 +422,7 @@ transform_align = 3
 process_material = SubResource("ParticleProcessMaterial_uw28x")
 draw_pass_1 = SubResource("QuadMesh_h1pam")
 
-[node name="Damage" type="GPUParticles3D" parent="."]
+[node name="Damage" type="GPUParticles3D" parent="." unique_id=1908707533]
 transform = Transform3D(-4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 0, 0, 0)
 layers = 32
 emitting = false
@@ -441,24 +438,24 @@ transform_align = 3
 process_material = SubResource("ParticleProcessMaterial_a0hi5")
 draw_pass_1 = SubResource("QuadMesh_7e25t")
 
-[node name="CoreDestroyed" type="AudioStreamPlayer3D" parent="."]
+[node name="CoreDestroyed" type="AudioStreamPlayer3D" parent="." unique_id=314183844]
+process_mode = 1
 stream = ExtResource("5_gnejk")
 volume_db = -12.0
 max_db = 0.0
 max_distance = 50.0
 bus = &"GAME SFX"
-process_mode = 1
 attenuation_filter_cutoff_hz = 20500.0
 script = ExtResource("6_rtt7c")
 groupKey = &"core_destroyed"
 
-[node name="CoreBase" type="AudioStreamPlayer3D" parent="."]
+[node name="CoreBase" type="AudioStreamPlayer3D" parent="." unique_id=1597360889]
+process_mode = 1
 stream = ExtResource("7_iq5t3")
 volume_db = -12.0
 max_db = 0.0
 max_distance = 50.0
 bus = &"GAME SFX"
-process_mode = 1
 attenuation_filter_cutoff_hz = 20500.0
 script = ExtResource("6_rtt7c")
 groupKey = &"core_base"

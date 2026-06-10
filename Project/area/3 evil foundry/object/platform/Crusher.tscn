@@ -1,4 +1,4 @@
-[gd_scene load_steps=6 format=3 uid="uid://0gcen5dmjd"]
+[gd_scene format=3 uid="uid://0gcen5dmjd"]
 
 [ext_resource type="PackedScene" uid="uid://oq1anfcpifuh" path="res://area/3 evil foundry/object/model/platform/Crusher.gltf" id="1_tdd7l"]
 [ext_resource type="Script" uid="uid://brhowomad8gfm" path="res://area/3 evil foundry/data/script/Crusher.cs" id="1_x3xhd"]
@@ -8,27 +8,28 @@
 [sub_resource type="BoxShape3D" id="BoxShape3D_8xdkw"]
 size = Vector3(5, 2, 5)
 
-[node name="Crusher" node_paths=PackedStringArray("sfx") instance=ExtResource("1_tdd7l")]
+[node name="Crusher" unique_id=1490259462 node_paths=PackedStringArray("sfx") instance=ExtResource("1_tdd7l")]
 script = ExtResource("1_x3xhd")
 light = NodePath("CrusherBloomMesh")
 crusher = NodePath("CrusherTopMesh")
 sfx = NodePath("SFX")
 
-[node name="StaticBody3D" parent="CrusherBottomMesh" index="0" groups=["floor", "splash jump", "wall"]]
+[node name="StaticBody3D" parent="CrusherBottomMesh" parent_id_path=PackedInt32Array(1679465377) index="0" unique_id=437446136 groups=["floor", "splash jump", "wall"]]
 
-[node name="CrusherTopMesh" parent="." index="2"]
+[node name="CrusherTopMesh" parent="." index="2" unique_id=1117883537]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
 
-[node name="StaticBody3D" parent="CrusherTopMesh" index="0" groups=["crusher", "floor", "splash jump", "wall"]]
+[node name="StaticBody3D" parent="CrusherTopMesh" index="0" unique_id=940127135 groups=["crusher", "floor", "splash jump", "wall"]]
 
-[node name="PlatformTrigger" parent="CrusherTopMesh" index="1" node_paths=PackedStringArray("parentCollider") instance=ExtResource("3_pqcjf")]
+[node name="PlatformTrigger" parent="CrusherTopMesh" index="1" unique_id=246912008 node_paths=PackedStringArray("parentCollider") instance=ExtResource("3_pqcjf")]
 parentCollider = NodePath("../StaticBody3D")
 "Falling Platform Settings/Enabled" = false
+"Floating Platform Settings/Enabled" = false
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="CrusherTopMesh/PlatformTrigger" index="0"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="CrusherTopMesh/PlatformTrigger" index="0" unique_id=1566829134]
 shape = SubResource("BoxShape3D_8xdkw")
 
-[node name="SFX" type="AudioStreamPlayer3D" parent="." index="3"]
+[node name="SFX" type="AudioStreamPlayer3D" parent="." index="3" unique_id=576148236]
 stream = ExtResource("4_beoya")
 max_db = 0.0
 max_distance = 100.0

@@ -1,33 +1,22 @@
-[gd_scene load_steps=7 format=3 uid="uid://csaug6ajhbtce"]
+[gd_scene format=3 uid="uid://csaug6ajhbtce"]
 
 [ext_resource type="PackedScene" uid="uid://rh85bh20fk6r" path="res://object/enemy/majin/Majin.tscn" id="1_b2ojl"]
 [ext_resource type="PackedScene" uid="uid://btmba2obtxn1h" path="res://object/enemy/majin/data/skeleton dome/model/RedMajin.gltf" id="2_4wvce"]
 [ext_resource type="AnimationLibrary" uid="uid://duuj6x0f00ny7" path="res://object/enemy/majin/data/animation/red majin/MajinLibrary.gltf" id="3_44x6m"]
 
-[sub_resource type="AnimationNodeStateMachinePlayback" id="AnimationNodeStateMachinePlayback_ymxtn"]
-
-[sub_resource type="AnimationNodeStateMachinePlayback" id="AnimationNodeStateMachinePlayback_45vcn"]
-
-[sub_resource type="AnimationNodeStateMachinePlayback" id="AnimationNodeStateMachinePlayback_s4uui"]
-
-[node name="RedMajin" instance=ExtResource("1_b2ojl")]
+[node name="RedMajin" unique_id=1382557533 instance=ExtResource("1_b2ojl")]
 "Attack Settings/Attack Type" = 2
 "Attack Settings/Flame Active Time" = 1.0
 "Attack Settings/Flame Inactive Time" = 0.0
+"Attack Settings/Flame Aggression Radius" = 0
+"Attack Settings/Attack Instantly" = false
 maxHealth = 2
 
-[node name="RedMajin" parent="Root" index="0" instance=ExtResource("2_4wvce")]
+[node name="RedMajin" parent="Root" parent_id_path=PackedInt32Array(797600160) index="0" unique_id=786674045 instance=ExtResource("2_4wvce")]
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="Root/RedMajin" index="1"]
-libraries = {
-"MajinLibrary": ExtResource("3_44x6m")
-}
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Root/RedMajin" index="1" unique_id=1012589906]
+libraries/MajinLibrary = ExtResource("3_44x6m")
 
-[node name="FireFX" parent="FX" index="0"]
-visible = true
-
-[node name="AnimationTree" parent="." index="5"]
+[node name="AnimationTree" parent="." index="6" unique_id=2000790734]
+root_node = NodePath("../Root/RedMajin")
 anim_player = NodePath("../Root/RedMajin/AnimationPlayer")
-parameters/defeat_state/playback = SubResource("AnimationNodeStateMachinePlayback_ymxtn")
-parameters/fire_state/playback = SubResource("AnimationNodeStateMachinePlayback_45vcn")
-parameters/spin_state/playback = SubResource("AnimationNodeStateMachinePlayback_s4uui")

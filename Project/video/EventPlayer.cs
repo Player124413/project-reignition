@@ -316,7 +316,7 @@ public partial class EventPlayer : Node
 			double currentKeyTime = currentAnimation.TrackGetKeyTime(0, i);
 			float keyLength;
 			if (i == currentAnimation.TrackGetKeyCount(0) - 1) // Final key; hide at the end of the cutscene
-				keyLength = currentAnimation.Length - (float)currentKeyTime;
+				keyLength = (float)(currentAnimation.Length - currentKeyTime);
 			else // Change text at next key
 				keyLength = (float)(currentAnimation.TrackGetKeyTime(0, i + 1) - currentKeyTime);
 

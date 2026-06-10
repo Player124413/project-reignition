@@ -33,6 +33,7 @@ var cpu_timer : float
 const CPU_BASE_INPUT_INTERVAL : float = 3.0 / 2.0
 
 func on_spawn_finished() -> void:
+	super()
 	rollback_timer.register_target(self)
 	ball_mesh.material_override = ball_materials[player_index]
 	character_animator.play_animation(get_anim_prefix() + "wait")

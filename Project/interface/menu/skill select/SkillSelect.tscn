@@ -1,4 +1,4 @@
-[gd_scene load_steps=57 format=3 uid="uid://bt32kmhyoo7ec"]
+[gd_scene format=3 uid="uid://bt32kmhyoo7ec"]
 
 [ext_resource type="Script" uid="uid://8fsxq4g2aeod" path="res://interface/menu/skill select/script/SkillSelect.cs" id="1_v1nov"]
 [ext_resource type="PackedScene" uid="uid://c4ohuqlywe4f" path="res://interface/menu/Description.tscn" id="3_ud304"]
@@ -17,7 +17,7 @@
 [ext_resource type="AudioStream" uid="uid://cl54rftw5aiyf" path="res://sound/sfx/system/menu cancel.wav" id="11_wl6lw"]
 [ext_resource type="AudioStream" uid="uid://l2e1do1wwkg" path="res://sound/sfx/system/menu confirm.wav" id="11_xu7kr"]
 [ext_resource type="AudioStream" uid="uid://dc6pp0ugxo4e3" path="res://sound/sfx/system/menu pause.wav" id="12_4pjkd"]
-[ext_resource type="Shader" uid="uid://cywcr73eavwo2" path="res://effect/shader/interface/InterfaceFlashAdd.gdshader" id="18_yq62n"]
+[ext_resource type="Shader" uid="uid://dj2vtehay1fej" path="res://effect/shader/interface/InterfaceFlashAdd.gdshader" id="18_yq62n"]
 [ext_resource type="FontFile" uid="uid://bsoin3p4iygoo" path="res://interface/font/otf/Chiaro Std B.otf" id="19_ysjw8"]
 [ext_resource type="Texture2D" uid="uid://hlj4agda0gde" path="res://interface/menu/common/button small default.png" id="21_aslc8"]
 [ext_resource type="Script" uid="uid://cj76gvi7tbku6" path="res://sound/script/BGMPlayer.cs" id="21_gfii7"]
@@ -1764,7 +1764,7 @@ _data = {
 &"unequip": SubResource("Animation_tf8ok")
 }
 
-[node name="SkillSelect" type="Control" node_paths=PackedStringArray("optionContainer", "cursor", "cursorAnimator", "description", "scrollbar", "skillPointFill", "levelLabel", "skillPointLabel", "alertAnimator", "alertLabel", "sortTypeLabel", "sortOrderCursor", "bgm", "animator")]
+[node name="SkillSelect" type="Control" unique_id=1145580607 node_paths=PackedStringArray("optionContainer", "cursor", "cursorAnimator", "description", "scrollbar", "skillPointFill", "levelLabel", "skillPointLabel", "alertAnimator", "alertLabel", "sortTypeLabel", "sortOrderCursor", "bgm", "animator")]
 visible = false
 modulate = Color(1, 1, 1, 0)
 layout_mode = 3
@@ -1792,8 +1792,9 @@ submenus = Array[NodePath]([NodePath("")])
 bgm = NodePath("BGM")
 animator = NodePath("AnimationPlayer")
 
-[node name="Content" type="Control" parent="."]
+[node name="Content" type="Control" parent="." unique_id=2020963313]
 layout_mode = 1
+anchors_preset = 13
 anchor_left = 0.5
 anchor_right = 0.5
 anchor_bottom = 1.0
@@ -1803,7 +1804,7 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
-[node name="Window" type="Control" parent="Content"]
+[node name="Window" type="Control" parent="Content" unique_id=574441306]
 modulate = Color(1, 1, 1, 0)
 anchors_preset = 0
 offset_left = 640.0
@@ -1812,7 +1813,7 @@ offset_right = 640.0
 offset_bottom = 480.0
 mouse_filter = 2
 
-[node name="Background" type="TextureRect" parent="Content/Window"]
+[node name="Background" type="TextureRect" parent="Content/Window" unique_id=1052262239]
 layout_mode = 0
 offset_left = -640.0
 offset_top = -374.0
@@ -1822,7 +1823,7 @@ mouse_filter = 2
 texture = ExtResource("4_gfii7")
 expand_mode = 1
 
-[node name="Scrollbar" type="NinePatchRect" parent="Content/Window"]
+[node name="Scrollbar" type="NinePatchRect" parent="Content/Window" unique_id=1437854954]
 layout_mode = 0
 offset_left = 584.0
 offset_top = -272.0
@@ -1835,21 +1836,21 @@ patch_margin_left = 56
 patch_margin_right = 56
 metadata/_edit_lock_ = true
 
-[node name="ScrollPosition" type="Sprite2D" parent="Content/Window/Scrollbar"]
+[node name="ScrollPosition" type="Sprite2D" parent="Content/Window/Scrollbar" unique_id=1307854860]
 rotation = -1.5708
 texture = ExtResource("4_tcevv")
 offset = Vector2(-32, 64)
 region_enabled = true
 region_rect = Rect2(0, 448, 62, 64)
 
-[node name="CursorOrigin" type="Node2D" parent="Content"]
+[node name="CursorOrigin" type="Node2D" parent="Content" unique_id=1670087654]
 position = Vector2(624, 232)
 metadata/_edit_lock_ = true
 
-[node name="Cursor" type="Node2D" parent="Content/CursorOrigin"]
+[node name="Cursor" type="Node2D" parent="Content/CursorOrigin" unique_id=1608721056]
 scale = Vector2(1, 1e-05)
 
-[node name="Cursor" type="NinePatchRect" parent="Content/CursorOrigin/Cursor"]
+[node name="Cursor" type="NinePatchRect" parent="Content/CursorOrigin/Cursor" unique_id=1038352822]
 anchors_preset = -1
 offset_left = -560.0
 offset_top = -64.0
@@ -1861,42 +1862,41 @@ patch_margin_top = 64
 patch_margin_right = 72
 patch_margin_bottom = 64
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="Content/CursorOrigin/Cursor"]
-libraries = {
-&"": SubResource("AnimationLibrary_gc54t")
-}
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Content/CursorOrigin/Cursor" unique_id=1530010542]
+libraries/ = SubResource("AnimationLibrary_gc54t")
 next/show = &"loop"
 
-[node name="Header" type="Control" parent="Content"]
+[node name="Header" type="Control" parent="Content" unique_id=1803694903]
 modulate = Color(1, 1, 1, 0)
 layout_mode = 1
+anchors_preset = 10
 anchor_right = 1.0
 offset_top = 48.0
 offset_bottom = 128.0
 grow_horizontal = 2
 mouse_filter = 2
 
-[node name="SkillPointBar" type="Node2D" parent="Content/Header"]
+[node name="SkillPointBar" type="Node2D" parent="Content/Header" unique_id=553298845]
 position = Vector2(792, 36)
 
-[node name="Background" type="Sprite2D" parent="Content/Header/SkillPointBar"]
+[node name="Background" type="Sprite2D" parent="Content/Header/SkillPointBar" unique_id=707236602]
 texture = ExtResource("6_gfii7")
 region_enabled = true
 region_rect = Rect2(0, 85, 256, 40)
 
-[node name="Fill" type="Sprite2D" parent="Content/Header/SkillPointBar"]
+[node name="Fill" type="Sprite2D" parent="Content/Header/SkillPointBar" unique_id=43873143]
 position = Vector2(-96, -20)
 texture = ExtResource("6_gfii7")
 centered = false
 region_enabled = true
 region_rect = Rect2(32, 0, 196, 42)
 
-[node name="Border" type="Sprite2D" parent="Content/Header/SkillPointBar"]
+[node name="Border" type="Sprite2D" parent="Content/Header/SkillPointBar" unique_id=975521449]
 texture = ExtResource("6_gfii7")
 region_enabled = true
 region_rect = Rect2(0, 42, 256, 40)
 
-[node name="LevelLabel" type="Label" parent="Content/Header"]
+[node name="LevelLabel" type="Label" parent="Content/Header" unique_id=660451572]
 layout_mode = 0
 offset_left = 256.0
 offset_right = 512.0
@@ -1906,7 +1906,7 @@ label_settings = ExtResource("6_4a5gt")
 vertical_alignment = 1
 uppercase = true
 
-[node name="SPLabel" type="Label" parent="Content/Header"]
+[node name="SPLabel" type="Label" parent="Content/Header" unique_id=535067914]
 layout_mode = 0
 offset_left = 576.0
 offset_right = 660.0
@@ -1917,7 +1917,7 @@ horizontal_alignment = 2
 vertical_alignment = 1
 uppercase = true
 
-[node name="SPValue" type="Label" parent="Content/Header"]
+[node name="SPValue" type="Label" parent="Content/Header" unique_id=1764538286]
 layout_mode = 0
 offset_left = 928.0
 offset_right = 1216.0
@@ -1926,7 +1926,7 @@ text = "000/000"
 label_settings = ExtResource("6_4a5gt")
 vertical_alignment = 1
 
-[node name="SortingMethodLabel" type="Label" parent="Content/Header"]
+[node name="SortingMethodLabel" type="Label" parent="Content/Header" unique_id=1530943613]
 layout_mode = 0
 offset_left = 112.0
 offset_top = 90.0
@@ -1938,7 +1938,7 @@ label_settings = ExtResource("6_4a5gt")
 vertical_alignment = 1
 uppercase = true
 
-[node name="SortArrow" type="TextureRect" parent="Content/Header"]
+[node name="SortArrow" type="TextureRect" parent="Content/Header" unique_id=1243868614]
 layout_mode = 0
 offset_left = 1088.0
 offset_top = 90.0
@@ -1950,10 +1950,10 @@ expand_mode = 1
 stretch_mode = 5
 flip_v = true
 
-[node name="Clip" type="Control" parent="Content"]
+[node name="Clip" type="Control" parent="Content" unique_id=1391107814]
 modulate = Color(1, 1, 1, 0)
-clip_contents = true
 custom_minimum_size = Vector2(1072, 500)
+clip_contents = true
 layout_mode = 1
 anchor_left = 0.102
 anchor_top = 0.178
@@ -1969,7 +1969,7 @@ size_flags_horizontal = 0
 mouse_filter = 2
 metadata/_edit_group_ = true
 
-[node name="Options" type="VBoxContainer" parent="Content/Clip"]
+[node name="Options" type="VBoxContainer" parent="Content/Clip" unique_id=214403577]
 layout_mode = 1
 anchors_preset = -1
 anchor_right = 1.0
@@ -1979,7 +1979,7 @@ grow_horizontal = 2
 mouse_filter = 2
 theme_override_constants/separation = -2
 
-[node name="NavigationButtons" type="HBoxContainer" parent="."]
+[node name="NavigationButtons" type="HBoxContainer" parent="." unique_id=40516230]
 layout_mode = 1
 anchors_preset = -1
 anchor_top = 1.0
@@ -1991,62 +1991,63 @@ mouse_filter = 2
 theme_override_constants/separation = 64
 alignment = 1
 
-[node name="Select" parent="NavigationButtons" instance=ExtResource("9_kp51v")]
+[node name="Select" parent="NavigationButtons" unique_id=1509041114 instance=ExtResource("9_kp51v")]
 layout_mode = 2
 ActionKey = &"sys_select"
 inputKey = &"sys_select"
 fallbackKey = &"ui_select"
 
-[node name="Cancel" parent="NavigationButtons" instance=ExtResource("9_kp51v")]
+[node name="Cancel" parent="NavigationButtons" unique_id=181844547 instance=ExtResource("9_kp51v")]
 layout_mode = 2
 ActionKey = &"sys_return"
 inputKey = &"sys_cancel"
 fallbackKey = &"ui_cancel"
 
-[node name="Sort" parent="NavigationButtons" instance=ExtResource("9_kp51v")]
+[node name="Sort" parent="NavigationButtons" unique_id=662318732 instance=ExtResource("9_kp51v")]
 layout_mode = 2
 ActionKey = &"sys_sort"
 inputKey = &"sys_sort"
 fallbackKey = &"ui_focus_next"
 
-[node name="Presets" parent="NavigationButtons" instance=ExtResource("9_kp51v")]
+[node name="Presets" parent="NavigationButtons" unique_id=1173051388 instance=ExtResource("9_kp51v")]
 layout_mode = 2
 ActionKey = &"sys_presets"
 inputKey = &"sys_pause"
 fallbackKey = &"ui_accept"
 
-[node name="SFX" type="Node" parent="."]
+[node name="SFX" type="Node" parent="." unique_id=24624658]
 
-[node name="Save" type="AudioStreamPlayer" parent="SFX"]
+[node name="Save" type="AudioStreamPlayer" parent="SFX" unique_id=1204934175]
 stream = ExtResource("7_n4imj")
 bus = &"SFX"
 
-[node name="Cancel" type="AudioStreamPlayer" parent="SFX"]
+[node name="Cancel" type="AudioStreamPlayer" parent="SFX" unique_id=156409126]
 stream = ExtResource("11_wl6lw")
 bus = &"SFX"
 
-[node name="Confirm" type="AudioStreamPlayer" parent="SFX"]
+[node name="Confirm" type="AudioStreamPlayer" parent="SFX" unique_id=103796260]
 stream = ExtResource("11_xu7kr")
 bus = &"SFX"
 
-[node name="Alert" type="AudioStreamPlayer" parent="SFX"]
+[node name="Alert" type="AudioStreamPlayer" parent="SFX" unique_id=1548196523]
 stream = ExtResource("12_4pjkd")
 bus = &"SFX"
 
-[node name="Equip" type="AudioStreamPlayer" parent="SFX"]
+[node name="Equip" type="AudioStreamPlayer" parent="SFX" unique_id=1926276250]
 stream = ExtResource("7_5j0l1")
 bus = &"SFX"
 
-[node name="Unequip" type="AudioStreamPlayer" parent="SFX"]
+[node name="Unequip" type="AudioStreamPlayer" parent="SFX" unique_id=1738950304]
 stream = ExtResource("8_rnu1p")
 bus = &"SFX"
 
-[node name="Select" type="AudioStreamPlayer" parent="SFX"]
+[node name="Select" type="AudioStreamPlayer" parent="SFX" unique_id=2073727857]
 stream = ExtResource("9_1265f")
 bus = &"SFX"
 
-[node name="Description" type="Control" parent="."]
+[node name="Description" type="Control" parent="." unique_id=412671573]
 layout_mode = 1
+anchors_preset = 12
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -2058,14 +2059,14 @@ grow_horizontal = 2
 grow_vertical = 0
 mouse_filter = 2
 
-[node name="Description" parent="Description" instance=ExtResource("3_ud304")]
+[node name="Description" parent="Description" unique_id=2146580700 instance=ExtResource("3_ud304")]
 layout_mode = 1
 offset_left = 0.0
 offset_top = 0.0
 offset_right = 1152.0
 offset_bottom = 256.0
 
-[node name="AlertMenu" type="Control" parent="."]
+[node name="AlertMenu" type="Control" parent="." unique_id=514891292]
 visible = false
 modulate = Color(1, 1, 1, 0)
 z_index = 120
@@ -2076,7 +2077,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Fade" type="ColorRect" parent="AlertMenu"]
+[node name="Fade" type="ColorRect" parent="AlertMenu" unique_id=2100746202]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -2087,8 +2088,9 @@ mouse_filter = 2
 color = Color(0, 0, 0, 0.588235)
 metadata/_edit_lock_ = true
 
-[node name="Menu" type="Control" parent="AlertMenu"]
+[node name="Menu" type="Control" parent="AlertMenu" unique_id=1412040203]
 layout_mode = 1
+anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
 offset_left = -960.0
@@ -2098,20 +2100,21 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
-[node name="Parent" type="Control" parent="AlertMenu/Menu"]
+[node name="Parent" type="Control" parent="AlertMenu/Menu" unique_id=1047084782]
 layout_mode = 1
+anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
 offset_top = 470.0
 offset_bottom = 470.0
 mouse_filter = 2
 
-[node name="Window" type="Node2D" parent="AlertMenu/Menu/Parent"]
+[node name="Window" type="Node2D" parent="AlertMenu/Menu/Parent" unique_id=1310171409]
 
-[node name="TopBar" type="Node2D" parent="AlertMenu/Menu/Parent/Window"]
+[node name="TopBar" type="Node2D" parent="AlertMenu/Menu/Parent/Window" unique_id=1658797645]
 position = Vector2(0, -192)
 
-[node name="TopLeft" type="Sprite2D" parent="AlertMenu/Menu/Parent/Window/TopBar"]
+[node name="TopLeft" type="Sprite2D" parent="AlertMenu/Menu/Parent/Window/TopBar" unique_id=750496426]
 position = Vector2(-560, 36)
 scale = Vector2(1, -1)
 texture = ExtResource("4_tcevv")
@@ -2119,7 +2122,7 @@ centered = false
 region_enabled = true
 region_rect = Rect2(260, 60, 120, 60)
 
-[node name="Top" type="NinePatchRect" parent="AlertMenu/Menu/Parent/Window/TopBar"]
+[node name="Top" type="NinePatchRect" parent="AlertMenu/Menu/Parent/Window/TopBar" unique_id=179926989]
 custom_minimum_size = Vector2(432, 33)
 anchors_preset = -1
 anchor_left = 0.104
@@ -2135,7 +2138,7 @@ texture = ExtResource("4_tcevv")
 region_rect = Rect2(379, 60, 94, 60)
 axis_stretch_horizontal = 1
 
-[node name="TopRight" type="Sprite2D" parent="AlertMenu/Menu/Parent/Window/TopBar"]
+[node name="TopRight" type="Sprite2D" parent="AlertMenu/Menu/Parent/Window/TopBar" unique_id=699974577]
 position = Vector2(416, 36)
 scale = Vector2(1, -1)
 texture = ExtResource("4_tcevv")
@@ -2143,7 +2146,7 @@ centered = false
 region_enabled = true
 region_rect = Rect2(367, 0, 140, 60)
 
-[node name="Background" type="NinePatchRect" parent="AlertMenu/Menu/Parent/Window"]
+[node name="Background" type="NinePatchRect" parent="AlertMenu/Menu/Parent/Window" unique_id=1730891608]
 anchors_preset = -1
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -2161,17 +2164,17 @@ patch_margin_top = 32
 patch_margin_right = 32
 patch_margin_bottom = 32
 
-[node name="BottomBar" type="Node2D" parent="AlertMenu/Menu/Parent/Window"]
+[node name="BottomBar" type="Node2D" parent="AlertMenu/Menu/Parent/Window" unique_id=1899503311]
 position = Vector2(0, 208)
 
-[node name="BottomLeft" type="Sprite2D" parent="AlertMenu/Menu/Parent/Window/BottomBar"]
+[node name="BottomLeft" type="Sprite2D" parent="AlertMenu/Menu/Parent/Window/BottomBar" unique_id=1279018227]
 position = Vector2(-560, -36)
 texture = ExtResource("4_tcevv")
 centered = false
 region_enabled = true
 region_rect = Rect2(260, 60, 120, 60)
 
-[node name="Bottom" type="NinePatchRect" parent="AlertMenu/Menu/Parent/Window/BottomBar"]
+[node name="Bottom" type="NinePatchRect" parent="AlertMenu/Menu/Parent/Window/BottomBar" unique_id=1817012019]
 custom_minimum_size = Vector2(432, 33)
 anchors_preset = -1
 anchor_left = 0.104
@@ -2186,18 +2189,18 @@ texture = ExtResource("4_tcevv")
 region_rect = Rect2(379, 60, 94, 60)
 axis_stretch_horizontal = 1
 
-[node name="BottomRight" type="Sprite2D" parent="AlertMenu/Menu/Parent/Window/BottomBar"]
+[node name="BottomRight" type="Sprite2D" parent="AlertMenu/Menu/Parent/Window/BottomBar" unique_id=1877981452]
 position = Vector2(416, -36)
 texture = ExtResource("4_tcevv")
 centered = false
 region_enabled = true
 region_rect = Rect2(367, 0, 140, 60)
 
-[node name="Text" type="Control" parent="AlertMenu/Menu/Parent"]
+[node name="Text" type="Control" parent="AlertMenu/Menu/Parent" unique_id=87555407]
 anchors_preset = 0
 mouse_filter = 2
 
-[node name="Options" type="HBoxContainer" parent="AlertMenu/Menu/Parent/Text"]
+[node name="Options" type="HBoxContainer" parent="AlertMenu/Menu/Parent/Text" unique_id=1094830384]
 layout_mode = 0
 offset_left = -480.0
 offset_top = 16.0
@@ -2207,7 +2210,7 @@ mouse_filter = 2
 theme_override_constants/separation = 200
 alignment = 1
 
-[node name="Yes" type="TextureRect" parent="AlertMenu/Menu/Parent/Text/Options"]
+[node name="Yes" type="TextureRect" parent="AlertMenu/Menu/Parent/Text/Options" unique_id=624566532]
 custom_minimum_size = Vector2(300, 128)
 layout_mode = 2
 mouse_filter = 0
@@ -2215,7 +2218,7 @@ texture = ExtResource("21_aslc8")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="YesLabel" type="Label" parent="AlertMenu/Menu/Parent/Text/Options/Yes"]
+[node name="YesLabel" type="Label" parent="AlertMenu/Menu/Parent/Text/Options/Yes" unique_id=455177867]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -2228,7 +2231,7 @@ horizontal_alignment = 1
 vertical_alignment = 1
 uppercase = true
 
-[node name="No" type="TextureRect" parent="AlertMenu/Menu/Parent/Text/Options"]
+[node name="No" type="TextureRect" parent="AlertMenu/Menu/Parent/Text/Options" unique_id=1840835798]
 custom_minimum_size = Vector2(300, 128)
 layout_mode = 2
 mouse_filter = 0
@@ -2236,7 +2239,7 @@ texture = ExtResource("23_5gexy")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="NoLabel" type="Label" parent="AlertMenu/Menu/Parent/Text/Options/No"]
+[node name="NoLabel" type="Label" parent="AlertMenu/Menu/Parent/Text/Options/No" unique_id=899336932]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -2249,7 +2252,7 @@ horizontal_alignment = 1
 vertical_alignment = 1
 uppercase = true
 
-[node name="Cancel" type="TextureRect" parent="AlertMenu/Menu/Parent/Text"]
+[node name="Cancel" type="TextureRect" parent="AlertMenu/Menu/Parent/Text" unique_id=1467144542]
 visible = false
 custom_minimum_size = Vector2(300, 128)
 layout_mode = 0
@@ -2262,7 +2265,7 @@ texture = ExtResource("24_6tdb6")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="CancelLabel" type="Label" parent="AlertMenu/Menu/Parent/Text/Cancel"]
+[node name="CancelLabel" type="Label" parent="AlertMenu/Menu/Parent/Text/Cancel" unique_id=2027667478]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -2275,7 +2278,7 @@ horizontal_alignment = 1
 vertical_alignment = 1
 uppercase = true
 
-[node name="Cursor" type="Control" parent="AlertMenu/Menu/Parent/Text"]
+[node name="Cursor" type="Control" parent="AlertMenu/Menu/Parent/Text" unique_id=2046760178]
 custom_minimum_size = Vector2(150, 64)
 anchors_preset = 0
 offset_left = 100.0
@@ -2285,7 +2288,7 @@ offset_bottom = 144.0
 pivot_offset = Vector2(150, 64)
 mouse_filter = 2
 
-[node name="Sprite" type="TextureRect" parent="AlertMenu/Menu/Parent/Text/Cursor"]
+[node name="Sprite" type="TextureRect" parent="AlertMenu/Menu/Parent/Text/Cursor" unique_id=961566919]
 modulate = Color(1, 1, 1, 0)
 material = SubResource("ShaderMaterial_y5j5a")
 layout_mode = 1
@@ -2300,12 +2303,10 @@ texture = ExtResource("23_5gexy")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="CursorAnimationPlayer" type="AnimationPlayer" parent="AlertMenu/Menu/Parent/Text/Cursor"]
-libraries = {
-&"": SubResource("AnimationLibrary_el8q8")
-}
+[node name="CursorAnimationPlayer" type="AnimationPlayer" parent="AlertMenu/Menu/Parent/Text/Cursor" unique_id=790869553]
+libraries/ = SubResource("AnimationLibrary_el8q8")
 
-[node name="Label" type="Label" parent="AlertMenu/Menu/Parent/Text"]
+[node name="Label" type="Label" parent="AlertMenu/Menu/Parent/Text" unique_id=465311703]
 layout_mode = 0
 offset_left = -384.0
 offset_top = -150.0
@@ -2323,20 +2324,16 @@ horizontal_alignment = 1
 vertical_alignment = 1
 autowrap_mode = 2
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="AlertMenu"]
-libraries = {
-&"": SubResource("AnimationLibrary_6tdb6")
-}
+[node name="AnimationPlayer" type="AnimationPlayer" parent="AlertMenu" unique_id=526749373]
+libraries/ = SubResource("AnimationLibrary_6tdb6")
 
-[node name="BGM" type="AudioStreamPlayer" parent="."]
+[node name="BGM" type="AudioStreamPlayer" parent="." unique_id=874204704]
 bus = &"BGM"
 script = ExtResource("21_gfii7")
 bgmResource = ExtResource("26_6tdb6")
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
-libraries = {
-&"": SubResource("AnimationLibrary_wky6r")
-}
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=1178192449]
+libraries/ = SubResource("AnimationLibrary_wky6r")
 
 [connection signal="mouse_entered" from="AlertMenu/Menu/Parent/Text/Options/Yes" to="." method="ReceiveAlertMouseInput" binds= [0]]
 [connection signal="mouse_exited" from="AlertMenu/Menu/Parent/Text/Options/Yes" to="." method="ReceiveAlertMouseInput" binds= [-1]]

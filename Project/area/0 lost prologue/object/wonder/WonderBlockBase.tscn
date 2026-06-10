@@ -1,4 +1,4 @@
-[gd_scene load_steps=19 format=3 uid="uid://523smjugvmxt"]
+[gd_scene format=3 uid="uid://523smjugvmxt"]
 
 [ext_resource type="Script" uid="uid://coiui4qvdxbqe" path="res://object/trigger/modules/EventTrigger.cs" id="1_2v7tl"]
 [ext_resource type="AudioStream" uid="uid://dvv2n20oc5bp5" path="res://sound/sfx/stage/lost prologue/wonderblock.wav" id="3_aqfi5"]
@@ -314,7 +314,7 @@ _data = {
 &"event-deactivate": SubResource("Animation_utsff")
 }
 
-[node name="WonderBlock" type="StaticBody3D" node_paths=PackedStringArray("animator") groups=["floor", "grind wall", "splash jump", "wall"]]
+[node name="WonderBlock" type="StaticBody3D" unique_id=378899757 node_paths=PackedStringArray("animator") groups=["floor", "grind wall", "splash jump", "wall"]]
 script = ExtResource("1_2v7tl")
 animator = NodePath("AnimationPlayer")
 respawnAnimation = 2
@@ -323,29 +323,29 @@ respawnAnimation = 2
 "Trigger Settings/Animation Blending" = 0.0
 "Trigger Settings/Player Stand-in" = NodePath("")
 
-[node name="Root" type="Node3D" parent="."]
+[node name="Root" type="Node3D" parent="." unique_id=1058438679]
 
-[node name="DeactivateTrigger" type="Area3D" parent="."]
+[node name="DeactivateTrigger" type="Area3D" parent="." unique_id=1350490119]
 collision_layer = 0
 collision_mask = 2
 monitoring = false
 monitorable = false
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="DeactivateTrigger"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="DeactivateTrigger" unique_id=1740300243]
 shape = SubResource("CylinderShape3D_7kigq")
 
-[node name="ActivateTrigger" type="Area3D" parent="."]
+[node name="ActivateTrigger" type="Area3D" parent="." unique_id=1749680600]
 collision_layer = 0
 collision_mask = 2
 monitorable = false
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="ActivateTrigger"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="ActivateTrigger" unique_id=1451450599]
 shape = SubResource("CylinderShape3D_2v7tl")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=1632114312]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
 
-[node name="SFX" type="AudioStreamPlayer3D" parent="."]
+[node name="SFX" type="AudioStreamPlayer3D" parent="." unique_id=1247564906]
 stream = ExtResource("3_aqfi5")
 attenuation_model = 3
 max_db = 0.0
@@ -355,7 +355,7 @@ script = ExtResource("4_vdbax")
 groupKey = &"wonderblock"
 audioLengthOverride = 1.1999999999970896
 
-[node name="VFX" type="GPUParticles3D" parent="."]
+[node name="VFX" type="GPUParticles3D" parent="." unique_id=1545280704]
 layers = 32
 cast_shadow = 0
 extra_cull_margin = 16384.0
@@ -372,10 +372,8 @@ transform_align = 3
 process_material = SubResource("ParticleProcessMaterial_0iybe")
 draw_pass_1 = SubResource("QuadMesh_utsff")
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
-libraries = {
-&"": SubResource("AnimationLibrary_cof80")
-}
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=768677067]
+libraries/ = SubResource("AnimationLibrary_cof80")
 
 [connection signal="area_exited" from="DeactivateTrigger" to="." method="Deactivate"]
 [connection signal="area_entered" from="ActivateTrigger" to="." method="Activate"]

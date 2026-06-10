@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3 uid="uid://b7ti0ill2nhev"]
+[gd_scene format=3 uid="uid://b7ti0ill2nhev"]
 
 [ext_resource type="PackedScene" uid="uid://fyxwf6fnm1as" path="res://party/scene/minigame/05 parasol ball/model/Basket.glb" id="1_78frh"]
 [ext_resource type="PackedScene" uid="uid://cho38gsk705f8" path="res://party/resource/character/scene/Omochao.tscn" id="2_n421a"]
@@ -93,61 +93,59 @@ _data = {
 &"loop": SubResource("Animation_n421a")
 }
 
-[node name="Basket" type="Node3D"]
+[node name="Basket" type="Node3D" unique_id=941350410]
 
-[node name="BasketRoot" parent="." groups=["floor"] instance=ExtResource("1_78frh")]
+[node name="BasketRoot" parent="." unique_id=928501377 groups=["floor"] instance=ExtResource("1_78frh")]
 
-[node name="BasketMesh" parent="BasketRoot" index="0"]
+[node name="BasketMesh" parent="BasketRoot" index="0" unique_id=1377462039]
 layers = 2
 
-[node name="StaticBody3D" type="StaticBody3D" parent="BasketRoot" groups=["wall"]]
+[node name="StaticBody3D" type="StaticBody3D" parent="BasketRoot" unique_id=1090442673 groups=["wall"]]
 collision_layer = 8
 collision_mask = 0
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="BasketRoot/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="BasketRoot/StaticBody3D" unique_id=1674085186]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, -14)
 shape = SubResource("BoxShape3D_n421a")
 
-[node name="CollisionShape3D2" type="CollisionShape3D" parent="BasketRoot/StaticBody3D"]
+[node name="CollisionShape3D2" type="CollisionShape3D" parent="BasketRoot/StaticBody3D" unique_id=1069279223]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 14)
 shape = SubResource("BoxShape3D_n421a")
 
-[node name="CollisionShape3D3" type="CollisionShape3D" parent="BasketRoot/StaticBody3D"]
+[node name="CollisionShape3D3" type="CollisionShape3D" parent="BasketRoot/StaticBody3D" unique_id=205826920]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20, 8, 0)
 shape = SubResource("BoxShape3D_aiu8g")
 
-[node name="CollisionShape3D4" type="CollisionShape3D" parent="BasketRoot/StaticBody3D"]
+[node name="CollisionShape3D4" type="CollisionShape3D" parent="BasketRoot/StaticBody3D" unique_id=1421441165]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -20, 8, 0)
 shape = SubResource("BoxShape3D_aiu8g")
 
-[node name="CollectionTrigger" type="Area3D" parent="BasketRoot"]
+[node name="CollectionTrigger" type="Area3D" parent="BasketRoot" unique_id=419900731]
 collision_layer = 8
 collision_mask = 0
 monitoring = false
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="BasketRoot/CollectionTrigger"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="BasketRoot/CollectionTrigger" unique_id=678470632]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 7.5, 0)
 shape = SubResource("BoxShape3D_78frh")
 
-[node name="Omochao1" parent="BasketRoot" instance=ExtResource("2_n421a")]
+[node name="Omochao1" parent="BasketRoot" unique_id=1983093763 instance=ExtResource("2_n421a")]
 transform = Transform3D(0.4330127, 0, 0.25, 0, 0.5, 0, -0.25, 0, 0.4330127, -21.5, 10, -18.330128)
 
-[node name="AnimationPlayer" parent="BasketRoot/Omochao1/Omochao" index="1"]
-autoplay = "select"
+[node name="AnimationPlayer" parent="BasketRoot/Omochao1/Omochao" parent_id_path=PackedInt32Array(1983093763, 1095560975) index="1" unique_id=378277842]
+autoplay = &"select"
 
-[node name="Omochao2" parent="BasketRoot" instance=ExtResource("2_n421a")]
+[node name="Omochao2" parent="BasketRoot" unique_id=1098826056 instance=ExtResource("2_n421a")]
 transform = Transform3D(0.43301272, 0, -0.24999999, 0, 0.5, 0, 0.24999999, 0, 0.43301272, 22.5, 10, -18.33)
 
-[node name="AnimationPlayer" parent="BasketRoot/Omochao2/Omochao" index="1"]
-autoplay = "select"
+[node name="AnimationPlayer" parent="BasketRoot/Omochao2/Omochao" parent_id_path=PackedInt32Array(1098826056, 1095560975) index="1" unique_id=378277842]
+autoplay = &"select"
 
-[node name="BasketTarget" type="Node3D" parent="BasketRoot"]
+[node name="BasketTarget" type="Node3D" parent="BasketRoot" unique_id=760593425]
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
-libraries = {
-&"": SubResource("AnimationLibrary_aiu8g")
-}
-autoplay = "init"
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=159674572]
+libraries/ = SubResource("AnimationLibrary_aiu8g")
+autoplay = &"init"
 
 [connection signal="area_entered" from="BasketRoot/CollectionTrigger" to="." method="_on_collection_trigger_area_entered"]
 

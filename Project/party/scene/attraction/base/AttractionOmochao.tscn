@@ -1,0 +1,241 @@
+[gd_scene format=3 uid="uid://gpujyr046r8q"]
+
+[ext_resource type="PackedScene" uid="uid://cho38gsk705f8" path="res://party/resource/character/scene/Omochao.tscn" id="1_xy06l"]
+[ext_resource type="PackedScene" uid="uid://dqrs0sg3rfo1s" path="res://party/scene/world library/model/Book.glb" id="2_pwfhp"]
+[ext_resource type="Material" uid="uid://0auafar5avso" path="res://party/scene/attraction/base/material/Dust Lite.tres" id="3_kbcim"]
+[ext_resource type="Script" uid="uid://c65ffkknyq6gr" path="res://addons/custom_nodes/script/GroupGpuParticles3D.cs" id="4_pk5of"]
+[ext_resource type="Material" uid="uid://bmqg22jfddbnu" path="res://party/scene/attraction/base/material/Dust Heavy.tres" id="5_867ds"]
+[ext_resource type="Material" uid="uid://c04iw0we7ha16" path="res://party/scene/attraction/base/material/Confetti.tres" id="6_j6lc7"]
+[ext_resource type="AudioStream" uid="uid://dkmjvhpdq1xg" path="res://party/sound/sfx/system/omochao entrance.wav" id="7_wkgg2"]
+
+[sub_resource type="Curve" id="Curve_rceo5"]
+_data = [Vector2(0, 0), 0.0, 31.04731, 0, 0, Vector2(0.1, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_u7wql"]
+width = 64
+texture_mode = 1
+curve = SubResource("Curve_rceo5")
+
+[sub_resource type="Curve" id="Curve_cn7cr"]
+_data = [Vector2(0, 0.2), 0.0, 2.2734313, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_k7cu3"]
+width = 64
+curve = SubResource("Curve_cn7cr")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_u7wql"]
+lifetime_randomness = 0.4
+angle_min = 1.0728836e-05
+angle_max = 360.00003
+direction = Vector3(0, 1, 0)
+spread = 90.0
+initial_velocity_min = 20.0
+initial_velocity_max = 30.0
+gravity = Vector3(0, 0, 0)
+scale_min = 5.0
+scale_max = 10.0
+scale_curve = SubResource("CurveTexture_k7cu3")
+alpha_curve = SubResource("CurveTexture_u7wql")
+
+[sub_resource type="QuadMesh" id="QuadMesh_hn3kd"]
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_k7cu3"]
+lifetime_randomness = 0.4
+angle_min = 1.0728836e-05
+angle_max = 360.00003
+direction = Vector3(0, 1, 0)
+spread = 90.0
+initial_velocity_min = 5.0
+initial_velocity_max = 10.0
+gravity = Vector3(0, 0, 0)
+scale_min = 5.0
+scale_max = 10.0
+scale_curve = SubResource("CurveTexture_k7cu3")
+color = Color(0.765, 0.9, 0.9, 1)
+alpha_curve = SubResource("CurveTexture_u7wql")
+
+[sub_resource type="Gradient" id="Gradient_rceo5"]
+interpolation_mode = 1
+offsets = PackedFloat32Array(0, 0.25790754, 0.5377129, 0.7931873)
+colors = PackedColorArray(1, 0, 0, 1, 0, 1, 0, 1, 0, 0, 1, 1, 1, 1, 0, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_u7wql"]
+gradient = SubResource("Gradient_rceo5")
+width = 64
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_hn3kd"]
+lifetime_randomness = 0.4
+direction = Vector3(0, 1, 0)
+initial_velocity_min = 50.0
+initial_velocity_max = 100.0
+angular_velocity_min = -1.6093254e-05
+angular_velocity_max = 719.99994
+gravity = Vector3(0, -80, 0)
+color_initial_ramp = SubResource("GradientTexture1D_u7wql")
+alpha_curve = SubResource("CurveTexture_u7wql")
+
+[sub_resource type="Animation" id="Animation_pw8qp"]
+resource_name = "RESET"
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Book:visible")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+
+[sub_resource type="Animation" id="Animation_qlf3p"]
+resource_name = "open"
+length = 5.0
+tracks/0/type = "method"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.099999994),
+"transitions": PackedFloat32Array(1, 1),
+"values": [{
+"args": [&"pull", true, 0.10000000000582077],
+"method": &"play_animation"
+}, {
+"args": [&"hover", 0.1999999999970896],
+"method": &"queue_minigame_animation"
+}]
+}
+tracks/1/type = "animation"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Book/AnimationPlayer")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"clips": PackedStringArray("open", "left", "left", "left", "left"),
+"times": PackedFloat32Array(0.033333335, 1.3666667, 2.0666666, 2.7666667, 3.466667)
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Book:visible")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+
+[sub_resource type="Animation" id="Animation_hn3kd"]
+resource_name = "show"
+tracks/0/type = "method"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Appear")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"RestartGroup"
+}]
+}
+tracks/1/type = "method"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Entrance")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [0.0],
+"method": &"play"
+}]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_xytu4"]
+_data = {
+&"RESET": SubResource("Animation_pw8qp"),
+&"open": SubResource("Animation_qlf3p"),
+&"show": SubResource("Animation_hn3kd")
+}
+
+[node name="Omochao" unique_id=1383319368 instance=ExtResource("1_xy06l")]
+
+[node name="Omochao" parent="." index="0" unique_id=1095560975]
+transform = Transform3D(0.3, 0, 0, 0, 0.3, 0, 0, 0, 0.3, 0, 0, 0)
+
+[node name="Book" parent="." index="2" unique_id=485455304 instance=ExtResource("2_pwfhp")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5, 20)
+visible = false
+
+[node name="AnimationPlayer" parent="Book" index="1" unique_id=1029238769]
+speed_scale = 3.0
+
+[node name="Appear" type="GPUParticles3D" parent="." index="3" unique_id=550326219 node_paths=PackedStringArray("subSystems")]
+layers = 32
+material_override = ExtResource("3_kbcim")
+cast_shadow = 0
+emitting = false
+lifetime = 0.8
+one_shot = true
+explosiveness = 0.7
+fixed_fps = 0
+fract_delta = false
+process_material = SubResource("ParticleProcessMaterial_u7wql")
+draw_pass_1 = SubResource("QuadMesh_hn3kd")
+script = ExtResource("4_pk5of")
+subSystems = [NodePath("DustHeavy"), NodePath("Confetti")]
+
+[node name="DustHeavy" type="GPUParticles3D" parent="Appear" index="0" unique_id=112345697]
+layers = 32
+material_override = ExtResource("5_867ds")
+cast_shadow = 0
+emitting = false
+lifetime = 0.8
+one_shot = true
+explosiveness = 0.7
+fixed_fps = 0
+fract_delta = false
+process_material = SubResource("ParticleProcessMaterial_k7cu3")
+draw_pass_1 = SubResource("QuadMesh_hn3kd")
+
+[node name="Confetti" type="GPUParticles3D" parent="Appear" index="1" unique_id=2087269034]
+layers = 32
+material_override = ExtResource("6_j6lc7")
+cast_shadow = 0
+emitting = false
+amount = 32
+lifetime = 0.8
+one_shot = true
+explosiveness = 0.7
+fixed_fps = 0
+fract_delta = false
+transform_align = 2
+process_material = SubResource("ParticleProcessMaterial_hn3kd")
+draw_pass_1 = SubResource("QuadMesh_hn3kd")
+
+[node name="Entrance" type="AudioStreamPlayer" parent="." index="4" unique_id=239749167]
+stream = ExtResource("7_wkgg2")
+volume_db = 3.0
+bus = &"SFX"
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." index="5" unique_id=1418944219]
+libraries/ = SubResource("AnimationLibrary_xytu4")
+speed_scale = 3.0
+
+[editable path="Omochao"]
+[editable path="Book"]

@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=3 uid="uid://cnwhks8ciopdd"]
+[gd_scene format=3 uid="uid://cnwhks8ciopdd"]
 
 [ext_resource type="Script" uid="uid://bj7jhdknn12cl" path="res://object/stage/destructable/resource/script/DestructableObject.cs" id="1_45nuq"]
 [ext_resource type="PackedScene" uid="uid://dg1hjwb52rbkk" path="res://area/2 dino jungle/object/model/rock/WhiteRock.gltf" id="1_wso5u"]
@@ -158,7 +158,7 @@ _data = {
 &"shatter": SubResource("Animation_slgct")
 }
 
-[node name="WhiteRock" type="Node3D" node_paths=PackedStringArray("root", "pieceRoot", "animator")]
+[node name="WhiteRock" type="Node3D" unique_id=1457996387 node_paths=PackedStringArray("root", "pieceRoot", "animator")]
 script = ExtResource("1_45nuq")
 pieceMass = 0.2
 shatterFlags = 18
@@ -166,30 +166,30 @@ root = NodePath("WhiteRock")
 pieceRoot = NodePath("WhiteRockPieces")
 animator = NodePath("AnimationPlayer")
 
-[node name="Trigger" type="Area3D" parent="."]
+[node name="Trigger" type="Area3D" parent="." unique_id=1711837098]
 collision_layer = 0
 collision_mask = 10
 monitorable = false
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Trigger"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Trigger" unique_id=462028464]
 shape = SubResource("ConvexPolygonShape3D_1pber")
 
-[node name="WhiteRock" parent="." instance=ExtResource("1_wso5u")]
+[node name="WhiteRock" parent="." unique_id=1065367134 instance=ExtResource("1_wso5u")]
 
-[node name="StaticBody3D" parent="WhiteRock/WhiteRockMesh" index="0" groups=["splash jump", "wall"]]
+[node name="StaticBody3D" parent="WhiteRock/WhiteRockMesh" parent_id_path=PackedInt32Array(1065367134, 874168771) index="0" unique_id=121580665 groups=["splash jump", "wall"]]
 collision_layer = 72
 
-[node name="WhiteRockPieces" parent="." instance=ExtResource("3_uwb6q")]
+[node name="WhiteRockPieces" parent="." unique_id=938649231 instance=ExtResource("3_uwb6q")]
 visible = false
 
-[node name="Shatter" type="AudioStreamPlayer3D" parent="."]
+[node name="Shatter" type="AudioStreamPlayer3D" parent="." unique_id=1431668251]
 process_mode = 1
 stream = ExtResource("4_v2do2")
 max_db = 0.0
 max_distance = 100.0
 bus = &"GAME SFX"
 
-[node name="ShatterVFX" type="GPUParticles3D" parent="."]
+[node name="ShatterVFX" type="GPUParticles3D" parent="." unique_id=832247989]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
 layers = 32
 cast_shadow = 0
@@ -203,10 +203,8 @@ visibility_aabb = AABB(-2, -2, -2, 4, 4, 4)
 process_material = SubResource("ParticleProcessMaterial_2o86k")
 draw_pass_1 = SubResource("QuadMesh_w7x81")
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
-libraries = {
-&"": SubResource("AnimationLibrary_rshkq")
-}
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=556091952]
+libraries/ = SubResource("AnimationLibrary_rshkq")
 
 [connection signal="area_entered" from="Trigger" to="." method="OnEntered"]
 [connection signal="area_exited" from="Trigger" to="." method="OnExited"]

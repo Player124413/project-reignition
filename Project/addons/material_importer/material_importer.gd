@@ -22,12 +22,14 @@ func link_materials() -> void:
 	
 	var material_files : PackedStringArray = material_directory.get_files()
 	for file_name : String in material_files:
+		print("Processing %s" % file_name)
 		if !file_name.ends_with(".tres"): # Not a text-editable material
 			continue
 		
 		var material_path : String = material_path.text + file_name
 		var material = ResourceLoader.load(material_path)
 		if material is not Material or material is ShaderMaterial and skip_custom_shaders.button_pressed:
+			print("Skipping %s" % file_name)
 			continue
 		
 		# Open the file for editing
@@ -47,6 +49,7 @@ func link_materials() -> void:
 			material_lines.set(line, generate_resource_line(texture_path, id))
 			line = find_line_index("[resource]", material_lines, 0) + 1
 			material_lines.insert(line, 'albedo_texture = ExtResource("%s")' % id)
+			print("Set albedo of %s to %s" % [file_name, texture_path])
 		else:
 			print("WARNING: texture not found for " + file_name)
 			print(get_texture_name(file_name))

@@ -1,4 +1,4 @@
-[gd_scene load_steps=45 format=3 uid="uid://ck5jasnqj5yv1"]
+[gd_scene format=3 uid="uid://ck5jasnqj5yv1"]
 
 [ext_resource type="PackedScene" uid="uid://cd15ckfvp1igu" path="res://area/4 levitated ruin/object/model/obstacle/MissileTracking.gltf" id="1_3nssn"]
 [ext_resource type="Material" uid="uid://4batii1hel0b" path="res://effect/particle/material/explosion/Explosion Smoke.tres" id="2_0dh8p"]
@@ -12,7 +12,6 @@
 [ext_resource type="AudioStream" uid="uid://krtje434volg" path="res://sound/sfx/stage/levitated ruin/missile explosion.wav" id="10_jc8lh"]
 [ext_resource type="Script" uid="uid://dnrfeyqvx8aq" path="res://addons/custom_nodes/script/GroupAudioStreamPlayer3D.cs" id="11_24jkw"]
 [ext_resource type="AudioStream" uid="uid://bktx0sr73366c" path="res://sound/sfx/stage/levitated ruin/missile launch.wav" id="12_24jkw"]
-
 
 [sub_resource type="Curve" id="Curve_bv4j8"]
 _data = [Vector2(0.00656455, 1), 0.0, -1.00661, 0, 1, Vector2(1, 0), -1.00661, 0.0, 1, 0]
@@ -366,7 +365,7 @@ _data = {
 &"fly": SubResource("Animation_rfjd0")
 }
 
-[node name="MissileBomb" node_paths=PackedStringArray("root", "animator") instance=ExtResource("1_3nssn")]
+[node name="MissileBomb" unique_id=647074362 node_paths=PackedStringArray("root", "animator") instance=ExtResource("1_3nssn")]
 script = ExtResource("2_rlbjh")
 alignModelForward = true
 root = NodePath(".")
@@ -377,7 +376,7 @@ animator = NodePath("AnimationPlayer")
 "Launch Settings/Spread" = 2.0
 "Launch Settings/Middle Height" = 10.0
 
-[node name="Trail" type="GPUParticles3D" parent="." index="1"]
+[node name="Trail" type="GPUParticles3D" parent="." index="1" unique_id=1125192385]
 layers = 32
 cast_shadow = 0
 extra_cull_margin = 16384.0
@@ -390,18 +389,18 @@ visibility_aabb = AABB(-12, -12, -35, 24, 24, 40)
 process_material = SubResource("ParticleProcessMaterial_ayml1")
 draw_pass_1 = SubResource("QuadMesh_p36d8")
 
-[node name="Hitbox" type="Area3D" parent="." index="2"]
+[node name="Hitbox" type="Area3D" parent="." index="2" unique_id=796183787]
 collision_layer = 0
 collision_mask = 2
 monitorable = false
 script = ExtResource("4_q6hqs")
 ignoreSpeedbreakingCharacters = true
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Hitbox" index="0"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Hitbox" index="0" unique_id=1741569412]
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0, 0)
 shape = SubResource("CylinderShape3D_rapu8")
 
-[node name="Explosion" type="GPUParticles3D" parent="." index="3" node_paths=PackedStringArray("subSystems")]
+[node name="Explosion" type="GPUParticles3D" parent="." index="3" unique_id=1055592109 node_paths=PackedStringArray("subSystems")]
 layers = 32
 cast_shadow = 0
 extra_cull_margin = 16384.0
@@ -417,7 +416,7 @@ draw_pass_1 = SubResource("QuadMesh_ws8be")
 script = ExtResource("4_vxjl6")
 subSystems = [NodePath("Flash"), NodePath("HitSpark"), NodePath("EmberBlue"), NodePath("CommonDust")]
 
-[node name="Flash" type="GPUParticles3D" parent="Explosion" index="0"]
+[node name="Flash" type="GPUParticles3D" parent="Explosion" index="0" unique_id=1672688552]
 layers = 32
 cast_shadow = 0
 extra_cull_margin = 16384.0
@@ -432,7 +431,7 @@ visibility_aabb = AABB(0, 0, 0, 0, 0, 0)
 process_material = SubResource("ParticleProcessMaterial_pbxqa")
 draw_pass_1 = SubResource("QuadMesh_4fxai")
 
-[node name="HitSpark" type="GPUParticles3D" parent="Explosion" index="1"]
+[node name="HitSpark" type="GPUParticles3D" parent="Explosion" index="1" unique_id=643244743]
 layers = 32
 cast_shadow = 0
 extra_cull_margin = 16384.0
@@ -448,7 +447,7 @@ visibility_aabb = AABB(0, 0, 0, 0, 0, 0)
 process_material = SubResource("ParticleProcessMaterial_m2fxf")
 draw_pass_1 = SubResource("QuadMesh_ygd7i")
 
-[node name="EmberBlue" type="GPUParticles3D" parent="Explosion" index="2"]
+[node name="EmberBlue" type="GPUParticles3D" parent="Explosion" index="2" unique_id=1059053565]
 layers = 32
 cast_shadow = 0
 extra_cull_margin = 16384.0
@@ -462,7 +461,7 @@ visibility_aabb = AABB(0, 0, 0, 0, 0, 0)
 process_material = SubResource("ParticleProcessMaterial_7mdy4")
 draw_pass_1 = SubResource("QuadMesh_gr8ch")
 
-[node name="CommonDust" type="GPUParticles3D" parent="Explosion" index="3"]
+[node name="CommonDust" type="GPUParticles3D" parent="Explosion" index="3" unique_id=1620036171]
 layers = 32
 cast_shadow = 0
 extra_cull_margin = 16384.0
@@ -477,7 +476,7 @@ visibility_aabb = AABB(0, 0, 0, 0, 0, 0)
 process_material = SubResource("ParticleProcessMaterial_ikdv0")
 draw_pass_1 = SubResource("QuadMesh_5ln46")
 
-[node name="LaunchSFX" type="AudioStreamPlayer3D" parent="." index="4"]
+[node name="LaunchSFX" type="AudioStreamPlayer3D" parent="." index="4" unique_id=92436513]
 stream = ExtResource("12_24jkw")
 unit_size = 50.0
 max_db = 0.0
@@ -488,7 +487,7 @@ script = ExtResource("11_24jkw")
 groupKey = &"bomb missile launch"
 audioLengthOverride = 1.2
 
-[node name="ExplosionSFX" type="AudioStreamPlayer3D" parent="." index="5"]
+[node name="ExplosionSFX" type="AudioStreamPlayer3D" parent="." index="5" unique_id=1971348142]
 stream = ExtResource("10_jc8lh")
 unit_size = 20.0
 max_db = 0.0
@@ -499,11 +498,9 @@ script = ExtResource("11_24jkw")
 groupKey = &"bomb missile explosion"
 audioLengthOverride = 0.8
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="." index="6"]
-libraries = {
-&"": SubResource("AnimationLibrary_nbb4y")
-}
-autoplay = "fly"
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." index="6" unique_id=1289997171]
+libraries/ = SubResource("AnimationLibrary_nbb4y")
+autoplay = &"fly"
 
 [connection signal="Exploded" from="." to="ExplosionSFX" method="PlayInGroup"]
 [connection signal="Launched" from="." to="LaunchSFX" method="PlayInGroup"]

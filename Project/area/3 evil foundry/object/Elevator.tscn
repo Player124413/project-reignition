@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=3 uid="uid://bioj7igetxoe1"]
+[gd_scene format=3 uid="uid://bioj7igetxoe1"]
 
 [ext_resource type="PackedScene" uid="uid://wl72orcirdh4" path="res://area/3 evil foundry/object/model/Elevator.gltf" id="1_7olfm"]
 [ext_resource type="Script" uid="uid://pnh70abopq8e" path="res://object/stage/common/resource/script/Hazard.cs" id="2_03yvt"]
@@ -147,88 +147,84 @@ _data = {
 &"rise": SubResource("Animation_j23ue")
 }
 
-[node name="Elevator" type="Node3D"]
+[node name="Elevator" type="Node3D" unique_id=1604362583]
 script = ExtResource("3_edqjq")
+timeCurve = SubResource("Curve_obwmd")
+smoothPausing = true
+lockToStartingPosition = true
+root = NodePath("Root")
+animator = NodePath("")
 Movement/Mode = 1
 "Movement/Cycle Length" = 5.0
 "Movement/Starting Offset" = 0.0
 Movement/Distance = 30.0
 Movement/Angle = 180.0
 "Vertical Orientation" = true
-timeCurve = SubResource("Curve_obwmd")
-smoothPausing = true
-lockToStartingPosition = true
-root = NodePath("Root")
-animator = NodePath("")
 
-[node name="Root" type="Node3D" parent="."]
+[node name="Root" type="Node3D" parent="." unique_id=814028486]
 script = ExtResource("2_03yvt")
 
-[node name="Elevator" parent="Root" instance=ExtResource("1_7olfm")]
+[node name="Elevator" parent="Root" unique_id=1137741106 instance=ExtResource("1_7olfm")]
 
-[node name="Skeleton3D" parent="Root/Elevator/ElevatorRoot" index="0"]
-bones/1/rotation = Quaternion(-0.707106, 1.25607e-15, 3.94099e-08, 0.707107)
+[node name="AnimationPlayer" parent="Root/Elevator" index="1" unique_id=1116433071]
+autoplay = &"gear"
 
-[node name="AnimationPlayer" parent="Root/Elevator" index="1"]
-autoplay = "gear"
-
-[node name="Hitbox" type="Area3D" parent="Root"]
+[node name="Hitbox" type="Area3D" parent="Root" unique_id=347887865]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -2.4, -2)
 collision_layer = 0
 collision_mask = 2
 monitorable = false
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Root/Hitbox"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Root/Hitbox" unique_id=1369335995]
 shape = SubResource("BoxShape3D_2vuck")
 
-[node name="Collision" type="StaticBody3D" parent="Root" groups=["ceiling", "floor", "wall"]]
+[node name="Collision" type="StaticBody3D" parent="Root" unique_id=96068023 groups=["ceiling", "floor", "wall"]]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6, 0)
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Root/Collision"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Root/Collision" unique_id=1773099701]
 shape = SubResource("BoxShape3D_xkf1e")
 
-[node name="CollisionShape3D2" type="CollisionShape3D" parent="Root/Collision"]
+[node name="CollisionShape3D2" type="CollisionShape3D" parent="Root/Collision" unique_id=790786267]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, 1)
 shape = SubResource("BoxShape3D_gxhqd")
 
-[node name="PlatformTrigger" type="Node3D" parent="Root" node_paths=PackedStringArray("floorCalculationRoot", "parentCollider")]
+[node name="PlatformTrigger" type="Node3D" parent="Root" unique_id=180938809 node_paths=PackedStringArray("floorCalculationRoot", "parentCollider")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.1, 0)
 script = ExtResource("6_k4s3l")
-"Falling Platform Settings/Enabled" = false
 playerJumpInfluenceMultiplier = 2.0
 maxJumpMovementAmount = 20.0
 floorCalculationRoot = NodePath(".")
 parentCollider = NodePath("../Collision")
+"Falling Platform Settings/Enabled" = false
+"Floating Platform Settings/Enabled" = false
 
-[node name="Trigger" type="Area3D" parent="Root/PlatformTrigger"]
+[node name="Trigger" type="Area3D" parent="Root/PlatformTrigger" unique_id=296021900]
 collision_layer = 0
 collision_mask = 2
 monitorable = false
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Root/PlatformTrigger/Trigger"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Root/PlatformTrigger/Trigger" unique_id=1748544757]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
 shape = SubResource("BoxShape3D_dnt6x")
 
-[node name="Fall" type="AudioStreamPlayer3D" parent="Root"]
+[node name="Fall" type="AudioStreamPlayer3D" parent="Root" unique_id=1194903527]
+process_mode = 1
 stream = ExtResource("4_0kf3o")
 max_db = 0.0
 autoplay = true
 max_distance = 100.0
 bus = &"GAME SFX"
-process_mode = 1
 
-[node name="Rise" type="AudioStreamPlayer3D" parent="Root"]
+[node name="Rise" type="AudioStreamPlayer3D" parent="Root" unique_id=1993228163]
+process_mode = 1
 stream = ExtResource("5_mcxgm")
 max_db = 0.0
 autoplay = true
 max_distance = 100.0
 bus = &"GAME SFX"
-process_mode = 1
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
-libraries = {
-"": SubResource("AnimationLibrary_h1tvi")
-}
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=889675094]
+libraries/ = SubResource("AnimationLibrary_h1tvi")
 
 [connection signal="LeftInitialPosition" from="." to="AnimationPlayer" method="play" binds= [&"fall", -1.0, 1.0, false]]
 [connection signal="ReturnedToInitialPosition" from="." to="AnimationPlayer" method="play" binds= [&"rise", -1.0, 1.0, false]]

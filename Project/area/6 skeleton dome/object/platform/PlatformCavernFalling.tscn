@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3 uid="uid://cfejcc3m08i2r"]
+[gd_scene format=3 uid="uid://cfejcc3m08i2r"]
 
 [ext_resource type="PackedScene" uid="uid://bd2vgdlj4fx6i" path="res://area/6 skeleton dome/object/model/platform/PlatformCavernFalling.gltf" id="1_irr62"]
 [ext_resource type="Script" uid="uid://bdlofqc6xiigo" path="res://object/trigger/modules/PlatformTrigger.cs" id="1_mm11p"]
@@ -193,7 +193,7 @@ _data = {
 &"shake": SubResource("Animation_hi8l2")
 }
 
-[node name="PlatformCavernFalling" type="Node3D" node_paths=PackedStringArray("floorCalculationRoot", "parentCollider")]
+[node name="PlatformCavernFalling" type="Node3D" unique_id=569678783 node_paths=PackedStringArray("floorCalculationRoot", "parentCollider")]
 script = ExtResource("1_mm11p")
 floorCalculationRoot = NodePath("Root/PlatformTrigger")
 parentCollider = NodePath("Root/StaticBody3D")
@@ -204,29 +204,29 @@ parentCollider = NodePath("Root/StaticBody3D")
 "Falling Platform Settings/Fall Speed" = 1.0
 "Floating Platform Settings/Enabled" = false
 
-[node name="Root" type="Node3D" parent="."]
+[node name="Root" type="Node3D" parent="." unique_id=742093073]
 
-[node name="Visuals" parent="Root" instance=ExtResource("1_irr62")]
+[node name="Visuals" parent="Root" unique_id=636843863 instance=ExtResource("1_irr62")]
 
-[node name="PlatformCavernFallingMesh" parent="Root/Visuals" index="0"]
+[node name="PlatformCavernFallingMesh" parent="Root/Visuals" index="0" unique_id=852466454]
 layers = 4
 cast_shadow = 0
 
-[node name="PlatformTrigger" type="Area3D" parent="Root"]
+[node name="PlatformTrigger" type="Area3D" parent="Root" unique_id=1777289826]
 collision_layer = 0
 collision_mask = 2
 monitorable = false
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Root/PlatformTrigger"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Root/PlatformTrigger" unique_id=666364284]
 shape = SubResource("BoxShape3D_p4jqh")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Root" groups=["floor", "splash jump", "wall"]]
+[node name="StaticBody3D" type="StaticBody3D" parent="Root" unique_id=456730968 groups=["floor", "splash jump", "wall"]]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, 0)
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Root/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Root/StaticBody3D" unique_id=1694839128]
 shape = SubResource("BoxShape3D_lp7au")
 
-[node name="Shake" type="AudioStreamPlayer3D" parent="Root"]
+[node name="Shake" type="AudioStreamPlayer3D" parent="Root" unique_id=1698538141]
 stream = ExtResource("3_wipsy")
 max_db = -9.0
 max_distance = 50.0
@@ -234,18 +234,16 @@ max_polyphony = 2
 bus = &"GAME SFX"
 attenuation_filter_cutoff_hz = 20500.0
 
-[node name="Fall" type="AudioStreamPlayer3D" parent="Root"]
+[node name="Fall" type="AudioStreamPlayer3D" parent="Root" unique_id=912307768]
 stream = ExtResource("4_wipsy")
 max_db = -3.0
 max_distance = 100.0
 bus = &"GAME SFX"
 attenuation_filter_cutoff_hz = 20500.0
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=731019209]
 callback_mode_process = 0
-libraries = {
-&"": SubResource("AnimationLibrary_p0p5m")
-}
+libraries/ = SubResource("AnimationLibrary_p0p5m")
 
 [connection signal="area_entered" from="Root/PlatformTrigger" to="." method="OnEntered"]
 [connection signal="area_exited" from="Root/PlatformTrigger" to="." method="OnExited"]

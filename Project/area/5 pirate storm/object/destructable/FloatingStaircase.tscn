@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3 uid="uid://kihlqnxvg34q"]
+[gd_scene format=3 uid="uid://kihlqnxvg34q"]
 
 [ext_resource type="Script" uid="uid://bj7jhdknn12cl" path="res://object/stage/destructable/resource/script/DestructableObject.cs" id="1_gwefs"]
 [ext_resource type="PackedScene" uid="uid://chsvf0ua8yxp0" path="res://area/5 pirate storm/object/model/destructable/FloatingStaircase.gltf" id="2_xvmob"]
@@ -107,7 +107,7 @@ _data = {
 &"shatter": SubResource("Animation_gwefs")
 }
 
-[node name="FloatingStaircase" type="Node3D" node_paths=PackedStringArray("root", "pieceRoot", "animator")]
+[node name="FloatingStaircase" type="Node3D" unique_id=2069075880 node_paths=PackedStringArray("root", "pieceRoot", "animator")]
 script = ExtResource("1_gwefs")
 pieceMass = 1.0
 stopPlayerOnShatter = true
@@ -116,24 +116,24 @@ root = NodePath("FloatingStaircase")
 pieceRoot = NodePath("FloatingStaircasePieces")
 animator = NodePath("AnimationPlayer")
 
-[node name="Trigger" type="Area3D" parent="."]
+[node name="Trigger" type="Area3D" parent="." unique_id=2013767608]
 collision_layer = 8
 collision_mask = 10
 monitorable = false
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Trigger"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Trigger" unique_id=1825127005]
 shape = SubResource("ConcavePolygonShape3D_wpm7c")
 
-[node name="FloatingStaircase" parent="." instance=ExtResource("2_xvmob")]
+[node name="FloatingStaircase" parent="." unique_id=1113291576 instance=ExtResource("2_xvmob")]
 
-[node name="StaticBody3D" parent="FloatingStaircase/FloatingStaircaseMesh" index="0" groups=["pathtraveller stagger", "splash jump", "wall"]]
+[node name="StaticBody3D" parent="FloatingStaircase/FloatingStaircaseMesh" parent_id_path=PackedInt32Array(1113291576, 1966791957) index="0" unique_id=1065765802 groups=["pathtraveller stagger", "splash jump", "wall"]]
 collision_layer = 8
 collision_mask = 8
 
-[node name="FloatingStaircasePieces" parent="." instance=ExtResource("3_0eybb")]
+[node name="FloatingStaircasePieces" parent="." unique_id=2047218426 instance=ExtResource("3_0eybb")]
 visible = false
 
-[node name="Sfx" type="AudioStreamPlayer3D" parent="."]
+[node name="Sfx" type="AudioStreamPlayer3D" parent="." unique_id=582823647]
 stream = ExtResource("4_xvmob")
 unit_size = 30.0
 max_db = 0.0
@@ -142,10 +142,8 @@ bus = &"GAME SFX"
 script = ExtResource("5_0eybb")
 groupKey = &"ps_destructable"
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
-libraries = {
-&"": SubResource("AnimationLibrary_0eybb")
-}
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=151221596]
+libraries/ = SubResource("AnimationLibrary_0eybb")
 
 [connection signal="area_entered" from="Trigger" to="." method="OnEntered"]
 [connection signal="area_exited" from="Trigger" to="." method="OnExited"]

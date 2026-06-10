@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=3 uid="uid://b0khnq3fhs771"]
+[gd_scene format=3 uid="uid://b0khnq3fhs771"]
 
 [ext_resource type="PackedScene" uid="uid://bq421e7316n42" path="res://party/scene/minigame/06 parasol diving/model/Parasol.glb" id="2_ale5a"]
 [ext_resource type="Script" uid="uid://ds056nimfywwr" path="res://party/script/core/rollback_timer.gd" id="3_hdqxl"]
@@ -73,7 +73,7 @@ nodes/stuck-transition/node = SubResource("AnimationNodeTransition_dn1mx")
 nodes/stuck-transition/position = Vector2(-160, 160)
 node_connections = [&"output", 0, &"shake-transition", &"shake-transition", 0, &"shake", &"shake-transition", 1, &"stuck-transition", &"float-speed", 0, &"direction-blend", &"direction-blend", 0, &"left", &"direction-blend", 1, &"fall", &"direction-blend", 2, &"right", &"stuck-transition", 0, &"stuck", &"stuck-transition", 1, &"float-speed"]
 
-[node name="Player" type="Node3D" node_paths=PackedStringArray("rollback_timer", "hand_attachment", "character_body", "drift_sfx", "spawn_position", "animation_tree")]
+[node name="Player" type="Node3D" unique_id=1090265094 node_paths=PackedStringArray("rollback_timer", "hand_attachment", "character_body", "drift_sfx", "spawn_position", "animation_tree")]
 script = ExtResource("14_la5i6")
 rollback_timer = NodePath("Rollback")
 hand_attachment = NodePath("HandAttachment")
@@ -83,39 +83,39 @@ spawn_position = NodePath("CharacterBody3D")
 animation_tree = NodePath("AnimationTree")
 deactivate_on_gameplay_finished = false
 
-[node name="CharacterBody3D" type="CharacterBody3D" parent="."]
+[node name="CharacterBody3D" type="CharacterBody3D" parent="." unique_id=480641583]
 motion_mode = 1
 
-[node name="Trigger" type="Area3D" parent="CharacterBody3D"]
+[node name="Trigger" type="Area3D" parent="CharacterBody3D" unique_id=1629503630]
 collision_layer = 0
 collision_mask = 8
 monitorable = false
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="CharacterBody3D/Trigger"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="CharacterBody3D/Trigger" unique_id=626498131]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5, 0)
 shape = SubResource("CapsuleShape3D_dn1mx")
 
-[node name="CPUTrigger" type="Area3D" parent="CharacterBody3D"]
+[node name="CPUTrigger" type="Area3D" parent="CharacterBody3D" unique_id=729603402]
 collision_layer = 0
 collision_mask = 8
 monitorable = false
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="CharacterBody3D/CPUTrigger"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="CharacterBody3D/CPUTrigger" unique_id=1898762235]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -21, 0)
 shape = SubResource("BoxShape3D_dn1mx")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="CharacterBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="CharacterBody3D" unique_id=684945161]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5, 0)
 shape = SubResource("CapsuleShape3D_dn1mx")
 
-[node name="HandAttachment" type="BoneAttachment3D" parent="."]
+[node name="HandAttachment" type="BoneAttachment3D" parent="." unique_id=2079043497]
 bone_name = "wrist_r"
 bone_idx = 45
 
-[node name="Parasol" parent="HandAttachment" instance=ExtResource("2_ale5a")]
+[node name="Parasol" parent="HandAttachment" unique_id=205943131 instance=ExtResource("2_ale5a")]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 0.99999994, 0, -1, 0, -4.371139e-08, 0.8, 0, 0)
 
-[node name="AnimationTree" type="AnimationTree" parent="."]
+[node name="AnimationTree" type="AnimationTree" parent="." unique_id=459278440]
 active = false
 tree_root = SubResource("AnimationNodeBlendTree_tukkm")
 parameters/shake-transition/current_state = "disabled"
@@ -127,12 +127,12 @@ parameters/stuck-transition/current_state = "disabled"
 parameters/stuck-transition/transition_request = ""
 parameters/stuck-transition/current_index = 1
 
-[node name="Rollback" type="Node" parent="."]
+[node name="Rollback" type="Node" parent="." unique_id=15368288]
 script = ExtResource("3_hdqxl")
 param_count = 4
 rollback_interval = 0.0
 
-[node name="Drift" type="AudioStreamPlayer" parent="."]
+[node name="Drift" type="AudioStreamPlayer" parent="." unique_id=1533636787]
 stream = ExtResource("4_xqsq0")
 max_polyphony = 4
 bus = &"GAME SFX"

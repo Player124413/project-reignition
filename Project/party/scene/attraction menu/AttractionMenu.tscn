@@ -1,4 +1,4 @@
-[gd_scene load_steps=36 format=3 uid="uid://xskcm1oi838i"]
+[gd_scene format=3 uid="uid://xskcm1oi838i"]
 
 [ext_resource type="PackedScene" uid="uid://bioxiqh3duql" path="res://party/scene/attraction menu/Cave.tscn" id="1_oqrfm"]
 [ext_resource type="Script" uid="uid://tv4a5scl054g" path="res://party/script/interface/attraction_menu.gd" id="1_s3pqp"]
@@ -11,7 +11,7 @@
 [ext_resource type="PackedScene" uid="uid://cecwknfky51bj" path="res://party/scene/attraction menu/Tent.tscn" id="7_iagrt"]
 [ext_resource type="PackedScene" uid="uid://cvb1pratfrmh" path="res://party/scene/attraction menu/Castle.tscn" id="10_5jwni"]
 [ext_resource type="Texture2D" uid="uid://dtd1uclogii23" path="res://party/scene/attraction menu/texture/tournament palace.png" id="11_107jj"]
-[ext_resource type="LabelSettings" uid="uid://bfig1lkmqmluv" path="res://party/font/AttractionName.tres" id="12_58uef"]
+[ext_resource type="LabelSettings" uid="uid://bfig1lkmqmluv" path="res://party/font/attraction/AttractionName.tres" id="12_58uef"]
 [ext_resource type="Texture2D" uid="uid://cy2pssi8ls0sr" path="res://party/scene/attraction menu/texture/selection.png" id="13_iagrt"]
 [ext_resource type="Texture2D" uid="uid://bd2x5tyu3yvyt" path="res://party/scene/attraction menu/texture/genie lair.png" id="14_gb7it"]
 [ext_resource type="PackedScene" uid="uid://dfmawxqsw6v4d" path="res://interface/menu/DescriptionTall.tscn" id="14_o5j5g"]
@@ -1128,7 +1128,7 @@ _data = {
 &"world-library": SubResource("Animation_yr5py")
 }
 
-[node name="AttractionMenu" type="Control" node_paths=PackedStringArray("description", "selection_animator", "attraction_animators", "omochao", "omochao_locations", "animator")]
+[node name="AttractionMenu" type="Control" unique_id=1455546486 node_paths=PackedStringArray("description", "selection_animator", "attraction_animators", "omochao", "omochao_locations", "animator")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -1141,10 +1141,10 @@ selection_animator = NodePath("SelectionAnimationPlayer")
 attraction_animators = [NodePath("WorldViewportContainer/WorldViewport/ModelRoot/MapObjects/Castle/AnimationPlayer"), NodePath("WorldViewportContainer/WorldViewport/ModelRoot/MapObjects/Cave/AnimationPlayer"), NodePath("WorldViewportContainer/WorldViewport/ModelRoot/MapObjects/Ship/AnimationPlayer"), NodePath("WorldViewportContainer/WorldViewport/ModelRoot/MapObjects/Gate/AnimationPlayer"), NodePath("WorldViewportContainer/WorldViewport/ModelRoot/MapObjects/Library/AnimationPlayer"), NodePath("WorldViewportContainer/WorldViewport/ModelRoot/MapObjects/Tent/AnimationPlayer"), NodePath("WorldViewportContainer/WorldViewport/ModelRoot/MapObjects/Park/AnimationPlayer")]
 omochao = NodePath("WorldViewportContainer/WorldViewport/ModelRoot/Camera/Omochao")
 omochao_locations = [NodePath("WorldViewportContainer/WorldViewport/ModelRoot/Camera/WorldBazaar"), NodePath("WorldViewportContainer/WorldViewport/ModelRoot/Camera/TournamentPalace"), NodePath("WorldViewportContainer/WorldViewport/ModelRoot/Camera/GenieLair"), NodePath("WorldViewportContainer/WorldViewport/ModelRoot/Camera/WorldLibrary"), NodePath("WorldViewportContainer/WorldViewport/ModelRoot/Camera/TreasureHunt"), NodePath("WorldViewportContainer/WorldViewport/ModelRoot/Camera/PirateCoast"), NodePath("WorldViewportContainer/WorldViewport/ModelRoot/Camera/Exit"), NodePath("WorldViewportContainer/WorldViewport/ModelRoot/Camera/Introduction")]
-attraction_scenes = Array[String](["", "", "", "uid://c8wrhoilndl5h", "", "", ""])
+attraction_scenes = Array[String](["", "uid://bm6fo8bvadvpb", "", "uid://c8wrhoilndl5h", "", "", ""])
 animator = NodePath("VisibilityAnimationPlayer")
 
-[node name="WorldViewportContainer" type="SubViewportContainer" parent="."]
+[node name="WorldViewportContainer" type="SubViewportContainer" parent="." unique_id=914110267]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -1153,81 +1153,81 @@ grow_horizontal = 2
 grow_vertical = 2
 stretch = true
 
-[node name="WorldViewport" type="SubViewport" parent="WorldViewportContainer"]
+[node name="WorldViewport" type="SubViewport" parent="WorldViewportContainer" unique_id=938624826]
 own_world_3d = true
 transparent_bg = true
 handle_input_locally = false
 size = Vector2i(1920, 1080)
 render_target_update_mode = 4
 
-[node name="ModelRoot" type="Node3D" parent="WorldViewportContainer/WorldViewport"]
+[node name="ModelRoot" type="Node3D" parent="WorldViewportContainer/WorldViewport" unique_id=1381560720]
 
-[node name="Camera" type="Camera3D" parent="WorldViewportContainer/WorldViewport/ModelRoot"]
+[node name="Camera" type="Camera3D" parent="WorldViewportContainer/WorldViewport/ModelRoot" unique_id=1501965506]
 transform = Transform3D(1, 0, 0, 0, 0.7071068, 0.7071068, 0, -0.7071068, 0.7071068, 0, 125, 130)
 cull_mask = 1
 current = true
 fov = 65.0
 
-[node name="Omochao" parent="WorldViewportContainer/WorldViewport/ModelRoot/Camera" instance=ExtResource("2_apb64")]
+[node name="Omochao" parent="WorldViewportContainer/WorldViewport/ModelRoot/Camera" unique_id=1261055441 instance=ExtResource("2_apb64")]
 transform = Transform3D(0.8602031, -0.29138267, 0.41850543, 0.25630027, 0.9565254, 0.13917316, -0.4408638, -0.012454136, 0.89748764, -34.96032, -25.695677, -59.912823)
 
-[node name="OmochaoRoot" parent="WorldViewportContainer/WorldViewport/ModelRoot/Camera/Omochao/Omochao" index="0"]
+[node name="OmochaoRoot" parent="WorldViewportContainer/WorldViewport/ModelRoot/Camera/Omochao/Omochao" parent_id_path=PackedInt32Array(1261055441, 1095560975) index="0" unique_id=1239529444]
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0)
 
-[node name="Introduction" type="Node3D" parent="WorldViewportContainer/WorldViewport/ModelRoot/Camera"]
+[node name="Introduction" type="Node3D" parent="WorldViewportContainer/WorldViewport/ModelRoot/Camera" unique_id=683946701]
 transform = Transform3D(0.8602031, -0.29138267, 0.41850537, 0.25630024, 0.95652544, 0.1391731, -0.4408637, -0.012454107, 0.89748764, -34.96032, -25.695677, -59.912823)
 
-[node name="TournamentPalace" type="Node3D" parent="WorldViewportContainer/WorldViewport/ModelRoot/Camera"]
+[node name="TournamentPalace" type="Node3D" parent="WorldViewportContainer/WorldViewport/ModelRoot/Camera" unique_id=1663349894]
 transform = Transform3D(0.9801593, -0.11252117, 0.16317591, 0.1631759, 0.92541647, -0.34202012, -0.112521164, 0.3618606, 0.9254165, -19.21235, 23.522083, -112.53302)
 
-[node name="GenieLair" type="Node3D" parent="WorldViewportContainer/WorldViewport/ModelRoot/Camera"]
+[node name="GenieLair" type="Node3D" parent="WorldViewportContainer/WorldViewport/ModelRoot/Camera" unique_id=1878609985]
 transform = Transform3D(0.94582146, -0.029027525, -0.32338634, -0.08240734, 0.94192046, -0.3255681, 0.31405467, 0.3345788, 0.88849676, 34.203194, 21.406557, -112.34206)
 
-[node name="WorldBazaar" type="Node3D" parent="WorldViewportContainer/WorldViewport/ModelRoot/Camera"]
+[node name="WorldBazaar" type="Node3D" parent="WorldViewportContainer/WorldViewport/ModelRoot/Camera" unique_id=2081590772]
 transform = Transform3D(0.81701845, -0.11580543, 0.5648625, 0.25488693, 0.95125103, -0.17364816, -0.5172167, 0.28584987, 0.80670714, -73.18937, 35.34124, -112.00095)
 
-[node name="WorldLibrary" type="Node3D" parent="WorldViewportContainer/WorldViewport/ModelRoot/Camera"]
+[node name="WorldLibrary" type="Node3D" parent="WorldViewportContainer/WorldViewport/ModelRoot/Camera" unique_id=2073525804]
 transform = Transform3D(0.81701845, -0.11580543, 0.5648625, 0.25488693, 0.95125103, -0.17364816, -0.5172167, 0.28584987, 0.80670714, -77.18937, 3.3412428, -112.00095)
 
-[node name="PirateCoast" type="Node3D" parent="WorldViewportContainer/WorldViewport/ModelRoot/Camera"]
+[node name="PirateCoast" type="Node3D" parent="WorldViewportContainer/WorldViewport/ModelRoot/Camera" unique_id=1752675528]
 transform = Transform3D(0.8528683, 0.1503837, -0.4999999, -0.17364813, 0.9848075, 0, 0.49240375, 0.08682407, 0.8660252, 58.94731, 6.1063476, -110.60777)
 
-[node name="TreasureHunt" type="Node3D" parent="WorldViewportContainer/WorldViewport/ModelRoot/Camera"]
+[node name="TreasureHunt" type="Node3D" parent="WorldViewportContainer/WorldViewport/ModelRoot/Camera" unique_id=778429645]
 transform = Transform3D(0.9961946, -0.022557562, -0.084185965, 0, 0.9659258, -0.25881904, 0.08715574, 0.2578341, 0.9622502, 20.157904, 9.23852, -111.80484)
 
-[node name="Exit" type="Node3D" parent="WorldViewportContainer/WorldViewport/ModelRoot/Camera"]
+[node name="Exit" type="Node3D" parent="WorldViewportContainer/WorldViewport/ModelRoot/Camera" unique_id=129628946]
 transform = Transform3D(0.9481789, -0.18430732, 0.258819, 0.19080897, 0.98162705, 0, -0.25406379, 0.049384996, 0.9659257, -23.709848, -17.87139, -100.345695)
 
-[node name="MapObjects" type="Node3D" parent="WorldViewportContainer/WorldViewport/ModelRoot"]
+[node name="MapObjects" type="Node3D" parent="WorldViewportContainer/WorldViewport/ModelRoot" unique_id=1720105302]
 
-[node name="Castle" parent="WorldViewportContainer/WorldViewport/ModelRoot/MapObjects" instance=ExtResource("10_5jwni")]
+[node name="Castle" parent="WorldViewportContainer/WorldViewport/ModelRoot/MapObjects" unique_id=2116896818 instance=ExtResource("10_5jwni")]
 
-[node name="Cave" parent="WorldViewportContainer/WorldViewport/ModelRoot/MapObjects" instance=ExtResource("1_oqrfm")]
+[node name="Cave" parent="WorldViewportContainer/WorldViewport/ModelRoot/MapObjects" unique_id=1425398965 instance=ExtResource("1_oqrfm")]
 
-[node name="Ship" parent="WorldViewportContainer/WorldViewport/ModelRoot/MapObjects" instance=ExtResource("6_58uef")]
+[node name="Ship" parent="WorldViewportContainer/WorldViewport/ModelRoot/MapObjects" unique_id=222130816 instance=ExtResource("6_58uef")]
 
-[node name="Gate" parent="WorldViewportContainer/WorldViewport/ModelRoot/MapObjects" instance=ExtResource("2_s3pqp")]
+[node name="Gate" parent="WorldViewportContainer/WorldViewport/ModelRoot/MapObjects" unique_id=2078025345 instance=ExtResource("2_s3pqp")]
 
-[node name="Library" parent="WorldViewportContainer/WorldViewport/ModelRoot/MapObjects" instance=ExtResource("3_apb64")]
+[node name="Library" parent="WorldViewportContainer/WorldViewport/ModelRoot/MapObjects" unique_id=1017335342 instance=ExtResource("3_apb64")]
 
-[node name="Tent" parent="WorldViewportContainer/WorldViewport/ModelRoot/MapObjects" instance=ExtResource("7_iagrt")]
+[node name="Tent" parent="WorldViewportContainer/WorldViewport/ModelRoot/MapObjects" unique_id=391655060 instance=ExtResource("7_iagrt")]
 
-[node name="Park" parent="WorldViewportContainer/WorldViewport/ModelRoot/MapObjects" instance=ExtResource("5_107jj")]
+[node name="Park" parent="WorldViewportContainer/WorldViewport/ModelRoot/MapObjects" unique_id=2134185091 instance=ExtResource("5_107jj")]
 
-[node name="Map" parent="WorldViewportContainer/WorldViewport/ModelRoot" instance=ExtResource("4_5jwni")]
+[node name="Map" parent="WorldViewportContainer/WorldViewport/ModelRoot" unique_id=645909318 instance=ExtResource("4_5jwni")]
 
-[node name="pt_00_field_Mesh_0000" parent="WorldViewportContainer/WorldViewport/ModelRoot/Map/MapRoot" index="0"]
+[node name="pt_00_field_Mesh_0000" parent="WorldViewportContainer/WorldViewport/ModelRoot/Map/MapRoot" parent_id_path=PackedInt32Array(645909318, 1832183594) index="0" unique_id=189309429]
 transparency = 1.0
 instance_shader_parameters/ratio_shown = 0.0
 
-[node name="WorldEnvironment" type="WorldEnvironment" parent="WorldViewportContainer/WorldViewport/ModelRoot"]
+[node name="WorldEnvironment" type="WorldEnvironment" parent="WorldViewportContainer/WorldViewport/ModelRoot" unique_id=151883280]
 environment = SubResource("Environment_5jwni")
 
-[node name="DirectionalLight3D" type="DirectionalLight3D" parent="WorldViewportContainer/WorldViewport/ModelRoot"]
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="WorldViewportContainer/WorldViewport/ModelRoot" unique_id=1445574977]
 transform = Transform3D(-0.8660254, -0.43301278, 0.25, 0, 0.49999997, 0.86602545, -0.50000006, 0.75, -0.43301266, 0, 0, 0)
 shadow_caster_mask = 1
 
-[node name="Options" type="Control" parent="."]
+[node name="Options" type="Control" parent="." unique_id=1801377039]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -1236,8 +1236,9 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
-[node name="TournamentPalace" type="Control" parent="Options"]
+[node name="TournamentPalace" type="Control" parent="Options" unique_id=819143523]
 layout_mode = 1
+anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
@@ -1248,7 +1249,7 @@ grow_horizontal = 2
 grow_vertical = 2
 scale = Vector2(0.6, 0.6)
 
-[node name="Root" type="TextureRect" parent="Options/TournamentPalace"]
+[node name="Root" type="TextureRect" parent="Options/TournamentPalace" unique_id=1012538658]
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.5
@@ -1264,7 +1265,7 @@ grow_vertical = 2
 pivot_offset = Vector2(256, 128)
 texture = ExtResource("11_107jj")
 
-[node name="AttractionLabel" type="Label" parent="Options/TournamentPalace/Root"]
+[node name="AttractionLabel" type="Label" parent="Options/TournamentPalace/Root" unique_id=1935230130]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -1276,7 +1277,7 @@ label_settings = ExtResource("12_58uef")
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Selection" type="TextureRect" parent="Options/TournamentPalace/Root"]
+[node name="Selection" type="TextureRect" parent="Options/TournamentPalace/Root" unique_id=894311594]
 visible = false
 show_behind_parent = true
 layout_mode = 1
@@ -1288,8 +1289,9 @@ grow_vertical = 2
 pivot_offset = Vector2(256, 128)
 texture = ExtResource("13_iagrt")
 
-[node name="GenieLair" type="Control" parent="Options"]
+[node name="GenieLair" type="Control" parent="Options" unique_id=223985308]
 layout_mode = 1
+anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
@@ -1302,7 +1304,7 @@ grow_horizontal = 2
 grow_vertical = 2
 scale = Vector2(0.6, 0.6)
 
-[node name="Root" type="TextureRect" parent="Options/GenieLair"]
+[node name="Root" type="TextureRect" parent="Options/GenieLair" unique_id=1064594271]
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.5
@@ -1318,7 +1320,7 @@ grow_vertical = 2
 pivot_offset = Vector2(256, 128)
 texture = ExtResource("14_gb7it")
 
-[node name="AttractionLabel" type="Label" parent="Options/GenieLair/Root"]
+[node name="AttractionLabel" type="Label" parent="Options/GenieLair/Root" unique_id=1431829833]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -1330,7 +1332,7 @@ label_settings = ExtResource("12_58uef")
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Selection" type="TextureRect" parent="Options/GenieLair/Root"]
+[node name="Selection" type="TextureRect" parent="Options/GenieLair/Root" unique_id=1783659800]
 visible = false
 show_behind_parent = true
 layout_mode = 1
@@ -1342,8 +1344,9 @@ grow_vertical = 2
 pivot_offset = Vector2(256, 128)
 texture = ExtResource("13_iagrt")
 
-[node name="PirateCoast" type="Control" parent="Options"]
+[node name="PirateCoast" type="Control" parent="Options" unique_id=468014431]
 layout_mode = 1
+anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
@@ -1356,7 +1359,7 @@ grow_horizontal = 2
 grow_vertical = 2
 scale = Vector2(0.6, 0.6)
 
-[node name="Root" type="TextureRect" parent="Options/PirateCoast"]
+[node name="Root" type="TextureRect" parent="Options/PirateCoast" unique_id=923911942]
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.5
@@ -1372,7 +1375,7 @@ grow_vertical = 2
 pivot_offset = Vector2(256, 128)
 texture = ExtResource("15_8aiu5")
 
-[node name="AttractionLabel" type="Label" parent="Options/PirateCoast/Root"]
+[node name="AttractionLabel" type="Label" parent="Options/PirateCoast/Root" unique_id=43975769]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -1384,7 +1387,7 @@ label_settings = ExtResource("12_58uef")
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Selection" type="TextureRect" parent="Options/PirateCoast/Root"]
+[node name="Selection" type="TextureRect" parent="Options/PirateCoast/Root" unique_id=1498883048]
 visible = false
 show_behind_parent = true
 layout_mode = 1
@@ -1396,8 +1399,9 @@ grow_vertical = 2
 pivot_offset = Vector2(256, 128)
 texture = ExtResource("13_iagrt")
 
-[node name="Exit" type="Control" parent="Options"]
+[node name="Exit" type="Control" parent="Options" unique_id=1233216053]
 layout_mode = 1
+anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
@@ -1410,7 +1414,7 @@ grow_horizontal = 2
 grow_vertical = 2
 scale = Vector2(0.6, 0.6)
 
-[node name="Root" type="TextureRect" parent="Options/Exit"]
+[node name="Root" type="TextureRect" parent="Options/Exit" unique_id=1268805539]
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.5
@@ -1426,7 +1430,7 @@ grow_vertical = 2
 pivot_offset = Vector2(256, 128)
 texture = ExtResource("16_a80pk")
 
-[node name="AttractionLabel" type="Label" parent="Options/Exit/Root"]
+[node name="AttractionLabel" type="Label" parent="Options/Exit/Root" unique_id=260219454]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -1438,7 +1442,7 @@ label_settings = ExtResource("12_58uef")
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Selection" type="TextureRect" parent="Options/Exit/Root"]
+[node name="Selection" type="TextureRect" parent="Options/Exit/Root" unique_id=1804013619]
 visible = false
 show_behind_parent = true
 layout_mode = 1
@@ -1450,8 +1454,9 @@ grow_vertical = 2
 pivot_offset = Vector2(256, 128)
 texture = ExtResource("13_iagrt")
 
-[node name="WorldLibrary" type="Control" parent="Options"]
+[node name="WorldLibrary" type="Control" parent="Options" unique_id=746024065]
 layout_mode = 1
+anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
@@ -1464,7 +1469,7 @@ grow_horizontal = 2
 grow_vertical = 2
 scale = Vector2(0.6, 0.6)
 
-[node name="Root" type="TextureRect" parent="Options/WorldLibrary"]
+[node name="Root" type="TextureRect" parent="Options/WorldLibrary" unique_id=1049811156]
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.5
@@ -1480,7 +1485,7 @@ grow_vertical = 2
 pivot_offset = Vector2(256, 128)
 texture = ExtResource("17_77k2d")
 
-[node name="AttractionLabel" type="Label" parent="Options/WorldLibrary/Root"]
+[node name="AttractionLabel" type="Label" parent="Options/WorldLibrary/Root" unique_id=505153754]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -1492,7 +1497,7 @@ label_settings = ExtResource("12_58uef")
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Selection" type="TextureRect" parent="Options/WorldLibrary/Root"]
+[node name="Selection" type="TextureRect" parent="Options/WorldLibrary/Root" unique_id=1196149003]
 visible = false
 show_behind_parent = true
 layout_mode = 1
@@ -1504,8 +1509,9 @@ grow_vertical = 2
 pivot_offset = Vector2(256, 128)
 texture = ExtResource("13_iagrt")
 
-[node name="WorldBazaar" type="Control" parent="Options"]
+[node name="WorldBazaar" type="Control" parent="Options" unique_id=982757130]
 layout_mode = 1
+anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
@@ -1518,7 +1524,7 @@ grow_horizontal = 2
 grow_vertical = 2
 scale = Vector2(0.6, 0.6)
 
-[node name="Root" type="TextureRect" parent="Options/WorldBazaar"]
+[node name="Root" type="TextureRect" parent="Options/WorldBazaar" unique_id=919433502]
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.5
@@ -1534,7 +1540,7 @@ grow_vertical = 2
 pivot_offset = Vector2(256, 128)
 texture = ExtResource("18_2c1ao")
 
-[node name="AttractionLabel" type="Label" parent="Options/WorldBazaar/Root"]
+[node name="AttractionLabel" type="Label" parent="Options/WorldBazaar/Root" unique_id=1869447696]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -1546,7 +1552,7 @@ label_settings = ExtResource("12_58uef")
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Selection" type="TextureRect" parent="Options/WorldBazaar/Root"]
+[node name="Selection" type="TextureRect" parent="Options/WorldBazaar/Root" unique_id=1230493721]
 visible = false
 show_behind_parent = true
 layout_mode = 1
@@ -1558,8 +1564,9 @@ grow_vertical = 2
 pivot_offset = Vector2(256, 128)
 texture = ExtResource("13_iagrt")
 
-[node name="TreasureHunt" type="Control" parent="Options"]
+[node name="TreasureHunt" type="Control" parent="Options" unique_id=875654820]
 layout_mode = 1
+anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
@@ -1572,7 +1579,7 @@ grow_horizontal = 2
 grow_vertical = 2
 scale = Vector2(0.6, 0.6)
 
-[node name="Root" type="TextureRect" parent="Options/TreasureHunt"]
+[node name="Root" type="TextureRect" parent="Options/TreasureHunt" unique_id=1585610956]
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.5
@@ -1588,7 +1595,7 @@ grow_vertical = 2
 pivot_offset = Vector2(256, 128)
 texture = ExtResource("19_yqqr0")
 
-[node name="AttractionLabel" type="Label" parent="Options/TreasureHunt/Root"]
+[node name="AttractionLabel" type="Label" parent="Options/TreasureHunt/Root" unique_id=767899076]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -1600,7 +1607,7 @@ label_settings = ExtResource("12_58uef")
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Selection" type="TextureRect" parent="Options/TreasureHunt/Root"]
+[node name="Selection" type="TextureRect" parent="Options/TreasureHunt/Root" unique_id=1367225321]
 visible = false
 show_behind_parent = true
 layout_mode = 1
@@ -1612,20 +1619,19 @@ grow_vertical = 2
 pivot_offset = Vector2(256, 128)
 texture = ExtResource("13_iagrt")
 
-[node name="DescriptionTall" parent="." instance=ExtResource("14_o5j5g")]
+[node name="DescriptionTall" parent="." unique_id=316609387 instance=ExtResource("14_o5j5g")]
 layout_mode = 1
 
-[node name="VisibilityAnimationPlayer" type="AnimationPlayer" parent="."]
-libraries = {
-&"": SubResource("AnimationLibrary_107jj")
-}
-autoplay = "init"
+[node name="Border" parent="DescriptionTall" index="0" unique_id=859722956]
+grow_horizontal = 2
 
-[node name="SelectionAnimationPlayer" type="AnimationPlayer" parent="."]
+[node name="VisibilityAnimationPlayer" type="AnimationPlayer" parent="." unique_id=325208361]
+libraries/ = SubResource("AnimationLibrary_107jj")
+autoplay = &"init"
+
+[node name="SelectionAnimationPlayer" type="AnimationPlayer" parent="." unique_id=1250380427]
 deterministic = true
-libraries = {
-&"": SubResource("AnimationLibrary_qlo78")
-}
+libraries/ = SubResource("AnimationLibrary_qlo78")
 
 [editable path="WorldViewportContainer/WorldViewport/ModelRoot/Camera/Omochao"]
 [editable path="WorldViewportContainer/WorldViewport/ModelRoot/Camera/Omochao/Omochao"]

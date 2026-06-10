@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3 uid="uid://dsms0ivmnpaq8"]
+[gd_scene format=3 uid="uid://dsms0ivmnpaq8"]
 
 [ext_resource type="PackedScene" uid="uid://dxaspwoin7dr1" path="res://area/1 sand oasis/object/model/Jar.gltf" id="1_qspct"]
 [ext_resource type="PackedScene" uid="uid://cnhlb8lynqjln" path="res://area/1 sand oasis/object/model/JarPieces.gltf" id="2_2vdbn"]
@@ -87,50 +87,48 @@ _data = {
 &"shatter": SubResource("Animation_wtc5q")
 }
 
-[node name="Jar" type="Node3D" node_paths=PackedStringArray("root", "pieceRoot", "animator")]
+[node name="Jar" type="Node3D" unique_id=1507350034 node_paths=PackedStringArray("root", "pieceRoot", "animator")]
 script = ExtResource("2_l0n6o")
 pieceMass = 0.6
 shakeScreenOnShatter = false
 stopPlayerOnShatter = true
+shatterFlags = 31
 root = NodePath("Root")
 pieceRoot = NodePath("JarPieces")
 animator = NodePath("AnimationPlayer")
-shatterFlags = 31
 
-[node name="Root" type="StaticBody3D" parent="." groups=["wall"]]
+[node name="Root" type="StaticBody3D" parent="." unique_id=1047332806 groups=["wall"]]
 collision_layer = 8
 collision_mask = 0
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Root"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Root" unique_id=106633847]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.1, 0)
 shape = SubResource("SphereShape3D_yxr3g")
 
-[node name="Jar" parent="Root" instance=ExtResource("1_qspct")]
+[node name="Jar" parent="Root" unique_id=1687640909 instance=ExtResource("1_qspct")]
 
-[node name="JarPieces" parent="." instance=ExtResource("2_2vdbn")]
+[node name="JarPieces" parent="." unique_id=316847253 instance=ExtResource("2_2vdbn")]
 visible = false
 
-[node name="Trigger" type="Area3D" parent="."]
+[node name="Trigger" type="Area3D" parent="." unique_id=770527751]
 collision_layer = 0
 collision_mask = 2
 monitorable = false
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Trigger"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Trigger" unique_id=1629184403]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.1, 0)
 shape = SubResource("CapsuleShape3D_v3ose")
 
-[node name="SFX" type="AudioStreamPlayer3D" parent="."]
+[node name="SFX" type="AudioStreamPlayer3D" parent="." unique_id=331483964]
+process_mode = 1
 stream = ExtResource("4_040ue")
 max_db = 0.0
 pitch_scale = 0.86
 max_distance = 100.0
 bus = &"GAME SFX"
-process_mode = 1
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
-libraries = {
-"": SubResource("AnimationLibrary_f43ij")
-}
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=2127127023]
+libraries/ = SubResource("AnimationLibrary_f43ij")
 
 [connection signal="area_entered" from="Trigger" to="." method="OnEntered"]
 [connection signal="area_exited" from="Trigger" to="." method="OnExited"]

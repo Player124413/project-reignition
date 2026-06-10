@@ -99,25 +99,39 @@ func _ready() -> void:
 		# This is a demo character
 		on_demo_spawned()
 	else:
+		set_physics_process(false)
+		
+		if is_player_valid():
+			MinigameManager.instance.gameplay_started.connect(Callable.create(self, "activate"))
+			MinigameManager.instance.gameplay_finished.connect(Callable.create(self, "on_gameplay_finished"))
+			MinigameManager.instance.minigame_finished.connect(Callable.create(self, "on_minigame_finished"))
+		else:
+			# This player index is not being used. (i.e. tournament palace)
+			visible = false
+			set_process(false)
+			MinigameManager.instance.disable_splitscreen_player(player_index)
+		
 		# Instance Player Model
 		character_animator = MinigameManager.instance.load_character_model(player_index)
 		spawn_position.add_child(character_animator)
 		
-		# TODO Check if this player index is actually being used. (i.e. duel minigames)
-		set_physics_process(false)
-		MinigameManager.instance.gameplay_started.connect(Callable.create(self, "activate"))
-		MinigameManager.instance.gameplay_finished.connect(Callable.create(self, "on_gameplay_finished"))
-		MinigameManager.instance.minigame_finished.connect(Callable.create(self, "on_minigame_finished"))
-		
 		if is_instance_valid(score_counter):
 			# Initialize the score counter
-			score_counter.set_player_index(player_index)
+			score_counter.initialize_score_counter(player_index)
 	
 	character_animator.connect("animation_event", Callable.create(self, "process_animation_event"))
 	on_spawn_finished()
 	
-	if player_index == 0 && NetworkManager.is_hosting_game: # Only generate queue on player 1
+	if is_minigame_host():
 		on_host_spawned()
+
+## Returns whether this player is the minigame host.
+## Due to Tournament Palace, this is not the same as the network host.
+func is_minigame_host() -> bool:
+	return player_index == PartyManager.minigame_players[0]
+
+func is_player_valid() -> bool:
+	return PartyManager.minigame_players.has(player_index)
 
 ## Called after the host has spawned.
 func on_host_spawned() -> void:
@@ -126,6 +140,8 @@ func on_host_spawned() -> void:
 ## Called after spawn logic has finished.
 func on_spawn_finished() -> void:
 	_is_spawn_finished = true
+	if !is_player_valid() && player_index != -1:
+		queue_free()
 
 func on_gameplay_finished() -> void:
 	_is_gameplay_finished = true
@@ -133,6 +149,7 @@ func on_gameplay_finished() -> void:
 		deactivate()
 
 func on_minigame_finished() -> void:
+	cancel_invincibility()
 	disable_tree()
 	deactivate()
 

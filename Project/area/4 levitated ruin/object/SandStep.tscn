@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=3 uid="uid://br4bp3m6g4l8g"]
+[gd_scene format=3 uid="uid://br4bp3m6g4l8g"]
 
 [ext_resource type="Script" uid="uid://der7w6b5fd4vk" path="res://area/4 levitated ruin/data/script/SandStep.cs" id="1_xg4nq"]
 [ext_resource type="Material" uid="uid://c2lqqtvy2q1xp" path="res://effect/particle/material/environment/Common Dust.tres" id="2_l0ttg"]
@@ -46,7 +46,7 @@ material = ExtResource("3_6e2ye")
 [sub_resource type="BoxShape3D" id="BoxShape3D_l0ttg"]
 size = Vector3(1, 0.05, 1)
 
-[node name="SandStep" type="Node3D" node_paths=PackedStringArray("particleParent", "lockonTrigger", "floorCollision", "sfx")]
+[node name="SandStep" type="Node3D" unique_id=1875817894 node_paths=PackedStringArray("particleParent", "lockonTrigger", "floorCollision", "sfx")]
 script = ExtResource("1_xg4nq")
 isSandFlowing = true
 particleParent = NodePath("Dust")
@@ -54,7 +54,7 @@ lockonTrigger = NodePath("Lockon")
 floorCollision = NodePath("Floor/CollisionShape3D")
 sfx = NodePath("SandStepSFX")
 
-[node name="Dust" type="GPUParticles3D" parent="." node_paths=PackedStringArray("subSystems")]
+[node name="Dust" type="GPUParticles3D" parent="." unique_id=1730940837 node_paths=PackedStringArray("subSystems")]
 layers = 32
 cast_shadow = 0
 visibility_aabb = AABB(-1, -4, -0.5, 2, 5, 4)
@@ -64,7 +64,7 @@ draw_pass_1 = SubResource("QuadMesh_jt26i")
 script = ExtResource("3_xg4nq")
 subSystems = [NodePath("Splatter")]
 
-[node name="Splatter" type="GPUParticles3D" parent="Dust"]
+[node name="Splatter" type="GPUParticles3D" parent="Dust" unique_id=1237862204]
 layers = 32
 cast_shadow = 0
 fixed_fps = 60
@@ -74,24 +74,24 @@ local_coords = true
 process_material = SubResource("ParticleProcessMaterial_e71ed")
 draw_pass_1 = SubResource("QuadMesh_f06j3")
 
-[node name="Lockon" type="Area3D" parent="."]
+[node name="Lockon" type="Area3D" parent="." unique_id=1524306044]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1)
 collision_layer = 12
 collision_mask = 2
 monitoring = false
 monitorable = false
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Lockon"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Lockon" unique_id=117367989]
 shape = SubResource("SphereShape3D_5bxov")
 
-[node name="Floor" type="StaticBody3D" parent="." groups=["floor", "level wall", "sand"]]
+[node name="Floor" type="StaticBody3D" parent="." unique_id=208401970 groups=["floor", "level wall", "sand"]]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.4, 1)
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Floor"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Floor" unique_id=83120553]
 shape = SubResource("BoxShape3D_l0ttg")
 disabled = true
 
-[node name="SandStepSFX" type="AudioStreamPlayer3D" parent="."]
+[node name="SandStepSFX" type="AudioStreamPlayer3D" parent="." unique_id=1757641084]
 stream = ExtResource("5_l0ttg")
 max_db = 0.0
 max_distance = 100.0

@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://xeuluo21g3tw"]
+[gd_scene format=3 uid="uid://xeuluo21g3tw"]
 
 [ext_resource type="Script" uid="uid://dbxkhv8cvi8sq" path="res://object/stage/common/resource/script/TimedHazard.cs" id="1_araiw"]
 [ext_resource type="PackedScene" uid="uid://cum3u35ksu1pb" path="res://object/stage/common/resource/model/SpikePanel.gltf" id="2_wces2"]
@@ -255,7 +255,7 @@ _data = {
 &"warning": SubResource("6")
 }
 
-[node name="SpikePanel" type="Node3D"]
+[node name="SpikePanel" type="Node3D" unique_id=1864789487]
 script = ExtResource("1_araiw")
 stateNames = Array[StringName]([&"inactive", &"warning", &"active"])
 stateLengths = PackedFloat32Array(0, 0, 0)
@@ -263,34 +263,33 @@ animator = NodePath("SpikePanel/AnimationPlayer")
 timer = NodePath("Timer")
 "Current State" = 0
 "Auto Advance" = true
+"Start Paused" = false
 "Start Time" = 0.0
 "State Lengths/inactive" = 0.0
 "State Lengths/warning" = 0.0
 "State Lengths/active" = 0.0
 ignoreSpeedbreakingCharacters = true
 
-[node name="SpikePanel" parent="." instance=ExtResource("2_wces2")]
+[node name="SpikePanel" parent="." unique_id=1686966535 instance=ExtResource("2_wces2")]
 
-[node name="Spikes" parent="SpikePanel" index="1"]
+[node name="Spikes" parent="SpikePanel" index="1" unique_id=1794944754]
 visible = false
 
-[node name="Hitbox" type="Area3D" parent="SpikePanel/Spikes" index="0"]
+[node name="Hitbox" type="Area3D" parent="SpikePanel/Spikes" index="0" unique_id=1436206019]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.4032, 0)
 collision_layer = 0
 collision_mask = 2
 monitorable = false
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="SpikePanel/Spikes/Hitbox"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="SpikePanel/Spikes/Hitbox" unique_id=655182568]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.65, 0)
 shape = SubResource("3")
 disabled = true
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="SpikePanel"]
-libraries = {
-&"": SubResource("AnimationLibrary_vh2p2")
-}
+[node name="AnimationPlayer" type="AnimationPlayer" parent="SpikePanel" unique_id=1038807318]
+libraries/ = SubResource("AnimationLibrary_vh2p2")
 
-[node name="ActivateSfx" type="AudioStreamPlayer3D" parent="."]
+[node name="ActivateSfx" type="AudioStreamPlayer3D" parent="." unique_id=437598721]
 process_mode = 1
 stream = ExtResource("3_x6o7f")
 unit_size = 30.0
@@ -301,7 +300,7 @@ bus = &"GAME SFX"
 script = ExtResource("4_3uyhn")
 groupKey = &"spike_panel_activate"
 
-[node name="DeactivateSfx" type="AudioStreamPlayer3D" parent="."]
+[node name="DeactivateSfx" type="AudioStreamPlayer3D" parent="." unique_id=2003989913]
 process_mode = 1
 stream = ExtResource("4_qse3b")
 unit_size = 30.0
@@ -312,7 +311,7 @@ bus = &"GAME SFX"
 script = ExtResource("4_3uyhn")
 groupKey = &"spike_panel_deactivate"
 
-[node name="Timer" type="Timer" parent="."]
+[node name="Timer" type="Timer" parent="." unique_id=1731614720]
 one_shot = true
 
 [connection signal="area_entered" from="SpikePanel/Spikes/Hitbox" to="." method="OnEntered"]

@@ -49,6 +49,7 @@ enum SCREEN_MODE {
 	SHARED, # A single screen for everybody. Use this for sequential or group mini-games.
 	SPLITSCREEN # Each player gets a corner of the screen. Use this for simultaneous screens.
 }
+@export var use_horizontal_duel_screen : bool
 ## Transition to use when exiting demo.
 @export var demo_transition_mode : DEMO_TRANSITION
 enum DEMO_TRANSITION {
@@ -58,8 +59,8 @@ enum DEMO_TRANSITION {
 
 ## Disable this if you have something in the game that needs to finish before we can play the results.
 @export var autoplay_results : bool = true
-## Number of players that must "complete" the game the minigame to auto-complete.
-@export var autocomplete_player_count : int = 4
+## Number of "survivors" that must be left for the minigame to autocomplete.
+@export_range(0, 3, 1) var autocomplete_survivor_count : int = 0
 ## Tracks whether we're ready to play the results screen or not (based on non-game elements).
 var is_results_queued : bool
 
@@ -109,7 +110,7 @@ func _init() -> void:
 	
 	if !PartyManager.is_player_data_initialized():
 		PartyManager.initialize_offline_player_data()
-		initialize_debug_characters()
+		PartyManager.initialize_debug_characters()
 
 func _ready() -> void:
 	for i in range(INITIAL_SCORE_POPUP_POOL_SIZE):
@@ -118,8 +119,11 @@ func _ready() -> void:
 	for i in results_location.size():
 		results_location[i].visible = false
 	
-	# TODO Change splitscreen mode if in Tournament Palace (2 players)
-	animator.play("free-for-all")
+	if PartyManager.current_mode == PartyManager.CURRENT_MODE_ENUM.TOURNAMENT_PALACE:
+		# Change splitscreen mode if in Tournament Palace (2 players)
+		animator.play("duel_horizontal" if use_horizontal_duel_screen else "duel_vertical")
+	else:
+		animator.play("free-for-all")
 	animator.advance(0.0)
 	
 	if screen_mode == SCREEN_MODE.SHARED || demo_transition_mode == DEMO_TRANSITION.FULLSCREEN:
@@ -127,29 +131,26 @@ func _ready() -> void:
 		animator.advance(0.0)
 	
 	if NetworkManager.is_online:
-		NetworkManager.party_game_started.connect(Callable(self, "start_party_game"), CONNECT_DEFERRED)
+		NetworkManager.peers_loaded.connect(Callable(self, "start_party_game"), CONNECT_DEFERRED)
 	else:
 		call_deferred("start_party_game")
 
+## Disables a splitscreen player.  
+func disable_splitscreen_player(index : int) -> void:
+	subviewport_worlds[index].get_parent().visible = false
+	subviewport_worlds[index].set_process(false)
+	subviewport_worlds[index].set_physics_process(false)
+
 func _exit_tree() -> void:
-	if NetworkManager.party_game_started.is_connected(Callable(self, "start_party_game")):
-		NetworkManager.party_game_started.disconnect(Callable(self, "start_party_game"))
+	if NetworkManager.peers_loaded.is_connected(Callable(self, "start_party_game")):
+		NetworkManager.peers_loaded.disconnect(Callable(self, "start_party_game"))
 
 func start_party_game() -> void:
 	peers_loaded.emit()
+	print("peers are loaded!")
 	if is_instance_valid(intro_animator) && intro_animator.has_animation("intro"):
+		print("playing intro animation!")
 		intro_animator.play("intro")
-
-## Called when running a mini-game from the editor. Loads 4 default characters.
-func initialize_debug_characters() -> void:
-	print("Initializing default characters for debug mode.")
-	for i in PartyManager.MAX_PLAYER_COUNT:
-		# Simply add characters based on their index order
-		var character_data : PartyCharacterResource = PartyManager.character_data.get(i)
-		PartyManager.set_character_data(i, character_data.character_name)
-		PartyManager.set_player_indexes(i, i, 1 if i == 0 else 0, 1) # Set everyone to a cpu except for p1
-		if i > 0:
-			PartyManager.set_difficulty(i, i) # Set this to i - 1 if you need to test easy cpus
 
 func load_character_model(player_index : int) -> CharacterAnimator:
 	var scene : PackedScene = load(PartyManager.get_player_data(player_index).character_data.model_file) as PackedScene
@@ -181,7 +182,7 @@ func on_repool_score_popup(popup : ScorePopup) -> void:
 		active_popups.remove_at(index)
 
 func request_score_popup(player_index : int, amount : int, pos : Vector2) -> void:
-	if player_index < 0 || player_index > PartyManager.MAX_PLAYER_COUNT:
+	if !PartyManager.minigame_players.has(player_index):
 		return
 	
 	if screen_mode == SCREEN_MODE.SPLITSCREEN: # Account for splitscreen
@@ -234,7 +235,7 @@ func _change_time(player_index : int, time : float) -> void:
 ## Adds one completed player and checks whether we should finish the mini-game.
 func register_completed_player() -> void:
 	completed_player_count += 1
-	if completed_player_count >= autocomplete_player_count:
+	if completed_player_count >= PartyManager.minigame_players.size() - autocomplete_survivor_count:
 		request_minigame_finish()
 
 func request_minigame_start() -> void:
@@ -319,20 +320,26 @@ func start_results() -> void:
 		if rank_mode == RANK_MODE.TIME:
 			for i in player_times.size():
 				var rank : int = 0
-				for j in i:
-					if player_times[j] < player_times[i]:
-						rank += 1
-					else:
-						rankings[j] += 1
+				if !PartyManager.minigame_players.has(i):
+					rank = PartyManager.MAX_PLAYER_COUNT
+				else:
+					for j in i:
+						if player_times[j] < player_times[i]:
+							rank += 1
+						else:
+							rankings[j] += 1
 				rankings[i] = rank
 		else:
 			for i in player_scores.size():
 				var rank : int = 0
-				for j in i:
-					if player_scores[j] > player_scores[i]:
-						rank += 1
-					elif player_scores[j] < player_scores[i]:
-						rankings[j] += 1
+				if !PartyManager.minigame_players.has(i):
+					rank = PartyManager.MAX_PLAYER_COUNT
+				else:
+					for j in i:
+						if player_scores[j] > player_scores[i]:
+							rank += 1
+						elif player_scores[j] < player_scores[i]:
+							rankings[j] += 1
 				rankings[i] = rank
 	
 	# Store rankings to PartyManager
