@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=3 uid="uid://bv4u8as8ffj76"]
+[gd_scene format=3 uid="uid://bv4u8as8ffj76"]
 
 [ext_resource type="PackedScene" uid="uid://bm61nw4o1jcrb" path="res://area/4 levitated ruin/act 1/Static.tscn" id="1_vv3mv"]
 [ext_resource type="Script" uid="uid://bssd28yqn1cxg" path="res://object/trigger/modules/PathTrigger.cs" id="2_e171u"]
@@ -15,6 +15,94 @@
 [ext_resource type="PackedScene" uid="uid://bn6wr6l8s3qyt" path="res://object/trigger/StageTrigger.tscn" id="12_mu566"]
 [ext_resource type="Resource" uid="uid://cbakeucrpdafq" path="res://area/4 levitated ruin/act 1/camera/rampage/EnemyCam.tres" id="13_ji7qd"]
 
+[sub_resource type="Shader" id="Shader_cl5sw"]
+code = "shader_type canvas_item;
+render_mode unshaded, blend_add;
+
+uniform sampler2D depth_tex : filter_linear;
+uniform sampler2D screen_texture : hint_screen_texture, filter_linear;
+uniform sampler2D light_color : hint_default_white;
+uniform vec4 ray_color : source_color = vec4(1.0, 1.0, 1.0, 1.0);
+uniform float ray_length : hint_range(0.0, 1.0) = 1.0;
+uniform float ray_intensity : hint_range(0.0, 1.0) = 1.0;
+uniform float light_source_scale = 1.0;
+uniform float light_source_feather = 2.0;
+uniform float noise_strength : hint_range(0.0, 1.0) = 0.2;
+uniform vec2 light_source_pos = vec2(0.0, 0.0);
+uniform vec3 light_source_dir = vec3(0.5, -1.0, 0.25);
+uniform float mask_threshold : hint_range(0.0, 1.0) = 0.5;
+uniform float mask_softness : hint_range(0.01, 0.5) = 0.15;
+uniform float mask_radius : hint_range(0.01, 0.5) = 0.15;
+uniform bool debug_mode = false;
+uniform float debug_dot_radius : hint_range(0.001, 0.05) = 0.01;
+
+const int SAMPLE_COUNT = 120;
+
+float random(vec2 uv) {
+	return fract(sin(dot(uv.xy, vec2(12.9898, 78.233))) * 43758.5453123);
+}
+
+void fragment() {
+	vec2 light_pos = light_source_pos;
+	vec2 ratio = vec2(SCREEN_PIXEL_SIZE.x / SCREEN_PIXEL_SIZE.y, 1.0);
+
+	if (debug_mode) {
+		vec2 diff = (UV - light_pos) / ratio;
+		float dist = length(diff);
+		float dot_mask = smoothstep(debug_dot_radius, debug_dot_radius * 0.5, dist);
+		COLOR.rgb = vec3(dot_mask);
+		COLOR.a = 1.0;
+	} else {
+		vec2 dir = UV - light_pos;
+		vec2 dir2 = UV / ratio - light_pos / ratio;
+		float light_rays = 0.0;
+		vec2 uv2;
+		float scale, l;
+
+		for (int i = 0; i < SAMPLE_COUNT; i++) {
+			scale = 1.0 - ray_length * (float(i) / float(SAMPLE_COUNT - 1));
+			vec2 sample_uv = dir * scale + light_pos;
+			l = 1.0 - texture(depth_tex, sample_uv).a;
+			uv2 = dir2 * scale * pow(light_source_scale, 2.0);
+			l *= smoothstep(1.0, 0.999 - light_source_feather, dot(uv2, uv2) * 4.0);
+			light_rays += l / float(SAMPLE_COUNT);
+		}
+
+		float n = 1.0 - random(UV) * noise_strength * smoothstep(0.999 - 1.25, 1.0, dot(dir2, dir2) * 2.0);
+		light_rays *= n;
+
+		vec3 screen_col = texture(screen_texture, SCREEN_UV).rgb;
+		float brightness = max(screen_col.r, max(screen_col.g, screen_col.b));
+		float moon_mask = smoothstep(mask_threshold, mask_threshold + mask_softness, brightness);
+
+		float dist_to_light = length((UV - light_pos) / ratio);
+		float proximity = 1.0 - smoothstep(0.0, mask_radius, dist_to_light);
+		moon_mask *= proximity;
+
+		light_rays *= (1.0 - moon_mask);
+
+		COLOR.rgb = vec3(light_rays * ray_intensity) * texture(light_color, UV).rgb * ray_color.rgb;
+		COLOR.a = ray_color.a;
+	}
+}"
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_fuur8"]
+resource_local_to_scene = true
+shader = SubResource("Shader_cl5sw")
+shader_parameter/ray_color = Color(0.92156863, 0.74509805, 0.3372549, 1)
+shader_parameter/ray_length = 0.8000000380000001
+shader_parameter/ray_intensity = 0.350000016625
+shader_parameter/light_source_scale = 1.1999999999970896
+shader_parameter/light_source_feather = 1.4499999999970896
+shader_parameter/noise_strength = 0.10000000475
+shader_parameter/light_source_pos = Vector2(0, 0)
+shader_parameter/light_source_dir = Vector3(0.5, -1, 0.25)
+shader_parameter/mask_threshold = 0.78400003724
+shader_parameter/mask_softness = 0.16900000732898002
+shader_parameter/mask_radius = 0.5
+shader_parameter/debug_mode = false
+shader_parameter/debug_dot_radius = 0.01
+
 [sub_resource type="Curve3D" id="Curve3D_1vxpw"]
 _data = {
 "points": PackedVector3Array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 500),
@@ -28,59 +116,62 @@ size = Vector3(20, 20, 2.5)
 [sub_resource type="BoxShape3D" id="BoxShape3D_62udo"]
 size = Vector3(150, 150, 5)
 
-[node name="Stage" type="Node"]
+[node name="Stage" type="Node" unique_id=2122712813]
 
-[node name="Static" parent="." node_paths=PackedStringArray("pathParent") instance=ExtResource("1_vv3mv")]
+[node name="Static" parent="." unique_id=1067814808 node_paths=PackedStringArray("pathParent") instance=ExtResource("1_vv3mv")]
 Data = ExtResource("2_jy6pq")
 InitialCameraSettings = ExtResource("3_qbu3x")
 pathParent = NodePath("../RampageAct/LevelPath")
 
-[node name="CollisionShape3D" parent="Static/Triggers/Camera/Rukh1Camera" index="1"]
+[node name="ColorRect_LightRays" parent="Static/Visuals/LRSky/DepthRenderer/CanvasLayerLightShafts" parent_id_path=PackedInt32Array(1067814808, 707065977) index="0" unique_id=1619946167]
+material = SubResource("ShaderMaterial_fuur8")
+
+[node name="CollisionShape3D" parent="Static/Triggers/Camera/Rukh1Camera" parent_id_path=PackedInt32Array(1067814808, 449207962) index="1" unique_id=2140249471]
 disabled = true
 
-[node name="RampageAct" type="Node3D" parent="."]
+[node name="RampageAct" type="Node3D" parent="." unique_id=1461787496]
 
-[node name="LevelPath" type="Node3D" parent="RampageAct" node_paths=PackedStringArray("path")]
+[node name="LevelPath" type="Node3D" parent="RampageAct" unique_id=2102220727 node_paths=PackedStringArray("path")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -141)
 script = ExtResource("2_e171u")
 path = NodePath("Path")
 
-[node name="Path" type="Path3D" parent="RampageAct/LevelPath"]
+[node name="Path" type="Path3D" parent="RampageAct/LevelPath" unique_id=1183211271]
 curve = SubResource("Curve3D_1vxpw")
 
-[node name="SpawnPosition" type="Node3D" parent="RampageAct"]
+[node name="SpawnPosition" type="Node3D" parent="RampageAct" unique_id=1037670261]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.125, -10)
 
-[node name="CharacterSpawn" parent="RampageAct/SpawnPosition" instance=ExtResource("4_uidvt")]
+[node name="CharacterSpawn" parent="RampageAct/SpawnPosition" unique_id=67748819 instance=ExtResource("4_uidvt")]
 
-[node name="Objects" type="Node3D" parent="RampageAct"]
+[node name="Objects" type="Node3D" parent="RampageAct" unique_id=1631553459]
 
-[node name="RoundPillar1" parent="RampageAct/Objects" instance=ExtResource("5_klixx")]
+[node name="RoundPillar1" parent="RampageAct/Objects" unique_id=462692493 instance=ExtResource("5_klixx")]
 transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 2, 4.88772, -110)
 
-[node name="RoundPillar2" parent="RampageAct/Objects" instance=ExtResource("5_klixx")]
+[node name="RoundPillar2" parent="RampageAct/Objects" unique_id=272180221 instance=ExtResource("5_klixx")]
 transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 2.72848e-12, 4.88772, -110)
 
-[node name="RoundPillar3" parent="RampageAct/Objects" instance=ExtResource("5_klixx")]
+[node name="RoundPillar3" parent="RampageAct/Objects" unique_id=1317261979 instance=ExtResource("5_klixx")]
 transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, -2, 4.88772, -110)
 
-[node name="StaticBody3D" type="StaticBody3D" parent="RampageAct/Objects" groups=["wall"]]
+[node name="StaticBody3D" type="StaticBody3D" parent="RampageAct/Objects" unique_id=1136888252 groups=["wall"]]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.72848e-12, 5, -110)
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="RampageAct/Objects/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="RampageAct/Objects/StaticBody3D" unique_id=605568553]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
 shape = SubResource("BoxShape3D_25c7k")
 
-[node name="FireSoul1" parent="RampageAct/Objects" instance=ExtResource("3_rd0hr")]
+[node name="FireSoul1" parent="RampageAct/Objects" unique_id=1874569906 instance=ExtResource("3_rd0hr")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.91172e-12, 2.8, -70)
 
-[node name="Spring" parent="RampageAct/Objects" instance=ExtResource("7_q81mj")]
+[node name="Spring" parent="RampageAct/Objects" unique_id=297835069 instance=ExtResource("7_q81mj")]
 transform = Transform3D(1, 5.14749e-15, -1.37927e-15, -5.32907e-15, 0.965926, -0.258819, 3.28225e-21, 0.258819, 0.965926, 0, 0.2, 0)
 MiddleHeight = 6.0
 FinalHeight = 5.0
 Distance = 10.0
 
-[node name="Ivy" parent="RampageAct/Objects" instance=ExtResource("6_ek6sl")]
+[node name="Ivy" parent="RampageAct/Objects" unique_id=299610279 instance=ExtResource("6_ek6sl")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.68434e-14, 55, 10)
 Length = 50
 MaxRotation = 150.0
@@ -89,33 +180,33 @@ MaxRotation = 150.0
 "Secondary Settings/Distance" = 40.0
 LauncherDirection = 2
 
-[node name="StaticCamera" type="Node3D" parent="RampageAct/Objects/Ivy"]
+[node name="StaticCamera" type="Node3D" parent="RampageAct/Objects/Ivy" unique_id=1293557638]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, -40, -5)
 script = ExtResource("10_hmeqa")
 settings = ExtResource("11_j6onj")
 previousSettings = ExtResource("3_qbu3x")
 
-[node name="FireSoul2" parent="RampageAct/Objects" instance=ExtResource("3_rd0hr")]
+[node name="FireSoul2" parent="RampageAct/Objects" unique_id=429351500 instance=ExtResource("3_rd0hr")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 44, 46)
 fireSoulIndex = 2
 
-[node name="EnemyCamera" parent="RampageAct/Objects" instance=ExtResource("12_mu566")]
+[node name="EnemyCamera" parent="RampageAct/Objects" unique_id=1703352465 instance=ExtResource("12_mu566")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 60)
 "Enter Mode" = 0
 
-[node name="Camera" type="Node3D" parent="RampageAct/Objects/EnemyCamera"]
+[node name="Camera" type="Node3D" parent="RampageAct/Objects/EnemyCamera" unique_id=199642776]
 script = ExtResource("10_hmeqa")
 settings = ExtResource("13_ji7qd")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="RampageAct/Objects/EnemyCamera"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="RampageAct/Objects/EnemyCamera" unique_id=726918999]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 50, 0)
 shape = SubResource("BoxShape3D_62udo")
 
-[node name="FireSoul3" parent="RampageAct/Objects" instance=ExtResource("3_rd0hr")]
+[node name="FireSoul3" parent="RampageAct/Objects" unique_id=259092126 instance=ExtResource("3_rd0hr")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4, 99)
 fireSoulIndex = 3
 
-[node name="BlueMajin" parent="RampageAct/Objects" instance=ExtResource("5_qrx72")]
+[node name="BlueMajin" parent="RampageAct/Objects" unique_id=274856726 instance=ExtResource("5_qrx72")]
 transform = Transform3D(-1, 0, 8.74232e-08, 0, 1, 0, -8.74232e-08, 0, -1, -9.09495e-13, 0, 100)
 SpawnMode = 2
 

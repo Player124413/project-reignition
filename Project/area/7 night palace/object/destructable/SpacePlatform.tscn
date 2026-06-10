@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=3 uid="uid://cdebogumtj1sj"]
+[gd_scene format=3 uid="uid://cdebogumtj1sj"]
 
 [ext_resource type="Script" uid="uid://bdlofqc6xiigo" path="res://object/trigger/modules/PlatformTrigger.cs" id="1_vndqj"]
 [ext_resource type="Script" uid="uid://bj7jhdknn12cl" path="res://object/stage/destructable/resource/script/DestructableObject.cs" id="2_aawft"]
@@ -220,7 +220,7 @@ _data = {
 &"shatter": SubResource("Animation_u4mg2")
 }
 
-[node name="SpacePlatform" type="Node3D" node_paths=PackedStringArray("floorCalculationRoot", "parentCollider")]
+[node name="SpacePlatform" type="Node3D" unique_id=1689470527 node_paths=PackedStringArray("floorCalculationRoot", "parentCollider")]
 script = ExtResource("1_vndqj")
 floorCalculationRoot = NodePath("Root/PlatformTrigger")
 parentCollider = NodePath("Root/StaticBody3D")
@@ -231,7 +231,7 @@ parentCollider = NodePath("Root/StaticBody3D")
 "Falling Platform Settings/Fall Speed" = 0.5
 "Floating Platform Settings/Enabled" = false
 
-[node name="Root" type="Node3D" parent="." node_paths=PackedStringArray("root", "pieceRoot", "animator")]
+[node name="Root" type="Node3D" parent="." unique_id=515277581 node_paths=PackedStringArray("root", "pieceRoot", "animator")]
 script = ExtResource("2_aawft")
 pieceMass = 0.1999999999970896
 shakeScreenOnShatter = false
@@ -241,40 +241,40 @@ root = NodePath("SpacePlatform")
 pieceRoot = NodePath("SpacePlatformPieces")
 animator = NodePath("../AnimationPlayer")
 
-[node name="SpacePlatform" parent="Root" instance=ExtResource("2_tq1bs")]
+[node name="SpacePlatform" parent="Root" unique_id=2046275350 instance=ExtResource("2_tq1bs")]
 
-[node name="SpacePlatformPieces" parent="Root" instance=ExtResource("3_aawft")]
+[node name="SpacePlatformPieces" parent="Root" unique_id=704377423 instance=ExtResource("3_aawft")]
 visible = false
 
-[node name="PlatformTrigger" type="Area3D" parent="Root"]
+[node name="PlatformTrigger" type="Area3D" parent="Root" unique_id=634350470]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.125, 0)
 visible = false
 collision_layer = 0
 collision_mask = 2
 monitorable = false
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Root/PlatformTrigger"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Root/PlatformTrigger" unique_id=490744642]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
 shape = SubResource("BoxShape3D_vndqj")
 
-[node name="ShatterTrigger" type="Area3D" parent="Root"]
+[node name="ShatterTrigger" type="Area3D" parent="Root" unique_id=59850217]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, 0)
 visible = false
 collision_layer = 0
 collision_mask = 3
 monitorable = false
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Root/ShatterTrigger"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Root/ShatterTrigger" unique_id=1325151927]
 shape = SubResource("BoxShape3D_vndqj")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Root" groups=["crusher", "floor", "splash jump"]]
+[node name="StaticBody3D" type="StaticBody3D" parent="Root" unique_id=621746919 groups=["crusher", "floor", "splash jump"]]
 collision_layer = 9
 collision_mask = 0
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Root/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Root/StaticBody3D" unique_id=766731154]
 shape = SubResource("BoxShape3D_u4mg2")
 
-[node name="SFX" type="AudioStreamPlayer3D" parent="Root"]
+[node name="SFX" type="AudioStreamPlayer3D" parent="Root" unique_id=1282255333]
 stream = ExtResource("5_u4mg2")
 attenuation_model = 3
 max_db = 0.0
@@ -284,11 +284,9 @@ attenuation_filter_cutoff_hz = 20500.0
 script = ExtResource("6_lctic")
 groupKey = &"glass shatter"
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=755386178]
 callback_mode_process = 0
-libraries = {
-&"": SubResource("AnimationLibrary_aawft")
-}
+libraries/ = SubResource("AnimationLibrary_aawft")
 
 [connection signal="area_entered" from="Root/PlatformTrigger" to="." method="OnEntered"]
 [connection signal="area_exited" from="Root/PlatformTrigger" to="." method="OnExited"]

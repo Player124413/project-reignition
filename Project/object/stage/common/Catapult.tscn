@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://mhhtlvsxmugl"]
+[gd_scene format=3 uid="uid://mhhtlvsxmugl"]
 
 [ext_resource type="Script" uid="uid://w762wb2ka727" path="res://object/stage/common/resource/script/Catapult.cs" id="1_khiik"]
 [ext_resource type="PackedScene" uid="uid://c8k53rqs12i2q" path="res://object/stage/common/resource/model/Catapult.gltf" id="2_2l30y"]
@@ -16,7 +16,7 @@ size = Vector3(0.3, 1.8, 0.2)
 [sub_resource type="SphereShape3D" id="2"]
 radius = 0.9
 
-[node name="Catapult" type="Node3D" node_paths=PackedStringArray("playerPositionNode", "armNode", "enterSFX", "aimSFX", "launchPoint")]
+[node name="Catapult" type="Node3D" unique_id=985699732 node_paths=PackedStringArray("playerPositionNode", "armNode", "enterSFX", "aimSFX", "launchPoint")]
 script = ExtResource("1_khiik")
 playerPositionNode = NodePath("Catapult/CatapultArm/PlayerPosition")
 armNode = NodePath("Catapult/CatapultArm")
@@ -34,42 +34,42 @@ sfxPlayer = NodePath("SFX/Launch")
 voiceKey = &""
 launchPoint = NodePath("LaunchPoint")
 
-[node name="Collision" type="StaticBody3D" parent="." groups=["floor", "wall"]]
+[node name="Collision" type="StaticBody3D" parent="." unique_id=1915266 groups=["floor", "wall"]]
 
-[node name="BaseCollider" type="CollisionShape3D" parent="Collision"]
+[node name="BaseCollider" type="CollisionShape3D" parent="Collision" unique_id=550780851]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.15, 0)
 shape = SubResource("CylinderShape3D_rv4cm")
 
-[node name="ArmCollider" type="CollisionShape3D" parent="Collision"]
+[node name="ArmCollider" type="CollisionShape3D" parent="Collision" unique_id=1795862056]
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0.2, -1.496)
 shape = SubResource("BoxShape3D_rv4cm")
 
-[node name="LaunchPoint" type="Node3D" parent="."]
+[node name="LaunchPoint" type="Node3D" parent="." unique_id=167329542]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.5, 0)
 
-[node name="Catapult" parent="." instance=ExtResource("2_2l30y")]
+[node name="Catapult" parent="." unique_id=1478530071 instance=ExtResource("2_2l30y")]
 
-[node name="PlayerPosition" type="Node3D" parent="Catapult/CatapultArm" index="0"]
+[node name="PlayerPosition" type="Node3D" parent="Catapult/CatapultArm" parent_id_path=PackedInt32Array(1478530071, 11744784) index="0" unique_id=416636991]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.1, -3)
 
-[node name="Lockon" type="Area3D" parent="Catapult/CatapultArm" index="1"]
+[node name="Lockon" type="Area3D" parent="Catapult/CatapultArm" parent_id_path=PackedInt32Array(1478530071, 11744784) index="1" unique_id=451457332]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -3)
 collision_layer = 4
 collision_mask = 2
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Catapult/CatapultArm/Lockon"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Catapult/CatapultArm/Lockon" unique_id=602392619]
 shape = SubResource("2")
 
-[node name="SFX" type="Node3D" parent="."]
+[node name="SFX" type="Node3D" parent="." unique_id=2019854950]
 
-[node name="Enter" type="AudioStreamPlayer3D" parent="SFX"]
+[node name="Enter" type="AudioStreamPlayer3D" parent="SFX" unique_id=1519486430]
 process_mode = 1
 stream = ExtResource("3_uj4ov")
 max_db = -6.0
 bus = &"GAME SFX"
 attenuation_filter_cutoff_hz = 20500.0
 
-[node name="Aim" type="AudioStreamPlayer3D" parent="SFX"]
+[node name="Aim" type="AudioStreamPlayer3D" parent="SFX" unique_id=1642440349]
 process_mode = 1
 stream = ExtResource("4_hssgu")
 max_db = -6.0
@@ -77,7 +77,7 @@ max_distance = 100.0
 bus = &"GAME SFX"
 attenuation_filter_cutoff_hz = 20500.0
 
-[node name="Launch" type="AudioStreamPlayer3D" parent="SFX"]
+[node name="Launch" type="AudioStreamPlayer3D" parent="SFX" unique_id=1746289956]
 process_mode = 1
 stream = ExtResource("5_rv4cm")
 max_db = -6.0

@@ -1,9 +1,9 @@
-[gd_scene load_steps=23 format=3 uid="uid://mlaecfbmxihk"]
+[gd_scene format=3 uid="uid://mlaecfbmxihk"]
 
 [ext_resource type="PackedScene" uid="uid://bxq56vewfoodk" path="res://area/6 skeleton dome/object/model/special/Bone.gltf" id="1_3jkna"]
 [ext_resource type="Script" uid="uid://hofqefwd2eym" path="res://area/6 skeleton dome/data/script/Bone.cs" id="1_dl4pl"]
 [ext_resource type="Material" uid="uid://bef3nf037vgw8" path="res://object/stage/common/resource/model/material/Flying Pot Shine.tres" id="2_0hift"]
-[ext_resource type="PackedScene" path="res://area/6 skeleton dome/object/WarpVfx.tscn" id="4_dqaqq"]
+[ext_resource type="PackedScene" uid="uid://ohu3dilki5ib" path="res://area/6 skeleton dome/object/WarpVfx.tscn" id="4_dqaqq"]
 [ext_resource type="Material" uid="uid://ca62uiedbfw5x" path="res://effect/particle/material/Ember Blue.tres" id="4_g2ar6"]
 [ext_resource type="AudioStream" uid="uid://cwmbrplfgnrjb" path="res://sound/sfx/stage/skeleton dome/bone spin.wav" id="6_qdqox"]
 
@@ -121,28 +121,28 @@ _data = {
 &"loop": SubResource("Animation_dqaqq")
 }
 
-[node name="Bone" type="Node3D" node_paths=PackedStringArray("area", "root", "sfx", "warpParticleGroup")]
+[node name="Bone" type="Node3D" unique_id=311404206 node_paths=PackedStringArray("area", "root", "sfx", "warpParticleGroup")]
 script = ExtResource("1_dl4pl")
 area = NodePath("BoneRoot/Trigger")
 root = NodePath("BoneRoot")
 sfx = NodePath("SFX")
 warpParticleGroup = NodePath("WarpVFX")
 
-[node name="BoneRoot" parent="." instance=ExtResource("1_3jkna")]
+[node name="BoneRoot" parent="." unique_id=2008577699 instance=ExtResource("1_3jkna")]
 
-[node name="BoneMesh" parent="BoneRoot" index="0"]
+[node name="BoneMesh" parent="BoneRoot" index="0" unique_id=2028405514]
 transform = Transform3D(0.866025, -0.5, 0, 0.5, 0.866025, 0, 0, 0, 1, 0, 0, 0)
 
-[node name="Trigger" type="Area3D" parent="BoneRoot"]
+[node name="Trigger" type="Area3D" parent="BoneRoot" unique_id=686860578]
 transform = Transform3D(1.01943, 0, 0, 0, 1.01943, 0, 0, 0, 1.01943, 0, 0, 0)
 collision_layer = 4
 collision_mask = 2
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="BoneRoot/Trigger"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="BoneRoot/Trigger" unique_id=249012485]
 transform = Transform3D(0.866025, -0.5, 0, 0.5, 0.866025, 0, 0, 0, 1, 0, 0, 0)
 shape = SubResource("CapsuleShape3D_0hift")
 
-[node name="SparkleFX" type="GPUParticles3D" parent="."]
+[node name="SparkleFX" type="GPUParticles3D" parent="." unique_id=1180573229]
 layers = 32
 lifetime = 0.6
 fixed_fps = 0
@@ -151,7 +151,7 @@ visibility_aabb = AABB(-2, -2, -2, 4, 4, 4)
 process_material = SubResource("ParticleProcessMaterial_g2ar6")
 draw_pass_1 = SubResource("PlaneMesh_qdqox")
 
-[node name="CollectFX" type="GPUParticles3D" parent="."]
+[node name="CollectFX" type="GPUParticles3D" parent="." unique_id=1148964346]
 layers = 32
 emitting = false
 amount = 16
@@ -165,24 +165,22 @@ transform_align = 3
 process_material = SubResource("ParticleProcessMaterial_gvqj4")
 draw_pass_1 = SubResource("QuadMesh_lbsyn")
 
-[node name="WarpVFX" parent="." instance=ExtResource("4_dqaqq")]
+[node name="WarpVFX" parent="." unique_id=841337663 instance=ExtResource("4_dqaqq")]
 emitting = false
 
-[node name="Letters" parent="WarpVFX" index="0"]
+[node name="Letters" parent="WarpVFX" index="0" unique_id=746194433]
 emitting = false
 
-[node name="SFX" type="AudioStreamPlayer3D" parent="."]
+[node name="SFX" type="AudioStreamPlayer3D" parent="." unique_id=551623952]
 stream = ExtResource("6_qdqox")
 max_db = -3.0
 max_distance = 20.0
 bus = &"GAME SFX"
 attenuation_filter_cutoff_hz = 20500.0
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
-libraries = {
-&"": SubResource("AnimationLibrary_g2ar6")
-}
-autoplay = "loop"
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=590851371]
+libraries/ = SubResource("AnimationLibrary_g2ar6")
+autoplay = &"loop"
 
 [connection signal="Collected" from="." to="SparkleFX" method="set_emitting" binds= [false]]
 [connection signal="CollectionFinished" from="." to="CollectFX" method="restart"]

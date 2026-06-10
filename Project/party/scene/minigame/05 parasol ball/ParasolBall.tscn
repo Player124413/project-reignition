@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3 uid="uid://bvkej7ps0siog"]
+[gd_scene format=3 uid="uid://bvkej7ps0siog"]
 
 [ext_resource type="PackedScene" uid="uid://dq11nnbns4cqj" path="res://party/scene/minigame/05 parasol ball/model/Ball.glb" id="1_odj36"]
 [ext_resource type="Script" uid="uid://7540gp3bqv6e" path="res://party/scene/minigame/05 parasol ball/script/parasol_ball.gd" id="1_wbhdi"]
@@ -134,7 +134,7 @@ _data = {
 &"fall": SubResource("Animation_1a2t5")
 }
 
-[node name="ParasolBall" type="Area3D" node_paths=PackedStringArray("animator", "mesh", "left_raycast", "right_raycast") groups=["enemy"]]
+[node name="ParasolBall" type="Area3D" unique_id=488367662 node_paths=PackedStringArray("animator", "mesh", "left_raycast", "right_raycast") groups=["enemy"]]
 collision_layer = 8
 collision_mask = 8
 script = ExtResource("1_wbhdi")
@@ -146,23 +146,23 @@ hit_curve = SubResource("Curve_1a2t5")
 left_raycast = NodePath("LeftSide")
 right_raycast = NodePath("RightSide")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=169629812]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3, 0)
 shape = SubResource("SphereShape3D_wbhdi")
 
-[node name="Ball" parent="." instance=ExtResource("1_odj36")]
+[node name="Ball" parent="." unique_id=2043793161 instance=ExtResource("1_odj36")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3, 0)
 
-[node name="BallRoot" parent="Ball" index="0"]
+[node name="BallRoot" parent="Ball" index="0" unique_id=154396953]
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0)
 
-[node name="BallMesh" parent="Ball/BallRoot/Skeleton3D" index="0"]
+[node name="BallMesh" parent="Ball/BallRoot/Skeleton3D" parent_id_path=PackedInt32Array(2043793161, 1138325015) index="0" unique_id=115527176]
 cast_shadow = 0
 
-[node name="AnimationPlayer" parent="Ball" index="1"]
+[node name="AnimationPlayer" parent="Ball" index="1" unique_id=1077031073]
 blend_times = [&"ball", &"RESET", 0.5]
 
-[node name="Shadow" type="Decal" parent="Ball"]
+[node name="Shadow" type="Decal" parent="Ball" unique_id=1664526982]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -24, 0)
 size = Vector3(10, 50, 10)
 texture_albedo = ExtResource("2_c6exx")
@@ -171,18 +171,16 @@ upper_fade = 0.01
 lower_fade = 0.5
 cull_mask = 2
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
-libraries = {
-&"": SubResource("AnimationLibrary_1a2t5")
-}
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=699790919]
+libraries/ = SubResource("AnimationLibrary_1a2t5")
 
-[node name="LeftSide" type="RayCast3D" parent="."]
+[node name="LeftSide" type="RayCast3D" parent="." unique_id=1798673334]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0, 0)
 enabled = false
 target_position = Vector3(-5, 0, 0)
 collision_mask = 8
 
-[node name="RightSide" type="RayCast3D" parent="."]
+[node name="RightSide" type="RayCast3D" parent="." unique_id=1080847197]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0, 0)
 enabled = false
 target_position = Vector3(5, 0, 0)

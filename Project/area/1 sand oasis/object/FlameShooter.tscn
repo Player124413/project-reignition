@@ -1,4 +1,4 @@
-[gd_scene load_steps=20 format=3 uid="uid://dnfwvf2akhf1v"]
+[gd_scene format=3 uid="uid://dnfwvf2akhf1v"]
 
 [ext_resource type="Script" uid="uid://dbxkhv8cvi8sq" path="res://object/stage/common/resource/script/TimedHazard.cs" id="1_srdx0"]
 [ext_resource type="PackedScene" uid="uid://b1tirama0dt1b" path="res://area/1 sand oasis/object/model/FlameShooter.gltf" id="1_wwv3q"]
@@ -181,7 +181,7 @@ _data = {
 &"inactive": SubResource("Animation_1683u")
 }
 
-[node name="FlameShooter" type="Node3D"]
+[node name="FlameShooter" type="Node3D" unique_id=817645600]
 script = ExtResource("1_srdx0")
 stateNames = Array[StringName]([&"inactive", &"active"])
 stateLengths = PackedFloat32Array(0.5, 1)
@@ -195,25 +195,25 @@ timer = NodePath("Timer")
 "State Lengths/active" = 1.0
 ignoreSpeedbreakingCharacters = true
 
-[node name="FlameShooter" parent="." instance=ExtResource("1_wwv3q")]
+[node name="FlameShooter" parent="." unique_id=976546314 instance=ExtResource("1_wwv3q")]
 
-[node name="Hitbox" type="Area3D" parent="."]
+[node name="Hitbox" type="Area3D" parent="." unique_id=361194860]
 collision_layer = 0
 collision_mask = 2
 monitorable = false
 
-[node name="StaticHitbox" type="CollisionShape3D" parent="Hitbox"]
+[node name="StaticHitbox" type="CollisionShape3D" parent="Hitbox" unique_id=2143391755]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.4, 0)
 shape = SubResource("SphereShape3D_hqwbi")
 
-[node name="FlameHitbox" type="CollisionShape3D" parent="Hitbox"]
+[node name="FlameHitbox" type="CollisionShape3D" parent="Hitbox" unique_id=921956562]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3, 0)
 shape = SubResource("CylinderShape3D_sotvg")
 disabled = true
 
-[node name="VFX" type="Node3D" parent="."]
+[node name="VFX" type="Node3D" parent="." unique_id=1119437595]
 
-[node name="BaseFlame" type="GPUParticles3D" parent="VFX"]
+[node name="BaseFlame" type="GPUParticles3D" parent="VFX" unique_id=1700007259]
 transform = Transform3D(1, 0, 0, 0, 1, 4.37114e-08, 0, -4.37114e-08, 1, 0, 0.75, 0)
 layers = 32
 cast_shadow = 0
@@ -226,7 +226,7 @@ local_coords = true
 process_material = ExtResource("3_4n1tk")
 draw_pass_1 = SubResource("QuadMesh_dr313")
 
-[node name="AttackFlameBase" type="GPUParticles3D" parent="VFX"]
+[node name="AttackFlameBase" type="GPUParticles3D" parent="VFX" unique_id=1094902466]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.75, 0)
 layers = 32
 cast_shadow = 0
@@ -242,7 +242,7 @@ local_coords = true
 process_material = ExtResource("3_4n1tk")
 draw_pass_1 = SubResource("QuadMesh_qbdct")
 
-[node name="AttackFlameExplosion" type="GPUParticles3D" parent="VFX"]
+[node name="AttackFlameExplosion" type="GPUParticles3D" parent="VFX" unique_id=99346225]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.75, 0)
 layers = 32
 cast_shadow = 0
@@ -258,7 +258,7 @@ local_coords = true
 process_material = ExtResource("5_el5o5")
 draw_pass_1 = SubResource("QuadMesh_gcb82")
 
-[node name="SFX" type="AudioStreamPlayer3D" parent="."]
+[node name="SFX" type="AudioStreamPlayer3D" parent="." unique_id=838650029]
 process_mode = 1
 stream = ExtResource("5_kt73t")
 max_db = 0.0
@@ -267,12 +267,10 @@ bus = &"GAME SFX"
 script = ExtResource("6_76o3t")
 groupKey = &"flame_shooter"
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
-libraries = {
-&"": SubResource("AnimationLibrary_i4sv0")
-}
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=184707216]
+libraries/ = SubResource("AnimationLibrary_i4sv0")
 
-[node name="Timer" type="Timer" parent="."]
+[node name="Timer" type="Timer" parent="." unique_id=1023567953]
 one_shot = true
 
 [connection signal="area_entered" from="Hitbox" to="." method="OnEntered"]

@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://o05lipks5eo5"]
+[gd_scene format=3 uid="uid://o05lipks5eo5"]
 
 [ext_resource type="PackedScene" uid="uid://dwk8aijinr25g" path="res://area/5 pirate storm/object/model/Wave.gltf" id="1_2g4la"]
 [ext_resource type="Script" uid="uid://dj1gxehwro7g" path="res://area/5 pirate storm/data/script/Wave.cs" id="1_mfdxk"]
@@ -63,40 +63,38 @@ _data = {
 &"show": SubResource("Animation_mfdxk")
 }
 
-[node name="Wave" type="Node3D" node_paths=PackedStringArray("animator")]
+[node name="Wave" type="Node3D" unique_id=1119469774 node_paths=PackedStringArray("animator")]
 script = ExtResource("1_mfdxk")
 animator = NodePath("AnimationPlayer")
 
-[node name="Wave" parent="." instance=ExtResource("1_2g4la")]
+[node name="Wave" parent="." unique_id=1604319914 instance=ExtResource("1_2g4la")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1, 0)
 
-[node name="WaveMesh" parent="Wave" index="0"]
+[node name="WaveMesh" parent="Wave" index="0" unique_id=1080150309]
 layers = 8
 cast_shadow = 0
 
-[node name="Trigger" type="Area3D" parent="."]
+[node name="Trigger" type="Area3D" parent="." unique_id=1595223200]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 50, 128)
 collision_layer = 8
 collision_mask = 8
 monitorable = false
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Trigger"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Trigger" unique_id=2143327148]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 20)
 shape = SubResource("BoxShape3D_mfdxk")
 
-[node name="JumpTrigger" type="Area3D" parent="."]
+[node name="JumpTrigger" type="Area3D" parent="." unique_id=2042669014]
 transform = Transform3D(1, 0, 0, 0, 0.866025, 0.5, 0, -0.5, 0.866025, 0, 80, 70)
 collision_layer = 8
 collision_mask = 8
 monitorable = false
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="JumpTrigger"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="JumpTrigger" unique_id=2146694801]
 shape = SubResource("BoxShape3D_wukio")
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
-libraries = {
-&"": SubResource("AnimationLibrary_x746k")
-}
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=1484058774]
+libraries/ = SubResource("AnimationLibrary_x746k")
 
 [connection signal="area_entered" from="Trigger" to="." method="OnEntered"]
 [connection signal="area_exited" from="Trigger" to="." method="OnExited"]

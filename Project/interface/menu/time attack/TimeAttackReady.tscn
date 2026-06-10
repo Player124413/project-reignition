@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3 uid="uid://mpx28q1qmiyp"]
+[gd_scene format=3 uid="uid://mpx28q1qmiyp"]
 
 [ext_resource type="PackedScene" uid="uid://byf372uaewx1u" path="res://interface/menu/level select/ReadyMenu.tscn" id="1_mxanw"]
 [ext_resource type="Script" uid="uid://cicbbc02b3gij" path="res://interface/menu/time attack/script/TimeAttackReady.cs" id="1_t0lx7"]
@@ -35,7 +35,7 @@ _data = {
 &"show": SubResource("Animation_mxanw")
 }
 
-[node name="TimeAttackReady" type="Control" node_paths=PackedStringArray("readyMenu", "skillMenu", "bgm", "animator")]
+[node name="TimeAttackReady" type="Control" unique_id=2086501245 node_paths=PackedStringArray("readyMenu", "skillMenu", "bgm", "animator")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -50,29 +50,28 @@ bgm = NodePath("BGM")
 animator = NodePath("AnimationPlayer")
 isProcessing = true
 
-[node name="ReadyMenu" parent="." node_paths=PackedStringArray("description") instance=ExtResource("1_mxanw")]
+[node name="ReadyMenu" parent="." unique_id=1699558802 node_paths=PackedStringArray("description") instance=ExtResource("1_mxanw")]
 layout_mode = 1
 description = NodePath("../Description/Description")
 submenus = Array[NodePath]([NodePath("../SkillSelect")])
 
-[node name="SkillSelect" parent="." node_paths=PackedStringArray("parentMenu") instance=ExtResource("2_t0lx7")]
+[node name="SkillSelect" parent="." unique_id=1938991927 node_paths=PackedStringArray("parentMenu") instance=ExtResource("2_t0lx7")]
 layout_mode = 1
 parentMenu = NodePath("..")
 submenus = Array[NodePath]([NodePath("../SkillPresetSelect")])
 
-[node name="SkillPresetSelect" parent="." node_paths=PackedStringArray("parentMenu") instance=ExtResource("4_odnbn")]
+[node name="SkillPresetSelect" parent="." unique_id=1277787522 node_paths=PackedStringArray("parentMenu") instance=ExtResource("4_odnbn")]
 z_index = 20
 layout_mode = 1
 parentMenu = NodePath("../SkillSelect")
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
-libraries = {
-&"": SubResource("AnimationLibrary_kona0")
-}
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=1243877421]
+libraries/ = SubResource("AnimationLibrary_kona0")
 
-[node name="Description" type="Control" parent="."]
+[node name="Description" type="Control" parent="." unique_id=1358558174]
 z_index = 100
 layout_mode = 1
+anchors_preset = 12
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -84,14 +83,15 @@ grow_horizontal = 2
 grow_vertical = 0
 metadata/_edit_group_ = true
 
-[node name="Description" parent="Description" instance=ExtResource("4_kona0")]
+[node name="Description" parent="Description" unique_id=917686740 instance=ExtResource("4_kona0")]
 layout_mode = 1
+anchors_preset = -1
 anchor_top = 0.0
 offset_top = 0.0
 offset_bottom = 256.0
 grow_vertical = 1
 
-[node name="BGM" type="AudioStreamPlayer" parent="."]
+[node name="BGM" type="AudioStreamPlayer" parent="." unique_id=1242935923]
 stream = ExtResource("5_ybopv")
 bus = &"BGM"
 script = ExtResource("6_odnbn")

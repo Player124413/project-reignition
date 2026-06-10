@@ -1,4 +1,4 @@
-[gd_scene load_steps=20 format=3 uid="uid://75f72xq1jhqo"]
+[gd_scene format=3 uid="uid://75f72xq1jhqo"]
 
 [ext_resource type="Script" uid="uid://itcitubu7e71" path="res://area/3 evil foundry/data/script/TraversalScrap.cs" id="1_3b4ar"]
 [ext_resource type="PackedScene" uid="uid://fy07foymgkig" path="res://area/3 evil foundry/boss/data/model/TraversalScrap.gltf" id="2_gqs3j"]
@@ -282,18 +282,18 @@ _data = {
 &"show": SubResource("Animation_6vqmq")
 }
 
-[node name="TraversalScrap" type="Area3D"]
+[node name="TraversalScrap" type="Area3D" unique_id=1143430375]
 collision_layer = 4
 collision_mask = 2
 script = ExtResource("1_3b4ar")
 animator = NodePath("AnimationPlayer")
 root = NodePath("Root")
 
-[node name="Root" type="Node3D" parent="."]
+[node name="Root" type="Node3D" parent="." unique_id=1575516766]
 
-[node name="TraversalScrap" parent="Root" instance=ExtResource("2_gqs3j")]
+[node name="TraversalScrap" parent="Root" unique_id=1662060323 instance=ExtResource("2_gqs3j")]
 
-[node name="SparkleVFX" type="GPUParticles3D" parent="Root"]
+[node name="SparkleVFX" type="GPUParticles3D" parent="Root" unique_id=770082060]
 layers = 32
 emitting = false
 lifetime = 0.3
@@ -303,7 +303,7 @@ visibility_aabb = AABB(-2, -2, -2, 4, 4, 4)
 process_material = SubResource("ParticleProcessMaterial_23168")
 draw_pass_1 = SubResource("QuadMesh_jbtny")
 
-[node name="BurstVFX" type="GPUParticles3D" parent="Root"]
+[node name="BurstVFX" type="GPUParticles3D" parent="Root" unique_id=720510970]
 layers = 32
 emitting = false
 amount = 16
@@ -316,21 +316,19 @@ visibility_aabb = AABB(-2, -2, -2, 4, 4, 4)
 process_material = SubResource("ParticleProcessMaterial_i36ch")
 draw_pass_1 = SubResource("QuadMesh_jbtny")
 
-[node name="SFX" type="AudioStreamPlayer3D" parent="Root"]
+[node name="SFX" type="AudioStreamPlayer3D" parent="Root" unique_id=580860315]
 process_mode = 1
 stream = ExtResource("4_xjmsd")
 volume_db = -3.0
 bus = &"GAME SFX"
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=832230810]
 shape = SubResource("SphereShape3D_mb02e")
 disabled = true
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=708292385]
 deterministic = true
-libraries = {
-&"": SubResource("AnimationLibrary_we8ah")
-}
+libraries/ = SubResource("AnimationLibrary_we8ah")
 
 [connection signal="area_entered" from="." to="." method="OnEntered"]
 [connection signal="area_exited" from="." to="." method="OnExited"]

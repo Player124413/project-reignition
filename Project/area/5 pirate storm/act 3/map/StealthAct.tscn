@@ -1,4 +1,4 @@
-[gd_scene load_steps=44 format=3 uid="uid://d35hqfpjj7q2t"]
+[gd_scene format=3 uid="uid://d35hqfpjj7q2t"]
 
 [ext_resource type="PackedScene" uid="uid://cu3mc0x6pj3p" path="res://area/5 pirate storm/act 3/Static.tscn" id="1_wucta"]
 [ext_resource type="Resource" uid="uid://dr43egyiqrrrf" path="res://resource/level data/pirate storm/Act3Stealth.tres" id="2_wucta"]
@@ -38,6 +38,77 @@
 [ext_resource type="PackedScene" uid="uid://b0uekqdfkbg6h" path="res://object/stage/common/ItemBox.tscn" id="36_ue8gm"]
 [ext_resource type="PackedScene" uid="uid://dxepb172kmp8n" path="res://object/stage/common/Goal.tscn" id="37_ogl6t"]
 
+[sub_resource type="Shader" id="Shader_ken67"]
+code = "shader_type canvas_item;
+render_mode unshaded, blend_add;
+
+uniform sampler2D depth_tex : filter_linear;
+uniform sampler2D light_color : hint_default_white;
+uniform vec4 ray_color : source_color = vec4(1.0, 1.0, 1.0, 1.0);
+uniform float ray_length : hint_range(0.0, 1.0) = 1.0;
+uniform float ray_intensity : hint_range(0.0, 1.0) = 1.0;
+uniform float light_source_scale = 1.0;
+uniform float light_source_feather = 2.0;
+uniform float noise_strength : hint_range(0.0, 1.0) = 0.2;
+uniform vec2 light_source_pos = vec2(0.0, 0.0);
+uniform vec3 light_source_dir = vec3(0.5, -1.0, 0.25);
+uniform bool debug_mode = false;
+uniform float debug_dot_radius : hint_range(0.001, 0.05) = 0.01;
+
+const int SAMPLE_COUNT = 120;
+
+float random(vec2 uv) {
+	return fract(sin(dot(uv.xy, vec2(12.9898, 78.233))) * 43758.5453123);
+}
+
+void fragment() {
+	vec2 light_pos = light_source_pos;
+	vec2 ratio = vec2(SCREEN_PIXEL_SIZE.x / SCREEN_PIXEL_SIZE.y, 1.0);
+
+	if (debug_mode) {
+		vec2 diff = (UV - light_pos) / ratio;
+		float dist = length(diff);
+		float dot_mask = smoothstep(debug_dot_radius, debug_dot_radius * 0.5, dist);
+		COLOR.rgb = vec3(dot_mask);
+		COLOR.a = 1.0;
+	} else {
+		vec2 dir = UV - light_pos;
+		vec2 dir2 = UV / ratio - light_pos / ratio;
+		float light_rays = 0.0;
+		vec2 uv2;
+		float scale, l;
+
+		for (int i = 0; i < SAMPLE_COUNT; i++) {
+			scale = 1.0 - ray_length * (float(i) / float(SAMPLE_COUNT - 1));
+			vec2 sample_uv = dir * scale + light_pos;
+			l = 1.0 - texture(depth_tex, sample_uv).a;
+			uv2 = dir2 * scale * pow(light_source_scale, 2.0);
+			l *= smoothstep(1.0, 0.999 - light_source_feather, dot(uv2, uv2) * 4.0);
+			light_rays += l / float(SAMPLE_COUNT);
+		}
+
+		float n = 1.0 - random(UV) * noise_strength * smoothstep(0.999 - 1.25, 1.0, dot(dir2, dir2) * 2.0);
+		light_rays *= n;
+
+		COLOR.rgb = vec3(light_rays * ray_intensity) * texture(light_color, UV).rgb * ray_color.rgb;
+		COLOR.a = ray_color.a;
+	}
+}"
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_wucta"]
+resource_local_to_scene = true
+shader = SubResource("Shader_ken67")
+shader_parameter/ray_color = Color(1, 0.69803923, 0.31764707, 1)
+shader_parameter/ray_length = 0.8000000380000001
+shader_parameter/ray_intensity = 0.770000036575
+shader_parameter/light_source_scale = 1.1999999999970896
+shader_parameter/light_source_feather = 1.5
+shader_parameter/noise_strength = 0.10000000475
+shader_parameter/light_source_pos = Vector2(0, 0)
+shader_parameter/light_source_dir = Vector3(0.5, -1, 0.25)
+shader_parameter/debug_mode = false
+shader_parameter/debug_dot_radius = 0.01
+
 [sub_resource type="BoxShape3D" id="BoxShape3D_lr06k"]
 size = Vector3(20, 20, 5)
 
@@ -64,109 +135,112 @@ _limits = [-1.0, 1.0, 0.0, 1.0]
 _data = [Vector2(0, 0), 0.0, -5.7531, 0, 0, Vector2(0.5, -1), -0.16262, -0.16262, 0, 0, Vector2(1, 2.98023e-08), 4.85418, 0.0, 0, 0]
 point_count = 3
 
-[node name="Stage" type="Node"]
+[node name="Stage" type="Node" unique_id=503834334]
 
-[node name="Static" parent="." instance=ExtResource("1_wucta")]
+[node name="Static" parent="." unique_id=1564840288 instance=ExtResource("1_wucta")]
 Data = ExtResource("2_wucta")
 
-[node name="StealthAct" type="Node3D" parent="."]
+[node name="ColorRect_LightRays" parent="Static/Visuals/Skybox/DepthRenderer/CanvasLayerLightShafts" parent_id_path=PackedInt32Array(1564840288, 1239802836, 208896064) index="0" unique_id=974145098]
+material = SubResource("ShaderMaterial_wucta")
 
-[node name="SpawnPosition" type="Node3D" parent="StealthAct"]
+[node name="StealthAct" type="Node3D" parent="." unique_id=363274789]
+
+[node name="SpawnPosition" type="Node3D" parent="StealthAct" unique_id=376805170]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 32, 2, 475)
 metadata/_edit_lock_ = true
 
-[node name="CharacterSpawn" parent="StealthAct/SpawnPosition" instance=ExtResource("3_hbhjh")]
+[node name="CharacterSpawn" parent="StealthAct/SpawnPosition" unique_id=903225007 instance=ExtResource("3_hbhjh")]
 
-[node name="CullingMap" type="Node3D" parent="StealthAct"]
+[node name="CullingMap" type="Node3D" parent="StealthAct" unique_id=113180847]
 visible = false
 
-[node name="ReverseTrigger" parent="StealthAct/CullingMap" instance=ExtResource("4_yja4q")]
+[node name="ReverseTrigger" parent="StealthAct/CullingMap" unique_id=450751831 instance=ExtResource("4_yja4q")]
 transform = Transform3D(0.996195, 0, -0.0871557, 0, 1, 0, 0.0871557, 0, 0.996195, 11.9004, 2, 577.991)
 "Enter Mode" = 0
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="StealthAct/CullingMap/ReverseTrigger"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StealthAct/CullingMap/ReverseTrigger" unique_id=145327192]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
 shape = SubResource("BoxShape3D_lr06k")
 
-[node name="Island2-L" parent="StealthAct/CullingMap" instance=ExtResource("4_yja4q")]
+[node name="Island2-L" parent="StealthAct/CullingMap" unique_id=1800120406 instance=ExtResource("4_yja4q")]
 transform = Transform3D(-0.273153, -3.58063e-08, -0.961971, 8.15011e-09, 1, -3.9536e-08, 0.961971, -1.86396e-08, -0.273153, 6.23082, 2, 435.568)
 "Trigger Mode" = 2
 "Exit Mode" = 2
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="StealthAct/CullingMap/Island2-L"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StealthAct/CullingMap/Island2-L" unique_id=1406582152]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
 shape = SubResource("BoxShape3D_lr06k")
 
-[node name="Island1-U" parent="StealthAct/CullingMap" instance=ExtResource("4_yja4q")]
+[node name="Island1-U" parent="StealthAct/CullingMap" unique_id=1545396904 instance=ExtResource("4_yja4q")]
 transform = Transform3D(0.561333, -3.58063e-08, -0.82759, 3.55252e-08, 1, -1.91699e-08, 0.82759, -1.86396e-08, 0.561333, -116.212, 2, 458.288)
 "Trigger Mode" = 2
 "Exit Mode" = 2
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="StealthAct/CullingMap/Island1-U"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StealthAct/CullingMap/Island1-U" unique_id=60226836]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
 shape = SubResource("BoxShape3D_lr06k")
 
-[node name="Island3-L" parent="StealthAct/CullingMap" instance=ExtResource("4_yja4q")]
+[node name="Island3-L" parent="StealthAct/CullingMap" unique_id=1831714643 instance=ExtResource("4_yja4q")]
 transform = Transform3D(0.631326, -3.58063e-08, -0.775518, 3.70607e-08, 1, -1.60008e-08, 0.775518, -1.86396e-08, 0.631326, -123.138, 2, 463.461)
 "Trigger Mode" = 2
 "Exit Mode" = 2
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="StealthAct/CullingMap/Island3-L"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StealthAct/CullingMap/Island3-L" unique_id=2098802600]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
 shape = SubResource("BoxShape3D_lr06k")
 
-[node name="Island2-U" parent="StealthAct/CullingMap" instance=ExtResource("4_yja4q")]
+[node name="Island2-U" parent="StealthAct/CullingMap" unique_id=1268510142 instance=ExtResource("4_yja4q")]
 transform = Transform3D(0.512822, -3.58063e-08, 0.858495, 2.36027e-09, 1, 4.02983e-08, -0.858495, -1.86396e-08, 0.512822, -128.803, 2, 660.11)
 "Trigger Mode" = 2
 "Exit Mode" = 2
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="StealthAct/CullingMap/Island2-U"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StealthAct/CullingMap/Island2-U" unique_id=1729822546]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
 shape = SubResource("BoxShape3D_lr06k")
 
-[node name="Island4-L" parent="StealthAct/CullingMap" instance=ExtResource("4_yja4q")]
+[node name="Island4-L" parent="StealthAct/CullingMap" unique_id=1602114301 instance=ExtResource("4_yja4q")]
 transform = Transform3D(0.827591, -3.58063e-08, 0.561333, 1.91699e-08, 1, 3.55252e-08, -0.561333, -1.86396e-08, 0.827591, -135.386, 2, 653.698)
 "Trigger Mode" = 2
 "Exit Mode" = 2
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="StealthAct/CullingMap/Island4-L"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StealthAct/CullingMap/Island4-L" unique_id=907121674]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
 shape = SubResource("BoxShape3D_lr06k")
 
-[node name="Island3-U" parent="StealthAct/CullingMap" instance=ExtResource("4_yja4q")]
+[node name="Island3-U" parent="StealthAct/CullingMap" unique_id=85730790 instance=ExtResource("4_yja4q")]
 transform = Transform3D(-0.961971, -3.58063e-08, 0.273153, -3.9536e-08, 1, -8.1501e-09, -0.273153, -1.86396e-08, -0.961971, 10.3037, 2.00001, 635.691)
 "Trigger Mode" = 2
 "Exit Mode" = 2
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="StealthAct/CullingMap/Island3-U"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StealthAct/CullingMap/Island3-U" unique_id=915473942]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
 shape = SubResource("BoxShape3D_lr06k")
 
-[node name="Island1" type="Node3D" parent="StealthAct"]
+[node name="Island1" type="Node3D" parent="StealthAct" unique_id=2110085427]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 32, 2, 475)
 script = ExtResource("5_owm5c")
 startEnabled = true
 saveVisibilityOnCheckpoint = true
 
-[node name="BridgeGroup1" type="Node3D" parent="StealthAct/Island1"]
+[node name="BridgeGroup1" type="Node3D" parent="StealthAct/Island1" unique_id=1059378762]
 transform = Transform3D(0.965926, 0, 0.258819, 0, 1, 0, -0.258819, 0, 0.965926, -1.23982, 0, -9.42166)
 
-[node name="BridgeSquare1" parent="StealthAct/Island1/BridgeGroup1" instance=ExtResource("6_p1yhv")]
+[node name="BridgeSquare1" parent="StealthAct/Island1/BridgeGroup1" unique_id=410952575 instance=ExtResource("6_p1yhv")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 0, 0)
 
-[node name="BridgeSquare2" parent="StealthAct/Island1/BridgeGroup1" instance=ExtResource("6_p1yhv")]
+[node name="BridgeSquare2" parent="StealthAct/Island1/BridgeGroup1" unique_id=1859058782 instance=ExtResource("6_p1yhv")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 0, 0)
 
-[node name="BridgeSquare3" parent="StealthAct/Island1/BridgeGroup1" instance=ExtResource("6_p1yhv")]
+[node name="BridgeSquare3" parent="StealthAct/Island1/BridgeGroup1" unique_id=1280610604 instance=ExtResource("6_p1yhv")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, 4, -34)
 
-[node name="SpikeBallSpawner" parent="StealthAct/Island1/BridgeGroup1/BridgeSquare3" instance=ExtResource("7_cp2cb")]
+[node name="SpikeBallSpawner" parent="StealthAct/Island1/BridgeGroup1/BridgeSquare3" unique_id=401459170 instance=ExtResource("7_cp2cb")]
 transform = Transform3D(1, 0, 0, 0, 0.573576, 0.819152, 0, -0.819152, 0.573576, 0, 5, -5.983)
 lifetime = 6.0
 spawnInterval = 2.0
 initialVelocity = 18.0
 
-[node name="Rings1" type="Node3D" parent="StealthAct/Island1"]
+[node name="Rings1" type="Node3D" parent="StealthAct/Island1" unique_id=1525760911]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.4, 0.7, -5)
 script = ExtResource("8_it6v4")
 Source = ExtResource("9_p2828")
@@ -181,56 +255,56 @@ Spacing = 3.0
 "Vertical Offset" = null
 metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
 
-[node name="Child01" parent="StealthAct/Island1/Rings1" instance=ExtResource("9_p2828")]
+[node name="Child01" parent="StealthAct/Island1/Rings1" unique_id=434250688 instance=ExtResource("9_p2828")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.72205e-06, 0, 3.05176e-05)
 
-[node name="Child02" parent="StealthAct/Island1/Rings1" instance=ExtResource("9_p2828")]
+[node name="Child02" parent="StealthAct/Island1/Rings1" unique_id=1258529850 instance=ExtResource("9_p2828")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.539396, 0, -2.95032)
 
-[node name="Child03" parent="StealthAct/Island1/Rings1" instance=ExtResource("9_p2828")]
+[node name="Child03" parent="StealthAct/Island1/Rings1" unique_id=2143769063 instance=ExtResource("9_p2828")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.26236, 0, -5.86127)
 
-[node name="Child04" parent="StealthAct/Island1/Rings1" instance=ExtResource("9_p2828")]
+[node name="Child04" parent="StealthAct/Island1/Rings1" unique_id=777869379 instance=ExtResource("9_p2828")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.15302, 0, -8.72537)
 
-[node name="Child05" parent="StealthAct/Island1/Rings1" instance=ExtResource("9_p2828")]
+[node name="Child05" parent="StealthAct/Island1/Rings1" unique_id=301150823 instance=ExtResource("9_p2828")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.20332, 0, -11.5349)
 
-[node name="Child06" parent="StealthAct/Island1/Rings1" instance=ExtResource("9_p2828")]
+[node name="Child06" parent="StealthAct/Island1/Rings1" unique_id=1574911602 instance=ExtResource("9_p2828")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.4099, 0, -14.2809)
 
-[node name="Child07" parent="StealthAct/Island1/Rings1" instance=ExtResource("9_p2828")]
+[node name="Child07" parent="StealthAct/Island1/Rings1" unique_id=1735834364 instance=ExtResource("9_p2828")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.77246, 0, -16.953)
 
-[node name="Child08" parent="StealthAct/Island1/Rings1" instance=ExtResource("9_p2828")]
+[node name="Child08" parent="StealthAct/Island1/Rings1" unique_id=1796829202 instance=ExtResource("9_p2828")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.29255, 0, -19.5386)
 
-[node name="Child09" parent="StealthAct/Island1/Rings1" instance=ExtResource("9_p2828")]
+[node name="Child09" parent="StealthAct/Island1/Rings1" unique_id=105224632 instance=ExtResource("9_p2828")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.97271, 0, -22.0231)
 
-[node name="Child10" parent="StealthAct/Island1/Rings1" instance=ExtResource("9_p2828")]
+[node name="Child10" parent="StealthAct/Island1/Rings1" unique_id=132512786 instance=ExtResource("9_p2828")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10.8155, 0, -24.3893)
 
-[node name="SlimeMajin1" parent="StealthAct/Island1" instance=ExtResource("12_71inf")]
+[node name="SlimeMajin1" parent="StealthAct/Island1" unique_id=1420058515 instance=ExtResource("12_71inf")]
 transform = Transform3D(0.819152, 0, 0.573576, 0, 1, 0, -0.573576, 0, 0.819152, -12.2929, 0, -28.2929)
 spawnOffset = Vector3(-15, -4, 0)
 jumpCount = 9
 rangeOverride = 20
 
-[node name="SlimeMajin2" parent="StealthAct/Island1" instance=ExtResource("12_71inf")]
+[node name="SlimeMajin2" parent="StealthAct/Island1" unique_id=764138539 instance=ExtResource("12_71inf")]
 transform = Transform3D(0.422618, 0, 0.906308, 0, 1, 0, -0.906308, 0, 0.422618, -20.7381, 0, -38.4308)
 spawnOffset = Vector3(7, 9, 5)
 spawnHeight = 10.0
 jumpCount = 9
 rangeOverride = 30
 
-[node name="WaterGroup" type="Node3D" parent="StealthAct/Island1"]
+[node name="WaterGroup" type="Node3D" parent="StealthAct/Island1" unique_id=801981721]
 transform = Transform3D(0.139173, 0, -0.990268, 0, 1, 0, 0.990268, 0, 0.139173, -56.0349, -1.99096e-10, -39.3985)
 
-[node name="BridgeSquare" parent="StealthAct/Island1/WaterGroup" instance=ExtResource("6_p1yhv")]
+[node name="BridgeSquare" parent="StealthAct/Island1/WaterGroup" unique_id=1262705869 instance=ExtResource("6_p1yhv")]
 transform = Transform3D(1.2, 0, 0, 0, 0.8, 0, 0, 0, 1, 0, -2, 0)
 
-[node name="ThornSpring1" parent="StealthAct/Island1/WaterGroup" instance=ExtResource("10_6gb5x")]
+[node name="ThornSpring1" parent="StealthAct/Island1/WaterGroup" unique_id=675702379 instance=ExtResource("10_6gb5x")]
 transform = Transform3D(0.996195, 0, -0.0871557, 0, 1, 0, 0.0871557, 0, 0.996195, 0, 1, 7)
 rotationTime = 1.5
 staticTime = 1.5
@@ -239,10 +313,10 @@ FinalHeight = 6.0
 Distance = 3.0
 LauncherDirection = 0
 
-[node name="BridgeLarge1" parent="StealthAct/Island1/WaterGroup" instance=ExtResource("11_q6qx1")]
+[node name="BridgeLarge1" parent="StealthAct/Island1/WaterGroup" unique_id=1111045386 instance=ExtResource("11_q6qx1")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1, 17)
 
-[node name="Rings" type="Node3D" parent="StealthAct/Island1/WaterGroup/BridgeLarge1"]
+[node name="Rings" type="Node3D" parent="StealthAct/Island1/WaterGroup/BridgeLarge1" unique_id=872221987]
 transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, -1, 5.7, -4)
 script = ExtResource("8_it6v4")
 Source = ExtResource("9_p2828")
@@ -254,24 +328,24 @@ Spacing = 2.0
 "Vertical Offset" = null
 metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
 
-[node name="Child01" parent="StealthAct/Island1/WaterGroup/BridgeLarge1/Rings" instance=ExtResource("9_p2828")]
+[node name="Child01" parent="StealthAct/Island1/WaterGroup/BridgeLarge1/Rings" unique_id=1259045936 instance=ExtResource("9_p2828")]
 
-[node name="Child02" parent="StealthAct/Island1/WaterGroup/BridgeLarge1/Rings" instance=ExtResource("9_p2828")]
+[node name="Child02" parent="StealthAct/Island1/WaterGroup/BridgeLarge1/Rings" unique_id=1064578106 instance=ExtResource("9_p2828")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2)
 
-[node name="Child03" parent="StealthAct/Island1/WaterGroup/BridgeLarge1/Rings" instance=ExtResource("9_p2828")]
+[node name="Child03" parent="StealthAct/Island1/WaterGroup/BridgeLarge1/Rings" unique_id=845403845 instance=ExtResource("9_p2828")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -4)
 
-[node name="Child04" parent="StealthAct/Island1/WaterGroup/BridgeLarge1/Rings" instance=ExtResource("9_p2828")]
+[node name="Child04" parent="StealthAct/Island1/WaterGroup/BridgeLarge1/Rings" unique_id=1862426132 instance=ExtResource("9_p2828")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -6)
 
-[node name="Child05" parent="StealthAct/Island1/WaterGroup/BridgeLarge1/Rings" instance=ExtResource("9_p2828")]
+[node name="Child05" parent="StealthAct/Island1/WaterGroup/BridgeLarge1/Rings" unique_id=2035197511 instance=ExtResource("9_p2828")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -8)
 
-[node name="BridgeLarge2" parent="StealthAct/Island1/WaterGroup" instance=ExtResource("11_q6qx1")]
+[node name="BridgeLarge2" parent="StealthAct/Island1/WaterGroup" unique_id=467798305 instance=ExtResource("11_q6qx1")]
 transform = Transform3D(0.99863, 0, 0.052336, 0, 1, 0, -0.052336, 0, 0.99863, 0.5, -3, 34)
 
-[node name="Rings" type="Node3D" parent="StealthAct/Island1/WaterGroup/BridgeLarge2"]
+[node name="Rings" type="Node3D" parent="StealthAct/Island1/WaterGroup/BridgeLarge2" unique_id=851712706]
 transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 1, 5.7, -4)
 script = ExtResource("8_it6v4")
 Source = ExtResource("9_p2828")
@@ -283,27 +357,27 @@ Spacing = 1.5
 "Vertical Offset" = null
 metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
 
-[node name="Child01" parent="StealthAct/Island1/WaterGroup/BridgeLarge2/Rings" instance=ExtResource("9_p2828")]
+[node name="Child01" parent="StealthAct/Island1/WaterGroup/BridgeLarge2/Rings" unique_id=1655048075 instance=ExtResource("9_p2828")]
 
-[node name="Child02" parent="StealthAct/Island1/WaterGroup/BridgeLarge2/Rings" instance=ExtResource("9_p2828")]
+[node name="Child02" parent="StealthAct/Island1/WaterGroup/BridgeLarge2/Rings" unique_id=812877735 instance=ExtResource("9_p2828")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -1.5)
 
-[node name="Child03" parent="StealthAct/Island1/WaterGroup/BridgeLarge2/Rings" instance=ExtResource("9_p2828")]
+[node name="Child03" parent="StealthAct/Island1/WaterGroup/BridgeLarge2/Rings" unique_id=1644893702 instance=ExtResource("9_p2828")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -3)
 
-[node name="Child04" parent="StealthAct/Island1/WaterGroup/BridgeLarge2/Rings" instance=ExtResource("9_p2828")]
+[node name="Child04" parent="StealthAct/Island1/WaterGroup/BridgeLarge2/Rings" unique_id=806552254 instance=ExtResource("9_p2828")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -4.5)
 
-[node name="Child05" parent="StealthAct/Island1/WaterGroup/BridgeLarge2/Rings" instance=ExtResource("9_p2828")]
+[node name="Child05" parent="StealthAct/Island1/WaterGroup/BridgeLarge2/Rings" unique_id=764270446 instance=ExtResource("9_p2828")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -6)
 
-[node name="SpoilsSmall1" parent="StealthAct/Island1/WaterGroup/BridgeLarge2" instance=ExtResource("13_hbhjh")]
+[node name="SpoilsSmall1" parent="StealthAct/Island1/WaterGroup/BridgeLarge2" unique_id=776615805 instance=ExtResource("13_hbhjh")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.6, 5, 4)
 
-[node name="SpoilsSmall2" parent="StealthAct/Island1/WaterGroup/BridgeLarge2" instance=ExtResource("13_hbhjh")]
+[node name="SpoilsSmall2" parent="StealthAct/Island1/WaterGroup/BridgeLarge2" unique_id=2065815667 instance=ExtResource("13_hbhjh")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5, 4)
 
-[node name="ThornSpring2" parent="StealthAct/Island1/WaterGroup" instance=ExtResource("10_6gb5x")]
+[node name="ThornSpring2" parent="StealthAct/Island1/WaterGroup" unique_id=1467302567 instance=ExtResource("10_6gb5x")]
 transform = Transform3D(0.996195, 0, 0.0871557, 0, 1, 0, -0.0871557, 0, 0.996195, 1.7385, -1, 54.0114)
 rotationTime = 1.5
 staticTime = 1.5
@@ -312,10 +386,10 @@ FinalHeight = 5.0
 Distance = 10.0
 LauncherDirection = 2
 
-[node name="BridgeLarge3" parent="StealthAct/Island1/WaterGroup" instance=ExtResource("11_q6qx1")]
+[node name="BridgeLarge3" parent="StealthAct/Island1/WaterGroup" unique_id=111237560 instance=ExtResource("11_q6qx1")]
 transform = Transform3D(0.987688, 0, 0.156434, 0, 1, 0, -0.156434, 0, 0.987688, 4, -5, 73)
 
-[node name="Rings" type="Node3D" parent="StealthAct/Island1/WaterGroup/BridgeLarge3"]
+[node name="Rings" type="Node3D" parent="StealthAct/Island1/WaterGroup/BridgeLarge3" unique_id=355975452]
 transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, -8.74228e-08, 5.7, -4)
 script = ExtResource("8_it6v4")
 Source = ExtResource("9_p2828")
@@ -327,21 +401,21 @@ Spacing = 2.0
 "Vertical Offset" = null
 metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
 
-[node name="Child01" parent="StealthAct/Island1/WaterGroup/BridgeLarge3/Rings" instance=ExtResource("9_p2828")]
+[node name="Child01" parent="StealthAct/Island1/WaterGroup/BridgeLarge3/Rings" unique_id=833107738 instance=ExtResource("9_p2828")]
 
-[node name="Child02" parent="StealthAct/Island1/WaterGroup/BridgeLarge3/Rings" instance=ExtResource("9_p2828")]
+[node name="Child02" parent="StealthAct/Island1/WaterGroup/BridgeLarge3/Rings" unique_id=1735019609 instance=ExtResource("9_p2828")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2)
 
-[node name="Child03" parent="StealthAct/Island1/WaterGroup/BridgeLarge3/Rings" instance=ExtResource("9_p2828")]
+[node name="Child03" parent="StealthAct/Island1/WaterGroup/BridgeLarge3/Rings" unique_id=1411149503 instance=ExtResource("9_p2828")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -4)
 
-[node name="Child04" parent="StealthAct/Island1/WaterGroup/BridgeLarge3/Rings" instance=ExtResource("9_p2828")]
+[node name="Child04" parent="StealthAct/Island1/WaterGroup/BridgeLarge3/Rings" unique_id=992427162 instance=ExtResource("9_p2828")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -6)
 
-[node name="Child05" parent="StealthAct/Island1/WaterGroup/BridgeLarge3/Rings" instance=ExtResource("9_p2828")]
+[node name="Child05" parent="StealthAct/Island1/WaterGroup/BridgeLarge3/Rings" unique_id=886115224 instance=ExtResource("9_p2828")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -8)
 
-[node name="BlueMajin" parent="StealthAct/Island1/WaterGroup" instance=ExtResource("14_yja4q")]
+[node name="BlueMajin" parent="StealthAct/Island1/WaterGroup" unique_id=422272038 instance=ExtResource("14_yja4q")]
 transform = Transform3D(-0.996195, 0, -0.0871558, 0, 1, 0, 0.0871558, 0, -0.996195, 2, -2, 57)
 "Spawn Settings/Spawn Travel Time" = 1.0
 "Spawn Settings/Spawn Delay" = 0.0
@@ -350,21 +424,21 @@ transform = Transform3D(-0.996195, 0, -0.0871558, 0, 1, 0, 0.0871558, 0, -0.9961
 "Spawn Settings/Spawn Out Offset" = Vector3(0, 0, 0)
 rangeOverride = 30
 
-[node name="Island2" type="Node3D" parent="StealthAct"]
+[node name="Island2" type="Node3D" parent="StealthAct" unique_id=1098249519]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -101, 2, 451)
 script = ExtResource("5_owm5c")
 saveVisibilityOnCheckpoint = true
 
-[node name="SlimeMajinGroup" type="Node3D" parent="StealthAct/Island2"]
+[node name="SlimeMajinGroup" type="Node3D" parent="StealthAct/Island2" unique_id=695233890]
 transform = Transform3D(-0.459998, 0, 0.88792, 0, 1, 0, -0.88792, 0, -0.459998, -10.0392, 0, 4.22097)
 
-[node name="SlimeMajin1" parent="StealthAct/Island2/SlimeMajinGroup" instance=ExtResource("12_71inf")]
+[node name="SlimeMajin1" parent="StealthAct/Island2/SlimeMajinGroup" unique_id=216496045 instance=ExtResource("12_71inf")]
 spawnOffset = Vector3(20, -5, 0)
 spawnHeight = 10.0
 jumpCount = 9
 rangeOverride = 20
 
-[node name="SlimeMajin2" parent="StealthAct/Island2/SlimeMajinGroup" instance=ExtResource("12_71inf")]
+[node name="SlimeMajin2" parent="StealthAct/Island2/SlimeMajinGroup" unique_id=710182016 instance=ExtResource("12_71inf")]
 transform = Transform3D(0.984808, 0, 0.173648, 0, 1, 0, -0.173648, 0, 0.984808, -3.58579, 0, -14.4495)
 spawnOffset = Vector3(-25, -5, 5)
 spawnHeight = 10.0
@@ -373,7 +447,7 @@ movementDistance = 1.0
 isSpitEnabled = true
 SpawnMode = 1
 
-[node name="SlimeMajin3" parent="StealthAct/Island2/SlimeMajinGroup" instance=ExtResource("12_71inf")]
+[node name="SlimeMajin3" parent="StealthAct/Island2/SlimeMajinGroup" unique_id=2081953766 instance=ExtResource("12_71inf")]
 transform = Transform3D(0.965926, 0, 0.258819, 0, 1, 0, -0.258819, 0, 0.965926, 0.0340742, 0, -15.7412)
 spawnOffset = Vector3(20, -5, 5)
 spawnHeight = 10.0
@@ -382,16 +456,16 @@ movementDistance = 1.0
 isSpitEnabled = true
 SpawnMode = 1
 
-[node name="SlimeMajin4" parent="StealthAct/Island2/SlimeMajinGroup" instance=ExtResource("12_71inf")]
+[node name="SlimeMajin4" parent="StealthAct/Island2/SlimeMajinGroup" unique_id=1690213782 instance=ExtResource("12_71inf")]
 transform = Transform3D(0.766044, 0, 0.642787, 0, 1, 0, -0.642787, 0, 0.766044, -10.5427, 0, -31.6456)
 isSpitEnabled = true
 isShockEnabled = true
 SpawnMode = 1
 
-[node name="RingGroup" type="Node3D" parent="StealthAct/Island2"]
+[node name="RingGroup" type="Node3D" parent="StealthAct/Island2" unique_id=2003516333]
 transform = Transform3D(0.965926, 0, -0.258819, 0, 1, 0, 0.258819, 0, 0.965926, -34.7622, 0.6, 32.0905)
 
-[node name="RingsL" type="Node3D" parent="StealthAct/Island2/RingGroup"]
+[node name="RingsL" type="Node3D" parent="StealthAct/Island2/RingGroup" unique_id=1309143922]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.6, 0, 0)
 script = ExtResource("8_it6v4")
 Source = ExtResource("9_p2828")
@@ -406,22 +480,22 @@ Spacing = 2.0
 "Vertical Offset" = null
 metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
 
-[node name="Child01" parent="StealthAct/Island2/RingGroup/RingsL" instance=ExtResource("9_p2828")]
+[node name="Child01" parent="StealthAct/Island2/RingGroup/RingsL" unique_id=1570176039 instance=ExtResource("9_p2828")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.62939e-06, 0, -3.05176e-05)
 
-[node name="Child02" parent="StealthAct/Island2/RingGroup/RingsL" instance=ExtResource("9_p2828")]
+[node name="Child02" parent="StealthAct/Island2/RingGroup/RingsL" unique_id=1462223105 instance=ExtResource("9_p2828")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.08078, 0, 1.95929)
 
-[node name="Child03" parent="StealthAct/Island2/RingGroup/RingsL" instance=ExtResource("9_p2828")]
+[node name="Child03" parent="StealthAct/Island2/RingGroup/RingsL" unique_id=364524727 instance=ExtResource("9_p2828")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.284752, 0, 3.90955)
 
-[node name="Child04" parent="StealthAct/Island2/RingGroup/RingsL" instance=ExtResource("9_p2828")]
+[node name="Child04" parent="StealthAct/Island2/RingGroup/RingsL" unique_id=1332478436 instance=ExtResource("9_p2828")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.610878, 0, 5.84344)
 
-[node name="Child05" parent="StealthAct/Island2/RingGroup/RingsL" instance=ExtResource("9_p2828")]
+[node name="Child05" parent="StealthAct/Island2/RingGroup/RingsL" unique_id=1702967522 instance=ExtResource("9_p2828")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.05599, 0, 7.7522)
 
-[node name="RingsR" type="Node3D" parent="StealthAct/Island2/RingGroup"]
+[node name="RingsR" type="Node3D" parent="StealthAct/Island2/RingGroup" unique_id=1902662067]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.6, 0, 0)
 script = ExtResource("8_it6v4")
 Source = ExtResource("9_p2828")
@@ -436,69 +510,69 @@ Spacing = 2.0
 "Vertical Offset" = null
 metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
 
-[node name="Child01" parent="StealthAct/Island2/RingGroup/RingsR" instance=ExtResource("9_p2828")]
+[node name="Child01" parent="StealthAct/Island2/RingGroup/RingsR" unique_id=779063552 instance=ExtResource("9_p2828")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.000183105)
 
-[node name="Child02" parent="StealthAct/Island2/RingGroup/RingsR" instance=ExtResource("9_p2828")]
+[node name="Child02" parent="StealthAct/Island2/RingGroup/RingsR" unique_id=282243357 instance=ExtResource("9_p2828")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0831451, 0, 2.03452)
 
-[node name="Child03" parent="StealthAct/Island2/RingGroup/RingsR" instance=ExtResource("9_p2828")]
+[node name="Child03" parent="StealthAct/Island2/RingGroup/RingsR" unique_id=1979177803 instance=ExtResource("9_p2828")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.294243, 0, 4.06009)
 
-[node name="Child04" parent="StealthAct/Island2/RingGroup/RingsR" instance=ExtResource("9_p2828")]
+[node name="Child04" parent="StealthAct/Island2/RingGroup/RingsR" unique_id=927320291 instance=ExtResource("9_p2828")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.632111, 0, 6.06818)
 
-[node name="Child05" parent="StealthAct/Island2/RingGroup/RingsR" instance=ExtResource("9_p2828")]
+[node name="Child05" parent="StealthAct/Island2/RingGroup/RingsR" unique_id=1851580575 instance=ExtResource("9_p2828")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.09341, 0, 8.04944)
 
-[node name="RichRing" parent="StealthAct/Island2/RingGroup" instance=ExtResource("16_mg4ec")]
+[node name="RichRing" parent="StealthAct/Island2/RingGroup" unique_id=440264125 instance=ExtResource("16_mg4ec")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.4, 0.2, 9)
 
-[node name="BridgeGroup" type="Node3D" parent="StealthAct/Island2"]
+[node name="BridgeGroup" type="Node3D" parent="StealthAct/Island2" unique_id=1384394371]
 transform = Transform3D(0.939693, 0, 0.34202, 0, 1, 0, -0.34202, 0, 0.939693, -31.126, 0, 62.9813)
 
-[node name="BridgeLarge" parent="StealthAct/Island2/BridgeGroup" instance=ExtResource("11_q6qx1")]
+[node name="BridgeLarge" parent="StealthAct/Island2/BridgeGroup" unique_id=1058387749 instance=ExtResource("11_q6qx1")]
 transform = Transform3D(1.8, 0, 0, 0, 1, 0, -5.96046e-08, 0, 1.5, 0, 0, 0)
 
-[node name="BridgeSquare" parent="StealthAct/Island2/BridgeGroup" instance=ExtResource("6_p1yhv")]
+[node name="BridgeSquare" parent="StealthAct/Island2/BridgeGroup" unique_id=2041608843 instance=ExtResource("6_p1yhv")]
 transform = Transform3D(1.8, 0, 0, 0, 2, 0, -5.96046e-08, 0, 1.5, 0, 4.4, 5)
 
-[node name="ItemBox" parent="StealthAct/Island2/BridgeGroup" instance=ExtResource("36_ue8gm")]
+[node name="ItemBox" parent="StealthAct/Island2/BridgeGroup" unique_id=773058932 instance=ExtResource("36_ue8gm")]
 transform = Transform3D(-1, 0, -1.50996e-07, 0, 1, 0, 1.50996e-07, 0, -1, 0, 14.9, 5)
 "Spawn Settings/Spawn Pearls" = true
 "Spawn Settings/Amount" = 20
 
-[node name="CameraTrigger" parent="StealthAct/Island2/BridgeGroup" instance=ExtResource("4_yja4q")]
+[node name="CameraTrigger" parent="StealthAct/Island2/BridgeGroup" unique_id=746441360 instance=ExtResource("4_yja4q")]
 "Trigger Mode" = 2
 "Enter Mode" = 0
 "Exit Mode" = 0
 
-[node name="Camera" type="Node3D" parent="StealthAct/Island2/BridgeGroup/CameraTrigger"]
+[node name="Camera" type="Node3D" parent="StealthAct/Island2/BridgeGroup/CameraTrigger" unique_id=1405691133]
 script = ExtResource("19_sloo7")
 settings = ExtResource("20_miaao")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="StealthAct/Island2/BridgeGroup/CameraTrigger"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StealthAct/Island2/BridgeGroup/CameraTrigger" unique_id=1874385433]
 transform = Transform3D(1, 0, 2.68221e-07, 0, 1, 0, -2.68221e-07, 0, 1, 0, 13, -3.00006)
 shape = SubResource("BoxShape3D_3pp3i")
 
-[node name="SpoilsLarge1" parent="StealthAct/Island2/BridgeGroup" instance=ExtResource("18_a83fu")]
+[node name="SpoilsLarge1" parent="StealthAct/Island2/BridgeGroup" unique_id=840984918 instance=ExtResource("18_a83fu")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -8.5)
 
-[node name="SpoilGroup" type="Node3D" parent="StealthAct/Island2/BridgeGroup"]
+[node name="SpoilGroup" type="Node3D" parent="StealthAct/Island2/BridgeGroup" unique_id=1471550002]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5, 0)
 
-[node name="RichPearl1" parent="StealthAct/Island2/BridgeGroup/SpoilGroup" instance=ExtResource("30_1mbba")]
+[node name="RichPearl1" parent="StealthAct/Island2/BridgeGroup/SpoilGroup" unique_id=505919006 instance=ExtResource("30_1mbba")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, -6)
 
-[node name="SpoilsLarge2" parent="StealthAct/Island2/BridgeGroup/SpoilGroup" instance=ExtResource("18_a83fu")]
+[node name="SpoilsLarge2" parent="StealthAct/Island2/BridgeGroup/SpoilGroup" unique_id=821763849 instance=ExtResource("18_a83fu")]
 
-[node name="SpoilsLarge3" parent="StealthAct/Island2/BridgeGroup/SpoilGroup" instance=ExtResource("18_a83fu")]
+[node name="SpoilsLarge3" parent="StealthAct/Island2/BridgeGroup/SpoilGroup" unique_id=1828519092 instance=ExtResource("18_a83fu")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 0, -3.05176e-05)
 
-[node name="SpoilsLarge4" parent="StealthAct/Island2/BridgeGroup/SpoilGroup" instance=ExtResource("18_a83fu")]
+[node name="SpoilsLarge4" parent="StealthAct/Island2/BridgeGroup/SpoilGroup" unique_id=1004759416 instance=ExtResource("18_a83fu")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -3.00003)
 
-[node name="RedMajin" parent="StealthAct/Island2/BridgeGroup/SpoilGroup/SpoilsLarge4" instance=ExtResource("19_wucta")]
+[node name="RedMajin" parent="StealthAct/Island2/BridgeGroup/SpoilGroup/SpoilsLarge4" unique_id=736004716 instance=ExtResource("19_wucta")]
 transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 3, 0)
 "Rotation Settings/Track Player" = false
 "Rotation Settings/Rotation Time" = 5.0
@@ -506,28 +580,28 @@ transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 3, 
 "Attack Settings/Flame Inactive Time" = 1.0
 "Attack Settings/Flame Aggression Radius" = 15
 
-[node name="SpoilsLarge5" parent="StealthAct/Island2/BridgeGroup/SpoilGroup" instance=ExtResource("18_a83fu")]
+[node name="SpoilsLarge5" parent="StealthAct/Island2/BridgeGroup/SpoilGroup" unique_id=1104848344 instance=ExtResource("18_a83fu")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3, 0)
 
-[node name="RichPearl2" parent="StealthAct/Island2/BridgeGroup/SpoilGroup/SpoilsLarge5" instance=ExtResource("30_1mbba")]
+[node name="RichPearl2" parent="StealthAct/Island2/BridgeGroup/SpoilGroup/SpoilsLarge5" unique_id=211951972 instance=ExtResource("30_1mbba")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4, 0)
 
-[node name="RichRing" parent="StealthAct/Island2/BridgeGroup/SpoilGroup/SpoilsLarge5" instance=ExtResource("16_mg4ec")]
+[node name="RichRing" parent="StealthAct/Island2/BridgeGroup/SpoilGroup/SpoilsLarge5" unique_id=1848322942 instance=ExtResource("16_mg4ec")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.8, 0.8)
 
-[node name="SpikeBallSpawnerL" parent="StealthAct/Island2/BridgeGroup" instance=ExtResource("7_cp2cb")]
+[node name="SpikeBallSpawnerL" parent="StealthAct/Island2/BridgeGroup" unique_id=344123215 instance=ExtResource("7_cp2cb")]
 transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 3, 26, -2.62268e-07)
 lifetime = 8.0
 spawnInterval = 5.0
 initialVelocity = 5.0
 
-[node name="SpikeBallSpawnerR" parent="StealthAct/Island2/BridgeGroup" instance=ExtResource("7_cp2cb")]
+[node name="SpikeBallSpawnerR" parent="StealthAct/Island2/BridgeGroup" unique_id=105738659 instance=ExtResource("7_cp2cb")]
 transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, -3, 31, 0)
 lifetime = 8.0
 spawnInterval = 5.0
 initialVelocity = 5.0
 
-[node name="BlueMajin" parent="StealthAct/Island2/BridgeGroup" instance=ExtResource("14_yja4q")]
+[node name="BlueMajin" parent="StealthAct/Island2/BridgeGroup" unique_id=1353380290 instance=ExtResource("14_yja4q")]
 transform = Transform3D(-0.984808, 0, 0.173648, 0, 1, 0, -0.173648, 0, -0.984808, -1.50551, 14.4, 16.8275)
 "Spawn Settings/Spawn Travel Time" = 1.0
 "Spawn Settings/Spawn Delay" = 0.0
@@ -536,10 +610,10 @@ transform = Transform3D(-0.984808, 0, 0.173648, 0, 1, 0, -0.173648, 0, -0.984808
 "Spawn Settings/Spawn Out Offset" = Vector3(0, 0, 0)
 rangeOverride = 15
 
-[node name="DashPanel" parent="StealthAct/Island2/BridgeGroup" instance=ExtResource("32_o6ix1")]
+[node name="DashPanel" parent="StealthAct/Island2/BridgeGroup" unique_id=1752520504 instance=ExtResource("32_o6ix1")]
 transform = Transform3D(0.972832, 0, -0.23151, 0, 1, 0, 0.23151, 0, 0.972832, -1.35149, 0, 15.9048)
 
-[node name="Rings" type="Node3D" parent="StealthAct/Island2/BridgeGroup/DashPanel"]
+[node name="Rings" type="Node3D" parent="StealthAct/Island2/BridgeGroup/DashPanel" unique_id=882461345]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6, 2.6)
 script = ExtResource("8_it6v4")
 Source = ExtResource("9_p2828")
@@ -554,62 +628,62 @@ Spacing = 2.0
 "Vertical Offset" = null
 metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
 
-[node name="Child01" parent="StealthAct/Island2/BridgeGroup/DashPanel/Rings" instance=ExtResource("9_p2828")]
+[node name="Child01" parent="StealthAct/Island2/BridgeGroup/DashPanel/Rings" unique_id=1378844637 instance=ExtResource("9_p2828")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -6.10352e-05)
 
-[node name="Child02" parent="StealthAct/Island2/BridgeGroup/DashPanel/Rings" instance=ExtResource("9_p2828")]
+[node name="Child02" parent="StealthAct/Island2/BridgeGroup/DashPanel/Rings" unique_id=1164292765 instance=ExtResource("9_p2828")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.114395, 0, 1.99774)
 
-[node name="Child03" parent="StealthAct/Island2/BridgeGroup/DashPanel/Rings" instance=ExtResource("9_p2828")]
+[node name="Child03" parent="StealthAct/Island2/BridgeGroup/DashPanel/Rings" unique_id=815355828 instance=ExtResource("9_p2828")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.299576, 0, 3.99011)
 
-[node name="Child04" parent="StealthAct/Island2/BridgeGroup/DashPanel/Rings" instance=ExtResource("9_p2828")]
+[node name="Child04" parent="StealthAct/Island2/BridgeGroup/DashPanel/Rings" unique_id=1843875350 instance=ExtResource("9_p2828")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.548355, 0, 5.97546)
 
-[node name="Child05" parent="StealthAct/Island2/BridgeGroup/DashPanel/Rings" instance=ExtResource("9_p2828")]
+[node name="Child05" parent="StealthAct/Island2/BridgeGroup/DashPanel/Rings" unique_id=520441387 instance=ExtResource("9_p2828")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.853424, 0, 7.95294)
 
-[node name="Child06" parent="StealthAct/Island2/BridgeGroup/DashPanel/Rings" instance=ExtResource("9_p2828")]
+[node name="Child06" parent="StealthAct/Island2/BridgeGroup/DashPanel/Rings" unique_id=132853400 instance=ExtResource("9_p2828")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.2074, 0, 9.92206)
 
-[node name="Child07" parent="StealthAct/Island2/BridgeGroup/DashPanel/Rings" instance=ExtResource("9_p2828")]
+[node name="Child07" parent="StealthAct/Island2/BridgeGroup/DashPanel/Rings" unique_id=1622421340 instance=ExtResource("9_p2828")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.60303, 0, 11.8831)
 
-[node name="Child08" parent="StealthAct/Island2/BridgeGroup/DashPanel/Rings" instance=ExtResource("9_p2828")]
+[node name="Child08" parent="StealthAct/Island2/BridgeGroup/DashPanel/Rings" unique_id=995345635 instance=ExtResource("9_p2828")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.03354, 0, 13.8367)
 
-[node name="Child09" parent="StealthAct/Island2/BridgeGroup/DashPanel/Rings" instance=ExtResource("9_p2828")]
+[node name="Child09" parent="StealthAct/Island2/BridgeGroup/DashPanel/Rings" unique_id=2146370685 instance=ExtResource("9_p2828")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.4924, 0, 15.7838)
 
-[node name="Child10" parent="StealthAct/Island2/BridgeGroup/DashPanel/Rings" instance=ExtResource("9_p2828")]
+[node name="Child10" parent="StealthAct/Island2/BridgeGroup/DashPanel/Rings" unique_id=1382846918 instance=ExtResource("9_p2828")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.9736, 0, 17.7254)
 
-[node name="FireSoul1" parent="StealthAct/Island2/BridgeGroup" instance=ExtResource("13_ummfv")]
+[node name="FireSoul1" parent="StealthAct/Island2/BridgeGroup" unique_id=1472277266 instance=ExtResource("13_ummfv")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.5, 5.6, 0)
 
-[node name="WaterGroup" type="Node3D" parent="StealthAct/Island2"]
+[node name="WaterGroup" type="Node3D" parent="StealthAct/Island2" unique_id=1670569732]
 transform = Transform3D(0.98768, 0, -0.156486, 0, 1, 0, 0.156486, 0, 0.98768, -28.5, 0, 105)
 
-[node name="JumpPanel" parent="StealthAct/Island2/WaterGroup" instance=ExtResource("31_gsmtd")]
+[node name="JumpPanel" parent="StealthAct/Island2/WaterGroup" unique_id=210293305 instance=ExtResource("31_gsmtd")]
 transform = Transform3D(0.996195, 0, 0.0871557, 0, 1, 0, -0.0871557, 0, 0.996195, 0, -0.6, 2)
 MiddleHeight = 4.0
 FinalHeight = 3.0
 Distance = 18.0
 
-[node name="GrindrailLGroup" type="Node3D" parent="StealthAct/Island2/WaterGroup"]
+[node name="GrindrailLGroup" type="Node3D" parent="StealthAct/Island2/WaterGroup" unique_id=1349756317]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.6, -2, 20)
 
-[node name="BridgeSquare2" parent="StealthAct/Island2/WaterGroup/GrindrailLGroup" instance=ExtResource("6_p1yhv")]
+[node name="BridgeSquare2" parent="StealthAct/Island2/WaterGroup/GrindrailLGroup" unique_id=349608967 instance=ExtResource("6_p1yhv")]
 transform = Transform3D(0.5, 0, 0, 0, 1, 0, 0, 0, 0.5, -4.57764e-05, 0, 6.10352e-05)
 
-[node name="Grindrail2" parent="StealthAct/Island2/WaterGroup/GrindrailLGroup" instance=ExtResource("24_wucta")]
+[node name="Grindrail2" parent="StealthAct/Island2/WaterGroup/GrindrailLGroup" unique_id=221961857 instance=ExtResource("24_wucta")]
 transform = Transform3D(-1, 0, -1.49012e-07, 0, 1, 0, 1.49012e-07, 0, -1, 0, 4.9, 0)
 railModel = NodePath("")
 startCap = NodePath("")
 endCap = NodePath("")
 collider = NodePath("")
 
-[node name="PearlsL" type="Node3D" parent="StealthAct/Island2/WaterGroup/GrindrailLGroup/Grindrail2"]
+[node name="PearlsL" type="Node3D" parent="StealthAct/Island2/WaterGroup/GrindrailLGroup/Grindrail2" unique_id=331446805]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.25, 0.4, -2.5)
 script = ExtResource("8_it6v4")
 Source = ExtResource("21_n5t8q")
@@ -621,51 +695,51 @@ Spacing = 1.8
 "Vertical Offset" = null
 metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
 
-[node name="Child01" parent="StealthAct/Island2/WaterGroup/GrindrailLGroup/Grindrail2/PearlsL" instance=ExtResource("21_n5t8q")]
+[node name="Child01" parent="StealthAct/Island2/WaterGroup/GrindrailLGroup/Grindrail2/PearlsL" unique_id=796860231 instance=ExtResource("21_n5t8q")]
 
-[node name="Child02" parent="StealthAct/Island2/WaterGroup/GrindrailLGroup/Grindrail2/PearlsL" instance=ExtResource("21_n5t8q")]
+[node name="Child02" parent="StealthAct/Island2/WaterGroup/GrindrailLGroup/Grindrail2/PearlsL" unique_id=2054615752 instance=ExtResource("21_n5t8q")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -1.8)
 
-[node name="Child03" parent="StealthAct/Island2/WaterGroup/GrindrailLGroup/Grindrail2/PearlsL" instance=ExtResource("21_n5t8q")]
+[node name="Child03" parent="StealthAct/Island2/WaterGroup/GrindrailLGroup/Grindrail2/PearlsL" unique_id=160867492 instance=ExtResource("21_n5t8q")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -3.6)
 
-[node name="Child04" parent="StealthAct/Island2/WaterGroup/GrindrailLGroup/Grindrail2/PearlsL" instance=ExtResource("21_n5t8q")]
+[node name="Child04" parent="StealthAct/Island2/WaterGroup/GrindrailLGroup/Grindrail2/PearlsL" unique_id=758752127 instance=ExtResource("21_n5t8q")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -5.4)
 
-[node name="Child05" parent="StealthAct/Island2/WaterGroup/GrindrailLGroup/Grindrail2/PearlsL" instance=ExtResource("21_n5t8q")]
+[node name="Child05" parent="StealthAct/Island2/WaterGroup/GrindrailLGroup/Grindrail2/PearlsL" unique_id=80032483 instance=ExtResource("21_n5t8q")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -7.2)
 
-[node name="Child06" parent="StealthAct/Island2/WaterGroup/GrindrailLGroup/Grindrail2/PearlsL" instance=ExtResource("21_n5t8q")]
+[node name="Child06" parent="StealthAct/Island2/WaterGroup/GrindrailLGroup/Grindrail2/PearlsL" unique_id=1866978940 instance=ExtResource("21_n5t8q")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -9)
 
-[node name="Child07" parent="StealthAct/Island2/WaterGroup/GrindrailLGroup/Grindrail2/PearlsL" instance=ExtResource("21_n5t8q")]
+[node name="Child07" parent="StealthAct/Island2/WaterGroup/GrindrailLGroup/Grindrail2/PearlsL" unique_id=2030154293 instance=ExtResource("21_n5t8q")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -10.8)
 
-[node name="Child08" parent="StealthAct/Island2/WaterGroup/GrindrailLGroup/Grindrail2/PearlsL" instance=ExtResource("21_n5t8q")]
+[node name="Child08" parent="StealthAct/Island2/WaterGroup/GrindrailLGroup/Grindrail2/PearlsL" unique_id=654384557 instance=ExtResource("21_n5t8q")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -12.6)
 
-[node name="Child09" parent="StealthAct/Island2/WaterGroup/GrindrailLGroup/Grindrail2/PearlsL" instance=ExtResource("21_n5t8q")]
+[node name="Child09" parent="StealthAct/Island2/WaterGroup/GrindrailLGroup/Grindrail2/PearlsL" unique_id=414778463 instance=ExtResource("21_n5t8q")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -14.4)
 
-[node name="Child10" parent="StealthAct/Island2/WaterGroup/GrindrailLGroup/Grindrail2/PearlsL" instance=ExtResource("21_n5t8q")]
+[node name="Child10" parent="StealthAct/Island2/WaterGroup/GrindrailLGroup/Grindrail2/PearlsL" unique_id=1337833449 instance=ExtResource("21_n5t8q")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -16.2)
 
-[node name="Child11" parent="StealthAct/Island2/WaterGroup/GrindrailLGroup/Grindrail2/PearlsL" instance=ExtResource("21_n5t8q")]
+[node name="Child11" parent="StealthAct/Island2/WaterGroup/GrindrailLGroup/Grindrail2/PearlsL" unique_id=458888716 instance=ExtResource("21_n5t8q")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -18)
 
-[node name="Child12" parent="StealthAct/Island2/WaterGroup/GrindrailLGroup/Grindrail2/PearlsL" instance=ExtResource("21_n5t8q")]
+[node name="Child12" parent="StealthAct/Island2/WaterGroup/GrindrailLGroup/Grindrail2/PearlsL" unique_id=784042808 instance=ExtResource("21_n5t8q")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -19.8)
 
-[node name="Child13" parent="StealthAct/Island2/WaterGroup/GrindrailLGroup/Grindrail2/PearlsL" instance=ExtResource("21_n5t8q")]
+[node name="Child13" parent="StealthAct/Island2/WaterGroup/GrindrailLGroup/Grindrail2/PearlsL" unique_id=1945708448 instance=ExtResource("21_n5t8q")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -21.6)
 
-[node name="Child14" parent="StealthAct/Island2/WaterGroup/GrindrailLGroup/Grindrail2/PearlsL" instance=ExtResource("21_n5t8q")]
+[node name="Child14" parent="StealthAct/Island2/WaterGroup/GrindrailLGroup/Grindrail2/PearlsL" unique_id=319388356 instance=ExtResource("21_n5t8q")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -23.4)
 
-[node name="Child15" parent="StealthAct/Island2/WaterGroup/GrindrailLGroup/Grindrail2/PearlsL" instance=ExtResource("21_n5t8q")]
+[node name="Child15" parent="StealthAct/Island2/WaterGroup/GrindrailLGroup/Grindrail2/PearlsL" unique_id=253851931 instance=ExtResource("21_n5t8q")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -25.2)
 
-[node name="PearlsR" type="Node3D" parent="StealthAct/Island2/WaterGroup/GrindrailLGroup/Grindrail2"]
+[node name="PearlsR" type="Node3D" parent="StealthAct/Island2/WaterGroup/GrindrailLGroup/Grindrail2" unique_id=988677061]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.25, 0.4, -2.5)
 script = ExtResource("8_it6v4")
 Source = ExtResource("21_n5t8q")
@@ -677,54 +751,54 @@ Spacing = 1.8
 "Vertical Offset" = null
 metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
 
-[node name="Child01" parent="StealthAct/Island2/WaterGroup/GrindrailLGroup/Grindrail2/PearlsR" instance=ExtResource("21_n5t8q")]
+[node name="Child01" parent="StealthAct/Island2/WaterGroup/GrindrailLGroup/Grindrail2/PearlsR" unique_id=1371139798 instance=ExtResource("21_n5t8q")]
 
-[node name="Child02" parent="StealthAct/Island2/WaterGroup/GrindrailLGroup/Grindrail2/PearlsR" instance=ExtResource("21_n5t8q")]
+[node name="Child02" parent="StealthAct/Island2/WaterGroup/GrindrailLGroup/Grindrail2/PearlsR" unique_id=1636385065 instance=ExtResource("21_n5t8q")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -1.8)
 
-[node name="Child03" parent="StealthAct/Island2/WaterGroup/GrindrailLGroup/Grindrail2/PearlsR" instance=ExtResource("21_n5t8q")]
+[node name="Child03" parent="StealthAct/Island2/WaterGroup/GrindrailLGroup/Grindrail2/PearlsR" unique_id=362542625 instance=ExtResource("21_n5t8q")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -3.6)
 
-[node name="Child04" parent="StealthAct/Island2/WaterGroup/GrindrailLGroup/Grindrail2/PearlsR" instance=ExtResource("21_n5t8q")]
+[node name="Child04" parent="StealthAct/Island2/WaterGroup/GrindrailLGroup/Grindrail2/PearlsR" unique_id=88675622 instance=ExtResource("21_n5t8q")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -5.4)
 
-[node name="Child05" parent="StealthAct/Island2/WaterGroup/GrindrailLGroup/Grindrail2/PearlsR" instance=ExtResource("21_n5t8q")]
+[node name="Child05" parent="StealthAct/Island2/WaterGroup/GrindrailLGroup/Grindrail2/PearlsR" unique_id=1325067805 instance=ExtResource("21_n5t8q")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -7.2)
 
-[node name="Child06" parent="StealthAct/Island2/WaterGroup/GrindrailLGroup/Grindrail2/PearlsR" instance=ExtResource("21_n5t8q")]
+[node name="Child06" parent="StealthAct/Island2/WaterGroup/GrindrailLGroup/Grindrail2/PearlsR" unique_id=234295382 instance=ExtResource("21_n5t8q")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -9)
 
-[node name="Child07" parent="StealthAct/Island2/WaterGroup/GrindrailLGroup/Grindrail2/PearlsR" instance=ExtResource("21_n5t8q")]
+[node name="Child07" parent="StealthAct/Island2/WaterGroup/GrindrailLGroup/Grindrail2/PearlsR" unique_id=215580079 instance=ExtResource("21_n5t8q")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -10.8)
 
-[node name="Child08" parent="StealthAct/Island2/WaterGroup/GrindrailLGroup/Grindrail2/PearlsR" instance=ExtResource("21_n5t8q")]
+[node name="Child08" parent="StealthAct/Island2/WaterGroup/GrindrailLGroup/Grindrail2/PearlsR" unique_id=819996754 instance=ExtResource("21_n5t8q")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -12.6)
 
-[node name="Child09" parent="StealthAct/Island2/WaterGroup/GrindrailLGroup/Grindrail2/PearlsR" instance=ExtResource("21_n5t8q")]
+[node name="Child09" parent="StealthAct/Island2/WaterGroup/GrindrailLGroup/Grindrail2/PearlsR" unique_id=655789333 instance=ExtResource("21_n5t8q")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -14.4)
 
-[node name="Child10" parent="StealthAct/Island2/WaterGroup/GrindrailLGroup/Grindrail2/PearlsR" instance=ExtResource("21_n5t8q")]
+[node name="Child10" parent="StealthAct/Island2/WaterGroup/GrindrailLGroup/Grindrail2/PearlsR" unique_id=50735069 instance=ExtResource("21_n5t8q")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -16.2)
 
-[node name="Child11" parent="StealthAct/Island2/WaterGroup/GrindrailLGroup/Grindrail2/PearlsR" instance=ExtResource("21_n5t8q")]
+[node name="Child11" parent="StealthAct/Island2/WaterGroup/GrindrailLGroup/Grindrail2/PearlsR" unique_id=497297661 instance=ExtResource("21_n5t8q")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -18)
 
-[node name="Child12" parent="StealthAct/Island2/WaterGroup/GrindrailLGroup/Grindrail2/PearlsR" instance=ExtResource("21_n5t8q")]
+[node name="Child12" parent="StealthAct/Island2/WaterGroup/GrindrailLGroup/Grindrail2/PearlsR" unique_id=1900434626 instance=ExtResource("21_n5t8q")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -19.8)
 
-[node name="Child13" parent="StealthAct/Island2/WaterGroup/GrindrailLGroup/Grindrail2/PearlsR" instance=ExtResource("21_n5t8q")]
+[node name="Child13" parent="StealthAct/Island2/WaterGroup/GrindrailLGroup/Grindrail2/PearlsR" unique_id=1730316973 instance=ExtResource("21_n5t8q")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -21.6)
 
-[node name="Child14" parent="StealthAct/Island2/WaterGroup/GrindrailLGroup/Grindrail2/PearlsR" instance=ExtResource("21_n5t8q")]
+[node name="Child14" parent="StealthAct/Island2/WaterGroup/GrindrailLGroup/Grindrail2/PearlsR" unique_id=1854708612 instance=ExtResource("21_n5t8q")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -23.4)
 
-[node name="Child15" parent="StealthAct/Island2/WaterGroup/GrindrailLGroup/Grindrail2/PearlsR" instance=ExtResource("21_n5t8q")]
+[node name="Child15" parent="StealthAct/Island2/WaterGroup/GrindrailLGroup/Grindrail2/PearlsR" unique_id=202921866 instance=ExtResource("21_n5t8q")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -25.2)
 
-[node name="BridgeSquare3" parent="StealthAct/Island2/WaterGroup/GrindrailLGroup" instance=ExtResource("6_p1yhv")]
+[node name="BridgeSquare3" parent="StealthAct/Island2/WaterGroup/GrindrailLGroup" unique_id=1997554411 instance=ExtResource("6_p1yhv")]
 transform = Transform3D(0.5, 0, 0, 0, 1, 0, 0, 0, 0.5, 0, 0, 31)
 
-[node name="BlueMajin" parent="StealthAct/Island2/WaterGroup/GrindrailLGroup" instance=ExtResource("14_yja4q")]
+[node name="BlueMajin" parent="StealthAct/Island2/WaterGroup/GrindrailLGroup" unique_id=1767050515 instance=ExtResource("14_yja4q")]
 transform = Transform3D(-1, 0, 1.49012e-07, 0, 1, 0, -1.49012e-07, 0, -1, -1.00002, 5, 35.9999)
 "Spawn Interval Settings/Enable Spawn Interval" = true
 "Spawn Interval Settings/Spawn Delay" = 4.0
@@ -732,41 +806,41 @@ transform = Transform3D(-1, 0, 1.49012e-07, 0, 1, 0, -1.49012e-07, 0, -1, -1.000
 "Spawn Interval Settings/Despawn Delay" = 2.0
 rangeOverride = 35
 
-[node name="FireSoul2" parent="StealthAct/Island2/WaterGroup/GrindrailLGroup" instance=ExtResource("13_ummfv")]
+[node name="FireSoul2" parent="StealthAct/Island2/WaterGroup/GrindrailLGroup" unique_id=382390057 instance=ExtResource("13_ummfv")]
 transform = Transform3D(-1, 0, 1.49012e-07, 0, 1, 0, -1.49012e-07, 0, -1, -1, 5, 45)
 fireSoulIndex = 2
 
-[node name="SpoilsSmall" parent="StealthAct/Island2/WaterGroup/GrindrailLGroup" instance=ExtResource("13_hbhjh")]
+[node name="SpoilsSmall" parent="StealthAct/Island2/WaterGroup/GrindrailLGroup" unique_id=1235504110 instance=ExtResource("13_hbhjh")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5, 31.5)
 
-[node name="GrindrailRGroup" type="Node3D" parent="StealthAct/Island2/WaterGroup"]
+[node name="GrindrailRGroup" type="Node3D" parent="StealthAct/Island2/WaterGroup" unique_id=1754770064]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.4, -2, 50)
 
-[node name="BridgeSquare1" parent="StealthAct/Island2/WaterGroup/GrindrailRGroup" instance=ExtResource("6_p1yhv")]
+[node name="BridgeSquare1" parent="StealthAct/Island2/WaterGroup/GrindrailRGroup" unique_id=1051705401 instance=ExtResource("6_p1yhv")]
 transform = Transform3D(0.5, 0, 0, 0, 1, 0, 0, 0, 0.5, -4.57764e-05, 0, 6.10352e-05)
 
-[node name="Grindrail" parent="StealthAct/Island2/WaterGroup/GrindrailRGroup" instance=ExtResource("25_xa48n")]
+[node name="Grindrail" parent="StealthAct/Island2/WaterGroup/GrindrailRGroup" unique_id=1739582030 instance=ExtResource("25_xa48n")]
 transform = Transform3D(-1, 1.52574e-09, 8.74095e-08, 0, 0.999848, -0.0174524, -8.74228e-08, -0.0174524, -0.999848, 7.62939e-06, 4.9, 0.999878)
 railModel = NodePath("")
 startCap = NodePath("")
 endCap = NodePath("")
 collider = NodePath("")
 
-[node name="Spring" parent="StealthAct/Island2/WaterGroup/GrindrailRGroup/Grindrail" instance=ExtResource("24_oqpya")]
+[node name="Spring" parent="StealthAct/Island2/WaterGroup/GrindrailRGroup/Grindrail" unique_id=726346642 instance=ExtResource("24_oqpya")]
 transform = Transform3D(-0.906308, -0.211309, -0.365998, -6.98492e-10, 0.866026, -0.5, 0.422618, -0.453154, -0.784886, 0, 0.1, -20)
 MiddleHeight = 7.0
 FinalHeight = -2.0
 Distance = 25.0
 
-[node name="BridgeSquare2" parent="StealthAct/Island2/WaterGroup/GrindrailRGroup" instance=ExtResource("6_p1yhv")]
+[node name="BridgeSquare2" parent="StealthAct/Island2/WaterGroup/GrindrailRGroup" unique_id=1947710231 instance=ExtResource("6_p1yhv")]
 transform = Transform3D(0.5, 0, 0, 0, 1, 0, 0, 0, 0.5, 0, 0, 22)
 
-[node name="Island3" type="Node3D" parent="StealthAct"]
+[node name="Island3" type="Node3D" parent="StealthAct" unique_id=1460573178]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -138, 2, 648)
 script = ExtResource("5_owm5c")
 saveVisibilityOnCheckpoint = true
 
-[node name="Rings1" type="Node3D" parent="StealthAct/Island3"]
+[node name="Rings1" type="Node3D" parent="StealthAct/Island3" unique_id=320244662]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.1, 0.6, 9.7)
 script = ExtResource("8_it6v4")
 Source = ExtResource("9_p2828")
@@ -781,52 +855,52 @@ Spacing = 1.6
 "Vertical Offset" = null
 metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
 
-[node name="Child01" parent="StealthAct/Island3/Rings1" instance=ExtResource("9_p2828")]
+[node name="Child01" parent="StealthAct/Island3/Rings1" unique_id=1125491582 instance=ExtResource("9_p2828")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -6.10352e-05)
 
-[node name="Child02" parent="StealthAct/Island3/Rings1" instance=ExtResource("9_p2828")]
+[node name="Child02" parent="StealthAct/Island3/Rings1" unique_id=811175579 instance=ExtResource("9_p2828")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.64436, 0, 0.501404)
 
-[node name="Child03" parent="StealthAct/Island3/Rings1" instance=ExtResource("9_p2828")]
+[node name="Child03" parent="StealthAct/Island3/Rings1" unique_id=1249555892 instance=ExtResource("9_p2828")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.077, 0, 1.17426)
 
-[node name="Child04" parent="StealthAct/Island3/Rings1" instance=ExtResource("9_p2828")]
+[node name="Child04" parent="StealthAct/Island3/Rings1" unique_id=1892146344 instance=ExtResource("9_p2828")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.20181, 0, 2.28961)
 
-[node name="Child05" parent="StealthAct/Island3/Rings1" instance=ExtResource("9_p2828")]
+[node name="Child05" parent="StealthAct/Island3/Rings1" unique_id=533001801 instance=ExtResource("9_p2828")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.16972, 0, 3.77887)
 
-[node name="Child06" parent="StealthAct/Island3/Rings1" instance=ExtResource("9_p2828")]
+[node name="Child06" parent="StealthAct/Island3/Rings1" unique_id=688686949 instance=ExtResource("9_p2828")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.28874, 0, 5.16217)
 
-[node name="Child07" parent="StealthAct/Island3/Rings1" instance=ExtResource("9_p2828")]
+[node name="Child07" parent="StealthAct/Island3/Rings1" unique_id=316350701 instance=ExtResource("9_p2828")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.7715, 0, 5.87665)
 
-[node name="Child08" parent="StealthAct/Island3/Rings1" instance=ExtResource("9_p2828")]
+[node name="Child08" parent="StealthAct/Island3/Rings1" unique_id=683571608 instance=ExtResource("9_p2828")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.60611, 0, 5.63336)
 
-[node name="Child09" parent="StealthAct/Island3/Rings1" instance=ExtResource("9_p2828")]
+[node name="Child09" parent="StealthAct/Island3/Rings1" unique_id=2034540019 instance=ExtResource("9_p2828")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.3837, 0, 5.28412)
 
-[node name="Child10" parent="StealthAct/Island3/Rings1" instance=ExtResource("9_p2828")]
+[node name="Child10" parent="StealthAct/Island3/Rings1" unique_id=993336173 instance=ExtResource("9_p2828")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12.8763, 0, 5.72955)
 
-[node name="Child11" parent="StealthAct/Island3/Rings1" instance=ExtResource("9_p2828")]
+[node name="Child11" parent="StealthAct/Island3/Rings1" unique_id=994406166 instance=ExtResource("9_p2828")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14.2678, 0, 6.72388)
 
-[node name="Child12" parent="StealthAct/Island3/Rings1" instance=ExtResource("9_p2828")]
+[node name="Child12" parent="StealthAct/Island3/Rings1" unique_id=1881875478 instance=ExtResource("9_p2828")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 15.7229, 0, 7.76593)
 
-[node name="Child13" parent="StealthAct/Island3/Rings1" instance=ExtResource("9_p2828")]
+[node name="Child13" parent="StealthAct/Island3/Rings1" unique_id=497484415 instance=ExtResource("9_p2828")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 17.3022, 0, 8.367)
 
-[node name="Child14" parent="StealthAct/Island3/Rings1" instance=ExtResource("9_p2828")]
+[node name="Child14" parent="StealthAct/Island3/Rings1" unique_id=1284187037 instance=ExtResource("9_p2828")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 18.9498, 0, 8.21179)
 
-[node name="Child15" parent="StealthAct/Island3/Rings1" instance=ExtResource("9_p2828")]
+[node name="Child15" parent="StealthAct/Island3/Rings1" unique_id=1729839147 instance=ExtResource("9_p2828")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20.5912, 0, 7.58386)
 
-[node name="Rings2" type="Node3D" parent="StealthAct/Island3"]
+[node name="Rings2" type="Node3D" parent="StealthAct/Island3" unique_id=215580546]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 28.8, 0.6, 17.5)
 script = ExtResource("8_it6v4")
 Source = ExtResource("9_p2828")
@@ -841,162 +915,162 @@ Spacing = 1.6
 "Vertical Offset" = null
 metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
 
-[node name="Child01" parent="StealthAct/Island3/Rings2" instance=ExtResource("9_p2828")]
+[node name="Child01" parent="StealthAct/Island3/Rings2" unique_id=495549018 instance=ExtResource("9_p2828")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.52588e-05, 0, 0)
 
-[node name="Child02" parent="StealthAct/Island3/Rings2" instance=ExtResource("9_p2828")]
+[node name="Child02" parent="StealthAct/Island3/Rings2" unique_id=204983519 instance=ExtResource("9_p2828")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.62013, 0, -0.622498)
 
-[node name="Child03" parent="StealthAct/Island3/Rings2" instance=ExtResource("9_p2828")]
+[node name="Child03" parent="StealthAct/Island3/Rings2" unique_id=1543439251 instance=ExtResource("9_p2828")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.21869, 0, -0.900391)
 
-[node name="Child04" parent="StealthAct/Island3/Rings2" instance=ExtResource("9_p2828")]
+[node name="Child04" parent="StealthAct/Island3/Rings2" unique_id=422952777 instance=ExtResource("9_p2828")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.80534, 0, -0.567383)
 
-[node name="Child05" parent="StealthAct/Island3/Rings2" instance=ExtResource("9_p2828")]
+[node name="Child05" parent="StealthAct/Island3/Rings2" unique_id=582338710 instance=ExtResource("9_p2828")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.40283, 0, 0.234009)
 
-[node name="Child06" parent="StealthAct/Island3/Rings2" instance=ExtResource("9_p2828")]
+[node name="Child06" parent="StealthAct/Island3/Rings2" unique_id=110212622 instance=ExtResource("9_p2828")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.01881, 0, 0.936035)
 
-[node name="Child07" parent="StealthAct/Island3/Rings2" instance=ExtResource("9_p2828")]
+[node name="Child07" parent="StealthAct/Island3/Rings2" unique_id=1105719640 instance=ExtResource("9_p2828")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.63023, 0, 0.943604)
 
-[node name="Child08" parent="StealthAct/Island3/Rings2" instance=ExtResource("9_p2828")]
+[node name="Child08" parent="StealthAct/Island3/Rings2" unique_id=519634666 instance=ExtResource("9_p2828")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.2031, 0, -0.00183105)
 
-[node name="Child09" parent="StealthAct/Island3/Rings2" instance=ExtResource("9_p2828")]
+[node name="Child09" parent="StealthAct/Island3/Rings2" unique_id=1315533624 instance=ExtResource("9_p2828")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12.7591, 0, -0.961121)
 
-[node name="Child10" parent="StealthAct/Island3/Rings2" instance=ExtResource("9_p2828")]
+[node name="Child10" parent="StealthAct/Island3/Rings2" unique_id=617769174 instance=ExtResource("9_p2828")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14.3533, 0, -1.0116)
 
-[node name="Child11" parent="StealthAct/Island3/Rings2" instance=ExtResource("9_p2828")]
+[node name="Child11" parent="StealthAct/Island3/Rings2" unique_id=1280540554 instance=ExtResource("9_p2828")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 15.9868, 0, -0.437866)
 
-[node name="Child12" parent="StealthAct/Island3/Rings2" instance=ExtResource("9_p2828")]
+[node name="Child12" parent="StealthAct/Island3/Rings2" unique_id=1836684917 instance=ExtResource("9_p2828")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 17.6336, 0, 0.241272)
 
-[node name="Child13" parent="StealthAct/Island3/Rings2" instance=ExtResource("9_p2828")]
+[node name="Child13" parent="StealthAct/Island3/Rings2" unique_id=2023461990 instance=ExtResource("9_p2828")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19.2595, 0, 0.541504)
 
-[node name="Child14" parent="StealthAct/Island3/Rings2" instance=ExtResource("9_p2828")]
+[node name="Child14" parent="StealthAct/Island3/Rings2" unique_id=341439878 instance=ExtResource("9_p2828")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20.8388, 0, 0.156799)
 
-[node name="Child15" parent="StealthAct/Island3/Rings2" instance=ExtResource("9_p2828")]
+[node name="Child15" parent="StealthAct/Island3/Rings2" unique_id=1533346325 instance=ExtResource("9_p2828")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22.3848, 0, -0.676147)
 
-[node name="BombGroup0" type="Node3D" parent="StealthAct/Island3"]
+[node name="BombGroup0" type="Node3D" parent="StealthAct/Island3" unique_id=1437294798]
 
-[node name="BombTrigger" parent="StealthAct/Island3/BombGroup0" instance=ExtResource("4_yja4q")]
+[node name="BombTrigger" parent="StealthAct/Island3/BombGroup0" unique_id=1389696682 instance=ExtResource("4_yja4q")]
 transform = Transform3D(0.999354, 0, -0.035946, 0, 1, 0, 0.035946, 0, 0.999354, -0.0682208, 0, -24.0194)
 OneShot = true
 "Respawn Mode" = 0
 "Enter Mode" = 0
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="StealthAct/Island3/BombGroup0/BombTrigger"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StealthAct/Island3/BombGroup0/BombTrigger" unique_id=717464470]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
 shape = SubResource("BoxShape3D_lr06k")
 
-[node name="Bomb1" parent="StealthAct/Island3/BombGroup0" instance=ExtResource("26_lxodc")]
+[node name="Bomb1" parent="StealthAct/Island3/BombGroup0" unique_id=1158564379 instance=ExtResource("26_lxodc")]
 transform = Transform3D(-0.866025, 0, -0.5, 0, 1, 0, 0.5, 0, -0.866025, 0.3538, 0, 6.1902)
 "Launch Settings/Starting Offset" = Vector3(-40, 30, 0)
 "Launch Settings/Middle Height" = 0.0
 
-[node name="BombGroup1" type="Node3D" parent="StealthAct/Island3"]
+[node name="BombGroup1" type="Node3D" parent="StealthAct/Island3" unique_id=977962200]
 
-[node name="BombTrigger" parent="StealthAct/Island3/BombGroup1" instance=ExtResource("4_yja4q")]
+[node name="BombTrigger" parent="StealthAct/Island3/BombGroup1" unique_id=87923859 instance=ExtResource("4_yja4q")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.5, 0, -8.6)
 OneShot = true
 "Respawn Mode" = 0
 "Enter Mode" = 0
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="StealthAct/Island3/BombGroup1/BombTrigger"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StealthAct/Island3/BombGroup1/BombTrigger" unique_id=79385194]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
 shape = SubResource("BoxShape3D_lr06k")
 
-[node name="Bomb1" parent="StealthAct/Island3/BombGroup1" instance=ExtResource("26_lxodc")]
+[node name="Bomb1" parent="StealthAct/Island3/BombGroup1" unique_id=654142930 instance=ExtResource("26_lxodc")]
 transform = Transform3D(-0.642788, 0, -0.766044, 0, 1, 0, 0.766044, 0, -0.642788, 7.4966, 0, 12.8083)
 "Launch Settings/Starting Offset" = Vector3(-40, 30, 0)
 "Launch Settings/Middle Height" = 0.0
 
-[node name="Bomb2" parent="StealthAct/Island3/BombGroup1" instance=ExtResource("26_lxodc")]
+[node name="Bomb2" parent="StealthAct/Island3/BombGroup1" unique_id=636805139 instance=ExtResource("26_lxodc")]
 transform = Transform3D(-0.422618, 0, -0.906308, 0, 1, 0, 0.906308, 0, -0.422618, 13.7464, 0, 12.5438)
 launchDelay = 0.5
 "Launch Settings/Starting Offset" = Vector3(-30, 30, 0)
 "Launch Settings/Middle Height" = 0.0
 
-[node name="BombGroup2" type="Node3D" parent="StealthAct/Island3"]
+[node name="BombGroup2" type="Node3D" parent="StealthAct/Island3" unique_id=1540928674]
 
-[node name="BombTrigger" parent="StealthAct/Island3/BombGroup2" instance=ExtResource("4_yja4q")]
+[node name="BombTrigger" parent="StealthAct/Island3/BombGroup2" unique_id=1098554559 instance=ExtResource("4_yja4q")]
 transform = Transform3D(0.939693, 0, 0.34202, 0, 1, 0, -0.34202, 0, 0.939693, 0.5, 0, 1.4)
 OneShot = true
 "Respawn Mode" = 0
 "Enter Mode" = 0
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="StealthAct/Island3/BombGroup2/BombTrigger"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StealthAct/Island3/BombGroup2/BombTrigger" unique_id=1322088146]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
 shape = SubResource("BoxShape3D_lr06k")
 
-[node name="Bomb1" parent="StealthAct/Island3/BombGroup2" instance=ExtResource("26_lxodc")]
+[node name="Bomb1" parent="StealthAct/Island3/BombGroup2" unique_id=270780387 instance=ExtResource("26_lxodc")]
 transform = Transform3D(-0.258819, 0, -0.965926, 0, 1, 0, 0.965926, 0, -0.258819, 17.5417, 0, 17.5416)
 "Launch Settings/Starting Offset" = Vector3(40, 30, 0)
 "Launch Settings/Middle Height" = 0.0
 
-[node name="Bomb2" parent="StealthAct/Island3/BombGroup2" instance=ExtResource("26_lxodc")]
+[node name="Bomb2" parent="StealthAct/Island3/BombGroup2" unique_id=920161459 instance=ExtResource("26_lxodc")]
 transform = Transform3D(-0.0871558, 0, -0.996195, 0, 1, 0, 0.996195, 0, -0.0871558, 23.6742, 0, 15.6457)
 launchDelay = 0.5
 "Launch Settings/Starting Offset" = Vector3(-30, 30, 0)
 "Launch Settings/Middle Height" = 0.0
 
-[node name="BombGroup4" type="Node3D" parent="StealthAct/Island3"]
+[node name="BombGroup4" type="Node3D" parent="StealthAct/Island3" unique_id=1630308819]
 
-[node name="BombTrigger" parent="StealthAct/Island3/BombGroup4" instance=ExtResource("4_yja4q")]
+[node name="BombTrigger" parent="StealthAct/Island3/BombGroup4" unique_id=124923798 instance=ExtResource("4_yja4q")]
 transform = Transform3D(0.34202, 0, 0.939693, 0, 1, 0, -0.939693, 0, 0.34202, 15.189, 0, 15.2261)
 OneShot = true
 "Respawn Mode" = 0
 "Enter Mode" = 0
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="StealthAct/Island3/BombGroup4/BombTrigger"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StealthAct/Island3/BombGroup4/BombTrigger" unique_id=128381711]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
 shape = SubResource("BoxShape3D_lr06k")
 
-[node name="Bomb1" parent="StealthAct/Island3/BombGroup4" instance=ExtResource("26_lxodc")]
+[node name="Bomb1" parent="StealthAct/Island3/BombGroup4" unique_id=1354211879 instance=ExtResource("26_lxodc")]
 transform = Transform3D(0.0871558, 0, -0.996195, 0, 1, 0, 0.996195, 0, 0.0871558, 42.6352, 0, 18.9648)
 "Launch Settings/Starting Offset" = Vector3(40, 30, 0)
 "Launch Settings/Middle Height" = 0.0
 
-[node name="Bomb2" parent="StealthAct/Island3/BombGroup4" instance=ExtResource("26_lxodc")]
+[node name="Bomb2" parent="StealthAct/Island3/BombGroup4" unique_id=774974389 instance=ExtResource("26_lxodc")]
 transform = Transform3D(0.0508369, 0, -0.998707, 0, 1, 0, 0.998707, 0, 0.0508369, 48.2712, 0, 15.4816)
 launchDelay = 0.5
 "Launch Settings/Starting Offset" = Vector3(-30, 30, 0)
 "Launch Settings/Middle Height" = 0.0
 
-[node name="WaterGroup" type="Node3D" parent="StealthAct/Island3"]
+[node name="WaterGroup" type="Node3D" parent="StealthAct/Island3" unique_id=1351154015]
 transform = Transform3D(-0.0784591, 0, 0.996917, 0, 1, 0, -0.996917, 0, -0.0784591, 58, 0, 16.4)
 
-[node name="BridgeSquare1" parent="StealthAct/Island3/WaterGroup" instance=ExtResource("6_p1yhv")]
+[node name="BridgeSquare1" parent="StealthAct/Island3/WaterGroup" unique_id=153219696 instance=ExtResource("6_p1yhv")]
 transform = Transform3D(1.2, 0, 7.45058e-09, 0, 0.8, 0, 0, 0, 1, 0, -2.5, 0)
 
-[node name="BridgeLarge" parent="StealthAct/Island3/WaterGroup" instance=ExtResource("11_q6qx1")]
+[node name="BridgeLarge" parent="StealthAct/Island3/WaterGroup" unique_id=274946199 instance=ExtResource("11_q6qx1")]
 transform = Transform3D(1, 0, 0, 0, 0.8, 0, 0, 0, 1, 0, -4, 7)
 
-[node name="BridgeThin" parent="StealthAct/Island3/WaterGroup" instance=ExtResource("29_wucta")]
+[node name="BridgeThin" parent="StealthAct/Island3/WaterGroup" unique_id=1080949724 instance=ExtResource("29_wucta")]
 transform = Transform3D(1, 0, 0, 0, 0.8, 0, 0, 0, 1, 0, -5, 17)
 
-[node name="BridgeThin2" parent="StealthAct/Island3/WaterGroup" instance=ExtResource("29_wucta")]
+[node name="BridgeThin2" parent="StealthAct/Island3/WaterGroup" unique_id=164612808 instance=ExtResource("29_wucta")]
 transform = Transform3D(1, 0, 0, 0, 0.8, 0, 0, 0, 1, 0, -7, 27)
 
-[node name="BridgeSquare2" parent="StealthAct/Island3/WaterGroup" instance=ExtResource("6_p1yhv")]
+[node name="BridgeSquare2" parent="StealthAct/Island3/WaterGroup" unique_id=1956292860 instance=ExtResource("6_p1yhv")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 0.6, 0, -9, 33.2)
 
-[node name="SpoilsSmall1" parent="StealthAct/Island3/WaterGroup" instance=ExtResource("13_hbhjh")]
+[node name="SpoilsSmall1" parent="StealthAct/Island3/WaterGroup" unique_id=619052873 instance=ExtResource("13_hbhjh")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.75, -4, 32.9)
 
-[node name="SpoilsSmall2" parent="StealthAct/Island3/WaterGroup" instance=ExtResource("13_hbhjh")]
+[node name="SpoilsSmall2" parent="StealthAct/Island3/WaterGroup" unique_id=1268011846 instance=ExtResource("13_hbhjh")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.75, -4, 32.9)
 
-[node name="RedMajin1" parent="StealthAct/Island3/WaterGroup" instance=ExtResource("19_wucta")]
+[node name="RedMajin1" parent="StealthAct/Island3/WaterGroup" unique_id=1457283001 instance=ExtResource("19_wucta")]
 transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, -2.5, -1.5, 17)
 "Rotation Settings/Track Player" = false
 "Rotation Settings/Rotation Time" = -5.0
@@ -1005,7 +1079,7 @@ transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, -2.5, 
 "Attack Settings/Flame Aggression Radius" = 20
 "Attack Settings/Attack Instantly" = true
 
-[node name="RedMajin2" parent="StealthAct/Island3/WaterGroup" instance=ExtResource("19_wucta")]
+[node name="RedMajin2" parent="StealthAct/Island3/WaterGroup" unique_id=248003260 instance=ExtResource("19_wucta")]
 transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 2.5, -2.5, 26)
 "Rotation Settings/Track Player" = false
 "Rotation Settings/Rotation Time" = 5.0
@@ -1014,75 +1088,75 @@ transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 2.5, -
 "Attack Settings/Flame Aggression Radius" = 20
 "Attack Settings/Attack Instantly" = true
 
-[node name="FlyingPotGroup" type="Node3D" parent="StealthAct/Island3/WaterGroup"]
+[node name="FlyingPotGroup" type="Node3D" parent="StealthAct/Island3/WaterGroup" unique_id=918059712]
 transform = Transform3D(0.996917, 0, 0.0784591, 0, 1, 0, -0.0784591, 0, 0.996917, 1.5, -3, 38)
 
-[node name="FlyingPot" parent="StealthAct/Island3/WaterGroup/FlyingPotGroup" instance=ExtResource("28_jx4k4")]
+[node name="FlyingPot" parent="StealthAct/Island3/WaterGroup/FlyingPotGroup" unique_id=480020850 instance=ExtResource("28_jx4k4")]
 transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 0, 0)
 travelBounds = Vector2(2, 19)
 
-[node name="RichPearl1" parent="StealthAct/Island3/WaterGroup/FlyingPotGroup" instance=ExtResource("30_1mbba")]
+[node name="RichPearl1" parent="StealthAct/Island3/WaterGroup/FlyingPotGroup" unique_id=948903457 instance=ExtResource("30_1mbba")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.00012207, 12, 0)
 
-[node name="RichPearlL1" parent="StealthAct/Island3/WaterGroup/FlyingPotGroup" instance=ExtResource("30_1mbba")]
+[node name="RichPearlL1" parent="StealthAct/Island3/WaterGroup/FlyingPotGroup" unique_id=1044037366 instance=ExtResource("30_1mbba")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.00012, 14, 0)
 
-[node name="RichPearlR1" parent="StealthAct/Island3/WaterGroup/FlyingPotGroup" instance=ExtResource("30_1mbba")]
+[node name="RichPearlR1" parent="StealthAct/Island3/WaterGroup/FlyingPotGroup" unique_id=1130368259 instance=ExtResource("30_1mbba")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 14, 0)
 
-[node name="SpikeBall2" parent="StealthAct/Island3/WaterGroup/FlyingPotGroup" instance=ExtResource("29_6i1au")]
+[node name="SpikeBall2" parent="StealthAct/Island3/WaterGroup/FlyingPotGroup" unique_id=451775764 instance=ExtResource("29_6i1au")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 14, 0)
 Movement/Mode = 0
 
-[node name="RichPearl2" parent="StealthAct/Island3/WaterGroup/FlyingPotGroup" instance=ExtResource("30_1mbba")]
+[node name="RichPearl2" parent="StealthAct/Island3/WaterGroup/FlyingPotGroup" unique_id=2022407224 instance=ExtResource("30_1mbba")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.000120044, 16, 0)
 
-[node name="SpikeBall1" parent="StealthAct/Island3/WaterGroup/FlyingPotGroup" instance=ExtResource("29_6i1au")]
+[node name="SpikeBall1" parent="StealthAct/Island3/WaterGroup/FlyingPotGroup" unique_id=1253469120 instance=ExtResource("29_6i1au")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.00012, 10, 0)
 "Movement/Cycle Length" = 4.0
 "Movement/Starting Offset" = 0.5
 Movement/Distance = 4.0
 Movement/Angle = 90.0
 
-[node name="BridgeLarge1" parent="StealthAct/Island3/WaterGroup/FlyingPotGroup" instance=ExtResource("11_q6qx1")]
+[node name="BridgeLarge1" parent="StealthAct/Island3/WaterGroup/FlyingPotGroup" unique_id=147548958 instance=ExtResource("11_q6qx1")]
 transform = Transform3D(1.49994, 0, 0.0130898, 0, 1.5, 0, -0.0130898, 0, 1.49994, 0.041626, 3, 9.03107)
 
-[node name="BridgeLarge2" parent="StealthAct/Island3/WaterGroup/FlyingPotGroup/BridgeLarge1" instance=ExtResource("11_q6qx1")]
+[node name="BridgeLarge2" parent="StealthAct/Island3/WaterGroup/FlyingPotGroup/BridgeLarge1" unique_id=1677100865 instance=ExtResource("11_q6qx1")]
 transform = Transform3D(1, 0, 7.45058e-09, 0, 1, 0, -7.45058e-09, 0, 1, 0, 5, 0.00999451)
 
-[node name="JumpPanel" parent="StealthAct/Island3/WaterGroup/FlyingPotGroup" instance=ExtResource("31_gsmtd")]
+[node name="JumpPanel" parent="StealthAct/Island3/WaterGroup/FlyingPotGroup" unique_id=670122300 instance=ExtResource("31_gsmtd")]
 transform = Transform3D(0.997564, 0, 0.0697565, 0, 1, 0, -0.0697565, 0, 0.997564, 0.1, 18, 17)
 MiddleHeight = 10.0
 FinalHeight = -16.0
 Distance = 15.0
 
-[node name="Island4" type="Node3D" parent="StealthAct"]
+[node name="Island4" type="Node3D" parent="StealthAct" unique_id=980809672]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -15, 2, 655)
 script = ExtResource("5_owm5c")
 saveVisibilityOnCheckpoint = true
 
-[node name="DashGroup1" type="Node3D" parent="StealthAct/Island4"]
+[node name="DashGroup1" type="Node3D" parent="StealthAct/Island4" unique_id=1249629895]
 transform = Transform3D(-0.34202, 0, 0.939693, 0, 1, 0, -0.939693, 0, -0.34202, 4.29138, 0, -1.31102)
 
-[node name="DashPanelL" parent="StealthAct/Island4/DashGroup1" instance=ExtResource("32_o6ix1")]
+[node name="DashPanelL" parent="StealthAct/Island4/DashGroup1" unique_id=668146351 instance=ExtResource("32_o6ix1")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0)
 
-[node name="DashPanelR" parent="StealthAct/Island4/DashGroup1" instance=ExtResource("32_o6ix1")]
+[node name="DashPanelR" parent="StealthAct/Island4/DashGroup1" unique_id=110807517 instance=ExtResource("32_o6ix1")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0, 0)
 
-[node name="SpikeBall1" parent="StealthAct/Island4" instance=ExtResource("29_6i1au")]
+[node name="SpikeBall1" parent="StealthAct/Island4" unique_id=394095770 instance=ExtResource("29_6i1au")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20, 1, -8)
 Movement/Mode = 0
 
-[node name="Switch1" parent="StealthAct/Island4" instance=ExtResource("33_444jh")]
+[node name="Switch1" parent="StealthAct/Island4" unique_id=549152738 instance=ExtResource("33_444jh")]
 transform = Transform3D(0.905781, -0.031344, -0.422585, 0.0340797, 0.999418, -0.00108148, 0.422373, -0.013422, 0.906323, 24.2593, -0.000306986, -13.8502)
 activationLength = 1.0
 
-[node name="RingCull" type="Node3D" parent="StealthAct/Island4/Switch1"]
+[node name="RingCull" type="Node3D" parent="StealthAct/Island4/Switch1" unique_id=1324156671]
 transform = Transform3D(0.997684, 0, 0.0680153, 0, 1, 0, -0.0680153, 0, 0.997684, -0.117321, 0.799979, -6.10486)
 script = ExtResource("5_owm5c")
 
-[node name="Rings" type="Node3D" parent="StealthAct/Island4/Switch1/RingCull"]
+[node name="Rings" type="Node3D" parent="StealthAct/Island4/Switch1/RingCull" unique_id=58990124]
 script = ExtResource("8_it6v4")
 Source = ExtResource("9_p2828")
 Amount = 15
@@ -1096,72 +1170,72 @@ Spacing = 1.1
 "Vertical Offset" = null
 metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
 
-[node name="Child01" parent="StealthAct/Island4/Switch1/RingCull/Rings" instance=ExtResource("9_p2828")]
+[node name="Child01" parent="StealthAct/Island4/Switch1/RingCull/Rings" unique_id=505272292 instance=ExtResource("9_p2828")]
 transform = Transform3D(1, -4.65661e-10, 0, 0, 1, 0, 0, 0, 1, 4.57764e-05, -2.38419e-06, 0.000366211)
 
-[node name="Child02" parent="StealthAct/Island4/Switch1/RingCull/Rings" instance=ExtResource("9_p2828")]
+[node name="Child02" parent="StealthAct/Island4/Switch1/RingCull/Rings" unique_id=1527051399 instance=ExtResource("9_p2828")]
 transform = Transform3D(1, -4.65661e-10, 0, 0, 1, 0, 0, 0, 1, -0.151443, 0.0065856, -1.14697)
 
-[node name="Child03" parent="StealthAct/Island4/Switch1/RingCull/Rings" instance=ExtResource("9_p2828")]
+[node name="Child03" parent="StealthAct/Island4/Switch1/RingCull/Rings" unique_id=1222248094 instance=ExtResource("9_p2828")]
 transform = Transform3D(1, -4.65661e-10, 0, 0, 1, 0, 0, 0, 1, -0.339584, 0.0144067, -2.2821)
 
-[node name="Child04" parent="StealthAct/Island4/Switch1/RingCull/Rings" instance=ExtResource("9_p2828")]
+[node name="Child04" parent="StealthAct/Island4/Switch1/RingCull/Rings" unique_id=1372077086 instance=ExtResource("9_p2828")]
 transform = Transform3D(1, -4.65661e-10, 0, 0, 1, 0, 0, 0, 1, -0.564941, 0.0234809, -3.40448)
 
-[node name="Child05" parent="StealthAct/Island4/Switch1/RingCull/Rings" instance=ExtResource("9_p2828")]
+[node name="Child05" parent="StealthAct/Island4/Switch1/RingCull/Rings" unique_id=615926008 instance=ExtResource("9_p2828")]
 transform = Transform3D(1, -4.65661e-10, 0, 0, 1, 0, 0, 0, 1, -0.828903, 0.0338554, -4.51318)
 
-[node name="Child06" parent="StealthAct/Island4/Switch1/RingCull/Rings" instance=ExtResource("9_p2828")]
+[node name="Child06" parent="StealthAct/Island4/Switch1/RingCull/Rings" unique_id=298578370 instance=ExtResource("9_p2828")]
 transform = Transform3D(1, -4.65661e-10, 0, 0, 1, 0, 0, 0, 1, -1.13345, 0.0455947, -5.60669)
 
-[node name="Child07" parent="StealthAct/Island4/Switch1/RingCull/Rings" instance=ExtResource("9_p2828")]
+[node name="Child07" parent="StealthAct/Island4/Switch1/RingCull/Rings" unique_id=14640488 instance=ExtResource("9_p2828")]
 transform = Transform3D(1, -4.65661e-10, 0, 0, 1, 0, 0, 0, 1, -1.48099, 0.0587778, -6.68286)
 
-[node name="Child08" parent="StealthAct/Island4/Switch1/RingCull/Rings" instance=ExtResource("9_p2828")]
+[node name="Child08" parent="StealthAct/Island4/Switch1/RingCull/Rings" unique_id=1596006529 instance=ExtResource("9_p2828")]
 transform = Transform3D(1, -4.65661e-10, 0, 0, 1, 0, 0, 0, 1, -1.87431, 0.0734978, -7.7395)
 
-[node name="Child09" parent="StealthAct/Island4/Switch1/RingCull/Rings" instance=ExtResource("9_p2828")]
+[node name="Child09" parent="StealthAct/Island4/Switch1/RingCull/Rings" unique_id=764576551 instance=ExtResource("9_p2828")]
 transform = Transform3D(1, -4.65661e-10, 0, 0, 1, 0, 0, 0, 1, -2.31665, 0.0898614, -8.77441)
 
-[node name="Child10" parent="StealthAct/Island4/Switch1/RingCull/Rings" instance=ExtResource("9_p2828")]
+[node name="Child10" parent="StealthAct/Island4/Switch1/RingCull/Rings" unique_id=1877005442 instance=ExtResource("9_p2828")]
 transform = Transform3D(1, -4.65661e-10, 0, 0, 1, 0, 0, 0, 1, -2.81126, 0.107977, -9.78467)
 
-[node name="Child11" parent="StealthAct/Island4/Switch1/RingCull/Rings" instance=ExtResource("9_p2828")]
+[node name="Child11" parent="StealthAct/Island4/Switch1/RingCull/Rings" unique_id=1201899236 instance=ExtResource("9_p2828")]
 transform = Transform3D(1, -4.65661e-10, 0, 0, 1, 0, 0, 0, 1, -3.3618, 0.127966, -10.7678)
 
-[node name="Child12" parent="StealthAct/Island4/Switch1/RingCull/Rings" instance=ExtResource("9_p2828")]
+[node name="Child12" parent="StealthAct/Island4/Switch1/RingCull/Rings" unique_id=164017652 instance=ExtResource("9_p2828")]
 transform = Transform3D(1, -4.65661e-10, 0, 0, 1, 0, 0, 0, 1, -3.97217, 0.149959, -11.7213)
 
-[node name="Child13" parent="StealthAct/Island4/Switch1/RingCull/Rings" instance=ExtResource("9_p2828")]
+[node name="Child13" parent="StealthAct/Island4/Switch1/RingCull/Rings" unique_id=2098204944 instance=ExtResource("9_p2828")]
 transform = Transform3D(1, -4.65661e-10, 0, 0, 1, 0, 0, 0, 1, -4.64635, 0.174086, -12.6425)
 
-[node name="Child14" parent="StealthAct/Island4/Switch1/RingCull/Rings" instance=ExtResource("9_p2828")]
+[node name="Child14" parent="StealthAct/Island4/Switch1/RingCull/Rings" unique_id=72006163 instance=ExtResource("9_p2828")]
 transform = Transform3D(1, -4.65661e-10, 0, 0, 1, 0, 0, 0, 1, -5.3886, 0.200491, -13.5291)
 
-[node name="Child15" parent="StealthAct/Island4/Switch1/RingCull/Rings" instance=ExtResource("9_p2828")]
+[node name="Child15" parent="StealthAct/Island4/Switch1/RingCull/Rings" unique_id=696798921 instance=ExtResource("9_p2828")]
 transform = Transform3D(1, -4.65661e-10, 0, 0, 1, 0, 0, 0, 1, -6.20322, 0.229318, -14.3785)
 
-[node name="SpikeBall2" parent="StealthAct/Island4" instance=ExtResource("29_6i1au")]
+[node name="SpikeBall2" parent="StealthAct/Island4" unique_id=1587652312 instance=ExtResource("29_6i1au")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 23, 1, -18)
 Movement/Mode = 0
 
-[node name="DashPanel1" parent="StealthAct/Island4" instance=ExtResource("32_o6ix1")]
+[node name="DashPanel1" parent="StealthAct/Island4" unique_id=1048446926 instance=ExtResource("32_o6ix1")]
 transform = Transform3D(-0.939693, 0, 0.34202, 0, 1, 0, -0.34202, 0, -0.939693, 26.1382, 0, -17.4068)
 length = 0.2
 
-[node name="SpikeBall3" parent="StealthAct/Island4" instance=ExtResource("29_6i1au")]
+[node name="SpikeBall3" parent="StealthAct/Island4" unique_id=205971031 instance=ExtResource("29_6i1au")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 26, 1, -26)
 Movement/Mode = 0
 
-[node name="Switch2" parent="StealthAct/Island4" instance=ExtResource("33_444jh")]
+[node name="Switch2" parent="StealthAct/Island4" unique_id=1073391754 instance=ExtResource("33_444jh")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 26.5, 0.1, -33.7)
 activationLength = 1.0
 
-[node name="RingCull" type="Node3D" parent="StealthAct/Island4/Switch2"]
+[node name="RingCull" type="Node3D" parent="StealthAct/Island4/Switch2" unique_id=1931357644]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.506473, 0.799979, -7.04312)
 script = ExtResource("5_owm5c")
 
-[node name="Rings" type="Node3D" parent="StealthAct/Island4/Switch2/RingCull"]
+[node name="Rings" type="Node3D" parent="StealthAct/Island4/Switch2/RingCull" unique_id=1347950682]
 script = ExtResource("8_it6v4")
 Source = ExtResource("9_p2828")
 Amount = 15
@@ -1175,77 +1249,77 @@ Spacing = 1.0
 "Vertical Offset" = null
 metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
 
-[node name="Child01" parent="StealthAct/Island4/Switch2/RingCull/Rings" instance=ExtResource("9_p2828")]
+[node name="Child01" parent="StealthAct/Island4/Switch2/RingCull/Rings" unique_id=1502213454 instance=ExtResource("9_p2828")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.90735e-06, 0, 0)
 
-[node name="Child02" parent="StealthAct/Island4/Switch2/RingCull/Rings" instance=ExtResource("9_p2828")]
+[node name="Child02" parent="StealthAct/Island4/Switch2/RingCull/Rings" unique_id=1459842564 instance=ExtResource("9_p2828")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.414303, 0, -1.02161)
 
-[node name="Child03" parent="StealthAct/Island4/Switch2/RingCull/Rings" instance=ExtResource("9_p2828")]
+[node name="Child03" parent="StealthAct/Island4/Switch2/RingCull/Rings" unique_id=1081278148 instance=ExtResource("9_p2828")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.756809, 0, -2.03668)
 
-[node name="Child04" parent="StealthAct/Island4/Switch2/RingCull/Rings" instance=ExtResource("9_p2828")]
+[node name="Child04" parent="StealthAct/Island4/Switch2/RingCull/Rings" unique_id=1510520952 instance=ExtResource("9_p2828")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.0256, 0, -3.04364)
 
-[node name="Child05" parent="StealthAct/Island4/Switch2/RingCull/Rings" instance=ExtResource("9_p2828")]
+[node name="Child05" parent="StealthAct/Island4/Switch2/RingCull/Rings" unique_id=1209368053 instance=ExtResource("9_p2828")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.21891, 0, -4.04144)
 
-[node name="Child06" parent="StealthAct/Island4/Switch2/RingCull/Rings" instance=ExtResource("9_p2828")]
+[node name="Child06" parent="StealthAct/Island4/Switch2/RingCull/Rings" unique_id=529227009 instance=ExtResource("9_p2828")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.33513, 0, -5.02924)
 
-[node name="Child07" parent="StealthAct/Island4/Switch2/RingCull/Rings" instance=ExtResource("9_p2828")]
+[node name="Child07" parent="StealthAct/Island4/Switch2/RingCull/Rings" unique_id=568344976 instance=ExtResource("9_p2828")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.37293, 0, -6.00696)
 
-[node name="Child08" parent="StealthAct/Island4/Switch2/RingCull/Rings" instance=ExtResource("9_p2828")]
+[node name="Child08" parent="StealthAct/Island4/Switch2/RingCull/Rings" unique_id=1189129543 instance=ExtResource("9_p2828")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.33134, 0, -6.9754)
 
-[node name="Child09" parent="StealthAct/Island4/Switch2/RingCull/Rings" instance=ExtResource("9_p2828")]
+[node name="Child09" parent="StealthAct/Island4/Switch2/RingCull/Rings" unique_id=410430796 instance=ExtResource("9_p2828")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.21119, 0, -7.95074)
 
-[node name="Child10" parent="StealthAct/Island4/Switch2/RingCull/Rings" instance=ExtResource("9_p2828")]
+[node name="Child10" parent="StealthAct/Island4/Switch2/RingCull/Rings" unique_id=2110478421 instance=ExtResource("9_p2828")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.00337, 0, -8.94873)
 
-[node name="Child11" parent="StealthAct/Island4/Switch2/RingCull/Rings" instance=ExtResource("9_p2828")]
+[node name="Child11" parent="StealthAct/Island4/Switch2/RingCull/Rings" unique_id=1355668799 instance=ExtResource("9_p2828")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.703312, 0, -9.9472)
 
-[node name="Child12" parent="StealthAct/Island4/Switch2/RingCull/Rings" instance=ExtResource("9_p2828")]
+[node name="Child12" parent="StealthAct/Island4/Switch2/RingCull/Rings" unique_id=1529394198 instance=ExtResource("9_p2828")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.309366, 0, -10.9465)
 
-[node name="Child13" parent="StealthAct/Island4/Switch2/RingCull/Rings" instance=ExtResource("9_p2828")]
+[node name="Child13" parent="StealthAct/Island4/Switch2/RingCull/Rings" unique_id=1336465713 instance=ExtResource("9_p2828")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.180125, 0, -11.947)
 
-[node name="Child14" parent="StealthAct/Island4/Switch2/RingCull/Rings" instance=ExtResource("9_p2828")]
+[node name="Child14" parent="StealthAct/Island4/Switch2/RingCull/Rings" unique_id=1147762816 instance=ExtResource("9_p2828")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.76681, 0, -12.9493)
 
-[node name="Child15" parent="StealthAct/Island4/Switch2/RingCull/Rings" instance=ExtResource("9_p2828")]
+[node name="Child15" parent="StealthAct/Island4/Switch2/RingCull/Rings" unique_id=1613843255 instance=ExtResource("9_p2828")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.45232, 0, -13.9542)
 
-[node name="SpikeBall4" parent="StealthAct/Island4" instance=ExtResource("29_6i1au")]
+[node name="SpikeBall4" parent="StealthAct/Island4" unique_id=1722090784 instance=ExtResource("29_6i1au")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 29, 1, -35)
 Movement/Mode = 0
 
-[node name="DashPanel2" parent="StealthAct/Island4" instance=ExtResource("32_o6ix1")]
+[node name="DashPanel2" parent="StealthAct/Island4" unique_id=1722476286 instance=ExtResource("32_o6ix1")]
 transform = Transform3D(-0.939693, 0, 0.34202, 0, 1, 0, -0.34202, 0, -0.939693, 26.2128, 0, -38.6632)
 length = 0.2
 alignToPath = false
 
-[node name="SpikeBall5" parent="StealthAct/Island4" instance=ExtResource("29_6i1au")]
+[node name="SpikeBall5" parent="StealthAct/Island4" unique_id=2116729515 instance=ExtResource("29_6i1au")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25, 1, -43)
 Movement/Mode = 0
 
-[node name="SpikeBall6" parent="StealthAct/Island4" instance=ExtResource("29_6i1au")]
+[node name="SpikeBall6" parent="StealthAct/Island4" unique_id=2012104941 instance=ExtResource("29_6i1au")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 28.5, 1, -56)
 Movement/Mode = 0
 
-[node name="Switch3" parent="StealthAct/Island4" instance=ExtResource("33_444jh")]
+[node name="Switch3" parent="StealthAct/Island4" unique_id=1198838669 instance=ExtResource("33_444jh")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25, 0.1, -56.5)
 activationLength = 1.0
 
-[node name="RingCull" type="Node3D" parent="StealthAct/Island4/Switch3"]
+[node name="RingCull" type="Node3D" parent="StealthAct/Island4/Switch3" unique_id=2000319874]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.906473, 0.799979, -2.14312)
 script = ExtResource("5_owm5c")
 
-[node name="Rings" type="Node3D" parent="StealthAct/Island4/Switch3/RingCull"]
+[node name="Rings" type="Node3D" parent="StealthAct/Island4/Switch3/RingCull" unique_id=1353118380]
 script = ExtResource("8_it6v4")
 Source = ExtResource("9_p2828")
 Amount = 8
@@ -1259,53 +1333,53 @@ Spacing = 1.0
 "Vertical Offset" = null
 metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
 
-[node name="Child01" parent="StealthAct/Island4/Switch3/RingCull/Rings" instance=ExtResource("9_p2828")]
+[node name="Child01" parent="StealthAct/Island4/Switch3/RingCull/Rings" unique_id=1809825611 instance=ExtResource("9_p2828")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -6.10352e-05)
 
-[node name="Child02" parent="StealthAct/Island4/Switch3/RingCull/Rings" instance=ExtResource("9_p2828")]
+[node name="Child02" parent="StealthAct/Island4/Switch3/RingCull/Rings" unique_id=484122810 instance=ExtResource("9_p2828")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.62941, 0, -0.989197)
 
-[node name="Child03" parent="StealthAct/Island4/Switch3/RingCull/Rings" instance=ExtResource("9_p2828")]
+[node name="Child03" parent="StealthAct/Island4/Switch3/RingCull/Rings" unique_id=1368702471 instance=ExtResource("9_p2828")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.932611, 0, -1.98175)
 
-[node name="Child04" parent="StealthAct/Island4/Switch3/RingCull/Rings" instance=ExtResource("9_p2828")]
+[node name="Child04" parent="StealthAct/Island4/Switch3/RingCull/Rings" unique_id=744780462 instance=ExtResource("9_p2828")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.04386, 0, -2.97699)
 
-[node name="Child05" parent="StealthAct/Island4/Switch3/RingCull/Rings" instance=ExtResource("9_p2828")]
+[node name="Child05" parent="StealthAct/Island4/Switch3/RingCull/Rings" unique_id=1562187041 instance=ExtResource("9_p2828")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.07779, 0, -3.97369)
 
-[node name="Child06" parent="StealthAct/Island4/Switch3/RingCull/Rings" instance=ExtResource("9_p2828")]
+[node name="Child06" parent="StealthAct/Island4/Switch3/RingCull/Rings" unique_id=383726197 instance=ExtResource("9_p2828")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.982628, 0, -4.97388)
 
-[node name="Child07" parent="StealthAct/Island4/Switch3/RingCull/Rings" instance=ExtResource("9_p2828")]
+[node name="Child07" parent="StealthAct/Island4/Switch3/RingCull/Rings" unique_id=838358797 instance=ExtResource("9_p2828")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.698286, 0, -5.98108)
 
-[node name="Child08" parent="StealthAct/Island4/Switch3/RingCull/Rings" instance=ExtResource("9_p2828")]
+[node name="Child08" parent="StealthAct/Island4/Switch3/RingCull/Rings" unique_id=952103248 instance=ExtResource("9_p2828")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.176725, 0, -6.99915)
 
-[node name="FireSoul3" parent="StealthAct/Island4" instance=ExtResource("13_ummfv")]
+[node name="FireSoul3" parent="StealthAct/Island4" unique_id=1984723820 instance=ExtResource("13_ummfv")]
 transform = Transform3D(-1, 0, 1.49012e-07, 0, 1, 0, -1.49012e-07, 0, -1, 25, 0.6, -46)
 fireSoulIndex = 3
 
-[node name="SpikeBall7" parent="StealthAct/Island4" instance=ExtResource("29_6i1au")]
+[node name="SpikeBall7" parent="StealthAct/Island4" unique_id=1453579968 instance=ExtResource("29_6i1au")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 23.5, 1, -61)
 Movement/Mode = 0
 
-[node name="SpikeBall8" parent="StealthAct/Island4" instance=ExtResource("29_6i1au")]
+[node name="SpikeBall8" parent="StealthAct/Island4" unique_id=1850768055 instance=ExtResource("29_6i1au")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 29, 1, -68)
 Movement/Mode = 0
 
-[node name="SpikeBall9" parent="StealthAct/Island4" instance=ExtResource("29_6i1au")]
+[node name="SpikeBall9" parent="StealthAct/Island4" unique_id=501164622 instance=ExtResource("29_6i1au")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25.5, 1, -74)
 Movement/Mode = 0
 
-[node name="WaterGroup" type="Node3D" parent="StealthAct/Island4"]
+[node name="WaterGroup" type="Node3D" parent="StealthAct/Island4" unique_id=1599934650]
 transform = Transform3D(-0.979715, 0, 0.200394, 0, 1, 0, -0.200394, 0, -0.979715, 28.5725, 0, -88.7056)
 
-[node name="BridgeSquare1" parent="StealthAct/Island4/WaterGroup" instance=ExtResource("6_p1yhv")]
+[node name="BridgeSquare1" parent="StealthAct/Island4/WaterGroup" unique_id=21632388 instance=ExtResource("6_p1yhv")]
 transform = Transform3D(1.2, 0, 7.45058e-09, 0, 0.8, 0, 0, 0, 1, 0, -2.5, 0)
 
-[node name="Barrel" parent="StealthAct/Island4/WaterGroup" instance=ExtResource("22_g3tc4")]
+[node name="Barrel" parent="StealthAct/Island4/WaterGroup" unique_id=2086015883 instance=ExtResource("22_g3tc4")]
 transform = Transform3D(0.999048, 0, -0.0436194, 0, 1, 0, 0.0436194, 0, 0.999048, -2, -4, 12)
 MiddleHeight = 10.0
 FinalHeight = 2.0
@@ -1314,23 +1388,26 @@ Distance = 18.0
 [node name="Barrel" parent="StealthAct/Island4/WaterGroup/Barrel" index="1"]
 transform = Transform3D(0.541675, -0.541675, 0.642788, 0.707107, 0.707107, -2.10734e-08, -0.45452, 0.45452, 0.766045, 0, 0, 0)
 
-[node name="BridgeSquare3" parent="StealthAct/Island4/WaterGroup" instance=ExtResource("6_p1yhv")]
+[node name="AnimationPlayer" parent="StealthAct/Island4/WaterGroup/Barrel" index="2"]
+autoplay = &"idle"
+
+[node name="BridgeSquare3" parent="StealthAct/Island4/WaterGroup" unique_id=1278477344 instance=ExtResource("6_p1yhv")]
 transform = Transform3D(-1, 0, -1.78814e-07, 0, 1, 0, 1.78814e-07, 0, -1, -3, -8, 25)
 
-[node name="CratePlatform" parent="StealthAct/Island4/WaterGroup" instance=ExtResource("35_fgkf8")]
+[node name="CratePlatform" parent="StealthAct/Island4/WaterGroup" unique_id=852207865 instance=ExtResource("35_fgkf8")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, -4, 40)
 
-[node name="GreenMajin" parent="StealthAct/Island4/WaterGroup" instance=ExtResource("35_a83fu")]
+[node name="GreenMajin" parent="StealthAct/Island4/WaterGroup" unique_id=1442273552 instance=ExtResource("35_a83fu")]
 transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, -3, -3, 40)
 "Spawn Interval Settings/Enable Spawn Interval" = true
 "Spawn Interval Settings/Spawn Delay" = 3.0
 "Spawn Interval Settings/Separate Despawn Interval" = false
 rangeOverride = 15
 
-[node name="BridgeThin1" parent="StealthAct/Island4/WaterGroup" instance=ExtResource("29_wucta")]
+[node name="BridgeThin1" parent="StealthAct/Island4/WaterGroup" unique_id=399708904 instance=ExtResource("29_wucta")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, -7, 55)
 
-[node name="Rings" type="Node3D" parent="StealthAct/Island4/WaterGroup/BridgeThin1"]
+[node name="Rings" type="Node3D" parent="StealthAct/Island4/WaterGroup/BridgeThin1" unique_id=1952740933]
 transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 5.6, -4)
 script = ExtResource("8_it6v4")
 Source = ExtResource("9_p2828")
@@ -1342,24 +1419,24 @@ Spacing = 2.0
 "Vertical Offset" = null
 metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
 
-[node name="Child01" parent="StealthAct/Island4/WaterGroup/BridgeThin1/Rings" instance=ExtResource("9_p2828")]
+[node name="Child01" parent="StealthAct/Island4/WaterGroup/BridgeThin1/Rings" unique_id=597029578 instance=ExtResource("9_p2828")]
 
-[node name="Child02" parent="StealthAct/Island4/WaterGroup/BridgeThin1/Rings" instance=ExtResource("9_p2828")]
+[node name="Child02" parent="StealthAct/Island4/WaterGroup/BridgeThin1/Rings" unique_id=1872889671 instance=ExtResource("9_p2828")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2)
 
-[node name="Child03" parent="StealthAct/Island4/WaterGroup/BridgeThin1/Rings" instance=ExtResource("9_p2828")]
+[node name="Child03" parent="StealthAct/Island4/WaterGroup/BridgeThin1/Rings" unique_id=160991841 instance=ExtResource("9_p2828")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -4)
 
-[node name="Child04" parent="StealthAct/Island4/WaterGroup/BridgeThin1/Rings" instance=ExtResource("9_p2828")]
+[node name="Child04" parent="StealthAct/Island4/WaterGroup/BridgeThin1/Rings" unique_id=761763073 instance=ExtResource("9_p2828")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -6)
 
-[node name="Child05" parent="StealthAct/Island4/WaterGroup/BridgeThin1/Rings" instance=ExtResource("9_p2828")]
+[node name="Child05" parent="StealthAct/Island4/WaterGroup/BridgeThin1/Rings" unique_id=629174239 instance=ExtResource("9_p2828")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -8)
 
-[node name="BridgeThin2" parent="StealthAct/Island4/WaterGroup" instance=ExtResource("29_wucta")]
+[node name="BridgeThin2" parent="StealthAct/Island4/WaterGroup" unique_id=248393680 instance=ExtResource("29_wucta")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, -5.5, 65)
 
-[node name="Rings" type="Node3D" parent="StealthAct/Island4/WaterGroup/BridgeThin2"]
+[node name="Rings" type="Node3D" parent="StealthAct/Island4/WaterGroup/BridgeThin2" unique_id=1241866176]
 transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 5.6, -4)
 script = ExtResource("8_it6v4")
 Source = ExtResource("9_p2828")
@@ -1371,24 +1448,24 @@ Spacing = 2.0
 "Vertical Offset" = null
 metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
 
-[node name="Child01" parent="StealthAct/Island4/WaterGroup/BridgeThin2/Rings" instance=ExtResource("9_p2828")]
+[node name="Child01" parent="StealthAct/Island4/WaterGroup/BridgeThin2/Rings" unique_id=995616803 instance=ExtResource("9_p2828")]
 
-[node name="Child02" parent="StealthAct/Island4/WaterGroup/BridgeThin2/Rings" instance=ExtResource("9_p2828")]
+[node name="Child02" parent="StealthAct/Island4/WaterGroup/BridgeThin2/Rings" unique_id=615510256 instance=ExtResource("9_p2828")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2)
 
-[node name="Child03" parent="StealthAct/Island4/WaterGroup/BridgeThin2/Rings" instance=ExtResource("9_p2828")]
+[node name="Child03" parent="StealthAct/Island4/WaterGroup/BridgeThin2/Rings" unique_id=587362243 instance=ExtResource("9_p2828")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -4)
 
-[node name="Child04" parent="StealthAct/Island4/WaterGroup/BridgeThin2/Rings" instance=ExtResource("9_p2828")]
+[node name="Child04" parent="StealthAct/Island4/WaterGroup/BridgeThin2/Rings" unique_id=990864001 instance=ExtResource("9_p2828")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -6)
 
-[node name="Child05" parent="StealthAct/Island4/WaterGroup/BridgeThin2/Rings" instance=ExtResource("9_p2828")]
+[node name="Child05" parent="StealthAct/Island4/WaterGroup/BridgeThin2/Rings" unique_id=1768101546 instance=ExtResource("9_p2828")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -8)
 
-[node name="BridgeThin3" parent="StealthAct/Island4/WaterGroup" instance=ExtResource("29_wucta")]
+[node name="BridgeThin3" parent="StealthAct/Island4/WaterGroup" unique_id=2066995549 instance=ExtResource("29_wucta")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, -4, 75)
 
-[node name="Rings" type="Node3D" parent="StealthAct/Island4/WaterGroup/BridgeThin3"]
+[node name="Rings" type="Node3D" parent="StealthAct/Island4/WaterGroup/BridgeThin3" unique_id=1473531090]
 transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 5.6, -4)
 script = ExtResource("8_it6v4")
 Source = ExtResource("9_p2828")
@@ -1400,39 +1477,39 @@ Spacing = 2.0
 "Vertical Offset" = null
 metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
 
-[node name="Child01" parent="StealthAct/Island4/WaterGroup/BridgeThin3/Rings" instance=ExtResource("9_p2828")]
+[node name="Child01" parent="StealthAct/Island4/WaterGroup/BridgeThin3/Rings" unique_id=346250314 instance=ExtResource("9_p2828")]
 
-[node name="Child02" parent="StealthAct/Island4/WaterGroup/BridgeThin3/Rings" instance=ExtResource("9_p2828")]
+[node name="Child02" parent="StealthAct/Island4/WaterGroup/BridgeThin3/Rings" unique_id=758559396 instance=ExtResource("9_p2828")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2)
 
-[node name="Child03" parent="StealthAct/Island4/WaterGroup/BridgeThin3/Rings" instance=ExtResource("9_p2828")]
+[node name="Child03" parent="StealthAct/Island4/WaterGroup/BridgeThin3/Rings" unique_id=437737680 instance=ExtResource("9_p2828")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -4)
 
-[node name="Child04" parent="StealthAct/Island4/WaterGroup/BridgeThin3/Rings" instance=ExtResource("9_p2828")]
+[node name="Child04" parent="StealthAct/Island4/WaterGroup/BridgeThin3/Rings" unique_id=659488172 instance=ExtResource("9_p2828")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -6)
 
-[node name="Child05" parent="StealthAct/Island4/WaterGroup/BridgeThin3/Rings" instance=ExtResource("9_p2828")]
+[node name="Child05" parent="StealthAct/Island4/WaterGroup/BridgeThin3/Rings" unique_id=1571945865 instance=ExtResource("9_p2828")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -8)
 
-[node name="BridgeGroup2" type="Node3D" parent="StealthAct/Island4"]
+[node name="BridgeGroup2" type="Node3D" parent="StealthAct/Island4" unique_id=1630184385]
 transform = Transform3D(0.965926, 0, 0.258819, 0, 1, 0, -0.258819, 0, 0.965926, 45.7602, 0, -189.422)
 
-[node name="BridgeSquare1" parent="StealthAct/Island4/BridgeGroup2" instance=ExtResource("6_p1yhv")]
+[node name="BridgeSquare1" parent="StealthAct/Island4/BridgeGroup2" unique_id=1121301122 instance=ExtResource("6_p1yhv")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 0, 0)
 
-[node name="BridgeSquare2" parent="StealthAct/Island4/BridgeGroup2" instance=ExtResource("6_p1yhv")]
+[node name="BridgeSquare2" parent="StealthAct/Island4/BridgeGroup2" unique_id=901977040 instance=ExtResource("6_p1yhv")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 0, 0)
 
-[node name="BridgeSquare3" parent="StealthAct/Island4/BridgeGroup2" instance=ExtResource("6_p1yhv")]
+[node name="BridgeSquare3" parent="StealthAct/Island4/BridgeGroup2" unique_id=740901204 instance=ExtResource("6_p1yhv")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, 4, -34)
 
-[node name="SpikeBallSpawner" parent="StealthAct/Island4/BridgeGroup2/BridgeSquare3" instance=ExtResource("7_cp2cb")]
+[node name="SpikeBallSpawner" parent="StealthAct/Island4/BridgeGroup2/BridgeSquare3" unique_id=305485074 instance=ExtResource("7_cp2cb")]
 transform = Transform3D(1, 0, 0, 0, 0.573576, 0.819152, 0, -0.819152, 0.573576, 0, 5, -5.983)
 lifetime = 6.0
 spawnInterval = 2.0
 initialVelocity = 18.0
 
-[node name="Rings2" type="Node3D" parent="StealthAct/Island4"]
+[node name="Rings2" type="Node3D" parent="StealthAct/Island4" unique_id=1928180795]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 46.6, 0.7, -185)
 script = ExtResource("8_it6v4")
 Source = ExtResource("9_p2828")
@@ -1447,49 +1524,49 @@ Spacing = 3.0
 "Vertical Offset" = null
 metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
 
-[node name="Child01" parent="StealthAct/Island4/Rings2" instance=ExtResource("9_p2828")]
+[node name="Child01" parent="StealthAct/Island4/Rings2" unique_id=437354054 instance=ExtResource("9_p2828")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.72205e-06, 0, 3.05176e-05)
 
-[node name="Child02" parent="StealthAct/Island4/Rings2" instance=ExtResource("9_p2828")]
+[node name="Child02" parent="StealthAct/Island4/Rings2" unique_id=708039873 instance=ExtResource("9_p2828")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.539396, 0, -2.95032)
 
-[node name="Child03" parent="StealthAct/Island4/Rings2" instance=ExtResource("9_p2828")]
+[node name="Child03" parent="StealthAct/Island4/Rings2" unique_id=937400708 instance=ExtResource("9_p2828")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.26236, 0, -5.86127)
 
-[node name="Child04" parent="StealthAct/Island4/Rings2" instance=ExtResource("9_p2828")]
+[node name="Child04" parent="StealthAct/Island4/Rings2" unique_id=685085417 instance=ExtResource("9_p2828")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.15302, 0, -8.72537)
 
-[node name="Child05" parent="StealthAct/Island4/Rings2" instance=ExtResource("9_p2828")]
+[node name="Child05" parent="StealthAct/Island4/Rings2" unique_id=1703463845 instance=ExtResource("9_p2828")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.20332, 0, -11.5349)
 
-[node name="Child06" parent="StealthAct/Island4/Rings2" instance=ExtResource("9_p2828")]
+[node name="Child06" parent="StealthAct/Island4/Rings2" unique_id=42956378 instance=ExtResource("9_p2828")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.4099, 0, -14.2809)
 
-[node name="Child07" parent="StealthAct/Island4/Rings2" instance=ExtResource("9_p2828")]
+[node name="Child07" parent="StealthAct/Island4/Rings2" unique_id=539862429 instance=ExtResource("9_p2828")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.77246, 0, -16.953)
 
-[node name="Child08" parent="StealthAct/Island4/Rings2" instance=ExtResource("9_p2828")]
+[node name="Child08" parent="StealthAct/Island4/Rings2" unique_id=1439071827 instance=ExtResource("9_p2828")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.29255, 0, -19.5386)
 
-[node name="Child09" parent="StealthAct/Island4/Rings2" instance=ExtResource("9_p2828")]
+[node name="Child09" parent="StealthAct/Island4/Rings2" unique_id=1884189482 instance=ExtResource("9_p2828")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.97271, 0, -22.0231)
 
-[node name="Child10" parent="StealthAct/Island4/Rings2" instance=ExtResource("9_p2828")]
+[node name="Child10" parent="StealthAct/Island4/Rings2" unique_id=2022642726 instance=ExtResource("9_p2828")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10.8155, 0, -24.3893)
 
-[node name="Goal" parent="StealthAct/Island4" instance=ExtResource("37_ogl6t")]
+[node name="Goal" parent="StealthAct/Island4" unique_id=1358989705 instance=ExtResource("37_ogl6t")]
 transform = Transform3D(0.642788, 0, 0.766044, 0, 1, 0, -0.766044, 0, 0.642788, 28.9107, 8, -216.766)
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="StealthAct/Island4/Goal"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StealthAct/Island4/Goal" unique_id=1584687375]
 shape = SubResource("BoxShape3D_lr06k")
 
-[node name="WaterGroup2" type="Node3D" parent="StealthAct/Island4"]
+[node name="WaterGroup2" type="Node3D" parent="StealthAct/Island4" unique_id=899107345]
 transform = Transform3D(0.139173, 0, -0.990268, 0, 1, 0, 0.990268, 0, 0.139173, -9.0349, 0, -219.398)
 
-[node name="BridgeSquare" parent="StealthAct/Island4/WaterGroup2" instance=ExtResource("6_p1yhv")]
+[node name="BridgeSquare" parent="StealthAct/Island4/WaterGroup2" unique_id=448750547 instance=ExtResource("6_p1yhv")]
 transform = Transform3D(1.2, 0, 0, 0, 0.8, 0, 0, 0, 1, 0, -2, 0)
 
-[node name="ThornSpring1" parent="StealthAct/Island4/WaterGroup2" instance=ExtResource("10_6gb5x")]
+[node name="ThornSpring1" parent="StealthAct/Island4/WaterGroup2" unique_id=508933730 instance=ExtResource("10_6gb5x")]
 transform = Transform3D(0.996195, 0, -0.0871557, 0, 1, 0, 0.0871557, 0, 0.996195, 0, 1, 7)
 rotationTime = 1.5
 staticTime = 1.5
@@ -1498,10 +1575,10 @@ FinalHeight = 6.0
 Distance = 3.0
 LauncherDirection = 0
 
-[node name="BridgeLarge1" parent="StealthAct/Island4/WaterGroup2" instance=ExtResource("11_q6qx1")]
+[node name="BridgeLarge1" parent="StealthAct/Island4/WaterGroup2" unique_id=292707681 instance=ExtResource("11_q6qx1")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1, 17)
 
-[node name="Rings" type="Node3D" parent="StealthAct/Island4/WaterGroup2/BridgeLarge1"]
+[node name="Rings" type="Node3D" parent="StealthAct/Island4/WaterGroup2/BridgeLarge1" unique_id=967039703]
 transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, -1, 5.7, -4)
 script = ExtResource("8_it6v4")
 Source = ExtResource("9_p2828")
@@ -1513,24 +1590,24 @@ Spacing = 2.0
 "Vertical Offset" = null
 metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
 
-[node name="Child01" parent="StealthAct/Island4/WaterGroup2/BridgeLarge1/Rings" instance=ExtResource("9_p2828")]
+[node name="Child01" parent="StealthAct/Island4/WaterGroup2/BridgeLarge1/Rings" unique_id=141106156 instance=ExtResource("9_p2828")]
 
-[node name="Child02" parent="StealthAct/Island4/WaterGroup2/BridgeLarge1/Rings" instance=ExtResource("9_p2828")]
+[node name="Child02" parent="StealthAct/Island4/WaterGroup2/BridgeLarge1/Rings" unique_id=1797769074 instance=ExtResource("9_p2828")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2)
 
-[node name="Child03" parent="StealthAct/Island4/WaterGroup2/BridgeLarge1/Rings" instance=ExtResource("9_p2828")]
+[node name="Child03" parent="StealthAct/Island4/WaterGroup2/BridgeLarge1/Rings" unique_id=681367345 instance=ExtResource("9_p2828")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -4)
 
-[node name="Child04" parent="StealthAct/Island4/WaterGroup2/BridgeLarge1/Rings" instance=ExtResource("9_p2828")]
+[node name="Child04" parent="StealthAct/Island4/WaterGroup2/BridgeLarge1/Rings" unique_id=1264402159 instance=ExtResource("9_p2828")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -6)
 
-[node name="Child05" parent="StealthAct/Island4/WaterGroup2/BridgeLarge1/Rings" instance=ExtResource("9_p2828")]
+[node name="Child05" parent="StealthAct/Island4/WaterGroup2/BridgeLarge1/Rings" unique_id=695357715 instance=ExtResource("9_p2828")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -8)
 
-[node name="BridgeLarge2" parent="StealthAct/Island4/WaterGroup2" instance=ExtResource("11_q6qx1")]
+[node name="BridgeLarge2" parent="StealthAct/Island4/WaterGroup2" unique_id=2015610747 instance=ExtResource("11_q6qx1")]
 transform = Transform3D(0.99863, 0, 0.052336, 0, 1, 0, -0.052336, 0, 0.99863, 0.5, -3, 34)
 
-[node name="Rings" type="Node3D" parent="StealthAct/Island4/WaterGroup2/BridgeLarge2"]
+[node name="Rings" type="Node3D" parent="StealthAct/Island4/WaterGroup2/BridgeLarge2" unique_id=247879509]
 transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 1, 5.7, -4)
 script = ExtResource("8_it6v4")
 Source = ExtResource("9_p2828")
@@ -1542,27 +1619,27 @@ Spacing = 1.5
 "Vertical Offset" = null
 metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
 
-[node name="Child01" parent="StealthAct/Island4/WaterGroup2/BridgeLarge2/Rings" instance=ExtResource("9_p2828")]
+[node name="Child01" parent="StealthAct/Island4/WaterGroup2/BridgeLarge2/Rings" unique_id=1929952127 instance=ExtResource("9_p2828")]
 
-[node name="Child02" parent="StealthAct/Island4/WaterGroup2/BridgeLarge2/Rings" instance=ExtResource("9_p2828")]
+[node name="Child02" parent="StealthAct/Island4/WaterGroup2/BridgeLarge2/Rings" unique_id=1442590554 instance=ExtResource("9_p2828")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -1.5)
 
-[node name="Child03" parent="StealthAct/Island4/WaterGroup2/BridgeLarge2/Rings" instance=ExtResource("9_p2828")]
+[node name="Child03" parent="StealthAct/Island4/WaterGroup2/BridgeLarge2/Rings" unique_id=1169367147 instance=ExtResource("9_p2828")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -3)
 
-[node name="Child04" parent="StealthAct/Island4/WaterGroup2/BridgeLarge2/Rings" instance=ExtResource("9_p2828")]
+[node name="Child04" parent="StealthAct/Island4/WaterGroup2/BridgeLarge2/Rings" unique_id=632442164 instance=ExtResource("9_p2828")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -4.5)
 
-[node name="Child05" parent="StealthAct/Island4/WaterGroup2/BridgeLarge2/Rings" instance=ExtResource("9_p2828")]
+[node name="Child05" parent="StealthAct/Island4/WaterGroup2/BridgeLarge2/Rings" unique_id=1475225100 instance=ExtResource("9_p2828")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -6)
 
-[node name="SpoilsSmall1" parent="StealthAct/Island4/WaterGroup2/BridgeLarge2" instance=ExtResource("13_hbhjh")]
+[node name="SpoilsSmall1" parent="StealthAct/Island4/WaterGroup2/BridgeLarge2" unique_id=1163548337 instance=ExtResource("13_hbhjh")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.6, 5, 4)
 
-[node name="SpoilsSmall2" parent="StealthAct/Island4/WaterGroup2/BridgeLarge2" instance=ExtResource("13_hbhjh")]
+[node name="SpoilsSmall2" parent="StealthAct/Island4/WaterGroup2/BridgeLarge2" unique_id=1084640164 instance=ExtResource("13_hbhjh")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5, 4)
 
-[node name="ThornSpring2" parent="StealthAct/Island4/WaterGroup2" instance=ExtResource("10_6gb5x")]
+[node name="ThornSpring2" parent="StealthAct/Island4/WaterGroup2" unique_id=611126962 instance=ExtResource("10_6gb5x")]
 transform = Transform3D(0.996195, 0, 0.0871557, 0, 1, 0, -0.0871557, 0, 0.996195, 1.7385, -1, 54.0114)
 rotationTime = 1.5
 staticTime = 1.5
@@ -1571,10 +1648,10 @@ FinalHeight = 5.0
 Distance = 10.0
 LauncherDirection = 2
 
-[node name="BridgeLarge3" parent="StealthAct/Island4/WaterGroup2" instance=ExtResource("11_q6qx1")]
+[node name="BridgeLarge3" parent="StealthAct/Island4/WaterGroup2" unique_id=251889453 instance=ExtResource("11_q6qx1")]
 transform = Transform3D(0.987688, 0, 0.156434, 0, 1, 0, -0.156434, 0, 0.987688, 4, -5, 73)
 
-[node name="Rings" type="Node3D" parent="StealthAct/Island4/WaterGroup2/BridgeLarge3"]
+[node name="Rings" type="Node3D" parent="StealthAct/Island4/WaterGroup2/BridgeLarge3" unique_id=1035595763]
 transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, -8.74228e-08, 5.7, -4)
 script = ExtResource("8_it6v4")
 Source = ExtResource("9_p2828")
@@ -1586,28 +1663,28 @@ Spacing = 2.0
 "Vertical Offset" = null
 metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
 
-[node name="Child01" parent="StealthAct/Island4/WaterGroup2/BridgeLarge3/Rings" instance=ExtResource("9_p2828")]
+[node name="Child01" parent="StealthAct/Island4/WaterGroup2/BridgeLarge3/Rings" unique_id=640118772 instance=ExtResource("9_p2828")]
 
-[node name="Child02" parent="StealthAct/Island4/WaterGroup2/BridgeLarge3/Rings" instance=ExtResource("9_p2828")]
+[node name="Child02" parent="StealthAct/Island4/WaterGroup2/BridgeLarge3/Rings" unique_id=1842484135 instance=ExtResource("9_p2828")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2)
 
-[node name="Child03" parent="StealthAct/Island4/WaterGroup2/BridgeLarge3/Rings" instance=ExtResource("9_p2828")]
+[node name="Child03" parent="StealthAct/Island4/WaterGroup2/BridgeLarge3/Rings" unique_id=2043149735 instance=ExtResource("9_p2828")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -4)
 
-[node name="Child04" parent="StealthAct/Island4/WaterGroup2/BridgeLarge3/Rings" instance=ExtResource("9_p2828")]
+[node name="Child04" parent="StealthAct/Island4/WaterGroup2/BridgeLarge3/Rings" unique_id=322023812 instance=ExtResource("9_p2828")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -6)
 
-[node name="Child05" parent="StealthAct/Island4/WaterGroup2/BridgeLarge3/Rings" instance=ExtResource("9_p2828")]
+[node name="Child05" parent="StealthAct/Island4/WaterGroup2/BridgeLarge3/Rings" unique_id=997302782 instance=ExtResource("9_p2828")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -8)
 
-[node name="ReverseCullingTrigger" type="Node3D" parent="StealthAct"]
+[node name="ReverseCullingTrigger" type="Node3D" parent="StealthAct" unique_id=335371198]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 32, 2, 480)
 script = ExtResource("5_owm5c")
 startEnabled = true
 
-[node name="ReverseCollision" type="StaticBody3D" parent="StealthAct/ReverseCullingTrigger"]
+[node name="ReverseCollision" type="StaticBody3D" parent="StealthAct/ReverseCullingTrigger" unique_id=1401820667]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="StealthAct/ReverseCullingTrigger/ReverseCollision"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StealthAct/ReverseCullingTrigger/ReverseCollision" unique_id=601356189]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
 shape = SubResource("BoxShape3D_lr06k")
 

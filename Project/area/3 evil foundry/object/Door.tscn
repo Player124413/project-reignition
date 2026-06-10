@@ -1,4 +1,4 @@
-[gd_scene load_steps=26 format=3 uid="uid://bn8lomrei46ap"]
+[gd_scene format=3 uid="uid://bn8lomrei46ap"]
 
 [ext_resource type="PackedScene" uid="uid://bjhq4tu61hyom" path="res://area/3 evil foundry/object/model/Door.gltf" id="1_13c01"]
 [ext_resource type="Script" uid="uid://mrs44oflcm84" path="res://area/3 evil foundry/data/script/FoundryDoor.cs" id="1_d8fuq"]
@@ -107,6 +107,7 @@ input_7/break_loop_at_end = false
 input_7/reset = false
 
 [sub_resource type="AnimationNodeBlendTree" id="AnimationNodeBlendTree_gk1ho"]
+nodes/output/position = Vector2(720, 120)
 nodes/RESET_anim/node = SubResource("AnimationNodeAnimation_3j4i5")
 nodes/RESET_anim/position = Vector2(-400, 0)
 nodes/close_left_anim/node = SubResource("AnimationNodeAnimation_1buhq")
@@ -127,7 +128,6 @@ nodes/open_left_anim/node = SubResource("AnimationNodeAnimation_ftfsa")
 nodes/open_left_anim/position = Vector2(-800, 340)
 nodes/open_right_anim/node = SubResource("AnimationNodeAnimation_ra5h5")
 nodes/open_right_anim/position = Vector2(-1000, 440)
-nodes/output/position = Vector2(720, 120)
 nodes/spike_add/node = SubResource("AnimationNodeAdd2_mc3tu")
 nodes/spike_add/position = Vector2(480, 120)
 nodes/spike_anim/node = SubResource("AnimationNodeAnimation_uh66v")
@@ -142,95 +142,95 @@ nodes/state_transition/node = SubResource("AnimationNodeTransition_e0hso")
 nodes/state_transition/position = Vector2(-200, 200)
 node_connections = [&"output", 0, &"spike_add", &"spike_add", 0, &"spike_transition", &"spike_add", 1, &"state_speed", &"spike_transition", 0, &"spike_anim", &"spike_transition", 1, &"normal_anim", &"spike_transition", 2, &"RESET_anim", &"state_seek", 0, &"state_transition", &"state_speed", 0, &"state_seek", &"state_transition", 0, &"close_left_anim", &"state_transition", 1, &"close_right_anim", &"state_transition", 2, &"open_left_anim", &"state_transition", 3, &"open_right_anim", &"state_transition", 4, &"fakeout_left_anim", &"state_transition", 5, &"fakeout_right_anim", &"state_transition", 6, &"flip_left_anim", &"state_transition", 7, &"flip_right_anim"]
 
-[node name="Door" type="Node3D" node_paths=PackedStringArray("creakSfx")]
+[node name="Door" type="Node3D" unique_id=1682741024 node_paths=PackedStringArray("creakSfx")]
 script = ExtResource("1_d8fuq")
 swingLength = 0.4
 animator = NodePath("AnimationTree")
 hazard = NodePath("Door")
 creakSfx = NodePath("Creak")
 
-[node name="Door" parent="." instance=ExtResource("1_13c01")]
+[node name="Door" parent="." unique_id=1692864054 instance=ExtResource("1_13c01")]
 script = ExtResource("3_cphun")
 ignoreSpeedbreakingCharacters = true
 
-[node name="Skeleton3D" parent="Door/DoorRoot" index="0"]
+[node name="Skeleton3D" parent="Door/DoorRoot" parent_id_path=PackedInt32Array(1692864054, 1595314787) index="0" unique_id=1750512610]
 bones/0/rotation = Quaternion(-0.707107, 0, 0, 0.707107)
 
-[node name="DoorFrame" parent="Door/DoorRoot/Skeleton3D" index="0"]
+[node name="DoorFrame" parent="Door/DoorRoot/Skeleton3D" index="0" unique_id=1362608341]
 extra_cull_margin = 5.0
 
-[node name="DoorNormal" parent="Door/DoorRoot/Skeleton3D" index="1"]
+[node name="DoorNormal" parent="Door/DoorRoot/Skeleton3D" index="1" unique_id=1731853340]
 extra_cull_margin = 5.0
 
-[node name="DoorSpiked" parent="Door/DoorRoot/Skeleton3D" index="2"]
+[node name="DoorSpiked" parent="Door/DoorRoot/Skeleton3D" index="2" unique_id=1383613099]
 extra_cull_margin = 5.0
 
-[node name="DoorAttachment" type="BoneAttachment3D" parent="Door/DoorRoot/Skeleton3D/DoorSpiked" index="0"]
+[node name="DoorAttachment" type="BoneAttachment3D" parent="Door/DoorRoot/Skeleton3D/DoorSpiked" index="0" unique_id=194835000]
 bone_name = "door_center"
 bone_idx = 3
 use_external_skeleton = true
 external_skeleton = NodePath("../..")
 
-[node name="Hitbox" type="Area3D" parent="Door/DoorRoot/Skeleton3D/DoorSpiked/DoorAttachment"]
+[node name="Hitbox" type="Area3D" parent="Door/DoorRoot/Skeleton3D/DoorSpiked/DoorAttachment" unique_id=1155225896]
 collision_layer = 0
 collision_mask = 2
 monitoring = false
 monitorable = false
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Door/DoorRoot/Skeleton3D/DoorSpiked/DoorAttachment/Hitbox"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Door/DoorRoot/Skeleton3D/DoorSpiked/DoorAttachment/Hitbox" unique_id=341907396]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3, 0.5)
 shape = SubResource("BoxShape3D_8nglt")
 
-[node name="BaseAttachment" type="BoneAttachment3D" parent="Door/DoorRoot/Skeleton3D" index="3"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0, 0)
+[node name="BaseAttachment" type="BoneAttachment3D" parent="Door/DoorRoot/Skeleton3D" index="3" unique_id=257399117]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.0000005, 0, 0)
 bone_name = "hinge_r"
 bone_idx = 2
 
-[node name="SpeedbreakFlip" type="Area3D" parent="Door/DoorRoot/Skeleton3D/BaseAttachment"]
+[node name="SpeedbreakFlip" type="Area3D" parent="Door/DoorRoot/Skeleton3D/BaseAttachment" unique_id=277352885]
 transform = Transform3D(1, 0, 0, 0, 1, 3.55271e-15, 0, 0, 1, -2, 0, 0)
 collision_layer = 0
 collision_mask = 2
 monitorable = false
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Door/DoorRoot/Skeleton3D/BaseAttachment/SpeedbreakFlip"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Door/DoorRoot/Skeleton3D/BaseAttachment/SpeedbreakFlip" unique_id=697405394]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3, 0)
 shape = SubResource("BoxShape3D_rcg7m")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Door/DoorRoot/Skeleton3D/BaseAttachment" groups=["splash jump", "wall"]]
+[node name="StaticBody3D" type="StaticBody3D" parent="Door/DoorRoot/Skeleton3D/BaseAttachment" unique_id=1374980364 groups=["splash jump", "wall"]]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0, 0)
 collision_layer = 8
 collision_mask = 2
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Door/DoorRoot/Skeleton3D/BaseAttachment/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Door/DoorRoot/Skeleton3D/BaseAttachment/StaticBody3D" unique_id=32496469]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3, 0)
 shape = SubResource("BoxShape3D_jrdri")
 
-[node name="CollisionShape3D2" type="CollisionShape3D" parent="Door/DoorRoot/Skeleton3D/BaseAttachment/StaticBody3D"]
+[node name="CollisionShape3D2" type="CollisionShape3D" parent="Door/DoorRoot/Skeleton3D/BaseAttachment/StaticBody3D" unique_id=362937197]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 6, 0)
 shape = SubResource("ConvexPolygonShape3D_1mfj6")
 
-[node name="AnimationPlayer" parent="Door" index="1"]
+[node name="AnimationPlayer" parent="Door" index="1" unique_id=302912325]
 reset_on_save = false
 
-[node name="Creak" type="AudioStreamPlayer3D" parent="."]
+[node name="Creak" type="AudioStreamPlayer3D" parent="." unique_id=433145412]
 stream = ExtResource("4_ri4y8")
 max_db = 0.0
 max_distance = 50.0
 bus = &"GAME SFX"
 attenuation_filter_cutoff_hz = 20500.0
 
-[node name="AnimationTree" type="AnimationTree" parent="."]
+[node name="AnimationTree" type="AnimationTree" parent="." unique_id=1307139915]
 root_node = NodePath("../Door")
 tree_root = SubResource("AnimationNodeBlendTree_gk1ho")
 anim_player = NodePath("../Door/AnimationPlayer")
 parameters/spike_add/add_amount = 1.0
 parameters/spike_transition/current_state = "enabled"
-parameters/spike_transition/transition_request = ""
+parameters/spike_transition/transition_request = "enabled"
 parameters/spike_transition/current_index = 0
-parameters/state_seek/seek_request = -1.0
+parameters/state_seek/seek_request = 0.0
 parameters/state_speed/scale = 0.0
 parameters/state_transition/current_state = "open_left"
-parameters/state_transition/transition_request = ""
+parameters/state_transition/transition_request = "open_left"
 parameters/state_transition/current_index = 2
 
 [connection signal="area_entered" from="Door/DoorRoot/Skeleton3D/DoorSpiked/DoorAttachment/Hitbox" to="Door" method="OnEntered"]

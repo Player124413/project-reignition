@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3 uid="uid://cra2x0w3qbcxv"]
+[gd_scene format=3 uid="uid://cra2x0w3qbcxv"]
 
 [ext_resource type="Script" uid="uid://bj7jhdknn12cl" path="res://object/stage/destructable/resource/script/DestructableObject.cs" id="1_3vi3t"]
 [ext_resource type="PackedScene" uid="uid://ddqpbpt4nebvh" path="res://area/6 skeleton dome/object/model/destructable/Skull.gltf" id="2_64ltn"]
@@ -154,7 +154,7 @@ _data = {
 &"shatter": SubResource("Animation_45kur")
 }
 
-[node name="Skull" type="Node3D" node_paths=PackedStringArray("root", "pieceRoot", "animator")]
+[node name="Skull" type="Node3D" unique_id=1405977889 node_paths=PackedStringArray("root", "pieceRoot", "animator")]
 script = ExtResource("1_3vi3t")
 pieceMass = 0.3
 shatterFlags = 28
@@ -163,27 +163,27 @@ root = NodePath("Skull")
 pieceRoot = NodePath("SkullPieces")
 animator = NodePath("AnimationPlayer")
 
-[node name="Skull" parent="." instance=ExtResource("2_64ltn")]
+[node name="Skull" parent="." unique_id=354435790 instance=ExtResource("2_64ltn")]
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Skull" groups=["wall"]]
+[node name="StaticBody3D" type="StaticBody3D" parent="Skull" unique_id=403726781 groups=["wall"]]
 collision_layer = 8
 collision_mask = 0
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Skull/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Skull/StaticBody3D" unique_id=215108804]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.1, 0)
 shape = SubResource("SphereShape3D_lp6gg")
 
-[node name="Lockon" type="Area3D" parent="Skull"]
+[node name="Lockon" type="Area3D" parent="Skull" unique_id=2082331143]
 collision_layer = 4
 collision_mask = 2
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Skull/Lockon"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Skull/Lockon" unique_id=1999886196]
 shape = SubResource("SphereShape3D_mhxvr")
 
-[node name="SkullPieces" parent="." instance=ExtResource("3_vl65g")]
+[node name="SkullPieces" parent="." unique_id=2047325864 instance=ExtResource("3_vl65g")]
 visible = false
 
-[node name="Shatter" type="AudioStreamPlayer3D" parent="."]
+[node name="Shatter" type="AudioStreamPlayer3D" parent="." unique_id=283017177]
 stream = ExtResource("4_70vy5")
 attenuation_model = 3
 max_db = 0.0
@@ -191,11 +191,9 @@ max_distance = 20.0
 bus = &"GAME SFX"
 attenuation_filter_cutoff_hz = 20500.0
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
-libraries = {
-&"": SubResource("AnimationLibrary_nj5im")
-}
-autoplay = "loop"
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=1729301988]
+libraries/ = SubResource("AnimationLibrary_nj5im")
+autoplay = &"loop"
 
 [connection signal="area_entered" from="Skull/Lockon" to="." method="OnEntered"]
 [connection signal="area_exited" from="Skull/Lockon" to="." method="OnExited"]

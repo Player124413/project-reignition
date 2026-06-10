@@ -1,4 +1,4 @@
-[gd_scene load_steps=29 format=3 uid="uid://b0uekqdfkbg6h"]
+[gd_scene format=3 uid="uid://b0uekqdfkbg6h"]
 
 [ext_resource type="Script" uid="uid://b4uel2yxe2ldm" path="res://object/stage/pickups/resource/script/ItemBox.cs" id="2"]
 [ext_resource type="PackedScene" uid="uid://bl0hh6rrv7hxo" path="res://object/stage/common/resource/model/ItemBox.gltf" id="3"]
@@ -433,7 +433,7 @@ _data = {
 &"show": SubResource("Animation_gne53")
 }
 
-[node name="ItemBox" type="Area3D"]
+[node name="ItemBox" type="Area3D" unique_id=964030705]
 collision_layer = 12
 collision_mask = 2
 script = ExtResource("2")
@@ -445,20 +445,20 @@ animator = NodePath("AnimationPlayer")
 "Spawn Settings/Travel Delay Range" = 0.5
 "Spawn Settings/Travel Height" = 2.0
 
-[node name="ItemBox" parent="." instance=ExtResource("3")]
+[node name="ItemBox" parent="." unique_id=1745486644 instance=ExtResource("3")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, 0)
 
-[node name="ItemBoxGlowMesh" parent="ItemBox/ItemBoxRoot/Skeleton3D" index="0"]
+[node name="ItemBoxGlowMesh" parent="ItemBox/ItemBoxRoot/Skeleton3D" parent_id_path=PackedInt32Array(1745486644, 1186050322) index="0" unique_id=2077419525]
 visible = false
 transparency = 1.0
 cast_shadow = 0
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=52862944]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.2, 0)
 visible = false
 shape = SubResource("6")
 
-[node name="CollectFX" type="GPUParticles3D" parent="." node_paths=PackedStringArray("subSystems")]
+[node name="CollectFX" type="GPUParticles3D" parent="." unique_id=1165835646 node_paths=PackedStringArray("subSystems")]
 layers = 32
 cast_shadow = 0
 emitting = false
@@ -474,7 +474,7 @@ draw_pass_1 = SubResource("QuadMesh_q26oc")
 script = ExtResource("4_gne53")
 subSystems = [NodePath("Dust"), NodePath("Splatter")]
 
-[node name="Dust" type="GPUParticles3D" parent="CollectFX"]
+[node name="Dust" type="GPUParticles3D" parent="CollectFX" unique_id=934561457]
 layers = 32
 cast_shadow = 0
 emitting = false
@@ -490,7 +490,7 @@ transform_align = 3
 process_material = SubResource("ParticleProcessMaterial_dilgf")
 draw_pass_1 = SubResource("QuadMesh_0skij")
 
-[node name="Splatter" type="GPUParticles3D" parent="CollectFX"]
+[node name="Splatter" type="GPUParticles3D" parent="CollectFX" unique_id=820443442]
 layers = 32
 cast_shadow = 0
 emitting = false
@@ -506,15 +506,13 @@ transform_align = 3
 process_material = SubResource("ParticleProcessMaterial_yrxy5")
 draw_pass_1 = SubResource("QuadMesh_0e725")
 
-[node name="SFX" type="AudioStreamPlayer" parent="."]
+[node name="SFX" type="AudioStreamPlayer" parent="." unique_id=1582922599]
 process_mode = 1
 stream = ExtResource("4_o2niv")
 bus = &"GAME SFX"
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
-libraries = {
-&"": SubResource("AnimationLibrary_c756k")
-}
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=720778357]
+libraries/ = SubResource("AnimationLibrary_c756k")
 
 [connection signal="area_entered" from="." to="." method="OnEntered"]
 

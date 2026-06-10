@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3 uid="uid://bvr4uqeokuaj8"]
+[gd_scene format=3 uid="uid://bvr4uqeokuaj8"]
 
 [ext_resource type="Script" uid="uid://bnfenvhg4nanb" path="res://party/script/interface/rule_manager.gd" id="1_gd8h5"]
 [ext_resource type="Texture2D" uid="uid://b1smr5yk80fqt" path="res://party/scene/rule manager/texture/rulebook.png" id="1_mjahg"]
@@ -95,7 +95,7 @@ _data = {
 &"show": SubResource("Animation_gd8h5")
 }
 
-[node name="RuleManager" type="Control" node_paths=PackedStringArray("description", "back_button", "minigame_name", "minigame_thumbnail", "animator")]
+[node name="RuleManager" type="Control" unique_id=1678090752 node_paths=PackedStringArray("description", "back_button", "minigame_name", "minigame_thumbnail", "animator")]
 z_index = 9
 z_as_relative = false
 layout_mode = 3
@@ -111,7 +111,7 @@ minigame_name = NodePath("Name")
 minigame_thumbnail = NodePath("Thumbnail")
 animator = NodePath("AnimationPlayer")
 
-[node name="Background" type="TextureRect" parent="."]
+[node name="Background" type="TextureRect" parent="." unique_id=1264657491]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -120,8 +120,9 @@ grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("1_mjahg")
 
-[node name="FlamePosition" type="Control" parent="."]
+[node name="FlamePosition" type="Control" parent="." unique_id=1370526763]
 layout_mode = 1
+anchors_preset = 3
 anchor_left = 1.0
 anchor_top = 1.0
 anchor_right = 1.0
@@ -133,16 +134,19 @@ offset_bottom = -128.0
 grow_horizontal = 0
 grow_vertical = 0
 
-[node name="Flames" type="AnimatedSprite2D" parent="FlamePosition"]
+[node name="Flames" type="AnimatedSprite2D" parent="FlamePosition" unique_id=820194834]
 position = Vector2(0, -160)
 scale = Vector2(3, 3)
 sprite_frames = ExtResource("3_gd8h5")
 autoplay = "default"
 
-[node name="DescriptionParty" parent="." instance=ExtResource("3_w2sj7")]
+[node name="DescriptionParty" parent="." unique_id=1168095963 instance=ExtResource("3_w2sj7")]
 layout_mode = 1
 
-[node name="NavigationButtons" type="HBoxContainer" parent="."]
+[node name="Border" parent="DescriptionParty" index="0" unique_id=633672243]
+grow_horizontal = 2
+
+[node name="NavigationButtons" type="HBoxContainer" parent="." unique_id=423821021]
 layout_mode = 1
 anchors_preset = -1
 anchor_top = 0.5
@@ -157,19 +161,19 @@ mouse_filter = 2
 theme_override_constants/separation = 64
 alignment = 1
 
-[node name="Start" parent="NavigationButtons" instance=ExtResource("4_1gkbu")]
+[node name="Start" parent="NavigationButtons" unique_id=957799035 instance=ExtResource("4_1gkbu")]
 layout_mode = 2
 ActionKey = &"party_start"
 inputKey = &"button_pause1"
 fallbackKey = &"ui_accept"
 
-[node name="Back" parent="NavigationButtons" instance=ExtResource("4_1gkbu")]
+[node name="Back" parent="NavigationButtons" unique_id=454543279 instance=ExtResource("4_1gkbu")]
 layout_mode = 2
 ActionKey = &"sys_back"
 inputKey = &"button_secondary1"
 fallbackKey = &"ui_cancel"
 
-[node name="Name" type="Label" parent="."]
+[node name="Name" type="Label" parent="." unique_id=1631940911]
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.5
@@ -185,7 +189,7 @@ label_settings = ExtResource("5_osdyi")
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Thumbnail" type="TextureRect" parent="."]
+[node name="Thumbnail" type="TextureRect" parent="." unique_id=59624371]
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 1.0
@@ -202,11 +206,9 @@ texture = ExtResource("6_p7r22")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
-libraries = {
-&"": SubResource("AnimationLibrary_6d68q")
-}
-autoplay = "init"
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=314004059]
+libraries/ = SubResource("AnimationLibrary_6d68q")
+autoplay = &"init"
 
 [editable path="DescriptionParty"]
-[editable path="DescriptionParty/NavigationButton"]
+[editable path="DescriptionParty/Border/NavigationButton"]

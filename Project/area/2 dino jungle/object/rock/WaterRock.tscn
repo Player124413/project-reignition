@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=3 uid="uid://e43vdgi280co"]
+[gd_scene format=3 uid="uid://e43vdgi280co"]
 
 [ext_resource type="Script" uid="uid://bj7jhdknn12cl" path="res://object/stage/destructable/resource/script/DestructableObject.cs" id="1_mm0fn"]
 [ext_resource type="PackedScene" uid="uid://b7n51v7g5c2w7" path="res://area/2 dino jungle/object/model/rock/WaterRock.gltf" id="2_nt46s"]
@@ -183,7 +183,7 @@ _data = {
 &"shatter": SubResource("Animation_oqsl4")
 }
 
-[node name="WaterRock" type="Node3D" node_paths=PackedStringArray("root", "pieceRoot", "animator")]
+[node name="WaterRock" type="Node3D" unique_id=1399308518 node_paths=PackedStringArray("root", "pieceRoot", "animator")]
 script = ExtResource("1_mm0fn")
 pieceMass = 0.2
 shatterFlags = 18
@@ -191,34 +191,34 @@ root = NodePath("Root")
 pieceRoot = NodePath("WhiteRockPieces")
 animator = NodePath("AnimationPlayer")
 
-[node name="Root" type="Node3D" parent="."]
+[node name="Root" type="Node3D" parent="." unique_id=1341166243]
 
-[node name="WaterRock" parent="Root" instance=ExtResource("2_nt46s")]
+[node name="WaterRock" parent="Root" unique_id=1052654690 instance=ExtResource("2_nt46s")]
 
-[node name="StaticBody3D" parent="Root/WaterRock/WaterRockMesh" index="0" groups=["pathtraveller stagger", "splash jump", "stagger", "wall"]]
+[node name="StaticBody3D" parent="Root/WaterRock/WaterRockMesh" parent_id_path=PackedInt32Array(1052654690, 1964881479) index="0" unique_id=1843096034 groups=["pathtraveller stagger", "splash jump", "stagger", "wall"]]
 
-[node name="WaterRockBroken" parent="Root" instance=ExtResource("3_tl3ui")]
+[node name="WaterRockBroken" parent="Root" unique_id=1913062462 instance=ExtResource("3_tl3ui")]
 visible = false
 
-[node name="Trigger" type="Area3D" parent="."]
+[node name="Trigger" type="Area3D" parent="." unique_id=1299449957]
 collision_layer = 0
 collision_mask = 10
 monitorable = false
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Trigger"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Trigger" unique_id=1756429139]
 shape = SubResource("ConvexPolygonShape3D_f08fp")
 
-[node name="WhiteRockPieces" parent="." instance=ExtResource("4_1igcp")]
+[node name="WhiteRockPieces" parent="." unique_id=1047226509 instance=ExtResource("4_1igcp")]
 visible = false
 
-[node name="Shatter" type="AudioStreamPlayer3D" parent="."]
+[node name="Shatter" type="AudioStreamPlayer3D" parent="." unique_id=392855719]
 process_mode = 1
 stream = ExtResource("5_icob7")
 max_db = 0.0
 max_distance = 100.0
 bus = &"GAME SFX"
 
-[node name="ShatterVFX" type="GPUParticles3D" parent="."]
+[node name="ShatterVFX" type="GPUParticles3D" parent="." unique_id=738331520]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0.2)
 layers = 32
 cast_shadow = 0
@@ -232,10 +232,8 @@ visibility_aabb = AABB(-2, -2, -2, 4, 4, 4)
 process_material = SubResource("ParticleProcessMaterial_8dlnx")
 draw_pass_1 = SubResource("QuadMesh_7bqf5")
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
-libraries = {
-&"": SubResource("AnimationLibrary_ghebx")
-}
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=1294599062]
+libraries/ = SubResource("AnimationLibrary_ghebx")
 
 [connection signal="area_entered" from="Trigger" to="." method="OnEntered"]
 [connection signal="area_exited" from="Trigger" to="." method="OnExited"]

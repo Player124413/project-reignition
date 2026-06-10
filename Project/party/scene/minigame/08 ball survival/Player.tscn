@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3 uid="uid://bibmi1nq7ul4e"]
+[gd_scene format=3 uid="uid://bibmi1nq7ul4e"]
 
 [ext_resource type="PackedScene" uid="uid://bcgaqhvrrfooj" path="res://party/scene/minigame/08 ball survival/model/Ball.glb" id="1_atgpo"]
 [ext_resource type="Script" uid="uid://ba40pisodeghn" path="res://party/scene/minigame/08 ball survival/script/player_controller.gd" id="1_jis8g"]
@@ -10,7 +10,7 @@
 [sub_resource type="SphereShape3D" id="SphereShape3D_jis8g"]
 radius = 5.0
 
-[node name="Player" type="Node3D" node_paths=PackedStringArray("collision_sfx", "ball_mesh", "rollback_timer", "character_body", "spawn_position")]
+[node name="Player" type="Node3D" unique_id=14198173 node_paths=PackedStringArray("collision_sfx", "ball_mesh", "rollback_timer", "character_body", "spawn_position")]
 script = ExtResource("1_jis8g")
 collision_sfx = NodePath("Collision")
 ball_mesh = NodePath("Body/Ball")
@@ -19,7 +19,6 @@ character_body = NodePath("Body")
 allow_instant_turn = false
 enable_gravity = true
 run_speed = 30.0
-walk_speed = 30.0
 turn_speed = 3.0
 in_place_turn_speed = 6.0
 friction = 20.0
@@ -28,38 +27,38 @@ brake_friction = 20.0
 spawn_position = NodePath("Body/Spawn")
 deactivate_on_gameplay_finished = false
 
-[node name="Body" type="CharacterBody3D" parent="."]
+[node name="Body" type="CharacterBody3D" parent="." unique_id=1105517414]
 floor_stop_on_slope = false
 floor_block_on_wall = false
 floor_snap_length = 2.0
 
-[node name="Spawn" type="Node3D" parent="Body"]
+[node name="Spawn" type="Node3D" parent="Body" unique_id=463882317]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 10, 0)
 
-[node name="Ball" parent="Body" instance=ExtResource("1_atgpo")]
+[node name="Ball" parent="Body" unique_id=1448517533 instance=ExtResource("1_atgpo")]
 transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 5, 0)
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Body"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Body" unique_id=1017904819]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5, 0)
 shape = SubResource("SphereShape3D_jis8g")
 
-[node name="FallDetector" type="Area3D" parent="Body"]
+[node name="FallDetector" type="Area3D" parent="Body" unique_id=2041832802]
 monitoring = false
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Body/FallDetector"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Body/FallDetector" unique_id=275535107]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5, 0)
 shape = SubResource("SphereShape3D_jis8g")
 
-[node name="Rollback" type="Node" parent="."]
+[node name="Rollback" type="Node" parent="." unique_id=1917528327]
 script = ExtResource("3_nieit")
 param_count = 4
 rollback_interval = 0.0
 
-[node name="Collision" type="AudioStreamPlayer" parent="."]
+[node name="Collision" type="AudioStreamPlayer" parent="." unique_id=1153273710]
 stream = ExtResource("4_o43ly")
 bus = &"GAME SFX"
 script = ExtResource("5_gxs62")
 group = "collision"
 min_volume = 0.5
 
-[node name="Splash" parent="." instance=ExtResource("6_gxs62")]
+[node name="Splash" parent="." unique_id=1397809318 instance=ExtResource("6_gxs62")]

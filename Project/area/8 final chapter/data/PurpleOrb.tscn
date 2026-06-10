@@ -1,4 +1,4 @@
-[gd_scene load_steps=20 format=3 uid="uid://d1rhnes3eagu"]
+[gd_scene format=3 uid="uid://d1rhnes3eagu"]
 
 [ext_resource type="Script" uid="uid://brremmesah202" path="res://area/8 final chapter/data/script/PurpleOrb.cs" id="1_7yvr5"]
 [ext_resource type="Script" uid="uid://pnh70abopq8e" path="res://object/stage/common/resource/script/Hazard.cs" id="1_pnkon"]
@@ -249,12 +249,12 @@ _data = {
 &"travel": SubResource("Animation_su5gj")
 }
 
-[node name="PurpleOrb" type="Node3D" node_paths=PackedStringArray("animator")]
+[node name="PurpleOrb" type="Node3D" unique_id=1685204292 node_paths=PackedStringArray("animator")]
 script = ExtResource("1_7yvr5")
 moveSpeed = 80.0
 animator = NodePath("AnimationPlayer")
 
-[node name="Base" type="GPUParticles3D" parent="."]
+[node name="Base" type="GPUParticles3D" parent="." unique_id=373328203]
 layers = 32
 cast_shadow = 0
 emitting = false
@@ -266,7 +266,7 @@ local_coords = true
 process_material = SubResource("ParticleProcessMaterial_4647h")
 draw_pass_1 = SubResource("QuadMesh_7yvr5")
 
-[node name="Lightning" type="GPUParticles3D" parent="."]
+[node name="Lightning" type="GPUParticles3D" parent="." unique_id=425620593]
 layers = 32
 cast_shadow = 0
 emitting = false
@@ -277,31 +277,29 @@ transform_align = 2
 process_material = SubResource("ParticleProcessMaterial_1yshn")
 draw_pass_1 = SubResource("QuadMesh_pnkon")
 
-[node name="Hitbox" type="Area3D" parent="."]
+[node name="Hitbox" type="Area3D" parent="." unique_id=486740147]
 collision_layer = 0
 collision_mask = 2
 monitorable = false
 script = ExtResource("1_pnkon")
 isDisabled = true
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Hitbox"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Hitbox" unique_id=1038840558]
 shape = SubResource("SphereShape3D_gvvo1")
 
-[node name="PurpleOrbThrowSFX" type="AudioStreamPlayer" parent="."]
+[node name="PurpleOrbThrowSFX" type="AudioStreamPlayer" parent="." unique_id=8466956]
 stream = ExtResource("5_4647h")
 volume_db = -6.0
 max_polyphony = 4
 bus = &"GAME SFX"
 
-[node name="PurpleOrbExplosion" type="AudioStreamPlayer" parent="."]
+[node name="PurpleOrbExplosion" type="AudioStreamPlayer" parent="." unique_id=784385781]
 stream = ExtResource("6_gvvo1")
 bus = &"GAME SFX"
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
-libraries = {
-&"": SubResource("AnimationLibrary_xeqdn")
-}
-autoplay = "init"
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=1040209461]
+libraries/ = SubResource("AnimationLibrary_xeqdn")
+autoplay = &"init"
 next/spawn = &"travel"
 
 [connection signal="DamagedPlayer" from="Hitbox" to="." method="Explode"]

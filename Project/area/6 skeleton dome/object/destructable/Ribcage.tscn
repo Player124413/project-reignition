@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://dmuj7wvvp56uk"]
+[gd_scene format=3 uid="uid://dmuj7wvvp56uk"]
 
 [ext_resource type="Script" uid="uid://bj7jhdknn12cl" path="res://object/stage/destructable/resource/script/DestructableObject.cs" id="1_v75fs"]
 [ext_resource type="PackedScene" uid="uid://ca6w7ysr7jb52" path="res://area/6 skeleton dome/object/model/destructable/Ribcage.gltf" id="2_dh1ke"]
@@ -97,7 +97,7 @@ _data = {
 &"shatter": SubResource("Animation_0mcy5")
 }
 
-[node name="Ribcage" type="Node3D" node_paths=PackedStringArray("root", "pieceRoot", "animator")]
+[node name="Ribcage" type="Node3D" unique_id=846249362 node_paths=PackedStringArray("root", "pieceRoot", "animator")]
 script = ExtResource("1_v75fs")
 pieceMass = 0.1
 gravityScale = -1.0
@@ -107,28 +107,28 @@ root = NodePath("Root")
 pieceRoot = NodePath("RibcagePieces")
 animator = NodePath("AnimationPlayer")
 
-[node name="Root" type="Node3D" parent="."]
+[node name="Root" type="Node3D" parent="." unique_id=1985807549]
 
-[node name="Ribcage" parent="Root" instance=ExtResource("2_dh1ke")]
+[node name="Ribcage" parent="Root" unique_id=960631688 instance=ExtResource("2_dh1ke")]
 
-[node name="RibcageCollision" parent="Root/Ribcage" index="1" groups=["wall"]]
+[node name="RibcageCollision" parent="Root/Ribcage" index="1" unique_id=712507149 groups=["wall"]]
 layers = 0
 
-[node name="StaticBody3D" parent="Root/Ribcage/RibcageCollision" index="0"]
+[node name="StaticBody3D" parent="Root/Ribcage/RibcageCollision" index="0" unique_id=1734788469]
 collision_layer = 8
 
-[node name="Area3D" type="Area3D" parent="Root"]
+[node name="Area3D" type="Area3D" parent="Root" unique_id=1212816347]
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0, 0)
 collision_layer = 4
 collision_mask = 2
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Root/Area3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Root/Area3D" unique_id=1635850399]
 shape = SubResource("CylinderShape3D_2dhly")
 
-[node name="RibcagePieces" parent="." instance=ExtResource("3_gwtx7")]
+[node name="RibcagePieces" parent="." unique_id=1091223618 instance=ExtResource("3_gwtx7")]
 visible = false
 
-[node name="Shatter" type="AudioStreamPlayer3D" parent="."]
+[node name="Shatter" type="AudioStreamPlayer3D" parent="." unique_id=529182223]
 stream = ExtResource("4_cnxdc")
 attenuation_model = 3
 max_db = 0.0
@@ -136,10 +136,8 @@ max_distance = 20.0
 bus = &"GAME SFX"
 attenuation_filter_cutoff_hz = 20500.0
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
-libraries = {
-&"": SubResource("AnimationLibrary_rd8ot")
-}
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=324227979]
+libraries/ = SubResource("AnimationLibrary_rd8ot")
 
 [connection signal="area_entered" from="Root/Area3D" to="." method="OnEntered"]
 [connection signal="area_exited" from="Root/Area3D" to="." method="OnExited"]

@@ -1,4 +1,4 @@
-[gd_scene load_steps=64 format=3 uid="uid://d2j6qde5aener"]
+[gd_scene format=3 uid="uid://d2j6qde5aener"]
 
 [ext_resource type="Script" uid="uid://02whpr4ceeig" path="res://area/5 pirate storm/data/script/BossBombAttack.cs" id="1_xchwx"]
 [ext_resource type="Texture2D" uid="uid://c44w2mvqikuys" path="res://area/5 pirate storm/boss/data/model/texture/missile center.png" id="2_0rh84"]
@@ -775,7 +775,7 @@ _data = {
 &"windup": SubResource("Animation_wa5u3")
 }
 
-[node name="BombAttack" type="Node3D" node_paths=PackedStringArray("lockonDecalRoot", "root", "animator")]
+[node name="BombAttack" type="Node3D" unique_id=640597607 node_paths=PackedStringArray("lockonDecalRoot", "root", "animator")]
 script = ExtResource("1_xchwx")
 lockonDecalRoot = NodePath("Decals")
 "Launch Settings/Mode" = 0
@@ -788,9 +788,9 @@ screenShakeEnabled = true
 root = NodePath("Root")
 animator = NodePath("AnimationPlayer")
 
-[node name="Root" type="Node3D" parent="."]
+[node name="Root" type="Node3D" parent="." unique_id=195898613]
 
-[node name="Body" type="GPUParticles3D" parent="Root"]
+[node name="Body" type="GPUParticles3D" parent="Root" unique_id=777018108]
 layers = 32
 cast_shadow = 0
 emitting = false
@@ -800,7 +800,7 @@ interpolate = false
 process_material = SubResource("ParticleProcessMaterial_g2e5f")
 draw_pass_1 = SubResource("QuadMesh_umhhu")
 
-[node name="BodySolid" type="GPUParticles3D" parent="Root"]
+[node name="BodySolid" type="GPUParticles3D" parent="Root" unique_id=690096451]
 layers = 32
 cast_shadow = 0
 emitting = false
@@ -812,18 +812,18 @@ local_coords = true
 process_material = SubResource("ParticleProcessMaterial_xchwx")
 draw_pass_1 = SubResource("QuadMesh_umhhu")
 
-[node name="Hitbox" type="Area3D" parent="Root"]
+[node name="Hitbox" type="Area3D" parent="Root" unique_id=1414291605]
 collision_layer = 8
 collision_mask = 2
 monitorable = false
 script = ExtResource("2_uj4au")
 ignoreSpeedbreakingCharacters = true
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Root/Hitbox"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Root/Hitbox" unique_id=370404929]
 shape = SubResource("SphereShape3D_xchwx")
 disabled = true
 
-[node name="Explosion" type="GPUParticles3D" parent="Root" node_paths=PackedStringArray("subSystems")]
+[node name="Explosion" type="GPUParticles3D" parent="Root" unique_id=687307070 node_paths=PackedStringArray("subSystems")]
 layers = 32
 cast_shadow = 0
 extra_cull_margin = 16384.0
@@ -839,7 +839,7 @@ draw_pass_1 = SubResource("QuadMesh_8e5qk")
 script = ExtResource("7_umhhu")
 subSystems = [NodePath("Dust"), NodePath("Flame"), NodePath("FlameDust")]
 
-[node name="Dust" type="GPUParticles3D" parent="Root/Explosion"]
+[node name="Dust" type="GPUParticles3D" parent="Root/Explosion" unique_id=1165038134]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.2, 0)
 layers = 32
 cast_shadow = 0
@@ -855,7 +855,7 @@ transform_align = 2
 process_material = SubResource("ParticleProcessMaterial_c7c8l")
 draw_pass_1 = SubResource("QuadMesh_hm27i")
 
-[node name="Flame" type="GPUParticles3D" parent="Root/Explosion"]
+[node name="Flame" type="GPUParticles3D" parent="Root/Explosion" unique_id=43709765]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
 layers = 32
 cast_shadow = 0
@@ -871,7 +871,7 @@ transform_align = 2
 process_material = SubResource("ParticleProcessMaterial_1lvje")
 draw_pass_1 = SubResource("QuadMesh_mo8io")
 
-[node name="FlameDust" type="GPUParticles3D" parent="Root/Explosion"]
+[node name="FlameDust" type="GPUParticles3D" parent="Root/Explosion" unique_id=1333149997]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
 layers = 32
 cast_shadow = 0
@@ -886,7 +886,7 @@ transform_align = 2
 process_material = SubResource("ParticleProcessMaterial_mo8io")
 draw_pass_1 = SubResource("QuadMesh_xa85y")
 
-[node name="OmniLight3D" type="OmniLight3D" parent="Root/Explosion"]
+[node name="OmniLight3D" type="OmniLight3D" parent="Root/Explosion" unique_id=900115427]
 light_color = Color(1, 0.92200005, 0.61, 1)
 light_energy = 0.0
 light_specular = 1.0
@@ -896,7 +896,7 @@ distance_fade_begin = 20.0
 distance_fade_length = 40.0
 omni_range = 20.0
 
-[node name="LaunchSFX" type="AudioStreamPlayer3D" parent="Root"]
+[node name="LaunchSFX" type="AudioStreamPlayer3D" parent="Root" unique_id=639399508]
 stream = ExtResource("12_1lvje")
 attenuation_model = 3
 max_db = 0.0
@@ -904,7 +904,7 @@ max_distance = 100.0
 bus = &"GAME SFX"
 attenuation_filter_cutoff_hz = 20500.0
 
-[node name="ExplosionSFX" type="AudioStreamPlayer3D" parent="Root"]
+[node name="ExplosionSFX" type="AudioStreamPlayer3D" parent="Root" unique_id=641218182]
 stream = ExtResource("12_wxqed")
 attenuation_model = 3
 max_db = 0.0
@@ -914,39 +914,35 @@ script = ExtResource("13_1lvje")
 groupKey = &"bomb explosion"
 audioLengthOverride = 1.0
 
-[node name="Decals" type="Node3D" parent="."]
+[node name="Decals" type="Node3D" parent="." unique_id=1555653123]
 
-[node name="Center" type="Decal" parent="Decals"]
+[node name="Center" type="Decal" parent="Decals" unique_id=712992246]
 layers = 32
 size = Vector3(0.56, 5, 0.5)
 texture_albedo = ExtResource("2_0rh84")
 modulate = Color(1, 1, 1, 0)
 cull_mask = 2
 
-[node name="Middle" type="Decal" parent="Decals"]
+[node name="Middle" type="Decal" parent="Decals" unique_id=111194014]
 layers = 32
 size = Vector3(1, 5, 1)
 texture_albedo = ExtResource("3_e5ly6")
 modulate = Color(1, 1, 1, 0)
 cull_mask = 2
 
-[node name="Edge" type="Decal" parent="Decals"]
+[node name="Edge" type="Decal" parent="Decals" unique_id=498015228]
 layers = 32
 size = Vector3(1, 5, 1)
 texture_albedo = ExtResource("4_uj4au")
 modulate = Color(1, 1, 1, 0)
 cull_mask = 2
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="Decals"]
-libraries = {
-&"": SubResource("AnimationLibrary_ojg08")
-}
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Decals" unique_id=441727632]
+libraries/ = SubResource("AnimationLibrary_ojg08")
 next/windup = &"loop"
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
-libraries = {
-&"": SubResource("AnimationLibrary_ovd8r")
-}
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=407188048]
+libraries/ = SubResource("AnimationLibrary_ovd8r")
 
 [connection signal="area_entered" from="Root/Hitbox" to="Root/Hitbox" method="OnEntered"]
 [connection signal="area_exited" from="Root/Hitbox" to="Root/Hitbox" method="OnExited"]

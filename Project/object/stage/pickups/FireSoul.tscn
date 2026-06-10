@@ -1,4 +1,4 @@
-[gd_scene load_steps=28 format=3 uid="uid://cu6lpq7q82grk"]
+[gd_scene format=3 uid="uid://cu6lpq7q82grk"]
 
 [ext_resource type="PackedScene" uid="uid://bpe2f7mqbqm5p" path="res://object/stage/pickups/resource/model/RedRing.gltf" id="2"]
 [ext_resource type="Script" uid="uid://cqpplke7vxyty" path="res://object/stage/pickups/resource/script/FireSoul.cs" id="3"]
@@ -518,16 +518,16 @@ _data = {
 &"show": SubResource("Animation_57hms")
 }
 
-[node name="FireSoul" type="Area3D"]
+[node name="FireSoul" type="Area3D" unique_id=279015534]
 collision_layer = 0
 collision_mask = 2
 monitorable = false
 script = ExtResource("3")
 animator = NodePath("Animator")
 
-[node name="RedRing" parent="." instance=ExtResource("2")]
+[node name="RedRing" parent="." unique_id=74360749 instance=ExtResource("2")]
 
-[node name="Flames" type="GPUParticles3D" parent="RedRing"]
+[node name="Flames" type="GPUParticles3D" parent="RedRing" unique_id=1817480955]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.1, 0)
 layers = 32
 cast_shadow = 0
@@ -538,7 +538,7 @@ interpolate = false
 process_material = ExtResource("3_u27aa")
 draw_pass_1 = SubResource("QuadMesh_nwwog")
 
-[node name="SparkParticle" type="GPUParticles3D" parent="."]
+[node name="SparkParticle" type="GPUParticles3D" parent="." unique_id=779465304]
 visible = false
 layers = 32
 emitting = false
@@ -552,7 +552,7 @@ visibility_aabb = AABB(-1.5, -1.5, -1.5, 3, 3, 3)
 process_material = ExtResource("6_y1djn")
 draw_pass_1 = SubResource("PlaneMesh_v1vyq")
 
-[node name="EmberParticle" type="GPUParticles3D" parent="."]
+[node name="EmberParticle" type="GPUParticles3D" parent="." unique_id=852362932]
 layers = 32
 emitting = false
 amount = 32
@@ -564,10 +564,10 @@ visibility_aabb = AABB(-0.8, -0.8, -0.8, 1.6, 1.6, 1.6)
 process_material = ExtResource("3_75fjl")
 draw_pass_1 = SubResource("PlaneMesh_4ge2j")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=1733121813]
 shape = SubResource("3")
 
-[node name="Hidden" type="GPUParticles3D" parent="."]
+[node name="Hidden" type="GPUParticles3D" parent="." unique_id=838181023]
 layers = 32
 gi_mode = 0
 emitting = false
@@ -578,17 +578,15 @@ visibility_aabb = AABB(-0.5, -0.5, -1, 1, 1, 2)
 process_material = SubResource("ParticleProcessMaterial_ri7x1")
 draw_pass_1 = SubResource("PlaneMesh_aqtbv")
 
-[node name="SFX" type="AudioStreamPlayer" parent="."]
+[node name="SFX" type="AudioStreamPlayer" parent="." unique_id=731870685]
 process_mode = 1
 stream = ExtResource("6_ds3mv")
 volume_db = -6.0
 bus = &"GAME SFX"
 
-[node name="Animator" type="AnimationPlayer" parent="."]
-libraries = {
-&"": SubResource("AnimationLibrary_e5wth")
-}
-autoplay = "loop"
+[node name="Animator" type="AnimationPlayer" parent="." unique_id=1423888162]
+libraries/ = SubResource("AnimationLibrary_e5wth")
+autoplay = &"loop"
 next/show = &"loop"
 
 [connection signal="area_entered" from="." to="." method="OnEntered"]

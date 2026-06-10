@@ -1,4 +1,4 @@
-[gd_scene load_steps=33 format=3 uid="uid://vv8ysqa68nc1"]
+[gd_scene format=3 uid="uid://vv8ysqa68nc1"]
 
 [ext_resource type="Script" uid="uid://ob7pwd04qme1" path="res://area/8 final chapter/data/script/GravityOrb.cs" id="1_poxal"]
 [ext_resource type="Material" uid="uid://bnk8skmt06lca" path="res://effect/particle/material/environment/Circular Glow.tres" id="1_snu67"]
@@ -389,7 +389,7 @@ _data = {
 &"spawn": SubResource("Animation_l0rdi")
 }
 
-[node name="GravityOrb" type="Node3D" node_paths=PackedStringArray("animator", "pullSfx")]
+[node name="GravityOrb" type="Node3D" unique_id=276213650 node_paths=PackedStringArray("animator", "pullSfx")]
 script = ExtResource("1_poxal")
 animator = NodePath("AnimationPlayer")
 gravityPull = 12.0
@@ -397,11 +397,11 @@ moveSpeed = 15.0
 gravityCurve = SubResource("Curve_fx7oj")
 pullSfx = NodePath("Pull")
 
-[node name="VisualRoot" type="Node3D" parent="."]
+[node name="VisualRoot" type="Node3D" parent="." unique_id=294501293]
 
-[node name="GravityOrb" parent="VisualRoot" instance=ExtResource("3_l0rdi")]
+[node name="GravityOrb" parent="VisualRoot" unique_id=1669750471 instance=ExtResource("3_l0rdi")]
 
-[node name="BluePulse" type="GPUParticles3D" parent="VisualRoot" node_paths=PackedStringArray("subSystems")]
+[node name="BluePulse" type="GPUParticles3D" parent="VisualRoot" unique_id=817133724 node_paths=PackedStringArray("subSystems")]
 layers = 32
 cast_shadow = 0
 amount = 2
@@ -413,7 +413,7 @@ draw_pass_1 = SubResource("QuadMesh_wnjru")
 script = ExtResource("4_fx7oj")
 subSystems = [NodePath("CentralStreaks"), NodePath("PurpleSparks")]
 
-[node name="CentralStreaks" type="GPUParticles3D" parent="VisualRoot/BluePulse"]
+[node name="CentralStreaks" type="GPUParticles3D" parent="VisualRoot/BluePulse" unique_id=1357380596]
 layers = 32
 cast_shadow = 0
 lifetime = 0.5
@@ -423,7 +423,7 @@ local_coords = true
 process_material = SubResource("ParticleProcessMaterial_wnjru")
 draw_pass_1 = SubResource("QuadMesh_snu67")
 
-[node name="PurpleSparks" type="GPUParticles3D" parent="VisualRoot/BluePulse"]
+[node name="PurpleSparks" type="GPUParticles3D" parent="VisualRoot/BluePulse" unique_id=385915407]
 layers = 32
 cast_shadow = 0
 amount = 32
@@ -435,7 +435,7 @@ local_coords = true
 process_material = SubResource("ParticleProcessMaterial_l0rdi")
 draw_pass_1 = SubResource("QuadMesh_l0rdi")
 
-[node name="Explosion" type="GPUParticles3D" parent="VisualRoot"]
+[node name="Explosion" type="GPUParticles3D" parent="VisualRoot" unique_id=1983674911]
 layers = 32
 cast_shadow = 0
 emitting = false
@@ -450,17 +450,17 @@ transform_align = 2
 process_material = SubResource("ParticleProcessMaterial_w0bvt")
 draw_pass_1 = SubResource("QuadMesh_poxal")
 
-[node name="GravityZone" type="Area3D" parent="."]
+[node name="GravityZone" type="Area3D" parent="." unique_id=1088142186]
 collision_layer = 0
 collision_mask = 2
 monitoring = false
 monitorable = false
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="GravityZone"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="GravityZone" unique_id=644871308]
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, -4.371139e-08, -1)
 shape = SubResource("CylinderShape3D_fx7oj")
 
-[node name="DamageZone" type="Area3D" parent="."]
+[node name="DamageZone" type="Area3D" parent="." unique_id=1638810608]
 collision_layer = 0
 collision_mask = 2
 monitorable = false
@@ -468,22 +468,20 @@ script = ExtResource("4_w0bvt")
 isDisabled = true
 ignoreSpeedbreakingCharacters = true
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="DamageZone"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="DamageZone" unique_id=841259323]
 shape = SubResource("SphereShape3D_fx7oj")
 
-[node name="Pull" type="AudioStreamPlayer" parent="."]
+[node name="Pull" type="AudioStreamPlayer" parent="." unique_id=504903645]
 stream = ExtResource("7_pbnhl")
 bus = &"GAME SFX"
 
-[node name="Spawn" type="AudioStreamPlayer" parent="."]
+[node name="Spawn" type="AudioStreamPlayer" parent="." unique_id=1737166190]
 stream = ExtResource("8_grstn")
 bus = &"GAME SFX"
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
-libraries = {
-&"": SubResource("AnimationLibrary_w0bvt")
-}
-autoplay = "init"
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=1516429927]
+libraries/ = SubResource("AnimationLibrary_w0bvt")
+autoplay = &"init"
 
 [connection signal="area_entered" from="GravityZone" to="." method="OnEntered"]
 [connection signal="area_exited" from="GravityZone" to="." method="OnExited"]

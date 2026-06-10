@@ -1,4 +1,4 @@
-[gd_scene load_steps=26 format=3 uid="uid://b6tymj1vanl66"]
+[gd_scene format=3 uid="uid://b6tymj1vanl66"]
 
 [ext_resource type="Script" uid="uid://dtkbvehtmy3em" path="res://object/stage/StageSettings.cs" id="1_fvbu3"]
 [ext_resource type="Resource" uid="uid://du86d7lfu3g3t" path="res://resource/level data/night palace/Boss.tres" id="2_wdw6t"]
@@ -81,7 +81,6 @@ reflected_light_source = 1
 tonemap_mode = 1
 tonemap_white = 1.3
 glow_enabled = true
-glow_levels/5 = 0.0
 glow_levels/6 = 0.1
 glow_normalized = true
 glow_intensity = 1.5
@@ -429,7 +428,7 @@ _data = {
 &"demo3": SubResource("Animation_ca2n2")
 }
 
-[node name="Static" type="Node3D" node_paths=PackedStringArray("pathParent", "completionAnimator", "Environment")]
+[node name="Static" type="Node3D" unique_id=977857622 node_paths=PackedStringArray("pathParent", "completionAnimator", "Environment")]
 script = ExtResource("1_fvbu3")
 Data = ExtResource("2_wdw6t")
 DefaultBgm = ExtResource("12_njf43")
@@ -439,24 +438,24 @@ pathParent = NodePath("Path")
 completionAnimator = NodePath("DemoCamera/AnimationPlayer")
 Environment = NodePath("WorldEnvironment")
 
-[node name="Visuals" type="Node3D" parent="."]
+[node name="Visuals" type="Node3D" parent="." unique_id=1593159644]
 
-[node name="bouncelight" type="DirectionalLight3D" parent="Visuals"]
+[node name="bouncelight" type="DirectionalLight3D" parent="Visuals" unique_id=1759608850]
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0)
 layers = 1024
 light_color = Color(0.45, 0.45, 1, 1)
 light_energy = 0.5
 light_cull_mask = 4293918722
 
-[node name="Skybox" parent="Visuals" instance=ExtResource("9_aohgx")]
+[node name="Skybox" parent="Visuals" unique_id=1594034757 instance=ExtResource("9_aohgx")]
 metadata/_edit_lock_ = true
 
-[node name="MoonMesh" parent="Visuals/Skybox/SkyRoot/Skeleton3D" index="5"]
+[node name="MoonMesh" parent="Visuals/Skybox/SkyRoot/Skeleton3D" parent_id_path=PackedInt32Array(1594034757, 1668315416) index="5" unique_id=2115929852]
 surface_material_override/0 = SubResource("StandardMaterial3D_ca2n2")
 
-[node name="moonlight" type="Node3D" parent="Visuals/Skybox"]
+[node name="moonlight" type="Node3D" parent="Visuals/Skybox" unique_id=1591929822]
 
-[node name="DirectionalLight3D" type="DirectionalLight3D" parent="Visuals/Skybox/moonlight"]
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="Visuals/Skybox/moonlight" unique_id=1702467502]
 transform = Transform3D(0.7582937, -0.15555833, 0.6330817, -6.752521e-09, 0.97111344, 0.23861821, -0.65191317, -0.18094267, 0.73638916, 0, 2.7190177, 0)
 layers = 1024
 light_color = Color(0.7, 0.765, 1, 1)
@@ -469,7 +468,7 @@ directional_shadow_split_1 = 0.15
 directional_shadow_split_2 = 0.3
 directional_shadow_max_distance = 80.0
 
-[node name="DirectionalLight3D" type="DirectionalLight3D" parent="Visuals/Skybox/moonlight/DirectionalLight3D"]
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="Visuals/Skybox/moonlight/DirectionalLight3D" unique_id=2096702284]
 transform = Transform3D(0.782771, -0.06196451, -0.6192169, -0.08312882, 0.97570115, -0.2027232, 0.6167324, 0.21016069, 0.75859976, -5.1584826, 1.2872431, 5.826931)
 layers = 1024
 light_color = Color(0.11270679, 1.540184e-06, 0.5560142, 1)
@@ -482,40 +481,36 @@ directional_shadow_split_2 = 0.3
 directional_shadow_blend_splits = true
 directional_shadow_max_distance = 80.0
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="Visuals/Skybox/moonlight"]
-libraries = {
-&"": SubResource("AnimationLibrary_iowwo")
-}
-autoplay = "why do i have to do this"
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Visuals/Skybox/moonlight" unique_id=1085423884]
+libraries/ = SubResource("AnimationLibrary_iowwo")
+autoplay = &"why do i have to do this"
 
-[node name="InfiniteHall" parent="Visuals" node_paths=PackedStringArray("sky") instance=ExtResource("10_jhood")]
+[node name="InfiniteHall" parent="Visuals" unique_id=1577123208 node_paths=PackedStringArray("sky") instance=ExtResource("10_jhood")]
 sky = NodePath("../Skybox")
 
-[node name="DepthRenderer" parent="Visuals" instance=ExtResource("9_ca2n2")]
+[node name="DepthRenderer" parent="Visuals" unique_id=2071953401 instance=ExtResource("9_ca2n2")]
 
-[node name="Path" type="Node3D" parent="."]
+[node name="Path" type="Node3D" parent="." unique_id=1069107296]
 
-[node name="MainPath" type="Path3D" parent="Path"]
+[node name="MainPath" type="Path3D" parent="Path" unique_id=1402882961]
 curve = ExtResource("10_7yaqk")
 
-[node name="PrimaryReflectionRenderer" parent="." instance=ExtResource("11_gi0oh")]
+[node name="PrimaryReflectionRenderer" parent="." unique_id=1508084297 instance=ExtResource("11_gi0oh")]
 reflectionMaterials = [ExtResource("15_48h34")]
 
-[node name="SecondaryReflectionRenderer" parent="." instance=ExtResource("11_gi0oh")]
+[node name="SecondaryReflectionRenderer" parent="." unique_id=1529819770 instance=ExtResource("11_gi0oh")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.35, 0)
 reflectionMaterials = [ExtResource("16_gcw3n")]
 
-[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1102451381]
 environment = SubResource("Environment_gk03j")
 
-[node name="DemoCamera" type="Node3D" parent="."]
+[node name="DemoCamera" type="Node3D" parent="." unique_id=614832635]
 
-[node name="Camera" type="Camera3D" parent="DemoCamera"]
+[node name="Camera" type="Camera3D" parent="DemoCamera" unique_id=491153792]
 cull_mask = 1086
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="DemoCamera"]
-libraries = {
-&"": SubResource("AnimationLibrary_njf43")
-}
+[node name="AnimationPlayer" type="AnimationPlayer" parent="DemoCamera" unique_id=1291624873]
+libraries/ = SubResource("AnimationLibrary_njf43")
 
 [editable path="Visuals/Skybox"]

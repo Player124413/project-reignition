@@ -1,4 +1,4 @@
-[gd_scene load_steps=38 format=3 uid="uid://b8irusmhs8rjm"]
+[gd_scene format=3 uid="uid://b8irusmhs8rjm"]
 
 [ext_resource type="Script" uid="uid://01bsn0f21qa0" path="res://object/stage/common/resource/script/BombMissile.cs" id="1_1rlvb"]
 [ext_resource type="PackedScene" uid="uid://cmlev1vsg4lag" path="res://area/1 sand oasis/boss/data/model/Missile.gltf" id="1_q671j"]
@@ -481,17 +481,17 @@ _data = {
 &"fly": SubResource("Animation_ymqqu")
 }
 
-[node name="Missile" type="Node3D" node_paths=PackedStringArray("root", "animator")]
+[node name="Missile" type="Node3D" unique_id=698334755 node_paths=PackedStringArray("root", "animator")]
 script = ExtResource("1_1rlvb")
 disableRespawning = true
 root = NodePath(".")
 animator = NodePath("AnimationPlayer")
 "Launch Settings/Mode" = 2
 
-[node name="Missile" parent="." instance=ExtResource("1_q671j")]
+[node name="Missile" parent="." unique_id=1942272551 instance=ExtResource("1_q671j")]
 transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 0, 0)
 
-[node name="Hitbox" type="Area3D" parent="."]
+[node name="Hitbox" type="Area3D" parent="." unique_id=1510443004]
 physics_interpolation_mode = 2
 collision_layer = 0
 collision_mask = 2
@@ -500,12 +500,12 @@ monitorable = false
 script = ExtResource("3_bfiyb")
 ignoreSpeedbreakingCharacters = true
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Hitbox"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Hitbox" unique_id=1148121283]
 shape = SubResource("SphereShape3D_ykuxf")
 
-[node name="Particles" type="Node3D" parent="."]
+[node name="Particles" type="Node3D" parent="." unique_id=1720416567]
 
-[node name="Trail" type="GPUParticles3D" parent="Particles"]
+[node name="Trail" type="GPUParticles3D" parent="Particles" unique_id=1130294597]
 layers = 32
 cast_shadow = 0
 extra_cull_margin = 16384.0
@@ -518,7 +518,7 @@ visibility_aabb = AABB(-12, -12, -35, 24, 24, 40)
 process_material = SubResource("ParticleProcessMaterial_diufn")
 draw_pass_1 = SubResource("QuadMesh_ln563")
 
-[node name="Dust" type="GPUParticles3D" parent="Particles"]
+[node name="Dust" type="GPUParticles3D" parent="Particles" unique_id=863709770]
 visible = false
 layers = 32
 cast_shadow = 0
@@ -534,7 +534,7 @@ local_coords = true
 process_material = SubResource("ParticleProcessMaterial_lwa6m")
 draw_pass_1 = SubResource("QuadMesh_l3hqx")
 
-[node name="Sand" type="GPUParticles3D" parent="Particles"]
+[node name="Sand" type="GPUParticles3D" parent="Particles" unique_id=236211898]
 visible = false
 layers = 32
 cast_shadow = 0
@@ -550,7 +550,7 @@ local_coords = true
 process_material = SubResource("ParticleProcessMaterial_x83so")
 draw_pass_1 = SubResource("QuadMesh_07a1k")
 
-[node name="Spark" type="GPUParticles3D" parent="Particles"]
+[node name="Spark" type="GPUParticles3D" parent="Particles" unique_id=1340024337]
 visible = false
 layers = 32
 cast_shadow = 0
@@ -566,9 +566,9 @@ transform_align = 3
 process_material = SubResource("ParticleProcessMaterial_k1cqg")
 draw_pass_1 = SubResource("PlaneMesh_0vxsp")
 
-[node name="SFX" type="Node3D" parent="."]
+[node name="SFX" type="Node3D" parent="." unique_id=45400339]
 
-[node name="Launch" type="AudioStreamPlayer3D" parent="SFX"]
+[node name="Launch" type="AudioStreamPlayer3D" parent="SFX" unique_id=1806577415]
 process_mode = 1
 stream = ExtResource("7_h121c")
 attenuation_model = 3
@@ -580,7 +580,7 @@ attenuation_filter_cutoff_hz = 20500.0
 script = ExtResource("8_nplt5")
 groupKey = &"soboss_missile_launch"
 
-[node name="Impact" type="AudioStreamPlayer3D" parent="SFX"]
+[node name="Impact" type="AudioStreamPlayer3D" parent="SFX" unique_id=1851884114]
 process_mode = 1
 stream = ExtResource("9_230w5")
 attenuation_model = 3
@@ -592,11 +592,9 @@ attenuation_filter_cutoff_hz = 20500.0
 script = ExtResource("8_nplt5")
 groupKey = &"soboss_missile_impact"
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=1175770003]
 root_node = NodePath("../Hitbox")
-libraries = {
-&"": SubResource("AnimationLibrary_rfc3l")
-}
+libraries/ = SubResource("AnimationLibrary_rfc3l")
 
 [connection signal="DamagedPlayer" from="Hitbox" to="." method="Explode"]
 [connection signal="area_entered" from="Hitbox" to="Hitbox" method="OnEntered"]

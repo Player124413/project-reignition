@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://bo061vk53h0fv"]
+[gd_scene format=3 uid="uid://bo061vk53h0fv"]
 
 [ext_resource type="Script" uid="uid://bdlofqc6xiigo" path="res://object/trigger/modules/PlatformTrigger.cs" id="1_lvjt2"]
 [ext_resource type="PackedScene" uid="uid://uwnkocedgmtq" path="res://area/7 night palace/object/model/foothold/SidleFooting.gltf" id="1_xky6q"]
@@ -338,7 +338,7 @@ _data = {
 &"shake": SubResource("Animation_2yb40")
 }
 
-[node name="SidleFooting" type="Node3D" node_paths=PackedStringArray("parentCollider")]
+[node name="SidleFooting" type="Node3D" unique_id=282995556 node_paths=PackedStringArray("parentCollider")]
 script = ExtResource("1_lvjt2")
 parentCollider = NodePath("Root/AnimatableBody3D")
 "Falling Platform Settings/Enabled" = true
@@ -348,36 +348,34 @@ parentCollider = NodePath("Root/AnimatableBody3D")
 "Falling Platform Settings/Fall Speed" = 1.0
 "Floating Platform Settings/Enabled" = false
 
-[node name="Root" type="Node3D" parent="."]
+[node name="Root" type="Node3D" parent="." unique_id=243902027]
 
-[node name="Visuals" parent="Root" instance=ExtResource("1_xky6q")]
+[node name="Visuals" parent="Root" unique_id=1205161169 instance=ExtResource("1_xky6q")]
 
-[node name="SidleFootingMesh" parent="Root/Visuals" index="0"]
+[node name="SidleFootingMesh" parent="Root/Visuals" index="0" unique_id=1876458848]
 layers = 2
 
-[node name="PlatformTrigger" type="Area3D" parent="Root"]
+[node name="PlatformTrigger" type="Area3D" parent="Root" unique_id=2048476568]
 collision_layer = 0
 collision_mask = 2
 monitorable = false
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Root/PlatformTrigger"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Root/PlatformTrigger" unique_id=1237208638]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.15, 0)
 shape = SubResource("BoxShape3D_yx42l")
 
-[node name="AnimatableBody3D" type="AnimatableBody3D" parent="Root" groups=["floor"]]
+[node name="AnimatableBody3D" type="AnimatableBody3D" parent="Root" unique_id=1654222700 groups=["floor"]]
 sync_to_physics = false
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Root/AnimatableBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Root/AnimatableBody3D" unique_id=929423419]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.1, 0)
 shape = SubResource("BoxShape3D_lk7m2")
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=767653062]
 callback_mode_process = 0
-libraries = {
-&"": SubResource("AnimationLibrary_2svow")
-}
+libraries/ = SubResource("AnimationLibrary_2svow")
 
-[node name="Shake" type="AudioStreamPlayer3D" parent="."]
+[node name="Shake" type="AudioStreamPlayer3D" parent="." unique_id=1885165368]
 stream = ExtResource("3_ywhrj")
 attenuation_model = 3
 volume_db = -80.0
@@ -389,7 +387,7 @@ script = ExtResource("4_ymq3v")
 groupKey = &"sidle footing shake"
 audioLengthOverride = 1.0
 
-[node name="Crumble" type="AudioStreamPlayer3D" parent="."]
+[node name="Crumble" type="AudioStreamPlayer3D" parent="." unique_id=1718687836]
 stream = ExtResource("4_xr76x")
 attenuation_model = 3
 max_db = 0.0

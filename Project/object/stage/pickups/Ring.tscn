@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3 uid="uid://c7l8mr7ubn848"]
+[gd_scene format=3 uid="uid://c7l8mr7ubn848"]
 
 [ext_resource type="Script" uid="uid://b5odvkwlgmlk3" path="res://object/stage/pickups/resource/script/Ring.cs" id="1"]
 [ext_resource type="PackedScene" uid="uid://7q1qood2upqf" path="res://object/stage/pickups/resource/model/Ring.gltf" id="2"]
@@ -156,19 +156,19 @@ _data = {
 &"loop": SubResource("4")
 }
 
-[node name="Ring" type="Area3D" groups=["ignore destructable", "light dashable"]]
+[node name="Ring" type="Area3D" unique_id=760260758 groups=["ignore destructable", "light dashable"]]
 collision_layer = 8
 collision_mask = 2
 script = ExtResource("1")
 animator = NodePath("AnimationPlayer")
 collider = NodePath("CollisionShape3D")
 
-[node name="Ring" parent="." instance=ExtResource("2")]
+[node name="Ring" parent="." unique_id=2070796800 instance=ExtResource("2")]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=329056373]
 shape = SubResource("3")
 
-[node name="SparkParticle" type="GPUParticles3D" parent="."]
+[node name="SparkParticle" type="GPUParticles3D" parent="." unique_id=1435410177]
 visible = false
 layers = 32
 extra_cull_margin = 1000.0
@@ -180,10 +180,8 @@ visibility_aabb = AABB(-1, -1, -1, 2, 2, 2)
 process_material = ExtResource("3_dnn02")
 draw_pass_1 = SubResource("PlaneMesh_ekr2c")
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
-libraries = {
-"": SubResource("AnimationLibrary_6x35q")
-}
-autoplay = "loop"
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=1753023000]
+libraries/ = SubResource("AnimationLibrary_6x35q")
+autoplay = &"loop"
 
 [connection signal="area_entered" from="." to="." method="OnEntered"]

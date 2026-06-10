@@ -1,4 +1,4 @@
-[gd_scene load_steps=36 format=3 uid="uid://bemb37fo0seak"]
+[gd_scene format=3 uid="uid://bemb37fo0seak"]
 
 [ext_resource type="Script" uid="uid://c3h7ogmmkpfhq" path="res://object/player/resource/script/PlayerSkillController.cs" id="1_ek230"]
 [ext_resource type="AudioStream" uid="uid://dgg82ed3pd114" path="res://sound/sfx/player/speed break end.wav" id="3_di5ls"]
@@ -512,7 +512,7 @@ _data = {
 &"stop": SubResource("Animation_i45wl")
 }
 
-[node name="Skills" type="Node3D" node_paths=PackedStringArray("speedBreakShockwave", "speedBreakParticles", "speedBreakAnimator", "speedBreakSFX", "timeBreakAnimator", "timeBreakSFX", "heartbeatSFX")]
+[node name="Skills" type="Node3D" unique_id=1803456563 node_paths=PackedStringArray("speedBreakShockwave", "speedBreakParticles", "speedBreakAnimator", "speedBreakSFX", "timeBreakAnimator", "timeBreakSFX", "heartbeatSFX")]
 script = ExtResource("1_ek230")
 countdownBoostSpeed = 32.0
 landingDashSpeed = 32.0
@@ -527,22 +527,22 @@ timeBreakSFX = NodePath("TimeBreakSFX")
 heartbeatSFX = NodePath("HeartbeatSFX")
 speedBreakSpeed = 64.0
 
-[node name="SpeedBreakSFX" type="AudioStreamPlayer" parent="."]
+[node name="SpeedBreakSFX" type="AudioStreamPlayer" parent="." unique_id=1632129792]
 process_mode = 1
 stream = ExtResource("3_di5ls")
 bus = &"GAME SFX"
 
-[node name="TimeBreakSFX" type="AudioStreamPlayer" parent="."]
+[node name="TimeBreakSFX" type="AudioStreamPlayer" parent="." unique_id=1896203543]
 process_mode = 1
 stream = ExtResource("12_vkf5a")
 bus = &"GAME SFX"
 
-[node name="HeartbeatSFX" type="AudioStreamPlayer" parent="."]
+[node name="HeartbeatSFX" type="AudioStreamPlayer" parent="." unique_id=974266526]
 process_mode = 1
 stream = ExtResource("10_fl25x")
 bus = &"GAME SFX"
 
-[node name="TimeBreak" type="Control" parent="."]
+[node name="TimeBreak" type="Control" parent="." unique_id=147552176]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -551,15 +551,15 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
-[node name="CanvasLayer" type="CanvasLayer" parent="TimeBreak"]
+[node name="CanvasLayer" type="CanvasLayer" parent="TimeBreak" unique_id=647279740]
 layer = -10
 
-[node name="ScreenGlowBB" type="BackBufferCopy" parent="TimeBreak/CanvasLayer"]
+[node name="ScreenGlowBB" type="BackBufferCopy" parent="TimeBreak/CanvasLayer" unique_id=1663305621]
 position = Vector2(6.10352e-05, -6.10352e-05)
 copy_mode = 2
 rect = Rect2(0, 0, 1920, 1080)
 
-[node name="ScreenGlow" type="ColorRect" parent="TimeBreak/CanvasLayer"]
+[node name="ScreenGlow" type="ColorRect" parent="TimeBreak/CanvasLayer" unique_id=398895678]
 material = SubResource("ShaderMaterial_7rw8q")
 anchors_preset = 15
 anchor_right = 1.0
@@ -570,11 +570,11 @@ pivot_offset = Vector2(960, 540)
 mouse_filter = 2
 metadata/_edit_lock_ = true
 
-[node name="BlurBB" type="BackBufferCopy" parent="TimeBreak/CanvasLayer"]
+[node name="BlurBB" type="BackBufferCopy" parent="TimeBreak/CanvasLayer" unique_id=2134139387]
 copy_mode = 2
 rect = Rect2(0, 0, 1920, 1080)
 
-[node name="RadialBlur" type="ColorRect" parent="TimeBreak/CanvasLayer"]
+[node name="RadialBlur" type="ColorRect" parent="TimeBreak/CanvasLayer" unique_id=2065035116]
 visible = false
 material = ExtResource("9_d8as4")
 anchors_preset = 15
@@ -587,15 +587,13 @@ mouse_filter = 2
 color = Color(1, 1, 1, 0)
 metadata/_edit_lock_ = true
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="TimeBreak/CanvasLayer"]
+[node name="AnimationPlayer" type="AnimationPlayer" parent="TimeBreak/CanvasLayer" unique_id=359056447]
 root_node = NodePath("../..")
-libraries = {
-&"": SubResource("AnimationLibrary_m0ixc")
-}
+libraries/ = SubResource("AnimationLibrary_m0ixc")
 
-[node name="SpeedBreak" type="Node3D" parent="."]
+[node name="SpeedBreak" type="Node3D" parent="." unique_id=220740886]
 
-[node name="VFX" type="GPUParticles3D" parent="SpeedBreak" node_paths=PackedStringArray("subSystems")]
+[node name="VFX" type="GPUParticles3D" parent="SpeedBreak" unique_id=141122141 node_paths=PackedStringArray("subSystems")]
 transform = Transform3D(1.31134e-07, -4.37114e-08, 1, 4.37114e-08, 1, 4.37114e-08, -1, 4.37114e-08, 1.31134e-07, 0, 0.3, 1.4)
 layers = 32
 cast_shadow = 0
@@ -613,7 +611,7 @@ draw_pass_1 = ExtResource("10_wn37a")
 script = ExtResource("11_h5y28")
 subSystems = [NodePath("Streak")]
 
-[node name="Streak" type="GPUParticles3D" parent="SpeedBreak/VFX"]
+[node name="Streak" type="GPUParticles3D" parent="SpeedBreak/VFX" unique_id=1252745140]
 transform = Transform3D(1, 0, 0, 0, 1, -1.37338e-15, 0, -1.37338e-15, 1, -1, 4.37114e-08, 1.31134e-07)
 layers = 32
 cast_shadow = 0
@@ -629,15 +627,15 @@ transform_align = 2
 process_material = SubResource("ParticleProcessMaterial_74ibn")
 draw_pass_1 = ExtResource("11_6mnos")
 
-[node name="CanvasLayer" type="CanvasLayer" parent="SpeedBreak"]
+[node name="CanvasLayer" type="CanvasLayer" parent="SpeedBreak" unique_id=1993052943]
 layer = -10
 
-[node name="ScreenShockBB" type="BackBufferCopy" parent="SpeedBreak/CanvasLayer"]
+[node name="ScreenShockBB" type="BackBufferCopy" parent="SpeedBreak/CanvasLayer" unique_id=1371297615]
 position = Vector2(6.10352e-05, -6.10352e-05)
 copy_mode = 2
 rect = Rect2(0, 0, 1920, 1080)
 
-[node name="ScreenShock" type="ColorRect" parent="SpeedBreak/CanvasLayer"]
+[node name="ScreenShock" type="ColorRect" parent="SpeedBreak/CanvasLayer" unique_id=1578389307]
 visible = false
 material = SubResource("ShaderMaterial_er50h")
 anchors_preset = 15
@@ -648,11 +646,11 @@ grow_vertical = 2
 pivot_offset = Vector2(960, 540)
 mouse_filter = 2
 
-[node name="BlurBB" type="BackBufferCopy" parent="SpeedBreak/CanvasLayer"]
+[node name="BlurBB" type="BackBufferCopy" parent="SpeedBreak/CanvasLayer" unique_id=503276991]
 copy_mode = 2
 rect = Rect2(0, 0, 1920, 1080)
 
-[node name="RadialBlur" type="ColorRect" parent="SpeedBreak/CanvasLayer"]
+[node name="RadialBlur" type="ColorRect" parent="SpeedBreak/CanvasLayer" unique_id=653664775]
 visible = false
 material = ExtResource("14_d8as4")
 anchors_preset = 15
@@ -665,8 +663,6 @@ mouse_filter = 2
 color = Color(1, 1, 1, 0)
 metadata/_edit_lock_ = true
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="SpeedBreak"]
+[node name="AnimationPlayer" type="AnimationPlayer" parent="SpeedBreak" unique_id=299620063]
 root_node = NodePath("../..")
-libraries = {
-&"": SubResource("AnimationLibrary_5ilpv")
-}
+libraries/ = SubResource("AnimationLibrary_5ilpv")

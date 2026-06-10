@@ -1,4 +1,4 @@
-[gd_scene load_steps=49 format=3 uid="uid://baffjaqc6ty35"]
+[gd_scene format=3 uid="uid://baffjaqc6ty35"]
 
 [ext_resource type="PackedScene" uid="uid://ctfcgpodfhnp0" path="res://area/7 night palace/act 1/Static.tscn" id="1_vgtu5"]
 [ext_resource type="Resource" uid="uid://be7ju3v1edjit" path="res://resource/level data/night palace/Act1Race.tres" id="2_kmats"]
@@ -32,6 +32,94 @@
 [ext_resource type="PackedScene" uid="uid://dc1ik7p6xlh0a" path="res://object/stage/genie/Uhu.tscn" id="30_my3co"]
 [ext_resource type="PackedScene" uid="uid://cu6lpq7q82grk" path="res://object/stage/pickups/FireSoul.tscn" id="34_86m7c"]
 [ext_resource type="PackedScene" uid="uid://dxepb172kmp8n" path="res://object/stage/common/Goal.tscn" id="39_6rmwm"]
+
+[sub_resource type="Shader" id="Shader_5jqgc"]
+code = "shader_type canvas_item;
+render_mode unshaded, blend_add;
+
+uniform sampler2D depth_tex : filter_linear;
+uniform sampler2D screen_texture : hint_screen_texture, filter_linear;
+uniform sampler2D light_color : hint_default_white;
+uniform vec4 ray_color : source_color = vec4(1.0, 1.0, 1.0, 1.0);
+uniform float ray_length : hint_range(0.0, 1.0) = 1.0;
+uniform float ray_intensity : hint_range(0.0, 1.0) = 1.0;
+uniform float light_source_scale = 1.0;
+uniform float light_source_feather = 2.0;
+uniform float noise_strength : hint_range(0.0, 1.0) = 0.2;
+uniform vec2 light_source_pos = vec2(0.0, 0.0);
+uniform vec3 light_source_dir = vec3(0.5, -1.0, 0.25);
+uniform float mask_threshold : hint_range(0.0, 1.0) = 0.5;
+uniform float mask_softness : hint_range(0.01, 0.5) = 0.15;
+uniform float mask_radius : hint_range(0.01, 0.5) = 0.15;
+uniform bool debug_mode = false;
+uniform float debug_dot_radius : hint_range(0.001, 0.05) = 0.01;
+
+const int SAMPLE_COUNT = 120;
+
+float random(vec2 uv) {
+	return fract(sin(dot(uv.xy, vec2(12.9898, 78.233))) * 43758.5453123);
+}
+
+void fragment() {
+	vec2 light_pos = light_source_pos;
+	vec2 ratio = vec2(SCREEN_PIXEL_SIZE.x / SCREEN_PIXEL_SIZE.y, 1.0);
+
+	if (debug_mode) {
+		vec2 diff = (UV - light_pos) / ratio;
+		float dist = length(diff);
+		float dot_mask = smoothstep(debug_dot_radius, debug_dot_radius * 0.5, dist);
+		COLOR.rgb = vec3(dot_mask);
+		COLOR.a = 1.0;
+	} else {
+		vec2 dir = UV - light_pos;
+		vec2 dir2 = UV / ratio - light_pos / ratio;
+		float light_rays = 0.0;
+		vec2 uv2;
+		float scale, l;
+
+		for (int i = 0; i < SAMPLE_COUNT; i++) {
+			scale = 1.0 - ray_length * (float(i) / float(SAMPLE_COUNT - 1));
+			vec2 sample_uv = dir * scale + light_pos;
+			l = 1.0 - texture(depth_tex, sample_uv).a;
+			uv2 = dir2 * scale * pow(light_source_scale, 2.0);
+			l *= smoothstep(1.0, 0.999 - light_source_feather, dot(uv2, uv2) * 4.0);
+			light_rays += l / float(SAMPLE_COUNT);
+		}
+
+		float n = 1.0 - random(UV) * noise_strength * smoothstep(0.999 - 1.25, 1.0, dot(dir2, dir2) * 2.0);
+		light_rays *= n;
+
+		vec3 screen_col = texture(screen_texture, SCREEN_UV).rgb;
+		float brightness = max(screen_col.r, max(screen_col.g, screen_col.b));
+		float moon_mask = smoothstep(mask_threshold, mask_threshold + mask_softness, brightness);
+
+		float dist_to_light = length((UV - light_pos) / ratio);
+		float proximity = 1.0 - smoothstep(0.0, mask_radius, dist_to_light);
+		moon_mask *= proximity;
+
+		light_rays *= (1.0 - moon_mask);
+
+		COLOR.rgb = vec3(light_rays * ray_intensity) * texture(light_color, UV).rgb * ray_color.rgb;
+		COLOR.a = ray_color.a;
+	}
+}"
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_kmats"]
+resource_local_to_scene = true
+shader = SubResource("Shader_5jqgc")
+shader_parameter/ray_color = Color(1, 1, 1, 1)
+shader_parameter/ray_length = 0.8000000380000001
+shader_parameter/ray_intensity = 0.5000000237500001
+shader_parameter/light_source_scale = 1.1999999999970896
+shader_parameter/light_source_feather = 1.4499999999970896
+shader_parameter/noise_strength = 0.10000000475
+shader_parameter/light_source_pos = Vector2(0, 0)
+shader_parameter/light_source_dir = Vector3(0.5, -1, 0.25)
+shader_parameter/mask_threshold = 0.470000022325
+shader_parameter/mask_softness = 0.16900000732898002
+shader_parameter/mask_radius = 0.5
+shader_parameter/debug_mode = false
+shader_parameter/debug_dot_radius = 0.01
 
 [sub_resource type="Animation" id="Animation_kmats"]
 length = 0.001
@@ -386,83 +474,84 @@ _data = {
 [sub_resource type="BoxShape3D" id="BoxShape3D_bhcs1"]
 size = Vector3(50, 20, 5)
 
-[node name="World" type="Node"]
+[node name="World" type="Node" unique_id=1950610896]
 
-[node name="Static" parent="." instance=ExtResource("1_vgtu5")]
+[node name="Static" parent="." unique_id=545405502 instance=ExtResource("1_vgtu5")]
 Data = ExtResource("2_kmats")
 InitialCameraSettings = ExtResource("3_pth2e")
 
-[node name="RaceAct" type="Node3D" parent="."]
+[node name="ColorRect_LightRays" parent="Static/Visuals/MainSection/DepthRenderer/CanvasLayerLightShafts" parent_id_path=PackedInt32Array(545405502, 452127697) index="0" unique_id=2021292303]
+material = SubResource("ShaderMaterial_kmats")
 
-[node name="SpawnPosition" type="Node3D" parent="RaceAct"]
+[node name="RaceAct" type="Node3D" parent="." unique_id=403785695]
+
+[node name="SpawnPosition" type="Node3D" parent="RaceAct" unique_id=2136921974]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -10)
 metadata/_edit_lock_ = true
 
-[node name="CharacterSpawn" parent="RaceAct/SpawnPosition" instance=ExtResource("4_lhihf")]
+[node name="CharacterSpawn" parent="RaceAct/SpawnPosition" unique_id=1897984112 instance=ExtResource("4_lhihf")]
 
-[node name="Uhu" type="Node3D" parent="RaceAct"]
+[node name="Uhu" type="Node3D" parent="RaceAct" unique_id=1774386696]
 
-[node name="UhuPath" type="Path3D" parent="RaceAct/Uhu"]
+[node name="UhuPath" type="Path3D" parent="RaceAct/Uhu" unique_id=65614878]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 34.501)
 curve = ExtResource("30_kmats")
 
-[node name="Uhu" parent="RaceAct/Uhu/UhuPath" node_paths=PackedStringArray("animator") instance=ExtResource("30_my3co")]
+[node name="Uhu" parent="RaceAct/Uhu/UhuPath" unique_id=1217946264 node_paths=PackedStringArray("animator") instance=ExtResource("30_my3co")]
 transform = Transform3D(-0.9998869, 0, 0, 0, 0.9999463, 0, 0, 0, -0.9998752, 0, -0.5, -43.99999)
 progress = 44.0
 v_offset = -0.5
 animator = NodePath("AnimationPlayer")
 maxProgress = 768.0
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="RaceAct/Uhu/UhuPath/Uhu"]
-libraries = {
-&"": SubResource("AnimationLibrary_kmats")
-}
+[node name="AnimationPlayer" type="AnimationPlayer" parent="RaceAct/Uhu/UhuPath/Uhu" unique_id=1422039904]
+libraries/ = SubResource("AnimationLibrary_kmats")
 
-[node name="CullingMap" type="Node3D" parent="RaceAct"]
+[node name="CullingMap" type="Node3D" parent="RaceAct" unique_id=1837403325]
 visible = false
 
-[node name="SidleL" parent="RaceAct/CullingMap" instance=ExtResource("5_i15cn")]
+[node name="SidleL" parent="RaceAct/CullingMap" unique_id=1136984983 instance=ExtResource("5_i15cn")]
 transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 91, 2.5, -79.85)
 "Trigger Mode" = 2
 "Exit Mode" = 2
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="RaceAct/CullingMap/SidleL"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="RaceAct/CullingMap/SidleL" unique_id=136803625]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
 shape = SubResource("BoxShape3D_mow5f")
 
-[node name="StartU" parent="RaceAct/CullingMap" instance=ExtResource("5_i15cn")]
+[node name="StartU" parent="RaceAct/CullingMap" unique_id=578333260 instance=ExtResource("5_i15cn")]
 transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 159.986, 0.0100317, -116.437)
 "Trigger Mode" = 2
 "Exit Mode" = 2
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="RaceAct/CullingMap/StartU"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="RaceAct/CullingMap/StartU" unique_id=1419088820]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
 shape = SubResource("BoxShape3D_mow5f")
 
-[node name="HallL" parent="RaceAct/CullingMap" instance=ExtResource("5_i15cn")]
+[node name="HallL" parent="RaceAct/CullingMap" unique_id=1626016440 instance=ExtResource("5_i15cn")]
 transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 159.978, 0.0103252, -201.247)
 "Trigger Mode" = 2
 "Exit Mode" = 2
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="RaceAct/CullingMap/HallL"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="RaceAct/CullingMap/HallL" unique_id=769636742]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
 shape = SubResource("BoxShape3D_mow5f")
 
-[node name="SidleU" parent="RaceAct/CullingMap" instance=ExtResource("5_i15cn")]
+[node name="SidleU" parent="RaceAct/CullingMap" unique_id=2079517381 instance=ExtResource("5_i15cn")]
 transform = Transform3D(-0.707107, 0, -0.707107, 0, 1, 0, 0.707107, 0, -0.707107, 139.26, 0.000968456, -265.884)
 "Trigger Mode" = 2
 "Exit Mode" = 2
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="RaceAct/CullingMap/SidleU"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="RaceAct/CullingMap/SidleU" unique_id=503639260]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
 shape = SubResource("BoxShape3D_mow5f")
 
-[node name="Start" type="Node3D" parent="RaceAct"]
+[node name="Start" type="Node3D" parent="RaceAct" unique_id=1017116993]
 script = ExtResource("6_m54ir")
 startEnabled = true
 saveVisibilityOnCheckpoint = true
 
-[node name="Rings1" type="Node3D" parent="RaceAct/Start"]
+[node name="Rings1" type="Node3D" parent="RaceAct/Start" unique_id=1013696719]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.7, -24)
 script = ExtResource("7_s55we")
 Source = ExtResource("8_a6ejr")
@@ -473,36 +562,36 @@ Spacing = 5.0
 "Horizontal Offset" = null
 "Vertical Offset" = null
 
-[node name="Child01" parent="RaceAct/Start/Rings1" instance=ExtResource("8_a6ejr")]
+[node name="Child01" parent="RaceAct/Start/Rings1" unique_id=1917679054 instance=ExtResource("8_a6ejr")]
 
-[node name="Child02" parent="RaceAct/Start/Rings1" instance=ExtResource("8_a6ejr")]
+[node name="Child02" parent="RaceAct/Start/Rings1" unique_id=564647346 instance=ExtResource("8_a6ejr")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -5)
 
-[node name="Child03" parent="RaceAct/Start/Rings1" instance=ExtResource("8_a6ejr")]
+[node name="Child03" parent="RaceAct/Start/Rings1" unique_id=619804208 instance=ExtResource("8_a6ejr")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -10)
 
-[node name="Child04" parent="RaceAct/Start/Rings1" instance=ExtResource("8_a6ejr")]
+[node name="Child04" parent="RaceAct/Start/Rings1" unique_id=1981239531 instance=ExtResource("8_a6ejr")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -15)
 
-[node name="Child05" parent="RaceAct/Start/Rings1" instance=ExtResource("8_a6ejr")]
+[node name="Child05" parent="RaceAct/Start/Rings1" unique_id=1049245034 instance=ExtResource("8_a6ejr")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -20)
 
-[node name="Child06" parent="RaceAct/Start/Rings1" instance=ExtResource("8_a6ejr")]
+[node name="Child06" parent="RaceAct/Start/Rings1" unique_id=341279360 instance=ExtResource("8_a6ejr")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -25)
 
-[node name="Child07" parent="RaceAct/Start/Rings1" instance=ExtResource("8_a6ejr")]
+[node name="Child07" parent="RaceAct/Start/Rings1" unique_id=585811739 instance=ExtResource("8_a6ejr")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -30)
 
-[node name="Child08" parent="RaceAct/Start/Rings1" instance=ExtResource("8_a6ejr")]
+[node name="Child08" parent="RaceAct/Start/Rings1" unique_id=1910294973 instance=ExtResource("8_a6ejr")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -35)
 
-[node name="Child09" parent="RaceAct/Start/Rings1" instance=ExtResource("8_a6ejr")]
+[node name="Child09" parent="RaceAct/Start/Rings1" unique_id=219579822 instance=ExtResource("8_a6ejr")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -40)
 
-[node name="Child10" parent="RaceAct/Start/Rings1" instance=ExtResource("8_a6ejr")]
+[node name="Child10" parent="RaceAct/Start/Rings1" unique_id=1152874094 instance=ExtResource("8_a6ejr")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -45)
 
-[node name="Rings2" type="Node3D" parent="RaceAct/Start"]
+[node name="Rings2" type="Node3D" parent="RaceAct/Start" unique_id=1915890661]
 transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 12.5, 0.7, -80)
 script = ExtResource("7_s55we")
 Source = ExtResource("8_a6ejr")
@@ -513,180 +602,180 @@ Spacing = 2.5
 "Horizontal Offset" = null
 "Vertical Offset" = null
 
-[node name="Child01" parent="RaceAct/Start/Rings2" instance=ExtResource("8_a6ejr")]
+[node name="Child01" parent="RaceAct/Start/Rings2" unique_id=1932017611 instance=ExtResource("8_a6ejr")]
 
-[node name="Child02" parent="RaceAct/Start/Rings2" instance=ExtResource("8_a6ejr")]
+[node name="Child02" parent="RaceAct/Start/Rings2" unique_id=2046207261 instance=ExtResource("8_a6ejr")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2.5)
 
-[node name="Child03" parent="RaceAct/Start/Rings2" instance=ExtResource("8_a6ejr")]
+[node name="Child03" parent="RaceAct/Start/Rings2" unique_id=1813067027 instance=ExtResource("8_a6ejr")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -5)
 
-[node name="Child04" parent="RaceAct/Start/Rings2" instance=ExtResource("8_a6ejr")]
+[node name="Child04" parent="RaceAct/Start/Rings2" unique_id=786699668 instance=ExtResource("8_a6ejr")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -7.5)
 
-[node name="Child05" parent="RaceAct/Start/Rings2" instance=ExtResource("8_a6ejr")]
+[node name="Child05" parent="RaceAct/Start/Rings2" unique_id=1008980208 instance=ExtResource("8_a6ejr")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -10)
 
-[node name="Child06" parent="RaceAct/Start/Rings2" instance=ExtResource("8_a6ejr")]
+[node name="Child06" parent="RaceAct/Start/Rings2" unique_id=1224971894 instance=ExtResource("8_a6ejr")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -12.5)
 
-[node name="Child07" parent="RaceAct/Start/Rings2" instance=ExtResource("8_a6ejr")]
+[node name="Child07" parent="RaceAct/Start/Rings2" unique_id=146347439 instance=ExtResource("8_a6ejr")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -15)
 
-[node name="Child08" parent="RaceAct/Start/Rings2" instance=ExtResource("8_a6ejr")]
+[node name="Child08" parent="RaceAct/Start/Rings2" unique_id=1365266785 instance=ExtResource("8_a6ejr")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -17.5)
 
-[node name="Child09" parent="RaceAct/Start/Rings2" instance=ExtResource("8_a6ejr")]
+[node name="Child09" parent="RaceAct/Start/Rings2" unique_id=1781342017 instance=ExtResource("8_a6ejr")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -20)
 
-[node name="Child10" parent="RaceAct/Start/Rings2" instance=ExtResource("8_a6ejr")]
+[node name="Child10" parent="RaceAct/Start/Rings2" unique_id=121716980 instance=ExtResource("8_a6ejr")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -22.5)
 
-[node name="SpikeBallSpawner1" parent="RaceAct/Start" instance=ExtResource("9_rhel3")]
+[node name="SpikeBallSpawner1" parent="RaceAct/Start" unique_id=1528134788 instance=ExtResource("9_rhel3")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 118.8, 20, -83.5)
 lifetime = 3.0
 spawnInterval = 2.0
 
-[node name="SpikeBallSpawner2" parent="RaceAct/Start" instance=ExtResource("9_rhel3")]
+[node name="SpikeBallSpawner2" parent="RaceAct/Start" unique_id=1550035864 instance=ExtResource("9_rhel3")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 120.6, 21, -85.6)
 lifetime = 3.0
 
-[node name="DashPanel1" parent="RaceAct/Start" instance=ExtResource("10_uvhxf")]
+[node name="DashPanel1" parent="RaceAct/Start" unique_id=1938483461 instance=ExtResource("10_uvhxf")]
 transform = Transform3D(0.422618, 0, 0.906308, 0, 1, 0, -0.906308, 0, 0.422618, 115.786, 2.5, -78.2942)
 
-[node name="DashPanel2" parent="RaceAct/Start" instance=ExtResource("10_uvhxf")]
+[node name="DashPanel2" parent="RaceAct/Start" unique_id=877950226 instance=ExtResource("10_uvhxf")]
 transform = Transform3D(0.573576, 0, 0.819152, 0, 1, 0, -0.819152, 0, 0.573576, 115.897, 2.5, -80.7752)
 
-[node name="CrateGroup1" type="Node3D" parent="RaceAct/Start"]
+[node name="CrateGroup1" type="Node3D" parent="RaceAct/Start" unique_id=346440114]
 transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 82.5, 2.5, -79)
 
-[node name="Crate1" parent="RaceAct/Start/CrateGroup1" instance=ExtResource("11_2jmk7")]
+[node name="Crate1" parent="RaceAct/Start/CrateGroup1" unique_id=74163826 instance=ExtResource("11_2jmk7")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.5, 0.5, 0)
 
-[node name="Crate2" parent="RaceAct/Start/CrateGroup1" instance=ExtResource("11_2jmk7")]
+[node name="Crate2" parent="RaceAct/Start/CrateGroup1" unique_id=1287285785 instance=ExtResource("11_2jmk7")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 0.5, 0)
 
-[node name="Crate3" parent="RaceAct/Start/CrateGroup1" instance=ExtResource("11_2jmk7")]
+[node name="Crate3" parent="RaceAct/Start/CrateGroup1" unique_id=966521843 instance=ExtResource("11_2jmk7")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
 
-[node name="CrateGroup2" type="Node3D" parent="RaceAct/Start"]
+[node name="CrateGroup2" type="Node3D" parent="RaceAct/Start" unique_id=346162699]
 transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 90.5, 2.5, -80.5)
 
-[node name="Crate1" parent="RaceAct/Start/CrateGroup2" instance=ExtResource("11_2jmk7")]
+[node name="Crate1" parent="RaceAct/Start/CrateGroup2" unique_id=447908138 instance=ExtResource("11_2jmk7")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.5, 0.5, 0)
 
-[node name="Crate2" parent="RaceAct/Start/CrateGroup2" instance=ExtResource("11_2jmk7")]
+[node name="Crate2" parent="RaceAct/Start/CrateGroup2" unique_id=2132221487 instance=ExtResource("11_2jmk7")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 0.5, 0)
 
-[node name="Crate3" parent="RaceAct/Start/CrateGroup2" instance=ExtResource("11_2jmk7")]
+[node name="Crate3" parent="RaceAct/Start/CrateGroup2" unique_id=2064094967 instance=ExtResource("11_2jmk7")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5, 0.5, 0)
 
-[node name="Crate4" parent="RaceAct/Start/CrateGroup2" instance=ExtResource("11_2jmk7")]
+[node name="Crate4" parent="RaceAct/Start/CrateGroup2" unique_id=893715950 instance=ExtResource("11_2jmk7")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
 
-[node name="CrateGroup3" type="Node3D" parent="RaceAct/Start"]
+[node name="CrateGroup3" type="Node3D" parent="RaceAct/Start" unique_id=1263925010]
 transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 98.5, 2.5, -81.5)
 
-[node name="Crate1" parent="RaceAct/Start/CrateGroup3" instance=ExtResource("11_2jmk7")]
+[node name="Crate1" parent="RaceAct/Start/CrateGroup3" unique_id=1131864780 instance=ExtResource("11_2jmk7")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.5, 0.5, 0)
 
-[node name="Crate2" parent="RaceAct/Start/CrateGroup3" instance=ExtResource("11_2jmk7")]
+[node name="Crate2" parent="RaceAct/Start/CrateGroup3" unique_id=1718520343 instance=ExtResource("11_2jmk7")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 0.5, 0)
 
-[node name="Crate3" parent="RaceAct/Start/CrateGroup3" instance=ExtResource("11_2jmk7")]
+[node name="Crate3" parent="RaceAct/Start/CrateGroup3" unique_id=646915165 instance=ExtResource("11_2jmk7")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5, 0.5, 0)
 
-[node name="Crate4" parent="RaceAct/Start/CrateGroup3" instance=ExtResource("11_2jmk7")]
+[node name="Crate4" parent="RaceAct/Start/CrateGroup3" unique_id=407716398 instance=ExtResource("11_2jmk7")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.5, 0.5, 0)
 
-[node name="Crate5" parent="RaceAct/Start/CrateGroup3" instance=ExtResource("11_2jmk7")]
+[node name="Crate5" parent="RaceAct/Start/CrateGroup3" unique_id=197068541 instance=ExtResource("11_2jmk7")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.2, 1.5, 0)
 
-[node name="Crate7" parent="RaceAct/Start/CrateGroup3" instance=ExtResource("11_2jmk7")]
+[node name="Crate7" parent="RaceAct/Start/CrateGroup3" unique_id=806237719 instance=ExtResource("11_2jmk7")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.9, 2.5, 0)
 
-[node name="Crate6" parent="RaceAct/Start/CrateGroup3" instance=ExtResource("11_2jmk7")]
+[node name="Crate6" parent="RaceAct/Start/CrateGroup3" unique_id=1700240219 instance=ExtResource("11_2jmk7")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.2, 1.5, 0)
 
-[node name="FireSoul1" parent="RaceAct/Start" instance=ExtResource("34_86m7c")]
+[node name="FireSoul1" parent="RaceAct/Start" unique_id=132262914 instance=ExtResource("34_86m7c")]
 transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 99.5, 3.5, -81)
 
-[node name="Sidle" type="Node3D" parent="RaceAct"]
+[node name="Sidle" type="Node3D" parent="RaceAct" unique_id=842865415]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 160, 0, -160)
 script = ExtResource("6_m54ir")
 saveVisibilityOnCheckpoint = true
 
-[node name="SidleGroup1" type="Node3D" parent="RaceAct/Sidle"]
+[node name="SidleGroup1" type="Node3D" parent="RaceAct/Sidle" unique_id=132836971]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 40)
 
-[node name="Footing" type="Node3D" parent="RaceAct/Sidle/SidleGroup1"]
+[node name="Footing" type="Node3D" parent="RaceAct/Sidle/SidleGroup1" unique_id=252058544]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -4)
 
-[node name="SidleFooting1" parent="RaceAct/Sidle/SidleGroup1/Footing" instance=ExtResource("11_v0eum")]
+[node name="SidleFooting1" parent="RaceAct/Sidle/SidleGroup1/Footing" unique_id=1629754909 instance=ExtResource("11_v0eum")]
 "Falling Platform Settings/Enabled" = false
 
-[node name="SidleFooting2" parent="RaceAct/Sidle/SidleGroup1/Footing" instance=ExtResource("11_v0eum")]
+[node name="SidleFooting2" parent="RaceAct/Sidle/SidleGroup1/Footing" unique_id=31073134 instance=ExtResource("11_v0eum")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -3)
 "Falling Platform Settings/Enabled" = false
 
-[node name="SidleFooting3" parent="RaceAct/Sidle/SidleGroup1/Footing" instance=ExtResource("11_v0eum")]
+[node name="SidleFooting3" parent="RaceAct/Sidle/SidleGroup1/Footing" unique_id=371983614 instance=ExtResource("11_v0eum")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -6)
 "Falling Platform Settings/Enabled" = false
 
-[node name="SidleFooting4" parent="RaceAct/Sidle/SidleGroup1/Footing" instance=ExtResource("11_v0eum")]
+[node name="SidleFooting4" parent="RaceAct/Sidle/SidleGroup1/Footing" unique_id=1206748819 instance=ExtResource("11_v0eum")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -9)
 "Falling Platform Settings/Enabled" = false
 
-[node name="SidleFooting5" parent="RaceAct/Sidle/SidleGroup1/Footing" instance=ExtResource("11_v0eum")]
+[node name="SidleFooting5" parent="RaceAct/Sidle/SidleGroup1/Footing" unique_id=1539403086 instance=ExtResource("11_v0eum")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -12)
 "Falling Platform Settings/Enabled" = false
 
-[node name="GreenMajin" parent="RaceAct/Sidle/SidleGroup1" instance=ExtResource("19_8vwyv")]
+[node name="GreenMajin" parent="RaceAct/Sidle/SidleGroup1" unique_id=1981733231 instance=ExtResource("19_8vwyv")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.4, -0.4, -15.5)
 "Spawn Interval Settings/Enable Spawn Interval" = true
 "Spawn Interval Settings/Spawn Delay" = 2.0
 "Spawn Interval Settings/Separate Despawn Interval" = false
 rangeOverride = 15
 
-[node name="SidleGroup2" type="Node3D" parent="RaceAct/Sidle"]
+[node name="SidleGroup2" type="Node3D" parent="RaceAct/Sidle" unique_id=606033540]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 5)
 
-[node name="Footing" type="Node3D" parent="RaceAct/Sidle/SidleGroup2"]
+[node name="Footing" type="Node3D" parent="RaceAct/Sidle/SidleGroup2" unique_id=1926276853]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -3)
 
-[node name="SidleFooting1" parent="RaceAct/Sidle/SidleGroup2/Footing" instance=ExtResource("11_v0eum")]
+[node name="SidleFooting1" parent="RaceAct/Sidle/SidleGroup2/Footing" unique_id=26456681 instance=ExtResource("11_v0eum")]
 "Falling Platform Settings/Enabled" = false
 
-[node name="SidleFooting2" parent="RaceAct/Sidle/SidleGroup2/Footing" instance=ExtResource("11_v0eum")]
+[node name="SidleFooting2" parent="RaceAct/Sidle/SidleGroup2/Footing" unique_id=1804909954 instance=ExtResource("11_v0eum")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 0, -9)
 "Falling Platform Settings/Enabled" = false
 
-[node name="SidleFooting3" parent="RaceAct/Sidle/SidleGroup2/Footing" instance=ExtResource("11_v0eum")]
+[node name="SidleFooting3" parent="RaceAct/Sidle/SidleGroup2/Footing" unique_id=1003548168 instance=ExtResource("11_v0eum")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 0, -12)
 "Falling Platform Settings/Enabled" = false
 
-[node name="SidleFooting4" parent="RaceAct/Sidle/SidleGroup2/Footing" instance=ExtResource("11_v0eum")]
+[node name="SidleFooting4" parent="RaceAct/Sidle/SidleGroup2/Footing" unique_id=1701581199 instance=ExtResource("11_v0eum")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 0, -15)
 "Falling Platform Settings/Enabled" = false
 
-[node name="SidleFooting5" parent="RaceAct/Sidle/SidleGroup2/Footing" instance=ExtResource("11_v0eum")]
+[node name="SidleFooting5" parent="RaceAct/Sidle/SidleGroup2/Footing" unique_id=1863062404 instance=ExtResource("11_v0eum")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 0, -18)
 "Falling Platform Settings/Enabled" = false
 
-[node name="SidleFooting6" parent="RaceAct/Sidle/SidleGroup2/Footing" instance=ExtResource("11_v0eum")]
+[node name="SidleFooting6" parent="RaceAct/Sidle/SidleGroup2/Footing" unique_id=680939855 instance=ExtResource("11_v0eum")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 0, -21)
 "Falling Platform Settings/Enabled" = false
 
-[node name="SidleFooting7" parent="RaceAct/Sidle/SidleGroup2/Footing" instance=ExtResource("11_v0eum")]
+[node name="SidleFooting7" parent="RaceAct/Sidle/SidleGroup2/Footing" unique_id=1946772201 instance=ExtResource("11_v0eum")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -30)
 "Falling Platform Settings/Shake Length" = 2.0
 
-[node name="ItemBox" parent="RaceAct/Sidle/SidleGroup2" instance=ExtResource("12_bjon2")]
+[node name="ItemBox" parent="RaceAct/Sidle/SidleGroup2" unique_id=1978866217 instance=ExtResource("12_bjon2")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 7.8)
 "Spawn Settings/Spawn Pearls" = true
 "Spawn Settings/Amount" = 50
 
-[node name="SpikePanel1" parent="RaceAct/Sidle/SidleGroup2" instance=ExtResource("14_x5vcq")]
+[node name="SpikePanel1" parent="RaceAct/Sidle/SidleGroup2" unique_id=1585463951 instance=ExtResource("14_x5vcq")]
 transform = Transform3D(-4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 0.100006, 0.8, -4)
 stateLengths = PackedFloat32Array(2, 0.4, 0.4)
 "Start Paused" = false
@@ -694,10 +783,10 @@ stateLengths = PackedFloat32Array(2, 0.4, 0.4)
 "State Lengths/warning" = 0.4
 "State Lengths/active" = 0.4
 
-[node name="SpikeGroup1" type="Node3D" parent="RaceAct/Sidle/SidleGroup2"]
+[node name="SpikeGroup1" type="Node3D" parent="RaceAct/Sidle/SidleGroup2" unique_id=667211969]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.975006, 0, -15)
 
-[node name="SpikePanel1" parent="RaceAct/Sidle/SidleGroup2/SpikeGroup1" instance=ExtResource("14_x5vcq")]
+[node name="SpikePanel1" parent="RaceAct/Sidle/SidleGroup2/SpikeGroup1" unique_id=1690102783 instance=ExtResource("14_x5vcq")]
 transform = Transform3D(-4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 0.125, 0.8, 0.75)
 stateLengths = PackedFloat32Array(3, 0.4, 1)
 "Start Paused" = true
@@ -705,7 +794,7 @@ stateLengths = PackedFloat32Array(3, 0.4, 1)
 "State Lengths/warning" = 0.4
 "State Lengths/active" = 1.0
 
-[node name="SpikePanel2" parent="RaceAct/Sidle/SidleGroup2/SpikeGroup1" instance=ExtResource("14_x5vcq")]
+[node name="SpikePanel2" parent="RaceAct/Sidle/SidleGroup2/SpikeGroup1" unique_id=1042914520 instance=ExtResource("14_x5vcq")]
 transform = Transform3D(-4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 0.125, 0.8, -0.75)
 stateLengths = PackedFloat32Array(3, 0.4, 1)
 "Start Paused" = true
@@ -713,28 +802,28 @@ stateLengths = PackedFloat32Array(3, 0.4, 1)
 "State Lengths/warning" = 0.4
 "State Lengths/active" = 1.0
 
-[node name="FootholdRight" parent="RaceAct/Sidle/SidleGroup2/SpikeGroup1" instance=ExtResource("15_vueth")]
+[node name="FootholdRight" parent="RaceAct/Sidle/SidleGroup2/SpikeGroup1" unique_id=711718331 instance=ExtResource("15_vueth")]
 transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -0.5, -0.5, 1.6)
 
-[node name="FootholdCenter1" parent="RaceAct/Sidle/SidleGroup2/SpikeGroup1/FootholdRight" instance=ExtResource("16_kgicr")]
+[node name="FootholdCenter1" parent="RaceAct/Sidle/SidleGroup2/SpikeGroup1/FootholdRight" unique_id=515625279 instance=ExtResource("16_kgicr")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.599991, 0, 0)
 
-[node name="FootholdCenter2" parent="RaceAct/Sidle/SidleGroup2/SpikeGroup1/FootholdRight" instance=ExtResource("16_kgicr")]
+[node name="FootholdCenter2" parent="RaceAct/Sidle/SidleGroup2/SpikeGroup1/FootholdRight" unique_id=1728919985 instance=ExtResource("16_kgicr")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.59999, 0, 0)
 
-[node name="FootholdCenter3" parent="RaceAct/Sidle/SidleGroup2/SpikeGroup1/FootholdRight" instance=ExtResource("16_kgicr")]
+[node name="FootholdCenter3" parent="RaceAct/Sidle/SidleGroup2/SpikeGroup1/FootholdRight" unique_id=165090423 instance=ExtResource("16_kgicr")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.59999, 0, 0)
 
-[node name="FootholdLeft" parent="RaceAct/Sidle/SidleGroup2/SpikeGroup1/FootholdRight" instance=ExtResource("17_7ihyh")]
+[node name="FootholdLeft" parent="RaceAct/Sidle/SidleGroup2/SpikeGroup1/FootholdRight" unique_id=358547120 instance=ExtResource("17_7ihyh")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.2, 0, 0)
 
-[node name="FootholdTrigger" parent="RaceAct/Sidle/SidleGroup2/SpikeGroup1/FootholdRight" instance=ExtResource("18_j0k61")]
+[node name="FootholdTrigger" parent="RaceAct/Sidle/SidleGroup2/SpikeGroup1/FootholdRight" unique_id=356640851 instance=ExtResource("18_j0k61")]
 transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, -1.60001, 0.5, -0.5)
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="RaceAct/Sidle/SidleGroup2/SpikeGroup1/FootholdRight/FootholdTrigger"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="RaceAct/Sidle/SidleGroup2/SpikeGroup1/FootholdRight/FootholdTrigger" unique_id=1151334182]
 shape = SubResource("BoxShape3D_lcjye")
 
-[node name="GreenMajin1" parent="RaceAct/Sidle/SidleGroup2" instance=ExtResource("19_8vwyv")]
+[node name="GreenMajin1" parent="RaceAct/Sidle/SidleGroup2" unique_id=793469015 instance=ExtResource("19_8vwyv")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.5, -0.4, -20)
 "Spawn Interval Settings/Enable Spawn Interval" = true
 "Spawn Interval Settings/Spawn Delay" = 2.0
@@ -742,10 +831,10 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.5, -0.4, -20)
 "Spawn Interval Settings/Despawn Delay" = 1.0
 rangeOverride = 10
 
-[node name="SpikeGroup2" type="Node3D" parent="RaceAct/Sidle/SidleGroup2"]
+[node name="SpikeGroup2" type="Node3D" parent="RaceAct/Sidle/SidleGroup2" unique_id=1754427643]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0249939, 0, -33)
 
-[node name="SpikePanel1" parent="RaceAct/Sidle/SidleGroup2/SpikeGroup2" instance=ExtResource("14_x5vcq")]
+[node name="SpikePanel1" parent="RaceAct/Sidle/SidleGroup2/SpikeGroup2" unique_id=417937169 instance=ExtResource("14_x5vcq")]
 transform = Transform3D(-4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 0.125, 0.8, 1.5)
 stateLengths = PackedFloat32Array(1, 0.8, 0.6)
 "Current State" = 2
@@ -754,7 +843,7 @@ stateLengths = PackedFloat32Array(1, 0.8, 0.6)
 "State Lengths/warning" = 0.8
 "State Lengths/active" = 0.6
 
-[node name="SpikePanel2" parent="RaceAct/Sidle/SidleGroup2/SpikeGroup2" instance=ExtResource("14_x5vcq")]
+[node name="SpikePanel2" parent="RaceAct/Sidle/SidleGroup2/SpikeGroup2" unique_id=1327890284 instance=ExtResource("14_x5vcq")]
 transform = Transform3D(-4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 0.125, 0.8, 0)
 stateLengths = PackedFloat32Array(1, 0.8, 0.6)
 "Current State" = 2
@@ -763,7 +852,7 @@ stateLengths = PackedFloat32Array(1, 0.8, 0.6)
 "State Lengths/warning" = 0.8
 "State Lengths/active" = 0.6
 
-[node name="SpikePanel3" parent="RaceAct/Sidle/SidleGroup2/SpikeGroup2" instance=ExtResource("14_x5vcq")]
+[node name="SpikePanel3" parent="RaceAct/Sidle/SidleGroup2/SpikeGroup2" unique_id=38431476 instance=ExtResource("14_x5vcq")]
 transform = Transform3D(-4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 0.125, 0.8, -1.5)
 stateLengths = PackedFloat32Array(1, 0.8, 0.6)
 "Current State" = 2
@@ -772,49 +861,49 @@ stateLengths = PackedFloat32Array(1, 0.8, 0.6)
 "State Lengths/warning" = 0.8
 "State Lengths/active" = 0.6
 
-[node name="SidleGroup3" type="Node3D" parent="RaceAct/Sidle"]
+[node name="SidleGroup3" type="Node3D" parent="RaceAct/Sidle" unique_id=1382289978]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -54)
 
-[node name="Footing" type="Node3D" parent="RaceAct/Sidle/SidleGroup3"]
+[node name="Footing" type="Node3D" parent="RaceAct/Sidle/SidleGroup3" unique_id=1538823786]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -3)
 
-[node name="SidleFooting1" parent="RaceAct/Sidle/SidleGroup3/Footing" instance=ExtResource("11_v0eum")]
+[node name="SidleFooting1" parent="RaceAct/Sidle/SidleGroup3/Footing" unique_id=1077146854 instance=ExtResource("11_v0eum")]
 "Falling Platform Settings/Enabled" = false
 
-[node name="SidleFooting2" parent="RaceAct/Sidle/SidleGroup3/Footing" instance=ExtResource("11_v0eum")]
+[node name="SidleFooting2" parent="RaceAct/Sidle/SidleGroup3/Footing" unique_id=1120807962 instance=ExtResource("11_v0eum")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -3)
 "Falling Platform Settings/Enabled" = false
 
-[node name="SidleFooting3" parent="RaceAct/Sidle/SidleGroup3/Footing" instance=ExtResource("11_v0eum")]
+[node name="SidleFooting3" parent="RaceAct/Sidle/SidleGroup3/Footing" unique_id=64288748 instance=ExtResource("11_v0eum")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -6)
 "Falling Platform Settings/Enabled" = false
 
-[node name="SidleFooting4" parent="RaceAct/Sidle/SidleGroup3/Footing" instance=ExtResource("11_v0eum")]
+[node name="SidleFooting4" parent="RaceAct/Sidle/SidleGroup3/Footing" unique_id=2108999723 instance=ExtResource("11_v0eum")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -9)
 "Falling Platform Settings/Enabled" = false
 
-[node name="SidleFooting5" parent="RaceAct/Sidle/SidleGroup3/Footing" instance=ExtResource("11_v0eum")]
+[node name="SidleFooting5" parent="RaceAct/Sidle/SidleGroup3/Footing" unique_id=1127481165 instance=ExtResource("11_v0eum")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -12)
 "Falling Platform Settings/Enabled" = false
 
-[node name="SidleFooting6" parent="RaceAct/Sidle/SidleGroup3/Footing" instance=ExtResource("11_v0eum")]
+[node name="SidleFooting6" parent="RaceAct/Sidle/SidleGroup3/Footing" unique_id=1131917113 instance=ExtResource("11_v0eum")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -15)
 "Falling Platform Settings/Enabled" = false
 
-[node name="ItemBox1" parent="RaceAct/Sidle/SidleGroup3" instance=ExtResource("12_bjon2")]
+[node name="ItemBox1" parent="RaceAct/Sidle/SidleGroup3" unique_id=1617640906 instance=ExtResource("12_bjon2")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.40001, 0.5, 8.3)
 "Spawn Settings/Spawn Pearls" = true
 "Spawn Settings/Amount" = 50
 
-[node name="ItemBox2" parent="RaceAct/Sidle/SidleGroup3" instance=ExtResource("12_bjon2")]
+[node name="ItemBox2" parent="RaceAct/Sidle/SidleGroup3" unique_id=137236035 instance=ExtResource("12_bjon2")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.40001, 0.5, 4.8)
 "Spawn Settings/Spawn Pearls" = true
 "Spawn Settings/Amount" = 50
 
-[node name="SpikeGroup1" type="Node3D" parent="RaceAct/Sidle/SidleGroup3"]
+[node name="SpikeGroup1" type="Node3D" parent="RaceAct/Sidle/SidleGroup3" unique_id=1087255969]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -6)
 
-[node name="SpikePanel" parent="RaceAct/Sidle/SidleGroup3/SpikeGroup1" instance=ExtResource("14_x5vcq")]
+[node name="SpikePanel" parent="RaceAct/Sidle/SidleGroup3/SpikeGroup1" unique_id=1631585898 instance=ExtResource("14_x5vcq")]
 transform = Transform3D(-4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 0.125, 0.8, 0)
 stateLengths = PackedFloat32Array(0.6, 0.4, 3)
 "Start Paused" = true
@@ -822,13 +911,13 @@ stateLengths = PackedFloat32Array(0.6, 0.4, 3)
 "State Lengths/warning" = 0.4
 "State Lengths/active" = 3.0
 
-[node name="SpikeGroup2" type="Node3D" parent="RaceAct/Sidle/SidleGroup3"]
+[node name="SpikeGroup2" type="Node3D" parent="RaceAct/Sidle/SidleGroup3" unique_id=1162318952]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -9.5)
 
-[node name="SpikeGroup3" type="Node3D" parent="RaceAct/Sidle/SidleGroup3"]
+[node name="SpikeGroup3" type="Node3D" parent="RaceAct/Sidle/SidleGroup3" unique_id=386891126]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -16.5)
 
-[node name="SpikePanel1" parent="RaceAct/Sidle/SidleGroup3/SpikeGroup3" instance=ExtResource("14_x5vcq")]
+[node name="SpikePanel1" parent="RaceAct/Sidle/SidleGroup3/SpikeGroup3" unique_id=1548274437 instance=ExtResource("14_x5vcq")]
 transform = Transform3D(-4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 0.125, 0.8, 2.25)
 stateLengths = PackedFloat32Array(2, 1, 1.5)
 "Start Paused" = false
@@ -837,7 +926,7 @@ stateLengths = PackedFloat32Array(2, 1, 1.5)
 "State Lengths/warning" = 1.0
 "State Lengths/active" = 1.5
 
-[node name="GreenMajin1" parent="RaceAct/Sidle/SidleGroup3" instance=ExtResource("19_8vwyv")]
+[node name="GreenMajin1" parent="RaceAct/Sidle/SidleGroup3" unique_id=1656810406 instance=ExtResource("19_8vwyv")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.5, -0.5, -17)
 "Spawn Interval Settings/Enable Spawn Interval" = true
 "Spawn Interval Settings/Spawn Delay" = 2.0
@@ -845,7 +934,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.5, -0.5, -17)
 "Spawn Interval Settings/Despawn Delay" = 1.0
 rangeOverride = 10
 
-[node name="GreenMajin2" parent="RaceAct/Sidle/SidleGroup3" instance=ExtResource("19_8vwyv")]
+[node name="GreenMajin2" parent="RaceAct/Sidle/SidleGroup3" unique_id=224073922 instance=ExtResource("19_8vwyv")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.5, -0.5, -21)
 "Spawn Interval Settings/Enable Spawn Interval" = true
 "Spawn Interval Settings/Spawn Delay" = 2.0
@@ -853,15 +942,15 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.5, -0.5, -21)
 "Spawn Interval Settings/Despawn Delay" = 1.0
 rangeOverride = 10
 
-[node name="Hall" type="Node3D" parent="RaceAct"]
+[node name="Hall" type="Node3D" parent="RaceAct" unique_id=1240326427]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 154.1, 0.01, -245.6)
 script = ExtResource("6_m54ir")
 saveVisibilityOnCheckpoint = true
 
-[node name="MajinGroup1" type="Node3D" parent="RaceAct/Hall"]
+[node name="MajinGroup1" type="Node3D" parent="RaceAct/Hall" unique_id=677970578]
 transform = Transform3D(0.707107, 0, 0.707107, 0, 1, 0, -0.707107, 0, 0.707107, -9.57361, 0, -14.9894)
 
-[node name="GreenMajin1" parent="RaceAct/Hall/MajinGroup1" instance=ExtResource("19_8vwyv")]
+[node name="GreenMajin1" parent="RaceAct/Hall/MajinGroup1" unique_id=659714121 instance=ExtResource("19_8vwyv")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0, -2.28882e-05)
 "Spawn Settings/Spawn Travel Time" = 1.0
 "Spawn Settings/Spawn Delay" = 0.0
@@ -870,7 +959,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0, -2.28882e-05)
 "Spawn Settings/Spawn Out Offset" = Vector3(-2, 4, -4)
 rangeOverride = 15
 
-[node name="GreenMajin2" parent="RaceAct/Hall/MajinGroup1" instance=ExtResource("19_8vwyv")]
+[node name="GreenMajin2" parent="RaceAct/Hall/MajinGroup1" unique_id=669671936 instance=ExtResource("19_8vwyv")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.00003, 0, -7.00001)
 "Spawn Settings/Spawn Travel Time" = 1.0
 "Spawn Settings/Spawn Delay" = 0.0
@@ -879,7 +968,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.00003, 0, -7.00001)
 "Spawn Settings/Spawn Out Offset" = Vector3(0, 0, 0)
 rangeOverride = 15
 
-[node name="GreenMajin3" parent="RaceAct/Hall/MajinGroup1" instance=ExtResource("19_8vwyv")]
+[node name="GreenMajin3" parent="RaceAct/Hall/MajinGroup1" unique_id=1167283917 instance=ExtResource("19_8vwyv")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.299988, 0, -3.70001)
 "Spawn Settings/Spawn Travel Time" = 1.0
 "Spawn Settings/Spawn Delay" = 0.0
@@ -888,7 +977,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.299988, 0, -3.70001)
 "Spawn Settings/Spawn Out Offset" = Vector3(0, 0, 0)
 rangeOverride = 10
 
-[node name="BlueMajin" parent="RaceAct/Hall/MajinGroup1" instance=ExtResource("20_wu0i5")]
+[node name="BlueMajin" parent="RaceAct/Hall/MajinGroup1" unique_id=256616513 instance=ExtResource("20_wu0i5")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.32391, 0, -12.713)
 "Spawn Settings/Spawn Travel Time" = 1.0
 "Spawn Settings/Spawn Delay" = 0.0
@@ -897,7 +986,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.32391, 0, -12.713)
 "Spawn Settings/Spawn Out Offset" = Vector3(0, 0, -2)
 rangeOverride = 15
 
-[node name="RedMajin" parent="RaceAct/Hall/MajinGroup1" instance=ExtResource("21_h0jqq")]
+[node name="RedMajin" parent="RaceAct/Hall/MajinGroup1" unique_id=1495432248 instance=ExtResource("21_h0jqq")]
 transform = Transform3D(0.906308, 0, 0.422618, 0, 1, 0, -0.422618, 0, 0.906308, -1.39404, 0, -20.3458)
 "Spawn Settings/Spawn Travel Time" = 1.0
 "Spawn Settings/Spawn Delay" = 0.0
@@ -910,7 +999,7 @@ transform = Transform3D(0.906308, 0, 0.422618, 0, 1, 0, -0.422618, 0, 0.906308, 
 "Attack Settings/Attack Instantly" = false
 rangeOverride = 20
 
-[node name="GreenMajin4" parent="RaceAct/Hall/MajinGroup1" instance=ExtResource("19_8vwyv")]
+[node name="GreenMajin4" parent="RaceAct/Hall/MajinGroup1" unique_id=1756622563 instance=ExtResource("19_8vwyv")]
 transform = Transform3D(0.866025, 0, 0.5, 0, 1, 0, -0.5, 0, 0.866025, -5.95087, 0, -22.9364)
 "Spawn Settings/Spawn Travel Time" = 0.5
 "Spawn Settings/Spawn Delay" = 0.0
@@ -919,14 +1008,14 @@ transform = Transform3D(0.866025, 0, 0.5, 0, 1, 0, -0.5, 0, 0.866025, -5.95087, 
 "Spawn Settings/Spawn Out Offset" = Vector3(0, 0, 0)
 rangeOverride = 20
 
-[node name="ItemBox1" parent="RaceAct/Hall" instance=ExtResource("12_bjon2")]
+[node name="ItemBox1" parent="RaceAct/Hall" unique_id=1222613575 instance=ExtResource("12_bjon2")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -35.1, 0.5, -32)
 "Spawn Settings/Pickup Parent" = NodePath("RichRing")
 
-[node name="RichRing" parent="RaceAct/Hall/ItemBox1" instance=ExtResource("13_3awdn")]
+[node name="RichRing" parent="RaceAct/Hall/ItemBox1" unique_id=702407979 instance=ExtResource("13_3awdn")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 0.5, -1.5)
 
-[node name="Event" type="Node3D" parent="RaceAct/Hall/ItemBox1" node_paths=PackedStringArray("animator")]
+[node name="Event" type="Node3D" parent="RaceAct/Hall/ItemBox1" unique_id=121741219 node_paths=PackedStringArray("animator")]
 script = ExtResource("22_sn2xb")
 animator = NodePath("AnimationPlayer")
 "Trigger Settings/Automatically Respawn" = false
@@ -934,71 +1023,69 @@ animator = NodePath("AnimationPlayer")
 "Trigger Settings/Animation Blending" = 0.0
 "Trigger Settings/Player Stand-in" = NodePath("")
 
-[node name="SpikeBallPhysics1" parent="RaceAct/Hall/ItemBox1/Event" instance=ExtResource("23_xnl1q")]
+[node name="SpikeBallPhysics1" parent="RaceAct/Hall/ItemBox1/Event" unique_id=76843478 instance=ExtResource("23_xnl1q")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -22.675, 20, -0.399994)
 MaxLifetime = 10.0
 
-[node name="SpikeBallPhysics2" parent="RaceAct/Hall/ItemBox1/Event" instance=ExtResource("23_xnl1q")]
+[node name="SpikeBallPhysics2" parent="RaceAct/Hall/ItemBox1/Event" unique_id=903552026 instance=ExtResource("23_xnl1q")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -22.675, 20, -2.79999)
 MaxLifetime = 10.0
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="RaceAct/Hall/ItemBox1/Event"]
-libraries = {
-&"": SubResource("AnimationLibrary_gukr6")
-}
+[node name="AnimationPlayer" type="AnimationPlayer" parent="RaceAct/Hall/ItemBox1/Event" unique_id=1941760444]
+libraries/ = SubResource("AnimationLibrary_gukr6")
 
-[node name="CrateGroup1" type="Node3D" parent="RaceAct/Hall"]
+[node name="CrateGroup1" type="Node3D" parent="RaceAct/Hall" unique_id=708915938]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -64, 5, -32.200012)
 
-[node name="Crate1" parent="RaceAct/Hall/CrateGroup1" instance=ExtResource("11_2jmk7")]
+[node name="Crate1" parent="RaceAct/Hall/CrateGroup1" unique_id=2034755492 instance=ExtResource("11_2jmk7")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.5, 0.5, 0)
 
-[node name="Crate2" parent="RaceAct/Hall/CrateGroup1" instance=ExtResource("11_2jmk7")]
+[node name="Crate2" parent="RaceAct/Hall/CrateGroup1" unique_id=1304635766 instance=ExtResource("11_2jmk7")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 0.5, 0)
 
-[node name="Crate3" parent="RaceAct/Hall/CrateGroup1" instance=ExtResource("11_2jmk7")]
+[node name="Crate3" parent="RaceAct/Hall/CrateGroup1" unique_id=2087070633 instance=ExtResource("11_2jmk7")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.2, 1.5, 0)
 
-[node name="CrateGroup2" type="Node3D" parent="RaceAct/Hall"]
+[node name="CrateGroup2" type="Node3D" parent="RaceAct/Hall" unique_id=1666869725]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -75, 5, -32.1)
 
-[node name="Crate1" parent="RaceAct/Hall/CrateGroup2" instance=ExtResource("11_2jmk7")]
+[node name="Crate1" parent="RaceAct/Hall/CrateGroup2" unique_id=1149948936 instance=ExtResource("11_2jmk7")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.5, 0.5, 0)
 
-[node name="Crate2" parent="RaceAct/Hall/CrateGroup2" instance=ExtResource("11_2jmk7")]
+[node name="Crate2" parent="RaceAct/Hall/CrateGroup2" unique_id=654399176 instance=ExtResource("11_2jmk7")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 0.5, 0)
 
-[node name="Crate3" parent="RaceAct/Hall/CrateGroup2" instance=ExtResource("11_2jmk7")]
+[node name="Crate3" parent="RaceAct/Hall/CrateGroup2" unique_id=1111962938 instance=ExtResource("11_2jmk7")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5, 0.5, 0)
 
-[node name="Crate4" parent="RaceAct/Hall/CrateGroup2" instance=ExtResource("11_2jmk7")]
+[node name="Crate4" parent="RaceAct/Hall/CrateGroup2" unique_id=776937543 instance=ExtResource("11_2jmk7")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.5, 0.5, 0)
 
-[node name="Crate5" parent="RaceAct/Hall/CrateGroup2" instance=ExtResource("11_2jmk7")]
+[node name="Crate5" parent="RaceAct/Hall/CrateGroup2" unique_id=800588880 instance=ExtResource("11_2jmk7")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.5, 0.5, 0)
 
-[node name="Crate6" parent="RaceAct/Hall/CrateGroup2" instance=ExtResource("11_2jmk7")]
+[node name="Crate6" parent="RaceAct/Hall/CrateGroup2" unique_id=1123085276 instance=ExtResource("11_2jmk7")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.19999999, 1.5, 0)
 
-[node name="Crate7" parent="RaceAct/Hall/CrateGroup2" instance=ExtResource("11_2jmk7")]
+[node name="Crate7" parent="RaceAct/Hall/CrateGroup2" unique_id=1436361515 instance=ExtResource("11_2jmk7")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.2, 1.5, 0)
 
-[node name="Crate8" parent="RaceAct/Hall/CrateGroup2" instance=ExtResource("11_2jmk7")]
+[node name="Crate8" parent="RaceAct/Hall/CrateGroup2" unique_id=755629231 instance=ExtResource("11_2jmk7")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.2, 1.5, 0)
 
-[node name="CrateGroup3" type="Node3D" parent="RaceAct/Hall"]
+[node name="CrateGroup3" type="Node3D" parent="RaceAct/Hall" unique_id=165174431]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -82, 5, -33.7)
 
-[node name="SpikeBallTrigger" parent="RaceAct/Hall/CrateGroup3" instance=ExtResource("5_i15cn")]
+[node name="SpikeBallTrigger" parent="RaceAct/Hall/CrateGroup3" unique_id=1707697017 instance=ExtResource("5_i15cn")]
 OneShot = true
 "Respawn Mode" = 0
 "Enter Mode" = 0
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="RaceAct/Hall/CrateGroup3/SpikeBallTrigger"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="RaceAct/Hall/CrateGroup3/SpikeBallTrigger" unique_id=1958537736]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 0.9000001, 0)
 shape = SubResource("BoxShape3D_my3co")
 
-[node name="Event1" type="Node3D" parent="RaceAct/Hall/CrateGroup3" node_paths=PackedStringArray("animator")]
+[node name="Event1" type="Node3D" parent="RaceAct/Hall/CrateGroup3" unique_id=1993454772 node_paths=PackedStringArray("animator")]
 transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 1.7999878, 0.5, 3)
 script = ExtResource("22_sn2xb")
 animator = NodePath("AnimationPlayer")
@@ -1007,20 +1094,18 @@ animator = NodePath("AnimationPlayer")
 "Trigger Settings/Animation Blending" = 0.0
 "Trigger Settings/Player Stand-in" = NodePath("")
 
-[node name="SpikeBallPhysics1" parent="RaceAct/Hall/CrateGroup3/Event1" instance=ExtResource("23_xnl1q")]
+[node name="SpikeBallPhysics1" parent="RaceAct/Hall/CrateGroup3/Event1" unique_id=858047600 instance=ExtResource("23_xnl1q")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -30.675, 20, 3.3)
 MaxLifetime = 10.0
 
-[node name="SpikeBallPhysics2" parent="RaceAct/Hall/CrateGroup3/Event1" instance=ExtResource("23_xnl1q")]
+[node name="SpikeBallPhysics2" parent="RaceAct/Hall/CrateGroup3/Event1" unique_id=942813290 instance=ExtResource("23_xnl1q")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -29.675, 20, 0.5)
 MaxLifetime = 10.0
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="RaceAct/Hall/CrateGroup3/Event1"]
-libraries = {
-&"": SubResource("AnimationLibrary_n34xa")
-}
+[node name="AnimationPlayer" type="AnimationPlayer" parent="RaceAct/Hall/CrateGroup3/Event1" unique_id=734912129]
+libraries/ = SubResource("AnimationLibrary_n34xa")
 
-[node name="Event2" type="Node3D" parent="RaceAct/Hall/CrateGroup3" node_paths=PackedStringArray("animator")]
+[node name="Event2" type="Node3D" parent="RaceAct/Hall/CrateGroup3" unique_id=2023387409 node_paths=PackedStringArray("animator")]
 transform = Transform3D(-4.371141e-08, 0, 1, 0, 1, 0, -1, 0, -4.371141e-08, -2, 0.5, 1)
 script = ExtResource("22_sn2xb")
 animator = NodePath("AnimationPlayer")
@@ -1029,34 +1114,32 @@ animator = NodePath("AnimationPlayer")
 "Trigger Settings/Animation Blending" = 0.0
 "Trigger Settings/Player Stand-in" = NodePath("")
 
-[node name="SpikeBallPhysics" parent="RaceAct/Hall/CrateGroup3/Event2" instance=ExtResource("23_xnl1q")]
+[node name="SpikeBallPhysics" parent="RaceAct/Hall/CrateGroup3/Event2" unique_id=742508958 instance=ExtResource("23_xnl1q")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 28, 25, 0.6)
 MaxLifetime = 10.0
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="RaceAct/Hall/CrateGroup3/Event2"]
-libraries = {
-&"": SubResource("AnimationLibrary_j83vd")
-}
+[node name="AnimationPlayer" type="AnimationPlayer" parent="RaceAct/Hall/CrateGroup3/Event2" unique_id=697132593]
+libraries/ = SubResource("AnimationLibrary_j83vd")
 
-[node name="Crate1" parent="RaceAct/Hall/CrateGroup3" instance=ExtResource("11_2jmk7")]
+[node name="Crate1" parent="RaceAct/Hall/CrateGroup3" unique_id=1764513595 instance=ExtResource("11_2jmk7")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.5, 0.5, 0)
 
-[node name="Crate2" parent="RaceAct/Hall/CrateGroup3" instance=ExtResource("11_2jmk7")]
+[node name="Crate2" parent="RaceAct/Hall/CrateGroup3" unique_id=1086466457 instance=ExtResource("11_2jmk7")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 0.5, 0)
 
-[node name="Crate3" parent="RaceAct/Hall/CrateGroup3" instance=ExtResource("11_2jmk7")]
+[node name="Crate3" parent="RaceAct/Hall/CrateGroup3" unique_id=1107278169 instance=ExtResource("11_2jmk7")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5, 0.5, 0)
 
-[node name="Crate4" parent="RaceAct/Hall/CrateGroup3" instance=ExtResource("11_2jmk7")]
+[node name="Crate4" parent="RaceAct/Hall/CrateGroup3" unique_id=694086223 instance=ExtResource("11_2jmk7")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.20000005, 1.5, 0)
 
-[node name="Crate5" parent="RaceAct/Hall/CrateGroup3" instance=ExtResource("11_2jmk7")]
+[node name="Crate5" parent="RaceAct/Hall/CrateGroup3" unique_id=488715006 instance=ExtResource("11_2jmk7")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.79999995, 1.5, 0)
 
-[node name="MajinGroup2" type="Node3D" parent="RaceAct/Hall"]
+[node name="MajinGroup2" type="Node3D" parent="RaceAct/Hall" unique_id=1647024617]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -113.1, 10, -33.5)
 
-[node name="BlueMajin1" parent="RaceAct/Hall/MajinGroup2" instance=ExtResource("20_wu0i5")]
+[node name="BlueMajin1" parent="RaceAct/Hall/MajinGroup2" unique_id=306626396 instance=ExtResource("20_wu0i5")]
 transform = Transform3D(0.642788, 0, 0.766044, 0, 1, 0, -0.766044, 0, 0.642788, -32.678604, 0, -5.383022)
 "Spawn Settings/Spawn Travel Time" = 1.0
 "Spawn Settings/Spawn Delay" = 0.0
@@ -1064,7 +1147,7 @@ transform = Transform3D(0.642788, 0, 0.766044, 0, 1, 0, -0.766044, 0, 0.642788, 
 "Spawn Settings/Spawn In Offset" = Vector3(6, -1, -17)
 "Spawn Settings/Spawn Out Offset" = Vector3(2, 0, -2)
 
-[node name="BlueMajin2" parent="RaceAct/Hall/MajinGroup2" instance=ExtResource("20_wu0i5")]
+[node name="BlueMajin2" parent="RaceAct/Hall/MajinGroup2" unique_id=1679250675 instance=ExtResource("20_wu0i5")]
 transform = Transform3D(0.707107, 0, 0.707107, 0, 1, 0, -0.707107, 0, 0.707107, -34.010063, 0, -11.989936)
 "Spawn Settings/Spawn Travel Time" = 1.0
 "Spawn Settings/Spawn Delay" = 0.0
@@ -1072,7 +1155,7 @@ transform = Transform3D(0.707107, 0, 0.707107, 0, 1, 0, -0.707107, 0, 0.707107, 
 "Spawn Settings/Spawn In Offset" = Vector3(7, 0, -15)
 "Spawn Settings/Spawn Out Offset" = Vector3(-3, 0, -2)
 
-[node name="RedMajin" parent="RaceAct/Hall/MajinGroup2" instance=ExtResource("21_h0jqq")]
+[node name="RedMajin" parent="RaceAct/Hall/MajinGroup2" unique_id=1401372877 instance=ExtResource("21_h0jqq")]
 transform = Transform3D(0.866025, 0, 0.5, 0, 1, 0, -0.5, 0, 0.866025, -40, 0, -19)
 "Spawn Settings/Spawn Travel Time" = 0.5
 "Spawn Settings/Spawn Delay" = 0.0
@@ -1087,11 +1170,11 @@ transform = Transform3D(0.866025, 0, 0.5, 0, 1, 0, -0.5, 0, 0.866025, -40, 0, -1
 "Attack Settings/Attack Instantly" = false
 rangeOverride = 25
 
-[node name="FireSoul2" parent="RaceAct/Hall/MajinGroup2" instance=ExtResource("34_86m7c")]
+[node name="FireSoul2" parent="RaceAct/Hall/MajinGroup2" unique_id=1816051941 instance=ExtResource("34_86m7c")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -40, 5, -19)
 fireSoulIndex = 2
 
-[node name="GreenMajin1" parent="RaceAct/Hall/MajinGroup2" instance=ExtResource("19_8vwyv")]
+[node name="GreenMajin1" parent="RaceAct/Hall/MajinGroup2" unique_id=906787794 instance=ExtResource("19_8vwyv")]
 transform = Transform3D(0.906308, 0, 0.422618, 0, 1, 0, -0.422618, 0, 0.906308, -40.5042, 0, -13.8656)
 "Spawn Settings/Spawn Travel Time" = 0.5
 "Spawn Settings/Spawn Delay" = 0.0
@@ -1100,7 +1183,7 @@ transform = Transform3D(0.906308, 0, 0.422618, 0, 1, 0, -0.422618, 0, 0.906308, 
 "Spawn Settings/Spawn Out Offset" = Vector3(0, 0, 0)
 rangeOverride = 25
 
-[node name="BlueMajin3" parent="RaceAct/Hall/MajinGroup2" instance=ExtResource("20_wu0i5")]
+[node name="BlueMajin3" parent="RaceAct/Hall/MajinGroup2" unique_id=102234256 instance=ExtResource("20_wu0i5")]
 transform = Transform3D(0.965926, 0, 0.258819, 0, 1, 0, -0.258819, 0, 0.965926, -43.9696, 0, -21.803)
 "Spawn Settings/Spawn Travel Time" = 2.0
 "Spawn Settings/Spawn Delay" = 0.0
@@ -1108,7 +1191,7 @@ transform = Transform3D(0.965926, 0, 0.258819, 0, 1, 0, -0.258819, 0, 0.965926, 
 "Spawn Settings/Spawn In Offset" = Vector3(0, 2, -30)
 "Spawn Settings/Spawn Out Offset" = Vector3(2, 2, -2)
 
-[node name="GreenMajin2" parent="RaceAct/Hall/MajinGroup2" instance=ExtResource("19_8vwyv")]
+[node name="GreenMajin2" parent="RaceAct/Hall/MajinGroup2" unique_id=777531780 instance=ExtResource("19_8vwyv")]
 transform = Transform3D(0.984808, 0, 0.173648, 0, 1, 0, -0.173648, 0, 0.984808, -41.7014, 0, -26.5102)
 "Spawn Settings/Spawn Travel Time" = 0.5
 "Spawn Settings/Spawn Delay" = 0.0
@@ -1117,21 +1200,21 @@ transform = Transform3D(0.984808, 0, 0.173648, 0, 1, 0, -0.173648, 0, 0.984808, 
 "Spawn Settings/Spawn Out Offset" = Vector3(0, 0, 0)
 rangeOverride = 10
 
-[node name="SpikeBall1" parent="RaceAct/Hall" instance=ExtResource("25_jnj8d")]
+[node name="SpikeBall1" parent="RaceAct/Hall" unique_id=1639513912 instance=ExtResource("25_jnj8d")]
 transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, -157.934, 6.2, -98)
 "Movement/Cycle Length" = 2.0
 Movement/Distance = 16.0
 
-[node name="FireSoul3" parent="RaceAct/Hall" instance=ExtResource("34_86m7c")]
+[node name="FireSoul3" parent="RaceAct/Hall" unique_id=552781682 instance=ExtResource("34_86m7c")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -183, 9, -97.5)
 fireSoulIndex = 3
 
-[node name="SpikeBall2" parent="RaceAct/Hall" instance=ExtResource("25_jnj8d")]
+[node name="SpikeBall2" parent="RaceAct/Hall" unique_id=1339676889 instance=ExtResource("25_jnj8d")]
 transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, -187.934, 6.2, -101)
 "Movement/Cycle Length" = 1.5
 Movement/Distance = 20.0
 
-[node name="ThornSpring" parent="RaceAct/Hall" instance=ExtResource("26_bhcs1")]
+[node name="ThornSpring" parent="RaceAct/Hall" unique_id=589485949 instance=ExtResource("26_bhcs1")]
 transform = Transform3D(0.642788, 0, -0.766044, 0, 1, 0, 0.766044, 0, 0.642788, -214, 8, -99)
 rotationTime = 0.6
 staticTime = 0.6
@@ -1141,22 +1224,22 @@ FinalHeight = -18.0
 Distance = 38.0
 LauncherDirection = 2
 
-[node name="Camera" type="Node3D" parent="RaceAct/Hall/ThornSpring"]
+[node name="Camera" type="Node3D" parent="RaceAct/Hall/ThornSpring" unique_id=1288534654]
 transform = Transform3D(1, 0, 2.9802322e-08, 0, 1, 0, -2.9802322e-08, 0, 1, 0, -3, 0)
 script = ExtResource("27_ockkn")
 settings = ExtResource("28_wbmjg")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="RaceAct/Hall"]
+[node name="StaticBody3D" type="StaticBody3D" parent="RaceAct/Hall" unique_id=771766774]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -274, -10, -74)
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="RaceAct/Hall/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="RaceAct/Hall/StaticBody3D" unique_id=539503101]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4, 0)
 shape = SubResource("BoxShape3D_bhcs1")
 
-[node name="Goal" parent="RaceAct/Hall" instance=ExtResource("39_6rmwm")]
+[node name="Goal" parent="RaceAct/Hall" unique_id=1233114100 instance=ExtResource("39_6rmwm")]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -268, -0.99999976, -74)
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="RaceAct/Hall/Goal"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="RaceAct/Hall/Goal" unique_id=1182904354]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -5, 0)
 shape = SubResource("BoxShape3D_bhcs1")
 
@@ -1178,3 +1261,5 @@ shape = SubResource("BoxShape3D_bhcs1")
 
 [editable path="Static"]
 [editable path="Static/Collision"]
+[editable path="Static/Visuals/MainSection/Skybox"]
+[editable path="Static/Visuals/SpaceSection/SpaceSkybox"]

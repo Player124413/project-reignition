@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3 uid="uid://gqxmlgiwtikn"]
+[gd_scene format=3 uid="uid://gqxmlgiwtikn"]
 
 [ext_resource type="Script" uid="uid://63modgu1nm31" path="res://object/trigger/BigTrigger.cs" id="1_kksc7"]
 [ext_resource type="PackedScene" uid="uid://d4fjpfriuh1ij" path="res://object/stage/common/Big.tscn" id="2_c2025"]
@@ -45,7 +45,7 @@ _data = {
 &"activate": SubResource("Animation_10g23")
 }
 
-[node name="BigTrigger" type="Area3D" node_paths=PackedStringArray("bigAnimator", "cameraAnimator", "cameraTrigger", "stopLockout")]
+[node name="BigTrigger" type="Area3D" unique_id=1484590107 node_paths=PackedStringArray("bigAnimator", "cameraAnimator", "cameraTrigger", "stopLockout")]
 collision_layer = 0
 collision_mask = 2
 monitorable = false
@@ -56,12 +56,12 @@ cameraAnimator = NodePath("Camera/AnimationPlayer")
 cameraTrigger = NodePath("Camera")
 stopLockout = NodePath("StopLockout")
 
-[node name="Big" parent="." instance=ExtResource("2_c2025")]
+[node name="Big" parent="." unique_id=2058707559 instance=ExtResource("2_c2025")]
 
-[node name="BigMesh" parent="Big/BigRoot/Skeleton3D" index="0"]
+[node name="BigMesh" parent="Big/BigRoot/Skeleton3D" parent_id_path=PackedInt32Array(2058707559, 1744159249) index="0" unique_id=1989258754]
 cast_shadow = 0
 
-[node name="Camera" type="Node3D" parent="."]
+[node name="Camera" type="Node3D" parent="." unique_id=686359960]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
 script = ExtResource("5_13m3c")
 transitionTime = 0.0
@@ -69,16 +69,14 @@ settings = ExtResource("6_kksc7")
 UpdateEveryFrame = true
 followObject = NodePath("Cam")
 
-[node name="Cam" type="Camera3D" parent="Camera"]
+[node name="Cam" type="Camera3D" parent="Camera" unique_id=1131882258]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 30)
 fov = 50.0
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="Camera"]
-libraries = {
-&"": SubResource("AnimationLibrary_l5nir")
-}
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Camera" unique_id=2009224563]
+libraries/ = SubResource("AnimationLibrary_l5nir")
 
-[node name="StopLockout" type="Node3D" parent="."]
+[node name="StopLockout" type="Node3D" parent="." unique_id=1896595443]
 script = ExtResource("2_kxf83")
 lockoutData = ExtResource("3_c2025")
 

@@ -1,4 +1,4 @@
-[gd_scene load_steps=55 format=3 uid="uid://153wwjnd7nv6"]
+[gd_scene format=3 uid="uid://153wwjnd7nv6"]
 
 [ext_resource type="PackedScene" uid="uid://dbyn2iyw87kug" path="res://object/stage/common/resource/model/FlyingPot.gltf" id="1"]
 [ext_resource type="Script" uid="uid://cnoeetlb03upm" path="res://object/stage/common/resource/script/FlyingPot.cs" id="2"]
@@ -12,12 +12,7 @@
 [ext_resource type="AudioStream" uid="uid://b75ytouytm73f" path="res://sound/sfx/objects/flying pot enter.wav" id="12_0cgd7"]
 [ext_resource type="AudioStream" uid="uid://1rnhdwqarpwj" path="res://sound/sfx/stage/sand oasis/jar.wav" id="12_jyaqs"]
 [ext_resource type="AudioStream" uid="uid://cjnqa17j2mmww" path="res://sound/sfx/objects/flying pot exit.wav" id="13_43524"]
-[ext_resource type="Animation" uid="uid://cmwxxfe7emgju" path="res://object/stage/common/resource/model/animation/flying pot/pot-action.res" id="14_0njss"]
 [ext_resource type="AudioStream" uid="uid://c0f0a8fdabdrf" path="res://sound/sfx/objects/wing.wav" id="14_uh57a"]
-[ext_resource type="Animation" uid="uid://6ewambjq30xr" path="res://object/stage/common/resource/model/animation/flying pot/pot-flap.res" id="15_lexan"]
-[ext_resource type="Animation" uid="uid://cskcpwrjlxjli" path="res://object/stage/common/resource/model/animation/flying pot/RESET.res" id="16_wtihg"]
-[ext_resource type="Animation" uid="uid://bsdjn3l3f6082" path="res://object/stage/common/resource/model/animation/flying pot/pot-fall.res" id="17_2i7ha"]
-[ext_resource type="Animation" uid="uid://b3n470ohdfefg" path="res://object/stage/common/resource/model/animation/flying pot/pot-idle.res" id="18_10mla"]
 
 [sub_resource type="SphereShape3D" id="3"]
 radius = 0.8
@@ -171,15 +166,6 @@ color_initial_ramp = SubResource("GradientTexture1D_mnp3m")
 material = ExtResource("8_wn8by")
 size = Vector2(1, 1)
 orientation = 2
-
-[sub_resource type="AnimationLibrary" id="AnimationLibrary_27os8"]
-_data = {
-&"RESET": ExtResource("16_wtihg"),
-&"pot-action": ExtResource("14_0njss"),
-&"pot-fall": ExtResource("17_2i7ha"),
-&"pot-flap": ExtResource("15_lexan"),
-&"pot-idle": ExtResource("18_10mla")
-}
 
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_wgyli"]
 animation = &"pot-action"
@@ -364,7 +350,7 @@ _data = {
 &"shatter": SubResource("Animation_gp4pg")
 }
 
-[node name="FlyingPot" type="Node3D" node_paths=PackedStringArray("root", "lockonArea", "environmentCollider", "animationTree", "interactionAnimator", "enterSFX", "exitSFX")]
+[node name="FlyingPot" type="Node3D" unique_id=1156069682 node_paths=PackedStringArray("root", "lockonArea", "environmentCollider", "animationTree", "interactionAnimator", "enterSFX", "exitSFX")]
 script = ExtResource("2")
 customCameraSettings = ExtResource("2_gdkjt")
 root = NodePath("Root")
@@ -375,34 +361,34 @@ interactionAnimator = NodePath("AnimationPlayer")
 enterSFX = NodePath("Root/SFX/EnterSFX")
 exitSFX = NodePath("Root/SFX/ExitSFX")
 
-[node name="Root" type="Node3D" parent="."]
+[node name="Root" type="Node3D" parent="." unique_id=1522817486]
 
-[node name="FlyingPot" parent="Root" instance=ExtResource("1")]
+[node name="FlyingPot" parent="Root" unique_id=655902858 instance=ExtResource("1")]
 
-[node name="Skeleton3D" parent="Root/FlyingPot/FlyingPotRoot" index="0"]
+[node name="Skeleton3D" parent="Root/FlyingPot/FlyingPotRoot" parent_id_path=PackedInt32Array(655902858, 755579795) index="0" unique_id=1960819624]
 bones/0/rotation = Quaternion(-0.707107, -1.15202e-07, -1.15202e-07, 0.707107)
 bones/5/rotation = Quaternion(0.707107, 1.15202e-07, 1.15202e-07, 0.707107)
 
-[node name="Collision" type="StaticBody3D" parent="Root" groups=["wall"]]
+[node name="Collision" type="StaticBody3D" parent="Root" unique_id=1286083387 groups=["wall"]]
 collision_layer = 8
 collision_mask = 0
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Root/Collision"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Root/Collision" unique_id=1129834945]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
 shape = SubResource("3")
 
-[node name="LockonTarget" type="Area3D" parent="Root"]
+[node name="LockonTarget" type="Area3D" parent="Root" unique_id=662296986]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
 collision_layer = 4
 collision_mask = 2
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Root/LockonTarget"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Root/LockonTarget" unique_id=783520110]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.4, 0)
 shape = SubResource("CylinderShape3D_h3d10")
 
-[node name="VFX" type="Node3D" parent="Root"]
+[node name="VFX" type="Node3D" parent="Root" unique_id=409213961]
 
-[node name="FeatherParticles" type="GPUParticles3D" parent="Root/VFX"]
+[node name="FeatherParticles" type="GPUParticles3D" parent="Root/VFX" unique_id=852095633]
 layers = 32
 emitting = false
 amount = 12
@@ -413,7 +399,7 @@ transform_align = 3
 process_material = SubResource("ParticleProcessMaterial_qqgtp")
 draw_pass_1 = SubResource("PlaneMesh_18vhs")
 
-[node name="DustParticles" type="GPUParticles3D" parent="Root/VFX"]
+[node name="DustParticles" type="GPUParticles3D" parent="Root/VFX" unique_id=1273338582]
 layers = 32
 emitting = false
 lifetime = 1.5
@@ -423,7 +409,7 @@ visibility_aabb = AABB(-2, -3, -2, 4, 4, 4)
 process_material = SubResource("ParticleProcessMaterial_qs2s3")
 draw_pass_1 = SubResource("PlaneMesh_x18td")
 
-[node name="SpawnParticles" type="GPUParticles3D" parent="Root/VFX"]
+[node name="SpawnParticles" type="GPUParticles3D" parent="Root/VFX" unique_id=1465440760]
 layers = 32
 emitting = false
 one_shot = true
@@ -435,7 +421,7 @@ transform_align = 3
 process_material = SubResource("ParticleProcessMaterial_vv0c0")
 draw_pass_1 = SubResource("PlaneMesh_k3kup")
 
-[node name="ShineParticles" type="GPUParticles3D" parent="Root/VFX"]
+[node name="ShineParticles" type="GPUParticles3D" parent="Root/VFX" unique_id=622991632]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, 0)
 layers = 32
 emitting = false
@@ -448,7 +434,7 @@ interpolate = false
 process_material = ExtResource("8_5bysa")
 draw_pass_1 = SubResource("PlaneMesh_eilr1")
 
-[node name="SparkParticles" type="GPUParticles3D" parent="Root/VFX"]
+[node name="SparkParticles" type="GPUParticles3D" parent="Root/VFX" unique_id=980042862]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, 0)
 layers = 32
 emitting = false
@@ -461,27 +447,27 @@ interpolate = false
 process_material = SubResource("ParticleProcessMaterial_yk21u")
 draw_pass_1 = SubResource("PlaneMesh_x428s")
 
-[node name="SFX" type="Node3D" parent="Root"]
+[node name="SFX" type="Node3D" parent="Root" unique_id=1604314463]
 
-[node name="EnterSFX" type="AudioStreamPlayer" parent="Root/SFX"]
+[node name="EnterSFX" type="AudioStreamPlayer" parent="Root/SFX" unique_id=1024638588]
 process_mode = 1
 stream = ExtResource("12_0cgd7")
 volume_db = -6.0
 bus = &"GAME SFX"
 
-[node name="ExitSFX" type="AudioStreamPlayer" parent="Root/SFX"]
+[node name="ExitSFX" type="AudioStreamPlayer" parent="Root/SFX" unique_id=804676413]
 process_mode = 1
 stream = ExtResource("13_43524")
 volume_db = -6.0
 bus = &"GAME SFX"
 
-[node name="ShatterSFX" type="AudioStreamPlayer" parent="Root/SFX"]
+[node name="ShatterSFX" type="AudioStreamPlayer" parent="Root/SFX" unique_id=943824405]
 process_mode = 1
 stream = ExtResource("12_jyaqs")
 volume_db = -6.0
 bus = &"GAME SFX"
 
-[node name="WingSFX" type="AudioStreamPlayer3D" parent="Root/SFX"]
+[node name="WingSFX" type="AudioStreamPlayer3D" parent="Root/SFX" unique_id=757842482]
 process_mode = 1
 stream = ExtResource("14_uh57a")
 max_db = 0.0
@@ -491,12 +477,9 @@ panning_strength = 0.2
 bus = &"GAME SFX"
 attenuation_filter_cutoff_hz = 10000.0
 
-[node name="AnimationTree" type="AnimationTree" parent="Root"]
+[node name="AnimationTree" type="AnimationTree" parent="Root" unique_id=937115463]
 active = false
 root_node = NodePath("../FlyingPot")
-libraries = {
-&"": SubResource("AnimationLibrary_27os8")
-}
 tree_root = SubResource("AnimationNodeBlendTree_v4aem")
 anim_player = NodePath("../FlyingPot/AnimationPlayer")
 parameters/enter_trigger/active = false
@@ -510,10 +493,8 @@ parameters/flap_trigger/active = false
 parameters/flap_trigger/internal_active = false
 parameters/flap_trigger/request = 0
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
-libraries = {
-&"": SubResource("AnimationLibrary_hb8l8")
-}
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=1913575801]
+libraries/ = SubResource("AnimationLibrary_hb8l8")
 
 [connection signal="area_entered" from="Root/LockonTarget" to="." method="OnEntered"]
 [connection signal="area_exited" from="Root/LockonTarget" to="." method="OnExited"]

@@ -1,4 +1,4 @@
-[gd_scene load_steps=22 format=3 uid="uid://dwg8morsdrkm"]
+[gd_scene format=3 uid="uid://dwg8morsdrkm"]
 
 [ext_resource type="Script" uid="uid://c0f78bfayvnvc" path="res://object/stage/common/resource/script/PathTraveller.cs" id="1_uaq8f"]
 [ext_resource type="PackedScene" uid="uid://bdsdow54p4xgf" path="res://area/5 pirate storm/object/model/Cannonball.gltf" id="2_ygngy"]
@@ -225,7 +225,7 @@ _data = {
 &"respawn": SubResource("Animation_732a4")
 }
 
-[node name="Cannonball" type="Node3D" node_paths=PackedStringArray("root", "localRoot", "playerPosition", "animator")]
+[node name="Cannonball" type="Node3D" unique_id=937827004 node_paths=PackedStringArray("root", "localRoot", "playerPosition", "animator")]
 script = ExtResource("1_uaq8f")
 MaxSpeed = 30.0
 TurnSpeed = 12.0
@@ -236,13 +236,13 @@ localRoot = NodePath("Cannonball/CannonballMesh")
 playerPosition = NodePath("Cannonball/CannonballMesh/PlayerPosition")
 animator = NodePath("AnimationPlayer")
 
-[node name="Cannonball" parent="." instance=ExtResource("2_ygngy")]
+[node name="Cannonball" parent="." unique_id=1612306768 instance=ExtResource("2_ygngy")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.8, 0)
 
-[node name="PlayerPosition" type="Node3D" parent="Cannonball/CannonballMesh" index="0"]
+[node name="PlayerPosition" type="Node3D" parent="Cannonball/CannonballMesh" parent_id_path=PackedInt32Array(1612306768, 425949221) index="0" unique_id=1708459192]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.375, -0.1)
 
-[node name="TrailFX" type="GPUParticles3D" parent="Cannonball" node_paths=PackedStringArray("subSystems")]
+[node name="TrailFX" type="GPUParticles3D" parent="Cannonball" unique_id=615866207 node_paths=PackedStringArray("subSystems")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.7)
 layers = 32
 cast_shadow = 0
@@ -259,7 +259,7 @@ draw_pass_1 = SubResource("QuadMesh_1ldeh")
 script = ExtResource("4_iayi3")
 subSystems = [NodePath("Burst"), NodePath("Streak")]
 
-[node name="Burst" type="GPUParticles3D" parent="Cannonball/TrailFX"]
+[node name="Burst" type="GPUParticles3D" parent="Cannonball/TrailFX" unique_id=632970153]
 layers = 32
 cast_shadow = 0
 emitting = false
@@ -272,7 +272,7 @@ local_coords = true
 process_material = SubResource("ParticleProcessMaterial_iayi3")
 draw_pass_1 = SubResource("QuadMesh_iayi3")
 
-[node name="Streak" type="GPUParticles3D" parent="Cannonball/TrailFX"]
+[node name="Streak" type="GPUParticles3D" parent="Cannonball/TrailFX" unique_id=1706392945]
 layers = 32
 cast_shadow = 0
 emitting = false
@@ -285,20 +285,18 @@ transform_align = 2
 process_material = SubResource("ParticleProcessMaterial_732a4")
 draw_pass_1 = SubResource("QuadMesh_wcrga")
 
-[node name="Hurtbox" type="Area3D" parent="."]
+[node name="Hurtbox" type="Area3D" parent="." unique_id=292793462]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.8, 0)
 collision_layer = 0
 collision_mask = 8
 monitorable = false
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Hurtbox"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Hurtbox" unique_id=359294552]
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0, 0)
 shape = SubResource("CapsuleShape3D_uaq8f")
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
-libraries = {
-&"": SubResource("AnimationLibrary_iayi3")
-}
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=1634158889]
+libraries/ = SubResource("AnimationLibrary_iayi3")
 
 [connection signal="body_entered" from="Hurtbox" to="." method="OnBodyEntered"]
 

@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3 uid="uid://bcsww42lqxn6w"]
+[gd_scene format=3 uid="uid://bcsww42lqxn6w"]
 
 [ext_resource type="Script" uid="uid://bf7nwjguu8ueo" path="res://object/stage/common/resource/script/LaunchRing.cs" id="1_17ata"]
 [ext_resource type="PackedScene" uid="uid://boex8m7dhjl24" path="res://object/stage/common/resource/model/LaunchRing.gltf" id="2_gkfym"]
@@ -169,66 +169,64 @@ _data = {
 height = 0.4
 radius = 3.0
 
-[node name="LaunchRing" type="Area3D" node_paths=PackedStringArray("animator")]
+[node name="LaunchRing" type="Area3D" unique_id=485239371 node_paths=PackedStringArray("animator")]
 collision_layer = 0
 collision_mask = 2
 monitorable = false
 script = ExtResource("1_17ata")
+pieces = [NodePath("LaunchRing/LaunchRing1"), NodePath("LaunchRing/LaunchRing2"), NodePath("LaunchRing/LaunchRing3"), NodePath("LaunchRing/LaunchRing4"), NodePath("LaunchRing/LaunchRing5"), NodePath("LaunchRing/LaunchRing6"), NodePath("LaunchRing/LaunchRing7"), NodePath("LaunchRing/LaunchRing8"), NodePath("LaunchRing/LaunchRing9"), NodePath("LaunchRing/LaunchRing10"), NodePath("LaunchRing/LaunchRing11"), NodePath("LaunchRing/LaunchRing12"), NodePath("LaunchRing/LaunchRing13"), NodePath("LaunchRing/LaunchRing14"), NodePath("LaunchRing/LaunchRing15"), NodePath("LaunchRing/LaunchRing16")]
+animator = NodePath("AnimationPlayer")
 "Secondary Settings/Enabled" = true
 "Secondary Settings/Middle Height" = 5.0
 "Secondary Settings/Final Height" = 2.0
 "Secondary Settings/Distance" = 20.0
 "Secondary Settings/Blend" = 0.0
-pieces = [NodePath("LaunchRing/LaunchRing1"), NodePath("LaunchRing/LaunchRing2"), NodePath("LaunchRing/LaunchRing3"), NodePath("LaunchRing/LaunchRing4"), NodePath("LaunchRing/LaunchRing5"), NodePath("LaunchRing/LaunchRing6"), NodePath("LaunchRing/LaunchRing7"), NodePath("LaunchRing/LaunchRing8"), NodePath("LaunchRing/LaunchRing9"), NodePath("LaunchRing/LaunchRing10"), NodePath("LaunchRing/LaunchRing11"), NodePath("LaunchRing/LaunchRing12"), NodePath("LaunchRing/LaunchRing13"), NodePath("LaunchRing/LaunchRing14"), NodePath("LaunchRing/LaunchRing15"), NodePath("LaunchRing/LaunchRing16")]
-animator = NodePath("AnimationPlayer")
 MiddleHeight = 2.0
 Distance = 10.0
 AllowJumpDashing = true
 sfxPlayer = NodePath("Launch")
 voiceKey = &""
 
-[node name="LaunchRing" parent="." instance=ExtResource("2_gkfym")]
+[node name="LaunchRing" parent="." unique_id=2094331138 instance=ExtResource("2_gkfym")]
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
-libraries = {
-"": SubResource("AnimationLibrary_tk06v")
-}
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=489565218]
+libraries/ = SubResource("AnimationLibrary_tk06v")
 blend_times = [&"charge", &"RESET", 0.5]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=1810288962]
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0)
 shape = SubResource("CylinderShape3D_eaqjp")
 
-[node name="Loop" type="AudioStreamPlayer3D" parent="."]
+[node name="Loop" type="AudioStreamPlayer3D" parent="." unique_id=1829546642]
+process_mode = 1
 stream = ExtResource("3_ovn5f")
 volume_db = -80.0
 max_db = -9.0
 pitch_scale = 0.8
 max_distance = 50.0
 bus = &"GAME SFX"
-process_mode = 1
 
-[node name="Loop2" type="AudioStreamPlayer3D" parent="."]
+[node name="Loop2" type="AudioStreamPlayer3D" parent="." unique_id=10532224]
+process_mode = 1
 stream = ExtResource("3_lq4d6")
 volume_db = -80.0
 max_db = 0.0
 max_distance = 50.0
 bus = &"GAME SFX"
-process_mode = 1
 
-[node name="Enter" type="AudioStreamPlayer3D" parent="."]
+[node name="Enter" type="AudioStreamPlayer3D" parent="." unique_id=700586273]
+process_mode = 1
 stream = ExtResource("4_wmq7e")
 max_db = 0.0
 max_distance = 20.0
 bus = &"GAME SFX"
-process_mode = 1
 
-[node name="Launch" type="AudioStreamPlayer3D" parent="."]
+[node name="Launch" type="AudioStreamPlayer3D" parent="." unique_id=846802822]
+process_mode = 1
 stream = ExtResource("5_b618j")
 max_db = 0.0
 max_distance = 50.0
 bus = &"GAME SFX"
-process_mode = 1
 
 [connection signal="Entered" from="." to="Enter" method="play"]
 [connection signal="Exited" from="." to="Enter" method="play"]

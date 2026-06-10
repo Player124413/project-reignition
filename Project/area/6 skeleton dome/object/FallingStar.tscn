@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=3 uid="uid://bqhcoks73ujwv"]
+[gd_scene format=3 uid="uid://bqhcoks73ujwv"]
 
 [ext_resource type="Script" uid="uid://2snd2fxcrc3s" path="res://area/6 skeleton dome/data/script/FallingStar.cs" id="1_hadv5"]
 [ext_resource type="Material" uid="uid://2uyghhoj7ydh" path="res://object/player/resource/effect/material/Aegis Dust.tres" id="1_mkiai"]
@@ -53,13 +53,13 @@ scale_curve = SubResource("CurveTexture_3r1tp")
 [sub_resource type="QuadMesh" id="QuadMesh_pdbca"]
 material = ExtResource("4_m4bdr")
 
-[node name="FallingStar" type="Node3D" node_paths=PackedStringArray("particles")]
+[node name="FallingStar" type="Node3D" unique_id=1294101281 node_paths=PackedStringArray("particles")]
 script = ExtResource("1_hadv5")
 lifetime = 8.0
 travelDistance = 100.0
 particles = NodePath("Base")
 
-[node name="Base" type="GPUParticles3D" parent="." node_paths=PackedStringArray("subSystems")]
+[node name="Base" type="GPUParticles3D" parent="." unique_id=1041447999 node_paths=PackedStringArray("subSystems")]
 layers = 32
 cast_shadow = 0
 extra_cull_margin = 50.0
@@ -74,7 +74,7 @@ draw_pass_1 = SubResource("QuadMesh_m4bdr")
 script = ExtResource("2_ahw6t")
 subSystems = [NodePath("Spark")]
 
-[node name="Spark" type="GPUParticles3D" parent="Base"]
+[node name="Spark" type="GPUParticles3D" parent="Base" unique_id=808457099]
 layers = 32
 cast_shadow = 0
 extra_cull_margin = 50.0
@@ -87,7 +87,7 @@ visibility_aabb = AABB(0, 0, 0, 0, 0, 0)
 process_material = SubResource("ParticleProcessMaterial_kv2rj")
 draw_pass_1 = SubResource("QuadMesh_pdbca")
 
-[node name="SFX" type="AudioStreamPlayer3D" parent="."]
+[node name="SFX" type="AudioStreamPlayer3D" parent="." unique_id=2107394608]
 stream = ExtResource("5_m4bdr")
 attenuation_model = 3
 unit_size = 20.0
@@ -97,7 +97,7 @@ bus = &"GAME SFX"
 script = ExtResource("6_3mis8")
 groupKey = &"falling star"
 
-[node name="Timer" type="Timer" parent="."]
+[node name="Timer" type="Timer" parent="." unique_id=1640811405]
 wait_time = 5.0
 
 [connection signal="Restarted" from="." to="Timer" method="start" binds= [0.0]]

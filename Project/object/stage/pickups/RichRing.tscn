@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3 uid="uid://68st06xyjgvp"]
+[gd_scene format=3 uid="uid://68st06xyjgvp"]
 
 [ext_resource type="Script" uid="uid://b5odvkwlgmlk3" path="res://object/stage/pickups/resource/script/Ring.cs" id="1"]
 [ext_resource type="PackedScene" uid="uid://c3fvfe7fvrd68" path="res://object/stage/pickups/resource/model/RichRing.gltf" id="2"]
@@ -144,7 +144,7 @@ _data = {
 &"loop": SubResource("4")
 }
 
-[node name="RichRing" type="Area3D" groups=["ignore destructable", "light dashable"]]
+[node name="RichRing" type="Area3D" unique_id=829122401 groups=["ignore destructable", "light dashable"]]
 collision_layer = 8
 collision_mask = 2
 script = ExtResource("1")
@@ -152,12 +152,12 @@ isRichRing = true
 animator = NodePath("AnimationPlayer")
 collider = NodePath("CollisionShape3D")
 
-[node name="RichRing" parent="." instance=ExtResource("2")]
+[node name="RichRing" parent="." unique_id=2123788651 instance=ExtResource("2")]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=308736334]
 shape = SubResource("SphereShape3D_3eyv2")
 
-[node name="SparkParticle" type="GPUParticles3D" parent="."]
+[node name="SparkParticle" type="GPUParticles3D" parent="." unique_id=1955772968]
 extra_cull_margin = 1000.0
 emitting = false
 lifetime = 0.2
@@ -167,10 +167,8 @@ visibility_aabb = AABB(-1, -1, -1, 2, 2, 2)
 process_material = ExtResource("3_hj5xx")
 draw_pass_1 = SubResource("PlaneMesh_ekr2c")
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
-libraries = {
-&"": SubResource("AnimationLibrary_6x35q")
-}
-autoplay = "loop"
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=1187581828]
+libraries/ = SubResource("AnimationLibrary_6x35q")
+autoplay = &"loop"
 
 [connection signal="area_entered" from="." to="." method="OnEntered"]

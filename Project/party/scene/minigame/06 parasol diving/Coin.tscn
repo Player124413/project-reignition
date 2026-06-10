@@ -1,4 +1,4 @@
-[gd_scene load_steps=19 format=3 uid="uid://d1iodnfaxfyet"]
+[gd_scene format=3 uid="uid://d1iodnfaxfyet"]
 
 [ext_resource type="Script" uid="uid://cgj4nlx5fbcmq" path="res://party/scene/minigame/06 parasol diving/script/coin.gd" id="1_nljhk"]
 [ext_resource type="PackedScene" uid="uid://b1rqg5xv3qyak" path="res://party/scene/minigame/00 base/model/Coin.glb" id="2_j6inb"]
@@ -168,7 +168,7 @@ alpha_curve = SubResource("CurveTexture_6k27s")
 
 [sub_resource type="QuadMesh" id="QuadMesh_b8pgm"]
 
-[node name="Coin" type="Area3D" node_paths=PackedStringArray("collect_sfx", "mesh", "animator")]
+[node name="Coin" type="Area3D" unique_id=1238331976 node_paths=PackedStringArray("collect_sfx", "mesh", "animator")]
 collision_layer = 8
 collision_mask = 0
 monitoring = false
@@ -178,18 +178,16 @@ mesh = NodePath("Coin/CoinMesh")
 animator = NodePath("Coin/AnimationPlayer")
 materials = Array[Material]([ExtResource("2_tud03"), ExtResource("3_6k27s")])
 
-[node name="Coin" parent="." instance=ExtResource("2_j6inb")]
+[node name="Coin" parent="." unique_id=1601241015 instance=ExtResource("2_j6inb")]
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="Coin"]
-libraries = {
-&"": SubResource("AnimationLibrary_ut2w0")
-}
-autoplay = "spawn"
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Coin" unique_id=294761310]
+libraries/ = SubResource("AnimationLibrary_ut2w0")
+autoplay = &"spawn"
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=400518554]
 shape = SubResource("SphereShape3D_tud03")
 
-[node name="CollectVFX" type="GPUParticles3D" parent="."]
+[node name="CollectVFX" type="GPUParticles3D" parent="." unique_id=132386366]
 layers = 32
 material_override = ExtResource("5_6k27s")
 cast_shadow = 0
@@ -202,7 +200,7 @@ fract_delta = false
 process_material = SubResource("ParticleProcessMaterial_ipnsq")
 draw_pass_1 = SubResource("QuadMesh_b8pgm")
 
-[node name="CollectSFX" type="AudioStreamPlayer" parent="."]
+[node name="CollectSFX" type="AudioStreamPlayer" parent="." unique_id=1286132667]
 stream = ExtResource("6_b8pgm")
 bus = &"GAME SFX"
 script = ExtResource("7_ut2w0")

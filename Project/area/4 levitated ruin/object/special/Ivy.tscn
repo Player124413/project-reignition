@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3 uid="uid://ci8d3jdqrc0nr"]
+[gd_scene format=3 uid="uid://ci8d3jdqrc0nr"]
 
 [ext_resource type="Script" uid="uid://b2npn6f8s5xl7" path="res://area/4 levitated ruin/data/script/Ivy.cs" id="1_3x35n"]
 [ext_resource type="PackedScene" uid="uid://bhyhksqbx12de" path="res://area/4 levitated ruin/object/model/special/IvyBase.gltf" id="1_mnuw2"]
@@ -13,7 +13,7 @@ point_count = 3
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_bxmnq"]
 height = 1.5
 
-[node name="Ivy" type="Node3D" node_paths=PackedStringArray("swingSfx", "launchPoint")]
+[node name="Ivy" type="Node3D" unique_id=2135463585 node_paths=PackedStringArray("swingSfx", "launchPoint")]
 script = ExtResource("1_3x35n")
 Length = 5
 MaxRotation = 45.0
@@ -36,29 +36,29 @@ voiceKey = &"jump panel"
 launchPoint = NodePath("Lockon")
 ignoreLaunchPointRotation = true
 
-[node name="IvyBase" parent="." instance=ExtResource("1_mnuw2")]
+[node name="IvyBase" parent="." unique_id=984421742 instance=ExtResource("1_mnuw2")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.35, 0)
 
-[node name="SegmentRoot" type="Node3D" parent="IvyBase"]
+[node name="SegmentRoot" type="Node3D" parent="IvyBase" unique_id=713380726]
 
-[node name="Lockon" type="Area3D" parent="."]
+[node name="Lockon" type="Area3D" parent="." unique_id=277374306]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -4.15, 0)
 collision_layer = 12
 collision_mask = 2
 
-[node name="SwingSFX" type="AudioStreamPlayer3D" parent="Lockon"]
+[node name="SwingSFX" type="AudioStreamPlayer3D" parent="Lockon" unique_id=603570269]
 stream = ExtResource("4_d1lf5")
 max_db = 0.0
 max_distance = 200.0
 bus = &"GAME SFX"
 
-[node name="CatchSFX" type="AudioStreamPlayer3D" parent="Lockon"]
+[node name="CatchSFX" type="AudioStreamPlayer3D" parent="Lockon" unique_id=20208403]
 stream = ExtResource("5_724sq")
 max_db = 0.0
 max_distance = 200.0
 bus = &"GAME SFX"
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Lockon"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Lockon" unique_id=1308378758]
 shape = SubResource("CapsuleShape3D_bxmnq")
 
 [connection signal="IvyStarted" from="." to="Lockon/CatchSFX" method="play" binds= [0.0]]

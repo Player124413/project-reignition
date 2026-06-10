@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3 uid="uid://cbovci4wqnpxl"]
+[gd_scene format=3 uid="uid://cbovci4wqnpxl"]
 
 [ext_resource type="Script" uid="uid://dtvj1vg0nkhi6" path="res://object/trigger/modules/TeleportTrigger.cs" id="1_35hvm"]
 [ext_resource type="PackedScene" uid="uid://cp8owtrig0i60" path="res://area/6 skeleton dome/object/model/obstacle/WarpBase.gltf" id="1_2348r"]
@@ -10,7 +10,7 @@
 height = 5.75
 radius = 1.8
 
-[node name="Warp" type="Area3D"]
+[node name="Warp" type="Area3D" unique_id=1232228124]
 collision_layer = 0
 collision_mask = 2
 monitorable = false
@@ -18,19 +18,19 @@ script = ExtResource("1_35hvm")
 enableStartFX = true
 crossfade = true
 
-[node name="WarpBase" parent="." instance=ExtResource("1_2348r")]
+[node name="WarpBase" parent="." unique_id=71753653 instance=ExtResource("1_2348r")]
 
-[node name="WarpBaseCollision" parent="WarpBase" index="1"]
+[node name="WarpBaseCollision" parent="WarpBase" index="1" unique_id=500187998]
 visible = false
 
-[node name="StaticBody3D" parent="WarpBase/WarpBaseCollision" index="0" groups=["wall"]]
+[node name="StaticBody3D" parent="WarpBase/WarpBaseCollision" index="0" unique_id=1562890114 groups=["wall"]]
 collision_layer = 17
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=841320183]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.875, 0)
 shape = SubResource("CylinderShape3D_r5wk0")
 
-[node name="Shatter" type="AudioStreamPlayer3D" parent="."]
+[node name="Shatter" type="AudioStreamPlayer3D" parent="." unique_id=1682828229]
 stream = ExtResource("3_35hvm")
 max_db = -3.0
 autoplay = true
@@ -41,7 +41,7 @@ script = ExtResource("4_m286k")
 groupKey = &"bone shatter"
 audioLengthOverride = 1.5
 
-[node name="WarpVFX" parent="." instance=ExtResource("3_rgcks")]
+[node name="WarpVFX" parent="." unique_id=1957070432 instance=ExtResource("3_rgcks")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.25, 0)
 
 [connection signal="area_entered" from="." to="." method="Activate"]

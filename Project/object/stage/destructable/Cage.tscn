@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://2h6xrqn3jp6l"]
+[gd_scene format=3 uid="uid://2h6xrqn3jp6l"]
 
 [ext_resource type="Script" uid="uid://bj7jhdknn12cl" path="res://object/stage/destructable/resource/script/DestructableObject.cs" id="1_4wep3"]
 [ext_resource type="PackedScene" uid="uid://c4jpkog4h7iod" path="res://object/stage/destructable/resource/model/Cage.gltf" id="1_i1qbr"]
@@ -146,7 +146,7 @@ _data = {
 &"shatter": SubResource("Animation_uvifu")
 }
 
-[node name="Cage" type="Node3D" node_paths=PackedStringArray("root", "pieceRoot", "animator", "snapTransform")]
+[node name="Cage" type="Node3D" unique_id=1951493774 node_paths=PackedStringArray("root", "pieceRoot", "animator", "snapTransform")]
 script = ExtResource("1_4wep3")
 pieceMass = 2.5
 shatterFlags = 24
@@ -157,26 +157,26 @@ pieceRoot = NodePath("CagePieces")
 animator = NodePath("AnimationPlayer")
 snapTransform = NodePath("Root/Lockon")
 
-[node name="Root" type="StaticBody3D" parent="." groups=["floor", "grind wall", "metal", "wall"]]
+[node name="Root" type="StaticBody3D" parent="." unique_id=648657558 groups=["floor", "grind wall", "metal", "wall"]]
 collision_layer = 8
 collision_mask = 0
 
-[node name="Cage" parent="Root" instance=ExtResource("1_i1qbr")]
+[node name="Cage" parent="Root" unique_id=1194035059 instance=ExtResource("1_i1qbr")]
 
-[node name="Lockon" type="Area3D" parent="Root"]
+[node name="Lockon" type="Area3D" parent="Root" unique_id=1680779628]
 collision_layer = 12
 collision_mask = 2
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Root/Lockon"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Root/Lockon" unique_id=1196122861]
 shape = SubResource("BoxShape3D_0pm0a")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Root"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Root" unique_id=105465539]
 shape = SubResource("BoxShape3D_0pm0a")
 
-[node name="CagePieces" parent="." instance=ExtResource("2_3gwu7")]
+[node name="CagePieces" parent="." unique_id=1169939314 instance=ExtResource("2_3gwu7")]
 visible = false
 
-[node name="SFX" type="AudioStreamPlayer3D" parent="."]
+[node name="SFX" type="AudioStreamPlayer3D" parent="." unique_id=1822641724]
 process_mode = 1
 stream = ExtResource("4_rehhr")
 max_db = -6.0
@@ -184,10 +184,8 @@ max_distance = 100.0
 bus = &"GAME SFX"
 attenuation_filter_cutoff_hz = 20500.0
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
-libraries = {
-&"": SubResource("AnimationLibrary_8wuil")
-}
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=1712994788]
+libraries/ = SubResource("AnimationLibrary_8wuil")
 
 [connection signal="area_entered" from="Root/Lockon" to="." method="OnEntered"]
 [connection signal="area_exited" from="Root/Lockon" to="." method="OnExited"]

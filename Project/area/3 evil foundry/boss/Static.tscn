@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=3 uid="uid://554o5nn5ah4r"]
+[gd_scene format=3 uid="uid://554o5nn5ah4r"]
 
 [ext_resource type="Script" uid="uid://dtkbvehtmy3em" path="res://object/stage/StageSettings.cs" id="1_qxxdp"]
 [ext_resource type="PackedScene" uid="uid://v8h6abta165i" path="res://area/3 evil foundry/boss/environment/EFBoss.tscn" id="2_r5wbo"]
@@ -304,7 +304,6 @@ ssil_intensity = 1.5
 glow_enabled = true
 glow_levels/2 = 2.0
 glow_levels/3 = 0.3
-glow_levels/5 = 0.0
 glow_levels/7 = 0.01
 glow_normalized = true
 glow_intensity = 0.4
@@ -336,7 +335,7 @@ adjustment_contrast = 1.3
 adjustment_saturation = 0.9
 adjustment_color_correction = SubResource("GradientTexture1D_ppx68")
 
-[node name="Static" type="Node3D" node_paths=PackedStringArray("pathParent", "completionAnimator", "Environment")]
+[node name="Static" type="Node3D" unique_id=981540620 node_paths=PackedStringArray("pathParent", "completionAnimator", "Environment")]
 script = ExtResource("1_qxxdp")
 DefaultBgm = ExtResource("8_t6nvw")
 pathParent = NodePath("Path")
@@ -344,17 +343,17 @@ completionAnimator = NodePath("DemoCamera/AnimationPlayer")
 Environment = NodePath("WorldEnvironment")
 environmentFxFactor = 1.0
 
-[node name="Visuals" type="Node3D" parent="."]
+[node name="Visuals" type="Node3D" parent="." unique_id=1871536232]
 
-[node name="DirectionalLight" type="DirectionalLight3D" parent="Visuals"]
+[node name="DirectionalLight" type="DirectionalLight3D" parent="Visuals" unique_id=550267016]
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, -5, 0)
 layers = 1024
 light_color = Color(1, 0.725, 0.5, 1)
 light_energy = 1.5
 
-[node name="EFBoss" parent="Visuals" instance=ExtResource("2_r5wbo")]
+[node name="EFBoss" parent="Visuals" unique_id=1372361316 instance=ExtResource("2_r5wbo")]
 
-[node name="ReflectionProbe" type="ReflectionProbe" parent="Visuals"]
+[node name="ReflectionProbe" type="ReflectionProbe" parent="Visuals" unique_id=957792085]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -8.316406, 0)
 size = Vector3(77.706055, 62.546875, 67.55762)
 cull_mask = 0
@@ -363,36 +362,34 @@ ambient_mode = 2
 ambient_color = Color(1, 0.85833335, 0.75, 1)
 ambient_color_energy = 0.5
 
-[node name="Collision" parent="." instance=ExtResource("4_ptqv5")]
+[node name="Collision" parent="." unique_id=877611647 instance=ExtResource("4_ptqv5")]
 visible = false
 
-[node name="Path" type="Node3D" parent="."]
+[node name="Path" type="Node3D" parent="." unique_id=108070535]
 
-[node name="MainPath" type="Path3D" parent="Path"]
+[node name="MainPath" type="Path3D" parent="Path" unique_id=741304028]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -26, 5.725, 0)
 curve = ExtResource("5_b4qr8")
 
-[node name="DamagePath" type="Node3D" parent="Path"]
+[node name="DamagePath" type="Node3D" parent="Path" unique_id=871435957]
 
-[node name="DamagePath" type="Path3D" parent="Path/DamagePath"]
+[node name="DamagePath" type="Path3D" parent="Path/DamagePath" unique_id=133979179]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5.725, 26)
 curve = ExtResource("5_hjxb7")
 
-[node name="ScreenWarp" parent="." instance=ExtResource("8_d6cfb")]
+[node name="ScreenWarp" parent="." unique_id=191493924 instance=ExtResource("8_d6cfb")]
 
-[node name="DemoCamera" type="Node3D" parent="."]
+[node name="DemoCamera" type="Node3D" parent="." unique_id=780315832]
 transform = Transform3D(0.70710707, 0, 0.7071068, 0, 1, 0, -0.7071068, 0, 0.70710707, 0, 0, 0)
 
-[node name="Camera" type="Camera3D" parent="DemoCamera"]
+[node name="Camera" type="Camera3D" parent="DemoCamera" unique_id=252582792]
 transform = Transform3D(1, 0, 0, 0, 0.9396928, 0.34202036, 0, -0.34202036, 0.9396928, 0, 10, 35)
 cull_mask = 1086
 fov = 50.0
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="DemoCamera"]
-libraries = {
-&"": SubResource("AnimationLibrary_en8nf")
-}
+[node name="AnimationPlayer" type="AnimationPlayer" parent="DemoCamera" unique_id=1420135439]
+libraries/ = SubResource("AnimationLibrary_en8nf")
 next/demo1 = &"demo2"
 
-[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1656038581]
 environment = SubResource("Environment_m5ojg")

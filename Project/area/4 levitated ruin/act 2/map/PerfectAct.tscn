@@ -1,4 +1,4 @@
-[gd_scene load_steps=31 format=3 uid="uid://cwqbha6bstwrp"]
+[gd_scene format=3 uid="uid://cwqbha6bstwrp"]
 
 [ext_resource type="PackedScene" uid="uid://bpxj0juyhbmxs" path="res://area/4 levitated ruin/act 2/Static.tscn" id="1_n5x1h"]
 [ext_resource type="Resource" uid="uid://bxwpjg4ij4uki" path="res://resource/level data/levitated ruin/Act2Perfect.tres" id="2_txk0p"]
@@ -29,6 +29,94 @@
 [ext_resource type="Resource" uid="uid://d1v1gp585e8c7" path="res://area/4 levitated ruin/act 2/camera/cage/Tower5SpringCam.tres" id="75_3ijk8"]
 [ext_resource type="PackedScene" uid="uid://jbfxcttlv66w" path="res://area/4 levitated ruin/object/platform/TowerInteriorPlatform.tscn" id="76_eq8su"]
 
+[sub_resource type="Shader" id="Shader_emcxb"]
+code = "shader_type canvas_item;
+render_mode unshaded, blend_add;
+
+uniform sampler2D depth_tex : filter_linear;
+uniform sampler2D screen_texture : hint_screen_texture, filter_linear;
+uniform sampler2D light_color : hint_default_white;
+uniform vec4 ray_color : source_color = vec4(1.0, 1.0, 1.0, 1.0);
+uniform float ray_length : hint_range(0.0, 1.0) = 1.0;
+uniform float ray_intensity : hint_range(0.0, 1.0) = 1.0;
+uniform float light_source_scale = 1.0;
+uniform float light_source_feather = 2.0;
+uniform float noise_strength : hint_range(0.0, 1.0) = 0.2;
+uniform vec2 light_source_pos = vec2(0.0, 0.0);
+uniform vec3 light_source_dir = vec3(0.5, -1.0, 0.25);
+uniform float mask_threshold : hint_range(0.0, 1.0) = 0.5;
+uniform float mask_softness : hint_range(0.01, 0.5) = 0.15;
+uniform float mask_radius : hint_range(0.01, 0.5) = 0.15;
+uniform bool debug_mode = false;
+uniform float debug_dot_radius : hint_range(0.001, 0.05) = 0.01;
+
+const int SAMPLE_COUNT = 120;
+
+float random(vec2 uv) {
+	return fract(sin(dot(uv.xy, vec2(12.9898, 78.233))) * 43758.5453123);
+}
+
+void fragment() {
+	vec2 light_pos = light_source_pos;
+	vec2 ratio = vec2(SCREEN_PIXEL_SIZE.x / SCREEN_PIXEL_SIZE.y, 1.0);
+
+	if (debug_mode) {
+		vec2 diff = (UV - light_pos) / ratio;
+		float dist = length(diff);
+		float dot_mask = smoothstep(debug_dot_radius, debug_dot_radius * 0.5, dist);
+		COLOR.rgb = vec3(dot_mask);
+		COLOR.a = 1.0;
+	} else {
+		vec2 dir = UV - light_pos;
+		vec2 dir2 = UV / ratio - light_pos / ratio;
+		float light_rays = 0.0;
+		vec2 uv2;
+		float scale, l;
+
+		for (int i = 0; i < SAMPLE_COUNT; i++) {
+			scale = 1.0 - ray_length * (float(i) / float(SAMPLE_COUNT - 1));
+			vec2 sample_uv = dir * scale + light_pos;
+			l = 1.0 - texture(depth_tex, sample_uv).a;
+			uv2 = dir2 * scale * pow(light_source_scale, 2.0);
+			l *= smoothstep(1.0, 0.999 - light_source_feather, dot(uv2, uv2) * 4.0);
+			light_rays += l / float(SAMPLE_COUNT);
+		}
+
+		float n = 1.0 - random(UV) * noise_strength * smoothstep(0.999 - 1.25, 1.0, dot(dir2, dir2) * 2.0);
+		light_rays *= n;
+
+		vec3 screen_col = texture(screen_texture, SCREEN_UV).rgb;
+		float brightness = max(screen_col.r, max(screen_col.g, screen_col.b));
+		float moon_mask = smoothstep(mask_threshold, mask_threshold + mask_softness, brightness);
+
+		float dist_to_light = length((UV - light_pos) / ratio);
+		float proximity = 1.0 - smoothstep(0.0, mask_radius, dist_to_light);
+		moon_mask *= proximity;
+
+		light_rays *= (1.0 - moon_mask);
+
+		COLOR.rgb = vec3(light_rays * ray_intensity) * texture(light_color, UV).rgb * ray_color.rgb;
+		COLOR.a = ray_color.a;
+	}
+}"
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_om2pp"]
+resource_local_to_scene = true
+shader = SubResource("Shader_emcxb")
+shader_parameter/ray_color = Color(0.5529412, 0.49411765, 0.23921569, 1)
+shader_parameter/ray_length = 0.70000003325
+shader_parameter/ray_intensity = 0.6000000285
+shader_parameter/light_source_scale = 1.1999999999970896
+shader_parameter/light_source_feather = 1.4499999999970896
+shader_parameter/noise_strength = 0.10000000475
+shader_parameter/light_source_pos = Vector2(0, 0)
+shader_parameter/light_source_dir = Vector3(0.5, -1, 0.25)
+shader_parameter/mask_threshold = 0.69200003287
+shader_parameter/mask_softness = 0.16900000732898002
+shader_parameter/mask_radius = 0.5
+shader_parameter/debug_mode = false
+shader_parameter/debug_dot_radius = 0.01
+
 [sub_resource type="BoxShape3D" id="BoxShape3D_5yb3a"]
 size = Vector3(10, 9, 2.5)
 
@@ -36,187 +124,190 @@ size = Vector3(10, 9, 2.5)
 height = 10.0
 radius = 10.0
 
-[node name="World" type="Node"]
+[node name="World" type="Node" unique_id=323222374]
 
-[node name="Static" parent="." instance=ExtResource("1_n5x1h")]
+[node name="Static" parent="." unique_id=1555538368 instance=ExtResource("1_n5x1h")]
 Data = ExtResource("2_txk0p")
 metadata/_edit_lock_ = true
 metadata/_edit_group_ = true
 
-[node name="Rukh1" parent="Static/Visuals" index="1"]
+[node name="ColorRect_LightRays" parent="Static/Visuals/LRSky/DepthRenderer/CanvasLayerLightShafts" parent_id_path=PackedInt32Array(1555538368, 657050233) index="0" unique_id=657003425]
+material = SubResource("ShaderMaterial_om2pp")
+
+[node name="Rukh1" parent="Static/Visuals" parent_id_path=PackedInt32Array(1555538368, 2405459) index="1" unique_id=1283337765]
 startEnabled = false
 
-[node name="Rukh1LOD" parent="Static/Visuals" index="2"]
+[node name="Rukh1LOD" parent="Static/Visuals" parent_id_path=PackedInt32Array(1555538368, 2405459) index="2" unique_id=59869592]
 startEnabled = true
 
-[node name="Rukh5" parent="Static/Visuals" index="9"]
+[node name="Rukh5" parent="Static/Visuals" parent_id_path=PackedInt32Array(1555538368, 2405459) index="9" unique_id=1405328742]
 startEnabled = true
 
-[node name="Rukh5LOD" parent="Static/Visuals" index="10"]
+[node name="Rukh5LOD" parent="Static/Visuals" parent_id_path=PackedInt32Array(1555538368, 2405459) index="10" unique_id=1088172079]
 startEnabled = false
 
-[node name="PerfectAct" type="Node3D" parent="."]
+[node name="PerfectAct" type="Node3D" parent="." unique_id=1963650931]
 
-[node name="SpawnPosition" type="Node3D" parent="PerfectAct"]
+[node name="SpawnPosition" type="Node3D" parent="PerfectAct" unique_id=1174649720]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 550, 29.18, -1055)
 metadata/_edit_lock_ = true
 
-[node name="InvisibleWall" type="StaticBody3D" parent="PerfectAct/SpawnPosition" groups=["wall"]]
+[node name="InvisibleWall" type="StaticBody3D" parent="PerfectAct/SpawnPosition" unique_id=410984665 groups=["wall"]]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -3)
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="PerfectAct/SpawnPosition/InvisibleWall"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="PerfectAct/SpawnPosition/InvisibleWall" unique_id=871593719]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4, 0)
 shape = SubResource("BoxShape3D_5yb3a")
 
-[node name="CharacterSpawn" parent="PerfectAct/SpawnPosition" instance=ExtResource("7_af3f0")]
+[node name="CharacterSpawn" parent="PerfectAct/SpawnPosition" unique_id=4465151 instance=ExtResource("7_af3f0")]
 
-[node name="Objects" type="Node3D" parent="PerfectAct"]
+[node name="Objects" type="Node3D" parent="PerfectAct" unique_id=1089208337]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 550, 30, -1025)
 
-[node name="Exterior" type="Node3D" parent="PerfectAct/Objects"]
+[node name="Exterior" type="Node3D" parent="PerfectAct/Objects" unique_id=25018950]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -52)
 
-[node name="GargoyleStaticL" parent="PerfectAct/Objects/Exterior" instance=ExtResource("55_jg6oy")]
+[node name="GargoyleStaticL" parent="PerfectAct/Objects/Exterior" unique_id=898292045 instance=ExtResource("55_jg6oy")]
 transform = Transform3D(-4.35451e-08, 3.8097e-09, -1, 0.0871557, 0.996195, 0, 0.996195, -0.0871557, -4.37114e-08, 4, -0.300381, -0.0087154)
 
-[node name="GargoyleStaticR" parent="PerfectAct/Objects/Exterior" instance=ExtResource("55_jg6oy")]
+[node name="GargoyleStaticR" parent="PerfectAct/Objects/Exterior" unique_id=1323364440 instance=ExtResource("55_jg6oy")]
 transform = Transform3D(-4.35451e-08, -3.8097e-09, 1, -0.0871557, 0.996195, 0, -0.996195, -0.0871557, -4.37114e-08, -4, -0.300381, -0.00871505)
 
-[node name="Triggers" type="Node3D" parent="PerfectAct/Objects"]
+[node name="Triggers" type="Node3D" parent="PerfectAct/Objects" unique_id=298813061]
 
-[node name="LoopPath" type="Node3D" parent="PerfectAct/Objects/Triggers" node_paths=PackedStringArray("path")]
+[node name="LoopPath" type="Node3D" parent="PerfectAct/Objects/Triggers" unique_id=1222543134 node_paths=PackedStringArray("path")]
 script = ExtResource("19_3jnno")
 path = NodePath("../../../../Static/Paths/Tower5")
 
-[node name="LoopReversePath" type="Node3D" parent="PerfectAct/Objects/Triggers" node_paths=PackedStringArray("path")]
+[node name="LoopReversePath" type="Node3D" parent="PerfectAct/Objects/Triggers" unique_id=1161869178 node_paths=PackedStringArray("path")]
 script = ExtResource("19_3jnno")
 path = NodePath("../../../../Static/Paths/Tower5")
 pathMode = 1
 
-[node name="Lockout" type="Node3D" parent="PerfectAct/Objects/Triggers"]
+[node name="Lockout" type="Node3D" parent="PerfectAct/Objects/Triggers" unique_id=242637273]
 script = ExtResource("5_snm3l")
 lockoutData = ExtResource("6_q02yx")
 
-[node name="GroundPathTrigger" parent="PerfectAct/Objects/Triggers" instance=ExtResource("4_guc1f")]
+[node name="GroundPathTrigger" parent="PerfectAct/Objects/Triggers" unique_id=746946129 instance=ExtResource("4_guc1f")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3, 0)
 "Enter Mode" = 0
 
-[node name="GroundPath" type="Node3D" parent="PerfectAct/Objects/Triggers/GroundPathTrigger" node_paths=PackedStringArray("path")]
+[node name="GroundPath" type="Node3D" parent="PerfectAct/Objects/Triggers/GroundPathTrigger" unique_id=806146060 node_paths=PackedStringArray("path")]
 script = ExtResource("19_3jnno")
 path = NodePath("../../../../../Static/Paths/Rukh5")
 pathMode = 2
 enableReversePathTransition = true
 
-[node name="Camera" type="Node3D" parent="PerfectAct/Objects/Triggers/GroundPathTrigger"]
+[node name="Camera" type="Node3D" parent="PerfectAct/Objects/Triggers/GroundPathTrigger" unique_id=1986327485]
 script = ExtResource("17_b586c")
 settings = ExtResource("29_7wf5w")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="PerfectAct/Objects/Triggers/GroundPathTrigger"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="PerfectAct/Objects/Triggers/GroundPathTrigger" unique_id=223705602]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 0)
 shape = SubResource("CylinderShape3D_kgcgh")
 
-[node name="Gate1" parent="PerfectAct/Objects" instance=ExtResource("35_b8nsb")]
+[node name="Gate1" parent="PerfectAct/Objects" unique_id=1368501785 instance=ExtResource("35_b8nsb")]
 transform = Transform3D(1, 0, 0, 0, 1.75, 0, 0, 0, 1, 0, 0, 9.5)
 respawnAnimation = 2
 activationSpeedScale = 10.0
 
-[node name="GateTrigger" parent="PerfectAct/Objects" instance=ExtResource("4_guc1f")]
+[node name="GateTrigger" parent="PerfectAct/Objects" unique_id=1879235405 instance=ExtResource("4_guc1f")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -13)
 OneShot = true
 "Respawn Mode" = 0
 
-[node name="Checkpoint" type="Node3D" parent="PerfectAct/Objects/GateTrigger" node_paths=PackedStringArray("PlayerPath", "CameraPath")]
+[node name="Checkpoint" type="Node3D" parent="PerfectAct/Objects/GateTrigger" unique_id=1218114835 node_paths=PackedStringArray("PlayerPath", "CameraPath")]
 script = ExtResource("26_sxofc")
 PlayerPath = NodePath("../../../../Static/Paths/Rukh5")
 CameraPath = NodePath("../../../../Static/Paths/Rukh5")
 CameraSettings = ExtResource("29_7wf5w")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="PerfectAct/Objects/GateTrigger"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="PerfectAct/Objects/GateTrigger" unique_id=771570536]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3, 0)
 shape = SubResource("BoxShape3D_5yb3a")
 
-[node name="Gate2" parent="PerfectAct/Objects" instance=ExtResource("35_b8nsb")]
+[node name="Gate2" parent="PerfectAct/Objects" unique_id=802470417 instance=ExtResource("35_b8nsb")]
 transform = Transform3D(1, 0, 0, 0, 1.75, 0, 0, 0, 1, 0, 0, -18)
 respawnAnimation = 2
 activationSpeedScale = 10.0
 
-[node name="EnemyStone1" parent="PerfectAct/Objects" instance=ExtResource("36_yp1q0")]
+[node name="EnemyStone1" parent="PerfectAct/Objects" unique_id=2075473002 instance=ExtResource("36_yp1q0")]
 transform = Transform3D(-1.5, 0, -2.26494e-07, 0, 1, 0, 2.26494e-07, 0, -1.5, 0, 1, 5)
 enemyCount = 3
 
-[node name="Switch1" parent="PerfectAct/Objects" instance=ExtResource("41_ax6yr")]
+[node name="Switch1" parent="PerfectAct/Objects" unique_id=1322198677 instance=ExtResource("41_ax6yr")]
 transform = Transform3D(-1, 0, -1.50996e-07, 0, 1, 0, 1.50996e-07, 0, -1, 0, 0.1, 5)
 
-[node name="Spring" parent="PerfectAct/Objects/Switch1" instance=ExtResource("37_r34q0")]
+[node name="Spring" parent="PerfectAct/Objects/Switch1" unique_id=483574583 instance=ExtResource("37_r34q0")]
 transform = Transform3D(-0.965926, 0, 0.258819, 0, 1, 0, -0.258819, 0, -0.965926, 0, 0, 0)
 startHidden = true
 MiddleHeight = 18.0
 FinalHeight = 16.0
 Distance = 3.0
 
-[node name="Path" type="Node3D" parent="PerfectAct/Objects/Switch1/Spring" node_paths=PackedStringArray("path")]
+[node name="Path" type="Node3D" parent="PerfectAct/Objects/Switch1/Spring" unique_id=817856069 node_paths=PackedStringArray("path")]
 script = ExtResource("19_3jnno")
 path = NodePath("../../../../../Static/Paths/Tower5")
 affectCamera = false
 
-[node name="Camera" type="Node3D" parent="PerfectAct/Objects/Switch1/Spring"]
+[node name="Camera" type="Node3D" parent="PerfectAct/Objects/Switch1/Spring" unique_id=1467590524]
 script = ExtResource("17_b586c")
 settings = ExtResource("75_3ijk8")
 
-[node name="EnemyStone2" parent="PerfectAct/Objects" instance=ExtResource("36_yp1q0")]
+[node name="EnemyStone2" parent="PerfectAct/Objects" unique_id=2087096706 instance=ExtResource("36_yp1q0")]
 transform = Transform3D(-1.5, 0, -1.31134e-07, 0, 1, 0, 1.31134e-07, 0, -1.5, -4, 1.1, 0)
 enemyCount = 1
 
-[node name="Switch2" parent="PerfectAct/Objects" instance=ExtResource("41_ax6yr")]
+[node name="Switch2" parent="PerfectAct/Objects" unique_id=2054347052 instance=ExtResource("41_ax6yr")]
 transform = Transform3D(-1, 0, -8.74227e-08, 0, 1, 0, 8.74228e-08, 0, -1, -4, 0.1, 0)
 
-[node name="Spring" parent="PerfectAct/Objects/Switch2" instance=ExtResource("37_r34q0")]
+[node name="Spring" parent="PerfectAct/Objects/Switch2" unique_id=761177471 instance=ExtResource("37_r34q0")]
 transform = Transform3D(-0.939693, -0.0885214, -0.330366, 0, 0.965926, -0.258819, 0.34202, -0.24321, -0.907673, 0, 0.199999, 0)
 startHidden = true
 MiddleHeight = 37.0
 FinalHeight = 31.5
 Distance = 8.0
 
-[node name="Path" type="Node3D" parent="PerfectAct/Objects/Switch2/Spring" node_paths=PackedStringArray("path")]
+[node name="Path" type="Node3D" parent="PerfectAct/Objects/Switch2/Spring" unique_id=1575540455 node_paths=PackedStringArray("path")]
 script = ExtResource("19_3jnno")
 path = NodePath("../../../../../Static/Paths/Tower5Sidle")
 
-[node name="Camera" type="Node3D" parent="PerfectAct/Objects/Switch2/Spring"]
+[node name="Camera" type="Node3D" parent="PerfectAct/Objects/Switch2/Spring" unique_id=2143584795]
 script = ExtResource("17_b586c")
 settings = ExtResource("75_3ijk8")
 
-[node name="EnemyStone3" parent="PerfectAct/Objects" instance=ExtResource("36_yp1q0")]
+[node name="EnemyStone3" parent="PerfectAct/Objects" unique_id=1198622118 instance=ExtResource("36_yp1q0")]
 transform = Transform3D(-1.5, 0, -1.31134e-07, 0, 1, 0, 1.31134e-07, 0, -1.5, 4, 1, 0)
 enemyCount = 1
 
-[node name="Switch3" parent="PerfectAct/Objects" instance=ExtResource("41_ax6yr")]
+[node name="Switch3" parent="PerfectAct/Objects" unique_id=1416451224 instance=ExtResource("41_ax6yr")]
 transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 4, 0, 0)
 
-[node name="Spring" parent="PerfectAct/Objects/Switch3" instance=ExtResource("37_r34q0")]
+[node name="Spring" parent="PerfectAct/Objects/Switch3" unique_id=1646581611 instance=ExtResource("37_r34q0")]
 transform = Transform3D(-0.984808, -0.0449435, -0.167731, 0, 0.965926, -0.258819, 0.173648, -0.254887, -0.951251, 0, 0.299999, 0)
 startHidden = true
 MiddleHeight = 44.0
 FinalHeight = 40.0
 Distance = 6.0
 
-[node name="Path" type="Node3D" parent="PerfectAct/Objects/Switch3/Spring" node_paths=PackedStringArray("path")]
+[node name="Path" type="Node3D" parent="PerfectAct/Objects/Switch3/Spring" unique_id=1826420417 node_paths=PackedStringArray("path")]
 script = ExtResource("19_3jnno")
 path = NodePath("../../../../../Static/Paths/TowerTop5")
 
-[node name="Camera" type="Node3D" parent="PerfectAct/Objects/Switch3/Spring"]
+[node name="Camera" type="Node3D" parent="PerfectAct/Objects/Switch3/Spring" unique_id=1544225433]
 script = ExtResource("17_b586c")
 settings = ExtResource("75_3ijk8")
 
-[node name="EnemyGroup1" type="Node3D" parent="PerfectAct/Objects"]
+[node name="EnemyGroup1" type="Node3D" parent="PerfectAct/Objects" unique_id=42632641]
 transform = Transform3D(-1, 0, -1.50996e-07, 0, 1, 0, 1.50996e-07, 0, -1, 0, 0, 0)
 
-[node name="GreenMajin" parent="PerfectAct/Objects/EnemyGroup1" instance=ExtResource("34_ttm40")]
+[node name="GreenMajin" parent="PerfectAct/Objects/EnemyGroup1" unique_id=1095790447 instance=ExtResource("34_ttm40")]
 transform = Transform3D(1, 0, -6.3573e-08, 0, 1, 0, 6.3573e-08, 0, 1, -0.5, 0, 5)
 
-[node name="BlueMajin" parent="PerfectAct/Objects/EnemyGroup1" instance=ExtResource("56_l6hdc")]
+[node name="BlueMajin" parent="PerfectAct/Objects/EnemyGroup1" unique_id=1878408030 instance=ExtResource("56_l6hdc")]
 transform = Transform3D(1, 0, -6.3573e-08, 0, 1, 0, 6.3573e-08, 0, 1, 2, 1, 2)
 
-[node name="RedMajin" parent="PerfectAct/Objects/EnemyGroup1" instance=ExtResource("57_b4m25")]
+[node name="RedMajin" parent="PerfectAct/Objects/EnemyGroup1" unique_id=1544704511 instance=ExtResource("57_b4m25")]
 transform = Transform3D(1, 0, -6.3573e-08, 0, 1, 0, 6.3573e-08, 0, 1, 0, 2, 0)
 "Rotation Settings/Track Player" = false
 "Rotation Settings/Rotation Time" = 1.0
@@ -224,118 +315,118 @@ transform = Transform3D(1, 0, -6.3573e-08, 0, 1, 0, 6.3573e-08, 0, 1, 0, 2, 0)
 "Attack Settings/Flame Inactive Time" = 1.5
 "Attack Settings/Attack Instantly" = true
 
-[node name="FirstFloor" type="Node3D" parent="PerfectAct/Objects"]
+[node name="FirstFloor" type="Node3D" parent="PerfectAct/Objects" unique_id=1611569251]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 15, 0)
 
-[node name="TowerInteriorPlatform1" parent="PerfectAct/Objects/FirstFloor" instance=ExtResource("76_eq8su")]
+[node name="TowerInteriorPlatform1" parent="PerfectAct/Objects/FirstFloor" unique_id=222869801 instance=ExtResource("76_eq8su")]
 transform = Transform3D(-0.707107, 0, -0.707107, 0, 1, 0, 0.707107, 0, -0.707107, 5.09119, 12, 5.62012)
 
-[node name="StaticGate1" parent="PerfectAct/Objects/FirstFloor" instance=ExtResource("35_b8nsb")]
+[node name="StaticGate1" parent="PerfectAct/Objects/FirstFloor" unique_id=128453771 instance=ExtResource("35_b8nsb")]
 transform = Transform3D(-1.74846e-08, 0, -1, 0, 2.3, 0, 0.4, 0, -4.37114e-08, 0.150024, 1.00001, 7.59998)
 
-[node name="TowerInteriorPlatform2" parent="PerfectAct/Objects/FirstFloor" instance=ExtResource("76_eq8su")]
+[node name="TowerInteriorPlatform2" parent="PerfectAct/Objects/FirstFloor" unique_id=1728717292 instance=ExtResource("76_eq8su")]
 transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 9, 7.59998)
 
-[node name="StaticGate2" parent="PerfectAct/Objects/FirstFloor" instance=ExtResource("35_b8nsb")]
+[node name="StaticGate2" parent="PerfectAct/Objects/FirstFloor" unique_id=783195160 instance=ExtResource("35_b8nsb")]
 transform = Transform3D(-0.282843, 0, 0.707107, 0, 3.2, 0, -0.282843, 0, -0.707107, 5.21063, 1.00001, 5.40796)
 
-[node name="SpikeBallStatic1" parent="PerfectAct/Objects/FirstFloor" instance=ExtResource("66_0ttn5")]
+[node name="SpikeBallStatic1" parent="PerfectAct/Objects/FirstFloor" unique_id=2032950437 instance=ExtResource("66_0ttn5")]
 transform = Transform3D(0.702745, 0.485715, -0.519837, -0.423861, 0.872687, 0.242404, 0.571394, 0.0499905, 0.819152, -7.59998, 1, -3.19995)
 
-[node name="SpikeBallStatic2" parent="PerfectAct/Objects/FirstFloor" instance=ExtResource("66_0ttn5")]
+[node name="SpikeBallStatic2" parent="PerfectAct/Objects/FirstFloor" unique_id=1322213184 instance=ExtResource("66_0ttn5")]
 transform = Transform3D(0.524685, -0.375, 0.764252, 0.00661426, 0.899519, 0.436831, -0.851271, -0.224144, 0.474444, -4.1062, 1.5, -6.75)
 
-[node name="TowerInteriorPlatform3" parent="PerfectAct/Objects/FirstFloor" instance=ExtResource("76_eq8su")]
+[node name="TowerInteriorPlatform3" parent="PerfectAct/Objects/FirstFloor" unique_id=618421371 instance=ExtResource("76_eq8su")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 9, -7.5)
 
-[node name="Ivy1" parent="PerfectAct/Objects/FirstFloor" instance=ExtResource("58_apfho")]
+[node name="Ivy1" parent="PerfectAct/Objects/FirstFloor" unique_id=1735623913 instance=ExtResource("58_apfho")]
 transform = Transform3D(0.422618, 0, 0.906308, 0, 1, 0, -0.906308, 0, 0.422618, 0, 8.40001, -6.69995)
 Length = 7
 "Secondary Settings/Middle Height" = 3.0
 "Secondary Settings/Final Height" = 2.0
 "Secondary Settings/Distance" = 4.0
 
-[node name="SpikeBall1" parent="PerfectAct/Objects/FirstFloor" instance=ExtResource("54_8sats")]
+[node name="SpikeBall1" parent="PerfectAct/Objects/FirstFloor" unique_id=1140568347 instance=ExtResource("54_8sats")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.3, 0.2, -6.5)
 Movement/Mode = 0
 
-[node name="SpikeBall2" parent="PerfectAct/Objects/FirstFloor" instance=ExtResource("54_8sats")]
+[node name="SpikeBall2" parent="PerfectAct/Objects/FirstFloor" unique_id=1413085325 instance=ExtResource("54_8sats")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, -8)
 Movement/Mode = 0
 
-[node name="SpikeBall3" parent="PerfectAct/Objects/FirstFloor" instance=ExtResource("54_8sats")]
+[node name="SpikeBall3" parent="PerfectAct/Objects/FirstFloor" unique_id=1158625564 instance=ExtResource("54_8sats")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.7, 0.2, -6.5)
 Movement/Mode = 0
 
-[node name="SpikeBall4" parent="PerfectAct/Objects/FirstFloor" instance=ExtResource("54_8sats")]
+[node name="SpikeBall4" parent="PerfectAct/Objects/FirstFloor" unique_id=272413495 instance=ExtResource("54_8sats")]
 transform = Transform3D(1.06066, 0, -1.06066, 0, 1.5, 0, 1.06066, 0, 1.06066, 4.497, 0.5, -5.79699)
 Movement/Mode = 0
 
-[node name="SpikeBall5" parent="PerfectAct/Objects/FirstFloor" instance=ExtResource("54_8sats")]
+[node name="SpikeBall5" parent="PerfectAct/Objects/FirstFloor" unique_id=660645575 instance=ExtResource("54_8sats")]
 transform = Transform3D(1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.5, 7.48, 0.5, -3)
 Movement/Mode = 0
 
-[node name="BlueMajin1" parent="PerfectAct/Objects/FirstFloor" instance=ExtResource("56_l6hdc")]
+[node name="BlueMajin1" parent="PerfectAct/Objects/FirstFloor" unique_id=2028260036 instance=ExtResource("56_l6hdc")]
 transform = Transform3D(-0.866025, 0, -0.5, 0, 1, 0, 0.5, 0, -0.866025, 7, 2, -3)
 rangeOverride = 10
 
-[node name="BlueMajin2" parent="PerfectAct/Objects/FirstFloor" instance=ExtResource("56_l6hdc")]
+[node name="BlueMajin2" parent="PerfectAct/Objects/FirstFloor" unique_id=117918460 instance=ExtResource("56_l6hdc")]
 transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, 7.5, 1.2, 1)
 rangeOverride = 10
 
-[node name="Switch" parent="PerfectAct/Objects/FirstFloor" instance=ExtResource("41_ax6yr")]
+[node name="Switch" parent="PerfectAct/Objects/FirstFloor" unique_id=464014719 instance=ExtResource("41_ax6yr")]
 transform = Transform3D(0.707107, 0, -0.707107, 0, 1, 0, 0.707107, 0, 0.707107, 6.5, 1.1, 4.5)
 
-[node name="Spring" parent="PerfectAct/Objects/FirstFloor/Switch" instance=ExtResource("37_r34q0")]
+[node name="Spring" parent="PerfectAct/Objects/FirstFloor/Switch" unique_id=885318073 instance=ExtResource("37_r34q0")]
 transform = Transform3D(-0.34202, -0.469846, -0.813798, 0, 0.866025, -0.5, 0.939692, -0.17101, -0.296198, 0, 0, 0)
 startHidden = true
 MiddleHeight = 2.0
 FinalHeight = -16.0
 Distance = 15.0
 
-[node name="Path" type="Node3D" parent="PerfectAct/Objects/FirstFloor/Switch/Spring" node_paths=PackedStringArray("path")]
+[node name="Path" type="Node3D" parent="PerfectAct/Objects/FirstFloor/Switch/Spring" unique_id=494634005 node_paths=PackedStringArray("path")]
 script = ExtResource("19_3jnno")
 path = NodePath("../../../../../../Static/Paths/Rukh5")
 pathMode = 1
 
-[node name="Layer1Culler" type="Node3D" parent="PerfectAct/Objects"]
+[node name="Layer1Culler" type="Node3D" parent="PerfectAct/Objects" unique_id=782937237]
 script = ExtResource("8_chn6w")
 
-[node name="ItemBox" parent="PerfectAct/Objects/Layer1Culler" instance=ExtResource("60_bwopr")]
+[node name="ItemBox" parent="PerfectAct/Objects/Layer1Culler" unique_id=1559055311 instance=ExtResource("60_bwopr")]
 transform = Transform3D(0.999999, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, -15)
 "Spawn Settings/Spawn Pearls" = true
 "Spawn Settings/Amount" = 10
 
-[node name="RedMajin" parent="PerfectAct/Objects/Layer1Culler" instance=ExtResource("57_b4m25")]
+[node name="RedMajin" parent="PerfectAct/Objects/Layer1Culler" unique_id=1389999028 instance=ExtResource("57_b4m25")]
 transform = Transform3D(-1, 0, -8.74227e-08, 0, 1, 0, 8.74228e-08, 0, -1, -4, 2.1, 0)
 "Rotation Settings/Track Player" = false
 "Rotation Settings/Rotation Time" = 1.0
 "Attack Settings/Flame Active Time" = 2.0
 "Attack Settings/Flame Inactive Time" = 2.0
 
-[node name="SecondFloor" type="Node3D" parent="PerfectAct/Objects"]
+[node name="SecondFloor" type="Node3D" parent="PerfectAct/Objects" unique_id=819847206]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 32, 0)
 
-[node name="StaticGate1" parent="PerfectAct/Objects/SecondFloor" instance=ExtResource("35_b8nsb")]
+[node name="StaticGate1" parent="PerfectAct/Objects/SecondFloor" unique_id=1155057412 instance=ExtResource("35_b8nsb")]
 transform = Transform3D(0.282843, 0, -0.707107, 0, 2.3, 0, 0.282843, 0, 0.707107, 5.3119, 0.0800079, 5.54937)
 
-[node name="SpikeBall1" parent="PerfectAct/Objects/SecondFloor" instance=ExtResource("54_8sats")]
+[node name="SpikeBall1" parent="PerfectAct/Objects/SecondFloor" unique_id=178600877 instance=ExtResource("54_8sats")]
 transform = Transform3D(1.25, 0, 0, 0, 1.25, 0, 0, 0, 1.25, 1.625, -0.5, 7.475)
 
-[node name="SpikeBall2" parent="PerfectAct/Objects/SecondFloor" instance=ExtResource("54_8sats")]
+[node name="SpikeBall2" parent="PerfectAct/Objects/SecondFloor" unique_id=751362248 instance=ExtResource("54_8sats")]
 transform = Transform3D(0.883883, 0, -0.883883, 0, 1.25, 0, 0.883883, 0, 0.883883, 4.14798, -0.5, 6.64089)
 
-[node name="StaticGate2" parent="PerfectAct/Objects/SecondFloor" instance=ExtResource("35_b8nsb")]
+[node name="StaticGate2" parent="PerfectAct/Objects/SecondFloor" unique_id=1941812275 instance=ExtResource("35_b8nsb")]
 transform = Transform3D(-0.4, 0, 1.50996e-07, 0, 1.8, 0, -6.03983e-08, 0, -1, -7.6, 1.5, 2)
 
-[node name="SpikePanelCull" type="Node3D" parent="PerfectAct/Objects/SecondFloor"]
+[node name="SpikePanelCull" type="Node3D" parent="PerfectAct/Objects/SecondFloor" unique_id=223834071]
 transform = Transform3D(-4.37114e-08, 1, -4.37114e-08, 0, -4.37114e-08, -1, -1, -4.37114e-08, 0, -7.09998, 0.799999, 0)
 script = ExtResource("8_chn6w")
 
-[node name="SpikePanelGroup1" type="Node3D" parent="PerfectAct/Objects/SecondFloor/SpikePanelCull"]
+[node name="SpikePanelGroup1" type="Node3D" parent="PerfectAct/Objects/SecondFloor/SpikePanelCull" unique_id=1279604614]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, -8.35188e-23, 1, 0, 0, 0)
 
-[node name="SpikePanel1" parent="PerfectAct/Objects/SecondFloor/SpikePanelCull/SpikePanelGroup1" instance=ExtResource("59_2hgap")]
+[node name="SpikePanel1" parent="PerfectAct/Objects/SecondFloor/SpikePanelCull/SpikePanelGroup1" unique_id=798172571 instance=ExtResource("59_2hgap")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.75, 0, 0)
 stateLengths = PackedFloat32Array(2, 0.5, 0.5)
 "Start Paused" = false
@@ -344,7 +435,7 @@ stateLengths = PackedFloat32Array(2, 0.5, 0.5)
 "State Lengths/warning" = 0.5
 "State Lengths/active" = 0.5
 
-[node name="SpikePanel2" parent="PerfectAct/Objects/SecondFloor/SpikePanelCull/SpikePanelGroup1" instance=ExtResource("59_2hgap")]
+[node name="SpikePanel2" parent="PerfectAct/Objects/SecondFloor/SpikePanelCull/SpikePanelGroup1" unique_id=422402036 instance=ExtResource("59_2hgap")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.75, 0, 0)
 stateLengths = PackedFloat32Array(2, 0.5, 0.5)
 "Start Paused" = false
@@ -353,7 +444,7 @@ stateLengths = PackedFloat32Array(2, 0.5, 0.5)
 "State Lengths/warning" = 0.5
 "State Lengths/active" = 0.5
 
-[node name="SpikePanel3" parent="PerfectAct/Objects/SecondFloor/SpikePanelCull" instance=ExtResource("59_2hgap")]
+[node name="SpikePanel3" parent="PerfectAct/Objects/SecondFloor/SpikePanelCull" unique_id=1225338934 instance=ExtResource("59_2hgap")]
 transform = Transform3D(0.906308, -0.422618, 0, 0.422618, 0.906308, 0, -2.66007e-14, 1.14656e-14, 1, 2.91553, 0.28125, 0)
 stateLengths = PackedFloat32Array(2, 0.5, 0.5)
 "Current State" = 2
@@ -362,10 +453,10 @@ stateLengths = PackedFloat32Array(2, 0.5, 0.5)
 "State Lengths/warning" = 0.5
 "State Lengths/active" = 0.5
 
-[node name="SpikePanelGroup2" type="Node3D" parent="PerfectAct/Objects/SecondFloor/SpikePanelCull"]
+[node name="SpikePanelGroup2" type="Node3D" parent="PerfectAct/Objects/SecondFloor/SpikePanelCull" unique_id=549836903]
 transform = Transform3D(0.707107, -0.707107, 0, 0.707107, 0.707107, 0, -4.04309e-14, -3.77288e-14, 1, 5.09119, 2.0799, 0)
 
-[node name="SpikePanel1" parent="PerfectAct/Objects/SecondFloor/SpikePanelCull/SpikePanelGroup2" instance=ExtResource("59_2hgap")]
+[node name="SpikePanel1" parent="PerfectAct/Objects/SecondFloor/SpikePanelCull/SpikePanelGroup2" unique_id=1114237394 instance=ExtResource("59_2hgap")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.75, 0, 0)
 stateLengths = PackedFloat32Array(2, 0.5, 0.5)
 "Start Paused" = false
@@ -374,7 +465,7 @@ stateLengths = PackedFloat32Array(2, 0.5, 0.5)
 "State Lengths/warning" = 0.5
 "State Lengths/active" = 0.5
 
-[node name="SpikePanel2" parent="PerfectAct/Objects/SecondFloor/SpikePanelCull/SpikePanelGroup2" instance=ExtResource("59_2hgap")]
+[node name="SpikePanel2" parent="PerfectAct/Objects/SecondFloor/SpikePanelCull/SpikePanelGroup2" unique_id=802267028 instance=ExtResource("59_2hgap")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.75, 0, 0)
 stateLengths = PackedFloat32Array(2, 0.5, 0.5)
 "Start Paused" = false
@@ -383,38 +474,38 @@ stateLengths = PackedFloat32Array(2, 0.5, 0.5)
 "State Lengths/warning" = 0.5
 "State Lengths/active" = 0.5
 
-[node name="StaticGate3" parent="PerfectAct/Objects/SecondFloor" instance=ExtResource("35_b8nsb")]
+[node name="StaticGate3" parent="PerfectAct/Objects/SecondFloor" unique_id=1014106002 instance=ExtResource("35_b8nsb")]
 transform = Transform3D(-0.282843, 0, 0.707107, 0, 1.8, 0, -0.282843, 0, -0.707107, -4, 1.5, -6.8)
 
-[node name="Switch" parent="PerfectAct/Objects/SecondFloor" instance=ExtResource("41_ax6yr")]
+[node name="Switch" parent="PerfectAct/Objects/SecondFloor" unique_id=889110088 instance=ExtResource("41_ax6yr")]
 transform = Transform3D(-0.707107, 0, 0.707107, 0, 1, 0, -0.707107, 0, -0.707107, 6.42426, 0.1, 4.57574)
 
-[node name="Spring" parent="PerfectAct/Objects/SecondFloor/Switch" instance=ExtResource("37_r34q0")]
+[node name="Spring" parent="PerfectAct/Objects/SecondFloor/Switch" unique_id=887644228 instance=ExtResource("37_r34q0")]
 transform = Transform3D(0.34202, 0.469846, 0.813798, 0, 0.866025, -0.5, -0.939693, 0.17101, 0.296198, 0, 0, 0)
 startHidden = true
 MiddleHeight = 2.0
 FinalHeight = -32.0
 Distance = 15.0
 
-[node name="Layer2Culler" type="Node3D" parent="PerfectAct/Objects"]
+[node name="Layer2Culler" type="Node3D" parent="PerfectAct/Objects" unique_id=1449072646]
 script = ExtResource("8_chn6w")
 
-[node name="ItemBox" parent="PerfectAct/Objects/Layer2Culler" instance=ExtResource("60_bwopr")]
+[node name="ItemBox" parent="PerfectAct/Objects/Layer2Culler" unique_id=1375243020 instance=ExtResource("60_bwopr")]
 transform = Transform3D(0.999999, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, -15)
 "Spawn Settings/Spawn Pearls" = true
 "Spawn Settings/Amount" = 10
 
-[node name="RedMajin" parent="PerfectAct/Objects/Layer2Culler" instance=ExtResource("57_b4m25")]
+[node name="RedMajin" parent="PerfectAct/Objects/Layer2Culler" unique_id=1520785179 instance=ExtResource("57_b4m25")]
 transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 4, 2, 0)
 "Rotation Settings/Track Player" = false
 "Rotation Settings/Rotation Time" = 1.0
 "Attack Settings/Flame Active Time" = 2.0
 "Attack Settings/Flame Inactive Time" = 2.0
 
-[node name="MissileGeneratorGroup" type="Node3D" parent="PerfectAct/Objects"]
+[node name="MissileGeneratorGroup" type="Node3D" parent="PerfectAct/Objects" unique_id=713106518]
 transform = Transform3D(-0.707107, -0.0123407, 0.706999, 0, 0.999848, 0.0174524, -0.707107, 0.0123407, -0.706999, 81, 42.6, -81)
 
-[node name="MissileGenerator1" parent="PerfectAct/Objects/MissileGeneratorGroup" instance=ExtResource("27_om2pp")]
+[node name="MissileGenerator1" parent="PerfectAct/Objects/MissileGeneratorGroup" unique_id=215001734 instance=ExtResource("27_om2pp")]
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, -1.5, -3.8147e-06, 0)
 isInvisibleSpawner = true
 missileLifetime = 4.0
@@ -422,7 +513,7 @@ missleSpeed = 30.0
 spawnInterval = 2.0
 spawnTimer = 0.0
 
-[node name="MissileGenerator2" parent="PerfectAct/Objects/MissileGeneratorGroup" instance=ExtResource("27_om2pp")]
+[node name="MissileGenerator2" parent="PerfectAct/Objects/MissileGeneratorGroup" unique_id=1137802983 instance=ExtResource("27_om2pp")]
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0)
 isInvisibleSpawner = true
 missileLifetime = 4.0
@@ -430,7 +521,7 @@ missleSpeed = 30.0
 spawnInterval = 2.0
 spawnTimer = 0.0
 
-[node name="MissileGenerator3" parent="PerfectAct/Objects/MissileGeneratorGroup" instance=ExtResource("27_om2pp")]
+[node name="MissileGenerator3" parent="PerfectAct/Objects/MissileGeneratorGroup" unique_id=1150520502 instance=ExtResource("27_om2pp")]
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 1.5, 0, 0)
 isInvisibleSpawner = true
 missileLifetime = 4.0
@@ -438,10 +529,10 @@ missleSpeed = 30.0
 spawnInterval = 2.0
 spawnTimer = 0.0
 
-[node name="Goal" parent="PerfectAct/Objects" instance=ExtResource("11_wdp83")]
+[node name="Goal" parent="PerfectAct/Objects" unique_id=1663031848 instance=ExtResource("11_wdp83")]
 transform = Transform3D(0.707107, 0, -0.707107, 0, 1, 0, 0.707107, 0, 0.707107, 13.435, 48, -13.435)
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="PerfectAct/Objects/Goal"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="PerfectAct/Objects/Goal" unique_id=2067083424]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -4, 0)
 shape = SubResource("BoxShape3D_5yb3a")
 

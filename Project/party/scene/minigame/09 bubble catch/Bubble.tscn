@@ -1,4 +1,4 @@
-[gd_scene load_steps=24 format=3 uid="uid://ccwgyiyqqppfx"]
+[gd_scene format=3 uid="uid://ccwgyiyqqppfx"]
 
 [ext_resource type="Script" uid="uid://ckucw62sohdjn" path="res://party/scene/minigame/09 bubble catch/script/bubble.gd" id="1_t3awv"]
 [ext_resource type="Material" uid="uid://wtqfiuc0wid2" path="res://party/scene/minigame/09 bubble catch/material/Bubble P1.tres" id="2_0q6sf"]
@@ -164,7 +164,7 @@ alpha_curve = SubResource("CurveTexture_08xxq")
 
 [sub_resource type="QuadMesh" id="QuadMesh_nmnon"]
 
-[node name="Bubble" type="Area3D" node_paths=PackedStringArray("animator", "particles", "mesh")]
+[node name="Bubble" type="Area3D" unique_id=1049898922 node_paths=PackedStringArray("animator", "particles", "mesh")]
 collision_layer = 8
 collision_mask = 0
 monitoring = false
@@ -174,22 +174,20 @@ particles = NodePath("Swirls")
 mesh = NodePath("Mesh")
 bubble_materials = Array[Material]([ExtResource("2_0q6sf"), ExtResource("3_gcryn"), ExtResource("4_ny18l"), ExtResource("5_nmnon")])
 
-[node name="Mesh" type="MeshInstance3D" parent="."]
+[node name="Mesh" type="MeshInstance3D" parent="." unique_id=1934266088]
 layers = 32
 material_override = ExtResource("2_0q6sf")
 cast_shadow = 0
 mesh = SubResource("QuadMesh_t3awv")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=322938011]
 shape = SubResource("SphereShape3D_asyjt")
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
-libraries = {
-&"": SubResource("AnimationLibrary_pvslu")
-}
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=679286148]
+libraries/ = SubResource("AnimationLibrary_pvslu")
 next/capture = &"move"
 
-[node name="Swirls" type="GPUParticles3D" parent="." node_paths=PackedStringArray("subSystems")]
+[node name="Swirls" type="GPUParticles3D" parent="." unique_id=2102356933 node_paths=PackedStringArray("subSystems")]
 layers = 32
 material_override = ExtResource("6_nmnon")
 cast_shadow = 0
@@ -203,7 +201,7 @@ draw_pass_1 = SubResource("QuadMesh_nmnon")
 script = ExtResource("6_ny18l")
 subSystems = [NodePath("Rings")]
 
-[node name="Rings" type="GPUParticles3D" parent="Swirls"]
+[node name="Rings" type="GPUParticles3D" parent="Swirls" unique_id=1830562115]
 layers = 32
 material_override = ExtResource("8_ybtt0")
 cast_shadow = 0

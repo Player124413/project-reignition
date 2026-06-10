@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=3 uid="uid://c61jp8ke67ib7"]
+[gd_scene format=3 uid="uid://c61jp8ke67ib7"]
 
 [ext_resource type="Script" uid="uid://7k1mo133gtqy" path="res://object/stage/common/resource/script/SpikeBallPhysics.cs" id="1_qqj0m"]
 [ext_resource type="Material" uid="uid://cn2oss03xobla" path="res://effect/particle/material/environment/Sand Dust.tres" id="2_1imd6"]
@@ -261,7 +261,7 @@ _data = {
 &"spawn": SubResource("Animation_exb0i")
 }
 
-[node name="SpikeBallPhysics" type="RigidBody3D" node_paths=PackedStringArray("animator")]
+[node name="SpikeBallPhysics" type="RigidBody3D" unique_id=1805647825 node_paths=PackedStringArray("animator")]
 physics_interpolation_mode = 2
 collision_layer = 24
 collision_mask = 18
@@ -270,7 +270,7 @@ script = ExtResource("1_qqj0m")
 IsSpawnedFromEditor = true
 animator = NodePath("AnimationPlayer")
 
-[node name="DespawnParticle" type="GPUParticles3D" parent="."]
+[node name="DespawnParticle" type="GPUParticles3D" parent="." unique_id=1696120260]
 layers = 32
 cast_shadow = 0
 emitting = false
@@ -282,28 +282,26 @@ visibility_aabb = AABB(-2, -2, -2, 4, 4, 4)
 process_material = SubResource("ParticleProcessMaterial_8f0vy")
 draw_pass_1 = SubResource("QuadMesh_udrot")
 
-[node name="Root" parent="." instance=ExtResource("3_1adac")]
+[node name="Root" parent="." unique_id=946535428 instance=ExtResource("3_1adac")]
 transform = Transform3D(0.999996, 0, 0, 0, 1, 0, 0, 0, 0.999996, 0, 0, 0)
 
-[node name="Hitbox" type="Area3D" parent="."]
+[node name="Hitbox" type="Area3D" parent="." unique_id=910480743]
 transform = Transform3D(0.999996, 0, 0, 0, 1, 0, 0, 0, 0.999996, 0, 0, 0)
 collision_layer = 0
 collision_mask = 2
 monitorable = false
 script = ExtResource("4_0wlt3")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Hitbox"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Hitbox" unique_id=1313831118]
 shape = SubResource("2")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=23049435]
 shape = SubResource("3")
 
-[node name="DespawnSFX" type="AudioStreamPlayer3D" parent="."]
+[node name="DespawnSFX" type="AudioStreamPlayer3D" parent="." unique_id=1199523425]
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
-libraries = {
-&"": SubResource("AnimationLibrary_x4w3n")
-}
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=1634451149]
+libraries/ = SubResource("AnimationLibrary_x4w3n")
 
 [connection signal="DamagedPlayer" from="Hitbox" to="." method="BounceFromPlayer"]
 [connection signal="area_entered" from="Hitbox" to="Hitbox" method="OnEntered"]

@@ -1,4 +1,4 @@
-[gd_scene load_steps=21 format=3 uid="uid://dyfndruxwjpbx"]
+[gd_scene format=3 uid="uid://dyfndruxwjpbx"]
 
 [ext_resource type="Script" uid="uid://pnh70abopq8e" path="res://object/stage/common/resource/script/Hazard.cs" id="1_b8sv5"]
 [ext_resource type="Script" uid="uid://c27oe48qjsjv4" path="res://area/4 levitated ruin/data/script/Missile.cs" id="1_p3oel"]
@@ -280,17 +280,17 @@ _data = {
 &"launch": SubResource("Animation_3h5ia")
 }
 
-[node name="Spear" type="Node3D" node_paths=PackedStringArray("animator", "hitbox")]
+[node name="Spear" type="Node3D" unique_id=864848858 node_paths=PackedStringArray("animator", "hitbox")]
 script = ExtResource("1_p3oel")
 lifetime = 2.0
 moveSpeed = 150.0
 animator = NodePath("AnimationPlayer")
 hitbox = NodePath("Hitbox")
 
-[node name="Spear" parent="." instance=ExtResource("2_yn34g")]
+[node name="Spear" parent="." unique_id=227988643 instance=ExtResource("2_yn34g")]
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 0, 0)
 
-[node name="Hitbox" type="Area3D" parent="."]
+[node name="Hitbox" type="Area3D" parent="." unique_id=881179272]
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 0, 0)
 collision_layer = 0
 collision_mask = 2
@@ -298,25 +298,25 @@ monitorable = false
 script = ExtResource("1_b8sv5")
 ignoreSpeedbreakingCharacters = true
 
-[node name="TipCollision" type="CollisionShape3D" parent="Hitbox"]
+[node name="TipCollision" type="CollisionShape3D" parent="Hitbox" unique_id=1186065863]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 6, 0)
 shape = SubResource("2")
 
-[node name="HandleCollision" type="CollisionShape3D" parent="Hitbox"]
+[node name="HandleCollision" type="CollisionShape3D" parent="Hitbox" unique_id=434294478]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 13, 0)
 shape = SubResource("3")
 
-[node name="ObjectHitbox" type="Area3D" parent="."]
+[node name="ObjectHitbox" type="Area3D" parent="." unique_id=1809201946]
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 0, 0)
 collision_layer = 0
 collision_mask = 8
 monitorable = false
 
-[node name="TipCollision" type="CollisionShape3D" parent="ObjectHitbox"]
+[node name="TipCollision" type="CollisionShape3D" parent="ObjectHitbox" unique_id=311153933]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 0)
 shape = SubResource("2")
 
-[node name="TipVFX" type="GPUParticles3D" parent="."]
+[node name="TipVFX" type="GPUParticles3D" parent="." unique_id=1800400638]
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 4.371139e-08, 1)
 layers = 32
 cast_shadow = 0
@@ -332,7 +332,7 @@ transform_align = 2
 process_material = SubResource("ParticleProcessMaterial_3h5ia")
 draw_pass_1 = SubResource("PlaneMesh_3h5ia")
 
-[node name="TipVFX2" type="GPUParticles3D" parent="."]
+[node name="TipVFX2" type="GPUParticles3D" parent="." unique_id=216132713]
 transform = Transform3D(0.25881907, 0, -0.9659258, 0.9659258, -4.371139e-08, 0.25881907, -4.222196e-08, -1, -1.1313343e-08, 0, 1.3113416e-07, 3)
 layers = 32
 cast_shadow = 0
@@ -348,7 +348,7 @@ transform_align = 2
 process_material = SubResource("ParticleProcessMaterial_3h5ia")
 draw_pass_1 = SubResource("PlaneMesh_3h5ia")
 
-[node name="SFX" type="AudioStreamPlayer3D" parent="."]
+[node name="SFX" type="AudioStreamPlayer3D" parent="." unique_id=1212907189]
 stream = ExtResource("3_4tk3g")
 attenuation_model = 3
 max_db = 0.0
@@ -357,11 +357,9 @@ attenuation_filter_cutoff_hz = 20500.0
 script = ExtResource("5_qlxs2")
 groupKey = &"spear"
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=1298384103]
 root_node = NodePath("../Hitbox")
-libraries = {
-&"": SubResource("AnimationLibrary_p3oel")
-}
+libraries/ = SubResource("AnimationLibrary_p3oel")
 
 [connection signal="area_entered" from="Hitbox" to="Hitbox" method="OnEntered"]
 [connection signal="area_exited" from="Hitbox" to="Hitbox" method="OnExited"]

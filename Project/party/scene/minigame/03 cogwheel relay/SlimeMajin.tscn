@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=3 uid="uid://be21lrysd2f75"]
+[gd_scene format=3 uid="uid://be21lrysd2f75"]
 
 [ext_resource type="Script" uid="uid://dd5b31n421be6" path="res://party/scene/minigame/03 cogwheel relay/script/majin_controller.gd" id="1_pkkib"]
 [ext_resource type="Material" uid="uid://m8tkr4fj8ghw" path="res://party/resource/character/model/material/Slime Red.tres" id="2_388ph"]
@@ -58,7 +58,7 @@ scale_max = 2.5
 scale_curve = SubResource("CurveTexture_wn8yn")
 alpha_curve = SubResource("CurveTexture_sap0e")
 
-[node name="SlimeMajin" type="Area3D" node_paths=PackedStringArray("collider", "mesh", "ceiling_raycast", "animator", "ground_raycast", "point_sfx", "fall_sfx", "move_vfx", "land_vfx", "rollback_timer") groups=["enemy"]]
+[node name="SlimeMajin" type="Area3D" unique_id=2070557139 node_paths=PackedStringArray("collider", "mesh", "ceiling_raycast", "animator", "ground_raycast", "point_sfx", "fall_sfx", "move_vfx", "land_vfx", "rollback_timer") groups=["enemy"]]
 collision_mask = 8
 script = ExtResource("1_pkkib")
 collider = NodePath("CollisionShape3D")
@@ -73,30 +73,30 @@ move_vfx = NodePath("Move")
 land_vfx = NodePath("Land")
 rollback_timer = NodePath("Rollback")
 
-[node name="SlimeMajin" parent="." instance=ExtResource("4_pkkib")]
+[node name="SlimeMajin" parent="." unique_id=1046217370 instance=ExtResource("4_pkkib")]
 transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 0, 0)
 
-[node name="AnimationPlayer" parent="SlimeMajin" index="1"]
+[node name="AnimationPlayer" parent="SlimeMajin" index="1" unique_id=1210098826]
 blend_times = [&"land", &"idle", 0.1]
 
-[node name="GroundCast" type="RayCast3D" parent="."]
+[node name="GroundCast" type="RayCast3D" parent="." unique_id=541310636]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
 enabled = false
 target_position = Vector3(0, -1.5, 0)
 collide_with_areas = true
 
-[node name="CeilingCast" type="RayCast3D" parent="."]
+[node name="CeilingCast" type="RayCast3D" parent="." unique_id=571488490]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
 enabled = false
 target_position = Vector3(0, 1, 0)
 collide_with_areas = true
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=1373393545]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
 shape = SubResource("SphereShape3D_pkkib")
 disabled = true
 
-[node name="Move" type="GPUParticles3D" parent="."]
+[node name="Move" type="GPUParticles3D" parent="." unique_id=1309524478]
 layers = 32
 material_override = ExtResource("9_gv4b2")
 emitting = false
@@ -106,7 +106,7 @@ fract_delta = false
 process_material = SubResource("ParticleProcessMaterial_wn8yn")
 draw_pass_1 = SubResource("QuadMesh_sap0e")
 
-[node name="Land" type="GPUParticles3D" parent="."]
+[node name="Land" type="GPUParticles3D" parent="." unique_id=603641158]
 layers = 32
 material_override = ExtResource("9_gv4b2")
 emitting = false
@@ -118,23 +118,23 @@ fract_delta = false
 process_material = SubResource("ParticleProcessMaterial_gv4b2")
 draw_pass_1 = SubResource("QuadMesh_sap0e")
 
-[node name="SFX" type="Node" parent="."]
+[node name="SFX" type="Node" parent="." unique_id=2128710916]
 
-[node name="Point" type="AudioStreamPlayer" parent="SFX"]
+[node name="Point" type="AudioStreamPlayer" parent="SFX" unique_id=550116992]
 stream = ExtResource("6_bexr2")
 bus = &"GAME SFX"
 script = ExtResource("7_nk1fd")
 group = "point"
 min_volume = 0.5
 
-[node name="Fall" type="AudioStreamPlayer" parent="SFX"]
+[node name="Fall" type="AudioStreamPlayer" parent="SFX" unique_id=1749607413]
 stream = ExtResource("7_gv4b2")
 bus = &"GAME SFX"
 script = ExtResource("7_nk1fd")
 group = "fall"
 min_volume = 0.5
 
-[node name="Rollback" type="Node" parent="."]
+[node name="Rollback" type="Node" parent="." unique_id=1581105815]
 script = ExtResource("5_388ph")
 
 [connection signal="area_entered" from="." to="." method="_on_area_entered"]

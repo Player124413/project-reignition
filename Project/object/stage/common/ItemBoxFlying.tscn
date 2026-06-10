@@ -1,4 +1,4 @@
-[gd_scene load_steps=30 format=3 uid="uid://cc64d8h51jyx2"]
+[gd_scene format=3 uid="uid://cc64d8h51jyx2"]
 
 [ext_resource type="Script" uid="uid://b4uel2yxe2ldm" path="res://object/stage/pickups/resource/script/ItemBox.cs" id="1_oatmb"]
 [ext_resource type="PackedScene" uid="uid://dpqfrq4sc5frh" path="res://object/stage/common/resource/model/ItemBoxWings.gltf" id="2_dsovg"]
@@ -528,7 +528,7 @@ _data = {
 &"show": SubResource("Animation_v7ak5")
 }
 
-[node name="ItemBoxFlying" type="Area3D"]
+[node name="ItemBoxFlying" type="Area3D" unique_id=628138897]
 collision_layer = 4
 collision_mask = 2
 script = ExtResource("1_oatmb")
@@ -540,26 +540,26 @@ animator = NodePath("AnimationPlayer")
 "Spawn Settings/Travel Delay Range" = 0.5
 "Spawn Settings/Travel Height" = 2.0
 
-[node name="ItemBoxWings" parent="." instance=ExtResource("2_dsovg")]
+[node name="ItemBoxWings" parent="." unique_id=627484894 instance=ExtResource("2_dsovg")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, 0)
 
-[node name="RootPosition" type="BoneAttachment3D" parent="ItemBoxWings/ItemBoxWingsRoot/Skeleton3D" index="1"]
-transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, 0, -0.0056, 0)
+[node name="RootPosition" type="BoneAttachment3D" parent="ItemBoxWings/ItemBoxWingsRoot/Skeleton3D" parent_id_path=PackedInt32Array(627484894, 1674695302) index="1" unique_id=357967087]
+transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, 0, -0.005599998, 0)
 bone_name = "root"
 bone_idx = 0
 
-[node name="Position" type="Node3D" parent="ItemBoxWings/ItemBoxWingsRoot/Skeleton3D/RootPosition"]
+[node name="Position" type="Node3D" parent="ItemBoxWings/ItemBoxWingsRoot/Skeleton3D/RootPosition" unique_id=2066537112]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.5)
 
-[node name="ItemBox" parent="ItemBoxWings/ItemBoxWingsRoot/Skeleton3D/RootPosition" instance=ExtResource("3_wgmxc")]
+[node name="ItemBox" parent="ItemBoxWings/ItemBoxWingsRoot/Skeleton3D/RootPosition" unique_id=989554839 instance=ExtResource("3_wgmxc")]
 transform = Transform3D(1, 0, 0, 0, 0, -1, 0, 1, 0, 0, 0, -0.808014)
 
-[node name="ItemBoxGlowMesh" parent="ItemBoxWings/ItemBoxWingsRoot/Skeleton3D/RootPosition/ItemBox/ItemBoxRoot/Skeleton3D" index="0"]
+[node name="ItemBoxGlowMesh" parent="ItemBoxWings/ItemBoxWingsRoot/Skeleton3D/RootPosition/ItemBox/ItemBoxRoot/Skeleton3D" parent_id_path=PackedInt32Array(989554839, 1186050322) index="0" unique_id=2077419525]
 visible = false
 transparency = 1.0
 cast_shadow = 0
 
-[node name="CollectFX" type="GPUParticles3D" parent="ItemBoxWings/ItemBoxWingsRoot/Skeleton3D/RootPosition" node_paths=PackedStringArray("subSystems")]
+[node name="CollectFX" type="GPUParticles3D" parent="ItemBoxWings/ItemBoxWingsRoot/Skeleton3D/RootPosition" unique_id=935991424 node_paths=PackedStringArray("subSystems")]
 layers = 32
 cast_shadow = 0
 emitting = false
@@ -575,7 +575,7 @@ draw_pass_1 = SubResource("QuadMesh_ichpa")
 script = ExtResource("5_86ivo")
 subSystems = [NodePath("Dust"), NodePath("Splatter")]
 
-[node name="Dust" type="GPUParticles3D" parent="ItemBoxWings/ItemBoxWingsRoot/Skeleton3D/RootPosition/CollectFX"]
+[node name="Dust" type="GPUParticles3D" parent="ItemBoxWings/ItemBoxWingsRoot/Skeleton3D/RootPosition/CollectFX" unique_id=1797641454]
 layers = 32
 cast_shadow = 0
 emitting = false
@@ -591,7 +591,7 @@ transform_align = 3
 process_material = SubResource("ParticleProcessMaterial_ydc7e")
 draw_pass_1 = SubResource("QuadMesh_6soeo")
 
-[node name="Splatter" type="GPUParticles3D" parent="ItemBoxWings/ItemBoxWingsRoot/Skeleton3D/RootPosition/CollectFX"]
+[node name="Splatter" type="GPUParticles3D" parent="ItemBoxWings/ItemBoxWingsRoot/Skeleton3D/RootPosition/CollectFX" unique_id=2001890453]
 layers = 32
 cast_shadow = 0
 emitting = false
@@ -607,30 +607,28 @@ transform_align = 3
 process_material = SubResource("ParticleProcessMaterial_ijwfr")
 draw_pass_1 = SubResource("QuadMesh_mpd54")
 
-[node name="AnimationPlayer" parent="ItemBoxWings" index="1"]
-autoplay = "wing"
+[node name="AnimationPlayer" parent="ItemBoxWings" index="1" unique_id=1538519871]
+autoplay = &"wing"
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=1321777704]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.2, 0)
 shape = SubResource("6")
 
-[node name="Collision" type="StaticBody3D" parent="." groups=["floor", "wall"]]
+[node name="Collision" type="StaticBody3D" parent="." unique_id=1651992509 groups=["floor", "wall"]]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.2, 0)
 collision_layer = 8
 collision_mask = 0
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Collision"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Collision" unique_id=398176917]
 shape = SubResource("6")
 
-[node name="SFX" type="AudioStreamPlayer" parent="."]
+[node name="SFX" type="AudioStreamPlayer" parent="." unique_id=1955332732]
 process_mode = 1
 stream = ExtResource("4_qfd32")
 bus = &"GAME SFX"
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
-libraries = {
-&"": SubResource("AnimationLibrary_c756k")
-}
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=1705335079]
+libraries/ = SubResource("AnimationLibrary_c756k")
 
 [connection signal="area_entered" from="." to="." method="OnEntered"]
 

@@ -1,4 +1,4 @@
-[gd_scene load_steps=29 format=3 uid="uid://c3d5r3parf5ur"]
+[gd_scene format=3 uid="uid://c3d5r3parf5ur"]
 
 [ext_resource type="FontFile" uid="uid://d1bvfghhgreq7" path="res://interface/font/otf/Rodin DB.otf" id="1_756x4"]
 [ext_resource type="Script" uid="uid://b42hufx4brpjy" path="res://interface/gameplay/pause/PauseSkill.cs" id="1_gprt5"]
@@ -202,22 +202,6 @@ tracks/0/keys = {
 "values": [ExtResource("3_mq2yy")]
 }
 
-[sub_resource type="Animation" id="Animation_5frjn"]
-resource_name = "wind"
-length = 0.001
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("Element:texture")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [ExtResource("2_uusj6")]
-}
-
 [sub_resource type="Animation" id="Animation_te6uu"]
 resource_name = "setting"
 length = 0.001
@@ -232,6 +216,22 @@ tracks/0/keys = {
 "transitions": PackedFloat32Array(1),
 "update": 1,
 "values": [ExtResource("9_te6uu")]
+}
+
+[sub_resource type="Animation" id="Animation_5frjn"]
+resource_name = "wind"
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Element:texture")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [ExtResource("2_uusj6")]
 }
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_jxd2u"]
@@ -251,7 +251,7 @@ _data = {
 &"wind": SubResource("Animation_5frjn")
 }
 
-[node name="PauseSkill" type="Control" node_paths=PackedStringArray("nameLabel", "animator")]
+[node name="PauseSkill" type="Control" unique_id=1210143654 node_paths=PackedStringArray("nameLabel", "animator")]
 custom_minimum_size = Vector2(680, 56)
 layout_mode = 3
 anchors_preset = 0
@@ -259,7 +259,7 @@ script = ExtResource("1_gprt5")
 nameLabel = NodePath("SkillList")
 animator = NodePath("AnimationPlayer")
 
-[node name="SkillList" type="Label" parent="."]
+[node name="SkillList" type="Label" parent="." unique_id=162656907]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -274,7 +274,7 @@ vertical_alignment = 1
 text_overrun_behavior = 1
 max_lines_visible = 7
 
-[node name="Element" type="TextureRect" parent="."]
+[node name="Element" type="TextureRect" parent="." unique_id=1317833179]
 layout_mode = 1
 anchors_preset = 11
 anchor_left = 1.0
@@ -288,7 +288,7 @@ texture = ExtResource("2_uusj6")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="Category" type="TextureRect" parent="Element"]
+[node name="Category" type="TextureRect" parent="Element" unique_id=2011084473]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -299,7 +299,5 @@ texture = ExtResource("3_mq2yy")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
-libraries = {
-&"": SubResource("AnimationLibrary_jxd2u")
-}
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=778025116]
+libraries/ = SubResource("AnimationLibrary_jxd2u")

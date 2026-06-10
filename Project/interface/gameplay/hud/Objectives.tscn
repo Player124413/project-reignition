@@ -1,4 +1,4 @@
-[gd_scene load_steps=47 format=3 uid="uid://b005oiw1u2ygf"]
+[gd_scene format=3 uid="uid://b005oiw1u2ygf"]
 
 [ext_resource type="Texture2D" uid="uid://q2red5fhpctn" path="res://interface/gameplay/hud/texture/objective/enemy.png" id="1_baim8"]
 [ext_resource type="Script" uid="uid://c05jt6xoey6uv" path="res://interface/gameplay/hud/script/Objectives.cs" id="1_m1rpe"]
@@ -126,6 +126,22 @@ tracks/0/keys = {
 "transitions": PackedFloat32Array(1),
 "update": 1,
 "values": [ExtResource("17_f4u8t")]
+}
+
+[sub_resource type="Animation" id="Animation_8k5hc"]
+resource_name = "crate"
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:texture")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [ExtResource("18_qrnqp")]
 }
 
 [sub_resource type="Animation" id="Animation_fbwlm"]
@@ -825,22 +841,6 @@ tracks/0/keys = {
 "values": [ExtResource("14_bkjs6")]
 }
 
-[sub_resource type="Animation" id="Animation_8k5hc"]
-resource_name = "crate"
-length = 0.001
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath(".:texture")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [ExtResource("18_qrnqp")]
-}
-
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_lw1hn"]
 _data = {
 &"RESET": SubResource("Animation_egvi3"),
@@ -1228,7 +1228,7 @@ _data = {
 &"reignited": SubResource("Animation_vky5u")
 }
 
-[node name="Objectives" type="Control" node_paths=PackedStringArray("styleAnimator", "objectiveSprite", "objectiveValue", "objectiveMaxValue", "objectiveAnimators", "objectiveSfx")]
+[node name="Objectives" type="Control" unique_id=2061418293 node_paths=PackedStringArray("styleAnimator", "objectiveSprite", "objectiveValue", "objectiveMaxValue", "objectiveAnimators", "objectiveSfx")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -1243,7 +1243,7 @@ objectiveMaxValue = NodePath("Data/ObjectiveSprites/Text/Text/MaxValue")
 objectiveAnimators = [NodePath("Data/ObjectiveSprites/ObjectiveRoot1/Sprite/AnimationPlayer"), NodePath("Data/ObjectiveSprites/ObjectiveRoot2/Sprite/AnimationPlayer"), NodePath("Data/ObjectiveSprites/ObjectiveRoot3/Sprite/AnimationPlayer"), NodePath("Data/ObjectiveSprites/ObjectiveRoot4/Sprite/AnimationPlayer")]
 objectiveSfx = NodePath("Data/Sfx")
 
-[node name="ObjectivesDecal" type="Sprite2D" parent="."]
+[node name="ObjectivesDecal" type="Sprite2D" parent="." unique_id=1319488797]
 visible = false
 position = Vector2(0, 112)
 texture = ExtResource("18_vky5u")
@@ -1252,8 +1252,9 @@ flip_h = true
 region_enabled = true
 region_rect = Rect2(125, 168, 577, 100)
 
-[node name="Data" type="Control" parent="."]
+[node name="Data" type="Control" parent="." unique_id=471519107]
 layout_mode = 1
+anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
 offset_left = -576.0
@@ -1261,7 +1262,7 @@ offset_top = 208.0
 offset_right = -128.0
 offset_bottom = 304.0
 
-[node name="ObjectiveSprites" type="HBoxContainer" parent="Data"]
+[node name="ObjectiveSprites" type="HBoxContainer" parent="Data" unique_id=1997460788]
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 1.0
@@ -1273,11 +1274,11 @@ pivot_offset = Vector2(256, 48)
 theme_override_constants/separation = -48
 alignment = 2
 
-[node name="ObjectiveRoot4" type="Control" parent="Data/ObjectiveSprites"]
+[node name="ObjectiveRoot4" type="Control" parent="Data/ObjectiveSprites" unique_id=1458138663]
 custom_minimum_size = Vector2(96, 96)
 layout_mode = 2
 
-[node name="Sprite" type="TextureRect" parent="Data/ObjectiveSprites/ObjectiveRoot4"]
+[node name="Sprite" type="TextureRect" parent="Data/ObjectiveSprites/ObjectiveRoot4" unique_id=1460517931]
 custom_minimum_size = Vector2(96, 96)
 layout_mode = 0
 offset_right = 96.0
@@ -1287,17 +1288,15 @@ texture = ExtResource("1_baim8")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="Data/ObjectiveSprites/ObjectiveRoot4/Sprite"]
-libraries = {
-&"": SubResource("AnimationLibrary_lw1hn")
-}
-autoplay = "hide"
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Data/ObjectiveSprites/ObjectiveRoot4/Sprite" unique_id=1131369315]
+libraries/ = SubResource("AnimationLibrary_lw1hn")
+autoplay = &"hide"
 
-[node name="ObjectiveRoot3" type="Control" parent="Data/ObjectiveSprites"]
+[node name="ObjectiveRoot3" type="Control" parent="Data/ObjectiveSprites" unique_id=207637981]
 custom_minimum_size = Vector2(96, 96)
 layout_mode = 2
 
-[node name="Sprite" type="TextureRect" parent="Data/ObjectiveSprites/ObjectiveRoot3"]
+[node name="Sprite" type="TextureRect" parent="Data/ObjectiveSprites/ObjectiveRoot3" unique_id=1876589013]
 custom_minimum_size = Vector2(96, 96)
 layout_mode = 0
 offset_right = 96.0
@@ -1307,17 +1306,15 @@ texture = ExtResource("1_baim8")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="Data/ObjectiveSprites/ObjectiveRoot3/Sprite"]
-libraries = {
-&"": SubResource("AnimationLibrary_lw1hn")
-}
-autoplay = "hide"
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Data/ObjectiveSprites/ObjectiveRoot3/Sprite" unique_id=158459242]
+libraries/ = SubResource("AnimationLibrary_lw1hn")
+autoplay = &"hide"
 
-[node name="ObjectiveRoot2" type="Control" parent="Data/ObjectiveSprites"]
+[node name="ObjectiveRoot2" type="Control" parent="Data/ObjectiveSprites" unique_id=1819931912]
 custom_minimum_size = Vector2(96, 96)
 layout_mode = 2
 
-[node name="Sprite" type="TextureRect" parent="Data/ObjectiveSprites/ObjectiveRoot2"]
+[node name="Sprite" type="TextureRect" parent="Data/ObjectiveSprites/ObjectiveRoot2" unique_id=406670261]
 custom_minimum_size = Vector2(96, 96)
 layout_mode = 0
 offset_right = 96.0
@@ -1327,17 +1324,15 @@ texture = ExtResource("1_baim8")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="Data/ObjectiveSprites/ObjectiveRoot2/Sprite"]
-libraries = {
-&"": SubResource("AnimationLibrary_lw1hn")
-}
-autoplay = "hide"
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Data/ObjectiveSprites/ObjectiveRoot2/Sprite" unique_id=535778894]
+libraries/ = SubResource("AnimationLibrary_lw1hn")
+autoplay = &"hide"
 
-[node name="ObjectiveRoot1" type="Control" parent="Data/ObjectiveSprites"]
+[node name="ObjectiveRoot1" type="Control" parent="Data/ObjectiveSprites" unique_id=884789438]
 custom_minimum_size = Vector2(96, 96)
 layout_mode = 2
 
-[node name="Sprite" type="TextureRect" parent="Data/ObjectiveSprites/ObjectiveRoot1"]
+[node name="Sprite" type="TextureRect" parent="Data/ObjectiveSprites/ObjectiveRoot1" unique_id=1290253719]
 custom_minimum_size = Vector2(96, 96)
 layout_mode = 0
 offset_right = 96.0
@@ -1347,17 +1342,16 @@ texture = ExtResource("1_baim8")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="Data/ObjectiveSprites/ObjectiveRoot1/Sprite"]
-libraries = {
-&"": SubResource("AnimationLibrary_lw1hn")
-}
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Data/ObjectiveSprites/ObjectiveRoot1/Sprite" unique_id=537056373]
+libraries/ = SubResource("AnimationLibrary_lw1hn")
 
-[node name="Text" type="Control" parent="Data/ObjectiveSprites"]
+[node name="Text" type="Control" parent="Data/ObjectiveSprites" unique_id=88398719]
 custom_minimum_size = Vector2(48, 0)
 layout_mode = 2
 
-[node name="Text" type="Control" parent="Data/ObjectiveSprites/Text"]
+[node name="Text" type="Control" parent="Data/ObjectiveSprites/Text" unique_id=1642217514]
 layout_mode = 1
+anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
 offset_left = -24.0
@@ -1365,7 +1359,7 @@ offset_right = 200.0
 offset_bottom = 100.0
 pivot_offset = Vector2(0, 50)
 
-[node name="Value" type="Label" parent="Data/ObjectiveSprites/Text/Text"]
+[node name="Value" type="Label" parent="Data/ObjectiveSprites/Text/Text" unique_id=988646002]
 layout_mode = 0
 offset_top = 8.0
 offset_right = 96.00012
@@ -1377,7 +1371,7 @@ text = "00"
 horizontal_alignment = 2
 vertical_alignment = 1
 
-[node name="MaxValue" type="Label" parent="Data/ObjectiveSprites/Text/Text"]
+[node name="MaxValue" type="Label" parent="Data/ObjectiveSprites/Text/Text" unique_id=682266515]
 layout_mode = 0
 offset_left = 104.00012
 offset_top = 8.0
@@ -1389,7 +1383,7 @@ theme_override_font_sizes/font_size = 64
 text = "22"
 vertical_alignment = 1
 
-[node name="Divider" type="Label" parent="Data/ObjectiveSprites/Text/Text"]
+[node name="Divider" type="Label" parent="Data/ObjectiveSprites/Text/Text" unique_id=1894130893]
 layout_mode = 0
 offset_left = 72.00012
 offset_top = 8.0
@@ -1402,12 +1396,10 @@ text = "/"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Sfx" type="AudioStreamPlayer" parent="Data"]
+[node name="Sfx" type="AudioStreamPlayer" parent="Data" unique_id=441597681]
 process_mode = 1
 stream = ExtResource("16_7ogxs")
 bus = &"GAME SFX"
 
-[node name="StyleAnimationPlayer" type="AnimationPlayer" parent="."]
-libraries = {
-&"": SubResource("AnimationLibrary_f4u8t")
-}
+[node name="StyleAnimationPlayer" type="AnimationPlayer" parent="." unique_id=407013645]
+libraries/ = SubResource("AnimationLibrary_f4u8t")

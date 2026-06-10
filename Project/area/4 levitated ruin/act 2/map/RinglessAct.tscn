@@ -1,4 +1,4 @@
-[gd_scene load_steps=26 format=3 uid="uid://bd3ar1u8ocmn5"]
+[gd_scene format=3 uid="uid://bd3ar1u8ocmn5"]
 
 [ext_resource type="PackedScene" uid="uid://bpxj0juyhbmxs" path="res://area/4 levitated ruin/act 2/Static.tscn" id="1_1o1q6"]
 [ext_resource type="Resource" uid="uid://chxhuuvqyoli0" path="res://resource/level data/levitated ruin/Act2Ringless.tres" id="2_mfwxn"]
@@ -23,6 +23,94 @@
 [ext_resource type="PackedScene" uid="uid://y7w1jrfgsii7" path="res://object/enemy/majin/data/levitated ruin/GreenMajin.tscn" id="20_r8djy"]
 [ext_resource type="PackedScene" uid="uid://b724x1op3kfpc" path="res://object/enemy/majin/data/levitated ruin/RedMajin.tscn" id="21_wnkt2"]
 
+[sub_resource type="Shader" id="Shader_emcxb"]
+code = "shader_type canvas_item;
+render_mode unshaded, blend_add;
+
+uniform sampler2D depth_tex : filter_linear;
+uniform sampler2D screen_texture : hint_screen_texture, filter_linear;
+uniform sampler2D light_color : hint_default_white;
+uniform vec4 ray_color : source_color = vec4(1.0, 1.0, 1.0, 1.0);
+uniform float ray_length : hint_range(0.0, 1.0) = 1.0;
+uniform float ray_intensity : hint_range(0.0, 1.0) = 1.0;
+uniform float light_source_scale = 1.0;
+uniform float light_source_feather = 2.0;
+uniform float noise_strength : hint_range(0.0, 1.0) = 0.2;
+uniform vec2 light_source_pos = vec2(0.0, 0.0);
+uniform vec3 light_source_dir = vec3(0.5, -1.0, 0.25);
+uniform float mask_threshold : hint_range(0.0, 1.0) = 0.5;
+uniform float mask_softness : hint_range(0.01, 0.5) = 0.15;
+uniform float mask_radius : hint_range(0.01, 0.5) = 0.15;
+uniform bool debug_mode = false;
+uniform float debug_dot_radius : hint_range(0.001, 0.05) = 0.01;
+
+const int SAMPLE_COUNT = 120;
+
+float random(vec2 uv) {
+	return fract(sin(dot(uv.xy, vec2(12.9898, 78.233))) * 43758.5453123);
+}
+
+void fragment() {
+	vec2 light_pos = light_source_pos;
+	vec2 ratio = vec2(SCREEN_PIXEL_SIZE.x / SCREEN_PIXEL_SIZE.y, 1.0);
+
+	if (debug_mode) {
+		vec2 diff = (UV - light_pos) / ratio;
+		float dist = length(diff);
+		float dot_mask = smoothstep(debug_dot_radius, debug_dot_radius * 0.5, dist);
+		COLOR.rgb = vec3(dot_mask);
+		COLOR.a = 1.0;
+	} else {
+		vec2 dir = UV - light_pos;
+		vec2 dir2 = UV / ratio - light_pos / ratio;
+		float light_rays = 0.0;
+		vec2 uv2;
+		float scale, l;
+
+		for (int i = 0; i < SAMPLE_COUNT; i++) {
+			scale = 1.0 - ray_length * (float(i) / float(SAMPLE_COUNT - 1));
+			vec2 sample_uv = dir * scale + light_pos;
+			l = 1.0 - texture(depth_tex, sample_uv).a;
+			uv2 = dir2 * scale * pow(light_source_scale, 2.0);
+			l *= smoothstep(1.0, 0.999 - light_source_feather, dot(uv2, uv2) * 4.0);
+			light_rays += l / float(SAMPLE_COUNT);
+		}
+
+		float n = 1.0 - random(UV) * noise_strength * smoothstep(0.999 - 1.25, 1.0, dot(dir2, dir2) * 2.0);
+		light_rays *= n;
+
+		vec3 screen_col = texture(screen_texture, SCREEN_UV).rgb;
+		float brightness = max(screen_col.r, max(screen_col.g, screen_col.b));
+		float moon_mask = smoothstep(mask_threshold, mask_threshold + mask_softness, brightness);
+
+		float dist_to_light = length((UV - light_pos) / ratio);
+		float proximity = 1.0 - smoothstep(0.0, mask_radius, dist_to_light);
+		moon_mask *= proximity;
+
+		light_rays *= (1.0 - moon_mask);
+
+		COLOR.rgb = vec3(light_rays * ray_intensity) * texture(light_color, UV).rgb * ray_color.rgb;
+		COLOR.a = ray_color.a;
+	}
+}"
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_wnkt2"]
+resource_local_to_scene = true
+shader = SubResource("Shader_emcxb")
+shader_parameter/ray_color = Color(0.5529412, 0.49411765, 0.23921569, 1)
+shader_parameter/ray_length = 0.70000003325
+shader_parameter/ray_intensity = 0.6000000285
+shader_parameter/light_source_scale = 1.1999999999970896
+shader_parameter/light_source_feather = 1.4499999999970896
+shader_parameter/noise_strength = 0.10000000475
+shader_parameter/light_source_pos = Vector2(0, 0)
+shader_parameter/light_source_dir = Vector3(0.5, -1, 0.25)
+shader_parameter/mask_threshold = 0.69200003287
+shader_parameter/mask_softness = 0.16900000732898002
+shader_parameter/mask_radius = 0.5
+shader_parameter/debug_mode = false
+shader_parameter/debug_dot_radius = 0.01
+
 [sub_resource type="BoxShape3D" id="BoxShape3D_72y36"]
 size = Vector3(5, 8, 3)
 
@@ -32,165 +120,168 @@ size = Vector3(10, 20, 2.5)
 [sub_resource type="BoxShape3D" id="BoxShape3D_u88v8"]
 size = Vector3(20, 20, 5)
 
-[node name="World" type="Node"]
+[node name="World" type="Node" unique_id=1499456218]
 
-[node name="Static" parent="." instance=ExtResource("1_1o1q6")]
+[node name="Static" parent="." unique_id=1113299967 instance=ExtResource("1_1o1q6")]
 Data = ExtResource("2_mfwxn")
 
-[node name="Rukh4" parent="Static/Visuals" index="7"]
+[node name="ColorRect_LightRays" parent="Static/Visuals/LRSky/DepthRenderer/CanvasLayerLightShafts" parent_id_path=PackedInt32Array(1113299967, 657050233) index="0" unique_id=657003425]
+material = SubResource("ShaderMaterial_wnkt2")
+
+[node name="Rukh4" parent="Static/Visuals" parent_id_path=PackedInt32Array(1113299967, 2405459) index="7" unique_id=698672714]
 startEnabled = true
 
-[node name="Rukh4LOD" parent="Static/Visuals" index="8"]
+[node name="Rukh4LOD" parent="Static/Visuals" parent_id_path=PackedInt32Array(1113299967, 2405459) index="8" unique_id=351197048]
 startEnabled = false
 
-[node name="Tower1Sidescrolling" parent="Static/Triggers/Camera/Tower1Triggers" index="2"]
+[node name="Tower1Sidescrolling" parent="Static/Triggers/Camera/Tower1Triggers" parent_id_path=PackedInt32Array(1113299967, 1894423925) index="2" unique_id=1913663676]
 monitoring = false
 
-[node name="Tower1LowerSidescrolling" parent="Static/Triggers/Camera/Tower1Triggers" index="3"]
+[node name="Tower1LowerSidescrolling" parent="Static/Triggers/Camera/Tower1Triggers" parent_id_path=PackedInt32Array(1113299967, 1894423925) index="3" unique_id=1395940454]
 monitoring = false
 
-[node name="RinglessAct" type="Node3D" parent="."]
+[node name="RinglessAct" type="Node3D" parent="." unique_id=395401060]
 
-[node name="SpawnPosition" type="Node3D" parent="RinglessAct"]
+[node name="SpawnPosition" type="Node3D" parent="RinglessAct" unique_id=1503634922]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 250, -30, -1370)
 
-[node name="CharacterSpawn" parent="RinglessAct/SpawnPosition" instance=ExtResource("2_yj75v")]
+[node name="CharacterSpawn" parent="RinglessAct/SpawnPosition" unique_id=609230759 instance=ExtResource("2_yj75v")]
 
-[node name="Tower1" type="Node3D" parent="RinglessAct"]
+[node name="Tower1" type="Node3D" parent="RinglessAct" unique_id=831436724]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 250, -30, -1375)
 
-[node name="StaticGate1" parent="RinglessAct/Tower1" instance=ExtResource("3_u88v8")]
+[node name="StaticGate1" parent="RinglessAct/Tower1" unique_id=290165231 instance=ExtResource("3_u88v8")]
 transform = Transform3D(1, 0, 0, 0, 2, 0, 0, 0, 1, 0, 0, -9.19995)
 
-[node name="StaticGate2" parent="RinglessAct/Tower1" instance=ExtResource("3_u88v8")]
+[node name="StaticGate2" parent="RinglessAct/Tower1" unique_id=2054597908 instance=ExtResource("3_u88v8")]
 transform = Transform3D(1, 0, 0, 0, 2, 0, 0, 0, 1, 0, 0, 9.19995)
 
-[node name="Cam" type="Node3D" parent="RinglessAct/Tower1"]
+[node name="Cam" type="Node3D" parent="RinglessAct/Tower1" unique_id=1655707114]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
 script = ExtResource("8_r8rt5")
 transitionTime = 1.0
 settings = ExtResource("6_vvfwf")
 
-[node name="Cam2" type="Node3D" parent="RinglessAct/Tower1"]
+[node name="Cam2" type="Node3D" parent="RinglessAct/Tower1" unique_id=1739533404]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 16, 0)
 script = ExtResource("8_r8rt5")
 transitionTime = 1.0
 settings = ExtResource("11_1hqb8")
 
-[node name="Spring1" parent="RinglessAct/Tower1" instance=ExtResource("4_76k2r")]
+[node name="Spring1" parent="RinglessAct/Tower1" unique_id=189473746 instance=ExtResource("4_76k2r")]
 transform = Transform3D(-0.707107, -0.241845, -0.664463, 0, 0.939693, -0.34202, 0.707107, -0.241845, -0.664463, 0, 0.300001, 0)
 FinalHeight = 8.0
 Distance = 6.0
 
-[node name="Spring2" parent="RinglessAct/Tower1" instance=ExtResource("4_76k2r")]
+[node name="Spring2" parent="RinglessAct/Tower1" unique_id=674286000 instance=ExtResource("4_76k2r")]
 transform = Transform3D(0.984808, -0.111619, -0.133022, 0, 0.766044, -0.642788, 0.173648, 0.633022, 0.754406, -4.5, 8.3, -4.5)
 FinalHeight = 4.0
 Distance = 11.0
 
-[node name="Spring3" parent="RinglessAct/Tower1" instance=ExtResource("4_76k2r")]
+[node name="Spring3" parent="RinglessAct/Tower1" unique_id=1565274752 instance=ExtResource("4_76k2r")]
 transform = Transform3D(-4.37114e-08, 0.866025, 0.5, 0, 0.5, -0.866025, -1, -3.78552e-08, -2.18557e-08, -6.5, 12, 5.9)
 FinalHeight = 3.5
 Distance = 13.0
 
-[node name="Spring4" parent="RinglessAct/Tower1" instance=ExtResource("4_76k2r")]
+[node name="Spring4" parent="RinglessAct/Tower1" unique_id=1856311727 instance=ExtResource("4_76k2r")]
 transform = Transform3D(-1, -6.69697e-08, -5.61943e-08, 0, 0.642788, -0.766044, 8.74228e-08, -0.766044, -0.642788, 6.21716, 15.5, 6.21716)
 FinalHeight = 4.5
 Distance = 12.5
 
-[node name="Cam3" type="Node3D" parent="RinglessAct/Tower1"]
+[node name="Cam3" type="Node3D" parent="RinglessAct/Tower1" unique_id=1966296157]
 transform = Transform3D(0.707107, 0, -0.707107, 0, 1, 0, 0.707107, 0, 0.707107, -2.82843, 25.808, -2.82843)
 script = ExtResource("8_r8rt5")
 transitionType = 1
 settings = ExtResource("6_vvfwf")
 
-[node name="Spring5" parent="RinglessAct/Tower1" instance=ExtResource("4_76k2r")]
+[node name="Spring5" parent="RinglessAct/Tower1" unique_id=1342674909 instance=ExtResource("4_76k2r")]
 transform = Transform3D(0.707107, -0.5, -0.5, 0, 0.707107, -0.707107, 0.707107, 0.5, 0.5, 6.25, 20, -6.25)
 FinalHeight = 5.0
 Distance = 16.5
 
-[node name="Ziplines" type="Node3D" parent="RinglessAct"]
+[node name="Ziplines" type="Node3D" parent="RinglessAct" unique_id=1887291551]
 
-[node name="Zipline3" type="Path3D" parent="RinglessAct/Ziplines"]
+[node name="Zipline3" type="Path3D" parent="RinglessAct/Ziplines" unique_id=909781295]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 242.835, -1.45, -1367.82)
 curve = ExtResource("5_sqft8")
 
-[node name="Start" parent="RinglessAct/Ziplines/Zipline3" instance=ExtResource("6_mfwxn")]
+[node name="Start" parent="RinglessAct/Ziplines/Zipline3" unique_id=712421253 instance=ExtResource("6_mfwxn")]
 transform = Transform3D(0.707107, 0, 0.707107, 0, 1, 0, -0.707107, 0, 0.707107, 2.14799, -4.55, -1.46008)
 OneShot = true
 "Respawn Mode" = 2
 "Enter Mode" = 0
 
-[node name="Jump" type="Node3D" parent="RinglessAct/Ziplines/Zipline3/Start"]
+[node name="Jump" type="Node3D" parent="RinglessAct/Ziplines/Zipline3/Start" unique_id=736601896]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.5, 3.5, -0.325)
 script = ExtResource("7_vvfwf")
 jumpHeight = 0.5
 autoAlign = true
 forceConsistentHeight = true
 
-[node name="Camera" type="Node3D" parent="RinglessAct/Ziplines/Zipline3/Start/Jump"]
+[node name="Camera" type="Node3D" parent="RinglessAct/Ziplines/Zipline3/Start/Jump" unique_id=522847068]
 script = ExtResource("8_r8rt5")
 settings = ExtResource("12_vvfwf")
 
-[node name="Path" type="Node3D" parent="RinglessAct/Ziplines/Zipline3/Start/Jump" node_paths=PackedStringArray("path")]
+[node name="Path" type="Node3D" parent="RinglessAct/Ziplines/Zipline3/Start/Jump" unique_id=1828330945 node_paths=PackedStringArray("path")]
 script = ExtResource("10_qfdpq")
 path = NodePath("../../..")
 affectPlayer = false
 
-[node name="Path" type="Node3D" parent="RinglessAct/Ziplines/Zipline3/Start" node_paths=PackedStringArray("path")]
+[node name="Path" type="Node3D" parent="RinglessAct/Ziplines/Zipline3/Start" unique_id=1901054765 node_paths=PackedStringArray("path")]
 script = ExtResource("10_qfdpq")
 path = NodePath("../..")
 affectCamera = false
 
-[node name="Camera" type="Node3D" parent="RinglessAct/Ziplines/Zipline3/Start"]
+[node name="Camera" type="Node3D" parent="RinglessAct/Ziplines/Zipline3/Start" unique_id=1251550306]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.5, 4, 0)
 script = ExtResource("8_r8rt5")
 transitionTime = 1.0
 settings = ExtResource("11_1hqb8")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="RinglessAct/Ziplines/Zipline3/Start"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="RinglessAct/Ziplines/Zipline3/Start" unique_id=880713531]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.5, 0)
 shape = SubResource("BoxShape3D_72y36")
 
-[node name="Zipline" parent="RinglessAct/Ziplines/Zipline3" instance=ExtResource("12_r8djy")]
+[node name="Zipline" parent="RinglessAct/Ziplines/Zipline3" unique_id=908480682 instance=ExtResource("12_r8djy")]
 transform = Transform3D(0.8122579, 0, -0.5832951, 0, 1, 0, 0.5832951, 0, 0.8122579, -0.5757963, -0.15984374, 0.80181575)
 progress = 1.0
 ZiplineSpeed = 14.5
 
-[node name="End" parent="RinglessAct/Ziplines/Zipline3" instance=ExtResource("6_mfwxn")]
+[node name="End" parent="RinglessAct/Ziplines/Zipline3" unique_id=1169081757 instance=ExtResource("6_mfwxn")]
 transform = Transform3D(0.812084, 0, -0.583541, 0, 1, 0, 0.583541, 0, 0.812084, -270.16, -74.9842, 375.968)
 OneShot = true
 "Respawn Mode" = 0
 "Enter Mode" = 0
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="RinglessAct/Ziplines/Zipline3/End"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="RinglessAct/Ziplines/Zipline3/End" unique_id=2125908269]
 shape = SubResource("BoxShape3D_nvqrb")
 
-[node name="Jump" type="Node3D" parent="RinglessAct/Ziplines/Zipline3/End"]
+[node name="Jump" type="Node3D" parent="RinglessAct/Ziplines/Zipline3/End" unique_id=564734445]
 transform = Transform3D(2.98023e-08, 0, 1, 0, 1, 0, -1, 0, 2.98023e-08, -5.70941, -15.4441, 13.8082)
 script = ExtResource("7_vvfwf")
 jumpHeight = 5.0
 autoAlign = true
 
-[node name="Camera" type="Node3D" parent="RinglessAct/Ziplines/Zipline3/End/Jump"]
+[node name="Camera" type="Node3D" parent="RinglessAct/Ziplines/Zipline3/End/Jump" unique_id=1924983821]
 script = ExtResource("8_r8rt5")
 settings = ExtResource("13_wnkt2")
 
-[node name="Path" type="Node3D" parent="RinglessAct/Ziplines/Zipline3/End/Jump" node_paths=PackedStringArray("path")]
+[node name="Path" type="Node3D" parent="RinglessAct/Ziplines/Zipline3/End/Jump" unique_id=90243796 node_paths=PackedStringArray("path")]
 script = ExtResource("10_qfdpq")
 path = NodePath("../../../../../../Static/Paths/Rukh4")
 affectPlayer = false
 cameraPathBlendTime = 1.0
 
-[node name="Path" type="Node3D" parent="RinglessAct/Ziplines/Zipline3/End" node_paths=PackedStringArray("path")]
+[node name="Path" type="Node3D" parent="RinglessAct/Ziplines/Zipline3/End" unique_id=981250040 node_paths=PackedStringArray("path")]
 script = ExtResource("10_qfdpq")
 path = NodePath("../../../../../Static/Paths/Rukh4")
 affectCamera = false
 
-[node name="Objects" type="Node3D" parent="RinglessAct"]
+[node name="Objects" type="Node3D" parent="RinglessAct" unique_id=2146887403]
 transform = Transform3D(0.812258, -0.0932362, -0.575795, 0, 0.987142, -0.159843, 0.583295, 0.129835, 0.801814, 242.259, -1.60984, -1367.02)
 script = ExtResource("16_1hqb8")
 
-[node name="Rings1" type="Node3D" parent="RinglessAct/Objects"]
+[node name="Rings1" type="Node3D" parent="RinglessAct/Objects" unique_id=1971206440]
 transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, -2.62268e-07, 1.5, 37)
 script = ExtResource("16_1sm85")
 Source = ExtResource("17_qfdpq")
@@ -202,18 +293,18 @@ Spacing = 2.5
 "Vertical Offset" = null
 metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
 
-[node name="Child01" parent="RinglessAct/Objects/Rings1" instance=ExtResource("17_qfdpq")]
+[node name="Child01" parent="RinglessAct/Objects/Rings1" unique_id=221374429 instance=ExtResource("17_qfdpq")]
 
-[node name="Child02" parent="RinglessAct/Objects/Rings1" instance=ExtResource("17_qfdpq")]
+[node name="Child02" parent="RinglessAct/Objects/Rings1" unique_id=1881745205 instance=ExtResource("17_qfdpq")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2.5)
 
-[node name="Child03" parent="RinglessAct/Objects/Rings1" instance=ExtResource("17_qfdpq")]
+[node name="Child03" parent="RinglessAct/Objects/Rings1" unique_id=436256375 instance=ExtResource("17_qfdpq")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -5)
 
-[node name="Child04" parent="RinglessAct/Objects/Rings1" instance=ExtResource("17_qfdpq")]
+[node name="Child04" parent="RinglessAct/Objects/Rings1" unique_id=1899433835 instance=ExtResource("17_qfdpq")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -7.5)
 
-[node name="Rings2" type="Node3D" parent="RinglessAct/Objects"]
+[node name="Rings2" type="Node3D" parent="RinglessAct/Objects" unique_id=1363509898]
 transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, -1.5, 80)
 script = ExtResource("16_1sm85")
 Source = ExtResource("17_qfdpq")
@@ -225,21 +316,21 @@ Spacing = 2.5
 "Vertical Offset" = null
 metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
 
-[node name="Child01" parent="RinglessAct/Objects/Rings2" instance=ExtResource("17_qfdpq")]
+[node name="Child01" parent="RinglessAct/Objects/Rings2" unique_id=235354380 instance=ExtResource("17_qfdpq")]
 
-[node name="Child02" parent="RinglessAct/Objects/Rings2" instance=ExtResource("17_qfdpq")]
+[node name="Child02" parent="RinglessAct/Objects/Rings2" unique_id=871130694 instance=ExtResource("17_qfdpq")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2.5)
 
-[node name="Child03" parent="RinglessAct/Objects/Rings2" instance=ExtResource("17_qfdpq")]
+[node name="Child03" parent="RinglessAct/Objects/Rings2" unique_id=412792792 instance=ExtResource("17_qfdpq")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -5)
 
-[node name="Child04" parent="RinglessAct/Objects/Rings2" instance=ExtResource("17_qfdpq")]
+[node name="Child04" parent="RinglessAct/Objects/Rings2" unique_id=1855441005 instance=ExtResource("17_qfdpq")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -7.5)
 
-[node name="SpikeBallGroup1" type="Node3D" parent="RinglessAct/Objects"]
+[node name="SpikeBallGroup1" type="Node3D" parent="RinglessAct/Objects" unique_id=2075715784]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 94)
 
-[node name="SpikeBall1" parent="RinglessAct/Objects/SpikeBallGroup1" instance=ExtResource("19_r8djy")]
+[node name="SpikeBall1" parent="RinglessAct/Objects/SpikeBallGroup1" unique_id=1988361946 instance=ExtResource("19_r8djy")]
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0)
 animatorSpeedScale = -0.5
 Movement/Mode = 2
@@ -249,7 +340,7 @@ Movement/Mode = 2
 "Movement/Vertical Size" = 0.0
 Movement/Radius = 2.0
 
-[node name="SpikeBall2" parent="RinglessAct/Objects/SpikeBallGroup1" instance=ExtResource("19_r8djy")]
+[node name="SpikeBall2" parent="RinglessAct/Objects/SpikeBallGroup1" unique_id=748858073 instance=ExtResource("19_r8djy")]
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0)
 animatorSpeedScale = -0.5
 Movement/Mode = 2
@@ -258,7 +349,7 @@ Movement/Mode = 2
 "Movement/Vertical Size" = 0.0
 Movement/Radius = 2.0
 
-[node name="Rings3" type="Node3D" parent="RinglessAct/Objects"]
+[node name="Rings3" type="Node3D" parent="RinglessAct/Objects" unique_id=812589936]
 transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, -1.5, 100)
 script = ExtResource("16_1sm85")
 Source = ExtResource("17_qfdpq")
@@ -270,21 +361,21 @@ Spacing = 2.5
 "Vertical Offset" = null
 metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
 
-[node name="Child01" parent="RinglessAct/Objects/Rings3" instance=ExtResource("17_qfdpq")]
+[node name="Child01" parent="RinglessAct/Objects/Rings3" unique_id=230916352 instance=ExtResource("17_qfdpq")]
 
-[node name="Child02" parent="RinglessAct/Objects/Rings3" instance=ExtResource("17_qfdpq")]
+[node name="Child02" parent="RinglessAct/Objects/Rings3" unique_id=1572680247 instance=ExtResource("17_qfdpq")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2.5)
 
-[node name="Child03" parent="RinglessAct/Objects/Rings3" instance=ExtResource("17_qfdpq")]
+[node name="Child03" parent="RinglessAct/Objects/Rings3" unique_id=1087027976 instance=ExtResource("17_qfdpq")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -5)
 
-[node name="Child04" parent="RinglessAct/Objects/Rings3" instance=ExtResource("17_qfdpq")]
+[node name="Child04" parent="RinglessAct/Objects/Rings3" unique_id=7807046 instance=ExtResource("17_qfdpq")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -7.5)
 
-[node name="SpikeBallGroup2" type="Node3D" parent="RinglessAct/Objects"]
+[node name="SpikeBallGroup2" type="Node3D" parent="RinglessAct/Objects" unique_id=722553422]
 transform = Transform3D(1, -2.23517e-08, -5.96046e-08, -7.45058e-09, 1, -7.45058e-09, 0, 7.45058e-09, 1, 0, 0, 114)
 
-[node name="SpikeBall1" parent="RinglessAct/Objects/SpikeBallGroup2" instance=ExtResource("19_r8djy")]
+[node name="SpikeBall1" parent="RinglessAct/Objects/SpikeBallGroup2" unique_id=1105236879 instance=ExtResource("19_r8djy")]
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0)
 animatorSpeedScale = 0.5
 Movement/Mode = 2
@@ -294,7 +385,7 @@ Movement/Mode = 2
 "Movement/Vertical Size" = 0.0
 Movement/Radius = 2.0
 
-[node name="SpikeBall2" parent="RinglessAct/Objects/SpikeBallGroup2" instance=ExtResource("19_r8djy")]
+[node name="SpikeBall2" parent="RinglessAct/Objects/SpikeBallGroup2" unique_id=1232320711 instance=ExtResource("19_r8djy")]
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0)
 animatorSpeedScale = 0.5
 Movement/Mode = 2
@@ -303,7 +394,7 @@ Movement/Mode = 2
 "Movement/Vertical Size" = 0.0
 Movement/Radius = 2.0
 
-[node name="Rings4" type="Node3D" parent="RinglessAct/Objects"]
+[node name="Rings4" type="Node3D" parent="RinglessAct/Objects" unique_id=1239765432]
 transform = Transform3D(-1, -1.49012e-08, -2.98023e-08, 7.45058e-09, 1, 0, 8.9407e-08, 0, -1, 0, -1.5, 120)
 script = ExtResource("16_1sm85")
 Source = ExtResource("17_qfdpq")
@@ -315,18 +406,18 @@ Spacing = 2.5
 "Vertical Offset" = null
 metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
 
-[node name="Child01" parent="RinglessAct/Objects/Rings4" instance=ExtResource("17_qfdpq")]
+[node name="Child01" parent="RinglessAct/Objects/Rings4" unique_id=718274827 instance=ExtResource("17_qfdpq")]
 
-[node name="Child02" parent="RinglessAct/Objects/Rings4" instance=ExtResource("17_qfdpq")]
+[node name="Child02" parent="RinglessAct/Objects/Rings4" unique_id=666688115 instance=ExtResource("17_qfdpq")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2.5)
 
-[node name="Child03" parent="RinglessAct/Objects/Rings4" instance=ExtResource("17_qfdpq")]
+[node name="Child03" parent="RinglessAct/Objects/Rings4" unique_id=814846384 instance=ExtResource("17_qfdpq")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -5)
 
-[node name="Child04" parent="RinglessAct/Objects/Rings4" instance=ExtResource("17_qfdpq")]
+[node name="Child04" parent="RinglessAct/Objects/Rings4" unique_id=1877563972 instance=ExtResource("17_qfdpq")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -7.5)
 
-[node name="Rings5" type="Node3D" parent="RinglessAct/Objects"]
+[node name="Rings5" type="Node3D" parent="RinglessAct/Objects" unique_id=1878655287]
 transform = Transform3D(-1, -1.49012e-08, -2.98023e-08, 7.45058e-09, 1, 0, 8.9407e-08, 0, -1, 0, -1.5, 140)
 script = ExtResource("16_1sm85")
 Source = ExtResource("17_qfdpq")
@@ -338,18 +429,18 @@ Spacing = 2.5
 "Vertical Offset" = null
 metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
 
-[node name="Child01" parent="RinglessAct/Objects/Rings5" instance=ExtResource("17_qfdpq")]
+[node name="Child01" parent="RinglessAct/Objects/Rings5" unique_id=1604167284 instance=ExtResource("17_qfdpq")]
 
-[node name="Child02" parent="RinglessAct/Objects/Rings5" instance=ExtResource("17_qfdpq")]
+[node name="Child02" parent="RinglessAct/Objects/Rings5" unique_id=354803271 instance=ExtResource("17_qfdpq")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2.5)
 
-[node name="Child03" parent="RinglessAct/Objects/Rings5" instance=ExtResource("17_qfdpq")]
+[node name="Child03" parent="RinglessAct/Objects/Rings5" unique_id=392805935 instance=ExtResource("17_qfdpq")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -5)
 
-[node name="Child04" parent="RinglessAct/Objects/Rings5" instance=ExtResource("17_qfdpq")]
+[node name="Child04" parent="RinglessAct/Objects/Rings5" unique_id=736419064 instance=ExtResource("17_qfdpq")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -7.5)
 
-[node name="Rings6" type="Node3D" parent="RinglessAct/Objects"]
+[node name="Rings6" type="Node3D" parent="RinglessAct/Objects" unique_id=1420697315]
 transform = Transform3D(-1, -3.72529e-08, 5.96046e-08, 1.49012e-08, 1, 7.45058e-09, 8.9407e-08, 0, -1, 0, -1.5, 170)
 script = ExtResource("16_1sm85")
 Source = ExtResource("17_qfdpq")
@@ -361,18 +452,18 @@ Spacing = 2.5
 "Vertical Offset" = null
 metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
 
-[node name="Child01" parent="RinglessAct/Objects/Rings6" instance=ExtResource("17_qfdpq")]
+[node name="Child01" parent="RinglessAct/Objects/Rings6" unique_id=2022982363 instance=ExtResource("17_qfdpq")]
 
-[node name="Child02" parent="RinglessAct/Objects/Rings6" instance=ExtResource("17_qfdpq")]
+[node name="Child02" parent="RinglessAct/Objects/Rings6" unique_id=1835899344 instance=ExtResource("17_qfdpq")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2.5)
 
-[node name="Child03" parent="RinglessAct/Objects/Rings6" instance=ExtResource("17_qfdpq")]
+[node name="Child03" parent="RinglessAct/Objects/Rings6" unique_id=937212831 instance=ExtResource("17_qfdpq")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -5)
 
-[node name="Child04" parent="RinglessAct/Objects/Rings6" instance=ExtResource("17_qfdpq")]
+[node name="Child04" parent="RinglessAct/Objects/Rings6" unique_id=131587676 instance=ExtResource("17_qfdpq")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -7.5)
 
-[node name="GreenMajin" parent="RinglessAct/Objects" instance=ExtResource("20_r8djy")]
+[node name="GreenMajin" parent="RinglessAct/Objects" unique_id=485017588 instance=ExtResource("20_r8djy")]
 transform = Transform3D(-1, 9.96624e-09, 1.49012e-07, 7.45058e-09, 0.987137, -0.159881, -8.9407e-08, -0.159881, -0.987136, 6.10352e-05, 0, 175)
 "Spawn Settings/Spawn Travel Time" = 1.0
 "Spawn Settings/Spawn Delay" = 0.0
@@ -381,7 +472,7 @@ transform = Transform3D(-1, 9.96624e-09, 1.49012e-07, 7.45058e-09, 0.987137, -0.
 "Spawn Settings/Spawn Out Offset" = Vector3(0, 0, 0)
 rangeOverride = 30
 
-[node name="Rings7" type="Node3D" parent="RinglessAct/Objects"]
+[node name="Rings7" type="Node3D" parent="RinglessAct/Objects" unique_id=152942912]
 transform = Transform3D(-1, -3.72529e-08, 5.96046e-08, 1.49012e-08, 1, 7.45058e-09, 8.9407e-08, 0, -1, 0, -1.5, 190)
 script = ExtResource("16_1sm85")
 Source = ExtResource("17_qfdpq")
@@ -393,18 +484,18 @@ Spacing = 2.5
 "Vertical Offset" = null
 metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
 
-[node name="Child01" parent="RinglessAct/Objects/Rings7" instance=ExtResource("17_qfdpq")]
+[node name="Child01" parent="RinglessAct/Objects/Rings7" unique_id=1594395232 instance=ExtResource("17_qfdpq")]
 
-[node name="Child02" parent="RinglessAct/Objects/Rings7" instance=ExtResource("17_qfdpq")]
+[node name="Child02" parent="RinglessAct/Objects/Rings7" unique_id=1600048997 instance=ExtResource("17_qfdpq")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2.5)
 
-[node name="Child03" parent="RinglessAct/Objects/Rings7" instance=ExtResource("17_qfdpq")]
+[node name="Child03" parent="RinglessAct/Objects/Rings7" unique_id=1570146957 instance=ExtResource("17_qfdpq")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -5)
 
-[node name="Child04" parent="RinglessAct/Objects/Rings7" instance=ExtResource("17_qfdpq")]
+[node name="Child04" parent="RinglessAct/Objects/Rings7" unique_id=1278375720 instance=ExtResource("17_qfdpq")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -7.5)
 
-[node name="Rings8" type="Node3D" parent="RinglessAct/Objects"]
+[node name="Rings8" type="Node3D" parent="RinglessAct/Objects" unique_id=1491191067]
 transform = Transform3D(-1, -3.72529e-08, 5.96046e-08, 1.49012e-08, 1, 7.45058e-09, 8.9407e-08, 0, -1, 0, -1.5, 210)
 script = ExtResource("16_1sm85")
 Source = ExtResource("17_qfdpq")
@@ -416,18 +507,18 @@ Spacing = 2.5
 "Vertical Offset" = null
 metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
 
-[node name="Child01" parent="RinglessAct/Objects/Rings8" instance=ExtResource("17_qfdpq")]
+[node name="Child01" parent="RinglessAct/Objects/Rings8" unique_id=615718322 instance=ExtResource("17_qfdpq")]
 
-[node name="Child02" parent="RinglessAct/Objects/Rings8" instance=ExtResource("17_qfdpq")]
+[node name="Child02" parent="RinglessAct/Objects/Rings8" unique_id=1593672884 instance=ExtResource("17_qfdpq")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2.5)
 
-[node name="Child03" parent="RinglessAct/Objects/Rings8" instance=ExtResource("17_qfdpq")]
+[node name="Child03" parent="RinglessAct/Objects/Rings8" unique_id=1702635066 instance=ExtResource("17_qfdpq")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -5)
 
-[node name="Child04" parent="RinglessAct/Objects/Rings8" instance=ExtResource("17_qfdpq")]
+[node name="Child04" parent="RinglessAct/Objects/Rings8" unique_id=1381180412 instance=ExtResource("17_qfdpq")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -7.5)
 
-[node name="Rings9" type="Node3D" parent="RinglessAct/Objects"]
+[node name="Rings9" type="Node3D" parent="RinglessAct/Objects" unique_id=914927331]
 transform = Transform3D(-1, -3.72529e-08, 5.96046e-08, 1.49012e-08, 1, 7.45058e-09, 8.9407e-08, 0, -1, 0, -1.5, 230)
 script = ExtResource("16_1sm85")
 Source = ExtResource("17_qfdpq")
@@ -439,18 +530,18 @@ Spacing = 2.5
 "Vertical Offset" = null
 metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
 
-[node name="Child01" parent="RinglessAct/Objects/Rings9" instance=ExtResource("17_qfdpq")]
+[node name="Child01" parent="RinglessAct/Objects/Rings9" unique_id=1890533377 instance=ExtResource("17_qfdpq")]
 
-[node name="Child02" parent="RinglessAct/Objects/Rings9" instance=ExtResource("17_qfdpq")]
+[node name="Child02" parent="RinglessAct/Objects/Rings9" unique_id=1063824794 instance=ExtResource("17_qfdpq")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2.5)
 
-[node name="Child03" parent="RinglessAct/Objects/Rings9" instance=ExtResource("17_qfdpq")]
+[node name="Child03" parent="RinglessAct/Objects/Rings9" unique_id=732250396 instance=ExtResource("17_qfdpq")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -5)
 
-[node name="Child04" parent="RinglessAct/Objects/Rings9" instance=ExtResource("17_qfdpq")]
+[node name="Child04" parent="RinglessAct/Objects/Rings9" unique_id=664545691 instance=ExtResource("17_qfdpq")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -7.5)
 
-[node name="Rings10" type="Node3D" parent="RinglessAct/Objects"]
+[node name="Rings10" type="Node3D" parent="RinglessAct/Objects" unique_id=585182749]
 transform = Transform3D(-1, -3.72529e-08, 5.96046e-08, 1.49012e-08, 1, 7.45058e-09, 8.9407e-08, 0, -1, 0, -1.5, 250)
 script = ExtResource("16_1sm85")
 Source = ExtResource("17_qfdpq")
@@ -462,18 +553,18 @@ Spacing = 2.5
 "Vertical Offset" = null
 metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
 
-[node name="Child01" parent="RinglessAct/Objects/Rings10" instance=ExtResource("17_qfdpq")]
+[node name="Child01" parent="RinglessAct/Objects/Rings10" unique_id=1181854501 instance=ExtResource("17_qfdpq")]
 
-[node name="Child02" parent="RinglessAct/Objects/Rings10" instance=ExtResource("17_qfdpq")]
+[node name="Child02" parent="RinglessAct/Objects/Rings10" unique_id=751884856 instance=ExtResource("17_qfdpq")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2.5)
 
-[node name="Child03" parent="RinglessAct/Objects/Rings10" instance=ExtResource("17_qfdpq")]
+[node name="Child03" parent="RinglessAct/Objects/Rings10" unique_id=1287441197 instance=ExtResource("17_qfdpq")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -5)
 
-[node name="Child04" parent="RinglessAct/Objects/Rings10" instance=ExtResource("17_qfdpq")]
+[node name="Child04" parent="RinglessAct/Objects/Rings10" unique_id=13614950 instance=ExtResource("17_qfdpq")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -7.5)
 
-[node name="RedMajin1" parent="RinglessAct/Objects" instance=ExtResource("21_wnkt2")]
+[node name="RedMajin1" parent="RinglessAct/Objects" unique_id=632046141 instance=ExtResource("21_wnkt2")]
 transform = Transform3D(-1, 1.39773e-08, 8.62982e-08, 0, 0.987137, -0.159881, -8.74228e-08, -0.159881, -0.987136, -2.5, -2.25, 250)
 "Spawn Settings/Spawn Travel Time" = 1.0
 "Spawn Settings/Spawn Delay" = 0.0
@@ -485,7 +576,7 @@ transform = Transform3D(-1, 1.39773e-08, 8.62982e-08, 0, 0.987137, -0.159881, -8
 "Attack Settings/Flame Active Time" = 5.0
 rangeOverride = 40
 
-[node name="Rings11" type="Node3D" parent="RinglessAct/Objects"]
+[node name="Rings11" type="Node3D" parent="RinglessAct/Objects" unique_id=953837297]
 transform = Transform3D(-1, -3.72529e-08, 5.96046e-08, 1.49012e-08, 1, 7.45058e-09, 8.9407e-08, 0, -1, 0, -1.5, 270)
 script = ExtResource("16_1sm85")
 Source = ExtResource("17_qfdpq")
@@ -497,18 +588,18 @@ Spacing = 2.5
 "Vertical Offset" = null
 metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
 
-[node name="Child01" parent="RinglessAct/Objects/Rings11" instance=ExtResource("17_qfdpq")]
+[node name="Child01" parent="RinglessAct/Objects/Rings11" unique_id=1012700808 instance=ExtResource("17_qfdpq")]
 
-[node name="Child02" parent="RinglessAct/Objects/Rings11" instance=ExtResource("17_qfdpq")]
+[node name="Child02" parent="RinglessAct/Objects/Rings11" unique_id=1234075518 instance=ExtResource("17_qfdpq")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2.5)
 
-[node name="Child03" parent="RinglessAct/Objects/Rings11" instance=ExtResource("17_qfdpq")]
+[node name="Child03" parent="RinglessAct/Objects/Rings11" unique_id=1209564209 instance=ExtResource("17_qfdpq")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -5)
 
-[node name="Child04" parent="RinglessAct/Objects/Rings11" instance=ExtResource("17_qfdpq")]
+[node name="Child04" parent="RinglessAct/Objects/Rings11" unique_id=840375478 instance=ExtResource("17_qfdpq")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -7.5)
 
-[node name="Rings12" type="Node3D" parent="RinglessAct/Objects"]
+[node name="Rings12" type="Node3D" parent="RinglessAct/Objects" unique_id=328296760]
 transform = Transform3D(-1, -3.72529e-08, 5.96046e-08, 1.49012e-08, 1, 7.45058e-09, 8.9407e-08, 0, -1, 0, -1.5, 290)
 script = ExtResource("16_1sm85")
 Source = ExtResource("17_qfdpq")
@@ -520,21 +611,21 @@ Spacing = 2.5
 "Vertical Offset" = null
 metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
 
-[node name="Child01" parent="RinglessAct/Objects/Rings12" instance=ExtResource("17_qfdpq")]
+[node name="Child01" parent="RinglessAct/Objects/Rings12" unique_id=1152611288 instance=ExtResource("17_qfdpq")]
 
-[node name="Child02" parent="RinglessAct/Objects/Rings12" instance=ExtResource("17_qfdpq")]
+[node name="Child02" parent="RinglessAct/Objects/Rings12" unique_id=188219486 instance=ExtResource("17_qfdpq")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2.5)
 
-[node name="Child03" parent="RinglessAct/Objects/Rings12" instance=ExtResource("17_qfdpq")]
+[node name="Child03" parent="RinglessAct/Objects/Rings12" unique_id=94368690 instance=ExtResource("17_qfdpq")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -5)
 
-[node name="Child04" parent="RinglessAct/Objects/Rings12" instance=ExtResource("17_qfdpq")]
+[node name="Child04" parent="RinglessAct/Objects/Rings12" unique_id=1692720721 instance=ExtResource("17_qfdpq")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -7.5)
 
-[node name="SpikeBallGroup3" type="Node3D" parent="RinglessAct/Objects"]
+[node name="SpikeBallGroup3" type="Node3D" parent="RinglessAct/Objects" unique_id=236239732]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 304)
 
-[node name="SpikeBall1" parent="RinglessAct/Objects/SpikeBallGroup3" instance=ExtResource("19_r8djy")]
+[node name="SpikeBall1" parent="RinglessAct/Objects/SpikeBallGroup3" unique_id=1617880731 instance=ExtResource("19_r8djy")]
 transform = Transform3D(1, 8.9407e-08, -7.45058e-09, 0, -4.47035e-08, -1, -2.98023e-08, 1, -3.72529e-08, 0, 0, 0)
 animatorSpeedScale = -0.5
 Movement/Mode = 2
@@ -543,7 +634,7 @@ Movement/Mode = 2
 "Movement/Vertical Size" = 0.0
 Movement/Radius = 2.0
 
-[node name="SpikeBall2" parent="RinglessAct/Objects/SpikeBallGroup3" instance=ExtResource("19_r8djy")]
+[node name="SpikeBall2" parent="RinglessAct/Objects/SpikeBallGroup3" unique_id=1081601221 instance=ExtResource("19_r8djy")]
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0)
 animatorSpeedScale = -0.5
 Movement/Mode = 2
@@ -553,7 +644,7 @@ Movement/Mode = 2
 "Movement/Vertical Size" = 0.0
 Movement/Radius = 2.0
 
-[node name="Rings13" type="Node3D" parent="RinglessAct/Objects"]
+[node name="Rings13" type="Node3D" parent="RinglessAct/Objects" unique_id=1890416424]
 transform = Transform3D(-1, -5.21541e-08, 1.19209e-07, 2.23517e-08, 1, 7.45058e-09, 8.9407e-08, 1.49012e-08, -1, 0, -1.5, 310)
 script = ExtResource("16_1sm85")
 Source = ExtResource("17_qfdpq")
@@ -565,18 +656,18 @@ Spacing = 2.5
 "Vertical Offset" = null
 metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
 
-[node name="Child01" parent="RinglessAct/Objects/Rings13" instance=ExtResource("17_qfdpq")]
+[node name="Child01" parent="RinglessAct/Objects/Rings13" unique_id=644371008 instance=ExtResource("17_qfdpq")]
 
-[node name="Child02" parent="RinglessAct/Objects/Rings13" instance=ExtResource("17_qfdpq")]
+[node name="Child02" parent="RinglessAct/Objects/Rings13" unique_id=300196213 instance=ExtResource("17_qfdpq")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2.5)
 
-[node name="Child03" parent="RinglessAct/Objects/Rings13" instance=ExtResource("17_qfdpq")]
+[node name="Child03" parent="RinglessAct/Objects/Rings13" unique_id=910354784 instance=ExtResource("17_qfdpq")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -5)
 
-[node name="Child04" parent="RinglessAct/Objects/Rings13" instance=ExtResource("17_qfdpq")]
+[node name="Child04" parent="RinglessAct/Objects/Rings13" unique_id=268453169 instance=ExtResource("17_qfdpq")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -7.5)
 
-[node name="Rings14" type="Node3D" parent="RinglessAct/Objects"]
+[node name="Rings14" type="Node3D" parent="RinglessAct/Objects" unique_id=567223984]
 transform = Transform3D(-1, -5.21541e-08, 1.19209e-07, 2.23517e-08, 1, 7.45058e-09, 8.9407e-08, 1.49012e-08, -1, 0, -1.5, 330)
 script = ExtResource("16_1sm85")
 Source = ExtResource("17_qfdpq")
@@ -588,18 +679,18 @@ Spacing = 2.5
 "Vertical Offset" = null
 metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
 
-[node name="Child01" parent="RinglessAct/Objects/Rings14" instance=ExtResource("17_qfdpq")]
+[node name="Child01" parent="RinglessAct/Objects/Rings14" unique_id=1576718362 instance=ExtResource("17_qfdpq")]
 
-[node name="Child02" parent="RinglessAct/Objects/Rings14" instance=ExtResource("17_qfdpq")]
+[node name="Child02" parent="RinglessAct/Objects/Rings14" unique_id=689163101 instance=ExtResource("17_qfdpq")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2.5)
 
-[node name="Child03" parent="RinglessAct/Objects/Rings14" instance=ExtResource("17_qfdpq")]
+[node name="Child03" parent="RinglessAct/Objects/Rings14" unique_id=1953862041 instance=ExtResource("17_qfdpq")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -5)
 
-[node name="Child04" parent="RinglessAct/Objects/Rings14" instance=ExtResource("17_qfdpq")]
+[node name="Child04" parent="RinglessAct/Objects/Rings14" unique_id=1047838737 instance=ExtResource("17_qfdpq")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -7.5)
 
-[node name="RedMajin2" parent="RinglessAct/Objects" instance=ExtResource("21_wnkt2")]
+[node name="RedMajin2" parent="RinglessAct/Objects" unique_id=655567182 instance=ExtResource("21_wnkt2")]
 transform = Transform3D(-1, 1.39773e-08, 8.62982e-08, 0, 0.987137, -0.159881, -8.74228e-08, -0.159881, -0.987136, 2.5, -2.25, 335)
 "Spawn Settings/Spawn Travel Time" = 1.0
 "Spawn Settings/Spawn Delay" = 0.0
@@ -611,7 +702,7 @@ transform = Transform3D(-1, 1.39773e-08, 8.62982e-08, 0, 0.987137, -0.159881, -8
 "Attack Settings/Flame Active Time" = 5.0
 rangeOverride = 40
 
-[node name="Rings15" type="Node3D" parent="RinglessAct/Objects"]
+[node name="Rings15" type="Node3D" parent="RinglessAct/Objects" unique_id=2118555176]
 transform = Transform3D(-1, -5.21541e-08, 1.19209e-07, 2.23517e-08, 1, 7.45058e-09, 8.9407e-08, 1.49012e-08, -1, 0, -1.5, 350)
 script = ExtResource("16_1sm85")
 Source = ExtResource("17_qfdpq")
@@ -623,21 +714,21 @@ Spacing = 2.5
 "Vertical Offset" = null
 metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
 
-[node name="Child01" parent="RinglessAct/Objects/Rings15" instance=ExtResource("17_qfdpq")]
+[node name="Child01" parent="RinglessAct/Objects/Rings15" unique_id=1703426011 instance=ExtResource("17_qfdpq")]
 
-[node name="Child02" parent="RinglessAct/Objects/Rings15" instance=ExtResource("17_qfdpq")]
+[node name="Child02" parent="RinglessAct/Objects/Rings15" unique_id=867377266 instance=ExtResource("17_qfdpq")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2.5)
 
-[node name="Child03" parent="RinglessAct/Objects/Rings15" instance=ExtResource("17_qfdpq")]
+[node name="Child03" parent="RinglessAct/Objects/Rings15" unique_id=1778672344 instance=ExtResource("17_qfdpq")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -5)
 
-[node name="Child04" parent="RinglessAct/Objects/Rings15" instance=ExtResource("17_qfdpq")]
+[node name="Child04" parent="RinglessAct/Objects/Rings15" unique_id=124449870 instance=ExtResource("17_qfdpq")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -7.5)
 
-[node name="SpikeBallGroup4" type="Node3D" parent="RinglessAct/Objects"]
+[node name="SpikeBallGroup4" type="Node3D" parent="RinglessAct/Objects" unique_id=1609734583]
 transform = Transform3D(1, -1.49012e-08, -5.96046e-08, -7.45058e-09, 1, -7.45058e-09, 0, 0, 1, 0, 0, 364)
 
-[node name="SpikeBall1" parent="RinglessAct/Objects/SpikeBallGroup4" instance=ExtResource("19_r8djy")]
+[node name="SpikeBall1" parent="RinglessAct/Objects/SpikeBallGroup4" unique_id=1238331612 instance=ExtResource("19_r8djy")]
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0)
 animatorSpeedScale = 0.5
 Movement/Mode = 2
@@ -646,7 +737,7 @@ Movement/Mode = 2
 "Movement/Vertical Size" = 0.0
 Movement/Radius = 2.0
 
-[node name="SpikeBall2" parent="RinglessAct/Objects/SpikeBallGroup4" instance=ExtResource("19_r8djy")]
+[node name="SpikeBall2" parent="RinglessAct/Objects/SpikeBallGroup4" unique_id=696188381 instance=ExtResource("19_r8djy")]
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0)
 animatorSpeedScale = 0.5
 Movement/Mode = 2
@@ -656,7 +747,7 @@ Movement/Mode = 2
 "Movement/Vertical Size" = 0.0
 Movement/Radius = 2.0
 
-[node name="SpikeBall3" parent="RinglessAct/Objects/SpikeBallGroup4" instance=ExtResource("19_r8djy")]
+[node name="SpikeBall3" parent="RinglessAct/Objects/SpikeBallGroup4" unique_id=1189839822 instance=ExtResource("19_r8djy")]
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0)
 animatorSpeedScale = 0.5
 Movement/Mode = 2
@@ -666,7 +757,7 @@ Movement/Mode = 2
 "Movement/Vertical Size" = 0.0
 Movement/Radius = 2.0
 
-[node name="Rings16" type="Node3D" parent="RinglessAct/Objects"]
+[node name="Rings16" type="Node3D" parent="RinglessAct/Objects" unique_id=452945841]
 transform = Transform3D(-1, -6.70552e-08, 1.78814e-07, 2.98023e-08, 1, 0, 8.9407e-08, 1.49012e-08, -1, 0, -1.5, 370)
 script = ExtResource("16_1sm85")
 Source = ExtResource("17_qfdpq")
@@ -678,18 +769,18 @@ Spacing = 2.5
 "Vertical Offset" = null
 metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
 
-[node name="Child01" parent="RinglessAct/Objects/Rings16" instance=ExtResource("17_qfdpq")]
+[node name="Child01" parent="RinglessAct/Objects/Rings16" unique_id=673303314 instance=ExtResource("17_qfdpq")]
 
-[node name="Child02" parent="RinglessAct/Objects/Rings16" instance=ExtResource("17_qfdpq")]
+[node name="Child02" parent="RinglessAct/Objects/Rings16" unique_id=2009259023 instance=ExtResource("17_qfdpq")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2.5)
 
-[node name="Child03" parent="RinglessAct/Objects/Rings16" instance=ExtResource("17_qfdpq")]
+[node name="Child03" parent="RinglessAct/Objects/Rings16" unique_id=1564281428 instance=ExtResource("17_qfdpq")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -5)
 
-[node name="Child04" parent="RinglessAct/Objects/Rings16" instance=ExtResource("17_qfdpq")]
+[node name="Child04" parent="RinglessAct/Objects/Rings16" unique_id=1506058883 instance=ExtResource("17_qfdpq")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -7.5)
 
-[node name="Rings17" type="Node3D" parent="RinglessAct/Objects"]
+[node name="Rings17" type="Node3D" parent="RinglessAct/Objects" unique_id=1920187754]
 transform = Transform3D(-1, -6.70552e-08, 1.78814e-07, 2.98023e-08, 1, 0, 8.9407e-08, 1.49012e-08, -1, 0, -1.5, 390)
 script = ExtResource("16_1sm85")
 Source = ExtResource("17_qfdpq")
@@ -701,21 +792,21 @@ Spacing = 2.5
 "Vertical Offset" = null
 metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
 
-[node name="Child01" parent="RinglessAct/Objects/Rings17" instance=ExtResource("17_qfdpq")]
+[node name="Child01" parent="RinglessAct/Objects/Rings17" unique_id=36607271 instance=ExtResource("17_qfdpq")]
 
-[node name="Child02" parent="RinglessAct/Objects/Rings17" instance=ExtResource("17_qfdpq")]
+[node name="Child02" parent="RinglessAct/Objects/Rings17" unique_id=2033299945 instance=ExtResource("17_qfdpq")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2.5)
 
-[node name="Child03" parent="RinglessAct/Objects/Rings17" instance=ExtResource("17_qfdpq")]
+[node name="Child03" parent="RinglessAct/Objects/Rings17" unique_id=1156538244 instance=ExtResource("17_qfdpq")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -5)
 
-[node name="Child04" parent="RinglessAct/Objects/Rings17" instance=ExtResource("17_qfdpq")]
+[node name="Child04" parent="RinglessAct/Objects/Rings17" unique_id=2115385259 instance=ExtResource("17_qfdpq")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -7.5)
 
-[node name="SpikeBallGroup5" type="Node3D" parent="RinglessAct/Objects"]
+[node name="SpikeBallGroup5" type="Node3D" parent="RinglessAct/Objects" unique_id=1177628645]
 transform = Transform3D(-1, -5.01699e-08, -1.19209e-07, 1.02324e-07, -1, -7.45058e-09, -2.38419e-07, -1.49012e-08, 1, 0, 0, 404)
 
-[node name="SpikeBall1" parent="RinglessAct/Objects/SpikeBallGroup5" instance=ExtResource("19_r8djy")]
+[node name="SpikeBall1" parent="RinglessAct/Objects/SpikeBallGroup5" unique_id=468237051 instance=ExtResource("19_r8djy")]
 transform = Transform3D(1, 8.9407e-08, -7.45058e-09, 0, -4.47035e-08, -1, -2.98023e-08, 1, -3.72529e-08, 0, 0, 0)
 animatorSpeedScale = -0.5
 Movement/Mode = 2
@@ -724,7 +815,7 @@ Movement/Mode = 2
 "Movement/Vertical Size" = 0.0
 Movement/Radius = 2.0
 
-[node name="SpikeBall2" parent="RinglessAct/Objects/SpikeBallGroup5" instance=ExtResource("19_r8djy")]
+[node name="SpikeBall2" parent="RinglessAct/Objects/SpikeBallGroup5" unique_id=34521411 instance=ExtResource("19_r8djy")]
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0)
 animatorSpeedScale = -0.5
 Movement/Mode = 2
@@ -734,7 +825,7 @@ Movement/Mode = 2
 "Movement/Vertical Size" = 0.0
 Movement/Radius = 2.0
 
-[node name="SpikeBall3" parent="RinglessAct/Objects/SpikeBallGroup5" instance=ExtResource("19_r8djy")]
+[node name="SpikeBall3" parent="RinglessAct/Objects/SpikeBallGroup5" unique_id=715022370 instance=ExtResource("19_r8djy")]
 transform = Transform3D(1, 8.9407e-08, -7.45058e-09, 0, -4.47035e-08, -1, -2.98023e-08, 1, -3.72529e-08, 0, 0, 0)
 animatorSpeedScale = -0.5
 Movement/Mode = 2
@@ -744,7 +835,7 @@ Movement/Mode = 2
 "Movement/Vertical Size" = 0.0
 Movement/Radius = 2.0
 
-[node name="SpikeBall4" parent="RinglessAct/Objects/SpikeBallGroup5" instance=ExtResource("19_r8djy")]
+[node name="SpikeBall4" parent="RinglessAct/Objects/SpikeBallGroup5" unique_id=809168746 instance=ExtResource("19_r8djy")]
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0)
 animatorSpeedScale = -0.5
 Movement/Mode = 2
@@ -754,7 +845,7 @@ Movement/Mode = 2
 "Movement/Vertical Size" = 0.0
 Movement/Radius = 2.0
 
-[node name="Rings18" type="Node3D" parent="RinglessAct/Objects"]
+[node name="Rings18" type="Node3D" parent="RinglessAct/Objects" unique_id=1599773381]
 transform = Transform3D(-1, -8.9407e-08, 2.08616e-07, 3.72529e-08, 1, 7.45058e-09, 8.9407e-08, 7.45058e-09, -1, 0, -1.5, 410)
 script = ExtResource("16_1sm85")
 Source = ExtResource("17_qfdpq")
@@ -766,18 +857,18 @@ Spacing = 2.5
 "Vertical Offset" = null
 metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
 
-[node name="Child01" parent="RinglessAct/Objects/Rings18" instance=ExtResource("17_qfdpq")]
+[node name="Child01" parent="RinglessAct/Objects/Rings18" unique_id=1090763340 instance=ExtResource("17_qfdpq")]
 
-[node name="Child02" parent="RinglessAct/Objects/Rings18" instance=ExtResource("17_qfdpq")]
+[node name="Child02" parent="RinglessAct/Objects/Rings18" unique_id=1130232294 instance=ExtResource("17_qfdpq")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2.5)
 
-[node name="Child03" parent="RinglessAct/Objects/Rings18" instance=ExtResource("17_qfdpq")]
+[node name="Child03" parent="RinglessAct/Objects/Rings18" unique_id=971810783 instance=ExtResource("17_qfdpq")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -5)
 
-[node name="Child04" parent="RinglessAct/Objects/Rings18" instance=ExtResource("17_qfdpq")]
+[node name="Child04" parent="RinglessAct/Objects/Rings18" unique_id=1214182315 instance=ExtResource("17_qfdpq")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -7.5)
 
-[node name="RedMajin3" parent="RinglessAct/Objects" instance=ExtResource("21_wnkt2")]
+[node name="RedMajin3" parent="RinglessAct/Objects" unique_id=1896072071 instance=ExtResource("21_wnkt2")]
 transform = Transform3D(-1, -1.42409e-08, 2.38419e-07, 2.23517e-08, 0.987137, -0.159881, -8.9407e-08, -0.159881, -0.987136, -2.5, -2.25, 430)
 "Spawn Settings/Spawn Travel Time" = 1.0
 "Spawn Settings/Spawn Delay" = 0.0
@@ -789,10 +880,10 @@ transform = Transform3D(-1, -1.42409e-08, 2.38419e-07, 2.23517e-08, 0.987137, -0
 "Attack Settings/Flame Active Time" = 5.0
 rangeOverride = 40
 
-[node name="SpikeBallGroup6" type="Node3D" parent="RinglessAct/Objects"]
+[node name="SpikeBallGroup6" type="Node3D" parent="RinglessAct/Objects" unique_id=1231705137]
 transform = Transform3D(1, -3.72529e-08, -1.19209e-07, -1.49012e-08, 1, -7.45058e-09, 0, 0, 1, 0, 0, 444)
 
-[node name="SpikeBall1" parent="RinglessAct/Objects/SpikeBallGroup6" instance=ExtResource("19_r8djy")]
+[node name="SpikeBall1" parent="RinglessAct/Objects/SpikeBallGroup6" unique_id=1069550899 instance=ExtResource("19_r8djy")]
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0)
 animatorSpeedScale = 0.5
 Movement/Mode = 2
@@ -801,7 +892,7 @@ Movement/Mode = 2
 "Movement/Vertical Size" = 0.0
 Movement/Radius = 2.0
 
-[node name="SpikeBall2" parent="RinglessAct/Objects/SpikeBallGroup6" instance=ExtResource("19_r8djy")]
+[node name="SpikeBall2" parent="RinglessAct/Objects/SpikeBallGroup6" unique_id=1464294510 instance=ExtResource("19_r8djy")]
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0)
 animatorSpeedScale = 0.5
 Movement/Mode = 2
@@ -811,7 +902,7 @@ Movement/Mode = 2
 "Movement/Vertical Size" = 0.0
 Movement/Radius = 2.0
 
-[node name="SpikeBall3" parent="RinglessAct/Objects/SpikeBallGroup6" instance=ExtResource("19_r8djy")]
+[node name="SpikeBall3" parent="RinglessAct/Objects/SpikeBallGroup6" unique_id=1028350319 instance=ExtResource("19_r8djy")]
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0)
 animatorSpeedScale = 0.5
 Movement/Mode = 2
@@ -821,7 +912,7 @@ Movement/Mode = 2
 "Movement/Vertical Size" = 0.0
 Movement/Radius = 2.0
 
-[node name="SpikeBall4" parent="RinglessAct/Objects/SpikeBallGroup6" instance=ExtResource("19_r8djy")]
+[node name="SpikeBall4" parent="RinglessAct/Objects/SpikeBallGroup6" unique_id=1830035323 instance=ExtResource("19_r8djy")]
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0)
 animatorSpeedScale = 0.5
 Movement/Mode = 2
@@ -831,7 +922,7 @@ Movement/Mode = 2
 "Movement/Vertical Size" = 0.0
 Movement/Radius = 2.0
 
-[node name="SpikeBall5" parent="RinglessAct/Objects/SpikeBallGroup6" instance=ExtResource("19_r8djy")]
+[node name="SpikeBall5" parent="RinglessAct/Objects/SpikeBallGroup6" unique_id=1941253823 instance=ExtResource("19_r8djy")]
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0)
 animatorSpeedScale = 0.5
 Movement/Mode = 2
@@ -841,7 +932,7 @@ Movement/Mode = 2
 "Movement/Vertical Size" = 0.0
 Movement/Radius = 2.0
 
-[node name="Rings19" type="Node3D" parent="RinglessAct/Objects"]
+[node name="Rings19" type="Node3D" parent="RinglessAct/Objects" unique_id=1929221709]
 transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 0.75, -1.5, 460)
 script = ExtResource("16_1sm85")
 Source = ExtResource("17_qfdpq")
@@ -853,21 +944,21 @@ Spacing = 1.5
 "Vertical Offset" = null
 metadata/_custom_type_script = "uid://dd24u7rlj0dwl"
 
-[node name="Child01" parent="RinglessAct/Objects/Rings19" instance=ExtResource("17_qfdpq")]
+[node name="Child01" parent="RinglessAct/Objects/Rings19" unique_id=1096098948 instance=ExtResource("17_qfdpq")]
 
-[node name="Child02" parent="RinglessAct/Objects/Rings19" instance=ExtResource("17_qfdpq")]
+[node name="Child02" parent="RinglessAct/Objects/Rings19" unique_id=678806606 instance=ExtResource("17_qfdpq")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -1.5)
 
-[node name="Goal" parent="RinglessAct" instance=ExtResource("3_bd3wh")]
+[node name="Goal" parent="RinglessAct" unique_id=1720423138 instance=ExtResource("3_bd3wh")]
 transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, -40, -78, -951)
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="RinglessAct/Goal"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="RinglessAct/Goal" unique_id=860522602]
 shape = SubResource("BoxShape3D_u88v8")
 
-[node name="InvisibleWall" type="StaticBody3D" parent="RinglessAct" groups=["wall"]]
+[node name="InvisibleWall" type="StaticBody3D" parent="RinglessAct" unique_id=1324713978 groups=["wall"]]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -40, -78, -944)
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="RinglessAct/InvisibleWall"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="RinglessAct/InvisibleWall" unique_id=419349405]
 shape = SubResource("BoxShape3D_u88v8")
 
 [connection signal="Activated" from="RinglessAct/Tower1/Spring1" to="RinglessAct/Tower1/Cam" method="Activate"]

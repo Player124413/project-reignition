@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://d0v2jlqmfqwkb"]
+[gd_scene format=3 uid="uid://d0v2jlqmfqwkb"]
 
 [ext_resource type="Script" uid="uid://bj7jhdknn12cl" path="res://object/stage/destructable/resource/script/DestructableObject.cs" id="1_halc8"]
 [ext_resource type="PackedScene" uid="uid://drlh02bcyviwu" path="res://area/6 skeleton dome/object/model/destructable/Tail.gltf" id="2_fueyy"]
@@ -146,7 +146,7 @@ _data = {
 &"shatter": SubResource("Animation_0mcy5")
 }
 
-[node name="Tail" type="Node3D" node_paths=PackedStringArray("root", "pieceRoot", "animator")]
+[node name="Tail" type="Node3D" unique_id=2086212096 node_paths=PackedStringArray("root", "pieceRoot", "animator")]
 script = ExtResource("1_halc8")
 pieceMass = 0.05
 shatterFlags = 28
@@ -155,27 +155,27 @@ root = NodePath("Root")
 pieceRoot = NodePath("TailPieces")
 animator = NodePath("AnimationPlayer")
 
-[node name="Root" type="Node3D" parent="."]
+[node name="Root" type="Node3D" parent="." unique_id=917063266]
 
-[node name="Tail" parent="Root" instance=ExtResource("2_fueyy")]
+[node name="Tail" parent="Root" unique_id=1939838379 instance=ExtResource("2_fueyy")]
 
-[node name="StaticBody3D" parent="Root/Tail/TailMesh" index="0" groups=["wall"]]
+[node name="StaticBody3D" parent="Root/Tail/TailMesh" parent_id_path=PackedInt32Array(1939838379, 103323333) index="0" unique_id=1233629380 groups=["wall"]]
 collision_layer = 8
 collision_mask = 0
 
-[node name="Lockon" type="Area3D" parent="Root"]
+[node name="Lockon" type="Area3D" parent="Root" unique_id=18374472]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.3, 0.2)
 collision_layer = 4
 collision_mask = 2
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Root/Lockon"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Root/Lockon" unique_id=2054485240]
 transform = Transform3D(1.1, 0, 0, 0, -4.80825e-08, -1.1, 0, 1.1, -4.80825e-08, 0, -0.306157, -0.252309)
 shape = SubResource("CapsuleShape3D_eqlkx")
 
-[node name="TailPieces" parent="." instance=ExtResource("3_ybyh0")]
+[node name="TailPieces" parent="." unique_id=1396738677 instance=ExtResource("3_ybyh0")]
 visible = false
 
-[node name="Shatter" type="AudioStreamPlayer3D" parent="."]
+[node name="Shatter" type="AudioStreamPlayer3D" parent="." unique_id=546065386]
 stream = ExtResource("4_2wjfk")
 attenuation_model = 3
 max_db = 0.0
@@ -183,10 +183,8 @@ max_distance = 20.0
 bus = &"GAME SFX"
 attenuation_filter_cutoff_hz = 20500.0
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
-libraries = {
-&"": SubResource("AnimationLibrary_rd8ot")
-}
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=701229805]
+libraries/ = SubResource("AnimationLibrary_rd8ot")
 
 [connection signal="area_entered" from="Root/Lockon" to="." method="OnEntered"]
 [connection signal="area_exited" from="Root/Lockon" to="." method="OnExited"]
