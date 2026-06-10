@@ -6,11 +6,12 @@
 [ext_resource type="Resource" uid="uid://cedbgtjhhisjg" path="res://area/7 night palace/data/BossDialogLibrary.tres" id="4_p7tjh"]
 [ext_resource type="Texture2D" uid="uid://caxeerv5m6p41" path="res://area/7 night palace/data/skybox/model/texture/sky moon.png" id="7_njf43"]
 [ext_resource type="PackedScene" uid="uid://1mlq23jb6byp" path="res://area/7 night palace/data/skybox/Skybox.tscn" id="9_aohgx"]
-[ext_resource type="PackedScene" uid="uid://dar74l2eiux2t" path="res://effect/buffer/DepthRenderer.tscn" id="9_ca2n2"]
 [ext_resource type="Curve3D" uid="uid://dvdtvb7kixby0" path="res://area/7 night palace/boss/environment/path/MainPath.tres" id="10_7yaqk"]
 [ext_resource type="PackedScene" uid="uid://bpk2a7t5ag3lk" path="res://area/7 night palace/boss/data/InfiniteHall.tscn" id="10_jhood"]
 [ext_resource type="PackedScene" uid="uid://0o1ds8o5k04j" path="res://effect/buffer/PlanarReflectionRenderer.tscn" id="11_gi0oh"]
 [ext_resource type="Resource" uid="uid://cl8grcpx1vjdo" path="res://resource/bgm/bgm np boss.tres" id="12_njf43"]
+[ext_resource type="Script" uid="uid://2o7w04fafmsf" path="res://effect/buffer/script/DepthRenderer.cs" id="13_js1vy"]
+[ext_resource type="Material" uid="uid://tma3nv6ewgck" path="res://effect/buffer/material/Depth Renderer Material.tres" id="14_g51bp"]
 [ext_resource type="Material" uid="uid://c3kendmmffv8b" path="res://area/7 night palace/data/material/Effect Primary Reflection.tres" id="15_48h34"]
 [ext_resource type="Material" uid="uid://dwmvujonhvjd7" path="res://area/7 night palace/data/material/Effect Secondary Reflection.tres" id="16_gcw3n"]
 
@@ -60,6 +61,135 @@ _data = {
 &"RESET": SubResource("Animation_g51bp"),
 &"why do i have to do this": SubResource("Animation_js1vy")
 }
+
+[sub_resource type="QuadMesh" id="QuadMesh_js1vy"]
+flip_faces = true
+size = Vector2(2, 2)
+
+[sub_resource type="Shader" id="Shader_cl5sw"]
+code = "shader_type canvas_item;
+render_mode unshaded, blend_add;
+
+uniform sampler2D depth_tex : filter_linear;
+uniform sampler2D screen_texture : hint_screen_texture, filter_linear;
+uniform sampler2D light_color : hint_default_white;
+uniform vec4 ray_color : source_color = vec4(1.0, 1.0, 1.0, 1.0);
+uniform float ray_length : hint_range(0.0, 1.0) = 1.0;
+uniform float ray_intensity : hint_range(0.0, 1.0) = 1.0;
+uniform float light_source_scale = 1.0;
+uniform float light_source_feather = 2.0;
+uniform float noise_strength : hint_range(0.0, 1.0) = 0.2;
+uniform vec2 light_source_pos = vec2(0.0, 0.0);
+uniform vec3 light_source_dir = vec3(0.5, -1.0, 0.25);
+uniform float mask_threshold : hint_range(0.0, 1.0) = 0.5;
+uniform float mask_softness : hint_range(0.01, 0.5) = 0.15;
+uniform float mask_radius : hint_range(0.01, 0.5) = 0.15;
+uniform bool debug_mode = false;
+uniform float debug_dot_radius : hint_range(0.001, 0.05) = 0.01;
+
+const int SAMPLE_COUNT = 120;
+
+float random(vec2 uv) {
+	return fract(sin(dot(uv.xy, vec2(12.9898, 78.233))) * 43758.5453123);
+}
+
+void fragment() {
+	vec2 light_pos = light_source_pos;
+	vec2 ratio = vec2(SCREEN_PIXEL_SIZE.x / SCREEN_PIXEL_SIZE.y, 1.0);
+
+	if (debug_mode) {
+		vec2 diff = (UV - light_pos) / ratio;
+		float dist = length(diff);
+		float dot_mask = smoothstep(debug_dot_radius, debug_dot_radius * 0.5, dist);
+		COLOR.rgb = vec3(dot_mask);
+		COLOR.a = 1.0;
+	} else {
+		vec2 dir = UV - light_pos;
+		vec2 dir2 = UV / ratio - light_pos / ratio;
+		float light_rays = 0.0;
+		vec2 uv2;
+		float scale, l;
+
+		for (int i = 0; i < SAMPLE_COUNT; i++) {
+			scale = 1.0 - ray_length * (float(i) / float(SAMPLE_COUNT - 1));
+			vec2 sample_uv = dir * scale + light_pos;
+			l = 1.0 - texture(depth_tex, sample_uv).a;
+			uv2 = dir2 * scale * pow(light_source_scale, 2.0);
+			l *= smoothstep(1.0, 0.999 - light_source_feather, dot(uv2, uv2) * 4.0);
+			light_rays += l / float(SAMPLE_COUNT);
+		}
+
+		float n = 1.0 - random(UV) * noise_strength * smoothstep(0.999 - 1.25, 1.0, dot(dir2, dir2) * 2.0);
+		light_rays *= n;
+
+		vec3 screen_col = texture(screen_texture, SCREEN_UV).rgb;
+		float brightness = max(screen_col.r, max(screen_col.g, screen_col.b));
+		float moon_mask = smoothstep(mask_threshold, mask_threshold + mask_softness, brightness);
+
+		float dist_to_light = length((UV - light_pos) / ratio);
+		float proximity = 1.0 - smoothstep(0.0, mask_radius, dist_to_light);
+		moon_mask *= proximity;
+
+		light_rays *= (1.0 - moon_mask);
+
+		COLOR.rgb = vec3(light_rays * ray_intensity) * texture(light_color, UV).rgb * ray_color.rgb;
+		COLOR.a = ray_color.a;
+	}
+}"
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_g51bp"]
+resource_local_to_scene = true
+shader = SubResource("Shader_cl5sw")
+shader_parameter/ray_color = Color(1, 1, 1, 1)
+shader_parameter/ray_length = 0.8000000380000001
+shader_parameter/ray_intensity = 0.5000000237500001
+shader_parameter/light_source_scale = 1.1999999999970896
+shader_parameter/light_source_feather = 1.4499999999970896
+shader_parameter/noise_strength = 0.10000000475
+shader_parameter/light_source_pos = Vector2(0, 0)
+shader_parameter/light_source_dir = Vector3(0.5, -1, 0.25)
+shader_parameter/mask_threshold = 0.470000022325
+shader_parameter/mask_softness = 0.16900000732898002
+shader_parameter/mask_radius = 0.5
+shader_parameter/debug_mode = false
+shader_parameter/debug_dot_radius = 0.01
+
+[sub_resource type="GDScript" id="GDScript_iowwo"]
+script/source = "extends ColorRect
+
+@export var sun_target_path: NodePath
+@export var depth_viewport_path: NodePath
+
+@onready var depth_viewport: SubViewport = get_node(depth_viewport_path)
+@onready var sun_target: Node3D = get_node(sun_target_path)
+
+func _ready() -> void:
+	process_priority = 100
+	material.set_shader_parameter(\"depth_tex\", depth_viewport.get_texture())
+
+func _process(_delta: float) -> void:
+	var active_cam: Camera3D = get_tree().root.get_camera_3d()
+	if not active_cam or not sun_target:
+		return
+
+	var cam_forward: Vector3 = -active_cam.global_basis.z
+	var target_pos: Vector3 = sun_target.global_position
+
+	if active_cam.is_position_behind(target_pos):
+		material.set_shader_parameter(\"light_source_pos\", Vector2(-99999, -99999))
+		material.set_shader_parameter(\"camera_dir\", cam_forward)
+		return
+
+	var sun_dir: Vector3 = (target_pos - active_cam.global_position).normalized()
+	material.set_shader_parameter(\"light_source_dir\", sun_dir)
+
+	var pos: Vector2 = active_cam.unproject_position(target_pos)
+	var viewport_size: Vector2 = get_viewport().get_visible_rect().size
+	var pos_uv: Vector2 = pos / viewport_size
+
+	material.set_shader_parameter(\"light_source_pos\", pos_uv)
+	material.set_shader_parameter(\"camera_dir\", cam_forward)
+"
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_kamdx"]
 sky_top_color = Color(0, 0, 0.109804, 1)
@@ -428,7 +558,7 @@ _data = {
 &"demo3": SubResource("Animation_ca2n2")
 }
 
-[node name="Static" type="Node3D" unique_id=977857622 node_paths=PackedStringArray("pathParent", "completionAnimator", "Environment")]
+[node name="Static" type="Node3D" unique_id=909990699 node_paths=PackedStringArray("pathParent", "completionAnimator", "Environment")]
 script = ExtResource("1_fvbu3")
 Data = ExtResource("2_wdw6t")
 DefaultBgm = ExtResource("12_njf43")
@@ -438,24 +568,24 @@ pathParent = NodePath("Path")
 completionAnimator = NodePath("DemoCamera/AnimationPlayer")
 Environment = NodePath("WorldEnvironment")
 
-[node name="Visuals" type="Node3D" parent="." unique_id=1593159644]
+[node name="Visuals" type="Node3D" parent="." unique_id=497129495]
 
-[node name="bouncelight" type="DirectionalLight3D" parent="Visuals" unique_id=1759608850]
+[node name="bouncelight" type="DirectionalLight3D" parent="Visuals" unique_id=1778176150]
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0)
 layers = 1024
 light_color = Color(0.45, 0.45, 1, 1)
 light_energy = 0.5
 light_cull_mask = 4293918722
 
-[node name="Skybox" parent="Visuals" unique_id=1594034757 instance=ExtResource("9_aohgx")]
+[node name="Skybox" parent="Visuals" unique_id=486591170 instance=ExtResource("9_aohgx")]
 metadata/_edit_lock_ = true
 
-[node name="MoonMesh" parent="Visuals/Skybox/SkyRoot/Skeleton3D" parent_id_path=PackedInt32Array(1594034757, 1668315416) index="5" unique_id=2115929852]
+[node name="MoonMesh" parent="Visuals/Skybox/SkyRoot/Skeleton3D" parent_id_path=PackedInt32Array(486591170, 1102596825) index="5" unique_id=403737835]
 surface_material_override/0 = SubResource("StandardMaterial3D_ca2n2")
 
-[node name="moonlight" type="Node3D" parent="Visuals/Skybox" unique_id=1591929822]
+[node name="moonlight" type="Node3D" parent="Visuals/Skybox" unique_id=2050519465]
 
-[node name="DirectionalLight3D" type="DirectionalLight3D" parent="Visuals/Skybox/moonlight" unique_id=1702467502]
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="Visuals/Skybox/moonlight" unique_id=1153193584]
 transform = Transform3D(0.7582937, -0.15555833, 0.6330817, -6.752521e-09, 0.97111344, 0.23861821, -0.65191317, -0.18094267, 0.73638916, 0, 2.7190177, 0)
 layers = 1024
 light_color = Color(0.7, 0.765, 1, 1)
@@ -463,12 +593,11 @@ light_energy = 1.2
 light_specular = 2.0
 light_cull_mask = 4293918787
 shadow_enabled = true
-shadow_bias = 0.001
 directional_shadow_split_1 = 0.15
 directional_shadow_split_2 = 0.3
 directional_shadow_max_distance = 80.0
 
-[node name="DirectionalLight3D" type="DirectionalLight3D" parent="Visuals/Skybox/moonlight/DirectionalLight3D" unique_id=2096702284]
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="Visuals/Skybox/moonlight/DirectionalLight3D" unique_id=421403164]
 transform = Transform3D(0.782771, -0.06196451, -0.6192169, -0.08312882, 0.97570115, -0.2027232, 0.6167324, 0.21016069, 0.75859976, -5.1584826, 1.2872431, 5.826931)
 layers = 1024
 light_color = Color(0.11270679, 1.540184e-06, 0.5560142, 1)
@@ -481,36 +610,109 @@ directional_shadow_split_2 = 0.3
 directional_shadow_blend_splits = true
 directional_shadow_max_distance = 80.0
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="Visuals/Skybox/moonlight" unique_id=1085423884]
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Visuals/Skybox/moonlight" unique_id=647734038]
 libraries/ = SubResource("AnimationLibrary_iowwo")
 autoplay = &"why do i have to do this"
 
-[node name="InfiniteHall" parent="Visuals" unique_id=1577123208 node_paths=PackedStringArray("sky") instance=ExtResource("10_jhood")]
+[node name="InfiniteHall" parent="Visuals" unique_id=145401295 node_paths=PackedStringArray("sky") instance=ExtResource("10_jhood")]
 sky = NodePath("../Skybox")
 
-[node name="DepthRenderer" parent="Visuals" unique_id=2071953401 instance=ExtResource("9_ca2n2")]
+[node name="DepthRenderer" type="Node" parent="Visuals" unique_id=1523278665 node_paths=PackedStringArray("depthCamera", "depthViewport", "depthViewportContainer")]
+script = ExtResource("13_js1vy")
+depthCamera = NodePath("Viewport/DepthPreview/DepthViewport/DepthCamera")
+depthViewport = NodePath("Viewport/DepthPreview/DepthViewport")
+depthMaterial = ExtResource("14_g51bp")
+depthViewportContainer = NodePath("Viewport")
+depthMaterials = []
 
-[node name="Path" type="Node3D" parent="." unique_id=1069107296]
+[node name="Viewport" type="Control" parent="Visuals/DepthRenderer" unique_id=48526871]
+visible = false
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 
-[node name="MainPath" type="Path3D" parent="Path" unique_id=1402882961]
+[node name="DepthPreview" type="SubViewportContainer" parent="Visuals/DepthRenderer/Viewport" unique_id=291008742]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -480.0
+offset_top = -540.0
+offset_right = 480.0
+grow_horizontal = 0
+grow_vertical = 0
+scale = Vector2(0.5, 0.5)
+pivot_offset = Vector2(0, 540)
+
+[node name="DepthViewport" type="SubViewport" parent="Visuals/DepthRenderer/Viewport/DepthPreview" unique_id=1572182880]
+transparent_bg = true
+handle_input_locally = false
+scaling_3d_scale = 0.25
+anisotropic_filtering_level = 0
+gui_disable_input = true
+positional_shadow_atlas_size = 0
+positional_shadow_atlas_16_bits = false
+positional_shadow_atlas_quad_0 = 0
+positional_shadow_atlas_quad_1 = 0
+positional_shadow_atlas_quad_2 = 0
+positional_shadow_atlas_quad_3 = 0
+canvas_cull_mask = 0
+size = Vector2i(256, 256)
+render_target_update_mode = 0
+
+[node name="DepthCamera" type="Camera3D" parent="Visuals/DepthRenderer/Viewport/DepthPreview/DepthViewport" unique_id=613465626]
+visible = false
+cull_mask = 262215
+current = true
+
+[node name="DepthRenderer" type="MeshInstance3D" parent="Visuals/DepthRenderer/Viewport/DepthPreview/DepthViewport/DepthCamera" unique_id=1956442411]
+layers = 262144
+material_override = ExtResource("14_g51bp")
+cast_shadow = 0
+extra_cull_margin = 16384.0
+mesh = SubResource("QuadMesh_js1vy")
+
+[node name="CanvasLayerLightShafts" type="CanvasLayer" parent="Visuals/DepthRenderer" unique_id=1526060651]
+layer = -1
+
+[node name="ColorRect_LightRays" type="ColorRect" parent="Visuals/DepthRenderer/CanvasLayerLightShafts" unique_id=627732589]
+material = SubResource("ShaderMaterial_g51bp")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = SubResource("GDScript_iowwo")
+sun_target_path = NodePath("../../../Skybox/SkyRoot/Skeleton3D/MoonMesh/MoonTransform")
+depth_viewport_path = NodePath("../../Viewport/DepthPreview/DepthViewport")
+metadata/_edit_use_anchors_ = true
+
+[node name="Path" type="Node3D" parent="." unique_id=552831541]
+
+[node name="MainPath" type="Path3D" parent="Path" unique_id=596483389]
 curve = ExtResource("10_7yaqk")
 
-[node name="PrimaryReflectionRenderer" parent="." unique_id=1508084297 instance=ExtResource("11_gi0oh")]
+[node name="PrimaryReflectionRenderer" parent="." unique_id=1123063642 instance=ExtResource("11_gi0oh")]
 reflectionMaterials = [ExtResource("15_48h34")]
 
-[node name="SecondaryReflectionRenderer" parent="." unique_id=1529819770 instance=ExtResource("11_gi0oh")]
+[node name="SecondaryReflectionRenderer" parent="." unique_id=1570344700 instance=ExtResource("11_gi0oh")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.35, 0)
 reflectionMaterials = [ExtResource("16_gcw3n")]
 
-[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1102451381]
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=903135044]
 environment = SubResource("Environment_gk03j")
 
-[node name="DemoCamera" type="Node3D" parent="." unique_id=614832635]
+[node name="DemoCamera" type="Node3D" parent="." unique_id=1217102229]
 
-[node name="Camera" type="Camera3D" parent="DemoCamera" unique_id=491153792]
+[node name="Camera" type="Camera3D" parent="DemoCamera" unique_id=1022478888]
 cull_mask = 1086
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="DemoCamera" unique_id=1291624873]
+[node name="AnimationPlayer" type="AnimationPlayer" parent="DemoCamera" unique_id=1910950838]
 libraries/ = SubResource("AnimationLibrary_njf43")
 
 [editable path="Visuals/Skybox"]
