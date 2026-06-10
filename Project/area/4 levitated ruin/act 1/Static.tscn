@@ -342,6 +342,9 @@ size = Vector3(40, 20, 57)
 [sub_resource type="BoxShape3D" id="BoxShape3D_6ei0p"]
 size = Vector3(20, 20, 5)
 
+[sub_resource type="BoxShape3D" id="BoxShape3D_0b4pr"]
+size = Vector3(10, 17, 2)
+
 [sub_resource type="BoxShape3D" id="BoxShape3D_crwnd"]
 size = Vector3(10, 20, 120)
 
@@ -1118,22 +1121,19 @@ startEnabled = true
 
 [node name="LRSky" parent="Visuals" unique_id=1421820300 instance=ExtResource("18_0sql3")]
 
-[node name="stg060_tsky_obj_Mesh_0000" parent="Visuals/LRSky/SkyRoot/Skeleton3D" parent_id_path=PackedInt32Array(1421820300, 513266925) index="0" unique_id=951759577]
+[node name="stg060_tsky_obj_Mesh_0000" parent="Visuals/LRSky/SkyRoot/Skeleton3D" parent_id_path=PackedInt32Array(1421820300, 696682843) index="0" unique_id=984789454]
 surface_material_override/0 = SubResource("StandardMaterial3D_dkiax")
 
-[node name="stg060_tsky_obj_Mesh_0002" parent="Visuals/LRSky/SkyRoot/Skeleton3D" parent_id_path=PackedInt32Array(1421820300, 513266925) index="2" unique_id=24938695]
+[node name="stg060_tsky_obj_Mesh_0002" parent="Visuals/LRSky/SkyRoot/Skeleton3D" parent_id_path=PackedInt32Array(1421820300, 696682843) index="2" unique_id=934846255]
 surface_material_override/0 = SubResource("StandardMaterial3D_jkh2t")
 
-[node name="stg060_tsky_obj_Mesh_0007" parent="Visuals/LRSky/SkyRoot/Skeleton3D" parent_id_path=PackedInt32Array(1421820300, 513266925) index="7" unique_id=639431056]
+[node name="stg060_tsky_obj_Mesh_0007" parent="Visuals/LRSky/SkyRoot/Skeleton3D" parent_id_path=PackedInt32Array(1421820300, 696682843) index="7" unique_id=12104236]
 surface_material_override/0 = ExtResource("22_dkiax")
 
-[node name="stg060_tsky_obj_Mesh_0014" parent="Visuals/LRSky/SkyRoot/Skeleton3D" parent_id_path=PackedInt32Array(1421820300, 513266925) index="14" unique_id=1327683672]
+[node name="stg060_tsky_obj_Mesh_0014" parent="Visuals/LRSky/SkyRoot/Skeleton3D" parent_id_path=PackedInt32Array(1421820300, 696682843) index="14" unique_id=1935466265]
 surface_material_override/0 = SubResource("ShaderMaterial_hfxvw")
 
-[node name="AnimationPlayer" parent="Visuals/LRSky" index="1" unique_id=1460294186]
-autoplay = &"sky"
-
-[node name="Sun" parent="Visuals/LRSky" index="2"]
+[node name="Sun" parent="Visuals/LRSky" index="2" unique_id=1152051495]
 transform = Transform3D(0.671318, 0.0125417, -0.179442, -0.0899399, 0.623826, -0.292878, 0.15578, 0.30612, 0.604192, 509.278, 318.903, -1609.51)
 
 [node name="DepthRenderer" type="Node" parent="Visuals/LRSky" unique_id=1664311319 node_paths=PackedStringArray("depthCamera", "depthViewport", "depthViewportContainer")]
@@ -1185,6 +1185,7 @@ size = Vector2i(256, 256)
 render_target_update_mode = 0
 
 [node name="DepthCamera" type="Camera3D" parent="Visuals/LRSky/DepthRenderer/Viewport/DepthPreview/DepthViewport" unique_id=649286186]
+visible = false
 cull_mask = 262215
 current = true
 
@@ -1368,7 +1369,6 @@ ambient_color_energy = 1.5
 [node name="Triggers" type="Node3D" parent="." unique_id=1097728764]
 
 [node name="Object" type="Node3D" parent="Triggers" unique_id=385293656]
-visible = false
 
 [node name="FallTrigger" parent="Triggers/Object" unique_id=928896851 instance=ExtResource("19_fp3yh")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -200, 0)
@@ -1479,6 +1479,25 @@ OneShot = true
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Triggers/Object/Rukh6" unique_id=1435197911]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
 shape = SubResource("BoxShape3D_gwjfc")
+
+[node name="FinalPathTrigger" parent="Triggers/Object" unique_id=1029606726 instance=ExtResource("19_fp3yh")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 250, -22, -1382.5)
+OneShot = true
+"Respawn Mode" = 0
+"Enter Mode" = 0
+
+[node name="LoopPath" type="Node3D" parent="Triggers/Object/FinalPathTrigger" unique_id=411430219 node_paths=PackedStringArray("path")]
+script = ExtResource("21_22ibx")
+path = NodePath("../../../../Paths/TowerPath")
+affectCamera = false
+
+[node name="LoopLockout" type="Node3D" parent="Triggers/Object/FinalPathTrigger" unique_id=1134787953]
+script = ExtResource("22_hfpio")
+lockoutData = ExtResource("24_v02si")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Triggers/Object/FinalPathTrigger" unique_id=269932926]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
+shape = SubResource("BoxShape3D_0b4pr")
 
 [node name="Checkpoint" type="Node3D" parent="Triggers" unique_id=1395063708]
 
@@ -2724,6 +2743,7 @@ external_skeleton = NodePath("../PrisonDoorRoot/Skeleton3D")
 [connection signal="Activated" from="Triggers/Object/Rukh4" to="Visuals/Rukh3LOD" method="Activate"]
 [connection signal="Activated" from="Triggers/Object/Rukh4" to="Visuals/Rukh4Event" method="Activate"]
 [connection signal="Activated" from="Triggers/Object/Rukh6" to="Visuals/Rukh6Event" method="Activate"]
+[connection signal="Activated" from="Triggers/Object/FinalPathTrigger" to="Triggers/Camera/TowerCameras" method="Activate"]
 [connection signal="Activated" from="SkyRoad/SkyRoad01/GargoyleTrigger" to="SkyRoad/SkyRoad01/Gargoyle" method="Activate"]
 [connection signal="Activated" from="SkyRoad/SkyRoad01/Lockout" to="SkyRoad/SkyroadLockout" method="Activate"]
 [connection signal="Activated" from="SkyRoad/SkyRoad01/Rukh4Jump" to="Visuals/Rukh4Event" method="Activate"]
