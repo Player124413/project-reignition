@@ -173,7 +173,7 @@ public partial class DriftState : PlayerState
 	private void AttemptDrift(float distance)
 	{
 		bool isManualDrift = SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.DriftExp);
-		bool isAttemptingDrift = ((Input.IsActionJustPressed("button_action") && isManualDrift) ||
+		bool isAttemptingDrift = (isManualDrift && (Input.IsActionJustPressed("button_action") || Input.IsActionJustPressed("button_attack")) ||
 			((!isManualDrift || Player.Skills.IsSpeedBreakActive) && distance <= InputWindowDistance)) && driftStatus != DriftStatus.TimingFail;
 
 		if (!isAttemptingDrift)
