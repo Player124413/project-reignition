@@ -84,6 +84,9 @@ public partial class DebugManager : Control
 			}
 		}
 
+		if (Input.IsActionJustPressed("debug_pause_shader"))
+			Runtime.Instance.AreShadersPausable = !Runtime.Instance.AreShadersPausable;
+
 		if (!IsPaused)
 			isAttemptingPause = false;
 

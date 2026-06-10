@@ -95,9 +95,12 @@ public partial class Runtime : Node
 	private const float ShaderTimeRollover = 3600f;
 	private readonly string ShaderTimeParameter = "time";
 
+	/// <summary> Determines whether shaders should be pausable or not. </summary>
+	public bool AreShadersPausable { get; set; }
+
 	private void UpdateShaderTime()
 	{
-		if (GetTree().Paused)
+		if (GetTree().Paused && AreShadersPausable)
 			return;
 
 		shaderTime += PhysicsManager.normalDelta * (float)Engine.TimeScale;
