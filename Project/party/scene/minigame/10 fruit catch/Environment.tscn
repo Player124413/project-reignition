@@ -1,4 +1,4 @@
-[gd_scene load_steps=22 format=3 uid="uid://c35p8v62qdykg"]
+[gd_scene format=3 uid="uid://c35p8v62qdykg"]
 
 [ext_resource type="PackedScene" uid="uid://5id56kgo0rka" path="res://party/scene/minigame/10 fruit catch/model/Environment.glb" id="1_6kaxa"]
 [ext_resource type="Script" uid="uid://bf82prgf8lewt" path="res://party/scene/minigame/10 fruit catch/script/player_controller.gd" id="1_qlpbs"]
@@ -16,125 +16,68 @@ glow_enabled = true
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_aoec8"]
 
-[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_aoec8"]
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_kmx01"]
 radius = 0.25
 height = 25.0
 
-[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_w6lhc"]
-animation = &"MINIGAME/aim-neutral"
+[sub_resource type="BoxMesh" id="BoxMesh_qh6t2"]
 
-[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_ry6b1"]
-animation = &"MINIGAME/aim-up"
-
-[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_onisx"]
-animation = &"MINIGAME/aim-down"
-
-[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_2tt17"]
-animation = &"MINIGAME/aim-left"
-
-[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_y2qp1"]
-animation = &"MINIGAME/aim-right"
-
-[sub_resource type="AnimationNodeBlendSpace2D" id="AnimationNodeBlendSpace2D_287b0"]
-blend_point_0/node = SubResource("AnimationNodeAnimation_w6lhc")
-blend_point_0/pos = Vector2(0, 0)
-blend_point_1/node = SubResource("AnimationNodeAnimation_ry6b1")
-blend_point_1/pos = Vector2(0, 1)
-blend_point_2/node = SubResource("AnimationNodeAnimation_onisx")
-blend_point_2/pos = Vector2(0, -1)
-blend_point_3/node = SubResource("AnimationNodeAnimation_2tt17")
-blend_point_3/pos = Vector2(-1, 0)
-blend_point_4/node = SubResource("AnimationNodeAnimation_y2qp1")
-blend_point_4/pos = Vector2(1, 0)
-sync = true
-
-[sub_resource type="AnimationNodeBlend2" id="AnimationNodeBlend2_ggd4j"]
-filter_enabled = true
-filters = ["%GeneralSkeleton:elbow_r", "%GeneralSkeleton:head", "%GeneralSkeleton:shoulder_r", "%GeneralSkeleton:stomach", "%GeneralSkeleton:wrist_r"]
-
-[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_287b0"]
-animation = &"MINIGAME/hurt"
-
-[sub_resource type="AnimationNodeTimeSeek" id="AnimationNodeTimeSeek_ggd4j"]
-
-[sub_resource type="AnimationNodeOneShot" id="AnimationNodeOneShot_ggd4j"]
-fadein_time = 0.05
-fadeout_time = 0.1
-
-[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_ggd4j"]
-animation = &"MINIGAME/wait"
-
-[sub_resource type="AnimationNodeBlendTree" id="AnimationNodeBlendTree_y30lh"]
-graph_offset = Vector2(-925.8203, 116.272705)
-nodes/output/position = Vector2(220, 140)
-nodes/wait_anim/node = SubResource("AnimationNodeAnimation_ggd4j")
-nodes/wait_anim/position = Vector2(-520, 40)
-nodes/aim_blend/node = SubResource("AnimationNodeBlendSpace2D_287b0")
-nodes/aim_blend/position = Vector2(-520, 220)
-nodes/aim_blend_const/node = SubResource("AnimationNodeBlend2_ggd4j")
-nodes/aim_blend_const/position = Vector2(-220, 120)
-nodes/hurt_trigger/node = SubResource("AnimationNodeOneShot_ggd4j")
-nodes/hurt_trigger/position = Vector2(60, 140)
-nodes/hurt_anim/node = SubResource("AnimationNodeAnimation_287b0")
-nodes/hurt_anim/position = Vector2(-320, 400)
-nodes/hurt_seek/node = SubResource("AnimationNodeTimeSeek_ggd4j")
-nodes/hurt_seek/position = Vector2(-100, 380)
-node_connections = [&"output", 0, &"hurt_trigger", &"aim_blend_const", 0, &"wait_anim", &"aim_blend_const", 1, &"aim_blend", &"hurt_trigger", 0, &"aim_blend_const", &"hurt_trigger", 1, &"hurt_seek", &"hurt_seek", 0, &"hurt_anim"]
-
-[node name="Environment" type="Node3D" node_paths=PackedStringArray("bone_attachment", "spawn_position", "animation_tree")]
+[node name="Environment" type="Node3D" unique_id=458310397 node_paths=PackedStringArray("stomach_attachment", "rapier_attachment", "shoulder_inherited_attachment", "shoulder_override_attachment", "spawn_position")]
 script = ExtResource("1_qlpbs")
-bone_attachment = NodePath("SpawnPosition/RapierBone")
+stomach_attachment = NodePath("SpawnPosition/Stomach")
+rapier_attachment = NodePath("SpawnPosition/RapierBone")
+shoulder_inherited_attachment = NodePath("SpawnPosition/ShoulderInherit")
+shoulder_override_attachment = NodePath("SpawnPosition/Stomach/ShoulderOverride")
 spawn_position = NodePath("SpawnPosition")
-animation_tree = NodePath("SpawnPosition/AnimationTree")
 
-[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1148311159]
 environment = SubResource("Environment_6kaxa")
 
-[node name="Environment" parent="." instance=ExtResource("1_6kaxa")]
+[node name="Environment" parent="." unique_id=1412730873 instance=ExtResource("1_6kaxa")]
 
-[node name="st_118_map_Mesh_0000" parent="Environment" index="0"]
+[node name="st_118_map_Mesh_0000" parent="Environment" index="0" unique_id=1901487524]
 layers = 4
 
-[node name="st_118_map_Mesh_0005" parent="Environment" index="1"]
+[node name="st_118_map_Mesh_0005" parent="Environment" index="1" unique_id=1168112257]
 layers = 4
 
-[node name="st_118_map_Mesh_0006" parent="Environment" index="2"]
+[node name="st_118_map_Mesh_0006" parent="Environment" index="2" unique_id=62170544]
 layers = 4
 
-[node name="st_118_map_Mesh_0007" parent="Environment" index="3"]
+[node name="st_118_map_Mesh_0007" parent="Environment" index="3" unique_id=1336229234]
 layers = 4
 
-[node name="st_118_map_Mesh_0011" parent="Environment" index="4"]
+[node name="st_118_map_Mesh_0011" parent="Environment" index="4" unique_id=2143658208]
 layers = 4
 
-[node name="st_118_map_Mesh_0015" parent="Environment" index="5"]
+[node name="st_118_map_Mesh_0015" parent="Environment" index="5" unique_id=921198218]
 layers = 4
 
-[node name="st_118_map_Mesh_0018" parent="Environment" index="6"]
+[node name="st_118_map_Mesh_0018" parent="Environment" index="6" unique_id=1003101280]
 layers = 4
 
-[node name="st_118_map_Mesh_0020" parent="Environment" index="7"]
+[node name="st_118_map_Mesh_0020" parent="Environment" index="7" unique_id=1967449721]
 layers = 4
 
-[node name="st_118_map_Mesh_0021" parent="Environment" index="8"]
+[node name="st_118_map_Mesh_0021" parent="Environment" index="8" unique_id=1188113046]
 layers = 4
 
-[node name="st_118_map_Mesh_0031" parent="Environment" index="9"]
+[node name="st_118_map_Mesh_0031" parent="Environment" index="9" unique_id=1182367953]
 visible = false
 layers = 4
 
-[node name="st_118_map_Mesh_0035" parent="Environment" index="10"]
+[node name="st_118_map_Mesh_0035" parent="Environment" index="10" unique_id=2027261212]
 layers = 4
 
-[node name="Fire1" parent="." instance=ExtResource("2_8em1r")]
+[node name="Fire1" parent="." unique_id=589886147 instance=ExtResource("2_8em1r")]
 transform = Transform3D(5, 0, 0, 0, 5, 0, 0, 0, 5, 117, 30, -39)
 
-[node name="Fire2" parent="." instance=ExtResource("2_8em1r")]
+[node name="Fire2" parent="." unique_id=2045541372 instance=ExtResource("2_8em1r")]
 transform = Transform3D(5, 0, 0, 0, 5, 0, 0, 0, 5, -116, 30, -39)
 
-[node name="Lights" type="Node3D" parent="."]
+[node name="Lights" type="Node3D" parent="." unique_id=1300235167]
 
-[node name="Light1" type="OmniLight3D" parent="Lights"]
+[node name="Light1" type="OmniLight3D" parent="Lights" unique_id=1173153069]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -116, 40, -39)
 layers = 1024
 light_color = Color(1, 0.79, 0.58000004, 1)
@@ -145,7 +88,7 @@ shadow_enabled = true
 shadow_caster_mask = 1
 omni_range = 50.0
 
-[node name="Light2" type="OmniLight3D" parent="Lights"]
+[node name="Light2" type="OmniLight3D" parent="Lights" unique_id=69128506]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 117, 40, -39)
 layers = 1024
 light_color = Color(1, 0.79, 0.58000004, 1)
@@ -156,7 +99,7 @@ shadow_enabled = true
 shadow_caster_mask = 1
 omni_range = 50.0
 
-[node name="Light3" type="OmniLight3D" parent="Lights"]
+[node name="Light3" type="OmniLight3D" parent="Lights" unique_id=1413814627]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 36, 71, -85)
 layers = 1024
 light_color = Color(1, 0.79, 0.58000004, 1)
@@ -167,7 +110,7 @@ shadow_enabled = true
 shadow_caster_mask = 1
 omni_range = 30.0
 
-[node name="Light4" type="OmniLight3D" parent="Lights"]
+[node name="Light4" type="OmniLight3D" parent="Lights" unique_id=1328395759]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -36.5, 71, -85)
 layers = 1024
 light_color = Color(1, 0.79, 0.58000004, 1)
@@ -178,7 +121,7 @@ shadow_enabled = true
 shadow_caster_mask = 1
 omni_range = 30.0
 
-[node name="MainLight" type="OmniLight3D" parent="Lights"]
+[node name="MainLight" type="OmniLight3D" parent="Lights" unique_id=2055366083]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 38, -14)
 layers = 1024
 light_color = Color(1, 0.79, 0.58000004, 1)
@@ -188,7 +131,7 @@ light_cull_mask = 4
 shadow_caster_mask = 1
 omni_range = 200.0
 
-[node name="BookLight" type="DirectionalLight3D" parent="Lights"]
+[node name="BookLight" type="DirectionalLight3D" parent="Lights" unique_id=764460086]
 transform = Transform3D(1, 0, 0, 0, 0.25881907, 0.9659258, 0, -0.9659258, 0.25881907, 0, 38, 100)
 layers = 1024
 light_color = Color(1, 0.79, 0.58000004, 1)
@@ -197,95 +140,106 @@ light_cull_mask = 1
 shadow_enabled = true
 shadow_caster_mask = 1
 
-[node name="CandleStick1" type="Node3D" parent="."]
+[node name="CandleStick1" type="Node3D" parent="." unique_id=1612754387]
 transform = Transform3D(0.81915206, 0, 0.57357645, 0, 1, 0, -0.57357645, 0, 0.81915206, -36.66165, 68.5, -84.81571)
 
-[node name="Fire1" parent="CandleStick1" instance=ExtResource("2_8em1r")]
+[node name="Fire1" parent="CandleStick1" unique_id=1833460851 instance=ExtResource("2_8em1r")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.384, -7.5, 0)
 
-[node name="Fire2" parent="CandleStick1" instance=ExtResource("2_8em1r")]
+[node name="Fire2" parent="CandleStick1" unique_id=773557159 instance=ExtResource("2_8em1r")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.384, -4.3, 0)
 
-[node name="Fire3" parent="CandleStick1" instance=ExtResource("2_8em1r")]
+[node name="Fire3" parent="CandleStick1" unique_id=1042267588 instance=ExtResource("2_8em1r")]
 
-[node name="Fire4" parent="CandleStick1" instance=ExtResource("2_8em1r")]
+[node name="Fire4" parent="CandleStick1" unique_id=684635302 instance=ExtResource("2_8em1r")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.3836555, -4.3, -2.9802322e-08)
 
-[node name="Fire5" parent="CandleStick1" instance=ExtResource("2_8em1r")]
+[node name="Fire5" parent="CandleStick1" unique_id=1845253675 instance=ExtResource("2_8em1r")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.383656, -7.5, -2.9802322e-08)
 
-[node name="CandleStick2" type="Node3D" parent="."]
+[node name="CandleStick2" type="Node3D" parent="." unique_id=221899132]
 transform = Transform3D(0.81915206, 0, -0.57357645, 0, 1, 0, 0.57357645, 0, 0.81915206, 36.662, 68.5, -84.816)
 
-[node name="Fire1" parent="CandleStick2" instance=ExtResource("2_8em1r")]
+[node name="Fire1" parent="CandleStick2" unique_id=943156951 instance=ExtResource("2_8em1r")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.384, -7.5, 0)
 
-[node name="Fire2" parent="CandleStick2" instance=ExtResource("2_8em1r")]
+[node name="Fire2" parent="CandleStick2" unique_id=763431881 instance=ExtResource("2_8em1r")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.384, -4.3, 0)
 
-[node name="Fire3" parent="CandleStick2" instance=ExtResource("2_8em1r")]
+[node name="Fire3" parent="CandleStick2" unique_id=1531280372 instance=ExtResource("2_8em1r")]
 
-[node name="Fire4" parent="CandleStick2" instance=ExtResource("2_8em1r")]
+[node name="Fire4" parent="CandleStick2" unique_id=1810581473 instance=ExtResource("2_8em1r")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.3836555, -4.3, -2.9802322e-08)
 
-[node name="Fire5" parent="CandleStick2" instance=ExtResource("2_8em1r")]
+[node name="Fire5" parent="CandleStick2" unique_id=29262261 instance=ExtResource("2_8em1r")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.383656, -7.5, -2.9802322e-08)
 
-[node name="GameCamera" type="Camera3D" parent="."]
+[node name="GameCamera" type="Camera3D" parent="." unique_id=833988017]
 transform = Transform3D(1, 0, 0, 0, 0.90630776, -0.42261827, 0, 0.42261827, 0.90630776, 0, 3, 15)
 cull_mask = 1061
 current = true
 fov = 50.0
 
-[node name="SpawnPosition" type="Node3D" parent="."]
+[node name="SpawnPosition" type="Node3D" parent="." unique_id=465451725]
 transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, 0, 0)
 
-[node name="RapierBone" type="BoneAttachment3D" parent="SpawnPosition"]
+[node name="RapierBone" type="BoneAttachment3D" parent="SpawnPosition" unique_id=1434115486]
 transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 0, 0, 0)
 bone_name = "wrist_r"
 bone_idx = 45
 
-[node name="Rapier" parent="SpawnPosition/RapierBone" instance=ExtResource("4_aoec8")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 0, -0.5)
+[node name="Rapier" parent="SpawnPosition/RapierBone" unique_id=1089770171 instance=ExtResource("4_aoec8")]
+transform = Transform3D(0.5003372, 0.19806774, -0.84287095, 0.008750528, 0.9722759, 0.23367134, 0.8657861, -0.124290094, 0.48473278, 0.6824806, 0.028223619, 0.50768447)
 
-[node name="StabTrigger" type="Area3D" parent="SpawnPosition/RapierBone/Rapier"]
+[node name="StabTrigger" type="Area3D" parent="SpawnPosition/RapierBone/Rapier" unique_id=760324065]
 collision_layer = 8
 collision_mask = 0
 monitoring = false
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="SpawnPosition/RapierBone/Rapier/StabTrigger"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="SpawnPosition/RapierBone/Rapier/StabTrigger" unique_id=504322546]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 28, 0)
 shape = SubResource("SphereShape3D_aoec8")
 
-[node name="StickCollision" type="StaticBody3D" parent="SpawnPosition/RapierBone/Rapier"]
+[node name="StickCollision" type="StaticBody3D" parent="SpawnPosition/RapierBone/Rapier" unique_id=1924850419]
 physics_interpolation_mode = 1
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="SpawnPosition/RapierBone/Rapier/StickCollision"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="SpawnPosition/RapierBone/Rapier/StickCollision" unique_id=507360246]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 14.884376, 0)
-shape = SubResource("CapsuleShape3D_aoec8")
+shape = SubResource("CapsuleShape3D_kmx01")
 
-[node name="AnimationTree" type="AnimationTree" parent="SpawnPosition"]
-active = false
-tree_root = SubResource("AnimationNodeBlendTree_y30lh")
-parameters/aim_blend/blend_position = Vector2(0, 0)
-parameters/aim_blend_const/blend_amount = 1.0
-parameters/hurt_trigger/active = false
-parameters/hurt_trigger/internal_active = false
-parameters/hurt_trigger/request = 0
-parameters/hurt_seek/seek_request = -1.0
+[node name="ShoulderInherit" type="BoneAttachment3D" parent="SpawnPosition" unique_id=117061831]
+transform = Transform3D(-0.5430404, 0.83656126, 0.072612, 0.7697735, 0.4614009, 0.4410872, 0.33549315, 0.29542294, -0.89452225, -1.4326147, 0.24316159, -7.197843)
+bone_name = "shoulder_r"
+bone_idx = 43
 
-[node name="Omochaos" type="Node3D" parent="." node_paths=PackedStringArray("omochaos")]
+[node name="Stomach" type="BoneAttachment3D" parent="SpawnPosition" unique_id=681614948]
+transform = Transform3D(9.1446885e-11, 0.99999994, -1.19209254e-07, 0.0007669927, -1.1920928e-07, -0.9999997, -0.99999964, 1.943215e-17, -0.0007669926, 2.9792213e-07, 0.23804058, -5.494179)
+bone_name = "stomach"
+bone_idx = 5
+
+[node name="ShoulderOverride" type="BoneAttachment3D" parent="SpawnPosition/Stomach" unique_id=486793441]
+transform = Transform3D(-0.3349026, -0.29506898, 0.8948604, -0.54304063, 0.8365615, 0.07261205, -0.7700307, -0.4616274, -0.44040084, 1.7036686, -1.4326153, -0.003814131)
+bone_name = "shoulder_r"
+bone_idx = 43
+override_pose = true
+use_external_skeleton = true
+external_skeleton = NodePath("")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="SpawnPosition/Stomach/ShoulderOverride" unique_id=817338000]
+mesh = SubResource("BoxMesh_qh6t2")
+
+[node name="Omochaos" type="Node3D" parent="." unique_id=1254267859 node_paths=PackedStringArray("omochaos")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 20, -67)
 script = ExtResource("3_djtaf")
 omochaos = [NodePath("OmochaoL"), NodePath("OmochaoM"), NodePath("OmochaoR")]
 
-[node name="OmochaoL" parent="Omochaos" instance=ExtResource("3_8em1r")]
+[node name="OmochaoL" parent="Omochaos" unique_id=795732468 instance=ExtResource("3_8em1r")]
 transform = Transform3D(0.37587705, 0, 0.13680805, 0, 0.4, 0, -0.13680805, 0, 0.37587705, -25, 0, 0)
 
-[node name="OmochaoM" parent="Omochaos" instance=ExtResource("3_8em1r")]
+[node name="OmochaoM" parent="Omochaos" unique_id=1804231474 instance=ExtResource("3_8em1r")]
 transform = Transform3D(0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 0, 0, 0)
 
-[node name="OmochaoR" parent="Omochaos" instance=ExtResource("3_8em1r")]
+[node name="OmochaoR" parent="Omochaos" unique_id=1649772967 instance=ExtResource("3_8em1r")]
 transform = Transform3D(0.37587705, 0, -0.13680805, 0, 0.4, 0, 0.13680805, 0, 0.37587705, 25, 0, 0)
 
 [editable path="Environment"]

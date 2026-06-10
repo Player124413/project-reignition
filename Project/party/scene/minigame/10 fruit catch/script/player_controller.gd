@@ -1,18 +1,29 @@
 extends PartyGameCharacterSpawner
 
-@export var bone_attachment : BoneAttachment3D
+@export var stomach_attachment : BoneAttachment3D
+@export var rapier_attachment : BoneAttachment3D
+## The "default" position of the shoulder bone.
+@export var shoulder_inherited_attachment : BoneAttachment3D
+var initial_basis : Basis
+## The bone attachment that overrides the shoulder's transform.
+@export var shoulder_override_attachment : BoneAttachment3D
+
 func on_spawn_finished() -> void:
 	super()
-	initialize_animation_tree(get_anim_prefix(), []) # No need to relink animations bc the demo uses the same library
-	bone_attachment.reparent(character_animator.skeleton)
+	stomach_attachment.reparent(character_animator.skeleton)
+	rapier_attachment.reparent(character_animator.skeleton)
+	shoulder_inherited_attachment.reparent(character_animator.skeleton)
+	initial_basis = shoulder_inherited_attachment.global_basis
+	shoulder_override_attachment.external_skeleton = shoulder_override_attachment.get_path_to(character_animator.skeleton)
+	character_animator.play_animation("%s/wait" % MinigameManager.ANIMATION_LIBRARY_PREFIX)
 
 func on_minigame_finished() -> void:
 	super()
-	bone_attachment.visible = false
+	rapier_attachment.visible = false
 
-var current_blend : Vector2
+var current_aim_pos : Vector2
 var aim_speed : float = 10.0
-const BLEND_PARAMETER : StringName = "parameters/aim_blend/blend_position"
+const MAX_ROTATION : Vector2 = Vector2(PI, PI * 0.2)
 const HURT_TRIGGER_PARAMETER : StringName = "parameters/hurt_trigger/request"
 const HURT_SEEK_PARAMETER : StringName = "parameters/hurt_seek/seek_request"
 
@@ -32,10 +43,17 @@ func _physics_process(_delta: float) -> void:
 	process_animation()
 
 func process_movement_tick() -> void:
-	current_blend += Vector2(get_horizontal_input(), get_vertical_input()) * aim_speed * get_physics_process_delta_time()
+	current_aim_pos += Vector2(get_horizontal_input(), get_vertical_input()) * aim_speed * get_physics_process_delta_time()
+	current_aim_pos = current_aim_pos.clamp(-MAX_ROTATION, MAX_ROTATION)
+	print(current_aim_pos)
+	var aim_basis : Basis = initial_basis
+	aim_basis = aim_basis.rotated(Vector3.RIGHT, current_aim_pos.y)
+	aim_basis = aim_basis.rotated(Vector3.UP, -current_aim_pos.x)
+	aim_basis = aim_basis.orthonormalized()
+	shoulder_override_attachment.global_basis = aim_basis
 
 func process_animation() -> void:
-	animation_tree.set(BLEND_PARAMETER, current_blend)
+	pass
 
 func disable_tree() -> void:
 	character_animator.visible = false
