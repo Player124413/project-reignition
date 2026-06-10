@@ -1142,6 +1142,7 @@ public partial class PlayerCameraController : Node3D
 	private bool isFreeCamTilting;
 
 	private bool isFreeCamLocked;
+	private float initialFov;
 	private float freeCamFov;
 	private Vector3 freeCamPosition;
 	private Vector3 freeCamRotation;
@@ -1176,9 +1177,11 @@ public partial class PlayerCameraController : Node3D
 			Camera.Rotation = FreeCamRoot.GlobalRotation.RemoveVertical();
 			FreeCamRoot.GlobalRotation = new(0, FreeCamRoot.GlobalRotation.Y, 0);
 			freeCamFov = Camera.Fov;
+			initialFov = Camera.Fov;
 		}
 		else
 		{
+			Camera.Fov = initialFov;
 			isFreeCamLocked = false;
 			IsFreeCamActive = isFreeCamRotating = false;
 			Camera.Transform = Transform3D.Identity;
