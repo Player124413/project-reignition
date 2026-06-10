@@ -21,7 +21,7 @@ public partial class QuickStepState : PlayerState
 	private float currentStepLength;
 	private readonly float MaxQuickSlideSamplePosition = 0.5f;
 	private readonly float StepLength = 0.3f;
-	private readonly float InterruptLength = 0.2f;
+	private readonly float InterruptLength = 0.1f;
 	private readonly float FallPreventionLength = 0.1f;
 	private int stepDirection;
 
@@ -102,7 +102,14 @@ public partial class QuickStepState : PlayerState
 
 		if (currentStepLength >= InterruptLength)
 		{
-			if (Player.Controller.IsJumpBufferActive)
+			if (Player.Controller.IsStepBufferActive)
+			{
+				Player.StartQuickStep(Player.Controller.StepDirection < 0);
+				Player.Controller.ResetStepBuffer();
+				EnterState(); // Restart quick steps
+				return null;
+			}
+			else if (Player.Controller.IsJumpBufferActive)
 			{
 				Player.Controller.ResetJumpBuffer();
 
