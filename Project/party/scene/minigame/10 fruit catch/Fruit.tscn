@@ -3,6 +3,9 @@
 [ext_resource type="PackedScene" uid="uid://dn2k1c3qdho62" path="res://party/scene/minigame/10 fruit catch/model/Apple.glb" id="1_5hf5h"]
 [ext_resource type="Script" uid="uid://dniklspc7efil" path="res://party/scene/minigame/10 fruit catch/script/fruit.gd" id="1_kv4gg"]
 [ext_resource type="PackedScene" uid="uid://tek4bper0ran" path="res://party/scene/minigame/10 fruit catch/model/Orange.glb" id="2_ky84k"]
+[ext_resource type="AudioStream" uid="uid://cvtw4vg44mumc" path="res://party/scene/minigame/10 fruit catch/sound/catch.wav" id="4_smyga"]
+[ext_resource type="Script" uid="uid://bkwc2atbp4cjd" path="res://party/scene/minigame/00 base/script/group_sfx_player.gd" id="5_07p2i"]
+[ext_resource type="Material" uid="uid://bhj21xbsvtun5" path="res://effect/particle/material/environment/Common Dust Splatter Add.tres" id="6_07p2i"]
 
 [sub_resource type="Curve" id="Curve_ij1mo"]
 _data = [Vector2(0, 0), 0.0, 4.5711074, 0, 0, Vector2(0.5, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), -4.0842037, 0.0, 0, 0]
@@ -150,6 +153,38 @@ tracks/0/keys = {
 "values": [Vector3(0, 0, 0), Vector3(1.1, 1.1, 1.1), Vector3(1, 1, 1)]
 }
 
+[sub_resource type="Animation" id="Animation_x2xvr"]
+resource_name = "splatter"
+length = 0.001
+tracks/0/type = "method"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Splatter")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [false],
+"method": &"restart"
+}]
+}
+tracks/1/type = "method"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Catch")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"play_in_group"
+}]
+}
+
 [sub_resource type="Animation" id="Animation_07p2i"]
 resource_name = "travel"
 length = 2.0
@@ -174,8 +209,56 @@ _data = {
 &"despawn": SubResource("Animation_ky84k"),
 &"orange": SubResource("Animation_aiivs"),
 &"spawn": SubResource("Animation_kv4gg"),
+&"splatter": SubResource("Animation_x2xvr"),
 &"travel": SubResource("Animation_07p2i")
 }
+
+[sub_resource type="Curve" id="Curve_aiivs"]
+_data = [Vector2(0, 0), 0.0, 11.150733, 0, 0, Vector2(0.2, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_07p2i"]
+width = 64
+texture_mode = 1
+curve = SubResource("Curve_aiivs")
+
+[sub_resource type="Curve" id="Curve_07p2i"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="Curve" id="Curve_x2xvr"]
+_data = [Vector2(0, 0.11235964), 0.0, 1.5852907, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="Curve" id="Curve_blby3"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveXYZTexture" id="CurveXYZTexture_07p2i"]
+curve_x = SubResource("Curve_07p2i")
+curve_y = SubResource("Curve_x2xvr")
+curve_z = SubResource("Curve_blby3")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_e2t8q"]
+lifetime_randomness = 0.4
+emission_shape_offset = Vector3(0, 0.5, 0)
+angle_min = 1.0728835e-05
+angle_max = 360.00003
+direction = Vector3(0, 1, 0)
+spread = 180.0
+initial_velocity_min = 5.0
+initial_velocity_max = 8.0
+angular_velocity_min = -360.0
+angular_velocity_max = 359.99997
+gravity = Vector3(0, 0, 0)
+scale_min = 2.0
+scale_max = 4.0
+scale_curve = SubResource("CurveXYZTexture_07p2i")
+color = Color(1, 0.8901961, 0.6901961, 1)
+alpha_curve = SubResource("CurveTexture_07p2i")
+
+[sub_resource type="QuadMesh" id="QuadMesh_qh6t2"]
+center_offset = Vector3(0, 0.4, 0)
 
 [node name="Fruit" type="Area3D" unique_id=476296964 node_paths=PackedStringArray("animator") groups=["crusher"]]
 collision_layer = 8
@@ -200,6 +283,28 @@ collision_mask = 16
 [node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=455804543]
 libraries/ = SubResource("AnimationLibrary_qq70q")
 next/spawn = &"travel"
+
+[node name="Catch" type="AudioStreamPlayer" parent="." unique_id=472676658]
+stream = ExtResource("4_smyga")
+bus = &"GAME SFX"
+script = ExtResource("5_07p2i")
+group = "catch"
+min_volume = 0.5
+lockout_time = 0.1
+
+[node name="Splatter" type="GPUParticles3D" parent="." unique_id=1769389679]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1)
+layers = 32
+material_override = ExtResource("6_07p2i")
+cast_shadow = 0
+emitting = false
+lifetime = 0.4
+one_shot = true
+explosiveness = 0.8
+fixed_fps = 0
+fract_delta = false
+process_material = SubResource("ParticleProcessMaterial_e2t8q")
+draw_pass_1 = SubResource("QuadMesh_qh6t2")
 
 [connection signal="area_entered" from="." to="." method="on_entered"]
 [connection signal="area_exited" from="." to="." method="_on_exited"]

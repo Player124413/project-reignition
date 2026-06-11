@@ -7,6 +7,8 @@
 [ext_resource type="Script" uid="uid://bgxo1jobmw4co" path="res://party/scene/minigame/10 fruit catch/script/fruit_manager.gd" id="3_djtaf"]
 [ext_resource type="PackedScene" uid="uid://bkkrc2d0tht7q" path="res://party/scene/minigame/10 fruit catch/model/Rapier.glb" id="4_aoec8"]
 [ext_resource type="PackedScene" uid="uid://cmmgmrlddrbe8" path="res://party/scene/minigame/10 fruit catch/Fruit.tscn" id="7_kmx01"]
+[ext_resource type="AudioStream" uid="uid://dp6h0sd40fsio" path="res://party/scene/minigame/10 fruit catch/sound/throw.wav" id="8_lgs74"]
+[ext_resource type="Script" uid="uid://bkwc2atbp4cjd" path="res://party/scene/minigame/00 base/script/group_sfx_player.gd" id="9_uokfm"]
 
 [sub_resource type="Environment" id="Environment_6kaxa"]
 background_mode = 1
@@ -301,12 +303,13 @@ settings/0/axes = 7
 settings/0/invert = 0
 settings/0/additive = false
 
-[node name="Omochaos" type="Node3D" parent="." unique_id=1254267859 node_paths=PackedStringArray("omochaos", "fruits", "player_origin")]
+[node name="Omochaos" type="Node3D" parent="." unique_id=1254267859 node_paths=PackedStringArray("omochaos", "fruits", "player_origin", "throw_sfx")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 20, -67)
 script = ExtResource("3_djtaf")
 omochaos = [NodePath("OmochaoL"), NodePath("OmochaoM"), NodePath("OmochaoR")]
 fruits = [NodePath("../SpawnPosition/HandEnd/Rapier/StabTrigger/Fruits/Fruit1"), NodePath("../SpawnPosition/HandEnd/Rapier/StabTrigger/Fruits/Fruit2"), NodePath("../SpawnPosition/HandEnd/Rapier/StabTrigger/Fruits/Fruit3"), NodePath("../SpawnPosition/HandEnd/Rapier/StabTrigger/Fruits/Fruit4"), NodePath("../SpawnPosition/HandEnd/Rapier/StabTrigger/Fruits/Fruit5"), NodePath("../SpawnPosition/HandEnd/Rapier/StabTrigger/Fruits/Fruit6"), NodePath("../SpawnPosition/HandEnd/Rapier/StabTrigger/Fruits/Fruit7"), NodePath("../SpawnPosition/HandEnd/Rapier/StabTrigger/Fruits/Fruit8"), NodePath("../SpawnPosition/HandEnd/Rapier/StabTrigger/Fruits/Fruit9"), NodePath("../SpawnPosition/HandEnd/Rapier/StabTrigger/Fruits/Fruit10")]
 player_origin = NodePath("../SpawnPosition")
+throw_sfx = NodePath("Throw")
 
 [node name="OmochaoL" parent="Omochaos" unique_id=795732468 instance=ExtResource("3_8em1r")]
 transform = Transform3D(0.37587705, 0, 0.13680805, 0, 0.4, 0, -0.13680805, 0, 0.37587705, -25, 0, 0)
@@ -316,5 +319,14 @@ transform = Transform3D(0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 0, 0, 0)
 
 [node name="OmochaoR" parent="Omochaos" unique_id=1649772967 instance=ExtResource("3_8em1r")]
 transform = Transform3D(0.37587705, 0, -0.13680805, 0, 0.4, 0, 0.13680805, 0, 0.37587705, 25, 0, 0)
+
+[node name="Throw" type="AudioStreamPlayer" parent="Omochaos" unique_id=1286818107]
+stream = ExtResource("8_lgs74")
+bus = &"GAME SFX"
+script = ExtResource("9_uokfm")
+group = "throw"
+base_volume = 0.8
+min_volume = 0.5
+lockout_time = 0.1
 
 [editable path="Environment"]

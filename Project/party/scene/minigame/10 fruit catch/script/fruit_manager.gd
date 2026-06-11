@@ -6,6 +6,7 @@ signal fruit_spawned(fruit : Node3D)
 @export var omochaos : Array[CharacterAnimator]
 @export var fruits : Array[Node3D]
 @export var player_origin : Node3D
+@export var throw_sfx : GroupSfxPlayer
 var _camera : Camera3D
 
 # List of all fruit that has been caught. When it becomes larger than 5, the first fruit is removed from the stick.
@@ -61,8 +62,9 @@ func spawn_fruit(offset : float, omochao_index : int, is_apple : bool, tick : fl
 	if _fruit_index >= fruits.size():
 		return # Spawned all fruits
 	
-	omochaos[omochao_index].play_minigame_animation("pull", 0.0, 1.0, tick)
+	omochaos[omochao_index].play_minigame_animation("pull", 0.0, 1.0, 0.0, tick)
 	omochaos[omochao_index].queue_minigame_animation("select", 0.2)
+	throw_sfx.play_in_group()
 	var end_position : Vector3 = player_origin.global_position + Vector3.RIGHT * offset + Vector3.FORWARD * 2
 	var throw_position : Vector3 = omochaos[omochao_index].global_position + Vector3.UP * 7
 	throw_position += omochaos[omochao_index].global_basis.z * 10

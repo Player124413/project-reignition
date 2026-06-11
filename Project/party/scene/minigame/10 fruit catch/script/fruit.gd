@@ -78,8 +78,7 @@ func process_movement_tick() -> void:
 func collect() -> void:
 	top_level = false
 	_is_collected = true
-	# TODO Play FX
-	animator.pause()
+	animator.play("splatter")
 	collected.emit()
 
 func process_pusher() -> void:
