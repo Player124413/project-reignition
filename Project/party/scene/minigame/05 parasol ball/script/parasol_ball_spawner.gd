@@ -52,7 +52,7 @@ func request_ball_spawn() -> void:
 	spawn_position.x += (1.0 - randf() * 2.0) * spawn_bounds.x
 	spawn_position.z += (1.0 - randf() * 2.0) * spawn_bounds.y
 	var spawn_time : float = NetworkTimeSynchronizer.get_time() + 0.5
-	ball_pool[current_ball_index].rpc("request_spawn", spawn_time, spawn_position)
+	ball_pool[current_ball_index].rpc("spawn", spawn_time, spawn_position)
 	current_ball_index += 1
 	if current_ball_index >= ball_pool.size(): # Done spawning
 		set_physics_process(false)

@@ -41,10 +41,7 @@ func _ready() -> void:
 ## Kick off the demo by spawning a ball.
 func start_demo() -> void:
 	is_active = true
-	await get_tree().create_timer(NetworkManager.calculate_transition_tick()).timeout
-	start_falling(global_position)
-	reset_physics_interpolation()
-	spawn()
+	spawn(NetworkTimeSynchronizer.get_time(), global_position)
 
 @rpc("any_peer", "call_local", "reliable")
 func initialize(is_bonus : bool) -> void:
@@ -75,13 +72,10 @@ func hit_ball(time : float, player_index : int, start_pos : Vector3, end_pos : V
 	process_movement_tick()
 
 @rpc("any_peer", "call_local", "reliable")
-func request_spawn(time : float, spawn_pos : Vector3) -> void:
+func spawn(time : float, spawn_pos : Vector3) -> void:
 	start_falling(spawn_pos)
 	reset_physics_interpolation()
-	var callable : Callable = Callable(self, "spawn")
-	get_tree().create_timer(NetworkTimeSynchronizer.get_time() - time).timeout.connect(callable)
-
-func spawn() -> void:
+	
 	is_active = true
 	visible = true
 	animator.play("RESET")
@@ -90,6 +84,8 @@ func spawn() -> void:
 	monitoring = true
 	left_raycast.enabled = true
 	right_raycast.enabled = true
+	travel_timer = NetworkTimeSynchronizer.get_time() - time
+	process_movement_tick()
 
 func start_falling(pos : Vector3) -> void:
 	is_hit = false
