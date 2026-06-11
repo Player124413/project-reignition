@@ -68,10 +68,14 @@ func process_movement_tick() -> void:
 		deactivate()
 
 func on_entered(area : Area3D) -> void:
-	if area.is_in_group("player"):
-		return # TODO Deal damage
-	
 	if _is_collected:
+		return
+	
+	if area.is_in_group("player"):
+		if is_multiplayer_authority():
+			if !area.get_parent().is_invincible():
+				print("Dealing Damage to player!")
+				area.get_parent().rpc("take_damage", NetworkTimeSynchronizer.get_time())
 		return
 	
 	# Stick to the rapier

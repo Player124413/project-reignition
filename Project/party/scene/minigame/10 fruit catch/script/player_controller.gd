@@ -21,6 +21,7 @@ var _camera : Camera3D
 var initial_transform : Transform3D
 var _input : Vector2
 var _previous_input : Vector2
+var is_input_disabled : bool
 var cpu_fruit_queue : Array[Node3D]
 
 var current_aim_pos : Vector2
@@ -62,9 +63,13 @@ func start_demo() -> void:
 func _physics_process(_delta: float) -> void:
 	if is_multiplayer_authority():
 		_input = get_input()
+	process_invincibility()
 	process_movement_tick()
 
 func process_movement_tick() -> void:
+	if is_input_disabled:
+		return
+	
 	var target_speed : float = _input.length() * aim_speed
 	var delta : float = acceleration if target_speed > _move_speed else decceleration
 	_move_speed = move_toward(_move_speed, target_speed, delta * get_physics_process_delta_time())
@@ -100,6 +105,17 @@ func get_input() -> Vector2:
 	target_input *= 0.005
 	target_input.y *= -1
 	return target_input.limit_length()
+
+@rpc("any_peer", "call_local", "reliable")
+func take_damage(tick : float) -> void:
+	is_input_disabled = true
+	character_animator.play_minigame_animation("%s/hurt" % MinigameManager.ANIMATION_LIBRARY_PREFIX, 0.1, 1.0, 0.0, tick)
+
+func process_animation_event(info : int) -> void:
+	if info == 0:
+		character_animator.play_animation("%s/wait" % MinigameManager.ANIMATION_LIBRARY_PREFIX, true, 0.1)
+		is_input_disabled = false
+		request_invincibility()
 
 func get_target_fruit() -> Node3D:
 	while !cpu_fruit_queue.is_empty():

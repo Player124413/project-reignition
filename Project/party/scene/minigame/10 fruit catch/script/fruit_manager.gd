@@ -55,9 +55,9 @@ func request_fruit_spawn() -> void:
 	omochaos[omochao_index].play_minigame_animation("pull", 0.0, 1.0, NetworkTimeSynchronizer.get_time())
 	omochaos[omochao_index].queue_minigame_animation("select", 0.2)
 	var offset : float = 0
-	if _player_index != -1:
-		offset = (1.0 - 2.0 * randf()) * OFFSET_BOUNDS
-	var end_position : Vector3 = player_origin.global_position + Vector3.RIGHT * offset
+	#if _player_index != -1:
+	#	offset = (1.0 - 2.0 * randf()) * OFFSET_BOUNDS
+	var end_position : Vector3 = player_origin.global_position + Vector3.RIGHT * offset + Vector3.FORWARD * 2
 	var throw_position : Vector3 = omochaos[omochao_index].global_position + Vector3.UP * 7
 	throw_position += omochaos[omochao_index].global_basis.z * 10
 	fruits[_fruit_index].rpc("spawn", throw_position, end_position, randf() > 0.5, NetworkTimeSynchronizer.get_time())
