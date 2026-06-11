@@ -127,6 +127,9 @@ public partial class RunState : PlayerState
 			return backstepState;
 		}
 
+		if (Player.Controller.IsBackTiltActive())
+			return backstepState;
+
 		if (Player.Stats.GroundSettings.GetSpeedRatioClamped(Player.MoveSpeed) > RunRatio &&
 			StageSettings.Instance.IsLevelIngame)
 		{

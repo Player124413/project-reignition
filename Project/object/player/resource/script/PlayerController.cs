@@ -680,6 +680,9 @@ public partial class PlayerController : CharacterBody3D
 		if (IsLockoutDisablingAction(LockoutResource.ActionFlags.Backflip))
 			return false;
 
+		if (Controller.IsGyroEnabled && Controller.IsBackTiltActive())
+			return true;
+
 		if (Mathf.IsZeroApprox(Controller.GetInputStrength()))
 			return false;
 

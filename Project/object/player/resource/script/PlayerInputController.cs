@@ -15,6 +15,8 @@ public partial class PlayerInputController : Node
 	public float GetInputStrength()
 	{
 		float inputLength = InputAxis.Length();
+		if (IsGyroEnabled)
+			inputLength = new Vector2(InputHorizontal, InputVertical).Length();
 
 		if (Player.IsLockoutActive && Player.ActiveLockoutData.movementMode == LockoutResource.MovementModes.Replace)
 		{
@@ -183,7 +185,7 @@ public partial class PlayerInputController : Node
 	private readonly float GyroSmoothing = 5.0f;
 	private readonly float TurnSensitivity = 0.2f;
 	private readonly float TurnDeadzone = 0.5f;
-	private readonly float ReverseDeadzone = 0.5f;
+	private readonly float ReverseDeadzone = -4f;
 	public void ProcessGyroMovement(bool disableSmoothing = false)
 	{
 		if (!IsGyroEnabled)
@@ -200,7 +202,7 @@ public partial class PlayerInputController : Node
 			targetGyroInput.X -= Mathf.Sign(targetGyroInput.X) * TurnDeadzone;
 		targetGyroInput.X *= TurnSensitivity;
 
-		if (rawGyroInput.Y < ReverseDeadzone)
+		if (rawGyroInput.Y > ReverseDeadzone)
 			targetGyroInput.Y = -1f;
 
 		if (disableSmoothing)
@@ -225,13 +227,21 @@ public partial class PlayerInputController : Node
 	}
 
 	private readonly float SideShakeSensitivity = 4f;
-	/// <summary> A basic shake downward. </summary>
+	/// <summary> A basic shake sideways. </summary>
 	public bool IsSideShakeRegistered()
 	{
 		if (!IsGyroEnabled)
 			return false;
 
 		return Mathf.Abs(Input.GetJoyGyroscope(Runtime.Instance.ActiveController).Z) > SideShakeSensitivity;
+	}
+
+	public bool IsBackTiltActive()
+	{
+		if (!IsGyroEnabled)
+			return false;
+
+		return gyroInput.Y < -DeadZone;
 	}
 
 

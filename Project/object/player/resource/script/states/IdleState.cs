@@ -98,6 +98,9 @@ public partial class IdleState : PlayerState
 					return backstepState;
 				}
 
+				if (Player.Controller.IsBackTiltActive())
+					return backstepState;
+
 				return runState;
 			}
 		}

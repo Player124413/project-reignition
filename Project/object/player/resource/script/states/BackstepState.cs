@@ -42,8 +42,11 @@ public partial class BackstepState : PlayerState
 		if (Mathf.IsZeroApprox(Player.MoveSpeed))
 			return idleState;
 
-		if (Player.Controller.GetHoldingDistance(Player.MovementAngle, Player.PathFollower.ForwardAngle) < 1.0f)
-			return runState;
+		if (!Player.Controller.IsBackTiltActive())
+		{
+			if (Player.Controller.GetHoldingDistance(Player.MovementAngle, Player.PathFollower.ForwardAngle) < 1.0f)
+				return runState;
+		}
 
 		if (Player.Controller.IsJumpBufferActive)
 		{
