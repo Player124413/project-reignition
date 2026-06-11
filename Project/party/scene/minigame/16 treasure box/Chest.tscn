@@ -56,6 +56,9 @@ alpha_curve = SubResource("CurveTexture_ucbua")
 material = ExtResource("3_umfws")
 size = Vector2(5, 5)
 
+[sub_resource type="BoxShape3D" id="BoxShape3D_gwinm"]
+size = Vector3(11.799271, 1, 11.959717)
+
 [sub_resource type="Animation" id="Animation_q1wmv"]
 resource_name = "RESET"
 tracks/0/type = "value"
@@ -108,20 +111,19 @@ _data = {
 &"hit_floor": SubResource("Animation_njmpl")
 }
 
-[node name="Chest" type="Node3D" unique_id=1004644722 node_paths=PackedStringArray("animator", "rigidbody", "smoke")]
+[node name="Chest" type="Node3D" unique_id=1004644722 node_paths=PackedStringArray("animator", "rigidbody", "smoke", "debug_label")]
 script = ExtResource("2_q1wmv")
 animator = NodePath("AnimationPlayer")
 rigidbody = NodePath("RigidBody3D")
 smoke = NodePath("RigidBody3D/Smoke")
+debug_label = NodePath("RigidBody3D/DebugLabel")
 
-[node name="RigidBody3D" type="RigidBody3D" parent="." unique_id=1581115964 node_paths=PackedStringArray("animator")]
+[node name="RigidBody3D" type="RigidBody3D" parent="." unique_id=1581115964]
 mass = 8.0
 physics_material_override = SubResource("PhysicsMaterial_q1wmv")
 gravity_scale = 9.8
 contact_monitor = true
 max_contacts_reported = 10
-script = ExtResource("2_q1wmv")
-animator = NodePath("../AnimationPlayer")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="RigidBody3D" unique_id=2126557322]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.09931183, 3.416626, -0.10531616)
@@ -173,6 +175,19 @@ fixed_fps = 0
 fract_delta = false
 process_material = SubResource("ParticleProcessMaterial_8ptpb")
 draw_pass_1 = SubResource("QuadMesh_gwgyu")
+
+[node name="DebugLabel" type="Label3D" parent="RigidBody3D" unique_id=1654577420]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 10.280496, 0)
+modulate = Color(0, 1, 0, 1)
+text = "0"
+font_size = 763
+
+[node name="GrabArea" type="Area3D" parent="RigidBody3D" unique_id=579565338 groups=["enemy"]]
+
+[node name="GrabHitbox" type="CollisionShape3D" parent="RigidBody3D/GrabArea" unique_id=678793659 groups=["enemy"]]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.11917877, 0.2507553, -0.25720024)
+shape = SubResource("BoxShape3D_gwinm")
+debug_color = Color(1, 1, 0, 0.41960785)
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=337456766]
 libraries/ = SubResource("AnimationLibrary_sbutm")
