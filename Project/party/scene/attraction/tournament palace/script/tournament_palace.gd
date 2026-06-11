@@ -32,8 +32,14 @@ var view_cpu : bool = true
 func initialize_setting_menu() -> void:
 	setting_menu.options[0].set_selection(win_count - 1)
 	setting_menu.options[1].set_selection(0 if view_cpu else 1)
-	setting_menu.selection_changed.connect(Callable(self, "change_setting"))
+	setting_menu.selection_changed.connect(Callable(self, "request_setting_change"))
 
+func request_setting_change(selection : Vector2i) -> void:
+	if NetworkManager.is_hosting_game:
+		change_setting(selection)
+		rpc("change_setting", selection)
+
+@rpc("any_peer", "call_remote", "reliable")
 func change_setting(selection : Vector2i) -> void:
 	if selection.y == 0:
 		win_count = selection.x + 1
