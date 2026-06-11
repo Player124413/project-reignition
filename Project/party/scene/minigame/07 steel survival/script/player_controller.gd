@@ -68,7 +68,7 @@ const HITSTUN_LENGTH : float = 0.4
 var _top_platform_position : Vector3
 const PLATFORM_SIZE : float = 30
 const SHAKE_AMOUNT : float = 1.0
-const GRAVITY_SCALE : float = 100.0
+const GRAVITY_SCALE : float = 20.0
 
 func on_spawn_finished() -> void:
 	super()
@@ -95,15 +95,17 @@ func register_rigidbody(rb : RigidBody3D) -> void:
 	_platforms.append(rb)
 	(rb.get_child(1) as CollisionShape3D).disabled = true
 	rb.freeze = true
-	rb.gravity_scale = GRAVITY_SCALE
 
 func _physics_process(_delta: float) -> void:
+	if _current_health == 0:
+		for rb in _platforms:
+			rb.linear_velocity += Vector3.UP * rb.get_gravity() * GRAVITY_SCALE
+		return
+	
 	if is_multiplayer_authority() && !_is_gameplay_finished:
 		process_input()
-	
 	process_movement_tick()
 	process_animation()
-	
 	if is_multiplayer_authority():
 		process_rollback()
 
@@ -267,6 +269,7 @@ func finish_throw(hitstun : bool) -> void:
 func process_movement_tick() -> void:
 	process_rotation()
 	process_distance()
+	
 	_current_rotation += _rotation_speed * get_physics_process_delta_time()
 	_current_rotation = fmod(_current_rotation, TAU)
 	spike_ball_position.position = Vector3.FORWARD * _current_distance + Vector3.UP * _current_height
@@ -347,7 +350,6 @@ func take_damage() -> void:
 		
 		crumble_sfx.play()
 		character_physics_parent.freeze = false
-		set_physics_process(false)
 		hurtbox.set_deferred("monitorable", false)
 		MinigameManager.instance.register_completed_player()
 		character_animator.play_voice("fall1")
