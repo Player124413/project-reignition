@@ -23,6 +23,7 @@ const RAPIER_SLIDE_SPEED : float = 20.0
 const FRUIT_SIZE : float = 2.5
  
 func _ready() -> void:
+	top_level = true
 	deactivate()
 
 func _physics_process(_delta: float) -> void:
@@ -74,10 +75,13 @@ func process_movement_tick() -> void:
 
 @rpc("any_peer", "call_local", "reliable")
 func collect() -> void:
+	top_level = false
 	_is_collected = true
 	# TODO Play FX
 	animator.pause()
-	collected.emit()
+	
+	if is_multiplayer_authority():
+		collected.emit()
 
 func process_pusher() -> void:
 	var delta_pos : Vector3 = _pusher.global_position - _previous_pusher_position
@@ -101,8 +105,6 @@ func on_entered(area : Area3D) -> void:
 		_previous_pusher_position = area.global_position
 		return
 	
-	# Stick to the rapier
-	call_deferred("reparent", area) # TODO Make this work online
 	rpc("collect")
 
 func _on_exited(area: Area3D) -> void:

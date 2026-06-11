@@ -10,6 +10,7 @@ extends PartyGameCharacterSpawner
 @export var twist_disperser : BoneTwistDisperser3D
 @export var two_bone_ik : TwoBoneIK3D
 @export var copy_transform_modifier : CopyTransformModifier3D
+@export var rollback_timer : RollbackTimer
 
 @export_group("Stats")
 @export var acceleration : float
@@ -31,6 +32,9 @@ const MIN_ROTATION : Vector2 = Vector2(PI * -0.3, PI * -0.2)
 
 func on_spawn_finished() -> void:
 	super()
+	if is_instance_valid(rollback_timer):
+		rollback_timer.register_target(self)
+	
 	fruit_manager.set_player_index(player_index)
 	fruit_manager.fruit_spawned.connect(Callable(self, "on_fruit_spawned"))
 	
@@ -61,10 +65,29 @@ func start_demo() -> void:
 	fruit_manager.request_fruit_spawn()
 
 func _physics_process(_delta: float) -> void:
-	if is_multiplayer_authority():
+	if is_multiplayer_authority() || player_index == -1:
 		_input = get_input()
 	process_invincibility()
 	process_movement_tick()
+	if player_index != -1 && is_multiplayer_authority():
+		process_rollback()
+
+#####################
+### ROLLBACK CODE ###
+#####################
+const RB_POS : int = 0
+const RB_SPD : int = 1
+const RB_INPUT : int = 2
+func on_rollback_applied(rb_params : Array) -> void:
+	current_aim_pos = rb_params[RB_POS]
+	_move_speed = rb_params[RB_SPD]
+	_input = rb_params[RB_INPUT]
+
+func process_rollback() -> void:
+	rollback_timer.set_param(RB_POS, current_aim_pos)
+	rollback_timer.set_param(RB_SPD, _move_speed)
+	rollback_timer.set_param(RB_INPUT, _input)
+	rollback_timer.process_rollback()
 
 func process_movement_tick() -> void:
 	if is_input_disabled:
@@ -89,7 +112,7 @@ func get_input() -> Vector2:
 	if !_input.is_zero_approx():
 		_previous_input = _input.normalized()
 	
-	if !is_multiplayer_authority(): # No input recieved. Use previous input.
+	if !is_multiplayer_authority() && player_index != -1: # No input recieved. Use previous input.
 		return _input
 	
 	if !is_cpu():

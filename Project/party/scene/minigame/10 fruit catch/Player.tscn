@@ -2,8 +2,10 @@
 
 [ext_resource type="PackedScene" uid="uid://c35p8v62qdykg" path="res://party/scene/minigame/10 fruit catch/Environment.tscn" id="1_lwkkx"]
 [ext_resource type="PackedScene" uid="uid://q76tk2hwfseh" path="res://party/scene/minigame/00 base/ScoreCounter.tscn" id="2_fqdwu"]
+[ext_resource type="Script" uid="uid://ds056nimfywwr" path="res://party/script/core/rollback_timer.gd" id="3_c5src"]
 
-[node name="Player" unique_id=781800836 node_paths=PackedStringArray("score_counter") instance=ExtResource("1_lwkkx")]
+[node name="Player" unique_id=781800836 node_paths=PackedStringArray("rollback_timer", "score_counter") instance=ExtResource("1_lwkkx")]
+rollback_timer = NodePath("RollbackTimer")
 score_counter = NodePath("UI/PlayerScore")
 
 [node name="UI" type="Control" parent="." index="6" unique_id=1000223031]
@@ -26,5 +28,10 @@ offset_right = -64.0
 offset_bottom = -56.0
 grow_horizontal = 0
 grow_vertical = 0
+
+[node name="RollbackTimer" type="Node" parent="." index="8" unique_id=1604928475]
+script = ExtResource("3_c5src")
+param_count = 3
+rollback_interval = 0.0
 
 [editable path="Environment"]
