@@ -6,6 +6,8 @@
 [ext_resource type="Script" uid="uid://c65ffkknyq6gr" path="res://addons/custom_nodes/script/GroupGpuParticles3D.cs" id="4_wi5kp"]
 [ext_resource type="Material" uid="uid://btlea54srir75" path="res://party/scene/minigame/11 giant stake/particles/Cloud2.tres" id="5_if4cr"]
 [ext_resource type="Material" uid="uid://n28w5281vih" path="res://party/scene/minigame/11 giant stake/particles/Cloud3.tres" id="6_rlp0s"]
+[ext_resource type="AudioStream" uid="uid://88l115r85i3j" path="res://party/scene/minigame/16 treasure box/sound/thud.wav" id="7_if4cr"]
+[ext_resource type="Script" uid="uid://bkwc2atbp4cjd" path="res://party/scene/minigame/00 base/script/group_sfx_player.gd" id="8_rlp0s"]
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_q1wmv"]
 friction = 2.35
@@ -85,6 +87,20 @@ tracks/0/keys = {
 "update": 0,
 "values": [Vector3(0, 0, 0), Vector3(0, 0, 0.08726646), Vector3(0, 0, -0.08726646), Vector3(0, 0, 0)]
 }
+tracks/1/type = "method"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("SFX/drop")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"play_in_group"
+}]
+}
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_sbutm"]
 _data = {
@@ -160,6 +176,14 @@ draw_pass_1 = SubResource("QuadMesh_gwgyu")
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=337456766]
 libraries/ = SubResource("AnimationLibrary_sbutm")
+
+[node name="SFX" type="Node" parent="." unique_id=1192601528]
+
+[node name="drop" type="AudioStreamPlayer" parent="SFX" unique_id=242624561]
+stream = ExtResource("7_if4cr")
+script = ExtResource("8_rlp0s")
+group = "chest"
+metadata/_custom_type_script = "uid://bkwc2atbp4cjd"
 
 [connection signal="body_entered" from="RigidBody3D" to="." method="_on_rigid_body_3d_body_entered"]
 
