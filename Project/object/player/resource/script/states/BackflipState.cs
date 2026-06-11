@@ -117,12 +117,9 @@ public partial class BackflipState : PlayerState
 	protected override void ProcessMoveSpeed()
 	{
 		ProcessAutorunStrafeSpeed();
-		if (Player.Controller.IsGyroEnabled)
+		if (Player.Controller.IsGyroEnabled && Player.Controller.IsBackTiltActive())
 		{
-			if (Player.Controller.IsBackTiltActive())
-				Player.MoveSpeed = Player.Stats.BackflipSettings.UpdateInterpolate(Player.MoveSpeed, 1f);
-			else
-				Player.MoveSpeed = Player.Stats.BackflipSettings.UpdateInterpolate(Player.MoveSpeed, 0);
+			Player.MoveSpeed = Player.Stats.BackflipSettings.UpdateInterpolate(Player.MoveSpeed, 1f);
 			return;
 		}
 

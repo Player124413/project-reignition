@@ -159,9 +159,9 @@ public partial class GrindState : PlayerState
 		else
 		{
 			isAttemptingGrindStep = !Mathf.IsZeroApprox(Player.Controller.GetInputStrength()) &&
-					!Mathf.IsZeroApprox(Player.Controller.InputHorizontal) &&
-					(Player.Controller.IsHoldingDirection(targetInputAngle, Player.MovementAngle + (Mathf.Pi * .5f)) ||
-					Player.Controller.IsHoldingDirection(targetInputAngle, Player.MovementAngle - (Mathf.Pi * .5f)));
+				!Mathf.IsZeroApprox(Player.Controller.InputHorizontal) &&
+				(Player.Controller.IsHoldingDirection(targetInputAngle, Player.MovementAngle + (Mathf.Pi * .5f)) ||
+				Player.Controller.IsHoldingDirection(targetInputAngle, Player.MovementAngle - (Mathf.Pi * .5f)));
 		}
 
 		if (allowRedrawing && wasAttemptingGrindStep != isAttemptingGrindStep)
