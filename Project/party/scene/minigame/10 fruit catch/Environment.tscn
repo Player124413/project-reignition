@@ -4,7 +4,7 @@
 [ext_resource type="Script" uid="uid://bf82prgf8lewt" path="res://party/scene/minigame/10 fruit catch/script/player_controller.gd" id="1_qlpbs"]
 [ext_resource type="PackedScene" uid="uid://fqfrgeoixshr" path="res://party/scene/world library/CommonPartyFire.tscn" id="2_8em1r"]
 [ext_resource type="PackedScene" uid="uid://cho38gsk705f8" path="res://party/resource/character/scene/Omochao.tscn" id="3_8em1r"]
-[ext_resource type="Script" uid="uid://bgxo1jobmw4co" path="res://party/scene/minigame/10 fruit catch/script/omochao_manager.gd" id="3_djtaf"]
+[ext_resource type="Script" uid="uid://bgxo1jobmw4co" path="res://party/scene/minigame/10 fruit catch/script/fruit_manager.gd" id="3_djtaf"]
 [ext_resource type="PackedScene" uid="uid://bkkrc2d0tht7q" path="res://party/scene/minigame/10 fruit catch/model/Rapier.glb" id="4_aoec8"]
 [ext_resource type="PackedScene" uid="uid://cmmgmrlddrbe8" path="res://party/scene/minigame/10 fruit catch/Fruit.tscn" id="7_kmx01"]
 
@@ -13,6 +13,7 @@ background_mode = 1
 ambient_light_source = 2
 ambient_light_color = Color(0.45452422, 0.45452428, 0.45452422, 1)
 tonemap_mode = 2
+tonemap_white = 1.2
 glow_enabled = true
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_kmx01"]
@@ -21,9 +22,9 @@ glow_enabled = true
 radius = 0.25
 height = 25.0
 
-[node name="Environment" type="Node3D" unique_id=458310397 node_paths=PackedStringArray("omochao_manager", "hand_end", "pole", "rapier_tip", "lookat", "twist_disperser", "two_bone_ik", "copy_transform_modifier", "spawn_position")]
+[node name="Environment" type="Node3D" unique_id=458310397 node_paths=PackedStringArray("fruit_manager", "hand_end", "pole", "rapier_tip", "lookat", "twist_disperser", "two_bone_ik", "copy_transform_modifier", "spawn_position")]
 script = ExtResource("1_qlpbs")
-omochao_manager = NodePath("Omochaos")
+fruit_manager = NodePath("Omochaos")
 hand_end = NodePath("SpawnPosition/HandEnd")
 pole = NodePath("SpawnPosition/Pole")
 rapier_tip = NodePath("SpawnPosition/HandEnd/Rapier/StabTrigger/CollisionShape3D")
@@ -190,7 +191,7 @@ fov = 50.0
 transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, 0, 0)
 
 [node name="HandEnd" type="Marker3D" parent="SpawnPosition" unique_id=1453479841]
-transform = Transform3D(0.92387944, -0.33141363, 0.19134176, 0, 0.5, 0.8660256, -0.38268343, -0.8001033, 0.46193984, 2.4999998, 7, -3.0000002)
+transform = Transform3D(0.9396925, -0.29619816, 0.17101009, 0, 0.5, 0.8660256, -0.3420201, -0.81379783, 0.4698464, 1, 5, -1)
 top_level = true
 
 [node name="Rapier" parent="SpawnPosition/HandEnd" unique_id=151744692 instance=ExtResource("4_aoec8")]
@@ -213,7 +214,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 14.884376, 0)
 shape = SubResource("CapsuleShape3D_a8ckg")
 
 [node name="Pole" type="Marker3D" parent="SpawnPosition" unique_id=1239897125]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 0, -5)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 5, -5)
 
 [node name="Lookat" type="LookAtModifier3D" parent="SpawnPosition" unique_id=882356382]
 transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 0, 0, 0)

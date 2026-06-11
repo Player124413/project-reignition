@@ -24,6 +24,12 @@ class_name PartyCharacterResource extends Resource
 ## Number of firesouls required in the main game to unlock this character.
 @export var unlock_requirements : int
 
+@export var model_size : MODEL_SIZES
+enum MODEL_SIZES {
+	NORMAL,
+	SMALL, # Cream and Tails.
+}
+
 func is_unlocked() -> bool:
 	# TODO Link to the main game's save data through the c# script
 	return true
