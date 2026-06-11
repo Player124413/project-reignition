@@ -117,8 +117,9 @@ func on_minigame_finished() -> void:
 	bat_attachment.visible = false
 
 func _physics_process(_delta: float) -> void:
-	process_swing()
-	process_ball()
+	if !_is_gameplay_finished:
+		process_swing()
+		process_ball()
 	process_camera()
 
 func process_swing() -> void:
