@@ -1,0 +1,166 @@
+[gd_scene format=3 uid="uid://b6y52vko8cbif"]
+
+[ext_resource type="PackedScene" uid="uid://yapk65lkrew2" path="res://party/scene/minigame/16 treasure box/model/Chest.glb" id="1_je2ft"]
+[ext_resource type="Script" uid="uid://dfm2ly80l4qfl" path="res://party/scene/minigame/16 treasure box/script/chest.gd" id="2_q1wmv"]
+[ext_resource type="Material" uid="uid://dfv7u475orc7p" path="res://party/scene/minigame/11 giant stake/particles/Cloud1.tres" id="3_umfws"]
+[ext_resource type="Script" uid="uid://c65ffkknyq6gr" path="res://addons/custom_nodes/script/GroupGpuParticles3D.cs" id="4_wi5kp"]
+[ext_resource type="Material" uid="uid://btlea54srir75" path="res://party/scene/minigame/11 giant stake/particles/Cloud2.tres" id="5_if4cr"]
+[ext_resource type="Material" uid="uid://n28w5281vih" path="res://party/scene/minigame/11 giant stake/particles/Cloud3.tres" id="6_rlp0s"]
+
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_q1wmv"]
+friction = 2.35
+rough = true
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_nkfxl"]
+size = Vector3(10.759415, 6.928467, 7.440857)
+
+[sub_resource type="Curve" id="Curve_myeab"]
+_data = [Vector2(0, 0), 0.0, 17.129793, 0, 0, Vector2(0.2, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_ucbua"]
+width = 64
+texture_mode = 1
+curve = SubResource("Curve_myeab")
+
+[sub_resource type="Curve" id="Curve_o030l"]
+_data = [Vector2(0, 0.2), 0.0, 2.1647105, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_qdsmy"]
+width = 64
+curve = SubResource("Curve_o030l")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_8ptpb"]
+lifetime_randomness = 0.4
+emission_shape = 6
+emission_ring_axis = Vector3(0, 0, 1)
+emission_ring_height = 1.0
+emission_ring_radius = 4.28
+emission_ring_inner_radius = 4.4
+emission_ring_cone_angle = 90.0
+angle_min = 1.0728836e-05
+angle_max = 360.00003
+angular_velocity_min = -1.6093254e-05
+angular_velocity_max = -1.6093254e-05
+radial_velocity_min = -2.2351742e-05
+radial_velocity_max = 6.2499776
+gravity = Vector3(0, 30, 0)
+scale_max = 2.0
+scale_curve = SubResource("CurveTexture_qdsmy")
+alpha_curve = SubResource("CurveTexture_ucbua")
+
+[sub_resource type="QuadMesh" id="QuadMesh_gwgyu"]
+material = ExtResource("3_umfws")
+size = Vector2(5, 5)
+
+[sub_resource type="Animation" id="Animation_q1wmv"]
+resource_name = "RESET"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("RigidBody3D/Chest:rotation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0, 0, 0)]
+}
+
+[sub_resource type="Animation" id="Animation_njmpl"]
+resource_name = "hit_floor"
+length = 0.2
+step = 0.01
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("RigidBody3D/Chest:rotation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.07, 0.14, 0.2),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 0,
+"values": [Vector3(0, 0, 0), Vector3(0, 0, 0.08726646), Vector3(0, 0, -0.08726646), Vector3(0, 0, 0)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_sbutm"]
+_data = {
+&"RESET": SubResource("Animation_q1wmv"),
+&"hit_floor": SubResource("Animation_njmpl")
+}
+
+[node name="Chest" type="Node3D" unique_id=1004644722 node_paths=PackedStringArray("animator", "rigidbody", "smoke")]
+script = ExtResource("2_q1wmv")
+animator = NodePath("AnimationPlayer")
+rigidbody = NodePath("RigidBody3D")
+smoke = NodePath("RigidBody3D/Smoke")
+
+[node name="RigidBody3D" type="RigidBody3D" parent="." unique_id=1581115964 node_paths=PackedStringArray("animator")]
+mass = 8.0
+physics_material_override = SubResource("PhysicsMaterial_q1wmv")
+gravity_scale = 9.8
+contact_monitor = true
+max_contacts_reported = 10
+script = ExtResource("2_q1wmv")
+animator = NodePath("../AnimationPlayer")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="RigidBody3D" unique_id=2126557322]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.09931183, 3.416626, -0.10531616)
+shape = SubResource("BoxShape3D_nkfxl")
+debug_color = Color(0, 0.6, 0.69803923, 1)
+
+[node name="Chest" parent="RigidBody3D" unique_id=797442472 instance=ExtResource("1_je2ft")]
+
+[node name="Smoke" type="GPUParticles3D" parent="RigidBody3D" unique_id=51711195 node_paths=PackedStringArray("subSystems")]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 0.78496647, 0)
+layers = 32
+cast_shadow = 0
+emitting = false
+amount = 16
+lifetime = 0.4
+one_shot = true
+explosiveness = 1.0
+fixed_fps = 0
+fract_delta = false
+process_material = SubResource("ParticleProcessMaterial_8ptpb")
+draw_pass_1 = SubResource("QuadMesh_gwgyu")
+script = ExtResource("4_wi5kp")
+subSystems = [NodePath("."), null, null]
+
+[node name="Cloud2" type="GPUParticles3D" parent="RigidBody3D/Smoke" unique_id=2059828243]
+layers = 32
+material_override = ExtResource("5_if4cr")
+cast_shadow = 0
+emitting = false
+amount = 16
+lifetime = 0.4
+one_shot = true
+explosiveness = 1.0
+fixed_fps = 0
+fract_delta = false
+process_material = SubResource("ParticleProcessMaterial_8ptpb")
+draw_pass_1 = SubResource("QuadMesh_gwgyu")
+
+[node name="Cloud3" type="GPUParticles3D" parent="RigidBody3D/Smoke" unique_id=374918736]
+layers = 32
+material_override = ExtResource("6_rlp0s")
+cast_shadow = 0
+emitting = false
+amount = 16
+lifetime = 0.4
+one_shot = true
+explosiveness = 1.0
+fixed_fps = 0
+fract_delta = false
+process_material = SubResource("ParticleProcessMaterial_8ptpb")
+draw_pass_1 = SubResource("QuadMesh_gwgyu")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=337456766]
+libraries/ = SubResource("AnimationLibrary_sbutm")
+
+[connection signal="body_entered" from="RigidBody3D" to="." method="_on_rigid_body_3d_body_entered"]
+
+[editable path="RigidBody3D/Chest"]

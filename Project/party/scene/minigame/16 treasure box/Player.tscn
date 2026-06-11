@@ -1,0 +1,46 @@
+[gd_scene format=3 uid="uid://bxn2piwe6usv7"]
+
+[ext_resource type="Script" uid="uid://bmvnc6ip52ms5" path="res://party/scene/minigame/16 treasure box/script/player_controller.gd" id="1_3omtm"]
+[ext_resource type="Script" uid="uid://ds056nimfywwr" path="res://party/script/core/rollback_timer.gd" id="2_ikhk4"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_ikhk4"]
+radius = 3.0
+height = 8.0
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_3omtm"]
+size = Vector3(3.4075928, 10.356323, 4.692322)
+
+[node name="Player" type="Node3D" unique_id=606278347 node_paths=PackedStringArray("hand_attachment", "rollback_timer", "character_body", "spawn_position")]
+script = ExtResource("1_3omtm")
+hand_attachment = NodePath("HandAttachment")
+rollback_timer = NodePath("Rollback")
+character_body = NodePath("PlayerCollision")
+allow_braking = false
+run_speed = 35.0
+friction = 230.0
+spawn_position = NodePath("PlayerCollision")
+
+[node name="PlayerCollision" type="CharacterBody3D" parent="." unique_id=923231115]
+
+[node name="PlayerCollider" type="CollisionShape3D" parent="PlayerCollision" unique_id=1994698216]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4, 0)
+shape = SubResource("CapsuleShape3D_ikhk4")
+
+[node name="PlayerHitbox" type="Area3D" parent="PlayerCollision" unique_id=1310407172 groups=["player"]]
+monitoring = false
+
+[node name="hitbox" type="CollisionShape3D" parent="PlayerCollision/PlayerHitbox" unique_id=1298723636]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.08868599, 4.8506246, -0.61441994)
+shape = SubResource("BoxShape3D_3omtm")
+debug_color = Color(1, 0, 0, 0.41960785)
+
+[node name="HandAttachment" type="BoneAttachment3D" parent="." unique_id=1436336536]
+transform = Transform3D(-0.055639148, 0.82801193, 0.5579431, -0.9488646, -0.21776418, 0.22854908, 0.3107414, -0.51669616, 0.7977873, -0.11048618, 3.0883198, 1.8606191)
+bone_name = "hand_attachment"
+bone_idx = 89
+
+[node name="Rollback" type="Node" parent="." unique_id=1426136170]
+script = ExtResource("2_ikhk4")
+enable_lag_compensation = false
+param_count = 10
+rollback_interval = 0.0
