@@ -139,7 +139,7 @@ func on_load_complete(peer_id : int) -> void:
 	load_states[index] = false
 	loading_peers = loading_peer_count()
 	if loading_peers == 0:
-		rpc("finish_loading", calculate_transition_tick() + 1.0) # RPC on a timer so we can sync unpauses
+		rpc("finish_loading", calculate_transition_tick()) # RPC on a timer so we can sync unpauses
 
 @rpc("any_peer", "call_local", "reliable")
 func finish_loading(target_tick : float) -> void:
