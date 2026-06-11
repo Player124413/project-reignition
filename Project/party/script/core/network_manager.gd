@@ -67,7 +67,10 @@ func register_scene(path : String, root : Node) -> void:
 func load_scene(scene_path : String, type : TRANSITION_TYPE_ENUM) -> void:
 	scene_path = format_scene_path(scene_path)
 	
-	rpc_id(1, "set_loading", multiplayer.get_unique_id(), true) # Let the host know we're loading
+	if NetworkManager.is_hosting_game: # Flag all clients as loading
+		for i in multiplayer.get_peers().size():
+			load_states[i] = true
+	
 	# TODO Add Fade Transitions
 	
 	if scene_dictionary.has(scene_path):
@@ -85,8 +88,7 @@ func load_scene(scene_path : String, type : TRANSITION_TYPE_ENUM) -> void:
 	print("Loaded scene %s" % scene_path)
 	call_deferred("add_child", scene_node)
 	emit_scene_signals(type)
-	
-	rpc_id(1, "set_loading", multiplayer.get_unique_id(), false) # Let the host know we're done loading
+	rpc_id(1, "on_load_complete", multiplayer.get_unique_id()) # Let the host know we're done loading
 
 func emit_scene_signals(type : TRANSITION_TYPE_ENUM) -> void:
 	scene_changed.emit() # Base signal
@@ -126,7 +128,7 @@ func return_to_main_menu() -> void:
 	get_tree().change_scene_to_file("res://interface/menu/Menu.tscn") #  Return to title screen
 
 @rpc("any_peer", "call_local", "reliable")
-func set_loading(peer_id : int, is_loading : bool) -> void:
+func on_load_complete(peer_id : int) -> void:
 	var index : int = multiplayer.get_peers().find(peer_id) if is_online else 0
 	if index == -1:
 		if peer_id == 1:
@@ -134,10 +136,10 @@ func set_loading(peer_id : int, is_loading : bool) -> void:
 		else:
 			print("WARN: Invalid peer id %s passed to set_loading." % peer_id)
 			return
-	load_states[index] = is_loading
+	load_states[index] = false
 	loading_peers = loading_peer_count()
 	if loading_peers == 0:
-		rpc("finish_loading", calculate_transition_tick()) # RPC on a timer so we can sync unpauses
+		rpc("finish_loading", calculate_transition_tick() + 1.0) # RPC on a timer so we can sync unpauses
 
 @rpc("any_peer", "call_local", "reliable")
 func finish_loading(target_tick : float) -> void:

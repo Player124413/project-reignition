@@ -156,6 +156,7 @@ func on_minigame_finished() -> void:
 ## Called after a demo object has spawned. Default behavior: connect the demo_transition_processed signal.
 func on_demo_spawned() -> void:
 	# Hide demo nodes during the transition
+	print("Connected demo transition process signal")
 	MinigameManager.instance.demo_transition_processed.connect(Callable.create(self, "disable_tree"))
 
 ## Disables the node and its children. Used to disable demo nodes.

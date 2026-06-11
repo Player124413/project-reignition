@@ -58,11 +58,13 @@ func on_fruit_spawned(fruit : Node3D) -> void:
 	cpu_fruit_queue.append(fruit)
 
 func on_minigame_finished() -> void:
-	super()
+	if player_index != -1:
+		super()
 	hand_end.visible = false
 
 func start_demo() -> void:
-	fruit_manager.request_fruit_spawn()
+	if NetworkManager.is_hosting_game:
+		fruit_manager.request_fruit_spawn()
 
 func _physics_process(_delta: float) -> void:
 	if is_multiplayer_authority() || player_index == -1:
@@ -149,5 +151,7 @@ func get_target_fruit() -> Node3D:
 	return null
 
 func disable_tree() -> void:
-	character_animator.visible = false
-	process_mode = Node.PROCESS_MODE_DISABLED
+	if player_index == -1:
+		spawn_position.visible = false
+	else:
+		super()

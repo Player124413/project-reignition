@@ -146,8 +146,8 @@ func _exit_tree() -> void:
 		NetworkManager.peers_loaded.disconnect(Callable(self, "start_party_game"))
 
 func start_party_game() -> void:
-	peers_loaded.emit()
 	print("peers are loaded!")
+	peers_loaded.emit()
 	if is_instance_valid(intro_animator) && intro_animator.has_animation("intro"):
 		print("playing intro animation!")
 		intro_animator.play("intro")

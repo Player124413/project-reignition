@@ -2,7 +2,7 @@
 extends Node3D
 
 signal collected
-signal collection_finished
+signal travel_finished
 
 @export var animator : AnimationPlayer
 @export var height_curve : Curve
@@ -51,9 +51,6 @@ func spawn(start : Vector3, end : Vector3, is_apple : bool, tick : float) -> voi
 	activate()
 
 func process_movement_tick() -> void:
-	if is_instance_valid(_pusher):
-		process_pusher()
-	
 	if _is_collected:
 		if _fruit_index != -1:
 			var target_pos : Vector3 = position
@@ -63,8 +60,11 @@ func process_movement_tick() -> void:
 			position = position.move_toward(target_pos, RAPIER_SLIDE_SPEED * get_physics_process_delta_time())
 			if position.is_equal_approx(target_pos):
 				_fruit_index = -1
-				collection_finished.emit()
+				travel_finished.emit()
 		return
+	
+	if is_instance_valid(_pusher):
+		process_pusher()
 	
 	var time_ratio : float = (NetworkTimeSynchronizer.get_time() - _start_time) / TRAVEL_LENGTH
 	var current_pos : Vector3 = start_pos.lerp(end_pos, time_ratio)
@@ -72,6 +72,7 @@ func process_movement_tick() -> void:
 	global_position = current_pos
 	if time_ratio >= 1.0:
 		deactivate()
+		travel_finished.emit()
 
 @rpc("any_peer", "call_local", "reliable")
 func collect() -> void:
@@ -79,9 +80,7 @@ func collect() -> void:
 	_is_collected = true
 	# TODO Play FX
 	animator.pause()
-	
-	if is_multiplayer_authority():
-		collected.emit()
+	collected.emit()
 
 func process_pusher() -> void:
 	var delta_pos : Vector3 = _pusher.global_position - _previous_pusher_position
@@ -105,7 +104,9 @@ func on_entered(area : Area3D) -> void:
 		_previous_pusher_position = area.global_position
 		return
 	
-	rpc("collect")
+	if is_multiplayer_authority():
+		_is_collected = true
+		rpc("collect")
 
 func _on_exited(area: Area3D) -> void:
 	if area.is_in_group("crusher"):

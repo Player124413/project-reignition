@@ -46,25 +46,30 @@ func set_player_index(index : int) -> void:
 	_player_index = index
 
 func request_fruit_spawn() -> void:
-	if _fruit_index >= fruits.size():
-		return # Spawned all fruits
+	var offset : float = 0
+	if _player_index != -1:
+		offset = (1.0 - 2.0 * randf()) * OFFSET_BOUNDS
 	
 	var omochao_index : int = 0
 	if _player_index != -1:
 		omochao_index = randi_range(0, omochaos.size() - 1)
-	omochaos[omochao_index].play_minigame_animation("pull", 0.0, 1.0, NetworkTimeSynchronizer.get_time())
+	
+	rpc("spawn_fruit", offset, omochao_index, randf() > 0.5, NetworkTimeSynchronizer.get_time())
+
+@rpc("any_peer", "call_local", "reliable")
+func spawn_fruit(offset : float, omochao_index : int, is_apple : bool, tick : float) -> void:
+	if _fruit_index >= fruits.size():
+		return # Spawned all fruits
+	
+	omochaos[omochao_index].play_minigame_animation("pull", 0.0, 1.0, tick)
 	omochaos[omochao_index].queue_minigame_animation("select", 0.2)
-	var offset : float = 0
-	if _player_index != -1:
-		offset = (1.0 - 2.0 * randf()) * OFFSET_BOUNDS
 	var end_position : Vector3 = player_origin.global_position + Vector3.RIGHT * offset + Vector3.FORWARD * 2
 	var throw_position : Vector3 = omochaos[omochao_index].global_position + Vector3.UP * 7
 	throw_position += omochaos[omochao_index].global_basis.z * 10
-	fruits[_fruit_index].rpc("spawn", throw_position, end_position, randf() > 0.5, NetworkTimeSynchronizer.get_time())
+	fruits[_fruit_index].spawn(throw_position, end_position, is_apple, tick)
 	fruits[_fruit_index].collected.connect(Callable(self, "register_caught_fruit").bind(fruits[_fruit_index]))
 	fruit_spawned.emit(fruits[_fruit_index])
-	if _player_index == -1:
-		fruits[_fruit_index].collection_finished.connect(Callable(self, "on_fruit_collection_finished"))
+	fruits[_fruit_index].travel_finished.connect(Callable(self, "on_fruit_travel_finished").bind(fruits[_fruit_index]))
 	_fruit_index += 1
 
 func register_caught_fruit(node : Node3D) -> void:
@@ -76,5 +81,11 @@ func register_caught_fruit(node : Node3D) -> void:
 	for i in _caught_fruits.size():
 		_caught_fruits[i]._fruit_index = i
 
-func on_fruit_collection_finished() -> void:
-	MinigameManager.instance.request_minigame_start()
+func on_fruit_travel_finished(fruit : Node3D) -> void:
+	if !is_multiplayer_authority():
+		return
+	
+	if _player_index == -1 && fruit == fruits[0]:
+		MinigameManager.instance.request_minigame_start()
+	elif _player_index == 0 && fruit == fruits[fruits.size() - 1]:
+		MinigameManager.instance.request_minigame_finish()
