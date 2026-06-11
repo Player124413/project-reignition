@@ -6,6 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://cho38gsk705f8" path="res://party/resource/character/scene/Omochao.tscn" id="3_8em1r"]
 [ext_resource type="Script" uid="uid://bgxo1jobmw4co" path="res://party/scene/minigame/10 fruit catch/script/omochao_manager.gd" id="3_djtaf"]
 [ext_resource type="PackedScene" uid="uid://bkkrc2d0tht7q" path="res://party/scene/minigame/10 fruit catch/model/Rapier.glb" id="4_aoec8"]
+[ext_resource type="PackedScene" uid="uid://cmmgmrlddrbe8" path="res://party/scene/minigame/10 fruit catch/Fruit.tscn" id="7_kmx01"]
 
 [sub_resource type="Environment" id="Environment_6kaxa"]
 background_mode = 1
@@ -20,8 +21,9 @@ glow_enabled = true
 radius = 0.25
 height = 25.0
 
-[node name="Environment" type="Node3D" unique_id=458310397 node_paths=PackedStringArray("hand_end", "pole", "rapier_tip", "lookat", "twist_disperser", "two_bone_ik", "copy_transform_modifier", "spawn_position")]
+[node name="Environment" type="Node3D" unique_id=458310397 node_paths=PackedStringArray("omochao_manager", "hand_end", "pole", "rapier_tip", "lookat", "twist_disperser", "two_bone_ik", "copy_transform_modifier", "spawn_position")]
 script = ExtResource("1_qlpbs")
+omochao_manager = NodePath("Omochaos")
 hand_end = NodePath("SpawnPosition/HandEnd")
 pole = NodePath("SpawnPosition/Pole")
 rapier_tip = NodePath("SpawnPosition/HandEnd/Rapier/StabTrigger/CollisionShape3D")
@@ -29,6 +31,8 @@ lookat = NodePath("SpawnPosition/Lookat")
 twist_disperser = NodePath("SpawnPosition/TwistDisperser")
 two_bone_ik = NodePath("SpawnPosition/TwoBoneIK")
 copy_transform_modifier = NodePath("SpawnPosition/HandEndCopyModifier")
+acceleration = 2.0
+decceleration = 10.0
 spawn_position = NodePath("SpawnPosition")
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1148311159]
@@ -69,12 +73,6 @@ layers = 4
 
 [node name="st_118_map_Mesh_0035" parent="Environment" index="10" unique_id=629002444]
 layers = 4
-
-[node name="Fire1" parent="." unique_id=589886147 instance=ExtResource("2_8em1r")]
-transform = Transform3D(5, 0, 0, 0, 5, 0, 0, 0, 5, 117, 30, -39)
-
-[node name="Fire2" parent="." unique_id=2045541372 instance=ExtResource("2_8em1r")]
-transform = Transform3D(5, 0, 0, 0, 5, 0, 0, 0, 5, -116, 30, -39)
 
 [node name="Lights" type="Node3D" parent="." unique_id=1300235167]
 
@@ -141,42 +139,49 @@ light_cull_mask = 1
 shadow_enabled = true
 shadow_caster_mask = 1
 
-[node name="CandleStick1" type="Node3D" parent="." unique_id=1612754387]
+[node name="Fire1" parent="Lights" unique_id=589886147 instance=ExtResource("2_8em1r")]
+transform = Transform3D(5, 0, 0, 0, 5, 0, 0, 0, 5, 117, 30, -39)
+
+[node name="Fire2" parent="Lights" unique_id=2045541372 instance=ExtResource("2_8em1r")]
+transform = Transform3D(5, 0, 0, 0, 5, 0, 0, 0, 5, -116, 30, -39)
+
+[node name="CandleStick1" type="Node3D" parent="Lights" unique_id=1612754387]
 transform = Transform3D(0.81915206, 0, 0.57357645, 0, 1, 0, -0.57357645, 0, 0.81915206, -36.66165, 68.5, -84.81571)
 
-[node name="Fire1" parent="CandleStick1" unique_id=1833460851 instance=ExtResource("2_8em1r")]
+[node name="Fire1" parent="Lights/CandleStick1" unique_id=1833460851 instance=ExtResource("2_8em1r")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.384, -7.5, 0)
 
-[node name="Fire2" parent="CandleStick1" unique_id=773557159 instance=ExtResource("2_8em1r")]
+[node name="Fire2" parent="Lights/CandleStick1" unique_id=773557159 instance=ExtResource("2_8em1r")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.384, -4.3, 0)
 
-[node name="Fire3" parent="CandleStick1" unique_id=1042267588 instance=ExtResource("2_8em1r")]
+[node name="Fire3" parent="Lights/CandleStick1" unique_id=1042267588 instance=ExtResource("2_8em1r")]
 
-[node name="Fire4" parent="CandleStick1" unique_id=684635302 instance=ExtResource("2_8em1r")]
+[node name="Fire4" parent="Lights/CandleStick1" unique_id=684635302 instance=ExtResource("2_8em1r")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.3836555, -4.3, -2.9802322e-08)
 
-[node name="Fire5" parent="CandleStick1" unique_id=1845253675 instance=ExtResource("2_8em1r")]
+[node name="Fire5" parent="Lights/CandleStick1" unique_id=1845253675 instance=ExtResource("2_8em1r")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.383656, -7.5, -2.9802322e-08)
 
-[node name="CandleStick2" type="Node3D" parent="." unique_id=221899132]
+[node name="CandleStick2" type="Node3D" parent="Lights" unique_id=221899132]
 transform = Transform3D(0.81915206, 0, -0.57357645, 0, 1, 0, 0.57357645, 0, 0.81915206, 36.662, 68.5, -84.816)
 
-[node name="Fire1" parent="CandleStick2" unique_id=943156951 instance=ExtResource("2_8em1r")]
+[node name="Fire1" parent="Lights/CandleStick2" unique_id=943156951 instance=ExtResource("2_8em1r")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.384, -7.5, 0)
 
-[node name="Fire2" parent="CandleStick2" unique_id=763431881 instance=ExtResource("2_8em1r")]
+[node name="Fire2" parent="Lights/CandleStick2" unique_id=763431881 instance=ExtResource("2_8em1r")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.384, -4.3, 0)
 
-[node name="Fire3" parent="CandleStick2" unique_id=1531280372 instance=ExtResource("2_8em1r")]
+[node name="Fire3" parent="Lights/CandleStick2" unique_id=1531280372 instance=ExtResource("2_8em1r")]
 
-[node name="Fire4" parent="CandleStick2" unique_id=1810581473 instance=ExtResource("2_8em1r")]
+[node name="Fire4" parent="Lights/CandleStick2" unique_id=1810581473 instance=ExtResource("2_8em1r")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.3836555, -4.3, -2.9802322e-08)
 
-[node name="Fire5" parent="CandleStick2" unique_id=29262261 instance=ExtResource("2_8em1r")]
+[node name="Fire5" parent="Lights/CandleStick2" unique_id=29262261 instance=ExtResource("2_8em1r")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.383656, -7.5, -2.9802322e-08)
 
 [node name="GameCamera" type="Camera3D" parent="." unique_id=833988017]
 transform = Transform3D(1, 0, 0, 0, 0.90630776, -0.42261827, 0, 0.42261827, 0.90630776, 0, 3, 15)
+visible = false
 cull_mask = 1061
 current = true
 fov = 50.0
@@ -258,10 +263,12 @@ settings/0/axes = 7
 settings/0/invert = 0
 settings/0/additive = false
 
-[node name="Omochaos" type="Node3D" parent="." unique_id=1254267859 node_paths=PackedStringArray("omochaos")]
+[node name="Omochaos" type="Node3D" parent="." unique_id=1254267859 node_paths=PackedStringArray("omochaos", "fruits", "player_origin")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 20, -67)
 script = ExtResource("3_djtaf")
 omochaos = [NodePath("OmochaoL"), NodePath("OmochaoM"), NodePath("OmochaoR")]
+fruits = [NodePath("Fruits/Fruit1"), NodePath("Fruits/Fruit2"), NodePath("Fruits/Fruit3"), NodePath("Fruits/Fruit4"), NodePath("Fruits/Fruit5"), NodePath("Fruits/Fruit6"), NodePath("Fruits/Fruit7"), NodePath("Fruits/Fruit8"), NodePath("Fruits/Fruit9"), NodePath("Fruits/Fruit10")]
+player_origin = NodePath("../SpawnPosition")
 
 [node name="OmochaoL" parent="Omochaos" unique_id=795732468 instance=ExtResource("3_8em1r")]
 transform = Transform3D(0.37587705, 0, 0.13680805, 0, 0.4, 0, -0.13680805, 0, 0.37587705, -25, 0, 0)
@@ -271,5 +278,27 @@ transform = Transform3D(0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 0, 0, 0)
 
 [node name="OmochaoR" parent="Omochaos" unique_id=1649772967 instance=ExtResource("3_8em1r")]
 transform = Transform3D(0.37587705, 0, -0.13680805, 0, 0.4, 0, 0.13680805, 0, 0.37587705, 25, 0, 0)
+
+[node name="Fruits" type="Node3D" parent="Omochaos" unique_id=977630319]
+
+[node name="Fruit1" parent="Omochaos/Fruits" unique_id=217349057 instance=ExtResource("7_kmx01")]
+
+[node name="Fruit2" parent="Omochaos/Fruits" unique_id=1576976703 instance=ExtResource("7_kmx01")]
+
+[node name="Fruit3" parent="Omochaos/Fruits" unique_id=444033309 instance=ExtResource("7_kmx01")]
+
+[node name="Fruit4" parent="Omochaos/Fruits" unique_id=122089717 instance=ExtResource("7_kmx01")]
+
+[node name="Fruit5" parent="Omochaos/Fruits" unique_id=804379988 instance=ExtResource("7_kmx01")]
+
+[node name="Fruit6" parent="Omochaos/Fruits" unique_id=1906909544 instance=ExtResource("7_kmx01")]
+
+[node name="Fruit7" parent="Omochaos/Fruits" unique_id=89154125 instance=ExtResource("7_kmx01")]
+
+[node name="Fruit8" parent="Omochaos/Fruits" unique_id=1633346745 instance=ExtResource("7_kmx01")]
+
+[node name="Fruit9" parent="Omochaos/Fruits" unique_id=2000250203 instance=ExtResource("7_kmx01")]
+
+[node name="Fruit10" parent="Omochaos/Fruits" unique_id=1133595257 instance=ExtResource("7_kmx01")]
 
 [editable path="Environment"]

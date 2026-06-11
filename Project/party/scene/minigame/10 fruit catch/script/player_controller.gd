@@ -1,5 +1,8 @@
 extends PartyGameCharacterSpawner
 
+@export var omochao_manager : Node3D
+
+@export_group("Components")
 @export var hand_end : Node3D
 @export var pole : Node3D
 @export var rapier_tip : Node3D
@@ -7,10 +10,30 @@ extends PartyGameCharacterSpawner
 @export var twist_disperser : BoneTwistDisperser3D
 @export var two_bone_ik : TwoBoneIK3D
 @export var copy_transform_modifier : CopyTransformModifier3D
+
+@export_group("Stats")
+@export var acceleration : float
+@export var decceleration : float
+var aim_speed : float = 3.0
+var _move_speed : float
+
 var initial_transform : Transform3D
+
+# List of all fruit that has been caught. When it becomes larger than 5, the first fruit is removed from the stick.
+var _caught_fruits : Array[Node3D]
+
+var _previous_input : Vector2
+
+var current_aim_pos : Vector2
+const POSITION_FACTOR : float = 1.5
+const MAX_ROTATION : Vector2 = Vector2(PI * 0.3, PI * 0.35)
+const MIN_ROTATION : Vector2 = Vector2(PI * -0.3, PI * -0.2)
 
 func on_spawn_finished() -> void:
 	super()
+	if player_index == -1:
+		omochao_manager.is_demo = true
+	
 	character_animator.play_animation("%s/wait" % MinigameManager.ANIMATION_LIBRARY_PREFIX, true)
 	
 	lookat.reparent(character_animator.skeleton)
@@ -27,19 +50,11 @@ func on_minigame_finished() -> void:
 	super()
 	hand_end.visible = false
 
-var current_aim_pos : Vector2
-var aim_speed : float = 3.0
-const POSITION_FACTOR : float = 1.5
-const MAX_ROTATION : Vector2 = Vector2(PI * 0.2, PI * 0.2)
-const MIN_ROTATION : Vector2 = Vector2(PI * -0.2, PI * -0.1)
-const HURT_TRIGGER_PARAMETER : StringName = "parameters/hurt_trigger/request"
-const HURT_SEEK_PARAMETER : StringName = "parameters/hurt_seek/seek_request"
-
 func start_demo() -> void:
-	await get_tree().create_timer(NetworkManager.calculate_transition_tick()).timeout
+	print("Starting demos!")
 	## TODO Spawn fruit and start demo
-	MinigameManager.instance.request_minigame_start()
-	
+	#MinigameManager.instance.request_minigame_start()
+	omochao_manager.request_fruit_spawn()
 
 func get_input_suffix() -> String:
 	return "1"
@@ -52,7 +67,13 @@ func _physics_process(_delta: float) -> void:
 	process_animation()
 
 func process_movement_tick() -> void:
-	current_aim_pos += Vector2(get_horizontal_input(), get_vertical_input()) * aim_speed * get_physics_process_delta_time()
+	var input : Vector2 = Vector2(get_horizontal_input(), get_vertical_input()).limit_length()
+	var target_speed : float = input.length() * aim_speed
+	var delta : float = acceleration if target_speed > _move_speed else decceleration
+	_move_speed = move_toward(_move_speed, target_speed, delta * get_physics_process_delta_time())
+	if !input.is_zero_approx():
+		_previous_input = input.normalized()
+	current_aim_pos += _previous_input * _move_speed * get_physics_process_delta_time()
 	current_aim_pos = current_aim_pos.clamp(MIN_ROTATION, MAX_ROTATION)
 	var aim_basis : Basis = initial_transform.basis
 	aim_basis = aim_basis.rotated(Vector3.RIGHT, current_aim_pos.y)
