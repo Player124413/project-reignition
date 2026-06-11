@@ -1,7 +1,7 @@
 class_name ChestSpawner extends Node3D
 
 @export var spawners: Array[Node3D]
-@export var chests: Array[Chest]
+@export var chests: Array[TreasureChest]
 
 var rng: RandomNumberGenerator
 
@@ -10,7 +10,6 @@ func _ready() -> void:
 	if !NetworkManager.is_hosting_game:
 		return
 	print("starting minigame")
-	MinigameManager.instance.gameplay_started.connect(Callable(self , "start_spawning"))
 
 func start_spawning() -> void:
 	set_physics_process(true)
