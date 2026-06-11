@@ -177,20 +177,12 @@ _data = {
 &"travel": SubResource("Animation_07p2i")
 }
 
-[node name="Fruit" type="Area3D" unique_id=476296964 node_paths=PackedStringArray("animator")]
-collision_layer = 0
+[node name="Fruit" type="Area3D" unique_id=476296964 node_paths=PackedStringArray("animator") groups=["crusher"]]
+collision_layer = 8
 collision_mask = 10
-monitorable = false
 script = ExtResource("1_kv4gg")
 animator = NodePath("AnimationPlayer")
 height_curve = SubResource("Curve_ij1mo")
-
-[node name="StaticBody3D" type="StaticBody3D" parent="." unique_id=1846276236]
-collision_layer = 16
-collision_mask = 0
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D" unique_id=1360402656]
-shape = SubResource("SphereShape3D_ky84k")
 
 [node name="Root" type="Node3D" parent="." unique_id=1065159559]
 
@@ -210,3 +202,4 @@ libraries/ = SubResource("AnimationLibrary_qq70q")
 next/spawn = &"travel"
 
 [connection signal="area_entered" from="." to="." method="on_entered"]
+[connection signal="area_exited" from="." to="." method="_on_exited"]

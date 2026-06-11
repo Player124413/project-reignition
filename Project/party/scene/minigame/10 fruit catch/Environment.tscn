@@ -24,7 +24,7 @@ height = 9.0
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_a8ckg"]
 radius = 0.25
-height = 25.0
+height = 26.0
 
 [node name="Environment" type="Node3D" unique_id=458310397 node_paths=PackedStringArray("fruit_manager", "hand_end", "pole", "rapier_tip", "lookat", "twist_disperser", "two_bone_ik", "copy_transform_modifier", "spawn_position")]
 script = ExtResource("1_qlpbs")
@@ -219,11 +219,13 @@ monitoring = false
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 28, 0)
 shape = SubResource("SphereShape3D_kmx01")
 
-[node name="StickCollision" type="StaticBody3D" parent="SpawnPosition/HandEnd/Rapier" unique_id=1368285645]
-physics_interpolation_mode = 1
+[node name="PushCollision" type="Area3D" parent="SpawnPosition/HandEnd/Rapier" unique_id=1615512013 groups=["crusher"]]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 15, 0)
+collision_layer = 8
+collision_mask = 0
+monitoring = false
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="SpawnPosition/HandEnd/Rapier/StickCollision" unique_id=1938060747]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 14.884376, 0)
+[node name="CollisionShape3D" type="CollisionShape3D" parent="SpawnPosition/HandEnd/Rapier/PushCollision" unique_id=1779536007]
 shape = SubResource("CapsuleShape3D_a8ckg")
 
 [node name="Pole" type="Marker3D" parent="SpawnPosition" unique_id=1239897125]

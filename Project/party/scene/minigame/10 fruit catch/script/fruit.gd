@@ -14,6 +14,8 @@ var _start_time : float
 
 # The index of the fruit's position on the pole.
 var _fruit_index : int = -1
+var _pusher : Node3D
+var _previous_pusher_position : Vector3
 
 const TRAVEL_HEIGHT : float = 20.0
 const TRAVEL_LENGTH : float = 3.0
@@ -48,6 +50,9 @@ func spawn(start : Vector3, end : Vector3, is_apple : bool, tick : float) -> voi
 	activate()
 
 func process_movement_tick() -> void:
+	if is_instance_valid(_pusher):
+		process_pusher()
+	
 	if _is_collected:
 		if _fruit_index != -1:
 			var target_pos : Vector3 = position
@@ -67,6 +72,19 @@ func process_movement_tick() -> void:
 	if time_ratio >= 1.0:
 		deactivate()
 
+@rpc("any_peer", "call_local", "reliable")
+func collect() -> void:
+	_is_collected = true
+	# TODO Play FX
+	animator.pause()
+	collected.emit()
+
+func process_pusher() -> void:
+	var delta_pos : Vector3 = _pusher.global_position - _previous_pusher_position
+	_previous_pusher_position = _pusher.global_position
+	start_pos.x += delta_pos.x * 2
+	end_pos.x += delta_pos.x * 2
+
 func on_entered(area : Area3D) -> void:
 	if _is_collected:
 		return
@@ -78,13 +96,15 @@ func on_entered(area : Area3D) -> void:
 				area.get_parent().rpc("take_damage", NetworkTimeSynchronizer.get_time())
 		return
 	
+	if area.is_in_group("crusher"): # Start getting pushed by rapier
+		_pusher = area
+		_previous_pusher_position = area.global_position
+		return
+	
 	# Stick to the rapier
 	call_deferred("reparent", area) # TODO Make this work online
 	rpc("collect")
 
-@rpc("any_peer", "call_local", "reliable")
-func collect() -> void:
-	_is_collected = true
-	# TODO Play FX
-	animator.pause()
-	collected.emit()
+func _on_exited(area: Area3D) -> void:
+	if area.is_in_group("crusher"):
+		_pusher = null
