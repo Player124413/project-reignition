@@ -23,7 +23,6 @@ var initial_transform : Transform3D
 var _input : Vector2
 var _previous_input : Vector2
 var is_input_disabled : bool
-var cpu_fruit_queue : Array[Node3D]
 
 var current_aim_pos : Vector2
 const POSITION_FACTOR : float = 1.2
@@ -120,16 +119,49 @@ func get_input() -> Vector2:
 	if !is_cpu():
 		return Vector2(get_horizontal_input(), get_vertical_input()).limit_length()
 	
-	var target_fruit : Node3D = get_target_fruit()
-	if !is_instance_valid(target_fruit):
-		return Vector2.ZERO
+	if is_zero_approx(cpu_timer):
+		# Recalculate input
+		var target_fruit : Node3D = get_target_fruit()
+		if !is_instance_valid(target_fruit):
+			return Vector2.ZERO
+		target_cpu_position = _camera.unproject_position(target_fruit.global_position)
+		if player_index != -1:
+			var difficulty : PlayerData.CPU_DIFFICULTY_ENUM = get_cpu_difficulty()
+			if difficulty == PlayerData.CPU_DIFFICULTY_ENUM.EASY:
+				target_cpu_position.x += (1.0 - 2.0 * randf()) * 150.0 # Variance
+				cpu_timer = CPU_INTERVAL
+			elif difficulty == PlayerData.CPU_DIFFICULTY_ENUM.NORMAL:
+				target_cpu_position.x += (1.0 - 2.0 * randf()) * 100.0 # Variance
+				cpu_timer = CPU_INTERVAL * 0.6
+			elif difficulty == PlayerData.CPU_DIFFICULTY_ENUM.HARD:
+				target_cpu_position.x += (1.0 - 2.0 * randf()) * 50.0 # Variance
+				cpu_timer = CPU_INTERVAL * 0.3
+			else:
+				target_cpu_position.x += (1.0 - 2.0 * randf()) * 10.0 # Variance
+				cpu_timer = CPU_INTERVAL * 0.1
+			cpu_timer *= lerp(CPU_MIN_INTERVAL_VARIANCE, CPU_MAX_INTERVAL_VARIANCE, randf())
+	else:
+		cpu_timer = move_toward(cpu_timer, 0, get_physics_process_delta_time())
 	
-	var fruit_pos : Vector2 = _camera.unproject_position(target_fruit.global_position)
 	var tip_pos : Vector2 = _camera.unproject_position(rapier_tip.global_position)
-	var target_input : Vector2 = (fruit_pos - tip_pos)
-	target_input *= 0.005
+	var target_input : Vector2 = (target_cpu_position - tip_pos) * 0.005
 	target_input.y *= -1
 	return target_input.limit_length()
+
+var cpu_timer : float
+var target_cpu_position : Vector2
+var cpu_fruit_queue : Array[Node3D]
+const CPU_INTERVAL : float = 1.2
+const CPU_MIN_INTERVAL_VARIANCE : float = 0.5
+const CPU_MAX_INTERVAL_VARIANCE : float = 0.8
+
+func get_target_fruit() -> Node3D:
+	while !cpu_fruit_queue.is_empty():
+		if cpu_fruit_queue[0]._is_collected || cpu_fruit_queue[0].global_position.z > rapier_tip.global_position.z:
+			cpu_fruit_queue.remove_at(0)
+		else:
+			return cpu_fruit_queue[0]
+	return null
 
 @rpc("any_peer", "call_local", "reliable")
 func take_damage(tick : float) -> void:
@@ -141,14 +173,6 @@ func process_animation_event(info : int) -> void:
 		character_animator.play_animation("%s/wait" % MinigameManager.ANIMATION_LIBRARY_PREFIX, true, 0.1)
 		is_input_disabled = false
 		request_invincibility()
-
-func get_target_fruit() -> Node3D:
-	while !cpu_fruit_queue.is_empty():
-		if cpu_fruit_queue[0]._is_collected || cpu_fruit_queue[0].global_position.z > rapier_tip.global_position.z:
-			cpu_fruit_queue.remove_at(0)
-		else:
-			return cpu_fruit_queue[0]
-	return null
 
 func disable_tree() -> void:
 	if player_index == -1:
