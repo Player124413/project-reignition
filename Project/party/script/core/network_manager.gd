@@ -75,7 +75,7 @@ func load_scene(scene_path : String, type : TRANSITION_TYPE_ENUM) -> void:
 		push_warning("Reloading stage!")
 		scene_dictionary[scene_path].queue_free() # Delete the existing node associated with the scene
 
-	ResourceLoader.load_threaded_request(scene_path)
+	ResourceLoader.load_threaded_request(scene_path, "", true)
 	while ResourceLoader.load_threaded_get_status(scene_path) == ResourceLoader.ThreadLoadStatus.THREAD_LOAD_IN_PROGRESS:
 		await get_tree().create_timer(0.1).timeout
 	
