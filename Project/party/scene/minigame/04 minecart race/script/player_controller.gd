@@ -18,6 +18,9 @@ enum LEVER_STATES {
 	UP
 }
 
+## Are we done loading?
+var is_movement_enabled : bool
+
 ## How fast the cart is currently moving.
 var current_speed : float
 ## How much extra slope momementum the cart has.
@@ -68,6 +71,9 @@ const PUMP_ANIM_SPEED : float = 2.0
 ## Multiplier for the tires' animations.
 const TIRE_ANIMATION_SPEED : float = 0.1
 
+func on_peers_loaded() -> void:
+	is_movement_enabled = true
+
 func on_spawn_finished() -> void:
 	super()
 	camera_root.top_level = true
@@ -77,13 +83,14 @@ func on_spawn_finished() -> void:
 	character_animator.play_animation(get_anim_prefix() + "low-wait")
 	
 	current_speed = INITIAL_SPEED
-	MinigameManager.instance.gameplay_started.connect(Callable(self, "on_gamplay_started"))
+	MinigameManager.instance.peers_loaded.connect(Callable.create(self, "on_peers_loaded"))
 	set_physics_process(is_player_valid()) # Movement is needed during the demo
 	
 	# Randomize sfx time so they aren't all overlapping
 	get_tree().create_timer(randf()).timeout.connect(Callable(cart_roll_sfx, "play_in_group"))
 
-func on_gamplay_started() -> void:
+func activate() -> void:
+	super()
 	can_pump = true
 	is_demo_active = false
 
@@ -92,7 +99,7 @@ func on_gameplay_finished() -> void:
 	can_pump = false
 
 func _physics_process(_delta: float) -> void:
-	if !_is_spawn_finished:
+	if !_is_spawn_finished || !is_movement_enabled:
 		return
 	
 	if is_demo_active:
