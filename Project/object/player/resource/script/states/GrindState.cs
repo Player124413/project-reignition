@@ -111,8 +111,16 @@ public partial class GrindState : PlayerState
 		CheckGrindStep(true);
 		UpdateCharge();
 
-		if (Player.Controller.IsJumpBufferActive)
+		if (Player.Controller.IsJumpBufferActive || Player.Controller.IsSideShakeRegistered())
+		{
+			if (Player.Controller.IsSideShakeRegistered())
+			{
+				isAttemptingGrindStep = true;
+				Player.Controller.ProcessGyroMovement(true); // Snap input to gyro direction
+			}
+
 			return ProcessJump();
+		}
 
 		if (Player.Controller.IsStepBufferActive)
 		{
@@ -146,10 +154,15 @@ public partial class GrindState : PlayerState
 		bool wasAttemptingGrindStep = isAttemptingGrindStep;
 		// Check if the player is holding a direction parallel to rail and start a grindstep
 		float targetInputAngle = Player.Controller.GetTargetInputAngle();
-		isAttemptingGrindStep = !Mathf.IsZeroApprox(Player.Controller.GetInputStrength()) &&
-				!Mathf.IsZeroApprox(Player.Controller.InputHorizontal) &&
-				(Player.Controller.IsHoldingDirection(targetInputAngle, Player.MovementAngle + (Mathf.Pi * .5f)) ||
-				Player.Controller.IsHoldingDirection(targetInputAngle, Player.MovementAngle - (Mathf.Pi * .5f)));
+		if (Player.Controller.IsStrafeModeActive)
+			isAttemptingGrindStep = Mathf.Abs(Player.Controller.InputHorizontal) > 0.5f;
+		else
+		{
+			isAttemptingGrindStep = !Mathf.IsZeroApprox(Player.Controller.GetInputStrength()) &&
+					!Mathf.IsZeroApprox(Player.Controller.InputHorizontal) &&
+					(Player.Controller.IsHoldingDirection(targetInputAngle, Player.MovementAngle + (Mathf.Pi * .5f)) ||
+					Player.Controller.IsHoldingDirection(targetInputAngle, Player.MovementAngle - (Mathf.Pi * .5f)));
+		}
 
 		if (allowRedrawing && wasAttemptingGrindStep != isAttemptingGrindStep)
 		{

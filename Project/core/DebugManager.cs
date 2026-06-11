@@ -18,6 +18,8 @@ public partial class DebugManager : Control
 	/// <summary> Tracks whether we're in a cutscene (credits or story event). </summary>
 	public bool IsCutsceneActive { get; set; }
 
+	public bool IsGyroEnabled { get; set; } = true;
+
 	private bool isAdvancingFrame;
 	private bool isAttemptingPause;
 	private bool IsPaused => GetTree().Paused;

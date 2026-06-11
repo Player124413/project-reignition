@@ -87,12 +87,13 @@ public partial class PlayerInputController : Node
 	public void ProcessInputs()
 	{
 		ProcessMouseMovement();
+		ProcessGyroMovement();
 		InputAxis = Input.GetVector("move_left", "move_right", "move_up", "move_down", DeadZone);
 		InputAxis = (InputAxis + mouseInput).LimitLength(1f);
 		InputHorizontal = Input.GetAxis("move_left", "move_right");
-		InputHorizontal = Mathf.Clamp(InputHorizontal + mouseInput.X, -1f, 1f);
+		InputHorizontal = Mathf.Clamp(InputHorizontal + mouseInput.X + gyroInput.X, -1f, 1f);
 		InputVertical = Input.GetAxis("move_up", "move_down");
-		InputVertical = Mathf.Clamp(InputVertical + mouseInput.Y, -1f, 1f);
+		InputVertical = Mathf.Clamp(InputVertical + mouseInput.Y + gyroInput.Y, -1f, 1f);
 		if (!InputAxis.IsZeroApprox())
 			NonZeroInputAxis = InputAxis;
 
@@ -175,6 +176,79 @@ public partial class PlayerInputController : Node
 		mouseInput.Y = Mathf.Clamp(mouseInput.Y, -1f, 1f);
 	}
 
+	public bool IsGyroEnabled => IsStrafeModeActive && DebugManager.Instance.IsGyroEnabled && Input.IsJoyMotionSensorsEnabled(Runtime.Instance.ActiveController);
+
+	private Vector2 gyroInput;
+	private Vector2 gyroInputVelocity;
+	private readonly float GyroSmoothing = 5.0f;
+	private readonly float TurnSensitivity = 0.2f;
+	private readonly float TurnDeadzone = 0.5f;
+	private readonly float ReverseDeadzone = 0.5f;
+	public void ProcessGyroMovement(bool disableSmoothing = false)
+	{
+		if (!IsGyroEnabled)
+		{
+			gyroInput = Vector2.Zero;
+			return;
+		}
+
+		Vector3 rawGyroInput = Input.GetJoyAccelerometer(Runtime.Instance.ActiveController);
+		Vector2 targetGyroInput = new(rawGyroInput.X, 0);
+		if (Mathf.Abs(targetGyroInput.X) < TurnDeadzone)
+			targetGyroInput.X = 0.0f;
+		else
+			targetGyroInput.X -= Mathf.Sign(targetGyroInput.X) * TurnDeadzone;
+		targetGyroInput.X *= TurnSensitivity;
+
+		if (rawGyroInput.Y < ReverseDeadzone)
+			targetGyroInput.Y = -1f;
+
+		if (disableSmoothing)
+		{
+			gyroInput = targetGyroInput;
+			InputHorizontal = gyroInput.X;
+		}
+		else
+		{
+			gyroInput = ExtensionMethods.SmoothDamp(gyroInput, targetGyroInput, ref gyroInputVelocity, GyroSmoothing * PhysicsManager.physicsDelta);
+		}
+	}
+
+	private readonly float DownShakeSensitivity = 4f;
+	/// <summary> A basic shake downward. </summary>
+	public bool IsDownShakeRegistered()
+	{
+		if (!IsGyroEnabled)
+			return false;
+
+		return -Input.GetJoyGyroscope(Runtime.Instance.ActiveController).X > DownShakeSensitivity;
+	}
+
+	private readonly float SideShakeSensitivity = 4f;
+	/// <summary> A basic shake downward. </summary>
+	public bool IsSideShakeRegistered()
+	{
+		if (!IsGyroEnabled)
+			return false;
+
+		return Mathf.Abs(Input.GetJoyGyroscope(Runtime.Instance.ActiveController).Z) > SideShakeSensitivity;
+	}
+
+
+	public override void _ExitTree()
+	{
+		if (Runtime.Instance.IsUsingController)
+			Input.SetJoyMotionSensorsEnabled(Runtime.Instance.ActiveController, false);
+	}
+
+	public override void _EnterTree()
+	{
+		if (Runtime.Instance.IsUsingController)
+			Input.SetJoyMotionSensorsEnabled(Runtime.Instance.ActiveController, DebugManager.Instance.IsGyroEnabled);
+		else if (OS.IsDebugBuild()) // For booting into a level
+			Input.SetJoyMotionSensorsEnabled(0, DebugManager.Instance.IsGyroEnabled);
+	}
+
 	private void UpdateJumpBuffer()
 	{
 		if (Player.IsLockoutDisablingAction(LockoutResource.ActionFlags.JumpButton))
@@ -231,6 +305,12 @@ public partial class PlayerInputController : Node
 		}
 
 		if (Input.IsActionJustPressed("button_attack"))
+		{
+			attackBuffer = InputBufferLength;
+			return;
+		}
+
+		if (IsDownShakeRegistered())
 		{
 			attackBuffer = InputBufferLength;
 			return;
