@@ -200,7 +200,6 @@ public partial class SaveSelect : Menu
 				});
 				return;
 			}
-
 		}
 
 		if (DebugManager.Instance.UseDemoSave) // Unlock all worlds in the demo
