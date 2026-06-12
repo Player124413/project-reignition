@@ -677,6 +677,9 @@ public partial class PlayerController : CharacterBody3D
 
 	public bool IsBackflipInputValid()
 	{
+		if (Controller.IsBrakeHeld())
+			return false;
+
 		if (IsLockoutDisablingAction(LockoutResource.ActionFlags.Backflip))
 			return false;
 
