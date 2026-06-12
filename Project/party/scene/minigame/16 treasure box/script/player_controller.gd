@@ -1,7 +1,6 @@
 ### The player controller for the Treasure Box party game.
 extends PartyGameCharacterMover
 @export var hand_attachment: BoneAttachment3D
-@export var chest_attachment: Node3D
 
 var current_chest: TreasureChest
 var can_grab: bool
@@ -15,6 +14,8 @@ enum STATE {
 	DAMAGE,
 	INVINCIBLE
 }
+
+const CHEST_POSITION_SPEED : float = 20.0
 
 func on_spawn_finished() -> void:
 	super ()
@@ -38,6 +39,9 @@ func process_speed() -> void:
 func process_animation() -> void:
 	if _state == STATE.IDLE || _state == STATE.INVINCIBLE:
 		super ()
+	
+	if _state == STATE.HOLD && is_instance_valid(current_chest): # Move to hands
+		current_chest.position = current_chest.position.move_toward(Vector3.ZERO, CHEST_POSITION_SPEED * get_physics_process_delta_time())
 
 func process_movement_tick() -> void:
 	process_invincibility()
@@ -81,8 +85,13 @@ func start_pickup(tick: float):
 	_state = STATE.HOLD
 	var target_anim: StringName = get_anim_prefix() + "lift"
 	character_animator.rpc("play_minigame_animation", target_anim, 0, 1, 0, tick)
-	current_chest.reparent(chest_attachment, true)
+	var original_position : Vector3 = current_chest.rigidbody.global_position
+	current_chest.rigidbody.position = Vector3.ZERO # Reset positions
 	current_chest.rigidbody.freeze = true
+	current_chest.rigidbody.reset_physics_interpolation()
+	current_chest.reparent(hand_attachment)
+	current_chest.global_position = original_position
+	current_chest.reset_physics_interpolation()
 	print("grabbing " + str(current_chest))
 
 @rpc("any_peer", "call_local", "reliable")
@@ -104,16 +113,13 @@ func _on_grab_area_area_entered(area: Area3D) -> void:
 		var node = area
 		while (node is not TreasureChest):
 			node = node.get_parent()
-
 		current_chest = node
 		can_grab = true
-
 
 func _on_grab_area_area_exited(area: Area3D) -> void:
 	if area.is_in_group("enemy"):
 		print("Out of chest range")
 		can_grab = false
-		current_chest = null
 	
 func is_valid_move_state() -> bool:
 	match _state:

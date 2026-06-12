@@ -1,4 +1,4 @@
-class_name TreasureChest extends Node
+class_name TreasureChest extends Node3D
 
 @export var num_coins: int = 0
 @export var animator: AnimationPlayer
