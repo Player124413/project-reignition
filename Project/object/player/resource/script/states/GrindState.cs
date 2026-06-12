@@ -111,7 +111,7 @@ public partial class GrindState : PlayerState
 		CheckGrindStep(true);
 		UpdateCharge();
 
-		bool isSideShakeRegistered = Player.Controller.IsSideShakeRegistered();
+		bool isSideShakeRegistered = Player.Controller.IsSideFlickRegistered();
 		if (Player.Controller.IsJumpBufferActive || isSideShakeRegistered)
 		{
 			if (isSideShakeRegistered)

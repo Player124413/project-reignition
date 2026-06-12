@@ -118,11 +118,9 @@ public partial class ZiplineState : PlayerState
 		}
 
 		input = Player.Controller.InputHorizontal;
-		if (Mathf.Abs(input) <= SaveManager.Config.deadZone) // Take dead zone into account
-			input = 0;
 
 		// Check tapping
-		if (Mathf.IsZeroApprox(input))
+		if (Mathf.Abs(input) <= SaveManager.Config.deadZone)
 		{
 			inputHoldTimer = 0;
 		}

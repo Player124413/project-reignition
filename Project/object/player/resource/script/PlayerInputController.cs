@@ -237,8 +237,8 @@ public partial class PlayerInputController : Node
 
 	private readonly float SideShakeSensitivity = 2f;
 	private readonly float SideShakeLimit = 6f;
-	/// <summary> A basic shake sideways. </summary>
-	public bool IsSideShakeRegistered()
+	/// <summary> A basic flick sideways. </summary>
+	public bool IsSideFlickRegistered()
 	{
 		if (!IsGyroEnabled)
 			return false;
