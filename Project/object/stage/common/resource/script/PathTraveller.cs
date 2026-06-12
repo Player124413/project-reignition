@@ -184,7 +184,7 @@ public partial class PathTraveller : Node3D
 	/// <summary> Handles player input. </summary>
 	private void CalculateMovement()
 	{
-		Vector2 inputVector = Player.Controller.InputAxis;
+		Vector2 inputVector = new Vector2(Player.Controller.InputHorizontal, Player.Controller.InputVertical).LimitLength(1f);
 		if (IsVerticalMovementDisabled) // Ignore vertical input
 			inputVector.Y = 0;
 

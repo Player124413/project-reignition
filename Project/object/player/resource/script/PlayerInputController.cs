@@ -179,7 +179,12 @@ public partial class PlayerInputController : Node
 	}
 
 	/// <summary> Determines whether to invert gyro inputs for certain stage objects. </summary>
-	public bool InvertGyro { get; set; }
+	public bool GyroInvertHorizontal { get; set; }
+	/// <summary> Determines whether to invert vertical gyro inputs. </summary>
+	public bool GyroInvertVertical { get; set; }
+	/// <summary> Determines whether to use the full vertical axis for vertical gyro controls. </summary>
+	public bool GyroUseFullVertical { get; set; }
+
 	public bool IsGyroEnabled => IsStrafeModeActive && DebugManager.Instance.IsGyroEnabled && Input.IsJoyMotionSensorsEnabled(Runtime.Instance.ActiveController);
 
 	private Vector2 gyroInput;
@@ -187,6 +192,8 @@ public partial class PlayerInputController : Node
 	private readonly float GyroSmoothing = 5.0f;
 	private readonly float TurnSensitivity = 0.2f;
 	private readonly float TurnDeadzone = 0.5f;
+	private readonly float PitchDeadzone = 0.5f;
+	private readonly float PitchSensitivity = 0.2f;
 	private readonly float ReverseDeadzone = -4f;
 	public void ProcessGyroMovement(bool disableSmoothing = false)
 	{
@@ -197,18 +204,30 @@ public partial class PlayerInputController : Node
 		}
 
 		Vector3 rawGyroInput = Input.GetJoyAccelerometer(Runtime.Instance.ActiveController);
-		Vector2 targetGyroInput = new(rawGyroInput.X, 0);
-		if (Mathf.Abs(targetGyroInput.X) < TurnDeadzone)
-			targetGyroInput.X = 0.0f;
-		else
-			targetGyroInput.X -= Mathf.Sign(targetGyroInput.X) * TurnDeadzone;
-		targetGyroInput.X *= TurnSensitivity;
+		Vector2 targetGyroInput = Vector2.Zero;
+		if (Mathf.Abs(rawGyroInput.X) >= TurnDeadzone)
+		{
+			targetGyroInput.X = rawGyroInput.X - Mathf.Sign(rawGyroInput.X) * TurnDeadzone;
+			targetGyroInput.X *= TurnSensitivity;
+		}
 
-		if (InvertGyro)
+		if (!GyroUseFullVertical)
+		{
+			if (rawGyroInput.Y > ReverseDeadzone)
+				targetGyroInput.Y = -1f;
+		}
+		else if (Mathf.Abs(rawGyroInput.Y) >= PitchDeadzone)
+		{
+			GD.Print(rawGyroInput.Y);
+			targetGyroInput.Y = rawGyroInput.Y - Mathf.Sign(rawGyroInput.Y) * PitchDeadzone;
+			targetGyroInput.Y *= PitchSensitivity;
+		}
+
+		if (GyroInvertHorizontal)
 			targetGyroInput.X *= -1;
 
-		if (rawGyroInput.Y > ReverseDeadzone)
-			targetGyroInput.Y = -1f;
+		if (GyroInvertVertical)
+			targetGyroInput.Y *= -1;
 
 		if (disableSmoothing)
 		{
@@ -224,7 +243,7 @@ public partial class PlayerInputController : Node
 	private readonly float DownShakeSensitivity = 4f;
 	private readonly float DownShakeDeadzone = -8f;
 	/// <summary> A basic shake downward. </summary>
-	public bool IsDownShakeRegistered()
+	public bool IsDownShakeRegistered(float multiplier = 1f)
 	{
 		if (!IsGyroEnabled)
 			return false;
@@ -232,7 +251,7 @@ public partial class PlayerInputController : Node
 		if (Input.GetJoyAccelerometer(Runtime.Instance.ActiveController).Y > DownShakeDeadzone)
 			return false;
 
-		return -Input.GetJoyGyroscope(Runtime.Instance.ActiveController).X > DownShakeSensitivity;
+		return -Input.GetJoyGyroscope(Runtime.Instance.ActiveController).X > DownShakeSensitivity * multiplier;
 	}
 
 	private readonly float SideShakeSensitivity = 2f;

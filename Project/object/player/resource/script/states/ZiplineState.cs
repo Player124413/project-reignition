@@ -63,7 +63,7 @@ public partial class ZiplineState : PlayerState
 		animationVelocity = 0;
 		fullSwingDirection = 0;
 
-		Player.Controller.InvertGyro = true;
+		Player.Controller.GyroInvertHorizontal = true;
 		Player.MoveSpeed = isSpeedBreaking ? Player.Skills.speedBreakSpeed : 0f;
 		Player.Skills.AllowExternalSpeedBreak = true;
 		Player.Animator.StartZipline();
@@ -80,7 +80,7 @@ public partial class ZiplineState : PlayerState
 
 	public override void ExitState()
 	{
-		Player.Controller.InvertGyro = false;
+		Player.Controller.GyroInvertHorizontal = false;
 		Player.Skills.AllowExternalSpeedBreak = false;
 		Player.StopExternal();
 
