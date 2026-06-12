@@ -117,7 +117,7 @@ public partial class PlayerState : Node
 		if (Player.Camera.IsCrossfading)
 			return false;
 
-		if (Player.Controller.IsGyroEnabled && Player.Controller.IsBackTiltActive())
+		if (Player.Controller.IsBackTiltActive())
 			return !Player.IsMovingBackward;
 
 		return Player.Controller.IsHoldingDirection(inputAngle, Player.MovementAngle + Mathf.Pi) && Player.Controller.GetInputStrength() > 0.5f;
@@ -159,7 +159,7 @@ public partial class PlayerState : Node
 				Player.IsMovingBackward = Player.Controller.IsHoldingDirection(Player.Controller.GetTargetInputAngle(), Player.PathFollower.BackAngle);
 		}
 
-		if (Player.Controller.IsGyroEnabled && Player.Controller.IsBackTiltActive())
+		if (Player.Controller.IsBackTiltActive())
 			return;
 
 		float pathControlAmount = Player.Controller.CalculatePathControlAmount();

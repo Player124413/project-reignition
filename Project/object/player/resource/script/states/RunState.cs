@@ -7,7 +7,6 @@ public partial class RunState : PlayerState
 {
 	[Export] private PlayerState fallState;
 	[Export] private PlayerState idleState;
-	[Export] private PlayerState backstepState;
 	[Export] private PlayerState slideState;
 	[Export] private PlayerState jumpState;
 	[Export] private PlayerState backflipState;
@@ -120,15 +119,6 @@ public partial class RunState : PlayerState
 
 		if (!Player.Skills.IsSpeedBreakActive && Mathf.IsZeroApprox(Player.MoveSpeed))
 			return idleState;
-
-		if (Player.Controller.GetHoldingDistance(Player.MovementAngle, Player.PathFollower.ForwardAngle) >= 1.0f &&
-			!SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.FreeRoam))
-		{
-			return backstepState;
-		}
-
-		if (Player.Controller.IsBackTiltActive())
-			return backstepState;
 
 		if (Player.Stats.GroundSettings.GetSpeedRatioClamped(Player.MoveSpeed) > RunRatio &&
 			StageSettings.Instance.IsLevelIngame)
