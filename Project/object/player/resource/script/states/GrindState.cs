@@ -63,9 +63,9 @@ public partial class GrindState : PlayerState
 
 		Player.StartExternal(null, ActiveGrindRail.PathFollower, positionSmoothing);
 		Player.Skills.IsSpeedBreakEnabled = false;
-		Player.Animator.ExternalAngle = 0; // Reset rotation
 		Player.Animator.StartBalancing();
-		Player.Animator.CallDeferred("SnapRotation", Player.Animator.ExternalAngle);
+		Player.Animator.ExternalAngle = 0; // Reset rotation
+		Player.Animator.SnapRotation(Player.Animator.ExternalAngle);
 
 		// Reset FX
 		Player.Effect.StartGrindFX(true);
@@ -111,9 +111,10 @@ public partial class GrindState : PlayerState
 		CheckGrindStep(true);
 		UpdateCharge();
 
-		if (Player.Controller.IsJumpBufferActive || Player.Controller.IsSideShakeRegistered())
+		bool isSideShakeRegistered = Player.Controller.IsSideShakeRegistered();
+		if (Player.Controller.IsJumpBufferActive || isSideShakeRegistered)
 		{
-			if (Player.Controller.IsSideShakeRegistered())
+			if (isSideShakeRegistered)
 			{
 				isAttemptingGrindStep = true;
 				Player.Controller.ProcessGyroMovement(true); // Snap input to gyro direction
@@ -202,6 +203,7 @@ public partial class GrindState : PlayerState
 
 		Player.UpDirection = ActiveGrindRail.PathFollower.Up();
 		Player.MovementAngle = ExtensionMethods.CalculateForwardAngle(ActiveGrindRail.PathFollower.Forward(), ActiveGrindRail.PathFollower.Up());
+		Player.Animator.SnapRotation(Player.MovementAngle);
 		return movementDelta;
 	}
 

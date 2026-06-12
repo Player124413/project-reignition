@@ -231,15 +231,22 @@ public partial class PlayerInputController : Node
 	}
 
 	private readonly float SideShakeSensitivity = 2f;
+	private readonly float SideShakeLimit = 6f;
 	/// <summary> A basic shake sideways. </summary>
 	public bool IsSideShakeRegistered()
 	{
 		if (!IsGyroEnabled)
 			return false;
 
-		float shakeDirection = Input.GetJoyGyroscope(Runtime.Instance.ActiveController).Z;
-		GD.PrintT(gyroInput.X, shakeDirection);
-		return Mathf.Abs(shakeDirection) > SideShakeSensitivity;
+		float accel = Input.GetJoyAccelerometer(Runtime.Instance.ActiveController).X;
+		float gyro = Input.GetJoyGyroscope(Runtime.Instance.ActiveController).Z;
+		if (Mathf.Abs(accel) > SideShakeLimit)
+			return false;
+
+		if (Mathf.Sign(gyro) == Mathf.Sign(accel)) // Recentering
+			return false;
+
+		return Mathf.Abs(gyro) > SideShakeSensitivity;
 	}
 
 	public bool IsBackTiltActive()
