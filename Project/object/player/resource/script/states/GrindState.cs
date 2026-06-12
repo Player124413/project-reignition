@@ -65,7 +65,7 @@ public partial class GrindState : PlayerState
 		Player.Skills.IsSpeedBreakEnabled = false;
 		Player.Animator.ExternalAngle = 0; // Reset rotation
 		Player.Animator.StartBalancing();
-		Player.Animator.SnapRotation(Player.Animator.ExternalAngle);
+		Player.Animator.CallDeferred("SnapRotation", Player.Animator.ExternalAngle);
 
 		// Reset FX
 		Player.Effect.StartGrindFX(true);

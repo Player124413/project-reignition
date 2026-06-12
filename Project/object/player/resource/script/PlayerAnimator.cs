@@ -826,8 +826,8 @@ public partial class PlayerAnimator : Node3D
 
 		SetStateXfade(0.05f);
 		animationTree.Set(StateTransition, BalanceState); // Turn on balancing animations
-		animationTree.Set(BalanceGrindstepTrigger, (int)AnimationNodeOneShot.OneShotRequest.FadeOut); // Disable any grindstepping
 		animationTree.Set(BalanceTrickTrigger, (int)AnimationNodeOneShot.OneShotRequest.Abort); // Cancel any residual tricks
+		animationTree.Set(BalanceGrindstepTrigger, (int)AnimationNodeOneShot.OneShotRequest.Abort); // Disable any grindstepping
 	}
 
 	public void UpdateBalanceCrouch(bool isCrouching)
