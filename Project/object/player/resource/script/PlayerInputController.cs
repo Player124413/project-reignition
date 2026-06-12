@@ -178,6 +178,8 @@ public partial class PlayerInputController : Node
 		mouseInput.Y = Mathf.Clamp(mouseInput.Y, -1f, 1f);
 	}
 
+	/// <summary> Determines whether to invert gyro inputs for certain stage objects. </summary>
+	public bool InvertGyro { get; set; }
 	public bool IsGyroEnabled => IsStrafeModeActive && DebugManager.Instance.IsGyroEnabled && Input.IsJoyMotionSensorsEnabled(Runtime.Instance.ActiveController);
 
 	private Vector2 gyroInput;
@@ -201,6 +203,9 @@ public partial class PlayerInputController : Node
 		else
 			targetGyroInput.X -= Mathf.Sign(targetGyroInput.X) * TurnDeadzone;
 		targetGyroInput.X *= TurnSensitivity;
+
+		if (InvertGyro)
+			targetGyroInput.X *= -1;
 
 		if (rawGyroInput.Y > ReverseDeadzone)
 			targetGyroInput.Y = -1f;

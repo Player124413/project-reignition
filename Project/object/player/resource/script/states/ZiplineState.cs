@@ -63,6 +63,7 @@ public partial class ZiplineState : PlayerState
 		animationVelocity = 0;
 		fullSwingDirection = 0;
 
+		Player.Controller.InvertGyro = true;
 		Player.MoveSpeed = isSpeedBreaking ? Player.Skills.speedBreakSpeed : 0f;
 		Player.Skills.AllowExternalSpeedBreak = true;
 		Player.Animator.StartZipline();
@@ -79,6 +80,7 @@ public partial class ZiplineState : PlayerState
 
 	public override void ExitState()
 	{
+		Player.Controller.InvertGyro = false;
 		Player.Skills.AllowExternalSpeedBreak = false;
 		Player.StopExternal();
 
@@ -115,7 +117,7 @@ public partial class ZiplineState : PlayerState
 			return input;
 		}
 
-		input = Player.Controller.InputAxis.LimitLength().X;
+		input = Player.Controller.InputHorizontal;
 		if (Mathf.Abs(input) <= SaveManager.Config.deadZone) // Take dead zone into account
 			input = 0;
 
