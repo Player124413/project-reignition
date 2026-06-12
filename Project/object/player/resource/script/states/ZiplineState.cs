@@ -29,10 +29,11 @@ public partial class ZiplineState : PlayerState
 	private readonly float DamageLockoutLength = 0.5f;
 
 	private int fullSwingDirection;
+	private int queuedFullSwingDirection;
 	/// <summary> Determines how long the player can stay in the "Tap swing" state. </summary>
 	private float tapSwingTimer;
 	/// <summary> How long a tap swing lasts. </summary>
-	private readonly float TapSwingLength = 0.4f;
+	private readonly float TapSwingLength = 0.2f;
 	/// <summary> How much to smooth rotations when doing a tap swing. </summary>
 	private readonly float TapSwingRotationSmoothing = 10.0f;
 	/// <summary> How far out the player rotates with a tap (or swing from the other side). </summary>
@@ -142,7 +143,7 @@ public partial class ZiplineState : PlayerState
 
 	private void UpdateSwingButton()
 	{
-		if (!Player.Controller.IsGimmickBufferActive)
+		if (queuedFullSwingDirection != 0 || !Player.Controller.IsGimmickBufferActive)
 			return;
 
 		Player.Controller.ResetGimmickBuffer();
@@ -170,17 +171,17 @@ public partial class ZiplineState : PlayerState
 	/// <summary> Attempts a full swing. </summary>
 	private void StartFullSwing()
 	{
-		if (Trigger.SwingSide != Mathf.Sign(input))
+		if (queuedFullSwingDirection == 0 && Trigger.SwingSide != Mathf.Sign(input) && Mathf.IsZeroApprox(tapSwingTimer))
 		{
-			if (Mathf.IsZeroApprox(tapSwingTimer))
-				StartTap();
-
+			queuedFullSwingDirection = Mathf.Sign(input);
 			return;
 		}
 
 		tapSwingTimer = 0;
-		fullSwingDirection = Mathf.Sign(input);
+		fullSwingDirection = queuedFullSwingDirection == 0 ? Mathf.Sign(input) : queuedFullSwingDirection;
 		Player.Animator.StartZiplineTap(Mathf.Sign(input) > 0, false);
+
+		queuedFullSwingDirection = 0;
 	}
 
 	private void UpdatePrompts()
@@ -197,6 +198,9 @@ public partial class ZiplineState : PlayerState
 	{
 		float animationBlend = Player.Animator.GetZiplineBlend();
 		float targetBlend = input;
+		if (queuedFullSwingDirection != 0)
+			targetBlend = -queuedFullSwingDirection * Mathf.Abs(Trigger.CurrentRotation / QueuedFullSwingRotation);
+
 		animationBlend = ExtensionMethods.SmoothDamp(animationBlend, targetBlend, ref animationVelocity, AnimationSmoothing * PhysicsManager.physicsDelta);
 		Player.Animator.SetZiplineBlend(animationBlend);
 	}
@@ -211,6 +215,13 @@ public partial class ZiplineState : PlayerState
 
 		if (Mathf.Abs(Trigger.CurrentRotation) > NormalRotationLimit)
 			tapSwingTimer = Mathf.MoveToward(tapSwingTimer, 0, PhysicsManager.physicsDelta);
+
+		if (queuedFullSwingDirection != 0 &&
+			Mathf.Sign(Trigger.CurrentRotation) != queuedFullSwingDirection &&
+			Mathf.Abs(Trigger.CurrentRotation) > QueuedFullSwingRotation * 0.5f)
+		{
+			StartFullSwing();
+		}
 	}
 
 	private void UpdateFullSwing()
@@ -248,6 +259,9 @@ public partial class ZiplineState : PlayerState
 
 	private float CalculateTargetRotation()
 	{
+		if (queuedFullSwingDirection != 0)
+			return QueuedFullSwingRotation * -queuedFullSwingDirection;
+
 		if (fullSwingDirection != 0)
 			return Trigger.CurrentRotation + Mathf.Pi * .6f * fullSwingDirection;
 
@@ -262,6 +276,9 @@ public partial class ZiplineState : PlayerState
 
 	private float CalculateRotationSmoothing()
 	{
+		if (queuedFullSwingDirection != 0)
+			return QueuedFullSwingSmoothing;
+
 		// Full swings are slower at the top
 		if (fullSwingDirection != 0)
 		{
