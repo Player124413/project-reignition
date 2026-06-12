@@ -117,7 +117,8 @@ public partial class Options : Menu
 			return;
 		}
 
-		cursorAnimator.Play("show");
+		if (currentSubmenu != Submenus.Test)
+			cursorAnimator.Play("show");
 	}
 
 	private void FlipBook(Submenus submenu, bool flipRight, int selection)
