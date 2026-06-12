@@ -277,6 +277,15 @@ public partial class PlayerInputController : Node
 		return -Input.GetJoyGyroscope(Runtime.Instance.ActiveController).X > DownShakeSensitivity * multiplier;
 	}
 
+	/// <summary> A basic shake in any direction. </summary>
+	public bool IsShakeRegistered(float multiplier = 1f)
+	{
+		if (!IsGyroEnabled)
+			return false;
+
+		return Input.GetJoyAccelerometer(Runtime.Instance.ActiveController).Length() > DownShakeSensitivity * multiplier;
+	}
+
 	private readonly float SideShakeSensitivity = 2f;
 	private readonly float SideShakeLimit = 6f;
 	/// <summary> A basic flick sideways. </summary>
