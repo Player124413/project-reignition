@@ -18,8 +18,6 @@ public partial class DebugManager : Control
 	/// <summary> Tracks whether we're in a cutscene (credits or story event). </summary>
 	public bool IsCutsceneActive { get; set; }
 
-	public bool IsGyroEnabled { get; set; } = true;
-
 	private bool isAdvancingFrame;
 	private bool isAttemptingPause;
 	private bool IsPaused => GetTree().Paused;
@@ -286,7 +284,6 @@ public partial class DebugManager : Control
 		StageSettings.Instance?.UpdateScore(50000, StageSettings.MathModeEnum.Replace);
 		StageSettings.Instance?.FinishLevel(true);
 		StageSettings.Instance?.StartCompletionDemo();
-		GD.Print("Finishing Level");
 	}
 
 	/// <summary> Infinite soul gauge. </summary>

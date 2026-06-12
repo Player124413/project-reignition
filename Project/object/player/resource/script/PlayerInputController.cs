@@ -8,6 +8,28 @@ public partial class PlayerInputController : Node
 	private PlayerController Player { get; set; }
 	public void Initialize(PlayerController player) => Player = player;
 
+	public override void _Ready() => Runtime.Instance.ControllerChanged += dir => OnControllerChanged();
+
+	private void OnControllerChanged()
+	{
+		if (Runtime.Instance.IsUsingController)
+			Input.SetJoyMotionSensorsEnabled(Runtime.Instance.ActiveController, true);
+		else
+			Input.SetJoyMotionSensorsEnabled(0, true);
+	}
+
+	public override void _EnterTree()
+	{
+		if (OS.IsDebugBuild()) // For booting into a level
+			Input.SetJoyMotionSensorsEnabled(0, true);
+	}
+
+	public override void _ExitTree()
+	{
+		if (Runtime.Instance.IsUsingController)
+			Input.SetJoyMotionSensorsEnabled(Runtime.Instance.ActiveController, false);
+	}
+
 	private Vector2 mouseInput;
 
 	[Export]
@@ -186,7 +208,7 @@ public partial class PlayerInputController : Node
 	public bool GyroUseFullVertical { get; set; }
 	/// <summary> Offsets the gyro calibration. </summary>
 	public Vector3 GyroCalibrationOffset { get; set; }
-	public bool IsGyroEnabled => IsStrafeModeActive && DebugManager.Instance.IsGyroEnabled && Input.IsJoyMotionSensorsEnabled(Runtime.Instance.ActiveController);
+	public bool IsGyroEnabled => IsStrafeModeActive && SaveManager.Config.isGyroEnabled && Input.IsJoyMotionSensorsEnabled(Runtime.Instance.ActiveController);
 
 	private Vector2 gyroInput;
 	private Vector2 gyroInputVelocity;
@@ -210,7 +232,7 @@ public partial class PlayerInputController : Node
 		if (Mathf.Abs(rawGyroInput.X) >= TurnDeadzone)
 		{
 			targetGyroInput.X = rawGyroInput.X - Mathf.Sign(rawGyroInput.X) * TurnDeadzone;
-			targetGyroInput.X *= TurnSensitivity;
+			targetGyroInput.X *= TurnSensitivity * SaveManager.Config.gyroSensitivity * 0.01f;
 		}
 
 		if (!GyroUseFullVertical)
@@ -221,7 +243,7 @@ public partial class PlayerInputController : Node
 		else if (Mathf.Abs(rawGyroInput.Y) >= PitchDeadzone)
 		{
 			targetGyroInput.Y = rawGyroInput.Y - Mathf.Sign(rawGyroInput.Y) * PitchDeadzone;
-			targetGyroInput.Y *= PitchSensitivity;
+			targetGyroInput.Y *= PitchSensitivity * SaveManager.Config.gyroSensitivity * 0.01f;
 		}
 
 		if (GyroInvertHorizontal)
@@ -280,21 +302,6 @@ public partial class PlayerInputController : Node
 			return false;
 
 		return gyroInput.Y < -DeadZone;
-	}
-
-
-	public override void _ExitTree()
-	{
-		if (Runtime.Instance.IsUsingController)
-			Input.SetJoyMotionSensorsEnabled(Runtime.Instance.ActiveController, false);
-	}
-
-	public override void _EnterTree()
-	{
-		if (Runtime.Instance.IsUsingController)
-			Input.SetJoyMotionSensorsEnabled(Runtime.Instance.ActiveController, DebugManager.Instance.IsGyroEnabled);
-		else if (OS.IsDebugBuild()) // For booting into a level
-			Input.SetJoyMotionSensorsEnabled(0, DebugManager.Instance.IsGyroEnabled);
 	}
 
 	private void UpdateJumpBuffer()

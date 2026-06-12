@@ -293,6 +293,10 @@ public partial class SaveManager : Node
 		public int[] partyModeDevices = [0, 0, 0, 0];
 		public Dictionary inputConfiguration = [];
 
+		// Gryo
+		public bool isGyroEnabled = true;
+		public int gyroSensitivity = 100;
+
 		// Language
 		public bool isSubtitleDisabled;
 		public bool isDialogDisabled;

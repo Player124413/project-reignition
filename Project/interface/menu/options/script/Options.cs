@@ -39,13 +39,16 @@ public partial class Options : Menu
 				maxSelection = languageLabels.Length;
 				break;
 			case Submenus.Control:
-				maxSelection = 8;
+				maxSelection = 9;
 				break;
 			case Submenus.Interface:
 				maxSelection = interfaceLabels.Length;
 				break;
 			case Submenus.Mouse:
 				maxSelection = controlMouseLabels.Length;
+				break;
+			case Submenus.Gyro:
+				maxSelection = gyroLabels.Length;
 				break;
 			case Submenus.Mapping:
 				maxSelection = controlMappingOptions.Length;
@@ -74,6 +77,7 @@ public partial class Options : Menu
 		ResetSettings, // Submenu for resetting the configuration settings
 		ResetControls, // Submenu for resetting the control settings
 		Mouse, // Control submenu for configuring mouse mappings
+		Gyro, // Control submenu for configuring gyro sensitivities
 		Mapping, // Control submenu for configuring adventure mode's input mappings
 		PartyMapping, // Control submenu for configuring party mode's input mappings
 		Unbind, // Control sub-submenu for unbinding inputs
@@ -217,6 +221,9 @@ public partial class Options : Menu
 			case Submenus.Mouse:
 				ConfirmMouseOption();
 				break;
+			case Submenus.Gyro:
+				ConfirmGyroOption();
+				break;
 			case Submenus.Mapping:
 				ConfirmSFX();
 				controlMappingOptions[VerticalSelection].CallDeferred(ControlOption.MethodName.StartListening);
@@ -301,11 +308,15 @@ public partial class Options : Menu
 				CancelSFX();
 				FlipBook(Submenus.Control, true, 3);
 				break;
+			case Submenus.Gyro:
+				CancelSFX();
+				FlipBook(Submenus.Control, true, 4);
+				break;
 			case Submenus.Mapping:
 				if (!controlMappingOptions[VerticalSelection].IsReady) return;
 
 				CancelSFX();
-				FlipBook(Submenus.Control, true, 4);
+				FlipBook(Submenus.Control, true, 5);
 				break;
 			case Submenus.PartyMapping:
 				if (VerticalSelection >= ExtraPartyModeOptionCount &&
@@ -315,7 +326,7 @@ public partial class Options : Menu
 				}
 
 				CancelSFX();
-				FlipBook(Submenus.Control, true, 5);
+				FlipBook(Submenus.Control, true, 6);
 				break;
 			case Submenus.Test:
 				Select();
@@ -479,6 +490,7 @@ public partial class Options : Menu
 	[Export] private Label[] interfaceLabels;
 	[Export] private Label[] partyMappingLabels;
 	[Export] private Label[] generalLabels;
+	[Export] private Label[] gyroLabels;
 
 	private readonly string EnabledString = "option_enable";
 	private readonly string DisabledString = "option_disable";
@@ -606,6 +618,9 @@ public partial class Options : Menu
 		controlMouseLabels[4].Text = $"{SaveManager.Config.mouseHorizontalRange}%";
 		controlMouseLabels[5].Text = $"{SaveManager.Config.mouseVerticalRange}%";
 		controlMouseLabels[6].Text = $"{SaveManager.Config.mouseVerticalOffset}%";
+
+		gyroLabels[0].Text = SaveManager.Config.isGyroEnabled ? DisabledString : EnabledString;
+		gyroLabels[1].Text = $"{SaveManager.Config.gyroSensitivity}%";
 
 		controlLabels[0].Text = $"{Mathf.RoundToInt(SaveManager.Config.deadZone * 100)}%";
 		controlLabels[1].Text = SaveManager.Config.useHoldBreakMode ? HoldString : ToggleString;
@@ -756,6 +771,9 @@ public partial class Options : Menu
 				break;
 			case Submenus.Mouse:
 				settingUpdated = SlideMouseOption(direction);
+				break;
+			case Submenus.Gyro:
+				settingUpdated = SlideGyroOption(direction);
 				break;
 			case Submenus.Control:
 				settingUpdated = SlideControlOption(direction);
@@ -1166,6 +1184,21 @@ public partial class Options : Menu
 			return true;
 		}
 
+		return false;
+	}
+
+	private bool SlideGyroOption(int direction)
+	{
+		if (VerticalSelection == 0)
+		{
+			SaveManager.Config.isGyroEnabled = !SaveManager.Config.isGyroEnabled;
+			return true;
+		}
+		else if (VerticalSelection == 1)
+		{
+			SaveManager.Config.gyroSensitivity = WrapSelection(SaveManager.Config.gyroSensitivity + (direction * 10), 200);
+			return true;
+		}
 
 		return false;
 	}
@@ -1307,15 +1340,18 @@ public partial class Options : Menu
 				FlipBook(Submenus.Mouse, false, 0);
 				break;
 			case 4:
-				FlipBook(Submenus.Mapping, false, 0);
+				FlipBook(Submenus.Gyro, false, 0);
 				break;
 			case 5:
-				FlipBook(Submenus.PartyMapping, false, 0);
+				FlipBook(Submenus.Mapping, false, 0);
 				break;
 			case 6:
-				FlipBook(Submenus.Test, false, VerticalSelection);
+				FlipBook(Submenus.PartyMapping, false, 0);
 				break;
 			case 7:
+				FlipBook(Submenus.Test, false, VerticalSelection);
+				break;
+			case 8:
 				currentSubmenu = Submenus.ResetControls;
 				ShowResetMenu();
 				return;
@@ -1336,6 +1372,12 @@ public partial class Options : Menu
 	private void ConfirmMouseOption()
 	{
 		SlideMouseOption(1);
+		ConfirmSFX();
+	}
+
+	private void ConfirmGyroOption()
+	{
+		SlideGyroOption(1);
 		ConfirmSFX();
 	}
 
