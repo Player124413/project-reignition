@@ -184,7 +184,8 @@ public partial class PlayerInputController : Node
 	public bool GyroInvertVertical { get; set; }
 	/// <summary> Determines whether to use the full vertical axis for vertical gyro controls. </summary>
 	public bool GyroUseFullVertical { get; set; }
-
+	/// <summary> Offsets the gyro calibration. </summary>
+	public Vector3 GyroCalibrationOffset { get; set; }
 	public bool IsGyroEnabled => IsStrafeModeActive && DebugManager.Instance.IsGyroEnabled && Input.IsJoyMotionSensorsEnabled(Runtime.Instance.ActiveController);
 
 	private Vector2 gyroInput;
@@ -204,6 +205,7 @@ public partial class PlayerInputController : Node
 		}
 
 		Vector3 rawGyroInput = Input.GetJoyAccelerometer(Runtime.Instance.ActiveController);
+		rawGyroInput += GyroCalibrationOffset;
 		Vector2 targetGyroInput = Vector2.Zero;
 		if (Mathf.Abs(rawGyroInput.X) >= TurnDeadzone)
 		{
@@ -218,7 +220,6 @@ public partial class PlayerInputController : Node
 		}
 		else if (Mathf.Abs(rawGyroInput.Y) >= PitchDeadzone)
 		{
-			GD.Print(rawGyroInput.Y);
 			targetGyroInput.Y = rawGyroInput.Y - Mathf.Sign(rawGyroInput.Y) * PitchDeadzone;
 			targetGyroInput.Y *= PitchSensitivity;
 		}
