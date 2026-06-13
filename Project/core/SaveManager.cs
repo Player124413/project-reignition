@@ -502,8 +502,6 @@ public partial class SaveManager : Node
 
 			if (dictionary.TryGetValue(nameof(useQuickLoad), out var))
 				useQuickLoad = (bool)var;
-			else
-				Instance.IsQuickLoadAlertEnabled = true;
 			if (dictionary.TryGetValue(nameof(subtitleOpacity), out var))
 				subtitleOpacity = (int)var;
 			if (dictionary.TryGetValue(nameof(cutsceneOpacity), out var))
