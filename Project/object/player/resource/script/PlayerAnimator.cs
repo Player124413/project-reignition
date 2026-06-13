@@ -445,6 +445,9 @@ public partial class PlayerAnimator : Node3D
 		if (Player.ExternalController != null && !Player.IsGrinding)
 			return 0; // Disable turning when controlled externally
 
+		if (Player.Controller.IsGyroEnabled)
+			return Player.Controller.InputHorizontal;
+
 		float referenceAngle = Player.IsMovingBackward ? Player.PathFollower.ForwardAngle : Player.MovementAngle;
 		float inputAngle = Player.PathFollower.DeltaAngle * PathTurnStrength;
 		if (Player.IsLockoutActive && Player.ActiveLockoutData.movementMode == LockoutResource.MovementModes.Replace)
@@ -823,7 +826,8 @@ public partial class PlayerAnimator : Node3D
 
 		SetStateXfade(0.05f);
 		animationTree.Set(StateTransition, BalanceState); // Turn on balancing animations
-		animationTree.Set(BalanceGrindstepTrigger, (int)AnimationNodeOneShot.OneShotRequest.FadeOut); // Disable any grindstepping
+		animationTree.Set(BalanceTrickTrigger, (int)AnimationNodeOneShot.OneShotRequest.Abort); // Cancel any residual tricks
+		animationTree.Set(BalanceGrindstepTrigger, (int)AnimationNodeOneShot.OneShotRequest.Abort); // Disable any grindstepping
 	}
 
 	public void UpdateBalanceCrouch(bool isCrouching)

@@ -37,7 +37,7 @@ public partial class CountdownState : PlayerState
 
 	public override PlayerState ProcessPhysics()
 	{
-		if (Player.Controller.IsActionBufferActive)
+		if (Player.Controller.IsActionBufferActive || Player.Controller.IsDownShakeRegistered())
 		{
 			Player.Controller.ResetActionBuffer();
 			countdownBoostTimer = (countdownBoostTimer > 0) ? -BoostWindow : BoostWindow;

@@ -307,7 +307,8 @@ public partial class Enemy : Node3D
 		{
 			UpdateLockon();
 			IsLightSpeedAttackValid = IsDefeated && SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.LightSpeedAttack) &&
-				(Input.IsActionPressed("button_attack") || (Input.IsActionPressed("button_jump") && SaveManager.Config.jumpButtonMode != SaveManager.JumpButtonModeEnum.Stomp));
+				(Input.IsActionPressed("button_attack") || Player.Controller.IsShakeRegistered(3f) ||
+				(Input.IsActionPressed("button_jump") && SaveManager.Config.jumpButtonMode != SaveManager.JumpButtonModeEnum.Stomp));
 
 			// If the player is trying to perform a light speed attack, only do the bounce AFTER checking the next target
 			if (!IsLightSpeedAttackValid)

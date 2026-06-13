@@ -63,7 +63,7 @@ public partial class FlyingPotState : PlayerState
 			return jumpState;
 		}
 
-		if (Player.Controller.IsGimmickBufferActive) // Move upwards
+		if (Player.Controller.IsGimmickBufferActive || Player.Controller.IsDownShakeRegistered(0.2f)) // Move upwards
 		{
 			Player.Controller.ResetGimmickBuffer();
 

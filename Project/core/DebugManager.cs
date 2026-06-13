@@ -284,7 +284,6 @@ public partial class DebugManager : Control
 		StageSettings.Instance?.UpdateScore(50000, StageSettings.MathModeEnum.Replace);
 		StageSettings.Instance?.FinishLevel(true);
 		StageSettings.Instance?.StartCompletionDemo();
-		GD.Print("Finishing Level");
 	}
 
 	/// <summary> Infinite soul gauge. </summary>

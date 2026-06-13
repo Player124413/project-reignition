@@ -37,6 +37,8 @@ public partial class CatapultState : PlayerState
 		Player.Animator.StartSpin(3f);
 		Player.Animator.SnapRotation(0);
 
+		Player.Controller.GyroUseFullVertical = true;
+
 		Catapult.LaunchRatio = 1f;
 		Catapult.PlayEnterSfx();
 
@@ -47,6 +49,8 @@ public partial class CatapultState : PlayerState
 
 	public override void ExitState()
 	{
+		Player.Controller.GyroUseFullVertical = false;
+
 		Player.StopExternal();
 		Player.Skills.IsSpeedBreakEnabled = true;
 		Player.Animator.IsFallTransitionEnabled = false;
@@ -97,7 +101,7 @@ public partial class CatapultState : PlayerState
 			return;
 		}
 
-		if (Player.Controller.IsGimmickBufferActive)
+		if (Player.Controller.IsGimmickBufferActive || Player.Controller.IsDownShakeRegistered(2))
 		{
 			Player.Controller.ResetGimmickBuffer();
 			currentState = State.Launch;

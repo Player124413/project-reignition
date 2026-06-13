@@ -32,8 +32,11 @@ public partial class GrindStepState : PlayerState
 		}
 		else
 		{
-			// Delta angle to rail's movement direction (NOTE - Due to Godot conventions, negative is right, positive is left)
-			stepDirection = Mathf.Sign(ExtensionMethods.SignedDeltaAngleRad(Player.Controller.GetTargetInputAngle(), Player.MovementAngle));
+			if (Player.Controller.IsSideFlickRegistered()) // For Gyro support
+				stepDirection = Mathf.Sign(-Player.Controller.InputHorizontal);
+			else // Delta angle to rail's movement direction (NOTE - Due to Godot conventions, negative is right, positive is left)
+				stepDirection = Mathf.Sign(ExtensionMethods.SignedDeltaAngleRad(Player.Controller.GetTargetInputAngle(), Player.MovementAngle));
+
 			inputStrength = Player.Controller.GetInputStrength();
 		}
 

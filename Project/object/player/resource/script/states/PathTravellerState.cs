@@ -13,6 +13,9 @@ public partial class PathTravellerState : PlayerState
 	{
 		isSpeedBreaking = Player.Skills.IsSpeedBreakActive;
 
+		Player.Controller.GyroUseFullVertical = true;
+		Player.Controller.GyroInvertVertical = true;
+		Player.Controller.GyroCalibrationOffset = Vector3.Up * 5;
 		Player.MoveSpeed = isSpeedBreaking ? Player.Skills.speedBreakSpeed : 0f;
 		Player.Skills.AllowExternalSpeedBreak = true;
 		Player.VerticalSpeed = 0;
@@ -30,6 +33,10 @@ public partial class PathTravellerState : PlayerState
 	public override void ExitState()
 	{
 		isRespawning = false;
+
+		Player.Controller.GyroUseFullVertical = false;
+		Player.Controller.GyroInvertVertical = false;
+		Player.Controller.GyroCalibrationOffset = Vector3.Zero;
 		Player.Skills.AllowExternalSpeedBreak = false;
 
 		Player.StopExternal();

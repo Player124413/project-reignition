@@ -293,6 +293,10 @@ public partial class SaveManager : Node
 		public int[] partyModeDevices = [0, 0, 0, 0];
 		public Dictionary inputConfiguration = [];
 
+		// Gryo
+		public bool isGyroEnabled = true;
+		public int gyroSensitivity = 100;
+
 		// Language
 		public bool isSubtitleDisabled;
 		public bool isDialogDisabled;
@@ -360,6 +364,9 @@ public partial class SaveManager : Node
 				{ nameof(mouseHorizontalRange), mouseHorizontalRange },
 				{ nameof(mouseVerticalRange), mouseVerticalRange },
 				{ nameof(mouseVerticalOffset), mouseVerticalOffset },
+
+				{ nameof(isGyroEnabled), isGyroEnabled },
+				{ nameof(gyroSensitivity), gyroSensitivity },
 
 				{ nameof(partyModeDevices), partyModeDevices },
 				{ nameof(inputConfiguration), inputConfiguration },
@@ -469,6 +476,11 @@ public partial class SaveManager : Node
 			if (dictionary.TryGetValue(nameof(mouseVerticalOffset), out var))
 				mouseVerticalOffset = (int)var;
 
+			if (dictionary.TryGetValue(nameof(isGyroEnabled), out var))
+				isGyroEnabled = (bool)var;
+			if (dictionary.TryGetValue(nameof(gyroSensitivity), out var))
+				gyroSensitivity = (int)var;
+
 			if (dictionary.TryGetValue(nameof(partyModeDevices), out var))
 				partyModeDevices = (int[])var;
 			if (dictionary.TryGetValue(nameof(inputConfiguration), out var))
@@ -498,8 +510,6 @@ public partial class SaveManager : Node
 
 			if (dictionary.TryGetValue(nameof(useQuickLoad), out var))
 				useQuickLoad = (bool)var;
-			else
-				Instance.IsQuickLoadAlertEnabled = true;
 			if (dictionary.TryGetValue(nameof(subtitleOpacity), out var))
 				subtitleOpacity = (int)var;
 			if (dictionary.TryGetValue(nameof(cutsceneOpacity), out var))

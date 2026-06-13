@@ -42,6 +42,7 @@ public partial class IvyState : PlayerState
 		Player.StartExternal(Trigger, Trigger.LaunchPoint, 0.2f);
 
 		Player.Controller.ResetActionBuffer();
+		Player.Controller.ResetAttackBuffer();
 		Player.Skills.IsSpeedBreakEnabled = false;
 		Player.Lockon.IsMonitoring = false;
 		Player.Animator.StartIvy();
@@ -69,7 +70,7 @@ public partial class IvyState : PlayerState
 			return null;
 		}
 
-		if (Player.Controller.IsGimmickBufferActive && (!Player.Animator.IsIvySwingActive))
+		if ((Player.Controller.IsGimmickBufferActive || Player.Controller.IsDownShakeRegistered()) && !Player.Animator.IsIvySwingActive)
 		{
 			Player.Controller.ResetGimmickBuffer();
 			Player.Animator.StartIvySwing();

@@ -251,7 +251,7 @@ public partial class SidleState : PlayerState
 
 	private void ProcessDamageHanging()
 	{
-		if (Input.IsActionJustPressed("button_jump")) // Process inputs
+		if (Input.IsActionJustPressed("button_jump") || Player.Controller.IsDownShakeRegistered()) // Process inputs
 		{
 			// Jump back to the ledge
 			cycleTimer = 0;
