@@ -619,7 +619,7 @@ public partial class Options : Menu
 		controlMouseLabels[5].Text = $"{SaveManager.Config.mouseVerticalRange}%";
 		controlMouseLabels[6].Text = $"{SaveManager.Config.mouseVerticalOffset}%";
 
-		gyroLabels[0].Text = SaveManager.Config.isGyroEnabled ? DisabledString : EnabledString;
+		gyroLabels[0].Text = SaveManager.Config.isGyroEnabled ? EnabledString : DisabledString;
 		gyroLabels[1].Text = $"{SaveManager.Config.gyroSensitivity}%";
 
 		controlLabels[0].Text = $"{Mathf.RoundToInt(SaveManager.Config.deadZone * 100)}%";

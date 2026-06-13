@@ -365,6 +365,9 @@ public partial class SaveManager : Node
 				{ nameof(mouseVerticalRange), mouseVerticalRange },
 				{ nameof(mouseVerticalOffset), mouseVerticalOffset },
 
+				{ nameof(isGyroEnabled), isGyroEnabled },
+				{ nameof(gyroSensitivity), gyroSensitivity },
+
 				{ nameof(partyModeDevices), partyModeDevices },
 				{ nameof(inputConfiguration), inputConfiguration },
 
@@ -472,6 +475,11 @@ public partial class SaveManager : Node
 				mouseVerticalRange = (int)var;
 			if (dictionary.TryGetValue(nameof(mouseVerticalOffset), out var))
 				mouseVerticalOffset = (int)var;
+
+			if (dictionary.TryGetValue(nameof(isGyroEnabled), out var))
+				isGyroEnabled = (bool)var;
+			if (dictionary.TryGetValue(nameof(gyroSensitivity), out var))
+				gyroSensitivity = (int)var;
 
 			if (dictionary.TryGetValue(nameof(partyModeDevices), out var))
 				partyModeDevices = (int[])var;
