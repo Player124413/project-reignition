@@ -117,8 +117,11 @@ public partial class RunState : PlayerState
 		if (!Player.IsOnGround)
 			return fallState;
 
-		if (!Player.Skills.IsSpeedBreakActive && Mathf.IsZeroApprox(Player.MoveSpeed))
+		if ((!Player.Skills.IsSpeedBreakActive && Mathf.IsZeroApprox(Player.MoveSpeed)) ||
+			(Player.Controller.IsBackTiltActive() && Player.IsOnWall))
+		{
 			return idleState;
+		}
 
 		if (Player.Stats.GroundSettings.GetSpeedRatioClamped(Player.MoveSpeed) > RunRatio &&
 			StageSettings.Instance.IsLevelIngame)

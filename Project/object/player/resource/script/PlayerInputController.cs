@@ -577,7 +577,6 @@ public partial class PlayerInputController : Node
 			int sign = Mathf.Sign(ExtensionMethods.DotAngle(baseAngle, XformAngle));
 			inputs *= sign >= 0 ? 1 : -1;
 		}
-		GD.PushWarning(XformAngle, Player.Camera.ActiveSettings.yawAngle, baseAngle, inputs);
 
 		float strafeAngle = TurningDampingRange;
 		if (Player.IsLockoutActive && Player.ActiveLockoutData.overrideSpeed)

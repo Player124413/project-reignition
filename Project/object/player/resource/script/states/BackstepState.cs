@@ -39,8 +39,11 @@ public partial class BackstepState : PlayerState
 		if (!Player.IsOnGround)
 			return fallState;
 
-		if (Mathf.IsZeroApprox(Player.MoveSpeed))
+		if (Mathf.IsZeroApprox(Player.MoveSpeed) ||
+			(Player.Controller.IsGyroEnabled && !Player.Controller.IsBackTiltActive() && Player.IsOnWall))
+		{
 			return idleState;
+		}
 
 		if (!Player.Controller.IsBackTiltActive())
 		{

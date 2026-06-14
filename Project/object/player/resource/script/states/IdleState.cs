@@ -83,6 +83,9 @@ public partial class IdleState : PlayerState
 		if (Player.CheckCeiling())
 			return null;
 
+		if (Player.Controller.IsBackTiltActive())
+			return backstepState;
+
 		if (!Player.IsOnWall)
 		{
 			if (Player.IsLockoutActive && Player.ActiveLockoutData.overrideSpeed && !Mathf.IsZeroApprox(Player.ActiveLockoutData.speedRatio))
@@ -97,9 +100,6 @@ public partial class IdleState : PlayerState
 				{
 					return backstepState;
 				}
-
-				if (Player.Controller.IsBackTiltActive())
-					return backstepState;
 
 				return runState;
 			}
