@@ -20,6 +20,11 @@ func spawn() -> void:
 	_original_parent = get_parent()
 	debug_label.text = str(num_coins)
 
+func despawn() -> void:
+	if !is_instance_valid(current_player):
+		visible = false
+		process_mode = Node.PROCESS_MODE_DISABLED
+
 func play_shake_sfx() -> void:
 	shake_sfx.play_in_group()
 	var volume_interval : float = (TreasureBoxChestSpawner.instance.HIGHEST_COIN_COUNT as float) / coin_sfx.size()
@@ -63,6 +68,7 @@ func start_results_shake() -> void:
 
 func _on_body_entered(body : Node) -> void:
 	if body is TreasureBoxChest:
+		current_player = null
 		return
 	
 	if body.is_in_group("floor"):

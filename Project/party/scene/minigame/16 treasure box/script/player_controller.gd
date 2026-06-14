@@ -171,7 +171,7 @@ func request_pickup() -> void:
 func pickup_chest(chest_index : int, tick : float) -> void:
 	state = STATE.PICKING_UP
 	var target_anim: StringName = get_anim_prefix() + "lift"
-	character_animator.play_minigame_animation(target_anim, 0, 1., 0, tick)
+	character_animator.play_minigame_animation(target_anim, 0, 1.4, 0, tick)
 	current_chest = TreasureBoxChestSpawner.instance.get_chest(chest_index)
 	current_chest.pickup(self, hand_attachment, tick) # Attempt to pickup the chest
 	print("grabbing " + str(current_chest))
@@ -191,7 +191,7 @@ func drop(tick : float) -> void:
 	character_animator.play_minigame_animation(get_anim_prefix() + "put", 0, 1.5, 0, tick)
 
 const THROW_STRENGTH : float  = 80.0
-const THROW_HEIGHT : float = 5.0
+const THROW_HEIGHT : float = 2.0
 func request_throw() -> void:
 	rpc("throw", NetworkTimeSynchronizer.get_time())
 

@@ -166,18 +166,18 @@ func apply_gravity() -> void:
 
 ## Updates the characters animations.
 func process_animation() -> void:
+	var target_speed : float = get_target_animation_speed()
+	character_animator.set_speed(target_speed)
+	
 	var target_animation : String = get_target_animation()
 	if target_animation.is_empty():
 		return
-	
-	var target_speed : float = get_target_animation_speed()
 	
 	if character_animator.has_animation(get_anim_prefix() + target_animation):
 		target_animation = get_anim_prefix() + target_animation
 	else:
 		target_animation = "%s/%s" % [MinigameManager.COMMON_ANIMATION_LIBRARY_PREFIX, target_animation]
 	
-	character_animator.set_speed(target_speed)
 	character_animator.play_animation(target_animation, false, 0.1)
 	apply_movement_rotation()
 
@@ -229,4 +229,6 @@ func get_target_animation() -> StringName:
 	return "walk" if _is_walking else "run"
 
 func get_target_animation_speed() -> float:
+	if character_animator.animator.current_animation == "%s/run" % MinigameManager.COMMON_ANIMATION_LIBRARY_PREFIX:
+		return 1.5 # Speed up run animation
 	return 1.0

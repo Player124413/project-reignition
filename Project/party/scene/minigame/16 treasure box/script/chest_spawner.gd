@@ -10,6 +10,11 @@ const HIGHEST_COIN_COUNT : int = 19
 
 func _ready() -> void:
 	instance = self
+	MinigameManager.instance.minigame_finished.connect(Callable(self, "despawn_chests"))
+
+func despawn_chests() -> void:
+	for chest in chests:
+		chest.despawn()
 
 ## Gets the index of a particular chest.
 func get_chest_index(chest : TreasureBoxChest) -> int:
