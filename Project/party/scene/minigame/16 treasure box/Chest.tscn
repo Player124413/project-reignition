@@ -6,15 +6,12 @@
 [ext_resource type="Script" uid="uid://c65ffkknyq6gr" path="res://addons/custom_nodes/script/GroupGpuParticles3D.cs" id="4_wi5kp"]
 [ext_resource type="Material" uid="uid://btlea54srir75" path="res://party/scene/minigame/11 giant stake/particles/Cloud2.tres" id="5_if4cr"]
 [ext_resource type="Material" uid="uid://n28w5281vih" path="res://party/scene/minigame/11 giant stake/particles/Cloud3.tres" id="6_rlp0s"]
-[ext_resource type="AudioStream" uid="uid://88l115r85i3j" path="res://party/scene/minigame/16 treasure box/sound/thud.wav" id="7_if4cr"]
+[ext_resource type="AudioStream" uid="uid://88l115r85i3j" path="res://party/scene/minigame/16 treasure box/sound/drop.wav" id="7_if4cr"]
 [ext_resource type="Script" uid="uid://bkwc2atbp4cjd" path="res://party/scene/minigame/00 base/script/group_sfx_player.gd" id="8_rlp0s"]
 
-[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_q1wmv"]
-friction = 2.35
-rough = true
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_nkfxl"]
-size = Vector3(10.759415, 6.928467, 7.440857)
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_gdgwk"]
+height = 6.0
+radius = 2.5
 
 [sub_resource type="Curve" id="Curve_myeab"]
 _data = [Vector2(0, 0), 0.0, 17.129793, 0, 0, Vector2(0.2, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
@@ -56,15 +53,16 @@ alpha_curve = SubResource("CurveTexture_ucbua")
 material = ExtResource("3_umfws")
 size = Vector2(5, 5)
 
-[sub_resource type="BoxShape3D" id="BoxShape3D_gwinm"]
-size = Vector3(11.799271, 1, 11.959717)
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_if4cr"]
+radius = 8.0
 
 [sub_resource type="Animation" id="Animation_q1wmv"]
 resource_name = "RESET"
+length = 0.001
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("RigidBody3D/Chest:rotation")
+tracks/0/path = NodePath("Chest:rotation")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
@@ -73,15 +71,43 @@ tracks/0/keys = {
 "update": 0,
 "values": [Vector3(0, 0, 0)]
 }
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("CollisionShape3D:disabled")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+
+[sub_resource type="Animation" id="Animation_rlp0s"]
+resource_name = "drop"
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("CollisionShape3D:disabled")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
 
 [sub_resource type="Animation" id="Animation_njmpl"]
-resource_name = "hit_floor"
+resource_name = "hit-floor"
 length = 0.2
 step = 0.01
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("RigidBody3D/Chest:rotation")
+tracks/0/path = NodePath("Chest:rotation")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
@@ -93,7 +119,7 @@ tracks/0/keys = {
 tracks/1/type = "method"
 tracks/1/imported = false
 tracks/1/enabled = true
-tracks/1/path = NodePath("SFX/drop")
+tracks/1/path = NodePath("SFX/Drop")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/keys = {
@@ -104,35 +130,67 @@ tracks/1/keys = {
 "method": &"play_in_group"
 }]
 }
+tracks/2/type = "method"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Smoke")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"RestartGroup"
+}]
+}
+
+[sub_resource type="Animation" id="Animation_if4cr"]
+resource_name = "pickup"
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("CollisionShape3D:disabled")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_sbutm"]
 _data = {
 &"RESET": SubResource("Animation_q1wmv"),
-&"hit_floor": SubResource("Animation_njmpl")
+&"drop": SubResource("Animation_rlp0s"),
+&"hit-floor": SubResource("Animation_njmpl"),
+&"pickup": SubResource("Animation_if4cr")
 }
 
-[node name="Chest" type="Node3D" unique_id=1004644722 node_paths=PackedStringArray("animator", "rigidbody", "smoke", "debug_label")]
+[node name="Chest" type="RigidBody3D" unique_id=1990958956 node_paths=PackedStringArray("animator", "debug_label")]
+collision_layer = 16
+collision_mask = 18
+gravity_scale = 10.0
+can_sleep = false
+lock_rotation = true
+freeze = true
+continuous_cd = true
+contact_monitor = true
+max_contacts_reported = 5
 script = ExtResource("2_q1wmv")
 animator = NodePath("AnimationPlayer")
-rigidbody = NodePath("RigidBody3D")
-smoke = NodePath("RigidBody3D/Smoke")
-debug_label = NodePath("RigidBody3D/DebugLabel")
+debug_label = NodePath("DebugLabel")
 
-[node name="RigidBody3D" type="RigidBody3D" parent="." unique_id=1581115964]
-mass = 8.0
-physics_material_override = SubResource("PhysicsMaterial_q1wmv")
-gravity_scale = 9.8
-contact_monitor = true
-max_contacts_reported = 10
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=2126557322]
+transform = Transform3D(-4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0, 1, 0, 2.5, 0)
+shape = SubResource("CylinderShape3D_gdgwk")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="RigidBody3D" unique_id=2126557322]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.09931183, 3.416626, -0.10531616)
-shape = SubResource("BoxShape3D_nkfxl")
-debug_color = Color(0, 0.6, 0.69803923, 1)
+[node name="Chest" parent="." unique_id=797442472 instance=ExtResource("1_je2ft")]
+transform = Transform3D(0.7, 0, 0, 0, 0.7, 0, 0, 0, 0.7, 0, 0, 0)
 
-[node name="Chest" parent="RigidBody3D" unique_id=797442472 instance=ExtResource("1_je2ft")]
-
-[node name="Smoke" type="GPUParticles3D" parent="RigidBody3D" unique_id=51711195 node_paths=PackedStringArray("subSystems")]
+[node name="Smoke" type="GPUParticles3D" parent="." unique_id=51711195 node_paths=PackedStringArray("subSystems")]
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 0.78496647, 0)
 layers = 32
 cast_shadow = 0
@@ -146,9 +204,9 @@ fract_delta = false
 process_material = SubResource("ParticleProcessMaterial_8ptpb")
 draw_pass_1 = SubResource("QuadMesh_gwgyu")
 script = ExtResource("4_wi5kp")
-subSystems = [NodePath("."), null, null]
+subSystems = [NodePath("Cloud2"), NodePath("Cloud3")]
 
-[node name="Cloud2" type="GPUParticles3D" parent="RigidBody3D/Smoke" unique_id=2059828243]
+[node name="Cloud2" type="GPUParticles3D" parent="Smoke" unique_id=2059828243]
 layers = 32
 material_override = ExtResource("5_if4cr")
 cast_shadow = 0
@@ -162,7 +220,7 @@ fract_delta = false
 process_material = SubResource("ParticleProcessMaterial_8ptpb")
 draw_pass_1 = SubResource("QuadMesh_gwgyu")
 
-[node name="Cloud3" type="GPUParticles3D" parent="RigidBody3D/Smoke" unique_id=374918736]
+[node name="Cloud3" type="GPUParticles3D" parent="Smoke" unique_id=374918736]
 layers = 32
 material_override = ExtResource("6_rlp0s")
 cast_shadow = 0
@@ -176,17 +234,20 @@ fract_delta = false
 process_material = SubResource("ParticleProcessMaterial_8ptpb")
 draw_pass_1 = SubResource("QuadMesh_gwgyu")
 
-[node name="DebugLabel" type="Label3D" parent="RigidBody3D" unique_id=1654577420]
+[node name="DebugLabel" type="Label3D" parent="." unique_id=1654577420]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 10.280496, 0)
 modulate = Color(0, 1, 0, 1)
 text = "0"
 font_size = 763
 
-[node name="GrabArea" type="Area3D" parent="RigidBody3D" unique_id=579565338 groups=["enemy"]]
+[node name="GrabArea" type="Area3D" parent="." unique_id=579565338 groups=["enemy"]]
+collision_layer = 4
+collision_mask = 0
+monitoring = false
 
-[node name="GrabHitbox" type="CollisionShape3D" parent="RigidBody3D/GrabArea" unique_id=678793659 groups=["enemy"]]
+[node name="GrabHitbox" type="CollisionShape3D" parent="GrabArea" unique_id=678793659 groups=["enemy"]]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.11917877, 0.2507553, -0.25720024)
-shape = SubResource("BoxShape3D_gwinm")
+shape = SubResource("CylinderShape3D_if4cr")
 debug_color = Color(1, 1, 0, 0.41960785)
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=337456766]
@@ -194,12 +255,12 @@ libraries/ = SubResource("AnimationLibrary_sbutm")
 
 [node name="SFX" type="Node" parent="." unique_id=1192601528]
 
-[node name="drop" type="AudioStreamPlayer" parent="SFX" unique_id=242624561]
+[node name="Drop" type="AudioStreamPlayer" parent="SFX" unique_id=242624561]
 stream = ExtResource("7_if4cr")
 script = ExtResource("8_rlp0s")
 group = "chest"
 metadata/_custom_type_script = "uid://bkwc2atbp4cjd"
 
-[connection signal="body_entered" from="RigidBody3D" to="." method="_on_rigid_body_3d_body_entered"]
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]
 
-[editable path="RigidBody3D/Chest"]
+[editable path="Chest"]
