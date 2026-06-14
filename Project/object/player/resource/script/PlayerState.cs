@@ -100,11 +100,18 @@ public partial class PlayerState : Node
 			return;
 		}
 
-		float input = Player.Controller.InputHorizontal;
+		float input = Player.Controller.InputAxis.X;
+		if (Player.Camera.ActiveSettings.controlMode == CameraSettingsResource.ControlModeEnum.Sidescrolling)
+			input = Player.Controller.InputAxis.Y;
+		if (Player.Controller.IsGyroEnabled)
+			input = Mathf.Clamp(input + Player.Controller.GyroInput.X, -1, 1);
+
 		if (Player.PathFollower.IsReversingPath)
 			input *= -1;
-		int sign = Mathf.Sign(ExtensionMethods.DotAngle(Player.PathFollower.ForwardAngle, Player.Controller.XformAngle));
-		input *= sign >= 0 ? 1 : -1; // Take camera direction into account
+
+		float dot = ExtensionMethods.DotAngle(Player.PathFollower.ForwardAngle, Player.Controller.XformAngle);
+		if (Mathf.Abs(dot) > 0.5f)
+			input *= Mathf.Sign(dot) >= 0 ? 1 : -1; // Take camera direction into account
 		Player.StrafeSpeed = Player.Stats.StrafeSettings.UpdateInterpolateSigned(Player.StrafeSpeed, input);
 	}
 

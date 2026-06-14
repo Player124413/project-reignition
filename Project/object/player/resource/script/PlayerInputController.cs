@@ -115,9 +115,9 @@ public partial class PlayerInputController : Node
 		InputAxis = Input.GetVector("move_left", "move_right", "move_up", "move_down", DeadZone);
 		InputAxis = (InputAxis + mouseInput).LimitLength(1f);
 		InputHorizontal = Input.GetAxis("move_left", "move_right");
-		InputHorizontal = Mathf.Clamp(InputHorizontal + mouseInput.X + gyroInput.X, -1f, 1f);
+		InputHorizontal = Mathf.Clamp(InputHorizontal + mouseInput.X + GyroInput.X, -1f, 1f);
 		InputVertical = Input.GetAxis("move_up", "move_down");
-		InputVertical = Mathf.Clamp(InputVertical + mouseInput.Y + gyroInput.Y, -1f, 1f);
+		InputVertical = Mathf.Clamp(InputVertical + mouseInput.Y + GyroInput.Y, -1f, 1f);
 		if (!InputAxis.IsZeroApprox())
 			NonZeroInputAxis = InputAxis;
 
@@ -210,7 +210,7 @@ public partial class PlayerInputController : Node
 	public Vector3 GyroCalibrationOffset { get; set; }
 	public bool IsGyroEnabled => IsStrafeModeActive && SaveManager.Config.isGyroEnabled && Input.IsJoyMotionSensorsEnabled(Runtime.Instance.ActiveController);
 
-	private Vector2 gyroInput;
+	public Vector2 GyroInput { get; private set; }
 	private Vector2 gyroInputVelocity;
 	private readonly float GyroSmoothing = 5.0f;
 	private readonly float TurnSensitivity = 0.2f;
@@ -222,7 +222,7 @@ public partial class PlayerInputController : Node
 	{
 		if (!IsGyroEnabled)
 		{
-			gyroInput = Vector2.Zero;
+			GyroInput = Vector2.Zero;
 			return;
 		}
 
@@ -254,12 +254,12 @@ public partial class PlayerInputController : Node
 
 		if (disableSmoothing)
 		{
-			gyroInput = targetGyroInput;
-			InputHorizontal = gyroInput.X;
+			GyroInput = targetGyroInput;
+			InputHorizontal = GyroInput.X;
 		}
 		else
 		{
-			gyroInput = ExtensionMethods.SmoothDamp(gyroInput, targetGyroInput, ref gyroInputVelocity, GyroSmoothing * PhysicsManager.physicsDelta);
+			GyroInput = ExtensionMethods.SmoothDamp(GyroInput, targetGyroInput, ref gyroInputVelocity, GyroSmoothing * PhysicsManager.physicsDelta);
 		}
 	}
 
@@ -310,7 +310,7 @@ public partial class PlayerInputController : Node
 		if (!IsGyroEnabled)
 			return false;
 
-		return gyroInput.Y < -DeadZone;
+		return GyroInput.Y < -DeadZone;
 	}
 
 	private void UpdateJumpBuffer()
@@ -577,6 +577,7 @@ public partial class PlayerInputController : Node
 			int sign = Mathf.Sign(ExtensionMethods.DotAngle(baseAngle, XformAngle));
 			inputs *= sign >= 0 ? 1 : -1;
 		}
+		GD.PushWarning(XformAngle, Player.Camera.ActiveSettings.yawAngle, baseAngle, inputs);
 
 		float strafeAngle = TurningDampingRange;
 		if (Player.IsLockoutActive && Player.ActiveLockoutData.overrideSpeed)

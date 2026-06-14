@@ -382,6 +382,7 @@ public partial class PlayerAnimator : Node3D
 	{
 		IsBrakeAnimationActive = false;
 		BrakeStatePlayback.Travel(isFacingRight ? "r" + BrakeStopState : "l" + BrakeStopState);
+		animationTree.Set(BrakeTrigger, (int)AnimationNodeOneShot.OneShotRequest.FadeOut);
 	}
 
 	private readonly string QuickStepTrigger = "parameters/ground_tree/quick_step_trigger/request";
