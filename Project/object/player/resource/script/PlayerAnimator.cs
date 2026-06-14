@@ -743,6 +743,8 @@ public partial class PlayerAnimator : Node3D
 			return VisualAngle;
 
 		float strafeAngle = Player.Stats.StrafeSettings.GetSpeedRatio(Player.StrafeSpeed) * -Mathf.Pi * 0.5f;
+		if (Player.PathFollower.IsReversingPath)
+			strafeAngle *= -1f;
 		strafeAngle *= 1f - Player.Stats.GroundSettings.GetSpeedRatioClamped(Player.MoveSpeed) * 0.8f;
 		return Player.MovementAngle + strafeAngle;
 	}

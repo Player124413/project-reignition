@@ -101,6 +101,8 @@ public partial class PlayerState : Node
 		}
 
 		float input = Player.Controller.InputHorizontal;
+		if (Player.PathFollower.IsReversingPath)
+			input *= -1;
 		int sign = Mathf.Sign(ExtensionMethods.DotAngle(Player.PathFollower.ForwardAngle, Player.Controller.XformAngle));
 		input *= sign >= 0 ? 1 : -1; // Take camera direction into account
 		Player.StrafeSpeed = Player.Stats.StrafeSettings.UpdateInterpolateSigned(Player.StrafeSpeed, input);
