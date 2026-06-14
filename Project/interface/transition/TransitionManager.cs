@@ -161,9 +161,11 @@ public partial class TransitionManager : Node
 					loadTime += .1f;
 					if (loadTime > LoadTimeoutLength)
 					{
-						// Possible infinite loading due to multi-threads. Try loading again.
-						ResourceLoader.LoadThreadedRequest(Instance.QueuedScene, string.Empty, SaveManager.Config.useQuickLoad);
 						GD.Print("Infinite loading from async subthreads detected. Sending another request.");
+						// Possible infinite loading due to multi-threads. Try loading again.
+						QueueSceneChange(Instance.QueuedScene);
+						CurrentTransitionData.ClearInSpeed();
+						StartTransition(CurrentTransitionData);
 						return;
 					}
 				}
@@ -246,4 +248,7 @@ public struct TransitionData
 	public bool loadAsynchronously;
 	public bool disableAutoTransition;
 	public bool showMissionDescription;
+
+	/// <summary> Sets the in speed to 0. Used to fix infinite loading. </summary>
+	public void ClearInSpeed() => inSpeed = 0;
 }
