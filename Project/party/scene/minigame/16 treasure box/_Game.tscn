@@ -6,8 +6,10 @@
 [ext_resource type="Resource" uid="uid://bhqd72enin16y" path="res://party/resource/minigame/16TreasureBox.tres" id="2_17dlv"]
 [ext_resource type="PackedScene" uid="uid://f5w7fq20xmd1" path="res://party/scene/minigame/00 base/Time.tscn" id="2_ko22q"]
 [ext_resource type="AnimationLibrary" uid="uid://besjw03kx0kgw" path="res://party/scene/minigame/16 treasure box/animation/_Library.glb" id="3_6af47"]
+[ext_resource type="Resource" uid="uid://b51ccttsaeaas" path="res://party/resource/bgm/Minigame2.tres" id="4_es7h8"]
 [ext_resource type="PackedScene" uid="uid://30sgb1pjxad8" path="res://party/scene/minigame/00 base/ScoreBottom.tscn" id="4_fw33i"]
 [ext_resource type="PackedScene" uid="uid://bxn2piwe6usv7" path="res://party/scene/minigame/16 treasure box/Player.tscn" id="7_ykn7p"]
+[ext_resource type="Material" uid="uid://ju4tirv28jd7" path="res://party/scene/minigame/16 treasure box/material/Sparkle Particle.tres" id="8_khh5a"]
 [ext_resource type="Script" uid="uid://bvypdc6hcy8lo" path="res://party/scene/minigame/16 treasure box/script/chest_spawner.gd" id="9_3jkc7"]
 [ext_resource type="PackedScene" uid="uid://b6y52vko8cbif" path="res://party/scene/minigame/16 treasure box/Chest.tscn" id="10_d7l16"]
 
@@ -20,6 +22,29 @@ tonemap_exposure = 1.2
 tonemap_white = 1.2
 glow_enabled = true
 glow_normalized = true
+
+[sub_resource type="Curve" id="Curve_khh5a"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.4, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_khh5a"]
+width = 64
+curve = SubResource("Curve_khh5a")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_l4tat"]
+lifetime_randomness = 0.4
+emission_shape = 3
+emission_box_extents = Vector3(30, 15, 10)
+angle_min = 1.0728835e-05
+angle_max = 360.00003
+angular_velocity_min = -20.000015
+angular_velocity_max = -10.000016
+gravity = Vector3(0, 0, 0)
+scale_min = 8.0
+scale_max = 10.0
+scale_curve = SubResource("CurveTexture_khh5a")
+
+[sub_resource type="QuadMesh" id="QuadMesh_e2t8q"]
 
 [sub_resource type="Animation" id="Animation_d7l16"]
 resource_name = "intro"
@@ -73,6 +98,9 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 0, -10)
 
 [node name="P4" parent="Minigame/ResultsLocation" parent_id_path=PackedInt32Array(600998337, 1428872605) index="3" unique_id=13369216]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 15, 0, -10)
+
+[node name="BGM" parent="Minigame" index="6" unique_id=1105249761]
+bgmResource = ExtResource("4_es7h8")
 
 [node name="Scores" parent="Minigame" unique_id=1484096685 instance=ExtResource("4_fw33i")]
 visible = false
@@ -178,6 +206,26 @@ light_color = Color(0.8325902, 0.93651986, 0.97084445, 1)
 light_energy = 3.0
 light_specular = 0.0
 light_cull_mask = 4
+
+[node name="Sparkles1" type="GPUParticles3D" parent="Environment" unique_id=554101709]
+transform = Transform3D(0.70710677, 0, 0.70710677, 0, 1, 0, -0.70710677, 0, 0.70710677, -36, 13, -45)
+layers = 32
+material_override = ExtResource("8_khh5a")
+randomness = 0.6
+fixed_fps = 0
+fract_delta = false
+process_material = SubResource("ParticleProcessMaterial_l4tat")
+draw_pass_1 = SubResource("QuadMesh_e2t8q")
+
+[node name="Sparkles2" type="GPUParticles3D" parent="Environment" unique_id=813629720]
+transform = Transform3D(0.70710665, 0, -0.70710665, 0, 1, 0, 0.70710665, 0, 0.70710665, 41.928932, 16, -37.928932)
+layers = 32
+material_override = ExtResource("8_khh5a")
+randomness = 0.6
+fixed_fps = 0
+fract_delta = false
+process_material = SubResource("ParticleProcessMaterial_l4tat")
+draw_pass_1 = SubResource("QuadMesh_e2t8q")
 
 [node name="CameraRoot" type="Node3D" parent="." unique_id=1531456481]
 transform = Transform3D(1, 0, 0, 0, 0.9659258, 0.25881904, 0, -0.25881904, 0.9659258, 2, 15, 0)
