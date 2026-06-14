@@ -2,6 +2,9 @@ class_name TreasureBoxChest extends RigidBody3D
 
 @export var animator : AnimationPlayer
 @export var debug_label : Label3D
+@export var throw_sfx : GroupSfxPlayer
+@export var shake_sfx : GroupSfxPlayer
+@export var coin_sfx : Array[AudioStreamPlayer3D]
 var _original_parent : Node
 
 ## The bone attachment this chest is connected to.
@@ -15,6 +18,18 @@ func spawn() -> void:
 	freeze = false
 	_original_parent = get_parent()
 	debug_label.text = str(num_coins)
+
+func play_shake_sfx() -> void:
+	shake_sfx.play_in_group()
+	var volume_interval : float = (TreasureBoxChestSpawner.instance.HIGHEST_COIN_COUNT as float) / coin_sfx.size()
+	var coin_ratio : float = num_coins / (TreasureBoxChestSpawner.instance.HIGHEST_COIN_COUNT as float)
+	var coin_sfx_range : int = ceil(lerp(0, coin_sfx.size(), coin_ratio))
+	print("Playing %s coin shake sound effects." % coin_sfx_range)
+	for i in coin_sfx_range:
+		coin_sfx[i].volume_linear = 1.0
+		if i != 0 && num_coins != TreasureBoxChestSpawner.instance.HIGHEST_COIN_COUNT && i == coin_sfx_range - 1:
+			coin_sfx[i].volume_linear = (fmod(num_coins, volume_interval) * 0.5) / (volume_interval as float)
+		coin_sfx[i].play()
 
 func pickup(player : Node, attachment : Node, tick : float) -> void:
 	if tick < pickup_tick: # Already picked up by a different player
@@ -37,6 +52,8 @@ func drop(vel : Vector3 = Vector3.ZERO) -> void:
 	apply_central_impulse(vel)
 	animator.play("drop")
 	is_thrown = !vel.is_zero_approx()
+	if is_thrown:
+		throw_sfx.play_in_group()
 	reparent(_original_parent)
 	set_multiplayer_authority(_original_parent.get_multiplayer_authority())
 

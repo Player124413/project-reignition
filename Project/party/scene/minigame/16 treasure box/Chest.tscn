@@ -7,7 +7,14 @@
 [ext_resource type="Material" uid="uid://btlea54srir75" path="res://party/scene/minigame/11 giant stake/particles/Cloud2.tres" id="5_if4cr"]
 [ext_resource type="Material" uid="uid://n28w5281vih" path="res://party/scene/minigame/11 giant stake/particles/Cloud3.tres" id="6_rlp0s"]
 [ext_resource type="AudioStream" uid="uid://88l115r85i3j" path="res://party/scene/minigame/16 treasure box/sound/drop.wav" id="7_if4cr"]
-[ext_resource type="Script" uid="uid://bkwc2atbp4cjd" path="res://party/scene/minigame/00 base/script/group_sfx_player.gd" id="8_rlp0s"]
+[ext_resource type="AudioStream" uid="uid://dcj4k1xvrcyov" path="res://party/scene/minigame/16 treasure box/sound/open.wav" id="8_rlp0s"]
+[ext_resource type="AudioStream" uid="uid://coxxy24xpa4y" path="res://party/scene/minigame/16 treasure box/sound/throw.wav" id="9_myeab"]
+[ext_resource type="Script" uid="uid://bkwc2atbp4cjd" path="res://party/scene/minigame/00 base/script/group_sfx_player.gd" id="10_myeab"]
+[ext_resource type="AudioStream" uid="uid://c8g6mj7xu03c0" path="res://party/scene/minigame/16 treasure box/sound/shake.wav" id="11_awuup"]
+[ext_resource type="AudioStream" uid="uid://drmxgpcsjkaxq" path="res://party/scene/minigame/16 treasure box/sound/coin 1.wav" id="11_nhk73"]
+[ext_resource type="AudioStream" uid="uid://bl34mkpsytitx" path="res://party/scene/minigame/16 treasure box/sound/coin 2.wav" id="12_awuup"]
+[ext_resource type="AudioStream" uid="uid://br0cpp5evvkqk" path="res://party/scene/minigame/16 treasure box/sound/coin 3.wav" id="13_yqy2d"]
+[ext_resource type="AudioStream" uid="uid://br8lby6ut1r6u" path="res://party/scene/minigame/16 treasure box/sound/coin 4.wav" id="14_3u1pb"]
 
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_gdgwk"]
 height = 6.0
@@ -119,15 +126,15 @@ tracks/0/keys = {
 tracks/1/type = "method"
 tracks/1/imported = false
 tracks/1/enabled = true
-tracks/1/path = NodePath("SFX/Drop")
+tracks/1/path = NodePath("SpatialSFX/Drop")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "values": [{
-"args": [],
-"method": &"play_in_group"
+"args": [0.0],
+"method": &"play"
 }]
 }
 tracks/2/type = "method"
@@ -169,7 +176,7 @@ _data = {
 &"pickup": SubResource("Animation_if4cr")
 }
 
-[node name="Chest" type="RigidBody3D" unique_id=1990958956 node_paths=PackedStringArray("animator", "debug_label")]
+[node name="Chest" type="RigidBody3D" unique_id=1990958956 node_paths=PackedStringArray("animator", "debug_label", "throw_sfx", "shake_sfx", "coin_sfx")]
 collision_layer = 16
 collision_mask = 18
 gravity_scale = 10.0
@@ -182,6 +189,9 @@ max_contacts_reported = 5
 script = ExtResource("2_q1wmv")
 animator = NodePath("AnimationPlayer")
 debug_label = NodePath("DebugLabel")
+throw_sfx = NodePath("SFX/Throw")
+shake_sfx = NodePath("SFX/Shake")
+coin_sfx = [NodePath("SpatialSFX/Coin1"), NodePath("SpatialSFX/Coin2"), NodePath("SpatialSFX/Coin3"), NodePath("SpatialSFX/Coin4")]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=2126557322]
 transform = Transform3D(-4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0, 1, 0, 2.5, 0)
@@ -253,13 +263,69 @@ debug_color = Color(1, 1, 0, 0.41960785)
 [node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=337456766]
 libraries/ = SubResource("AnimationLibrary_sbutm")
 
-[node name="SFX" type="Node" parent="." unique_id=1192601528]
+[node name="SFX" type="Node" parent="." unique_id=379569619]
 
-[node name="Drop" type="AudioStreamPlayer" parent="SFX" unique_id=242624561]
+[node name="Open" type="AudioStreamPlayer" parent="SFX" unique_id=1876864229]
+stream = ExtResource("8_rlp0s")
+bus = &"GAME SFX"
+script = ExtResource("10_myeab")
+group = "open"
+min_volume = 0.5
+
+[node name="Throw" type="AudioStreamPlayer" parent="SFX" unique_id=274850477]
+stream = ExtResource("9_myeab")
+bus = &"GAME SFX"
+script = ExtResource("10_myeab")
+group = "throw"
+min_volume = 0.6
+
+[node name="Shake" type="AudioStreamPlayer" parent="SFX" unique_id=1098143769]
+stream = ExtResource("11_awuup")
+volume_db = -12.0
+max_polyphony = 2
+bus = &"GAME SFX"
+script = ExtResource("10_myeab")
+group = "shake"
+base_volume = 0.1
+max_volume = 0.1
+min_volume = 0.1
+
+[node name="SpatialSFX" type="Node3D" parent="." unique_id=1478824135]
+
+[node name="Drop" type="AudioStreamPlayer3D" parent="SpatialSFX" unique_id=1711999973]
 stream = ExtResource("7_if4cr")
-script = ExtResource("8_rlp0s")
-group = "chest"
-metadata/_custom_type_script = "uid://bkwc2atbp4cjd"
+attenuation_model = 3
+max_db = -6.0
+panning_strength = 3.0
+bus = &"GAME SFX"
+
+[node name="Coin1" type="AudioStreamPlayer3D" parent="SpatialSFX" unique_id=610555057]
+stream = ExtResource("11_nhk73")
+attenuation_model = 3
+max_db = -3.0
+panning_strength = 3.0
+bus = &"GAME SFX"
+
+[node name="Coin2" type="AudioStreamPlayer3D" parent="SpatialSFX" unique_id=1567529764]
+stream = ExtResource("12_awuup")
+attenuation_model = 3
+max_db = -3.0
+panning_strength = 3.0
+bus = &"GAME SFX"
+
+[node name="Coin3" type="AudioStreamPlayer3D" parent="SpatialSFX" unique_id=1317012123]
+stream = ExtResource("13_yqy2d")
+attenuation_model = 3
+max_db = -3.0
+panning_strength = 3.0
+bus = &"GAME SFX"
+
+[node name="Coin4" type="AudioStreamPlayer3D" parent="SpatialSFX" unique_id=526119890]
+stream = ExtResource("14_3u1pb")
+attenuation_model = 3
+max_db = -3.0
+panning_strength = 3.0
+bus = &"GAME SFX"
 
 [connection signal="body_entered" from="." to="." method="_on_body_entered"]
 

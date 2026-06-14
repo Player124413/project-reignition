@@ -63,6 +63,7 @@ func process_movement_tick() -> void:
 const ANIM_FINISH : int = 0
 const ANIM_DROP : int = 1
 const ANIM_THROW : int = 2
+const ANIM_SHAKE : int = 3
 func process_animation_event(event: int) -> void:
 	if event == ANIM_FINISH:
 		state = STATE.HOLDING if is_instance_valid(current_chest) else STATE.NONE
@@ -71,8 +72,12 @@ func process_animation_event(event: int) -> void:
 			current_chest.drop()
 			current_chest = null
 	elif event == ANIM_THROW:
-		current_chest.drop(character_body.global_basis.z * THROW_STRENGTH + Vector3.UP * THROW_HEIGHT)
-		current_chest = null
+		if is_instance_valid(current_chest):
+			current_chest.drop(character_body.global_basis.z * THROW_STRENGTH + Vector3.UP * THROW_HEIGHT)
+			current_chest = null
+	elif event == ANIM_SHAKE:
+		if is_instance_valid(current_chest):
+			current_chest.play_shake_sfx()
 
 func process_inputs() -> void:
 	if is_cpu(): # TODO Process this later.

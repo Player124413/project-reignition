@@ -281,6 +281,7 @@ func request_autoplay_results() -> void:
 func finish_minigame(from_timer : bool) -> void:
 	print("Gameplay Finished.")
 	gameplay_finished.emit()
+	PauseManager.disable_pause_inputs()
 	rpc("play_animation", "minigame-time" if from_timer else "minigame-finish")
 
 ## Emits the signal to actually enable gameplay objects.
@@ -305,8 +306,12 @@ func on_minigame_finished() -> void:
 
 # Calculate the minigame winners and plays the proper results screen.
 func start_results() -> void:
-	PauseManager.disable_pause_inputs()
-	if NetworkManager.is_online && !NetworkManager.is_hosting_game:
+	if !NetworkManager.is_hosting_game:
+		return
+	play_results_animation()
+
+func play_results_animation() -> void:
+	if !NetworkManager.is_hosting_game:
 		return
 	
 	var rankings : Array[int]

@@ -1,7 +1,11 @@
 class_name TreasureBoxChestSpawner extends Node3D
 
 static var instance : TreasureBoxChestSpawner
+
 @export var chests : Array[TreasureBoxChest]
+
+## The number of coins in the best chest.
+const HIGHEST_COIN_COUNT : int = 19
 
 func _ready() -> void:
 	instance = self
@@ -18,7 +22,7 @@ func start_spawning() -> void:
 	if !NetworkManager.is_hosting_game:
 		return
 	
-	var coin_array : Array[int] = [2, 4, 6, 8, 10, 12, 15, 17, 19]
+	var coin_array : Array[int] = [2, 4, 6, 8, 10, 12, 15, 17, HIGHEST_COIN_COUNT]
 	coin_array.resize(chests.size())
 	coin_array.shuffle()
 	rpc("sync_coin_values", coin_array)
