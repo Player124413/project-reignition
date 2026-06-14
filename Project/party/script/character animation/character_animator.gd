@@ -13,6 +13,8 @@ signal animation_event(info : int)
 
 ## The index of this character
 var player_index : int
+## Should this animation player automatically play the results animation?
+var autoplay_result_anim : bool = true
 
 ## Updates the invincibility animator.
 func process_invincibility_timer(time_remaining : float) -> void:
@@ -126,6 +128,10 @@ func on_results_started() -> void:
 	if !PartyManager.minigame_players.has(player_index):
 		return
 	
+	if autoplay_result_anim:
+		play_result_animation()
+
+func play_result_animation() -> void:
 	set_speed(1)
 	if PartyManager.get_player_data(player_index).minigame_placement == 0:
 		play_animation("win")

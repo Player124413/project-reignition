@@ -13,6 +13,8 @@ signal demo_transition_processed
 signal gameplay_finished
 ## Teleport players to their results position here.
 signal minigame_finished
+## Specifically fires when the number of registered "completed" players surpasses the set requirement.
+signal players_completed
 ## Character Animators will play their result animations when this signal emits.
 signal results_started
 ## Emitted whenever a player's score is changed.
@@ -36,12 +38,6 @@ func process_demo_transition() -> void:
 const ANIMATION_LIBRARY_PREFIX : String = "MINIGAME"
 const COMMON_ANIMATION_LIBRARY_PREFIX : String = "COMMON_MINIGAME"
 
-@export var rank_mode : RANK_MODE
-enum RANK_MODE {
-	SCORE, # Use scores to rank players; highest score wins
-	TIME # Use times to rank players; lowest time wins
-}
-
 @export_group("View Settings")
 ## How should the screen be set up for this mini-game?
 @export var screen_mode : SCREEN_MODE
@@ -57,20 +53,28 @@ enum DEMO_TRANSITION {
 	FULLSCREEN, # Show a fullscreen demo first (normally played by a majin)
 }
 
+@export_group("Result Settings")
+@export var rank_mode : RANK_MODE
+enum RANK_MODE {
+	SCORE, # Use scores to rank players; highest score wins
+	TIME # Use times to rank players; lowest time wins
+}
 ## Disable this if you have something in the game that needs to finish before we can play the results.
 @export var autoplay_results : bool = true
+## Disable this if you want the to do something after the transition. Call play_results_animation manually if you turn this off.
+@export var autoplay_results_animation : bool = true
 ## Number of "survivors" that must be left for the minigame to autocomplete.
 @export_range(0, 3, 1) var autocomplete_survivor_count : int = 0
-## Tracks whether we're ready to play the results screen or not (based on non-game elements).
-var is_results_queued : bool
-
-@export_group("Component Settings")
-## Optional animator that plays when all peers are loaded. Use this for camera pans.
-@export var intro_animator : AnimationPlayer
 ## Option camera to use for the results screen.
 @export var results_camera : Camera3D
+## Tracks whether we're ready to play the results screen or not (based on non-game elements).
+var is_results_queued : bool
+## Tracks whether we've already finished the minigame and entered the results screen.
+var is_results_active : bool
 
-@export_group("Manager Attributes")
+@export_group("Components")
+## Optional animator that plays when all peers are loaded. Use this for camera pans.
+@export var intro_animator : AnimationPlayer
 @export var splitscreen_parent : Control
 @export var animator : AnimationPlayer
 
@@ -235,7 +239,12 @@ func _change_time(player_index : int, time : float) -> void:
 ## Adds one completed player and checks whether we should finish the mini-game.
 func register_completed_player() -> void:
 	completed_player_count += 1
+	if is_results_active && completed_player_count >= PartyManager.minigame_players.size() - autocomplete_survivor_count:
+		players_completed.emit()
+		return
+	
 	if completed_player_count >= PartyManager.minigame_players.size() - autocomplete_survivor_count:
+		players_completed.emit()
 		request_minigame_finish()
 
 func request_minigame_start() -> void:
@@ -304,13 +313,16 @@ func on_minigame_finished() -> void:
 	if results_camera != null:
 		results_camera.make_current()
 
-# Calculate the minigame winners and plays the proper results screen.
-func start_results() -> void:
-	if !NetworkManager.is_hosting_game:
+## Calculate the minigame winners and plays the proper results screen.
+func attempt_start_results() -> void:
+	is_results_active = true
+	if !NetworkManager.is_hosting_game || !autoplay_results_animation:
 		return
-	play_results_animation()
+	
+	start_results_animation()
 
-func play_results_animation() -> void:
+## Calculate the minigame winners and plays the proper results screen.
+func start_results_animation() -> void:
 	if !NetworkManager.is_hosting_game:
 		return
 	

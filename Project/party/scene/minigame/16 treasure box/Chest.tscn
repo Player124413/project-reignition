@@ -152,6 +152,34 @@ tracks/2/keys = {
 }]
 }
 
+[sub_resource type="Animation" id="Animation_awuup"]
+resource_name = "open"
+length = 0.5
+tracks/0/type = "animation"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Chest/AnimationPlayer")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"clips": PackedStringArray("RESET", "open"),
+"times": PackedFloat32Array(0, 0.03333333)
+}
+tracks/1/type = "method"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("SFX/Open")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0.16666667),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"play_in_group"
+}]
+}
+
 [sub_resource type="Animation" id="Animation_if4cr"]
 resource_name = "pickup"
 length = 0.001
@@ -173,10 +201,11 @@ _data = {
 &"RESET": SubResource("Animation_q1wmv"),
 &"drop": SubResource("Animation_rlp0s"),
 &"hit-floor": SubResource("Animation_njmpl"),
+&"open": SubResource("Animation_awuup"),
 &"pickup": SubResource("Animation_if4cr")
 }
 
-[node name="Chest" type="RigidBody3D" unique_id=1990958956 node_paths=PackedStringArray("animator", "debug_label", "throw_sfx", "shake_sfx", "coin_sfx")]
+[node name="Chest" type="RigidBody3D" unique_id=1990958956 node_paths=PackedStringArray("animator", "debug_label", "throw_sfx", "shake_sfx", "coin_sfx", "coin_spawn_pos")]
 collision_layer = 16
 collision_mask = 18
 gravity_scale = 10.0
@@ -192,10 +221,15 @@ debug_label = NodePath("DebugLabel")
 throw_sfx = NodePath("SFX/Throw")
 shake_sfx = NodePath("SFX/Shake")
 coin_sfx = [NodePath("SpatialSFX/Coin1"), NodePath("SpatialSFX/Coin2"), NodePath("SpatialSFX/Coin3"), NodePath("SpatialSFX/Coin4")]
+coin_spawn_pos = NodePath("CoinSpawnPosition")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=2126557322]
 transform = Transform3D(-4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0, 1, 0, 2.5, 0)
 shape = SubResource("CylinderShape3D_gdgwk")
+
+[node name="CoinSpawnPosition" type="Marker3D" parent="." unique_id=1719204886]
+transform = Transform3D(0.7, 0, 0, 0, 0.7, 0, 0, 0, 0.7, 0, 2, 1)
+gizmo_extents = 1.0
 
 [node name="Chest" parent="." unique_id=797442472 instance=ExtResource("1_je2ft")]
 transform = Transform3D(0.7, 0, 0, 0, 0.7, 0, 0, 0, 0.7, 0, 0, 0)
@@ -246,6 +280,7 @@ draw_pass_1 = SubResource("QuadMesh_gwgyu")
 
 [node name="DebugLabel" type="Label3D" parent="." unique_id=1654577420]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 10.280496, 0)
+visible = false
 modulate = Color(0, 1, 0, 1)
 text = "0"
 font_size = 763

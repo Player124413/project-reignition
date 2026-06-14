@@ -5,6 +5,7 @@ class_name TreasureBoxChest extends RigidBody3D
 @export var throw_sfx : GroupSfxPlayer
 @export var shake_sfx : GroupSfxPlayer
 @export var coin_sfx : Array[AudioStreamPlayer3D]
+@export var coin_spawn_pos : Node3D
 var _original_parent : Node
 
 ## The bone attachment this chest is connected to.
@@ -56,6 +57,9 @@ func drop(vel : Vector3 = Vector3.ZERO) -> void:
 		throw_sfx.play_in_group()
 	reparent(_original_parent)
 	set_multiplayer_authority(_original_parent.get_multiplayer_authority())
+
+func start_results_shake() -> void:
+	animator.play("open")
 
 func _on_body_entered(body : Node) -> void:
 	if body is TreasureBoxChest:

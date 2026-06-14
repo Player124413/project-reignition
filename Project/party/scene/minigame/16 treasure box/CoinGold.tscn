@@ -1,0 +1,24 @@
+[gd_scene format=3 uid="uid://v3mtc73in30d"]
+
+[ext_resource type="PackedScene" uid="uid://cbl3a8360isw7" path="res://party/scene/minigame/16 treasure box/model/CoinGold.glb" id="1_6q7dw"]
+[ext_resource type="AudioStream" uid="uid://bj1klscx6pm2i" path="res://party/scene/minigame/16 treasure box/sound/ring.wav" id="2_cdr22"]
+[ext_resource type="Script" uid="uid://bkwc2atbp4cjd" path="res://party/scene/minigame/00 base/script/group_sfx_player.gd" id="3_8fjst"]
+
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_cdr22"]
+rough = true
+bounce = 0.2
+
+[node name="CoinGold" unique_id=901438092 instance=ExtResource("1_6q7dw")]
+
+[node name="CoinGoldMesh" parent="." index="0" unique_id=174680755]
+physics_material_override = SubResource("PhysicsMaterial_cdr22")
+gravity_scale = 5.0
+
+[node name="Ring" type="AudioStreamPlayer" parent="." index="1" unique_id=52009906]
+stream = ExtResource("2_cdr22")
+max_polyphony = 30
+bus = &"GAME SFX"
+script = ExtResource("3_8fjst")
+group = "ring"
+min_volume = 0.5
+metadata/_custom_type_script = "uid://bkwc2atbp4cjd"

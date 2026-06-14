@@ -16,17 +16,43 @@ enum STATE {
 	HOLDING,
 	THROWING,
 	DROPPING,
-	DAMAGE
+	DAMAGE,
+	EMPTY
 }
 
 const CHEST_POSITION_SPEED : float = 20.0
 
 func on_spawn_finished() -> void:
-	super ()
+	super()
+	MinigameManager.instance.players_completed.connect(Callable(self, "start_results"))
 	hand_attachment.reparent(character_animator.skeleton)
 
+func start_results() -> void:
+	await get_tree().create_timer(0.5).timeout
+	MinigameManager.instance.start_results_animation()
+
+func on_gameplay_finished() -> void:
+	super()
+	if state == STATE.SHAKING:
+		request_shake_stop()
+
 func on_minigame_finished() -> void:
-	super ()
+	if !is_instance_valid(current_chest):
+		MinigameManager.instance.register_completed_player()
+		return
+	
+	if !is_multiplayer_authority():
+		return
+	
+	await get_tree().create_timer(0.1, false, true).timeout
+	character_animator.call_deferred("play_animation", get_anim_prefix() + "lift-wait", true)
+	current_chest.rotation = Vector3.ZERO # Reset chest rotation
+	current_chest.start_results_shake()
+	await get_tree().create_timer(0.2, false, true).timeout
+	state = STATE.EMPTY
+	character_animator.play_minigame_animation(get_anim_prefix() + "empty", 0.2, 1.5)
+	_move_angle = 0
+	character_body.rotation = Vector3.ZERO
 
 func process_rotation(target_angle: float) -> void:
 	if is_movement_disabled():
@@ -64,9 +90,13 @@ const ANIM_FINISH : int = 0
 const ANIM_DROP : int = 1
 const ANIM_THROW : int = 2
 const ANIM_SHAKE : int = 3
+const ANIM_EMPTY : int = 4
 func process_animation_event(event: int) -> void:
 	if event == ANIM_FINISH:
 		state = STATE.HOLDING if is_instance_valid(current_chest) else STATE.NONE
+		if _is_gameplay_finished:
+			MinigameManager.instance.register_completed_player()
+			character_animator.play_animation("%s/wait" % MinigameManager.COMMON_ANIMATION_LIBRARY_PREFIX, true, 0.1)
 	elif event == ANIM_DROP:
 		if is_instance_valid(current_chest):
 			current_chest.drop()
@@ -78,6 +108,31 @@ func process_animation_event(event: int) -> void:
 	elif event == ANIM_SHAKE:
 		if is_instance_valid(current_chest):
 			current_chest.play_shake_sfx()
+	elif event == ANIM_EMPTY:
+		if is_instance_valid(current_chest) && is_multiplayer_authority():
+			if current_chest.num_coins == 0:
+				request_throw()
+			else:
+				empty_coin()
+				await get_tree().create_timer(0.2).timeout
+				MinigameManager.instance.request_score_change(player_index, 1)
+
+const COIN_EMPTY_VELOCITY : float = 10.0
+@rpc("any_peer", "call_local", "reliable")
+func empty_coin() -> void:
+	current_chest.play_shake_sfx()
+	current_chest.num_coins -= 1
+	var coin : Node3D = TreasureBoxChestSpawner.instance.get_coin()
+	coin.visible = true
+	coin.process_mode = Node.PROCESS_MODE_INHERIT
+	var rb : RigidBody3D = coin.get_child(0) as RigidBody3D
+	rb.global_position = current_chest.coin_spawn_pos.global_position
+	rb.global_position += (1.0 - randf() * 2.0) * Vector3.RIGHT * 2.0
+	rb.rotation = Vector3((1.0 - randf() * 2.0), (1.0 - randf() * 2.0), (1.0 - randf() * 2.0)) * PI * 0.4
+	rb.reset_physics_interpolation()
+	rb.apply_central_impulse(global_basis.z * COIN_EMPTY_VELOCITY)
+	await get_tree().create_timer(0.2).timeout
+	coin.get_child(1).play_in_group()
 
 func process_inputs() -> void:
 	if is_cpu(): # TODO Process this later.
@@ -116,7 +171,7 @@ func request_pickup() -> void:
 func pickup_chest(chest_index : int, tick : float) -> void:
 	state = STATE.PICKING_UP
 	var target_anim: StringName = get_anim_prefix() + "lift"
-	character_animator.play_minigame_animation(target_anim, 0, 1.5, 0, tick)
+	character_animator.play_minigame_animation(target_anim, 0, 1., 0, tick)
 	current_chest = TreasureBoxChestSpawner.instance.get_chest(chest_index)
 	current_chest.pickup(self, hand_attachment, tick) # Attempt to pickup the chest
 	print("grabbing " + str(current_chest))
@@ -163,7 +218,7 @@ func shake_stop() -> void:
 	state = STATE.HOLDING
 
 func request_damage() -> void:
-	if is_invincible() || !is_multiplayer_authority():
+	if is_invincible() || !is_multiplayer_authority() || _is_gameplay_finished:
 		return
 	
 	rpc("take_damage", NetworkTimeSynchronizer.get_time())
