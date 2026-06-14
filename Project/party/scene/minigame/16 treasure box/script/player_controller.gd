@@ -12,6 +12,7 @@ var state : STATE = STATE.NONE
 enum STATE {
 	NONE,
 	PICKING_UP,
+	SHAKING,
 	HOLDING,
 	THROWING,
 	DROPPING,
@@ -85,6 +86,12 @@ func process_inputs() -> void:
 				request_drop()
 			else:
 				request_throw()
+	elif is_instance_valid(current_chest):
+		var is_shake_held : bool = Input.is_action_pressed("button_secondary%s" % get_input_suffix())
+		if state == STATE.HOLDING && is_shake_held:
+			request_shake_start()
+		elif state == STATE.SHAKING && !is_shake_held:
+			request_shake_stop()
 	super ()
 
 ## Finds the closest chest and tries to pick it up.
@@ -132,6 +139,23 @@ func request_throw() -> void:
 func throw(tick : float) -> void:
 	state = STATE.THROWING
 	character_animator.play_minigame_animation(get_anim_prefix() + "throw", 0, 2, 0, tick)
+
+func request_shake_start() -> void:
+	state = STATE.SHAKING
+	rpc("shake_start", NetworkTimeSynchronizer.get_time())
+
+@rpc("any_peer", "call_local", "reliable")
+func shake_start(tick : float) -> void:
+	state = STATE.SHAKING
+	character_animator.play_minigame_animation(get_anim_prefix() + "shake", 0.2, 1, 0, tick)
+
+func request_shake_stop() -> void:
+	state = STATE.HOLDING
+	rpc("shake_stop")
+
+@rpc("any_peer", "call_local", "reliable")
+func shake_stop() -> void:
+	state = STATE.HOLDING
 
 func request_damage() -> void:
 	if is_invincible() || !is_multiplayer_authority():
