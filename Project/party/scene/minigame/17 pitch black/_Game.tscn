@@ -1,8 +1,11 @@
 [gd_scene format=3 uid="uid://ds5hnjq82a67j"]
 
+[ext_resource type="PackedScene" uid="uid://dsbufs8tjchk7" path="res://party/scene/minigame/00 base/MinigameBase.tscn" id="1_1x6en"]
 [ext_resource type="PackedScene" uid="uid://ct3wwkbyhs7em" path="res://party/scene/minigame/17 pitch black/model/Map.glb" id="1_gshku"]
+[ext_resource type="Resource" uid="uid://cmv458b2hhmb0" path="res://party/resource/minigame/17PitchBlack.tres" id="2_5d3t0"]
 [ext_resource type="PackedScene" uid="uid://bnhdekqajqxd5" path="res://party/scene/minigame/17 pitch black/Picture.tscn" id="2_ti0kl"]
 [ext_resource type="Material" uid="uid://ctpclc7rvt0dk" path="res://party/scene/minigame/17 pitch black/material/Blackout.tres" id="3_qx0r3"]
+[ext_resource type="AnimationLibrary" uid="uid://b7nv23a63t0ui" path="res://party/scene/minigame/17 pitch black/animation/_Library.glb" id="3_t4r27"]
 [ext_resource type="PackedScene" uid="uid://dporu1ja77qk6" path="res://party/scene/minigame/17 pitch black/Spotlight.tscn" id="4_qx0r3"]
 [ext_resource type="PackedScene" uid="uid://dkhfl3o0fmu2e" path="res://party/scene/minigame/17 pitch black/CandleLights.tscn" id="5_1qa36"]
 
@@ -321,6 +324,11 @@ _data = {
 
 [node name="Game" type="Node3D" unique_id=1197644646]
 
+[node name="Minigame" parent="." unique_id=600998337 node_paths=PackedStringArray("results_camera") instance=ExtResource("1_1x6en")]
+minigame_resource = ExtResource("2_5d3t0")
+anim_library = ExtResource("3_t4r27")
+results_camera = NodePath("../ResultsCamera")
+
 [node name="Environment" type="Node3D" parent="." unique_id=2094558663]
 
 [node name="Map" parent="Environment" unique_id=1967604999 instance=ExtResource("1_gshku")]
@@ -414,6 +422,9 @@ libraries/ = SubResource("AnimationLibrary_1x6en")
 
 [node name="GameplayCamera" type="Camera3D" parent="." unique_id=1881580446]
 
+[node name="ResultsCamera" type="Camera3D" parent="." unique_id=121678800]
+
+[editable path="Minigame"]
 [editable path="Environment/Map"]
 [editable path="Environment/Map/CandleLightsL"]
 [editable path="Environment/Map/CandleLightsR"]
