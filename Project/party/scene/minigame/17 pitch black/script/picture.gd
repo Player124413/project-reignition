@@ -1,12 +1,21 @@
 extends Node3D
 
-@export var amy_materials : Array[StandardMaterial3D]
-@export var blaze_materials : Array[StandardMaterial3D]
-@export var cream_materials : Array[StandardMaterial3D]
-@export var knuckles_materials : Array[StandardMaterial3D]
-@export var shadow_materials : Array[StandardMaterial3D]
-@export var silver_materials : Array[StandardMaterial3D]
-@export var sonic_materials : Array[StandardMaterial3D]
-@export var tails_materials : Array[StandardMaterial3D]
-@export var demo_wrong : StandardMaterial3D
-@export var image_mesh : MeshInstance3D
+@export var animator: AnimationPlayer
+@export var picture_animator: AnimationPlayer
+var wrong: bool
+var _character: CHARACTER
+
+enum CHARACTER {
+	AMY,
+	BLAZE,
+	CREAM,
+	KNUCKLES,
+	SHADOW,
+	SILVER,
+	SONIC,
+	TAILS,
+	DEMO
+}
+
+func set_correct_picture() -> void:
+	picture_animator.play(str(_character).to_lower() + "_correct")

@@ -14,7 +14,10 @@ ambient_light_source = 2
 ambient_light_color = Color(0.35253242, 0.30506206, 0.3793383, 1)
 
 [sub_resource type="BoxMesh" id="BoxMesh_e2t8q"]
-size = Vector3(150, 80, 60)
+size = Vector3(150, 80, 109.455)
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_t4r27"]
+radius = 7.3774805
 
 [sub_resource type="Animation" id="Animation_qx0r3"]
 length = 0.001
@@ -333,41 +336,59 @@ results_camera = NodePath("../ResultsCamera")
 
 [node name="Map" parent="Environment" unique_id=1967604999 instance=ExtResource("1_gshku")]
 
-[node name="st_211_map_Mesh_0000" parent="Environment/Map" index="0" unique_id=132837179]
+[node name="st_211_map_Mesh_0000" parent="Environment/Map" index="0" unique_id=1607671330]
 layers = 4
 
-[node name="st_211_map_Mesh_0004" parent="Environment/Map" index="1" unique_id=1943951568]
+[node name="st_211_map_Mesh_0004" parent="Environment/Map" index="1" unique_id=481877817]
 layers = 4
 
-[node name="st_211_map_Mesh_0005" parent="Environment/Map" index="2" unique_id=56755636]
+[node name="st_211_map_Mesh_0005" parent="Environment/Map" index="2" unique_id=777578480]
 layers = 4
 
-[node name="st_211_map_Mesh_0006" parent="Environment/Map" index="3" unique_id=247984539]
+[node name="st_211_map_Mesh_0006" parent="Environment/Map" index="3" unique_id=1853616418]
 layers = 4
 
-[node name="st_211_map_Mesh_0007" parent="Environment/Map" index="4" unique_id=1285133228]
+[node name="st_211_map_Mesh_0007" parent="Environment/Map" index="4" unique_id=126147328]
 layers = 4
 
-[node name="st_211_map_Mesh_0016" parent="Environment/Map" index="5" unique_id=808240719]
+[node name="st_211_map_Mesh_0016" parent="Environment/Map" index="5" unique_id=2088823933]
 layers = 4
 
-[node name="st_211_map_Mesh_0020" parent="Environment/Map" index="6" unique_id=1045021345]
+[node name="st_211_map_Mesh_0020" parent="Environment/Map" index="6" unique_id=1761321913]
 layers = 4
 
-[node name="st_211_map_Mesh_0022" parent="Environment/Map" index="7" unique_id=962933978]
+[node name="st_211_map_Mesh_0022" parent="Environment/Map" index="7" unique_id=796824408]
 layers = 4
 
-[node name="st_211_map_Mesh_0024" parent="Environment/Map" index="8" unique_id=2053829270]
+[node name="st_211_map_Mesh_0024" parent="Environment/Map" index="8" unique_id=673078865]
 layers = 4
 
-[node name="st_211_map_Mesh_0025" parent="Environment/Map" index="9" unique_id=619613594]
+[node name="st_211_map_Mesh_0025" parent="Environment/Map" index="9" unique_id=367604698]
 layers = 4
 
 [node name="CandleLightsL" parent="Environment/Map" unique_id=1156450227 instance=ExtResource("5_1qa36")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -32.9, 65.6, -51.2)
 
+[node name="CandleBloomMesh" parent="Environment/Map/CandleLightsL" index="1" unique_id=213102181]
+visible = false
+
+[node name="Flames" parent="Environment/Map/CandleLightsL" index="2" unique_id=675727139]
+visible = false
+
+[node name="Light" parent="Environment/Map/CandleLightsL" index="3" unique_id=102281228]
+visible = false
+
 [node name="CandleLightsR" parent="Environment/Map" unique_id=548664349 instance=ExtResource("5_1qa36")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 33.600002, 65.6, -51.2)
+
+[node name="CandleBloomMesh" parent="Environment/Map/CandleLightsR" index="1" unique_id=213102181]
+visible = false
+
+[node name="Flames" parent="Environment/Map/CandleLightsR" index="2" unique_id=675727139]
+visible = false
+
+[node name="Light" parent="Environment/Map/CandleLightsR" index="3" unique_id=102281228]
+visible = false
 
 [node name="MainLight" type="DirectionalLight3D" parent="Environment/Map" unique_id=1502729911]
 transform = Transform3D(1, 0, 0, 0, 0.6427876, 0.7660445, 0, -0.7660445, 0.6427876, 0, 20, 0)
@@ -395,32 +416,58 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 50, 0, 0)
 environment = SubResource("Environment_e2t8q")
 
 [node name="Shadow" type="CSGMesh3D" parent="Environment" unique_id=438679061]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 40.2, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 40.2, -3.090744)
 material_override = ExtResource("3_qx0r3")
 cast_shadow = 0
 flip_faces = true
 mesh = SubResource("BoxMesh_e2t8q")
 
 [node name="Spotlight1" parent="Environment/Shadow" unique_id=588222927 instance=ExtResource("4_qx0r3")]
-transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -50, 0, -30)
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -50, 0, -56.005844)
 layers = 1024
+
+[node name="Area3DP1" type="Area3D" parent="Environment/Shadow/Spotlight1" unique_id=1436229903]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Environment/Shadow/Spotlight1/Area3DP1" unique_id=1795097121]
+shape = SubResource("SphereShape3D_t4r27")
+debug_color = Color(0.23282772, 0.63723266, 0, 1)
 
 [node name="Spotlight2" parent="Environment/Shadow" unique_id=288984128 instance=ExtResource("4_qx0r3")]
-transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -17, 0, -30)
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -17, 0, -56.005844)
 layers = 1024
+
+[node name="Area3DP2" type="Area3D" parent="Environment/Shadow/Spotlight2" unique_id=1751434409]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Environment/Shadow/Spotlight2/Area3DP2" unique_id=1663433474]
+shape = SubResource("SphereShape3D_t4r27")
+debug_color = Color(0.23282772, 0.63723266, 0, 1)
 
 [node name="Spotlight3" parent="Environment/Shadow" unique_id=1815259168 instance=ExtResource("4_qx0r3")]
-transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 16, 0, -30)
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 16, 0, -56.005844)
 layers = 1024
 
+[node name="Area3DP3" type="Area3D" parent="Environment/Shadow/Spotlight3" unique_id=917779036]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Environment/Shadow/Spotlight3/Area3DP3" unique_id=1716309394]
+shape = SubResource("SphereShape3D_t4r27")
+debug_color = Color(0.23282772, 0.63723266, 0, 1)
+
 [node name="Spotlight4" parent="Environment/Shadow" unique_id=173599378 instance=ExtResource("4_qx0r3")]
-transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 46, 0, -30)
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 46, 0, -56.005844)
 layers = 1024
+
+[node name="Area3DP4" type="Area3D" parent="Environment/Shadow/Spotlight4" unique_id=264675923]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Environment/Shadow/Spotlight4/Area3DP4" unique_id=1486918424]
+shape = SubResource("SphereShape3D_t4r27")
+debug_color = Color(0.23282772, 0.63723266, 0, 1)
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="Environment" unique_id=1716271743]
 libraries/ = SubResource("AnimationLibrary_1x6en")
 
 [node name="GameplayCamera" type="Camera3D" parent="." unique_id=1881580446]
+transform = Transform3D(1, 0, 0, 0, 0.97098887, -0.23912486, 0, 0.23912486, 0.97098887, 0, 9.543303, 25.45449)
+fov = 55.8
 
 [node name="ResultsCamera" type="Camera3D" parent="." unique_id=121678800]
 
