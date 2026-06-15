@@ -15,6 +15,7 @@
 [ext_resource type="AudioStream" uid="uid://bl34mkpsytitx" path="res://party/scene/minigame/16 treasure box/sound/coin 2.wav" id="12_awuup"]
 [ext_resource type="AudioStream" uid="uid://br0cpp5evvkqk" path="res://party/scene/minigame/16 treasure box/sound/coin 3.wav" id="13_yqy2d"]
 [ext_resource type="AudioStream" uid="uid://br8lby6ut1r6u" path="res://party/scene/minigame/16 treasure box/sound/coin 4.wav" id="14_3u1pb"]
+[ext_resource type="Script" uid="uid://ds056nimfywwr" path="res://party/script/core/rollback_timer.gd" id="16_yqy2d"]
 
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_gdgwk"]
 height = 6.0
@@ -205,7 +206,7 @@ _data = {
 &"pickup": SubResource("Animation_if4cr")
 }
 
-[node name="Chest" type="RigidBody3D" unique_id=1990958956 node_paths=PackedStringArray("animator", "debug_label", "throw_sfx", "shake_sfx", "coin_sfx", "coin_spawn_pos")]
+[node name="Chest" type="RigidBody3D" unique_id=1990958956 node_paths=PackedStringArray("animator", "debug_label", "throw_sfx", "shake_sfx", "coin_sfx", "coin_spawn_pos", "rollback_timer")]
 collision_layer = 16
 collision_mask = 18
 gravity_scale = 10.0
@@ -222,6 +223,7 @@ throw_sfx = NodePath("SFX/Throw")
 shake_sfx = NodePath("SFX/Shake")
 coin_sfx = [NodePath("SpatialSFX/Coin1"), NodePath("SpatialSFX/Coin2"), NodePath("SpatialSFX/Coin3"), NodePath("SpatialSFX/Coin4")]
 coin_spawn_pos = NodePath("CoinSpawnPosition")
+rollback_timer = NodePath("RollbackTimer")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=2126557322]
 transform = Transform3D(-4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0, 1, 0, 2.5, 0)
@@ -280,6 +282,7 @@ draw_pass_1 = SubResource("QuadMesh_gwgyu")
 
 [node name="DebugLabel" type="Label3D" parent="." unique_id=1654577420]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 10.280496, 0)
+visible = false
 modulate = Color(0, 1, 0, 1)
 text = "0"
 font_size = 763
@@ -359,6 +362,12 @@ attenuation_model = 3
 volume_db = 3.0
 panning_strength = 3.0
 bus = &"GAME SFX"
+
+[node name="RollbackTimer" type="Node" parent="." unique_id=535091791]
+script = ExtResource("16_yqy2d")
+enable_lag_compensation = false
+rollback_interval = 0.1
+metadata/_custom_type_script = "uid://ds056nimfywwr"
 
 [connection signal="body_entered" from="." to="." method="_on_body_entered"]
 

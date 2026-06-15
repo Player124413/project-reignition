@@ -44,9 +44,6 @@ func on_minigame_finished() -> void:
 		MinigameManager.instance.register_completed_player()
 		return
 	
-	if !is_multiplayer_authority():
-		return
-	
 	await get_tree().create_timer(0.1, false, true).timeout
 	character_animator.call_deferred("play_animation", get_anim_prefix() + "lift-wait", true)
 	current_chest.rotation = Vector3.ZERO # Reset chest rotation
@@ -117,16 +114,16 @@ func process_animation_event(event: int) -> void:
 			if is_multiplayer_authority() && is_cpu():
 				cpu_shakes_left -= 1
 	elif event == ANIM_EMPTY:
-		if is_instance_valid(current_chest) && is_multiplayer_authority():
+		if is_instance_valid(current_chest):
 			if current_chest.num_coins == 0:
 				request_throw()
 			else:
 				empty_coin()
-				await get_tree().create_timer(0.2).timeout
-				MinigameManager.instance.request_score_change(player_index, 1)
+				if is_multiplayer_authority():
+					await get_tree().create_timer(0.2).timeout
+					MinigameManager.instance.request_score_change(player_index, 1)
 
 const COIN_EMPTY_VELOCITY : float = 10.0
-@rpc("any_peer", "call_local", "reliable")
 func empty_coin() -> void:
 	current_chest.play_shake_sfx()
 	current_chest.num_coins -= 1

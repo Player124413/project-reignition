@@ -6,6 +6,8 @@ class_name TreasureBoxChest extends RigidBody3D
 @export var shake_sfx : GroupSfxPlayer
 @export var coin_sfx : Array[AudioStreamPlayer3D]
 @export var coin_spawn_pos : Node3D
+@export var rollback_timer : RollbackTimer
+
 var _original_parent : Node
 
 ## The bone attachment this chest is connected to.
@@ -20,6 +22,25 @@ func spawn() -> void:
 	freeze = false
 	_original_parent = get_parent()
 	debug_label.text = str(num_coins)
+	rollback_timer.register_target(self)
+
+func _physics_process(_delta: float) -> void:
+	if is_multiplayer_authority():
+		process_rollback()
+
+#####################
+### ROLLBACK CODE ###
+#####################
+const RB_TRANSFORM : int = 0
+const RB_VEL : int = 1
+func on_rollback_applied(rb_params : Array) -> void:
+	global_transform = rb_params[RB_TRANSFORM]
+	linear_velocity = rb_params[RB_VEL]
+
+func process_rollback() -> void:
+	rollback_timer.set_param(RB_TRANSFORM, global_transform)
+	rollback_timer.set_param(RB_VEL, linear_velocity)
+	rollback_timer.process_rollback()
 
 func despawn() -> void:
 	if !is_instance_valid(current_player):
@@ -84,7 +105,7 @@ func _on_body_entered(body : Node) -> void:
 			remove_collision_exception_with(exception)
 		return
 	
-	if !is_thrown || !is_multiplayer_authority():
+	if !is_thrown:
 		return
 	
 	var player : Node = body.get_parent()
