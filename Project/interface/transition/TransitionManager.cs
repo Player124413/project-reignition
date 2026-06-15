@@ -140,7 +140,7 @@ public partial class TransitionManager : Node
 
 	private float loadTime;
 	/// <summary> After this amount of time, the game will attempt to restart loading. </summary>
-	private readonly float LoadTimeoutLength = 5f;
+	private readonly float LoadTimeoutLength = 3f;
 
 	private async void ApplySceneChange()
 	{
@@ -155,17 +155,17 @@ public partial class TransitionManager : Node
 			if (CurrentTransitionData.loadAsynchronously)
 			{
 				loadTime = 0f;
-				while (ResourceLoader.LoadThreadedGetStatus(QueuedScene) == ResourceLoader.ThreadLoadStatus.InProgress)
+				ResourceLoader.ThreadLoadStatus status = ResourceLoader.LoadThreadedGetStatus(QueuedScene);
+				while (status != ResourceLoader.ThreadLoadStatus.Loaded)
 				{
 					await ToSignal(GetTree().CreateTimer(.1f), SceneTreeTimer.SignalName.Timeout); // Still loading; wait a bit
+					status = ResourceLoader.LoadThreadedGetStatus(QueuedScene);
 					loadTime += .1f;
-					if (loadTime > LoadTimeoutLength)
+					if (loadTime > LoadTimeoutLength || status != ResourceLoader.ThreadLoadStatus.InProgress)
 					{
-						GD.Print("Infinite loading from async subthreads detected. Sending another request.");
-						// Possible infinite loading due to multi-threads. Try loading again.
-						QueueSceneChange(Instance.QueuedScene);
-						CurrentTransitionData.ClearInSpeed();
-						StartTransition(CurrentTransitionData);
+						// Forget async loading
+						GD.Print("Infinite Loading Detected. Force switching.");
+						GetTree().ChangeSceneToFile(QueuedScene);
 						return;
 					}
 				}
@@ -248,7 +248,4 @@ public struct TransitionData
 	public bool loadAsynchronously;
 	public bool disableAutoTransition;
 	public bool showMissionDescription;
-
-	/// <summary> Sets the in speed to 0. Used to fix infinite loading. </summary>
-	public void ClearInSpeed() => inSpeed = 0;
 }
