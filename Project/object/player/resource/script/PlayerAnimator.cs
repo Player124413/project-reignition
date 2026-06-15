@@ -81,6 +81,10 @@ public partial class PlayerAnimator : Node3D
 	public void PlayCountdown()
 	{
 		PlayOneshotAnimation(SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.QuickStart) ? CountdownShortAnimation : CountdownAnimation);
+		if (SaveManager.ActiveGameData.IsWorldUnlocked(SaveManager.WorldEnum.SandOasis))
+			eventAnimationPlayer.Play(SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.QuickStart) ? "countdown-fire-short" : "countdown-fire-long");
+		else // Special intro animation without the flame
+			eventAnimationPlayer.Play(SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.QuickStart) ? "countdown-flameless-short" : "countdown-flameless-long");
 
 		// Prevent sluggish transitions into gameplay
 		DisabledSpeedSmoothing = true;
