@@ -10,6 +10,23 @@ var SETTINGS: Array[Dictionary] = [
 		"value": true,
 		"type": TYPE_BOOL
 	},
+	{
+		"name": "netfox/general/use_raw_commands",
+		"value": false,
+		"type": TYPE_BOOL
+	},
+	{
+		# Very conservative packet size limit, source:
+		# https://stackoverflow.com/a/35697810
+		"name": "netfox/general/max_sync_packet_size",
+		"value": 508,
+		"type": TYPE_INT
+	},
+	{
+		"name": "netfox/general/supress_identity_peer_disconnected_warning",
+		"value": false,
+		"type": TYPE_BOOL
+	},
 	# Logging
 	NetfoxLogger._make_setting("netfox/logging/netfox_log_level"),
 	# Time settings
@@ -113,9 +130,39 @@ var SETTINGS: Array[Dictionary] = [
 		"hint_string": "0,4,or_greater"
 	},
 	{
+		"name": "netfox/rollback/enable_input_broadcast",
+		"value": false,
+		"type": TYPE_BOOL
+	},
+	{
 		"name": "netfox/rollback/enable_diff_states",
 		"value": true,
 		"type": TYPE_BOOL
+	},
+	{
+		"name": "netfox/rollback/full_state_interval",
+		"value": 24,
+		"type": TYPE_INT,
+		"hint": PROPERTY_HINT_RANGE,
+		"hint_string": "0,60,or_greater"
+	},
+	# StateSynchronizer
+	{
+		"name": "netfox/state_synchronizer/enable_diff_states",
+		"value": true,
+		"type": TYPE_BOOL
+	},
+	{
+		"name": "netfox/state_synchronizer/history_limit",
+		"value": 64,
+		"type": TYPE_INT
+	},
+	{
+		"name": "netfox/state_synchronizer/full_state_interval",
+		"value": 24,
+		"type": TYPE_INT,
+		"hint": PROPERTY_HINT_RANGE,
+		"hint_string": "0,60,or_greater"
 	},
 	# Events
 	{
@@ -145,6 +192,30 @@ const AUTOLOADS: Array[Dictionary] = [
 	{
 		"name": "NetworkPerformance",
 		"path": ROOT + "/network-performance.gd"
+	},
+	{
+		"name": "RollbackSimulationServer",
+		"path": ROOT + "/servers/rollback-simulation-server.gd"
+	},
+	{
+		"name": "NetworkHistoryServer",
+		"path": ROOT + "/servers/network-history-server.gd"
+	},
+	{
+		"name": "NetworkSynchronizationServer",
+		"path": ROOT + "/servers/network-synchronization-server.gd"
+	},
+	{
+		"name": "NetworkIdentityServer",
+		"path": ROOT + "/servers/network-identity-server.gd"
+	},
+	{
+		"name": "NetworkCommandServer",
+		"path": ROOT + "/servers/network-command-server.gd"
+	},
+	{
+		"name": "RollbackLivenessServer",
+		"path": ROOT + "/servers/rollback-liveness-server.gd"
 	}
 ]
 
@@ -173,15 +244,22 @@ const TYPES: Array[Dictionary] = [
 		"script": ROOT + "/rewindable-action.gd",
 		"icon": ROOT + "/icons/rewindable-action.svg"
 	},
+	{
+		"name": "PredictiveSynchronizer",
+		"base": "Node",
+		"script": ROOT + "/rollback/predictive-synchronizer.gd",
+		"icon": ROOT + "/icons/predictive-synchronizer.svg"
+	},
 ]
 
 func _enter_tree():
 	for setting in SETTINGS:
 		add_setting(setting)
-	
+
 	for autoload in AUTOLOADS:
-		add_autoload_singleton(autoload.name, autoload.path)
-	
+		if not has_autoload(autoload.name):
+			add_autoload_singleton(autoload.name, autoload.path)
+
 	for type in TYPES:
 		add_custom_type(type.name, type.base, load(type.script), load(type.icon))
 
@@ -189,10 +267,11 @@ func _exit_tree() -> void:
 	if ProjectSettings.get_setting(&"netfox/general/clear_settings", false):
 		for setting in SETTINGS:
 			remove_setting(setting)
-	
+
 	for autoload in AUTOLOADS:
-		remove_autoload_singleton(autoload.name)
-	
+		if has_autoload(autoload.name):
+			remove_autoload_singleton(autoload.name)
+
 	for type in TYPES:
 		remove_custom_type(type.name)
 
@@ -212,5 +291,8 @@ func add_setting(setting: Dictionary) -> void:
 func remove_setting(setting: Dictionary) -> void:
 	if not ProjectSettings.has_setting(setting.name):
 		return
-	
+
 	ProjectSettings.clear(setting.name)
+
+func has_autoload(name: String) -> bool:
+	return ProjectSettings.has_setting("autoload/" + name)

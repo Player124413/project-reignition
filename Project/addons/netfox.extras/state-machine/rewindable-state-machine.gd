@@ -9,9 +9,8 @@ class_name RewindableStateMachine
 ## are only triggered by gameplay code, and not by rollback reverting to an
 ## earlier state.
 ## [br][br]
-## For this node to work correctly, a [RollbackSynchronizer] must be added as
-## a sibling, and it must have the [RewindableStateMachine]'s [member state]
-## property configured as a state property.
+## For this node to work correctly, a [RollbackSynchronizer] must have the
+## [RewindableStateMachine]'s [member state] property configured as a state property.
 ## [br][br]
 ## To implement states, extend the [RewindableState] class and add it as a child
 ## node.
@@ -34,7 +33,7 @@ class_name RewindableStateMachine
 ## means it may be emitted multiple times for the same transition if it gets
 ## resimulated during rollback.
 ## [br][br]
-## [b]State changes are not necessarily emitted on all peers.[/b]
+## [b]State changes are not necessarily emitted on all peers.[/b][br]
 ## See: [url=https://foxssake.github.io/netfox/netfox.extras/guides/rewindable-state-machine/#caveats]RewindableStateMachine caveats[/url]
 signal on_state_changed(old_state: RewindableState, new_state: RewindableState)
 
@@ -83,14 +82,14 @@ func transition(new_state_name: StringName) -> bool:
 	if from_state:
 		if !new_state.can_enter(_state_object):
 			return false
-		
+
 		# Emit exit signal, allow handlers to prevent transition
 		_state_object.on_exit.emit(new_state, NetworkRollback.tick, _prevent_callable)
 		if _prevent_transition: return false
 
 	new_state.on_enter.emit(from_state, NetworkRollback.tick, _prevent_callable)
 	if _prevent_transition: return false
-	
+
 	# Transition valid, run callbacks
 	if is_instance_valid(from_state):
 		from_state.exit(new_state, NetworkRollback.tick)
@@ -108,7 +107,7 @@ func transition(new_state_name: StringName) -> bool:
 ## manually to force an update.
 func update_states() -> void:
 	_available_states.clear()
-	
+
 	for child in find_children("*", "RewindableState", false):
 		_available_states[child.name] = child
 

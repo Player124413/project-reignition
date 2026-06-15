@@ -1,6 +1,8 @@
 extends Node
 class_name _NetworkPerformance
 
+# @public class
+
 const NETWORK_LOOP_DURATION_MONITOR: StringName = &"netfox/Network loop duration (ms)"
 const ROLLBACK_LOOP_DURATION_MONITOR: StringName = &"netfox/Rollback loop duration (ms)"
 const NETWORK_TICKS_MONITOR: StringName = &"netfox/Network ticks simulated"
@@ -38,14 +40,14 @@ static var _logger: NetfoxLogger = NetfoxLogger._for_netfox("NetworkPerformance"
 
 ## Check if performance monitoring is enabled.
 ## [br][br]
-## By default, monitoring is only enabled in debug builds 
+## By default, monitoring is only enabled in debug builds
 ## ( see [method OS.is_debug_build] ). [br]
 ## Can be forced on with the [code]netfox_perf[/code] feature tag. [br]
 ## Can be forced off with the [code]netfox_noperf[/code] feature tag.
 func is_enabled() -> bool:
 	if OS.has_feature("netfox_noperf"):
 		return false
-	
+
 	if OS.has_feature("netfox_perf"):
 		return true
 
@@ -106,11 +108,17 @@ func get_sent_state_props_ratio() -> float:
 func push_full_state(state: Dictionary) -> void:
 	_full_state_props_accum += state.size()
 
+func push_full_state_props(count: int) -> void:
+	_full_state_props_accum += count
+
 func push_full_state_broadcast(state: Dictionary) -> void:
 	_full_state_props_accum += state.size() * (multiplayer.get_peers().size() - 1)
 
 func push_sent_state(state: Dictionary) -> void:
 	_sent_state_props_accum += state.size()
+
+func push_sent_state_props(count: int) -> void:
+	_sent_state_props_accum += count
 
 func push_sent_state_broadcast(state: Dictionary) -> void:
 	_sent_state_props_accum += state.size() * (multiplayer.get_peers().size() - 1)
@@ -128,15 +136,15 @@ func _ready() -> void:
 	Performance.add_custom_monitor(ROLLBACK_TICK_DURATION_MONITOR, get_rollback_tick_duration_ms)
 	Performance.add_custom_monitor(ROLLBACK_NODES_SIMULATED_MONITOR, get_rollback_nodes_simulated)
 	Performance.add_custom_monitor(ROLLBACK_NODES_SIMULATED_PER_TICK_MONITOR, get_rollback_nodes_simulated_per_tick)
-	
+
 	Performance.add_custom_monitor(FULL_STATE_PROPERTIES_COUNT, get_full_state_props_count)
 	Performance.add_custom_monitor(SENT_STATE_PROPERTIES_COUNT, get_sent_state_props_count)
 	Performance.add_custom_monitor(SENT_STATE_PROPERTIES_RATIO, get_sent_state_props_ratio)
-	
+
 	NetworkTime.before_tick_loop.connect(_before_tick_loop)
 	NetworkTime.on_tick.connect(_on_network_tick)
 	NetworkTime.after_tick_loop.connect(_after_tick_loop)
-	
+
 	NetworkRollback.before_loop.connect(_before_rollback_loop)
 	NetworkRollback.on_process_tick.connect(_on_rollback_tick)
 	NetworkRollback.after_loop.connect(_after_rollback_loop)
@@ -151,10 +159,10 @@ func _on_network_tick(_dt, _t) -> void:
 func _after_tick_loop() -> void:
 	_network_loop_duration = _time() - _network_loop_start
 	_network_ticks = _network_ticks_accum
-	
+
 	_full_state_props = _full_state_props_accum
 	_full_state_props_accum = 0
-	
+
 	_sent_state_props = _sent_state_props_accum
 	_sent_state_props_accum = 0
 

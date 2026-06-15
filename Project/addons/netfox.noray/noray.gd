@@ -1,7 +1,11 @@
 extends Node
+class_name _Noray
+
+# @public class
+
 ## A noray client for Godot.
 ##
-## See: https://github.com/foxssake/noray
+## See: [url]https://github.com/foxssake/noray[/url]
 
 var _peer: StreamPeerTCP = StreamPeerTCP.new()
 var _protocol: NorayProtocolHandler = NorayProtocolHandler.new()
@@ -13,26 +17,26 @@ var _local_port: int = -1
 static var _logger: NetfoxLogger = NetfoxLogger._for_noray("Noray")
 
 ## Open ID.
-##
+## [br][br]
 ## [i]read-only[/i], this is set after registering as host.
 var oid: String:
 	get: return _oid
 	set(v): push_error("Trying to set read-only variable oid")
 
 ## Private ID.
-##
+## [br][br]
 ## [i]read-only[/i], this is set after registering as host.
 var pid: String:
 	get: return _pid
 	set(v): push_error("Trying to set read-only variable pid")
 
 ## Registered local port.
-##
-## This is the port that servers should listen on and the port that clients 
-## should bind to ( i.e. use as local port ), since this port has been 
+## [br][br]
+## This is the port that servers should listen on and the port that clients
+## should bind to ( i.e. use as local port ), since this port has been
 ## registered with noray as part of this machine's external address, and this
 ## is the port over which any handshake happens.
-##
+## [br][br]
 ## [i]read-only[/i], this is set after registering remote.
 var local_port: int:
 	get: return _local_port
@@ -69,21 +73,21 @@ func connect_to_host(address: String, port: int = 8890) -> Error:
 		disconnect_from_host()
 
 	_logger.info("Trying to connect to noray at %s:%s", [address, port])
-	
+
 	address = IP.resolve_hostname(address, IP.TYPE_IPV4)
 	_logger.debug("Resolved noray host to %s", [address])
-	
+
 	var err = _peer.connect_to_host(address, port)
 	if err != Error.OK:
 		return err
-		
+
 	_peer.set_no_delay(true)
 	_protocol.reset()
-	
+
 	while _peer.get_status() < 2:
 		_peer.poll()
 		await get_tree().process_frame
-	
+
 	if _peer.get_status() == _peer.STATUS_CONNECTED:
 		_address = address
 		_logger.info("Connected to noray at %s:%s", [address, port])
@@ -99,7 +103,7 @@ func is_connected_to_host() -> bool:
 	return _peer.get_status() == _peer.STATUS_CONNECTED
 
 ## Disconnect from noray.
-##
+## [br][br]
 ## Does nothing if already disconnected.
 func disconnect_from_host():
 	if is_connected_to_host():
@@ -114,7 +118,7 @@ func register_host() -> Error:
 func register_remote(registrar_port: int = 8809, timeout: float = 8, interval: float = 0.1) -> Error:
 	if not is_connected_to_host():
 		return ERR_CONNECTION_ERROR
-		
+
 	if not pid:
 		return ERR_UNAUTHORIZED
 
@@ -122,14 +126,14 @@ func register_remote(registrar_port: int = 8809, timeout: float = 8, interval: f
 	var udp = PacketPeerUDP.new()
 	udp.bind(0)
 	udp.set_dest_address(_address, registrar_port)
-	
+
 	_logger.debug("Bound UDP to port %s", [udp.get_local_port()])
-	
+
 	var packet = pid.to_utf8_buffer()
-	
+
 	while timeout > 0:
 		udp.put_packet(packet)
-		
+
 		while udp.get_available_packet_count() > 0:
 			var recv = udp.get_packet().get_string_from_utf8()
 			if recv == "OK":
@@ -146,7 +150,7 @@ func register_remote(registrar_port: int = 8809, timeout: float = 8, interval: f
 		# Sleep
 		await get_tree().create_timer(interval).timeout
 		timeout -= interval
-	
+
 	udp.close()
 	return result
 
@@ -162,20 +166,17 @@ func _process(_delta):
 	if not is_connected_to_host():
 		return
 
-	var error : Error = _peer.poll()
-	if _peer.get_status() != StreamPeerTCP.STATUS_CONNECTED || error != OK:
-		return
-	
+	_peer.poll()
 	var available = _peer.get_available_bytes()
 	if available <= 0:
 		return
-	
+
 	_protocol.ingest(_peer.get_utf8_string(available))
 
 func _put_command(command: String, data = null) -> Error:
 	if not is_connected_to_host():
 		return ERR_CONNECTION_ERROR
-		
+
 	if data != null:
 		_peer.put_data(("%s %s\n" % [command, data]).to_utf8_buffer())
 	else:

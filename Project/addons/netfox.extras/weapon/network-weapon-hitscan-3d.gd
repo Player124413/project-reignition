@@ -20,7 +20,7 @@ var _weapon: _NetworkWeaponProxy
 func fire() -> bool:
 	if not can_fire():
 		return false
-	
+
 	_apply_data(_get_data())
 	_after_fire()
 	return true
@@ -43,19 +43,22 @@ func _init():
 	_weapon.c_is_reconcilable = _is_reconcilable
 	_weapon.c_reconcile = _reconcile
 
+# @public method
 ## Override this method with your own can fire logic.
 ## [br][br]
 ## See [NetworkWeapon].
 func _can_fire() -> bool:
 	return true
 
+# @public method
 ## Override this method to check if a given peer can use this weapon.
 ## [br][br]
 ## See [NetworkWeapon].
 func _can_peer_use(peer_id: int) -> bool:
 	return true
 
-## Override this method to run any logic needed after successfully firing the 
+# @public method
+## Override this method to run any logic needed after successfully firing the
 ## weapon.
 ## [br][br]
 ## See [NetworkWeapon].

@@ -1,12 +1,14 @@
 extends Node
 class_name _NetworkTime
 
+# @public class
+
 ## This class handles timing.
 ##
 ## @tutorial(NetworkTime Guide): https://foxssake.github.io/netfox/latest/netfox/guides/network-time/
 
 ## Number of ticks per second.
-##
+## [br][br]
 ## [i]read-only[/i], you can change this in the project settings
 var tickrate: int:
 	get:
@@ -18,10 +20,10 @@ var tickrate: int:
 		push_error("Trying to set read-only variable tickrate")
 
 ## Whether to sync the network ticks to physics updates.
-##
-## When set to true, tickrate will be the same as the physics ticks per second, 
+## [br][br]
+## When set to true, tickrate will be the same as the physics ticks per second,
 ## and the network tick loop will be run inside the physics update process.
-##
+## [br][br]
 ## [i]read-only[/i], you can change this in the project settings
 var sync_to_physics: bool:
 	get:
@@ -30,13 +32,13 @@ var sync_to_physics: bool:
 		push_error("Trying to set read-only variable sync_to_physics")
 
 ## Maximum number of ticks to simulate per frame.
-##
+## [br][br]
 ## If the game itself runs slower than the configured tickrate, multiple ticks
 ## will be run in a single go. However, to avoid an endless feedback loop of
-## running too many ticks in a frame, which makes the game even slower, which 
+## running too many ticks in a frame, which makes the game even slower, which
 ## results in even more ticks and so on, this setting is an upper limit on how
 ## many ticks can be simulated in a single go.
-##
+## [br][br]
 ## [i]read-only[/i], you can change this in the project settings
 var max_ticks_per_frame: int:
 	get:
@@ -45,19 +47,19 @@ var max_ticks_per_frame: int:
 		push_error("Trying to set read-only variable max_ticks_per_frame")
 
 ## Current network time in seconds.
-##
+## [br][br]
 ## Time is measured from the start of NetworkTime, in practice this is often the
 ## time from the server's start.
-##
+## [br][br]
 ## Use this value in cases where timestamps need to be shared with the server.
-##
-## [i]Note:[/i] Time is continuously synced with the server. If the difference 
+## [br][br]
+## [i]Note:[/i] Time is continuously synced with the server. If the difference
 ## between local and server time is above a certain threshold, this value will
 ## be adjusted.
-##
-## See [NetworkTimeSynchronizer].
+## [br][br]
+## See [_NetworkTimeSynchronizer].
 ## See the setting [code]"netfox/time/recalibrate_threshold"[/code].
-##
+## [br][br]
 ## [i]read-only[/i]
 var time: float:
 	get:
@@ -66,19 +68,19 @@ var time: float:
 		push_error("Trying to set read-only variable time")
 
 ## Current network time in ticks.
-##
+## [br][br]
 ## Time is measured from the start of NetworkTime, in practice this is often the
 ## time from the server's start.
-##
+## [br][br]
 ## Use this value in cases where timestamps need to be shared with the server.
-##
-## [i]Note:[/i] Time is continuously synced with the server. If the difference 
+## [br][br]
+## [i]Note:[/i] Time is continuously synced with the server. If the difference
 ## between local and server time is above a certain threshold, this value will
 ## be adjusted.
-##
-## See [NetworkTimeSynchronizer].
+## [br][br]
+## See [_NetworkTimeSynchronizer].
 ## See the setting [code]"netfox/time/recalibrate_threshold"[/code].
-##
+## [br][br]
 ## [i]read-only[/i]
 var tick: int:
 	get:
@@ -87,8 +89,8 @@ var tick: int:
 		push_error("Trying to set read-only variable tick")
 
 ## Threshold before recalibrating [member tick] and [member time].
-##
-## Time is continuously synced to the server. In case the time difference is 
+## [br][br]
+## Time is continuously synced to the server. In case the time difference is
 ## excessive between local and the server, both [code]tick[/code] and
 ## [code]time[/code] will be reset to the estimated server values.
 ## [br][br]
@@ -105,7 +107,7 @@ var recalibrate_threshold: float:
 		push_error("Trying to set read-only variable recalibrate_threshold")
 
 ## Seconds required to pass before considering the game stalled.
-##
+## [br][br]
 ## If the game becomes unresponsive for some time - e.g. it becomes minimized,
 ## unfocused, or freezes -, the game time needs to be readjusted. These stalls
 ## are detected by checking how much time passes between frames. If it's more
@@ -118,8 +120,8 @@ var stall_threshold: float:
 		push_error("Trying to set read-only variable stall_threshold")
 
 ## Current network time in ticks on the server.
-##
-## This is value is only an estimate, and is regularly updated. This means that 
+## [br][br]
+## This is value is only an estimate, and is regularly updated. This means that
 ## this value can and probably will change depending on network conditions.
 ## [br][br]
 ## [i]read-only[/i]
@@ -132,8 +134,8 @@ var remote_tick: int:
 		push_error("Trying to set read-only variable remote_tick")
 
 ## Current network time in seconds on the server.
-##
-## This is value is only an estimate, and is regularly updated. This means that 
+## [br][br]
+## This is value is only an estimate, and is regularly updated. This means that
 ## this value can and probably will change depending on network conditions.
 ## [br][br]
 ## [i]read-only[/i]
@@ -146,9 +148,9 @@ var remote_time: float:
 		push_error("Trying to set read-only variable remote_time")
 
 ## Estimated roundtrip time to server.
-##
-## This value is updated regularly, during server time sync. Latency can be 
-## estimated as half of the roundtrip time. Returns the same as [member 
+## [br][br]
+## This value is updated regularly, during server time sync. Latency can be
+## estimated as half of the roundtrip time. Returns the same as [member
 ## _NetworkTimeSynchronizer.rtt].
 ## [br][br]
 ## Will always be 0 on servers.
@@ -161,9 +163,9 @@ var remote_rtt: float:
 		push_error("Trying to set read-only variable remote_rtt")
 
 ## Current network time in ticks.
-##
+## [br][br]
 ## On clients, this value is synced to the server [i]only once[/i] when joining
-## the game. After that, it will increase monotonically, incrementing every 
+## the game. After that, it will increase monotonically, incrementing every
 ## single tick.
 ## [br][br]
 ## When hosting, this value is simply the number of ticks since game start.
@@ -181,9 +183,9 @@ var local_tick: int:
 		push_error("Trying to set read-only variable local_tick")
 
 ## Current network time in seconds.
-##
+## [br][br]
 ## On clients, this value is synced to the server [i]only once[/i] when joining
-## the game. After that, it will increase monotonically, incrementing every 
+## the game. After that, it will increase monotonically, incrementing every
 ## single tick.
 ## [br][br]
 ## When hosting, this value is simply the seconds elapsed since game start.
@@ -199,12 +201,12 @@ var local_time: float:
 		return time
 	set(v):
 		push_error("Trying to set read-only variable local_time")
-		
+
 
 ## Amount of time a single tick takes, in seconds.
-##
+## [br][br]
 ## This is the reverse of tickrate
-##
+## [br][br]
 ## [i]read-only[/i]
 var ticktime: float:
 	get:
@@ -213,11 +215,11 @@ var ticktime: float:
 		push_error("Trying to set read-only variable ticktime")
 
 ## Percentage of where we are in time for the current tick.
-##
+## [br][br]
 ## 0.0 - the current tick just happened[br]
 ## 0.5 - we're halfway to the next tick[br]
 ## 1.0 - the next tick is right about to be simulated[br]
-##
+## [br][br]
 ## [i]read-only[/i]
 var tick_factor: float:
 	get:
@@ -229,21 +231,21 @@ var tick_factor: float:
 		push_error("Trying to set read-only variable tick_factor")
 
 ## Multiplier to get from physics process speeds to tick speeds.
-##
+## [br][br]
 ## Some methods, like CharacterBody's move_and_slide take velocity in units/sec
-## and figure out the time delta on their own. However, they are not aware of 
+## and figure out the time delta on their own. However, they are not aware of
 ## netfox's time, so motion is all wrong in a network tick. For example, the
-## network ticks run at 30 fps, while the game is running at 60fps, thus 
+## network ticks run at 30 fps, while the game is running at 60fps, thus
 ## move_and_slide will also assume that it's running on 60fps, resulting in
 ## slower than expected movement.
-##
-## To circument this, you can multiply any velocities with this variable, and 
+## [br][br]
+## To circument this, you can multiply any velocities with this variable, and
 ## get the desired speed. Don't forget to then divide by this value if it's a
 ## persistent variable ( e.g. CharacterBody's velocity ).
-##
-## NOTE: This works correctly both in regular and in physics frames, but may
+## [br][br]
+## [i]NOTE[/i]: This works correctly both in regular and in physics frames, but may
 ## yield different values.
-##
+## [br][br]
 ## [i]read-only[/i]
 var physics_factor: float:
 	get:
@@ -255,10 +257,10 @@ var physics_factor: float:
 		push_error("Trying to set read-only variable physics_factor")
 
 ## The maximum clock stretch factor allowed.
-##
-## For more context on clock stretch, see [member clock_stretch_factor]. The 
-## minimum allowed clock stretch factor is derived as 1.0 / clock_stretch_max. 
-## Setting this to larger values will allow for quicker clock adjustment at the 
+## [br][br]
+## For more context on clock stretch, see [member clock_stretch_factor]. The
+## minimum allowed clock stretch factor is derived as 1.0 / clock_stretch_max.
+## Setting this to larger values will allow for quicker clock adjustment at the
 ## cost of bigger deviations in game speed.
 ## [br][br]
 ## Make sure to adjust this value based on the game's needs.
@@ -279,14 +281,14 @@ var suppress_offline_peer_warning: bool:
 		push_error("Trying to set read-only variable suppress_offline_peer_warning")
 
 ## The currently used clock stretch factor.
-##
+## [br][br]
 ## As the game progresses, the simulation clock may be ahead of, or behind the
 ## host's remote clock. To compensate, whenever the simulation clock is ahead of
 ## the remote clock, the game will slightly slow down, to allow the remote clock
 ## to catch up. When the remote clock is ahead of the simulation clock, the game
 ## will run slightly faster to catch up with the remote clock.
 ## [br][br]
-## This value indicates the current clock speed multiplier. Values over 1.0 
+## This value indicates the current clock speed multiplier. Values over 1.0
 ## indicate speeding up, under 1.0 indicate slowing down.
 ## [br][br]
 ## See [member clock_stretch_max] for clock stretch bounds.[br]
@@ -300,7 +302,7 @@ var clock_stretch_factor: float:
 
 ## The current estimated offset between the reference clock and the simulation
 ## clock.
-## 
+## [br][br]
 ## Positive values mean the simulation clock is behind, and needs to run
 ## slightly faster to catch up. Negative values mean the simulation clock is
 ## ahead, and needs to slow down slightly.
@@ -315,8 +317,8 @@ var clock_offset: float:
 
 ## The current estimated offset between the reference clock and the remote
 ## clock.
-##
-## Positive values mean the reference clock is behind the remote clock. 
+## [br][br]
+## Positive values mean the reference clock is behind the remote clock.
 ## Negative values mean the reference clock is ahead of the remote clock.
 ## [br][br]
 ## Returns the same as [member _NetworkTimeSynchronizer.remote_offset].
@@ -342,13 +344,13 @@ signal after_tick(delta: float, tick: int)
 signal after_tick_loop()
 
 ## Emitted after time is synchronized.
-##
+## [br][br]
 ## This happens once the NetworkTime is started, and the first time sync process
 ## concludes. When running as server, this is emitted instantly after started.
 signal after_sync()
 
 ## Emitted after a client synchronizes their time.
-##
+## [br][br]
 ## This is only emitted on the server, and is emitted when the client concludes
 ## their time sync process. This is useful as this event means that the client
 ## is ticking and gameplay has started on their end.
@@ -394,7 +396,7 @@ var _synced_peers: Dictionary = {}
 static var _logger: NetfoxLogger = NetfoxLogger._for_netfox("NetworkTime")
 
 ## Start NetworkTime.
-##
+## [br][br]
 ## Once this is called, time will be synchronized and ticks will be consistently
 ## emitted.
 ## [br][br]
@@ -426,21 +428,21 @@ func start() -> int:
 	# Reset state
 	_tick = 0
 	_initial_sync_done = false
-	
+
 	# Host is always synced, as their time is considered ground truth
 	_synced_peers[1] = true
 
 	# Start sync
 	NetworkTimeSynchronizer.start()
 	_state = _STATE_SYNCING
-	
+
 	if not multiplayer.is_server():
 		await NetworkTimeSynchronizer.on_initial_sync
 
 		_tick = seconds_to_ticks(NetworkTimeSynchronizer.get_time())
 		_initial_sync_done = true
 		_state = _STATE_ACTIVE
-		
+
 		_submit_sync_success.rpc()
 	else:
 		_state = _STATE_ACTIVE
@@ -461,14 +463,18 @@ func start() -> int:
 	return OK
 
 ## Stop NetworkTime.
-##
-## This will stop the time sync in the background, and no more ticks will be 
+## [br][br]
+## This will stop the time sync in the background, and no more ticks will be
 ## emitted until the next start.
 func stop() -> void:
 	NetworkTimeSynchronizer.stop()
 	_tickrate_handshake.stop()
+
+	# Reset state
 	_state = _STATE_INACTIVE
 	_synced_peers.clear()
+	_tick = 0
+	_initial_sync_done = false
 
 	if multiplayer.peer_disconnected.is_connected(_handle_peer_disconnect):
 		multiplayer.peer_disconnected.disconnect(_handle_peer_disconnect)
@@ -478,7 +484,7 @@ func is_initial_sync_done() -> bool:
 	return _initial_sync_done
 
 ## Check if client's time sync is complete.
-##
+## [br][br]
 ## Using this from a client is considered an error.
 func is_client_synced(peer_id: int) -> bool:
 	return _synced_peers.has(peer_id)
@@ -492,13 +498,13 @@ func seconds_to_ticks(seconds: float) -> int:
 	return int(seconds * tickrate)
 
 ## Calculate the duration between two ticks in seconds
-##
+## [br][br]
 ## [i]Note:[/i] Returns negative values if tick_to is smaller than tick_from
 func seconds_between(tick_from: int, tick_to: int) -> float:
 	return ticks_to_seconds(tick_to - tick_from)
 
 ## Calculate the duration between two points in time as ticks
-##
+## [br][br]
 ## [i]Note:[/i] Returns negative values if seconds_to is smaller than seconds_from
 func ticks_between(seconds_from: float, seconds_to: float) -> int:
 	return seconds_to_ticks(seconds_to - seconds_from)
@@ -508,7 +514,7 @@ func _ready() -> void:
 
 	_tickrate_handshake = NetworkTickrateHandshake.new()
 	add_child(_tickrate_handshake)
-	
+
 	# Proxy tickrate mismatch event
 	_tickrate_handshake.on_tickrate_mismatch.connect(func(peer, tickrate):
 		on_tickrate_mismatch.emit(peer, tickrate)
@@ -524,10 +530,10 @@ func _loop() -> void:
 	# Adjust local clock
 	_clock.step(_clock_stretch_factor)
 	var clock_diff := NetworkTimeSynchronizer.get_time() - _clock.get_time()
-	
+
 	# Ignore diffs under 1ms
 	clock_diff = sign(clock_diff) * max(abs(clock_diff) - 0.001, 0.)
-	
+
 	var clock_stretch_min := 1. / clock_stretch_max
 	# var clock_stretch_f = (1. + clock_diff / (1. * ticktime)) / 2.
 	var clock_stretch_f := inverse_lerp(-ticktime, +ticktime, clock_diff)
@@ -535,7 +541,7 @@ func _loop() -> void:
 
 	var previous_stretch_factor := _clock_stretch_factor
 	_clock_stretch_factor = lerpf(clock_stretch_min, clock_stretch_max, clock_stretch_f)
-	
+
 	# Detect editor pause
 	var clock_step := _clock.get_time() - _last_process_time
 	var clock_step_raw := clock_step / previous_stretch_factor
@@ -550,7 +556,7 @@ func _loop() -> void:
 		_was_paused = false
 		_next_tick_time += clock_step
 		_tick = seconds_to_ticks(NetworkTimeSynchronizer.get_time())
-	
+
 	# Run tick loop if needed
 	var ticks_in_loop := 0
 	_last_process_time = _clock.get_time()
@@ -559,19 +565,26 @@ func _loop() -> void:
 			before_tick_loop.emit()
 
 		before_tick.emit(ticktime, tick)
+
 		on_tick.emit(ticktime, tick)
+
 		after_tick.emit(ticktime, tick)
-		
+		NetworkHistoryServer._record_sync_state(tick + 1)
+		NetworkSynchronizationServer._synchronize_sync_state(tick + 1)
+
 		_tick += 1
 		ticks_in_loop += 1
 		_next_tick_time += ticktime
-	
+
 	if ticks_in_loop > 0:
 		after_tick_loop.emit()
+		NetworkHistoryServer._restore_synchronizer_state(tick)
+
+	NetworkIdentityServer.flush_queue()
 
 func _process(delta: float) -> void:
 	_process_delta = delta
-	
+
 	if _is_active() and not sync_to_physics:
 		_loop()
 
@@ -592,9 +605,9 @@ func _handle_peer_disconnect(peer: int) -> void:
 @rpc("any_peer", "reliable", "call_local")
 func _submit_sync_success() -> void:
 	var peer_id := multiplayer.get_remote_sender_id()
-	
+
 	_logger.trace("Received time sync success from #%s, synced peers: %s", [peer_id, _synced_peers.keys()])
-	
+
 	if not _synced_peers.has(peer_id):
 		_synced_peers[peer_id] = true
 		after_client_sync.emit(peer_id)

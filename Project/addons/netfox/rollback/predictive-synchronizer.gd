@@ -1,0 +1,190 @@
+@tool
+extends Node
+class_name PredictiveSynchronizer
+
+## Similar to [RollbackSynchronizer], this class manages local variables in a
+## rollback context for predictive simulation without networking.
+##
+## This is a simplified version that focuses on local state management.
+## [br][br]
+## Like [RollbackSynchronizer], it automatically discovers nodes
+## with a [code]_rollback_tick(delta: float, tick: int)[/code]
+## method and calls them during the prediction phase.
+
+## The root node for resolving node paths in properties. Defaults to the parent
+## node.
+@export var root: Node = get_parent()
+
+@export_group("State")
+## Properties that define the game state.
+## [br][br]
+## State properties are recorded for each tick and restored during rollback.
+## State is restored before every rollback tick, and recorded after simulating
+## the tick.
+@export var state_properties: Array[String]
+
+var _state_properties := _PropertyPool.new()
+var _sim_nodes: Array[Node] = []
+var _liveness_nodes: Array[Node] = []
+
+var _properties_dirty: bool = false
+
+static var _managed_roots := {} # root node to PredictiveSynchronizer
+
+## Process settings.
+## [br][br]
+## Call this after any change to configuration.
+func process_settings() -> void:
+	# Deregister all nodes we've registered previously
+	for subject in _state_properties.get_subjects():
+		NetworkHistoryServer.deregister(subject)
+
+	for node in _sim_nodes:
+		RollbackSimulationServer.deregister_node(node)
+	_sim_nodes.clear()
+
+	# Gather all prediction-aware nodes to call during prediction ticks
+	var managed_nodes := [root] + _collect_managed_nodes(root)
+	for node in managed_nodes:
+		if NetworkRollback.is_rollback_aware(node):
+			_sim_nodes.append(node)
+			RollbackSimulationServer.register(NetworkRollback._get_rollback_method(node))
+
+		if NetworkRollback.is_rollback_liveness_aware(node) and not RollbackLivenessServer.is_registered(node):
+			var spawn_callback := NetworkRollback._get_rollback_spawn_method(node)
+			var despawn_callback := NetworkRollback._get_rollback_despawn_method(node)
+			var free_callback := NetworkRollback._get_rollback_destroy_method(node)
+
+			RollbackLivenessServer.register(node, spawn_callback, despawn_callback, free_callback)
+			_liveness_nodes.append(node)
+
+	# Keep history of state properties
+	_state_properties.set_from_paths(root, state_properties)
+	for subject in _state_properties.get_subjects():
+		for property in _state_properties.get_properties_of(subject):
+			NetworkHistoryServer.register_rollback_state(subject, property)
+
+## Mark the spawn tick for all nodes managed by this synchronizer.
+## [br][br]
+## When rewinding to a tick earlier than the spawn tick, every managed node will
+## be deactivated.
+func spawn(p_tick: int = NetworkRollback.tick) -> void:
+	for node in _liveness_nodes:
+		RollbackLivenessServer.spawn(node, p_tick)
+
+## Mark the despawn tick for all nodes managed by this synchronizer.
+## [br][br]
+## When rewinding to a tick later than the despawn tick, every managed node will
+## be deactivated.
+func despawn(p_tick: int = NetworkRollback.tick) -> void:
+	for node in _liveness_nodes:
+		RollbackLivenessServer.despawn(node, p_tick)
+
+## Return true if nodes managed by this synchronizer are alive.
+## [br][br]
+## Note that this method assumes that all node liveness is managed by the
+## synchronizer. If some node livenesses are handled separately, this method
+## may return the wrong liveness. In that case, use
+## [method _RollbackLivenessServer.is_alive] and check for individual
+## nodes.
+func is_alive(p_tick: int = NetworkRollback.tick) -> bool:
+	if _liveness_nodes.is_empty():
+		return true
+	return RollbackLivenessServer.is_alive(_liveness_nodes.front(), p_tick)
+
+func _ready() -> void:
+	if Engine.is_editor_hint():
+		return
+
+	if not NetworkTime.is_initial_sync_done():
+		# Wait for time sync to complete
+		await NetworkTime.after_sync
+
+	process_settings.call_deferred()
+
+func _enter_tree() -> void:
+	if Engine.is_editor_hint():
+		return
+
+	_managed_roots[root] = self
+
+	if not NetworkTime.is_initial_sync_done():
+		# Wait for time sync to complete
+		await NetworkTime.after_sync
+	process_settings.call_deferred()
+
+func _exit_tree() -> void:
+	_managed_roots.erase(root)
+
+	if root.is_queued_for_deletion():
+		for node in _sim_nodes:
+			RollbackSimulationServer.deregister_node(node)
+		for node in _liveness_nodes:
+			RollbackLivenessServer.deregister(node)
+		for subject in _state_properties.get_subjects():
+			NetworkHistoryServer.deregister(subject)
+
+func _reprocess_settings() -> void:
+	if not _properties_dirty or Engine.is_editor_hint():
+		return
+
+	_properties_dirty = false
+	process_settings()
+
+## Add a state property.
+## [br][br]
+## Settings will be automatically updated. The [param node] may be a string or
+## [NodePath] pointing to a node, or an actual [Node] instance. If the given
+## property is already tracked, this method does nothing.
+func add_state(node: Variant, property: String):
+	var property_path := PropertyEntry.make_path(root, node, property)
+	if not property_path or state_properties.has(property_path):
+		return
+
+	state_properties.push_back(property_path)
+	_properties_dirty = true
+	_reprocess_settings.call_deferred()
+
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_EDITOR_PRE_SAVE:
+		update_configuration_warnings()
+
+func _get_configuration_warnings() -> PackedStringArray:
+	if not root:
+		root = get_parent()
+
+	# Explore state properties
+	if not root:
+		return ["No valid root node found!"]
+
+	var result := PackedStringArray()
+	result.append_array(_NetfoxEditorUtils.gather_properties(root, "_get_rollback_state_properties",
+		func(node, prop):
+			add_state(node, prop)
+	))
+
+	return result
+
+# Find managed nodes recursively from given root, ignoring branches managed by
+# a different RollbackSynchronizer
+func _collect_managed_nodes(root: Node) -> Array[Node]:
+	var result: Array[Node] = []
+	for child in root.get_children():
+		if _is_foreign_rollback_root(child):
+			continue
+		result.append(child)
+		result.append_array(_collect_managed_nodes(child))
+	return result
+
+# Returns true if the node is the root of a different RollbackSynchronizer
+func _is_foreign_rollback_root(node: Node) -> bool:
+	if not _managed_roots.has(node):
+		# No RBS treats node as root
+		return false
+
+	if _managed_roots[node] == self:
+		# Node is our own root
+		return false
+
+	# Node is foreign root
+	return true
