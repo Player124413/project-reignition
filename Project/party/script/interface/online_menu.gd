@@ -24,6 +24,10 @@ var connection_values : Array[String] = [
 	"party_join",
 ]
 
+func show_menu() -> void:
+	address_edit.text = NetworkManager.address
+	super()
+
 func process_cursor() -> void:
 	cursor.global_position = online_nodes[current_selection.y + current_selection.x].global_position
 

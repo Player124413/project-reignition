@@ -27,7 +27,7 @@ var current_log_index : int
 ## Determines whether this device is acting as a host or a client.
 var is_hosting_game : bool = true
 ## The address to use for connections.
-var address : String = "tomfol.io"
+var address : String = "kumapauz.dev"
 ## The port to use for connections.
 var port = 8890
 ## Represents the room id that players can give to each other.
