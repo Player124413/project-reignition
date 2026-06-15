@@ -1,0 +1,91 @@
+[gd_scene format=3 uid="uid://dkhfl3o0fmu2e"]
+
+[ext_resource type="PackedScene" uid="uid://ba715mngy7h2o" path="res://party/scene/minigame/17 pitch black/model/CandleLights.glb" id="1_d1nr2"]
+[ext_resource type="Material" uid="uid://ckpheokk1q8b" path="res://party/scene/minigame/17 pitch black/material/Flames.tres" id="2_3j4yw"]
+
+[sub_resource type="Curve" id="Curve_rna1n"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.3, 1), 0.0, 0.0, 0, 0, Vector2(0.8, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 4
+
+[sub_resource type="CurveTexture" id="CurveTexture_3j4yw"]
+width = 64
+texture_mode = 1
+curve = SubResource("Curve_rna1n")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_w6qwe"]
+emission_shape_offset = Vector3(0, 3, 0)
+gravity = Vector3(0, 0, 0)
+scale_min = 8.0
+scale_max = 8.0
+alpha_curve = SubResource("CurveTexture_3j4yw")
+anim_speed_min = 1.0
+anim_speed_max = 1.0
+anim_offset_max = 1.0
+
+[sub_resource type="QuadMesh" id="QuadMesh_umlfm"]
+
+[node name="CandleLights" unique_id=1156450227 instance=ExtResource("1_d1nr2")]
+
+[node name="CandleFlameMesh" parent="." index="0" unique_id=279661165]
+visible = false
+
+[node name="Flames" type="Node3D" parent="." index="2" unique_id=675727139]
+
+[node name="Flames1" type="GPUParticles3D" parent="Flames" index="0" unique_id=1429325927]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, -1)
+layers = 32
+material_override = ExtResource("2_3j4yw")
+cast_shadow = 0
+amount = 2
+local_coords = true
+process_material = SubResource("ParticleProcessMaterial_w6qwe")
+draw_pass_1 = SubResource("QuadMesh_umlfm")
+
+[node name="Flames2" type="GPUParticles3D" parent="Flames" index="1" unique_id=1437726131]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.7, -2, -1)
+layers = 32
+material_override = ExtResource("2_3j4yw")
+cast_shadow = 0
+amount = 2
+local_coords = true
+process_material = SubResource("ParticleProcessMaterial_w6qwe")
+draw_pass_1 = SubResource("QuadMesh_umlfm")
+
+[node name="Flames3" type="GPUParticles3D" parent="Flames" index="2" unique_id=1418984333]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.7, -6, -1)
+layers = 32
+material_override = ExtResource("2_3j4yw")
+cast_shadow = 0
+amount = 2
+local_coords = true
+process_material = SubResource("ParticleProcessMaterial_w6qwe")
+draw_pass_1 = SubResource("QuadMesh_umlfm")
+
+[node name="Flames4" type="GPUParticles3D" parent="Flames" index="3" unique_id=915991534]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.7, -2, -1)
+layers = 32
+material_override = ExtResource("2_3j4yw")
+cast_shadow = 0
+amount = 2
+local_coords = true
+process_material = SubResource("ParticleProcessMaterial_w6qwe")
+draw_pass_1 = SubResource("QuadMesh_umlfm")
+
+[node name="Flames5" type="GPUParticles3D" parent="Flames" index="4" unique_id=1764612037]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.7, -6, -1)
+layers = 32
+material_override = ExtResource("2_3j4yw")
+cast_shadow = 0
+amount = 2
+local_coords = true
+process_material = SubResource("ParticleProcessMaterial_w6qwe")
+draw_pass_1 = SubResource("QuadMesh_umlfm")
+
+[node name="Light" type="OmniLight3D" parent="." index="3" unique_id=102281228]
+layers = 1024
+light_color = Color(1, 1, 0.60784316, 1)
+light_energy = 2.0
+light_specular = 0.0
+light_cull_mask = 4293918727
+omni_range = 50.0
+omni_attenuation = 0.0
