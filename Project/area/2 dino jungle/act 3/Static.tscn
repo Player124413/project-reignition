@@ -60,6 +60,9 @@
 [ext_resource type="PackedScene" uid="uid://q5aow4f6xlo3" path="res://area/2 dino jungle/object/dino/DinoStego.tscn" id="41_ym8ud"]
 [ext_resource type="Resource" uid="uid://cyxwq344l58or" path="res://resource/bgm/bgm dj act3.tres" id="58_2rc53"]
 [ext_resource type="PackedScene" uid="uid://dar74l2eiux2t" path="res://effect/buffer/DepthRenderer.tscn" id="58_hh6gi"]
+[ext_resource type="AudioStream" uid="uid://dqutonnrsm8sn" path="res://sound/sfx/stage/sand oasis/lake end loop.wav" id="61_hlk2v"]
+[ext_resource type="AudioStream" uid="uid://8rocdheu2kcf" path="res://sound/sfx/stage/dinosaur jungle/exterior ambience.wav" id="62_txr7m"]
+[ext_resource type="AudioStream" uid="uid://7kcy1fjoe4sg" path="res://sound/sfx/stage/dinosaur jungle/water fall point.wav" id="63_txr7m"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_slcyf"]
 blend_mode = 1
@@ -982,25 +985,25 @@ transform = Transform3D(2.25, 0, 0, 0, 1, 0, 0, 0, 2.25, -1.333, -11.114, 25.219
 [node name="CactusPlatform1" parent="Common" unique_id=895869916 instance=ExtResource("2_y75g5")]
 transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 19.7497, 4.97457, 113.39)
 
-[node name="CactusPlatformMesh" parent="Common/CactusPlatform1" index="0" unique_id=1938131690]
+[node name="CactusPlatformMesh" parent="Common/CactusPlatform1" index="0" unique_id=535905928]
 layers = 2
 
 [node name="CactusPlatform2" parent="Common" unique_id=368085881 instance=ExtResource("2_y75g5")]
 transform = Transform3D(1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.5, 13.166, 12.5, 112.952)
 
-[node name="CactusPlatformMesh" parent="Common/CactusPlatform2" index="0" unique_id=1938131690]
+[node name="CactusPlatformMesh" parent="Common/CactusPlatform2" index="0" unique_id=535905928]
 layers = 2
 
 [node name="CactusPlatform3" parent="Common" unique_id=248000659 instance=ExtResource("2_y75g5")]
 transform = Transform3D(2, 0, -2.23517e-07, 0, 2, 0, 2.23517e-07, 0, 2, -14.224, 23.7, 150.362)
 
-[node name="CactusPlatformMesh" parent="Common/CactusPlatform3" index="0" unique_id=1938131690]
+[node name="CactusPlatformMesh" parent="Common/CactusPlatform3" index="0" unique_id=535905928]
 layers = 2
 
 [node name="GrassPillar1" parent="Common" unique_id=253846207 instance=ExtResource("3_f3x6u")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -62.9927, 16.3, 225.311)
 
-[node name="GrassPillarMesh" parent="Common/GrassPillar1" index="0" unique_id=720705837]
+[node name="GrassPillarMesh" parent="Common/GrassPillar1" index="0" unique_id=675710008]
 layers = 2
 
 [node name="LotusGroup2" type="Node3D" parent="Common" unique_id=1107710361]
@@ -1412,6 +1415,58 @@ reflectionMaterials = [ExtResource("33_kheyr")]
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=650278774]
 environment = SubResource("Environment_kepwq")
+
+[node name="Sound" type="Node3D" parent="." unique_id=1420047629]
+
+[node name="Exterior" type="Node3D" parent="Sound" unique_id=829005353]
+
+[node name="Water2" type="AudioStreamPlayer3D" parent="Sound/Exterior" unique_id=231588013]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 13.964914, 0)
+stream = ExtResource("61_hlk2v")
+attenuation_model = 3
+unit_size = 100.0
+max_db = 0.0
+autoplay = true
+max_distance = 200.0
+panning_strength = 0.0
+bus = &"GAME SFX"
+area_mask = 1
+playback_type = 1
+attenuation_filter_db = 0.0
+
+[node name="Outside" type="AudioStreamPlayer3D" parent="Sound/Exterior" unique_id=227737554]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 13.964914, 0)
+stream = ExtResource("62_txr7m")
+attenuation_model = 3
+volume_db = 80.0
+unit_size = 100.0
+autoplay = true
+max_distance = 200.0
+panning_strength = 0.0
+bus = &"GAME SFX"
+area_mask = 1
+playback_type = 1
+attenuation_filter_db = 0.0
+
+[node name="WaterFalls" type="Node3D" parent="Sound" unique_id=1473408281]
+
+[node name="Fall1" type="AudioStreamPlayer3D" parent="Sound/WaterFalls" unique_id=1613719175]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.849121, 19.588167, 127.37863)
+stream = ExtResource("63_txr7m")
+autoplay = true
+max_distance = 100.0
+bus = &"GAME SFX"
+area_mask = 1
+attenuation_filter_db = 0.0
+
+[node name="Fall2" type="AudioStreamPlayer3D" parent="Sound/WaterFalls" unique_id=1274576677]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -47.92486, 7.4517527, 185.7622)
+stream = ExtResource("63_txr7m")
+autoplay = true
+max_distance = 100.0
+bus = &"GAME SFX"
+area_mask = 1
+attenuation_filter_db = 0.0
 
 [connection signal="Activated" from="Common/Object/Spring" to="Collision/IslandOneWay" method="Deactivate"]
 [connection signal="Activated" from="Common/Object/Spring" to="Common/Object/Spring/Camera" method="Activate"]
