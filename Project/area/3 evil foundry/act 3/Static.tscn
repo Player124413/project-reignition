@@ -26,9 +26,14 @@
 [ext_resource type="Curve3D" uid="uid://bw5j3w382q34e" path="res://area/3 evil foundry/act 3/environment/path/StartingPath.tres" id="15_s46kt"]
 [ext_resource type="Curve3D" uid="uid://45wud7t2ygbd" path="res://area/3 evil foundry/act 3/environment/path/EndingPath.tres" id="16_qmjwd"]
 [ext_resource type="Curve3D" uid="uid://bemn5jxwr8wqi" path="res://area/3 evil foundry/act 3/environment/path/LowHall1Path.tres" id="25_2wt11"]
-[ext_resource type="Curve3D" path="res://area/3 evil foundry/act 3/environment/path/LowHall2Path.tres" id="26_qxbgr"]
+[ext_resource type="Curve3D" uid="uid://chndm3cfjt6jb" path="res://area/3 evil foundry/act 3/environment/path/LowHall2Path.tres" id="26_qxbgr"]
 [ext_resource type="PackedScene" uid="uid://cs7ogaqrx3sn5" path="res://area/3 evil foundry/data/shader/ScreenWarp.tscn" id="28_c7cby"]
+[ext_resource type="AudioStream" uid="uid://6x5o6oa4x2dn" path="res://sound/sfx/stage/evil foundry/ambience.wav" id="30_fi3qt"]
 [ext_resource type="Resource" uid="uid://ctwbor6gn35hj" path="res://resource/bgm/bgm ef act3.tres" id="30_qxbgr"]
+[ext_resource type="AudioStream" uid="uid://dboe0vlmeni2u" path="res://sound/sfx/stage/evil foundry/factory ambience.wav" id="31_vd5im"]
+[ext_resource type="AudioStream" uid="uid://bq5jpgwmp8if2" path="res://sound/sfx/stage/evil foundry/closed lava area.wav" id="32_6yjij"]
+[ext_resource type="AudioStream" uid="uid://dbmpay7u8cx83" path="res://sound/sfx/stage/evil foundry/open lava area.wav" id="33_qptgj"]
+[ext_resource type="AudioStream" uid="uid://h7x4kqvrchho" path="res://sound/sfx/stage/evil foundry/lava river point.wav" id="34_cm1uv"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_y4n3u"]
 size = Vector3(20, 20, 5)
@@ -1319,6 +1324,145 @@ blendTime = 0.0
 environment = SubResource("Environment_mhcig")
 
 [node name="ScreenWarp" parent="." unique_id=1344374972 instance=ExtResource("28_c7cby")]
+
+[node name="Sound" type="Node3D" parent="." unique_id=80700191]
+
+[node name="Base" type="AudioStreamPlayer3D" parent="Sound" unique_id=1388863872]
+stream = ExtResource("30_fi3qt")
+attenuation_model = 3
+volume_db = -5.0
+max_db = 0.0
+autoplay = true
+panning_strength = 0.0
+bus = &"GAME SFX"
+area_mask = 1
+attenuation_filter_db = 0.0
+
+[node name="Base2" type="AudioStreamPlayer3D" parent="Sound" unique_id=2006908066]
+stream = ExtResource("31_vd5im")
+attenuation_model = 3
+volume_db = -15.0
+max_db = 0.0
+autoplay = true
+panning_strength = 0.0
+bus = &"GAME SFX"
+area_mask = 1
+attenuation_filter_db = 0.0
+
+[node name="MagmaAreas" type="Node3D" parent="Sound" unique_id=1362099264]
+
+[node name="Lava" type="AudioStreamPlayer3D" parent="Sound/MagmaAreas" unique_id=989721500]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -602.4301, -56.083447, -56.594116)
+stream = ExtResource("32_6yjij")
+attenuation_model = 3
+max_db = 0.0
+autoplay = true
+max_distance = 60.24
+panning_strength = 0.0
+bus = &"GAME SFX"
+area_mask = 1
+attenuation_filter_db = 0.0
+
+[node name="Lava2" type="AudioStreamPlayer3D" parent="Sound/MagmaAreas" unique_id=25127235]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -247.0939, -56.083447, -379.341)
+stream = ExtResource("32_6yjij")
+attenuation_model = 3
+max_db = 0.0
+autoplay = true
+max_distance = 51.9
+panning_strength = 0.0
+bus = &"GAME SFX"
+area_mask = 1
+attenuation_filter_db = 0.0
+
+[node name="Lava3" type="AudioStreamPlayer3D" parent="Sound/MagmaAreas" unique_id=1804579307]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -72.01181, -56.083447, -352.77893)
+stream = ExtResource("32_6yjij")
+attenuation_model = 3
+max_db = 0.0
+autoplay = true
+max_distance = 60.0
+panning_strength = 0.0
+bus = &"GAME SFX"
+area_mask = 1
+attenuation_filter_db = 0.0
+
+[node name="LavaOpen" type="AudioStreamPlayer3D" parent="Sound/MagmaAreas" unique_id=1333141721]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -670.3858, -56.083447, -378.49716)
+stream = ExtResource("33_qptgj")
+attenuation_model = 3
+max_db = 0.0
+autoplay = true
+max_distance = 100.0
+panning_strength = 0.0
+bus = &"GAME SFX"
+area_mask = 1
+attenuation_filter_db = 0.0
+
+[node name="MagmaPoints" type="Node3D" parent="Sound" unique_id=1616300313]
+
+[node name="River" type="AudioStreamPlayer3D" parent="Sound/MagmaPoints" unique_id=1813668226]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -658.32745, -57.419296, -336.58054)
+stream = ExtResource("34_cm1uv")
+volume_db = 80.0
+autoplay = true
+max_distance = 100.0
+bus = &"GAME SFX"
+area_mask = 1
+
+[node name="River2" type="AudioStreamPlayer3D" parent="Sound/MagmaPoints" unique_id=876603390]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -680.19806, -57.419296, -352.77942)
+stream = ExtResource("34_cm1uv")
+volume_db = 80.0
+autoplay = true
+max_distance = 100.0
+bus = &"GAME SFX"
+area_mask = 1
+
+[node name="River3" type="AudioStreamPlayer3D" parent="Sound/MagmaPoints" unique_id=899872452]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -680.19806, -55.538094, -399.67093)
+stream = ExtResource("34_cm1uv")
+volume_db = 80.0
+autoplay = true
+max_distance = 100.0
+bus = &"GAME SFX"
+area_mask = 1
+
+[node name="River4" type="AudioStreamPlayer3D" parent="Sound/MagmaPoints" unique_id=1007857846]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -234.99803, -55.538094, -371.96487)
+stream = ExtResource("34_cm1uv")
+volume_db = 80.0
+autoplay = true
+max_distance = 100.0
+bus = &"GAME SFX"
+area_mask = 1
+
+[node name="River5" type="AudioStreamPlayer3D" parent="Sound/MagmaPoints" unique_id=145297702]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -224.54042, -59.786858, -403.79935)
+stream = ExtResource("34_cm1uv")
+volume_db = 80.0
+autoplay = true
+max_distance = 100.0
+bus = &"GAME SFX"
+area_mask = 1
+
+[node name="River6" type="AudioStreamPlayer3D" parent="Sound/MagmaPoints" unique_id=496129073]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -68.04977, -51.50512, -327.5393)
+stream = ExtResource("34_cm1uv")
+volume_db = 80.0
+autoplay = true
+max_distance = 100.0
+bus = &"GAME SFX"
+area_mask = 1
+
+[node name="River7" type="AudioStreamPlayer3D" parent="Sound/MagmaPoints" unique_id=843270533]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -104.713394, -50.03913, -317.52084)
+stream = ExtResource("34_cm1uv")
+volume_db = 80.0
+autoplay = true
+max_distance = 100.0
+bus = &"GAME SFX"
+area_mask = 1
 
 [connection signal="Activated" from="Visuals/CullingMap/02Load" to="Visuals/02Elbow" method="Activate"]
 [connection signal="Deactivated" from="Visuals/CullingMap/02Load" to="Visuals/02Elbow" method="Deactivate"]
