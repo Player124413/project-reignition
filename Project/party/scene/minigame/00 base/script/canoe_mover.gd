@@ -11,8 +11,8 @@ class_name PartyGameCanoeMover extends PartyGameCharacterSpawner
 @export var disable_turning : bool
 @export var top_speed : float = 60.0
 @export var paddle_speed : float = 30.0
-@export var friction : float = 5.0
-@export var turn_speed : float = 1.8
+@export var friction : float = 10.0
+@export var turn_speed : float = 1.5
 @export var turn_friction : float = 1.4
 const GRAVITY : float = 40.0
 const MAX_GRAVITY : float = -50.0
