@@ -1,0 +1,78 @@
+[gd_scene format=3 uid="uid://dq6io45mlhugu"]
+
+[ext_resource type="Script" uid="uid://coavj1u8bf5di" path="res://party/scene/minigame/17 pitch black/script/player_controller.gd" id="1_hrsfa"]
+[ext_resource type="PackedScene" uid="uid://dq5hkbpr0yphp" path="res://party/scene/minigame/17 pitch black/model/Lantern.glb" id="2_i8106"]
+[ext_resource type="AnimationLibrary" uid="uid://b7nv23a63t0ui" path="res://party/scene/minigame/17 pitch black/animation/_Library.glb" id="4_0dth3"]
+[ext_resource type="Script" uid="uid://ds056nimfywwr" path="res://party/script/core/rollback_timer.gd" id="4_mu2ap"]
+[ext_resource type="PackedScene" uid="uid://bdln8dht3adii" path="res://party/resource/character/scene/Amy.tscn" id="4_wsiuk"]
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_17mea"]
+radius = 7.3774805
+
+[node name="Player" type="Node3D" unique_id=1879495047 node_paths=PackedStringArray("hand_attachment", "lookat", "lamp", "spawn_position")]
+script = ExtResource("1_hrsfa")
+hand_attachment = NodePath("HandAttachment")
+lookat = NodePath("LookAt")
+lamp = NodePath("HandAttachment/Lantern")
+spawn_position = NodePath("SpawnPos")
+
+[node name="SpawnPos" type="Node3D" parent="." unique_id=1171532647]
+
+[node name="Area3D" type="Area3D" parent="." unique_id=376204005]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D" unique_id=1249582878]
+shape = SubResource("SphereShape3D_17mea")
+debug_color = Color(0.23282772, 0.63723266, 0, 1)
+
+[node name="LookAt" type="LookAtModifier3D" parent="." unique_id=1321336359]
+bone_name = "elbow_r"
+forward_axis = 0
+use_angle_limitation = true
+symmetry_limitation = true
+primary_limit_angle = 6.2831855
+primary_damp_threshold = 1.0
+secondary_limit_angle = 6.2831855
+secondary_damp_threshold = 1.0
+
+[node name="Rollback" type="Node" parent="." unique_id=877059942]
+script = ExtResource("4_mu2ap")
+enable_lag_compensation = false
+param_count = 10
+rollback_interval = 0.0
+
+[node name="HandAttachment" type="BoneAttachment3D" parent="." unique_id=953133123]
+transform = Transform3D(0.1063588, 0.9759079, 0.190503, 0.5540595, -0.21725672, 0.8036276, 0.82565445, 0.020077117, -0.5638182, -0.5545693, 6.210803, 1.1245338)
+bone_name = "elbow_r"
+bone_idx = 44
+
+[node name="Lantern" parent="HandAttachment" unique_id=958616559 instance=ExtResource("2_i8106")]
+transform = Transform3D(0.15915197, 0.44467065, 0.8814413, 0.9871155, -0.0866564, -0.13451579, 0.016567364, 0.8914926, -0.45273268, 0, 0, 0)
+
+[node name="OmniLight3D" type="OmniLight3D" parent="HandAttachment/Lantern" unique_id=1635544296]
+transform = Transform3D(-0.05563916, 0.8280121, 0.55794317, -0.94886464, -0.21776427, 0.22854908, 0.3107414, -0.5166962, 0.7977875, 0, -2.433126, 5.8463187)
+light_color = Color(1, 1, 0.5568628, 1)
+light_energy = 13.839
+omni_range = 8.914636
+omni_attenuation = 0.09
+
+[node name="Amy" parent="." unique_id=451164240 instance=ExtResource("4_wsiuk")]
+
+[node name="Amy" parent="Amy" index="0" unique_id=1034621787]
+visible = false
+
+[node name="CharacterRoot" parent="Amy/Amy" index="0" unique_id=1997591770]
+visible = false
+
+[node name="GeneralSkeleton" parent="Amy/Amy/CharacterRoot" index="0" unique_id=1251559875]
+visible = false
+bones/13/rotation = Quaternion(4.8112817e-08, 0.7071068, 0.7071068, -4.7787147e-08)
+bones/14/rotation = Quaternion(3.7067636e-08, -0.7071068, 0.7071068, -2.4468768e-08)
+bones/22/rotation = Quaternion(-0.19045585, 0.68097484, -0.68097466, 0.19045587)
+bones/55/rotation = Quaternion(5.3680924e-07, 0.5742787, 3.580295e-07, 0.81865984)
+
+[node name="AnimationPlayer" parent="Amy/Amy" index="1" unique_id=439634828]
+libraries/_Library = ExtResource("4_0dth3")
+next/_Library/down = &""
+
+[editable path="Amy"]
+[editable path="Amy/Amy"]
