@@ -1,0 +1,333 @@
+[gd_scene format=3 uid="uid://dm22dns7yr2lp"]
+
+[ext_resource type="PackedScene" uid="uid://de5khdjj28n7s" path="res://party/scene/minigame/12 canoe race/model/Map.glb" id="1_1bd2x"]
+[ext_resource type="PackedScene" uid="uid://dsbufs8tjchk7" path="res://party/scene/minigame/00 base/MinigameBase.tscn" id="1_k6wrd"]
+[ext_resource type="PackedScene" uid="uid://f5w7fq20xmd1" path="res://party/scene/minigame/00 base/Time.tscn" id="2_cnv6o"]
+[ext_resource type="Resource" uid="uid://buae6jqyb88ay" path="res://party/resource/minigame/12CanoeRace.tres" id="2_r81ko"]
+[ext_resource type="AnimationLibrary" uid="uid://bk2osw7eo0vkb" path="res://party/scene/minigame/12 canoe race/animation/_Library.glb" id="3_38q1j"]
+[ext_resource type="PackedScene" uid="uid://d2hf4b6i01xrj" path="res://party/scene/minigame/12 canoe race/model/Canoe.glb" id="5_r81ko"]
+[ext_resource type="PackedScene" uid="uid://di6qt43fewimv" path="res://party/scene/minigame/12 canoe race/model/Oar.glb" id="8_hgdfq"]
+
+[sub_resource type="Environment" id="Environment_k6wrd"]
+ambient_light_source = 2
+ambient_light_color = Color(0.2717154, 0.47039235, 0.64332056, 1)
+tonemap_mode = 2
+tonemap_exposure = 1.1
+tonemap_white = 1.2
+glow_enabled = true
+adjustment_enabled = true
+
+[sub_resource type="Curve3D" id="Curve3D_cnv6o"]
+closed = true
+_data = {
+"points": PackedVector3Array(41.2, 0, 18.6, -41.2, 0, -18.6, 21, 15, 11, 3.5, 0, 61.3, -3.5, 0, -61.3, -102, 15, -97, -69.200005, 0, 1.5, 69.200005, 0, -1.5, 1, 15, -211, -1.7, 0, -41.7, 1.7, 0, 41.7, 101, 15, -123, 31, 10, -19, -31, -10, 19, 62, 9, -34, 19, -3, -17, -19, 3, 17, -62, 4, 31, -1, 0, -45, 1, 0, 45, -97, 15, 114, -48.8, 0, 1.5, 48.8, 0, -1.5, 7, 15, 205, 2.9, 0, 57.100002, -2.9, 0, -57.100002, 103, 15, 111),
+"tilts": PackedFloat32Array(0, 0, 0, 0, 0, 0, 0, 0, 0)
+}
+point_count = 9
+
+[node name="Game" type="Node3D" unique_id=61563640]
+
+[node name="Minigame" parent="." unique_id=600998337 instance=ExtResource("1_k6wrd")]
+minigame_resource = ExtResource("2_r81ko")
+anim_library = ExtResource("3_38q1j")
+
+[node name="Time" parent="Minigame" unique_id=2069576343 instance=ExtResource("2_cnv6o")]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -128.0
+offset_right = 128.0
+grow_horizontal = 2
+max_game_time = 0
+
+[node name="Environment" type="Node3D" parent="." unique_id=479088718]
+
+[node name="MainLight" type="DirectionalLight3D" parent="Environment" unique_id=397585150]
+transform = Transform3D(0.6830127, -0.7209159, 0.117362425, 0.18301277, 0.32446933, 0.9280226, -0.70710677, -0.6123725, 0.35355344, 0, 53, 0)
+layers = 1024
+light_color = Color(0.9999998, 0.90777826, 0.82030994, 1)
+light_cull_mask = 99
+shadow_enabled = true
+shadow_caster_mask = 2
+directional_shadow_max_distance = 500.0
+
+[node name="BounceLight" type="DirectionalLight3D" parent="Environment" unique_id=1616575120]
+transform = Transform3D(0.59503484, -0.124849625, -0.79394335, -0.22414386, -0.9744444, -0.014754696, -0.77181154, 0.18673709, -0.6078126, 0, 53, 0)
+layers = 1024
+light_color = Color(0.26666668, 0.9098039, 0.4392157, 1)
+light_energy = 0.7
+light_specular = 0.0
+light_cull_mask = 99
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="Environment" unique_id=499655761]
+environment = SubResource("Environment_k6wrd")
+
+[node name="Map" parent="Environment" unique_id=321913581 instance=ExtResource("1_1bd2x")]
+
+[node name="st_203_map_Mesh_0000" parent="Environment/Map" index="0" unique_id=1690211310]
+layers = 2
+cast_shadow = 0
+extra_cull_margin = 16384.0
+
+[node name="st_203_map_Mesh_0006" parent="Environment/Map" index="1" unique_id=1428639366]
+layers = 2
+cast_shadow = 0
+extra_cull_margin = 16384.0
+
+[node name="st_203_map_Mesh_0008" parent="Environment/Map" index="2" unique_id=924164289]
+layers = 2
+cast_shadow = 0
+extra_cull_margin = 16384.0
+
+[node name="st_203_map_Mesh_0009" parent="Environment/Map" index="3" unique_id=1870851123]
+layers = 2
+cast_shadow = 0
+extra_cull_margin = 16384.0
+
+[node name="st_203_map_Mesh_0018" parent="Environment/Map" index="4" unique_id=1915835840]
+layers = 2
+cast_shadow = 0
+extra_cull_margin = 16384.0
+
+[node name="st_203_map_Mesh_0020" parent="Environment/Map" index="5" unique_id=1863144135]
+layers = 2
+cast_shadow = 0
+extra_cull_margin = 16384.0
+
+[node name="st_203_map_Mesh_0021" parent="Environment/Map" index="6" unique_id=1734203685]
+layers = 2
+cast_shadow = 0
+extra_cull_margin = 16384.0
+
+[node name="st_203_map_Mesh_0022" parent="Environment/Map" index="7" unique_id=1834863294]
+layers = 2
+cast_shadow = 0
+extra_cull_margin = 16384.0
+
+[node name="st_203_map_Mesh_0036" parent="Environment/Map" index="8" unique_id=154285506]
+layers = 2
+cast_shadow = 0
+extra_cull_margin = 16384.0
+
+[node name="st_203_map_Mesh_0038" parent="Environment/Map" index="9" unique_id=1207812601]
+layers = 2
+cast_shadow = 0
+extra_cull_margin = 16384.0
+
+[node name="st_203_map_Mesh_0039" parent="Environment/Map" index="10" unique_id=813308832]
+layers = 2
+cast_shadow = 0
+extra_cull_margin = 16384.0
+
+[node name="st_203_map_Mesh_0040" parent="Environment/Map" index="11" unique_id=1269808141]
+layers = 2
+cast_shadow = 0
+extra_cull_margin = 16384.0
+
+[node name="st_203_map_Mesh_0042" parent="Environment/Map" index="12" unique_id=808939901]
+layers = 2
+cast_shadow = 0
+extra_cull_margin = 16384.0
+
+[node name="st_203_map_Mesh_0046" parent="Environment/Map" index="13" unique_id=1627241779]
+layers = 2
+cast_shadow = 0
+extra_cull_margin = 16384.0
+
+[node name="st_203_map_Mesh_0047" parent="Environment/Map" index="14" unique_id=815812359]
+layers = 2
+cast_shadow = 0
+extra_cull_margin = 16384.0
+
+[node name="st_203_map_Mesh_0049" parent="Environment/Map" index="15" unique_id=1900141328]
+layers = 2
+cast_shadow = 0
+extra_cull_margin = 16384.0
+
+[node name="st_203_map_Mesh_0050" parent="Environment/Map" index="16" unique_id=1456551055]
+layers = 2
+cast_shadow = 0
+extra_cull_margin = 16384.0
+
+[node name="st_203_map_Mesh_0059" parent="Environment/Map" index="17" unique_id=1073435099]
+layers = 2
+cast_shadow = 0
+extra_cull_margin = 16384.0
+
+[node name="st_203_map_Mesh_0062" parent="Environment/Map" index="18" unique_id=311207962]
+layers = 2
+cast_shadow = 0
+extra_cull_margin = 16384.0
+
+[node name="st_203_map_Mesh_0064" parent="Environment/Map" index="19" unique_id=1383080681]
+layers = 2
+cast_shadow = 0
+extra_cull_margin = 16384.0
+
+[node name="st_203_map_Mesh_0065" parent="Environment/Map" index="20" unique_id=55250257]
+layers = 2
+cast_shadow = 0
+extra_cull_margin = 16384.0
+
+[node name="st_203_map_Mesh_0075" parent="Environment/Map" index="21" unique_id=53007630]
+layers = 2
+cast_shadow = 0
+extra_cull_margin = 16384.0
+
+[node name="st_203_map_Mesh_0077" parent="Environment/Map" index="22" unique_id=535184385]
+layers = 2
+cast_shadow = 0
+extra_cull_margin = 16384.0
+
+[node name="st_203_map_Mesh_0079" parent="Environment/Map" index="23" unique_id=1535518236]
+layers = 2
+cast_shadow = 0
+extra_cull_margin = 16384.0
+
+[node name="st_203_map_Mesh_0080" parent="Environment/Map" index="24" unique_id=768538648]
+layers = 2
+cast_shadow = 0
+extra_cull_margin = 16384.0
+
+[node name="st_203_map_Mesh_0081" parent="Environment/Map" index="25" unique_id=1309920319]
+layers = 2
+cast_shadow = 0
+extra_cull_margin = 16384.0
+
+[node name="st_203_map_Mesh_0090" parent="Environment/Map" index="26" unique_id=104398180]
+layers = 2
+cast_shadow = 0
+extra_cull_margin = 16384.0
+
+[node name="st_203_map_Mesh_0094" parent="Environment/Map" index="27" unique_id=1935920862]
+layers = 2
+cast_shadow = 0
+extra_cull_margin = 16384.0
+
+[node name="st_203_map_Mesh_0096" parent="Environment/Map" index="28" unique_id=1113097714]
+layers = 2
+cast_shadow = 0
+extra_cull_margin = 16384.0
+
+[node name="st_203_map_Mesh_0098" parent="Environment/Map" index="29" unique_id=244037878]
+layers = 2
+cast_shadow = 0
+extra_cull_margin = 16384.0
+
+[node name="st_203_map_Mesh_0099" parent="Environment/Map" index="30" unique_id=486208522]
+layers = 2
+cast_shadow = 0
+extra_cull_margin = 16384.0
+
+[node name="st_203_map_Mesh_0100" parent="Environment/Map" index="31" unique_id=2147190610]
+layers = 2
+cast_shadow = 0
+extra_cull_margin = 16384.0
+
+[node name="st_203_map_Mesh_0111" parent="Environment/Map" index="32" unique_id=1732565005]
+layers = 2
+cast_shadow = 0
+extra_cull_margin = 16384.0
+
+[node name="st_203_map_Mesh_0120" parent="Environment/Map" index="33" unique_id=1298403574]
+layers = 2
+cast_shadow = 0
+extra_cull_margin = 16384.0
+
+[node name="st_203_map_Mesh_0132" parent="Environment/Map" index="34" unique_id=1350631535]
+layers = 2
+cast_shadow = 0
+extra_cull_margin = 16384.0
+
+[node name="st_203_map_Mesh_0136" parent="Environment/Map" index="35" unique_id=254574642]
+layers = 2
+cast_shadow = 0
+extra_cull_margin = 16384.0
+
+[node name="st_203_map_Mesh_0146" parent="Environment/Map" index="36" unique_id=728709291]
+layers = 2
+cast_shadow = 0
+extra_cull_margin = 16384.0
+
+[node name="st_203_map_Mesh_0147" parent="Environment/Map" index="37" unique_id=280482824]
+layers = 2
+extra_cull_margin = 16384.0
+
+[node name="st_203_map_Mesh_0187" parent="Environment/Map" index="38" unique_id=160851529]
+layers = 2
+extra_cull_margin = 16384.0
+
+[node name="st_203_map_Mesh_0198" parent="Environment/Map" index="39" unique_id=514039744]
+layers = 2
+extra_cull_margin = 16384.0
+
+[node name="st_203_map_suimen_Mesh_0000" parent="Environment/Map" index="40" unique_id=1769883009]
+layers = 2
+cast_shadow = 0
+extra_cull_margin = 16384.0
+
+[node name="st_203_map_takimori_Mesh_0000" parent="Environment/Map" index="41" unique_id=2119403212]
+layers = 2
+cast_shadow = 0
+extra_cull_margin = 16384.0
+
+[node name="st_203_map_takimori_Mesh_0014" parent="Environment/Map" index="42" unique_id=1981689769]
+layers = 2
+cast_shadow = 0
+extra_cull_margin = 16384.0
+
+[node name="st_203_map_takimori_Mesh_0015" parent="Environment/Map" index="43" unique_id=780783055]
+layers = 2
+cast_shadow = 0
+extra_cull_margin = 16384.0
+
+[node name="st_203_map_takimori_Mesh_0016" parent="Environment/Map" index="44" unique_id=2141970719]
+layers = 2
+cast_shadow = 0
+extra_cull_margin = 16384.0
+
+[node name="st_203_map_Mesh_0031" parent="Environment/Map" index="45" unique_id=1416833129]
+layers = 2
+cast_shadow = 0
+extra_cull_margin = 16384.0
+
+[node name="st_203_map_Mesh_0031_001" parent="Environment/Map" index="46" unique_id=1210079401]
+layers = 2
+cast_shadow = 0
+extra_cull_margin = 16384.0
+
+[node name="st_203_map_Mesh_0006_001" parent="Environment/Map" index="47" unique_id=1347184263]
+layers = 2
+cast_shadow = 0
+extra_cull_margin = 16384.0
+
+[node name="CameraRoot" type="Node3D" parent="." unique_id=2035980425]
+transform = Transform3D(0.25881907, -0.8365164, 0.48296288, 0, 0.5, 0.86602545, -0.9659258, -0.2241439, 0.12940952, 200, 300, 50)
+
+[node name="GameCamera" type="Camera3D" parent="CameraRoot" unique_id=24352474]
+transform = Transform3D(0.99999994, -1.4901161e-08, 7.450581e-09, 1.4901161e-08, 0.9999999, 9.313226e-09, 0, 5.5879354e-09, 0.99999994, 0, 0, 0)
+cull_mask = 1123
+far = 1000.0
+
+[node name="Paths" type="Node3D" parent="." unique_id=106001146]
+
+[node name="Path3D" type="Path3D" parent="Paths" unique_id=1348062017]
+curve = SubResource("Curve3D_cnv6o")
+debug_custom_color = Color(1, 1, 1, 1)
+
+[node name="Player" type="Node3D" parent="Paths/Path3D" unique_id=119553118]
+transform = Transform3D(-0.4114678, 0, -0.9114235, 0, 0.99999744, 0, 0.9114232, 0, -0.4114679, 21, 15, 11)
+
+[node name="Canoe" parent="Paths/Path3D/Player" unique_id=220934417 instance=ExtResource("5_r81ko")]
+transform = Transform3D(1, 0, 0, 0, 0.99999994, 0, 0, 0, 1, 0, 0, 0)
+
+[node name="OarAttachment" type="BoneAttachment3D" parent="Paths/Path3D/Player" unique_id=1162960053]
+transform = Transform3D(-2.3841858e-07, 1.937151e-07, 1, 0.6428036, -0.7660309, 2.3841854e-07, 0.7660309, 0.6428037, 0, -1.8932028, 3.7807188, 2.1917667)
+bone_name = "hand_attachment"
+bone_idx = 89
+
+[node name="Oar" parent="Paths/Path3D/Player/OarAttachment" unique_id=399077218 instance=ExtResource("8_hgdfq")]
+
+[editable path="Minigame"]
+[editable path="Environment/Map"]
