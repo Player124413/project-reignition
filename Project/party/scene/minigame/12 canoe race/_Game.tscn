@@ -5,8 +5,10 @@
 [ext_resource type="PackedScene" uid="uid://f5w7fq20xmd1" path="res://party/scene/minigame/00 base/Time.tscn" id="2_cnv6o"]
 [ext_resource type="Resource" uid="uid://buae6jqyb88ay" path="res://party/resource/minigame/12CanoeRace.tres" id="2_r81ko"]
 [ext_resource type="AnimationLibrary" uid="uid://bk2osw7eo0vkb" path="res://party/scene/minigame/12 canoe race/animation/_Library.glb" id="3_38q1j"]
-[ext_resource type="PackedScene" uid="uid://d2hf4b6i01xrj" path="res://party/scene/minigame/12 canoe race/model/Canoe.glb" id="5_r81ko"]
-[ext_resource type="PackedScene" uid="uid://di6qt43fewimv" path="res://party/scene/minigame/12 canoe race/model/Oar.glb" id="8_hgdfq"]
+[ext_resource type="PackedScene" uid="uid://fbmbmsypqykd" path="res://party/scene/minigame/12 canoe race/Player.tscn" id="6_0apxg"]
+[ext_resource type="PackedScene" uid="uid://cxyal174e2wck" path="res://party/scene/minigame/12 canoe race/Omochao.tscn" id="6_38q1j"]
+[ext_resource type="PackedScene" uid="uid://buf5583arxiip" path="res://party/scene/minigame/12 canoe race/model/Collision.glb" id="7_hgdfq"]
+[ext_resource type="Script" uid="uid://b2r326l8hl1b6" path="res://party/scene/minigame/12 canoe race/script/camera.gd" id="8_m4cgh"]
 
 [sub_resource type="Environment" id="Environment_k6wrd"]
 ambient_light_source = 2
@@ -25,11 +27,79 @@ _data = {
 }
 point_count = 9
 
+[sub_resource type="Animation" id="Animation_38q1j"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("CameraRoot/GameCamera:fov")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [75.0]
+}
+
+[sub_resource type="Animation" id="Animation_m4cgh"]
+resource_name = "init"
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("CameraRoot/GameCamera:fov")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [75.0]
+}
+
+[sub_resource type="Animation" id="Animation_hgdfq"]
+resource_name = "intro"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("CameraRoot/GameCamera:fov")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.8),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [75.0, 40.0]
+}
+tracks/1/type = "method"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Minigame")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(1),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"request_minigame_start"
+}]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_m4cgh"]
+_data = {
+&"RESET": SubResource("Animation_38q1j"),
+&"init": SubResource("Animation_m4cgh"),
+&"intro": SubResource("Animation_hgdfq")
+}
+
 [node name="Game" type="Node3D" unique_id=61563640]
 
-[node name="Minigame" parent="." unique_id=600998337 instance=ExtResource("1_k6wrd")]
+[node name="Minigame" parent="." unique_id=600998337 node_paths=PackedStringArray("intro_animator") instance=ExtResource("1_k6wrd")]
 minigame_resource = ExtResource("2_r81ko")
 anim_library = ExtResource("3_38q1j")
+intro_animator = NodePath("../AnimationPlayer")
 
 [node name="Time" parent="Minigame" unique_id=2069576343 instance=ExtResource("2_cnv6o")]
 layout_mode = 1
@@ -49,7 +119,7 @@ layers = 1024
 light_color = Color(0.9999998, 0.90777826, 0.82030994, 1)
 light_cull_mask = 99
 shadow_enabled = true
-shadow_caster_mask = 2
+shadow_caster_mask = 3
 directional_shadow_max_distance = 500.0
 
 [node name="BounceLight" type="DirectionalLight3D" parent="Environment" unique_id=1616575120]
@@ -62,6 +132,50 @@ light_cull_mask = 99
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="Environment" unique_id=499655761]
 environment = SubResource("Environment_k6wrd")
+
+[node name="Omochaos" type="Node3D" parent="Environment" unique_id=136203288]
+
+[node name="Omochao1" parent="Environment/Omochaos" unique_id=1992437820 instance=ExtResource("6_38q1j")]
+transform = Transform3D(-0.7039311, 0, 0.71026826, 0, 1, 0, -0.71026826, 0, -0.7039311, 38.176018, 27.937868, 57.71889)
+
+[node name="Omochao2" parent="Environment/Omochaos" unique_id=1524151319 instance=ExtResource("6_38q1j")]
+transform = Transform3D(-0.25448805, 0, 0.9670759, 0, 1, 0, -0.9670759, 0, -0.25448805, 47.320786, 27.937868, 68.36658)
+
+[node name="Omochao3" parent="Environment/Omochaos" unique_id=1303688594 instance=ExtResource("6_38q1j")]
+transform = Transform3D(0.5264311, 0, 0.85021776, 0, 1, 0, -0.85021776, 0, 0.5264311, 49.61305, 27.937868, 127.27867)
+
+[node name="Omochao4" parent="Environment/Omochaos" unique_id=634221371 instance=ExtResource("6_38q1j")]
+transform = Transform3D(0.6928825, 0, 0.7210506, 0, 1, 0, -0.7210506, 0, 0.6928825, 41.670055, 27.937868, 140.3189)
+
+[node name="Omochao5" parent="Environment/Omochaos" unique_id=550894018 instance=ExtResource("6_38q1j")]
+transform = Transform3D(0.8589624, 0, 0.51203877, 0, 1, 0, -0.51203877, 0, 0.8589624, 30.599567, 27.937868, 143.96648)
+
+[node name="Omochao6" parent="Environment/Omochaos" unique_id=2057282405 instance=ExtResource("6_38q1j")]
+transform = Transform3D(0.8758126, 0, -0.4826514, 0, 1, 0, 0.4826514, 0, 0.8758126, -29.18843, 27.937868, 146.30258)
+
+[node name="Omochao7" parent="Environment/Omochaos" unique_id=1544259736 instance=ExtResource("6_38q1j")]
+transform = Transform3D(0.7169073, 0, -0.6971686, 0, 1, 0, 0.6971686, 0, 0.7169073, -43.059464, 27.937868, 130.26808)
+
+[node name="Omochao8" parent="Environment/Omochaos" unique_id=155979002 instance=ExtResource("6_38q1j")]
+transform = Transform3D(-0.72463787, 0, 0.6891298, 0, 1, 0, -0.6891298, 0, -0.72463787, 38.52862, 27.937868, -142.4647)
+
+[node name="Omochao9" parent="Environment/Omochaos" unique_id=841316255 instance=ExtResource("6_38q1j")]
+transform = Transform3D(-0.28298986, 0, 0.9591229, 0, 1, 0, -0.9591229, 0, -0.28298986, 47.98442, 27.937868, -132.09225)
+
+[node name="Omochao10" parent="Environment/Omochaos" unique_id=1008667242 instance=ExtResource("6_38q1j")]
+transform = Transform3D(0.50104487, 0, 0.86542124, 0, 1, 0, -0.86542124, 0, 0.50104487, 52.018738, 27.937868, -73.27377)
+
+[node name="Omochao11" parent="Environment/Omochaos" unique_id=1099437303 instance=ExtResource("6_38q1j")]
+transform = Transform3D(0.67124516, 0, 0.7412355, 0, 1, 0, -0.7412355, 0, 0.67124516, 44.465046, 27.937868, -60.004246)
+
+[node name="Omochao12" parent="Environment/Omochaos" unique_id=1117283631 instance=ExtResource("6_38q1j")]
+transform = Transform3D(0.84343654, 0, 0.537229, 0, 1, 0, -0.537229, 0, 0.84343654, 33.507328, 27.937868, -56.030712)
+
+[node name="Omochao13" parent="Environment/Omochaos" unique_id=2140563527 instance=ExtResource("6_38q1j")]
+transform = Transform3D(0.8897095, 0, -0.4565271, 0, 1, 0, 0.4565271, 0, 0.8897095, -26.18538, 27.937868, -51.926662)
+
+[node name="Omochao14" parent="Environment/Omochaos" unique_id=1899449769 instance=ExtResource("6_38q1j")]
+transform = Transform3D(0.7372208, 0, -0.67565197, 0, 1, 0, 0.67565197, 0, 0.7372208, -40.524757, 27.937868, -67.54373)
 
 [node name="Map" parent="Environment" unique_id=321913581 instance=ExtResource("1_1bd2x")]
 
@@ -302,32 +416,48 @@ layers = 2
 cast_shadow = 0
 extra_cull_margin = 16384.0
 
-[node name="CameraRoot" type="Node3D" parent="." unique_id=2035980425]
-transform = Transform3D(0.25881907, -0.8365164, 0.48296288, 0, 0.5, 0.86602545, -0.9659258, -0.2241439, 0.12940952, 200, 300, 50)
+[node name="Collision" parent="Environment" unique_id=110934551 instance=ExtResource("7_hgdfq")]
+visible = false
+
+[node name="CameraRoot" type="Node3D" parent="." unique_id=2035980425 node_paths=PackedStringArray("players", "camera")]
+transform = Transform3D(0.42261824, -0.78488564, 0.45315388, 0, 0.49999997, 0.86602545, -0.9063078, -0.36599815, 0.2113091, 23, 15, 10)
+script = ExtResource("8_m4cgh")
+players = [NodePath("../Race/StartLine/Player1"), NodePath("../Race/StartLine/Player2"), NodePath("../Race/StartLine/Player3"), NodePath("../Race/StartLine/Player4")]
+camera = NodePath("GameCamera")
 
 [node name="GameCamera" type="Camera3D" parent="CameraRoot" unique_id=24352474]
-transform = Transform3D(0.99999994, -1.4901161e-08, 7.450581e-09, 1.4901161e-08, 0.9999999, 9.313226e-09, 0, 5.5879354e-09, 0.99999994, 0, 0, 0)
+transform = Transform3D(0.99999994, -1.4901161e-08, 2.2204463e-16, 1.4901161e-08, 0.9999999, -5.5879354e-09, -1.3877789e-16, 5.587935e-09, 0.99999994, 0, -15, 150)
 cull_mask = 1123
 far = 1000.0
 
-[node name="Paths" type="Node3D" parent="." unique_id=106001146]
+[node name="Race" type="Node3D" parent="." unique_id=106001146]
 
-[node name="Path3D" type="Path3D" parent="Paths" unique_id=1348062017]
+[node name="StartLine" type="Node3D" parent="Race" unique_id=1335162565]
+transform = Transform3D(-0.42261827, 0, -0.9063078, 0, 1, 0, 0.9063078, 0, -0.42261827, 26.273617, 15, 11.768274)
+
+[node name="Player1" parent="Race/StartLine" unique_id=1966362722 instance=ExtResource("6_0apxg")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 15, 0, 0)
+
+[node name="Player2" parent="Race/StartLine" unique_id=232890134 instance=ExtResource("6_0apxg")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 0, -10)
+player_index = 1
+
+[node name="Player3" parent="Race/StartLine" unique_id=1233272060 instance=ExtResource("6_0apxg")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 0, -20)
+player_index = 2
+
+[node name="Player4" parent="Race/StartLine" unique_id=280889217 instance=ExtResource("6_0apxg")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -15, 0, -30)
+player_index = 3
+
+[node name="Path3D" type="Path3D" parent="Race" unique_id=1348062017]
 curve = SubResource("Curve3D_cnv6o")
 debug_custom_color = Color(1, 1, 1, 1)
 
-[node name="Player" type="Node3D" parent="Paths/Path3D" unique_id=119553118]
-transform = Transform3D(-0.4114678, 0, -0.9114235, 0, 0.99999744, 0, 0.9114232, 0, -0.4114679, 21, 15, 11)
-
-[node name="Canoe" parent="Paths/Path3D/Player" unique_id=220934417 instance=ExtResource("5_r81ko")]
-transform = Transform3D(1, 0, 0, 0, 0.99999994, 0, 0, 0, 1, 0, 0, 0)
-
-[node name="OarAttachment" type="BoneAttachment3D" parent="Paths/Path3D/Player" unique_id=1162960053]
-transform = Transform3D(-2.3841858e-07, 1.937151e-07, 1, 0.6428036, -0.7660309, 2.3841854e-07, 0.7660309, 0.6428037, 0, -1.8932028, 3.7807188, 2.1917667)
-bone_name = "hand_attachment"
-bone_idx = 89
-
-[node name="Oar" parent="Paths/Path3D/Player/OarAttachment" unique_id=399077218 instance=ExtResource("8_hgdfq")]
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=1973003384]
+libraries/ = SubResource("AnimationLibrary_m4cgh")
+autoplay = &"init"
 
 [editable path="Minigame"]
 [editable path="Environment/Map"]
+[editable path="Environment/Collision"]

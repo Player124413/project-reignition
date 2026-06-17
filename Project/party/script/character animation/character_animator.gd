@@ -108,7 +108,7 @@ func play_minigame_animation(anim : StringName, blend : float = 0.0, speed : flo
 func network_seek(original_tick : float) -> void:
 	if !NetworkManager.is_online:
 		return
-	animator.seek(NetworkTimeSynchronizer.get_time() - original_tick, true)
+	animator.advance(NetworkTimeSynchronizer.get_time() - original_tick)
 
 func queue_minigame_animation(anim : StringName, blend : float = 0.0) -> void:
 	animator.set_blend_time(animator.assigned_animation, anim, blend)

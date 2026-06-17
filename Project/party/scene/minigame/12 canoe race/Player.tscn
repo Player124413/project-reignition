@@ -1,0 +1,40 @@
+[gd_scene format=3 uid="uid://fbmbmsypqykd"]
+
+[ext_resource type="Script" uid="uid://dd4gghke1qfri" path="res://party/scene/minigame/00 base/script/canoe_mover.gd" id="1_rvd6q"]
+[ext_resource type="PackedScene" uid="uid://d2hf4b6i01xrj" path="res://party/scene/minigame/12 canoe race/model/Canoe.glb" id="2_r4lm4"]
+[ext_resource type="PackedScene" uid="uid://di6qt43fewimv" path="res://party/scene/minigame/12 canoe race/model/Oar.glb" id="3_30qsr"]
+[ext_resource type="Script" uid="uid://ds056nimfywwr" path="res://party/script/core/rollback_timer.gd" id="4_r4lm4"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_e2t8q"]
+radius = 2.5
+height = 10.0
+
+[node name="Player" type="Node3D" unique_id=1966362722 node_paths=PackedStringArray("rollback_timer", "character_body", "oar_attachment", "spawn_position")]
+script = ExtResource("1_rvd6q")
+rollback_timer = NodePath("RollbackTimer")
+character_body = NodePath("Root")
+oar_attachment = NodePath("Root/OarAttachment")
+spawn_position = NodePath("Root/Canoe")
+
+[node name="Root" type="CharacterBody3D" parent="." unique_id=1908688906]
+transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, 0)
+
+[node name="Canoe" parent="Root" unique_id=220934417 instance=ExtResource("2_r4lm4")]
+transform = Transform3D(1, 0, 0, 0, 0.7, 0, 0, 0, 1, 0, 0, 0)
+
+[node name="OarAttachment" type="BoneAttachment3D" parent="Root" unique_id=895184390]
+transform = Transform3D(-2.682209e-07, 1.7881393e-07, 1, 0.6428036, -0.76603097, 2.3841855e-07, 0.7660309, 0.6428037, 2.9802322e-08, -1.8932028, 3.780719, 2.1917667)
+bone_name = "hand_attachment"
+bone_idx = 89
+
+[node name="Oar" parent="Root/OarAttachment" unique_id=399077218 instance=ExtResource("3_30qsr")]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Root" unique_id=1103133292]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 2.5, 0)
+shape = SubResource("CapsuleShape3D_e2t8q")
+
+[node name="RollbackTimer" type="Node" parent="." unique_id=2029090433]
+script = ExtResource("4_r4lm4")
+param_count = 4
+rollback_interval = 0.0
+metadata/_custom_type_script = "uid://ds056nimfywwr"
