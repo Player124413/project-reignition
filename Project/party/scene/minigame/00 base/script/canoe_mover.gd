@@ -67,12 +67,14 @@ const RB_SPD : int = 1
 const RB_ANGLE : int = 2
 func on_rollback_applied(rb_params : Array) -> void:
 	character_body.global_position = rb_params[RB_POS]
-	_move_speed = rb_params[RB_SPD]
+	_move_speed = rb_params[RB_SPD].x
+	_vertical_speed = rb_params[RB_SPD].y
+	_rot_speed = rb_params[RB_SPD].z
 	_move_angle = rb_params[RB_ANGLE]
 
 func process_rollback() -> void:
 	rollback_timer.set_param(RB_POS, character_body.global_position)
-	rollback_timer.set_param(RB_SPD, _move_speed)
+	rollback_timer.set_param(RB_SPD, Vector3(_move_speed, _vertical_speed, _rot_speed))
 	rollback_timer.set_param(RB_ANGLE, _move_angle)
 	rollback_timer.process_rollback()
 
@@ -179,17 +181,13 @@ func process_cpu_input() -> void:
 		cpu_interval_timer = get_cpu_interval()
 		calculate_cpu_input()
 
-const CPU_VARIANCE : float = 0.1
+const CPU_VARIANCE : float = 0.4
 ## Override this function to change how often the cpu updates their inputs.
 func get_cpu_interval() -> float:
 	var difficulty : PlayerData.CPU_DIFFICULTY_ENUM = get_cpu_difficulty()
-	if difficulty == PlayerData.CPU_DIFFICULTY_ENUM.EXTREME:
-		return 0.1
-	if difficulty == PlayerData.CPU_DIFFICULTY_ENUM.HARD:
-		return 0.0 # Normal CPU always just holds a consistent paddle speed
-	if difficulty == PlayerData.CPU_DIFFICULTY_ENUM.NORMAL:
-		return 0.6 - randf() * CPU_VARIANCE
-	return 1.0 - randf() * CPU_VARIANCE # Easy cpu is erratic
+	if difficulty == PlayerData.CPU_DIFFICULTY_ENUM.EASY || difficulty == PlayerData.CPU_DIFFICULTY_ENUM.NORMAL:
+		return 1.0 - randf() * CPU_VARIANCE # Easy cpu is erratic
+	return 0.0 # Other CPUs paddle at consistent speeds
 
 ## Override this function to calculate the cpu inputs.
 func calculate_cpu_input() -> void:

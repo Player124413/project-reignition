@@ -30,15 +30,15 @@ func sync_path_follower() -> void:
 
 func calculate_cpu_input() -> void:
 	var diff : PlayerData.CPU_DIFFICULTY_ENUM = get_cpu_difficulty()
+	# Dumb algorithm that often leads to moving backwards
 	var input : float
 	
 	if diff == PlayerData.CPU_DIFFICULTY_ENUM.EASY:
-		# Dumb algorithm that often leads to moving backwards
 		input = sign(path_follower.to_local(character_body.global_position).x)
 		request_paddle(input, true) # Easy CPU paddles fast then waits for an uncomfortably long time
 		return
 	
-	# Decent algorithm. Occasional wall bumps
+	# Better algorithm. Occasional wall bumps
 	var forward_dir : Vector3 = Vector3.MODEL_FRONT.rotated(Vector3.UP, _move_angle)
 	var angle : float = path_follower.global_basis.z.signed_angle_to(forward_dir, Vector3.UP)
 	input = sign(angle)
@@ -46,7 +46,7 @@ func calculate_cpu_input() -> void:
 	if diff == PlayerData.CPU_DIFFICULTY_ENUM.NORMAL:
 		request_paddle(input, true) # Normal CPU paddles fast then waits for an uncomfortably long time
 		return
-	
+		
 	if diff == PlayerData.CPU_DIFFICULTY_ENUM.HARD:
 		request_paddle(input, false) # Hard CPU paddle slowly, but consistently
 		return

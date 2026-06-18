@@ -54,7 +54,7 @@ func set_progress_percent(percent : float) -> void:
 ## Updates the lap of this tracker.
 func set_progress_lap(curr_lap : int, total_lap : int) -> void:
 	player_laps[_player_index] = curr_lap
-	curr_lap = max(curr_lap, 1) # Don't display less than lap 1
+	curr_lap = clamp(curr_lap, 1, total_lap) # Don't display less than lap 1
 	if display_mode == DISPLAY_MODES.LAP:
 		progress_label.set_synced_text(tr("party_lap").replace("[C]", str(curr_lap)).replace("[T]", str(total_lap)))
 
