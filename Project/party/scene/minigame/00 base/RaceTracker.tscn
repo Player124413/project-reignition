@@ -1,0 +1,142 @@
+[gd_scene format=3 uid="uid://cq2dk3maufhek"]
+
+[ext_resource type="Script" uid="uid://dyfjss33r8a4k" path="res://party/scene/minigame/00 base/script/race_tracker.gd" id="2_yelk8"]
+[ext_resource type="LabelSettings" uid="uid://drjlff6skaffl" path="res://party/font/minigame/PositionNumberOutline.tres" id="3_4t5in"]
+[ext_resource type="Texture2D" uid="uid://butavq6fgm4cr" path="res://party/scene/minigame/00 base/interface/race lap counter.png" id="3_rwb0i"]
+[ext_resource type="Texture2D" uid="uid://cnlbuerlqyq80" path="res://party/resource/character/texture/cs sonic.png" id="4_ex6m1"]
+[ext_resource type="Texture2D" uid="uid://k2i1pssbcay3" path="res://party/scene/minigame/00 base/interface/race portrait trim.png" id="4_sui6g"]
+[ext_resource type="Texture2D" uid="uid://bdu1k1cu4w0fg" path="res://party/scene/minigame/00 base/interface/race portrait clip.png" id="5_q8wdq"]
+[ext_resource type="LabelSettings" uid="uid://bttypxbhutr8y" path="res://party/font/minigame/PositionNumberFill.tres" id="5_rwb0i"]
+[ext_resource type="LabelSettings" uid="uid://b7qvf22ixh66g" path="res://party/font/minigame/ScoreNameOutline.tres" id="5_sui6g"]
+[ext_resource type="Script" uid="uid://qvplfr0cibu5" path="res://party/script/interface/synced_label.gd" id="6_q8wdq"]
+[ext_resource type="Texture2D" uid="uid://cas3nfw1h70dx" path="res://party/font/minigame/PositionFirstGradientFill.tres" id="6_rwb0i"]
+[ext_resource type="LabelSettings" uid="uid://udp30iqcrb0d" path="res://party/font/minigame/ScoreNameFill.tres" id="7_8jp4r"]
+[ext_resource type="Texture2D" uid="uid://cm4dsrfm8yxab" path="res://party/font/minigame/MinigameGradientFill.tres" id="8_nesss"]
+
+[node name="RaceTracker" type="TextureRect" unique_id=879132590 node_paths=PackedStringArray("progress_label", "position_label", "character_texture_rect")]
+anchors_preset = -1
+offset_right = 192.0
+offset_bottom = 64.0
+size_flags_horizontal = 6
+size_flags_vertical = 4
+texture = ExtResource("3_rwb0i")
+script = ExtResource("2_yelk8")
+progress_label = NodePath("ProgressLabel")
+position_label = NodePath("PositionLabel")
+character_texture_rect = NodePath("Trim/Clip/Character")
+
+[node name="PositionLabel" type="Label" parent="." unique_id=540785654]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -240.0
+offset_top = -40.0
+offset_right = -128.0
+offset_bottom = 38.5
+grow_horizontal = 2
+grow_vertical = 2
+text = "1st"
+label_settings = ExtResource("3_4t5in")
+horizontal_alignment = 1
+vertical_alignment = 1
+script = ExtResource("6_q8wdq")
+metadata/_custom_type_script = "uid://qvplfr0cibu5"
+
+[node name="FillLabel" type="Label" parent="PositionLabel" unique_id=1107783845]
+clip_children = 1
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "1st"
+label_settings = ExtResource("5_rwb0i")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Gradient" type="TextureRect" parent="PositionLabel/FillLabel" unique_id=235025346]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = 7.5
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("6_rwb0i")
+expand_mode = 1
+
+[node name="Trim" type="TextureRect" parent="." unique_id=1195612545]
+layout_mode = 1
+offset_left = -48.0
+offset_top = -16.0
+offset_right = 48.0
+offset_bottom = 80.0
+texture = ExtResource("4_sui6g")
+
+[node name="Clip" type="TextureRect" parent="Trim" unique_id=2102440062]
+show_behind_parent = true
+clip_children = 2
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("5_q8wdq")
+
+[node name="Character" type="TextureRect" parent="Trim/Clip" unique_id=1022188304]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("4_ex6m1")
+
+[node name="ProgressLabel" type="Label" parent="." unique_id=928045317]
+layout_mode = 1
+anchors_preset = -1
+anchor_top = 0.30100003
+anchor_right = 1.0
+anchor_bottom = 0.30100003
+offset_left = 40.0
+offset_top = -14.528004
+offset_right = -8.0
+offset_bottom = 36.736
+grow_horizontal = 2
+text = "LAP 1/2"
+label_settings = ExtResource("5_sui6g")
+horizontal_alignment = 1
+vertical_alignment = 1
+uppercase = true
+script = ExtResource("6_q8wdq")
+metadata/_custom_type_script = "uid://qvplfr0cibu5"
+
+[node name="FillLabel" type="Label" parent="ProgressLabel" unique_id=1594221613]
+clip_children = 1
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "LAP 1/2"
+label_settings = ExtResource("7_8jp4r")
+horizontal_alignment = 1
+vertical_alignment = 1
+uppercase = true
+
+[node name="Gradient" type="TextureRect" parent="ProgressLabel/FillLabel" unique_id=2076862106]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = 7.5
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("8_nesss")
+expand_mode = 1

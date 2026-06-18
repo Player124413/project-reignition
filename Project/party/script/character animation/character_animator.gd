@@ -119,9 +119,13 @@ func on_minigame_finished() -> void:
 	if !PartyManager.minigame_players.has(player_index):
 		return
 	
-	reparent(MinigameManager.instance.results_location[player_index])
-	set_deferred("transform", Transform3D.IDENTITY)
-	call_deferred("play_animation", "%s/wait" % MinigameManager.COMMON_ANIMATION_LIBRARY_PREFIX)
+	if MinigameManager.instance.is_canoe_minigame:
+		get_parent().reparent(MinigameManager.instance.results_location[player_index])
+		get_parent().set_deferred("transform", Transform3D.IDENTITY)
+	else:
+		reparent(MinigameManager.instance.results_location[player_index])
+		set_deferred("transform", Transform3D.IDENTITY)
+		call_deferred("play_animation", "%s/wait" % MinigameManager.COMMON_ANIMATION_LIBRARY_PREFIX)
 
 ## Play victory or loss animation
 func on_results_started() -> void:
@@ -134,12 +138,13 @@ func on_results_started() -> void:
 func play_result_animation() -> void:
 	set_speed(1)
 	if PartyManager.get_player_data(player_index).minigame_placement == 0:
-		play_animation("win")
+		play_animation("canoe-win" if MinigameManager.instance.is_canoe_minigame else "win")
 		play_voice("win%s" % randi_range(1, 2))
+	elif MinigameManager.instance.is_tie:
+		play_animation("canoe-draw" if MinigameManager.instance.is_canoe_minigame else "draw")
+		play_voice("draw")
 	else:
-		play_animation("lose")
-		if MinigameManager.instance.is_tie:
-			play_voice("draw")
+		play_animation("canoe-lose" if MinigameManager.instance.is_canoe_minigame else "lose")
 
 ## Loads a given animation library to the animator.
 func load_animation_library(library_name : String, library : AnimationLibrary) -> void:

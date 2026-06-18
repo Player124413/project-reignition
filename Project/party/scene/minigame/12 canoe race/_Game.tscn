@@ -5,7 +5,9 @@
 [ext_resource type="PackedScene" uid="uid://f5w7fq20xmd1" path="res://party/scene/minigame/00 base/Time.tscn" id="2_cnv6o"]
 [ext_resource type="Resource" uid="uid://buae6jqyb88ay" path="res://party/resource/minigame/12CanoeRace.tres" id="2_r81ko"]
 [ext_resource type="AnimationLibrary" uid="uid://bk2osw7eo0vkb" path="res://party/scene/minigame/12 canoe race/animation/_Library.glb" id="3_38q1j"]
+[ext_resource type="Resource" uid="uid://byywjgtxw58k" path="res://party/resource/bgm/Minigame3.tres" id="5_7l8rr"]
 [ext_resource type="PackedScene" uid="uid://fbmbmsypqykd" path="res://party/scene/minigame/12 canoe race/Player.tscn" id="6_0apxg"]
+[ext_resource type="PackedScene" uid="uid://cmy2epuwmgxbm" path="res://party/scene/minigame/00 base/RaceTrackerBottom.tscn" id="6_1isum"]
 [ext_resource type="PackedScene" uid="uid://cxyal174e2wck" path="res://party/scene/minigame/12 canoe race/Omochao.tscn" id="6_38q1j"]
 [ext_resource type="PackedScene" uid="uid://buf5583arxiip" path="res://party/scene/minigame/12 canoe race/model/Collision.glb" id="7_hgdfq"]
 [ext_resource type="Script" uid="uid://b2r326l8hl1b6" path="res://party/scene/minigame/12 canoe race/script/camera.gd" id="8_m4cgh"]
@@ -111,10 +113,14 @@ minigame_resource = ExtResource("2_r81ko")
 anim_library = ExtResource("3_38q1j")
 rank_mode = 1
 results_camera = NodePath("../ResultsCamera")
+is_canoe_minigame = true
 intro_animator = NodePath("../AnimationPlayer")
 
 [node name="ResultsLocation" parent="Minigame" index="4" unique_id=1428872605]
 transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 15, 179)
+
+[node name="BGM" parent="Minigame" index="6" unique_id=1105249761]
+bgmResource = ExtResource("5_7l8rr")
 
 [node name="Time" parent="Minigame" unique_id=2069576343 instance=ExtResource("2_cnv6o")]
 layout_mode = 1
@@ -125,6 +131,9 @@ offset_left = -128.0
 offset_right = 128.0
 grow_horizontal = 2
 max_game_time = 0
+
+[node name="RaceTrackers" parent="Minigame" unique_id=1992641460 instance=ExtResource("6_1isum")]
+layout_mode = 1
 
 [node name="Environment" type="Node3D" parent="." unique_id=479088718]
 
@@ -449,64 +458,72 @@ far = 1000.0
 [node name="Race" type="Node3D" parent="." unique_id=106001146]
 
 [node name="StartLine" type="Node3D" parent="Race" unique_id=1335162565]
-transform = Transform3D(-0.42261827, 0, -0.9063078, 0, 1, 0, 0.9063078, 0, -0.42261827, 26.484926, 15, 11.315121)
+transform = Transform3D(-0.42261827, 0, -0.9063078, 0, 1, 0, 0.9063078, 0, -0.42261827, 31.016464, 15, 13.428212)
 
-[node name="Player1" parent="Race/StartLine" unique_id=1966362722 node_paths=PackedStringArray("path", "path_follower") instance=ExtResource("6_0apxg")]
+[node name="Player1" parent="Race/StartLine" unique_id=1966362722 node_paths=PackedStringArray("path", "path_follower", "race_tracker") instance=ExtResource("6_0apxg")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 15, 0, 0)
-path = NodePath("../../Path3D")
-path_follower = NodePath("../../Path3D/PathFollower3D1")
+path = NodePath("../../Path")
+path_follower = NodePath("../../Path/PathFollower3D1")
+race_tracker = NodePath("../../../Minigame/RaceTrackers/RaceTracker1")
 
-[node name="Player2" parent="Race/StartLine" unique_id=232890134 node_paths=PackedStringArray("path", "path_follower") instance=ExtResource("6_0apxg")]
+[node name="Player2" parent="Race/StartLine" unique_id=232890134 node_paths=PackedStringArray("path", "path_follower", "race_tracker") instance=ExtResource("6_0apxg")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 0, -10)
-path = NodePath("../../Path3D")
-path_follower = NodePath("../../Path3D/PathFollower3D2")
+path = NodePath("../../Path")
+path_follower = NodePath("../../Path/PathFollower3D2")
 player_index = 1
+race_tracker = NodePath("../../../Minigame/RaceTrackers/RaceTracker2")
 
-[node name="Player3" parent="Race/StartLine" unique_id=1233272060 node_paths=PackedStringArray("path", "path_follower") instance=ExtResource("6_0apxg")]
+[node name="Player3" parent="Race/StartLine" unique_id=1233272060 node_paths=PackedStringArray("path", "path_follower", "race_tracker") instance=ExtResource("6_0apxg")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 0, -20)
-path = NodePath("../../Path3D")
-path_follower = NodePath("../../Path3D/PathFollower3D3")
+path = NodePath("../../Path")
+path_follower = NodePath("../../Path/PathFollower3D3")
 player_index = 2
+race_tracker = NodePath("../../../Minigame/RaceTrackers/RaceTracker3")
 
-[node name="Player4" parent="Race/StartLine" unique_id=280889217 node_paths=PackedStringArray("path", "path_follower") instance=ExtResource("6_0apxg")]
+[node name="Player4" parent="Race/StartLine" unique_id=280889217 node_paths=PackedStringArray("path", "path_follower", "race_tracker") instance=ExtResource("6_0apxg")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -15, 0, -30)
-path = NodePath("../../Path3D")
-path_follower = NodePath("../../Path3D/PathFollower3D4")
+path = NodePath("../../Path")
+path_follower = NodePath("../../Path/PathFollower3D4")
 player_index = 3
+race_tracker = NodePath("../../../Minigame/RaceTrackers/RaceTracker4")
 
-[node name="Path3D" type="Path3D" parent="Race" unique_id=1348062017]
+[node name="Path" type="Path3D" parent="Race" unique_id=1348062017]
 curve = SubResource("Curve3D_cnv6o")
 debug_custom_color = Color(1, 1, 1, 1)
 
-[node name="PathFollower3D1" type="PathFollow3D" parent="Race/Path3D" unique_id=1474843326]
+[node name="PathFollower3D1" type="PathFollow3D" parent="Race/Path" unique_id=1474843326]
 transform = Transform3D(-0.41146803, 0, -0.9114238, 0, 1, 0, 0.9114238, 0, -0.41146803, 21, 15, 11)
 use_model_front = true
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="Race/Path3D/PathFollower3D1" unique_id=1642906386]
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Race/Path/PathFollower3D1" unique_id=1642906386]
+layers = 524288
 mesh = SubResource("BoxMesh_e2t8q")
 
-[node name="PathFollower3D2" type="PathFollow3D" parent="Race/Path3D" unique_id=1263161293]
+[node name="PathFollower3D2" type="PathFollow3D" parent="Race/Path" unique_id=1263161293]
 transform = Transform3D(-0.41146803, 0, -0.9114238, 0, 1, 0, 0.9114238, 0, -0.41146803, 21, 15, 11)
 use_model_front = true
 
-[node name="MeshInstance3D2" type="MeshInstance3D" parent="Race/Path3D/PathFollower3D2" unique_id=1170432012]
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="Race/Path/PathFollower3D2" unique_id=1170432012]
 transform = Transform3D(1.0000001, 0, 0, 0, 1, 0, 0, 0, 1.0000001, 0, 0, 0)
+layers = 524288
 mesh = SubResource("BoxMesh_e2t8q")
 
-[node name="PathFollower3D3" type="PathFollow3D" parent="Race/Path3D" unique_id=450333806]
+[node name="PathFollower3D3" type="PathFollow3D" parent="Race/Path" unique_id=450333806]
 transform = Transform3D(-0.41146803, 0, -0.9114238, 0, 1, 0, 0.9114238, 0, -0.41146803, 21, 15, 11)
 use_model_front = true
 
-[node name="MeshInstance3D3" type="MeshInstance3D" parent="Race/Path3D/PathFollower3D3" unique_id=883628314]
+[node name="MeshInstance3D3" type="MeshInstance3D" parent="Race/Path/PathFollower3D3" unique_id=883628314]
 transform = Transform3D(1.0000002, 0, -2.9802322e-08, 0, 1, 0, 2.9802322e-08, 0, 1.0000002, 0, 0, 0)
+layers = 524288
 mesh = SubResource("BoxMesh_e2t8q")
 
-[node name="PathFollower3D4" type="PathFollow3D" parent="Race/Path3D" unique_id=757935260]
+[node name="PathFollower3D4" type="PathFollow3D" parent="Race/Path" unique_id=757935260]
 transform = Transform3D(-0.41146803, 0, -0.9114238, 0, 1, 0, 0.9114238, 0, -0.41146803, 21, 15, 11)
 use_model_front = true
 
-[node name="MeshInstance3D4" type="MeshInstance3D" parent="Race/Path3D/PathFollower3D4" unique_id=683174374]
+[node name="MeshInstance3D4" type="MeshInstance3D" parent="Race/Path/PathFollower3D4" unique_id=683174374]
 transform = Transform3D(1.0000002, 0, -2.9802322e-08, 0, 1, 0, 2.9802322e-08, 0, 1.0000002, 0, 0, 0)
+layers = 524288
 mesh = SubResource("BoxMesh_e2t8q")
 
 [node name="Checkpoint" type="Node3D" parent="." unique_id=720479057 node_paths=PackedStringArray("players")]
@@ -543,10 +560,20 @@ monitorable = false
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 10, 0)
 shape = SubResource("BoxShape3D_e2t8q")
 
+[node name="Checkpoint3" type="Area3D" parent="Checkpoint" unique_id=1446455999]
+transform = Transform3D(-0.42261827, 0, -0.90630776, 0, 1, 0, 0.90630776, 0, -0.42261827, 30.94218, 15, 14.654872)
+collision_layer = 0
+collision_mask = 2
+monitorable = false
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Checkpoint/Checkpoint3" unique_id=1141900790]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 10, 0)
+shape = SubResource("BoxShape3D_e2t8q")
+
 [node name="ResultsCamera" type="Camera3D" parent="." unique_id=728929041]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 29, 250)
 cull_mask = 1123
-fov = 40.0
+fov = 50.0
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=1973003384]
 libraries/ = SubResource("AnimationLibrary_m4cgh")
@@ -555,7 +582,9 @@ autoplay = &"init"
 [connection signal="area_entered" from="Checkpoint/Startline" to="Checkpoint" method="on_checkpoint_entered" binds= [0]]
 [connection signal="area_entered" from="Checkpoint/Checkpoint1" to="Checkpoint" method="on_checkpoint_entered" binds= [1]]
 [connection signal="area_entered" from="Checkpoint/Checkpoint2" to="Checkpoint" method="on_checkpoint_entered" binds= [2]]
+[connection signal="area_entered" from="Checkpoint/Checkpoint3" to="Checkpoint" method="on_checkpoint_entered" binds= [3]]
 
 [editable path="Minigame"]
+[editable path="Minigame/RaceTrackers"]
 [editable path="Environment/Map"]
 [editable path="Environment/Collision"]

@@ -67,6 +67,8 @@ enum RANK_MODE {
 @export_range(0, 3, 1) var autocomplete_survivor_count : int = 0
 ## Option camera to use for the results screen.
 @export var results_camera : Camera3D
+## Should the players use their canoe minigame animations?
+@export var is_canoe_minigame : bool
 ## Tracks whether we're ready to play the results screen or not (based on non-game elements).
 var is_results_queued : bool
 ## Tracks whether we've already finished the minigame and entered the results screen.

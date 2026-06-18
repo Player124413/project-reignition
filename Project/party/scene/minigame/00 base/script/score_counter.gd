@@ -7,7 +7,7 @@ class_name ScoreCounter extends TextureRect
 var _player_index : int = -1
 
 func _ready() -> void:
-	visible = false;
+	visible = false
 
 ## Sets the player index and links the on_score_updated signal.
 func initialize_score_counter(player_index : int) -> void:

@@ -38,6 +38,10 @@ func on_spawn_finished() -> void:
 	global_rotation = Vector3.ZERO
 	apply_movement_rotation()
 	character_animator.play_animation("%s/wait" % MinigameManager.ANIMATION_LIBRARY_PREFIX)
+	if character_animator.data.model_size == PartyCharacterResource.MODEL_SIZES.SMALL:
+		character_animator.position = Vector3.UP * 1
+	elif character_animator.data.model_size == PartyCharacterResource.MODEL_SIZES.EXTRA_SMALL:
+		character_animator.position = Vector3.UP * 1.5
 	rollback_timer.register_target(self)
 
 func deactivate() -> void:

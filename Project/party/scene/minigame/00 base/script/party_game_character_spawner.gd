@@ -4,8 +4,11 @@ class_name PartyGameCharacterSpawner extends Node3D
 
 @export_range(-1, 3, 1) var player_index : int = 0
 @export var spawn_position : Node3D
-@export var score_counter : ScoreCounter
 @export var character_animator : CharacterAnimator
+## Option score counter. Used to display scores to the screen.
+@export var score_counter : ScoreCounter
+## Option race tracker. Used to display positions and completion amount (laps or percentages) to the screen.
+@export var race_tracker : RaceTracker
 ## Option animation tree. Use initialize_animation_tree() to set it up.
 @export var animation_tree : AnimationTree
 
@@ -115,9 +118,10 @@ func _ready() -> void:
 		character_animator = MinigameManager.instance.load_character_model(player_index)
 		spawn_position.add_child(character_animator)
 		
-		if is_instance_valid(score_counter):
-			# Initialize the score counter
+		if is_instance_valid(score_counter): # Initialize the score counter
 			score_counter.initialize_score_counter(player_index)
+		if is_instance_valid(race_tracker): # Initialize the race tracker
+			race_tracker.initialize_race_tracker(player_index)
 	
 	character_animator.connect("animation_event", Callable.create(self, "process_animation_event"))
 	on_spawn_finished()
