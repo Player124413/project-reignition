@@ -55,6 +55,7 @@
 [ext_resource type="Script" uid="uid://ch4pb1qqwy5al" path="res://object/stage/common/resource/script/CameraFollower.cs" id="41_08hmi"]
 [ext_resource type="Material" uid="uid://86s1me03t0lu" path="res://area/5 pirate storm/data/material/Rain Impact.tres" id="42_q3kya"]
 [ext_resource type="Material" uid="uid://6q7k10n0i0bn" path="res://area/5 pirate storm/data/material/Rain Drop.tres" id="43_08hmi"]
+[ext_resource type="Resource" uid="uid://ba0whkdr1cnay" path="res://area/5 pirate storm/act 1/camera/ShipMastCam.tres" id="43_p2b7g"]
 [ext_resource type="Resource" uid="uid://c8f63q8b0ffti" path="res://area/5 pirate storm/act 1/camera/CannonballCam.tres" id="47_dpvh1"]
 [ext_resource type="Resource" uid="uid://cppeiepucyyse" path="res://area/5 pirate storm/act 1/camera/CannonballEndCam.tres" id="48_p2b7g"]
 [ext_resource type="Script" uid="uid://coiui4qvdxbqe" path="res://object/trigger/modules/EventTrigger.cs" id="49_qhv7k"]
@@ -78,6 +79,9 @@ size = Vector3(35, 36, 100)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_auuan"]
 size = Vector3(20, 2, 2)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_p2b7g"]
+size = Vector3(30, 50, 22)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_q3kya"]
 size = Vector3(50, 50, 52)
@@ -1146,7 +1150,7 @@ shape = SubResource("BoxShape3D_k720b")
 [node name="PSSky" parent="Visuals" unique_id=2133069 instance=ExtResource("13_q3kya")]
 script = ExtResource("41_08hmi")
 
-[node name="FogSkyboxMesh" parent="Visuals/PSSky" index="4" unique_id=2083488426]
+[node name="FogSkyboxMesh" parent="Visuals/PSSky" index="4" unique_id=171859400]
 startEnabled = true
 
 [node name="PSSkyLightning" parent="Visuals/PSSky" unique_id=1008241150 instance=ExtResource("17_qhv7k")]
@@ -1532,6 +1536,21 @@ previousSettings = ExtResource("32_82sha")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -38.2275, 27.0004)
 script = ExtResource("24_auuan")
 jumpHeight = 1.0
+
+[node name="ShipMastCamera" parent="Triggers/PathAndCameraTriggers" unique_id=1029606726 instance=ExtResource("22_ypnsc")]
+transform = Transform3D(0.933042, 0.0105851, 0.359613, 9.31323e-10, 0.999567, -0.029422, -0.359769, 0.027452, 0.932638, -95.55761, 68.39404, 1291.7085)
+"Trigger Mode" = 2
+"Enter Mode" = 0
+"Exit Mode" = 0
+
+[node name="Camera" type="Node3D" parent="Triggers/PathAndCameraTriggers/ShipMastCamera" unique_id=1464065800]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 7, -3)
+script = ExtResource("25_f6rbm")
+settings = ExtResource("43_p2b7g")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Triggers/PathAndCameraTriggers/ShipMastCamera" unique_id=41047289]
+transform = Transform3D(1, 2.0954764e-07, -2.3841854e-07, -2.0954758e-07, 1, 2.5146025e-07, 2.3841858e-07, -2.514602e-07, 1, -0.00012207031, 4.000061, 7.000122)
+shape = SubResource("BoxShape3D_p2b7g")
 
 [node name="ShipCloseCamera" parent="Triggers/PathAndCameraTriggers" unique_id=230622491 instance=ExtResource("22_ypnsc")]
 transform = Transform3D(0.933042, 0.0105851, 0.359613, 9.31323e-10, 0.999567, -0.029422, -0.359769, 0.027452, 0.932638, -90.0749, 29.6, 1307.18)
