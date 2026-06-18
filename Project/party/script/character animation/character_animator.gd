@@ -120,8 +120,8 @@ func on_minigame_finished() -> void:
 		return
 	
 	if MinigameManager.instance.is_canoe_minigame:
-		get_parent().reparent(MinigameManager.instance.results_location[player_index])
-		get_parent().set_deferred("transform", Transform3D.IDENTITY)
+		get_parent().get_parent().reparent(MinigameManager.instance.results_location[player_index])
+		get_parent().get_parent().set_deferred("transform", Transform3D.IDENTITY)
 	else:
 		reparent(MinigameManager.instance.results_location[player_index])
 		set_deferred("transform", Transform3D.IDENTITY)
