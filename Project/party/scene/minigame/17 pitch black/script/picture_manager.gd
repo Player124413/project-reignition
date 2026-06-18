@@ -4,6 +4,7 @@ class_name PictureManager extends Node3D
 var characters: Array[Picture.CHARACTER]
 var correction_num: Array[int]
 var current_pic: int = 0
+##How many total pictures can we have in a round
 const max_pictures: int = 49
 
 func _ready() -> void:
