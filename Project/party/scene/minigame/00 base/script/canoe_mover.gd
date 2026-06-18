@@ -29,6 +29,8 @@ var _vertical_speed : float
 var _is_paddle_active : bool
 ## The last direction that was paddled.
 var _paddle_dir : float = -1
+var paddle_buffer : float
+const PADDLE_BUFFER_LENGTH : float = 0.2
 const TURNING_DISABLED_CLAMP_AMOUNT : float = PI * 0.2
 
 func on_spawn_finished() -> void:
@@ -79,8 +81,12 @@ func process_inputs() -> void:
 		return
 	
 	if !is_cpu():
-		if !_is_paddle_active && Input.is_action_pressed("button_primary%s" % get_input_suffix()):
-			request_paddle()
+		paddle_buffer = move_toward(paddle_buffer, 0.0, get_physics_process_delta_time())
+		if Input.is_action_just_pressed("button_primary%s" % get_input_suffix()):
+			paddle_buffer = PADDLE_BUFFER_LENGTH
+		if !_is_paddle_active:
+			if Input.is_action_pressed("button_primary%s" % get_input_suffix()):
+				request_paddle(!is_zero_approx(paddle_buffer))
 	elif player_index != -1:
 		pass # TODO Check for CPU paddles.
 		#_input = get_cpu_input()
@@ -100,20 +106,21 @@ func process_animation_event(info : int) -> void:
 		_is_paddle_active = false
 		character_animator.play_animation("%s/wait" % MinigameManager.ANIMATION_LIBRARY_PREFIX, false, 0.1)
 
-func request_paddle() -> void:
+func request_paddle(fast_paddle : bool) -> void:
 	var input : float = get_horizontal_input()
 	if is_zero_approx(input):
 		_paddle_dir *= -1 # Alternate paddle direction (i.e. move forward)
 	else:
 		_paddle_dir = sign(input)
-	rpc("start_paddle", _paddle_dir, NetworkTimeSynchronizer.get_time())
+	rpc("start_paddle", _paddle_dir, fast_paddle, NetworkTimeSynchronizer.get_time())
 
 @rpc("any_peer", "call_local", "reliable")
-func start_paddle(dir : int, tick : float) -> void:
+func start_paddle(dir : int, fast_paddle : bool, tick : float) -> void:
 	_paddle_dir = dir
 	_is_paddle_active = true
 	var target_animation : String = "left" if dir > 0 else "right"
-	character_animator.play_minigame_animation("%s/%s" % [MinigameManager.ANIMATION_LIBRARY_PREFIX, target_animation], 0.1, 1.0, 0.0, tick)
+	var paddle_spd : float = 1.6 if fast_paddle else 0.8
+	character_animator.play_minigame_animation("%s/%s" % [MinigameManager.ANIMATION_LIBRARY_PREFIX, target_animation], 0.1, paddle_spd, 0.0, tick)
 
 func apply_paddle() -> void:
 	_move_speed = min(_move_speed + paddle_speed, top_speed)
