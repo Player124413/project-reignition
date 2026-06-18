@@ -1,7 +1,9 @@
 ## Manages the race ui in the canoe race minigame.
 extends Node
 
+@export var camera : Camera3D
 @export var players : Array[Node3D]
+@export var final_lap_notifications : Array[Control]
 var _player_laps : PackedInt32Array
 var _player_signs : PackedInt32Array
 
@@ -26,6 +28,8 @@ func _physics_process(_delta: float) -> void:
 		if player.is_multiplayer_authority():
 			process_sign(i)
 		player.race_tracker.set_progress_raw(get_progress(player))
+	for i in players.size():
+		final_lap_notifications[i].global_position = camera.unproject_position(players[i].character_body.global_position)
 
 func process_sign(player_index : int) -> void:
 	var player : Node3D = players[player_index]
@@ -63,6 +67,8 @@ func increment_lap(player_index : int, tick : float) -> void:
 	if _player_laps[player_index] == MAX_LAP_COUNT + 1:
 		MinigameManager.instance.request_time_change(player_index, tick)
 		MinigameManager.instance.request_minigame_finish()
+	elif _player_laps[player_index] == MAX_LAP_COUNT:
+		final_lap_notifications[player_index].get_node("AnimationPlayer").play("show")
 
 @rpc("any_peer", "call_local", "reliable")
 func decrement_lap(player_index : int) -> void:
