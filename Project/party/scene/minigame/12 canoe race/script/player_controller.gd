@@ -13,6 +13,11 @@ const WALL_BOUNCE_STRENGTH : float = 50.0
 const WALL_BOUNCE_FRICTION : float = 20.0
 const MINIMUM_BOUNCE_DOT : float = -0.75
 
+func on_gameplay_finished() -> void:
+	super()
+	if is_multiplayer_authority():
+		MinigameManager.instance.request_score_change(player_index, floori(race_tracker.player_progresses[player_index] * 100))
+
 func apply_movement() -> void:
 	super()
 	
