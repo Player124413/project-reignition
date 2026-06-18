@@ -32,7 +32,7 @@ func process_sign(player_index : int) -> void:
 	var curr_sign : int = calculate_sign(player)
 	if curr_sign == _player_signs[player_index]:
 		return
-	if player.path_follower.progress_ratio < 0.1 || player.path_follower.progress_ratio > 0.9:
+	if _player_signs[player_index] != 0 && curr_sign != 0:
 		if curr_sign == -1:
 			rpc("increment_lap", player_index, NetworkTimeSynchronizer.get_time())
 		else:
@@ -40,6 +40,8 @@ func process_sign(player_index : int) -> void:
 	_player_signs[player_index] = curr_sign
 
 func calculate_sign(player : Node3D) -> int:
+	if player.path_follower.progress_ratio > 0.1 && player.path_follower.progress_ratio < 0.9:
+		return 0
 	if player.path_follower.progress_ratio > 0.5:
 		return 1
 	else:
