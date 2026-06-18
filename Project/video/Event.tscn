@@ -15,6 +15,125 @@
 [ext_resource type="Texture2D" uid="uid://bfpp6wa7clovs" path="res://interface/gameplay/hud/texture/soul gauge/surface dimensions.png" id="12_hb7wu"]
 [ext_resource type="Texture2D" uid="uid://otrkb28oybm8" path="res://video/event/texture/gradient.png" id="13_kosw4"]
 
+[sub_resource type="Animation" id="Animation_d34qw"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:visible")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath(".:modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Subtitles:modulate")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+
+[sub_resource type="Animation" id="Animation_ckwq6"]
+resource_name = "hide"
+length = 0.5
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:visible")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.5),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [true, false]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath(".:modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.5),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 1), Color(1, 1, 1, 0)]
+}
+
+[sub_resource type="Animation" id="Animation_v836o"]
+resource_name = "show"
+length = 0.19999999999999998
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:visible")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath(".:modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.19999999),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 1)]
+}
+
+[sub_resource type="Animation" id="Animation_aba7n"]
+resource_name = "show-text"
+length = 0.19999999999999998
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Subtitles:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.20000002),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 1)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_gt3ln"]
+_data = {
+&"RESET": SubResource("Animation_d34qw"),
+&"hide": SubResource("Animation_ckwq6"),
+&"show": SubResource("Animation_v836o"),
+&"show-text": SubResource("Animation_aba7n")
+}
+
 [sub_resource type="Animation" id="Animation_u8y74"]
 length = 0.001
 tracks/0/type = "value"
@@ -386,7 +505,7 @@ _data = {
 &"skip": SubResource("Animation_kosw4")
 }
 
-[node name="Event" type="Control" unique_id=132709515 node_paths=PackedStringArray("interfaceAnimator", "skipAnimator", "audioPlayer", "videoPlayer", "editorSubtitleLabel", "editorSubtitleRoot")]
+[node name="Event" type="Control" unique_id=132709515 node_paths=PackedStringArray("interfaceAnimator", "skipAnimator", "audioPlayer", "videoPlayer", "subtitleAnimator", "subtitleLabel", "subtitleRoot")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -398,8 +517,9 @@ interfaceAnimator = NodePath("InterfaceAnimationPlayer")
 skipAnimator = NodePath("SkipInterface/SkipAnimationPlayer")
 audioPlayer = NodePath("Audio")
 videoPlayer = NodePath("Resizer/Video")
-editorSubtitleLabel = NodePath("SubtitleLetterbox/Subtitles")
-editorSubtitleRoot = NodePath("SubtitleLetterbox")
+subtitleAnimator = NodePath("SubtitleLetterbox/SubtitleAnimationPlayer")
+subtitleLabel = NodePath("SubtitleLetterbox/Subtitles")
+subtitleRoot = NodePath("SubtitleLetterbox")
 
 [node name="Menu" type="AspectRatioContainer" parent="." unique_id=1188841209]
 layout_mode = 1
@@ -547,6 +667,9 @@ text = "Subtitles will be displayed here as you play animations."
 horizontal_alignment = 1
 vertical_alignment = 1
 autowrap_mode = 2
+
+[node name="SubtitleAnimationPlayer" type="AnimationPlayer" parent="SubtitleLetterbox" unique_id=531998335]
+libraries/ = SubResource("AnimationLibrary_gt3ln")
 
 [node name="InterfaceAnimationPlayer" type="AnimationPlayer" parent="." unique_id=1793489281]
 libraries/ = SubResource("AnimationLibrary_7qjnt")

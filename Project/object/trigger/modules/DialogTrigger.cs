@@ -66,6 +66,7 @@ public partial class DialogTrigger : StageTriggerModule
 
 	public override void Deactivate() => SoundManager.instance.CancelDialog();
 
+	/// <summary> Unused flag from when event dialogs were handled via the Sound Manager. </summary>
 	public bool IsCutscene { get; set; }
 	public int DialogCount => textKeys.Count;
 	public bool HasDelay(int index) => delays != null && delays.Count > index && !Mathf.IsZeroApprox(delays[index]);

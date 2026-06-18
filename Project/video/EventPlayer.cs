@@ -37,14 +37,15 @@ public partial class EventPlayer : Node
 	[Export] private VideoStreamFileLoadPlayer videoPlayer;
 	private bool isInterfaceVisible;
 
-	[ExportGroup("Editor Only")]
+	[ExportGroup("Subtitles")]
+	[Export] private AnimationPlayer subtitleAnimator;
 	/// <summary> Subtitles used to preview cutscene in the editor. </summary>
-	[Export] private Label editorSubtitleLabel;
-	[Export] private Control editorSubtitleRoot;
-	private int editorKeyIndex = 0;
-	private int editorDialogIndex = 0;
-	private double editorLastUpdateTime;
-	private bool editorIsPlaybackInitialized;
+	[Export] private Label subtitleLabel;
+	[Export] private Control subtitleRoot;
+	private int subtitleKeyIndex = 0;
+	private int subtitleDialogIndex = 0;
+	private double subtitleLastUpdateTime;
+	private bool subtitleIsPlaybackInitialized;
 
 	private bool IsSpecialBook => Menu.menuMemory[Menu.MemoryKeys.ActiveMenu] == (int)Menu.MemoryKeys.SpecialBook;
 
@@ -53,10 +54,12 @@ public partial class EventPlayer : Node
 	private float interfaceVisibilityTimer;
 	/// <summary> How long the pause button needs to be held to skip the cutscene. </summary>
 	private readonly float InterfaceVisiblityLength = 1f;
+	private readonly float SubtitleOffset = 0.2f;
 
 	public override void _Ready()
 	{
-		editorSubtitleRoot.Visible = false;
+		subtitleRoot.Visible = false;
+		subtitleRoot.SelfModulate = Colors.White.Lerp(Colors.Transparent, SaveManager.Config.cutsceneOpacity * 0.01f);
 
 		if (Engine.IsEditorHint())
 			return;
@@ -67,7 +70,6 @@ public partial class EventPlayer : Node
 		interfaceAnimator.Advance(0.0);
 
 		LoadLocalization();
-		CreateSubtitles();
 
 		if (!isNestedCutscene && musicResource != null)
 		{
@@ -214,11 +216,10 @@ public partial class EventPlayer : Node
 
 	public override void _PhysicsProcess(double _)
 	{
+		ResyncEditorIndex();
+
 		if (Engine.IsEditorHint())
-		{
-			ResyncEditorIndex();
 			return;
-		}
 
 		if (isNestedCutscene)
 			return;
@@ -289,55 +290,6 @@ public partial class EventPlayer : Node
 		interfaceAnimator.Play("show_interface", 0f);
 	}
 
-	/// <summary> Creates a dialog trigger based on the keyframes in an animation. </summary>
-	private void CreateSubtitles()
-	{
-		if (animator == null) // No subtitles, apparently
-			return;
-
-		subtitles = new Gameplay.Triggers.DialogTrigger()
-		{
-			IsCutscene = true,
-			delays = [],
-			displayLength = [],
-			textKeys = [],
-		};
-		AddChild(subtitles);
-
-		Animation currentAnimation = animator.GetAnimation(animator.AssignedAnimation);
-		int currentDialogIndex = 0;
-		float accumulatedDelay = (float)currentAnimation.TrackGetKeyTime(0, 0);
-
-		for (int i = 0; i < currentAnimation.TrackGetKeyCount(0); i++)
-		{
-			Dictionary currentKeyData = currentAnimation.TrackGetKeyValue(0, i).As<Dictionary>();
-
-			// Calculate key length
-			double currentKeyTime = currentAnimation.TrackGetKeyTime(0, i);
-			float keyLength;
-			if (i == currentAnimation.TrackGetKeyCount(0) - 1) // Final key; hide at the end of the cutscene
-				keyLength = (float)(currentAnimation.Length - currentKeyTime);
-			else // Change text at next key
-				keyLength = (float)(currentAnimation.TrackGetKeyTime(0, i + 1) - currentKeyTime);
-
-			StringName method = currentKeyData["method"].As<StringName>();
-
-			if (method.Equals(MethodName.ShowSubtitles)) // Add a new key
-			{
-				currentDialogIndex++;
-				subtitles.textKeys.Add($"{localizationKeyPrefix}{currentDialogIndex}");
-				subtitles.delays.Add(accumulatedDelay);
-				subtitles.displayLength.Add(keyLength);
-
-				accumulatedDelay = 0f;
-				continue;
-			}
-
-			// Delay the next key
-			accumulatedDelay += keyLength;
-		}
-	}
-
 	/// <summary> Called after the cutscene has finished playing. </summary>
 	public void OnEventFinished() => OnEventFinished(false);
 	public void OnEventFinished(bool isCanceled)
@@ -395,21 +347,27 @@ public partial class EventPlayer : Node
 	}
 
 	#region Editor
-	private void ShowSubtitles()
-	{
-		if (!Engine.IsEditorHint())
-			return;
+	/// <summary> Method used simply for editor keyframing. </summary>
+	private void ShowSubtitles() { }
 
-		editorSubtitleRoot.Visible = true;
-		editorSubtitleLabel.Text = Tr($"{localizationKeyPrefix}{editorDialogIndex}");
+	private void ShowSubtitlesFromScript()
+	{
+		subtitleLabel.Text = Tr($"{localizationKeyPrefix}{subtitleDialogIndex}");
+		if (Engine.IsEditorHint())
+			subtitleRoot.Visible = true;
+		else
+			subtitleAnimator.Play(subtitleRoot.Visible ? "show-text" : "show");
 	}
 
-	private void HideSubtitles()
-	{
-		if (!Engine.IsEditorHint())
-			return;
+	/// <summary> Method used simply for editor keyframing. </summary>
+	private void HideSubtitles() { }
 
-		editorSubtitleRoot.Visible = false;
+	private void HideSubtitlesFromScript()
+	{
+		if (Engine.IsEditorHint())
+			subtitleRoot.Visible = false;
+		else
+			subtitleAnimator.Play("hide");
 	}
 
 	private void PlayFromEditor()
@@ -426,7 +384,7 @@ public partial class EventPlayer : Node
 		audioPlayer.Stop();
 		audioPlayer.Stream = null;
 		animator.Pause();
-		editorIsPlaybackInitialized = false;
+		subtitleIsPlaybackInitialized = false;
 	}
 
 	private void InitializeEditorIndex()
@@ -434,21 +392,21 @@ public partial class EventPlayer : Node
 		if (string.IsNullOrEmpty(animator.CurrentAnimation))
 			return;
 
-		editorKeyIndex = 0;
-		editorDialogIndex = 0;
-		editorLastUpdateTime = animator.CurrentAnimationPosition;
-		HideSubtitles();
+		subtitleKeyIndex = 0;
+		subtitleDialogIndex = 0;
+		subtitleLastUpdateTime = GetCurrentTime();
+		HideSubtitlesFromScript();
 
 		Animation currentAnimation = animator.GetAnimation(animator.CurrentAnimation);
 		for (int i = 0; i < currentAnimation.TrackGetKeyCount(0); i++)
 		{
-			if (currentAnimation.TrackGetKeyTime(0, i) > editorLastUpdateTime)
+			if (currentAnimation.TrackGetKeyTime(0, i) > subtitleLastUpdateTime)
 				break;
 
 			ProcessEditorKeyframe(currentAnimation.TrackGetKeyValue(0, i).As<Dictionary>());
 		}
 
-		editorIsPlaybackInitialized = true;
+		subtitleIsPlaybackInitialized = true;
 	}
 
 	private void ResyncEditorIndex()
@@ -458,45 +416,52 @@ public partial class EventPlayer : Node
 
 		if (string.IsNullOrEmpty(animator.CurrentAnimation))
 		{
-			if (editorIsPlaybackInitialized)
+			if (subtitleIsPlaybackInitialized)
 				PauseFromEditor();
 
 			return;
 		}
 
-		if (!editorIsPlaybackInitialized)
+		if (!subtitleIsPlaybackInitialized)
 		{
 			PlayFromEditor();
 			return;
 		}
 
 		Animation currentAnimation = animator.GetAnimation(animator.CurrentAnimation);
-
-		if (editorKeyIndex >= currentAnimation.TrackGetKeyCount(0) ||
-			currentAnimation.TrackGetKeyTime(0, editorKeyIndex) > animator.CurrentAnimationPosition)
+		if (subtitleKeyIndex >= currentAnimation.TrackGetKeyCount(0) ||
+			currentAnimation.TrackGetKeyTime(0, subtitleKeyIndex) > GetCurrentTime())
 		{
 			return;
 		}
 
-		ProcessEditorKeyframe(currentAnimation.TrackGetKeyValue(0, editorKeyIndex).As<Dictionary>());
-		editorLastUpdateTime = animator.CurrentAnimationPosition;
+		ProcessEditorKeyframe(currentAnimation.TrackGetKeyValue(0, subtitleKeyIndex).As<Dictionary>());
+		subtitleLastUpdateTime = GetCurrentTime();
+	}
+
+	private double GetCurrentTime()
+	{
+		if (Engine.IsEditorHint())
+			return animator.CurrentAnimationPosition;
+
+		return animator.CurrentAnimationPosition + SubtitleOffset;
 	}
 
 	private void ProcessEditorKeyframe(Dictionary key)
 	{
-		editorKeyIndex++;
+		subtitleKeyIndex++;
 
 		StringName method = key["method"].As<StringName>();
 
 		if (method.Equals(MethodName.ShowSubtitles))
 		{
-			editorDialogIndex++;
-			ShowSubtitles();
+			subtitleDialogIndex++;
+			ShowSubtitlesFromScript();
 			return;
 		}
 
 		if (method.Equals(MethodName.HideSubtitles))
-			HideSubtitles();
+			HideSubtitlesFromScript();
 	}
 
 	/// <summary> Called from an animation during the final cutscene. </summary>
