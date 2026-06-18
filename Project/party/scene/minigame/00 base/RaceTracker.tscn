@@ -11,9 +11,174 @@
 [ext_resource type="Script" uid="uid://qvplfr0cibu5" path="res://party/script/interface/synced_label.gd" id="6_q8wdq"]
 [ext_resource type="Texture2D" uid="uid://cas3nfw1h70dx" path="res://party/font/minigame/PositionFirstGradientFill.tres" id="6_rwb0i"]
 [ext_resource type="LabelSettings" uid="uid://udp30iqcrb0d" path="res://party/font/minigame/ScoreNameFill.tres" id="7_8jp4r"]
+[ext_resource type="Material" uid="uid://bhbsafmnnhtdb" path="res://effect/material/Canvas Item Add.tres" id="7_767m1"]
 [ext_resource type="Texture2D" uid="uid://cm4dsrfm8yxab" path="res://party/font/minigame/MinigameGradientFill.tres" id="8_nesss"]
+[ext_resource type="Texture2D" uid="uid://bkqvdtdpoh0w1" path="res://party/font/minigame/PositionSecondGradientFill.tres" id="14_qme1k"]
 
-[node name="RaceTracker" type="TextureRect" unique_id=879132590 node_paths=PackedStringArray("progress_label", "position_label", "character_texture_rect")]
+[sub_resource type="Animation" id="Animation_yelk8"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("PositionLabel/Glow:offset_transform_scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(1, 1)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("PositionLabel/Glow:modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("PositionLabel/FillLabel/Gradient:texture")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [ExtResource("6_rwb0i")]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("PositionLabel/Glow:visible")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+
+[sub_resource type="Animation" id="Animation_cwhp6"]
+resource_name = "losing"
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("PositionLabel/Glow:offset_transform_scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(1, 1)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("PositionLabel/Glow:modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 0)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("PositionLabel/FillLabel/Gradient:texture")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [ExtResource("14_qme1k")]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("PositionLabel/Glow:visible")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+
+[sub_resource type="Animation" id="Animation_767m1"]
+resource_name = "winning"
+length = 0.5
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("PositionLabel/Glow:offset_transform_scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.06666667, 0.19999999, 0.5),
+"transitions": PackedFloat32Array(1, 0.5, 1, 1),
+"update": 0,
+"values": [Vector2(1, 1), Vector2(1, 1), Vector2(1.5, 1.5), Vector2(1.5, 1.5)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("PositionLabel/Glow:modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.06666667, 0.2, 0.5),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 0.5882353), Color(1, 1, 1, 0), Color(1, 1, 1, 0)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("PositionLabel/FillLabel/Gradient:texture")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [ExtResource("6_rwb0i")]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("PositionLabel/Glow:visible")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_qme1k"]
+_data = {
+&"RESET": SubResource("Animation_yelk8"),
+&"losing": SubResource("Animation_cwhp6"),
+&"winning": SubResource("Animation_767m1")
+}
+
+[node name="RaceTracker" type="TextureRect" unique_id=879132590 node_paths=PackedStringArray("progress_label", "position_label", "character_texture_rect", "animator")]
 anchors_preset = -1
 offset_right = 192.0
 offset_bottom = 64.0
@@ -24,6 +189,7 @@ script = ExtResource("2_yelk8")
 progress_label = NodePath("ProgressLabel")
 position_label = NodePath("PositionLabel")
 character_texture_rect = NodePath("Trim/Clip/Character")
+animator = NodePath("AnimationPlayer")
 
 [node name="PositionLabel" type="Label" parent="." unique_id=540785654]
 layout_mode = 1
@@ -32,13 +198,13 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -240.0
-offset_top = -40.0
-offset_right = -128.0
-offset_bottom = 38.5
+offset_left = -443.0
+offset_top = -56.0
+offset_right = 97.0
+offset_bottom = 44.0
 grow_horizontal = 2
 grow_vertical = 2
-text = "1st"
+text = "party_placement1"
 label_settings = ExtResource("3_4t5in")
 horizontal_alignment = 1
 vertical_alignment = 1
@@ -53,12 +219,54 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-text = "1st"
+text = "party_placement1"
 label_settings = ExtResource("5_rwb0i")
 horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="Gradient" type="TextureRect" parent="PositionLabel/FillLabel" unique_id=235025346]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = 7.5
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("6_rwb0i")
+expand_mode = 1
+
+[node name="Glow" type="Label" parent="PositionLabel" unique_id=900257450]
+material = ExtResource("7_767m1")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+offset_transform_enabled = true
+text = "party_placement1"
+label_settings = ExtResource("3_4t5in")
+horizontal_alignment = 1
+vertical_alignment = 1
+script = ExtResource("6_q8wdq")
+metadata/_custom_type_script = "uid://qvplfr0cibu5"
+
+[node name="FillLabel" type="Label" parent="PositionLabel/Glow" unique_id=398871493]
+clip_children = 1
+use_parent_material = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "party_placement1"
+label_settings = ExtResource("5_rwb0i")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Gradient" type="TextureRect" parent="PositionLabel/Glow/FillLabel" unique_id=855162550]
+use_parent_material = true
 layout_mode = 1
 anchors_preset = -1
 anchor_right = 1.0
@@ -140,3 +348,6 @@ grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("8_nesss")
 expand_mode = 1
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=319146386]
+libraries/ = SubResource("AnimationLibrary_qme1k")

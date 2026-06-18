@@ -23,6 +23,7 @@ static var player_progresses : PackedFloat64Array
 var _player_index : int = -1
 
 func _ready() -> void:
+	get_parent().child_order_changed.connect(Callable(self, "update_animation"))
 	visible = false
 	if player_laps.size() != PartyManager.MAX_PLAYER_COUNT:
 		player_laps.resize(PartyManager.MAX_PLAYER_COUNT)
@@ -68,9 +69,16 @@ func set_progress_raw(progress : float) -> void:
 			index += 1
 		if index != get_index():
 			get_parent().move_child(self, index)
+			update_animation()
+
+func update_animation() -> void:
+	var index : int = get_index()
+	animator.play("winning" if index == 0 else "losing")
+	position_label.set_synced_text("party_placement%s" % (index + 1))
 
 func on_gameplay_started() -> void:
 	visible = true
+	update_animation()
 
 func on_results_started() -> void:
 	visible = false
