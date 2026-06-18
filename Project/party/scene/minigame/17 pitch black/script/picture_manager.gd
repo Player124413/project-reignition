@@ -1,6 +1,7 @@
 class_name PictureManager extends Node3D
 
-@export var pictures : Array[Picture]
+@export var env_animator: AnimationPlayer
+@export var pictures: Array[Picture]
 var characters: Array[Picture.CHARACTER]
 var correction_num: Array[int]
 var current_pic: int = 0
@@ -20,6 +21,9 @@ func initialize_starting_picture() -> void:
 	characters[0] = Picture.CHARACTER.DEMO
 	correction_num[0] = 1
 
+func get_next_picture() -> void:
+	return
+
 func set_character(chara: Picture.CHARACTER):
 	for pic in pictures:
 		pic._character = chara
@@ -28,7 +32,18 @@ func is_dupe(num: int) -> bool:
 	return false
 
 func play_correct_sequence() -> void:
+	env_animator.play("blackout", -1, -1.0, true)
 	for i in pictures.size():
 		if pictures[i].wrong:
 			pictures[i].play_correction_sequence()
-			return
+			break
+	await get_tree().create_timer(6).timeout
+	for pic in pictures:
+		pic.animator.play("spin_ftb")
+
+	env_animator.play("blackout")
+	await get_tree().create_timer(4).timeout
+	get_next_picture()
+	
+	for pic in pictures:
+		pic.animator.play("spin_btf")

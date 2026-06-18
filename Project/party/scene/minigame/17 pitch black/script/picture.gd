@@ -39,3 +39,4 @@ func play_correction_sequence() -> void:
 	correction_circle.visible = false
 	await get_tree().create_timer(0.2).timeout
 	animator.play("spin_ftbtf")
+	#await get_tree().create_timer(3).timeout
