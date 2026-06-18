@@ -69,6 +69,7 @@ func increment_lap(player_index : int, tick : float) -> void:
 		MinigameManager.instance.request_minigame_finish()
 	elif _player_laps[player_index] == MAX_LAP_COUNT:
 		final_lap_notifications[player_index].get_node("AnimationPlayer").play("show")
+		players[player_index].character_animator.play_voice("celebrate1")
 
 @rpc("any_peer", "call_local", "reliable")
 func decrement_lap(player_index : int) -> void:

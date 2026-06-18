@@ -9,8 +9,8 @@ class_name PartyGameCanoeMover extends PartyGameCharacterSpawner
 @export_group("Movement Settings")
 ## Should turning be disabled? If so, the canoe will simply strafe side-to-side.
 @export var disable_turning : bool
-@export var top_speed : float = 60.0
-@export var paddle_speed : float = 30.0
+@export var top_speed : float = 80.0
+@export var paddle_speed : float = 40.0
 @export var friction : float = 10.0
 @export var turn_speed : float = 1.5
 @export var turn_friction : float = 1.4
@@ -86,10 +86,9 @@ func process_inputs() -> void:
 			paddle_buffer = PADDLE_BUFFER_LENGTH
 		if !_is_paddle_active:
 			if Input.is_action_pressed("button_primary%s" % get_input_suffix()):
-				request_paddle(!is_zero_approx(paddle_buffer))
+				request_paddle(get_horizontal_input(), !is_zero_approx(paddle_buffer))
 	elif player_index != -1:
-		pass # TODO Check for CPU paddles.
-		#_input = get_cpu_input()
+		process_cpu_input() # Check for CPU paddles
 
 func process_movement_tick() -> void:
 	process_rotation()
@@ -106,8 +105,7 @@ func process_animation_event(info : int) -> void:
 		_is_paddle_active = false
 		character_animator.play_animation("%s/wait" % MinigameManager.ANIMATION_LIBRARY_PREFIX, false, 0.1)
 
-func request_paddle(fast_paddle : bool) -> void:
-	var input : float = get_horizontal_input()
+func request_paddle(input : float, fast_paddle : bool) -> void:
 	if is_zero_approx(input):
 		_paddle_dir *= -1 # Alternate paddle direction (i.e. move forward)
 	else:
@@ -119,7 +117,7 @@ func start_paddle(dir : int, fast_paddle : bool, tick : float) -> void:
 	_paddle_dir = dir
 	_is_paddle_active = true
 	var target_animation : String = "left" if dir > 0 else "right"
-	var paddle_spd : float = 1.6 if fast_paddle else 0.8
+	var paddle_spd : float = 2.0 if fast_paddle else 0.8
 	character_animator.play_minigame_animation("%s/%s" % [MinigameManager.ANIMATION_LIBRARY_PREFIX, target_animation], 0.1, paddle_spd, 0.0, tick)
 
 func apply_paddle() -> void:
@@ -173,29 +171,29 @@ func apply_gravity() -> void:
 	_vertical_speed = move_toward(_vertical_speed, MAX_GRAVITY, GRAVITY * get_physics_process_delta_time())
 
 var cpu_interval_timer : float
-func get_cpu_input() -> float:
+func process_cpu_input() -> void:
+	if _is_paddle_active:
+		return
 	cpu_interval_timer = move_toward(cpu_interval_timer, 0.0, get_physics_process_delta_time())
 	if is_zero_approx(cpu_interval_timer):
 		cpu_interval_timer = get_cpu_interval()
-		return calculate_cpu_input()
-	return 0.0
+		calculate_cpu_input()
 
 const CPU_VARIANCE : float = 0.1
 ## Override this function to change how often the cpu updates their inputs.
 func get_cpu_interval() -> float:
 	var difficulty : PlayerData.CPU_DIFFICULTY_ENUM = get_cpu_difficulty()
 	if difficulty == PlayerData.CPU_DIFFICULTY_ENUM.EXTREME:
-		return 0.0
+		return 0.1
 	if difficulty == PlayerData.CPU_DIFFICULTY_ENUM.HARD:
-		return 0.1 - randf() * CPU_VARIANCE
+		return 0.0 # Normal CPU always just holds a consistent paddle speed
 	if difficulty == PlayerData.CPU_DIFFICULTY_ENUM.NORMAL:
-		return 0.2 - randf() * CPU_VARIANCE
-	
-	return 0.4 - randf() * CPU_VARIANCE
+		return 0.6 - randf() * CPU_VARIANCE
+	return 1.0 - randf() * CPU_VARIANCE # Easy cpu is erratic
 
 ## Override this function to calculate the cpu inputs.
-func calculate_cpu_input() -> float:
-	return 0
+func calculate_cpu_input() -> void:
+	pass
 
 func apply_movement_rotation() -> void:
 	if disable_turning:
