@@ -7,7 +7,6 @@ class_name Picture extends Node3D
 var _character: CHARACTER
 var wrong: bool = false
 
-
 enum CHARACTER {
 	AMY,
 	BLAZE,
@@ -21,7 +20,6 @@ enum CHARACTER {
 }
 
 func _ready() -> void:
-	set_physics_process(true)
 	correction_circle.visible = false
 
 func set_correct_picture() -> void:
@@ -37,7 +35,7 @@ const TIME_UNTIL_ANIMATION: float = 2
 ## Used when selecting the incorrect picture
 func play_correction_sequence() -> void:
 	correction_circle.visible = true
-	#await get_tree().create_timer(TIME_UNTIL_ANIMATION).timeout
-	#correction_circle.visible = false
-	#await get_tree().create_timer(0.2).timeout
+	await get_tree().create_timer(TIME_UNTIL_ANIMATION).timeout
+	correction_circle.visible = false
+	await get_tree().create_timer(0.2).timeout
 	animator.play("spin_ftbtf")
