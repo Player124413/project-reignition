@@ -461,8 +461,7 @@ public partial class PlayerSkillController : Node3D
 			if (isAirBoost)
 				Player.CanAirBoost = false;
 
-			if (!isInstantSpeedbreak)
-				speedBreakTimer = SpeedBreakDelay;
+			speedBreakTimer = isInstantSpeedbreak ? 0.001f : SpeedBreakDelay;
 		}
 		else
 		{
