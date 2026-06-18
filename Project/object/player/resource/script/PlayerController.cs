@@ -809,6 +809,9 @@ public partial class PlayerController : CharacterBody3D
 	public bool AttemptLightSpeedAttack()
 	{
 		Lockon.ProcessPhysics();
+		if (Lockon.Target?.IsInGroup("enemy") == false) // Only allow light speed attacks on enemies
+			return false;
+
 		if (Lockon.IsTargetAttackable)
 			StateMachine.CallDeferred(PlayerStateMachine.MethodName.ChangeState, lightSpeedAttackState);
 		IsLightSpeedAttacking = Lockon.IsTargetAttackable;
