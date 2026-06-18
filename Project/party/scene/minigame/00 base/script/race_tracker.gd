@@ -1,15 +1,18 @@
 ### Score Counter for Party Games. 
 class_name RaceTracker extends TextureRect
 
-@export var progress_label : SyncedLabel
-@export var position_label : SyncedLabel
-@export var character_texture_rect : TextureRect
-@export var animator : AnimationPlayer
+@export_group("Settings")
+@export var enable_reorder : bool
 @export var display_mode : DISPLAY_MODES
 enum DISPLAY_MODES {
 	LAP,
 	PERCENT,
 }
+@export_group("Components")
+@export var progress_label : SyncedLabel
+@export var position_label : SyncedLabel
+@export var character_texture_rect : TextureRect
+@export var animator : AnimationPlayer
 
 ## Static arrays that stores the local progress of each player.
 ## Used to get player's approximate progress without sending positions over the network every frame.
@@ -50,13 +53,21 @@ func set_progress_percent(percent : float) -> void:
 ## Updates the lap of this tracker.
 func set_progress_lap(curr_lap : int, total_lap : int) -> void:
 	player_laps[_player_index] = curr_lap
-	curr_lap = max(curr_lap + 1, 1) # Offset displayed value by one (and don't display less than lap 1)
+	curr_lap = max(curr_lap, 1) # Don't display less than lap 1
 	if display_mode == DISPLAY_MODES.LAP:
 		progress_label.set_synced_text(tr("party_lap").replace("[C]", str(curr_lap)).replace("[T]", str(total_lap)))
 
 ## Updates the raw progress of this tracker.
 func set_progress_raw(progress : float) -> void:
 	player_progresses[_player_index] = progress
+	if enable_reorder:
+		var index : int = 0
+		for i in player_progresses.size():
+			if i == _player_index || player_progresses[i] < player_progresses[_player_index]:
+				continue
+			index += 1
+		if index != get_index():
+			get_parent().move_child(self, index)
 
 func on_gameplay_started() -> void:
 	visible = true

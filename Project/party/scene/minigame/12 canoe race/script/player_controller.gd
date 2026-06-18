@@ -19,9 +19,10 @@ func apply_movement() -> void:
 	process_wall_bounce()
 	character_body.velocity = path_follower.global_basis.z * river_speed + wall_bounce_velocity
 	character_body.move_and_slide()
+	sync_path_follower()
+
+func sync_path_follower() -> void:
 	path_follower.progress = path.curve.get_closest_offset(character_body.global_position)
-	
-	race_tracker.set_progress_raw(get_progress())
 
 func process_wall_bounce() -> void:
 	if character_body.is_on_wall():
@@ -35,9 +36,3 @@ func process_wall_bounce() -> void:
 			wall_bounce_velocity += character_body.get_wall_normal() * WALL_BOUNCE_STRENGTH
 			character_animator.play_voice("balance")
 	wall_bounce_velocity = wall_bounce_velocity.move_toward(Vector3.ZERO, WALL_BOUNCE_FRICTION * get_physics_process_delta_time())
-
-
-func get_progress() -> float:
-	if race_tracker.player_laps[player_index] == 0:
-		return 0.0
-	return lap_length * race_tracker.player_laps[player_index] + path_follower.progress

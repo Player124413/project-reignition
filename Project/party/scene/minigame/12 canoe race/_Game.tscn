@@ -36,9 +36,6 @@ point_count = 9
 
 [sub_resource type="BoxMesh" id="BoxMesh_e2t8q"]
 
-[sub_resource type="BoxShape3D" id="BoxShape3D_e2t8q"]
-size = Vector3(70, 20, 5)
-
 [sub_resource type="Animation" id="Animation_38q1j"]
 length = 0.001
 tracks/0/type = "value"
@@ -134,6 +131,18 @@ max_game_time = 0
 
 [node name="RaceTrackers" parent="Minigame" unique_id=1992641460 instance=ExtResource("6_1isum")]
 layout_mode = 1
+
+[node name="RaceTracker1" parent="Minigame/RaceTrackers" index="0" unique_id=879132590]
+enable_reorder = true
+
+[node name="RaceTracker2" parent="Minigame/RaceTrackers" index="1" unique_id=275666524]
+enable_reorder = true
+
+[node name="RaceTracker3" parent="Minigame/RaceTrackers" index="2" unique_id=1183487749]
+enable_reorder = true
+
+[node name="RaceTracker4" parent="Minigame/RaceTrackers" index="3" unique_id=1042379609]
+enable_reorder = true
 
 [node name="Environment" type="Node3D" parent="." unique_id=479088718]
 
@@ -530,46 +539,6 @@ mesh = SubResource("BoxMesh_e2t8q")
 script = ExtResource("10_cs327")
 players = [NodePath("../Race/StartLine/Player1"), NodePath("../Race/StartLine/Player2"), NodePath("../Race/StartLine/Player3"), NodePath("../Race/StartLine/Player4")]
 
-[node name="Startline" type="Area3D" parent="Checkpoint" unique_id=406784319]
-transform = Transform3D(-0.42261833, 0, -0.90630776, 0, 1, 0, 0.90630776, 0, -0.42261833, 20.7, 15.3, 9.2)
-collision_layer = 0
-collision_mask = 2
-monitorable = false
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Checkpoint/Startline" unique_id=1202593838]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 10, 0)
-shape = SubResource("BoxShape3D_e2t8q")
-
-[node name="Checkpoint1" type="Area3D" parent="Checkpoint" unique_id=1481918821]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 101, 15, -100)
-collision_layer = 0
-collision_mask = 2
-monitorable = false
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Checkpoint/Checkpoint1" unique_id=2116149748]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 10, 0)
-shape = SubResource("BoxShape3D_e2t8q")
-
-[node name="Checkpoint2" type="Area3D" parent="Checkpoint" unique_id=167021320]
-transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 5, 15, 205)
-collision_layer = 0
-collision_mask = 2
-monitorable = false
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Checkpoint/Checkpoint2" unique_id=311043892]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 10, 0)
-shape = SubResource("BoxShape3D_e2t8q")
-
-[node name="Checkpoint3" type="Area3D" parent="Checkpoint" unique_id=1446455999]
-transform = Transform3D(-0.42261827, 0, -0.90630776, 0, 1, 0, 0.90630776, 0, -0.42261827, 30.94218, 15, 14.654872)
-collision_layer = 0
-collision_mask = 2
-monitorable = false
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Checkpoint/Checkpoint3" unique_id=1141900790]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 10, 0)
-shape = SubResource("BoxShape3D_e2t8q")
-
 [node name="ResultsCamera" type="Camera3D" parent="." unique_id=728929041]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 29, 250)
 cull_mask = 1123
@@ -578,11 +547,6 @@ fov = 50.0
 [node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=1973003384]
 libraries/ = SubResource("AnimationLibrary_m4cgh")
 autoplay = &"init"
-
-[connection signal="area_entered" from="Checkpoint/Startline" to="Checkpoint" method="on_checkpoint_entered" binds= [0]]
-[connection signal="area_entered" from="Checkpoint/Checkpoint1" to="Checkpoint" method="on_checkpoint_entered" binds= [1]]
-[connection signal="area_entered" from="Checkpoint/Checkpoint2" to="Checkpoint" method="on_checkpoint_entered" binds= [2]]
-[connection signal="area_entered" from="Checkpoint/Checkpoint3" to="Checkpoint" method="on_checkpoint_entered" binds= [3]]
 
 [editable path="Minigame"]
 [editable path="Minigame/RaceTrackers"]
