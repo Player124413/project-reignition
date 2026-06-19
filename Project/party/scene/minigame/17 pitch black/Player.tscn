@@ -5,16 +5,19 @@
 [ext_resource type="AnimationLibrary" uid="uid://b7nv23a63t0ui" path="res://party/scene/minigame/17 pitch black/animation/_Library.glb" id="4_0dth3"]
 [ext_resource type="Script" uid="uid://ds056nimfywwr" path="res://party/script/core/rollback_timer.gd" id="4_mu2ap"]
 [ext_resource type="PackedScene" uid="uid://bdln8dht3adii" path="res://party/resource/character/scene/Amy.tscn" id="4_wsiuk"]
+[ext_resource type="PackedScene" uid="uid://ch1c2oir8hps6" path="res://party/scene/minigame/00 base/Cursor.tscn" id="7_5lm6n"]
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_17mea"]
 radius = 7.3774805
 
-[node name="Player" type="Node3D" unique_id=1879495047 node_paths=PackedStringArray("hand_attachment", "lookat", "lamp", "collision", "spawn_position")]
+[node name="Player" type="Node3D" unique_id=1879495047 node_paths=PackedStringArray("hand_attachment", "lookat", "lamp", "collision", "rollback_timer", "cursor_texture_rect", "spawn_position")]
 script = ExtResource("1_hrsfa")
 hand_attachment = NodePath("HandAttachment")
 lookat = NodePath("LookAt")
 lamp = NodePath("HandAttachment/Lantern")
 collision = NodePath("Area3D")
+rollback_timer = NodePath("Rollback")
+cursor_texture_rect = NodePath("Cursor")
 spawn_position = NodePath("SpawnPos")
 
 [node name="SpawnPos" type="Node3D" parent="." unique_id=1171532647]
@@ -74,6 +77,9 @@ bones/55/rotation = Quaternion(5.3680924e-07, 0.5742787, 3.580295e-07, 0.8186598
 
 [node name="AnimationPlayer" parent="Amy/Amy" index="1" unique_id=439634828]
 libraries/_Library = ExtResource("4_0dth3")
+
+[node name="Cursor" parent="." unique_id=1155527246 instance=ExtResource("7_5lm6n")]
+scale = Vector2(2, 2)
 
 [editable path="Amy"]
 [editable path="Amy/Amy"]

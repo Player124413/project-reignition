@@ -1,4 +1,4 @@
-extends PartyGameCharacterSpawner
+extends PartyGameCursorMover
 
 @export var picture_manager: PictureManager
 @export var spotlight: CSGCylinder3D
@@ -14,7 +14,7 @@ enum STATE {
 }
 
 func on_spawn_finished() -> void:
-	super ()
+	super()
 	print("Attaching lantern to hand")
 	hand_attachment.reparent(character_animator.skeleton)
 	character_animator.play_animation("%s/light-wait" % MinigameManager.ANIMATION_LIBRARY_PREFIX, true)
