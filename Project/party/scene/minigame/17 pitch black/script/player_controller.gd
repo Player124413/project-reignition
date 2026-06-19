@@ -32,6 +32,7 @@ func set_state(state: STATE):
 
 func start_miss() -> void:
 	character_animator.play_animation("%s/miss" % MinigameManager.ANIMATION_LIBRARY_PREFIX, true)
+	
 
 func start_success() -> void:
 	return
