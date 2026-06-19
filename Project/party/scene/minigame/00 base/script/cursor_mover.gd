@@ -2,7 +2,7 @@ class_name PartyGameCursorMover extends PartyGameCharacterSpawner
 
 @export_group("Components")
 @export var rollback_timer: RollbackTimer
-@export var cursor_texture_rect: TextureRect
+@export var cursor_texture_rect: Control
 
 @export_group("Movement Settings")
 @export var cursor_move_speed: float = 10
