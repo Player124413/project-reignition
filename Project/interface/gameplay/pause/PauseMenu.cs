@@ -290,6 +290,7 @@ public partial class PauseMenu : Node
 
 	private void ChangeSelection(int direction)
 	{
+		canMoveCursor = false;
 		Runtime.Instance.IsUsingMouse = false;
 		if (isNothingSelected)
 		{
@@ -461,7 +462,6 @@ public partial class PauseMenu : Node
 		if (playSFX)
 			selectSfx.Play();
 
-		canMoveCursor = false;
 		isNothingSelected = false;
 		currentSelection = selection;
 
