@@ -67,6 +67,8 @@
 [ext_resource type="Resource" uid="uid://bailq02vv2xw8" path="res://resource/bgm/bgm sd act1.tres" id="67_3ot08"]
 [ext_resource type="PackedScene" uid="uid://0o1ds8o5k04j" path="res://effect/buffer/PlanarReflectionRenderer.tscn" id="67_mt304"]
 [ext_resource type="Material" uid="uid://bia2fywx2kiva" path="res://area/6 skeleton dome/data/material/Water.tres" id="68_3ot08"]
+[ext_resource type="AudioStream" uid="uid://b54qmsepqd557" path="res://sound/sfx/stage/skeleton dome/exterior ambience loop.wav" id="68_4uowr"]
+[ext_resource type="AudioStream" uid="uid://b2wb8mtu4g7xy" path="res://sound/sfx/stage/skeleton dome/cave windy ambience.wav" id="69_sc7id"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_mow5f"]
 size = Vector3(15, 20, 5)
@@ -969,6 +971,75 @@ fog_depth_end = 200.0
 adjustment_enabled = true
 adjustment_brightness = 1.1
 adjustment_contrast = 1.05
+
+[sub_resource type="GDScript" id="GDScript_qbywm"]
+script/source = "extends Area3D
+
+@export_range(0.0, 1.0) var wet_target: float = 0.5
+@export var fade_time: float = 0.4
+
+# Shared by ALL instances of this script — one reverb effect on one bus.
+static var _bus_idx: int = -1
+static var _reverb: AudioEffectReverb
+static var _tween: Tween
+static var _active: Array = []   # zones currently containing the player
+
+func _ready() -> void:
+	if _bus_idx == -1:
+		_bus_idx = AudioServer.get_bus_index(\"GAME SFX\")
+		if _bus_idx == -1:
+			push_error(\"Audio bus 'GAME SFX' not found.\")
+			return
+		_reverb = AudioServer.get_bus_effect(_bus_idx, 0) as AudioEffectReverb
+		if _reverb:
+			_reverb.wet = 0.0
+			AudioServer.set_bus_effect_enabled(_bus_idx, 0, false)
+	body_entered.connect(_on_body_entered)
+	body_exited.connect(_on_body_exited)
+
+func _exit_tree() -> void:
+	_active.erase(self)
+
+func _on_body_entered(body: Node3D) -> void:
+	if not body.is_in_group(\"player\"):
+		return
+	if not _active.has(self):
+		_active.append(self)
+	_apply()
+
+func _on_body_exited(body: Node3D) -> void:
+	if not body.is_in_group(\"player\"):
+		return
+	_active.erase(self)
+	_apply()
+
+func _apply() -> void:
+	if _reverb == null:
+		return
+	var target := 0.0
+	if not _active.is_empty():
+		target = _active.back().get(\"wet_target\")
+	if target > 0.0:
+		AudioServer.set_bus_effect_enabled(_bus_idx, 0, true)
+	if _tween and _tween.is_valid():
+		_tween.kill()
+	_tween = create_tween()
+	_tween.tween_property(_reverb, \"wet\", target, fade_time)
+	if is_zero_approx(target):
+		_tween.tween_callback(_disable)
+
+func _disable() -> void:
+	AudioServer.set_bus_effect_enabled(_bus_idx, 0, false)
+"
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_ved51"]
+size = Vector3(543.3469, 278.43896, 409.8011)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_3ot08"]
+size = Vector3(528.2438, 278.43896, 921.10815)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_4uowr"]
+size = Vector3(293.14883, 151.65417, 151.82274)
 
 [node name="Static" type="Node3D" unique_id=382338805 node_paths=PackedStringArray("pathParent", "completionAnimator", "Environment")]
 script = ExtResource("1_0tght")
@@ -2196,6 +2267,162 @@ environment = SubResource("Environment_w7cdv")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 340, -25, -889)
 disableRenderering = true
 reflectionMaterials = [ExtResource("68_3ot08")]
+
+[node name="Sound" type="Node3D" parent="." unique_id=14800680]
+
+[node name="Exterior" type="Node3D" parent="Sound" unique_id=744851602]
+
+[node name="ExteriorAmbience" type="AudioStreamPlayer3D" parent="Sound/Exterior" unique_id=224657725]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -59.969543)
+stream = ExtResource("68_4uowr")
+attenuation_model = 3
+volume_db = -5.0
+unit_size = 100.0
+max_db = 6.0
+autoplay = true
+max_distance = 300.0
+panning_strength = 0.0
+bus = &"GAME SFX"
+area_mask = 1
+playback_type = 1
+attenuation_filter_db = 0.0
+
+[node name="ExteriorAmbience2" type="AudioStreamPlayer3D" parent="Sound/Exterior" unique_id=1506688038]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -558.93787)
+stream = ExtResource("68_4uowr")
+attenuation_model = 3
+volume_db = -5.0
+unit_size = 100.0
+max_db = 6.0
+autoplay = true
+max_distance = 300.0
+panning_strength = 0.0
+bus = &"GAME SFX"
+area_mask = 1
+playback_type = 1
+attenuation_filter_db = 0.0
+
+[node name="ExteriorAmbience3" type="AudioStreamPlayer3D" parent="Sound/Exterior" unique_id=140591016]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 685.475, 5.5960236, -1222.82)
+stream = ExtResource("68_4uowr")
+volume_db = 5.0
+unit_size = 100.0
+max_db = 6.0
+autoplay = true
+max_distance = 100.0
+bus = &"GAME SFX"
+area_mask = 1
+playback_type = 1
+
+[node name="Interior" type="Node3D" parent="Sound" unique_id=1235365294]
+
+[node name="Cave" type="AudioStreamPlayer3D" parent="Sound/Interior" unique_id=296485598]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 148.83377, 3.4111385, -903.8815)
+stream = ExtResource("69_sc7id")
+attenuation_model = 3
+unit_size = 100.0
+autoplay = true
+max_distance = 100.0
+panning_strength = 0.0
+bus = &"GAME SFX"
+area_mask = 1
+attenuation_filter_db = 0.0
+
+[node name="Cave2" type="AudioStreamPlayer3D" parent="Sound/Interior" unique_id=1255882471]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 351.1166, 3.4111385, -1005.80457)
+stream = ExtResource("69_sc7id")
+attenuation_model = 3
+unit_size = 100.0
+autoplay = true
+max_distance = 272.28
+panning_strength = 0.0
+bus = &"GAME SFX"
+area_mask = 1
+attenuation_filter_db = 0.0
+
+[node name="Cave3" type="AudioStreamPlayer3D" parent="Sound/Interior" unique_id=1353926179]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 601.6074, 24.39211, -1128.949)
+stream = ExtResource("69_sc7id")
+attenuation_model = 3
+unit_size = 100.0
+autoplay = true
+max_distance = 100.0
+panning_strength = 0.0
+bus = &"GAME SFX"
+area_mask = 1
+attenuation_filter_db = 0.0
+
+[node name="Cave4" type="AudioStreamPlayer3D" parent="Sound/Interior" unique_id=1688924251]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 888.9448, -14.651087, -1319.8883)
+stream = ExtResource("69_sc7id")
+attenuation_model = 3
+unit_size = 100.0
+autoplay = true
+max_distance = 175.0
+panning_strength = 0.0
+bus = &"GAME SFX"
+area_mask = 1
+attenuation_filter_db = 0.0
+
+[node name="Cave5" type="AudioStreamPlayer3D" parent="Sound/Interior" unique_id=1052215355]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1035.7128, -14.651087, -1163.3823)
+stream = ExtResource("69_sc7id")
+attenuation_model = 3
+unit_size = 100.0
+autoplay = true
+max_distance = 319.56
+panning_strength = 0.0
+bus = &"GAME SFX"
+area_mask = 1
+attenuation_filter_db = 0.0
+
+[node name="ReverbAreaGAME SFX BUS" type="Area3D" parent="Sound/Interior" unique_id=537779171]
+top_level = true
+collision_layer = 3
+collision_mask = 3
+priority = 1
+reverb_bus_amount = 0.5
+script = SubResource("GDScript_qbywm")
+wet_target = 0.09
+fade_time = 0.35
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Sound/Interior/ReverbAreaGAME SFX BUS" unique_id=1131655587]
+transform = Transform3D(0.99352384, 0, -0.11362401, 0, 1, 0, 0.11362401, 0, 0.99352384, 407.7576, 14.034567, -989.1295)
+top_level = true
+shape = SubResource("BoxShape3D_ved51")
+debug_color = Color(0.9954193, 0, 0.21351609, 0.41960785)
+
+[node name="ReverbAreaGAME SFX BUS2" type="Area3D" parent="Sound/Interior" unique_id=1543221139]
+top_level = true
+collision_layer = 3
+collision_mask = 3
+priority = 2
+reverb_bus_amount = 0.5
+script = SubResource("GDScript_qbywm")
+wet_target = 0.09
+fade_time = 0.35
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Sound/Interior/ReverbAreaGAME SFX BUS2" unique_id=122618048]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1036.9944, 14.034567, -931.64343)
+top_level = true
+shape = SubResource("BoxShape3D_3ot08")
+debug_color = Color(0.9954193, 0, 0.21351609, 0.41960785)
+
+[node name="ReverbAreaGAME SFX BUS3" type="Area3D" parent="Sound/Interior" unique_id=1313785900]
+top_level = true
+collision_layer = 3
+collision_mask = 3
+priority = 3
+reverb_bus_amount = 0.5
+script = SubResource("GDScript_qbywm")
+wet_target = 0.09
+fade_time = 0.35
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Sound/Interior/ReverbAreaGAME SFX BUS3" unique_id=1546234213]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 624.2236, -49.357826, -557.23267)
+top_level = true
+shape = SubResource("BoxShape3D_4uowr")
+debug_color = Color(0.9954193, 0, 0.21351609, 0.41960785)
 
 [connection signal="LevelStarted" from="." to="Snow" method="set_emitting" binds= [true]]
 [connection signal="Activated" from="Trigger/Object/CavernBTeleport/CavernBEntranceAutomation" to="Trigger/Object/CavernBTeleport/Camera" method="Activate"]

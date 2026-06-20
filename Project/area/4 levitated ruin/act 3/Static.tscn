@@ -54,6 +54,7 @@
 [ext_resource type="Resource" uid="uid://bwxtfdgnrxlqu" path="res://area/4 levitated ruin/act 3/camera/Skyroad2DescentCam.tres" id="43_blgqv"]
 [ext_resource type="Resource" uid="uid://dp065pv71hu3k" path="res://area/4 levitated ruin/act 3/camera/Skyroad2LoopCam.tres" id="43_r7xw4"]
 [ext_resource type="Resource" uid="uid://gnwkyayk82gs" path="res://area/4 levitated ruin/act 3/camera/Skyroad2AscentCam.tres" id="45_jkq8a"]
+[ext_resource type="AudioStream" uid="uid://b7oft4g34vp5u" path="res://sound/sfx/stage/levitated ruin/ambience.wav" id="56_xc0tm"]
 [ext_resource type="Resource" uid="uid://bof6ojrchqdb8" path="res://resource/bgm/bgm lr act3.tres" id="57_hoppa"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_q6mh6"]
@@ -550,30 +551,27 @@ visible = false
 [node name="LRSky" parent="Visuals" unique_id=75718777 instance=ExtResource("4_jkq8a")]
 visible = false
 
-[node name="stg060_tsky_obj_Mesh_0002" parent="Visuals/LRSky/SkyRoot/Skeleton3D" parent_id_path=PackedInt32Array(75718777, 513266925) index="2" unique_id=24938695]
+[node name="stg060_tsky_obj_Mesh_0002" parent="Visuals/LRSky/SkyRoot/Skeleton3D" parent_id_path=PackedInt32Array(75718777, 611234266) index="2" unique_id=961642791]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -21.7119, 0)
 surface_material_override/0 = SubResource("StandardMaterial3D_q6mh6")
 
-[node name="stg060_tsky_obj_Mesh_0011" parent="Visuals/LRSky/SkyRoot/Skeleton3D" parent_id_path=PackedInt32Array(75718777, 513266925) index="11" unique_id=978854660]
+[node name="stg060_tsky_obj_Mesh_0011" parent="Visuals/LRSky/SkyRoot/Skeleton3D" parent_id_path=PackedInt32Array(75718777, 611234266) index="11" unique_id=1535129314]
 surface_material_override/0 = SubResource("ShaderMaterial_bd1ok")
 
-[node name="stg060_tsky_obj_Mesh_0012" parent="Visuals/LRSky/SkyRoot/Skeleton3D" parent_id_path=PackedInt32Array(75718777, 513266925) index="12" unique_id=1007516385]
+[node name="stg060_tsky_obj_Mesh_0012" parent="Visuals/LRSky/SkyRoot/Skeleton3D" parent_id_path=PackedInt32Array(75718777, 611234266) index="12" unique_id=978893476]
 surface_material_override/0 = SubResource("ShaderMaterial_xc0tm")
 
-[node name="stg060_tsky_obj_Mesh_0013" parent="Visuals/LRSky/SkyRoot/Skeleton3D" parent_id_path=PackedInt32Array(75718777, 513266925) index="13" unique_id=290788865]
+[node name="stg060_tsky_obj_Mesh_0013" parent="Visuals/LRSky/SkyRoot/Skeleton3D" parent_id_path=PackedInt32Array(75718777, 611234266) index="13" unique_id=718922514]
 surface_material_override/0 = SubResource("ShaderMaterial_5u6dt")
 
-[node name="stg060_tsky_obj_Mesh_0014" parent="Visuals/LRSky/SkyRoot/Skeleton3D" parent_id_path=PackedInt32Array(75718777, 513266925) index="14" unique_id=1327683672]
+[node name="stg060_tsky_obj_Mesh_0014" parent="Visuals/LRSky/SkyRoot/Skeleton3D" parent_id_path=PackedInt32Array(75718777, 611234266) index="14" unique_id=2049559846]
 visible = false
 surface_material_override/0 = SubResource("ShaderMaterial_ntdde")
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="Visuals/LRSky/SkyRoot/Skeleton3D" parent_id_path=PackedInt32Array(75718777, 513266925) index="15" unique_id=1433038406]
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Visuals/LRSky/SkyRoot/Skeleton3D" parent_id_path=PackedInt32Array(75718777, 611234266) index="15" unique_id=1433038406]
 mesh = SubResource("CylinderMesh_xc0tm")
 skeleton = NodePath("..")
 surface_material_override/0 = SubResource("StandardMaterial3D_hoppa")
-
-[node name="AnimationPlayer" parent="Visuals/LRSky" index="1" unique_id=1460294186]
-autoplay = &"sky"
 
 [node name="Rukh1" parent="Visuals" unique_id=751787912 instance=ExtResource("2_ur2fq")]
 
@@ -1128,6 +1126,16 @@ libraries/ = SubResource("AnimationLibrary_5u6dt")
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1681852440]
 environment = SubResource("Environment_hoppa")
+
+[node name="Sound" type="Node3D" parent="." unique_id=1878743936]
+
+[node name="Main" type="AudioStreamPlayer3D" parent="Sound" unique_id=498174407]
+stream = ExtResource("56_xc0tm")
+volume_db = 80.0
+autoplay = true
+bus = &"GAME SFX"
+area_mask = 1
+playback_type = 1
 
 [connection signal="Activated" from="Triggers/Tower2Triggers/Layer1" to="Triggers/TowerLockout" method="Activate"]
 [connection signal="Activated" from="Paths/ZiplinePath/Zipline" to="Paths/ZiplinePath/Zipline/Cam" method="Activate"]
