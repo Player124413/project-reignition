@@ -53,7 +53,7 @@ public partial class PlayerState : Node
 			}
 		}
 
-		if ((!SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.Autorun) || Player.IsMovingBackward) &&
+		if ((!SaveManager.ActiveSkillRing.IsAutorunActive || Player.IsMovingBackward) &&
 			Mathf.IsZeroApprox(inputStrength)) // Basic slow down
 		{
 			Deccelerate();
@@ -69,7 +69,7 @@ public partial class PlayerState : Node
 		}
 
 		// Always move at full power when autorun is enabled
-		if (SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.Autorun) && !Player.IsMovingBackward)
+		if (SaveManager.ActiveSkillRing.IsAutorunActive && !Player.IsMovingBackward)
 		{
 			Accelerate(1f);
 			return;
@@ -90,7 +90,7 @@ public partial class PlayerState : Node
 
 	protected virtual void ProcessAutorunStrafeSpeed()
 	{
-		if (!SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.Autorun))
+		if (!SaveManager.ActiveSkillRing.IsAutorunActive)
 			return;
 
 		if (Player.Controller.IsBrakeHeld() ||
@@ -162,7 +162,7 @@ public partial class PlayerState : Node
 	protected float turningVelocity;
 	protected virtual void ProcessTurning()
 	{
-		if (SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.Autorun))
+		if (SaveManager.ActiveSkillRing.IsAutorunActive)
 		{
 			if (Mathf.IsZeroApprox(Player.MoveSpeed) && !Player.Controller.IsBrakeHeld())
 				Player.IsMovingBackward = Player.Controller.IsHoldingDirection(Player.Controller.GetTargetInputAngle(), Player.PathFollower.BackAngle);
@@ -228,7 +228,7 @@ public partial class PlayerState : Node
 
 	protected virtual void ProcessAutorunStrafe(float targetMovementAngle)
 	{
-		if (!SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.Autorun))
+		if (!SaveManager.ActiveSkillRing.IsAutorunActive)
 			return;
 
 		if (Mathf.IsZeroApprox(Player.Controller.GetInputStrength()))
@@ -244,7 +244,7 @@ public partial class PlayerState : Node
 
 	protected virtual float ProcessTargetMovementAngle(float targetMovementAngle)
 	{
-		if (SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.FreeRoam))
+		if (SaveManager.ActiveSkillRing.IsFreeRoamActive)
 		{
 			float dot = ExtensionMethods.DotAngle(Player.MovementAngle, Player.PathFollower.ForwardAngle);
 

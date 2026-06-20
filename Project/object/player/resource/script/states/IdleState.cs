@@ -74,7 +74,7 @@ public partial class IdleState : PlayerState
 				return darkspineSpinState;
 		}
 
-		if (SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.Autorun) && !Player.Controller.IsBrakeHeld())
+		if (SaveManager.ActiveSkillRing.IsAutorunActive && !Player.Controller.IsBrakeHeld())
 			Player.IsMovingBackward = Player.Controller.IsHoldingDirection(Player.Controller.GetTargetInputAngle(), Player.PathFollower.BackAngle);
 
 		if (!Player.CheckGround())
@@ -93,10 +93,10 @@ public partial class IdleState : PlayerState
 
 			bool hasInputStrength = !Mathf.IsZeroApprox(Player.Controller.GetInputStrength());
 			if (!Player.Controller.IsBrakeHeld() &&
-				(SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.Autorun) || hasInputStrength))
+				(SaveManager.ActiveSkillRing.IsAutorunActive || hasInputStrength))
 			{
 				if (Player.Controller.GetHoldingDistance(Player.Controller.GetTargetInputAngle(), Player.PathFollower.ForwardAngle) >= 1.0f &&
-					hasInputStrength && !SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.FreeRoam))
+					hasInputStrength && !SaveManager.ActiveSkillRing.IsFreeRoamActive)
 				{
 					return backstepState;
 				}
@@ -118,7 +118,7 @@ public partial class IdleState : PlayerState
 
 	private Vector3 CalculateWallCastDirection()
 	{
-		if (!SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.Autorun) &&
+		if (!SaveManager.ActiveSkillRing.IsAutorunActive &&
 			Mathf.IsZeroApprox(Player.Controller.GetInputStrength()))
 		{
 			return Player.GetMovementDirection();

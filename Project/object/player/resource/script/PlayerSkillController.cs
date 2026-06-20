@@ -479,7 +479,7 @@ public partial class PlayerSkillController : Node3D
 			speedBreakAnimator.Advance(0.0);
 			speedBreakParticles.SetEmitting(true);
 
-			if (!SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.FreeRoam))
+			if (!SaveManager.ActiveSkillRing.IsFreeRoamActive)
 				Player.MovementAngle = Player.PathFollower.ForwardAngle;
 
 			if (!isInstantSpeedbreak)

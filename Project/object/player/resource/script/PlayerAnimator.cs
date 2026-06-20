@@ -308,7 +308,7 @@ public partial class PlayerAnimator : Node3D
 		if (inputStrength >= .8f)
 			return true;
 
-		if (SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.Autorun) && Mathf.IsZeroApprox(inputStrength))
+		if (SaveManager.ActiveSkillRing.IsAutorunActive && Mathf.IsZeroApprox(inputStrength))
 			return true;
 
 		return Player.IsLockoutActive &&
@@ -708,7 +708,7 @@ public partial class PlayerAnimator : Node3D
 			VisualAngle += Player.PathFollower.DeltaAngle * 1.5f;
 		}
 
-		if (!SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.FreeRoam))
+		if (!SaveManager.ActiveSkillRing.IsFreeRoamActive)
 			VisualAngle = ExtensionMethods.ClampAngleRange(VisualAngle, Player.PathFollower.ForwardAngle, Mathf.Pi);
 
 		VisualAngle = ExtensionMethods.SmoothDampAngle(VisualAngle, targetRotation, ref rotationVelocity, MovementRotationSmoothing);
@@ -731,7 +731,7 @@ public partial class PlayerAnimator : Node3D
 
 		if (Player.IsMovingBackward) // Backstepping
 		{
-			if (!SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.FreeRoam))
+			if (!SaveManager.ActiveSkillRing.IsFreeRoamActive)
 				return Player.PathFollower.ForwardAngle + (groundTurnRatio * Mathf.Pi * .15f);
 
 			if (Player.IsBackflipping)
@@ -740,11 +740,11 @@ public partial class PlayerAnimator : Node3D
 
 		if (Player.IsLockoutActive && Player.ActiveLockoutData.recenterPlayer)
 		{
-			if (!SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.FreeRoam))
+			if (!SaveManager.ActiveSkillRing.IsFreeRoamActive)
 				return Player.PathFollower.ForwardAngle + Player.PathTurnInfluence;
 		}
 
-		if (SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.Autorun) && Mathf.IsZeroApprox(Player.MoveSpeed))
+		if (SaveManager.ActiveSkillRing.IsAutorunActive && Mathf.IsZeroApprox(Player.MoveSpeed))
 			return VisualAngle;
 
 		float strafeAngle = Player.Stats.StrafeSettings.GetSpeedRatio(Player.StrafeSpeed) * -Mathf.Pi * 0.5f;

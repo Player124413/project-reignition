@@ -97,7 +97,7 @@ public partial class PlayerController : CharacterBody3D
 	public float VerticalSpeed { get; set; }
 	public bool IsMovingBackward { get; set; }
 	/// <summary> Returns whether the player is moving backwards or not, taking free roam into account (CHECK IsMovingBackward SEPARATELY!). </summary>
-	public bool IsMovingBackwardFreeRoam => SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.FreeRoam) &&
+	public bool IsMovingBackwardFreeRoam => SaveManager.ActiveSkillRing.IsFreeRoamActive &&
 		ExtensionMethods.DotAngle(MovementAngle, PathFollower.ForwardAngle) < 0;
 
 	/// <summary> For movement that doesn't affect animations (e.x. wind). Reset every frame after it's applied. </summary>
@@ -322,7 +322,7 @@ public partial class PlayerController : CharacterBody3D
 
 		bool isCornerCollision = IsInWallCorner(castDirection, castLength);
 		float wallDelta = ExtensionMethods.DeltaAngleRad(ExtensionMethods.CalculateForwardAngle(WallRaycastHit.normal.RemoveVertical(), IsOnGround ? PathFollower.Up() : Vector3.Up), MovementAngle);
-		if (SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.FreeRoam))
+		if (SaveManager.ActiveSkillRing.IsFreeRoamActive)
 			wallDelta = Mathf.Abs(wallDelta);
 
 		if (wallDelta >= Mathf.Pi * .8f || isCornerCollision) // Process head-on collision
@@ -331,7 +331,7 @@ public partial class PlayerController : CharacterBody3D
 			if (Skills.IsSpeedBreakActive)
 			{
 				float pathDelta = ExtensionMethods.DeltaAngleRad(PathFollower.BackAngle, ExtensionMethods.CalculateForwardAngle(WallRaycastHit.normal));
-				if (SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.FreeRoam))
+				if (SaveManager.ActiveSkillRing.IsFreeRoamActive)
 					pathDelta = Mathf.Abs(pathDelta);
 
 				if (!isCornerCollision && pathDelta >= Mathf.Pi * .25f) // Snap to path direction
@@ -346,7 +346,7 @@ public partial class PlayerController : CharacterBody3D
 			if (reduceSpeedDuringHeadonCollision)
 			{
 				if (WallRaycastHit.distance <= CollisionSize.X + CollisionPadding)
-					MoveSpeed = SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.Autorun) ? Mathf.Abs(StrafeSpeed) : 0; // Kill speed
+					MoveSpeed = SaveManager.ActiveSkillRing.IsAutorunActive ? Mathf.Abs(StrafeSpeed) : 0; // Kill speed
 				else if (WallRaycastHit.distance <= CollisionSize.X + CollisionPadding + (MoveSpeed * PhysicsManager.physicsDelta))
 					MoveSpeed *= .9f; // Slow down drastically
 			}
@@ -689,7 +689,7 @@ public partial class PlayerController : CharacterBody3D
 		if (Mathf.IsZeroApprox(Controller.GetInputStrength()))
 			return false;
 
-		if (SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.FreeRoam))
+		if (SaveManager.ActiveSkillRing.IsFreeRoamActive)
 			return Controller.IsHoldingDirection(Controller.GetTargetInputAngle(), MovementAngle + Mathf.Pi);
 
 		return Controller.IsHoldingDirection(Controller.GetTargetInputAngle(), PathFollower.BackAngle);

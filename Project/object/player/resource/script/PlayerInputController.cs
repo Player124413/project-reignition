@@ -451,7 +451,7 @@ public partial class PlayerInputController : Node
 
 	public float CalculatePathControlAmount()
 	{
-		if (SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.Autorun))
+		if (SaveManager.ActiveSkillRing.IsAutorunActive)
 			return 0; // Don't use path influence during autorun
 
 		return Player.PathTurnInfluence;
@@ -459,13 +459,13 @@ public partial class PlayerInputController : Node
 
 	/// <summary> Returns whether the player is currently in strafing mode. </summary>
 	public bool IsStrafeModeActive => Player.Skills.IsSpeedBreakActive ||
-			SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.Autorun) ||
+			SaveManager.ActiveSkillRing.IsAutorunActive ||
 			(Player.IsLockoutActive && Player.ActiveLockoutData.movementMode == LockoutResource.MovementModes.Strafe);
 
 	/// <summary> Returns the automaticly calculated input angle based on the game's settings and skills. </summary>
 	public float GetTargetInputAngle()
 	{
-		if (SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.Autorun) && InputAxis.IsZeroApprox())
+		if (SaveManager.ActiveSkillRing.IsAutorunActive && InputAxis.IsZeroApprox())
 			return Player.PathFollower.ForwardAngle;
 
 		float nonZeroInput = NonZeroInputAxis.Rotated(-XformAngle).AngleTo(Vector2.Up);
@@ -529,7 +529,7 @@ public partial class PlayerInputController : Node
 		if (Player.Skills.IsSpeedBreakActive)
 			return GetStrafeAngle();
 
-		if (SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.Autorun))
+		if (SaveManager.ActiveSkillRing.IsAutorunActive)
 			return GetStrafeAngle();
 
 		if (Mathf.IsZeroApprox(GetInputStrength()))
@@ -593,7 +593,7 @@ public partial class PlayerInputController : Node
 			baseAngle = Player.PathFollower.BackAngle;
 		}
 
-		if (!SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.Autorun) || Player.IsBackflipping)
+		if (!SaveManager.ActiveSkillRing.IsAutorunActive || Player.IsBackflipping)
 			baseAngle -= strafeAngle;
 
 		return baseAngle;
