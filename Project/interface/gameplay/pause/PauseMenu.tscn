@@ -23,9 +23,15 @@
 [ext_resource type="FontFile" uid="uid://d1bvfghhgreq7" path="res://interface/font/otf/Rodin DB.otf" id="21_ojnve"]
 [ext_resource type="PackedScene" uid="uid://c4ohuqlywe4f" path="res://interface/menu/Description.tscn" id="22_l4mbb"]
 [ext_resource type="AudioStream" uid="uid://dc6pp0ugxo4e3" path="res://sound/sfx/system/menu pause.wav" id="23_7hqc4"]
+[ext_resource type="Texture2D" uid="uid://c14504mkeqpx5" path="res://resource/input sprites/disabled.png" id="23_wgwnp"]
 [ext_resource type="AudioStream" uid="uid://cl54rftw5aiyf" path="res://sound/sfx/system/menu cancel.wav" id="24_f3w17"]
+[ext_resource type="Texture2D" uid="uid://cl8uthum1mgns" path="res://resource/input sprites/gyro.png" id="24_u8r4q"]
+[ext_resource type="Texture2D" uid="uid://twb6ixtepihi" path="res://resource/input sprites/enabled.png" id="24_wgwnp"]
 [ext_resource type="AudioStream" uid="uid://huxte6rhwx58" path="res://sound/sfx/system/menu selection.wav" id="25_7vb7i"]
 [ext_resource type="AudioStream" uid="uid://cruu5h1jr78lr" path="res://sound/sfx/system/menu screen change.wav" id="26_3kmxq"]
+[ext_resource type="Texture2D" uid="uid://cpen7re4hhk50" path="res://resource/input sprites/motion.png" id="26_cl5ml"]
+[ext_resource type="PackedScene" uid="uid://crwawg2ivy3xd" path="res://interface/menu/NavigationButton.tscn" id="27_73vyn"]
+[ext_resource type="Texture2D" uid="uid://bi46movncobim" path="res://resource/input sprites/mouse.png" id="27_o56ng"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_ubgac"]
 atlas = ExtResource("14_p8ta0")
@@ -292,6 +298,373 @@ _data = {
 &"hide": SubResource("Animation_nsrdk"),
 &"loop": SubResource("Animation_c3bhf"),
 &"show": SubResource("Animation_qyq0t")
+}
+
+[sub_resource type="Animation" id="Animation_jhoxl"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Type:text")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": ["option_gyro_mode"]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Status:texture")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [ExtResource("23_wgwnp")]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Status/Sprite:texture")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [ExtResource("24_u8r4q")]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("StatusLabel:text")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": ["option_disable"]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath(".:visible")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+
+[sub_resource type="Animation" id="Animation_verb1"]
+resource_name = "gyro-disable"
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Type:text")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": ["option_gyro_mode"]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Status:texture")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [ExtResource("23_wgwnp")]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Status/Sprite:texture")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [ExtResource("24_u8r4q")]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("StatusLabel:text")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": ["option_disable"]
+}
+
+[sub_resource type="Animation" id="Animation_cwjr3"]
+resource_name = "gyro-enable"
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Type:text")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": ["option_gyro_mode"]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Status:texture")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [ExtResource("24_wgwnp")]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Status/Sprite:texture")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [ExtResource("24_u8r4q")]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("StatusLabel:text")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": ["option_enable"]
+}
+
+[sub_resource type="Animation" id="Animation_q3fkc"]
+resource_name = "hide"
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:visible")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+
+[sub_resource type="Animation" id="Animation_47y6t"]
+resource_name = "mouse-absolute"
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Type:text")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": ["option_mouse_mode"]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Status:texture")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [ExtResource("24_wgwnp")]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Status/Sprite:texture")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [ExtResource("27_o56ng")]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("StatusLabel:text")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": ["option_mouse_positional"]
+}
+
+[sub_resource type="Animation" id="Animation_plotw"]
+resource_name = "mouse-disabled"
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Type:text")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": ["option_mouse_mode"]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Status:texture")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [ExtResource("23_wgwnp")]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Status/Sprite:texture")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [ExtResource("27_o56ng")]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("StatusLabel:text")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": ["option_disable"]
+}
+
+[sub_resource type="Animation" id="Animation_yo026"]
+resource_name = "mouse-relative"
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Type:text")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": ["option_mouse_mode"]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Status:texture")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [ExtResource("26_cl5ml")]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Status/Sprite:texture")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [ExtResource("27_o56ng")]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("StatusLabel:text")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": ["option_mouse_motional"]
+}
+
+[sub_resource type="Animation" id="Animation_dyd6e"]
+resource_name = "show"
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:visible")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_cwjr3"]
+_data = {
+&"RESET": SubResource("Animation_jhoxl"),
+&"gyro-disable": SubResource("Animation_verb1"),
+&"gyro-enable": SubResource("Animation_cwjr3"),
+&"hide": SubResource("Animation_q3fkc"),
+&"mouse-absolute": SubResource("Animation_47y6t"),
+&"mouse-disabled": SubResource("Animation_plotw"),
+&"mouse-relative": SubResource("Animation_yo026"),
+&"show": SubResource("Animation_dyd6e")
 }
 
 [sub_resource type="Animation" id="Animation_5bjqt"]
@@ -4542,7 +4915,7 @@ _data = {
 &"show-skill": SubResource("Animation_ecgsa")
 }
 
-[node name="Pause" type="Control" unique_id=983380477 node_paths=PackedStringArray("mouseOptionParent", "pageAnimator", "statusAnimator", "selectionAnimator", "pauseCursorAnimator", "selectSfx", "cancelSfx", "description", "restart", "values", "missionTypeLabel", "missionDescriptionLabel", "fireSoulParent", "fireSoulRects", "rankRect", "noSkillLabel", "skillContainer", "skillCursor", "skillCursorAnimator", "levelSprite", "skillScrollbar")]
+[node name="Pause" type="Control" unique_id=983380477 node_paths=PackedStringArray("mouseOptionParent", "pageAnimator", "statusAnimator", "selectionAnimator", "pauseCursorAnimator", "selectSfx", "cancelSfx", "description", "restart", "values", "missionTypeLabel", "missionDescriptionLabel", "fireSoulParent", "fireSoulRects", "rankRect", "noSkillLabel", "skillContainer", "skillCursor", "skillCursorAnimator", "levelSprite", "skillScrollbar", "controlMethodAnimator")]
 process_mode = 3
 z_index = 50
 z_as_relative = false
@@ -4580,6 +4953,7 @@ pauseSkillScene = ExtResource("8_4d1pj")
 rectVerticalValues = PackedInt32Array(346, 8, 195, 244, 295, 98, 51, 145)
 levelSprite = NodePath("Pause/StatusMenu/ValueMenu/LevelTop")
 skillScrollbar = NodePath("Pause/StatusMenu/ValueMenu/Skill/Scrollbar/ScrollPosition")
+controlMethodAnimator = NodePath("Pause/ControlMode/AnimationPlayer")
 
 [node name="Pause" type="ColorRect" parent="." unique_id=500637334]
 layout_mode = 1
@@ -4824,8 +5198,8 @@ position = Vector2(1000, 448)
 anchors_preset = -1
 offset_left = -368.0
 offset_top = -288.0
-offset_right = -304.0
-offset_bottom = -224.0
+offset_right = 368.0
+offset_bottom = 244.0
 pivot_offset = Vector2(368, 266)
 texture = ExtResource("17_pdwl1")
 region_rect = Rect2(128, 352, 96, 96)
@@ -4857,10 +5231,11 @@ region_rect = Rect2(0, 472, 396, 32)
 modulate = Color(1, 1, 1, 0)
 
 [node name="Level" type="Label" parent="Pause/StatusMenu/ValueMenu/Status" unique_id=2129614486]
-modulate = Color(0, 0, 0, 1)
 anchors_preset = -1
-offset_right = 194.0
-offset_bottom = 53.0
+offset_left = -320.0
+offset_top = -256.0
+offset_right = -126.0
+offset_bottom = -203.0
 text = "pause_lv"
 label_settings = ExtResource("19_2kjal")
 horizontal_alignment = 2
@@ -4901,10 +5276,11 @@ region_enabled = true
 region_rect = Rect2(0, 0, 120, 128)
 
 [node name="HighScore" type="Label" parent="Pause/StatusMenu/ValueMenu/Status" unique_id=878403911]
-modulate = Color(0, 0, 0, 1)
 anchors_preset = -1
-offset_right = 420.0
-offset_bottom = 53.0
+offset_left = -320.0
+offset_top = -192.0
+offset_right = 100.0
+offset_bottom = -139.0
 theme_override_fonts/font = ExtResource("20_637u3")
 theme_override_font_sizes/font_size = 64
 text = "pause_high_score"
@@ -4931,10 +5307,11 @@ vertical_alignment = 1
 metadata/_edit_use_anchors_ = true
 
 [node name="Score" type="Label" parent="Pause/StatusMenu/ValueMenu/Status" unique_id=1451249300]
-modulate = Color(0, 0, 0, 1)
 anchors_preset = -1
-offset_right = 420.0
-offset_bottom = 53.0
+offset_left = -320.0
+offset_top = -136.0
+offset_right = 100.0
+offset_bottom = -83.0
 theme_override_fonts/font = ExtResource("20_637u3")
 theme_override_font_sizes/font_size = 64
 text = "pause_score"
@@ -4962,10 +5339,11 @@ vertical_alignment = 1
 metadata/_edit_use_anchors_ = true
 
 [node name="BestTime" type="Label" parent="Pause/StatusMenu/ValueMenu/Status" unique_id=1156308784]
-modulate = Color(0, 0, 0, 1)
 anchors_preset = -1
-offset_right = 420.0
-offset_bottom = 52.999992
+offset_left = -320.0
+offset_top = -80.0
+offset_right = 100.0
+offset_bottom = -27.000008
 theme_override_fonts/font = ExtResource("20_637u3")
 theme_override_font_sizes/font_size = 64
 text = "pause_best_time"
@@ -4993,10 +5371,11 @@ vertical_alignment = 1
 metadata/_edit_use_anchors_ = true
 
 [node name="Time" type="Label" parent="Pause/StatusMenu/ValueMenu/Status" unique_id=1282193691]
-modulate = Color(0, 0, 0, 1)
 anchors_preset = -1
-offset_right = 420.0
-offset_bottom = 53.0
+offset_left = -320.0
+offset_top = -24.0
+offset_right = 100.0
+offset_bottom = 28.999996
 theme_override_fonts/font = ExtResource("20_637u3")
 theme_override_font_sizes/font_size = 64
 text = "pause_time"
@@ -5024,10 +5403,11 @@ vertical_alignment = 1
 metadata/_edit_use_anchors_ = true
 
 [node name="StageEXP" type="Label" parent="Pause/StatusMenu/ValueMenu/Status" unique_id=677514519]
-modulate = Color(0, 0, 0, 1)
 anchors_preset = -1
-offset_right = 420.0
-offset_bottom = 53.000023
+offset_left = -320.0
+offset_top = 32.0
+offset_right = 100.0
+offset_bottom = 85.00003
 theme_override_fonts/font = ExtResource("20_637u3")
 theme_override_font_sizes/font_size = 64
 text = "pause_stage_exp"
@@ -5055,10 +5435,11 @@ vertical_alignment = 1
 metadata/_edit_use_anchors_ = true
 
 [node name="TotalEXP" type="Label" parent="Pause/StatusMenu/ValueMenu/Status" unique_id=1086233684]
-modulate = Color(0, 0, 0, 1)
 anchors_preset = -1
-offset_right = 420.0
-offset_bottom = 52.99997
+offset_left = -320.0
+offset_top = 88.0
+offset_right = 100.0
+offset_bottom = 140.99997
 theme_override_fonts/font = ExtResource("20_637u3")
 theme_override_font_sizes/font_size = 64
 text = "pause_total_exp"
@@ -5086,10 +5467,11 @@ vertical_alignment = 1
 metadata/_edit_use_anchors_ = true
 
 [node name="SoulGauge" type="Label" parent="Pause/StatusMenu/ValueMenu/Status" unique_id=1266361731]
-modulate = Color(0, 0, 0, 1)
 anchors_preset = -1
-offset_right = 420.0
-offset_bottom = 52.999863
+offset_left = -320.0
+offset_top = 144.0
+offset_right = 100.0
+offset_bottom = 196.99988
 theme_override_fonts/font = ExtResource("20_637u3")
 theme_override_font_sizes/font_size = 64
 text = "pause_gauge"
@@ -5227,8 +5609,8 @@ modulate = Color(1, 1, 1, 0)
 self_modulate = Color(0, 0, 0, 1)
 anchors_preset = -1
 offset_left = -343.0
-offset_top = -280.0
-offset_bottom = -236.0
+offset_top = -272.0
+offset_bottom = -225.83
 text = "pause_skill"
 label_settings = ExtResource("19_2kjal")
 vertical_alignment = 1
@@ -5330,6 +5712,125 @@ offset_top = -256.0
 offset_bottom = 0.0
 grow_vertical = 0
 
+[node name="ControlMode" type="Control" parent="Pause" unique_id=1448158828]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -776.0
+offset_top = -312.0
+offset_right = -280.0
+offset_bottom = -88.0
+grow_horizontal = 0
+grow_vertical = 0
+
+[node name="BG" type="NinePatchRect" parent="Pause/ControlMode" unique_id=858279892]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+pivot_offset = Vector2(368, 266)
+texture = ExtResource("17_pdwl1")
+region_rect = Rect2(128, 352, 96, 96)
+patch_margin_left = 32
+patch_margin_top = 32
+patch_margin_right = 32
+patch_margin_bottom = 32
+
+[node name="Type" type="Label" parent="Pause/ControlMode" unique_id=411166279]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_top = 8.0
+offset_bottom = 54.17
+grow_horizontal = 2
+text = "option_gyro_mode"
+label_settings = ExtResource("19_2kjal")
+horizontal_alignment = 1
+uppercase = true
+
+[node name="Status" type="TextureRect" parent="Pause/ControlMode" unique_id=816371603]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -153.5
+offset_top = -56.0
+offset_right = 153.5
+offset_bottom = 97.5
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("23_wgwnp")
+expand_mode = 1
+
+[node name="Sprite" type="TextureRect" parent="Pause/ControlMode/Status" unique_id=788758235]
+show_behind_parent = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("24_u8r4q")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="StatusLabel" type="Label" parent="Pause/ControlMode" unique_id=1366821598]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_top = 168.0
+offset_bottom = 212.0
+grow_horizontal = 2
+text = "option_disable"
+label_settings = ExtResource("19_2kjal")
+horizontal_alignment = 1
+uppercase = true
+
+[node name="NavigationButton" parent="Pause/ControlMode" unique_id=870845574 instance=ExtResource("27_73vyn")]
+z_index = 0
+z_as_relative = true
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = 148.0
+offset_top = -64.0
+offset_right = 196.0
+offset_bottom = -16.0
+grow_horizontal = 2
+grow_vertical = 0
+inputKey = &"sys_sort"
+
+[node name="Action" parent="Pause/ControlMode/NavigationButton" index="1" unique_id=1353156107]
+visible = false
+
+[node name="Bottom" type="Sprite2D" parent="Pause/ControlMode" unique_id=1114718792]
+position = Vector2(245.19994, 216)
+scale = Vector2(1.5, 1.5)
+texture = ExtResource("18_dyfn0")
+region_enabled = true
+region_rect = Rect2(0, 472, 396, 32)
+
+[node name="Top" type="Sprite2D" parent="Pause/ControlMode" unique_id=483206803]
+position = Vector2(245.19994, 8)
+scale = Vector2(1.5, 1.5)
+texture = ExtResource("18_dyfn0")
+flip_v = true
+region_enabled = true
+region_rect = Rect2(0, 472, 396, 32)
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Pause/ControlMode" unique_id=970163065]
+libraries/ = SubResource("AnimationLibrary_cwjr3")
+
 [node name="SFX" type="Node" parent="." unique_id=112275133]
 
 [node name="PauseSFX" type="AudioStreamPlayer" parent="SFX" unique_id=1142967963]
@@ -5360,3 +5861,5 @@ libraries/ = SubResource("AnimationLibrary_73vyn")
 root_node = NodePath("../PageAnimator")
 libraries/ = SubResource("AnimationLibrary_6cr62")
 next/show = &"select-0"
+
+[editable path="Pause/ControlMode/NavigationButton"]

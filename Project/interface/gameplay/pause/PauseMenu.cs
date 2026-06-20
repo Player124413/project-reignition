@@ -51,6 +51,11 @@ public partial class PauseMenu : Node
 	private readonly float ScrollSmoothing = .05f;
 	private readonly float SkillScrollInterval = 60;
 
+
+	[ExportGroup("Control Methods")]
+	[Export] private AnimationPlayer controlMethodAnimator;
+	private bool isControlMethodToggleAvailable;
+
 	private bool isActive;
 	private enum Submenu
 	{
@@ -138,6 +143,12 @@ public partial class PauseMenu : Node
 		if (!canMoveCursor)
 			return;
 
+		if (Runtime.Instance.IsActionJustPressed("sys_sort", "sys_sort"))
+		{
+			ToggleControlMethod();
+			return;
+		}
+
 		if (isConfirmButtonBuffered)
 		{
 			isConfirmButtonBuffered = false;
@@ -187,6 +198,9 @@ public partial class PauseMenu : Node
 
 	private void UpdateBuffers()
 	{
+		if (isNothingSelected)
+			return;
+
 		if (Runtime.Instance.IsActionJustPressed("sys_select", "ui_select") ||
 			(Runtime.Instance.IsUsingMouse && Input.IsActionJustPressed("mouse_left")))
 		{
@@ -198,6 +212,47 @@ public partial class PauseMenu : Node
 		{
 			isConfirmButtonBuffered = false;
 			isCancelButtonBuffered = true;
+		}
+	}
+
+	private void OnControllerChanged(int controllerIndex)
+	{
+		if (Runtime.Instance.IsUsingController)
+			isControlMethodToggleAvailable = Input.HasJoyMotionSensors(controllerIndex);
+		else
+			isControlMethodToggleAvailable = true;
+
+		controlMethodAnimator.Play(isControlMethodToggleAvailable ? "show" : "hide");
+		controlMethodAnimator.Advance(0.0);
+		UpdateControlLabels();
+	}
+
+	private void ToggleControlMethod()
+	{
+		if (!isControlMethodToggleAvailable)
+			return;
+
+		if (Runtime.Instance.IsUsingController)
+			SaveManager.Config.isGyroEnabled = !SaveManager.Config.isGyroEnabled;
+		else
+		{
+			int value = WrapSelection((int)SaveManager.Config.mouseControlMode + 1, (int)SaveManager.MouseControlModeEnum.Count);
+			SaveManager.Config.mouseControlMode = (SaveManager.MouseControlModeEnum)value;
+			GD.Print(SaveManager.Config.mouseControlMode);
+		}
+
+		selectSfx.Play();
+		UpdateControlLabels();
+	}
+
+	private void UpdateControlLabels()
+	{
+		if (Runtime.Instance.IsUsingController)
+			controlMethodAnimator.Play(SaveManager.Config.isGyroEnabled ? "gyro-enable" : "gyro-disable");
+		else
+		{
+			GD.Print($"mouse-{SaveManager.Config.mouseControlMode}".ToLower());
+			controlMethodAnimator.Play($"mouse-{SaveManager.Config.mouseControlMode}".ToLower());
 		}
 	}
 
@@ -477,6 +532,8 @@ public partial class PauseMenu : Node
 			UpdateStatusMenuData();
 			unpausedSpeed = (float)Engine.TimeScale;
 			Engine.TimeScale = 1.0f;
+			OnControllerChanged(Runtime.Instance.ActiveController);
+			Runtime.Instance.ControllerChanged += OnControllerChanged;
 		}
 		else if (!TransitionManager.IsTransitionActive)
 		{
@@ -484,6 +541,7 @@ public partial class PauseMenu : Node
 				cancelSfx.Play();
 
 			Engine.TimeScale = unpausedSpeed;
+			Runtime.Instance.ControllerChanged -= OnControllerChanged;
 		}
 	}
 
