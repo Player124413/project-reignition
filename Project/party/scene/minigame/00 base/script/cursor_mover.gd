@@ -16,14 +16,17 @@ var _input: Vector2
 var _move_speed: float
 
 func on_spawn_finished() -> void:
+	_move_speed = cursor_move_speed
+	print("MOVE SPEED: " + str(_move_speed))
 	cursor_texture_rect.get_child(0).self_modulate = get_color()
 	cursor_texture_rect.get_child(1).self_modulate = get_color()
 
 func _physics_process(delta: float) -> void:
+	print("PROCESSING PHYSICS")
 	if is_multiplayer_authority():
 		process_inputs()
 	
-	#process_movement_tick()
+	process_movement_tick()
 	if is_multiplayer_authority():
 		process_rollback()
 
@@ -70,13 +73,17 @@ func process_inputs() -> void:
 	if _is_gameplay_finished:
 		_input = Vector2.ZERO
 	
+	print("Checking input")
+	if _input != Vector2.ZERO:
+		print("Processing input!")
+	
 	if !is_cpu():
 		_input = get_input_axis()
-	elif player_index != -1:
-		return
+	#elif player_index != -1:
 
 func process_movement_tick() -> void:
 	apply_movement()
+	
 
 func apply_movement() -> void:
 	cursor_texture_rect.global_position += _input * _move_speed

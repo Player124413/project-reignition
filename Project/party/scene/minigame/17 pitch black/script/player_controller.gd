@@ -26,6 +26,7 @@ func on_spawn_finished() -> void:
 func _physics_process(delta: float) -> void:
 	lamp.look_at(spotlight.position)
 	collision.global_position = spotlight.get_child(0).mesh.get_aabb().get_center()
+	
 
 func set_state(state: STATE):
 	_state = state
