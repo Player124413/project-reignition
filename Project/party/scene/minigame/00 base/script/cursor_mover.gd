@@ -72,17 +72,21 @@ func process_inputs() -> void:
 	if _is_gameplay_finished:
 		_input = Vector2.ZERO
 	
-	print("Checking input")
-	if _input != Vector2.ZERO:
-		print("Processing input!")
-	
 	if !is_cpu():
 		_input = get_input_axis()
-	#elif player_index != -1:
 
 func process_movement_tick() -> void:
 	apply_movement()
 	
 
 func apply_movement() -> void:
-	cursor_texture_rect.global_position += _input * _move_speed
+	cursor_texture_rect.global_position.x += _input.x * _move_speed
+	cursor_texture_rect.global_position.y -= _input.y * _move_speed
+	cursor_texture_rect.global_position = cursor_texture_rect.global_position.clamp(Vector2.ZERO, get_viewport().get_visible_rect().size - cursor_texture_rect.size)
+func calculate_cpu_input() -> Vector2:
+	return Vector2.ZERO
+
+## Moves the cpu cursor to the specified position
+func request_cpu_position(pos: Vector2) -> void:
+	cursor_texture_rect.position.x = move_toward(cursor_texture_rect.position.x, pos.x, get_physics_process_delta_time())
+	cursor_texture_rect.position.y = move_toward(cursor_texture_rect.position.y, pos.y, get_physics_process_delta_time())

@@ -26,6 +26,7 @@ func on_spawn_finished() -> void:
 func process_movement_tick() -> void:
 	lamp.look_at(spotlight.position)
 	collision.global_position = spotlight.get_child(0).mesh.get_aabb().get_center()
+	super()
 	
 
 func set_state(state: STATE):
