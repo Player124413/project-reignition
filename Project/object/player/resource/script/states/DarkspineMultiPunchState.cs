@@ -94,7 +94,7 @@ public partial class DarkspineMultiPunchState : PlayerState
 			return null;
 		}
 
-		if (Player.Controller.IsActionBufferActive || Player.Controller.IsAttackBufferActive)
+		if (Player.Controller.IsActionBufferActive || Player.Controller.IsAttackBufferActive || Player.Controller.IsDownShakeRegistered(0.2f))
 		{
 			Player.Controller.ResetActionBuffer();
 			Player.Controller.ResetAttackBuffer();

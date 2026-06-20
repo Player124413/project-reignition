@@ -136,7 +136,7 @@ public partial class SlideState : PlayerState
 			return runState;
 		}
 
-		if (Player.Controller.IsAttackBufferActive && Player.Lockon.IsTargetAttackable)
+		if (Player.Controller.IsAttackBufferActive && Player.Lockon.IsTargetAttackable && !Player.Controller.IsBrakeHeld())
 		{
 			Player.Controller.ResetAttackBuffer();
 			return homingAttackState;

@@ -17,7 +17,7 @@ public partial class DarkspineSpinState : PlayerState
 	/// <summary> How quickly to charge when held down. </summary>
 	private readonly float SlowChargeInterval = 0.1f;
 	/// <summary> How long to remain in the Spin State after the button is released (to allow for mashing). </summary>
-	private readonly float DeactivationLength = 0.2f;
+	private readonly float DeactivationLength = 0.4f;
 	private readonly float SpeedLoss = 40f;
 
 	public override void EnterState()
@@ -40,7 +40,7 @@ public partial class DarkspineSpinState : PlayerState
 		if (CheckExit())
 			return Player.IsOnGround ? landState : fallState;
 
-		if (Input.IsActionJustPressed("button_attack")) // Provide more soul power when mashing
+		if (Input.IsActionJustPressed("button_attack") || Player.Controller.IsDownShakeRegistered(0.2f)) // Provide more soul power when mashing
 		{
 			deactivateTimer = DeactivationLength;
 

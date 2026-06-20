@@ -78,7 +78,7 @@ public partial class BackstepState : PlayerState
 		{
 			Player.Controller.ResetAttackBuffer();
 
-			if (Player.Lockon.IsTargetAttackable)
+			if (Player.Lockon.IsTargetAttackable && !Player.Controller.IsBrakeHeld())
 				return homingAttackState;
 
 			if (Player.IsDarkspineSonic)
