@@ -21,8 +21,7 @@ func on_spawn_finished() -> void:
 	cursor_texture_rect.get_child(0).self_modulate = get_color()
 	cursor_texture_rect.get_child(1).self_modulate = get_color()
 
-func _physics_process(delta: float) -> void:
-	print("PROCESSING PHYSICS")
+func _physics_process(_delta: float) -> void:
 	if is_multiplayer_authority():
 		process_inputs()
 	
