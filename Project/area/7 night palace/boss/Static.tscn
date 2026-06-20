@@ -13,6 +13,7 @@
 [ext_resource type="Script" uid="uid://2o7w04fafmsf" path="res://effect/buffer/script/DepthRenderer.cs" id="13_js1vy"]
 [ext_resource type="Material" uid="uid://tma3nv6ewgck" path="res://effect/buffer/material/Depth Renderer Material.tres" id="14_g51bp"]
 [ext_resource type="Material" uid="uid://c3kendmmffv8b" path="res://area/7 night palace/data/material/Effect Primary Reflection.tres" id="15_48h34"]
+[ext_resource type="AudioStream" uid="uid://b7oft4g34vp5u" path="res://sound/sfx/stage/levitated ruin/ambience.wav" id="15_g51bp"]
 [ext_resource type="Material" uid="uid://dwmvujonhvjd7" path="res://area/7 night palace/data/material/Effect Secondary Reflection.tres" id="16_gcw3n"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ca2n2"]
@@ -558,6 +559,69 @@ _data = {
 &"demo3": SubResource("Animation_ca2n2")
 }
 
+[sub_resource type="GDScript" id="GDScript_gk03j"]
+script/source = "extends Area3D
+
+@export_range(0.0, 1.0) var wet_target: float = 0.5
+@export var fade_time: float = 0.4
+
+# Shared by ALL instances of this script — one reverb effect on one bus.
+static var _bus_idx: int = -1
+static var _reverb: AudioEffectReverb
+static var _tween: Tween
+static var _active: Array = []   # zones currently containing the player
+
+func _ready() -> void:
+	if _bus_idx == -1:
+		_bus_idx = AudioServer.get_bus_index(\"GAME SFX\")
+		if _bus_idx == -1:
+			push_error(\"Audio bus 'GAME SFX' not found.\")
+			return
+		_reverb = AudioServer.get_bus_effect(_bus_idx, 0) as AudioEffectReverb
+		if _reverb:
+			_reverb.wet = 0.0
+			AudioServer.set_bus_effect_enabled(_bus_idx, 0, false)
+	body_entered.connect(_on_body_entered)
+	body_exited.connect(_on_body_exited)
+
+func _exit_tree() -> void:
+	_active.erase(self)
+
+func _on_body_entered(body: Node3D) -> void:
+	if not body.is_in_group(\"player\"):
+		return
+	if not _active.has(self):
+		_active.append(self)
+	_apply()
+
+func _on_body_exited(body: Node3D) -> void:
+	if not body.is_in_group(\"player\"):
+		return
+	_active.erase(self)
+	_apply()
+
+func _apply() -> void:
+	if _reverb == null:
+		return
+	var target := 0.0
+	if not _active.is_empty():
+		target = _active.back().get(\"wet_target\")
+	if target > 0.0:
+		AudioServer.set_bus_effect_enabled(_bus_idx, 0, true)
+	if _tween and _tween.is_valid():
+		_tween.kill()
+	_tween = create_tween()
+	_tween.tween_property(_reverb, \"wet\", target, fade_time)
+	if is_zero_approx(target):
+		_tween.tween_callback(_disable)
+
+func _disable() -> void:
+	AudioServer.set_bus_effect_enabled(_bus_idx, 0, false)
+"
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_ved51"]
+size = Vector3(13000, 1000, 13000)
+
 [node name="Static" type="Node3D" unique_id=909990699 node_paths=PackedStringArray("pathParent", "completionAnimator", "Environment")]
 script = ExtResource("1_fvbu3")
 Data = ExtResource("2_wdw6t")
@@ -580,7 +644,7 @@ light_cull_mask = 4293918722
 [node name="Skybox" parent="Visuals" unique_id=486591170 instance=ExtResource("9_aohgx")]
 metadata/_edit_lock_ = true
 
-[node name="MoonMesh" parent="Visuals/Skybox/SkyRoot/Skeleton3D" parent_id_path=PackedInt32Array(486591170, 791148252) index="5" unique_id=1145127188]
+[node name="MoonMesh" parent="Visuals/Skybox/SkyRoot/Skeleton3D" parent_id_path=PackedInt32Array(486591170, 1333920415) index="5" unique_id=276534196]
 surface_material_override/0 = SubResource("StandardMaterial3D_ca2n2")
 
 [node name="moonlight" type="Node3D" parent="Visuals/Skybox" unique_id=2050519465]
@@ -714,5 +778,34 @@ cull_mask = 1086
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="DemoCamera" unique_id=1910950838]
 libraries/ = SubResource("AnimationLibrary_njf43")
+
+[node name="Sound" type="Node3D" parent="." unique_id=668179432]
+
+[node name="OutdoorWind" type="AudioStreamPlayer3D" parent="Sound" unique_id=586954769]
+stream = ExtResource("15_g51bp")
+attenuation_model = 3
+volume_db = 80.0
+unit_size = 100.0
+max_db = 0.0
+pitch_scale = 0.95
+autoplay = true
+panning_strength = 0.0
+bus = &"GAME SFX"
+area_mask = 1
+
+[node name="ReverbAreaGAME SFX BUS" type="Area3D" parent="Sound" unique_id=51457737]
+top_level = true
+collision_layer = 3
+collision_mask = 3
+priority = 1
+reverb_bus_amount = 0.5
+script = SubResource("GDScript_gk03j")
+wet_target = 0.1
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Sound/ReverbAreaGAME SFX BUS" unique_id=764228966]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4889.582, 27.61702, -182.6803)
+top_level = true
+shape = SubResource("BoxShape3D_ved51")
+debug_color = Color(0.9954193, 0, 0.21351609, 0.41960785)
 
 [editable path="Visuals/Skybox"]
