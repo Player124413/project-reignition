@@ -28,9 +28,9 @@ public class SkillRing
 	public int GetSkillCountByElement(SkillResource.SkillElement element) => SkillCountByElement[(int)element];
 
 	/// <summary> Returns whether the autorun skill is equipped, or the player has Gyro enabled. </summary>
-	public bool IsAutorunActive => IsSkillEquipped(SkillKey.Autorun) || SaveManager.Config.isGyroEnabled;
+	public bool IsAutorunActive => IsSkillEquipped(SkillKey.Autorun) || (SaveManager.Config.isGyroEnabled && Runtime.Instance.IsUsingController);
 	/// <summary> Returns whether the freeroam skill is equipped and the player doesn't have Gyro enabled. </summary>
-	public bool IsFreeRoamActive => IsSkillEquipped(SkillKey.FreeRoam) && !SaveManager.Config.isGyroEnabled;
+	public bool IsFreeRoamActive => IsSkillEquipped(SkillKey.FreeRoam) && !(SaveManager.Config.isGyroEnabled && Runtime.Instance.IsUsingController);
 
 	/// <summary> Calculates how many skill points the player has based on their level. </summary>
 	public static int CalculateSkillPointsByLevel(int level)
