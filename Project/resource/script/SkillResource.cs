@@ -59,6 +59,12 @@ public partial class SkillResource : Resource
 	[Export(PropertyHint.Range, "0, 162, 1")]
 	public int FireSoulRequirement { get; private set; }
 
+	[ExportCategory("Custom Character Settings")]
+	/// <summary> The name of this custom character. Only used if key is set to Character. </summary>
+	[Export] private string CustomCharacterName;
+	[Export(PropertyHint.File)] public string NormalModel { get; private set; }
+	[Export(PropertyHint.File)] public string SuperModel { get; private set; }
+
 	/// <summary> Converts the internal key to snake case for localization. </summary>
 	public string NameString => Key.ToString().ToSnakeCase();
 	/// <summary> Returns the localization key for this skill. </summary>
@@ -66,6 +72,9 @@ public partial class SkillResource : Resource
 	{
 		get
 		{
+			if (Key == SkillKey.Character)
+				return CustomCharacterName;
+
 			StringName name = $"skill_{NameString}";
 			if (IsAugment)
 				name += AugmentIndex.ToString();
@@ -78,6 +87,9 @@ public partial class SkillResource : Resource
 	{
 		get
 		{
+			if (Key == SkillKey.Character)
+				return Tr("skill_custom_character_description").Replace("[CHARACTER]", CustomCharacterName);
+
 			StringName description = $"skill_{NameString}_description";
 			if (IsAugment)
 				description += AugmentIndex.ToString();

@@ -7,66 +7,78 @@ namespace Project.Core;
 
 public partial class ModManager : Node
 {
-
 	public static ModManager Instance;
-	public List<LevelDataResource> ModdedLevels { get; private set; }
-	private readonly string CustomLevelPath = "user://custom/levels/";
+	public readonly List<LevelDataResource> ModdedLevels = [];
+	public readonly List<SkillResource> CharacterMods = [];
 
-	public override void _EnterTree()
+	// Mod paths
+	private readonly string ResourceModPath = "res://mods/";
+	private readonly string LevelPaths = "levels/";
+	private readonly string CustomCharacterPaths = "characters/";
+	private readonly string PackExtension = "pck";
+	private readonly string ResourceExtension = "tres";
+
+	public override void _EnterTree() => Instance = this;
+
+	public override void _Ready() => SetUpMods();
+
+	public void SetUpMods()
 	{
-		Instance = this;
-		SetUpMods();
+		InitializeModDirectories();
+		LoadLevelMods();
 	}
 
-	private void SetUpMods()
+	/// <summary> Ensures that mod folders exist. </summary>
+	private void InitializeModDirectories()
 	{
-		ModdedLevels = new List<LevelDataResource>();
-		if (!DirAccess.DirExistsAbsolute(CustomLevelPath))
-			DirAccess.MakeDirRecursiveAbsolute(CustomLevelPath);
+		if (!DirAccess.DirExistsAbsolute(CustomCharacterPaths))
+			DirAccess.MakeDirRecursiveAbsolute(CustomCharacterPaths);
+	}
 
-		DirAccess dir = DirAccess.Open(CustomLevelPath);
-
-		if (dir == null)
+	/// <summary> Loads a .pck from a directory. </summary>
+	private void LoadPck(string file, string dir)
+	{
+		if (!file.GetExtension().Equals(PackExtension))
 			return;
 
-		foreach (string file in dir.GetFiles()) //Iterates through all level mods
-		{
-			GD.Print("LOADING MOD: " + CustomLevelPath + file);
-			if (file.GetExtension().Equals("pck"))
-			{
-				var success = ProjectSettings.LoadResourcePack(CustomLevelPath + file); //Loads the pck
-				if (!success)
-					continue; //If we failed, keep looking for pcks
-				else
-					GD.Print("LOADING MOD Succeeded");
-			}
-		}
+		if (!ProjectSettings.LoadResourcePack(dir + file))
+			GD.PrintErr($"Couldn't load mod {dir + file}!");
+	}
 
-		DirAccess modDir = DirAccess.Open("res://mods/levels/");
-
-		if (modDir == null)
+	private void LoadLevelMods()
+	{
+		if (!DirAccess.DirExistsAbsolute(SaveManager.ModDirectory + LevelPaths)) // No level mods to load
 			return;
 
-		foreach (string mod in modDir.GetDirectories())//Gets all the directories that were added
+		DirAccess dirAccess = DirAccess.Open(SaveManager.ModDirectory + LevelPaths);
+		foreach (string file in dirAccess.GetFiles())
+			LoadPck(file, SaveManager.ModDirectory + LevelPaths);
+
+		if (!DirAccess.DirExistsAbsolute(ResourceModPath + LevelPaths)) // Failed to load any levels
+			return;
+
+		// Switch to local resource folder, now that pcks are loaded
+		dirAccess = DirAccess.Open(ResourceModPath + LevelPaths);
+		foreach (string level in dirAccess.GetDirectories())
+			LoadModLevel(ResourceModPath + LevelPaths + level + "/");
+	}
+
+	private void LoadModLevel(string dir)
+	{
+		DirAccess levelDir = DirAccess.Open(dir); // Access the specific mod directory
+		string[] files = levelDir.GetFiles();
+		foreach (string file in files) // Find the level data resource
 		{
-			GD.Print("res://mods/levels/" + mod);
-			DirAccess levelDir = DirAccess.Open("res://mods/levels/" + mod + "/"); //Access the specific mod directory
+			if (!file.GetFile().GetExtension().Equals(ResourceExtension))
+				continue;
 
-			for (int i = 0; i < levelDir.GetFiles().Length; i++)
-			{
-				if (levelDir.GetFiles()[i].GetFile().GetExtension().Equals("tres")) //Finds the first tres in the directory, which should be the level data resource
-				{
-					LevelDataResource data = ResourceLoader.Load(levelDir.GetCurrentDir() + "/" + levelDir.GetFiles()[i]) as LevelDataResource;
-					GD.Print("Loading mod: " + levelDir.GetFiles()[i]);
-					ModdedLevels.Add(data);
+			Resource resource = ResourceLoader.Load(dir + file);
+			if (resource is not LevelDataResource)
+				continue;
 
-					GD.Print("Mission Name: " + ModdedLevels[i].MissionTypeKey);
-					GD.Print("Mission Description: " + ModdedLevels[i].MissionDescriptionKey);
-					break;//Break out of the loop when we find the tres
-				}
-
-			}
+			ModdedLevels.Add(resource as LevelDataResource);
+			GD.Print($"Loaded custom level {file}.");
+			break; // Found our level data resource
 		}
-
 	}
 }

@@ -98,9 +98,6 @@ public partial class LevelSelect : Menu
 
 	private void ModSetUp()
 	{
-
-		GD.Print(ModManager.Instance.ModdedLevels.Count);
-
 		if (ModManager.Instance.ModdedLevels.Count > 0)
 		{
 			foreach (LevelDataResource mod in ModManager.Instance.ModdedLevels)

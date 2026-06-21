@@ -14,7 +14,13 @@ public partial class SaveManager : Node
 	/// <summary> The first level loaded when a new game is started. </summary>
 	[Export] private LevelDataResource initialLevelData;
 
-	private static string SaveDirectory;
+	/// <summary> Directory for save files. </summary>
+	public static string SaveDirectory => DataDirectory + "saves/";
+	/// <summary> Directory for mod files. </summary>
+	public static string ModDirectory => DataDirectory + "mods/";
+	/// <summary> Base data directory. </summary>
+	public static string DataDirectory { get; private set; }
+	/// <summary> The file that stores where the save directory is. </summary>
 	private static string SaveLocationFile => OS.GetExecutablePath().GetBaseDir() + "/saveLocation.txt";
 
 	public override void _EnterTree()
@@ -22,7 +28,7 @@ public partial class SaveManager : Node
 		Instance = this;
 
 		CacheInitialInputMap();
-		SaveDirectory = ProjectSettings.GlobalizePath(GetSaveDirectory());
+		DataDirectory = ProjectSettings.GlobalizePath(GetDataDirectory());
 		MenuData = GameData.CreateDefaultData(); // Create a default game data object for the menu
 		SharedData = SharedGameData.CreateDefaultData();
 		TimeData = TimeAttackData.CreateDefaultData();
@@ -50,7 +56,7 @@ public partial class SaveManager : Node
 		}
 	}
 
-	private string GetSaveDirectory()
+	private string GetDataDirectory()
 	{
 		FileAccess f = FileAccess.Open(SaveLocationFile, FileAccess.ModeFlags.Read);
 		if (f != null && f.GetError() == Error.Ok)
@@ -62,7 +68,7 @@ public partial class SaveManager : Node
 				return targetDirectory;
 
 			// Fallback to executable path when directory is missing (only when a saveLocation file exists).
-			return OS.GetExecutablePath().GetBaseDir() + "/save/";
+			return OS.GetExecutablePath().GetBaseDir() + "/";
 		}
 
 		// Fallback to appdata
@@ -564,7 +570,7 @@ public partial class SaveManager : Node
 	/// <summary> Attempts to load config data from file. </summary>
 	public static void LoadConfig()
 	{
-		string configFile = SaveDirectory.PathJoin(ConfigFileName);
+		string configFile = DataDirectory.PathJoin(ConfigFileName);
 		FileAccess file = FileAccess.Open(configFile, FileAccess.ModeFlags.Read);
 
 		try
@@ -588,16 +594,16 @@ public partial class SaveManager : Node
 	/// <summary> Attempts to save config data to file. </summary>
 	public static void SaveConfig()
 	{
-		if (!DirAccess.DirExistsAbsolute(SaveDirectory))
-			DirAccess.MakeDirRecursiveAbsolute(SaveDirectory);
+		if (!DirAccess.DirExistsAbsolute(DataDirectory))
+			DirAccess.MakeDirRecursiveAbsolute(DataDirectory);
 
-		string configFile = SaveDirectory.PathJoin(ConfigFileName);
+		string configFile = DataDirectory.PathJoin(ConfigFileName);
 		FileAccess file = FileAccess.Open(configFile, FileAccess.ModeFlags.Write);
 		file.StoreString(Json.Stringify(Config.ToDictionary(), "\t"));
 		file.Close();
 
 		file = FileAccess.Open(SaveLocationFile, FileAccess.ModeFlags.Write);
-		file.StoreString(SaveDirectory);
+		file.StoreString(DataDirectory);
 		file.Close();
 	}
 
@@ -1569,7 +1575,7 @@ public partial class SaveManager : Node
 	/// <summary> Attempts to load config data from file. </summary>
 	public static void LoadSharedData()
 	{
-		string dataFile = SaveDirectory.PathJoin(SharedFileName);
+		string dataFile = DataDirectory.PathJoin(SharedFileName);
 		FileAccess file = FileAccess.Open(dataFile, FileAccess.ModeFlags.Read);
 
 		try
@@ -1600,7 +1606,7 @@ public partial class SaveManager : Node
 		file.Close();
 
 		file = FileAccess.Open(SaveLocationFile, FileAccess.ModeFlags.Write);
-		file.StoreString(SaveDirectory);
+		file.StoreString(DataDirectory);
 		file.Close();
 	}
 	#endregion
@@ -1773,7 +1779,7 @@ public partial class SaveManager : Node
 	/// <summary> Attempts to load Time Attack data from file. </summary>
 	public static void LoadTimeAttackData()
 	{
-		string dataFile = SaveDirectory.PathJoin(timeAttackFileName);
+		string dataFile = DataDirectory.PathJoin(timeAttackFileName);
 		FileAccess file = FileAccess.Open(dataFile, FileAccess.ModeFlags.Read);
 
 		try
@@ -1797,13 +1803,13 @@ public partial class SaveManager : Node
 		if (!DirAccess.DirExistsAbsolute(SaveDirectory))
 			DirAccess.MakeDirRecursiveAbsolute(SaveDirectory);
 
-		string dataFile = SaveDirectory.PathJoin(timeAttackFileName);
+		string dataFile = DataDirectory.PathJoin(timeAttackFileName);
 		FileAccess file = FileAccess.Open(dataFile, FileAccess.ModeFlags.Write);
 		file.StoreString(Json.Stringify(TimeData.ToDictionary(), "\t"));
 		file.Close();
 
 		file = FileAccess.Open(SaveLocationFile, FileAccess.ModeFlags.Write);
-		file.StoreString(SaveDirectory);
+		file.StoreString(DataDirectory);
 		file.Close();
 	}
 
