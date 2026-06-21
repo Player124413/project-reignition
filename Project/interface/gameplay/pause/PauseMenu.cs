@@ -224,6 +224,10 @@ public partial class PauseMenu : Node
 
 		controlMethodAnimator.Play(isControlMethodToggleAvailable ? "show" : "hide");
 		controlMethodAnimator.Advance(0.0);
+
+		if (!isControlMethodToggleAvailable) // Gyro is unavailable
+			SaveManager.Config.isGyroEnabled = false;
+
 		UpdateControlLabels();
 	}
 
