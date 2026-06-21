@@ -16,6 +16,7 @@ var _input: Vector2
 var _move_speed: float
 
 func on_spawn_finished() -> void:
+	super()
 	_move_speed = cursor_move_speed
 	print("MOVE SPEED: " + str(_move_speed))
 	cursor_texture_rect.get_child(0).self_modulate = get_color()

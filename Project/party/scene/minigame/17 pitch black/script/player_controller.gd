@@ -3,7 +3,6 @@ extends PartyGameCursorMover
 @export var picture_manager: PictureManager
 @export var spotlight: CSGCylinder3D
 @export var hand_attachment: BoneAttachment3D
-@export var lookat: LookAtModifier3D
 @export var lamp: Node3D
 @export var collision: Area3D
 
@@ -20,13 +19,10 @@ func on_spawn_finished() -> void:
 	character_animator.play_animation("%s/light-wait" % MinigameManager.ANIMATION_LIBRARY_PREFIX, true)
 	set_physics_process(true)
 
-	lookat.reparent(character_animator.skeleton)
-	lookat.target_node = lookat.get_path_to(spotlight)
-
 func process_movement_tick() -> void:
-	lamp.look_at(spotlight.position)
-	collision.global_position = spotlight.get_child(0).mesh.get_aabb().get_center()
 	super()
+	lamp.look_at(spotlight.global_position, Vector3.UP, true)
+	collision.global_position = spotlight.get_child(0).mesh.get_aabb().get_center()
 	
 
 func set_state(state: STATE):
