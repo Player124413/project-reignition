@@ -43,8 +43,7 @@ func get_next_picture() -> void:
 
 	
 	for picture in pictures:
-		#picture._character = next_char
-		picture._character = Picture.CHARACTER.AMY
+		picture._character = next_char
 		picture.set_correct_picture()
 			
 	pictures[incorrect_picture].set_incorrect_picture(next_int)
