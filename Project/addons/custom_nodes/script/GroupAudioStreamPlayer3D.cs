@@ -7,11 +7,13 @@ public partial class GroupAudioStreamPlayer3D : AudioStreamPlayer3D
 {
 	[Export] public StringName groupKey;
 	[Export] public float audioLengthOverride;
+	private float baseVolume;
 	private Callable SignalCallable => Callable.From(() => SoundManager.instance.RemoveGroupSfx(groupKey));
 	private Timer timer;
 
 	public override void _Ready()
 	{
+		baseVolume = VolumeLinear;
 		timer = new()
 		{
 			OneShot = true
@@ -31,7 +33,7 @@ public partial class GroupAudioStreamPlayer3D : AudioStreamPlayer3D
 			SoundManager.instance.RemoveGroupSfx(groupKey);
 
 		timer.Start(Mathf.IsZeroApprox(audioLengthOverride) ? (float)Stream.GetLength() : audioLengthOverride);
-		MaxDb = SoundManager.instance.AddGroupSfx(groupKey);
+		VolumeDb = SoundManager.instance.AddGroupSfx(groupKey) * baseVolume;
 		Play();
 	}
 
