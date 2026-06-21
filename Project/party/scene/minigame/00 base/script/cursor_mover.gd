@@ -18,7 +18,6 @@ var _move_speed: float
 func on_spawn_finished() -> void:
 	super()
 	_move_speed = cursor_move_speed
-	print("MOVE SPEED: " + str(_move_speed))
 	cursor_texture_rect.get_child(0).self_modulate = get_color()
 	cursor_texture_rect.get_child(1).self_modulate = get_color()
 
@@ -89,5 +88,5 @@ func calculate_cpu_input() -> Vector2:
 
 ## Moves the cpu cursor to the specified position
 func request_cpu_position(pos: Vector2) -> void:
-	cursor_texture_rect.position.x = move_toward(cursor_texture_rect.position.x, pos.x, get_physics_process_delta_time())
-	cursor_texture_rect.position.y = move_toward(cursor_texture_rect.position.y, pos.y, get_physics_process_delta_time())
+	cursor_texture_rect.position.x = move_toward(cursor_texture_rect.position.x, pos.x, get_physics_process_delta_time() * _move_speed)
+	cursor_texture_rect.position.y = move_toward(cursor_texture_rect.position.y, pos.y, get_physics_process_delta_time() * _move_speed)

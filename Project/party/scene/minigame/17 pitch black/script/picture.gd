@@ -24,6 +24,7 @@ func _ready() -> void:
 
 func set_correct_picture() -> void:
 	picture_animator.play(str(CHARACTER.keys()[_character]).to_lower() + "_correct")
+	print(str(CHARACTER.keys()[_character]).to_lower() + "_correct")
 	wrong = false
 
 func set_incorrect_picture(num: int) -> void:
