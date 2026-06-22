@@ -26,6 +26,15 @@ public partial class PlayerEffect : Node3D
 			darkspineAuraSfx.Play();
 			darkspineGroup.RestartGroup();
 		}
+
+		int augmentIndex = SaveManager.ActiveSkillRing.GetAugmentIndex(SkillKey.Character);
+		if (augmentIndex != 0)
+		{
+			// Override modded voice library
+			SkillResource skill = Runtime.Instance.SkillList.GetSkill(SkillKey.Character).GetAugment(augmentIndex);
+			if (skill.VoiceLibraryOverride != null)
+				voiceLibrary = skill.VoiceLibraryOverride;
+		}
 	}
 
 	public override void _PhysicsProcess(double _)
@@ -524,6 +533,7 @@ public partial class PlayerEffect : Node3D
 	[ExportGroup("Voices")]
 	[Export] public SFXLibraryResource voiceLibrary;
 	[Export] private AudioStreamPlayer voiceChannel;
+
 	public void PlayVoice(StringName key, int sfxIndex = -1, bool forcePlay = false)
 	{
 		// Don't play anything if someone is already talking
