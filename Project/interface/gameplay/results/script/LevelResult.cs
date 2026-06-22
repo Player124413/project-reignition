@@ -264,16 +264,16 @@ public partial class LevelResult : Control
 		string key = "results fail";
 		switch (voiceIndex)
 		{
-			case 0:
+			case 1:
 				key = "results none";
 				break;
-			case 1:
+			case 2:
 				key = "results bronze";
 				break;
-			case 2:
+			case 3:
 				key = "results silver";
 				break;
-			case 3:
+			case 4:
 				key = "results gold";
 				break;
 		}
