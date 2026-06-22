@@ -396,6 +396,10 @@ public partial class SkillPresetSelect : Menu
 			presetList[preset].Augments = SaveManager.ActiveGameData.equippedAugments.Duplicate();
 		}
 
+		// Never save modded character selections
+		presetList[preset].Skills.Remove(SkillKey.Character);
+		presetList[preset].Augments.Remove(SkillKey.Character);
+
 		//  Save our new data to the file and play the animation to initialize the on-screen data
 		if (subIndex == 0) // Only play the save animation if we are selecting save
 			presetList[preset].SavePreset();
@@ -407,8 +411,18 @@ public partial class SkillPresetSelect : Menu
 
 	private void LoadSkills(int preset)
 	{
+		bool isCharacterEquipped = ActiveSkillRing.IsSkillEquipped(SkillKey.Character);
+		int characterIndex = ActiveSkillRing.GetAugmentIndex(SkillKey.Character);
+
 		SaveManager.ActiveGameData.equippedSkills = presetList[preset].Skills.Duplicate();
 		SaveManager.ActiveGameData.equippedAugments = presetList[preset].Augments.Duplicate();
+
+		if (isCharacterEquipped) // Preserve modded character selection
+		{
+			SaveManager.ActiveGameData.equippedSkills.Add(SkillKey.Character);
+			SaveManager.ActiveGameData.equippedAugments.Add(SkillKey.Character, characterIndex);
+		}
+
 		ActiveSkillRing.LoadFromActiveData();
 		presetList[preset].SelectPreset();
 	}

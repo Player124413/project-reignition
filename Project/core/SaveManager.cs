@@ -1296,7 +1296,7 @@ public partial class SaveManager : Node
 			if (dictionary.TryGetValue(nameof(equippedSkills), out var))
 			{
 				equippedSkills = LoadSkills((Array<string>)var);
-				ActiveSkillRing.ValidateCrestSkills();
+				ActiveSkillRing.ValidateSkills();
 			}
 
 			if (dictionary.TryGetValue(nameof(equippedAugments), out var))
@@ -1740,7 +1740,7 @@ public partial class SaveManager : Node
 			if (dictionary.TryGetValue(nameof(equippedSkillsContinue), out var))
 			{
 				equippedSkillsContinue = ActiveGameData.LoadSkills((Array<string>)var);
-				ActiveSkillRing.ValidateCrestSkills();
+				ActiveSkillRing.ValidateSkills();
 			}
 
 			if (dictionary.TryGetValue(nameof(equippedAugmentsContinue), out var))
@@ -1749,7 +1749,7 @@ public partial class SaveManager : Node
 			if (dictionary.TryGetValue(nameof(equippedSkillsSingle), out var))
 			{
 				equippedSkillsSingle = ActiveGameData.LoadSkills((Array<string>)var);
-				ActiveSkillRing.ValidateCrestSkills();
+				ActiveSkillRing.ValidateSkills();
 			}
 
 			if (dictionary.TryGetValue(nameof(equippedAugmentsSingle), out var))

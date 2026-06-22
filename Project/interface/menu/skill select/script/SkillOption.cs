@@ -84,7 +84,7 @@ public partial class SkillOption : Control
 			augment.Initialize(); // Redraw
 		}
 
-		animator.Play(AugmentMenuCount <= 1 ? "disable-augment" : "enable-augment");
+		animator.Play(AugmentMenuCount <= 1 && Skill.Key != SkillKey.Character ? "disable-augment" : "enable-augment");
 		animator.Advance(0);
 	}
 

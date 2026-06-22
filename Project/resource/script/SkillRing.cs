@@ -237,6 +237,9 @@ public class SkillRing
 		if (skill == null) // Skill hasn't been created yet...
 			return false;
 
+		if (skill.Key == SkillKey.Character)
+			return ModManager.Instance.CharacterMods.Count != 0;
+
 		if (TimeAttackManager.Instance.IsRunActive)
 			return skill.Key != SkillKey.Darkspine; // Disables darkspine skill in timeattack mode
 
@@ -296,14 +299,19 @@ public class SkillRing
 	/// <summary> Updates a skill ring to match the active game data. </summary>
 	public void LoadFromActiveData()
 	{
-		ValidateCrestSkills();
+		ValidateSkills();
 		UpdateTotalSkillPoints();
 		UpdateTotalCost();
 		UpdateSkillCounts();
 	}
 
-	public void ValidateCrestSkills()
+	public void ValidateSkills()
 	{
+		// Validate modded characters
+		SkillResource characterSkill = Runtime.Instance.SkillList.GetSkill(SkillKey.Character);
+		if (GetAugmentIndex(SkillKey.Character) > characterSkill.Augments.Count) // Referencing a mod that no longer exists
+			EquippedSkills.Remove(SkillKey.Character);
+
 		UpdateSkillCounts();
 
 		for (int i = EquippedSkills.Count - 1; i >= 0; i--)
