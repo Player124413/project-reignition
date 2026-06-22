@@ -33,13 +33,13 @@ public partial class SaveManager : Node
 		if (OS.IsDebugBuild()) // Editor build, use custom configuration
 		{
 			// Default debug settings for testing from the editor.
-			Config.isMasterMuted = AudioServer.IsBusMute((int)SoundManager.AudioBuses.Master);
+			Config.isMasterMuted = AudioServer.IsBusMute((int)SoundManager.AudioBuses.Main);
 			Config.isBgmMuted = AudioServer.IsBusMute((int)SoundManager.AudioBuses.Bgm);
 			Config.isSfxMuted = AudioServer.IsBusMute((int)SoundManager.AudioBuses.Sfx);
 			Config.isVoiceMuted = AudioServer.IsBusMute((int)SoundManager.AudioBuses.Voice);
 
 			Config.masterVolume =
-				Mathf.RoundToInt(Mathf.DbToLinear(AudioServer.GetBusVolumeDb((int)SoundManager.AudioBuses.Master)) * 100);
+				Mathf.RoundToInt(Mathf.DbToLinear(AudioServer.GetBusVolumeDb((int)SoundManager.AudioBuses.Main)) * 100);
 			Config.bgmVolume =
 				Mathf.RoundToInt(Mathf.DbToLinear(AudioServer.GetBusVolumeDb((int)SoundManager.AudioBuses.Bgm)) * 100);
 			Config.sfxVolume =
@@ -721,7 +721,7 @@ public partial class SaveManager : Node
 				break;
 		}
 
-		SoundManager.SetAudioBusVolume(SoundManager.AudioBuses.Master, Config.masterVolume, Config.isMasterMuted);
+		SoundManager.SetAudioBusVolume(SoundManager.AudioBuses.Main, Config.masterVolume, Config.isMasterMuted);
 		SoundManager.SetAudioBusVolume(SoundManager.AudioBuses.Bgm, Config.bgmVolume, Config.isBgmMuted);
 		SoundManager.SetAudioBusVolume(SoundManager.AudioBuses.Sfx, Config.sfxVolume, Config.isSfxMuted);
 		SoundManager.SetAudioBusVolume(SoundManager.AudioBuses.Voice, Config.voiceVolume, Config.isVoiceMuted);

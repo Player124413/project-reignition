@@ -14,6 +14,7 @@ public partial class SoundManager : Control
 	public enum AudioBuses
 	{
 		Master,
+		Main,
 		Bgm,
 		Voice,
 		SfxAdjustment,
