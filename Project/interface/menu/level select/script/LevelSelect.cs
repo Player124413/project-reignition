@@ -98,9 +98,9 @@ public partial class LevelSelect : Menu
 
 	private void ModSetUp()
 	{
-		if (ModManager.Instance.ModdedLevels.Count > 0)
+		if (ModManager.Instance.LevelMods.Count > 0)
 		{
-			foreach (LevelDataResource mod in ModManager.Instance.ModdedLevels)
+			foreach (LevelDataResource mod in ModManager.Instance.LevelMods)
 			{
 				LevelOption newOption = levelOption.Instantiate<LevelOption>();
 				newOption.data = mod;
@@ -133,7 +133,7 @@ public partial class LevelSelect : Menu
 		{
 			if (Runtime.Instance.IsActionJustPressed("sys_pause", "ui_accept") && menuMemory[MemoryKeys.ActiveMenu] != (int)MemoryKeys.TimeAttack)
 			{
-				if (isModWorld && ModManager.Instance.ModdedLevels.Count == 0) //Don't open the bgm menu when we don't have any mods
+				if (isModWorld && ModManager.Instance.LevelMods.Count == 0) //Don't open the bgm menu when we don't have any mods
 					return;
 				menuMemory[MemoryKeys.ActiveMenu] = (int)MemoryKeys.Jukebox;
 				OpenBGMMenu();
@@ -205,7 +205,7 @@ public partial class LevelSelect : Menu
 
 	protected override void Confirm()
 	{
-		if (ModManager.Instance.ModdedLevels.Count == 0 && isModWorld)
+		if (ModManager.Instance.LevelMods.Count == 0 && isModWorld)
 			return;
 
 		if (TimeAttackManager.Instance.IsRunActive && TimeAttackManager.Instance.CurrentRunType != TimeAttackManager.RunType.SingleRun)
