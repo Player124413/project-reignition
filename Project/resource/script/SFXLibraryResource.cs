@@ -337,6 +337,7 @@ public partial class SFXLibraryResource : Resource
 	public Callable RefreshResourceGroup => Callable.From(NotifyPropertyListChanged);
 	[ExportToolButton("Auto-setup Localization Audio")]
 	public Callable SetUpLocalizationGroup => Callable.From(LocalizeAudioStreams);
+	[Export] private string rootAudioPath;
 	[Export] private SFXLibraryResource fallbackResource;
 	[Export] private Array<StringName> keys;
 	public int KeyCount => keys.Count;
@@ -375,6 +376,8 @@ public partial class SFXLibraryResource : Resource
 			GD.PrintErr("Given resource is not configured as a localizable audio pack.");
 			return;
 		}
+
+		AutoDetectEnglishClips();
 
 		channelCount = (int)SaveManager.VoiceLanguage.Count;
 		Array<Array<Array<string>>> tempStreamPaths = [];
@@ -431,6 +434,33 @@ public partial class SFXLibraryResource : Resource
 		streams = null;
 		localizedStreamPaths = tempStreamPaths;
 		NotifyPropertyListChanged();
+	}
+
+	private void AutoDetectEnglishClips()
+	{
+		if (!rootAudioPath.IsAbsolutePath())
+		{
+			GD.Print($"rootAudioPath is not configured properly.");
+			return;
+		}
+
+		DirAccess dir = DirAccess.Open(rootAudioPath + "en/");
+		if (DirAccess.GetOpenError() != Error.Ok)
+			GD.PrintErr($"Couldn't open {rootAudioPath}. Error {DirAccess.GetOpenError()}.");
+
+		string[] files = dir.GetFiles();
+		for (int i = 0; i < keys.Count; i++)
+		{
+			Array<string> filePaths = [];
+			foreach (string file in files)
+			{
+				if (file.StartsWith(keys[i]) && (file.EndsWith(".wav") || file.EndsWith(".ogg") || file.EndsWith(".mp3")))
+					filePaths.Add(rootAudioPath + "en/" + file);
+			}
+
+			if (filePaths.Count != 0)
+				localizedStreamPaths[0][i] = filePaths;
+		}
 	}
 
 	/// <summary>

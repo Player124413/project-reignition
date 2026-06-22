@@ -24,7 +24,6 @@ public partial class LevelResult : Control
 	private int bgmIndex;
 	[Export] private AnimationPlayer animator;
 	[Export] private AudioStreamPlayer resultsVoicePlayer;
-	[Export] private SFXLibraryResource resultsVoiceLibrary;
 
 	/// <summary> Tracks whether the stage was already cleared when starting; Used to skip repeat cutscenes. </summary>
 	private bool wasStageClearedWhenLoaded;
@@ -262,7 +261,23 @@ public partial class LevelResult : Control
 	public void PlayRankQuote()
 	{
 		int voiceIndex = Stage.CalculateRank() + 1;
-		resultsVoicePlayer.Stream = resultsVoiceLibrary.GetStream(voiceIndex, (int)SaveManager.Config.voiceLanguage);
+		string key = "results fail";
+		switch (voiceIndex)
+		{
+			case 0:
+				key = "results none";
+				break;
+			case 1:
+				key = "results bronze";
+				break;
+			case 2:
+				key = "results silver";
+				break;
+			case 3:
+				key = "results gold";
+				break;
+		}
+		resultsVoicePlayer.Stream = StageSettings.Player.Effect.voiceLibrary.GetStream(key, (int)SaveManager.Config.voiceLanguage);
 		resultsVoicePlayer.Play();
 	}
 }
