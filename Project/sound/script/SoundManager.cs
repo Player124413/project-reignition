@@ -21,6 +21,7 @@ public partial class SoundManager : Control
 		Sfx,
 		GameSfx,
 		BreakSfx,
+		Cutscene,
 		Count
 	}
 
