@@ -79,7 +79,17 @@ public partial class PlayerController : CharacterBody3D
 	private void InstancePlayerAnimator()
 	{
 		IsDarkspineSonic = SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.Darkspine);
-		StringName modelPath = IsDarkspineSonic ? darkspineModelPath : defaultModelPath;
+		StringName modelPath = string.Empty;
+		if (SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.Character))
+		{
+			SkillResource customCharacterSkill = Runtime.Instance.SkillList.GetSkill(SkillKey.Character);
+			int selection = SaveManager.ActiveSkillRing.GetAugmentIndex(SkillKey.Character);
+			customCharacterSkill = customCharacterSkill.GetAugment(selection);
+			modelPath = IsDarkspineSonic ? customCharacterSkill.SuperModel : customCharacterSkill.NormalModel;
+		}
+
+		if (string.IsNullOrEmpty(modelPath) || !ResourceLoader.Exists(modelPath)) // Default back to normal model
+			modelPath = IsDarkspineSonic ? darkspineModelPath : defaultModelPath;
 
 		Animator = ResourceLoader.Load<PackedScene>(modelPath).Instantiate<PlayerAnimator>();
 		Animator.Initialize(this, AnimatorRoot);

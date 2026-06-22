@@ -14,7 +14,7 @@ public partial class SkillResource : Resource
 	public SkillKey Key { get; set; }
 
 	/// <summary> The skill's elemental type. </summary>
-	[Export] public SkillElement Element { get; private set; }
+	[Export] public SkillElement Element { get; set; }
 	public enum SkillElement
 	{
 		Wind,
@@ -25,7 +25,7 @@ public partial class SkillResource : Resource
 	}
 
 	/// <summary> The skill's category type. </summary>
-	[Export] public SkillCategory Category { get; private set; }
+	[Export] public SkillCategory Category { get; set; }
 	public enum SkillCategory
 	{
 		Ground,
@@ -59,12 +59,6 @@ public partial class SkillResource : Resource
 	[Export(PropertyHint.Range, "0, 162, 1")]
 	public int FireSoulRequirement { get; private set; }
 
-	[ExportCategory("Custom Character Settings")]
-	/// <summary> The name of this custom character. Only used if key is set to Character. </summary>
-	[Export] private string CustomCharacterName;
-	[Export(PropertyHint.File)] public string NormalModel { get; private set; }
-	[Export(PropertyHint.File)] public string SuperModel { get; private set; }
-
 	/// <summary> Converts the internal key to snake case for localization. </summary>
 	public string NameString => Key.ToString().ToSnakeCase();
 	/// <summary> Returns the localization key for this skill. </summary>
@@ -72,7 +66,7 @@ public partial class SkillResource : Resource
 	{
 		get
 		{
-			if (Key == SkillKey.Character)
+			if (Key == SkillKey.Character && IsAugment)
 				return CustomCharacterName;
 
 			StringName name = $"skill_{NameString}";
@@ -87,7 +81,7 @@ public partial class SkillResource : Resource
 	{
 		get
 		{
-			if (Key == SkillKey.Character)
+			if (Key == SkillKey.Character && IsAugment)
 				return Tr("skill_custom_character_description").Replace("[CHARACTER]", CustomCharacterName);
 
 			StringName description = $"skill_{NameString}_description";
@@ -105,7 +99,7 @@ public partial class SkillResource : Resource
 	public bool HasAugments => Augments != null && Augments.Count != 0;
 	/// <summary> Does this skill build off of a previous skill? </summary>
 	public bool IsAugment => AugmentIndex != 0;
-	[Export] public int AugmentIndex { get; private set; }
+	[Export] public int AugmentIndex { get; set; }
 	/// <summary> List of skill augments. </summary>
 	[Export] public Array<SkillResource> Augments { get; set; }
 
@@ -123,4 +117,10 @@ public partial class SkillResource : Resource
 
 		return null;
 	}
+
+	[ExportGroup("Custom Character Settings")]
+	/// <summary> The name of this custom character. Only used if key is set to Character. </summary>
+	[Export] private string CustomCharacterName;
+	[Export(PropertyHint.File)] public string NormalModel { get; private set; }
+	[Export(PropertyHint.File)] public string SuperModel { get; private set; }
 }

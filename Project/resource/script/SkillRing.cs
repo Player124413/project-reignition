@@ -437,7 +437,6 @@ public enum SkillKey
 
 	Darkspine, // Completion reward
 
-	Count, // Number of skills
-
 	Character, // For custom characters.
+	Count, // Number of skills
 }

@@ -83,7 +83,6 @@ public partial class ModManager : Node
 
 			LevelMods.Add(resource as LevelDataResource);
 			GD.Print($"Loaded custom level {file}.");
-			break; // Found our level data resource
 		}
 	}
 
@@ -98,26 +97,37 @@ public partial class ModManager : Node
 
 		// Switch to local resource folder, now that pcks are loaded
 		DirAccess dirAccess = DirAccess.Open(ResourceModPath + CustomCharacterPaths);
+		SkillResource baseCharacterSkill = Runtime.Instance.SkillList.GetSkill(SkillKey.Character);
+		baseCharacterSkill.Augments = [];
 		foreach (string character in dirAccess.GetDirectories())
-			LoadModCharacter(ResourceModPath + CustomCharacterPaths + character + "/");
+			LoadModCharacter(ResourceModPath + CustomCharacterPaths + character + "/", baseCharacterSkill);
 	}
 
-	private void LoadModCharacter(string dir)
+	private void LoadModCharacter(string dir, SkillResource baseCharacterSkill)
 	{
 		DirAccess levelDir = DirAccess.Open(dir); // Access the specific mod directory
 		string[] files = levelDir.GetFiles();
 		foreach (string file in files) // Find the level data resource
 		{
-			if (!file.GetFile().GetExtension().Equals(ResourceExtension))
+			string fileName = file;
+			if (fileName.EndsWith(".remap"))
+				fileName = fileName.Replace(".remap", string.Empty);
+
+			if (!fileName.GetFile().GetExtension().Equals(ResourceExtension))
 				continue;
 
-			Resource resource = ResourceLoader.Load(dir + file);
+			Resource resource = ResourceLoader.Load(dir + fileName);
 			if (resource is not SkillResource)
 				continue;
 
-			CharacterMods.Add(resource as SkillResource);
-			GD.Print($"Loaded custom character {file}.");
-			break; // Found our character
+			SkillResource characterResource = resource.Duplicate() as SkillResource;
+			characterResource.Key = SkillKey.Character;
+			characterResource.Element = SkillResource.SkillElement.Config;
+			characterResource.Category = SkillResource.SkillCategory.Setting;
+			characterResource.AugmentIndex = baseCharacterSkill.Augments.Count + 1;
+			baseCharacterSkill.Augments.Add(characterResource);
+			CharacterMods.Add(characterResource);
+			GD.Print($"Loaded custom character {fileName} in slot {characterResource.AugmentIndex}");
 		}
 	}
 }
