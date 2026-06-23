@@ -46,7 +46,6 @@ public partial class SoundManager : Control
 		UpdateSfxGroups();
 
 		currentDuckVolume = Mathf.MoveToward(currentDuckVolume, IsDialogActive ? LinearDuckVolume : 1f, DuckSpeed * (float)delta);
-		GD.Print(currentDuckVolume);
 		AudioServer.SetBusVolumeLinear((int)AudioBuses.Duck, currentDuckVolume);
 	}
 
