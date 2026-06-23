@@ -26,10 +26,11 @@ public partial class SoundManager : Control
 		Count
 	}
 
-	private float currentDuckVolume = 1f;
+	private float currentDuckVolume = 0f;
 	/// <summary> How much to duck the audio when dialog is active. </summary>
-	private readonly float LinearDuckVolume = 0.9f;
-	private readonly float DuckSpeed = 0.1f;
+	private readonly float DuckVolumeDB = -6f;
+	private readonly float DuckOutSpeed = 20f;
+	private readonly float DuckInSpeed = 10f;
 
 	public override void _Ready()
 	{
@@ -44,9 +45,15 @@ public partial class SoundManager : Control
 	public override void _PhysicsProcess(double delta)
 	{
 		UpdateSfxGroups();
+		UpdateAudioDucking();
+	}
 
-		currentDuckVolume = Mathf.MoveToward(currentDuckVolume, IsDialogActive ? LinearDuckVolume : 1f, DuckSpeed * (float)delta);
-		AudioServer.SetBusVolumeLinear((int)AudioBuses.Duck, currentDuckVolume);
+	private void UpdateAudioDucking()
+	{
+		float targetVolumeDb = IsDialogActive ? DuckVolumeDB : 0f;
+		float targetSpeed = IsDialogActive ? DuckInSpeed : DuckOutSpeed;
+		currentDuckVolume = Mathf.MoveToward(currentDuckVolume, targetVolumeDb, targetSpeed * (float)GetPhysicsProcessDeltaTime());
+		AudioServer.SetBusVolumeDb((int)AudioBuses.Duck, currentDuckVolume);
 	}
 
 	#region Audio Bus
