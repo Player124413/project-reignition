@@ -28,7 +28,7 @@ public partial class SoundManager : Control
 
 	private float currentDuckVolume = 0f;
 	/// <summary> How much to duck the audio when dialog is active. </summary>
-	private readonly float DuckVolumeDB = -6f;
+	private readonly float DuckVolumeDB = -4f;
 	private readonly float DuckOutSpeed = 20f;
 	private readonly float DuckInSpeed = 10f;
 
