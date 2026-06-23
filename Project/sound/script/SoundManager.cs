@@ -15,6 +15,7 @@ public partial class SoundManager : Control
 	{
 		Master,
 		Main,
+		Duck,
 		Bgm,
 		Voice,
 		SfxAdjustment,
@@ -24,6 +25,11 @@ public partial class SoundManager : Control
 		Cutscene,
 		Count
 	}
+
+	private float currentDuckVolume = 1f;
+	/// <summary> How much to duck the audio when dialog is active. </summary>
+	private readonly float LinearDuckVolume = 0.9f;
+	private readonly float DuckSpeed = 0.1f;
 
 	public override void _Ready()
 	{
@@ -35,9 +41,13 @@ public partial class SoundManager : Control
 		TransitionManager.Instance.SceneChanged += CancelDialog;
 	}
 
-	public override void _PhysicsProcess(double _)
+	public override void _PhysicsProcess(double delta)
 	{
 		UpdateSfxGroups();
+
+		currentDuckVolume = Mathf.MoveToward(currentDuckVolume, IsDialogActive ? LinearDuckVolume : 1f, DuckSpeed * (float)delta);
+		GD.Print(currentDuckVolume);
+		AudioServer.SetBusVolumeLinear((int)AudioBuses.Duck, currentDuckVolume);
 	}
 
 	#region Audio Bus
