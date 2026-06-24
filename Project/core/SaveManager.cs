@@ -1779,7 +1779,7 @@ public partial class SaveManager : Node
 	/// <summary> Attempts to load Time Attack data from file. </summary>
 	public static void LoadTimeAttackData()
 	{
-		string dataFile = DataDirectory.PathJoin(timeAttackFileName);
+		string dataFile = SaveDirectory.PathJoin(timeAttackFileName);
 		FileAccess file = FileAccess.Open(dataFile, FileAccess.ModeFlags.Read);
 
 		try
@@ -1803,7 +1803,7 @@ public partial class SaveManager : Node
 		if (!DirAccess.DirExistsAbsolute(SaveDirectory))
 			DirAccess.MakeDirRecursiveAbsolute(SaveDirectory);
 
-		string dataFile = DataDirectory.PathJoin(timeAttackFileName);
+		string dataFile = SaveDirectory.PathJoin(timeAttackFileName);
 		FileAccess file = FileAccess.Open(dataFile, FileAccess.ModeFlags.Write);
 		file.StoreString(Json.Stringify(TimeData.ToDictionary(), "\t"));
 		file.Close();
