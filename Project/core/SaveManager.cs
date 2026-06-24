@@ -1575,7 +1575,7 @@ public partial class SaveManager : Node
 	/// <summary> Attempts to load config data from file. </summary>
 	public static void LoadSharedData()
 	{
-		string dataFile = DataDirectory.PathJoin(SharedFileName);
+		string dataFile = SaveDirectory.PathJoin(SharedFileName);
 		FileAccess file = FileAccess.Open(dataFile, FileAccess.ModeFlags.Read);
 
 		try
