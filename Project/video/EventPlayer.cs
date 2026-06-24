@@ -27,7 +27,6 @@ public partial class EventPlayer : Node
 	[Export] public Color transitionColor = Colors.Black;
 	[Export] public float transitionSpeed = 0.5f;
 	[Export] public Resource musicResource;
-	private Gameplay.Triggers.DialogTrigger subtitles;
 
 	[ExportGroup("Components")]
 	[Export] private AnimationPlayer animator;
@@ -58,8 +57,9 @@ public partial class EventPlayer : Node
 
 	public override void _Ready()
 	{
-		subtitleRoot.Visible = false;
 		subtitleRoot.SelfModulate = Colors.White.Lerp(Colors.Transparent, SaveManager.Config.cutsceneOpacity * 0.01f);
+		subtitleAnimator.Play("RESET");
+		subtitleAnimator.Advance(0);
 
 		if (Engine.IsEditorHint())
 			return;
@@ -210,8 +210,6 @@ public partial class EventPlayer : Node
 			animator.Seek(0.0);
 			animator.Play();
 		}
-
-		subtitles?.Activate();
 	}
 
 	public override void _PhysicsProcess(double _)
@@ -395,7 +393,8 @@ public partial class EventPlayer : Node
 		subtitleKeyIndex = 0;
 		subtitleDialogIndex = 0;
 		subtitleLastUpdateTime = GetCurrentTime();
-		HideSubtitlesFromScript();
+		subtitleAnimator.Play("RESET");
+		subtitleAnimator.Advance(0);
 
 		Animation currentAnimation = animator.GetAnimation(animator.CurrentAnimation);
 		for (int i = 0; i < currentAnimation.TrackGetKeyCount(0); i++)
