@@ -326,6 +326,17 @@ public class SkillRing
 		}
 	}
 
+	public int UnlockedSkillCount()
+	{
+		int count = 0;
+		for (int i = 0; i < (int)SkillKey.Count; i++)
+		{
+			if (i != (int)SkillKey.Character && IsSkillUnlocked((SkillKey)i))
+				count++;
+		}
+		return count;
+	}
+
 	/// <summary> Sorts skill resources based on their key (number). </summary>
 	public class KeySorter : System.Collections.Generic.IComparer<SkillResource>
 	{
