@@ -31,6 +31,9 @@ public partial class LevelResult : Control
 	private bool isFadingBgm;
 	private StageSettings Stage => StageSettings.Instance;
 
+	private readonly StringName AchievementGoldKey = "the ultimate";
+	private readonly int AchievementGoldRequirement = 111;
+
 	public override void _Ready()
 	{
 		wasStageClearedWhenLoaded = SaveManager.ActiveGameData.LevelData.GetClearStatus(Stage.Data.LevelID) == SaveManager.LevelSaveData.LevelStatus.Cleared;
@@ -124,8 +127,6 @@ public partial class LevelResult : Control
 			else // Actual scene transition is handled by the experience results screen (which is connected via this signal)
 				EmitSignal(SignalName.ContinuePressed);
 		}
-
-
 
 		isFadingBgm = true; // Start fading bgm
 		SetInputProcessing(false);
@@ -249,8 +250,6 @@ public partial class LevelResult : Control
 
 		else
 			animator.Play(isStageCleared ? "success-start" : "fail-start");
-
-
 	}
 
 	public void SetInputProcessing(bool value) => isProcessing = value;
@@ -277,6 +276,11 @@ public partial class LevelResult : Control
 				key = "results gold";
 				break;
 		}
+
+		GD.Print(SaveManager.ActiveGameData.LevelData.GoldMedalCount);
+		if (SaveManager.ActiveGameData.LevelData.GoldMedalCount >= AchievementGoldRequirement)
+			AchievementManager.Instance.UnlockAchievement(AchievementGoldKey);
+
 		resultsVoicePlayer.Stream = StageSettings.Player.Effect.voiceLibrary.GetStream(key, (int)SaveManager.Config.voiceLanguage);
 		resultsVoicePlayer.Play();
 	}
