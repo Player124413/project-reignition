@@ -113,7 +113,7 @@ public partial class PlayerController : CharacterBody3D
 	/// <summary> For movement that doesn't affect animations (e.x. wind). Reset every frame after it's applied. </summary>
 	public Vector3 ExternalVelocity { get; set; }
 
-	/// <summary> Global movement angle, in radians. Note - VISUAL ROTATION is controlled by CharacterAnimator.cs. </summary>
+	/// <summary> Global movement angle, in radians. Note - VISUAL ROTATION is controlled by PlayerAnimator.cs. </summary>
 	public float MovementAngle { get; set; }
 	public float PathTurnInfluence => PathFollower.DeltaAngle * Camera.ActiveSettings.pathControlInfluence;
 	public Vector3 GetMovementDirection()

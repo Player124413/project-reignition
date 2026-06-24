@@ -6,7 +6,7 @@ using Project.CustomNodes;
 namespace Project.Gameplay;
 
 /// <summary>
-/// Responsible for playing sfx/vfx. Controlled from the CharacterAnimator.
+/// Responsible for playing sfx/vfx. Controlled from the PlayerAnimator.
 /// </summary>
 public partial class PlayerEffect : Node3D
 {
