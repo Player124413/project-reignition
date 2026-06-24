@@ -15,4 +15,7 @@ public partial class BGMResource : Resource
 	[Export] public float LoopStart;
 	/// <summary> The time (in seconds) where the loop ends. </summary>
 	[Export] public float LoopEnd;
+	/// <summary> Volume modifications in DBs. </summary>
+	[Export(PropertyHint.Range, "-80.0, 12.0, 0.1")]
+	public float VolumeDB;
 }

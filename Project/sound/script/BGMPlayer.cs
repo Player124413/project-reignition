@@ -110,7 +110,7 @@ public partial class BGMPlayer : AudioStreamPlayer
 		if (bgmResource == null)
 			return;
 
-		VolumeLinear = 1f;
+		VolumeDb = GetBgmResource().VolumeDB;
 		isFadingBgm = false;
 		Play(bgmResource.StartPosition);
 	}
