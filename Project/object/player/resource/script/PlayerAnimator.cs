@@ -228,6 +228,7 @@ public partial class PlayerAnimator : Node3D
 		animationTree.Set(GroundSeek, 0);
 		animationTree.Set(LandTrigger, (int)AnimationNodeOneShot.OneShotRequest.Abort);
 		animationTree.Set(ReversePathTrigger, (int)AnimationNodeOneShot.OneShotRequest.Abort);
+		animationTree.Set(QuickSlideTransition, DisabledConstant);
 		animationTree.Set(CrouchTransition, DisabledConstant);
 	}
 
