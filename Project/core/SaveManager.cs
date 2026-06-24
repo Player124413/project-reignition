@@ -607,6 +607,21 @@ public partial class SaveManager : Node
 		file.Close();
 	}
 
+	private static void InitializeSaveDirectory()
+	{
+		DirAccess.MakeDirRecursiveAbsolute(SaveDirectory);
+
+		// Backwards compatability with old save file's folder structure
+		DirAccess dir = DirAccess.Open(DataDirectory);
+		string[] files = dir.GetFiles();
+		GD.Print(files);
+		for (int i = files.Length - 1; i >= 0; i--)
+		{
+			if (files[i].EndsWith(".dat"))
+				System.IO.File.Move(DataDirectory.PathJoin(files[i]), SaveDirectory.PathJoin(files[i]));
+		}
+	}
+
 	/// <summary> Applies active configuration data. </summary>
 	public static void ApplyConfig()
 	{
@@ -987,6 +1002,9 @@ public partial class SaveManager : Node
 	/// <summary> Preloads game data so it can be displayed on menus. </summary>
 	public static void LoadGameData()
 	{
+		if (!DirAccess.DirExistsAbsolute(SaveDirectory))
+			InitializeSaveDirectory();
+
 		LoadSharedData();
 		LoadTimeAttackData();
 
