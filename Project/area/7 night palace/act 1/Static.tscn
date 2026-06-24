@@ -75,6 +75,7 @@
 [ext_resource type="Resource" uid="uid://b808qipr112qt" path="res://area/7 night palace/act 1/camera/CarpetAutorunCam.tres" id="59_guye2"]
 [ext_resource type="Resource" uid="uid://w6ax6wllo7x8" path="res://resource/bgm/bgm np act1.tres" id="64_guye2"]
 [ext_resource type="AudioStream" uid="uid://dcyou6xxsxhoq" path="res://sound/sfx/stage/night palace/starting torch ambience.wav" id="75_g4ytx"]
+[ext_resource type="Script" uid="uid://bdieqwbvr1c2e" path="res://sound/script/Reverb_Area.gd" id="75_tc8c3"]
 [ext_resource type="AudioStream" uid="uid://bps2bv273awbs" path="res://sound/sfx/stage/pirate storm/cave ambience.wav" id="76_tc8c3"]
 [ext_resource type="AudioStream" uid="uid://b7oft4g34vp5u" path="res://sound/sfx/stage/levitated ruin/ambience.wav" id="77_scag8"]
 
@@ -1014,66 +1015,6 @@ _data = {
 &"demo2": SubResource("Animation_w6bbh"),
 &"demo3": SubResource("Animation_81pee")
 }
-
-[sub_resource type="GDScript" id="GDScript_i2aec"]
-script/source = "extends Area3D
-
-@export_range(0.0, 1.0) var wet_target: float = 0.5
-@export var fade_time: float = 0.4
-
-# Shared by ALL instances of this script — one reverb effect on one bus.
-static var _bus_idx: int = -1
-static var _reverb: AudioEffectReverb
-static var _tween: Tween
-static var _active: Array = []   # zones currently containing the player
-
-func _ready() -> void:
-	if _bus_idx == -1:
-		_bus_idx = AudioServer.get_bus_index(\"GAME SFX\")
-		if _bus_idx == -1:
-			push_error(\"Audio bus 'GAME SFX' not found.\")
-			return
-		_reverb = AudioServer.get_bus_effect(_bus_idx, 0) as AudioEffectReverb
-		if _reverb:
-			_reverb.wet = 0.0
-			AudioServer.set_bus_effect_enabled(_bus_idx, 0, false)
-	body_entered.connect(_on_body_entered)
-	body_exited.connect(_on_body_exited)
-
-func _exit_tree() -> void:
-	_active.erase(self)
-
-func _on_body_entered(body: Node3D) -> void:
-	if not body.is_in_group(\"player\"):
-		return
-	if not _active.has(self):
-		_active.append(self)
-	_apply()
-
-func _on_body_exited(body: Node3D) -> void:
-	if not body.is_in_group(\"player\"):
-		return
-	_active.erase(self)
-	_apply()
-
-func _apply() -> void:
-	if _reverb == null:
-		return
-	var target := 0.0
-	if not _active.is_empty():
-		target = _active.back().get(\"wet_target\")
-	if target > 0.0:
-		AudioServer.set_bus_effect_enabled(_bus_idx, 0, true)
-	if _tween and _tween.is_valid():
-		_tween.kill()
-	_tween = create_tween()
-	_tween.tween_property(_reverb, \"wet\", target, fade_time)
-	if is_zero_approx(target):
-		_tween.tween_callback(_disable)
-
-func _disable() -> void:
-	AudioServer.set_bus_effect_enabled(_bus_idx, 0, false)
-"
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_amxiy"]
 size = Vector3(101.24121, 61.222595, 119.92012)
@@ -2571,7 +2512,7 @@ collision_layer = 3
 collision_mask = 3
 priority = 1
 reverb_bus_amount = 0.5
-script = SubResource("GDScript_i2aec")
+script = ExtResource("75_tc8c3")
 wet_target = 0.15
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Sound/Interior/ReverbAreaGAME SFX BUS" unique_id=1571546354]
@@ -2586,7 +2527,7 @@ collision_layer = 3
 collision_mask = 3
 priority = 1
 reverb_bus_amount = 0.5
-script = SubResource("GDScript_i2aec")
+script = ExtResource("75_tc8c3")
 wet_target = 0.15
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Sound/Interior/ReverbAreaGAME SFX BUS2" unique_id=2019818045]
@@ -2601,7 +2542,7 @@ collision_layer = 3
 collision_mask = 3
 priority = 1
 reverb_bus_amount = 0.5
-script = SubResource("GDScript_i2aec")
+script = ExtResource("75_tc8c3")
 wet_target = 0.15
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Sound/Interior/ReverbAreaGAME SFX BUS3" unique_id=122546269]
