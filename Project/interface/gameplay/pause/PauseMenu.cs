@@ -41,8 +41,7 @@ public partial class PauseMenu : Node
 	[Export] private Control skillCursor;
 	[Export] private AnimationPlayer skillCursorAnimator;
 	[Export] private PackedScene pauseSkillScene;
-	[Export] private int[] rectVerticalValues;
-	[Export] private Sprite2D levelSprite;
+	[Export] private Label areaLabel;
 	private PauseSkill[] skills;
 	private float skillContainerStartingOffset;
 	private int skillScrollOffset;
@@ -74,18 +73,14 @@ public partial class PauseMenu : Node
 		pageAnimator.Play("init");
 		pageAnimator.Advance(0.0);
 
-		levelSprite.RegionRect = new
-		(
-			new(levelSprite.RegionRect.Position.X, rectVerticalValues[(int)SaveManager.ActiveGameData.lastPlayedWorld]),
-			levelSprite.RegionRect.Size
-		);
-
 		for (int i = 0; i < mouseOptionParent.GetChildCount(); i++)
 		{
 			Control node = mouseOptionParent.GetChildOrNull<Control>(i);
 			node.MouseEntered += () => ReceiveMouseInput(node, false);
 			node.MouseExited += () => ReceiveMouseInput(null, false);
 		}
+
+		areaLabel.Text = Stage.Data.GetAreaKey();
 
 		// Set up the skill menu
 		noSkillLabel.Visible = SaveManager.ActiveSkillRing.EquippedSkills.Count == 0;

@@ -24,13 +24,15 @@ public partial class LevelResult : Control
 	private int bgmIndex;
 	[Export] private AnimationPlayer animator;
 	[Export] private AudioStreamPlayer resultsVoicePlayer;
-	[Export] private SFXLibraryResource resultsVoiceLibrary;
 
 	/// <summary> Tracks whether the stage was already cleared when starting; Used to skip repeat cutscenes. </summary>
 	private bool wasStageClearedWhenLoaded;
 	private bool isProcessing;
 	private bool isFadingBgm;
 	private StageSettings Stage => StageSettings.Instance;
+
+	private readonly StringName AchievementGoldKey = "the ultimate";
+	private readonly int AchievementGoldRequirement = 111;
 
 	public override void _Ready()
 	{
@@ -125,8 +127,6 @@ public partial class LevelResult : Control
 			else
 				ActivateTransition();
 		}
-
-
 
 		isFadingBgm = true; // Start fading bgm
 		SetInputProcessing(false);
@@ -268,7 +268,28 @@ public partial class LevelResult : Control
 	public void PlayRankQuote()
 	{
 		int voiceIndex = Stage.CalculateRank() + 1;
-		resultsVoicePlayer.Stream = resultsVoiceLibrary.GetStream(voiceIndex, (int)SaveManager.Config.voiceLanguage);
+		string key = "results fail";
+		switch (voiceIndex)
+		{
+			case 1:
+				key = "results none";
+				break;
+			case 2:
+				key = "results bronze";
+				break;
+			case 3:
+				key = "results silver";
+				break;
+			case 4:
+				key = "results gold";
+				break;
+		}
+
+		GD.Print(SaveManager.ActiveGameData.LevelData.GoldMedalCount);
+		if (SaveManager.ActiveGameData.LevelData.GoldMedalCount >= AchievementGoldRequirement)
+			AchievementManager.Instance.UnlockAchievement(AchievementGoldKey);
+
+		resultsVoicePlayer.Stream = StageSettings.Player.Effect.voiceLibrary.GetStream(key, (int)SaveManager.Config.voiceLanguage);
 		resultsVoicePlayer.Play();
 
 		SoundManager.instance.IsRankQuotePlaying = true;

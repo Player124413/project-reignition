@@ -89,6 +89,7 @@ public partial class GrindStepState : PlayerState
 		{
 			Player.Controller.ResetJumpBuffer();
 			Player.Controller.ResetActionBuffer();
+			Player.IsStomping = true;
 			return stompState;
 		}
 

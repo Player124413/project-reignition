@@ -16,7 +16,7 @@
 [ext_resource type="Texture2D" uid="uid://dbdjvlt5egcbi" path="res://interface/gameplay/pause/texture/flame/pause flame 2.png" id="15_uf7ha"]
 [ext_resource type="LabelSettings" uid="uid://c2ppn463q7sif" path="res://interface/font/PauseOptionFont.tres" id="16_4h0p5"]
 [ext_resource type="Texture2D" uid="uid://dx4vxnhtgd13t" path="res://interface/menu/common/common menu atlas.png" id="17_pdwl1"]
-[ext_resource type="Texture2D" uid="uid://ftko0u3nnv8" path="res://interface/gameplay/pause/texture/text/status/status common en.png" id="18_dyfn0"]
+[ext_resource type="LabelSettings" uid="uid://ceb8j6jpt0nrw" path="res://interface/font/PauseArea.tres" id="18_1advk"]
 [ext_resource type="LabelSettings" uid="uid://b3k06q5urpxjh" path="res://interface/font/PauseStatus.tres" id="19_2kjal"]
 [ext_resource type="FontFile" uid="uid://b60t6w3shtof1" path="res://interface/font/bitmap fonts/Status Numbers en.fnt" id="20_637u3"]
 [ext_resource type="Texture2D" uid="uid://dlyp2y2l5p5er" path="res://interface/gameplay/hud/texture/ring_atlas.png" id="21_73vyn"]
@@ -4915,7 +4915,7 @@ _data = {
 &"show-skill": SubResource("Animation_ecgsa")
 }
 
-[node name="Pause" type="Control" unique_id=983380477 node_paths=PackedStringArray("mouseOptionParent", "pageAnimator", "statusAnimator", "selectionAnimator", "pauseCursorAnimator", "selectSfx", "cancelSfx", "description", "restart", "values", "missionTypeLabel", "missionDescriptionLabel", "fireSoulParent", "fireSoulRects", "rankRect", "noSkillLabel", "skillContainer", "skillCursor", "skillCursorAnimator", "levelSprite", "skillScrollbar", "controlMethodAnimator")]
+[node name="Pause" type="Control" unique_id=983380477 node_paths=PackedStringArray("mouseOptionParent", "pageAnimator", "statusAnimator", "selectionAnimator", "pauseCursorAnimator", "selectSfx", "cancelSfx", "description", "restart", "values", "missionTypeLabel", "missionDescriptionLabel", "fireSoulParent", "fireSoulRects", "rankRect", "noSkillLabel", "skillContainer", "skillCursor", "skillCursorAnimator", "areaLabel", "skillScrollbar", "controlMethodAnimator")]
 process_mode = 3
 z_index = 50
 z_as_relative = false
@@ -4950,8 +4950,7 @@ skillContainer = NodePath("Pause/StatusMenu/ValueMenu/Skill/Clip/Options")
 skillCursor = NodePath("Pause/StatusMenu/ValueMenu/Skill/CursorAnchor/Cursor")
 skillCursorAnimator = NodePath("Pause/StatusMenu/ValueMenu/Skill/CursorAnchor/SkillCursorAnimator")
 pauseSkillScene = ExtResource("8_4d1pj")
-rectVerticalValues = PackedInt32Array(346, 8, 195, 244, 295, 98, 51, 145)
-levelSprite = NodePath("Pause/StatusMenu/ValueMenu/LevelTop")
+areaLabel = NodePath("Pause/StatusMenu/ValueMenu/LevelTop/Area")
 skillScrollbar = NodePath("Pause/StatusMenu/ValueMenu/Skill/Scrollbar/ScrollPosition")
 controlMethodAnimator = NodePath("Pause/ControlMode/AnimationPlayer")
 
@@ -5208,24 +5207,71 @@ patch_margin_top = 32
 patch_margin_right = 32
 patch_margin_bottom = 32
 
-[node name="Top" type="Sprite2D" parent="Pause/StatusMenu/ValueMenu" unique_id=207494014]
+[node name="Top" type="Control" parent="Pause/StatusMenu/ValueMenu" unique_id=206280880]
 visible = false
-scale = Vector2(2.25, 2.25)
-texture = ExtResource("18_dyfn0")
-region_enabled = true
-region_rect = Rect2(0, 436, 396, 32)
+layout_mode = 3
+anchors_preset = 0
+scale = Vector2(1, -1)
 
-[node name="LevelTop" type="Sprite2D" parent="Pause/StatusMenu/ValueMenu" unique_id=1351402236]
-scale = Vector2(2.25, 2.25)
-texture = ExtResource("18_dyfn0")
-region_enabled = true
-region_rect = Rect2(0, 8, 396, 48)
+[node name="Bottom" type="NinePatchRect" parent="Pause/StatusMenu/ValueMenu/Top" unique_id=1311010468]
+custom_minimum_size = Vector2(605, 40)
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.104
+anchor_top = 0.89
+anchor_right = 0.889
+anchor_bottom = 1.0
+offset_left = -325.0
+offset_top = -24.0
+offset_right = 280.0
+offset_bottom = 16.0
+scale = Vector2(1, 1.5)
+texture = ExtResource("17_pdwl1")
+region_rect = Rect2(379, 60, 94, 60)
+axis_stretch_horizontal = 1
 
-[node name="Bottom" type="Sprite2D" parent="Pause/StatusMenu/ValueMenu" unique_id=1837093835]
-scale = Vector2(2.25, 2.25)
-texture = ExtResource("18_dyfn0")
+[node name="BottomLeft" type="Sprite2D" parent="Pause/StatusMenu/ValueMenu/Top" unique_id=1839013669]
+position = Vector2(-445, -24)
+texture = ExtResource("17_pdwl1")
+centered = false
 region_enabled = true
-region_rect = Rect2(0, 472, 396, 32)
+region_rect = Rect2(260, 60, 120, 60)
+
+[node name="BottomRight" type="Sprite2D" parent="Pause/StatusMenu/ValueMenu/Top" unique_id=939168989]
+position = Vector2(280, -24)
+texture = ExtResource("17_pdwl1")
+centered = false
+region_enabled = true
+region_rect = Rect2(370, 0, 140, 60)
+
+[node name="LevelTop" type="Node2D" parent="Pause/StatusMenu/ValueMenu" unique_id=1327816048]
+
+[node name="Left" type="Sprite2D" parent="Pause/StatusMenu/ValueMenu/LevelTop" unique_id=1644295817]
+position = Vector2(-445.00003, -24)
+texture = ExtResource("17_pdwl1")
+centered = false
+region_enabled = true
+region_rect = Rect2(272, 0, 240, 60)
+
+[node name="Right" type="Sprite2D" parent="Pause/StatusMenu/ValueMenu/LevelTop" unique_id=1889061342]
+position = Vector2(175.99997, -24)
+texture = ExtResource("17_pdwl1")
+centered = false
+flip_h = true
+region_enabled = true
+region_rect = Rect2(272, 0, 240, 60)
+
+[node name="Area" type="Label" parent="Pause/StatusMenu/ValueMenu/LevelTop" unique_id=1605527848]
+anchors_preset = -1
+offset_left = -368.0
+offset_top = -29.0
+offset_right = 368.0
+offset_bottom = 39.72
+text = "pause_area"
+label_settings = ExtResource("18_1advk")
+horizontal_alignment = 1
+vertical_alignment = 1
+uppercase = true
 
 [node name="Status" type="Node2D" parent="Pause/StatusMenu/ValueMenu" unique_id=1445570468]
 modulate = Color(1, 1, 1, 0)
@@ -5370,7 +5416,7 @@ metadata/_edit_use_anchors_ = true
 modulate = Color(0, 0, 0, 1)
 anchors_preset = -1
 offset_right = 420.0
-offset_bottom = 52.999992
+offset_bottom = 52.99998
 theme_override_fonts/font = ExtResource("20_637u3")
 theme_override_font_sizes/font_size = 64
 text = "pause_time"
@@ -5432,7 +5478,7 @@ metadata/_edit_use_anchors_ = true
 modulate = Color(0, 0, 0, 1)
 anchors_preset = -1
 offset_right = 420.0
-offset_bottom = 53.0
+offset_bottom = 53.00003
 theme_override_fonts/font = ExtResource("20_637u3")
 theme_override_font_sizes/font_size = 64
 text = "pause_total_exp"
@@ -5463,7 +5509,7 @@ metadata/_edit_use_anchors_ = true
 modulate = Color(0, 0, 0, 1)
 anchors_preset = -1
 offset_right = 420.0
-offset_bottom = 52.999878
+offset_bottom = 52.999847
 theme_override_fonts/font = ExtResource("20_637u3")
 theme_override_font_sizes/font_size = 64
 text = "pause_gauge"
@@ -5632,12 +5678,12 @@ blend_times = [&"show", &"loop", 0.1]
 [node name="HorizontalLine" type="NinePatchRect" parent="Pause/StatusMenu/ValueMenu/Skill" unique_id=636472714]
 anchors_preset = -1
 offset_left = -360.0
-offset_top = -232.0
+offset_top = -216.0
 offset_right = -344.0
-offset_bottom = -232.0
+offset_bottom = -216.0
 scale = Vector2(1e-05, 1e-05)
-texture = ExtResource("18_dyfn0")
-region_rect = Rect2(436, 136, 28, 12)
+texture = ExtResource("4_kmakp")
+region_rect = Rect2(48, 48, 152, 96)
 patch_margin_left = 8
 patch_margin_right = 8
 
@@ -5678,10 +5724,10 @@ theme_override_constants/separation = 4
 
 [node name="Scrollbar" type="NinePatchRect" parent="Pause/StatusMenu/ValueMenu/Skill" unique_id=345579389]
 anchors_preset = -1
-offset_left = 352.0
-offset_top = -216.0
-offset_right = 801.0
-offset_bottom = -144.0
+offset_left = 351.9999
+offset_top = -191.68388
+offset_right = 776.68384
+offset_bottom = -119.68388
 rotation = 1.5708
 texture = ExtResource("17_pdwl1")
 region_rect = Rect2(64, 448, 448, 64)
@@ -5695,14 +5741,40 @@ offset = Vector2(-32, 64)
 region_enabled = true
 region_rect = Rect2(0, 448, 62, 64)
 
-[node name="Description" parent="Pause" unique_id=2044269637 instance=ExtResource("22_l4mbb")]
+[node name="Bottom" type="Control" parent="Pause/StatusMenu/ValueMenu" unique_id=1605456217]
+layout_mode = 3
+anchors_preset = 0
+
+[node name="Bottom" type="NinePatchRect" parent="Pause/StatusMenu/ValueMenu/Bottom" unique_id=5785997]
+custom_minimum_size = Vector2(605, 40)
 layout_mode = 1
-anchors_preset = 7
-anchor_top = 1.0
+anchors_preset = -1
+anchor_left = 0.104
+anchor_top = 0.89
+anchor_right = 0.889
 anchor_bottom = 1.0
-offset_top = -256.0
-offset_bottom = 0.0
-grow_vertical = 0
+offset_left = -325.0
+offset_top = -24.0
+offset_right = 280.0
+offset_bottom = 16.0
+scale = Vector2(1, 1.5)
+texture = ExtResource("17_pdwl1")
+region_rect = Rect2(379, 60, 94, 60)
+axis_stretch_horizontal = 1
+
+[node name="BottomLeft" type="Sprite2D" parent="Pause/StatusMenu/ValueMenu/Bottom" unique_id=16922396]
+position = Vector2(-445, -24)
+texture = ExtResource("17_pdwl1")
+centered = false
+region_enabled = true
+region_rect = Rect2(260, 60, 120, 60)
+
+[node name="BottomRight" type="Sprite2D" parent="Pause/StatusMenu/ValueMenu/Bottom" unique_id=1067325941]
+position = Vector2(280, -24)
+texture = ExtResource("17_pdwl1")
+centered = false
+region_enabled = true
+region_rect = Rect2(370, 0, 140, 60)
 
 [node name="ControlMode" type="Control" parent="Pause" unique_id=1448158828]
 layout_mode = 1
@@ -5805,23 +5877,90 @@ inputKey = &"sys_sort"
 [node name="Action" parent="Pause/ControlMode/NavigationButton" index="1" unique_id=1353156107]
 visible = false
 
-[node name="Bottom" type="Sprite2D" parent="Pause/ControlMode" unique_id=1114718792]
-position = Vector2(245.19994, 216)
-scale = Vector2(1.5, 1.5)
-texture = ExtResource("18_dyfn0")
-region_enabled = true
-region_rect = Rect2(0, 472, 396, 32)
+[node name="Bottom" type="Control" parent="Pause/ControlMode" unique_id=1777695254]
+anchors_preset = 0
+offset_top = 208.0
+offset_bottom = 208.0
 
-[node name="Top" type="Sprite2D" parent="Pause/ControlMode" unique_id=483206803]
-position = Vector2(245.19994, 8)
-scale = Vector2(1.5, 1.5)
-texture = ExtResource("18_dyfn0")
-flip_v = true
+[node name="Bottom" type="NinePatchRect" parent="Pause/ControlMode/Bottom" unique_id=1803555722]
+custom_minimum_size = Vector2(358, 40)
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.104
+anchor_top = 0.89
+anchor_right = 0.889
+anchor_bottom = 1.0
+offset_left = 68.0
+offset_top = -24.0
+offset_right = 426.0
+offset_bottom = 16.0
+scale = Vector2(1, 1.5)
+texture = ExtResource("17_pdwl1")
+region_rect = Rect2(379, 60, 94, 60)
+axis_stretch_horizontal = 1
+
+[node name="BottomLeft" type="Sprite2D" parent="Pause/ControlMode/Bottom" unique_id=2093071711]
+position = Vector2(-52, -24)
+texture = ExtResource("17_pdwl1")
+centered = false
 region_enabled = true
-region_rect = Rect2(0, 472, 396, 32)
+region_rect = Rect2(260, 60, 120, 60)
+
+[node name="BottomRight" type="Sprite2D" parent="Pause/ControlMode/Bottom" unique_id=586496501]
+position = Vector2(426, -24)
+texture = ExtResource("17_pdwl1")
+centered = false
+region_enabled = true
+region_rect = Rect2(370, 0, 140, 60)
+
+[node name="Top" type="Control" parent="Pause/ControlMode" unique_id=1343304162]
+anchors_preset = 0
+offset_top = 16.0
+offset_bottom = 16.0
+scale = Vector2(1, -1)
+
+[node name="Bottom" type="NinePatchRect" parent="Pause/ControlMode/Top" unique_id=1617634107]
+custom_minimum_size = Vector2(358, 40)
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.104
+anchor_top = 0.89
+anchor_right = 0.889
+anchor_bottom = 1.0
+offset_left = 68.0
+offset_top = -24.0
+offset_right = 426.0
+offset_bottom = 16.0
+scale = Vector2(1, 1.5)
+texture = ExtResource("17_pdwl1")
+region_rect = Rect2(379, 60, 94, 60)
+axis_stretch_horizontal = 1
+
+[node name="BottomLeft" type="Sprite2D" parent="Pause/ControlMode/Top" unique_id=476976115]
+position = Vector2(-52, -24)
+texture = ExtResource("17_pdwl1")
+centered = false
+region_enabled = true
+region_rect = Rect2(260, 60, 120, 60)
+
+[node name="BottomRight" type="Sprite2D" parent="Pause/ControlMode/Top" unique_id=888686218]
+position = Vector2(426, -24)
+texture = ExtResource("17_pdwl1")
+centered = false
+region_enabled = true
+region_rect = Rect2(370, 0, 140, 60)
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="Pause/ControlMode" unique_id=970163065]
 libraries/ = SubResource("AnimationLibrary_cwjr3")
+
+[node name="Description" parent="Pause" unique_id=2044269637 instance=ExtResource("22_l4mbb")]
+layout_mode = 1
+anchors_preset = 7
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_top = -256.0
+offset_bottom = 0.0
+grow_vertical = 0
 
 [node name="SFX" type="Node" parent="." unique_id=112275133]
 

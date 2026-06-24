@@ -14,7 +14,13 @@ public partial class SaveManager : Node
 	/// <summary> The first level loaded when a new game is started. </summary>
 	[Export] private LevelDataResource initialLevelData;
 
-	private static string SaveDirectory;
+	/// <summary> Directory for save files. </summary>
+	public static string SaveDirectory => DataDirectory + "saves/";
+	/// <summary> Directory for mod files. </summary>
+	public static string ModDirectory => DataDirectory + "mods/";
+	/// <summary> Base data directory. </summary>
+	public static string DataDirectory { get; private set; }
+	/// <summary> The file that stores where the save directory is. </summary>
 	private static string SaveLocationFile => OS.GetExecutablePath().GetBaseDir() + "/saveLocation.txt";
 
 	public override void _EnterTree()
@@ -22,7 +28,7 @@ public partial class SaveManager : Node
 		Instance = this;
 
 		CacheInitialInputMap();
-		SaveDirectory = ProjectSettings.GlobalizePath(GetSaveDirectory());
+		DataDirectory = ProjectSettings.GlobalizePath(GetDataDirectory());
 		MenuData = GameData.CreateDefaultData(); // Create a default game data object for the menu
 		SharedData = SharedGameData.CreateDefaultData();
 		TimeData = TimeAttackData.CreateDefaultData();
@@ -50,7 +56,7 @@ public partial class SaveManager : Node
 		}
 	}
 
-	private string GetSaveDirectory()
+	private string GetDataDirectory()
 	{
 		FileAccess f = FileAccess.Open(SaveLocationFile, FileAccess.ModeFlags.Read);
 		if (f != null && f.GetError() == Error.Ok)
@@ -62,7 +68,7 @@ public partial class SaveManager : Node
 				return targetDirectory;
 
 			// Fallback to executable path when directory is missing (only when a saveLocation file exists).
-			return OS.GetExecutablePath().GetBaseDir() + "/save/";
+			return OS.GetExecutablePath().GetBaseDir() + "/";
 		}
 
 		// Fallback to appdata
@@ -564,7 +570,7 @@ public partial class SaveManager : Node
 	/// <summary> Attempts to load config data from file. </summary>
 	public static void LoadConfig()
 	{
-		string configFile = SaveDirectory.PathJoin(ConfigFileName);
+		string configFile = DataDirectory.PathJoin(ConfigFileName);
 		FileAccess file = FileAccess.Open(configFile, FileAccess.ModeFlags.Read);
 
 		try
@@ -588,17 +594,32 @@ public partial class SaveManager : Node
 	/// <summary> Attempts to save config data to file. </summary>
 	public static void SaveConfig()
 	{
-		if (!DirAccess.DirExistsAbsolute(SaveDirectory))
-			DirAccess.MakeDirRecursiveAbsolute(SaveDirectory);
+		if (!DirAccess.DirExistsAbsolute(DataDirectory))
+			DirAccess.MakeDirRecursiveAbsolute(DataDirectory);
 
-		string configFile = SaveDirectory.PathJoin(ConfigFileName);
+		string configFile = DataDirectory.PathJoin(ConfigFileName);
 		FileAccess file = FileAccess.Open(configFile, FileAccess.ModeFlags.Write);
 		file.StoreString(Json.Stringify(Config.ToDictionary(), "\t"));
 		file.Close();
 
 		file = FileAccess.Open(SaveLocationFile, FileAccess.ModeFlags.Write);
-		file.StoreString(SaveDirectory);
+		file.StoreString(DataDirectory);
 		file.Close();
+	}
+
+	private static void InitializeSaveDirectory()
+	{
+		DirAccess.MakeDirRecursiveAbsolute(SaveDirectory);
+
+		// Backwards compatability with old save file's folder structure
+		DirAccess dir = DirAccess.Open(DataDirectory);
+		string[] files = dir.GetFiles();
+		GD.Print(files);
+		for (int i = files.Length - 1; i >= 0; i--)
+		{
+			if (files[i].EndsWith(".dat"))
+				System.IO.File.Move(DataDirectory.PathJoin(files[i]), SaveDirectory.PathJoin(files[i]));
+		}
 	}
 
 	/// <summary> Applies active configuration data. </summary>
@@ -981,8 +1002,13 @@ public partial class SaveManager : Node
 	/// <summary> Preloads game data so it can be displayed on menus. </summary>
 	public static void LoadGameData()
 	{
+		if (!DirAccess.DirExistsAbsolute(SaveDirectory))
+			InitializeSaveDirectory();
+
 		LoadSharedData();
 		LoadTimeAttackData();
+
+		float gamePlayTime = 0f;
 
 		for (int i = 0; i < GameSaveSlots.Length; i++)
 		{
@@ -997,6 +1023,8 @@ public partial class SaveManager : Node
 				file.Close();
 			}
 
+			gamePlayTime += GameSaveSlots[i].playTime;
+
 			if (GameSaveSlots[i].presetNames == null &&
 				GameSaveSlots[i].presetSkills == null &&
 				GameSaveSlots[i].presetSkillAugments == null)
@@ -1009,6 +1037,9 @@ public partial class SaveManager : Node
 				}
 			}
 		}
+
+		// Backup for bookworm achievement in case shared file is deleted
+		SharedData.PlayTime = Mathf.Max(SharedData.PlayTime, gamePlayTime);
 	}
 
 	/// <summary> Frees game data at the given index. </summary>
@@ -1290,7 +1321,7 @@ public partial class SaveManager : Node
 			if (dictionary.TryGetValue(nameof(equippedSkills), out var))
 			{
 				equippedSkills = LoadSkills((Array<string>)var);
-				ActiveSkillRing.ValidateCrestSkills();
+				ActiveSkillRing.ValidateSkills();
 			}
 
 			if (dictionary.TryGetValue(nameof(equippedAugments), out var))
@@ -1600,7 +1631,7 @@ public partial class SaveManager : Node
 		file.Close();
 
 		file = FileAccess.Open(SaveLocationFile, FileAccess.ModeFlags.Write);
-		file.StoreString(SaveDirectory);
+		file.StoreString(DataDirectory);
 		file.Close();
 	}
 	#endregion
@@ -1734,7 +1765,7 @@ public partial class SaveManager : Node
 			if (dictionary.TryGetValue(nameof(equippedSkillsContinue), out var))
 			{
 				equippedSkillsContinue = ActiveGameData.LoadSkills((Array<string>)var);
-				ActiveSkillRing.ValidateCrestSkills();
+				ActiveSkillRing.ValidateSkills();
 			}
 
 			if (dictionary.TryGetValue(nameof(equippedAugmentsContinue), out var))
@@ -1743,7 +1774,7 @@ public partial class SaveManager : Node
 			if (dictionary.TryGetValue(nameof(equippedSkillsSingle), out var))
 			{
 				equippedSkillsSingle = ActiveGameData.LoadSkills((Array<string>)var);
-				ActiveSkillRing.ValidateCrestSkills();
+				ActiveSkillRing.ValidateSkills();
 			}
 
 			if (dictionary.TryGetValue(nameof(equippedAugmentsSingle), out var))
@@ -1803,7 +1834,7 @@ public partial class SaveManager : Node
 		file.Close();
 
 		file = FileAccess.Open(SaveLocationFile, FileAccess.ModeFlags.Write);
-		file.StoreString(SaveDirectory);
+		file.StoreString(DataDirectory);
 		file.Close();
 	}
 

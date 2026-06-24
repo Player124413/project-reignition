@@ -9,6 +9,7 @@ public partial class RunState : PlayerState
 	[Export] private PlayerState idleState;
 	[Export] private PlayerState slideState;
 	[Export] private PlayerState jumpState;
+	[Export] private PlayerState backstepState;
 	[Export] private PlayerState backflipState;
 	[Export] private PlayerState homingAttackState;
 	[Export] private PlayerState darkspineSpinState;
@@ -121,6 +122,12 @@ public partial class RunState : PlayerState
 			(Player.Controller.IsBackTiltActive() && Player.IsOnWall))
 		{
 			return idleState;
+		}
+
+		if (Player.Controller.GetHoldingDistance(Player.MovementAngle, Player.PathFollower.ForwardAngle) >= 1.0f &&
+			!SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.FreeRoam))
+		{
+			return backstepState;
 		}
 
 		if (Player.Stats.GroundSettings.GetSpeedRatioClamped(Player.MoveSpeed) > RunRatio &&

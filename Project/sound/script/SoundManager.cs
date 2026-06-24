@@ -97,7 +97,11 @@ public partial class SoundManager : Control
 
 	public void PlayDialog(DialogTrigger dialog)
 	{
-		if (dialog.DialogCount == 0 || DebugManager.Instance.DisableDialog || SaveManager.Config.isDialogDisabled) return; // No dialog
+		if (dialog.DialogCount == 0 || SaveManager.ActiveSkillRing.IsSkillEquipped(Gameplay.SkillKey.Character)
+			|| DebugManager.Instance.DisableDialog || SaveManager.Config.isDialogDisabled)
+		{
+			return; // No dialog
+		}
 
 		Visible = !SaveManager.Config.isSubtitleDisabled && !dialog.disableSubtitles;
 

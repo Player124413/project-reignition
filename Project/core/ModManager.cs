@@ -7,66 +7,127 @@ namespace Project.Core;
 
 public partial class ModManager : Node
 {
-
 	public static ModManager Instance;
-	public List<LevelDataResource> ModdedLevels { get; private set; }
-	private readonly string CustomLevelPath = "user://custom/levels/";
+	public readonly List<LevelDataResource> LevelMods = [];
+	public readonly List<SkillResource> CharacterMods = [];
 
-	public override void _EnterTree()
+	// Mod paths
+	private readonly string ResourceModPath = "res://mods/";
+	private readonly string LevelPaths = "levels/";
+	private readonly string CustomCharacterPaths = "characters/";
+	private readonly string PackExtension = "pck";
+	private readonly string ResourceExtension = "tres";
+
+	public override void _EnterTree() => Instance = this;
+
+	public override void _Ready() => SetUpMods();
+
+	public void SetUpMods()
 	{
-		Instance = this;
-		SetUpMods();
+		LoadLevelMods();
+		LoadCharacterMods();
 	}
 
-	private void SetUpMods()
+	/// <summary> Loads a .pck from a directory. </summary>
+	private void LoadPck(string file, string dir)
 	{
-		ModdedLevels = new List<LevelDataResource>();
-		if (!DirAccess.DirExistsAbsolute(CustomLevelPath))
-			DirAccess.MakeDirRecursiveAbsolute(CustomLevelPath);
-
-		DirAccess dir = DirAccess.Open(CustomLevelPath);
-
-		if (dir == null)
+		if (!file.GetExtension().Equals(PackExtension))
 			return;
 
-		foreach (string file in dir.GetFiles()) //Iterates through all level mods
+		if (!ProjectSettings.LoadResourcePack(dir + file))
+			GD.PrintErr($"Couldn't load mod {dir + file}!");
+
+		GD.Print($"Loaded PCK {dir + file}");
+	}
+
+	/// <summary> Loads pcks from a given directory. </summary>
+	private bool LoadPcks(string dir)
+	{
+		if (!DirAccess.DirExistsAbsolute(dir)) // No level mods to load
+			return false;
+
+		DirAccess dirAccess = DirAccess.Open(dir);
+		foreach (string file in dirAccess.GetFiles())
+			LoadPck(file, dir);
+
+		return true;
+	}
+
+	private void LoadLevelMods()
+	{
+		if (!LoadPcks(SaveManager.ModDirectory + LevelPaths)
+			|| !DirAccess.DirExistsAbsolute(ResourceModPath + LevelPaths))
 		{
-			GD.Print("LOADING MOD: " + CustomLevelPath + file);
-			if (file.GetExtension().Equals("pck"))
-			{
-				var success = ProjectSettings.LoadResourcePack(CustomLevelPath + file); //Loads the pck
-				if (!success)
-					continue; //If we failed, keep looking for pcks
-				else
-					GD.Print("LOADING MOD Succeeded");
-			}
-		}
-
-		DirAccess modDir = DirAccess.Open("res://mods/levels/");
-
-		if (modDir == null)
+			// Failed to load any levels
 			return;
-
-		foreach (string mod in modDir.GetDirectories())//Gets all the directories that were added
-		{
-			GD.Print("res://mods/levels/" + mod);
-			DirAccess levelDir = DirAccess.Open("res://mods/levels/" + mod + "/"); //Access the specific mod directory
-
-			for (int i = 0; i < levelDir.GetFiles().Length; i++)
-			{
-				if (levelDir.GetFiles()[i].GetFile().GetExtension().Equals("tres")) //Finds the first tres in the directory, which should be the level data resource
-				{
-					LevelDataResource data = ResourceLoader.Load(levelDir.GetCurrentDir() + "/" + levelDir.GetFiles()[i]) as LevelDataResource;
-					GD.Print("Loading mod: " + levelDir.GetFiles()[i]);
-					ModdedLevels.Add(data);
-
-					GD.Print("Mission Name: " + ModdedLevels[i].MissionTypeKey);
-					GD.Print("Mission Description: " + ModdedLevels[i].MissionDescriptionKey);
-					break;//Break out of the loop when we find the tres
-				}
-
-			}
 		}
 
+		// Switch to local resource folder, now that pcks are loaded
+		DirAccess dirAccess = DirAccess.Open(ResourceModPath + LevelPaths);
+		foreach (string level in dirAccess.GetDirectories())
+			LoadModLevel(ResourceModPath + LevelPaths + level + "/");
+	}
+
+	private void LoadModLevel(string dir)
+	{
+		DirAccess levelDir = DirAccess.Open(dir); // Access the specific mod directory
+		string[] files = levelDir.GetFiles();
+		foreach (string file in files) // Find the level data resource
+		{
+			if (!file.GetFile().GetExtension().Equals(ResourceExtension))
+				continue;
+
+			Resource resource = ResourceLoader.Load(dir + file);
+			if (resource is not LevelDataResource)
+				continue;
+
+			LevelMods.Add(resource as LevelDataResource);
+			GD.Print($"Loaded custom level {file}.");
+		}
+	}
+
+	private void LoadCharacterMods()
+	{
+		if (!LoadPcks(SaveManager.ModDirectory + CustomCharacterPaths)
+			|| !DirAccess.DirExistsAbsolute(ResourceModPath + CustomCharacterPaths))
+		{
+			// Failed to load any levels
+			return;
+		}
+
+		// Switch to local resource folder, now that pcks are loaded
+		DirAccess dirAccess = DirAccess.Open(ResourceModPath + CustomCharacterPaths);
+		SkillResource baseCharacterSkill = Runtime.Instance.SkillList.GetSkill(SkillKey.Character);
+		baseCharacterSkill.Augments = [];
+		foreach (string character in dirAccess.GetDirectories())
+			LoadModCharacter(ResourceModPath + CustomCharacterPaths + character + "/", baseCharacterSkill);
+	}
+
+	private void LoadModCharacter(string dir, SkillResource baseCharacterSkill)
+	{
+		DirAccess levelDir = DirAccess.Open(dir); // Access the specific mod directory
+		string[] files = levelDir.GetFiles();
+		foreach (string file in files) // Find the level data resource
+		{
+			string fileName = file;
+			if (fileName.EndsWith(".remap"))
+				fileName = fileName.Replace(".remap", string.Empty);
+
+			if (!fileName.GetFile().GetExtension().Equals(ResourceExtension))
+				continue;
+
+			Resource resource = ResourceLoader.Load(dir + fileName);
+			if (resource is not SkillResource)
+				continue;
+
+			SkillResource characterResource = resource.Duplicate() as SkillResource;
+			characterResource.Key = SkillKey.Character;
+			characterResource.Element = SkillResource.SkillElement.Config;
+			characterResource.Category = SkillResource.SkillCategory.Setting;
+			characterResource.AugmentIndex = baseCharacterSkill.Augments.Count + 1;
+			baseCharacterSkill.Augments.Add(characterResource);
+			CharacterMods.Add(characterResource);
+			GD.Print($"Loaded custom character {fileName} in slot {characterResource.AugmentIndex}");
+		}
 	}
 }

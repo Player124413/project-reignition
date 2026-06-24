@@ -375,6 +375,10 @@ public partial class ExperienceResult : Control
 		if (isFadingBgm)
 			return;
 
+		// Fallback for older saves
+		if (SaveManager.ActiveGameData.level == MaxLevel)
+			AchievementManager.Instance.UnlockAchievement(SuperPlayerAchievementName);
+
 		isFadingBgm = true;
 		NotificationManager.Instance.StartNotifications();
 	}

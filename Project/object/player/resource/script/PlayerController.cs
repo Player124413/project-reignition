@@ -79,7 +79,17 @@ public partial class PlayerController : CharacterBody3D
 	private void InstancePlayerAnimator()
 	{
 		IsDarkspineSonic = SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.Darkspine);
-		StringName modelPath = IsDarkspineSonic ? darkspineModelPath : defaultModelPath;
+		StringName modelPath = string.Empty;
+		if (SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.Character))
+		{
+			SkillResource customCharacterSkill = Runtime.Instance.SkillList.GetSkill(SkillKey.Character);
+			int selection = SaveManager.ActiveSkillRing.GetAugmentIndex(SkillKey.Character);
+			customCharacterSkill = customCharacterSkill.GetAugment(selection);
+			modelPath = IsDarkspineSonic ? customCharacterSkill.SuperModel : customCharacterSkill.NormalModel;
+		}
+
+		if (string.IsNullOrEmpty(modelPath) || !ResourceLoader.Exists(modelPath)) // Default back to normal model
+			modelPath = IsDarkspineSonic ? darkspineModelPath : defaultModelPath;
 
 		Animator = ResourceLoader.Load<PackedScene>(modelPath).Instantiate<PlayerAnimator>();
 		Animator.Initialize(this, AnimatorRoot);
@@ -103,7 +113,7 @@ public partial class PlayerController : CharacterBody3D
 	/// <summary> For movement that doesn't affect animations (e.x. wind). Reset every frame after it's applied. </summary>
 	public Vector3 ExternalVelocity { get; set; }
 
-	/// <summary> Global movement angle, in radians. Note - VISUAL ROTATION is controlled by CharacterAnimator.cs. </summary>
+	/// <summary> Global movement angle, in radians. Note - VISUAL ROTATION is controlled by PlayerAnimator.cs. </summary>
 	public float MovementAngle { get; set; }
 	public float PathTurnInfluence => PathFollower.DeltaAngle * Camera.ActiveSettings.pathControlInfluence;
 	public Vector3 GetMovementDirection()
