@@ -26,6 +26,9 @@ public partial class SoundManager : Control
 		Count
 	}
 
+	/// <summary> Extra flag for audio ducking during the rank quote. </summary>
+	public bool IsRankQuotePlaying { get; set; }
+
 	private float currentDuckVolume = 0f;
 	/// <summary> How much to duck the audio when dialog is active. </summary>
 	private readonly float DuckVolumeDB = -4f;
@@ -50,8 +53,9 @@ public partial class SoundManager : Control
 
 	private void UpdateAudioDucking()
 	{
-		float targetVolumeDb = IsDialogActive ? DuckVolumeDB : 0f;
-		float targetSpeed = IsDialogActive ? DuckInSpeed : DuckOutSpeed;
+		bool isDuckActive = IsDialogActive || IsRankQuotePlaying;
+		float targetVolumeDb = isDuckActive ? DuckVolumeDB : 0f;
+		float targetSpeed = isDuckActive ? DuckInSpeed : DuckOutSpeed;
 		currentDuckVolume = Mathf.MoveToward(currentDuckVolume, targetVolumeDb, targetSpeed * (float)GetPhysicsProcessDeltaTime());
 		AudioServer.SetBusVolumeDb((int)AudioBuses.Duck, currentDuckVolume);
 	}
