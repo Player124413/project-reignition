@@ -1008,6 +1008,8 @@ public partial class SaveManager : Node
 		LoadSharedData();
 		LoadTimeAttackData();
 
+		float gamePlayTime = 0f;
+
 		for (int i = 0; i < GameSaveSlots.Length; i++)
 		{
 			GameSaveSlots[i] = GameData.CreateDefaultData();
@@ -1021,6 +1023,8 @@ public partial class SaveManager : Node
 				file.Close();
 			}
 
+			gamePlayTime += GameSaveSlots[i].playTime;
+
 			if (GameSaveSlots[i].presetNames == null &&
 				GameSaveSlots[i].presetSkills == null &&
 				GameSaveSlots[i].presetSkillAugments == null)
@@ -1033,6 +1037,9 @@ public partial class SaveManager : Node
 				}
 			}
 		}
+
+		// Backup for bookworm achievement in case shared file is deleted
+		SharedData.PlayTime = Mathf.Max(SharedData.PlayTime, gamePlayTime);
 	}
 
 	/// <summary> Frees game data at the given index. </summary>
