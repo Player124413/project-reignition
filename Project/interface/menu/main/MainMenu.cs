@@ -16,13 +16,27 @@ public partial class MainMenu : Menu
 	private bool isNothingSelected;
 	private bool isMenuInitialized;
 
+	private bool IsTimeAttackUnlocked => SaveManager.SharedData.achievements.Contains("true hero");
+	private bool IsPartyModeUnlocked => false; // TODO Enable this after party mode is complete
+
 	public override void ShowMenu()
 	{
+		if (!IsTimeAttackUnlocked)
+		{
+			animator.Play("disable-ta");
+			animator.Advance(0);
+		}
+
+		if (!IsPartyModeUnlocked)
+		{
+			animator.Play("disable-party");
+			animator.Advance(0);
+		}
+
 		base.ShowMenu();
 
 		if (Runtime.Instance.IsUsingMouse)
 			isNothingSelected = true;
-
 		cursorVelocity = Vector2.Zero;
 		cursor.Position = menuItemAnchorPoints[currentSelection].Position;
 		menuMemory[MemoryKeys.ActiveMenu] = (int)MemoryKeys.MainMenu;
@@ -241,6 +255,14 @@ public partial class MainMenu : Menu
 
 		if (isNothingSelected)
 			return;
+
+		GD.PrintT(currentSelection, IsTimeAttackUnlocked, IsPartyModeUnlocked);
+		if (currentSelection == 1 && !IsTimeAttackUnlocked)
+			return;
+
+		if (currentSelection == 2 && !IsPartyModeUnlocked)
+			return;
+
 
 		animator.Play("confirm");
 	}
