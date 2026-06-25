@@ -1502,6 +1502,9 @@ public partial class SaveManager : Node
 		/// <summary> Total number of seconds TimeBreak was active. </summary>
 		public float TimeBreakTime { get; set; }
 
+		/// <summary> Tracks whether time attack has been unlocked orn not. </summary>
+		public bool IsTimeAttackUnlocked { get; set; }
+
 		/// <summary> Has the player selected this page? If not, show the "new" tag </summary>
 		public Array<string> ViewedPages = [];
 
@@ -1533,6 +1536,8 @@ public partial class SaveManager : Node
 				{ nameof(SpeedBreakActivationCount), SpeedBreakActivationCount },
 				{ nameof(TimeBreakTime), TimeBreakTime },
 				{ nameof(ViewedPages), ViewedPages},
+
+				{ nameof(IsTimeAttackUnlocked), IsTimeAttackUnlocked },
 
 				{ nameof(MinimalSkillCount), MinimalSkillCount },
 				{ nameof(FireOnlyCount), FireOnlyCount },
@@ -1566,6 +1571,10 @@ public partial class SaveManager : Node
 				TimeBreakTime = (float)var;
 			if (dictionary.TryGetValue(nameof(ViewedPages), out var))
 				ViewedPages = (Array<string>)var;
+
+
+			if (dictionary.TryGetValue(nameof(IsTimeAttackUnlocked), out var))
+				IsTimeAttackUnlocked = (bool)var;
 
 			if (dictionary.TryGetValue(nameof(MinimalSkillCount), out var))
 				MinimalSkillCount = (int)var;

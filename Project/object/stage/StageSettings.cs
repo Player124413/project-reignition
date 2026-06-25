@@ -777,6 +777,12 @@ public partial class StageSettings : Node3D
 			SaveManager.ActiveGameData.UnlockWorldRing(Data.WorldRing);
 			NotificationManager.Instance.AddNotification(NotificationManager.NotificationType.WorldRing, $"unlock_ring_{Data.WorldRing.ToString().ToSnakeCase()}");
 		}
+
+		if (Data.LevelID == "np_last" && !SaveManager.SharedData.IsTimeAttackUnlocked)
+		{
+			SaveManager.SharedData.IsTimeAttackUnlocked = true;
+			NotificationManager.Instance.AddNotification(NotificationManager.NotificationType.TimeAttack, "unlock_time_attack");
+		}
 	}
 
 	private void UpdateUnlockNotifications()

@@ -35,6 +35,7 @@ public partial class NotificationManager : Control
 		Page,
 		Party,
 		WorldRing,
+		TimeAttack,
 	}
 	public struct NotificationData
 	{
@@ -168,6 +169,9 @@ public partial class NotificationManager : Control
 				break;
 			case NotificationType.World:
 				animator.Play("unlock_world");
+				break;
+			case NotificationType.TimeAttack:
+				animator.Play("unlock_time_attack");
 				break;
 			default:
 				animator.Play($"unlock_{CurrentNotification.type.ToString().ToLower()}");
