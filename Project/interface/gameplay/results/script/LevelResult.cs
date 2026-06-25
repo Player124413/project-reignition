@@ -285,7 +285,6 @@ public partial class LevelResult : Control
 				break;
 		}
 
-		GD.Print(SaveManager.ActiveGameData.LevelData.GoldMedalCount);
 		if (SaveManager.ActiveGameData.LevelData.GoldMedalCount >= AchievementGoldRequirement)
 			AchievementManager.Instance.UnlockAchievement(AchievementGoldKey);
 
