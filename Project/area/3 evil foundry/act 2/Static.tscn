@@ -41,6 +41,7 @@
 [ext_resource type="AudioStream" uid="uid://dboe0vlmeni2u" path="res://sound/sfx/stage/evil foundry/factory ambience.wav" id="39_y7sxp"]
 [ext_resource type="AudioStream" uid="uid://dbmpay7u8cx83" path="res://sound/sfx/stage/evil foundry/open lava area.wav" id="40_kw7l1"]
 [ext_resource type="AudioStream" uid="uid://c3k3t15xxijst" path="res://sound/sfx/stage/evil foundry/hot pipe area.wav" id="41_lw2hc"]
+[ext_resource type="Script" uid="uid://bdieqwbvr1c2e" path="res://sound/script/Reverb_Area.gd" id="42_y7sxp"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_c5gu7"]
 size = Vector3(10, 10, 5)
@@ -768,6 +769,9 @@ adjustment_enabled = true
 adjustment_brightness = 1.2
 adjustment_contrast = 1.2
 adjustment_color_correction = SubResource("GradientTexture1D_x8oaf")
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_kw7l1"]
+size = Vector3(974.7981, 214.23889, 600.0574)
 
 [node name="Static" type="Node3D" unique_id=1842488443 node_paths=PackedStringArray("pathParent", "completionAnimator", "Environment")]
 script = ExtResource("1_ur5y1")
@@ -1660,6 +1664,22 @@ bus = &"GAME SFX"
 area_mask = 1
 playback_type = 1
 attenuation_filter_db = 0.0
+
+[node name="ReverbArea" type="Area3D" parent="Sound" unique_id=1150682874]
+top_level = true
+collision_layer = 3
+collision_mask = 3
+priority = 1
+reverb_bus_amount = 0.5
+script = ExtResource("42_y7sxp")
+wet_target = 0.075
+fade_time = 0.35
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Sound/ReverbArea" unique_id=1568159231]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -221.09682, 8.901993, -273.81268)
+top_level = true
+shape = SubResource("BoxShape3D_kw7l1")
+debug_color = Color(0.9954193, 0, 0.21351609, 0.41960785)
 
 [connection signal="Activated" from="Trigger/Object/SidleTrigger" to="Trigger/Object/SidleTrigger/Camera" method="Activate"]
 [connection signal="Deactivated" from="Trigger/Object/SidleTrigger" to="Trigger/Object/SidleTrigger/Camera" method="Deactivate"]

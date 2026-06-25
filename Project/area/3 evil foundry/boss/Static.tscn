@@ -8,6 +8,7 @@
 [ext_resource type="PackedScene" uid="uid://cs7ogaqrx3sn5" path="res://area/3 evil foundry/data/shader/ScreenWarp.tscn" id="8_d6cfb"]
 [ext_resource type="AudioStream" uid="uid://dbmpay7u8cx83" path="res://sound/sfx/stage/evil foundry/open lava area.wav" id="8_k8ieb"]
 [ext_resource type="Resource" uid="uid://cvg8im85w151h" path="res://resource/bgm/bgm ef boss.tres" id="8_t6nvw"]
+[ext_resource type="Script" uid="uid://bdieqwbvr1c2e" path="res://sound/script/Reverb_Area.gd" id="9_t6nvw"]
 
 [sub_resource type="Animation" id="Animation_13n20"]
 length = 0.001
@@ -336,6 +337,9 @@ adjustment_contrast = 1.3
 adjustment_saturation = 0.9
 adjustment_color_correction = SubResource("GradientTexture1D_ppx68")
 
+[sub_resource type="BoxShape3D" id="BoxShape3D_1e7at"]
+size = Vector3(105.91467, 127.183685, 94.62863)
+
 [node name="Static" type="Node3D" unique_id=981540620 node_paths=PackedStringArray("pathParent", "completionAnimator", "Environment")]
 script = ExtResource("1_qxxdp")
 DefaultBgm = ExtResource("8_t6nvw")
@@ -406,3 +410,19 @@ panning_strength = 0.0
 bus = &"GAME SFX"
 area_mask = 1
 attenuation_filter_db = 0.0
+
+[node name="ReverbArea" type="Area3D" parent="Sound" unique_id=41850671]
+top_level = true
+collision_layer = 3
+collision_mask = 3
+priority = 1
+reverb_bus_amount = 0.5
+script = ExtResource("9_t6nvw")
+wet_target = 0.075
+fade_time = 0.35
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Sound/ReverbArea" unique_id=325465497]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.9999237, 35.196747, 0.7696171)
+top_level = true
+shape = SubResource("BoxShape3D_1e7at")
+debug_color = Color(0.9954193, 0, 0.21351609, 0.41960785)

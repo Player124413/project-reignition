@@ -34,6 +34,7 @@
 [ext_resource type="AudioStream" uid="uid://bq5jpgwmp8if2" path="res://sound/sfx/stage/evil foundry/closed lava area.wav" id="32_6yjij"]
 [ext_resource type="AudioStream" uid="uid://dbmpay7u8cx83" path="res://sound/sfx/stage/evil foundry/open lava area.wav" id="33_qptgj"]
 [ext_resource type="AudioStream" uid="uid://h7x4kqvrchho" path="res://sound/sfx/stage/evil foundry/lava river point.wav" id="34_cm1uv"]
+[ext_resource type="Script" uid="uid://bdieqwbvr1c2e" path="res://sound/script/Reverb_Area.gd" id="35_vd5im"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_y4n3u"]
 size = Vector3(20, 20, 5)
@@ -584,6 +585,9 @@ adjustment_enabled = true
 adjustment_brightness = 1.2
 adjustment_contrast = 1.2
 adjustment_saturation = 0.6
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_6yjij"]
+size = Vector3(974.7981, 214.23889, 600.0574)
 
 [node name="Static" type="Node3D" unique_id=1748606928 node_paths=PackedStringArray("pathParent", "completionAnimator", "Environment")]
 script = ExtResource("1_y3xwh")
@@ -1463,6 +1467,22 @@ autoplay = true
 max_distance = 100.0
 bus = &"GAME SFX"
 area_mask = 1
+
+[node name="ReverbArea" type="Area3D" parent="Sound" unique_id=1688654457]
+top_level = true
+collision_layer = 3
+collision_mask = 3
+priority = 1
+reverb_bus_amount = 0.5
+script = ExtResource("35_vd5im")
+wet_target = 0.075
+fade_time = 0.35
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Sound/ReverbArea" unique_id=2115628542]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -221.09682, 8.901993, -273.81268)
+top_level = true
+shape = SubResource("BoxShape3D_6yjij")
+debug_color = Color(0.9954193, 0, 0.21351609, 0.41960785)
 
 [connection signal="Activated" from="Visuals/CullingMap/02Load" to="Visuals/02Elbow" method="Activate"]
 [connection signal="Deactivated" from="Visuals/CullingMap/02Load" to="Visuals/02Elbow" method="Deactivate"]
