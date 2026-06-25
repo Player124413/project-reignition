@@ -350,7 +350,8 @@ public partial class EventPlayer : Node
 
 	private void ShowSubtitlesFromScript()
 	{
-		subtitleLabel.Text = Tr($"{localizationKeyPrefix}{subtitleDialogIndex}");
+		subtitleLabel.Text = SoundManager.instance.FormatText(Tr($"{localizationKeyPrefix}{subtitleDialogIndex}"));
+
 		if (Engine.IsEditorHint())
 			subtitleRoot.Visible = true;
 		else

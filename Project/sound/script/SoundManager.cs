@@ -265,7 +265,7 @@ public partial class SoundManager : Control
 	}
 
 	/// <summary> Replaces curly braces with quotation marks for cutscene subtitles. </summary>
-	private string FormatText(string text)
+	public string FormatText(string text)
 	{
 		text = text.Replace('{', '"');
 		text = text.Replace('}', '"');
