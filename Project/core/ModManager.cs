@@ -55,10 +55,11 @@ public partial class ModManager : Node
 
 	private void LoadLevelMods()
 	{
-		if (!DirAccess.DirExistsAbsolute(ResourceModPath + LevelPaths))
-			DirAccess.MakeDirRecursiveAbsolute(ResourceModPath + LevelPaths);
+		if (!DirAccess.DirExistsAbsolute(SaveManager.ModDirectory + LevelPaths))
+			DirAccess.MakeDirRecursiveAbsolute(SaveManager.ModDirectory + LevelPaths);
 
-		if (!LoadPcks(SaveManager.ModDirectory + LevelPaths))
+		if (!LoadPcks(SaveManager.ModDirectory + LevelPaths)
+			|| !DirAccess.DirExistsAbsolute(ResourceModPath + LevelPaths))
 		{
 			// Failed to load any levels
 			return;
@@ -90,10 +91,11 @@ public partial class ModManager : Node
 
 	private void LoadCharacterMods()
 	{
-		if (!DirAccess.DirExistsAbsolute(ResourceModPath + CustomCharacterPaths))
-			DirAccess.MakeDirRecursiveAbsolute(ResourceModPath + CustomCharacterPaths);
+		if (!DirAccess.DirExistsAbsolute(SaveManager.ModDirectory + CustomCharacterPaths))
+			DirAccess.MakeDirRecursiveAbsolute(SaveManager.ModDirectory + CustomCharacterPaths);
 
-		if (!LoadPcks(SaveManager.ModDirectory + CustomCharacterPaths))
+		if (!LoadPcks(SaveManager.ModDirectory + CustomCharacterPaths)
+			|| !DirAccess.DirExistsAbsolute(ResourceModPath + CustomCharacterPaths))
 		{
 			// Failed to load any levels
 			return;
