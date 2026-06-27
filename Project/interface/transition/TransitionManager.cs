@@ -230,7 +230,7 @@ public partial class TransitionManager : Node
 	public void SetMissionDescriptionText(StringName typeKey, StringName descriptionKey)
 	{
 		string missionText = Tr(descriptionKey);
-		if (SaveManager.Config.textLanguage != SaveManager.TextLanguage.Japanese)
+		if (SaveManager.Config.textLocale.LocaleId != "ja")
 			missionText = missionText.Replace('\n', ' ');
 		else
 			missionText = missionText.Replace("\n", "");

@@ -11,13 +11,13 @@ public partial class LocalizedTrackLoader : AudioStreamPlayer
 	{
 		Stream = ResourceLoader.Load<AudioStream>(GetAudioPath(), "AudioStream");
 		if (Stream == null)
-			GD.PushError($"Couldn't load audio track for language {SaveManager.Config.voiceLanguage} on object {Name}!");
+			GD.PushError($"Couldn't load audio track for language {SaveManager.Config.voiceLocale} on object {Name}!");
 	}
 
 	private string GetAudioPath()
 	{
 		string audioPath = ResourceUid.UidToPath(englishAudioResource); // Default to English
-		audioPath = audioPath.Replace("_en", $"_{SaveManager.VoiceLocaleToString(SaveManager.Config.voiceLanguage)}");
+		audioPath = audioPath.Replace("_en", $"_{SaveManager.Config.voiceLocale.LocaleId}");
 		return audioPath;
 	}
 }

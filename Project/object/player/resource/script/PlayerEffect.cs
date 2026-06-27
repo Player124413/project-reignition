@@ -16,6 +16,9 @@ public partial class PlayerEffect : Node3D
 		Player = player;
 		trailFX.Player = Player;
 
+		// Rebuild dialog libraries to account for modded locales
+		voiceLibrary?.LocalizeAudioStreams(true);
+
 		SoundManager.instance.Connect(SoundManager.SignalName.SonicSpeechStart, new Callable(this, MethodName.MuteGameplayVoice));
 		SoundManager.instance.Connect(SoundManager.SignalName.SonicSpeechEnd, new Callable(this, MethodName.UnmuteGameplayVoice));
 

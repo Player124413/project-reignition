@@ -14,6 +14,9 @@ public partial class SaveManager : Node
 	/// <summary> The first level loaded when a new game is started. </summary>
 	[Export] private LevelDataResource initialLevelData;
 
+	[Export] public Array<LocalizationResource> TextLocalizations { get; private set; } = [];
+	[Export] public Array<LocalizationResource> VoiceLocalizations { get; private set; } = [];
+
 	/// <summary> Directory for save files. </summary>
 	public static string SaveDirectory => DataDirectory + "saves/";
 	/// <summary> Directory for mod files. </summary>
@@ -77,21 +80,10 @@ public partial class SaveManager : Node
 
 	#region Config
 	public static ConfigData Config = new();
-	public static bool UseEnglishVoices => Config.voiceLanguage == VoiceLanguage.English;
+	public static bool UseEnglishVoices => Config.voiceLocale.LocaleId.Equals("en");
 	/// <summary> Determines whether the game should ask the player whether to enable quick loading on the main menu. </summary>
 	public bool IsQuickLoadAlertEnabled;
 	private const string ConfigFileName = "config.cfg";
-
-	/// <summary> Converts a given VoiceLanguage to match Godot's internal localization key. </summary>
-	public static string VoiceLanguageToGodotLocale(VoiceLanguage lang)
-	{
-		return lang switch
-		{
-			VoiceLanguage.Japanese => "ja",
-			VoiceLanguage.Spanish => "es",
-			_ => "en",
-		};
-	}
 
 	#region Config Enums
 	public enum ControllerType
@@ -124,33 +116,6 @@ public partial class SaveManager : Node
 	{
 		Style1, // Standard controller theme
 		Style2, // White/Nintendo Wii controller theme
-		Count
-	}
-
-	/// <summary> Don't forget to update <see cref="VoiceLocaleToString"> when adding new dubs! </summary>
-	public enum VoiceLanguage
-	{
-		English,
-		Japanese,
-		Spanish,
-		Count
-	}
-
-	public enum TextLanguage
-	{
-		English, // English script (Uses Windii's retranslation when voiceover is set to Japanese)
-		Japanese,
-		German,
-		Italian,
-		French,
-		Spanish,
-		LatinAmericanSpanish,
-		BrazilianPortuguese,
-		Polish,
-		Chinese,
-		Turkish,
-		Swedish,
-		Russian,
 		Count
 	}
 
@@ -306,8 +271,8 @@ public partial class SaveManager : Node
 		// Language
 		public bool isSubtitleDisabled;
 		public bool isDialogDisabled;
-		public TextLanguage textLanguage = AutoDetectTextLocale();
-		public VoiceLanguage voiceLanguage = AutoDetectVoiceLocale();
+		public LocalizationResource textLocale;
+		public LocalizationResource voiceLocale;
 
 		// Interface
 		public bool useProjectReignitionBranding = true;
@@ -380,8 +345,8 @@ public partial class SaveManager : Node
 				// Language
 				{ nameof(isSubtitleDisabled), isSubtitleDisabled },
 				{ nameof(isDialogDisabled), isDialogDisabled},
-				{ nameof(voiceLanguage), (int)voiceLanguage },
-				{ nameof(textLanguage), (int)textLanguage },
+				{ nameof(voiceLocale), voiceLocale.LocaleId },
+				{ nameof(textLocale), textLocale.LocaleId },
 
 				// Interface
 				{ nameof(useProjectReignitionBranding), useProjectReignitionBranding },
@@ -497,10 +462,10 @@ public partial class SaveManager : Node
 				isSubtitleDisabled = (bool)var;
 			if (dictionary.TryGetValue(nameof(isDialogDisabled), out var))
 				isDialogDisabled = (bool)var;
-			if (dictionary.TryGetValue(nameof(voiceLanguage), out var))
-				voiceLanguage = (VoiceLanguage)(int)var;
-			if (dictionary.TryGetValue(nameof(textLanguage), out var))
-				textLanguage = (TextLanguage)(int)var;
+			if (dictionary.TryGetValue(nameof(voiceLocale), out var))
+				voiceLocale = FindVoiceLocale((string)var);
+			if (dictionary.TryGetValue(nameof(textLocale), out var))
+				textLocale = FindTextLocale((string)var);
 
 			// Interface
 			if (dictionary.TryGetValue(nameof(useProjectReignitionBranding), out var))
@@ -524,48 +489,58 @@ public partial class SaveManager : Node
 		}
 	}
 
-	/// <summary> Converts <paramref name="voiceLanguage"/> to a locale string. </summary>
-	public static string VoiceLocaleToString(VoiceLanguage voiceLanguage)
+	public static LocalizationResource AutoDetectTextLocale() => FindTextLocale(OS.GetLocaleLanguage());
+	public static LocalizationResource AutoDetectVoiceLocale()
 	{
-		return voiceLanguage switch
+		string targetLocale = AutoDetectTextLocale()?.LocaleId;
+		return FindVoiceLocale(targetLocale);
+	}
+
+	public static LocalizationResource FindTextLocale(string id)
+	{
+		foreach (LocalizationResource locale in Instance.TextLocalizations)
 		{
-			VoiceLanguage.Japanese => "ja",
-			VoiceLanguage.Spanish => "es",
-			_ => "en",
-		};
+			if (locale.LocaleId == id)
+				return locale;
+		}
+		return Instance.TextLocalizations[0]; // Default to English
 	}
 
-	private static TextLanguage AutoDetectTextLocale()
+	public static LocalizationResource FindVoiceLocale(string id)
 	{
-		return OS.GetLocaleLanguage() switch
+		foreach (LocalizationResource locale in Instance.VoiceLocalizations)
 		{
-			"ja" => TextLanguage.Japanese,
-			"de" => TextLanguage.German,
-			"it" => TextLanguage.Italian,
-			"fr" => TextLanguage.French,
-			"es" => TextLanguage.Spanish,
-			"pt" => TextLanguage.BrazilianPortuguese,
-			"pl" => TextLanguage.Polish,
-			"zh" => TextLanguage.Chinese,
-			"tr" => TextLanguage.Turkish,
-			"se" => TextLanguage.Swedish,
-			"ru" => TextLanguage.Russian,
-			_ => TextLanguage.English,
-		};
+			if (locale.LocaleId == id)
+				return locale;
+		}
+		return Instance.VoiceLocalizations[0]; // Default to English
 	}
 
-	private static VoiceLanguage AutoDetectVoiceLocale()
+	public static int FindTextLocaleIndex(string id)
 	{
-		TextLanguage autoTextLocale = AutoDetectTextLocale();
+		for (int i = 0; i < Instance.TextLocalizations.Count; i++)
+		{
+			if (Instance.TextLocalizations[i].LocaleId == id)
+				return i;
+		}
 
-		if (autoTextLocale == TextLanguage.Japanese)
-			return VoiceLanguage.Japanese;
-
-		if (autoTextLocale == TextLanguage.Spanish)
-			return VoiceLanguage.Spanish;
-
-		return VoiceLanguage.English;
+		return -1;
 	}
+
+	public static int FindVoiceLocaleIndex(string id)
+	{
+		for (int i = 0; i < Instance.VoiceLocalizations.Count; i++)
+		{
+			if (Instance.VoiceLocalizations[i].LocaleId == id)
+				return i;
+		}
+
+		return -1;
+	}
+
+	public static int GetCurrentTextLocaleIndex() => Instance.TextLocalizations.IndexOf(Config.textLocale);
+	public static int GetCurrentVoiceLocaleIndex() => Instance.VoiceLocalizations.IndexOf(Config.voiceLocale);
+
 
 	/// <summary> Attempts to load config data from file. </summary>
 	public static void LoadConfig()
@@ -587,6 +562,11 @@ public partial class SaveManager : Node
 		{
 			Config = new();
 		}
+
+		if (Config.textLocale == null)
+			Config.textLocale = AutoDetectTextLocale();
+		if (Config.voiceLocale == null)
+			Config.voiceLocale = AutoDetectVoiceLocale();
 
 		ApplyConfig();
 	}
@@ -753,49 +733,10 @@ public partial class SaveManager : Node
 	/// <summary> Applies text localization. Be sure voiceover language is set first. </summary>
 	private static void ApplyLocalization()
 	{
-		switch (Config.textLanguage)
-		{
-			case TextLanguage.Japanese:
-				TranslationServer.SetLocale("ja");
-				break;
-			case TextLanguage.Spanish:
-				TranslationServer.SetLocale("es");
-				break;
-			case TextLanguage.LatinAmericanSpanish:
-				TranslationServer.SetLocale("es_US");
-				break;
-			case TextLanguage.French:
-				TranslationServer.SetLocale("fr");
-				break;
-			case TextLanguage.Italian:
-				TranslationServer.SetLocale("it");
-				break;
-			case TextLanguage.German:
-				TranslationServer.SetLocale("de");
-				break;
-			case TextLanguage.BrazilianPortuguese:
-				TranslationServer.SetLocale("pt_BR");
-				break;
-			case TextLanguage.Polish:
-				TranslationServer.SetLocale("pl");
-				break;
-			case TextLanguage.Chinese:
-				TranslationServer.SetLocale("zh");
-				break;
-			case TextLanguage.Turkish:
-				TranslationServer.SetLocale("tr");
-				break;
-			case TextLanguage.Swedish:
-				TranslationServer.SetLocale("se");
-				break;
-			case TextLanguage.Russian:
-				TranslationServer.SetLocale("ru");
-				break;
-			default:
-				// Prefer the retranslation for all languages except when using the voiceover
-				TranslationServer.SetLocale(UseEnglishVoices ? "en" : "en_US");
-				break;
-		}
+		if (TranslationServer.HasTranslationForLocale(Config.textLocale.LocaleId, false))
+			TranslationServer.SetLocale(Config.textLocale.LocaleId);
+		else // Prefer the retranslation for all languages except when using the english voiceover
+			TranslationServer.SetLocale(UseEnglishVoices ? "en" : "en_US");
 	}
 	#endregion
 
