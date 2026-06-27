@@ -336,7 +336,7 @@ public partial class SFXLibraryResource : Resource
 	[ExportToolButton("Refresh Resource")]
 	public Callable RefreshResourceGroup => Callable.From(NotifyPropertyListChanged);
 	[ExportToolButton("Auto-setup Localization Audio")]
-	public Callable SetUpLocalizationGroup => Callable.From(LocalizeAudioStreams);
+	public Callable SetUpLocalizationGroup => Callable.From(() => LocalizeAudioStreams(false));
 	[Export] private string rootAudioPath;
 	[Export] private SFXLibraryResource fallbackResource;
 	[Export] private Array<StringName> keys;
@@ -369,8 +369,11 @@ public partial class SFXLibraryResource : Resource
 	}
 
 	/// <summary> Automatically set up localized audio streams. Do NOT use this for unlocalized sound effects. </summary>
-	private void LocalizeAudioStreams()
+	public void LocalizeAudioStreams(bool recursive = false)
 	{
+		if (recursive && fallbackResource != null)
+			fallbackResource.LocalizeAudioStreams(true);
+
 		if (!isLocalizedVoiceLines)
 		{
 			GD.PrintErr("Given resource is not configured as a localizable audio pack.");
@@ -501,17 +504,17 @@ public partial class SFXLibraryResource : Resource
 
 		if (isLocalizedVoiceLines)
 		{
-			if (string.IsNullOrEmpty(localizedStreamPaths[channel][keyIndex][sfxIndex])) // No dialog clip
+			string targetFile = localizedStreamPaths[channel][keyIndex][sfxIndex];
+			if (string.IsNullOrEmpty(targetFile)) // No dialog clip
 				return null;
 
-			if (!ResourceLoader.Exists(localizedStreamPaths[channel][keyIndex][sfxIndex]))
+			if (!ResourceLoader.Exists(targetFile))
 			{
-				GD.PushError($"{localizedStreamPaths[channel][keyIndex][sfxIndex]} doesn't exist!");
+				GD.PushError($"{targetFile} doesn't exist!");
 				return null;
 			}
 
-			// TODO Load this asyncronously?
-			return ResourceLoader.Load<AudioStream>(localizedStreamPaths[channel][keyIndex][sfxIndex]);
+			return ResourceLoader.Load<AudioStream>(targetFile);
 		}
 
 		return streams[channel][keyIndex][sfxIndex];

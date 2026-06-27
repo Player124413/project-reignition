@@ -2,6 +2,7 @@ using Godot;
 using System;
 using System.Collections.Generic;
 using Project.Gameplay;
+using System.Linq;
 
 namespace Project.Core;
 
@@ -139,6 +140,40 @@ public partial class ModManager : Node
 		}
 	}
 
+	private void LoadModLanguage(string dir)
+	{
+		DirAccess levelDir = DirAccess.Open(dir); // Access the specific mod directory
+		string[] files = levelDir.GetFiles();
+		foreach (string file in files) // Find the level data resource
+		{
+			if (!file.GetFile().GetExtension().Equals(ResourceExtension))
+				continue;
+
+			Resource resource = ResourceLoader.Load(dir + file);
+			if (resource is not LocalizationResource)
+				continue;
+
+			LocalizationResource locale = resource as LocalizationResource;
+			locale.IsMod = true;
+			if (locale.LocaleType == LocalizationResource.LocalizationType.Text)
+			{
+				if (SaveManager.FindTextLocaleIndex(locale.LocaleId) != -1) // Already exists
+					return;
+
+				SaveManager.Instance.TextLocalizations.Add(locale);
+			}
+			else
+			{
+				if (SaveManager.FindVoiceLocaleIndex(locale.LocaleId) != -1) // Already exists
+					return;
+
+				SaveManager.Instance.VoiceLocalizations.Add(locale);
+			}
+
+			GD.Print($"Loaded custom language {file}.");
+		}
+	}
+
 	private void LoadLanguageMods()
 	{
 		if (!DirAccess.DirExistsAbsolute(SaveManager.ModDirectory + LanguagePaths))
@@ -152,5 +187,10 @@ public partial class ModManager : Node
 		}
 
 		// Switch to local resource folder, now that pcks are loaded
+		DirAccess dirAccess = DirAccess.Open(ResourceModPath + LanguagePaths);
+		foreach (string language in dirAccess.GetDirectories())
+			LoadModLanguage(ResourceModPath + LanguagePaths + language + "/");
+
+		SaveManager.LoadConfig(); // Reload the config in case a mod language was originally selected
 	}
 }

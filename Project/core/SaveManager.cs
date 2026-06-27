@@ -119,36 +119,6 @@ public partial class SaveManager : Node
 		Count
 	}
 
-
-	/*
-	/// <summary> Don't forget to update <see cref="VoiceLocaleToString"> when adding new dubs! </summary>
-	public enum VoiceLanguage
-	{
-		English,
-		Japanese,
-		Spanish,
-		Count
-	}
-
-	public enum TextLanguage
-	{
-		English, // English script (Uses Windii's retranslation when voiceover is set to Japanese)
-		Japanese,
-		German,
-		Italian,
-		French,
-		Spanish,
-		LatinAmericanSpanish,
-		BrazilianPortuguese,
-		Polish,
-		Chinese,
-		Turkish,
-		Swedish,
-		Russian,
-		Count
-	}
-	*/
-
 	public enum QualitySetting
 	{
 		Disabled,
@@ -544,6 +514,28 @@ public partial class SaveManager : Node
 				return locale;
 		}
 		return Instance.VoiceLocalizations[0]; // Default to English
+	}
+
+	public static int FindTextLocaleIndex(string id)
+	{
+		for (int i = 0; i < Instance.TextLocalizations.Count; i++)
+		{
+			if (Instance.TextLocalizations[i].LocaleId == id)
+				return i;
+		}
+
+		return -1;
+	}
+
+	public static int FindVoiceLocaleIndex(string id)
+	{
+		for (int i = 0; i < Instance.VoiceLocalizations.Count; i++)
+		{
+			if (Instance.VoiceLocalizations[i].LocaleId == id)
+				return i;
+		}
+
+		return -1;
 	}
 
 	public static int GetCurrentTextLocaleIndex() => Instance.TextLocalizations.IndexOf(Config.textLocale);
