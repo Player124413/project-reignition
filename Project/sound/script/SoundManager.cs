@@ -9,7 +9,6 @@ namespace Project.Core;
 public partial class SoundManager : Control
 {
 	public static SoundManager instance;
-	public static int LanguageIndex => (int)SaveManager.Config.voiceLanguage;
 
 	public enum AudioBuses
 	{
@@ -225,7 +224,7 @@ public partial class SoundManager : Control
 		string key = currentDialog.textKeys[currentDialogIndex];
 		AudioStream targetStream = null;
 		if (IsInstanceValid(Gameplay.StageSettings.Instance))
-			targetStream = Gameplay.StageSettings.Instance.dialogLibrary.GetDialogStream(key, LanguageIndex);
+			targetStream = Gameplay.StageSettings.Instance.dialogLibrary.GetDialogStream(key, SaveManager.GetCurrentVoiceLocaleIndex());
 
 		if (targetStream != null) // Using audio
 		{

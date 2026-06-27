@@ -593,7 +593,7 @@ public partial class Options : Menu
 		audioLabels[3].Text = SaveManager.Config.isVoiceMuted ? MuteString : $"{SaveManager.Config.voiceVolume}%";
 		audioLabels[4].Text = SaveManager.Config.useRetailMenuMusic ? RetailStyle : ReignitedStyle;
 
-		languageLabels[1].Text = GetVoiceLanguageKey(SaveManager.Config.voiceLanguage);
+		languageLabels[1].Text = GetVoiceLanguageKey(SaveManager.Config.voiceLocale);
 		languageLabels[3].Text = SaveManager.Config.isSubtitleDisabled ? DisabledString : EnabledString;
 		languageLabels[2].Text = SaveManager.Config.isDialogDisabled ? DisabledString : EnabledString;
 		languageLabels[4].Text = $"{SaveManager.Config.subtitleOpacity}%";
@@ -681,15 +681,7 @@ public partial class Options : Menu
 		interfaceLabels[5].Text = SaveManager.Config.isActionPromptsEnabled ? EnabledString : DisabledString;
 	}
 
-	private string GetVoiceLanguageKey(SaveManager.VoiceLanguage voiceLanguage)
-	{
-		return voiceLanguage switch
-		{
-			SaveManager.VoiceLanguage.Japanese => "lang_ja",
-			SaveManager.VoiceLanguage.Spanish => "lang_es",
-			_ => "lang_en",
-		};
-	}
+	private string GetVoiceLanguageKey(LocalizationResource voiceLanguage) => $"lang_{voiceLanguage.LocaleId}";
 
 	private string GetQualityString(SaveManager.QualitySetting setting)
 	{
@@ -1031,15 +1023,15 @@ public partial class Options : Menu
 	{
 		if (VerticalSelection == 0)
 		{
-			int lang = WrapSelection((int)SaveManager.Config.textLanguage + direction, (int)SaveManager.TextLanguage.Count);
-			SaveManager.Config.textLanguage = (SaveManager.TextLanguage)lang;
+			int lang = WrapSelection(SaveManager.GetCurrentTextLocaleIndex() + direction, SaveManager.Instance.TextLocalizations.Count);
+			SaveManager.Config.textLocale = SaveManager.Instance.TextLocalizations[lang];
 			return true;
 		}
 
 		if (VerticalSelection == 1)
 		{
-			int lang = WrapSelection((int)SaveManager.Config.voiceLanguage + direction, (int)SaveManager.VoiceLanguage.Count);
-			SaveManager.Config.voiceLanguage = (SaveManager.VoiceLanguage)lang;
+			int lang = WrapSelection(SaveManager.GetCurrentVoiceLocaleIndex() + direction, SaveManager.Instance.VoiceLocalizations.Count);
+			SaveManager.Config.voiceLocale = SaveManager.Instance.VoiceLocalizations[lang];
 			return true;
 		}
 

@@ -101,7 +101,7 @@ public partial class EventPlayer : Node
 
 	private void LoadLocalization()
 	{
-		StringName targetLocale = SaveManager.VoiceLanguageToGodotLocale(SaveManager.Config.voiceLanguage);
+		StringName targetLocale = SaveManager.Config.voiceLocale.LocaleId;
 		LoadAudioTrack(targetLocale);
 
 		if (animator == null)

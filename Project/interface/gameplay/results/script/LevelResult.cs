@@ -288,7 +288,7 @@ public partial class LevelResult : Control
 		if (SaveManager.ActiveGameData.LevelData.GoldMedalCount >= AchievementGoldRequirement)
 			AchievementManager.Instance.UnlockAchievement(AchievementGoldKey);
 
-		resultsVoicePlayer.Stream = StageSettings.Player.Effect.voiceLibrary.GetStream(key, (int)SaveManager.Config.voiceLanguage);
+		resultsVoicePlayer.Stream = StageSettings.Player.Effect.voiceLibrary.GetStream(key, SaveManager.GetCurrentVoiceLocaleIndex());
 		resultsVoicePlayer.Play();
 
 		SoundManager.instance.IsRankQuotePlaying = true;

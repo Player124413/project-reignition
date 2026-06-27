@@ -379,7 +379,8 @@ public partial class SFXLibraryResource : Resource
 
 		AutoDetectEnglishClips();
 
-		channelCount = (int)SaveManager.VoiceLanguage.Count;
+		if (!Engine.IsEditorHint())
+			channelCount = SaveManager.Instance.VoiceLocalizations.Count;
 		Array<Array<Array<string>>> tempStreamPaths = [];
 
 		if (streams == null || streams.Count == 0)
@@ -411,10 +412,10 @@ public partial class SFXLibraryResource : Resource
 			}
 		}
 
-		for (int i = 1; i < (int)SaveManager.VoiceLanguage.Count; i++)
+		for (int i = 1; i < SaveManager.Instance.VoiceLocalizations.Count; i++)
 		{
 			tempStreamPaths.Add([]); // Add a language slot
-			string lang = SaveManager.VoiceLanguageToGodotLocale((SaveManager.VoiceLanguage)i);
+			string lang = SaveManager.Config.voiceLocale.LocaleId;
 
 			for (int j = 0; j < tempStreamPaths[0].Count; j++)
 			{
@@ -548,5 +549,5 @@ public partial class SFXLibraryResource : Resource
 	}
 
 	/// <summary> Wrapper function for party mode gdscripts. </summary>
-	public int CurrentLanguageIndex => SoundManager.LanguageIndex;
+	public int CurrentLanguageIndex => SaveManager.GetCurrentVoiceLocaleIndex();
 }

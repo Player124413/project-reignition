@@ -15,6 +15,7 @@ public partial class ModManager : Node
 	private readonly string ResourceModPath = "res://mods/";
 	private readonly string LevelPaths = "levels/";
 	private readonly string CustomCharacterPaths = "characters/";
+	private readonly string LanguagePaths = "lang/";
 	private readonly string PackExtension = "pck";
 	private readonly string ResourceExtension = "tres";
 
@@ -26,6 +27,7 @@ public partial class ModManager : Node
 	{
 		LoadLevelMods();
 		LoadCharacterMods();
+		LoadLanguageMods();
 	}
 
 	/// <summary> Loads a .pck from a directory. </summary>
@@ -135,5 +137,20 @@ public partial class ModManager : Node
 			CharacterMods.Add(characterResource);
 			GD.Print($"Loaded custom character {fileName} in slot {characterResource.AugmentIndex}");
 		}
+	}
+
+	private void LoadLanguageMods()
+	{
+		if (!DirAccess.DirExistsAbsolute(SaveManager.ModDirectory + LanguagePaths))
+			DirAccess.MakeDirRecursiveAbsolute(SaveManager.ModDirectory + LanguagePaths);
+
+		if (!LoadPcks(SaveManager.ModDirectory + LanguagePaths)
+			|| !DirAccess.DirExistsAbsolute(ResourceModPath + LanguagePaths))
+		{
+			// Failed to load any levels
+			return;
+		}
+
+		// Switch to local resource folder, now that pcks are loaded
 	}
 }
