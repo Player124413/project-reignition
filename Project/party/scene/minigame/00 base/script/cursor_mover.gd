@@ -7,6 +7,9 @@ class_name PartyGameCursorMover extends PartyGameCharacterSpawner
 @export_group("Movement Settings")
 @export var cursor_move_speed: float = 10
 
+@export var cursor_min_clamp: Vector2
+@export var cursor_max_clamp: Vector2
+
 var color: Color
 
 
@@ -20,6 +23,8 @@ func on_spawn_finished() -> void:
 	_move_speed = cursor_move_speed
 	cursor_texture_rect.get_child(0).self_modulate = get_color()
 	cursor_texture_rect.get_child(1).self_modulate = get_color()
+	cursor_min_clamp = Vector2.ZERO
+	cursor_max_clamp = get_viewport().get_visible_rect().size
 
 func _physics_process(_delta: float) -> void:
 	if is_multiplayer_authority():
@@ -82,7 +87,7 @@ func process_movement_tick() -> void:
 func apply_movement() -> void:
 	cursor_texture_rect.global_position.x += _input.x * _move_speed
 	cursor_texture_rect.global_position.y -= _input.y * _move_speed
-	cursor_texture_rect.global_position = cursor_texture_rect.global_position.clamp(Vector2.ZERO, get_viewport().get_visible_rect().size - cursor_texture_rect.size)
+	cursor_texture_rect.global_position = cursor_texture_rect.global_position.clamp(cursor_min_clamp, cursor_max_clamp - cursor_texture_rect.size)
 func calculate_cpu_input() -> Vector2:
 	return Vector2.ZERO
 

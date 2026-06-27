@@ -12,6 +12,7 @@ extends PartyGameCursorMover
 @export var collision: Area3D
 
 var is_demo_complete: bool = false
+var spotlight_pos
 
 var _state: STATE
 enum STATE {
@@ -21,11 +22,15 @@ enum STATE {
 
 func on_spawn_finished() -> void:
 	super()
-	print("Attaching lantern to hand")
 	hand_attachment.reparent(character_animator.skeleton)
 	character_animator.play_animation("%s/light-wait" % MinigameManager.ANIMATION_LIBRARY_PREFIX, true)
 	cursor_label.text = tr(character_animator.data.character_name)
 	set_physics_process(true)
+	spotlight_pos = spotlight.global_position.z
+	cursor_min_clamp.x = 175
+	cursor_min_clamp.y = 175
+	cursor_max_clamp.x = get_viewport().get_visible_rect().size.x - 175
+	cursor_max_clamp.y = get_viewport().get_visible_rect().size.y - 175
 
 func process_movement_tick() -> void:
 	super()
@@ -60,4 +65,12 @@ func demo_movement() -> void:
 	cursor.global_position = pos_2d - cursor.size
 
 func spotlight_movement() -> void:
+	const RAY_LENGTH = 120
+	var camera3d = get_viewport().get_camera_3d()
+	var from = camera3d.project_ray_origin(cursor.position)
+	var to = from + camera3d.project_ray_normal(cursor.position) * RAY_LENGTH
+
+	to.z = spotlight_pos
+
+	spotlight.global_position = to
 	return
