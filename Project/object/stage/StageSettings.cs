@@ -39,8 +39,8 @@ public partial class StageSettings : Node3D
 	{
 		Instance = this; // Always override previous instance
 
-		if (SaveManager.Config.voiceLocale.IsMod) // Rebuild dialog libraries when using modded locales
-			dialogLibrary?.LocalizeAudioStreams(true);
+		// Rebuild dialog libraries to account for modded locales
+		dialogLibrary?.LocalizeAudioStreams(true);
 
 		for (int i = 0; i < pathParent.GetChildCount(); i++)
 		{

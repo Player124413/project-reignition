@@ -44,16 +44,11 @@ public partial class ModManager : Node
 	}
 
 	/// <summary> Loads pcks from a given directory. </summary>
-	private bool LoadPcks(string dir)
+	private void LoadPcks(string dir)
 	{
-		if (!DirAccess.DirExistsAbsolute(dir)) // No level mods to load
-			return false;
-
 		DirAccess dirAccess = DirAccess.Open(dir);
 		foreach (string file in dirAccess.GetFiles())
 			LoadPck(file, dir);
-
-		return true;
 	}
 
 	private void LoadLevelMods()
@@ -61,12 +56,9 @@ public partial class ModManager : Node
 		if (!DirAccess.DirExistsAbsolute(SaveManager.ModDirectory + LevelPaths))
 			DirAccess.MakeDirRecursiveAbsolute(SaveManager.ModDirectory + LevelPaths);
 
-		if (!LoadPcks(SaveManager.ModDirectory + LevelPaths)
-			|| !DirAccess.DirExistsAbsolute(ResourceModPath + LevelPaths))
-		{
-			// Failed to load any levels
+		LoadPcks(SaveManager.ModDirectory + LevelPaths);
+		if (!DirAccess.DirExistsAbsolute(ResourceModPath + LevelPaths)) // Failed to load any levels
 			return;
-		}
 
 		// Switch to local resource folder, now that pcks are loaded
 		DirAccess dirAccess = DirAccess.Open(ResourceModPath + LevelPaths);
@@ -97,12 +89,9 @@ public partial class ModManager : Node
 		if (!DirAccess.DirExistsAbsolute(SaveManager.ModDirectory + CustomCharacterPaths))
 			DirAccess.MakeDirRecursiveAbsolute(SaveManager.ModDirectory + CustomCharacterPaths);
 
-		if (!LoadPcks(SaveManager.ModDirectory + CustomCharacterPaths)
-			|| !DirAccess.DirExistsAbsolute(ResourceModPath + CustomCharacterPaths))
-		{
-			// Failed to load any levels
+		LoadPcks(SaveManager.ModDirectory + CustomCharacterPaths);
+		if (!DirAccess.DirExistsAbsolute(ResourceModPath + CustomCharacterPaths)) // Failed to load any levels
 			return;
-		}
 
 		// Switch to local resource folder, now that pcks are loaded
 		DirAccess dirAccess = DirAccess.Open(ResourceModPath + CustomCharacterPaths);
@@ -144,7 +133,7 @@ public partial class ModManager : Node
 	{
 		DirAccess levelDir = DirAccess.Open(dir); // Access the specific mod directory
 		string[] files = levelDir.GetFiles();
-		foreach (string file in files) // Find the level data resource
+		foreach (string file in files) // Load language resources
 		{
 			if (!file.GetFile().GetExtension().Equals(ResourceExtension))
 				continue;
@@ -158,14 +147,14 @@ public partial class ModManager : Node
 			if (locale.LocaleType == LocalizationResource.LocalizationType.Text)
 			{
 				if (SaveManager.FindTextLocaleIndex(locale.LocaleId) != -1) // Already exists
-					return;
+					continue;
 
 				SaveManager.Instance.TextLocalizations.Add(locale);
 			}
 			else
 			{
 				if (SaveManager.FindVoiceLocaleIndex(locale.LocaleId) != -1) // Already exists
-					return;
+					continue;
 
 				SaveManager.Instance.VoiceLocalizations.Add(locale);
 			}
@@ -179,17 +168,15 @@ public partial class ModManager : Node
 		if (!DirAccess.DirExistsAbsolute(SaveManager.ModDirectory + LanguagePaths))
 			DirAccess.MakeDirRecursiveAbsolute(SaveManager.ModDirectory + LanguagePaths);
 
-		if (!LoadPcks(SaveManager.ModDirectory + LanguagePaths)
-			|| !DirAccess.DirExistsAbsolute(ResourceModPath + LanguagePaths))
-		{
-			// Failed to load any levels
+		LoadPcks(SaveManager.ModDirectory + LanguagePaths);
+		if (!DirAccess.DirExistsAbsolute(ResourceModPath + LanguagePaths)) // No languages to load
 			return;
-		}
 
 		// Switch to local resource folder, now that pcks are loaded
 		DirAccess dirAccess = DirAccess.Open(ResourceModPath + LanguagePaths);
+		LoadModLanguage(ResourceModPath + LanguagePaths + "/"); // Load base language folder
 		foreach (string language in dirAccess.GetDirectories())
-			LoadModLanguage(ResourceModPath + LanguagePaths + language + "/");
+			LoadModLanguage(ResourceModPath + LanguagePaths + language + "/"); // Load nested language folders
 
 		SaveManager.LoadConfig(); // Reload the config in case a mod language was originally selected
 	}
