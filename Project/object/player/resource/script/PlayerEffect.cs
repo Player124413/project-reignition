@@ -32,7 +32,7 @@ public partial class PlayerEffect : Node3D
 		{
 			// Override modded voice library
 			SkillResource skill = Runtime.Instance.SkillList.GetSkill(SkillKey.Character).GetAugment(augmentIndex);
-			if (skill.VoiceLibraryOverride != null)
+			if (skill?.VoiceLibraryOverride != null)
 				voiceLibrary = skill.VoiceLibraryOverride;
 		}
 	}
@@ -541,7 +541,7 @@ public partial class PlayerEffect : Node3D
 			return;
 
 		SoundManager.instance.IsSonicSfxVoiceChannelActive = true;
-		voiceChannel.Stream = voiceLibrary.GetStream(key, SoundManager.LanguageIndex, sfxIndex);
+		voiceChannel.Stream = voiceLibrary.GetStream(key, SaveManager.GetCurrentVoiceLocaleIndex(), sfxIndex);
 		voiceChannel.Play();
 	}
 
