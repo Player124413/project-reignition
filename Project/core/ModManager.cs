@@ -57,8 +57,6 @@ public partial class ModManager : Node
 			DirAccess.MakeDirRecursiveAbsolute(SaveManager.ModDirectory + LevelPaths);
 
 		LoadPcks(SaveManager.ModDirectory + LevelPaths);
-		if (!DirAccess.DirExistsAbsolute(ResourceModPath + LevelPaths)) // Failed to load any levels
-			return;
 
 		// Switch to local resource folder, now that pcks are loaded
 		DirAccess dirAccess = DirAccess.Open(ResourceModPath + LevelPaths);
@@ -90,8 +88,6 @@ public partial class ModManager : Node
 			DirAccess.MakeDirRecursiveAbsolute(SaveManager.ModDirectory + CustomCharacterPaths);
 
 		LoadPcks(SaveManager.ModDirectory + CustomCharacterPaths);
-		if (!DirAccess.DirExistsAbsolute(ResourceModPath + CustomCharacterPaths)) // Failed to load any levels
-			return;
 
 		// Switch to local resource folder, now that pcks are loaded
 		DirAccess dirAccess = DirAccess.Open(ResourceModPath + CustomCharacterPaths);
@@ -135,10 +131,14 @@ public partial class ModManager : Node
 		string[] files = levelDir.GetFiles();
 		foreach (string file in files) // Load language resources
 		{
-			if (!file.GetFile().GetExtension().Equals(ResourceExtension))
+			string fileName = file;
+			if (fileName.EndsWith(".remap"))
+				fileName = fileName.Replace(".remap", string.Empty);
+
+			if (!fileName.GetFile().GetExtension().Equals(ResourceExtension))
 				continue;
 
-			Resource resource = ResourceLoader.Load(dir + file);
+			Resource resource = ResourceLoader.Load(dir + fileName);
 			if (resource is not LocalizationResource)
 				continue;
 
@@ -159,7 +159,7 @@ public partial class ModManager : Node
 				SaveManager.Instance.VoiceLocalizations.Add(locale);
 			}
 
-			GD.Print($"Loaded custom language {file}.");
+			GD.Print($"Loaded custom language {fileName}.");
 		}
 	}
 
@@ -169,8 +169,6 @@ public partial class ModManager : Node
 			DirAccess.MakeDirRecursiveAbsolute(SaveManager.ModDirectory + LanguagePaths);
 
 		LoadPcks(SaveManager.ModDirectory + LanguagePaths);
-		if (!DirAccess.DirExistsAbsolute(ResourceModPath + LanguagePaths)) // No languages to load
-			return;
 
 		// Switch to local resource folder, now that pcks are loaded
 		DirAccess dirAccess = DirAccess.Open(ResourceModPath + LanguagePaths);
