@@ -95,9 +95,21 @@ public partial class EventPlayer : Node
 		}
 	}
 
-	public override void _EnterTree() => DebugManager.Instance.IsCutsceneActive = true;
+	public override void _EnterTree()
+	{
+		if (Engine.IsEditorHint())
+			return;
 
-	public override void _ExitTree() => DebugManager.Instance.IsCutsceneActive = false;
+		DebugManager.Instance.IsCutsceneActive = true;
+	}
+
+	public override void _ExitTree()
+	{
+		if (Engine.IsEditorHint())
+			return;
+
+		DebugManager.Instance.IsCutsceneActive = false;
+	}
 
 	private void LoadLocalization()
 	{
