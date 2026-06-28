@@ -142,6 +142,7 @@ public partial class ModManager : Node
 			if (resource is not LocalizationResource)
 				continue;
 
+			GD.Print($"Found localization resource {fileName}.");
 			LocalizationResource locale = resource as LocalizationResource;
 			locale.IsMod = true;
 			if (locale.LocaleType == LocalizationResource.LocalizationType.Text)
