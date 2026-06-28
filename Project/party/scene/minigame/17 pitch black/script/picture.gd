@@ -24,12 +24,12 @@ func _ready() -> void:
 
 func set_correct_picture() -> void:
 	picture_animator.play(str(CHARACTER.keys()[_character]).to_lower() + "_correct")
-	print(str(CHARACTER.keys()[_character]).to_lower() + "_correct")
 	wrong = false
 
 func set_incorrect_picture(num: int) -> void:
 	picture_animator.play(str(CHARACTER.keys()[_character]).to_lower() + "_" + str(num))
 	wrong = true
+	collision_shape.set_deferred("disabled", false)
 
 ## How long should the correction circle be up until it plays the correction sequence
 const TIME_UNTIL_ANIMATION: float = 2

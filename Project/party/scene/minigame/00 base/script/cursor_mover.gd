@@ -11,12 +11,16 @@ class_name PartyGameCursorMover extends PartyGameCharacterSpawner
 @export var cursor_max_clamp: Vector2
 
 var color: Color
-
-
 ## The current input being processed.
 var _input: Vector2
 ## The current speed we're moving at.
 var _move_speed: float
+
+var _state: STATE
+enum STATE {
+	IDLE,
+	BUSY
+}
 
 func on_spawn_finished() -> void:
 	super()
