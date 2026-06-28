@@ -735,7 +735,8 @@ public partial class SaveManager : Node
 	{
 		if (TranslationServer.HasTranslationForLocale(Config.textLocale.LocaleId, false))
 			TranslationServer.SetLocale(Config.textLocale.LocaleId);
-		else // Prefer the retranslation for all languages except when using the english voiceover
+
+		if (Config.textLocale.LocaleId == "en") // Prefer the retranslation for all languages except when using the english voiceover
 			TranslationServer.SetLocale(UseEnglishVoices ? "en" : "en_US");
 	}
 	#endregion
