@@ -292,6 +292,9 @@ public partial class EventPlayer : Node
 	public void OnEventFinished() => OnEventFinished(false);
 	public void OnEventFinished(bool isCanceled)
 	{
+		if (Engine.IsEditorHint())
+			return;
+
 		if (isNestedCutscene) // Don't do anything for nested cutscenes
 			return;
 
@@ -350,12 +353,16 @@ public partial class EventPlayer : Node
 
 	private void ShowSubtitlesFromScript()
 	{
-		subtitleLabel.Text = SoundManager.instance.FormatText(Tr($"{localizationKeyPrefix}{subtitleDialogIndex}"));
-
 		if (Engine.IsEditorHint())
+		{
+			subtitleLabel.Text = $"{localizationKeyPrefix}{subtitleDialogIndex}";
 			subtitleRoot.Visible = true;
+		}
 		else
+		{
+			subtitleLabel.Text = SoundManager.instance.FormatText(Tr($"{localizationKeyPrefix}{subtitleDialogIndex}"));
 			subtitleAnimator.Play(subtitleRoot.Visible ? "show-text" : "show");
+		}
 	}
 
 	/// <summary> Method used simply for editor keyframing. </summary>
