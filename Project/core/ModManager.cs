@@ -60,6 +60,9 @@ public partial class ModManager : Node
 
 		// Switch to local resource folder, now that pcks are loaded
 		DirAccess dirAccess = DirAccess.Open(ResourceModPath + LevelPaths);
+		if (DirAccess.GetOpenError() != Error.Ok)
+			return;
+
 		foreach (string level in dirAccess.GetDirectories())
 			LoadModLevel(ResourceModPath + LevelPaths + level + "/");
 	}
@@ -91,6 +94,9 @@ public partial class ModManager : Node
 
 		// Switch to local resource folder, now that pcks are loaded
 		DirAccess dirAccess = DirAccess.Open(ResourceModPath + CustomCharacterPaths);
+		if (DirAccess.GetOpenError() != Error.Ok)
+			return;
+
 		SkillResource baseCharacterSkill = Runtime.Instance.SkillList.GetSkill(SkillKey.Character);
 		baseCharacterSkill.Augments = [];
 		foreach (string character in dirAccess.GetDirectories())
@@ -173,6 +179,9 @@ public partial class ModManager : Node
 
 		// Switch to local resource folder, now that pcks are loaded
 		DirAccess dirAccess = DirAccess.Open(ResourceModPath + LanguagePaths);
+		if (DirAccess.GetOpenError() != Error.Ok)
+			return;
+
 		LoadModLanguage(ResourceModPath + LanguagePaths + "/"); // Load base language folder
 		foreach (string language in dirAccess.GetDirectories())
 			LoadModLanguage(ResourceModPath + LanguagePaths + language + "/"); // Load nested language folders
