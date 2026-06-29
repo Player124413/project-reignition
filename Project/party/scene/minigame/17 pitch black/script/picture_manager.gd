@@ -2,7 +2,8 @@ class_name PictureManager extends Node3D
 
 @export var env_animator: AnimationPlayer
 @export var pictures: Array[Picture]
-@export var players: Array[PartyGameCursorMover]
+@export var players: Array[PicturePlayerController]
+@export var camera: Camera3D
 
 var frame_dict: Dictionary = {"Character": 0, "IncorrectNumber": 1}
 var frame_dict_array: Array[Dictionary]
@@ -59,6 +60,9 @@ func get_next_picture() -> void:
 	return
 
 func get_correct_picture_pos() -> Vector2:
+	for picture in pictures:
+		if picture.wrong:
+			return camera.unproject_position(picture.correction_circle.global_position)
 	return Vector2.ZERO
 
 func set_character(chara: Picture.CHARACTER):
@@ -66,6 +70,9 @@ func set_character(chara: Picture.CHARACTER):
 		pic._character = chara
 
 func play_correct_sequence() -> void:
+	for player in players:
+		player._state = player.STATE.BUSY
+
 	env_animator.play("blackout", -1, -1.0, true)
 	for i in pictures.size():
 		if pictures[i].wrong:
@@ -79,6 +86,7 @@ func play_correct_sequence() -> void:
 	for player in players:
 		player._state = player.STATE.IDLE
 		player.CPU_CAN_SEARCH = true
+		player.update_target_pos()
 	await get_tree().create_timer(4).timeout
 	get_next_picture()
 	for pic in pictures:

@@ -1,4 +1,4 @@
-extends PartyGameCursorMover
+class_name PicturePlayerController extends PartyGameCursorMover
 
 @export var cursor: TextureRect
 @export var cursor_label: Label
@@ -10,6 +10,7 @@ extends PartyGameCursorMover
 @export var hand_attachment: BoneAttachment3D
 @export var lamp: Node3D
 @export var collision: Area3D
+@export var cpu_timer: Timer
 
 var rng: RandomNumberGenerator
 var can_initiate_success = false
@@ -26,13 +27,16 @@ func on_spawn_finished() -> void:
 	super()
 	hand_attachment.reparent(character_animator.skeleton)
 	character_animator.play_animation("%s/light-wait" % MinigameManager.ANIMATION_LIBRARY_PREFIX, true)
-	cursor_label.text = tr(character_animator.data.character_name)
+	cursor_label.text = tr(character_animator.data.character_name).to_upper()
 	set_physics_process(true)
 	spotlight_pos = spotlight.global_position.z
 	cursor_min_clamp.x = 175
 	cursor_min_clamp.y = 175
-	cursor_max_clamp.x = get_viewport().get_visible_rect().size.x - 175
-	cursor_max_clamp.y = get_viewport().get_visible_rect().size.y - 175
+	cursor_max_clamp.x = get_viewport().get_visible_rect().size.x - 200
+	cursor_max_clamp.y = get_viewport().get_visible_rect().size.y - 200
+
+	print("Cusor Min Clamp: " + str(cursor_min_clamp))
+	print("Cusor Max Clamp: " + str(cursor_max_clamp))
 	rng = RandomNumberGenerator.new()
 
 	if is_cpu():
@@ -49,7 +53,7 @@ func process_movement_tick() -> void:
 		demo_movement()
 	else:
 		spotlight_movement()
-		if is_cpu() && CPU_CAN_SEARCH:
+		if is_cpu() && CPU_CAN_SEARCH && _state == STATE.IDLE:
 			cpu_movement()
 
 func process_inputs() -> void:
@@ -77,9 +81,11 @@ func process_inputs() -> void:
 			CPU_CONFIRM_CHANCE = clamp(CPU_CONFIRM_CHANCE, 1, 10)
 			CPU_SEARCH_AMOUNT -= 1
 			CPU_SEARCH_AMOUNT = clamp(CPU_SEARCH_AMOUNT, 0, 10)
-			update_target_pos()
 
 			
+			update_target_pos()
+
+
 	super()
 
 const ANIM_MISS_START: int = 0
@@ -90,6 +96,7 @@ func process_animation_event(event: int) -> void:
 		_state = STATE.BUSY
 	elif event == ANIM_MISS_END:
 		_state = STATE.IDLE
+		character_animator.play_animation("%s/light-wait" % MinigameManager.ANIMATION_LIBRARY_PREFIX, true)
 	
 
 func set_state(state: STATE):
@@ -106,7 +113,7 @@ func start_success() -> void:
 	cursor_animator.play("correct")
 	cursor_correct.position = cursor.position
 	picture_manager.play_correct_sequence()
-	_state = STATE.BUSY
+	#_state = STATE.BUSY
 
 func complete_demo() -> void:
 	is_demo_complete = true
@@ -143,7 +150,7 @@ func _on_area_3d_area_entered(area: Area3D) -> void:
 ### CPU CODE ###
 ################
 
-var target_pos: Vector2
+var target_pos: Vector2 = Vector2.DOWN
 ##How many times should a CPU change positions before finding the correct answer. The last search will always be the correct answer
 var CPU_SEARCH_AMOUNT: int
 ##The chance a CPU will confirm when they reach the end of a search. The chance goes down with each successive search.
@@ -165,29 +172,32 @@ func update_target_pos() -> void:
 
 	if CPU_SEARCH_AMOUNT != 0:
 		target_pos = random_pos
-	elif correct == 1:
+	elif correct == 1 || CPU_SEARCH_AMOUNT == 0:
 		target_pos = picture_manager.get_correct_picture_pos()
 	
 	print("NEXT CPU POS: " + str(target_pos))
 	CPU_CAN_SEARCH = true
+	cpu_timer.start()
+
+
 func update_cpu_search_params() -> void:
 	match get_cpu_difficulty():
 		PlayerData.CPU_DIFFICULTY_ENUM.EASY:
-			CPU_SEARCH_AMOUNT = rng.randi_range(5, 9) ## The CPU will search 5-9 times
-			CPU_CONFIRM_CHANCE = 5 ## 1 in 5 chance for the cpu to confirm a choice
-			CPU_CORRECT_CHANCE = 7 ## 1 in 7 chance the next target will be the correct one
+			CPU_SEARCH_AMOUNT = rng.randi_range(6, 10) ## The CPU will search 5-9 times
+			CPU_CONFIRM_CHANCE = 6 ## 1 in 5 chance for the cpu to confirm a choice
+			CPU_CORRECT_CHANCE = 8 ## 1 in 7 chance the next target will be the correct one
 		PlayerData.CPU_DIFFICULTY_ENUM.NORMAL:
-			CPU_SEARCH_AMOUNT = rng.randi_range(4, 8)
-			CPU_CONFIRM_CHANCE = 6
-			CPU_CORRECT_CHANCE = 6
-		PlayerData.CPU_DIFFICULTY_ENUM.HARD:
-			CPU_SEARCH_AMOUNT = rng.randi_range(3, 6)
+			CPU_SEARCH_AMOUNT = rng.randi_range(5, 9)
 			CPU_CONFIRM_CHANCE = 7
-			CPU_CORRECT_CHANCE = 5
-		PlayerData.CPU_DIFFICULTY_ENUM.EXTREME:
-			CPU_SEARCH_AMOUNT = rng.randi_range(2, 4)
+			CPU_CORRECT_CHANCE = 7
+		PlayerData.CPU_DIFFICULTY_ENUM.HARD:
+			CPU_SEARCH_AMOUNT = rng.randi_range(4, 7)
 			CPU_CONFIRM_CHANCE = 8
-			CPU_CORRECT_CHANCE = 4
+			CPU_CORRECT_CHANCE = 6
+		PlayerData.CPU_DIFFICULTY_ENUM.EXTREME:
+			CPU_SEARCH_AMOUNT = rng.randi_range(3, 5)
+			CPU_CONFIRM_CHANCE = 9
+			CPU_CORRECT_CHANCE = 5
 
 func cpu_movement() -> void:
 	request_cpu_position(target_pos)
@@ -207,3 +217,11 @@ func can_cpu_search_correctly() -> bool:
 		return true
 	
 	return false
+
+
+func _on_timer_timeout() -> void:
+	CPU_SEARCH_AMOUNT -= 1
+	CPU_SEARCH_AMOUNT = clamp(CPU_SEARCH_AMOUNT, 0, 10)
+	update_target_pos()
+	
+	pass # Replace with function body.
