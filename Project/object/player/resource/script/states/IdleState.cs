@@ -79,6 +79,7 @@ public partial class IdleState : PlayerState
 
 		if (!Player.CheckGround())
 			return fallState;
+
 		Player.CheckWall(CalculateWallCastDirection());
 		if (Player.CheckCeiling())
 			return null;
@@ -86,14 +87,14 @@ public partial class IdleState : PlayerState
 		if (Player.Controller.IsBackTiltActive())
 			return backstepState;
 
-		if (!Player.IsOnWall)
+		if (!Player.IsOnWall || Player.Controller.IsStrafeModeActive)
 		{
 			if (Player.IsLockoutActive && Player.ActiveLockoutData.overrideSpeed && !Mathf.IsZeroApprox(Player.ActiveLockoutData.speedRatio))
 				return runState;
 
 			bool hasInputStrength = !Mathf.IsZeroApprox(Player.Controller.GetInputStrength());
 			if (!Player.Controller.IsBrakeHeld() &&
-				(SaveManager.ActiveSkillRing.IsAutorunActive || hasInputStrength))
+				((SaveManager.ActiveSkillRing.IsAutorunActive && !Player.IsOnWall) || hasInputStrength))
 			{
 				if (Player.Controller.GetHoldingDistance(Player.Controller.GetTargetInputAngle(), Player.PathFollower.ForwardAngle) >= 1.0f &&
 					hasInputStrength && !SaveManager.ActiveSkillRing.IsFreeRoamActive)
