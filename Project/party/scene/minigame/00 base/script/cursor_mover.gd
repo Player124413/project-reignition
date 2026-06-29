@@ -16,12 +16,6 @@ var _input: Vector2
 ## The current speed we're moving at.
 var _move_speed: float
 
-var _state: STATE
-enum STATE {
-	IDLE,
-	BUSY
-}
-
 func on_spawn_finished() -> void:
 	super()
 	_move_speed = cursor_move_speed

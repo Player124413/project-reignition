@@ -58,16 +58,12 @@ func get_next_picture() -> void:
 	
 	return
 
+func get_correct_picture_pos() -> Vector2:
+	return Vector2.ZERO
+
 func set_character(chara: Picture.CHARACTER):
 	for pic in pictures:
 		pic._character = chara
-
-#Checks if a picture has already been generated
-func is_dupe(num: int) -> bool:
-	for i in range(0, num):
-		if characters[i] == characters[num] && correction_num[i] == correction_num[num]:
-			return true
-	return false
 
 func play_correct_sequence() -> void:
 	env_animator.play("blackout", -1, -1.0, true)
@@ -82,6 +78,7 @@ func play_correct_sequence() -> void:
 	env_animator.play("blackout")
 	for player in players:
 		player._state = player.STATE.IDLE
+		player.CPU_CAN_SEARCH = true
 	await get_tree().create_timer(4).timeout
 	get_next_picture()
 	for pic in pictures:
