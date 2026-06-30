@@ -453,7 +453,12 @@ public partial class PlayerAnimator : Node3D
 			return 0; // Disable turning when controlled externally
 
 		if (Player.Controller.IsGyroEnabled)
+		{
+			if (Player.Camera.ActiveSettings.controlMode == CameraSettingsResource.ControlModeEnum.Reverse)
+				return -Player.Controller.InputHorizontal;
+
 			return Player.Controller.InputHorizontal;
+		}
 
 		float referenceAngle = Player.IsMovingBackward ? Player.PathFollower.ForwardAngle : Player.MovementAngle;
 		float inputAngle = Player.PathFollower.DeltaAngle * PathTurnStrength;
