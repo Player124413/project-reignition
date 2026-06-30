@@ -33,6 +33,7 @@ void fragment()
 	float normal_fade = clamp(smoothstep(NORMAL_FADE_START, NORMAL_FADE_END, -VERTEX.z), 0.0, 1.0);
 	NORMAL = normal.rgb * .5;
 	ROUGHNESS = 0.0;
+	SPECULAR = dot(normal.rgb, vec3(0.0, 1.0, 0.0));
 	
 	ALBEDO = col.rgb;
 	ALPHA = clamp(opacity * COLOR.a, 0.0, 1.0);
