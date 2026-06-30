@@ -452,6 +452,14 @@ public partial class PlayerEffect : Node3D
 		if (Mathf.IsZeroApprox(Player.MoveSpeed)) // Probably called during a blend to idle state; Ignore.
 			return;
 
+		// Update step emission speed and amount
+		if (currentStepEmitter != -1 && stepEmitters[currentStepEmitter] != null)
+		{
+			float ratio = Player.Stats.GroundSettings.GetSpeedRatioClamped(Player.MoveSpeed);
+			stepEmitters[currentStepEmitter].SpeedScale = ratio;
+			stepEmitters[currentStepEmitter].AmountRatio = ratio;
+		}
+
 		footstepChannel.Stream = materialSFXLibrary.GetStream(materialSFXLibrary.GetKeyByIndex(GroundMaterialIndex), 0);
 		footstepChannel.Play();
 
