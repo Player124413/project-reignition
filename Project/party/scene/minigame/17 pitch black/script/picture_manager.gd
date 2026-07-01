@@ -72,6 +72,8 @@ func set_character(chara: Picture.CHARACTER):
 func play_correct_sequence() -> void:
 	for player in players:
 		player._state = player.STATE.BUSY
+		player.CPU_CAN_SEARCH = false
+		
 
 	env_animator.play("blackout", -1, -1.0, true)
 	for i in pictures.size():
@@ -85,9 +87,16 @@ func play_correct_sequence() -> void:
 	env_animator.play("blackout")
 	for player in players:
 		player._state = player.STATE.IDLE
-		player.CPU_CAN_SEARCH = true
-		player.update_target_pos()
+
 	await get_tree().create_timer(4).timeout
 	get_next_picture()
+
 	for pic in pictures:
 		pic.animator.play("spin_btf")
+	
+	await get_tree().create_timer(1).timeout
+
+	for player in players:
+		player.CPU_CAN_SEARCH = true
+		player.update_target_pos()
+		player.cpu_search_timer.start(player.CPU_SEARCH_TIME)
