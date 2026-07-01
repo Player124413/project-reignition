@@ -72,7 +72,9 @@ func set_character(chara: Picture.CHARACTER):
 func play_correct_sequence() -> void:
 	for player in players:
 		player._state = player.STATE.BUSY
-		player.CPU_CAN_SEARCH = false
+		player._cpu_state = PicturePlayerController.CPU_STATE.WAITING
+		player.lamp.get_child(0).visible = false
+		player.lamp_light.visible = false
 		
 
 	env_animator.play("blackout", -1, -1.0, true)
@@ -80,15 +82,22 @@ func play_correct_sequence() -> void:
 		if pictures[i].wrong:
 			pictures[i].play_correction_sequence()
 			break
+	
 	await get_tree().create_timer(6).timeout
+
 	for pic in pictures:
 		pic.animator.play("spin_ftb")
 
 	env_animator.play("blackout")
 	for player in players:
 		player._state = player.STATE.IDLE
+		player.lamp.get_child(0).visible = true
+		player.lamp_light.visible = true
 
-	await get_tree().create_timer(4).timeout
+	if !players[0].is_demo_complete:
+		await get_tree().create_timer(4).timeout
+	else:
+		await get_tree().create_timer(1).timeout
 	get_next_picture()
 
 	for pic in pictures:
@@ -97,6 +106,6 @@ func play_correct_sequence() -> void:
 	await get_tree().create_timer(1).timeout
 
 	for player in players:
-		player.CPU_CAN_SEARCH = true
+		player._cpu_state = PicturePlayerController.CPU_STATE.SEARCHING
 		player.update_target_pos()
 		player.cpu_search_timer.start(player.CPU_SEARCH_TIME)

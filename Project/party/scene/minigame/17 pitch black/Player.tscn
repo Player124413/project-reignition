@@ -323,7 +323,7 @@ _data = {
 &"miss": SubResource("Animation_c6dsc")
 }
 
-[node name="Player" type="Node3D" unique_id=1879495047 node_paths=PackedStringArray("cursor", "cursor_label", "cursor_correct", "cursor_incorrect", "cursor_animator", "hand_attachment", "lamp", "collision", "cpu_search_timer", "rollback_timer", "cursor_texture_rect", "spawn_position")]
+[node name="Player" type="Node3D" unique_id=1879495047 node_paths=PackedStringArray("cursor", "cursor_label", "cursor_correct", "cursor_incorrect", "cursor_animator", "hand_attachment", "lamp", "lamp_light", "collision", "cpu_search_timer", "rollback_timer", "cursor_texture_rect", "spawn_position")]
 script = ExtResource("1_hrsfa")
 cursor = NodePath("Cursor/Cursor")
 cursor_label = NodePath("Cursor/Correct/Label")
@@ -332,6 +332,7 @@ cursor_incorrect = NodePath("Cursor/Incorrect")
 cursor_animator = NodePath("Cursor/AnimationPlayer")
 hand_attachment = NodePath("HandAttachment")
 lamp = NodePath("HandAttachment/Lantern")
+lamp_light = NodePath("HandAttachment/Lantern/OmniLight3D")
 collision = NodePath("Area3D")
 cpu_search_timer = NodePath("CPUTimer")
 rollback_timer = NodePath("Rollback")
@@ -431,7 +432,6 @@ libraries/ = SubResource("AnimationLibrary_ocuvf")
 process_callback = 0
 one_shot = true
 
-[connection signal="generate_new_target" from="." to="." method="_on_generate_new_target"]
 [connection signal="area_entered" from="Area3D" to="." method="_on_area_3d_area_entered"]
 [connection signal="area_exited" from="Area3D" to="." method="_on_area_3d_area_exited"]
 [connection signal="timeout" from="CPUTimer" to="." method="_on_cpu_timer_timeout"]
