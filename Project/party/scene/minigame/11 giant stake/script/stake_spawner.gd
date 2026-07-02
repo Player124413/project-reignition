@@ -24,10 +24,10 @@ var rng: RandomNumberGenerator
 func _ready() -> void:
 	rng = RandomNumberGenerator.new()
 	initialize_stakes()
-	MinigameManager.instance.minigame_finished.connect(Callable(self , "finish_spawning"))
+	MinigameManager.instance.minigame_finished.connect(Callable(self, "finish_spawning"))
 	if !NetworkManager.is_hosting_game:
 		return
-	MinigameManager.instance.gameplay_started.connect(Callable(self , "start_spawning"))
+	MinigameManager.instance.gameplay_started.connect(Callable(self, "start_spawning"))
 
 ### Spreads the stakes out evenly so we don't have to do it by hand
 func initialize_stakes() -> void:

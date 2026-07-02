@@ -22,12 +22,16 @@ enum CHARACTER {
 func _ready() -> void:
 	correction_circle.visible = false
 
-func set_correct_picture() -> void:
-	picture_animator.play(str(CHARACTER.keys()[_character]).to_lower() + "_correct")
+@rpc("any_peer", "call_local", "reliable")
+func set_correct_picture(chara: CHARACTER) -> void:
+	picture_animator.play(str(CHARACTER.keys()[chara]).to_lower() + "_correct")
+	_character = chara
 	wrong = false
 
-func set_incorrect_picture(num: int) -> void:
-	picture_animator.play(str(CHARACTER.keys()[_character]).to_lower() + "_" + str(num))
+@rpc("any_peer", "call_local", "reliable")
+func set_incorrect_picture(num: int, chara: CHARACTER) -> void:
+	picture_animator.play(str(CHARACTER.keys()[chara]).to_lower() + "_" + str(num))
+	_character = chara
 	wrong = true
 	collision_shape.set_deferred("disabled", false)
 

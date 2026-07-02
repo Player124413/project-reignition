@@ -31,7 +31,7 @@ func _ready() -> void:
 func initialize_starting_picture() -> void:
 	rng = RandomNumberGenerator.new()
 	set_character(Picture.CHARACTER.DEMO)
-	pictures[0].set_incorrect_picture(1)
+	pictures[0].set_incorrect_picture(1, Picture.CHARACTER.DEMO)
 
 func initialize_frame_array():
 	for i in range(max_pictures):
@@ -46,6 +46,8 @@ func initialize_frame_array():
 	frame_dict_array.shuffle()
 
 func get_next_picture() -> void:
+	if !NetworkManager.is_hosting_game:
+		return
 	var next_char: Picture.CHARACTER
 	var next_int: int
 	var incorrect_picture: int
@@ -56,10 +58,12 @@ func get_next_picture() -> void:
 	incorrect_picture = rng.randi_range(0, 3)
 
 	for picture in pictures:
-		picture._character = next_char
-		picture.set_correct_picture()
+		picture.rpc("set_correct_picture", next_char)
+		#picture._character = next_char
+		#picture.set_correct_picture()
 			
-	pictures[incorrect_picture].set_incorrect_picture(next_int)
+	#pictures[incorrect_picture].set_incorrect_picture(next_int)
+	pictures[incorrect_picture].rpc("set_incorrect_picture", next_int, next_char)
 	
 	return
 
@@ -107,6 +111,7 @@ func play_correct_sequence() -> void:
 		await get_tree().create_timer(4).timeout
 	else:
 		await get_tree().create_timer(1).timeout
+
 	get_next_picture()
 
 	sfx_rotate.play_in_group()
