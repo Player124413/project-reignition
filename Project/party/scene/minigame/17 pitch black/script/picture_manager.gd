@@ -4,6 +4,8 @@ class_name PictureManager extends Node3D
 @export var pictures: Array[Picture]
 @export var players: Array[PicturePlayerController]
 @export var camera: Camera3D
+@export var sfx_rotate: GroupSfxPlayer
+@export var sfx_blackout: GroupSfxPlayer
 
 var frame_dict: Dictionary = {"Character": 0, "IncorrectNumber": 1}
 var frame_dict_array: Array[Dictionary]
@@ -21,6 +23,8 @@ func _ready() -> void:
 	correction_num.resize(max_pictures)
 	initialize_starting_picture()
 	initialize_frame_array()
+
+	MinigameManager.instance.minigame_finished.connect(Callable(self, "finish_game"))
 	return
 
 ##Setup demo picture
@@ -71,6 +75,7 @@ func set_character(chara: Picture.CHARACTER):
 
 func play_correct_sequence() -> void:
 	for player in players:
+		player.cursor.visible = false
 		player._state = player.STATE.BUSY
 		player._cpu_state = PicturePlayerController.CPU_STATE.WAITING
 		player.lamp.get_child(0).visible = false
@@ -85,11 +90,15 @@ func play_correct_sequence() -> void:
 	
 	await get_tree().create_timer(6).timeout
 
+	sfx_rotate.play_in_group()
 	for pic in pictures:
 		pic.animator.play("spin_ftb")
 
-	env_animator.play("blackout")
+	if !MinigameManager.instance.is_minigame_finished:
+		env_animator.play("blackout")
+	sfx_blackout.play_in_group()
 	for player in players:
+		player.cursor.visible = true
 		player._state = player.STATE.IDLE
 		player.lamp.get_child(0).visible = true
 		player.lamp_light.visible = true
@@ -100,6 +109,7 @@ func play_correct_sequence() -> void:
 		await get_tree().create_timer(1).timeout
 	get_next_picture()
 
+	sfx_rotate.play_in_group()
 	for pic in pictures:
 		pic.animator.play("spin_btf")
 	
@@ -109,3 +119,17 @@ func play_correct_sequence() -> void:
 		player._cpu_state = PicturePlayerController.CPU_STATE.SEARCHING
 		player.update_target_pos()
 		player.cpu_search_timer.start(player.CPU_SEARCH_TIME)
+
+func finish_game() -> void:
+	env_animator.play("blackout", -1, -1.0, true)
+	for player in players:
+		player.cursor.visible = false
+		player.lamp.visible = false
+
+@rpc("any_peer", "call_local", "reliable")
+func request_score_popup(player_index: int, score: int, screen_pos: Vector2) -> void:
+	if !NetworkManager.is_hosting_game:
+		return
+	
+	MinigameManager.instance.request_score_popup(player_index, score, screen_pos)
+	MinigameManager.instance.request_score_change(player_index, score)

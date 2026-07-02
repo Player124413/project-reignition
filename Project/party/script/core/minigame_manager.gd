@@ -1,7 +1,7 @@
 ### Instance this node into every minigame.
 class_name MinigameManager extends Node
 
-static var instance : MinigameManager
+static var instance: MinigameManager
 
 ## Emitted when all network peers are ready to start the game. Start gameplay demos or call start_minigame() here.
 signal peers_loaded
@@ -18,90 +18,91 @@ signal players_completed
 ## Character Animators will play their result animations when this signal emits.
 signal results_started
 ## Emitted whenever a player's score is changed.
-signal on_score_updated(player_index : int, score : int)
+signal on_score_updated(player_index: int, score: int)
 ## Emitted whenever a player's score is changed.
-signal on_time_updated(player_index : int, time : float)
+signal on_time_updated(player_index: int, time: float)
 
 ## Stores the network time when gameplay was started.
-var gameplay_start_tick : float
+var gameplay_start_tick: float
 
 func process_demo_transition() -> void:
 	splitscreen_parent.visible = screen_mode == SCREEN_MODE.SPLITSCREEN
 	demo_transition_processed.emit()
 
 @export_group("Resource Settings")
-@export var minigame_resource : MinigameResource
+@export var minigame_resource: MinigameResource
 ## Minigame specific animation library to attach to player when adding them to the scene.
-@export var anim_library : AnimationLibrary
+@export var anim_library: AnimationLibrary
 ## Animations common to all minigames.
-@export var common_anim_library : AnimationLibrary
-const ANIMATION_LIBRARY_PREFIX : String = "MINIGAME"
-const COMMON_ANIMATION_LIBRARY_PREFIX : String = "COMMON_MINIGAME"
+@export var common_anim_library: AnimationLibrary
+const ANIMATION_LIBRARY_PREFIX: String = "MINIGAME"
+const COMMON_ANIMATION_LIBRARY_PREFIX: String = "COMMON_MINIGAME"
 
 @export_group("View Settings")
 ## How should the screen be set up for this mini-game?
-@export var screen_mode : SCREEN_MODE
+@export var screen_mode: SCREEN_MODE
 enum SCREEN_MODE {
 	SHARED, # A single screen for everybody. Use this for sequential or group mini-games.
 	SPLITSCREEN # Each player gets a corner of the screen. Use this for simultaneous screens.
 }
-@export var use_horizontal_duel_screen : bool
+@export var use_horizontal_duel_screen: bool
 ## Transition to use when exiting demo.
-@export var demo_transition_mode : DEMO_TRANSITION
+@export var demo_transition_mode: DEMO_TRANSITION
 enum DEMO_TRANSITION {
 	NONE, # Start with screen already split
 	FULLSCREEN, # Show a fullscreen demo first (normally played by a majin)
 }
 
 @export_group("Result Settings")
-@export var rank_mode : RANK_MODE
+@export var rank_mode: RANK_MODE
 enum RANK_MODE {
 	SCORE, # Use scores to rank players; highest score wins
 	TIME # Use times to rank players; lowest time wins
 }
 ## Disable this if you have something in the game that needs to finish before we can play the results.
-@export var autoplay_results : bool = true
+@export var autoplay_results: bool = true
 ## Disable this if you want the to do something after the transition. Call play_results_animation manually if you turn this off.
-@export var autoplay_results_animation : bool = true
+@export var autoplay_results_animation: bool = true
 ## Number of "survivors" that must be left for the minigame to autocomplete.
-@export_range(0, 3, 1) var autocomplete_survivor_count : int = 0
+@export_range(0, 3, 1) var autocomplete_survivor_count: int = 0
 ## Option camera to use for the results screen.
-@export var results_camera : Camera3D
+@export var results_camera: Camera3D
 ## Tracks whether we're ready to play the results screen or not (based on non-game elements).
-var is_results_queued : bool
+var is_results_queued: bool
 ## Tracks whether we've already finished the minigame and entered the results screen.
-var is_results_active : bool
+var is_results_active: bool
 
 @export_group("Components")
 ## Optional animator that plays when all peers are loaded. Use this for camera pans.
-@export var intro_animator : AnimationPlayer
-@export var splitscreen_parent : Control
-@export var animator : AnimationPlayer
+@export var intro_animator: AnimationPlayer
+@export var splitscreen_parent: Control
+@export var animator: AnimationPlayer
 
 ## Where to spawn players.
-@export var subviewport_worlds : Array[SubViewport]
+@export var subviewport_worlds: Array[SubViewport]
 ## Where to spawn players during the results screen.
-@export var results_location : Array[Node3D]
+@export var results_location: Array[Node3D]
 ## Labels for the mini-game winners.
-@export var winner_labels : Array[SyncedLabel]
+@export var winner_labels: Array[SyncedLabel]
 
-@export var score_popup_scene : PackedScene
+@export var score_popup_scene: PackedScene
 ## Pool for score popups
-var score_popup_pool : Array[ScorePopup]
+var score_popup_pool: Array[ScorePopup]
 ## List of active popups
-var active_popups : Array[ScorePopup]
+var active_popups: Array[ScorePopup]
 ## Number of players that have completed the current mini-game.
-var completed_player_count : int
+var completed_player_count: int
 
 ## Tracks whether the minigame ended in a tie.
-var is_tie : bool
+var is_tie: bool
 
 ## Tracks the player's scores.
-var player_scores : Array[int]
+var player_scores: Array[int]
 ## Tracks the player's times.
-var player_times : Array[float]
-
-const INITIAL_SCORE_POPUP_POOL_SIZE : int = 10
+var player_times: Array[float]
+##Tracks whether the minigame is finished
+var is_minigame_finished: bool = false
+const INITIAL_SCORE_POPUP_POOL_SIZE: int = 10
 
 func _init() -> void:
 	instance = self
@@ -140,7 +141,7 @@ func _ready() -> void:
 		call_deferred("start_party_game")
 
 ## Disables a splitscreen player.  
-func disable_splitscreen_player(index : int) -> void:
+func disable_splitscreen_player(index: int) -> void:
 	subviewport_worlds[index].get_parent().visible = false
 	subviewport_worlds[index].set_process(false)
 	subviewport_worlds[index].set_physics_process(false)
@@ -156,9 +157,9 @@ func start_party_game() -> void:
 		print("playing intro animation!")
 		intro_animator.play("intro")
 
-func load_character_model(player_index : int) -> CharacterAnimator:
-	var scene : PackedScene = load(PartyManager.get_player_data(player_index).character_data.model_file) as PackedScene
-	var character : CharacterAnimator = scene.instantiate() as CharacterAnimator
+func load_character_model(player_index: int) -> CharacterAnimator:
+	var scene: PackedScene = load(PartyManager.get_player_data(player_index).character_data.model_file) as PackedScene
+	var character: CharacterAnimator = scene.instantiate() as CharacterAnimator
 	if common_anim_library != null:
 		character.load_animation_library(COMMON_ANIMATION_LIBRARY_PREFIX, common_anim_library)
 	
@@ -169,23 +170,23 @@ func load_character_model(player_index : int) -> CharacterAnimator:
 
 ## Plays an animation, synced across the network.
 @rpc("any_peer", "call_local", "reliable")
-func play_animation(anim : String) -> void:
+func play_animation(anim: String) -> void:
 	animator.play(anim)
 
 func generate_score_popup() -> void:
-	var new_popup : Node = score_popup_scene.instantiate()
+	var new_popup: Node = score_popup_scene.instantiate()
 	add_child(new_popup)
 	new_popup.repool.connect(Callable.create(self, "on_repool_score_popup").bind(new_popup))
 	score_popup_pool.append(new_popup)
 
 ## Repools a score popup after it fades away.
-func on_repool_score_popup(popup : ScorePopup) -> void:
+func on_repool_score_popup(popup: ScorePopup) -> void:
 	score_popup_pool.append(popup)
-	var index : int = active_popups.find(popup)
+	var index: int = active_popups.find(popup)
 	if index != -1:
 		active_popups.remove_at(index)
 
-func request_score_popup(player_index : int, amount : int, pos : Vector2) -> void:
+func request_score_popup(player_index: int, amount: int, pos: Vector2) -> void:
 	if !PartyManager.minigame_players.has(player_index):
 		return
 	
@@ -194,45 +195,45 @@ func request_score_popup(player_index : int, amount : int, pos : Vector2) -> voi
 	
 	rpc("_score_popup", player_index, amount, pos, NetworkTimeSynchronizer.get_time())
 
-func request_score_popup_abort(player_index : int, time : float) -> void:
+func request_score_popup_abort(player_index: int, time: float) -> void:
 	rpc("_score_popup_abort", player_index, time)
 
 @rpc("any_peer", "call_local", "reliable")
-func _score_popup(player_index : int, amount : int, pos : Vector2, time : float) -> void:
+func _score_popup(player_index: int, amount: int, pos: Vector2, time: float) -> void:
 	if score_popup_pool.is_empty():
 		generate_score_popup()
 	
-	var popup : ScorePopup = score_popup_pool[0]
+	var popup: ScorePopup = score_popup_pool[0]
 	score_popup_pool.remove_at(0)
 	active_popups.append(popup)
 	popup.show_popup(player_index, amount, pos, time)
 
 @rpc("any_peer", "call_local", "reliable")
-func _score_popup_abort(player_index : int, time : float) -> void:
-	for popup : ScorePopup in active_popups:
+func _score_popup_abort(player_index: int, time: float) -> void:
+	for popup: ScorePopup in active_popups:
 		if popup.player_index == player_index && is_equal_approx(popup.spawn_time, time):
 			popup.abort_popup()
 			break
 
-func request_score_change(player_index : int, amount : int = 1) -> void:
+func request_score_change(player_index: int, amount: int = 1) -> void:
 	if player_index < 0 || player_index > PartyManager.MAX_PLAYER_COUNT:
 		return
 	rpc("_change_score", player_index, amount)
 
-func request_time_change(player_index : int, time : float) -> void:
+func request_time_change(player_index: int, time: float) -> void:
 	if player_index < 0 || player_index > PartyManager.MAX_PLAYER_COUNT:
 		return
 	rpc("_change_time", player_index, time)
 
 ## Changes the score of a player.
 @rpc("any_peer", "call_local", "reliable")
-func _change_score(player_index : int, amount : int) -> void:
+func _change_score(player_index: int, amount: int) -> void:
 	player_scores[player_index] += amount
 	on_score_updated.emit(player_index, player_scores[player_index])
 
 ## Changes the time of a player.
 @rpc("any_peer", "call_local", "reliable")
-func _change_time(player_index : int, time : float) -> void:
+func _change_time(player_index: int, time: float) -> void:
 	player_times[player_index] = time
 	on_time_updated.emit(player_index, player_times[player_index])
 
@@ -254,15 +255,15 @@ func request_minigame_start() -> void:
 
 ## Plays the "START!" animation.
 @rpc("any_peer", "call_local", "reliable")
-func start_minigame(tick : float) -> void:
-	var target_animation : String = "minigame-start"
+func start_minigame(tick: float) -> void:
+	var target_animation: String = "minigame-start"
 	if demo_transition_mode == DEMO_TRANSITION.FULLSCREEN:
 		target_animation = "demo-fade" # Transition to split-screen
 	
-	var callable : Callable = Callable(self, "play_animation").bind(target_animation)
+	var callable: Callable = Callable(self, "play_animation").bind(target_animation)
 	get_tree().create_timer(NetworkManager.calculate_transition_delay(tick)).timeout.connect(callable)
 
-func request_minigame_finish(from_timer : bool = false) -> void:
+func request_minigame_finish(from_timer: bool = false) -> void:
 	print("Finishing Minigame!")
 	if NetworkManager.is_hosting_game:
 		rpc("finish_minigame", from_timer)
@@ -287,7 +288,7 @@ func request_autoplay_results() -> void:
 
 ## Plays the "GAME SET!" animation, then starts the results screen.
 @rpc("any_peer", "call_local", "reliable")
-func finish_minigame(from_timer : bool) -> void:
+func finish_minigame(from_timer: bool) -> void:
 	print("Gameplay Finished.")
 	gameplay_finished.emit()
 	PauseManager.disable_pause_inputs()
@@ -304,6 +305,7 @@ func on_minigame_finished() -> void:
 	if is_instance_valid(intro_animator) && intro_animator.has_animation("finish"):
 		intro_animator.play("finish")
 	
+	is_minigame_finished = true
 	minigame_finished.emit()
 	
 	for i in results_location.size():
@@ -326,7 +328,7 @@ func start_results_animation() -> void:
 	if !NetworkManager.is_hosting_game:
 		return
 	
-	var rankings : Array[int]
+	var rankings: Array[int]
 	rankings.resize(PartyManager.MAX_PLAYER_COUNT)
 	
 	is_tie = check_tie()
@@ -336,7 +338,7 @@ func start_results_animation() -> void:
 	else: # Figure out the proper placement for each player
 		if rank_mode == RANK_MODE.TIME:
 			for i in player_times.size():
-				var rank : int = 0
+				var rank: int = 0
 				if !PartyManager.minigame_players.has(i):
 					rank = PartyManager.MAX_PLAYER_COUNT
 				else:
@@ -348,7 +350,7 @@ func start_results_animation() -> void:
 				rankings[i] = rank
 		else:
 			for i in player_scores.size():
-				var rank : int = 0
+				var rank: int = 0
 				if !PartyManager.minigame_players.has(i):
 					rank = PartyManager.MAX_PLAYER_COUNT
 				else:
@@ -380,9 +382,9 @@ func check_tie() -> bool:
 ## Updates the names of the winners for the results screen.
 @rpc("any_peer", "call_local", "reliable")
 func update_win_text() -> void:
-	var label_index : int = 0
+	var label_index: int = 0
 	for i in PartyManager.MAX_PLAYER_COUNT:
-		var data : PlayerData = PartyManager.get_player_data(i)
+		var data: PlayerData = PartyManager.get_player_data(i)
 		
 		if NetworkManager.is_online && !NetworkManager.is_hosting_game:
 			print("Player %s placed %s with a score of %s and a time of %s" % [data.character_data.character_name, data.minigame_placement, player_scores[i], player_times[i]])
