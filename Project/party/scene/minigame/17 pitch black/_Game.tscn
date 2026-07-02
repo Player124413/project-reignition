@@ -6,11 +6,16 @@
 [ext_resource type="PackedScene" uid="uid://bnhdekqajqxd5" path="res://party/scene/minigame/17 pitch black/Picture.tscn" id="2_ti0kl"]
 [ext_resource type="Material" uid="uid://ctpclc7rvt0dk" path="res://party/scene/minigame/17 pitch black/material/Blackout.tres" id="3_qx0r3"]
 [ext_resource type="AnimationLibrary" uid="uid://b7nv23a63t0ui" path="res://party/scene/minigame/17 pitch black/animation/_Library.glb" id="3_t4r27"]
+[ext_resource type="Resource" uid="uid://cnritclslppve" path="res://party/resource/bgm/Minigame4.tres" id="4_84ry3"]
 [ext_resource type="PackedScene" uid="uid://dporu1ja77qk6" path="res://party/scene/minigame/17 pitch black/Spotlight.tscn" id="4_qx0r3"]
 [ext_resource type="PackedScene" uid="uid://30sgb1pjxad8" path="res://party/scene/minigame/00 base/ScoreBottom.tscn" id="4_rjlyr"]
 [ext_resource type="PackedScene" uid="uid://dkhfl3o0fmu2e" path="res://party/scene/minigame/17 pitch black/CandleLights.tscn" id="5_1qa36"]
+[ext_resource type="PackedScene" uid="uid://f5w7fq20xmd1" path="res://party/scene/minigame/00 base/Time.tscn" id="5_f0r8e"]
 [ext_resource type="Script" uid="uid://tsdn2h7tfdic" path="res://party/scene/minigame/17 pitch black/script/picture_manager.gd" id="7_x2pef"]
 [ext_resource type="PackedScene" uid="uid://dq6io45mlhugu" path="res://party/scene/minigame/17 pitch black/Player.tscn" id="9_tlkyk"]
+[ext_resource type="AudioStream" uid="uid://balm5pqd7wfw1" path="res://party/scene/minigame/17 pitch black/sound/painting rotate.wav" id="14_do727"]
+[ext_resource type="Script" uid="uid://bkwc2atbp4cjd" path="res://party/scene/minigame/00 base/script/group_sfx_player.gd" id="15_gcmdu"]
+[ext_resource type="AudioStream" uid="uid://6syqvx70qyuk" path="res://party/scene/minigame/17 pitch black/sound/painting lightsout.wav" id="16_gcmdu"]
 
 [sub_resource type="Environment" id="Environment_e2t8q"]
 ambient_light_source = 2
@@ -603,13 +608,26 @@ _data = {
 [node name="Minigame" parent="." unique_id=600998337 node_paths=PackedStringArray("results_camera", "intro_animator") instance=ExtResource("1_1x6en")]
 minigame_resource = ExtResource("2_5d3t0")
 anim_library = ExtResource("3_t4r27")
-rank_mode = 1
 results_camera = NodePath("../ResultsCamera")
 intro_animator = NodePath("../IntroAnimator")
 
+[node name="ResultsLocation" parent="Minigame" index="4" unique_id=1428872605]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -26.322514)
+
+[node name="BGM" parent="Minigame" index="6" unique_id=1105249761]
+bgmResource = ExtResource("4_84ry3")
+
 [node name="Scores" parent="Minigame" unique_id=1484096685 instance=ExtResource("4_rjlyr")]
-visible = false
 layout_mode = 1
+
+[node name="Time" parent="Minigame" unique_id=2069576343 instance=ExtResource("5_f0r8e")]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -128.0
+offset_right = 128.0
+grow_horizontal = 2
 
 [node name="Environment" type="Node3D" parent="." unique_id=2094558663]
 
@@ -664,13 +682,15 @@ light_color = Color(1, 0.7647059, 0.4627451, 1)
 light_cull_mask = 4293918725
 shadow_enabled = true
 
-[node name="PictureFrames" type="Node3D" parent="Environment" unique_id=1720399247 node_paths=PackedStringArray("env_animator", "pictures", "players", "camera")]
+[node name="PictureFrames" type="Node3D" parent="Environment" unique_id=1720399247 node_paths=PackedStringArray("env_animator", "pictures", "players", "camera", "sfx_rotate", "sfx_blackout")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 34, -61)
 script = ExtResource("7_x2pef")
 env_animator = NodePath("../AnimationPlayer")
 pictures = [NodePath("Picture1"), NodePath("Picture2"), NodePath("Picture3"), NodePath("Picture4")]
 players = [NodePath("../../Objects/Player1"), NodePath("../../Objects/Player2"), NodePath("../../Objects/Player3"), NodePath("../../Objects/Player4")]
 camera = NodePath("../../GameplayCamera")
+sfx_rotate = NodePath("../../SFX/PaintingRotate")
+sfx_blackout = NodePath("../../SFX/Blackout")
 
 [node name="Picture1" parent="Environment/PictureFrames" unique_id=736417009 instance=ExtResource("2_ti0kl")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -50, 0, 0)
@@ -726,6 +746,8 @@ transform = Transform3D(1, 0, 0, 0, 0.98111016, -0.19345033, 0, 0.19345033, 0.98
 fov = 55.8
 
 [node name="ResultsCamera" type="Camera3D" parent="." unique_id=121678800]
+transform = Transform3D(1, 0, 0, 0, 0.9967341, 0.080753595, 0, -0.080753595, 0.9967341, 0, 14.745113, 36.95826)
+fov = 30.8
 
 [node name="Objects" type="Node3D" parent="." unique_id=1438525470]
 
@@ -766,6 +788,24 @@ score_counter = NodePath("../../Minigame/Scores/ScoreCounter4")
 
 [node name="IntroAnimator" type="AnimationPlayer" parent="." unique_id=1755016473]
 libraries/ = SubResource("AnimationLibrary_f0r8e")
+
+[node name="SFX" type="Node" parent="." unique_id=1304073205]
+
+[node name="PaintingRotate" type="AudioStreamPlayer" parent="SFX" unique_id=472042659]
+stream = ExtResource("14_do727")
+script = ExtResource("15_gcmdu")
+group = "rotate"
+base_volume = 0.5
+max_volume = 0.5
+metadata/_custom_type_script = "uid://bkwc2atbp4cjd"
+
+[node name="Blackout" type="AudioStreamPlayer" parent="SFX" unique_id=375733715]
+stream = ExtResource("16_gcmdu")
+script = ExtResource("15_gcmdu")
+group = "blackout"
+base_volume = 0.7
+max_volume = 0.7
+metadata/_custom_type_script = "uid://bkwc2atbp4cjd"
 
 [editable path="Minigame"]
 [editable path="Minigame/Scores"]

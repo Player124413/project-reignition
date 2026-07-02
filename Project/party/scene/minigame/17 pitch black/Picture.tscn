@@ -60,6 +60,8 @@
 [ext_resource type="Material" uid="uid://qhodg8cn8ltb" path="res://party/scene/minigame/17 pitch black/material/images/Tails.tres" id="57_minjq"]
 [ext_resource type="Material" uid="uid://cs0sebj2d6k3" path="res://party/scene/minigame/17 pitch black/material/images/Demo1.tres" id="58_d5adx"]
 [ext_resource type="Material" uid="uid://c1l8l1lf3u6hn" path="res://party/scene/minigame/17 pitch black/material/Picture Demo.tres" id="60_3vrvm"]
+[ext_resource type="AudioStream" uid="uid://balm5pqd7wfw1" path="res://party/scene/minigame/17 pitch black/sound/painting rotate.wav" id="61_apnju"]
+[ext_resource type="Script" uid="uid://bkwc2atbp4cjd" path="res://party/scene/minigame/00 base/script/group_sfx_player.gd" id="62_4ox22"]
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_5kfp0"]
 radius = 7.0915585
@@ -148,6 +150,23 @@ tracks/1/keys = {
 "values": [{
 "args": [],
 "method": &"set_correct_picture"
+}]
+}
+tracks/2/type = "method"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("SFX/PaintingRotate")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 1),
+"transitions": PackedFloat32Array(1, 1),
+"values": [{
+"args": [],
+"method": &"play_in_group"
+}, {
+"args": [],
+"method": &"play_in_group"
 }]
 }
 
@@ -3250,5 +3269,15 @@ libraries/ = SubResource("AnimationLibrary_ws3p7")
 [node name="PictureAnimator" type="AnimationPlayer" parent="." unique_id=561750656]
 deterministic = true
 libraries/ = SubResource("AnimationLibrary_apnju")
+
+[node name="SFX" type="Node" parent="." unique_id=799235371]
+
+[node name="PaintingRotate" type="AudioStreamPlayer" parent="SFX" unique_id=800279002]
+stream = ExtResource("61_apnju")
+script = ExtResource("62_4ox22")
+group = "rotate"
+base_volume = 0.5
+max_volume = 0.5
+metadata/_custom_type_script = "uid://bkwc2atbp4cjd"
 
 [editable path="Picture"]

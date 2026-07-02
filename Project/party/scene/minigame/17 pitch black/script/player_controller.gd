@@ -9,13 +9,14 @@ class_name PicturePlayerController extends PartyGameCursorMover
 @export var spotlight: CSGCylinder3D
 @export var hand_attachment: BoneAttachment3D
 @export var lamp: Node3D
+@export var lamp_light: OmniLight3D
 @export var collision: Area3D
+@export var sfx_wrong: GroupSfxPlayer
+@export var sfx_correct: GroupSfxPlayer
 var rng: RandomNumberGenerator
 var can_initiate_success = false
 var is_demo_complete: bool = false
 var spotlight_pos
-
-signal generate_new_target
 
 var _state: STATE
 enum STATE {
@@ -35,8 +36,6 @@ func on_spawn_finished() -> void:
 	cursor_max_clamp.x = get_viewport().get_visible_rect().size.x - 200
 	cursor_max_clamp.y = get_viewport().get_visible_rect().size.y - 200
 
-	print("Cusor Min Clamp: " + str(cursor_min_clamp))
-	print("Cusor Max Clamp: " + str(cursor_max_clamp))
 	rng = RandomNumberGenerator.new()
 
 	if is_cpu():
@@ -75,7 +74,6 @@ func process_animation_event(event: int) -> void:
 		_state = STATE.BUSY
 	elif event == ANIM_MISS_END:
 		_state = STATE.IDLE
-		CPU_CAN_SEARCH = true
 		character_animator.play_animation("%s/light-wait" % MinigameManager.ANIMATION_LIBRARY_PREFIX, true)
 	
 
@@ -83,6 +81,8 @@ func set_state(state: STATE):
 	_state = state
 
 func start_miss() -> void:
+	character_animator.play_voice("fail")
+	sfx_wrong.play_in_group()
 	character_animator.play_animation("%s/miss" % MinigameManager.ANIMATION_LIBRARY_PREFIX, true)
 	cursor_animator.play("miss")
 	cursor_incorrect.position = cursor.position
@@ -90,6 +90,12 @@ func start_miss() -> void:
 	
 
 func start_success() -> void:
+	character_animator.play_voice("celebrate1")
+	if is_demo_complete:
+		var score_pos: Vector2 = score_counter.global_position
+		score_pos.x = score_counter.global_position.x + (score_counter.size.x / 2)
+		picture_manager.request_score_popup(player_index, 1, score_pos)
+	sfx_correct.play_in_group()
 	cursor_animator.play("correct")
 	cursor_correct.position = cursor.position
 	picture_manager.play_correct_sequence()
@@ -135,11 +141,16 @@ func _on_area_3d_area_entered(area: Area3D) -> void:
 var CPU_SEARCH_TIME: float
 ##The chance the next target will be the correct answer. If this rng hits, then the cpu will always confirm
 var CPU_CORRECT_CHANCE: int
-var CPU_CAN_SEARCH: bool = false
+##When CPU_CORRECT_CHANCE is triggered, this will turn to true
 var CPU_CAN_CONFIRM: bool = false
-var CPU_HAS_REACHED: bool = false
 
 var target_pos: Vector2 = Vector2.DOWN
+
+var _cpu_state: CPU_STATE
+enum CPU_STATE {
+	WAITING, ## The CPU can't currently do anything
+	SEARCHING ## The CPU is actively moving
+}
 
 ##Lower difficulty CPUs will mess up more often, while higher difficulties will deliberate more before confirming a choice.
 
@@ -153,44 +164,43 @@ func update_target_pos() -> void:
 	if can_cpu_search_correctly():
 		target_pos = picture_manager.get_correct_picture_pos()
 		CPU_CAN_CONFIRM = true
-	
-	print("NEXT CPU POS: " + str(target_pos))
 
 
 func update_cpu_search_params() -> void:
 	match get_cpu_difficulty():
 		PlayerData.CPU_DIFFICULTY_ENUM.EASY:
-			CPU_SEARCH_TIME = randi_range(7, 10)
-			CPU_CORRECT_CHANCE = 11
+			CPU_SEARCH_TIME = randi_range(8, 11)
+			CPU_CORRECT_CHANCE = 13
 		PlayerData.CPU_DIFFICULTY_ENUM.NORMAL:
-			CPU_SEARCH_TIME = randi_range(6, 9)
-			CPU_CORRECT_CHANCE = 10
+			CPU_SEARCH_TIME = randi_range(7, 10)
+			CPU_CORRECT_CHANCE = 12
 		PlayerData.CPU_DIFFICULTY_ENUM.HARD:
-			CPU_SEARCH_TIME = randi_range(5, 8)
-			CPU_CORRECT_CHANCE = 9
+			CPU_SEARCH_TIME = randi_range(6, 9)
+			CPU_CORRECT_CHANCE = 11
 		PlayerData.CPU_DIFFICULTY_ENUM.EXTREME:
-			CPU_SEARCH_TIME = randi_range(4, 7)
-			CPU_CORRECT_CHANCE = 8
-	print("CPU SEARCH CHANCE: " + str(CPU_CORRECT_CHANCE))
+			CPU_SEARCH_TIME = randi_range(5, 8)
+			CPU_CORRECT_CHANCE = 10
 
 func cpu_movement() -> void:
-	if CPU_CAN_SEARCH:
+	if _cpu_state == CPU_STATE.SEARCHING:
 		request_cpu_position(target_pos)
-	if cursor.global_position == target_pos && CPU_HAS_REACHED == false:
-		CPU_HAS_REACHED = true
-		emit_signal("generate_new_target")
+	if cursor.global_position == target_pos:
+		generate_new_target()
 
 func can_cpu_search_correctly() -> bool:
 	if rng.randi_range(1, CPU_CORRECT_CHANCE) == 1:
-		print("CPU " + str(player_index) + "HAS SEARCHED CORRECTLY")
 		return true
 	return false
 
+func generate_new_target() -> void:
+	update_target_pos()
+
+	if CPU_CAN_CONFIRM:
+		cpu_search_timer.timeout.emit()
 
 func _on_cpu_timer_timeout() -> void:
-	if is_cpu() && _state == STATE.IDLE:
-		_state = STATE.BUSY
-		CPU_CAN_SEARCH = false
+	if is_cpu() && _cpu_state == CPU_STATE.SEARCHING:
+		_cpu_state = CPU_STATE.WAITING
 
 		if can_initiate_success:
 			start_success()
@@ -200,12 +210,4 @@ func _on_cpu_timer_timeout() -> void:
 		update_cpu_search_params()
 		update_target_pos()
 		cpu_search_timer.start(CPU_SEARCH_TIME)
-
-
-func _on_generate_new_target() -> void:
-	update_target_pos()
-
-	if CPU_CAN_CONFIRM:
-		cpu_search_timer.timeout.emit()
-	CPU_HAS_REACHED = false
-	pass # Replace with function body.
+		_cpu_state = CPU_STATE.SEARCHING
