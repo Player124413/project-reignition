@@ -24,6 +24,7 @@ func on_spawn_finished() -> void:
 	cursor_texture_rect.get_child(1).self_modulate = get_color()
 	cursor_min_clamp = Vector2.ZERO
 	cursor_max_clamp = get_viewport().get_visible_rect().size
+	rollback_timer.register_target(self)
 
 func _physics_process(_delta: float) -> void:
 	if is_multiplayer_authority():

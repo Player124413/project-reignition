@@ -138,7 +138,7 @@ func _on_area_3d_area_entered(area: Area3D) -> void:
 const RB_STATE: int = 3
 const RB_CPUSTATE: int = 4
 const RB_CPUTARGET: int = 5
-#const RB_CURSORPOS: int = 6
+const RB_CURSORPOS: int = 6
 
 func on_rollback_applied(rb_params: Array) -> void:
 	_state = rb_params[RB_STATE]
@@ -152,7 +152,6 @@ func process_rollback() -> void:
 	rollback_timer.set_param(RB_CPUSTATE, _cpu_state)
 	rollback_timer.set_param(RB_CPUTARGET, target_pos)
 	#rollback_timer.set_param(RB_CURSORPOS, cursor.global_position)
-	#rollback_timer.process_rollback()
 	super()
 
 ################
