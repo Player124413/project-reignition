@@ -55,16 +55,18 @@ func process_movement_tick() -> void:
 		if is_cpu() && _state == STATE.IDLE:
 			cpu_movement()
 
-	if is_multiplayer_authority():
-		process_rollback()
+	#if is_multiplayer_authority():
+		#process_rollback()
 
 func process_inputs() -> void:
 	if !is_cpu() && _state == STATE.IDLE:
 		if Input.is_action_just_pressed("button_primary%s" % get_input_suffix()):
 			if can_initiate_success:
-				start_success()
+				rpc("start_success")
+				#start_success()
 			else:
-				start_miss()
+				rpc("start_miss")
+				#start_miss()
 	super()
 
 const ANIM_MISS_START: int = 0
@@ -81,6 +83,7 @@ func process_animation_event(event: int) -> void:
 func set_state(state: STATE):
 	_state = state
 
+@rpc("any_peer", "call_local", "reliable")
 func start_miss() -> void:
 	character_animator.play_voice("fail")
 	sfx_wrong.play_in_group()
@@ -89,7 +92,7 @@ func start_miss() -> void:
 	cursor_incorrect.position = cursor.position
 	#_state = STATE.BUSY
 	
-
+@rpc("any_peer", "call_local", "reliable")
 func start_success() -> void:
 	character_animator.play_voice("celebrate1")
 	if is_demo_complete:
@@ -225,9 +228,11 @@ func _on_cpu_timer_timeout() -> void:
 		_cpu_state = CPU_STATE.WAITING
 
 		if can_initiate_success:
-			start_success()
+			rpc("start_success")
+			#start_success()
 		else:
-			start_miss()
+			rpc("start_miss")
+			#start_miss()
 				
 		update_cpu_search_params()
 		update_target_pos()

@@ -59,8 +59,6 @@ func get_next_picture() -> void:
 
 	for picture in pictures:
 		picture.rpc("set_correct_picture", next_char)
-		#picture._character = next_char
-		#picture.set_correct_picture()
 			
 	#pictures[incorrect_picture].set_incorrect_picture(next_int)
 	pictures[incorrect_picture].rpc("set_incorrect_picture", next_int, next_char)
