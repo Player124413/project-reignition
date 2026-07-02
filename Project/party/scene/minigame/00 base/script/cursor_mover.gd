@@ -92,5 +92,6 @@ func calculate_cpu_input() -> Vector2:
 
 ## Moves the cpu cursor to the specified position
 func request_cpu_position(pos: Vector2) -> void:
-	cursor_texture_rect.position.x = move_toward(cursor_texture_rect.position.x, pos.x, get_physics_process_delta_time() * cpu_move_speed) # * _move_speed)
-	cursor_texture_rect.position.y = move_toward(cursor_texture_rect.position.y, pos.y, get_physics_process_delta_time() * cpu_move_speed) # * _move_speed)
+	if NetworkManager.is_hosting_game:
+		cursor_texture_rect.position.x = move_toward(cursor_texture_rect.position.x, pos.x, get_physics_process_delta_time() * cpu_move_speed) # * _move_speed)
+		cursor_texture_rect.position.y = move_toward(cursor_texture_rect.position.y, pos.y, get_physics_process_delta_time() * cpu_move_speed) # * _move_speed)

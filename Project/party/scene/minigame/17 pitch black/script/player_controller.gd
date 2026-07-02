@@ -55,6 +55,9 @@ func process_movement_tick() -> void:
 		if is_cpu() && _state == STATE.IDLE:
 			cpu_movement()
 
+	if is_multiplayer_authority():
+		process_rollback()
+
 func process_inputs() -> void:
 	if !is_cpu() && _state == STATE.IDLE:
 		if Input.is_action_just_pressed("button_primary%s" % get_input_suffix()):
@@ -62,8 +65,6 @@ func process_inputs() -> void:
 				start_success()
 			else:
 				start_miss()
-	
-	
 	super()
 
 const ANIM_MISS_START: int = 0
@@ -131,6 +132,28 @@ func _on_area_3d_area_entered(area: Area3D) -> void:
 	if area.is_in_group("enemy"):
 		can_initiate_success = true
 
+#####################
+### ROLLBACK CODE ###
+#####################
+const RB_STATE: int = 3
+const RB_CPUSTATE: int = 4
+const RB_CPUTARGET: int = 5
+#const RB_CURSORPOS: int = 6
+
+func on_rollback_applied(rb_params: Array) -> void:
+	_state = rb_params[RB_STATE]
+	_cpu_state = rb_params[RB_CPUSTATE]
+	target_pos = rb_params[RB_CPUTARGET]
+	#cursor.global_position = rb_params[RB_CURSORPOS]
+	super(rb_params)
+
+func process_rollback() -> void:
+	rollback_timer.set_param(RB_STATE, _state)
+	rollback_timer.set_param(RB_CPUSTATE, _cpu_state)
+	rollback_timer.set_param(RB_CPUTARGET, target_pos)
+	#rollback_timer.set_param(RB_CURSORPOS, cursor.global_position)
+	#rollback_timer.process_rollback()
+	super()
 
 ################
 ### CPU CODE ###
