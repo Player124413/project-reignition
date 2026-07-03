@@ -80,9 +80,9 @@ func play_correct_sequence() -> void:
 		player.cursor.visible = false
 		player._state = player.STATE.BUSY
 		player._cpu_state = PicturePlayerController.CPU_STATE.WAITING
+		player.set_cpu_timer_paused(true)
 		player.lamp.get_child(0).visible = false
 		player.lamp_light.visible = false
-		
 
 	env_animator.play("blackout", -1, -1.0, true)
 	for i in pictures.size():
@@ -114,6 +114,10 @@ func play_correct_sequence() -> void:
 	sfx_rotate.play_in_group()
 	for pic in pictures:
 		pic.animator.play("spin_btf")
+	
+	for player in players:
+		player._state = player.STATE.MOVE_ONLY
+		player.set_cpu_timer_paused(false)
 	
 	await get_tree().create_timer(1).timeout
 

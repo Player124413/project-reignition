@@ -26,6 +26,7 @@ var _state: STATE
 enum STATE {
 	IDLE,
 	BUSY,
+	MOVE_ONLY,
 	MISS
 }
 
@@ -57,7 +58,7 @@ func initialize_clamp_regions() -> void:
 	cursor_max_clamp.y = unprojected_pos.y
 
 func process_movement_tick() -> void:
-	if _state == STATE.IDLE:
+	if _state == STATE.IDLE || _state == STATE.MOVE_ONLY:
 		super()
 	lamp.look_at(spotlight.global_position, Vector3.UP, true)
 	collision.global_position = spotlight.global_position
@@ -70,6 +71,9 @@ func process_movement_tick() -> void:
 			cpu_movement()
 
 func process_inputs() -> void:
+	if !is_demo_complete:
+		return
+	
 	if !is_cpu() && _state == STATE.IDLE:
 		if Input.is_action_just_pressed("button_primary%s" % get_input_suffix()):
 			rpc("start_success" if can_initiate_success else "start_miss")
@@ -166,18 +170,14 @@ enum CPU_STATE {
 }
 
 ##Lower difficulty CPUs will mess up more often, while higher difficulties will deliberate more before confirming a choice.
-
 func update_target_pos() -> void:
 	var random_pos_x: float = rng.randf_range(cursor_min_clamp.x, cursor_max_clamp.x)
 	var random_pos_y: float = rng.randf_range(cursor_min_clamp.y, cursor_max_clamp.y)
 	var random_pos = Vector2(random_pos_x, random_pos_y)
-
-	
 	target_pos = random_pos
 	if can_cpu_search_correctly():
 		target_pos = picture_manager.get_correct_picture_pos()
 		CPU_CAN_CONFIRM = true
-
 
 func update_cpu_search_params() -> void:
 	match get_cpu_difficulty():
@@ -193,6 +193,9 @@ func update_cpu_search_params() -> void:
 		PlayerData.CPU_DIFFICULTY_ENUM.EXTREME:
 			CPU_SEARCH_TIME = randi_range(5, 8)
 			CPU_CORRECT_CHANCE = 10
+
+func set_cpu_timer_paused(value : bool) -> void:
+	cpu_search_timer.paused = value
 
 func cpu_movement() -> void:
 	if _cpu_state == CPU_STATE.SEARCHING:
@@ -214,7 +217,8 @@ func generate_new_target() -> void:
 func _on_cpu_timer_timeout() -> void:
 	if is_cpu() && _cpu_state == CPU_STATE.SEARCHING:
 		_cpu_state = CPU_STATE.WAITING
-		rpc("start_success" if can_initiate_success else "start_miss")
+		if _state == STATE.IDLE:
+			rpc("start_success" if can_initiate_success else "start_miss")
 		
 		update_cpu_search_params()
 		update_target_pos()
