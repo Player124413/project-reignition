@@ -24,6 +24,7 @@ blend_mode = 1
 
 [sub_resource type="Animation" id="Animation_5qh3a"]
 resource_name = "RESET"
+length = 0.001
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
@@ -63,7 +64,7 @@ tracks/2/keys = {
 tracks/3/type = "value"
 tracks/3/imported = false
 tracks/3/enabled = true
-tracks/3/path = NodePath("Correct:scale")
+tracks/3/path = NodePath("Correct:offset_transform_scale")
 tracks/3/interp = 1
 tracks/3/loop_wrap = true
 tracks/3/keys = {
@@ -111,38 +112,38 @@ tracks/6/keys = {
 tracks/7/type = "value"
 tracks/7/imported = false
 tracks/7/enabled = true
-tracks/7/path = NodePath("Incorrect:scale")
+tracks/7/path = NodePath("Incorrect:modulate")
 tracks/7/interp = 1
 tracks/7/loop_wrap = true
 tracks/7/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 0,
-"values": [Vector2(2, 2)]
+"values": [Color(1, 1, 1, 1)]
 }
 tracks/8/type = "value"
 tracks/8/imported = false
 tracks/8/enabled = true
-tracks/8/path = NodePath("Incorrect:modulate")
+tracks/8/path = NodePath("Cursor:visible")
 tracks/8/interp = 1
 tracks/8/loop_wrap = true
 tracks/8/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [Color(1, 1, 1, 1)]
+"update": 1,
+"values": [true]
 }
 tracks/9/type = "value"
 tracks/9/imported = false
 tracks/9/enabled = true
-tracks/9/path = NodePath("Cursor:visible")
+tracks/9/path = NodePath("Incorrect:offset_transform_scale")
 tracks/9/interp = 1
 tracks/9/loop_wrap = true
 tracks/9/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [true]
+"update": 0,
+"values": [Vector2(1, 1)]
 }
 
 [sub_resource type="Animation" id="Animation_ocuvf"]
@@ -174,7 +175,7 @@ tracks/1/keys = {
 tracks/2/type = "value"
 tracks/2/imported = false
 tracks/2/enabled = true
-tracks/2/path = NodePath("Correct:scale")
+tracks/2/path = NodePath("Correct:offset_transform_scale")
 tracks/2/interp = 1
 tracks/2/loop_wrap = true
 tracks/2/keys = {
@@ -273,7 +274,7 @@ tracks/2/keys = {
 tracks/3/type = "value"
 tracks/3/imported = false
 tracks/3/enabled = true
-tracks/3/path = NodePath("Incorrect:scale")
+tracks/3/path = NodePath("Incorrect:offset_transform_scale")
 tracks/3/interp = 1
 tracks/3/loop_wrap = true
 tracks/3/keys = {
@@ -375,20 +376,31 @@ rollback_interval = 0.0
 [node name="Cursor" type="Control" parent="." unique_id=276047839]
 layout_mode = 3
 anchors_preset = 0
+offset_right = 64.0
+offset_bottom = 64.0
+offset_transform_enabled = true
+offset_transform_position = Vector2(-32, -32)
 
 [node name="Cursor" parent="Cursor" unique_id=1155527246 instance=ExtResource("7_5lm6n")]
-layout_mode = 0
-scale = Vector2(1.5, 1.5)
-
-[node name="RayCast3D" type="RayCast3D" parent="Cursor/Cursor" unique_id=33213652]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = 0.0
+offset_bottom = 0.0
+grow_horizontal = 2
+grow_vertical = 2
 
 [node name="Correct" type="TextureRect" parent="Cursor" unique_id=551532618]
 visible = false
-layout_mode = 0
-offset_right = 57.0
-offset_bottom = 57.0
-scale = Vector2(2, 2)
-pivot_offset = Vector2(28.235294, 27.058825)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+offset_transform_enabled = true
+offset_transform_scale = Vector2(2, 2)
 texture = ExtResource("7_ojabm")
 
 [node name="Label" type="Label" parent="Cursor/Correct" unique_id=588780333]
@@ -404,18 +416,20 @@ label_settings = SubResource("LabelSettings_ehhbi")
 visible = false
 material = SubResource("CanvasItemMaterial_ocuvf")
 layout_mode = 0
-offset_right = 50.000027
+offset_right = 50.000057
 offset_bottom = 50.0
 scale = Vector2(0.7, 0.7)
 texture = ExtResource("8_ocuvf")
 
 [node name="Incorrect" type="TextureRect" parent="Cursor" unique_id=526819903]
 visible = false
-layout_mode = 0
-offset_right = 59.0
-offset_bottom = 59.0
-scale = Vector2(2, 2)
-pivot_offset = Vector2(30, 29)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+offset_transform_enabled = true
 texture = ExtResource("8_5qh3a")
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="Cursor" unique_id=315455620]

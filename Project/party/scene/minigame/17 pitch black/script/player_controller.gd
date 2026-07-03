@@ -17,11 +17,16 @@ var rng: RandomNumberGenerator
 var can_initiate_success = false
 var is_demo_complete: bool = false
 var spotlight_pos
+var camera : Camera3D
+
+## How much the cursor can move relative to the picture manager (in 3d world coords).
+const CLAMP_WORLD_EXTENTS : Vector3 = Vector3(65.0, 20.0, 0.0)
 
 var _state: STATE
 enum STATE {
 	IDLE,
-	BUSY
+	BUSY,
+	MISS
 }
 
 func on_spawn_finished() -> void:
@@ -29,18 +34,27 @@ func on_spawn_finished() -> void:
 	hand_attachment.reparent(character_animator.skeleton)
 	character_animator.play_animation("%s/light-wait" % MinigameManager.ANIMATION_LIBRARY_PREFIX, true)
 	cursor_label.text = tr(character_animator.data.character_name).to_upper()
+	camera = get_viewport().get_camera_3d()
 	set_physics_process(true)
 	spotlight_pos = spotlight.global_position.z
-	cursor_min_clamp.x = 175
-	cursor_min_clamp.y = 175
-	cursor_max_clamp.x = get_viewport().get_visible_rect().size.x - 200
-	cursor_max_clamp.y = get_viewport().get_visible_rect().size.y - 200
-
+	initialize_clamp_regions()
 	rng = RandomNumberGenerator.new()
 
 	if is_cpu():
 		update_cpu_search_params()
 		update_target_pos()
+
+## Calculates how much to clamp the cursor by.
+func initialize_clamp_regions() -> void:
+	var world_pos : Vector3 = picture_manager.global_position + CLAMP_WORLD_EXTENTS
+	var unprojected_pos : Vector2 = camera.unproject_position(world_pos)
+	cursor_max_clamp.x = unprojected_pos.x
+	cursor_min_clamp.y = unprojected_pos.y
+	
+	world_pos = picture_manager.global_position - CLAMP_WORLD_EXTENTS
+	unprojected_pos = camera.unproject_position(world_pos)
+	cursor_min_clamp.x = unprojected_pos.x
+	cursor_max_clamp.y = unprojected_pos.y
 
 func process_movement_tick() -> void:
 	if _state == STATE.IDLE:
@@ -55,18 +69,10 @@ func process_movement_tick() -> void:
 		if is_cpu() && _state == STATE.IDLE:
 			cpu_movement()
 
-	#if is_multiplayer_authority():
-		#process_rollback()
-
 func process_inputs() -> void:
 	if !is_cpu() && _state == STATE.IDLE:
 		if Input.is_action_just_pressed("button_primary%s" % get_input_suffix()):
-			if can_initiate_success:
-				rpc("start_success")
-				#start_success()
-			else:
-				rpc("start_miss")
-				#start_miss()
+			rpc("start_success" if can_initiate_success else "start_miss")
 	super()
 
 const ANIM_MISS_START: int = 0
@@ -74,14 +80,11 @@ const ANIM_MISS_END: int = 1
 
 func process_animation_event(event: int) -> void:
 	if event == ANIM_MISS_START:
-		_state = STATE.BUSY
+		_state = STATE.MISS
 	elif event == ANIM_MISS_END:
-		_state = STATE.IDLE
+		if _state == STATE.MISS:
+			_state = STATE.IDLE
 		character_animator.play_animation("%s/light-wait" % MinigameManager.ANIMATION_LIBRARY_PREFIX, true)
-	
-
-func set_state(state: STATE):
-	_state = state
 
 @rpc("any_peer", "call_local", "reliable")
 func start_miss() -> void:
@@ -90,7 +93,6 @@ func start_miss() -> void:
 	character_animator.play_animation("%s/miss" % MinigameManager.ANIMATION_LIBRARY_PREFIX, true)
 	cursor_animator.play("miss")
 	cursor_incorrect.position = cursor.position
-	#_state = STATE.BUSY
 	
 @rpc("any_peer", "call_local", "reliable")
 func start_success() -> void:
@@ -103,33 +105,23 @@ func start_success() -> void:
 	cursor_animator.play("correct")
 	cursor_correct.position = cursor.position
 	picture_manager.play_correct_sequence()
-	#_state = STATE.BUSY
 
 func complete_demo() -> void:
 	is_demo_complete = true
 
 func demo_movement() -> void:
-	var pos_3d := spotlight.global_position
-	var cam := get_viewport().get_camera_3d()
-	var pos_2d := cam.unproject_position(pos_3d)
-	cursor.global_position = pos_2d - cursor.size
+	var pos : Vector2 = camera.unproject_position(spotlight.global_position)
+	cursor.global_position = pos
 
 func spotlight_movement() -> void:
-	const RAY_LENGTH = 120
-	var camera3d = get_viewport().get_camera_3d()
-	var from = camera3d.project_ray_origin(cursor.position)
-	var to = from + camera3d.project_ray_normal(cursor.position) * RAY_LENGTH
-
-	to.z = spotlight_pos
-
-	spotlight.global_position = to
-	return
-
+	var z_depth : float = camera.global_position.z - spotlight.global_position.z
+	var pos : Vector3 = camera.project_position(cursor.global_position, z_depth)
+	pos.z = spotlight.global_position.z
+	spotlight.global_position = pos
 
 func _on_area_3d_area_exited(area: Area3D) -> void:
 	if area.is_in_group("enemy"):
 		can_initiate_success = false
-
 
 func _on_area_3d_area_entered(area: Area3D) -> void:
 	if area.is_in_group("enemy"):
@@ -141,26 +133,22 @@ func _on_area_3d_area_entered(area: Area3D) -> void:
 const RB_STATE: int = 3
 const RB_CPUSTATE: int = 4
 const RB_CPUTARGET: int = 5
-const RB_CURSORPOS: int = 6
 
 func on_rollback_applied(rb_params: Array) -> void:
 	_state = rb_params[RB_STATE]
 	_cpu_state = rb_params[RB_CPUSTATE]
 	target_pos = rb_params[RB_CPUTARGET]
-	#cursor.global_position = rb_params[RB_CURSORPOS]
 	super(rb_params)
 
 func process_rollback() -> void:
 	rollback_timer.set_param(RB_STATE, _state)
 	rollback_timer.set_param(RB_CPUSTATE, _cpu_state)
 	rollback_timer.set_param(RB_CPUTARGET, target_pos)
-	#rollback_timer.set_param(RB_CURSORPOS, cursor.global_position)
 	super()
 
 ################
 ### CPU CODE ###
 ################
-
 @export var cpu_search_timer: Timer
 ##The amount of time it takes for cpus to search before confirming
 var CPU_SEARCH_TIME: float
@@ -226,14 +214,8 @@ func generate_new_target() -> void:
 func _on_cpu_timer_timeout() -> void:
 	if is_cpu() && _cpu_state == CPU_STATE.SEARCHING:
 		_cpu_state = CPU_STATE.WAITING
-
-		if can_initiate_success:
-			rpc("start_success")
-			#start_success()
-		else:
-			rpc("start_miss")
-			#start_miss()
-				
+		rpc("start_success" if can_initiate_success else "start_miss")
+		
 		update_cpu_search_params()
 		update_target_pos()
 		cpu_search_timer.start(CPU_SEARCH_TIME)
