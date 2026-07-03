@@ -101,7 +101,6 @@ func play_correct_sequence() -> void:
 	sfx_blackout.play_in_group()
 	for player in players:
 		player.cursor.visible = true
-		player._state = player.STATE.IDLE
 		player.lamp.get_child(0).visible = true
 		player.lamp_light.visible = true
 
@@ -119,6 +118,7 @@ func play_correct_sequence() -> void:
 	await get_tree().create_timer(1).timeout
 
 	for player in players:
+		player._state = player.STATE.IDLE
 		player._cpu_state = PicturePlayerController.CPU_STATE.SEARCHING
 		player.update_target_pos()
 		player.cpu_search_timer.start(player.CPU_SEARCH_TIME)

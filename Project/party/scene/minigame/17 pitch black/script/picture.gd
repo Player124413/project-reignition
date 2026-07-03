@@ -28,10 +28,13 @@ func set_correct_picture(chara: CHARACTER) -> void:
 	_character = chara
 	wrong = false
 
+func set_correct_picture_anim() -> void:
+	picture_animator.play(str(CHARACTER.keys()[_character]).to_lower() + "_correct")
+
 @rpc("any_peer", "call_local", "reliable")
 func set_incorrect_picture(num: int, chara: CHARACTER) -> void:
 	picture_animator.play(str(CHARACTER.keys()[chara]).to_lower() + "_" + str(num))
-	_character = chara
+	#_character = chara
 	wrong = true
 	collision_shape.set_deferred("disabled", false)
 
