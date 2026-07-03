@@ -22,7 +22,7 @@ public partial class JumpDashState : PlayerState
 
 	public override void EnterState()
 	{
-		if (!SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.FreeRoam))
+		if (!SaveManager.ActiveSkillRing.IsFreeRoamActive)
 		{
 			// Moving directly backwards -- jumpdash directly forward
 			if (ExtensionMethods.DeltaAngleRad(Player.MovementAngle, Player.PathFollower.BackAngle) <= Mathf.Pi * .25f)
@@ -139,7 +139,7 @@ public partial class JumpDashState : PlayerState
 		float turnSmoothing = Mathf.Lerp(Player.Stats.MinTurnAmount, maxTurnAmount, speedRatio);
 		Player.MovementAngle += pathControlAmount;
 		Turn(targetMovementAngle, turnSmoothing);
-		if (!SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.FreeRoam))
+		if (!SaveManager.ActiveSkillRing.IsFreeRoamActive)
 			Player.MovementAngle = ExtensionMethods.ClampAngleRange(Player.MovementAngle, Player.PathFollower.ForwardAngle, Mathf.Pi * .5f);
 
 		// Strafe implementation

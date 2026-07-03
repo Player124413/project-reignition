@@ -1,0 +1,46 @@
+[gd_scene format=3 uid="uid://fbmbmsypqykd"]
+
+[ext_resource type="Script" uid="uid://bok1re3f2cgsw" path="res://party/scene/minigame/12 canoe race/script/player_controller.gd" id="1_r4lm4"]
+[ext_resource type="PackedScene" uid="uid://c7v1xtivwofs8" path="res://party/scene/minigame/00 base/CanoeRoot.tscn" id="4_30qsr"]
+[ext_resource type="Script" uid="uid://ds056nimfywwr" path="res://party/script/core/rollback_timer.gd" id="4_r4lm4"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_e2t8q"]
+radius = 2.0
+height = 10.0
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_e2t8q"]
+radius = 1.0
+
+[node name="Player" type="Node3D" unique_id=1966362722 node_paths=PackedStringArray("rollback_timer", "character_body", "oar_attachment", "spawn_position")]
+script = ExtResource("1_r4lm4")
+rollback_timer = NodePath("RollbackTimer")
+character_body = NodePath("Root")
+oar_attachment = NodePath("Root/CanoeRoot/OarAttachment")
+spawn_position = NodePath("Root/CanoeRoot/Canoe")
+
+[node name="Root" type="CharacterBody3D" parent="." unique_id=1908688906]
+transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, 0)
+
+[node name="CanoeRoot" parent="Root" unique_id=264350525 instance=ExtResource("4_30qsr")]
+transform = Transform3D(1, 0, 0, 0, 0.6, 0, 0, 0, 1, 0, 0, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Root" unique_id=1103133292]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 2.5, 0)
+shape = SubResource("CapsuleShape3D_e2t8q")
+
+[node name="Area3D" type="Area3D" parent="Root" unique_id=858528954]
+collision_layer = 2
+collision_mask = 0
+monitoring = false
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Root/Area3D" unique_id=1003129210]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+shape = SubResource("SphereShape3D_e2t8q")
+
+[node name="RollbackTimer" type="Node" parent="." unique_id=2029090433]
+script = ExtResource("4_r4lm4")
+param_count = 4
+rollback_interval = 0.0
+metadata/_custom_type_script = "uid://ds056nimfywwr"
+
+[editable path="Root/CanoeRoot"]

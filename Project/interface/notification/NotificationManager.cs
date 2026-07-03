@@ -11,7 +11,10 @@ public partial class NotificationManager : Control
 {
 	public static NotificationManager Instance { get; private set; }
 	private NotificationData CurrentNotification => NotificationList[0];
+
 	private readonly List<NotificationData> NotificationList = [];
+	private readonly string SkillCollectorAchievementName = "skill collector";
+
 	public void AddNotification(NotificationType type, string description)
 	{
 		NotificationList.Add(new()
@@ -21,7 +24,7 @@ public partial class NotificationManager : Control
 		});
 	}
 
-	[Export] private Menus.Description description;
+	[Export] private Description description;
 	[Export] private AnimationPlayer animator;
 
 	public enum NotificationType
@@ -32,6 +35,7 @@ public partial class NotificationManager : Control
 		Page,
 		Party,
 		WorldRing,
+		TimeAttack,
 	}
 	public struct NotificationData
 	{
@@ -142,6 +146,7 @@ public partial class NotificationManager : Control
 		{
 			TransitionManager.Instance.Connect(TransitionManager.SignalName.TransitionProcess, new Callable(this, MethodName.HideMenu), (uint)ConnectFlags.OneShot);
 
+
 			// Connect the queued scene to transition signals
 			TransitionManager.QueueSceneChange(TransitionManager.Instance.QueuedScene);
 			TransitionManager.StartTransition(new()
@@ -151,6 +156,8 @@ public partial class NotificationManager : Control
 				color = Colors.Black,
 			});
 
+			if (SaveManager.ActiveSkillRing.UnlockedSkillCount() >= (int)SkillKey.Count - 1)
+				AchievementManager.Instance.UnlockAchievement(SkillCollectorAchievementName);
 			return;
 		}
 
@@ -162,6 +169,9 @@ public partial class NotificationManager : Control
 				break;
 			case NotificationType.World:
 				animator.Play("unlock_world");
+				break;
+			case NotificationType.TimeAttack:
+				animator.Play("unlock_time_attack");
 				break;
 			default:
 				animator.Play($"unlock_{CurrentNotification.type.ToString().ToLower()}");

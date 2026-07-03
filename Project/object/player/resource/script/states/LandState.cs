@@ -108,7 +108,7 @@ public partial class LandState : PlayerState
 		if (Mathf.IsZeroApprox(Player.MoveSpeed))
 			return idleState;
 
-		if (Player.IsMovingBackward && !SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.FreeRoam))
+		if (Player.IsMovingBackward && !SaveManager.ActiveSkillRing.IsFreeRoamActive)
 			return backstepState;
 
 		return runState;
@@ -127,12 +127,12 @@ public partial class LandState : PlayerState
 
 		// Only apply landing boost when holding forward to avoid accidents (See Sonic and the Black Knight)
 		float inputStrength = Player.Controller.GetInputStrength();
-		if (!SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.Autorun) && Mathf.IsZeroApprox(inputStrength))
+		if (!SaveManager.ActiveSkillRing.IsAutorunActive && Mathf.IsZeroApprox(inputStrength))
 			return;
 
 		float inputAngle = Player.Controller.GetTargetInputAngle();
 		float targetForwardAngle = Player.PathFollower.ForwardAngle;
-		if (SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.FreeRoam))
+		if (SaveManager.ActiveSkillRing.IsFreeRoamActive)
 			targetForwardAngle = Player.MovementAngle;
 
 		if (!Player.Controller.IsHoldingDirection(inputAngle, targetForwardAngle))

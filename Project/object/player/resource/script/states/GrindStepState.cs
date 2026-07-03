@@ -81,7 +81,7 @@ public partial class GrindStepState : PlayerState
 		Player.CheckGround();
 		Player.CheckWall();
 
-		if (Player.IsOnGround)
+		if (Player.IsOnGround || Player.GroundHit)
 			return landState;
 
 		if (Player.Controller.IsActionBufferActive ||
@@ -89,6 +89,7 @@ public partial class GrindStepState : PlayerState
 		{
 			Player.Controller.ResetJumpBuffer();
 			Player.Controller.ResetActionBuffer();
+			Player.IsStomping = true;
 			return stompState;
 		}
 

@@ -71,7 +71,8 @@ public partial class SkillOption : Control
 		foreach (SkillOption augment in augments)
 		{
 			// Update local visibility based on unlock status
-			augment.Visible = SaveManager.ActiveSkillRing.IsSkillUnlocked(augment.Skill);
+			augment.Visible = SaveManager.ActiveSkillRing.IsSkillUnlocked(augment.Skill) &&
+				(augment.Skill.Key != SkillKey.Character || augment.Skill.IsAugment);
 
 			if (!augment.Visible) // Skip hidden skills
 				continue;
@@ -83,7 +84,7 @@ public partial class SkillOption : Control
 			augment.Initialize(); // Redraw
 		}
 
-		animator.Play(AugmentMenuCount <= 1 ? "disable-augment" : "enable-augment");
+		animator.Play(AugmentMenuCount <= 1 && Skill.Key != SkillKey.Character ? "disable-augment" : "enable-augment");
 		animator.Advance(0);
 	}
 
@@ -97,8 +98,6 @@ public partial class SkillOption : Control
 			animator.Play("no-skill");
 			return;
 		}
-
-
 
 		RedrawStaticData();
 		Redraw();

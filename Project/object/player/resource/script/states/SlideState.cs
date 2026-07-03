@@ -136,7 +136,7 @@ public partial class SlideState : PlayerState
 			return runState;
 		}
 
-		if (Player.Controller.IsAttackBufferActive && Player.Lockon.IsTargetAttackable)
+		if (Player.Controller.IsAttackBufferActive && Player.Lockon.IsTargetAttackable && !Player.Controller.IsBrakeHeld())
 		{
 			Player.Controller.ResetAttackBuffer();
 			return homingAttackState;
@@ -166,7 +166,7 @@ public partial class SlideState : PlayerState
 		float inputAngle = Player.Controller.GetTargetMovementAngle();
 		if (Player.Controller.IsHoldingDirection(inputAngle, Player.MovementAngle + Mathf.Pi))
 			inputAmount = -(1 + inputStrength) * .5f; // -0.5 to -1
-		else if (SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.Autorun))
+		else if (SaveManager.ActiveSkillRing.IsAutorunActive)
 			inputAmount = 0;
 		else if (Player.Controller.IsHoldingDirection(inputAngle, Player.MovementAngle))
 			inputAmount = -(1 - inputStrength) * .5f; // 0 to -0.5
@@ -177,7 +177,7 @@ public partial class SlideState : PlayerState
 	{
 		targetMovementAngle = base.ProcessTargetMovementAngle(targetMovementAngle);
 
-		if (SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.FreeRoam))
+		if (SaveManager.ActiveSkillRing.IsFreeRoamActive)
 			return targetMovementAngle;
 
 		return ExtensionMethods.ClampAngleRange(targetMovementAngle, Player.PathFollower.ForwardAngle, MaxTurningAdjustment);

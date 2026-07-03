@@ -25,7 +25,9 @@ public partial class BemothHornState : PlayerState
 	}
 	/// <summary> Used to mimmick the "optimal speedrun strat" in the original game. </summary>
 	private float pullChargeTimer;
+	private float shakeTimer;
 	private readonly float OptimalPullChargeTiming = .4f;
+	private readonly float ShakeLength = .2f;
 	private readonly string JumpAction = "action_jump";
 	private readonly string PullAction = "action_pull";
 
@@ -83,15 +85,39 @@ public partial class BemothHornState : PlayerState
 	private void ProcessPullCharge()
 	{
 		if (!CanPullHorns)
-			return;
+		{
+			if (Player.Controller.IsDownShakeRegistered())
+				shakeTimer = ShakeLength;
 
-		if (Input.IsActionPressed("button_action") || Input.IsActionPressed("button_attack"))
+			return;
+		}
+
+		if (Player.Controller.IsDownShakeRegistered())
+		{
+			if (!Trigger.IsJoltingHorn && Mathf.IsZeroApprox(shakeTimer))
+			{
+				StartPull();
+				return;
+			}
+
+			shakeTimer = ShakeLength;
+		}
+
+		if (Input.IsActionPressed("button_action") || Input.IsActionPressed("button_attack") || Player.Controller.IsGyroEnabled)
 		{
 			if (Mathf.IsEqualApprox(pullChargeTimer, OptimalPullChargeTiming)) // Already charged
-				return;
+			{
+				if (Mathf.IsZeroApprox(shakeTimer))
+					return;
 
-			pullChargeTimer = Mathf.MoveToward(pullChargeTimer, OptimalPullChargeTiming, PhysicsManager.physicsDelta);
-			return;
+				StartPull();
+			}
+
+			if (!Player.Controller.IsGyroEnabled || !Mathf.IsZeroApprox(shakeTimer))
+			{
+				pullChargeTimer = Mathf.MoveToward(pullChargeTimer, OptimalPullChargeTiming, PhysicsManager.physicsDelta);
+				return;
+			}
 		}
 
 		if (Mathf.IsZeroApprox(pullChargeTimer))
@@ -99,15 +125,20 @@ public partial class BemothHornState : PlayerState
 
 		if (!Trigger.IsJoltingHorn)
 		{
-			Trigger.JoltHorn(PullStrength);
-			if (PullStrength > 2) // Feedback
-				Player.Camera.StartMediumCameraShake();
-			Player.Controller.ResetActionBuffer();
-
-			pullChargeTimer = 0f;
+			StartPull();
 			return;
 		}
 
 		pullChargeTimer = Mathf.MoveToward(pullChargeTimer, 0, PhysicsManager.physicsDelta);
+	}
+
+	private void StartPull()
+	{
+		Trigger.JoltHorn(PullStrength);
+		if (PullStrength > 2) // Feedback
+			Player.Camera.StartMediumCameraShake();
+		Player.Controller.ResetActionBuffer();
+		pullChargeTimer = 0f;
+		shakeTimer = 0f;
 	}
 }

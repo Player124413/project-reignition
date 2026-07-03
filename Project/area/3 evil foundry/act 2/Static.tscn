@@ -37,6 +37,10 @@
 [ext_resource type="PackedScene" uid="uid://cs7ogaqrx3sn5" path="res://area/3 evil foundry/data/shader/ScreenWarp.tscn" id="29_vht2p"]
 [ext_resource type="Script" uid="uid://coiui4qvdxbqe" path="res://object/trigger/modules/EventTrigger.cs" id="32_x8oaf"]
 [ext_resource type="Resource" uid="uid://exe3134bde8n" path="res://resource/bgm/bgm ef act2.tres" id="37_7ania"]
+[ext_resource type="AudioStream" uid="uid://6x5o6oa4x2dn" path="res://sound/sfx/stage/evil foundry/ambience.wav" id="38_arghx"]
+[ext_resource type="AudioStream" uid="uid://dboe0vlmeni2u" path="res://sound/sfx/stage/evil foundry/factory ambience.wav" id="39_y7sxp"]
+[ext_resource type="AudioStream" uid="uid://dbmpay7u8cx83" path="res://sound/sfx/stage/evil foundry/open lava area.wav" id="40_kw7l1"]
+[ext_resource type="AudioStream" uid="uid://c3k3t15xxijst" path="res://sound/sfx/stage/evil foundry/hot pipe area.wav" id="41_lw2hc"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_c5gu7"]
 size = Vector3(10, 10, 5)
@@ -1349,36 +1353,33 @@ startEnabled = true
 
 [node name="10Spiral" parent="Visuals" unique_id=1500602786 instance=ExtResource("15_xd5yw")]
 
-[node name="stg031_g36_Mesh_0000" parent="Visuals/10Spiral" index="36" unique_id=1697755979]
+[node name="stg031_g36_Mesh_0000" parent="Visuals/10Spiral" index="36" unique_id=17786149]
 visible = false
 
-[node name="stg031_lighting_36_Mesh_0000" parent="Visuals/10Spiral" index="37" unique_id=1177818639]
+[node name="stg031_lighting_36_Mesh_0000" parent="Visuals/10Spiral" index="37" unique_id=1280942754]
 visible = false
 
-[node name="stg031_o36_Mesh_0000" parent="Visuals/10Spiral" index="39" unique_id=1433548183]
+[node name="stg031_o36_Mesh_0000" parent="Visuals/10Spiral" index="39" unique_id=1147006273]
 surface_material_override/0 = SubResource("StandardMaterial3D_3eg40")
 
 [node name="11Hall" parent="Visuals" unique_id=205246602 instance=ExtResource("16_ll6ca")]
 
-[node name="stg031_g37_Mesh_0000" parent="Visuals/11Hall" index="27" unique_id=118188894]
+[node name="stg031_g37_Mesh_0000" parent="Visuals/11Hall" index="27" unique_id=1455629561]
 visible = false
 
-[node name="stg031_lighting_37_Mesh_0000" parent="Visuals/11Hall" index="29" unique_id=770659074]
+[node name="stg031_lighting_37_Mesh_0000" parent="Visuals/11Hall" index="29" unique_id=1892077299]
 visible = false
 
 [node name="12End" parent="Visuals" unique_id=573688717 instance=ExtResource("17_h4u1h")]
 
-[node name="stg031_g02_Mesh_0001" parent="Visuals/12End" index="30" unique_id=1744073298]
+[node name="stg031_g02_Mesh_0001" parent="Visuals/12End" index="30" unique_id=1187974422]
 visible = false
 
-[node name="stg031_g02_Mesh_0002" parent="Visuals/12End" index="31" unique_id=397154495]
+[node name="stg031_g02_Mesh_0002" parent="Visuals/12End" index="31" unique_id=1791038696]
 visible = false
 
-[node name="stg031_lighting_01_Mesh_0000" parent="Visuals/12End" index="32" unique_id=1064620468]
+[node name="stg031_lighting_01_Mesh_0000" parent="Visuals/12End" index="32" unique_id=1969273323]
 visible = false
-
-[node name="AnimationPlayer" parent="Visuals/12End" index="34" unique_id=1865556537]
-autoplay = &"12"
 
 [node name="Lighting" type="Node3D" parent="." unique_id=1923084673]
 
@@ -1537,6 +1538,128 @@ blendTime = 0.0
 environment = SubResource("Environment_qpgxq")
 
 [node name="ScreenWarp" parent="." unique_id=836518577 instance=ExtResource("29_vht2p")]
+
+[node name="Sound" type="Node3D" parent="." unique_id=1829260109]
+
+[node name="Base" type="AudioStreamPlayer3D" parent="Sound" unique_id=463519508]
+stream = ExtResource("38_arghx")
+attenuation_model = 3
+volume_db = -5.0
+max_db = 0.0
+autoplay = true
+panning_strength = 0.0
+bus = &"GAME SFX"
+area_mask = 1
+attenuation_filter_db = 0.0
+
+[node name="Base2" type="AudioStreamPlayer3D" parent="Sound" unique_id=2018024460]
+stream = ExtResource("39_y7sxp")
+attenuation_model = 3
+volume_db = -15.0
+max_db = 0.0
+autoplay = true
+panning_strength = 0.0
+bus = &"GAME SFX"
+area_mask = 1
+attenuation_filter_db = 0.0
+
+[node name="MagmaAreas" type="Node3D" parent="Sound" unique_id=237732757]
+
+[node name="LavaOpen2" type="AudioStreamPlayer3D" parent="Sound/MagmaAreas" unique_id=381852422]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 17.669262, 58.00426, -188.80286)
+stream = ExtResource("40_kw7l1")
+attenuation_model = 3
+max_db = 0.0
+autoplay = true
+max_distance = 90.0
+panning_strength = 0.0
+bus = &"GAME SFX"
+area_mask = 1
+attenuation_filter_db = 0.0
+
+[node name="LavaOpen3" type="AudioStreamPlayer3D" parent="Sound/MagmaAreas" unique_id=1227894481]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 17.669262, 58.00426, -293.87076)
+stream = ExtResource("40_kw7l1")
+attenuation_model = 3
+max_db = 0.0
+autoplay = true
+max_distance = 90.0
+panning_strength = 0.0
+bus = &"GAME SFX"
+area_mask = 1
+attenuation_filter_db = 0.0
+
+[node name="LavaOpen4" type="AudioStreamPlayer3D" parent="Sound/MagmaAreas" unique_id=521033482]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 17.669262, 58.00426, -409.45114)
+stream = ExtResource("40_kw7l1")
+attenuation_model = 3
+max_db = 0.0
+autoplay = true
+max_distance = 90.0
+panning_strength = 0.0
+bus = &"GAME SFX"
+area_mask = 1
+attenuation_filter_db = 0.0
+
+[node name="LavaOpen5" type="AudioStreamPlayer3D" parent="Sound/MagmaAreas" unique_id=1800750525]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 121.30144, 58.00426, -409.45114)
+stream = ExtResource("40_kw7l1")
+attenuation_model = 3
+max_db = 0.0
+autoplay = true
+max_distance = 90.0
+panning_strength = 0.0
+bus = &"GAME SFX"
+area_mask = 1
+attenuation_filter_db = 0.0
+
+[node name="LavaOpen6" type="AudioStreamPlayer3D" parent="Sound/MagmaAreas" unique_id=1061826913]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 121.30144, 58.00426, -286.43155)
+stream = ExtResource("40_kw7l1")
+attenuation_model = 3
+max_db = 0.0
+autoplay = true
+max_distance = 90.0
+panning_strength = 0.0
+bus = &"GAME SFX"
+area_mask = 1
+attenuation_filter_db = 0.0
+
+[node name="LavaOpen7" type="AudioStreamPlayer3D" parent="Sound/MagmaAreas" unique_id=2040692307]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 188.19125, 41.08089, -180.00778)
+stream = ExtResource("40_kw7l1")
+attenuation_model = 3
+max_db = 0.0
+autoplay = true
+max_distance = 68.15
+panning_strength = 0.0
+bus = &"GAME SFX"
+area_mask = 1
+attenuation_filter_db = 0.0
+
+[node name="HotPipes" type="AudioStreamPlayer3D" parent="Sound" unique_id=1492582551]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 71.76955, 43.889626, -466.173)
+stream = ExtResource("41_lw2hc")
+attenuation_model = 3
+autoplay = true
+max_distance = 67.48
+panning_strength = 0.0
+bus = &"GAME SFX"
+area_mask = 1
+playback_type = 1
+attenuation_filter_db = 0.0
+
+[node name="HotPipes2" type="AudioStreamPlayer3D" parent="Sound" unique_id=2071762766]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 119.875305, 43.889626, -222.47073)
+stream = ExtResource("41_lw2hc")
+attenuation_model = 3
+autoplay = true
+max_distance = 30.0
+panning_strength = 0.0
+bus = &"GAME SFX"
+area_mask = 1
+playback_type = 1
+attenuation_filter_db = 0.0
 
 [connection signal="Activated" from="Trigger/Object/SidleTrigger" to="Trigger/Object/SidleTrigger/Camera" method="Activate"]
 [connection signal="Deactivated" from="Trigger/Object/SidleTrigger" to="Trigger/Object/SidleTrigger/Camera" method="Deactivate"]

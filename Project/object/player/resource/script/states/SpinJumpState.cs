@@ -73,11 +73,13 @@ public partial class SpinJumpState : PlayerState
 			if (Player.Lockon.IsTargetAttackable)
 				return homingAttackState;
 
-			if (Player.IsDarkspineSonic &&
-				(Player.Controller.InputAxis.IsZeroApprox() ||
-				!Player.Controller.IsHoldingDirection(Player.Controller.GetTargetInputAngle(), Player.MovementAngle)))
+			if (Player.IsDarkspineSonic)
 			{
-				return darkspineSpinState;
+				if (Player.Controller.IsBrakeHeld() || !Player.Controller.IsGyroEnabled && (Player.Controller.InputAxis.IsZeroApprox() ||
+					!Player.Controller.IsHoldingDirection(Player.Controller.GetTargetInputAngle(), Player.MovementAngle)))
+				{
+					return darkspineSpinState;
+				}
 			}
 
 			return jumpDashState;

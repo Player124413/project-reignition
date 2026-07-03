@@ -664,7 +664,7 @@ public partial class PlayerCameraController : Node3D
 
 	private bool IsUsingBackstepCamera()
 	{
-		if (SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.FreeRoam))
+		if (SaveManager.ActiveSkillRing.IsFreeRoamActive)
 			return ExtensionMethods.DotAngle(Player.MovementAngle, Player.PathFollower.ForwardAngle) < 0f;
 
 		return Player.IsMovingBackward;

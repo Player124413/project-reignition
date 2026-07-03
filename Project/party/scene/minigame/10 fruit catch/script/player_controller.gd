@@ -50,8 +50,9 @@ func on_spawn_finished() -> void:
 	copy_transform_modifier.reparent(character_animator.skeleton)
 	copy_transform_modifier.set_reference_node(0, copy_transform_modifier.get_path_to(hand_end))
 	initial_transform = hand_end.global_transform
-	if is_instance_valid(character_animator.data) && character_animator.data.model_size == PartyCharacterResource.MODEL_SIZES.SMALL:
-		character_animator.position += Vector3.UP * 2 # Slightly lower for smaller models
+	if is_instance_valid(character_animator.data):
+		if character_animator.data.model_size == PartyCharacterResource.MODEL_SIZES.SMALL || character_animator.data.model_size == PartyCharacterResource.MODEL_SIZES.EXTRA_SMALL:
+			character_animator.position += Vector3.UP * 2 # Slightly lower for smaller models
 
 func on_fruit_spawned(fruit : Node3D) -> void:
 	cpu_fruit_queue.append(fruit)

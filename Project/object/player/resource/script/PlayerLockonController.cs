@@ -77,7 +77,7 @@ public partial class PlayerLockonController : Area3D
 	{
 		bool wasTargetChanged = false;
 
-		if (SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.Autorun))
+		if (SaveManager.ActiveSkillRing.IsAutorunActive)
 			GlobalRotation = Vector3.Up * Player.PathFollower.ForwardAngle;
 
 		isSideScrolling = Player.IsLockoutOverridingMovementAngle &&
@@ -279,18 +279,16 @@ public partial class PlayerLockonController : Area3D
 		if (Player.Camera.LockonTarget == target) // Always focus on camera lockon targets
 			return false;
 
-		float inputStrength = Player.Controller.GetInputStrength();
-		if (inputStrength < .8f) // Player isn't decisive enough
-			return false;
-
 		Vector3 direction = (target.GlobalPosition - Player.GlobalPosition).RemoveVertical();
 		float angle = ExtensionMethods.CalculateForwardAngle(direction);
 		if (ExtensionMethods.DotAngle(angle, Player.PathFollower.ForwardAngle) > 0) // Player is moving towards lockon-don't ignore it!
 			return false;
 
+		float inputStrength = Player.Controller.GetInputStrength();
 		float distance = direction.Flatten().Length();
-		bool isHoldingForward = Player.Controller.IsHoldingDirection(Player.Controller.GetTargetInputAngle(), Player.PathFollower.ForwardAngle);
-		return distance <= IgnoreTargetDistance && isHoldingForward;
+		bool isHoldingForward = inputStrength > 0.8f && Player.Controller.IsHoldingDirection(Player.Controller.GetTargetInputAngle(), Player.PathFollower.ForwardAngle);
+		bool isIgnoringTarget = isHoldingForward || (SaveManager.ActiveSkillRing.IsAutorunActive && !Player.Controller.IsBrakeHeld());
+		return distance <= IgnoreTargetDistance && isIgnoringTarget;
 	}
 
 	private bool HitObstacle(Node3D target)

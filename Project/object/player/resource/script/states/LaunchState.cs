@@ -12,10 +12,12 @@ public partial class LaunchState : PlayerState
 	[Export] private PlayerState stompState;
 	[Export] private PlayerState fallState;
 
+	private bool isDoublingJumping;
 	public LaunchSettings Settings { get; private set; }
 	public Launcher ActiveLauncher => Settings.Launcher;
 	private float launcherTime;
 	private RaycastHit wallHit;
+	private readonly float LaunchLength = 0.2f;
 	public bool UpdateSettings(LaunchSettings settings)
 	{
 		if (settings.startPosition.IsEqualApprox(settings.endPosition) &&
@@ -39,6 +41,7 @@ public partial class LaunchState : PlayerState
 	{
 		launcherTime = 0;
 		wallHit = new();
+		isDoublingJumping = false;
 
 		Player.IsOnGround = false;
 		Player.IsLaunching = true;
@@ -83,7 +86,7 @@ public partial class LaunchState : PlayerState
 	public override void ExitState()
 	{
 		Player.IsLaunching = false;
-		if (!wallHit)
+		if (!wallHit && !isDoublingJumping)
 		{
 			Player.MoveSpeed = Settings.HorizontalVelocity * .5f; // Prevent too much movement
 			Player.VerticalSpeed = Player.IsOnGround ? 0 : Settings.FinalVerticalVelocity;
@@ -131,11 +134,18 @@ public partial class LaunchState : PlayerState
 			return landState;
 		}
 
-		if (Settings.AllowInterruption)
+		if (Settings.AllowInterruption && launcherTime >= LaunchLength)
 		{
 			if (Player.Controller.IsJumpBufferActive)
 			{
 				Player.Controller.ResetJumpBuffer();
+				if (Player.CanDoubleJump && SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.DoubleJump)) // Start a double jump
+				{
+					isDoublingJumping = true;
+					Player.StartDoubleJump();
+					return null;
+				}
+
 				if (SaveManager.Config.jumpButtonMode == SaveManager.JumpButtonModeEnum.Stomp)
 					return stompState;
 

@@ -97,11 +97,14 @@ public partial class PlayerSkillController : Node3D
 			SkillRing.IsSkillEquipped(SkillKey.CrestFire) ||
 			SkillRing.IsSkillEquipped(SkillKey.CrestDark);
 
-		// Update crest of flame's trail color
-		if (Player.IsDarkspineSonic)
-			Player.Effect.UpdateTrailHueShift(DarkspineHueOffset);
-		else
-			Player.Effect.UpdateTrailHueShift(AllowCrestSkill && SkillRing.IsSkillEquipped(SkillKey.CrestFire) ? CrestOfFlameHueOffset : DefaultHueOffset);
+		if (!SkillRing.IsSkillEquipped(SkillKey.Character))
+		{
+			// Update crest of flame's trail color
+			if (Player.IsDarkspineSonic)
+				Player.Effect.UpdateTrailHueShift(DarkspineHueOffset);
+			else
+				Player.Effect.UpdateTrailHueShift(AllowCrestSkill && SkillRing.IsSkillEquipped(SkillKey.CrestFire) ? CrestOfFlameHueOffset : DefaultHueOffset);
+		}
 	}
 
 	private readonly float WindCrestSpeedMultiplier = 1.5f;
@@ -461,8 +464,7 @@ public partial class PlayerSkillController : Node3D
 			if (isAirBoost)
 				Player.CanAirBoost = false;
 
-			if (!isInstantSpeedbreak)
-				speedBreakTimer = SpeedBreakDelay;
+			speedBreakTimer = isInstantSpeedbreak ? 0.001f : SpeedBreakDelay;
 		}
 		else
 		{
@@ -480,7 +482,7 @@ public partial class PlayerSkillController : Node3D
 			speedBreakAnimator.Advance(0.0);
 			speedBreakParticles.SetEmitting(true);
 
-			if (!SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.FreeRoam))
+			if (!SaveManager.ActiveSkillRing.IsFreeRoamActive)
 				Player.MovementAngle = Player.PathFollower.ForwardAngle;
 
 			if (!isInstantSpeedbreak)

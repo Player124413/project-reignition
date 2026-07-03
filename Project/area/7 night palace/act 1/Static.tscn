@@ -52,7 +52,7 @@
 [ext_resource type="Resource" uid="uid://bku7n4ufln8ro" path="res://resource/preset/camera/common/StaticCam.tres" id="27_pyq2g"]
 [ext_resource type="Curve3D" uid="uid://bu2xlhn0gs3pw" path="res://area/7 night palace/act 1/environment/path/SpaceAPath.tres" id="29_42w86"]
 [ext_resource type="Curve3D" uid="uid://dme7e0d67phan" path="res://area/7 night palace/act 1/environment/path/SpaceBPath.tres" id="30_wgmg4"]
-[ext_resource type="Curve3D" uid="uid://l07xy3ljfoki" path="res://area/7 night palace/act 1/environment/path/SpaceCPath.tres" id="31_vfagc"]
+[ext_resource type="Curve3D" uid="uid://0118jjx4y4ma" path="res://area/7 night palace/act 1/environment/path/SpaceCPath.tres" id="31_vfagc"]
 [ext_resource type="Texture2D" uid="uid://c4b0rmtreq4w6" path="res://area/7 night palace/data/skybox/model/texture/moon glow.png" id="39_mgyvg"]
 [ext_resource type="Texture2D" uid="uid://caxeerv5m6p41" path="res://area/7 night palace/data/skybox/model/texture/sky moon.png" id="40_l0dmw"]
 [ext_resource type="Curve3D" uid="uid://dpokcowfe8c78" path="res://area/7 night palace/act 1/environment/path/GasRoomPath.tres" id="40_nugtn"]
@@ -70,10 +70,13 @@
 [ext_resource type="PackedScene" uid="uid://b2ym415hopd85" path="res://area/7 night palace/object/Carpet.tscn" id="52_vgsxs"]
 [ext_resource type="Resource" uid="uid://blg2b6vgjsl4x" path="res://area/7 night palace/act 1/camera/CarpetJumpCam.tres" id="52_wlx14"]
 [ext_resource type="Resource" uid="uid://b3ti60dq0o0ro" path="res://area/7 night palace/act 1/camera/CarpetCam.tres" id="53_51kfd"]
-[ext_resource type="Curve3D" uid="uid://cnilxlm5iir3r" path="res://area/7 night palace/act 1/environment/path/SpaceC2Path.tres" id="57_cppoj"]
-[ext_resource type="Curve3D" uid="uid://dhba6rm8wpm31" path="res://area/7 night palace/act 1/environment/path/SpaceC3Path.tres" id="58_guye2"]
+[ext_resource type="Curve3D" uid="uid://cmcvug7dbe85a" path="res://area/7 night palace/act 1/environment/path/SpaceC2Path.tres" id="57_cppoj"]
+[ext_resource type="Curve3D" uid="uid://bhivojgxr36sl" path="res://area/7 night palace/act 1/environment/path/SpaceC3Path.tres" id="58_guye2"]
 [ext_resource type="Resource" uid="uid://b808qipr112qt" path="res://area/7 night palace/act 1/camera/CarpetAutorunCam.tres" id="59_guye2"]
 [ext_resource type="Resource" uid="uid://w6ax6wllo7x8" path="res://resource/bgm/bgm np act1.tres" id="64_guye2"]
+[ext_resource type="AudioStream" uid="uid://dcyou6xxsxhoq" path="res://sound/sfx/stage/night palace/starting torch ambience.wav" id="75_g4ytx"]
+[ext_resource type="AudioStream" uid="uid://bps2bv273awbs" path="res://sound/sfx/stage/pirate storm/cave ambience.wav" id="76_tc8c3"]
+[ext_resource type="AudioStream" uid="uid://b7oft4g34vp5u" path="res://sound/sfx/stage/levitated ruin/ambience.wav" id="77_scag8"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_mow5f"]
 size = Vector3(20, 20, 5)
@@ -1011,6 +1014,75 @@ _data = {
 &"demo2": SubResource("Animation_w6bbh"),
 &"demo3": SubResource("Animation_81pee")
 }
+
+[sub_resource type="GDScript" id="GDScript_i2aec"]
+script/source = "extends Area3D
+
+@export_range(0.0, 1.0) var wet_target: float = 0.5
+@export var fade_time: float = 0.4
+
+# Shared by ALL instances of this script — one reverb effect on one bus.
+static var _bus_idx: int = -1
+static var _reverb: AudioEffectReverb
+static var _tween: Tween
+static var _active: Array = []   # zones currently containing the player
+
+func _ready() -> void:
+	if _bus_idx == -1:
+		_bus_idx = AudioServer.get_bus_index(\"GAME SFX\")
+		if _bus_idx == -1:
+			push_error(\"Audio bus 'GAME SFX' not found.\")
+			return
+		_reverb = AudioServer.get_bus_effect(_bus_idx, 0) as AudioEffectReverb
+		if _reverb:
+			_reverb.wet = 0.0
+			AudioServer.set_bus_effect_enabled(_bus_idx, 0, false)
+	body_entered.connect(_on_body_entered)
+	body_exited.connect(_on_body_exited)
+
+func _exit_tree() -> void:
+	_active.erase(self)
+
+func _on_body_entered(body: Node3D) -> void:
+	if not body.is_in_group(\"player\"):
+		return
+	if not _active.has(self):
+		_active.append(self)
+	_apply()
+
+func _on_body_exited(body: Node3D) -> void:
+	if not body.is_in_group(\"player\"):
+		return
+	_active.erase(self)
+	_apply()
+
+func _apply() -> void:
+	if _reverb == null:
+		return
+	var target := 0.0
+	if not _active.is_empty():
+		target = _active.back().get(\"wet_target\")
+	if target > 0.0:
+		AudioServer.set_bus_effect_enabled(_bus_idx, 0, true)
+	if _tween and _tween.is_valid():
+		_tween.kill()
+	_tween = create_tween()
+	_tween.tween_property(_reverb, \"wet\", target, fade_time)
+	if is_zero_approx(target):
+		_tween.tween_callback(_disable)
+
+func _disable() -> void:
+	AudioServer.set_bus_effect_enabled(_bus_idx, 0, false)
+"
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_amxiy"]
+size = Vector3(101.24121, 61.222595, 119.92012)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_iftxh"]
+size = Vector3(87.833496, 61.222595, 109.07151)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_sidgj"]
+size = Vector3(369.42365, 94.1196, 109.07151)
 
 [node name="Static" type="Node3D" unique_id=1663169071 node_paths=PackedStringArray("pathParent", "completionAnimator", "Environment")]
 script = ExtResource("1_siayx")
@@ -2160,13 +2232,13 @@ startEnabled = true
 [node name="Skybox" parent="Visuals/MainSection" unique_id=1114181453 instance=ExtResource("3_dbu0p")]
 transform = Transform3D(0.8, 0, 0, 0, 0.8, 0, 0, 0, 0.8, 0, 0, 0)
 
-[node name="BloomMesh" parent="Visuals/MainSection/Skybox/SkyRoot/Skeleton3D" parent_id_path=PackedInt32Array(1114181453, 1102596825) index="1" unique_id=710088823]
+[node name="BloomMesh" parent="Visuals/MainSection/Skybox/SkyRoot/Skeleton3D" parent_id_path=PackedInt32Array(1114181453, 1333920415) index="1" unique_id=1512399068]
 surface_material_override/0 = SubResource("StandardMaterial3D_w6bbh")
 
-[node name="MoonBackgroundMesh" parent="Visuals/MainSection/Skybox/SkyRoot/Skeleton3D" parent_id_path=PackedInt32Array(1114181453, 1102596825) index="4" unique_id=1723883963]
+[node name="MoonBackgroundMesh" parent="Visuals/MainSection/Skybox/SkyRoot/Skeleton3D" parent_id_path=PackedInt32Array(1114181453, 1333920415) index="4" unique_id=277762370]
 surface_material_override/0 = SubResource("StandardMaterial3D_81pee")
 
-[node name="MoonMesh" parent="Visuals/MainSection/Skybox/SkyRoot/Skeleton3D" parent_id_path=PackedInt32Array(1114181453, 1102596825) index="5" unique_id=403737835]
+[node name="MoonMesh" parent="Visuals/MainSection/Skybox/SkyRoot/Skeleton3D" parent_id_path=PackedInt32Array(1114181453, 1333920415) index="5" unique_id=276534196]
 surface_material_override/0 = SubResource("StandardMaterial3D_ikryj")
 
 [node name="DepthRenderer" type="Node" parent="Visuals/MainSection" unique_id=5560633 node_paths=PackedStringArray("depthCamera", "depthViewport", "depthViewportContainer")]
@@ -2252,16 +2324,16 @@ isStageVisuals = true
 
 [node name="SpaceSkybox" parent="Visuals/SpaceSection" unique_id=401803570 instance=ExtResource("19_grfne")]
 
-[node name="SpaceSky" parent="Visuals/SpaceSection/SpaceSkybox" index="0" unique_id=134689175]
+[node name="SpaceSky" parent="Visuals/SpaceSection/SpaceSkybox" index="0" unique_id=1924412261]
 surface_material_override/0 = SubResource("ShaderMaterial_tj2qf")
 
-[node name="SpaceSkyBlend" parent="Visuals/SpaceSection/SpaceSkybox" index="1" unique_id=396842846]
+[node name="SpaceSkyBlend" parent="Visuals/SpaceSection/SpaceSkybox" index="1" unique_id=1193272609]
 surface_material_override/0 = SubResource("ShaderMaterial_g4ytx")
 
-[node name="SpaceFog" parent="Visuals/SpaceSection/SpaceSkybox" index="2" unique_id=1923724327]
+[node name="SpaceFog" parent="Visuals/SpaceSection/SpaceSkybox" index="2" unique_id=414494873]
 surface_material_override/0 = SubResource("ShaderMaterial_tc8c3")
 
-[node name="SpaceFog2" parent="Visuals/SpaceSection/SpaceSkybox" index="3" unique_id=41039738]
+[node name="SpaceFog2" parent="Visuals/SpaceSection/SpaceSkybox" index="3" unique_id=1733903990]
 surface_material_override/0 = SubResource("ShaderMaterial_scag8")
 
 [node name="07GasRoom" parent="Visuals/SpaceSection" unique_id=6521878 instance=ExtResource("23_fk3k1")]
@@ -2488,6 +2560,235 @@ reflectionMaterials = [ExtResource("46_3fvhm")]
 
 [node name="SecondaryReflectionRenderer" parent="." unique_id=1533439138 instance=ExtResource("27_lklb2")]
 reflectionMaterials = [ExtResource("47_eiuc0")]
+
+[node name="Sound" type="Node3D" parent="." unique_id=1168185386]
+
+[node name="Interior" type="Node3D" parent="Sound" unique_id=880048378]
+
+[node name="ReverbAreaGAME SFX BUS" type="Area3D" parent="Sound/Interior" unique_id=2116268681]
+top_level = true
+collision_layer = 3
+collision_mask = 3
+priority = 1
+reverb_bus_amount = 0.5
+script = SubResource("GDScript_i2aec")
+wet_target = 0.15
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Sound/Interior/ReverbAreaGAME SFX BUS" unique_id=1571546354]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14.143921, 27.61702, -13.684715)
+top_level = true
+shape = SubResource("BoxShape3D_amxiy")
+debug_color = Color(0.9954193, 0, 0.21351609, 0.41960785)
+
+[node name="ReverbAreaGAME SFX BUS2" type="Area3D" parent="Sound/Interior" unique_id=238839588]
+top_level = true
+collision_layer = 3
+collision_mask = 3
+priority = 1
+reverb_bus_amount = 0.5
+script = SubResource("GDScript_i2aec")
+wet_target = 0.15
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Sound/Interior/ReverbAreaGAME SFX BUS2" unique_id=2019818045]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -198.90926, 27.61702, -495.77573)
+top_level = true
+shape = SubResource("BoxShape3D_iftxh")
+debug_color = Color(0.9954193, 0, 0.21351609, 0.41960785)
+
+[node name="ReverbAreaGAME SFX BUS3" type="Area3D" parent="Sound/Interior" unique_id=212224323]
+top_level = true
+collision_layer = 3
+collision_mask = 3
+priority = 1
+reverb_bus_amount = 0.5
+script = SubResource("GDScript_i2aec")
+wet_target = 0.15
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Sound/Interior/ReverbAreaGAME SFX BUS3" unique_id=122546269]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 507.9271, -77.69157, -495.77573)
+top_level = true
+shape = SubResource("BoxShape3D_sidgj")
+debug_color = Color(0.9954193, 0, 0.21351609, 0.41960785)
+
+[node name="Torch_L" type="AudioStreamPlayer3D" parent="Sound/Interior" unique_id=536611825]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -17.675278, 8.375941, -10.952209)
+stream = ExtResource("75_g4ytx")
+volume_db = -5.0
+max_db = 6.0
+autoplay = true
+max_distance = 40.0
+panning_strength = 3.0
+bus = &"GAME SFX"
+area_mask = 1
+attenuation_filter_db = 0.0
+
+[node name="Torch_R" type="AudioStreamPlayer3D" parent="Sound/Interior" unique_id=290777307]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 18.420189, 8.375941, -10.952209)
+stream = ExtResource("75_g4ytx")
+volume_db = -5.0
+max_db = 6.0
+autoplay = true
+max_distance = 40.0
+panning_strength = 3.0
+bus = &"GAME SFX"
+area_mask = 1
+attenuation_filter_db = 0.0
+
+[node name="Space Area" type="AudioStreamPlayer3D" parent="Sound/Interior" unique_id=1132430703]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 890.8452, 0, -650.2883)
+stream = ExtResource("76_tc8c3")
+attenuation_model = 3
+volume_db = 40.0
+unit_size = 100.0
+max_db = 6.0
+autoplay = true
+max_distance = 200.0
+panning_strength = 0.0
+bus = &"GAME SFX"
+area_mask = 1
+attenuation_filter_db = 0.0
+
+[node name="Space Area2" type="AudioStreamPlayer3D" parent="Sound/Interior" unique_id=1116553999]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 883.05334, 0, -292.65662)
+stream = ExtResource("76_tc8c3")
+attenuation_model = 3
+volume_db = 40.0
+unit_size = 100.0
+max_db = 6.0
+autoplay = true
+max_distance = 200.0
+panning_strength = 0.0
+bus = &"GAME SFX"
+area_mask = 1
+attenuation_filter_db = 0.0
+
+[node name="Space Area3" type="AudioStreamPlayer3D" parent="Sound/Interior" unique_id=650686206]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 883.05334, 0, -462.65204)
+stream = ExtResource("76_tc8c3")
+attenuation_model = 3
+volume_db = 40.0
+unit_size = 100.0
+max_db = 6.0
+autoplay = true
+max_distance = 200.0
+panning_strength = 0.0
+bus = &"GAME SFX"
+area_mask = 1
+attenuation_filter_db = 0.0
+
+[node name="Exterior" type="Node3D" parent="Sound" unique_id=1426943634]
+
+[node name="OutdoorWind" type="AudioStreamPlayer3D" parent="Sound/Exterior" unique_id=1704277124]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 101.190796, 0, -188.22234)
+stream = ExtResource("77_scag8")
+attenuation_model = 3
+volume_db = 80.0
+unit_size = 100.0
+max_db = 6.0
+autoplay = true
+max_distance = 170.0
+panning_strength = 0.0
+bus = &"GAME SFX"
+area_mask = 1
+attenuation_filter_db = 0.0
+
+[node name="OutdoorWind2" type="AudioStreamPlayer3D" parent="Sound/Exterior" unique_id=186570290]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -39.680107, 0, -412.16367)
+stream = ExtResource("77_scag8")
+attenuation_model = 3
+volume_db = 80.0
+unit_size = 100.0
+autoplay = true
+max_distance = 180.0
+panning_strength = 0.0
+bus = &"GAME SFX"
+area_mask = 1
+playback_type = 1
+
+[node name="OutdoorWind3" type="AudioStreamPlayer3D" parent="Sound/Exterior" unique_id=867546362]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 169.56392, -59.39724, -450.31622)
+stream = ExtResource("77_scag8")
+attenuation_model = 3
+volume_db = 80.0
+unit_size = 100.0
+autoplay = true
+max_distance = 150.0
+panning_strength = 0.0
+bus = &"GAME SFX"
+area_mask = 1
+playback_type = 1
+
+[node name="Torch_L" type="AudioStreamPlayer3D" parent="Sound/Exterior" unique_id=1442955212]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -202.65079, 4.523749, -420.50867)
+stream = ExtResource("75_g4ytx")
+volume_db = -5.0
+max_db = 6.0
+autoplay = true
+max_distance = 40.0
+panning_strength = 3.0
+bus = &"GAME SFX"
+area_mask = 1
+attenuation_filter_db = 0.0
+
+[node name="Torch_L2" type="AudioStreamPlayer3D" parent="Sound/Exterior" unique_id=704520496]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -204.90196, -1.3781486, -390.20416)
+stream = ExtResource("75_g4ytx")
+volume_db = -5.0
+max_db = 6.0
+autoplay = true
+max_distance = 40.0
+panning_strength = 3.0
+bus = &"GAME SFX"
+area_mask = 1
+attenuation_filter_db = 0.0
+
+[node name="Torch_L3" type="AudioStreamPlayer3D" parent="Sound/Exterior" unique_id=689920361]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -204.90196, -10.295122, -369.71118)
+stream = ExtResource("75_g4ytx")
+volume_db = -5.0
+max_db = 6.0
+autoplay = true
+max_distance = 40.0
+panning_strength = 3.0
+bus = &"GAME SFX"
+area_mask = 1
+attenuation_filter_db = 0.0
+
+[node name="Torch_R" type="AudioStreamPlayer3D" parent="Sound/Exterior" unique_id=138291721]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -188.48941, 4.523749, -420.50867)
+stream = ExtResource("75_g4ytx")
+volume_db = -5.0
+max_db = 6.0
+autoplay = true
+max_distance = 40.0
+panning_strength = 3.0
+bus = &"GAME SFX"
+area_mask = 1
+attenuation_filter_db = 0.0
+
+[node name="Torch_R2" type="AudioStreamPlayer3D" parent="Sound/Exterior" unique_id=367320647]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -184.48361, -1.3408256, -390.39072)
+stream = ExtResource("75_g4ytx")
+volume_db = -5.0
+max_db = 6.0
+autoplay = true
+max_distance = 40.0
+panning_strength = 3.0
+bus = &"GAME SFX"
+area_mask = 1
+attenuation_filter_db = 0.0
+
+[node name="Torch_R3" type="AudioStreamPlayer3D" parent="Sound/Exterior" unique_id=529374028]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -184.48361, -10.397976, -369.37866)
+stream = ExtResource("75_g4ytx")
+volume_db = -5.0
+max_db = 6.0
+autoplay = true
+max_distance = 40.0
+panning_strength = 3.0
+bus = &"GAME SFX"
+area_mask = 1
+attenuation_filter_db = 0.0
 
 [connection signal="Activated" from="Trigger/Object/WallRun1" to="Trigger/Object/WallRun1/WallRun" method="Activate"]
 [connection signal="Activated" from="Trigger/Object/WallRun1" to="Trigger/Object/WallRun1/WallRunCam" method="Activate"]

@@ -28,7 +28,7 @@ public partial class KnockbackState : PlayerState
 
 		Player.IsKnockback = true;
 
-		if (!SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.FreeRoam))
+		if (!SaveManager.ActiveSkillRing.IsFreeRoamActive)
 			Player.MovementAngle = Player.PathFollower.ForwardAngle; // Prevent being knocked sideways
 
 		Player.Animator.StartHurt(Settings.knockbackType);

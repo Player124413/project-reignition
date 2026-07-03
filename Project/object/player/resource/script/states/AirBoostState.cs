@@ -15,7 +15,7 @@ public partial class AirBoostState : PlayerState
 	{
 		airBoostTimer = 0;
 
-		if (!SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.FreeRoam))
+		if (!SaveManager.ActiveSkillRing.IsFreeRoamActive)
 		{
 			if (ExtensionMethods.DeltaAngleRad(Player.MovementAngle, Player.PathFollower.BackAngle) <= Mathf.Pi * .25f)
 				Player.MovementAngle = Player.PathFollower.ForwardAngle;

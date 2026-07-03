@@ -1,0 +1,201 @@
+[gd_scene format=3 uid="uid://c7v1xtivwofs8"]
+
+[ext_resource type="Material" uid="uid://qavhpoch6wr8" path="res://party/scene/minigame/12 canoe race/material/Canoe Ripple.tres" id="1_rd876"]
+[ext_resource type="Material" uid="uid://bhj21xbsvtun5" path="res://effect/particle/material/environment/Common Dust Splatter Add.tres" id="2_6i5w4"]
+[ext_resource type="Script" uid="uid://c65ffkknyq6gr" path="res://addons/custom_nodes/script/GroupGpuParticles3D.cs" id="3_62bmv"]
+[ext_resource type="AudioStream" uid="uid://4axa32te73cg" path="res://sound/sfx/player/step water 2.wav" id="4_4kv2h"]
+[ext_resource type="Script" uid="uid://bkwc2atbp4cjd" path="res://party/scene/minigame/00 base/script/group_sfx_player.gd" id="5_kxp5d"]
+[ext_resource type="PackedScene" uid="uid://d2hf4b6i01xrj" path="res://party/scene/minigame/12 canoe race/model/Canoe.glb" id="6_cy06q"]
+[ext_resource type="PackedScene" uid="uid://di6qt43fewimv" path="res://party/scene/minigame/12 canoe race/model/Oar.glb" id="7_hfwv2"]
+
+[sub_resource type="Curve" id="Curve_a3qxi"]
+_data = [Vector2(0, 0), 0.0, 12.532468, 0, 0, Vector2(0.2, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_yh0pl"]
+width = 64
+curve = SubResource("Curve_a3qxi")
+
+[sub_resource type="Curve" id="Curve_yh0pl"]
+_data = [Vector2(0, 0.23926377), 0.0, 2.6387382, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_a3qxi"]
+width = 64
+curve = SubResource("Curve_yh0pl")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_5mwb3"]
+lifetime_randomness = 0.2
+angle_min = 1.0728835e-05
+angle_max = 360.00003
+direction = Vector3(0, 1, 0)
+gravity = Vector3(0, 0, 0)
+scale_min = 20.0
+scale_max = 30.0
+scale_curve = SubResource("CurveTexture_a3qxi")
+alpha_curve = SubResource("CurveTexture_yh0pl")
+
+[sub_resource type="QuadMesh" id="QuadMesh_a3qxi"]
+orientation = 1
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_a3qxi"]
+lifetime_randomness = 0.4
+angle_min = 1.0728835e-05
+angle_max = 360.00003
+direction = Vector3(0, 1, 0)
+spread = 180.0
+initial_velocity_min = 5.0
+initial_velocity_max = 10.0
+gravity = Vector3(0, 0, 0)
+scale_min = 4.0
+scale_max = 7.0
+scale_curve = SubResource("CurveTexture_a3qxi")
+alpha_curve = SubResource("CurveTexture_yh0pl")
+
+[sub_resource type="QuadMesh" id="QuadMesh_5si3b"]
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_5si3b"]
+lifetime_randomness = 0.4
+angle_min = 1.0728835e-05
+angle_max = 360.00003
+direction = Vector3(0, 1, 0)
+gravity = Vector3(0, 0, 0)
+scale_min = 8.0
+scale_max = 12.0
+scale_curve = SubResource("CurveTexture_a3qxi")
+alpha_curve = SubResource("CurveTexture_yh0pl")
+
+[sub_resource type="Animation" id="Animation_rd876"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0, 0, 0)]
+}
+
+[sub_resource type="Animation" id="Animation_5mwb3"]
+resource_name = "bob"
+length = 2.0
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:position")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.26666668, 0.6, 0.96666664, 1.2333333, 1.5999999, 2),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1),
+"update": 0,
+"values": [Vector3(0, 0, 0), Vector3(0, -0.2, 0), Vector3(0, 0, 0), Vector3(0, -0.1, 0), Vector3(0, 0, 0), Vector3(0, -0.2, 0), Vector3(0, 0, 0)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_wkb2s"]
+_data = {
+&"RESET": SubResource("Animation_rd876"),
+&"bob": SubResource("Animation_5mwb3")
+}
+
+[node name="CanoeRoot" type="Node3D" unique_id=264350525]
+
+[node name="CanoeFX" type="Node3D" parent="." unique_id=840713803]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+
+[node name="Wake" type="GPUParticles3D" parent="CanoeFX" unique_id=774428041]
+layers = 32
+material_override = ExtResource("1_rd876")
+cast_shadow = 0
+lifetime = 0.8
+fixed_fps = 0
+fract_delta = false
+process_material = SubResource("ParticleProcessMaterial_5mwb3")
+draw_pass_1 = SubResource("QuadMesh_a3qxi")
+
+[node name="SplatterLeft" type="GPUParticles3D" parent="CanoeFX" unique_id=1873765486 node_paths=PackedStringArray("subSystems")]
+transform = Transform3D(1, 2.1457017e-28, -7.1054265e-15, -2.1175834e-22, 1, -2.980231e-08, 7.1054265e-15, 2.980231e-08, 1, 4, 0, 3.5)
+layers = 32
+material_override = ExtResource("2_6i5w4")
+cast_shadow = 0
+emitting = false
+lifetime = 0.4
+one_shot = true
+explosiveness = 0.8
+fixed_fps = 0
+fract_delta = false
+process_material = SubResource("ParticleProcessMaterial_a3qxi")
+draw_pass_1 = SubResource("QuadMesh_5si3b")
+script = ExtResource("3_62bmv")
+subSystems = [NodePath("Ripple")]
+
+[node name="Ripple" type="GPUParticles3D" parent="CanoeFX/SplatterLeft" unique_id=1390927101]
+transform = Transform3D(1, 0, 3.5527137e-15, 0, 1, 0, 1.4210855e-14, -3.5527137e-15, 1, 0, 0, 0)
+layers = 32
+material_override = ExtResource("1_rd876")
+cast_shadow = 0
+emitting = false
+amount = 4
+lifetime = 0.8
+one_shot = true
+explosiveness = 0.8
+fixed_fps = 0
+fract_delta = false
+process_material = SubResource("ParticleProcessMaterial_5si3b")
+draw_pass_1 = SubResource("QuadMesh_a3qxi")
+
+[node name="SplatterRight" type="GPUParticles3D" parent="CanoeFX" unique_id=89110476 node_paths=PackedStringArray("subSystems")]
+transform = Transform3D(1, 2.1457017e-28, -7.1054265e-15, -2.1175834e-22, 1, -2.980231e-08, 7.1054265e-15, 2.980231e-08, 1, -4, 0, 3.5)
+layers = 32
+material_override = ExtResource("2_6i5w4")
+cast_shadow = 0
+emitting = false
+lifetime = 0.4
+one_shot = true
+explosiveness = 0.8
+fixed_fps = 0
+fract_delta = false
+process_material = SubResource("ParticleProcessMaterial_a3qxi")
+draw_pass_1 = SubResource("QuadMesh_5si3b")
+script = ExtResource("3_62bmv")
+subSystems = [NodePath("Ripple")]
+
+[node name="Ripple" type="GPUParticles3D" parent="CanoeFX/SplatterRight" unique_id=1148224804]
+transform = Transform3D(1, 0, 3.5527137e-15, 0, 1, 0, 1.4210855e-14, -3.5527137e-15, 1, 0, 0, 0)
+layers = 32
+material_override = ExtResource("1_rd876")
+cast_shadow = 0
+emitting = false
+amount = 4
+lifetime = 0.8
+one_shot = true
+explosiveness = 0.8
+fixed_fps = 0
+fract_delta = false
+process_material = SubResource("ParticleProcessMaterial_5si3b")
+draw_pass_1 = SubResource("QuadMesh_a3qxi")
+
+[node name="Splash" type="AudioStreamPlayer" parent="CanoeFX" unique_id=506538006]
+stream = ExtResource("4_4kv2h")
+bus = &"GAME SFX"
+script = ExtResource("5_kxp5d")
+group = "paddle"
+metadata/_custom_type_script = "uid://bkwc2atbp4cjd"
+
+[node name="Canoe" parent="." unique_id=220934417 instance=ExtResource("6_cy06q")]
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Canoe" unique_id=1114001334]
+libraries/ = SubResource("AnimationLibrary_wkb2s")
+autoplay = &"bob"
+
+[node name="OarAttachment" type="BoneAttachment3D" parent="." unique_id=446287957]
+transform = Transform3D(-2.682209e-07, 1.7881393e-07, 1, 0.6428036, -0.76603097, 2.3841855e-07, 0.7660309, 0.6428037, 2.9802322e-08, -1.8932028, 4.280719, 2.1917667)
+bone_name = "hand_attachment"
+bone_idx = 89
+
+[node name="Oar" parent="OarAttachment" unique_id=399077218 instance=ExtResource("7_hfwv2")]

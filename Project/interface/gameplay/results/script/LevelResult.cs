@@ -24,13 +24,15 @@ public partial class LevelResult : Control
 	private int bgmIndex;
 	[Export] private AnimationPlayer animator;
 	[Export] private AudioStreamPlayer resultsVoicePlayer;
-	[Export] private SFXLibraryResource resultsVoiceLibrary;
 
 	/// <summary> Tracks whether the stage was already cleared when starting; Used to skip repeat cutscenes. </summary>
 	private bool wasStageClearedWhenLoaded;
 	private bool isProcessing;
 	private bool isFadingBgm;
 	private StageSettings Stage => StageSettings.Instance;
+
+	private readonly StringName AchievementGoldKey = "the ultimate";
+	private readonly int AchievementGoldRequirement = 111;
 
 	public override void _Ready()
 	{
@@ -97,7 +99,7 @@ public partial class LevelResult : Control
 		if (Runtime.Instance.IsActionJustPressed("sys_cancel", "ui_cancel", "escape")) // Retry stage
 		{
 			TransitionManager.Instance.QueuedScene = string.Empty;
-			EmitSignal(SignalName.ContinuePressed);
+			ActivateTransition();
 		}
 		else
 		{
@@ -122,11 +124,9 @@ public partial class LevelResult : Control
 				TimeAttackManager.Instance.LoadResults();
 			else if (TimeAttackManager.Instance.IsRunActive && TimeAttackManager.Instance.CurrentRunType == TimeAttackManager.RunType.SingleRun)
 				TimeAttackManager.Instance.LoadTimeAttack(true);
-			else // Actual scene transition is handled by the experience results screen (which is connected via this signal)
-				EmitSignal(SignalName.ContinuePressed);
+			else
+				ActivateTransition();
 		}
-
-
 
 		isFadingBgm = true; // Start fading bgm
 		SetInputProcessing(false);
@@ -250,19 +250,50 @@ public partial class LevelResult : Control
 
 		else
 			animator.Play(isStageCleared ? "success-start" : "fail-start");
-
-
 	}
+
+	private void ActivateTransition()
+	{
+		OnRankQuoteFinished();
+
+		// Actual scene transition is handled by the experience results screen (which is connected via this signal)
+		EmitSignal(SignalName.ContinuePressed);
+	}
+
 
 	public void SetInputProcessing(bool value) => isProcessing = value;
 	/// <summary> Mutes the gameplay sfx audio channel. </summary>
 	private void MuteGameplaySoundEffects() => SoundManager.SetAudioBusVolume(SoundManager.AudioBuses.GameSfx, 0);
 
-
 	public void PlayRankQuote()
 	{
 		int voiceIndex = Stage.CalculateRank() + 1;
-		resultsVoicePlayer.Stream = resultsVoiceLibrary.GetStream(voiceIndex, (int)SaveManager.Config.voiceLanguage);
+		string key = "results fail";
+		switch (voiceIndex)
+		{
+			case 1:
+				key = "results none";
+				break;
+			case 2:
+				key = "results bronze";
+				break;
+			case 3:
+				key = "results silver";
+				break;
+			case 4:
+				key = "results gold";
+				break;
+		}
+
+		if (SaveManager.ActiveGameData.LevelData.GoldMedalCount >= AchievementGoldRequirement)
+			AchievementManager.Instance.UnlockAchievement(AchievementGoldKey);
+
+		resultsVoicePlayer.Stream = StageSettings.Player.Effect.voiceLibrary.GetStream(key, SaveManager.GetCurrentVoiceLocaleIndex());
 		resultsVoicePlayer.Play();
+
+		SoundManager.instance.IsRankQuotePlaying = true;
+		resultsVoicePlayer.Finished += OnRankQuoteFinished;
 	}
+
+	private void OnRankQuoteFinished() => SoundManager.instance.IsRankQuotePlaying = false;
 }

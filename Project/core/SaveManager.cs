@@ -14,7 +14,16 @@ public partial class SaveManager : Node
 	/// <summary> The first level loaded when a new game is started. </summary>
 	[Export] private LevelDataResource initialLevelData;
 
-	private static string SaveDirectory;
+	[Export] public Array<LocalizationResource> TextLocalizations { get; private set; } = [];
+	[Export] public Array<LocalizationResource> VoiceLocalizations { get; private set; } = [];
+
+	/// <summary> Directory for save files. </summary>
+	public static string SaveDirectory => DataDirectory + "saves/";
+	/// <summary> Directory for mod files. </summary>
+	public static string ModDirectory => DataDirectory + "mods/";
+	/// <summary> Base data directory. </summary>
+	public static string DataDirectory { get; private set; }
+	/// <summary> The file that stores where the save directory is. </summary>
 	private static string SaveLocationFile => OS.GetExecutablePath().GetBaseDir() + "/saveLocation.txt";
 
 	public override void _EnterTree()
@@ -22,7 +31,7 @@ public partial class SaveManager : Node
 		Instance = this;
 
 		CacheInitialInputMap();
-		SaveDirectory = ProjectSettings.GlobalizePath(GetSaveDirectory());
+		DataDirectory = ProjectSettings.GlobalizePath(GetDataDirectory());
 		MenuData = GameData.CreateDefaultData(); // Create a default game data object for the menu
 		SharedData = SharedGameData.CreateDefaultData();
 		TimeData = TimeAttackData.CreateDefaultData();
@@ -33,13 +42,13 @@ public partial class SaveManager : Node
 		if (OS.IsDebugBuild()) // Editor build, use custom configuration
 		{
 			// Default debug settings for testing from the editor.
-			Config.isMasterMuted = AudioServer.IsBusMute((int)SoundManager.AudioBuses.Master);
+			Config.isMasterMuted = AudioServer.IsBusMute((int)SoundManager.AudioBuses.Main);
 			Config.isBgmMuted = AudioServer.IsBusMute((int)SoundManager.AudioBuses.Bgm);
 			Config.isSfxMuted = AudioServer.IsBusMute((int)SoundManager.AudioBuses.Sfx);
 			Config.isVoiceMuted = AudioServer.IsBusMute((int)SoundManager.AudioBuses.Voice);
 
 			Config.masterVolume =
-				Mathf.RoundToInt(Mathf.DbToLinear(AudioServer.GetBusVolumeDb((int)SoundManager.AudioBuses.Master)) * 100);
+				Mathf.RoundToInt(Mathf.DbToLinear(AudioServer.GetBusVolumeDb((int)SoundManager.AudioBuses.Main)) * 100);
 			Config.bgmVolume =
 				Mathf.RoundToInt(Mathf.DbToLinear(AudioServer.GetBusVolumeDb((int)SoundManager.AudioBuses.Bgm)) * 100);
 			Config.sfxVolume =
@@ -50,7 +59,7 @@ public partial class SaveManager : Node
 		}
 	}
 
-	private string GetSaveDirectory()
+	private string GetDataDirectory()
 	{
 		FileAccess f = FileAccess.Open(SaveLocationFile, FileAccess.ModeFlags.Read);
 		if (f != null && f.GetError() == Error.Ok)
@@ -62,7 +71,7 @@ public partial class SaveManager : Node
 				return targetDirectory;
 
 			// Fallback to executable path when directory is missing (only when a saveLocation file exists).
-			return OS.GetExecutablePath().GetBaseDir() + "/save/";
+			return OS.GetExecutablePath().GetBaseDir() + "/";
 		}
 
 		// Fallback to appdata
@@ -71,21 +80,10 @@ public partial class SaveManager : Node
 
 	#region Config
 	public static ConfigData Config = new();
-	public static bool UseEnglishVoices => Config.voiceLanguage == VoiceLanguage.English;
+	public static bool UseEnglishVoices => Config.voiceLocale.LocaleId.Equals("en");
 	/// <summary> Determines whether the game should ask the player whether to enable quick loading on the main menu. </summary>
 	public bool IsQuickLoadAlertEnabled;
 	private const string ConfigFileName = "config.cfg";
-
-	/// <summary> Converts a given VoiceLanguage to match Godot's internal localization key. </summary>
-	public static string VoiceLanguageToGodotLocale(VoiceLanguage lang)
-	{
-		return lang switch
-		{
-			VoiceLanguage.Japanese => "ja",
-			VoiceLanguage.Spanish => "es",
-			_ => "en",
-		};
-	}
 
 	#region Config Enums
 	public enum ControllerType
@@ -118,33 +116,6 @@ public partial class SaveManager : Node
 	{
 		Style1, // Standard controller theme
 		Style2, // White/Nintendo Wii controller theme
-		Count
-	}
-
-	/// <summary> Don't forget to update <see cref="VoiceLocaleToString"> when adding new dubs! </summary>
-	public enum VoiceLanguage
-	{
-		English,
-		Japanese,
-		Spanish,
-		Count
-	}
-
-	public enum TextLanguage
-	{
-		English, // English script (Uses Windii's retranslation when voiceover is set to Japanese)
-		Japanese,
-		German,
-		Italian,
-		French,
-		Spanish,
-		LatinAmericanSpanish,
-		BrazilianPortuguese,
-		Polish,
-		Chinese,
-		Turkish,
-		Swedish,
-		Russian,
 		Count
 	}
 
@@ -300,8 +271,8 @@ public partial class SaveManager : Node
 		// Language
 		public bool isSubtitleDisabled;
 		public bool isDialogDisabled;
-		public TextLanguage textLanguage = AutoDetectTextLocale();
-		public VoiceLanguage voiceLanguage = AutoDetectVoiceLocale();
+		public LocalizationResource textLocale;
+		public LocalizationResource voiceLocale;
 
 		// Interface
 		public bool useProjectReignitionBranding = true;
@@ -374,8 +345,8 @@ public partial class SaveManager : Node
 				// Language
 				{ nameof(isSubtitleDisabled), isSubtitleDisabled },
 				{ nameof(isDialogDisabled), isDialogDisabled},
-				{ nameof(voiceLanguage), (int)voiceLanguage },
-				{ nameof(textLanguage), (int)textLanguage },
+				{ nameof(voiceLocale), voiceLocale.LocaleId },
+				{ nameof(textLocale), textLocale.LocaleId },
 
 				// Interface
 				{ nameof(useProjectReignitionBranding), useProjectReignitionBranding },
@@ -491,10 +462,10 @@ public partial class SaveManager : Node
 				isSubtitleDisabled = (bool)var;
 			if (dictionary.TryGetValue(nameof(isDialogDisabled), out var))
 				isDialogDisabled = (bool)var;
-			if (dictionary.TryGetValue(nameof(voiceLanguage), out var))
-				voiceLanguage = (VoiceLanguage)(int)var;
-			if (dictionary.TryGetValue(nameof(textLanguage), out var))
-				textLanguage = (TextLanguage)(int)var;
+			if (dictionary.TryGetValue(nameof(voiceLocale), out var))
+				voiceLocale = FindVoiceLocale((string)var);
+			if (dictionary.TryGetValue(nameof(textLocale), out var))
+				textLocale = FindTextLocale((string)var);
 
 			// Interface
 			if (dictionary.TryGetValue(nameof(useProjectReignitionBranding), out var))
@@ -518,53 +489,63 @@ public partial class SaveManager : Node
 		}
 	}
 
-	/// <summary> Converts <paramref name="voiceLanguage"/> to a locale string. </summary>
-	public static string VoiceLocaleToString(VoiceLanguage voiceLanguage)
+	public static LocalizationResource AutoDetectTextLocale() => FindTextLocale(OS.GetLocaleLanguage());
+	public static LocalizationResource AutoDetectVoiceLocale()
 	{
-		return voiceLanguage switch
+		string targetLocale = AutoDetectTextLocale()?.LocaleId;
+		return FindVoiceLocale(targetLocale);
+	}
+
+	public static LocalizationResource FindTextLocale(string id)
+	{
+		foreach (LocalizationResource locale in Instance.TextLocalizations)
 		{
-			VoiceLanguage.Japanese => "ja",
-			VoiceLanguage.Spanish => "es",
-			_ => "en",
-		};
+			if (locale.LocaleId == id)
+				return locale;
+		}
+		return Instance.TextLocalizations[0]; // Default to English
 	}
 
-	private static TextLanguage AutoDetectTextLocale()
+	public static LocalizationResource FindVoiceLocale(string id)
 	{
-		return OS.GetLocaleLanguage() switch
+		foreach (LocalizationResource locale in Instance.VoiceLocalizations)
 		{
-			"ja" => TextLanguage.Japanese,
-			"de" => TextLanguage.German,
-			"it" => TextLanguage.Italian,
-			"fr" => TextLanguage.French,
-			"es" => TextLanguage.Spanish,
-			"pt" => TextLanguage.BrazilianPortuguese,
-			"pl" => TextLanguage.Polish,
-			"zh" => TextLanguage.Chinese,
-			"tr" => TextLanguage.Turkish,
-			"se" => TextLanguage.Swedish,
-			"ru" => TextLanguage.Russian,
-			_ => TextLanguage.English,
-		};
+			if (locale.LocaleId == id)
+				return locale;
+		}
+		return Instance.VoiceLocalizations[0]; // Default to English
 	}
 
-	private static VoiceLanguage AutoDetectVoiceLocale()
+	public static int FindTextLocaleIndex(string id)
 	{
-		TextLanguage autoTextLocale = AutoDetectTextLocale();
+		for (int i = 0; i < Instance.TextLocalizations.Count; i++)
+		{
+			if (Instance.TextLocalizations[i].LocaleId == id)
+				return i;
+		}
 
-		if (autoTextLocale == TextLanguage.Japanese)
-			return VoiceLanguage.Japanese;
-
-		if (autoTextLocale == TextLanguage.Spanish)
-			return VoiceLanguage.Spanish;
-
-		return VoiceLanguage.English;
+		return -1;
 	}
+
+	public static int FindVoiceLocaleIndex(string id)
+	{
+		for (int i = 0; i < Instance.VoiceLocalizations.Count; i++)
+		{
+			if (Instance.VoiceLocalizations[i].LocaleId == id)
+				return i;
+		}
+
+		return -1;
+	}
+
+	public static int GetCurrentTextLocaleIndex() => Instance.TextLocalizations.IndexOf(Config.textLocale);
+	public static int GetCurrentVoiceLocaleIndex() => Instance.VoiceLocalizations.IndexOf(Config.voiceLocale);
+
 
 	/// <summary> Attempts to load config data from file. </summary>
 	public static void LoadConfig()
 	{
-		string configFile = SaveDirectory.PathJoin(ConfigFileName);
+		string configFile = DataDirectory.PathJoin(ConfigFileName);
 		FileAccess file = FileAccess.Open(configFile, FileAccess.ModeFlags.Read);
 
 		try
@@ -582,23 +563,43 @@ public partial class SaveManager : Node
 			Config = new();
 		}
 
+		if (Config.textLocale == null)
+			Config.textLocale = AutoDetectTextLocale();
+		if (Config.voiceLocale == null)
+			Config.voiceLocale = AutoDetectVoiceLocale();
+
 		ApplyConfig();
 	}
 
 	/// <summary> Attempts to save config data to file. </summary>
 	public static void SaveConfig()
 	{
-		if (!DirAccess.DirExistsAbsolute(SaveDirectory))
-			DirAccess.MakeDirRecursiveAbsolute(SaveDirectory);
+		if (!DirAccess.DirExistsAbsolute(DataDirectory))
+			DirAccess.MakeDirRecursiveAbsolute(DataDirectory);
 
-		string configFile = SaveDirectory.PathJoin(ConfigFileName);
+		string configFile = DataDirectory.PathJoin(ConfigFileName);
 		FileAccess file = FileAccess.Open(configFile, FileAccess.ModeFlags.Write);
 		file.StoreString(Json.Stringify(Config.ToDictionary(), "\t"));
 		file.Close();
 
 		file = FileAccess.Open(SaveLocationFile, FileAccess.ModeFlags.Write);
-		file.StoreString(SaveDirectory);
+		file.StoreString(DataDirectory);
 		file.Close();
+	}
+
+	private static void InitializeSaveDirectory()
+	{
+		DirAccess.MakeDirRecursiveAbsolute(SaveDirectory);
+
+		// Backwards compatability with old save file's folder structure
+		DirAccess dir = DirAccess.Open(DataDirectory);
+		string[] files = dir.GetFiles();
+		GD.Print(files);
+		for (int i = files.Length - 1; i >= 0; i--)
+		{
+			if (files[i].EndsWith(".dat"))
+				System.IO.File.Move(DataDirectory.PathJoin(files[i]), SaveDirectory.PathJoin(files[i]));
+		}
 	}
 
 	/// <summary> Applies active configuration data. </summary>
@@ -721,7 +722,7 @@ public partial class SaveManager : Node
 				break;
 		}
 
-		SoundManager.SetAudioBusVolume(SoundManager.AudioBuses.Master, Config.masterVolume, Config.isMasterMuted);
+		SoundManager.SetAudioBusVolume(SoundManager.AudioBuses.Main, Config.masterVolume, Config.isMasterMuted);
 		SoundManager.SetAudioBusVolume(SoundManager.AudioBuses.Bgm, Config.bgmVolume, Config.isBgmMuted);
 		SoundManager.SetAudioBusVolume(SoundManager.AudioBuses.Sfx, Config.sfxVolume, Config.isSfxMuted);
 		SoundManager.SetAudioBusVolume(SoundManager.AudioBuses.Voice, Config.voiceVolume, Config.isVoiceMuted);
@@ -732,49 +733,11 @@ public partial class SaveManager : Node
 	/// <summary> Applies text localization. Be sure voiceover language is set first. </summary>
 	private static void ApplyLocalization()
 	{
-		switch (Config.textLanguage)
-		{
-			case TextLanguage.Japanese:
-				TranslationServer.SetLocale("ja");
-				break;
-			case TextLanguage.Spanish:
-				TranslationServer.SetLocale("es");
-				break;
-			case TextLanguage.LatinAmericanSpanish:
-				TranslationServer.SetLocale("es_US");
-				break;
-			case TextLanguage.French:
-				TranslationServer.SetLocale("fr");
-				break;
-			case TextLanguage.Italian:
-				TranslationServer.SetLocale("it");
-				break;
-			case TextLanguage.German:
-				TranslationServer.SetLocale("de");
-				break;
-			case TextLanguage.BrazilianPortuguese:
-				TranslationServer.SetLocale("pt_BR");
-				break;
-			case TextLanguage.Polish:
-				TranslationServer.SetLocale("pl");
-				break;
-			case TextLanguage.Chinese:
-				TranslationServer.SetLocale("zh");
-				break;
-			case TextLanguage.Turkish:
-				TranslationServer.SetLocale("tr");
-				break;
-			case TextLanguage.Swedish:
-				TranslationServer.SetLocale("se");
-				break;
-			case TextLanguage.Russian:
-				TranslationServer.SetLocale("ru");
-				break;
-			default:
-				// Prefer the retranslation for all languages except when using the voiceover
-				TranslationServer.SetLocale(UseEnglishVoices ? "en" : "en_US");
-				break;
-		}
+		if (TranslationServer.HasTranslationForLocale(Config.textLocale.LocaleId, false))
+			TranslationServer.SetLocale(Config.textLocale.LocaleId);
+
+		if (Config.textLocale.LocaleId == "en") // Prefer the retranslation for all languages except when using the english voiceover
+			TranslationServer.SetLocale(UseEnglishVoices ? "en" : "en_US");
 	}
 	#endregion
 
@@ -981,8 +944,13 @@ public partial class SaveManager : Node
 	/// <summary> Preloads game data so it can be displayed on menus. </summary>
 	public static void LoadGameData()
 	{
+		if (!DirAccess.DirExistsAbsolute(SaveDirectory))
+			InitializeSaveDirectory();
+
 		LoadSharedData();
 		LoadTimeAttackData();
+
+		float gamePlayTime = 0f;
 
 		for (int i = 0; i < GameSaveSlots.Length; i++)
 		{
@@ -997,6 +965,8 @@ public partial class SaveManager : Node
 				file.Close();
 			}
 
+			gamePlayTime += GameSaveSlots[i].playTime;
+
 			if (GameSaveSlots[i].presetNames == null &&
 				GameSaveSlots[i].presetSkills == null &&
 				GameSaveSlots[i].presetSkillAugments == null)
@@ -1009,6 +979,9 @@ public partial class SaveManager : Node
 				}
 			}
 		}
+
+		// Backup for bookworm achievement in case shared file is deleted
+		SharedData.PlayTime = Mathf.Max(SharedData.PlayTime, gamePlayTime);
 	}
 
 	/// <summary> Frees game data at the given index. </summary>
@@ -1290,7 +1263,7 @@ public partial class SaveManager : Node
 			if (dictionary.TryGetValue(nameof(equippedSkills), out var))
 			{
 				equippedSkills = LoadSkills((Array<string>)var);
-				ActiveSkillRing.ValidateCrestSkills();
+				ActiveSkillRing.ValidateSkills();
 			}
 
 			if (dictionary.TryGetValue(nameof(equippedAugments), out var))
@@ -1471,6 +1444,9 @@ public partial class SaveManager : Node
 		/// <summary> Total number of seconds TimeBreak was active. </summary>
 		public float TimeBreakTime { get; set; }
 
+		/// <summary> Tracks whether time attack has been unlocked orn not. </summary>
+		public bool IsTimeAttackUnlocked { get; set; }
+
 		/// <summary> Has the player selected this page? If not, show the "new" tag </summary>
 		public Array<string> ViewedPages = [];
 
@@ -1502,6 +1478,8 @@ public partial class SaveManager : Node
 				{ nameof(SpeedBreakActivationCount), SpeedBreakActivationCount },
 				{ nameof(TimeBreakTime), TimeBreakTime },
 				{ nameof(ViewedPages), ViewedPages},
+
+				{ nameof(IsTimeAttackUnlocked), IsTimeAttackUnlocked },
 
 				{ nameof(MinimalSkillCount), MinimalSkillCount },
 				{ nameof(FireOnlyCount), FireOnlyCount },
@@ -1535,6 +1513,10 @@ public partial class SaveManager : Node
 				TimeBreakTime = (float)var;
 			if (dictionary.TryGetValue(nameof(ViewedPages), out var))
 				ViewedPages = (Array<string>)var;
+
+
+			if (dictionary.TryGetValue(nameof(IsTimeAttackUnlocked), out var))
+				IsTimeAttackUnlocked = (bool)var;
 
 			if (dictionary.TryGetValue(nameof(MinimalSkillCount), out var))
 				MinimalSkillCount = (int)var;
@@ -1600,7 +1582,7 @@ public partial class SaveManager : Node
 		file.Close();
 
 		file = FileAccess.Open(SaveLocationFile, FileAccess.ModeFlags.Write);
-		file.StoreString(SaveDirectory);
+		file.StoreString(DataDirectory);
 		file.Close();
 	}
 	#endregion
@@ -1734,7 +1716,7 @@ public partial class SaveManager : Node
 			if (dictionary.TryGetValue(nameof(equippedSkillsContinue), out var))
 			{
 				equippedSkillsContinue = ActiveGameData.LoadSkills((Array<string>)var);
-				ActiveSkillRing.ValidateCrestSkills();
+				ActiveSkillRing.ValidateSkills();
 			}
 
 			if (dictionary.TryGetValue(nameof(equippedAugmentsContinue), out var))
@@ -1743,7 +1725,7 @@ public partial class SaveManager : Node
 			if (dictionary.TryGetValue(nameof(equippedSkillsSingle), out var))
 			{
 				equippedSkillsSingle = ActiveGameData.LoadSkills((Array<string>)var);
-				ActiveSkillRing.ValidateCrestSkills();
+				ActiveSkillRing.ValidateSkills();
 			}
 
 			if (dictionary.TryGetValue(nameof(equippedAugmentsSingle), out var))
@@ -1803,7 +1785,7 @@ public partial class SaveManager : Node
 		file.Close();
 
 		file = FileAccess.Open(SaveLocationFile, FileAccess.ModeFlags.Write);
-		file.StoreString(SaveDirectory);
+		file.StoreString(DataDirectory);
 		file.Close();
 	}
 

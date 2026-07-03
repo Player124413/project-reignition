@@ -9,19 +9,30 @@ namespace Project.Core;
 public partial class SoundManager : Control
 {
 	public static SoundManager instance;
-	public static int LanguageIndex => (int)SaveManager.Config.voiceLanguage;
 
 	public enum AudioBuses
 	{
 		Master,
+		Main,
+		Duck,
 		Bgm,
 		Voice,
 		SfxAdjustment,
 		Sfx,
 		GameSfx,
 		BreakSfx,
+		Cutscene,
 		Count
 	}
+
+	/// <summary> Extra flag for audio ducking during the rank quote. </summary>
+	public bool IsRankQuotePlaying { get; set; }
+
+	private float currentDuckVolume = 0f;
+	/// <summary> How much to duck the audio when dialog is active. </summary>
+	private readonly float DuckVolumeDB = -4f;
+	private readonly float DuckOutSpeed = 20f;
+	private readonly float DuckInSpeed = 10f;
 
 	public override void _Ready()
 	{
@@ -33,9 +44,19 @@ public partial class SoundManager : Control
 		TransitionManager.Instance.SceneChanged += CancelDialog;
 	}
 
-	public override void _PhysicsProcess(double _)
+	public override void _PhysicsProcess(double delta)
 	{
 		UpdateSfxGroups();
+		UpdateAudioDucking();
+	}
+
+	private void UpdateAudioDucking()
+	{
+		bool isDuckActive = IsDialogActive || IsRankQuotePlaying;
+		float targetVolumeDb = isDuckActive ? DuckVolumeDB : 0f;
+		float targetSpeed = isDuckActive ? DuckInSpeed : DuckOutSpeed;
+		currentDuckVolume = Mathf.MoveToward(currentDuckVolume, targetVolumeDb, targetSpeed * (float)GetPhysicsProcessDeltaTime());
+		AudioServer.SetBusVolumeDb((int)AudioBuses.Duck, currentDuckVolume);
 	}
 
 	#region Audio Bus
@@ -75,7 +96,11 @@ public partial class SoundManager : Control
 
 	public void PlayDialog(DialogTrigger dialog)
 	{
-		if (dialog.DialogCount == 0 || DebugManager.Instance.DisableDialog || SaveManager.Config.isDialogDisabled) return; // No dialog
+		if (dialog.DialogCount == 0 || SaveManager.ActiveSkillRing.IsSkillEquipped(Gameplay.SkillKey.Character)
+			|| DebugManager.Instance.DisableDialog || SaveManager.Config.isDialogDisabled)
+		{
+			return; // No dialog
+		}
 
 		Visible = !SaveManager.Config.isSubtitleDisabled && !dialog.disableSubtitles;
 
@@ -199,7 +224,7 @@ public partial class SoundManager : Control
 		string key = currentDialog.textKeys[currentDialogIndex];
 		AudioStream targetStream = null;
 		if (IsInstanceValid(Gameplay.StageSettings.Instance))
-			targetStream = Gameplay.StageSettings.Instance.dialogLibrary.GetDialogStream(key, LanguageIndex);
+			targetStream = Gameplay.StageSettings.Instance.dialogLibrary.GetDialogStream(key, SaveManager.GetCurrentVoiceLocaleIndex());
 
 		if (targetStream != null) // Using audio
 		{
@@ -239,7 +264,7 @@ public partial class SoundManager : Control
 	}
 
 	/// <summary> Replaces curly braces with quotation marks for cutscene subtitles. </summary>
-	private string FormatText(string text)
+	public string FormatText(string text)
 	{
 		text = text.Replace('{', '"');
 		text = text.Replace('}', '"');

@@ -6,7 +6,7 @@ using Project.CustomNodes;
 namespace Project.Gameplay;
 
 /// <summary>
-/// Responsible for playing sfx/vfx. Controlled from the CharacterAnimator.
+/// Responsible for playing sfx/vfx. Controlled from the PlayerAnimator.
 /// </summary>
 public partial class PlayerEffect : Node3D
 {
@@ -15,6 +15,9 @@ public partial class PlayerEffect : Node3D
 	{
 		Player = player;
 		trailFX.Player = Player;
+
+		// Rebuild dialog libraries to account for modded locales
+		voiceLibrary?.LocalizeAudioStreams(true);
 
 		SoundManager.instance.Connect(SoundManager.SignalName.SonicSpeechStart, new Callable(this, MethodName.MuteGameplayVoice));
 		SoundManager.instance.Connect(SoundManager.SignalName.SonicSpeechEnd, new Callable(this, MethodName.UnmuteGameplayVoice));
@@ -25,6 +28,15 @@ public partial class PlayerEffect : Node3D
 		{
 			darkspineAuraSfx.Play();
 			darkspineGroup.RestartGroup();
+		}
+
+		int augmentIndex = SaveManager.ActiveSkillRing.GetAugmentIndex(SkillKey.Character);
+		if (augmentIndex != 0)
+		{
+			// Override modded voice library
+			SkillResource skill = Runtime.Instance.SkillList.GetSkill(SkillKey.Character).GetAugment(augmentIndex);
+			if (skill?.VoiceLibraryOverride != null)
+				voiceLibrary = skill.VoiceLibraryOverride;
 		}
 	}
 
@@ -440,6 +452,14 @@ public partial class PlayerEffect : Node3D
 		if (Mathf.IsZeroApprox(Player.MoveSpeed)) // Probably called during a blend to idle state; Ignore.
 			return;
 
+		// Update step emission speed and amount
+		if (currentStepEmitter != -1 && stepEmitters[currentStepEmitter] != null)
+		{
+			float ratio = Player.Stats.GroundSettings.GetSpeedRatioClamped(Player.MoveSpeed);
+			stepEmitters[currentStepEmitter].SpeedScale = ratio;
+			stepEmitters[currentStepEmitter].AmountRatio = ratio;
+		}
+
 		footstepChannel.Stream = materialSFXLibrary.GetStream(materialSFXLibrary.GetKeyByIndex(GroundMaterialIndex), 0);
 		footstepChannel.Play();
 
@@ -524,6 +544,7 @@ public partial class PlayerEffect : Node3D
 	[ExportGroup("Voices")]
 	[Export] public SFXLibraryResource voiceLibrary;
 	[Export] private AudioStreamPlayer voiceChannel;
+
 	public void PlayVoice(StringName key, int sfxIndex = -1, bool forcePlay = false)
 	{
 		// Don't play anything if someone is already talking
@@ -531,7 +552,7 @@ public partial class PlayerEffect : Node3D
 			return;
 
 		SoundManager.instance.IsSonicSfxVoiceChannelActive = true;
-		voiceChannel.Stream = voiceLibrary.GetStream(key, SoundManager.LanguageIndex, sfxIndex);
+		voiceChannel.Stream = voiceLibrary.GetStream(key, SaveManager.GetCurrentVoiceLocaleIndex(), sfxIndex);
 		voiceChannel.Play();
 	}
 

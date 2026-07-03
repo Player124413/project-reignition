@@ -15,11 +15,11 @@ public partial class PlayerController : CharacterBody3D
 	[Export] public PlayerSkillController Skills { get; private set; }
 	[Export] public PlayerLockonController Lockon { get; private set; }
 	[Export] public Node3D AnimatorRoot { get; private set; }
-	[Export] public PlayerEffect Effect { get; private set; }
 	[Export] public PlayerPathController PathFollower { get; private set; }
 	[Export] public PlayerCameraController Camera { get; private set; }
 	private StageSettings Stage => StageSettings.Instance;
 	public PlayerAnimator Animator { get; private set; } // The animator is instanced in _Ready()
+	public PlayerEffect Effect => Animator.Effect;
 
 	[Export(PropertyHint.File, "*.tscn")]
 	private StringName defaultModelPath;
@@ -79,7 +79,17 @@ public partial class PlayerController : CharacterBody3D
 	private void InstancePlayerAnimator()
 	{
 		IsDarkspineSonic = SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.Darkspine);
-		StringName modelPath = IsDarkspineSonic ? darkspineModelPath : defaultModelPath;
+		StringName modelPath = string.Empty;
+		if (SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.Character))
+		{
+			SkillResource customCharacterSkill = Runtime.Instance.SkillList.GetSkill(SkillKey.Character);
+			int selection = SaveManager.ActiveSkillRing.GetAugmentIndex(SkillKey.Character);
+			customCharacterSkill = customCharacterSkill.GetAugment(selection);
+			modelPath = IsDarkspineSonic ? customCharacterSkill.SuperModel : customCharacterSkill.NormalModel;
+		}
+
+		if (string.IsNullOrEmpty(modelPath) || !ResourceLoader.Exists(modelPath)) // Default back to normal model
+			modelPath = IsDarkspineSonic ? darkspineModelPath : defaultModelPath;
 
 		Animator = ResourceLoader.Load<PackedScene>(modelPath).Instantiate<PlayerAnimator>();
 		Animator.Initialize(this, AnimatorRoot);
@@ -97,13 +107,13 @@ public partial class PlayerController : CharacterBody3D
 	public float VerticalSpeed { get; set; }
 	public bool IsMovingBackward { get; set; }
 	/// <summary> Returns whether the player is moving backwards or not, taking free roam into account (CHECK IsMovingBackward SEPARATELY!). </summary>
-	public bool IsMovingBackwardFreeRoam => SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.FreeRoam) &&
+	public bool IsMovingBackwardFreeRoam => SaveManager.ActiveSkillRing.IsFreeRoamActive &&
 		ExtensionMethods.DotAngle(MovementAngle, PathFollower.ForwardAngle) < 0;
 
 	/// <summary> For movement that doesn't affect animations (e.x. wind). Reset every frame after it's applied. </summary>
 	public Vector3 ExternalVelocity { get; set; }
 
-	/// <summary> Global movement angle, in radians. Note - VISUAL ROTATION is controlled by CharacterAnimator.cs. </summary>
+	/// <summary> Global movement angle, in radians. Note - VISUAL ROTATION is controlled by PlayerAnimator.cs. </summary>
 	public float MovementAngle { get; set; }
 	public float PathTurnInfluence => PathFollower.DeltaAngle * Camera.ActiveSettings.pathControlInfluence;
 	public Vector3 GetMovementDirection()
@@ -322,7 +332,7 @@ public partial class PlayerController : CharacterBody3D
 
 		bool isCornerCollision = IsInWallCorner(castDirection, castLength);
 		float wallDelta = ExtensionMethods.DeltaAngleRad(ExtensionMethods.CalculateForwardAngle(WallRaycastHit.normal.RemoveVertical(), IsOnGround ? PathFollower.Up() : Vector3.Up), MovementAngle);
-		if (SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.FreeRoam))
+		if (SaveManager.ActiveSkillRing.IsFreeRoamActive)
 			wallDelta = Mathf.Abs(wallDelta);
 
 		if (wallDelta >= Mathf.Pi * .8f || isCornerCollision) // Process head-on collision
@@ -331,7 +341,7 @@ public partial class PlayerController : CharacterBody3D
 			if (Skills.IsSpeedBreakActive)
 			{
 				float pathDelta = ExtensionMethods.DeltaAngleRad(PathFollower.BackAngle, ExtensionMethods.CalculateForwardAngle(WallRaycastHit.normal));
-				if (SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.FreeRoam))
+				if (SaveManager.ActiveSkillRing.IsFreeRoamActive)
 					pathDelta = Mathf.Abs(pathDelta);
 
 				if (!isCornerCollision && pathDelta >= Mathf.Pi * .25f) // Snap to path direction
@@ -346,7 +356,7 @@ public partial class PlayerController : CharacterBody3D
 			if (reduceSpeedDuringHeadonCollision)
 			{
 				if (WallRaycastHit.distance <= CollisionSize.X + CollisionPadding)
-					MoveSpeed = SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.Autorun) ? Mathf.Abs(StrafeSpeed) : 0; // Kill speed
+					MoveSpeed = SaveManager.ActiveSkillRing.IsAutorunActive ? Mathf.Abs(StrafeSpeed) : 0; // Kill speed
 				else if (WallRaycastHit.distance <= CollisionSize.X + CollisionPadding + (MoveSpeed * PhysicsManager.physicsDelta))
 					MoveSpeed *= .9f; // Slow down drastically
 			}
@@ -689,7 +699,7 @@ public partial class PlayerController : CharacterBody3D
 		if (Mathf.IsZeroApprox(Controller.GetInputStrength()))
 			return false;
 
-		if (SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.FreeRoam))
+		if (SaveManager.ActiveSkillRing.IsFreeRoamActive)
 			return Controller.IsHoldingDirection(Controller.GetTargetInputAngle(), MovementAngle + Mathf.Pi);
 
 		return Controller.IsHoldingDirection(Controller.GetTargetInputAngle(), PathFollower.BackAngle);
@@ -809,6 +819,9 @@ public partial class PlayerController : CharacterBody3D
 	public bool AttemptLightSpeedAttack()
 	{
 		Lockon.ProcessPhysics();
+		if (Lockon.Target?.IsInGroup("enemy") == false) // Only allow light speed attacks on enemies
+			return false;
+
 		if (Lockon.IsTargetAttackable)
 			StateMachine.CallDeferred(PlayerStateMachine.MethodName.ChangeState, lightSpeedAttackState);
 		IsLightSpeedAttacking = Lockon.IsTargetAttackable;

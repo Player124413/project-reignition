@@ -22,7 +22,7 @@ public partial class BackflipState : PlayerState
 
 		turningVelocity = 0;
 		referenceAngle = Player.PathFollower.BackAngle;
-		if (SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.FreeRoam))
+		if (SaveManager.ActiveSkillRing.IsFreeRoamActive)
 			referenceAngle = Player.MovementAngle + Mathf.Pi;
 
 		Player.IsOnGround = false;
@@ -80,7 +80,7 @@ public partial class BackflipState : PlayerState
 			if (Player.Lockon.IsTargetAttackable)
 				return homingAttackState;
 
-			if (SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.FreeRoam))
+			if (SaveManager.ActiveSkillRing.IsFreeRoamActive)
 				Player.MovementAngle += Mathf.Pi;
 
 			return jumpDashState;
@@ -92,7 +92,7 @@ public partial class BackflipState : PlayerState
 			if (Player.Lockon.IsTargetAttackable)
 				return homingAttackState;
 
-			if (SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.FreeRoam))
+			if (SaveManager.ActiveSkillRing.IsFreeRoamActive)
 				Player.MovementAngle += Mathf.Pi;
 
 			return jumpDashState;

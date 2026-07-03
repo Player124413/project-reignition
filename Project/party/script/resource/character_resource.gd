@@ -27,7 +27,8 @@ class_name PartyCharacterResource extends Resource
 @export var model_size : MODEL_SIZES
 enum MODEL_SIZES {
 	NORMAL,
-	SMALL, # Cream and Tails.
+	SMALL, # Tails
+	EXTRA_SMALL, # Cream
 }
 
 func is_unlocked() -> bool:

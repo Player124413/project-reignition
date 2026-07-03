@@ -29,7 +29,11 @@ public partial class Runtime : Node
 		Interface.Menus.Menu.SetUpMemory();
 	}
 
-	public override void _Ready() => TransitionManager.Instance.Connect(TransitionManager.SignalName.TransitionProcess, Callable.From(ClearPearls));
+	public override void _Ready()
+	{
+		TransitionManager.Instance.TransitionProcess += ClearPearls;
+		AreShadersPausable = !Engine.IsEditorHint();
+	}
 
 	public override void _Process(double _)
 	{

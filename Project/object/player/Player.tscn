@@ -23,7 +23,6 @@
 [ext_resource type="Script" uid="uid://do7sb2gp70ejv" path="res://object/player/resource/script/states/TeleportState.cs" id="17_h1v2w"]
 [ext_resource type="Script" uid="uid://b47duaf6r31j" path="res://object/player/resource/script/states/GrindState.cs" id="17_pl6a2"]
 [ext_resource type="Script" uid="uid://bdeip3w7axov6" path="res://object/player/resource/script/states/GrindStepState.cs" id="18_kmt0n"]
-[ext_resource type="PackedScene" uid="uid://gp7nom61rmtj" path="res://object/player/resource/component/Effect.tscn" id="19_3dctg"]
 [ext_resource type="Script" uid="uid://bibyiiv5yylwv" path="res://object/player/resource/script/states/AutomationState.cs" id="19_3qddi"]
 [ext_resource type="Script" uid="uid://clqpodq518710" path="res://object/player/resource/script/states/CountdownState.cs" id="20_0gpee"]
 [ext_resource type="PackedScene" uid="uid://qmsgr6kswk87" path="res://object/player/resource/component/PathFollower.tscn" id="20_b54bv"]
@@ -933,10 +932,10 @@ tracks/0/path = NodePath("AnimatorRoot/HitboxTrigger/CollisionShape3D:position")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
+"times": PackedFloat32Array(0, 0.001),
+"transitions": PackedFloat32Array(1, 1),
 "update": 0,
-"values": [Vector3(0, 0.2, 0)]
+"values": [Vector3(0, 0.2, 0), Vector3(0, 0.5, 0)]
 }
 tracks/1/type = "value"
 tracks/1/imported = false
@@ -945,10 +944,10 @@ tracks/1/path = NodePath("AnimatorRoot/HitboxTrigger/CollisionShape3D:shape:radi
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
+"times": PackedFloat32Array(0, 0.001),
+"transitions": PackedFloat32Array(1, 1),
 "update": 0,
-"values": [1.0]
+"values": [2.5, 3.0]
 }
 tracks/2/type = "value"
 tracks/2/imported = false
@@ -957,10 +956,10 @@ tracks/2/path = NodePath("AnimatorRoot/HitboxTrigger/CollisionShape3D:shape:heig
 tracks/2/interp = 1
 tracks/2/loop_wrap = true
 tracks/2/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
+"times": PackedFloat32Array(0, 0.001),
+"transitions": PackedFloat32Array(1, 1),
 "update": 0,
-"values": [2.5]
+"values": [3.5, 5.0]
 }
 
 [sub_resource type="Animation" id="Animation_flrr5"]
@@ -1168,7 +1167,7 @@ point_count = 4
 _data = [Vector2(0, 0), 0.0, 2.18969, 0, 0, Vector2(0.202422, 0.501805), 2.0, 2.0, 0, 0, Vector2(0.738754, 0.935018), -1.06758, -1.09074, 0, 0, Vector2(1, 0), -6.0, 0.0, 0, 0]
 point_count = 4
 
-[node name="Player" type="CharacterBody3D" unique_id=648476407 node_paths=PackedStringArray("StateMachine", "Controller", "Stats", "Skills", "Lockon", "AnimatorRoot", "Effect", "PathFollower", "hitboxAnimator", "countdownState", "reversePathState", "launchState", "launchRingState", "catapultState", "flyingPotState", "pathTravellerState", "spinJumpState", "quickStepState", "airBoostState", "lightSpeedDashState", "lightSpeedAttackState", "grindState", "sidleState", "automationState", "eventState", "bounceState", "driftState", "ivyState", "ziplineState", "petrifyState", "leverState", "hornState", "spiritBombState", "multiPunchState", "knockbackState", "teleportState") groups=["player"]]
+[node name="Player" type="CharacterBody3D" unique_id=648476407 node_paths=PackedStringArray("StateMachine", "Controller", "Stats", "Skills", "Lockon", "AnimatorRoot", "PathFollower", "hitboxAnimator", "countdownState", "reversePathState", "launchState", "launchRingState", "catapultState", "flyingPotState", "pathTravellerState", "spinJumpState", "quickStepState", "airBoostState", "lightSpeedDashState", "lightSpeedAttackState", "grindState", "sidleState", "automationState", "eventState", "bounceState", "driftState", "ivyState", "ziplineState", "petrifyState", "leverState", "hornState", "spiritBombState", "multiPunchState", "knockbackState", "teleportState") groups=["player"]]
 collision_layer = 2
 collision_mask = 9
 floor_stop_on_slope = false
@@ -1181,7 +1180,6 @@ Stats = NodePath("Stats")
 Skills = NodePath("AnimatorRoot/Skills")
 Lockon = NodePath("AnimatorRoot/Lockon")
 AnimatorRoot = NodePath("AnimatorRoot")
-Effect = NodePath("AnimatorRoot/Effect")
 PathFollower = NodePath("PathFollower")
 defaultModelPath = &"res://object/player/resource/Sonic.tscn"
 darkspineModelPath = &"res://object/player/resource/Darkspine.tscn"
@@ -1240,37 +1238,33 @@ travelMagnitude = Vector3(1, 0.3, 0.2)
 
 [node name="DebugSonic" parent="AnimatorRoot" unique_id=1529917484 instance=ExtResource("4_3hunb")]
 
-[node name="BodyMesh" parent="AnimatorRoot/DebugSonic/SonicRoot/GeneralSkeleton" parent_id_path=PackedInt32Array(1529917484, 1159100929) index="0" unique_id=2030859180]
+[node name="BodyMesh" parent="AnimatorRoot/DebugSonic/SonicRoot/GeneralSkeleton" parent_id_path=PackedInt32Array(1529917484, 1679812023) index="0" unique_id=596325683]
 layers = 64
 cast_shadow = 0
 
-[node name="Eyelids" parent="AnimatorRoot/DebugSonic/SonicRoot/GeneralSkeleton" parent_id_path=PackedInt32Array(1529917484, 1159100929) index="1" unique_id=958378528]
+[node name="Eyelids" parent="AnimatorRoot/DebugSonic/SonicRoot/GeneralSkeleton" parent_id_path=PackedInt32Array(1529917484, 1679812023) index="1" unique_id=1195426513]
 cast_shadow = 0
 
-[node name="EyeWhitesMesh" parent="AnimatorRoot/DebugSonic/SonicRoot/GeneralSkeleton" parent_id_path=PackedInt32Array(1529917484, 1159100929) index="2" unique_id=771640238]
+[node name="EyeWhitesMesh" parent="AnimatorRoot/DebugSonic/SonicRoot/GeneralSkeleton" parent_id_path=PackedInt32Array(1529917484, 1679812023) index="2" unique_id=377998682]
 cast_shadow = 0
 
-[node name="LEye" parent="AnimatorRoot/DebugSonic/SonicRoot/GeneralSkeleton" parent_id_path=PackedInt32Array(1529917484, 1159100929) index="3" unique_id=554242090]
+[node name="LEye" parent="AnimatorRoot/DebugSonic/SonicRoot/GeneralSkeleton" parent_id_path=PackedInt32Array(1529917484, 1679812023) index="3" unique_id=1385586187]
 layers = 64
 cast_shadow = 0
 instance_shader_parameters/uv_offset = Vector2(0.2, 0)
 
-[node name="MouthlessMesh" parent="AnimatorRoot/DebugSonic/SonicRoot/GeneralSkeleton" parent_id_path=PackedInt32Array(1529917484, 1159100929) index="4" unique_id=471223099]
+[node name="MouthlessMesh" parent="AnimatorRoot/DebugSonic/SonicRoot/GeneralSkeleton" parent_id_path=PackedInt32Array(1529917484, 1679812023) index="4" unique_id=516985810]
 layers = 64
 cast_shadow = 0
 
-[node name="REye" parent="AnimatorRoot/DebugSonic/SonicRoot/GeneralSkeleton" parent_id_path=PackedInt32Array(1529917484, 1159100929) index="5" unique_id=587772768]
+[node name="REye" parent="AnimatorRoot/DebugSonic/SonicRoot/GeneralSkeleton" parent_id_path=PackedInt32Array(1529917484, 1679812023) index="5" unique_id=2139863282]
 layers = 64
 cast_shadow = 0
 instance_shader_parameters/uv_offset = Vector2(-0.2, 0)
 
-[node name="RingMesh" parent="AnimatorRoot/DebugSonic/SonicRoot/GeneralSkeleton" parent_id_path=PackedInt32Array(1529917484, 1159100929) index="6" unique_id=952155532]
+[node name="RingMesh" parent="AnimatorRoot/DebugSonic/SonicRoot/GeneralSkeleton" parent_id_path=PackedInt32Array(1529917484, 1679812023) index="6" unique_id=1239807179]
 layers = 64
 cast_shadow = 0
-
-[node name="Effect" parent="AnimatorRoot" unique_id=373970437 node_paths=PackedStringArray("landingParticles", "stepEmitters") instance=ExtResource("19_3dctg")]
-landingParticles = [NodePath("VFX/LandingFX/LandingDust"), NodePath("VFX/LandingFX/LandingSand"), NodePath("VFX/LandingFX/LandingGrass"), null, NodePath("VFX/LandingFX/LandingSnow"), null, NodePath("VFX/LandingFX/LandingWater"), null, NodePath("VFX/LandingFX/LandingWet"), NodePath("VFX/LandingFX/LandingWet"), null]
-stepEmitters = [NodePath("VFX/StepFX/PavementStep"), NodePath("VFX/StepFX/SandStep"), NodePath("VFX/StepFX/GrassStep"), null, NodePath("VFX/StepFX/SnowStep"), null, NodePath("VFX/StepFX/WaterStep"), null, NodePath("VFX/StepFX/WetStep"), NodePath("VFX/StepFX/WetStep"), null]
 
 [node name="Skills" parent="AnimatorRoot" unique_id=2016387978 instance=ExtResource("6_ywq6t")]
 
@@ -1332,13 +1326,13 @@ fallState = NodePath("../Fall")
 homingAttackState = NodePath("../HomingAttack")
 darkspineSpinState = NodePath("../../Skill/DarkspineSpin")
 
-[node name="Run" type="Node" parent="StateMachine/Basic" unique_id=659272399 node_paths=PackedStringArray("fallState", "idleState", "backstepState", "slideState", "jumpState", "backflipState", "homingAttackState", "darkspineSpinState")]
+[node name="Run" type="Node" parent="StateMachine/Basic" unique_id=659272399 node_paths=PackedStringArray("fallState", "idleState", "slideState", "jumpState", "backstepState", "backflipState", "homingAttackState", "darkspineSpinState")]
 script = ExtResource("7_1ojgh")
 fallState = NodePath("../Fall")
 idleState = NodePath("../Idle")
-backstepState = NodePath("../Backstep")
 slideState = NodePath("../Slide")
 jumpState = NodePath("../Jump")
+backstepState = NodePath("../Backstep")
 backflipState = NodePath("../Backflip")
 homingAttackState = NodePath("../HomingAttack")
 darkspineSpinState = NodePath("../../Skill/DarkspineSpin")

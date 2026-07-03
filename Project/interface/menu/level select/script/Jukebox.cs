@@ -42,7 +42,7 @@ public partial class Jukebox : Menu
 	private readonly Array<JukeboxOption> songOptionList = [];
 	private readonly Array<JukeboxOption> customSongOptionList = [];
 	private bool isCustomMusicMenuActive;
-	private readonly string CustomMusicPath = "user://custom/music/";
+	private readonly string CustomMusicPath = "user://mods/music/";
 
 	protected override void SetUp()
 	{

@@ -13,6 +13,7 @@
 [ext_resource type="AudioStream" uid="uid://c5did7u4f8gq2" path="res://sound/sfx/player/flame countdown 1.wav" id="12_m0cgj"]
 [ext_resource type="Script" uid="uid://dx0a0rhyauccl" path="res://object/trigger/modules/CameraTrigger.cs" id="13_hosus"]
 [ext_resource type="Resource" uid="uid://ukcne4um86a6" path="res://resource/preset/camera/common/CutsceneCam.tres" id="14_fi8xb"]
+[ext_resource type="PackedScene" uid="uid://gp7nom61rmtj" path="res://object/player/resource/component/Effect.tscn" id="15_bc7c7"]
 [ext_resource type="AnimationNodeBlendTree" uid="uid://biwe75w273iq7" path="res://object/player/resource/model/animation/animation tree/Root.tres" id="16_cttwl"]
 
 [sub_resource type="Curve" id="Curve_skwgn"]
@@ -806,10 +807,11 @@ _data = {
 &"teleport-start": SubResource("Animation_jxy1t")
 }
 
-[node name="Model" type="Node3D" unique_id=781135473 node_paths=PackedStringArray("RightFoot", "LeftFoot", "animationTree", "eventAnimationPlayer")]
+[node name="Model" type="Node3D" unique_id=781135473 node_paths=PackedStringArray("RightFoot", "LeftFoot", "Effect", "animationTree", "eventAnimationPlayer")]
 script = ExtResource("1_l38yo")
 RightFoot = NodePath("RFoot/SoleOffset")
 LeftFoot = NodePath("LFoot/SoleOffset")
+Effect = NodePath("Effect")
 animationTree = NodePath("AnimationTree")
 eventAnimationPlayer = NodePath("EventAnimationPlayer")
 movementAnimationSpeedCurve = SubResource("Curve_skwgn")
@@ -883,7 +885,7 @@ UpdateEveryFrame = true
 followObject = NodePath(".")
 
 [node name="CountdownRoot" type="Node3D" parent="." unique_id=1657771510]
-transform = Transform3D(0.7191744, 0, 0.6948296, 0, 1, 0, -0.6948296, 0, 0.7191744, 0, 0, 0)
+transform = Transform3D(0.7191743, 0, 0.6948295, 0, 1, 0, -0.6948295, 0, 0.7191743, 0, 0, 0)
 
 [node name="FlameBurstSFX" type="AudioStreamPlayer" parent="CountdownRoot" unique_id=37315899]
 process_mode = 1
@@ -891,13 +893,17 @@ stream = ExtResource("12_m0cgj")
 bus = &"GAME SFX"
 
 [node name="CountdownPosition" type="Camera3D" parent="CountdownRoot" unique_id=239866055]
-transform = Transform3D(1.0000013, 2.1378852e-08, 2.0763476e-08, 0, 0.6967068, -0.7173569, -2.9802322e-08, 0.71735615, 0.69670755, 0, 0, 0)
+transform = Transform3D(1.0000013, 2.137885e-08, 2.0763476e-08, 0, 0.6967068, -0.7173569, -2.9802322e-08, 0.71735615, 0.69670755, 0, 0, 0)
 cull_mask = 64
 script = ExtResource("13_hosus")
 transitionTime = 0.0
 settings = ExtResource("14_fi8xb")
 UpdateEveryFrame = true
 followObject = NodePath(".")
+
+[node name="Effect" parent="." unique_id=806076737 node_paths=PackedStringArray("landingParticles", "stepEmitters") instance=ExtResource("15_bc7c7")]
+landingParticles = [NodePath("VFX/LandingFX/LandingDust"), NodePath("VFX/LandingFX/LandingSand"), NodePath("VFX/LandingFX/LandingGrass"), null, NodePath("VFX/LandingFX/LandingSnow"), null, NodePath("VFX/LandingFX/LandingWater"), null, NodePath("VFX/LandingFX/LandingWet"), NodePath("VFX/LandingFX/LandingWet"), null]
+stepEmitters = [NodePath("VFX/StepFX/PavementStep"), NodePath("VFX/StepFX/SandStep"), NodePath("VFX/StepFX/GrassStep"), null, NodePath("VFX/StepFX/SnowStep"), null, NodePath("VFX/StepFX/WaterStep"), null, NodePath("VFX/StepFX/WetStep"), NodePath("VFX/StepFX/WetStep"), null]
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=1818809983]
 libraries/ = SubResource("AnimationLibrary_6smkh")
@@ -914,6 +920,7 @@ libraries/ = SubResource("AnimationLibrary_r0udk")
 
 [node name="AnimationTree" type="AnimationTree" parent="." unique_id=859972339]
 active = false
+callback_mode_process = 0
 tree_root = ExtResource("16_cttwl")
 anim_player = NodePath("../AnimationPlayer")
 parameters/air_tree/TimeScale/scale = 1.2

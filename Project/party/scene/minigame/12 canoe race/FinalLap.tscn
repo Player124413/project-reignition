@@ -1,0 +1,171 @@
+[gd_scene format=3 uid="uid://fdidpy0cbyat"]
+
+[ext_resource type="LabelSettings" uid="uid://c82xi6o7qj2bf" path="res://party/font/minigame/ScoreNumberOutline.tres" id="1_o3asa"]
+[ext_resource type="Script" uid="uid://qvplfr0cibu5" path="res://party/script/interface/synced_label.gd" id="2_s0q4u"]
+[ext_resource type="LabelSettings" uid="uid://dirkfcy6gq3v3" path="res://party/font/minigame/ScoreNumberFill.tres" id="3_0486p"]
+[ext_resource type="Texture2D" uid="uid://cqc7cmiys46t3" path="res://party/font/minigame/TimeGradientFill.tres" id="4_3ym4g"]
+
+[sub_resource type="Animation" id="Animation_3oxh4"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("TimeLabel:offset_transform_position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(0, 0)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("TimeLabel:offset_transform_scale")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(1, 1)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("TimeLabel:modulate")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("TimeLabel:visible")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+
+[sub_resource type="Animation" id="Animation_lrx2d"]
+resource_name = "show"
+length = 0.8
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("TimeLabel:offset_transform_position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.10000001, 0.23333333, 0.3, 0.36666667),
+"transitions": PackedFloat32Array(0.5, 2, 0.5, 2, 1),
+"update": 0,
+"values": [Vector2(0, 0), Vector2(0, -64), Vector2(0, 0), Vector2(0, -15), Vector2(0, 0)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("TimeLabel:offset_transform_scale")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.10000001, 0.2, 0.23333333, 0.3, 0.36666667),
+"transitions": PackedFloat32Array(0.5, 1, 1, 1, 1, 1),
+"update": 0,
+"values": [Vector2(1, 0.2), Vector2(1, 1), Vector2(1, 2), Vector2(1, 0.5), Vector2(1, 1.2), Vector2(1, 1)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("TimeLabel:modulate")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 0.10000001, 0.36666667, 0.6, 0.8),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 1), Color(1, 1, 1, 1), Color(1, 1, 1, 1), Color(1, 1, 1, 0)]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("TimeLabel:visible")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0, 0.8),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [true, false]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_3oxh4"]
+_data = {
+&"RESET": SubResource("Animation_3oxh4"),
+&"show": SubResource("Animation_lrx2d")
+}
+
+[node name="FinalLap" type="Control" unique_id=531422601]
+layout_mode = 3
+anchors_preset = 0
+
+[node name="TimeLabel" type="Label" parent="." unique_id=1367236557]
+visible = false
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -160.5
+offset_top = -80.0
+offset_right = 160.5
+offset_bottom = -7.0
+grow_horizontal = 2
+grow_vertical = 2
+pivot_offset = Vector2(64, 48)
+offset_transform_enabled = true
+text = "party_final_lap"
+label_settings = ExtResource("1_o3asa")
+horizontal_alignment = 1
+vertical_alignment = 1
+uppercase = true
+script = ExtResource("2_s0q4u")
+metadata/_custom_type_script = "uid://qvplfr0cibu5"
+
+[node name="FillLabel" type="Label" parent="TimeLabel" unique_id=1341517001]
+clip_children = 1
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "party_final_lap"
+label_settings = ExtResource("3_0486p")
+horizontal_alignment = 1
+vertical_alignment = 1
+uppercase = true
+
+[node name="Gradient" type="TextureRect" parent="TimeLabel/FillLabel" unique_id=2029279345]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = 7.5
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("4_3ym4g")
+expand_mode = 1
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=1970564172]
+libraries/ = SubResource("AnimationLibrary_3oxh4")

@@ -27,6 +27,11 @@ public class SkillRing
 	private int[] SkillCountByElement = new int[(int)SkillResource.SkillElement.Count];
 	public int GetSkillCountByElement(SkillResource.SkillElement element) => SkillCountByElement[(int)element];
 
+	/// <summary> Returns whether the autorun skill is equipped, or the player has Gyro enabled. </summary>
+	public bool IsAutorunActive => IsSkillEquipped(SkillKey.Autorun) || (SaveManager.Config.isGyroEnabled && Runtime.Instance.IsUsingController);
+	/// <summary> Returns whether the freeroam skill is equipped and the player doesn't have Gyro enabled. </summary>
+	public bool IsFreeRoamActive => IsSkillEquipped(SkillKey.FreeRoam) && !(SaveManager.Config.isGyroEnabled && Runtime.Instance.IsUsingController);
+
 	/// <summary> Calculates how many skill points the player has based on their level. </summary>
 	public static int CalculateSkillPointsByLevel(int level)
 	{
@@ -232,6 +237,9 @@ public class SkillRing
 		if (skill == null) // Skill hasn't been created yet...
 			return false;
 
+		if (skill.Key == SkillKey.Character)
+			return ModManager.Instance.CharacterMods.Count != 0;
+
 		if (TimeAttackManager.Instance.IsRunActive)
 			return skill.Key != SkillKey.Darkspine; // Disables darkspine skill in timeattack mode
 
@@ -291,14 +299,19 @@ public class SkillRing
 	/// <summary> Updates a skill ring to match the active game data. </summary>
 	public void LoadFromActiveData()
 	{
-		ValidateCrestSkills();
+		ValidateSkills();
 		UpdateTotalSkillPoints();
 		UpdateTotalCost();
 		UpdateSkillCounts();
 	}
 
-	public void ValidateCrestSkills()
+	public void ValidateSkills()
 	{
+		// Validate modded characters
+		SkillResource characterSkill = Runtime.Instance.SkillList.GetSkill(SkillKey.Character);
+		if (GetAugmentIndex(SkillKey.Character) > characterSkill.Augments.Count) // Referencing a mod that no longer exists
+			EquippedSkills.Remove(SkillKey.Character);
+
 		UpdateSkillCounts();
 
 		for (int i = EquippedSkills.Count - 1; i >= 0; i--)
@@ -311,6 +324,17 @@ public class SkillRing
 			EquippedSkills.Remove(EquippedSkills[i]);
 			UpdateSkillCounts();
 		}
+	}
+
+	public int UnlockedSkillCount()
+	{
+		int count = 0;
+		for (int i = 0; i < (int)SkillKey.Count; i++)
+		{
+			if (i != (int)SkillKey.Character && IsSkillUnlocked((SkillKey)i))
+				count++;
+		}
+		return count;
 	}
 
 	/// <summary> Sorts skill resources based on their key (number). </summary>
@@ -432,5 +456,6 @@ public enum SkillKey
 
 	Darkspine, // Completion reward
 
+	Character, // For custom characters.
 	Count, // Number of skills
 }

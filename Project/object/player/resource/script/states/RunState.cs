@@ -9,6 +9,7 @@ public partial class RunState : PlayerState
 	[Export] private PlayerState idleState;
 	[Export] private PlayerState slideState;
 	[Export] private PlayerState jumpState;
+	[Export] private PlayerState backstepState;
 	[Export] private PlayerState backflipState;
 	[Export] private PlayerState homingAttackState;
 	[Export] private PlayerState darkspineSpinState;
@@ -98,7 +99,7 @@ public partial class RunState : PlayerState
 		{
 			Player.Controller.ResetAttackBuffer();
 
-			if (Player.Lockon.IsTargetAttackable)
+			if (Player.Lockon.IsTargetAttackable && !Player.Controller.IsBrakeHeld())
 				return homingAttackState;
 
 			if (Player.IsDarkspineSonic)
@@ -121,6 +122,12 @@ public partial class RunState : PlayerState
 			(Player.Controller.IsBackTiltActive() && Player.IsOnWall))
 		{
 			return idleState;
+		}
+
+		if (Player.Controller.GetHoldingDistance(Player.MovementAngle, Player.PathFollower.ForwardAngle) >= 1.0f &&
+			!SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.FreeRoam))
+		{
+			return backstepState;
 		}
 
 		if (Player.Stats.GroundSettings.GetSpeedRatioClamped(Player.MoveSpeed) > RunRatio &&
@@ -174,7 +181,7 @@ public partial class RunState : PlayerState
 		if (Player.Skills.IsSpeedBreakActive) return false;
 
 		// Autorun disables speed loss
-		if (SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.Autorun)) return false;
+		if (SaveManager.ActiveSkillRing.IsAutorunActive) return false;
 
 		// Don't apply turning speed loss when moving quickly and holding the direction of the pathfollower
 		if (Player.Controller.IsHoldingDirection(Player.Controller.GetTargetInputAngle(), Player.PathFollower.ForwardAngle) &&
@@ -234,7 +241,7 @@ public partial class RunState : PlayerState
 	{
 		targetMovementAngle = base.ProcessTargetMovementAngle(targetMovementAngle);
 
-		if (SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.FreeRoam))
+		if (SaveManager.ActiveSkillRing.IsFreeRoamActive)
 			return targetMovementAngle;
 
 		float speedRatio = Player.Stats.GroundSettings.GetSpeedRatioClamped(Player.MoveSpeed);

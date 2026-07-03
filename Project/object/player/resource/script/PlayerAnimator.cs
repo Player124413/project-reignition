@@ -12,6 +12,7 @@ public partial class PlayerAnimator : Node3D
 
 	[Export] public Node3D RightFoot { get; private set; }
 	[Export] public Node3D LeftFoot { get; private set; }
+	[Export] public PlayerEffect Effect { get; private set; }
 	private Node3D RotationRoot { get; set; }
 	private PlayerController Player { get; set; }
 	public void Initialize(PlayerController player, Node3D rotationRoot)
@@ -228,6 +229,7 @@ public partial class PlayerAnimator : Node3D
 		animationTree.Set(GroundSeek, 0);
 		animationTree.Set(LandTrigger, (int)AnimationNodeOneShot.OneShotRequest.Abort);
 		animationTree.Set(ReversePathTrigger, (int)AnimationNodeOneShot.OneShotRequest.Abort);
+		animationTree.Set(QuickSlideTransition, DisabledConstant);
 		animationTree.Set(CrouchTransition, DisabledConstant);
 	}
 
@@ -308,7 +310,7 @@ public partial class PlayerAnimator : Node3D
 		if (inputStrength >= .8f)
 			return true;
 
-		if (SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.Autorun) && Mathf.IsZeroApprox(inputStrength))
+		if (SaveManager.ActiveSkillRing.IsAutorunActive && Mathf.IsZeroApprox(inputStrength))
 			return true;
 
 		return Player.IsLockoutActive &&
@@ -451,7 +453,12 @@ public partial class PlayerAnimator : Node3D
 			return 0; // Disable turning when controlled externally
 
 		if (Player.Controller.IsGyroEnabled)
+		{
+			if (Player.Camera.ActiveSettings.controlMode == CameraSettingsResource.ControlModeEnum.Reverse)
+				return -Player.Controller.InputHorizontal;
+
 			return Player.Controller.InputHorizontal;
+		}
 
 		float referenceAngle = Player.IsMovingBackward ? Player.PathFollower.ForwardAngle : Player.MovementAngle;
 		float inputAngle = Player.PathFollower.DeltaAngle * PathTurnStrength;
@@ -708,7 +715,7 @@ public partial class PlayerAnimator : Node3D
 			VisualAngle += Player.PathFollower.DeltaAngle * 1.5f;
 		}
 
-		if (!SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.FreeRoam))
+		if (!SaveManager.ActiveSkillRing.IsFreeRoamActive)
 			VisualAngle = ExtensionMethods.ClampAngleRange(VisualAngle, Player.PathFollower.ForwardAngle, Mathf.Pi);
 
 		VisualAngle = ExtensionMethods.SmoothDampAngle(VisualAngle, targetRotation, ref rotationVelocity, MovementRotationSmoothing);
@@ -731,7 +738,7 @@ public partial class PlayerAnimator : Node3D
 
 		if (Player.IsMovingBackward) // Backstepping
 		{
-			if (!SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.FreeRoam))
+			if (!SaveManager.ActiveSkillRing.IsFreeRoamActive)
 				return Player.PathFollower.ForwardAngle + (groundTurnRatio * Mathf.Pi * .15f);
 
 			if (Player.IsBackflipping)
@@ -740,11 +747,11 @@ public partial class PlayerAnimator : Node3D
 
 		if (Player.IsLockoutActive && Player.ActiveLockoutData.recenterPlayer)
 		{
-			if (!SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.FreeRoam))
+			if (!SaveManager.ActiveSkillRing.IsFreeRoamActive)
 				return Player.PathFollower.ForwardAngle + Player.PathTurnInfluence;
 		}
 
-		if (SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.Autorun) && Mathf.IsZeroApprox(Player.MoveSpeed))
+		if (SaveManager.ActiveSkillRing.IsAutorunActive && Mathf.IsZeroApprox(Player.MoveSpeed))
 			return VisualAngle;
 
 		float strafeAngle = Player.Stats.StrafeSettings.GetSpeedRatio(Player.StrafeSpeed) * -Mathf.Pi * 0.5f;

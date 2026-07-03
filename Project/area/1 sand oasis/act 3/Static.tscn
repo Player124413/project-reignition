@@ -18,6 +18,7 @@
 [ext_resource type="PackedScene" uid="uid://dj37itfdjb74j" path="res://area/1 sand oasis/act 3/environment/02Descent.tscn" id="7_dg1ex"]
 [ext_resource type="Curve3D" uid="uid://27uwgglqp1g6" path="res://area/1 sand oasis/act 3/environment/path/MainPath.tres" id="8_5ae3c"]
 [ext_resource type="Script" uid="uid://coiui4qvdxbqe" path="res://object/trigger/modules/EventTrigger.cs" id="17_2ednf"]
+[ext_resource type="AudioStream" uid="uid://cegtacnu38mx2" path="res://sound/sfx/stage/sand oasis/interior wind loop.wav" id="19_ccpm0"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_kh3tl"]
 size = Vector3(15, 20, 66)
@@ -1681,6 +1682,18 @@ next/demo3 = &"demo1"
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1612650673]
 environment = SubResource("Environment_i2jqx")
+
+[node name="Sound" type="Node3D" parent="." unique_id=2097142336]
+
+[node name="InteriorWind" type="AudioStreamPlayer3D" parent="Sound" unique_id=1375698927]
+stream = ExtResource("19_ccpm0")
+attenuation_model = 3
+volume_db = 50.0
+unit_size = 100.0
+autoplay = true
+panning_strength = 0.0
+bus = &"GAME SFX"
+area_mask = 1
 
 [connection signal="Activated" from="Visuals/CullingMap/02L" to="Visuals/02Descent" method="Activate"]
 [connection signal="Deactivated" from="Visuals/CullingMap/02L" to="Visuals/02Descent" method="Deactivate"]

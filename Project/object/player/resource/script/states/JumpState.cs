@@ -97,7 +97,7 @@ public partial class JumpState : PlayerState
 		ProcessTurning();
 		ProcessGravity();
 
-		if (!SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.Autorun))
+		if (!SaveManager.ActiveSkillRing.IsAutorunActive)
 			Player.IsMovingBackward = Player.Controller.IsHoldingDirection(Player.MovementAngle, Player.PathFollower.BackAngle);
 
 		Player.ApplyMovement();
@@ -171,11 +171,13 @@ public partial class JumpState : PlayerState
 			if (Player.Lockon.IsTargetAttackable)
 				return homingAttackState;
 
-			if (Player.IsDarkspineSonic &&
-				(Player.Controller.InputAxis.IsZeroApprox() ||
-				!Player.Controller.IsHoldingDirection(Player.Controller.GetTargetInputAngle(), Player.MovementAngle)))
+			if (Player.IsDarkspineSonic)
 			{
-				return darkspineSpinState;
+				if (Player.Controller.IsBrakeHeld() || !Player.Controller.IsGyroEnabled && (Player.Controller.InputAxis.IsZeroApprox() ||
+					!Player.Controller.IsHoldingDirection(Player.Controller.GetTargetInputAngle(), Player.MovementAngle)))
+				{
+					return darkspineSpinState;
+				}
 			}
 
 			return jumpDashState;
@@ -227,7 +229,7 @@ public partial class JumpState : PlayerState
 	{
 		base.ProcessTurning();
 
-		if (Player.IsAccelerationJumping && !SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.FreeRoam))
+		if (Player.IsAccelerationJumping && !SaveManager.ActiveSkillRing.IsFreeRoamActive)
 		{
 			// Clamp acceleration jumps so they don't get out of control
 			Player.MovementAngle = ExtensionMethods.ClampAngleRange(Player.MovementAngle, Player.PathFollower.ForwardAngle, MaxAccelerationJumpTurnAmount);
@@ -274,14 +276,14 @@ public partial class JumpState : PlayerState
 		}
 
 		if (!SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.ChargeJump) &&
-			!SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.Autorun) &&
+			!SaveManager.ActiveSkillRing.IsAutorunActive &&
 			(!Player.Controller.IsHoldingDirection(inputAngle, forwardAngle) ||
 			inputStrength < .5f))
 		{
 			return;
 		}
 
-		if (!SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.FreeRoam) &&
+		if (!SaveManager.ActiveSkillRing.IsFreeRoamActive &&
 			ExtensionMethods.DeltaAngleRad(Player.MovementAngle, forwardAngle) > Mathf.Pi * .5f)
 		{
 			Player.MovementAngle = forwardAngle;
