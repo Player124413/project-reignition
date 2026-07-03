@@ -135,7 +135,7 @@ public partial class LandState : PlayerState
 		if (SaveManager.ActiveSkillRing.IsFreeRoamActive)
 			targetForwardAngle = Player.MovementAngle;
 
-		if (!Player.Controller.IsHoldingDirection(inputAngle, targetForwardAngle))
+		if (!Mathf.IsZeroApprox(inputStrength) && !Player.Controller.IsHoldingDirection(inputAngle, targetForwardAngle))
 			return;
 
 		Player.Effect.PlayWindFX();
