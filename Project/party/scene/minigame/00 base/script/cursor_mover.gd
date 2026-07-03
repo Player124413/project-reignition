@@ -5,7 +5,7 @@ class_name PartyGameCursorMover extends PartyGameCharacterSpawner
 @export var cursor_texture_rect: TextureRect
 
 @export_group("Movement Settings")
-@export var cursor_move_speed: float = 10
+@export var cursor_move_speed: float = 12
 @export var cpu_move_speed: float = 130
 
 @export var cursor_min_clamp: Vector2

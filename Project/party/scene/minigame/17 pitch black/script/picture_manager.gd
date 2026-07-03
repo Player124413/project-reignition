@@ -25,7 +25,6 @@ func _ready() -> void:
 	initialize_frame_array()
 
 	MinigameManager.instance.minigame_finished.connect(Callable(self, "finish_game"))
-	return
 
 ##Setup demo picture
 func initialize_starting_picture() -> void:
@@ -59,11 +58,8 @@ func get_next_picture() -> void:
 
 	for picture in pictures:
 		picture.rpc("set_correct_picture", next_char)
-			
-	#pictures[incorrect_picture].set_incorrect_picture(next_int)
-	pictures[incorrect_picture].rpc("set_incorrect_picture", next_int, next_char)
 	
-	return
+	pictures[incorrect_picture].rpc("set_incorrect_picture", next_int, next_char)
 
 func get_correct_picture_pos() -> Vector2:
 	for picture in pictures:
@@ -91,7 +87,10 @@ func play_correct_sequence() -> void:
 			break
 	
 	await get_tree().create_timer(6).timeout
-
+	
+	if process_mode == PROCESS_MODE_DISABLED:
+		return
+	
 	sfx_rotate.play_in_group()
 	for pic in pictures:
 		pic.animator.play("spin_ftb")
@@ -108,7 +107,9 @@ func play_correct_sequence() -> void:
 		await get_tree().create_timer(4).timeout
 	else:
 		await get_tree().create_timer(1).timeout
-
+	
+	if process_mode == PROCESS_MODE_DISABLED:
+		return
 	get_next_picture()
 
 	sfx_rotate.play_in_group()
@@ -121,6 +122,9 @@ func play_correct_sequence() -> void:
 	
 	await get_tree().create_timer(1).timeout
 
+	if process_mode == PROCESS_MODE_DISABLED:
+		return
+	
 	for player in players:
 		player._state = player.STATE.IDLE
 		player._cpu_state = PicturePlayerController.CPU_STATE.SEARCHING
@@ -128,7 +132,10 @@ func play_correct_sequence() -> void:
 		player.cpu_search_timer.start(player.CPU_SEARCH_TIME)
 
 func finish_game() -> void:
+	process_mode = PROCESS_MODE_DISABLED
 	env_animator.play("blackout", -1, -1.0, true)
+	for pic in pictures:
+		pic.animator.play("RESET")
 	for player in players:
 		player.cursor.visible = false
 		player.lamp.visible = false
