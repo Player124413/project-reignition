@@ -87,12 +87,13 @@ public partial class BonusManager : VBoxContainer
 	private void BonusFinished() => bonusesActive--;
 
 	private int ringChain;
+	private readonly int MaxRingChain = 50;
 	/// <summary> Increases the current ring chain. </summary>
 	public void AddRingChain()
 	{
 		ringChain++;
 
-		if (ringChain >= 50)
+		if (ringChain >= MaxRingChain)
 			FinishRingChain(true); // Force ring chains to finish when going over 50
 
 		if (Stage.Data.MissionType == LevelDataResource.MissionTypeEnum.Chain)
@@ -133,12 +134,17 @@ public partial class BonusManager : VBoxContainer
 	private float enemyChainTimer;
 	/// <summary> "Grace time" to allow player to chain attacks from a speed-break. </summary>
 	private readonly float EnemyChainBuffer = .5f;
+	private readonly int MaxEnemyChain = 11;
 	private readonly List<Node> activeEnemyComboExtenders = [];
 
 	/// <summary> Increases the enemy chain. </summary>
 	public void AddEnemyChain()
 	{
 		enemyChain++;
+
+		if (enemyChain >= MaxRingChain)
+			FinishEnemyChain(); // Force ring chains to finish when going over 50
+
 		UpdateQueuedScore();
 	}
 
