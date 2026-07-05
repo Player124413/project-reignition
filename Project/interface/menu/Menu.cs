@@ -308,8 +308,8 @@ public partial class Menu : Control
 
 		if (isFadingIn)
 		{
-			bgm.VolumeDb = Mathf.LinearToDb(initialVolume);
 			bgm.Play(); // Start playing
+			bgm.VolumeDb = Mathf.LinearToDb(initialVolume);
 		}
 	}
 
