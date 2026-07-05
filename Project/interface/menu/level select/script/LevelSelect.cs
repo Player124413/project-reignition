@@ -184,8 +184,8 @@ public partial class LevelSelect : Menu
 		if (canPlayBgm && bgm?.Playing == false)
 		{
 			// Change to world specific level select music
-			parentMenu.FadeBgm(.5f);
-			FadeBgm(.5f, true, .5f); // Fade in bgm
+			parentMenu.FadeBgm(1.5f);
+			FadeBgm(1.5f, true, .2f); // Fade in bgm
 			CurrentBgmTime = parentMenu.CurrentBgmTime; // Sync bgm
 			readyMenu.SetBgmPlayer(bgm); // Update readymenu's bgm player
 		}
