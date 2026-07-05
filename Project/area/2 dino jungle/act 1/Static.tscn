@@ -97,6 +97,7 @@
 [ext_resource type="Curve3D" uid="uid://d1cd8xa7wprvy" path="res://area/2 dino jungle/act 1/environment/path/EndMiddlePath.tres" id="80_4h07x"]
 [ext_resource type="Curve3D" uid="uid://dkof5hnvrvbuu" path="res://area/2 dino jungle/act 1/environment/path/EndTopPath.tres" id="81_vy7ml"]
 [ext_resource type="PackedScene" uid="uid://6cdlojevxvu7" path="res://area/2 dino jungle/act 1/completion/CompletionDemo.gltf" id="89_i1ci7"]
+[ext_resource type="Script" uid="uid://0binr1l2nyn6" path="res://object/trigger/modules/ReflectionProbeJitterTrigger.cs" id="95_no7gx"]
 [ext_resource type="Resource" uid="uid://c8haap0ftp8qy" path="res://resource/bgm/bgm dj act1.tres" id="96_4on6f"]
 [ext_resource type="AudioStream" uid="uid://408ql6pnhng6" path="res://sound/sfx/stage/dinosaur jungle/jungle ambience.wav" id="99_s2xa0"]
 [ext_resource type="AudioStream" uid="uid://dqutonnrsm8sn" path="res://sound/sfx/stage/sand oasis/lake end loop.wav" id="100_arhuk"]
@@ -1774,7 +1775,7 @@ shape = SubResource("BoxShape3D_ibe76")
 [node name="DinoPara1" parent="Trigger/Object/DinoParaGroup" unique_id=216997819 instance=ExtResource("41_ak0dc")]
 transform = Transform3D(1, 0, -5.96046e-08, 0, 1, 0, 5.96046e-08, 0, 1, 2.00012, 0, 1.80005)
 
-[node name="AnimationPlayer" parent="Trigger/Object/DinoParaGroup/DinoPara1" index="1" unique_id=2514404]
+[node name="AnimationPlayer" parent="Trigger/Object/DinoParaGroup/DinoPara1" index="1" unique_id=2147191043]
 autoplay = &"para-stand"
 
 [node name="Head" parent="Trigger/Object/DinoParaGroup/DinoPara1" index="3" unique_id=960295935]
@@ -1783,7 +1784,7 @@ transform = Transform3D(0.99999994, 4.4703484e-08, -4.2840838e-07, -4.1608206e-0
 [node name="DinoPara2" parent="Trigger/Object/DinoParaGroup" unique_id=1791093711 instance=ExtResource("41_ak0dc")]
 transform = Transform3D(0.955961, 0, -1.36525, 0, 1.66667, 0, 1.36525, 0, 0.955961, 11.3036, 0, 11.6873)
 
-[node name="AnimationPlayer" parent="Trigger/Object/DinoParaGroup/DinoPara2" index="1" unique_id=2514404]
+[node name="AnimationPlayer" parent="Trigger/Object/DinoParaGroup/DinoPara2" index="1" unique_id=2147191043]
 autoplay = &"event-deactivate"
 
 [node name="Head" parent="Trigger/Object/DinoParaGroup/DinoPara2" index="3" unique_id=960295935]
@@ -2658,38 +2659,44 @@ ambient_mode = 2
 ambient_color = Color(0.78, 0.901, 1, 1)
 ambient_color_energy = 0.4
 
-[node name="CaveEnvironmentProbe" type="ReflectionProbe" parent="Lighting/EnvironmentProbes" unique_id=728941657]
+[node name="CaveEnvironmentProbe" type="ReflectionProbe" parent="Lighting/EnvironmentProbes" unique_id=728941657 node_paths=PackedStringArray("parentCuller")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -369.819, -209.941, -692.303)
 layers = 1024
 size = Vector3(377.18, 143.786, 358.653)
-origin_offset = Vector3(20, 50, 150)
 interior = true
 cull_mask = 20
 reflection_mask = 12
 ambient_mode = 2
 ambient_color = Color(1, 1, 1, 1)
 ambient_color_energy = 0.2
+script = ExtResource("95_no7gx")
+parentCuller = NodePath("../../../Visuals/03Cave")
 
-[node name="ExteriorEnvironmentProbe" type="ReflectionProbe" parent="Lighting/EnvironmentProbes" unique_id=740748993]
+[node name="ExteriorEnvironmentProbe" type="ReflectionProbe" parent="Lighting/EnvironmentProbes" unique_id=740748993 node_paths=PackedStringArray("parentCuller")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -599.599, -226.955, -1246.46)
 layers = 1024
 size = Vector3(1544.79, 197.046, 878.932)
+box_projection = true
 cull_mask = 18
 reflection_mask = 10
 ambient_mode = 2
 ambient_color = Color(0.72549, 0.839216, 1, 1)
 ambient_color_energy = 0.5
+script = ExtResource("95_no7gx")
+parentCuller = NodePath("../../../Visuals/05Crossing")
 
-[node name="CavernEnvironmentProbe" type="ReflectionProbe" parent="Lighting/EnvironmentProbes" unique_id=79249667]
+[node name="CavernEnvironmentProbe" type="ReflectionProbe" parent="Lighting/EnvironmentProbes" unique_id=79249667 node_paths=PackedStringArray("parentCuller")]
 transform = Transform3D(0.828559, 0, 0.559902, 0, 1, 0, -0.559902, 0, 0.828559, -561.977, -254.348, -1103.17)
 layers = 1024
 size = Vector3(188, 84.4327, 106.284)
 interior = true
-cull_mask = 28
+cull_mask = 14
 reflection_mask = 12
 ambient_mode = 2
 ambient_color = Color(0, 0.75, 1, 1)
 ambient_color_energy = 0.8
+script = ExtResource("95_no7gx")
+parentCuller = NodePath("../../../Visuals/07Cavern")
 
 [node name="CavernTopEnvironmentProbe" type="ReflectionProbe" parent="Lighting/EnvironmentProbes" unique_id=834098307]
 transform = Transform3D(0.828559, 0, 0.559902, 0, 1, 0, -0.559902, 0, 0.828559, -561.977, -262.624, -1103.17)
@@ -2785,7 +2792,7 @@ environment = SubResource("Environment_f4b5x")
 
 [node name="CompletionDemo" parent="." unique_id=1029911597 instance=ExtResource("89_i1ci7")]
 
-[node name="Camera" type="Camera3D" parent="CompletionDemo/CompletionDemo" parent_id_path=PackedInt32Array(1029911597, 1591689840) index="0" unique_id=658962860]
+[node name="Camera" type="Camera3D" parent="CompletionDemo/CompletionDemo" parent_id_path=PackedInt32Array(1029911597, 1299251143) index="0" unique_id=658962860]
 cull_mask = 1086
 fov = 70.0
 

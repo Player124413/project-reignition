@@ -18,9 +18,15 @@ public partial class SaveSelect : Menu
 	private readonly Array<SaveOption> _saveOptions = [];
 	private const int ActiveSaveOptionIndex = 3; // Corresponds to the center save option
 
-	[Export] private AnimationPlayer deleteAnimator;
-	private bool isDeleteMenuActive;
-	private int deleteSelection;
+	[Export] private AnimationPlayer popupAnimator;
+	private enum PopupMode
+	{
+		Disabled,
+		Delete,
+		Control
+	}
+	private PopupMode currentPopupMode;
+	private int popupSelection;
 
 	[Export] private string descriptionText;
 	[Export] private Description description;
@@ -50,9 +56,7 @@ public partial class SaveSelect : Menu
 	{
 		if (Runtime.Instance.IsActionJustPressed("sys_clear", "ui_text_delete"))
 		{
-			if (isDeleteMenuActive)
-				CancelDeleteMenu();
-			else
+			if (currentPopupMode == PopupMode.Disabled)
 				ShowDeleteMenu();
 
 			return;
@@ -69,19 +73,35 @@ public partial class SaveSelect : Menu
 
 	protected override void Confirm()
 	{
-		if (isDeleteMenuActive)
+		if (currentPopupMode != PopupMode.Disabled)
 		{
-			if (deleteSelection == 0)
+			if (currentPopupMode == PopupMode.Delete)
 			{
-				deleteAnimator.Play("confirm");
-				DeleteSaveFile();
-				isDeleteMenuActive = false;
+				if (popupSelection == 0)
+				{
+					popupAnimator.Play("confirm");
+					DeleteSaveFile();
+				}
+				else
+				{
+					CancelPopupMenu();
+				}
 			}
 			else
 			{
-				CancelDeleteMenu();
+				// Select a control mode
+				popupAnimator.Play("confirm");
+				base.Confirm();
 			}
 
+			currentPopupMode = PopupMode.Disabled;
+			return;
+		}
+
+		SaveManager.ActiveSaveSlotIndex = _saveOptions[ActiveSaveOptionIndex].SaveIndex;
+		if (SaveManager.ActiveGameData.IsNewFile() || Mathf.IsZeroApprox(SaveManager.ActiveGameData.playTime))
+		{
+			ShowControlMenu();
 			return;
 		}
 
@@ -90,19 +110,20 @@ public partial class SaveSelect : Menu
 
 	protected override void Cancel()
 	{
-		if (isDeleteMenuActive)
+		if (currentPopupMode != PopupMode.Disabled)
 		{
-			CancelDeleteMenu();
+			CancelPopupMenu();
 			return;
 		}
 
 		if (menuMemory[MemoryKeys.ActiveMenu] != (int)MemoryKeys.TimeAttack)
-			base.Cancel();
-		else
 		{
-			parentMenu.PlayReturnAnim();
-			animator.Play("cancel-for-time-attack");
+			base.Cancel();
+			return;
 		}
+
+		parentMenu.PlayReturnAnim();
+		animator.Play("cancel-for-time-attack");
 	}
 
 	private void ShowDeleteMenu()
@@ -113,29 +134,65 @@ public partial class SaveSelect : Menu
 
 		if (Runtime.Instance.IsUsingMouse)
 		{
-			deleteSelection = -1;
-			deleteAnimator.Play("select-none");
+			popupSelection = -1;
+			popupAnimator.Play("select-none");
 		}
 		else
 		{
-			deleteSelection = 1;
-			deleteAnimator.Play("select-no");
+			popupSelection = 1;
+			popupAnimator.Play("select-no");
 		}
-		deleteAnimator.Advance(0.0);
 
-		deleteAnimator.Play("show");
-		isDeleteMenuActive = true;
+		popupAnimator.Advance(0.0);
+		popupAnimator.Play("delete");
+		popupAnimator.Advance(0.0);
+		popupAnimator.Play("show");
+		currentPopupMode = PopupMode.Delete;
+	}
+
+	private void ShowControlMenu()
+	{
+		if (Runtime.Instance.IsUsingMouse)
+		{
+			popupSelection = -1;
+			popupAnimator.Play("select-none");
+		}
+		else
+		{
+			// Default to "Reignited" control style
+			popupSelection = 1;
+			popupAnimator.Play("select-no");
+		}
+
+		popupAnimator.Advance(0.0);
+		popupAnimator.Play("control");
+		popupAnimator.Advance(0.0);
+		popupAnimator.Play("show");
+		currentPopupMode = PopupMode.Control;
 	}
 
 	protected override void UpdateSelection()
 	{
-		if (isDeleteMenuActive)
+		if (currentPopupMode == PopupMode.Delete)
 		{
 			int input = Mathf.Sign(Input.GetAxis("ui_left", "ui_right"));
-			if ((input > 0 && deleteSelection != 1) || (input < 0 && deleteSelection != 0))
+			if ((input > 0 && popupSelection != 1) || (input < 0 && popupSelection != 0))
 			{
-				deleteSelection = input > 0 ? 1 : 0;
-				UpdateDeleteMenuVisuals();
+				popupSelection = input > 0 ? 1 : 0;
+				UpdatePopupMenuVisuals();
+			}
+
+			return;
+		}
+
+		if (currentPopupMode == PopupMode.Control)
+		{
+			int input = Mathf.Sign(Input.GetAxis("ui_left", "ui_right"));
+			if (input != 0)
+			{
+				popupSelection = WrapSelection(popupSelection + input, 3);
+				UpdatePopupMenuVisuals();
+				StartSelectionTimer();
 			}
 
 			return;
@@ -147,15 +204,20 @@ public partial class SaveSelect : Menu
 		ScrollSelection(inputSign);
 	}
 
-	private void UpdateDeleteMenuVisuals()
+	private void UpdatePopupMenuVisuals()
 	{
-		if (deleteSelection == -1)
+		if (popupSelection == -1)
 		{
-			deleteAnimator.Play("select-none");
+			popupAnimator.Play("select-none");
 			return;
 		}
 
-		deleteAnimator.Play(deleteSelection == 0 ? "select-yes" : "select-no");
+		if (popupSelection == 0)
+			popupAnimator.Play("select-yes");
+		else if (popupSelection == 1)
+			popupAnimator.Play("select-no");
+		else
+			popupAnimator.Play("select-control");
 	}
 
 	private void ScrollSelection(int inputSign)
@@ -187,7 +249,18 @@ public partial class SaveSelect : Menu
 		if (SaveManager.ActiveGameData.IsNewFile() || Mathf.IsZeroApprox(SaveManager.ActiveGameData.playTime))
 		{
 			SaveManager.ResetSaveData(SaveManager.ActiveSaveSlotIndex, false);
+			if (popupSelection == 0)
+			{
+				SaveManager.ActiveSkillRing.EquipSkill(SkillKey.Autorun);
+				SaveManager.ActiveSkillRing.EquipSkill(SkillKey.ChargeJump);
+			}
+			else if (popupSelection == 2)
+			{
+				SaveManager.ActiveSkillRing.EquipSkill(SkillKey.FreeRoam);
+			}
+
 			SaveManager.SaveGameData();
+
 
 			if (!DebugManager.Instance.UseDemoSave) // Don't load into cutscenes in the demo
 			{
@@ -217,14 +290,17 @@ public partial class SaveSelect : Menu
 		base.ShowMenu();
 	}
 
-	private void CancelDeleteMenu()
+	private void CancelPopupMenu()
 	{
-		deleteSelection = 1;
-		deleteAnimator.Play("select-no");
-		deleteAnimator.Advance(0.0);
+		if (currentPopupMode == PopupMode.Delete)
+		{
+			popupSelection = 1;
+			popupAnimator.Play("select-no");
+			popupAnimator.Advance(0.0);
+		}
 
-		isDeleteMenuActive = false;
-		deleteAnimator.Play("hide");
+		currentPopupMode = PopupMode.Disabled;
+		popupAnimator.Play("hide");
 	}
 
 	/// <summary> Deletes the currently selected save file. </summary>
@@ -256,10 +332,10 @@ public partial class SaveSelect : Menu
 		if (!isProcessing)
 			return;
 
-		if (isDeleteMenuActive)
+		if (currentPopupMode != PopupMode.Disabled)
 		{
-			deleteSelection = direction;
-			UpdateDeleteMenuVisuals();
+			popupSelection = direction;
+			UpdatePopupMenuVisuals();
 			return;
 		}
 

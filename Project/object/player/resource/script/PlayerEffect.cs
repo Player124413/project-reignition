@@ -16,6 +16,9 @@ public partial class PlayerEffect : Node3D
 		Player = player;
 		trailFX.Player = Player;
 
+		// Rebuild dialog libraries to account for modded locales
+		voiceLibrary?.LocalizeAudioStreams(true);
+
 		SoundManager.instance.Connect(SoundManager.SignalName.SonicSpeechStart, new Callable(this, MethodName.MuteGameplayVoice));
 		SoundManager.instance.Connect(SoundManager.SignalName.SonicSpeechEnd, new Callable(this, MethodName.UnmuteGameplayVoice));
 
@@ -32,7 +35,7 @@ public partial class PlayerEffect : Node3D
 		{
 			// Override modded voice library
 			SkillResource skill = Runtime.Instance.SkillList.GetSkill(SkillKey.Character).GetAugment(augmentIndex);
-			if (skill.VoiceLibraryOverride != null)
+			if (skill?.VoiceLibraryOverride != null)
 				voiceLibrary = skill.VoiceLibraryOverride;
 		}
 	}
@@ -449,6 +452,14 @@ public partial class PlayerEffect : Node3D
 		if (Mathf.IsZeroApprox(Player.MoveSpeed)) // Probably called during a blend to idle state; Ignore.
 			return;
 
+		// Update step emission speed and amount
+		if (currentStepEmitter != -1 && stepEmitters[currentStepEmitter] != null)
+		{
+			float ratio = Player.Stats.GroundSettings.GetSpeedRatioClamped(Player.MoveSpeed);
+			stepEmitters[currentStepEmitter].SpeedScale = ratio;
+			stepEmitters[currentStepEmitter].AmountRatio = ratio;
+		}
+
 		footstepChannel.Stream = materialSFXLibrary.GetStream(materialSFXLibrary.GetKeyByIndex(GroundMaterialIndex), 0);
 		footstepChannel.Play();
 
@@ -541,7 +552,7 @@ public partial class PlayerEffect : Node3D
 			return;
 
 		SoundManager.instance.IsSonicSfxVoiceChannelActive = true;
-		voiceChannel.Stream = voiceLibrary.GetStream(key, SoundManager.LanguageIndex, sfxIndex);
+		voiceChannel.Stream = voiceLibrary.GetStream(key, SaveManager.GetCurrentVoiceLocaleIndex(), sfxIndex);
 		voiceChannel.Play();
 	}
 

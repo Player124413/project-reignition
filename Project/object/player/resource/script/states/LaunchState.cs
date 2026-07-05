@@ -17,6 +17,7 @@ public partial class LaunchState : PlayerState
 	public Launcher ActiveLauncher => Settings.Launcher;
 	private float launcherTime;
 	private RaycastHit wallHit;
+	private readonly float LaunchLength = 0.2f;
 	public bool UpdateSettings(LaunchSettings settings)
 	{
 		if (settings.startPosition.IsEqualApprox(settings.endPosition) &&
@@ -133,7 +134,7 @@ public partial class LaunchState : PlayerState
 			return landState;
 		}
 
-		if (Settings.AllowInterruption)
+		if (Settings.AllowInterruption && launcherTime >= LaunchLength)
 		{
 			if (Player.Controller.IsJumpBufferActive)
 			{

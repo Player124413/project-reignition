@@ -15,11 +15,11 @@ public partial class PlayerController : CharacterBody3D
 	[Export] public PlayerSkillController Skills { get; private set; }
 	[Export] public PlayerLockonController Lockon { get; private set; }
 	[Export] public Node3D AnimatorRoot { get; private set; }
-	[Export] public PlayerEffect Effect { get; private set; }
 	[Export] public PlayerPathController PathFollower { get; private set; }
 	[Export] public PlayerCameraController Camera { get; private set; }
 	private StageSettings Stage => StageSettings.Instance;
 	public PlayerAnimator Animator { get; private set; } // The animator is instanced in _Ready()
+	public PlayerEffect Effect => Animator.Effect;
 
 	[Export(PropertyHint.File, "*.tscn")]
 	private StringName defaultModelPath;

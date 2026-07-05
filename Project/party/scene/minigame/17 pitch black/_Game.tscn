@@ -1,0 +1,814 @@
+[gd_scene format=3 uid="uid://ds5hnjq82a67j"]
+
+[ext_resource type="PackedScene" uid="uid://dsbufs8tjchk7" path="res://party/scene/minigame/00 base/MinigameBase.tscn" id="1_1x6en"]
+[ext_resource type="PackedScene" uid="uid://ct3wwkbyhs7em" path="res://party/scene/minigame/17 pitch black/model/Map.glb" id="1_gshku"]
+[ext_resource type="Resource" uid="uid://cmv458b2hhmb0" path="res://party/resource/minigame/17PitchBlack.tres" id="2_5d3t0"]
+[ext_resource type="PackedScene" uid="uid://bnhdekqajqxd5" path="res://party/scene/minigame/17 pitch black/Picture.tscn" id="2_ti0kl"]
+[ext_resource type="Material" uid="uid://ctpclc7rvt0dk" path="res://party/scene/minigame/17 pitch black/material/Blackout.tres" id="3_qx0r3"]
+[ext_resource type="AnimationLibrary" uid="uid://b7nv23a63t0ui" path="res://party/scene/minigame/17 pitch black/animation/_Library.glb" id="3_t4r27"]
+[ext_resource type="Resource" uid="uid://cnritclslppve" path="res://party/resource/bgm/Minigame4.tres" id="4_84ry3"]
+[ext_resource type="PackedScene" uid="uid://dporu1ja77qk6" path="res://party/scene/minigame/17 pitch black/Spotlight.tscn" id="4_qx0r3"]
+[ext_resource type="PackedScene" uid="uid://30sgb1pjxad8" path="res://party/scene/minigame/00 base/ScoreBottom.tscn" id="4_rjlyr"]
+[ext_resource type="PackedScene" uid="uid://dkhfl3o0fmu2e" path="res://party/scene/minigame/17 pitch black/CandleLights.tscn" id="5_1qa36"]
+[ext_resource type="PackedScene" uid="uid://f5w7fq20xmd1" path="res://party/scene/minigame/00 base/Time.tscn" id="5_f0r8e"]
+[ext_resource type="Script" uid="uid://tsdn2h7tfdic" path="res://party/scene/minigame/17 pitch black/script/picture_manager.gd" id="7_x2pef"]
+[ext_resource type="PackedScene" uid="uid://dq6io45mlhugu" path="res://party/scene/minigame/17 pitch black/Player.tscn" id="9_tlkyk"]
+[ext_resource type="AudioStream" uid="uid://balm5pqd7wfw1" path="res://party/scene/minigame/17 pitch black/sound/painting rotate.wav" id="14_do727"]
+[ext_resource type="Script" uid="uid://bkwc2atbp4cjd" path="res://party/scene/minigame/00 base/script/group_sfx_player.gd" id="15_gcmdu"]
+[ext_resource type="AudioStream" uid="uid://6syqvx70qyuk" path="res://party/scene/minigame/17 pitch black/sound/painting lightsout.wav" id="16_gcmdu"]
+
+[sub_resource type="Environment" id="Environment_e2t8q"]
+ambient_light_source = 2
+ambient_light_color = Color(0.35253242, 0.30506206, 0.3793383, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_e2t8q"]
+size = Vector3(257.605, 80, 109.455)
+
+[sub_resource type="Animation" id="Animation_qx0r3"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Shadow:transparency")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.0]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Map/MainLight:light_energy")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [1.0]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Map/CandleLightsL:visible")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("Map/CandleLightsR:visible")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("Shadow/Spotlight1:visible")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("Shadow/Spotlight2:visible")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/6/type = "value"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("Shadow/Spotlight3:visible")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/7/type = "value"
+tracks/7/imported = false
+tracks/7/enabled = true
+tracks/7/path = NodePath("Shadow/Spotlight4:visible")
+tracks/7/interp = 1
+tracks/7/loop_wrap = true
+tracks/7/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+
+[sub_resource type="Animation" id="Animation_1qa36"]
+resource_name = "blackout"
+length = 0.5
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Shadow:transparency")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.5),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [1.0, 0.0]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Map/MainLight:light_energy")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0.19999999, 0.4),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [1.0, 0.0]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Map/CandleLightsL:visible")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 0.20000002),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [true, false]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("Map/CandleLightsR:visible")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0, 0.20000002),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [true, false]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("Shadow/Spotlight1:visible")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0, 0.36666667, 0.4),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 1,
+"values": [false, false, true]
+}
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("Shadow/Spotlight2:visible")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0, 0.36666667, 0.4),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 1,
+"values": [false, false, true]
+}
+tracks/6/type = "value"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("Shadow/Spotlight3:visible")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"times": PackedFloat32Array(0, 0.36666667, 0.4),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 1,
+"values": [false, false, true]
+}
+tracks/7/type = "value"
+tracks/7/imported = false
+tracks/7/enabled = true
+tracks/7/path = NodePath("Shadow/Spotlight4:visible")
+tracks/7/interp = 1
+tracks/7/loop_wrap = true
+tracks/7/keys = {
+"times": PackedFloat32Array(0, 0.36666667, 0.4),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 1,
+"values": [false, false, true]
+}
+
+[sub_resource type="Animation" id="Animation_1x6en"]
+resource_name = "init"
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Shadow:transparency")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.0]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Map/MainLight:light_energy")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.0]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Map/CandleLightsL:visible")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("Map/CandleLightsR:visible")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("Shadow/Spotlight1:visible")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("Shadow/Spotlight2:visible")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/6/type = "value"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("Shadow/Spotlight3:visible")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/7/type = "value"
+tracks/7/imported = false
+tracks/7/enabled = true
+tracks/7/path = NodePath("Shadow/Spotlight4:visible")
+tracks/7/interp = 1
+tracks/7/loop_wrap = true
+tracks/7/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_1x6en"]
+_data = {
+&"RESET": SubResource("Animation_qx0r3"),
+&"blackout": SubResource("Animation_1qa36"),
+&"init": SubResource("Animation_1x6en")
+}
+
+[sub_resource type="Animation" id="Animation_f0r8e"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Environment/Shadow/Spotlight1:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(-45.599144, -18.547619, -55.210144)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Environment/Shadow/Spotlight2:position")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(-12.599144, -18.547619, -55.210144)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Environment/Shadow/Spotlight3:position")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(20.400856, -18.547619, -55.210144)]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("Environment/Shadow/Spotlight4:position")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(50.400856, -18.547619, -55.210144)]
+}
+
+[sub_resource type="Animation" id="Animation_x2pef"]
+resource_name = "intro"
+length = 14.0
+step = 0.1
+tracks/0/type = "method"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Environment/AnimationPlayer")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [&"init", -1, 1.0, false],
+"method": &"play"
+}]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Environment/Shadow/Spotlight1:position")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 2.0333333, 4, 5),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 0,
+"values": [Vector3(-45.599144, -18.547619, -55.210144), Vector3(12.331, 8.052, -55.21), Vector3(-39.374, 8.052, -55.21), Vector3(-45.344, 0.727, -55.21)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Environment/Shadow/Spotlight2:position")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 0.3, 0.7, 1.5),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 0,
+"values": [Vector3(-12.599144, -18.547619, -55.210144), Vector3(-10.229, -18.548, -55.21), Vector3(-7.729, -24.458, -55.21), Vector3(-22.404, -6.078, -55.21)]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("Environment/Shadow/Spotlight3:position")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0, 1.5, 2.8999999),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector3(20.400856, -18.547619, -55.210144), Vector3(-22.889, 7.722, -55.21), Vector3(-6.744, -5.873, -55.21)]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("Environment/Shadow/Spotlight4:position")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0, 2.2, 2.7, 4, 4.4),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"update": 0,
+"values": [Vector3(50.400856, -18.547619, -55.210144), Vector3(-23.279, -18.548, -55.21), Vector3(-39.719, -27.003, -55.21), Vector3(-12.264, -16.928, -55.21), Vector3(-7.369, -16.928, -55.21)]
+}
+tracks/5/type = "method"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("Objects/Player1")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(5, 14),
+"transitions": PackedFloat32Array(1, 1),
+"values": [{
+"args": [],
+"method": &"start_success"
+}, {
+"args": [],
+"method": &"activate"
+}]
+}
+tracks/6/type = "method"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("Objects/Player2")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"times": PackedFloat32Array(1.5, 14),
+"transitions": PackedFloat32Array(1, 1),
+"values": [{
+"args": [],
+"method": &"start_miss"
+}, {
+"args": [],
+"method": &"activate"
+}]
+}
+tracks/7/type = "method"
+tracks/7/imported = false
+tracks/7/enabled = true
+tracks/7/path = NodePath("Objects/Player3")
+tracks/7/interp = 1
+tracks/7/loop_wrap = true
+tracks/7/keys = {
+"times": PackedFloat32Array(2.9, 14),
+"transitions": PackedFloat32Array(1, 1),
+"values": [{
+"args": [],
+"method": &"start_miss"
+}, {
+"args": [],
+"method": &"activate"
+}]
+}
+tracks/8/type = "method"
+tracks/8/imported = false
+tracks/8/enabled = true
+tracks/8/path = NodePath("Environment/PictureFrames")
+tracks/8/interp = 1
+tracks/8/loop_wrap = true
+tracks/8/keys = {
+"times": PackedFloat32Array(5),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"play_correct_sequence"
+}]
+}
+tracks/9/type = "method"
+tracks/9/imported = false
+tracks/9/enabled = true
+tracks/9/path = NodePath("Minigame")
+tracks/9/interp = 1
+tracks/9/loop_wrap = true
+tracks/9/keys = {
+"times": PackedFloat32Array(12),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"request_minigame_start"
+}]
+}
+tracks/10/type = "method"
+tracks/10/imported = false
+tracks/10/enabled = true
+tracks/10/path = NodePath("Objects/Player4")
+tracks/10/interp = 1
+tracks/10/loop_wrap = true
+tracks/10/keys = {
+"times": PackedFloat32Array(14),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"activate"
+}]
+}
+tracks/11/type = "method"
+tracks/11/imported = false
+tracks/11/enabled = true
+tracks/11/path = NodePath("Objects/Player1")
+tracks/11/interp = 1
+tracks/11/loop_wrap = true
+tracks/11/keys = {
+"times": PackedFloat32Array(14),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"complete_demo"
+}]
+}
+tracks/12/type = "method"
+tracks/12/imported = false
+tracks/12/enabled = true
+tracks/12/path = NodePath("Objects/Player2")
+tracks/12/interp = 1
+tracks/12/loop_wrap = true
+tracks/12/keys = {
+"times": PackedFloat32Array(14),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"complete_demo"
+}]
+}
+tracks/13/type = "method"
+tracks/13/imported = false
+tracks/13/enabled = true
+tracks/13/path = NodePath("Objects/Player3")
+tracks/13/interp = 1
+tracks/13/loop_wrap = true
+tracks/13/keys = {
+"times": PackedFloat32Array(14),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"complete_demo"
+}]
+}
+tracks/14/type = "method"
+tracks/14/imported = false
+tracks/14/enabled = true
+tracks/14/path = NodePath("Objects/Player4")
+tracks/14/interp = 1
+tracks/14/loop_wrap = true
+tracks/14/keys = {
+"times": PackedFloat32Array(14),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"complete_demo"
+}]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_f0r8e"]
+_data = {
+&"RESET": SubResource("Animation_f0r8e"),
+&"intro": SubResource("Animation_x2pef")
+}
+
+[node name="Game" type="Node3D" unique_id=1197644646]
+
+[node name="Minigame" parent="." unique_id=600998337 node_paths=PackedStringArray("results_camera", "intro_animator") instance=ExtResource("1_1x6en")]
+minigame_resource = ExtResource("2_5d3t0")
+anim_library = ExtResource("3_t4r27")
+results_camera = NodePath("../ResultsCamera")
+intro_animator = NodePath("../IntroAnimator")
+
+[node name="ResultsLocation" parent="Minigame" index="4" unique_id=1428872605]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -26.322514)
+
+[node name="BGM" parent="Minigame" index="6" unique_id=1105249761]
+bgmResource = ExtResource("4_84ry3")
+
+[node name="Scores" parent="Minigame" unique_id=1484096685 instance=ExtResource("4_rjlyr")]
+layout_mode = 1
+
+[node name="Time" parent="Minigame" unique_id=2069576343 instance=ExtResource("5_f0r8e")]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -128.0
+offset_right = 128.0
+grow_horizontal = 2
+
+[node name="Environment" type="Node3D" parent="." unique_id=2094558663]
+
+[node name="Map" parent="Environment" unique_id=1967604999 instance=ExtResource("1_gshku")]
+
+[node name="st_211_map_Mesh_0000" parent="Environment/Map" index="0" unique_id=132837179]
+layers = 4
+
+[node name="st_211_map_Mesh_0004" parent="Environment/Map" index="1" unique_id=1943951568]
+layers = 4
+
+[node name="st_211_map_Mesh_0005" parent="Environment/Map" index="2" unique_id=56755636]
+layers = 4
+
+[node name="st_211_map_Mesh_0006" parent="Environment/Map" index="3" unique_id=247984539]
+layers = 4
+
+[node name="st_211_map_Mesh_0007" parent="Environment/Map" index="4" unique_id=1285133228]
+layers = 4
+
+[node name="st_211_map_Mesh_0016" parent="Environment/Map" index="5" unique_id=808240719]
+layers = 4
+
+[node name="st_211_map_Mesh_0020" parent="Environment/Map" index="6" unique_id=1045021345]
+layers = 4
+
+[node name="st_211_map_Mesh_0022" parent="Environment/Map" index="7" unique_id=962933978]
+layers = 4
+
+[node name="st_211_map_Mesh_0024" parent="Environment/Map" index="8" unique_id=2053829270]
+layers = 4
+
+[node name="st_211_map_Mesh_0025" parent="Environment/Map" index="9" unique_id=619613594]
+layers = 4
+
+[node name="CandleLightsL" parent="Environment/Map" unique_id=1156450227 instance=ExtResource("5_1qa36")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -32.9, 65.6, -51.2)
+
+[node name="CandleFlameMesh" parent="Environment/Map/CandleLightsL" index="0" unique_id=279661165]
+visible = true
+
+[node name="CandleLightsR" parent="Environment/Map" unique_id=548664349 instance=ExtResource("5_1qa36")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 33.600002, 65.6, -51.2)
+
+[node name="CandleFlameMesh" parent="Environment/Map/CandleLightsR" index="0" unique_id=279661165]
+visible = true
+
+[node name="MainLight" type="DirectionalLight3D" parent="Environment/Map" unique_id=1502729911]
+transform = Transform3D(1, 0, 0, 0, 0.6427876, 0.7660445, 0, -0.7660445, 0.6427876, 0, 20, 0)
+layers = 1024
+light_color = Color(1, 0.7647059, 0.4627451, 1)
+light_cull_mask = 4293918725
+shadow_enabled = true
+
+[node name="PictureFrames" type="Node3D" parent="Environment" unique_id=1720399247 node_paths=PackedStringArray("env_animator", "pictures", "players", "camera", "sfx_rotate", "sfx_blackout")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 34, -61)
+script = ExtResource("7_x2pef")
+env_animator = NodePath("../AnimationPlayer")
+pictures = [NodePath("Picture1"), NodePath("Picture2"), NodePath("Picture3"), NodePath("Picture4")]
+players = [NodePath("../../Objects/Player1"), NodePath("../../Objects/Player2"), NodePath("../../Objects/Player3"), NodePath("../../Objects/Player4")]
+camera = NodePath("../../GameplayCamera")
+sfx_rotate = NodePath("../../SFX/PaintingRotate")
+sfx_blackout = NodePath("../../SFX/Blackout")
+
+[node name="Picture1" parent="Environment/PictureFrames" unique_id=736417009 instance=ExtResource("2_ti0kl")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -50, 0, 0)
+
+[node name="Picture2" parent="Environment/PictureFrames" unique_id=1615296750 instance=ExtResource("2_ti0kl")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -17, 0, 0)
+
+[node name="Picture3" parent="Environment/PictureFrames" unique_id=1680561069 instance=ExtResource("2_ti0kl")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 17, 0, 0)
+
+[node name="Picture4" parent="Environment/PictureFrames" unique_id=1707381995 instance=ExtResource("2_ti0kl")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 50, 0, 0)
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="Environment" unique_id=211643018]
+environment = SubResource("Environment_e2t8q")
+
+[node name="Shadow" type="CSGMesh3D" parent="Environment" unique_id=438679061]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.528595e-05, 40.205338, -3.0909932)
+material_override = ExtResource("3_qx0r3")
+cast_shadow = 0
+flip_faces = true
+mesh = SubResource("BoxMesh_e2t8q")
+
+[node name="Spotlight1" parent="Environment/Shadow" unique_id=588222927 instance=ExtResource("4_qx0r3")]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -45.599144, -18.547619, -55.210144)
+layers = 1024
+sides = 12
+smooth_faces = false
+
+[node name="Spotlight2" parent="Environment/Shadow" unique_id=288984128 instance=ExtResource("4_qx0r3")]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -12.599144, -18.547619, -55.210144)
+layers = 1024
+sides = 12
+smooth_faces = false
+
+[node name="Spotlight3" parent="Environment/Shadow" unique_id=1815259168 instance=ExtResource("4_qx0r3")]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 20.400856, -18.547619, -55.210144)
+layers = 1024
+sides = 12
+smooth_faces = false
+
+[node name="Spotlight4" parent="Environment/Shadow" unique_id=173599378 instance=ExtResource("4_qx0r3")]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 50.400856, -18.547619, -55.210144)
+layers = 1024
+sides = 12
+smooth_faces = false
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Environment" unique_id=1716271743]
+libraries/ = SubResource("AnimationLibrary_1x6en")
+
+[node name="GameplayCamera" type="Camera3D" parent="." unique_id=1881580446]
+transform = Transform3D(1, 0, 0, 0, 0.9816273, -0.19080903, 0, 0.19080903, 0.9816273, 0, 9.5, 43)
+fov = 55.8
+
+[node name="ResultsCamera" type="Camera3D" parent="." unique_id=121678800]
+transform = Transform3D(1, 0, 0, 0, 0.9967341, 0.080753595, 0, -0.080753595, 0.9967341, 0, 14.745113, 36.95826)
+fov = 30.8
+
+[node name="Objects" type="Node3D" parent="." unique_id=1438525470]
+
+[node name="Player1" parent="Objects" unique_id=1879495047 node_paths=PackedStringArray("picture_manager", "spotlight", "score_counter") instance=ExtResource("9_tlkyk")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, -23.15928, 0, 0)
+picture_manager = NodePath("../../Environment/PictureFrames")
+spotlight = NodePath("../../Environment/Shadow/Spotlight1")
+cursor_move_speed = 8.0
+cpu_move_speed = 170.0
+score_counter = NodePath("../../Minigame/Scores/ScoreCounter1")
+
+[node name="Player2" parent="Objects" unique_id=671960938 node_paths=PackedStringArray("picture_manager", "spotlight", "score_counter") instance=ExtResource("9_tlkyk")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, -8.159281, 0, 0)
+picture_manager = NodePath("../../Environment/PictureFrames")
+spotlight = NodePath("../../Environment/Shadow/Spotlight2")
+cursor_move_speed = 8.0
+cpu_move_speed = 170.0
+player_index = 1
+score_counter = NodePath("../../Minigame/Scores/ScoreCounter2")
+
+[node name="Player3" parent="Objects" unique_id=33427662 node_paths=PackedStringArray("picture_manager", "spotlight", "score_counter") instance=ExtResource("9_tlkyk")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 6.840719, 0, 0)
+picture_manager = NodePath("../../Environment/PictureFrames")
+spotlight = NodePath("../../Environment/Shadow/Spotlight3")
+cursor_move_speed = 8.0
+cpu_move_speed = 170.0
+player_index = 2
+score_counter = NodePath("../../Minigame/Scores/ScoreCounter3")
+
+[node name="Player4" parent="Objects" unique_id=1726793755 node_paths=PackedStringArray("picture_manager", "spotlight", "score_counter") instance=ExtResource("9_tlkyk")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 21.84072, 0, 0)
+picture_manager = NodePath("../../Environment/PictureFrames")
+spotlight = NodePath("../../Environment/Shadow/Spotlight4")
+cursor_move_speed = 8.0
+cpu_move_speed = 170.0
+player_index = 3
+score_counter = NodePath("../../Minigame/Scores/ScoreCounter4")
+
+[node name="IntroAnimator" type="AnimationPlayer" parent="." unique_id=1755016473]
+libraries/ = SubResource("AnimationLibrary_f0r8e")
+
+[node name="SFX" type="Node" parent="." unique_id=1304073205]
+
+[node name="PaintingRotate" type="AudioStreamPlayer" parent="SFX" unique_id=472042659]
+stream = ExtResource("14_do727")
+script = ExtResource("15_gcmdu")
+group = "rotate"
+base_volume = 0.5
+max_volume = 0.5
+metadata/_custom_type_script = "uid://bkwc2atbp4cjd"
+
+[node name="Blackout" type="AudioStreamPlayer" parent="SFX" unique_id=375733715]
+stream = ExtResource("16_gcmdu")
+script = ExtResource("15_gcmdu")
+group = "blackout"
+base_volume = 0.7
+max_volume = 0.7
+metadata/_custom_type_script = "uid://bkwc2atbp4cjd"
+
+[editable path="Minigame"]
+[editable path="Minigame/Scores"]
+[editable path="Environment/Map"]
+[editable path="Environment/Map/CandleLightsL"]
+[editable path="Environment/Map/CandleLightsR"]

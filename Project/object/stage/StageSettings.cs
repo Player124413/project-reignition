@@ -39,6 +39,9 @@ public partial class StageSettings : Node3D
 	{
 		Instance = this; // Always override previous instance
 
+		// Rebuild dialog libraries to account for modded locales
+		dialogLibrary?.LocalizeAudioStreams(true);
+
 		for (int i = 0; i < pathParent.GetChildCount(); i++)
 		{
 			Path3D path = pathParent.GetChildOrNull<Path3D>(i);
@@ -776,6 +779,12 @@ public partial class StageSettings : Node3D
 		{
 			SaveManager.ActiveGameData.UnlockWorldRing(Data.WorldRing);
 			NotificationManager.Instance.AddNotification(NotificationManager.NotificationType.WorldRing, $"unlock_ring_{Data.WorldRing.ToString().ToSnakeCase()}");
+		}
+
+		if (Data.LevelID == "np_last" && !SaveManager.SharedData.IsTimeAttackUnlocked)
+		{
+			SaveManager.SharedData.IsTimeAttackUnlocked = true;
+			NotificationManager.Instance.AddNotification(NotificationManager.NotificationType.TimeAttack, "unlock_time_attack");
 		}
 	}
 

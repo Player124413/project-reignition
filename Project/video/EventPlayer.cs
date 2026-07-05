@@ -95,13 +95,25 @@ public partial class EventPlayer : Node
 		}
 	}
 
-	public override void _EnterTree() => DebugManager.Instance.IsCutsceneActive = true;
+	public override void _EnterTree()
+	{
+		if (Engine.IsEditorHint())
+			return;
 
-	public override void _ExitTree() => DebugManager.Instance.IsCutsceneActive = false;
+		DebugManager.Instance.IsCutsceneActive = true;
+	}
+
+	public override void _ExitTree()
+	{
+		if (Engine.IsEditorHint())
+			return;
+
+		DebugManager.Instance.IsCutsceneActive = false;
+	}
 
 	private void LoadLocalization()
 	{
-		StringName targetLocale = SaveManager.VoiceLanguageToGodotLocale(SaveManager.Config.voiceLanguage);
+		StringName targetLocale = SaveManager.Config.voiceLocale.LocaleId;
 		LoadAudioTrack(targetLocale);
 
 		if (animator == null)
@@ -292,6 +304,9 @@ public partial class EventPlayer : Node
 	public void OnEventFinished() => OnEventFinished(false);
 	public void OnEventFinished(bool isCanceled)
 	{
+		if (Engine.IsEditorHint())
+			return;
+
 		if (isNestedCutscene) // Don't do anything for nested cutscenes
 			return;
 
@@ -350,11 +365,16 @@ public partial class EventPlayer : Node
 
 	private void ShowSubtitlesFromScript()
 	{
-		subtitleLabel.Text = Tr($"{localizationKeyPrefix}{subtitleDialogIndex}");
 		if (Engine.IsEditorHint())
+		{
+			subtitleLabel.Text = $"{localizationKeyPrefix}{subtitleDialogIndex}";
 			subtitleRoot.Visible = true;
+		}
 		else
+		{
+			subtitleLabel.Text = SoundManager.instance.FormatText(Tr($"{localizationKeyPrefix}{subtitleDialogIndex}"));
 			subtitleAnimator.Play(subtitleRoot.Visible ? "show-text" : "show");
+		}
 	}
 
 	/// <summary> Method used simply for editor keyframing. </summary>

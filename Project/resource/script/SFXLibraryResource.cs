@@ -336,7 +336,7 @@ public partial class SFXLibraryResource : Resource
 	[ExportToolButton("Refresh Resource")]
 	public Callable RefreshResourceGroup => Callable.From(NotifyPropertyListChanged);
 	[ExportToolButton("Auto-setup Localization Audio")]
-	public Callable SetUpLocalizationGroup => Callable.From(LocalizeAudioStreams);
+	public Callable SetUpLocalizationGroup => Callable.From(() => LocalizeAudioStreams(false));
 	[Export] private string rootAudioPath;
 	[Export] private SFXLibraryResource fallbackResource;
 	[Export] private Array<StringName> keys;
@@ -368,9 +368,14 @@ public partial class SFXLibraryResource : Resource
 		Swap, // Swaps two keys with each other
 	}
 
+	private readonly string[] BuiltInLocales = ["en", "ja"];
+
 	/// <summary> Automatically set up localized audio streams. Do NOT use this for unlocalized sound effects. </summary>
-	private void LocalizeAudioStreams()
+	public void LocalizeAudioStreams(bool recursive = false)
 	{
+		if (recursive && fallbackResource != null)
+			fallbackResource.LocalizeAudioStreams(true);
+
 		if (!isLocalizedVoiceLines)
 		{
 			GD.PrintErr("Given resource is not configured as a localizable audio pack.");
@@ -379,12 +384,19 @@ public partial class SFXLibraryResource : Resource
 
 		AutoDetectEnglishClips();
 
-		channelCount = (int)SaveManager.VoiceLanguage.Count;
+		if (Engine.IsEditorHint())
+			channelCount = BuiltInLocales.Length;
+		else
+		{
+			channelCount = SaveManager.Instance.VoiceLocalizations.Count;
+			GD.Print(channelCount);
+		}
+
 		Array<Array<Array<string>>> tempStreamPaths = [];
 
 		if (streams == null || streams.Count == 0)
 		{
-			// Keep existing en tracks
+			// Keep existing tracks
 			tempStreamPaths.Add(localizedStreamPaths[0]);
 		}
 		else
@@ -411,10 +423,21 @@ public partial class SFXLibraryResource : Resource
 			}
 		}
 
-		for (int i = 1; i < (int)SaveManager.VoiceLanguage.Count; i++)
+		string[] locales = new string[channelCount];
+		if (Engine.IsEditorHint())
+		{
+			locales = BuiltInLocales;
+		}
+		else
+		{
+			for (int i = 0; i < SaveManager.Instance.VoiceLocalizations.Count; i++)
+				locales[i] = SaveManager.Instance.VoiceLocalizations[i].LocaleId;
+		}
+
+		for (int i = 1; i < locales.Length; i++)
 		{
 			tempStreamPaths.Add([]); // Add a language slot
-			string lang = SaveManager.VoiceLanguageToGodotLocale((SaveManager.VoiceLanguage)i);
+			string lang = locales[i];
 
 			for (int j = 0; j < tempStreamPaths[0].Count; j++)
 			{
@@ -434,13 +457,16 @@ public partial class SFXLibraryResource : Resource
 		streams = null;
 		localizedStreamPaths = tempStreamPaths;
 		NotifyPropertyListChanged();
+
+		if (Engine.IsEditorHint())
+			ResourceSaver.Save(this);
 	}
 
 	private void AutoDetectEnglishClips()
 	{
 		if (!rootAudioPath.IsAbsolutePath())
 		{
-			GD.Print($"rootAudioPath is not configured properly.");
+			GD.Print($"rootAudioPath is not configured properly. File paths must be configured manually.");
 			return;
 		}
 
@@ -500,17 +526,17 @@ public partial class SFXLibraryResource : Resource
 
 		if (isLocalizedVoiceLines)
 		{
-			if (string.IsNullOrEmpty(localizedStreamPaths[channel][keyIndex][sfxIndex])) // No dialog clip
+			string targetFile = localizedStreamPaths[channel][keyIndex][sfxIndex];
+			if (string.IsNullOrEmpty(targetFile)) // No dialog clip
 				return null;
 
-			if (!ResourceLoader.Exists(localizedStreamPaths[channel][keyIndex][sfxIndex]))
+			if (!ResourceLoader.Exists(targetFile))
 			{
-				GD.PushError($"{localizedStreamPaths[channel][keyIndex][sfxIndex]} doesn't exist!");
+				GD.PushError($"{targetFile} doesn't exist!");
 				return null;
 			}
 
-			// TODO Load this asyncronously?
-			return ResourceLoader.Load<AudioStream>(localizedStreamPaths[channel][keyIndex][sfxIndex]);
+			return ResourceLoader.Load<AudioStream>(targetFile);
 		}
 
 		return streams[channel][keyIndex][sfxIndex];
@@ -548,5 +574,5 @@ public partial class SFXLibraryResource : Resource
 	}
 
 	/// <summary> Wrapper function for party mode gdscripts. </summary>
-	public int CurrentLanguageIndex => SoundManager.LanguageIndex;
+	public int CurrentLanguageIndex => SaveManager.GetCurrentVoiceLocaleIndex();
 }

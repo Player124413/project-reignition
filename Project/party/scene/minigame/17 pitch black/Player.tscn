@@ -1,0 +1,439 @@
+[gd_scene format=3 uid="uid://dq6io45mlhugu"]
+
+[ext_resource type="Script" uid="uid://coavj1u8bf5di" path="res://party/scene/minigame/17 pitch black/script/player_controller.gd" id="1_hrsfa"]
+[ext_resource type="PackedScene" uid="uid://dq5hkbpr0yphp" path="res://party/scene/minigame/17 pitch black/model/Lantern.glb" id="2_i8106"]
+[ext_resource type="Script" uid="uid://ds056nimfywwr" path="res://party/script/core/rollback_timer.gd" id="4_mu2ap"]
+[ext_resource type="PackedScene" uid="uid://ch1c2oir8hps6" path="res://party/scene/minigame/00 base/Cursor.tscn" id="7_5lm6n"]
+[ext_resource type="Texture2D" uid="uid://ccidyn8ex5ilp" path="res://party/scene/minigame/17 pitch black/texture/correct.png" id="7_ojabm"]
+[ext_resource type="Texture2D" uid="uid://bl2ndecj6hqtk" path="res://party/scene/minigame/17 pitch black/texture/incorrect.png" id="8_5qh3a"]
+[ext_resource type="FontFile" uid="uid://cislueb5bhi02" path="res://interface/font/bitmap fonts/Experience.fnt" id="8_c6dsc"]
+[ext_resource type="Texture2D" uid="uid://ryqut2of0q0p" path="res://party/scene/minigame/17 pitch black/texture/correct_shine.png" id="8_ocuvf"]
+[ext_resource type="AudioStream" uid="uid://cvrwnydami23g" path="res://party/scene/minigame/17 pitch black/sound/painting wrong.wav" id="9_c6dsc"]
+[ext_resource type="Script" uid="uid://bkwc2atbp4cjd" path="res://party/scene/minigame/00 base/script/group_sfx_player.gd" id="10_c6dsc"]
+[ext_resource type="AudioStream" uid="uid://b84lf614ufq3d" path="res://party/scene/minigame/17 pitch black/sound/painting correct.wav" id="11_ehhbi"]
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_17mea"]
+radius = 7.3774805
+
+[sub_resource type="LabelSettings" id="LabelSettings_ehhbi"]
+font = ExtResource("8_c6dsc")
+font_size = 22
+
+[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_ocuvf"]
+blend_mode = 1
+
+[sub_resource type="Animation" id="Animation_5qh3a"]
+resource_name = "RESET"
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Correct:visible")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Correct/CorrectShine:visible")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Incorrect:visible")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("Correct:offset_transform_scale")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(2, 2)]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("Correct/CorrectShine:position")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(0, 0)]
+}
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("Correct/CorrectShine:modulate")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+tracks/6/type = "value"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("Correct:modulate")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+tracks/7/type = "value"
+tracks/7/imported = false
+tracks/7/enabled = true
+tracks/7/path = NodePath("Incorrect:modulate")
+tracks/7/interp = 1
+tracks/7/loop_wrap = true
+tracks/7/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+tracks/8/type = "value"
+tracks/8/imported = false
+tracks/8/enabled = true
+tracks/8/path = NodePath("Incorrect:offset_transform_scale")
+tracks/8/interp = 1
+tracks/8/loop_wrap = true
+tracks/8/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(1, 1)]
+}
+
+[sub_resource type="Animation" id="Animation_ocuvf"]
+resource_name = "correct"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Correct:visible")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [true, false]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Correct/CorrectShine:visible")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Correct:offset_transform_scale")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 0.06666668, 0.13333334, 0.8, 1),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"update": 0,
+"values": [Vector2(1.7, 1.7), Vector2(2.2, 2.2), Vector2(2, 2), Vector2(2, 2), Vector2(2.3, 2.3)]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("Correct/CorrectShine:position")
+tracks/3/interp = 2
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector2(22.7, -15.635), Vector2(32.705, -4.255), Vector2(37.445, 1.825)]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("Correct/CorrectShine:modulate")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.23333333),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 1), Color(1, 1, 1, 1), Color(1, 1, 1, 0)]
+}
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("Correct:modulate")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0, 0.8, 1),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 1), Color(1, 1, 1, 1), Color(1, 1, 1, 0)]
+}
+tracks/6/type = "value"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("Incorrect:visible")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+
+[sub_resource type="Animation" id="Animation_c6dsc"]
+resource_name = "miss"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Correct:visible")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Correct/CorrectShine:visible")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Incorrect:visible")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("Incorrect:offset_transform_scale")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0, 0.06666667, 0.13333334, 0.8, 1),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"update": 0,
+"values": [Vector2(1.7, 1.7), Vector2(2.2, 2.2), Vector2(2, 2), Vector2(2, 2), Vector2(2.3, 2.3)]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("Incorrect:modulate")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0, 0.8, 1),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 1), Color(1, 1, 1, 1), Color(1, 1, 1, 0)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_ocuvf"]
+_data = {
+&"RESET": SubResource("Animation_5qh3a"),
+&"correct": SubResource("Animation_ocuvf"),
+&"miss": SubResource("Animation_c6dsc")
+}
+
+[node name="Player" type="Node3D" unique_id=1879495047 node_paths=PackedStringArray("cursor", "cursor_label", "cursor_correct", "cursor_incorrect", "cursor_animator", "hand_attachment", "lamp", "lamp_light", "collision", "sfx_wrong", "sfx_correct", "cpu_search_timer", "rollback_timer", "cursor_texture_rect", "spawn_position")]
+script = ExtResource("1_hrsfa")
+cursor = NodePath("Cursor/Cursor")
+cursor_label = NodePath("Cursor/Correct/Label")
+cursor_correct = NodePath("Cursor/Correct")
+cursor_incorrect = NodePath("Cursor/Incorrect")
+cursor_animator = NodePath("Cursor/AnimationPlayer")
+hand_attachment = NodePath("HandAttachment")
+lamp = NodePath("HandAttachment/Lantern")
+lamp_light = NodePath("HandAttachment/Lantern/OmniLight3D")
+collision = NodePath("Area3D")
+sfx_wrong = NodePath("SFX/PaintingWrong")
+sfx_correct = NodePath("SFX/PaintingCorrect")
+cpu_search_timer = NodePath("CPUTimer")
+rollback_timer = NodePath("Rollback")
+cursor_texture_rect = NodePath("Cursor/Cursor")
+spawn_position = NodePath("SpawnPos")
+
+[node name="SpawnPos" type="Node3D" parent="." unique_id=1171532647]
+
+[node name="Area3D" type="Area3D" parent="." unique_id=376204005 groups=["player"]]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D" unique_id=1249582878]
+shape = SubResource("SphereShape3D_17mea")
+debug_color = Color(0.23282772, 0.63723266, 0, 1)
+
+[node name="CharacterSpotlight" type="SpotLight3D" parent="." unique_id=33171026]
+transform = Transform3D(1, -8.4456616e-08, -1.0940591e-07, -8.4456616e-08, -1, -2.9802317e-08, -1.0940591e-07, 2.9802326e-08, -1, -4.7683716e-07, 4.829628, -7.294096)
+layers = 1024
+light_color = Color(0.7320333, 0.7125014, 0, 1)
+light_energy = 10.0
+light_cull_mask = 4293918727
+spot_range = 8.0
+spot_attenuation = 0.1
+spot_angle = 50.0
+
+[node name="HandAttachment" type="BoneAttachment3D" parent="." unique_id=953133123]
+transform = Transform3D(-0.99997973, 0.0010501739, 0.006232315, 0.0062316647, -0.0006785116, 0.99998003, 0.0010543821, 0.9999987, 0.0006719536, -3.0894136, 6.134006, 0.001460597)
+bone_name = "wrist_r"
+bone_idx = 45
+
+[node name="Lantern" parent="HandAttachment" unique_id=958616559 instance=ExtResource("2_i8106")]
+transform = Transform3D(0.15915197, 0.4446706, 0.8814412, 0.9871154, -0.08665641, -0.13451579, 0.01656736, 0.8914925, -0.45273262, 0, 0, 0)
+
+[node name="OmniLight3D" type="OmniLight3D" parent="HandAttachment/Lantern" unique_id=1635544296]
+transform = Transform3D(-0.05563916, 0.8280121, 0.55794317, -0.94886464, -0.21776427, 0.22854908, 0.3107414, -0.5166962, 0.7977875, 0, -2.433126, 5.8463187)
+light_color = Color(1, 1, 0.5568628, 1)
+light_energy = 10.0
+light_cull_mask = 4293918727
+omni_range = 10.0
+omni_attenuation = 0.1
+
+[node name="Rollback" type="Node" parent="." unique_id=877059942]
+script = ExtResource("4_mu2ap")
+enable_lag_compensation = false
+param_count = 10
+rollback_interval = 0.0
+
+[node name="Cursor" type="Control" parent="." unique_id=276047839]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 64.0
+offset_bottom = 64.0
+offset_transform_enabled = true
+offset_transform_position = Vector2(-32, -32)
+
+[node name="Cursor" parent="Cursor" unique_id=1155527246 instance=ExtResource("7_5lm6n")]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = 0.0
+offset_bottom = 0.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Correct" type="TextureRect" parent="Cursor" unique_id=551532618]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+offset_transform_enabled = true
+offset_transform_scale = Vector2(2, 2)
+texture = ExtResource("7_ojabm")
+
+[node name="Label" type="Label" parent="Cursor/Correct" unique_id=588780333]
+layout_mode = 0
+offset_left = -0.72664356
+offset_top = -23.56401
+offset_right = 144.27336
+offset_bottom = 30.43599
+text = "SONIC"
+label_settings = SubResource("LabelSettings_ehhbi")
+
+[node name="CorrectShine" type="TextureRect" parent="Cursor/Correct" unique_id=708612089]
+visible = false
+material = SubResource("CanvasItemMaterial_ocuvf")
+layout_mode = 0
+offset_right = 50.000072
+offset_bottom = 50.0
+scale = Vector2(0.7, 0.7)
+texture = ExtResource("8_ocuvf")
+
+[node name="Incorrect" type="TextureRect" parent="Cursor" unique_id=526819903]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+offset_transform_enabled = true
+texture = ExtResource("8_5qh3a")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Cursor" unique_id=315455620]
+deterministic = true
+libraries/ = SubResource("AnimationLibrary_ocuvf")
+
+[node name="CPUTimer" type="Timer" parent="." unique_id=178756823]
+process_callback = 0
+one_shot = true
+
+[node name="SFX" type="Node" parent="." unique_id=1252448326]
+
+[node name="PaintingWrong" type="AudioStreamPlayer" parent="SFX" unique_id=848758284]
+stream = ExtResource("9_c6dsc")
+script = ExtResource("10_c6dsc")
+group = "wrong"
+base_volume = 0.7
+max_volume = 0.7
+metadata/_custom_type_script = "uid://bkwc2atbp4cjd"
+
+[node name="PaintingCorrect" type="AudioStreamPlayer" parent="SFX" unique_id=2020131558]
+stream = ExtResource("11_ehhbi")
+script = ExtResource("10_c6dsc")
+group = "correct"
+base_volume = 0.7
+max_volume = 0.7
+metadata/_custom_type_script = "uid://bkwc2atbp4cjd"
+
+[connection signal="area_entered" from="Area3D" to="." method="_on_area_3d_area_entered"]
+[connection signal="area_exited" from="Area3D" to="." method="_on_area_3d_area_exited"]
+[connection signal="timeout" from="CPUTimer" to="." method="_on_cpu_timer_timeout"]

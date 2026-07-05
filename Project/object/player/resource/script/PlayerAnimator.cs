@@ -12,6 +12,7 @@ public partial class PlayerAnimator : Node3D
 
 	[Export] public Node3D RightFoot { get; private set; }
 	[Export] public Node3D LeftFoot { get; private set; }
+	[Export] public PlayerEffect Effect { get; private set; }
 	private Node3D RotationRoot { get; set; }
 	private PlayerController Player { get; set; }
 	public void Initialize(PlayerController player, Node3D rotationRoot)
@@ -452,7 +453,12 @@ public partial class PlayerAnimator : Node3D
 			return 0; // Disable turning when controlled externally
 
 		if (Player.Controller.IsGyroEnabled)
+		{
+			if (Player.Camera.ActiveSettings.controlMode == CameraSettingsResource.ControlModeEnum.Reverse)
+				return -Player.Controller.InputHorizontal;
+
 			return Player.Controller.InputHorizontal;
+		}
 
 		float referenceAngle = Player.IsMovingBackward ? Player.PathFollower.ForwardAngle : Player.MovementAngle;
 		float inputAngle = Player.PathFollower.DeltaAngle * PathTurnStrength;

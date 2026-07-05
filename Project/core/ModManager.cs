@@ -2,6 +2,7 @@ using Godot;
 using System;
 using System.Collections.Generic;
 using Project.Gameplay;
+using System.Linq;
 
 namespace Project.Core;
 
@@ -15,6 +16,7 @@ public partial class ModManager : Node
 	private readonly string ResourceModPath = "res://mods/";
 	private readonly string LevelPaths = "levels/";
 	private readonly string CustomCharacterPaths = "characters/";
+	private readonly string LanguagePaths = "lang/";
 	private readonly string PackExtension = "pck";
 	private readonly string ResourceExtension = "tres";
 
@@ -26,6 +28,7 @@ public partial class ModManager : Node
 	{
 		LoadLevelMods();
 		LoadCharacterMods();
+		LoadLanguageMods();
 	}
 
 	/// <summary> Loads a .pck from a directory. </summary>
@@ -41,29 +44,25 @@ public partial class ModManager : Node
 	}
 
 	/// <summary> Loads pcks from a given directory. </summary>
-	private bool LoadPcks(string dir)
+	private void LoadPcks(string dir)
 	{
-		if (!DirAccess.DirExistsAbsolute(dir)) // No level mods to load
-			return false;
-
 		DirAccess dirAccess = DirAccess.Open(dir);
 		foreach (string file in dirAccess.GetFiles())
 			LoadPck(file, dir);
-
-		return true;
 	}
 
 	private void LoadLevelMods()
 	{
-		if (!LoadPcks(SaveManager.ModDirectory + LevelPaths)
-			|| !DirAccess.DirExistsAbsolute(ResourceModPath + LevelPaths))
-		{
-			// Failed to load any levels
-			return;
-		}
+		if (!DirAccess.DirExistsAbsolute(SaveManager.ModDirectory + LevelPaths))
+			DirAccess.MakeDirRecursiveAbsolute(SaveManager.ModDirectory + LevelPaths);
+
+		LoadPcks(SaveManager.ModDirectory + LevelPaths);
 
 		// Switch to local resource folder, now that pcks are loaded
 		DirAccess dirAccess = DirAccess.Open(ResourceModPath + LevelPaths);
+		if (DirAccess.GetOpenError() != Error.Ok)
+			return;
+
 		foreach (string level in dirAccess.GetDirectories())
 			LoadModLevel(ResourceModPath + LevelPaths + level + "/");
 	}
@@ -88,15 +87,16 @@ public partial class ModManager : Node
 
 	private void LoadCharacterMods()
 	{
-		if (!LoadPcks(SaveManager.ModDirectory + CustomCharacterPaths)
-			|| !DirAccess.DirExistsAbsolute(ResourceModPath + CustomCharacterPaths))
-		{
-			// Failed to load any levels
-			return;
-		}
+		if (!DirAccess.DirExistsAbsolute(SaveManager.ModDirectory + CustomCharacterPaths))
+			DirAccess.MakeDirRecursiveAbsolute(SaveManager.ModDirectory + CustomCharacterPaths);
+
+		LoadPcks(SaveManager.ModDirectory + CustomCharacterPaths);
 
 		// Switch to local resource folder, now that pcks are loaded
 		DirAccess dirAccess = DirAccess.Open(ResourceModPath + CustomCharacterPaths);
+		if (DirAccess.GetOpenError() != Error.Ok)
+			return;
+
 		SkillResource baseCharacterSkill = Runtime.Instance.SkillList.GetSkill(SkillKey.Character);
 		baseCharacterSkill.Augments = [];
 		foreach (string character in dirAccess.GetDirectories())
@@ -129,5 +129,63 @@ public partial class ModManager : Node
 			CharacterMods.Add(characterResource);
 			GD.Print($"Loaded custom character {fileName} in slot {characterResource.AugmentIndex}");
 		}
+	}
+
+	private void LoadModLanguage(string dir)
+	{
+		DirAccess levelDir = DirAccess.Open(dir); // Access the specific mod directory
+		string[] files = levelDir.GetFiles();
+		foreach (string file in files) // Load language resources
+		{
+			string fileName = file;
+			if (fileName.EndsWith(".remap"))
+				fileName = fileName.Replace(".remap", string.Empty);
+
+			if (!fileName.GetFile().GetExtension().Equals(ResourceExtension))
+				continue;
+
+			Resource resource = ResourceLoader.Load(dir + fileName);
+			if (resource is not LocalizationResource)
+				continue;
+
+			GD.Print($"Found localization resource {fileName}.");
+			LocalizationResource locale = resource as LocalizationResource;
+			locale.IsMod = true;
+			if (locale.LocaleType == LocalizationResource.LocalizationType.Text)
+			{
+				if (SaveManager.FindTextLocaleIndex(locale.LocaleId) != -1) // Already exists
+					continue;
+
+				SaveManager.Instance.TextLocalizations.Add(locale);
+			}
+			else
+			{
+				if (SaveManager.FindVoiceLocaleIndex(locale.LocaleId) != -1) // Already exists
+					continue;
+
+				SaveManager.Instance.VoiceLocalizations.Add(locale);
+			}
+
+			GD.Print($"Loaded custom language {fileName}.");
+		}
+	}
+
+	private void LoadLanguageMods()
+	{
+		if (!DirAccess.DirExistsAbsolute(SaveManager.ModDirectory + LanguagePaths))
+			DirAccess.MakeDirRecursiveAbsolute(SaveManager.ModDirectory + LanguagePaths);
+
+		LoadPcks(SaveManager.ModDirectory + LanguagePaths);
+
+		// Switch to local resource folder, now that pcks are loaded
+		DirAccess dirAccess = DirAccess.Open(ResourceModPath + LanguagePaths);
+		if (DirAccess.GetOpenError() != Error.Ok)
+			return;
+
+		LoadModLanguage(ResourceModPath + LanguagePaths + "/"); // Load base language folder
+		foreach (string language in dirAccess.GetDirectories())
+			LoadModLanguage(ResourceModPath + LanguagePaths + language + "/"); // Load nested language folders
+
+		SaveManager.LoadConfig(); // Reload the config in case a mod language was originally selected
 	}
 }
