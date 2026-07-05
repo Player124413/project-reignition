@@ -94,7 +94,7 @@ public partial class BonusManager : VBoxContainer
 		ringChain++;
 
 		if (ringChain >= MaxRingChain)
-			FinishRingChain(true); // Force ring chains to finish when going over 50
+			FinishRingChain(true); // Force ring chains to finish when going over the max
 
 		if (Stage.Data.MissionType == LevelDataResource.MissionTypeEnum.Chain)
 			Stage.IncrementObjective();
@@ -142,8 +142,8 @@ public partial class BonusManager : VBoxContainer
 	{
 		enemyChain++;
 
-		if (enemyChain >= MaxRingChain)
-			FinishEnemyChain(); // Force ring chains to finish when going over 50
+		if (enemyChain >= MaxEnemyChain)
+			FinishEnemyChain(); // Force enemy chains to finish when going over the max
 
 		UpdateQueuedScore();
 	}
