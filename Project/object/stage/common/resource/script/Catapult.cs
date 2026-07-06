@@ -59,6 +59,13 @@ public partial class Catapult : Launcher
 		Player.Effect.StartTrailFX();
 	}
 
+	public override LaunchSettings GetLaunchSettings()
+	{
+		LaunchSettings settings = base.GetLaunchSettings();
+		settings.AllowDamage = true;
+		return settings;
+	}
+
 	public void PlayEnterSfx() => enterSFX.Play();
 	protected override void PlayLaunchSfx()
 	{
