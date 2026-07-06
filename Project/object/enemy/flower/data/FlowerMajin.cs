@@ -48,7 +48,7 @@ public partial class FlowerMajin : Enemy
 	}
 
 	/// <summary> Allow the player to force the flower majin out of it's passive state? </summary>
-	[Export] private bool weakDefense;
+	[Export] private bool remainHidden;
 	[Export] private PackedScene seed;
 	private int seedIndex;
 	private const int MaxSeedCount = 3;
@@ -144,14 +144,14 @@ public partial class FlowerMajin : Enemy
 				Player.StartBounce(false);
 				UpdateLockon();
 
-				if (weakDefense || Player.AttackState == PlayerController.AttackStates.Strong)
+				if (remainHidden || Player.AttackState == PlayerController.AttackStates.Strong)
 					StartStaggerState();
 				else
 					EmitSignal(SignalName.Deflect);
 			}
 
 			if (Player.AttackState == PlayerController.AttackStates.None ||
-				(Player.AttackState == PlayerController.AttackStates.Weak && !weakDefense))
+				(Player.AttackState == PlayerController.AttackStates.Weak && !remainHidden))
 			{
 				return;
 			}
@@ -210,7 +210,7 @@ public partial class FlowerMajin : Enemy
 		switch (currentState)
 		{
 			case State.Passive:
-				if (!disableAttacking && !Mathf.IsZeroApprox(passiveLength) && stateTimer >= passiveLength)
+				if (!remainHidden && !Mathf.IsZeroApprox(passiveLength) && stateTimer >= passiveLength)
 					StartAggressiveState();
 				break;
 			case State.PreAttack:

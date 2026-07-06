@@ -161,10 +161,10 @@ public partial class TransitionManager : Node
 					await ToSignal(GetTree().CreateTimer(.1f), SceneTreeTimer.SignalName.Timeout); // Still loading; wait a bit
 					status = ResourceLoader.LoadThreadedGetStatus(QueuedScene);
 					loadTime += .1f;
-					if (loadTime > LoadTimeoutLength || status != ResourceLoader.ThreadLoadStatus.InProgress)
+					if (loadTime > LoadTimeoutLength && status != ResourceLoader.ThreadLoadStatus.Loaded)
 					{
 						// Forget async loading
-						GD.Print("Infinite Loading Detected. Force switching.");
+						GD.Print("Infinite Loading Detected. Force loading.");
 						GetTree().ChangeSceneToFile(QueuedScene);
 						return;
 					}
