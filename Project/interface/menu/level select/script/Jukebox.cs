@@ -222,6 +222,9 @@ public partial class Jukebox : Menu
 
 	protected override void Confirm()
 	{
+		if (isNothingSelected)
+			return;
+
 		if (VerticalSelection == 0)
 		{
 			StopBgm();
@@ -309,7 +312,9 @@ public partial class Jukebox : Menu
 
 		if (inputSign != 0)
 		{
-			if (!isCustomMusicMenuActive)
+			if (isNothingSelected)
+				isNothingSelected = false;
+			else if (!isCustomMusicMenuActive)
 				VerticalSelection = WrapSelection(VerticalSelection + inputSign, songOptionList.Count);
 			else
 				VerticalSelection = WrapSelection(VerticalSelection + inputSign, customSongOptionList.Count);
