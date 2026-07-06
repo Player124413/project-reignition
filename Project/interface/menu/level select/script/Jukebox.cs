@@ -1,5 +1,6 @@
 using Godot;
 using Godot.Collections;
+using Godot.NativeInterop;
 using Project.Core;
 using Project.Gameplay;
 
@@ -171,6 +172,18 @@ public partial class Jukebox : Menu
 		base.ShowMenu();
 	}
 
+	public void RefreshMenu()
+	{
+		SetUpCustomMusic(); // Refresh custom music list
+
+		if (InitializeBgmResource() == null)
+		{
+			ScrollSelection(0);
+			customSongOptionList[0].Equip();
+		}
+
+	}
+
 	protected override void ProcessMenu()
 	{
 		if (Runtime.Instance.MouseScrollInput != 0)
@@ -212,9 +225,9 @@ public partial class Jukebox : Menu
 			return;
 		}
 
-		if (Input.IsActionJustPressed("button_attack"))
+		if (Input.IsActionJustPressed("button_attack") && isCustomMusicMenuActive)
 		{
-			SetUpCustomMusic();
+			RefreshMenu();
 		}
 
 		base.ProcessMenu();
@@ -236,20 +249,7 @@ public partial class Jukebox : Menu
 		}
 		else
 		{
-			if (!SaveManager.ActiveGameData.selectedMusic.TryGetValue(SelectedLevel.LevelID, out string selectedBgm))
-				selectedBgm = string.Empty;
-
-			string targetBgm = isCustomMusicMenuActive ? customSongOptionList[VerticalSelection].Bgm.StreamPath :
-				ResourceUid.IdToText(ResourceLoader.GetResourceUid(songOptionList[VerticalSelection].Bgm.ResourcePath));
-
-			if (targetBgm.Equals(selectedBgm))
-				return;
-
-			if (SaveManager.ActiveGameData.selectedMusic.ContainsKey(SelectedLevel.LevelID)) // If our dictionary already contains the ID for the selected level
-				SaveManager.ActiveGameData.selectedMusic[SelectedLevel.LevelID] = targetBgm;
-			else
-				SaveManager.ActiveGameData.selectedMusic.Add(SelectedLevel.LevelID, targetBgm);
-
+			SaveSelectedBGM();
 			PlayBgm();
 			animator.Play("equip");
 			UpdateSelectionVisuals();
@@ -275,6 +275,41 @@ public partial class Jukebox : Menu
 			customSongOptionList[VerticalSelection].Equip();
 		else
 			songOptionList[VerticalSelection].Equip();
+	}
+
+	private void UpdateSelectionVisuals(int selection)
+	{
+		UnequipSongs();
+
+		if (selection == 0)
+		{
+			// Default music is selected on both menus
+			songOptionList[selection].Equip();
+			customSongOptionList[selection].Equip();
+			return;
+		}
+
+		if (isCustomMusicMenuActive)
+			customSongOptionList[selection].Equip();
+		else
+			songOptionList[selection].Equip();
+	}
+
+	private void SaveSelectedBGM()
+	{
+		if (!SaveManager.ActiveGameData.selectedMusic.TryGetValue(SelectedLevel.LevelID, out string selectedBgm))
+			selectedBgm = string.Empty;
+
+		string targetBgm = isCustomMusicMenuActive ? customSongOptionList[VerticalSelection].Bgm.StreamPath :
+			ResourceUid.IdToText(ResourceLoader.GetResourceUid(songOptionList[VerticalSelection].Bgm.ResourcePath));
+
+		if (targetBgm.Equals(selectedBgm))
+			return;
+
+		if (SaveManager.ActiveGameData.selectedMusic.ContainsKey(SelectedLevel.LevelID)) // If our dictionary already contains the ID for the selected level
+			SaveManager.ActiveGameData.selectedMusic[SelectedLevel.LevelID] = targetBgm;
+		else
+			SaveManager.ActiveGameData.selectedMusic.Add(SelectedLevel.LevelID, targetBgm);
 	}
 
 	public override void PlayBgm()
@@ -401,6 +436,7 @@ public partial class Jukebox : Menu
 
 			ScrollSelection(i);
 			isCustomMusicMenuActive = true;
+			customSongOptionList[i].Equip();
 			return customSongOptionList[i].Bgm;
 		}
 
@@ -424,6 +460,15 @@ public partial class Jukebox : Menu
 		for (int i = 0; i < songOptionList.Count; i++)
 			songOptionList[i].Unequip();
 
+		if (customSongOptionList.Count > 0)
+		{
+			for (int i = 0; i < customSongOptionList.Count; i++)
+				customSongOptionList[i].Unequip();
+		}
+	}
+
+	private void UnequipCustomSongs()
+	{
 		if (customSongOptionList.Count > 0)
 		{
 			for (int i = 0; i < customSongOptionList.Count; i++)
