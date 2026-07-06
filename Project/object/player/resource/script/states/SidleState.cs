@@ -68,7 +68,7 @@ public partial class SidleState : PlayerState
 
 	public override void ExitState()
 	{
-		Player.StopSidle();
+		Player.SetSidleTrigger(null);
 		if (Player.ExternalController == this)
 		{
 			Player.StopExternal();

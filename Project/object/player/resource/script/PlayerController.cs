@@ -855,13 +855,9 @@ public partial class PlayerController : CharacterBody3D
 	public bool DisableSidle { get; set; }
 	public bool IsSidling => sidleState.Trigger != null;
 	[Export] private SidleState sidleState;
-	public void StartSidle(SidleTrigger trigger)
-	{
-		sidleState.Trigger = trigger;
-		StateMachine.ChangeState(sidleState);
-	}
 
-	public void StopSidle() => sidleState.Trigger = null;
+	public void SetSidleTrigger(SidleTrigger trigger) => sidleState.Trigger = trigger;
+	public void StartSidle() => StateMachine.ChangeState(sidleState);
 
 	public void SetFoothold(Node foothold) => sidleState.ActiveFoothold = foothold;
 	public void UnsetFoothold(Node foothold)

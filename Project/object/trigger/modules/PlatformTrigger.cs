@@ -391,7 +391,11 @@ public partial class PlatformTrigger : Node3D
 		return Player.IsOnGround;
 	}
 
-	private void ResetShakeTimer() => shakeTimer = 0;
+	private void ResetShakeTimer()
+	{
+		isPlatformFalling = false;
+		shakeTimer = 0;
+	}
 
 	public void OnEntered(Area3D a)
 	{
@@ -403,6 +407,7 @@ public partial class PlatformTrigger : Node3D
 		enableGroundSnapping = false; // Prevent initial snapping
 		floatingEntranceImpact = Mathf.Max(-Player.VerticalSpeed, 0);
 
+		GD.Print(Player.IsSidling);
 		if (Player.IsSidling) // Process interaction instantly when sidling
 			ProcessInteraction();
 

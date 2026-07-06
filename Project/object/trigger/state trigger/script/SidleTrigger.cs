@@ -33,6 +33,8 @@ public partial class SidleTrigger : Area3D
 	/// <summary> Checks whether the player is in a state where a sidle is possible. </summary>
 	private void AttemptSidle()
 	{
+		Player.SetSidleTrigger(this);
+
 		if (Player.IsSidling)
 			return;
 
@@ -48,7 +50,7 @@ public partial class SidleTrigger : Area3D
 		if (Player.ExternalController != null)
 			return; // Player is already busy
 
-		Player.StartSidle(this);
+		Player.StartSidle();
 	}
 
 	public void OnEntered(Area3D a)
@@ -67,7 +69,7 @@ public partial class SidleTrigger : Area3D
 
 		isInteractingWithPlayer = false;
 		Player.RemoveLockoutData(lockout);
-		Player.StopSidle();
+		Player.SetSidleTrigger(null);
 
 		if (Player.ExternalController == null)
 			Player.Skills.IsSpeedBreakEnabled = true; // Re-enable speed break
