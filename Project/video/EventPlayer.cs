@@ -310,6 +310,9 @@ public partial class EventPlayer : Node
 		if (isNestedCutscene) // Don't do anything for nested cutscenes
 			return;
 
+		if (IsSpecialBook)
+			FadeOutCreditsMusic();
+
 		isCutsceneFinished = true;
 		EmitSignal(SignalName.EventFinished);
 
