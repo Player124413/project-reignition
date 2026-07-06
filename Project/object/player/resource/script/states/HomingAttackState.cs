@@ -20,7 +20,6 @@ public partial class HomingAttackState : PlayerState
 
 		Player.IsMovingBackward = false;
 		Player.IsHomingAttacking = true;
-		Player.ChangeHitbox("spin");
 		Player.AttackState = PlayerController.AttackStates.Weak;
 
 		Player.IsPerfectHomingAttacking = Player.Lockon.IsMonitoringPerfectHomingAttack;
@@ -53,9 +52,13 @@ public partial class HomingAttackState : PlayerState
 			Player.Effect.StopSpinFX();
 			Player.Effect.StopTrailFX();
 			Player.Animator.ResetState();
+
+			if (!Player.IsBouncing) // Reset Perfect Homing Attack defense
+				Player.IsPerfectHomingAttacking = false;
 		}
 
 		Player.Lockon.CallDeferred(PlayerLockonController.MethodName.ResetLockonTarget);
+
 
 		if (!SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.CrestFire))
 			return;
@@ -66,6 +69,7 @@ public partial class HomingAttackState : PlayerState
 		}
 		else
 		{
+			Player.IsPerfectHomingAttacking = false;
 			Player.Lockon.ResetLockonTarget();
 			Player.Skills.DeactivateFireCrest();
 		}
