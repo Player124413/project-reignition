@@ -74,25 +74,7 @@ public partial class Jukebox : Menu
 		if (!DirAccess.DirExistsAbsolute(CustomMusicPath))
 			DirAccess.MakeDirRecursiveAbsolute(CustomMusicPath);
 
-		DirAccess dir = DirAccess.Open(CustomMusicPath);
-		if (dir == null)
-			return;
-
-		foreach (string file in dir.GetFiles()) //Iterates through all files in the custom music directory
-		{
-			if (!IsValidExtension(file.GetExtension()))
-				continue;
-
-			BGMResource bgm = SaveManager.Instance.LoadPRM(CustomMusicPath + file);
-			if (bgm == null) // If we can't find a PRM of the current track, create one
-			{
-				SaveManager.Instance.CreatePRM(file, CustomMusicPath + file);
-				bgm = SaveManager.Instance.LoadPRM(CustomMusicPath + file); // Load the PRM into a BGMResource again
-			}
-
-			customSongList.Add(bgm);
-		}
-
+		LoadCustomMusicRecursively(CustomMusicPath);
 		for (int i = 0; i < customSongList.Count; i++) // Creates the menu options for the custom songs
 		{
 			JukeboxOption newSong = jukeboxOption.Instantiate<JukeboxOption>();
@@ -101,6 +83,36 @@ public partial class Jukebox : Menu
 			newSong.SetBgmResource(customSongList[i]);
 			customSongOptionList.Add(newSong);
 			optionContainerSub.AddChild(newSong);
+		}
+	}
+
+	private void LoadCustomMusicRecursively(string path)
+	{
+		DirAccess dir = DirAccess.Open(path);
+		if (dir == null)
+			return;
+
+		foreach (string directory in dir.GetDirectories())
+		{
+			// Load subfolders
+			GD.Print("Loading " + directory);
+			LoadCustomMusicRecursively(path.PathJoin(directory));
+			continue;
+		}
+
+		foreach (string file in dir.GetFiles()) // Iterates through all files in the custom music directory
+		{
+			if (!IsValidExtension(file.GetExtension()))
+				continue;
+
+			BGMResource bgm = SaveManager.Instance.LoadPRM(path + file);
+			if (bgm == null) // If we can't find a PRM of the current track, create one
+			{
+				SaveManager.Instance.CreatePRM(file, path + file);
+				bgm = SaveManager.Instance.LoadPRM(path + file); // Load the PRM into a BGMResource again
+			}
+
+			customSongList.Add(bgm);
 		}
 	}
 
