@@ -17,6 +17,7 @@ public partial class ModManager : Node
 	private readonly string LevelPaths = "levels/";
 	private readonly string CustomCharacterPaths = "characters/";
 	private readonly string LanguagePaths = "lang/";
+	private readonly string ExtrasPaths = "extras/";
 	private readonly string PackExtension = "pck";
 	private readonly string ResourceExtension = "tres";
 
@@ -32,6 +33,9 @@ public partial class ModManager : Node
 			LoadCharacterMods();
 		if (SaveManager.Config.areLangModsEnabled)
 			LoadLanguageMods();
+
+		if (!DirAccess.DirExistsAbsolute(SaveManager.ModDirectory + ExtrasPaths))
+			DirAccess.MakeDirRecursiveAbsolute(SaveManager.ModDirectory + ExtrasPaths);
 	}
 
 	/// <summary> Loads a .pck from a directory. </summary>
