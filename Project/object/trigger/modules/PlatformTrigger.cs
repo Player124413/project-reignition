@@ -407,8 +407,7 @@ public partial class PlatformTrigger : Node3D
 		enableGroundSnapping = false; // Prevent initial snapping
 		floatingEntranceImpact = Mathf.Max(-Player.VerticalSpeed, 0);
 
-		GD.Print(Player.IsSidling);
-		if (Player.IsSidling) // Process interaction instantly when sidling
+		if (Player.HasSidleTrigger) // Process interaction instantly when sidling
 			ProcessInteraction();
 
 		ProcessPlatform();

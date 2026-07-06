@@ -33,10 +33,10 @@ public partial class SidleTrigger : Area3D
 	/// <summary> Checks whether the player is in a state where a sidle is possible. </summary>
 	private void AttemptSidle()
 	{
-		Player.SetSidleTrigger(this);
-
 		if (Player.IsSidling)
 			return;
+
+		Player.SetSidleTrigger(this);
 
 		if (Player.DisableSidle)
 			return;

@@ -55,6 +55,7 @@ public partial class SidleState : PlayerState
 		damageState = DamageStates.Disabled;
 
 		Player.IsOnGround = true;
+		Player.IsSidling = true;
 		Player.StartExternal(this, Player.PathFollower, .2f);
 		Player.Skills.IsSpeedBreakEnabled = false;
 		Player.Animator.ExternalAngle = 0; // Rotate to follow pathfollower
@@ -68,6 +69,7 @@ public partial class SidleState : PlayerState
 
 	public override void ExitState()
 	{
+		Player.IsSidling = false;
 		Player.SetSidleTrigger(null);
 		if (Player.ExternalController == this)
 		{
@@ -163,7 +165,7 @@ public partial class SidleState : PlayerState
 	private void OnPlayerDamaged()
 	{
 		// Invincible/Damage routine has already started
-		if (Player.IsDefeated || Player.IsInvincible || damageState != DamageStates.Disabled || !Player.IsSidling) return;
+		if (Player.IsDefeated || Player.IsInvincible || damageState != DamageStates.Disabled || !Player.HasSidleTrigger) return;
 
 		velocity = 0;
 		cycleTimer = 0;

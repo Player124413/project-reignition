@@ -853,7 +853,8 @@ public partial class PlayerController : CharacterBody3D
 	}
 
 	public bool DisableSidle { get; set; }
-	public bool IsSidling => sidleState.Trigger != null;
+	public bool HasSidleTrigger => sidleState.Trigger != null;
+	public bool IsSidling { get; set; }
 	[Export] private SidleState sidleState;
 
 	public void SetSidleTrigger(SidleTrigger trigger) => sidleState.Trigger = trigger;
