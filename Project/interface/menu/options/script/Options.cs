@@ -1148,25 +1148,18 @@ public partial class Options : Menu
 		return false;
 	}
 
-	private bool SlideModsOption(int direction)
+	private bool SlideModsOption(int _)
 	{
 		if (VerticalSelection == 0)
-		{
 			SaveManager.Config.areLevelModsEnabled = !SaveManager.Config.areLevelModsEnabled;
-		}
 		else if (VerticalSelection == 1)
-		{
 			SaveManager.Config.areCharaModsEnabled = !SaveManager.Config.areCharaModsEnabled;
-		}
 		else if (VerticalSelection == 2)
-		{
 			SaveManager.Config.areLangModsEnabled = !SaveManager.Config.areLangModsEnabled;
-		}
 		else if (VerticalSelection == 3)
-		{
 			OS.ShellOpen(ProjectSettings.GlobalizePath("user://mods/"));
-		}
-		return false;
+
+		return true;
 	}
 
 	private bool SlideMouseOption(int direction)
@@ -1395,6 +1388,7 @@ public partial class Options : Menu
 		SlideInterfaceOption(1);
 		ConfirmSFX();
 	}
+
 	private void ConfirmModsOption()
 	{
 		SlideModsOption(1);
