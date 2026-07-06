@@ -1030,7 +1030,7 @@ public partial class SaveManager : Node
 		{
 			{"Song Name", fileName.GetBaseName()},
 			{"Loop Start", 0.0},
-			{"Loop End", 0.0}, // Loop at end of file by default
+			{"Loop End", -1.0}, // Loop at end of file by default
 			{"File Path", path}
 		};
 
@@ -1063,7 +1063,7 @@ public partial class SaveManager : Node
 		{
 			res.StreamPath = (string)value;
 			if (!res.StreamPath.IsAbsolutePath())
-				res.StreamPath = ModDirectory + "music/" + res.StreamPath;
+				res.StreamPath = path.GetBaseDir().PathJoin(res.StreamPath);
 		}
 
 		if (dictReturn.TryGetValue("Volume DB", out value))

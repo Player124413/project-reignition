@@ -18,6 +18,7 @@ public partial class Jukebox : Menu
 	[Export] private Array<BGMResource> songList;
 	[Export] private Control worldText;
 	[Export] private Control parentNavigationButtons;
+	private readonly Array<string> registeredMusicPaths = [];
 	private readonly Array<BGMResource> customSongList = [];
 
 	public LevelDataResource SelectedLevel { get; set; }
@@ -67,6 +68,7 @@ public partial class Jukebox : Menu
 		for (int i = 0; i < optionContainerSub.GetChildren().Count; i++)
 			optionContainerSub.GetChild(i).QueueFree();
 
+		registeredMusicPaths.Clear();
 		customSongList.Clear();
 		customSongOptionList.Clear();
 		customSongList.Add(defaultOption);
@@ -74,7 +76,9 @@ public partial class Jukebox : Menu
 		if (!DirAccess.DirExistsAbsolute(CustomMusicPath))
 			DirAccess.MakeDirRecursiveAbsolute(CustomMusicPath);
 
-		LoadCustomMusicRecursively(CustomMusicPath);
+		LoadCustomMusicRecursively(CustomMusicPath, true); // Load prms
+		LoadCustomMusicRecursively(CustomMusicPath, false); // Load audios
+
 		for (int i = 0; i < customSongList.Count; i++) // Creates the menu options for the custom songs
 		{
 			JukeboxOption newSong = jukeboxOption.Instantiate<JukeboxOption>();
@@ -86,34 +90,47 @@ public partial class Jukebox : Menu
 		}
 	}
 
-	private void LoadCustomMusicRecursively(string path)
+	private void LoadCustomMusicRecursively(string path, bool prmOnly)
 	{
 		DirAccess dir = DirAccess.Open(path);
 		if (dir == null)
 			return;
 
-		foreach (string directory in dir.GetDirectories())
+		if (prmOnly)
 		{
-			// Load subfolders
-			GD.Print("Loading " + directory);
-			LoadCustomMusicRecursively(path.PathJoin(directory));
-			continue;
-		}
-
-		foreach (string file in dir.GetFiles()) // Iterates through all files in the custom music directory
-		{
-			if (!IsValidExtension(file.GetExtension()))
-				continue;
-
-			BGMResource bgm = SaveManager.Instance.LoadPRM(path + file);
-			if (bgm == null) // If we can't find a PRM of the current track, create one
+			foreach (string file in dir.GetFiles()) // Load PRM files
 			{
-				SaveManager.Instance.CreatePRM(file, path + file);
-				bgm = SaveManager.Instance.LoadPRM(path + file); // Load the PRM into a BGMResource again
-			}
+				if (file.GetExtension().ToLower() != "prm")
+					continue;
 
-			customSongList.Add(bgm);
+				string filePath = path.PathJoin(file).SimplifyPath();
+				BGMResource bgmRes = SaveManager.Instance.LoadPRM(filePath);
+				customSongList.Add(bgmRes);
+				registeredMusicPaths.Add(bgmRes.StreamPath.SimplifyPath());
+			}
 		}
+		else
+		{
+			foreach (string file in dir.GetFiles()) // Iterates again, loading any leftover music files
+			{
+				// Not a prm file
+				if (!IsValidExtension(file.GetExtension()))
+					continue;
+
+				string filePath = path.PathJoin(file).SimplifyPath();
+				if (registeredMusicPaths.Contains(filePath)) // Already loaded this music track from a prm
+					continue;
+
+				// If we can't find a PRM of an unregistered track, create one
+				SaveManager.Instance.CreatePRM(file, filePath);
+				BGMResource bgmRes = SaveManager.Instance.LoadPRM(filePath); // Load the PRM into a BGMResource again
+				customSongList.Add(bgmRes);
+				registeredMusicPaths.Add(filePath);
+			}
+		}
+
+		foreach (string directory in dir.GetDirectories()) // Load subdirectories
+			LoadCustomMusicRecursively(path.PathJoin(directory), prmOnly);
 	}
 
 	public override void _Process(double _)
