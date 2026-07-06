@@ -26,9 +26,12 @@ public partial class ModManager : Node
 
 	public void SetUpMods()
 	{
-		LoadLevelMods();
-		LoadCharacterMods();
-		LoadLanguageMods();
+		if (SaveManager.Config.areModsEnabled)
+			LoadLevelMods();
+		if (SaveManager.Config.areCharaModsEnabled)
+			LoadCharacterMods();
+		if (SaveManager.Config.areLangModsEnabled)
+			LoadLanguageMods();
 	}
 
 	/// <summary> Loads a .pck from a directory. </summary>

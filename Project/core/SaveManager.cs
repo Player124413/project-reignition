@@ -286,6 +286,11 @@ public partial class SaveManager : Node
 		public int subtitleOpacity = 20;
 		public int cutsceneOpacity = 20;
 
+		// Mods
+		public bool areModsEnabled = true; //Level mods
+		public bool areCharaModsEnabled = true; //Character mods
+		public bool areLangModsEnabled = true; //Language mods
+
 		/// <summary> Creates a dictionary based on config data. </summary>
 		public Dictionary ToDictionary()
 		{
@@ -358,6 +363,11 @@ public partial class SaveManager : Node
 				{ nameof(useQuickLoad), useQuickLoad },
 				{ nameof(subtitleOpacity), subtitleOpacity},
 				{ nameof(cutsceneOpacity), cutsceneOpacity},
+
+				// Mods
+				{ nameof(areModsEnabled), areModsEnabled},
+				{ nameof(areCharaModsEnabled), areCharaModsEnabled},
+				{ nameof(areLangModsEnabled), areLangModsEnabled}
 			};
 		}
 
@@ -485,6 +495,14 @@ public partial class SaveManager : Node
 				subtitleOpacity = (int)var;
 			if (dictionary.TryGetValue(nameof(cutsceneOpacity), out var))
 				cutsceneOpacity = (int)var;
+
+			//Mods
+			if (dictionary.TryGetValue(nameof(areModsEnabled), out var))
+				areModsEnabled = (bool)var;
+			if (dictionary.TryGetValue(nameof(areCharaModsEnabled), out var))
+				areCharaModsEnabled = (bool)var;
+			if (dictionary.TryGetValue(nameof(areLangModsEnabled), out var))
+				areLangModsEnabled = (bool)var;
 
 		}
 	}
