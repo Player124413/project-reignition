@@ -329,7 +329,6 @@ public partial class Options : Menu
 				FlipBook(Submenus.Control, true, 6);
 				break;
 			case Submenus.Test:
-				Select();
 				return;
 			case Submenus.ResetSettings:
 			case Submenus.ResetControls:
