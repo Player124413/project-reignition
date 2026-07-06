@@ -1060,7 +1060,12 @@ public partial class SaveManager : Node
 		if (dictReturn.TryGetValue("Loop End", out value))
 			res.LoopEnd = (float)value;
 		if (dictReturn.TryGetValue("File Path", out value))
+		{
 			res.StreamPath = (string)value;
+			if (!res.StreamPath.IsAbsolutePath())
+				res.StreamPath = ModDirectory + "music/" + res.StreamPath;
+		}
+
 		if (dictReturn.TryGetValue("Volume DB", out value))
 			res.VolumeDB = (float)value;
 		return res;
