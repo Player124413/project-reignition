@@ -133,11 +133,11 @@ public partial class Gargoyle : Enemy
 		if (state == State.Idle || state == State.Petrify || isSlashMovementEnabled)
 			ProcessMovement();
 
-		if (!IsInRange && !Player.IsPetrified)
-			return;
-
 		if (isWindballActive)
 			windball.GlobalPosition += windball.Forward() * WindballMoveSpeed * PhysicsManager.physicsDelta;
+
+		if (!IsInRange && !Player.IsPetrified)
+			return;
 
 		if (isActionTimerPaused || Player.Camera.IsBehindCamera(GlobalPosition))
 			return;
