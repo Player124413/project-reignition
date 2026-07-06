@@ -277,6 +277,9 @@ public partial class PlatformTrigger : Node3D
 
 	private void ProcessInteraction()
 	{
+		if (isPlatformFalling)
+			return;
+
 		if (isFallingBehaviourEnabled && autoShake)
 			StartShaking();
 
@@ -303,6 +306,7 @@ public partial class PlatformTrigger : Node3D
 	/// <summary> Called when the platform begins to fall. </summary>
 	private void StartFalling()
 	{
+		isPlatformFalling = true;
 		isPlatformShaking = false; // Stop shaking
 		fallingPlatformAnimator.Play("fall", .2);
 		fallingPlatformAnimator.SpeedScale = fallSpeedScale;
@@ -391,9 +395,11 @@ public partial class PlatformTrigger : Node3D
 
 	public void OnEntered(Area3D a)
 	{
-		if (!a.IsInGroup("player detection")) return;
+		if (!a.IsInGroup("player detection"))
+			return;
 
 		isInteractingWithPlayer = true;
+
 		enableGroundSnapping = false; // Prevent initial snapping
 		floatingEntranceImpact = Mathf.Max(-Player.VerticalSpeed, 0);
 
@@ -405,7 +411,9 @@ public partial class PlatformTrigger : Node3D
 
 	public void OnExited(Area3D a)
 	{
-		if (!a.IsInGroup("player detection")) return;
+		if (!a.IsInGroup("player detection"))
+			return;
+
 		isInteractingWithPlayer = false;
 	}
 }
