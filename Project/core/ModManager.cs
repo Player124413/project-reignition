@@ -27,7 +27,7 @@ public partial class ModManager : Node
 
 	public void SetUpMods()
 	{
-		if (SaveManager.Config.areModsEnabled)
+		if (SaveManager.Config.areLevelModsEnabled)
 			LoadLevelMods();
 		if (SaveManager.Config.areCharaModsEnabled)
 			LoadCharacterMods();

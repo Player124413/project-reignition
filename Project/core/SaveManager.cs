@@ -287,7 +287,7 @@ public partial class SaveManager : Node
 		public int cutsceneOpacity = 20;
 
 		// Mods
-		public bool areModsEnabled = true; //Level mods
+		public bool areLevelModsEnabled = true; //Level mods
 		public bool areCharaModsEnabled = true; //Character mods
 		public bool areLangModsEnabled = true; //Language mods
 
@@ -365,7 +365,7 @@ public partial class SaveManager : Node
 				{ nameof(cutsceneOpacity), cutsceneOpacity},
 
 				// Mods
-				{ nameof(areModsEnabled), areModsEnabled},
+				{ nameof(areLevelModsEnabled), areLevelModsEnabled},
 				{ nameof(areCharaModsEnabled), areCharaModsEnabled},
 				{ nameof(areLangModsEnabled), areLangModsEnabled}
 			};
@@ -497,8 +497,8 @@ public partial class SaveManager : Node
 				cutsceneOpacity = (int)var;
 
 			//Mods
-			if (dictionary.TryGetValue(nameof(areModsEnabled), out var))
-				areModsEnabled = (bool)var;
+			if (dictionary.TryGetValue(nameof(areLevelModsEnabled), out var))
+				areLevelModsEnabled = (bool)var;
 			if (dictionary.TryGetValue(nameof(areCharaModsEnabled), out var))
 				areCharaModsEnabled = (bool)var;
 			if (dictionary.TryGetValue(nameof(areLangModsEnabled), out var))

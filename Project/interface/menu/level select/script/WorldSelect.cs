@@ -36,6 +36,15 @@ public partial class WorldSelect : Menu
 	private readonly Array<Sprite2D> _levelTextSprites = [];
 	private readonly Array<Sprite2D> _levelGlowSprites = [];
 	private readonly Array<Control> _levelNewSprites = [];
+
+	private int GetMaxWorld()
+	{
+		if (!SaveManager.Config.areLevelModsEnabled) // Hide Mod world option
+			return (int)SaveManager.WorldEnum.Max - 1;
+
+		return (int)SaveManager.WorldEnum.Max;
+	}
+
 	protected override void SetUp()
 	{
 		if (SaveManager.Config.useRetailMenuMusic)
@@ -148,12 +157,13 @@ public partial class WorldSelect : Menu
 		if (!Mathf.IsZeroApprox(cursorSelectionTimer))
 			return;
 
-		VerticalSelection = WrapSelection(VerticalSelection + direction, (int)SaveManager.WorldEnum.Max);
+		int max = GetMaxWorld();
+		VerticalSelection = WrapSelection(VerticalSelection + direction, max);
 		menuMemory[MemoryKeys.WorldSelect] = VerticalSelection;
 		menuMemory[MemoryKeys.LevelSelect] = 0; // Reset level selection
 
 		bool isScrollingUp = direction < 0;
-		int transitionIndex = WrapSelection(isScrollingUp ? VerticalSelection - 1 : VerticalSelection + 1, (int)SaveManager.WorldEnum.Max);
+		int transitionIndex = WrapSelection(isScrollingUp ? VerticalSelection - 1 : VerticalSelection + 1, max);
 		UpdateSpriteRegion(3, transitionIndex); // Update level text
 
 		animator.Play(isScrollingUp ? ScrollUpAnimation : ScrollDownAnimation);
@@ -264,7 +274,8 @@ public partial class WorldSelect : Menu
 
 	private void UpdateSpriteRegion(int spriteIndex, int selectionIndex)
 	{
-		selectionIndex = WrapSelection(selectionIndex, (int)SaveManager.WorldEnum.Max);
+		int max = GetMaxWorld();
+		selectionIndex = WrapSelection(selectionIndex, max);
 		if (!SaveManager.ActiveGameData.IsWorldUnlocked((SaveManager.WorldEnum)selectionIndex)) // World isn't unlocked.
 			selectionIndex = levelSpriteRegions.Count - 1;
 
