@@ -688,7 +688,7 @@ public partial class Options : Menu
 		interfaceLabels[4].Text = SaveManager.Config.isUsingHorizontalSoulGauge ? HorizontalStyle : VerticalStyle;
 		interfaceLabels[5].Text = SaveManager.Config.isActionPromptsEnabled ? EnabledString : DisabledString;
 
-		modsLabels[0].Text = SaveManager.Config.areModsEnabled ? EnabledString : DisabledString;
+		modsLabels[0].Text = SaveManager.Config.areLevelModsEnabled ? EnabledString : DisabledString;
 		modsLabels[1].Text = SaveManager.Config.areCharaModsEnabled ? EnabledString : DisabledString;
 		modsLabels[2].Text = SaveManager.Config.areLangModsEnabled ? EnabledString : DisabledString;
 	}
@@ -1153,7 +1153,7 @@ public partial class Options : Menu
 	{
 		if (VerticalSelection == 0)
 		{
-			SaveManager.Config.areModsEnabled = !SaveManager.Config.areModsEnabled;
+			SaveManager.Config.areLevelModsEnabled = !SaveManager.Config.areLevelModsEnabled;
 		}
 		else if (VerticalSelection == 1)
 		{
