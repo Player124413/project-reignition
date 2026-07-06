@@ -27,7 +27,7 @@ public partial class Options : Menu
 		switch (currentSubmenu)
 		{
 			case Submenus.Options:
-				maxSelection = 7;
+				maxSelection = 8;
 				break;
 			case Submenus.Video:
 				maxSelection = videoLabels.Length;
@@ -43,6 +43,9 @@ public partial class Options : Menu
 				break;
 			case Submenus.Interface:
 				maxSelection = interfaceLabels.Length;
+				break;
+			case Submenus.Mods:
+				maxSelection = modsLabels.Length + 1;
 				break;
 			case Submenus.Mouse:
 				maxSelection = controlMouseLabels.Length;
@@ -74,6 +77,7 @@ public partial class Options : Menu
 		Language, // Menu for localization and language
 		Control, // Menu for configuring general control settings
 		Interface, // Menu for configuring interface settings
+		Mods, //Menu for configuring mod settings
 		ResetSettings, // Submenu for resetting the configuration settings
 		ResetControls, // Submenu for resetting the control settings
 		Mouse, // Control submenu for configuring mouse mappings
@@ -217,6 +221,9 @@ public partial class Options : Menu
 				break;
 			case Submenus.Interface:
 				ConfirmInterfaceOption();
+				break;
+			case Submenus.Mods:
+				ConfirmModsOption();
 				break;
 			case Submenus.Mouse:
 				ConfirmMouseOption();
@@ -487,6 +494,7 @@ public partial class Options : Menu
 	[Export] private Label[] languageLabels;
 	[Export] private Label[] controlLabels;
 	[Export] private Label[] interfaceLabels;
+	[Export] private Label[] modsLabels;
 	[Export] private Label[] partyMappingLabels;
 	[Export] private Label[] generalLabels;
 	[Export] private Label[] gyroLabels;
@@ -678,6 +686,10 @@ public partial class Options : Menu
 
 		interfaceLabels[4].Text = SaveManager.Config.isUsingHorizontalSoulGauge ? HorizontalStyle : VerticalStyle;
 		interfaceLabels[5].Text = SaveManager.Config.isActionPromptsEnabled ? EnabledString : DisabledString;
+
+		modsLabels[0].Text = SaveManager.Config.areModsEnabled ? EnabledString : DisabledString;
+		modsLabels[1].Text = SaveManager.Config.areCharaModsEnabled ? EnabledString : DisabledString;
+		modsLabels[2].Text = SaveManager.Config.areLangModsEnabled ? EnabledString : DisabledString;
 	}
 
 	private string GetVoiceLanguageKey(LocalizationResource voiceLanguage) => $"lang_{voiceLanguage.LocaleId}";
@@ -771,6 +783,9 @@ public partial class Options : Menu
 				break;
 			case Submenus.Interface:
 				settingUpdated = SlideInterfaceOption(direction);
+				break;
+			case Submenus.Mods:
+				settingUpdated = SlideModsOption(direction);
 				break;
 			case Submenus.PartyMapping:
 				settingUpdated = SlidePartyMappingOption(direction);
@@ -1133,6 +1148,27 @@ public partial class Options : Menu
 		return false;
 	}
 
+	private bool SlideModsOption(int direction)
+	{
+		if (VerticalSelection == 0)
+		{
+			SaveManager.Config.areModsEnabled = !SaveManager.Config.areModsEnabled;
+		}
+		else if (VerticalSelection == 1)
+		{
+			SaveManager.Config.areCharaModsEnabled = !SaveManager.Config.areCharaModsEnabled;
+		}
+		else if (VerticalSelection == 2)
+		{
+			SaveManager.Config.areLangModsEnabled = !SaveManager.Config.areLangModsEnabled;
+		}
+		else if (VerticalSelection == 3)
+		{
+			OS.ShellOpen(ProjectSettings.GlobalizePath("user://mods/"));
+		}
+		return false;
+	}
+
 	private bool SlideMouseOption(int direction)
 	{
 		if (VerticalSelection == 0)
@@ -1243,13 +1279,13 @@ public partial class Options : Menu
 
 	private void ConfirmOption()
 	{
-		if (VerticalSelection == 5)
+		if (VerticalSelection == 6)
 		{
 			SlideOption();
 			ConfirmSFX();
 			return;
 		}
-		else if (VerticalSelection == 6)
+		else if (VerticalSelection == 7)
 		{
 			currentSubmenu = Submenus.ResetSettings;
 			ShowResetMenu();
@@ -1262,7 +1298,7 @@ public partial class Options : Menu
 
 	private bool SlideOption()
 	{
-		if (VerticalSelection != 5)
+		if (VerticalSelection != 6)
 			return false;
 
 		SaveManager.Config.useQuickLoad = !SaveManager.Config.useQuickLoad;
@@ -1357,6 +1393,11 @@ public partial class Options : Menu
 	private void ConfirmInterfaceOption()
 	{
 		SlideInterfaceOption(1);
+		ConfirmSFX();
+	}
+	private void ConfirmModsOption()
+	{
+		SlideModsOption(1);
 		ConfirmSFX();
 	}
 

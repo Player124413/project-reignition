@@ -183,6 +183,11 @@ public partial class Jukebox : Menu
 			return;
 		}
 
+		if (Input.IsActionJustPressed("button_attack"))
+		{
+			SetUpCustomMusic();
+		}
+
 		base.ProcessMenu();
 	}
 
