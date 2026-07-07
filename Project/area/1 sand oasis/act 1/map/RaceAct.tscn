@@ -4,6 +4,7 @@
 [ext_resource type="PackedScene" uid="uid://cjupypih0myxo" path="res://object/player/CharacterSpawn.tscn" id="2_jytk8"]
 [ext_resource type="Curve3D" uid="uid://b2d3w2hiubhs0" path="res://area/1 sand oasis/act 1/environment/path/UhuPath.tres" id="4_5kxmd"]
 [ext_resource type="Script" uid="uid://dd24u7rlj0dwl" path="res://addons/custom_nodes/script/ObjectGenerator.cs" id="4_f3m4h"]
+[ext_resource type="Script" uid="uid://bitgnn108jmaa" path="res://object/trigger/modules/DialogTrigger.cs" id="5_3qn63"]
 [ext_resource type="PackedScene" uid="uid://dc1ik7p6xlh0a" path="res://object/stage/genie/Uhu.tscn" id="5_l41di"]
 [ext_resource type="PackedScene" uid="uid://c7l8mr7ubn848" path="res://object/stage/pickups/Ring.tscn" id="5_nopxn"]
 [ext_resource type="PackedScene" uid="uid://bhnh1as6xgpiy" path="res://object/stage/common/DashPanel.tscn" id="6_ckw71"]
@@ -21,6 +22,9 @@
 [ext_resource type="PackedScene" uid="uid://bx40lvnpwhjmi" path="res://area/1 sand oasis/data/particle/FallingSandDustParticle.tscn" id="22_56jp1"]
 [ext_resource type="AudioStream" uid="uid://djpvx5de1666k" path="res://sound/sfx/stage/sand oasis/pillar crate impact.wav" id="23_gg7b2"]
 [ext_resource type="PackedScene" uid="uid://cc64d8h51jyx2" path="res://object/stage/common/ItemBoxFlying.tscn" id="23_x8plt"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_y2433"]
+size = Vector3(15, 20, 5)
 
 [sub_resource type="Animation" id="Animation_h5pa1"]
 length = 0.001
@@ -1228,6 +1232,26 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 70.2, 75, 0)
 metadata/_edit_lock_ = true
 
 [node name="CharacterSpawn" parent="RaceAct/SpawnPosition" unique_id=2057670744 instance=ExtResource("2_jytk8")]
+
+[node name="DialogTriggers" type="Node3D" parent="RaceAct" unique_id=1058601151]
+visible = false
+
+[node name="UhuTrigger" parent="RaceAct/DialogTriggers" unique_id=1029606726 instance=ExtResource("9_jio4r")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 70.135, 75, -26.21)
+collision_layer = 0
+OneShot = true
+"Respawn Mode" = 4
+"Enter Mode" = 0
+
+[node name="Dialog" type="Node3D" parent="RaceAct/DialogTriggers/UhuTrigger" unique_id=1019600250 node_paths=PackedStringArray("randomizedDialogTriggers")]
+script = ExtResource("5_3qn63")
+displayLength = Array[float]([1.5, 2.0])
+textKeys = ["common_hint_murmur_sh", "common_hint_uhu_sh"]
+randomizedDialogTriggers = []
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="RaceAct/DialogTriggers/UhuTrigger" unique_id=746780152]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
+shape = SubResource("BoxShape3D_y2433")
 
 [node name="Uhu" type="Node3D" parent="RaceAct" unique_id=865294153]
 
