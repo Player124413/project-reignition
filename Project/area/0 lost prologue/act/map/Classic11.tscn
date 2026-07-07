@@ -6,12 +6,16 @@
 [ext_resource type="PackedScene" uid="uid://bqvtcp8tkbfyt" path="res://object/stage/common/SpikeBall.tscn" id="4_rx851"]
 [ext_resource type="PackedScene" uid="uid://bn6wr6l8s3qyt" path="res://object/trigger/StageTrigger.tscn" id="5_5f4qq"]
 [ext_resource type="Script" uid="uid://dx0a0rhyauccl" path="res://object/trigger/modules/CameraTrigger.cs" id="5_31gwq"]
+[ext_resource type="Script" uid="uid://bitgnn108jmaa" path="res://object/trigger/modules/DialogTrigger.cs" id="5_j5r7u"]
 [ext_resource type="Script" uid="uid://kvlmbv66orqt" path="res://object/trigger/modules/CullingTrigger.cs" id="5_y0li4"]
 [ext_resource type="PackedScene" uid="uid://dxepb172kmp8n" path="res://object/stage/common/Goal.tscn" id="6_c675n"]
 [ext_resource type="Resource" uid="uid://7fh17f1uaotj" path="res://area/0 lost prologue/act/camera/MediumCamera.tres" id="6_j5r7u"]
 [ext_resource type="PackedScene" uid="uid://bmgmok3n82tte" path="res://area/0 lost prologue/object/wonder/WonderBlock4.tscn" id="6_rx851"]
 [ext_resource type="PackedScene" uid="uid://ckhdnrnb1sf1i" path="res://object/enemy/majin/data/lost prologue/BlueMajin.tscn" id="9_rx851"]
 [ext_resource type="PackedScene" uid="uid://djstbs2wsu3ak" path="res://object/enemy/majin/data/lost prologue/RedMajin.tscn" id="10_5f4qq"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_8amei"]
+size = Vector3(20, 20, 5)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_5f4qq"]
 size = Vector3(10, 10, 10)
@@ -33,6 +37,23 @@ Data = ExtResource("2_d116g")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 100, 0, -320)
 
 [node name="CharacterSpawn" parent="Classic11/SpawnPosition" unique_id=1015851694 instance=ExtResource("3_y0li4")]
+
+[node name="VoiceLines" type="Node3D" parent="Classic11" unique_id=1226894171]
+
+[node name="SlideTutorial" parent="Classic11/VoiceLines" unique_id=1029606726 instance=ExtResource("5_5f4qq")]
+transform = Transform3D(2.9802322e-08, 0, -1, 0, 1, 0, 1, 0, 2.9802322e-08, 111.52893, 0, -319.98624)
+OneShot = true
+"Respawn Mode" = 0
+"Enter Mode" = 0
+
+[node name="Dialog" type="Node3D" parent="Classic11/VoiceLines/SlideTutorial" unique_id=1756383674 node_paths=PackedStringArray("randomizedDialogTriggers")]
+script = ExtResource("5_j5r7u")
+textKeys = Array[String](["lp_volcano_slider_sh", "lp_volcano_slider2_sh"])
+randomizedDialogTriggers = []
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Classic11/VoiceLines/SlideTutorial" unique_id=906983808]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
+shape = SubResource("BoxShape3D_8amei")
 
 [node name="ObstructionCuller" parent="Classic11" unique_id=1512540809 instance=ExtResource("5_5f4qq")]
 transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 140, 1, -320)

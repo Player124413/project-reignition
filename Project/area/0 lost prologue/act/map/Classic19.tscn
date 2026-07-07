@@ -4,9 +4,14 @@
 [ext_resource type="Resource" uid="uid://b2okywy6pwt1t" path="res://resource/level data/lost prologue/Classic19.tres" id="2_71rrm"]
 [ext_resource type="Resource" uid="uid://cvkm1hqnay7ys" path="res://area/0 lost prologue/act/camera/Classic17OverheadCamera.tres" id="3_tad0n"]
 [ext_resource type="PackedScene" uid="uid://cjupypih0myxo" path="res://object/player/CharacterSpawn.tscn" id="4_pxr50"]
+[ext_resource type="PackedScene" uid="uid://bn6wr6l8s3qyt" path="res://object/trigger/StageTrigger.tscn" id="5_tad0n"]
 [ext_resource type="PackedScene" uid="uid://dxepb172kmp8n" path="res://object/stage/common/Goal.tscn" id="5_u0og4"]
 [ext_resource type="PackedScene" uid="uid://bxlbhwvfotbq5" path="res://area/0 lost prologue/object/wonder/WonderPillar1.tscn" id="6_bbecd"]
+[ext_resource type="Script" uid="uid://bitgnn108jmaa" path="res://object/trigger/modules/DialogTrigger.cs" id="6_pxr50"]
 [ext_resource type="PackedScene" uid="uid://5l5gkjoad6bq" path="res://area/0 lost prologue/object/wonder/WonderPillar2.tscn" id="7_y17q5"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_u0og4"]
+size = Vector3(20, 20, 5)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_e5om0"]
 size = Vector3(20, 30, 5)
@@ -24,6 +29,24 @@ InitialCameraSettings = ExtResource("3_tad0n")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 160)
 
 [node name="CharacterSpawn" parent="Classic19/SpawnPosition" unique_id=387577351 instance=ExtResource("4_pxr50")]
+
+[node name="VoiceLines" type="Node3D" parent="Classic19" unique_id=906970871]
+
+[node name="StepTutorial" parent="Classic19/VoiceLines" unique_id=1029606726 instance=ExtResource("5_tad0n")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 155)
+OneShot = true
+"Respawn Mode" = 0
+"Enter Mode" = 0
+
+[node name="Dialog" type="Node3D" parent="Classic19/VoiceLines/StepTutorial" unique_id=1671313630 node_paths=PackedStringArray("randomizedDialogTriggers")]
+script = ExtResource("6_pxr50")
+displayLength = Array[float]([2.0])
+textKeys = Array[String](["lp_quickslide_sh"])
+randomizedDialogTriggers = []
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Classic19/VoiceLines/StepTutorial" unique_id=417893001]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
+shape = SubResource("BoxShape3D_u0og4")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="Classic19" unique_id=1205191156 groups=["wall"]]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 166)

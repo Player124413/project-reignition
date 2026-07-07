@@ -6,6 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://bn6wr6l8s3qyt" path="res://object/trigger/StageTrigger.tscn" id="4_icqay"]
 [ext_resource type="Script" uid="uid://dx0a0rhyauccl" path="res://object/trigger/modules/CameraTrigger.cs" id="5_2prtk"]
 [ext_resource type="PackedScene" uid="uid://loa88tx1asqv" path="res://area/0 lost prologue/object/wonder/WonderBlock8.tscn" id="5_ch146"]
+[ext_resource type="Script" uid="uid://bitgnn108jmaa" path="res://object/trigger/modules/DialogTrigger.cs" id="5_g30yw"]
 [ext_resource type="Resource" uid="uid://7fh17f1uaotj" path="res://area/0 lost prologue/act/camera/MediumCamera.tres" id="6_g30yw"]
 [ext_resource type="PackedScene" uid="uid://dgq0cufk1muvh" path="res://area/0 lost prologue/object/wonder/WonderBlock2.tscn" id="8_blgwo"]
 [ext_resource type="Resource" uid="uid://qhs2jwmmxotk" path="res://area/0 lost prologue/act/camera/Classic16BackupOverheadCamera.tres" id="8_eace3"]
@@ -15,6 +16,9 @@
 [ext_resource type="PackedScene" uid="uid://dxepb172kmp8n" path="res://object/stage/common/Goal.tscn" id="12_3epog"]
 [ext_resource type="PackedScene" uid="uid://68st06xyjgvp" path="res://object/stage/pickups/RichRing.tscn" id="14_ijblj"]
 [ext_resource type="PackedScene" uid="uid://gqxmlgiwtikn" path="res://object/trigger/BigTrigger.tscn" id="15_icqay"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_lyjop"]
+size = Vector3(20, 20, 5)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_e5om0"]
 size = Vector3(20, 30, 5)
@@ -45,6 +49,23 @@ Data = ExtResource("2_ch146")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -3)
 
 [node name="CharacterSpawn" parent="Classic16/SpawnPosition" unique_id=1790578874 instance=ExtResource("3_ijblj")]
+
+[node name="VoiceLines" type="Node3D" parent="Classic16" unique_id=1918632317]
+
+[node name="SplashJumpTutorial" parent="Classic16/VoiceLines" unique_id=1029606726 instance=ExtResource("4_icqay")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -10)
+OneShot = true
+"Respawn Mode" = 0
+"Enter Mode" = 0
+
+[node name="Dialog" type="Node3D" parent="Classic16/VoiceLines/SplashJumpTutorial" unique_id=539215614 node_paths=PackedStringArray("randomizedDialogTriggers")]
+script = ExtResource("5_g30yw")
+textKeys = Array[String](["lp_splash_jump_sh"])
+randomizedDialogTriggers = []
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Classic16/VoiceLines/SplashJumpTutorial" unique_id=599044833]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
+shape = SubResource("BoxShape3D_lyjop")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="Classic16" unique_id=507124321 groups=["wall"]]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 5)
@@ -327,10 +348,10 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 21, -20)
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 82, 19, -278)
 bigAnimation = &"swim"
 
-[node name="Camera" parent="BigTrigger" index="1"]
+[node name="Camera" parent="BigTrigger" index="1" unique_id=686359960]
 transform = Transform3D(0.64278764, 0.06676517, 0.7631294, 0, 0.9961947, -0.08715574, -0.76604444, 0.05602263, 0.64034164, 0, 1, 0)
 
-[node name="Cam" parent="BigTrigger/Camera" index="0"]
+[node name="Cam" parent="BigTrigger/Camera" index="0" unique_id=1131882258]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 60)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="BigTrigger" unique_id=1123802725]

@@ -3,10 +3,15 @@
 [ext_resource type="PackedScene" uid="uid://dax0mun2bjm1v" path="res://area/0 lost prologue/act/Static.tscn" id="1_yhnww"]
 [ext_resource type="Resource" uid="uid://6wuwl40kx3bk" path="res://resource/level data/lost prologue/Classic13.tres" id="2_yhnww"]
 [ext_resource type="PackedScene" uid="uid://cjupypih0myxo" path="res://object/player/CharacterSpawn.tscn" id="3_qypp8"]
+[ext_resource type="PackedScene" uid="uid://bn6wr6l8s3qyt" path="res://object/trigger/StageTrigger.tscn" id="4_5bjek"]
 [ext_resource type="PackedScene" uid="uid://bhnh1as6xgpiy" path="res://object/stage/common/DashPanel.tscn" id="4_54xls"]
+[ext_resource type="Script" uid="uid://bitgnn108jmaa" path="res://object/trigger/modules/DialogTrigger.cs" id="5_qypp8"]
 [ext_resource type="Script" uid="uid://bssd28yqn1cxg" path="res://object/trigger/modules/PathTrigger.cs" id="5_ux3jx"]
 [ext_resource type="Script" uid="uid://kvlmbv66orqt" path="res://object/trigger/modules/CullingTrigger.cs" id="6_ntfjr"]
 [ext_resource type="PackedScene" uid="uid://cbpudluma1oux" path="res://object/stage/destructable/Crate.tscn" id="7_fu5x7"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_54xls"]
+size = Vector3(20, 20, 5)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_e5om0"]
 size = Vector3(10, 20, 5)
@@ -22,6 +27,23 @@ Data = ExtResource("2_yhnww")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 144)
 
 [node name="CharacterSpawn" parent="Classic13/SpawnPosition" unique_id=218134432 instance=ExtResource("3_qypp8")]
+
+[node name="VoiceLines" type="Node3D" parent="Classic13" unique_id=126827441]
+
+[node name="StompTutorial" parent="Classic13/VoiceLines" unique_id=1029606726 instance=ExtResource("4_5bjek")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 140)
+OneShot = true
+"Respawn Mode" = 0
+"Enter Mode" = 0
+
+[node name="Dialog" type="Node3D" parent="Classic13/VoiceLines/StompTutorial" unique_id=2075094032 node_paths=PackedStringArray("randomizedDialogTriggers")]
+script = ExtResource("5_qypp8")
+textKeys = Array[String](["lp_fire_gaze_sh"])
+randomizedDialogTriggers = []
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Classic13/VoiceLines/StompTutorial" unique_id=1749828591]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
+shape = SubResource("BoxShape3D_54xls")
 
 [node name="DashPanelGroup1" type="Node3D" parent="Classic13" unique_id=1269005566]
 transform = Transform3D(-0.80670726, 0.14224426, -0.57357645, 0.1736482, 0.9848077, 0, 0.5648625, -0.09960051, -0.81915206, 9.838658, 0.03472964, 193.11298)

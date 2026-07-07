@@ -5,6 +5,7 @@
 [ext_resource type="PackedScene" uid="uid://cjupypih0myxo" path="res://object/player/CharacterSpawn.tscn" id="3_cs45n"]
 [ext_resource type="PackedScene" uid="uid://bn6wr6l8s3qyt" path="res://object/trigger/StageTrigger.tscn" id="4_2alec"]
 [ext_resource type="Script" uid="uid://dx0a0rhyauccl" path="res://object/trigger/modules/CameraTrigger.cs" id="5_uus3k"]
+[ext_resource type="Script" uid="uid://bitgnn108jmaa" path="res://object/trigger/modules/DialogTrigger.cs" id="5_yieqi"]
 [ext_resource type="Resource" uid="uid://cmcksgatwxf5p" path="res://area/0 lost prologue/act/camera/OverheadPlatformingCamera.tres" id="6_yieqi"]
 [ext_resource type="Resource" uid="uid://b6ynjki0mxqdh" path="res://area/0 lost prologue/act/camera/CloseCamera.tres" id="7_qm3q4"]
 [ext_resource type="PackedScene" uid="uid://dgq0cufk1muvh" path="res://area/0 lost prologue/object/wonder/WonderBlock2.tscn" id="8_spilw"]
@@ -16,6 +17,9 @@
 [ext_resource type="PackedScene" uid="uid://dxepb172kmp8n" path="res://object/stage/common/Goal.tscn" id="13_ca7tv"]
 [ext_resource type="PackedScene" uid="uid://5l5gkjoad6bq" path="res://area/0 lost prologue/object/wonder/WonderPillar2.tscn" id="14_uus3k"]
 [ext_resource type="PackedScene" uid="uid://ckhdnrnb1sf1i" path="res://object/enemy/majin/data/lost prologue/BlueMajin.tscn" id="15_yieqi"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_qm3q4"]
+size = Vector3(20, 20, 5)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_e5om0"]
 size = Vector3(20, 30, 5)
@@ -42,6 +46,23 @@ disabled = true
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 198.281, -9.799999, -40.717)
 
 [node name="CharacterSpawn" parent="Classic14/SpawnPosition" unique_id=637433172 instance=ExtResource("3_cs45n")]
+
+[node name="VoiceLines" type="Node3D" parent="Classic14" unique_id=669401348]
+
+[node name="DownCancelTutorial" parent="Classic14/VoiceLines" unique_id=1029606726 instance=ExtResource("4_2alec")]
+transform = Transform3D(-0.7071067, 0, 0.7071068, 0, 1, 0, -0.7071068, 0, -0.7071067, 182.35913, -9.799999, -22.826908)
+OneShot = true
+"Respawn Mode" = 0
+"Enter Mode" = 0
+
+[node name="Dialog" type="Node3D" parent="Classic14/VoiceLines/DownCancelTutorial" unique_id=937646640 node_paths=PackedStringArray("randomizedDialogTriggers")]
+script = ExtResource("5_yieqi")
+textKeys = Array[String](["lp_down_cancel_sh"])
+randomizedDialogTriggers = []
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Classic14/VoiceLines/DownCancelTutorial" unique_id=2057469297]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
+shape = SubResource("BoxShape3D_qm3q4")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="Classic14" unique_id=1912231587 groups=["wall"]]
 transform = Transform3D(0.76604444, 0, -0.6427876, 0, 1, 0, 0.6427876, 0, 0.76604444, 201.97322, -9.8, -45.279976)

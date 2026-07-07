@@ -273,11 +273,16 @@ public partial class SoundManager : Control
 		buttonPrompt.Visible = regexMatch.Success;
 		if (regexMatch.Success)
 		{
-			buttonPrompt.SetInputKey(regexMatch.Groups[0].Value.Substring(1, regexMatch.Groups[0].Length - 2));
+			string inputKey = regexMatch.Groups[0].Value.Substring(1, regexMatch.Groups[0].Length - 2);
+			if (inputKey == "button_crouch")
+				inputKey = SaveManager.ActiveSkillRing.IsSkillEquipped(Gameplay.SkillKey.ChargeJump) ? "button_jump" : "button_action";
+
+			buttonPrompt.SetInputKey(inputKey);
 			text = text.Replace(regexMatch.Captures[0].Value, ButtonSpaceReplacement); // 5 Spaces
 			buttonPromptIndex = regexMatch.Captures[0].Index + 2;
 		}
 
+		// TODO Support multiple buttons in a single text
 		return text;
 	}
 

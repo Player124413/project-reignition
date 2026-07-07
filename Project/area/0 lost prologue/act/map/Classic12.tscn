@@ -4,12 +4,17 @@
 [ext_resource type="Resource" uid="uid://cymu67ejootxl" path="res://resource/level data/lost prologue/Classic12.tres" id="2_feff1"]
 [ext_resource type="PackedScene" uid="uid://cjupypih0myxo" path="res://object/player/CharacterSpawn.tscn" id="3_302hu"]
 [ext_resource type="PackedScene" uid="uid://v2hbw6y70jr3" path="res://object/stage/pickups/RichPearl.tscn" id="4_g81qb"]
+[ext_resource type="PackedScene" uid="uid://bn6wr6l8s3qyt" path="res://object/trigger/StageTrigger.tscn" id="4_u00gp"]
+[ext_resource type="Script" uid="uid://bitgnn108jmaa" path="res://object/trigger/modules/DialogTrigger.cs" id="5_7188v"]
 [ext_resource type="PackedScene" uid="uid://bqvtcp8tkbfyt" path="res://object/stage/common/SpikeBall.tscn" id="6_feff1"]
 [ext_resource type="PackedScene" uid="uid://ckhdnrnb1sf1i" path="res://object/enemy/majin/data/lost prologue/BlueMajin.tscn" id="7_04nai"]
 [ext_resource type="Script" uid="uid://dd24u7rlj0dwl" path="res://addons/custom_nodes/script/ObjectGenerator.cs" id="7_j300n"]
 [ext_resource type="Script" uid="uid://dpt5o0lh62p6t" path="res://object/stage/MovingObject.cs" id="8_nxlx1"]
 [ext_resource type="PackedScene" uid="uid://cc64d8h51jyx2" path="res://object/stage/common/ItemBoxFlying.tscn" id="9_302hu"]
 [ext_resource type="PackedScene" uid="uid://dxepb172kmp8n" path="res://object/stage/common/Goal.tscn" id="10_302hu"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_j300n"]
+size = Vector3(20, 20, 5)
 
 [sub_resource type="Curve" id="Curve_p083t"]
 _limits = [-1.5, 1.5, 0.0, 1.0]
@@ -35,6 +40,24 @@ Data = ExtResource("2_feff1")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 160)
 
 [node name="CharacterSpawn" parent="Classic12/SpawnPosition" unique_id=1144521844 instance=ExtResource("3_302hu")]
+
+[node name="VoiceLines" type="Node3D" parent="Classic12" unique_id=1721514706]
+
+[node name="PerfectHomingAttackTutorial" parent="Classic12/VoiceLines" unique_id=1029606726 instance=ExtResource("4_u00gp")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 150)
+OneShot = true
+"Respawn Mode" = 0
+"Enter Mode" = 0
+
+[node name="Dialog" type="Node3D" parent="Classic12/VoiceLines/PerfectHomingAttackTutorial" unique_id=511372833 node_paths=PackedStringArray("randomizedDialogTriggers")]
+script = ExtResource("5_7188v")
+displayLength = Array[float]([2.5, 2.5, 2.5])
+textKeys = Array[String](["lp_perfect_homing_attack_sh", "lp_perfect_homing_attack2_sh", "lp_perfect_homing_attack3_sh"])
+randomizedDialogTriggers = []
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Classic12/VoiceLines/PerfectHomingAttackTutorial" unique_id=596479662]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
+shape = SubResource("BoxShape3D_j300n")
 
 [node name="RichPearl" parent="Classic12" unique_id=223568185 instance=ExtResource("4_g81qb")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 153)
