@@ -5,7 +5,11 @@
 [ext_resource type="PackedScene" uid="uid://cjupypih0myxo" path="res://object/player/CharacterSpawn.tscn" id="3_2jvj6"]
 [ext_resource type="PackedScene" uid="uid://bqvtcp8tkbfyt" path="res://object/stage/common/SpikeBall.tscn" id="4_41y3a"]
 [ext_resource type="PackedScene" uid="uid://bn6wr6l8s3qyt" path="res://object/trigger/StageTrigger.tscn" id="5_007ru"]
+[ext_resource type="Script" uid="uid://bitgnn108jmaa" path="res://object/trigger/modules/DialogTrigger.cs" id="5_xo1y7"]
 [ext_resource type="PackedScene" uid="uid://dxepb172kmp8n" path="res://object/stage/common/Goal.tscn" id="8_tnl7y"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_6333p"]
+size = Vector3(20, 20, 5)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_e5om0"]
 size = Vector3(20, 30, 5)
@@ -21,6 +25,23 @@ Data = ExtResource("2_xo1y7")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 100, 0, -320)
 
 [node name="CharacterSpawn" parent="Classic05/SpawnPosition" unique_id=407414799 instance=ExtResource("3_2jvj6")]
+
+[node name="Voicelines" type="Node3D" parent="Classic05" unique_id=1537961071]
+
+[node name="BrakeTutorial" parent="Classic05/Voicelines" unique_id=1029606726 instance=ExtResource("5_007ru")]
+transform = Transform3D(2.9802322e-08, 0, -1, 0, 1, 0, 1, 0, 2.9802322e-08, 107, 0, -320)
+OneShot = true
+"Respawn Mode" = 0
+"Enter Mode" = 0
+
+[node name="Dialog" type="Node3D" parent="Classic05/Voicelines/BrakeTutorial" unique_id=1674860897 node_paths=PackedStringArray("randomizedDialogTriggers")]
+script = ExtResource("5_xo1y7")
+textKeys = Array[String](["lp_brake_sh"])
+randomizedDialogTriggers = []
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Classic05/Voicelines/BrakeTutorial" unique_id=933844006]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
+shape = SubResource("BoxShape3D_6333p")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="Classic05" unique_id=236881674 groups=["wall"]]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 95, 0, -320)

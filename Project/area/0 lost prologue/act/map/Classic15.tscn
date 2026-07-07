@@ -4,9 +4,14 @@
 [ext_resource type="Resource" uid="uid://q1qxp10ju62a" path="res://resource/level data/lost prologue/Classic15.tres" id="2_sey6t"]
 [ext_resource type="Resource" uid="uid://daxieud5p230c" path="res://area/0 lost prologue/act/camera/BackstepCamera.tres" id="3_oms5g"]
 [ext_resource type="PackedScene" uid="uid://cjupypih0myxo" path="res://object/player/CharacterSpawn.tscn" id="4_fn6mb"]
+[ext_resource type="PackedScene" uid="uid://bn6wr6l8s3qyt" path="res://object/trigger/StageTrigger.tscn" id="4_oms5g"]
+[ext_resource type="Script" uid="uid://bitgnn108jmaa" path="res://object/trigger/modules/DialogTrigger.cs" id="5_fn6mb"]
 [ext_resource type="Script" uid="uid://dd24u7rlj0dwl" path="res://addons/custom_nodes/script/ObjectGenerator.cs" id="5_y712n"]
 [ext_resource type="PackedScene" uid="uid://c7l8mr7ubn848" path="res://object/stage/pickups/Ring.tscn" id="6_56o07"]
 [ext_resource type="PackedScene" uid="uid://dxepb172kmp8n" path="res://object/stage/common/Goal.tscn" id="7_iwo1a"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_y712n"]
+size = Vector3(20, 20, 5)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_lau7f"]
 size = Vector3(20, 30, 5)
@@ -23,6 +28,22 @@ Data = ExtResource("2_sey6t")
 InitialCameraSettings = ExtResource("3_oms5g")
 
 [node name="Classic15" type="Node3D" parent="." unique_id=208029217]
+
+[node name="Voicelines" type="Node3D" parent="Classic15" unique_id=1590793229]
+
+[node name="BackflipTutorial" parent="Classic15/Voicelines" unique_id=1029606726 instance=ExtResource("4_oms5g")]
+OneShot = true
+"Respawn Mode" = 0
+"Enter Mode" = 0
+
+[node name="Dialog" type="Node3D" parent="Classic15/Voicelines/BackflipTutorial" unique_id=1888423194 node_paths=PackedStringArray("randomizedDialogTriggers")]
+script = ExtResource("5_fn6mb")
+textKeys = Array[String](["lp_backflip_sh"])
+randomizedDialogTriggers = []
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Classic15/Voicelines/BackflipTutorial" unique_id=1736950292]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
+shape = SubResource("BoxShape3D_y712n")
 
 [node name="SpawnPosition" type="Node3D" parent="Classic15" unique_id=1761978025]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -3)

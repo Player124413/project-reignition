@@ -2,10 +2,15 @@
 
 [ext_resource type="PackedScene" uid="uid://dax0mun2bjm1v" path="res://area/0 lost prologue/act/Static.tscn" id="1_mth38"]
 [ext_resource type="Resource" uid="uid://d0rhjf5iauyv2" path="res://resource/level data/lost prologue/Classic7.tres" id="2_mth38"]
+[ext_resource type="PackedScene" uid="uid://bn6wr6l8s3qyt" path="res://object/trigger/StageTrigger.tscn" id="3_5h3v8"]
+[ext_resource type="Script" uid="uid://bitgnn108jmaa" path="res://object/trigger/modules/DialogTrigger.cs" id="4_anrf6"]
 [ext_resource type="PackedScene" uid="uid://cjupypih0myxo" path="res://object/player/CharacterSpawn.tscn" id="4_laomb"]
 [ext_resource type="PackedScene" uid="uid://cyd7uu3t42s2r" path="res://area/0 lost prologue/object/wonder/WonderBar5.tscn" id="6_02yl5"]
 [ext_resource type="PackedScene" uid="uid://dgq0cufk1muvh" path="res://area/0 lost prologue/object/wonder/WonderBlock2.tscn" id="7_mth38"]
 [ext_resource type="PackedScene" uid="uid://dxepb172kmp8n" path="res://object/stage/common/Goal.tscn" id="7_t56ew"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_laomb"]
+size = Vector3(20, 20, 5)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_lau7f"]
 size = Vector3(20, 30, 5)
@@ -16,6 +21,24 @@ size = Vector3(20, 30, 5)
 Data = ExtResource("2_mth38")
 
 [node name="Classic07" type="Node3D" parent="." unique_id=117344619]
+
+[node name="Voicelines" type="Node3D" parent="Classic07" unique_id=368757089]
+
+[node name="MoveTutorial" parent="Classic07/Voicelines" unique_id=1029606726 instance=ExtResource("3_5h3v8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 130)
+OneShot = true
+"Respawn Mode" = 0
+"Enter Mode" = 0
+
+[node name="Dialog" type="Node3D" parent="Classic07/Voicelines/MoveTutorial" unique_id=1413276539 node_paths=PackedStringArray("randomizedDialogTriggers")]
+script = ExtResource("4_anrf6")
+displayLength = Array[float]([0.0, 2.0])
+textKeys = Array[String](["lp_adv_accel_jump_sh", "lp_adv_accel_jump2_sh"])
+randomizedDialogTriggers = []
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Classic07/Voicelines/MoveTutorial" unique_id=811388160]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
+shape = SubResource("BoxShape3D_laomb")
 
 [node name="SpawnPosition" type="Node3D" parent="Classic07" unique_id=121389895]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 145)

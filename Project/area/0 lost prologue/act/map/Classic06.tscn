@@ -5,8 +5,13 @@
 [ext_resource type="PackedScene" uid="uid://cjupypih0myxo" path="res://object/player/CharacterSpawn.tscn" id="3_gs3ow"]
 [ext_resource type="Resource" uid="uid://daxieud5p230c" path="res://area/0 lost prologue/act/camera/BackstepCamera.tres" id="3_mdx18"]
 [ext_resource type="PackedScene" uid="uid://dxepb172kmp8n" path="res://object/stage/common/Goal.tscn" id="4_qdawn"]
+[ext_resource type="PackedScene" uid="uid://bn6wr6l8s3qyt" path="res://object/trigger/StageTrigger.tscn" id="5_wfc4d"]
+[ext_resource type="Script" uid="uid://bitgnn108jmaa" path="res://object/trigger/modules/DialogTrigger.cs" id="6_gs3ow"]
 [ext_resource type="Script" uid="uid://dd24u7rlj0dwl" path="res://addons/custom_nodes/script/ObjectGenerator.cs" id="7_wy2cv"]
 [ext_resource type="PackedScene" uid="uid://c7l8mr7ubn848" path="res://object/stage/pickups/Ring.tscn" id="8_wl6lj"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_gmvxw"]
+size = Vector3(20, 20, 5)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_lau7f"]
 size = Vector3(20, 30, 5)
@@ -28,6 +33,23 @@ InitialCameraSettings = ExtResource("3_mdx18")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -3)
 
 [node name="CharacterSpawn" parent="Classic06/SpawnPosition" unique_id=1310481231 instance=ExtResource("3_gs3ow")]
+
+[node name="Voicelines" type="Node3D" parent="Classic06" unique_id=1627345748]
+
+[node name="BackTutorial" parent="Classic06/Voicelines" unique_id=1029606726 instance=ExtResource("5_wfc4d")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -3)
+OneShot = true
+"Respawn Mode" = 0
+"Enter Mode" = 0
+
+[node name="Dialog" type="Node3D" parent="Classic06/Voicelines/BackTutorial" unique_id=1553758386 node_paths=PackedStringArray("randomizedDialogTriggers")]
+script = ExtResource("6_gs3ow")
+textKeys = Array[String](["lp_backstep_sh"])
+randomizedDialogTriggers = []
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Classic06/Voicelines/BackTutorial" unique_id=690728736]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
+shape = SubResource("BoxShape3D_gmvxw")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="Classic06" unique_id=1431739735 groups=["wall"]]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -8)
