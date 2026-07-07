@@ -40,6 +40,8 @@ public partial class SoundManager : Control
 		subtitleAnimator.Play("RESET");
 		InitializePearlSFX();
 
+		buttonPromptCharacterIndexes = new int[buttonPrompts.Length];
+
 		// Cancel Dialog when switching to a new scene
 		TransitionManager.Instance.SceneChanged += CancelDialog;
 	}
@@ -81,8 +83,9 @@ public partial class SoundManager : Control
 	public bool IsSubtitlesActive { get; private set; }
 	public bool IsDialogActive => IsSubtitlesActive && (isSonicSpeaking || isShahraSpeaking);
 	[Export] private Label subtitleLabel;
-	[Export] private NavigationButton buttonPrompt;
-	private int buttonPromptIndex;
+	[Export] private NavigationButton[] buttonPrompts;
+	private int buttonPromptIndex; // The current button prompt being calculated
+	private int[] buttonPromptCharacterIndexes; // 
 	[Export] private ColorRect subtitleLetterbox;
 	[Export] private AnimationPlayer subtitleAnimator;
 	[Export] private AudioStreamPlayer dialogChannel;
@@ -204,6 +207,7 @@ public partial class SoundManager : Control
 
 	private void UpdateDialog(bool processDelay)
 	{
+		ResetButtonPrompts();
 		InitializeSubtitleOpacity();
 		// Must have been interrupted
 		if (dialogChannel.IsConnected(AudioStreamPlayer.SignalName.Finished, new Callable(this, MethodName.OnDialogFinished)))
@@ -256,11 +260,17 @@ public partial class SoundManager : Control
 			CallDeferred(MethodName.UpdateButtonPromptPosition);
 		}
 
-
 		// If we've made it this far, we're using the custom specified time
 		if (!delayTimer.IsConnected(Timer.SignalName.Timeout, new Callable(this, MethodName.OnDialogFinished)))
 			delayTimer.Connect(Timer.SignalName.Timeout, new Callable(this, MethodName.OnDialogFinished), (uint)ConnectFlags.OneShot);
 		delayTimer.Start(currentDialog.displayLength[currentDialogIndex]);
+	}
+
+	private void ResetButtonPrompts()
+	{
+		buttonPromptIndex = 0;
+		for (int i = 0; i < buttonPrompts.Length; i++)
+			buttonPrompts[i].Visible = false;
 	}
 
 	/// <summary> Replaces curly braces with quotation marks for cutscene subtitles. </summary>
@@ -268,22 +278,28 @@ public partial class SoundManager : Control
 	{
 		text = text.Replace('{', '"');
 		text = text.Replace('}', '"');
-
-		Match regexMatch = ButtonPromptRegex().Match(text);
-		buttonPrompt.Visible = regexMatch.Success;
-		if (regexMatch.Success)
-		{
-			string inputKey = regexMatch.Groups[0].Value.Substring(1, regexMatch.Groups[0].Length - 2);
-			if (inputKey == "button_crouch")
-				inputKey = SaveManager.ActiveSkillRing.IsSkillEquipped(Gameplay.SkillKey.ChargeJump) ? "button_jump" : "button_action";
-
-			buttonPrompt.SetInputKey(inputKey);
-			text = text.Replace(regexMatch.Captures[0].Value, ButtonSpaceReplacement); // 5 Spaces
-			buttonPromptIndex = regexMatch.Captures[0].Index + 2;
-		}
-
+		text = FormatButtonPrompts(text);
 		// TODO Support multiple buttons in a single text
 		return text;
+	}
+
+	/// <summary> Recursively formats text, replacing button prompts with spaces. </summary>
+	public string FormatButtonPrompts(string text)
+	{
+		Match regexMatch = ButtonPromptRegex().Match(text);
+		if (!regexMatch.Success)
+			return text;
+
+		buttonPrompts[buttonPromptIndex].Visible = true;
+		string inputKey = regexMatch.Groups[0].Value.Substring(1, regexMatch.Groups[0].Length - 2);
+		if (inputKey == "button_crouch")
+			inputKey = SaveManager.ActiveSkillRing.IsSkillEquipped(Gameplay.SkillKey.ChargeJump) ? "button_jump" : "button_action";
+
+		buttonPrompts[buttonPromptIndex].SetInputKey(inputKey);
+		text = text.Replace(regexMatch.Captures[0].Value, ButtonSpaceReplacement); // 5 Spaces
+		buttonPromptCharacterIndexes[buttonPromptIndex] = regexMatch.Captures[0].Index + 2;
+		buttonPromptIndex++;
+		return FormatText(text);
 	}
 
 	[GeneratedRegex("\\[(.*?)\\]")]
@@ -300,12 +316,15 @@ public partial class SoundManager : Control
 
 	private void UpdateButtonPromptPosition()
 	{
-		if (!buttonPrompt.Visible)
-			return;
+		for (int i = 0; i < buttonPrompts.Length; i++)
+		{
+			if (!buttonPrompts[i].Visible)
+				return;
 
-		Vector2 buttonPromptOffset = -buttonPrompt.Size * 0.5f;
-		Rect2 charBounds = subtitleLabel.GetCharacterBounds(buttonPromptIndex);
-		buttonPrompt.GlobalPosition = subtitleLabel.GlobalPosition + charBounds.GetCenter() + buttonPromptOffset;
+			Vector2 buttonPromptOffset = -buttonPrompts[i].Size * 0.5f;
+			Rect2 charBounds = subtitleLabel.GetCharacterBounds(buttonPromptCharacterIndexes[i]);
+			buttonPrompts[i].GlobalPosition = subtitleLabel.GlobalPosition + charBounds.GetCenter() + buttonPromptOffset;
+		}
 	}
 
 	public bool IsSonicSfxVoiceChannelActive { get; set; }

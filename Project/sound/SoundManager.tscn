@@ -60,7 +60,7 @@ tracks/1/keys = {
 tracks/2/type = "value"
 tracks/2/imported = false
 tracks/2/enabled = true
-tracks/2/path = NodePath("ButtonPrompts:modulate")
+tracks/2/path = NodePath("ButtonPrompt1:modulate")
 tracks/2/interp = 1
 tracks/2/loop_wrap = true
 tracks/2/keys = {
@@ -100,7 +100,7 @@ tracks/1/keys = {
 tracks/2/type = "value"
 tracks/2/imported = false
 tracks/2/enabled = true
-tracks/2/path = NodePath("ButtonPrompts:modulate")
+tracks/2/path = NodePath("ButtonPrompt1:modulate")
 tracks/2/interp = 1
 tracks/2/loop_wrap = true
 tracks/2/keys = {
@@ -140,7 +140,7 @@ tracks/1/keys = {
 tracks/2/type = "value"
 tracks/2/imported = false
 tracks/2/enabled = true
-tracks/2/path = NodePath("ButtonPrompts:modulate")
+tracks/2/path = NodePath("ButtonPrompt1:modulate")
 tracks/2/interp = 1
 tracks/2/loop_wrap = true
 tracks/2/keys = {
@@ -222,7 +222,7 @@ tracks/1/keys = {
 tracks/2/type = "value"
 tracks/2/imported = false
 tracks/2/enabled = true
-tracks/2/path = NodePath("ButtonPrompts:modulate")
+tracks/2/path = NodePath("ButtonPrompt1:modulate")
 tracks/2/interp = 1
 tracks/2/loop_wrap = true
 tracks/2/keys = {
@@ -241,7 +241,7 @@ _data = {
 &"deactivate-cutscene": SubResource("5")
 }
 
-[node name="SoundManager" type="Control" unique_id=522553972 node_paths=PackedStringArray("subtitleLabel", "buttonPrompt", "subtitleLetterbox", "subtitleAnimator", "dialogChannel", "delayTimer", "ringSFX", "richRingSFX", "pearlSFX", "richPearlSFX", "pearlTimer", "StageMusicPlayer")]
+[node name="SoundManager" type="Control" unique_id=522553972 node_paths=PackedStringArray("subtitleLabel", "buttonPrompts", "subtitleLetterbox", "subtitleAnimator", "dialogChannel", "delayTimer", "ringSFX", "richRingSFX", "pearlSFX", "richPearlSFX", "pearlTimer", "StageMusicPlayer")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -250,7 +250,7 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1")
 subtitleLabel = NodePath("SubtitleLetterbox/Subtitles")
-buttonPrompt = NodePath("SubtitleLetterbox/ButtonPrompts")
+buttonPrompts = [NodePath("SubtitleLetterbox/ButtonPrompt1"), NodePath("SubtitleLetterbox/ButtonPrompt2")]
 subtitleLetterbox = NodePath("SubtitleLetterbox")
 subtitleAnimator = NodePath("SubtitleLetterbox/AnimationPlayer")
 dialogChannel = NodePath("DialogChannel")
@@ -299,7 +299,7 @@ Here's a button prompt:
 これは日本語。"
 vertical_alignment = 1
 
-[node name="ButtonPrompts" type="HBoxContainer" parent="SubtitleLetterbox" unique_id=611255571]
+[node name="ButtonPrompt1" type="HBoxContainer" parent="SubtitleLetterbox" unique_id=611255571]
 z_index = 10
 z_as_relative = false
 custom_minimum_size = Vector2(0, 48)
@@ -318,12 +318,52 @@ buttonTextureRect = NodePath("Sprite")
 actionLabel = NodePath("")
 keyboardLabelSettings = Array[LabelSettings]([ExtResource("14_ql1v7"), ExtResource("15_hakln")])
 
-[node name="Sprite" type="TextureRect" parent="SubtitleLetterbox/ButtonPrompts" unique_id=571652010]
+[node name="Sprite" type="TextureRect" parent="SubtitleLetterbox/ButtonPrompt1" unique_id=571652010]
 layout_mode = 2
 texture = ExtResource("16_f15ej")
 expand_mode = 3
 
-[node name="Key" type="Label" parent="SubtitleLetterbox/ButtonPrompts/Sprite" unique_id=1430248699]
+[node name="Key" type="Label" parent="SubtitleLetterbox/ButtonPrompt1/Sprite" unique_id=1430248699]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+pivot_offset = Vector2(24, 24)
+size_flags_vertical = 1
+text = "ENTER"
+label_settings = ExtResource("15_hakln")
+horizontal_alignment = 1
+vertical_alignment = 1
+uppercase = true
+
+[node name="ButtonPrompt2" type="HBoxContainer" parent="SubtitleLetterbox" unique_id=1518024157]
+z_index = 10
+z_as_relative = false
+custom_minimum_size = Vector2(0, 48)
+layout_mode = 1
+anchors_preset = -1
+offset_right = 48.0
+offset_bottom = 48.0
+scale = Vector2(1.2, 1.2)
+theme_override_constants/separation = 8
+alignment = 2
+script = ExtResource("3_4chnm")
+controllerResources = Array[Resource]([ExtResource("4_l1brp"), ExtResource("5_3x072"), ExtResource("6_5jw4q"), ExtResource("7_vqkwt"), ExtResource("8_rahdm")])
+controllerResourcesStyle2 = Array[Object]([ExtResource("9_iqw7e"), ExtResource("10_qeunv"), ExtResource("11_ix4en"), ExtResource("12_sbur4"), ExtResource("13_b7fgn")])
+buttonLabel = NodePath("Sprite/Key")
+buttonTextureRect = NodePath("Sprite")
+actionLabel = NodePath("")
+keyboardLabelSettings = Array[LabelSettings]([ExtResource("14_ql1v7"), ExtResource("15_hakln")])
+
+[node name="Sprite" type="TextureRect" parent="SubtitleLetterbox/ButtonPrompt2" unique_id=2082255761]
+layout_mode = 2
+texture = ExtResource("16_f15ej")
+expand_mode = 3
+
+[node name="Key" type="Label" parent="SubtitleLetterbox/ButtonPrompt2/Sprite" unique_id=34599411]
 visible = false
 layout_mode = 1
 anchors_preset = 15
