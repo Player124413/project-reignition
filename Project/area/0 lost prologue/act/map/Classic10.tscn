@@ -3,11 +3,16 @@
 [ext_resource type="PackedScene" uid="uid://dax0mun2bjm1v" path="res://area/0 lost prologue/act/Static.tscn" id="1_7bnud"]
 [ext_resource type="Resource" uid="uid://dym27ghfnkylg" path="res://resource/level data/lost prologue/Classic10.tres" id="2_7bnud"]
 [ext_resource type="PackedScene" uid="uid://cjupypih0myxo" path="res://object/player/CharacterSpawn.tscn" id="3_0me6u"]
+[ext_resource type="PackedScene" uid="uid://bn6wr6l8s3qyt" path="res://object/trigger/StageTrigger.tscn" id="3_ilupt"]
 [ext_resource type="Script" uid="uid://dd24u7rlj0dwl" path="res://addons/custom_nodes/script/ObjectGenerator.cs" id="4_ilupt"]
+[ext_resource type="Script" uid="uid://bitgnn108jmaa" path="res://object/trigger/modules/DialogTrigger.cs" id="4_rthe3"]
 [ext_resource type="PackedScene" uid="uid://d0b2gvx7s6s8u" path="res://object/stage/pickups/Pearl.tscn" id="6_oxtu2"]
 [ext_resource type="PackedScene" uid="uid://ckhdnrnb1sf1i" path="res://object/enemy/majin/data/lost prologue/BlueMajin.tscn" id="7_26eod"]
 [ext_resource type="PackedScene" uid="uid://dxepb172kmp8n" path="res://object/stage/common/Goal.tscn" id="8_1n0bp"]
 [ext_resource type="PackedScene" uid="uid://bqvtcp8tkbfyt" path="res://object/stage/common/SpikeBall.tscn" id="8_7bnud"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_oxtu2"]
+size = Vector3(20, 20, 5)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_lau7f"]
 size = Vector3(20, 30, 5)
@@ -23,6 +28,21 @@ point_count = 6
 Data = ExtResource("2_7bnud")
 
 [node name="Classic10" type="Node3D" parent="." unique_id=1517255768]
+
+[node name="TimeBreakTutorial" parent="Classic10" unique_id=1029606726 instance=ExtResource("3_ilupt")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 150)
+OneShot = true
+"Respawn Mode" = 0
+"Enter Mode" = 0
+
+[node name="Dialog" type="Node3D" parent="Classic10/TimeBreakTutorial" unique_id=1474040206 node_paths=PackedStringArray("randomizedDialogTriggers")]
+script = ExtResource("4_rthe3")
+textKeys = Array[String](["lp_pearls_sh", "lp_timebreak_input_sh", "lp_timebreak_desc_sh"])
+randomizedDialogTriggers = []
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Classic10/TimeBreakTutorial" unique_id=1774670736]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
+shape = SubResource("BoxShape3D_oxtu2")
 
 [node name="SpawnPosition" type="Node3D" parent="Classic10" unique_id=1751593235]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 162)
