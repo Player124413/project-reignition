@@ -26,6 +26,7 @@ public partial class JumpTrigger : StageTriggerModule
 		settings.IsJump = true;
 		settings.UseAutoAlign = autoAlign;
 		settings.AllowJumpDash = false;
+		settings.IgnoreCollisions = true;
 		return settings;
 	}
 
