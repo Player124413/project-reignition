@@ -195,9 +195,7 @@ public partial class SkillOption : Control
 
 	public void EnableNewTag(bool enable)
 	{
-		if (enable == true)
-			animator.Play("new");
-		else
-			animator.Play("new-disable");
+		animator.Play(enable ? "new" : "new-disable");
+		animator.Advance(0.0);
 	}
 }
