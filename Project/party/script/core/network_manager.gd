@@ -35,8 +35,11 @@ var room_id : String
 ## Tracks whether the game is connected online or not.
 var is_online : bool
 ## Determines whether to attempt NAT Punchthrough or not. Enable this when exporting the project.
-var is_nat_enabled : bool = false
+var is_nat_enabled : bool
 
+var pid_generation_time : float = -1
+## Sometimes NORAY servers get stuck, so after this timeout, it will force-fail.
+const PID_GENERATION_TIMEOUT : float = 3.0
 var load_states : Array[bool]
 var loading_peers : int
 ## Tracks all the scenes instanced through the network manager. Includes party games and attractions.
@@ -48,6 +51,7 @@ enum TRANSITION_TYPE_ENUM {
 }
 
 func _ready() -> void:
+	Noray.on_pid.connect(Callable.create(self, "on_pid_generated"))
 	initialize_loggers()
 	initialize_connection_logs()
 	load_states.resize(PartyManager.MAX_PLAYER_COUNT)
@@ -233,11 +237,18 @@ func _register_with_noray():
 		
 	# Register host
 	Noray.register_host()
-	await Noray.on_pid
+	print("registering host...")
+	pid_generation_time = PID_GENERATION_TIMEOUT
+	while pid_generation_time > 0.0:
+		pid_generation_time = move_toward(pid_generation_time, 0, 0.1)
+		await get_tree().create_timer(0.1).timeout
+	print("DONE...")
 	
 	# Register remove address
 	err = await Noray.register_remote()
-	if err != OK:
+	if err != OK || is_zero_approx(pid_generation_time):
+		if is_zero_approx(pid_generation_time):
+			err = Error.ERR_CANT_CREATE
 		print("Failed to register remote %s" % err)
 		connection_attempt_finished.emit(err)
 		return err
@@ -246,6 +257,9 @@ func _register_with_noray():
 
 ## Starts the Noray host.
 func _start_noray_host():
+	if is_zero_approx(pid_generation_time): # TIMEDOUT
+		return
+	
 	var noray_network_peer: ENetMultiplayerPeer = ENetMultiplayerPeer.new()
 	var err = noray_network_peer.create_server(Noray.local_port)
 	multiplayer.multiplayer_peer = noray_network_peer
@@ -275,6 +289,9 @@ func _handle_noray_client_connect(_address: String, _port: int) -> Error:
 		return err
 	
 	return OK
+
+func on_pid_generated(_pid : String) -> void:
+	pid_generation_time = -1
 
 ## Client method for attempting a NAT Punchthrough.
 func _handle_nat_connect(_address: String, _port: int) -> Error:
