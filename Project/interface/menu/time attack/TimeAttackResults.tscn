@@ -7,11 +7,15 @@
 [ext_resource type="PackedScene" uid="uid://b04nx00ecsmme" path="res://interface/menu/time attack/TimeAttackResultsOption.tscn" id="2_woix1"]
 [ext_resource type="Texture2D" uid="uid://c2hlq1r5rff2u" path="res://interface/menu/skill select/texture/cursor.png" id="4_n6pm5"]
 [ext_resource type="Texture2D" uid="uid://dx4vxnhtgd13t" path="res://interface/menu/common/common menu atlas.png" id="5_woix1"]
+[ext_resource type="Texture2D" uid="uid://hqhhv5t5s5gt" path="res://interface/gameplay/pause/texture/scroll_L_Solid.png" id="8_16qco"]
 [ext_resource type="Script" uid="uid://cj76gvi7tbku6" path="res://sound/script/BGMPlayer.cs" id="8_cwq8c"]
+[ext_resource type="Material" uid="uid://bhbsafmnnhtdb" path="res://effect/material/Canvas Item Add.tres" id="8_kijjj"]
 [ext_resource type="Resource" uid="uid://b3nly8ltpmtd2" path="res://resource/bgm/menu/time attack results.tres" id="9_7ca2l"]
+[ext_resource type="Texture2D" uid="uid://d3svma0uvqtgk" path="res://interface/gameplay/pause/texture/PaperUpdated.png" id="9_16qco"]
 [ext_resource type="AudioStream" uid="uid://cl54rftw5aiyf" path="res://sound/sfx/system/menu cancel.wav" id="10_yi44n"]
 [ext_resource type="AudioStream" uid="uid://huxte6rhwx58" path="res://sound/sfx/system/menu selection.wav" id="11_6y6eg"]
 [ext_resource type="Texture2D" uid="uid://brud032sdpwdy" path="res://interface/menu/time attack/texture/confetti.png" id="12_6y6eg"]
+[ext_resource type="AudioStream" uid="uid://djog8y22u5a43" path="res://sound/sfx/system/result success.wav" id="15_qb2ve"]
 
 [sub_resource type="Animation" id="Animation_8efxu"]
 length = 0.001
@@ -72,9 +76,12 @@ _data = {
 font = ExtResource("2_ob4jm")
 font_size = 72
 
-[sub_resource type="LabelSettings" id="LabelSettings_6y6eg"]
+[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_16qco"]
+blend_mode = 1
+
+[sub_resource type="LabelSettings" id="LabelSettings_16qco"]
 font = ExtResource("2_ob4jm")
-font_size = 30
+font_size = 186
 
 [sub_resource type="Animation" id="Animation_ob4jm"]
 resource_name = "RESET"
@@ -197,30 +204,6 @@ tracks/9/keys = {
 "transitions": PackedFloat32Array(1),
 "update": 0,
 "values": [Vector2(1, 1)]
-}
-tracks/10/type = "value"
-tracks/10/imported = false
-tracks/10/enabled = true
-tracks/10/path = NodePath("HBoxContainer/TotalTime2/PB:visible")
-tracks/10/interp = 1
-tracks/10/loop_wrap = true
-tracks/10/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [true]
-}
-tracks/11/type = "value"
-tracks/11/imported = false
-tracks/11/enabled = true
-tracks/11/path = NodePath("HBoxContainer/TotalTime2/PB:modulate")
-tracks/11/interp = 1
-tracks/11/loop_wrap = true
-tracks/11/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [Color(1, 1, 1, 1)]
 }
 
 [sub_resource type="Animation" id="Animation_yi44n"]
@@ -417,18 +400,6 @@ tracks/11/keys = {
 "update": 0,
 "values": [Vector2(1, 1e-05), Vector2(1, 0), Vector2(1, 1)]
 }
-tracks/12/type = "value"
-tracks/12/imported = false
-tracks/12/enabled = true
-tracks/12/path = NodePath("HBoxContainer/TotalTime2/PB:visible")
-tracks/12/interp = 1
-tracks/12/loop_wrap = true
-tracks/12/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [false]
-}
 
 [sub_resource type="Animation" id="Animation_kijjj"]
 resource_name = "show_pb"
@@ -588,37 +559,13 @@ tracks/11/keys = {
 "update": 0,
 "values": [Vector2(1, 1e-05), Vector2(1, 0), Vector2(1, 1)]
 }
-tracks/12/type = "value"
+tracks/12/type = "method"
 tracks/12/imported = false
 tracks/12/enabled = true
-tracks/12/path = NodePath("HBoxContainer/TotalTime2/PB:visible")
+tracks/12/path = NodePath("CelebrationAnimator")
 tracks/12/interp = 1
 tracks/12/loop_wrap = true
 tracks/12/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [true]
-}
-tracks/13/type = "value"
-tracks/13/imported = false
-tracks/13/enabled = true
-tracks/13/path = NodePath("HBoxContainer/TotalTime2/PB:modulate")
-tracks/13/interp = 1
-tracks/13/loop_wrap = true
-tracks/13/keys = {
-"times": PackedFloat32Array(0, 1.6, 1.9),
-"transitions": PackedFloat32Array(1, 1, 1),
-"update": 0,
-"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 0), Color(1, 1, 1, 1)]
-}
-tracks/14/type = "method"
-tracks/14/imported = false
-tracks/14/enabled = true
-tracks/14/path = NodePath("CelebrationAnimator")
-tracks/14/interp = 1
-tracks/14/loop_wrap = true
-tracks/14/keys = {
 "times": PackedFloat32Array(1.6),
 "transitions": PackedFloat32Array(1),
 "values": [{
@@ -638,6 +585,7 @@ _data = {
 
 [sub_resource type="Animation" id="Animation_xp1cf"]
 length = 0.001
+step = 0.1
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
@@ -697,11 +645,59 @@ tracks/4/keys = {
 "transitions": PackedFloat32Array(1),
 "update": 1,
 "values": [false]
+}
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("ScrollLeft:position")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(-95, 185)]
+}
+tracks/6/type = "value"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("NewRecord:anchor_right")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [1.0]
+}
+tracks/7/type = "value"
+tracks/7/imported = false
+tracks/7/enabled = true
+tracks/7/path = NodePath("ScrollLeft:modulate")
+tracks/7/interp = 1
+tracks/7/loop_wrap = true
+tracks/7/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+tracks/8/type = "value"
+tracks/8/imported = false
+tracks/8/enabled = true
+tracks/8/path = NodePath("NewRecord:modulate")
+tracks/8/interp = 1
+tracks/8/loop_wrap = true
+tracks/8/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
 }
 
 [sub_resource type="Animation" id="Animation_6y6eg"]
 resource_name = "celebration"
-length = 0.001
+length = 1.4
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
@@ -709,7 +705,7 @@ tracks/0/path = NodePath("Particles/Confetti:emitting")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
-"times": PackedFloat32Array(0),
+"times": PackedFloat32Array(0.3),
 "transitions": PackedFloat32Array(1),
 "update": 1,
 "values": [true]
@@ -721,7 +717,7 @@ tracks/1/path = NodePath("Particles/Confetti2:emitting")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/keys = {
-"times": PackedFloat32Array(0),
+"times": PackedFloat32Array(0.3),
 "transitions": PackedFloat32Array(1),
 "update": 1,
 "values": [true]
@@ -733,7 +729,7 @@ tracks/2/path = NodePath("Particles/Confetti3:emitting")
 tracks/2/interp = 1
 tracks/2/loop_wrap = true
 tracks/2/keys = {
-"times": PackedFloat32Array(0),
+"times": PackedFloat32Array(0.3),
 "transitions": PackedFloat32Array(1),
 "update": 1,
 "values": [true]
@@ -745,7 +741,7 @@ tracks/3/path = NodePath("Particles/Confetti4:emitting")
 tracks/3/interp = 1
 tracks/3/loop_wrap = true
 tracks/3/keys = {
-"times": PackedFloat32Array(0),
+"times": PackedFloat32Array(0.3),
 "transitions": PackedFloat32Array(1),
 "update": 1,
 "values": [true]
@@ -757,10 +753,72 @@ tracks/4/path = NodePath("Particles/Confetti5:emitting")
 tracks/4/interp = 1
 tracks/4/loop_wrap = true
 tracks/4/keys = {
-"times": PackedFloat32Array(0),
+"times": PackedFloat32Array(0.3),
 "transitions": PackedFloat32Array(1),
 "update": 1,
 "values": [true]
+}
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("ScrollLeft:position")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0, 0.3),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector2(-95, 185), Vector2(1839, 185)]
+}
+tracks/6/type = "value"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("NewRecord:anchor_right")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"times": PackedFloat32Array(0, 0.3),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [1.0, 2.015]
+}
+tracks/7/type = "value"
+tracks/7/imported = false
+tracks/7/enabled = true
+tracks/7/path = NodePath("NewRecord:modulate")
+tracks/7/interp = 1
+tracks/7/loop_wrap = true
+tracks/7/keys = {
+"times": PackedFloat32Array(0, 0.8, 1.4),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 1), Color(1, 1, 1, 1), Color(1, 1, 1, 0)]
+}
+tracks/8/type = "value"
+tracks/8/imported = false
+tracks/8/enabled = true
+tracks/8/path = NodePath("ScrollLeft:modulate")
+tracks/8/interp = 1
+tracks/8/loop_wrap = true
+tracks/8/keys = {
+"times": PackedFloat32Array(0, 0.8, 1.4),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 1), Color(1, 1, 1, 1), Color(1, 1, 1, 0)]
+}
+tracks/9/type = "method"
+tracks/9/imported = false
+tracks/9/enabled = true
+tracks/9/path = NodePath("SFX/New Record")
+tracks/9/interp = 1
+tracks/9/loop_wrap = true
+tracks/9/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [0.0],
+"method": &"play"
+}]
 }
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_xp1cf"]
@@ -1025,14 +1083,55 @@ horizontal_alignment = 2
 vertical_alignment = 1
 uppercase = true
 
-[node name="PB" type="Label" parent="HBoxContainer/TotalTime2" unique_id=1478854254]
-layout_mode = 0
-offset_left = -16.0
-offset_top = -22.0
-offset_right = 329.0
-offset_bottom = 8.0
-text = "ta_personalbest"
-label_settings = SubResource("LabelSettings_6y6eg")
+[node name="ScrollLeft" type="TextureRect" parent="." unique_id=34402597]
+material = SubResource("CanvasItemMaterial_16qco")
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -95.0
+offset_top = 185.0
+offset_right = -1931.999
+offset_bottom = -266.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("8_16qco")
+expand_mode = 1
+
+[node name="NewRecord" type="TextureRect" parent="." unique_id=244836245]
+material = ExtResource("8_kijjj")
+clip_contents = true
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -364.0
+offset_top = 214.0
+offset_right = -1940.0
+offset_bottom = -294.0
+grow_horizontal = 2
+grow_vertical = 2
+pivot_offset = Vector2(960, 540)
+mouse_filter = 2
+texture = ExtResource("9_16qco")
+expand_mode = 1
+
+[node name="TotalTime2" type="Label" parent="NewRecord" unique_id=1008016610]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -483.40015
+offset_top = -93.0
+offset_right = 842.59985
+offset_bottom = 93.47998
+grow_horizontal = 2
+grow_vertical = 2
+text = "ta_newrecord"
+label_settings = SubResource("LabelSettings_16qco")
 horizontal_alignment = 1
 vertical_alignment = 1
 uppercase = true
@@ -1056,6 +1155,10 @@ bus = &"SFX"
 
 [node name="Select" type="AudioStreamPlayer" parent="SFX" unique_id=1843724722]
 stream = ExtResource("11_6y6eg")
+bus = &"SFX"
+
+[node name="New Record" type="AudioStreamPlayer" parent="SFX" unique_id=1704513384]
+stream = ExtResource("15_qb2ve")
 bus = &"SFX"
 
 [node name="Particles" type="Node2D" parent="." unique_id=448104739]
