@@ -44,7 +44,6 @@ public partial class TimeAttackResults : Menu
 
 		initialCursorPosition = cursor.Position.Y;
 		totalTimeLabel.Text = ExtensionMethods.FormatTime(TimeAttackManager.Instance.GetTotalRunTime());
-		TimeAttackManager.Instance.ClearCurrentRun();
 		base.SetUp();
 	}
 
@@ -61,10 +60,17 @@ public partial class TimeAttackResults : Menu
 		RecalculateListPosition();
 		UpdateListPosition(0);
 
-		animator.Play("show");
+		if (TimeAttackManager.Instance.IsPersonalBest(TimeAttackManager.Instance.GetTotalRunTime()))
+		{
+			GD.Print("Personal Best Acquired");
+			animator.Play("show_pb");
+		}
+		else
+			animator.Play("show");
 
 		if (!bgm.Playing)
 			bgm.Play();
+		TimeAttackManager.Instance.ClearCurrentRun();
 	}
 
 	protected override void Confirm()

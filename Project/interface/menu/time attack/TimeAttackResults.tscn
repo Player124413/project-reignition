@@ -11,6 +11,7 @@
 [ext_resource type="Resource" uid="uid://b3nly8ltpmtd2" path="res://resource/bgm/menu/time attack results.tres" id="9_7ca2l"]
 [ext_resource type="AudioStream" uid="uid://cl54rftw5aiyf" path="res://sound/sfx/system/menu cancel.wav" id="10_yi44n"]
 [ext_resource type="AudioStream" uid="uid://huxte6rhwx58" path="res://sound/sfx/system/menu selection.wav" id="11_6y6eg"]
+[ext_resource type="Texture2D" uid="uid://brud032sdpwdy" path="res://interface/menu/time attack/texture/confetti.png" id="12_6y6eg"]
 
 [sub_resource type="Animation" id="Animation_8efxu"]
 length = 0.001
@@ -70,6 +71,10 @@ _data = {
 [sub_resource type="LabelSettings" id="LabelSettings_vcpj2"]
 font = ExtResource("2_ob4jm")
 font_size = 72
+
+[sub_resource type="LabelSettings" id="LabelSettings_6y6eg"]
+font = ExtResource("2_ob4jm")
+font_size = 30
 
 [sub_resource type="Animation" id="Animation_ob4jm"]
 resource_name = "RESET"
@@ -192,6 +197,30 @@ tracks/9/keys = {
 "transitions": PackedFloat32Array(1),
 "update": 0,
 "values": [Vector2(1, 1)]
+}
+tracks/10/type = "value"
+tracks/10/imported = false
+tracks/10/enabled = true
+tracks/10/path = NodePath("HBoxContainer/TotalTime2/PB:visible")
+tracks/10/interp = 1
+tracks/10/loop_wrap = true
+tracks/10/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/11/type = "value"
+tracks/11/imported = false
+tracks/11/enabled = true
+tracks/11/path = NodePath("HBoxContainer/TotalTime2/PB:modulate")
+tracks/11/interp = 1
+tracks/11/loop_wrap = true
+tracks/11/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
 }
 
 [sub_resource type="Animation" id="Animation_yi44n"]
@@ -388,14 +417,416 @@ tracks/11/keys = {
 "update": 0,
 "values": [Vector2(1, 1e-05), Vector2(1, 0), Vector2(1, 1)]
 }
+tracks/12/type = "value"
+tracks/12/imported = false
+tracks/12/enabled = true
+tracks/12/path = NodePath("HBoxContainer/TotalTime2/PB:visible")
+tracks/12/interp = 1
+tracks/12/loop_wrap = true
+tracks/12/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+
+[sub_resource type="Animation" id="Animation_kijjj"]
+resource_name = "show_pb"
+length = 2.4
+step = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Results/Decals/DecalTop:position")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.6, 1),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector2(0, 0), Vector2(0, 0), Vector2(0, -241)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Results/Decals/DecalBottom:position")
+tracks/1/interp = 2
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.6, 1),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector2(0, 0), Vector2(0, 0), Vector2(0, 407.58)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Results/Decals/DecalTop:modulate")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0.6, 1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 1)]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("Results/Decals/DecalBottom:modulate")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0.6, 1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 1)]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("Results:scale")
+tracks/4/interp = 2
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0, 0.4),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector2(0, 0), Vector2(1, 1)]
+}
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("Results:modulate")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0, 0.4),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 1)]
+}
+tracks/6/type = "value"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("Scrollbar:modulate")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"times": PackedFloat32Array(0, 0.6, 1),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 0), Color(1, 1, 1, 1)]
+}
+tracks/7/type = "method"
+tracks/7/imported = false
+tracks/7/enabled = true
+tracks/7/path = NodePath(".")
+tracks/7/interp = 1
+tracks/7/loop_wrap = true
+tracks/7/keys = {
+"times": PackedFloat32Array(0, 0.6, 2),
+"transitions": PackedFloat32Array(1, 1, 1),
+"values": [{
+"args": [],
+"method": &"DisableProcessing"
+}, {
+"args": [],
+"method": &"ShowAllOptions"
+}, {
+"args": [],
+"method": &"EnableProcessing"
+}]
+}
+tracks/8/type = "value"
+tracks/8/imported = false
+tracks/8/enabled = true
+tracks/8/path = NodePath("Cursor:modulate")
+tracks/8/interp = 1
+tracks/8/loop_wrap = true
+tracks/8/keys = {
+"times": PackedFloat32Array(0, 1.6, 2),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 0), Color(1, 1, 1, 1)]
+}
+tracks/9/type = "method"
+tracks/9/imported = false
+tracks/9/enabled = true
+tracks/9/path = NodePath("Cursor/AnimationPlayer")
+tracks/9/interp = 1
+tracks/9/loop_wrap = true
+tracks/9/keys = {
+"times": PackedFloat32Array(2),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [&"loop", -1, 1.0, false],
+"method": &"play"
+}]
+}
+tracks/10/type = "value"
+tracks/10/imported = false
+tracks/10/enabled = true
+tracks/10/path = NodePath("HBoxContainer:modulate")
+tracks/10/interp = 1
+tracks/10/loop_wrap = true
+tracks/10/keys = {
+"times": PackedFloat32Array(1, 1.6),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 1)]
+}
+tracks/11/type = "value"
+tracks/11/imported = false
+tracks/11/enabled = true
+tracks/11/path = NodePath("BackgroundBox:scale")
+tracks/11/interp = 1
+tracks/11/loop_wrap = true
+tracks/11/keys = {
+"times": PackedFloat32Array(0, 0.5, 1),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector2(1, 1e-05), Vector2(1, 0), Vector2(1, 1)]
+}
+tracks/12/type = "value"
+tracks/12/imported = false
+tracks/12/enabled = true
+tracks/12/path = NodePath("HBoxContainer/TotalTime2/PB:visible")
+tracks/12/interp = 1
+tracks/12/loop_wrap = true
+tracks/12/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/13/type = "value"
+tracks/13/imported = false
+tracks/13/enabled = true
+tracks/13/path = NodePath("HBoxContainer/TotalTime2/PB:modulate")
+tracks/13/interp = 1
+tracks/13/loop_wrap = true
+tracks/13/keys = {
+"times": PackedFloat32Array(0, 1.6, 1.9),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 0), Color(1, 1, 1, 1)]
+}
+tracks/14/type = "method"
+tracks/14/imported = false
+tracks/14/enabled = true
+tracks/14/path = NodePath("CelebrationAnimator")
+tracks/14/interp = 1
+tracks/14/loop_wrap = true
+tracks/14/keys = {
+"times": PackedFloat32Array(1.6),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [&"celebration", -1, 1.0, false],
+"method": &"play"
+}]
+}
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_7udyn"]
 _data = {
 &"RESET": SubResource("Animation_ob4jm"),
 &"hide": SubResource("Animation_yi44n"),
 &"select": SubResource("Animation_nvlrs"),
-&"show": SubResource("Animation_vcpj2")
+&"show": SubResource("Animation_vcpj2"),
+&"show_pb": SubResource("Animation_kijjj")
 }
+
+[sub_resource type="Animation" id="Animation_xp1cf"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Particles/Confetti:emitting")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Particles/Confetti2:emitting")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Particles/Confetti3:emitting")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("Particles/Confetti4:emitting")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("Particles/Confetti5:emitting")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+
+[sub_resource type="Animation" id="Animation_6y6eg"]
+resource_name = "celebration"
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Particles/Confetti:emitting")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Particles/Confetti2:emitting")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Particles/Confetti3:emitting")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("Particles/Confetti4:emitting")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("Particles/Confetti5:emitting")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_xp1cf"]
+_data = {
+&"RESET": SubResource("Animation_xp1cf"),
+&"celebration": SubResource("Animation_6y6eg")
+}
+
+[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_pf2rf"]
+particles_animation = true
+particles_anim_h_frames = 2
+particles_anim_v_frames = 1
+particles_anim_loop = true
+
+[sub_resource type="Gradient" id="Gradient_6y6eg"]
+offsets = PackedFloat32Array(0.3246828, 0.34659746, 0.6799308, 0.70184547, 1)
+colors = PackedColorArray(1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 1, 0, 0, 1, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_6y6eg"]
+gradient = SubResource("Gradient_6y6eg")
+
+[sub_resource type="Curve" id="Curve_6y6eg"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(0.2, 0.85511357), -0.7087208, -0.7087208, 0, 0, Vector2(1, 1), -0.70411235, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_6y6eg"]
+curve = SubResource("Curve_6y6eg")
+
+[sub_resource type="Curve" id="Curve_kijjj"]
+_limits = [-1.0, 1.0, 0.0, 1.0]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(0.7539326, 1), 0.0, 0.0, 0, 0, Vector2(0.9988764, -0.014204502), -4.35932, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_16qco"]
+curve = SubResource("Curve_kijjj")
+
+[sub_resource type="Curve" id="Curve_xp1cf"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(0.71910113, 1), 0.0, 0.0, 0, 0, Vector2(1, 0.70880675), -3.8431752, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_kijjj"]
+curve = SubResource("Curve_xp1cf")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_qbywm"]
+particle_flag_disable_z = true
+direction = Vector3(1, -1, 0)
+initial_velocity_min = 130.0
+initial_velocity_max = 485.22998
+angular_velocity_min = -1000.0
+angular_velocity_max = 999.99994
+gravity = Vector3(0, 75, 0)
+linear_accel_min = 9.999997
+linear_accel_max = 29.999996
+damping_min = 74.0
+damping_max = 78.0
+damping_curve = SubResource("CurveTexture_6y6eg")
+scale_min = 1.5
+scale_max = 2.0
+scale_curve = SubResource("CurveTexture_kijjj")
+color_initial_ramp = SubResource("GradientTexture1D_6y6eg")
+hue_variation_min = -0.020000022
+hue_variation_max = 0.019999977
+hue_variation_curve = SubResource("CurveTexture_16qco")
+anim_speed_min = 2.0
+anim_speed_max = 5.0
+anim_offset_max = 1.0
 
 [node name="TimeAttackResults" type="Control" unique_id=1646012327 node_paths=PackedStringArray("cursor", "options", "scrollbar", "totalTimeLabel", "bgm", "animator")]
 layout_mode = 3
@@ -563,9 +994,9 @@ anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
 offset_left = -955.0
-offset_top = -137.0
+offset_top = -125.0
 offset_right = 956.0
-offset_bottom = -61.0
+offset_bottom = -48.0
 grow_horizontal = 2
 grow_vertical = 0
 theme_override_constants/separation = 39
@@ -594,8 +1025,23 @@ horizontal_alignment = 2
 vertical_alignment = 1
 uppercase = true
 
+[node name="PB" type="Label" parent="HBoxContainer/TotalTime2" unique_id=1478854254]
+layout_mode = 0
+offset_left = -16.0
+offset_top = -22.0
+offset_right = 329.0
+offset_bottom = 8.0
+text = "ta_personalbest"
+label_settings = SubResource("LabelSettings_6y6eg")
+horizontal_alignment = 1
+vertical_alignment = 1
+uppercase = true
+
 [node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=1499590318]
 libraries/ = SubResource("AnimationLibrary_7udyn")
+
+[node name="CelebrationAnimator" type="AnimationPlayer" parent="." unique_id=1752802776]
+libraries/ = SubResource("AnimationLibrary_xp1cf")
 
 [node name="BGM" type="AudioStreamPlayer" parent="." unique_id=1556619268]
 bus = &"BGM"
@@ -611,3 +1057,65 @@ bus = &"SFX"
 [node name="Select" type="AudioStreamPlayer" parent="SFX" unique_id=1843724722]
 stream = ExtResource("11_6y6eg")
 bus = &"SFX"
+
+[node name="Particles" type="Node2D" parent="." unique_id=448104739]
+
+[node name="Confetti" type="GPUParticles2D" parent="Particles" unique_id=1733801005]
+material = SubResource("CanvasItemMaterial_pf2rf")
+position = Vector2(363, 1098)
+rotation = -0.7853982
+emitting = false
+amount = 100
+texture = ExtResource("12_6y6eg")
+lifetime = 10.0
+one_shot = true
+explosiveness = 0.97
+process_material = SubResource("ParticleProcessMaterial_qbywm")
+
+[node name="Confetti2" type="GPUParticles2D" parent="Particles" unique_id=2082088168]
+material = SubResource("CanvasItemMaterial_pf2rf")
+position = Vector2(930, 1105)
+rotation = -0.7853982
+emitting = false
+amount = 100
+texture = ExtResource("12_6y6eg")
+lifetime = 10.0
+one_shot = true
+explosiveness = 0.97
+process_material = SubResource("ParticleProcessMaterial_qbywm")
+
+[node name="Confetti3" type="GPUParticles2D" parent="Particles" unique_id=253791253]
+material = SubResource("CanvasItemMaterial_pf2rf")
+position = Vector2(1574, 1067)
+rotation = -0.7853982
+emitting = false
+amount = 100
+texture = ExtResource("12_6y6eg")
+lifetime = 10.0
+one_shot = true
+explosiveness = 0.97
+process_material = SubResource("ParticleProcessMaterial_qbywm")
+
+[node name="Confetti4" type="GPUParticles2D" parent="Particles" unique_id=390946343]
+material = SubResource("CanvasItemMaterial_pf2rf")
+position = Vector2(634.00024, 1080)
+rotation = -0.7853982
+emitting = false
+amount = 100
+texture = ExtResource("12_6y6eg")
+lifetime = 10.0
+one_shot = true
+explosiveness = 0.97
+process_material = SubResource("ParticleProcessMaterial_qbywm")
+
+[node name="Confetti5" type="GPUParticles2D" parent="Particles" unique_id=521946167]
+material = SubResource("CanvasItemMaterial_pf2rf")
+position = Vector2(1289, 1080)
+rotation = -0.7853982
+emitting = false
+amount = 100
+texture = ExtResource("12_6y6eg")
+lifetime = 10.0
+one_shot = true
+explosiveness = 0.97
+process_material = SubResource("ParticleProcessMaterial_qbywm")

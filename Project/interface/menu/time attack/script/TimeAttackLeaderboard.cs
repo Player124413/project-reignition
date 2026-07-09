@@ -369,7 +369,6 @@ public partial class TimeAttackLeaderboard : Menu
 			for (int k = 0; k < SaveManager.TimeData.BossRush[i].Count; k++)
 			{
 				bossRush[i].Add(SaveManager.TimeData.BossRush[i][k]);
-				GD.Print("Time " + i + ": " + bossRush[i][k]);
 			}
 		}
 

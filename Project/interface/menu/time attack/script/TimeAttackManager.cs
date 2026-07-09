@@ -3,6 +3,7 @@ using System;
 using Godot.Collections;
 using Project.Gameplay;
 using System.Linq;
+using System.Collections.Generic;
 
 namespace Project.Core;
 
@@ -182,14 +183,60 @@ public partial class TimeAttackManager : Node
 	}
 	public float GetTotalRunTime()
 	{
-		float results = 0;
-		foreach (float time in CurrentRunTimes)
+		return CurrentRunTimes.Sum();
+	}
+
+	public bool IsPersonalBest(float time)
+	{
+		switch (CurrentRunType)
 		{
-			//GD.Print("Time: " + time);
-			results += time;
+			case RunType.AnyP:
+				List<List<float>> anyP = new List<List<float>>();
+				for (int i = 0; i < SaveManager.TimeData.AnyP.Count; i++)
+				{
+					anyP.Add(new List<float>());
+					for (int k = 0; k < SaveManager.TimeData.AnyP[i].Count; k++)
+					{
+						anyP[i].Add(SaveManager.TimeData.AnyP[i][k]);
+					}
+				}
+				anyP = anyP.OrderBy(list => list.Sum()).ToList();
+
+				if (time == anyP[0].Sum())
+					return true;
+				break;
+			case RunType.GoalPercent:
+				List<List<float>> goalP = new List<List<float>>();
+
+				for (int i = 0; i < SaveManager.TimeData.GoalP.Count; i++)
+				{
+					goalP.Add(new List<float>());
+					for (int k = 0; k < SaveManager.TimeData.GoalP[i].Count; k++)
+					{
+						goalP[i].Add(SaveManager.TimeData.GoalP[i][k]);
+					}
+				}
+				if (time == goalP[0].Sum())
+					return true;
+				break;
+			case RunType.BossRush:
+
+				List<List<float>> bossRush = new List<List<float>>();
+				for (int i = 0; i < SaveManager.TimeData.BossRush.Count; i++)
+				{
+					bossRush.Add(new List<float>());
+					for (int k = 0; k < SaveManager.TimeData.BossRush[i].Count; k++)
+					{
+						bossRush[i].Add(SaveManager.TimeData.BossRush[i][k]);
+					}
+				}
+
+				bossRush = bossRush.OrderBy(list => list.Sum()).ToList();
+				if (time == bossRush[0].Sum())
+					return true;
+				break;
 		}
-		//GD.Print("Total Run Time: " + results);
-		return results;
+		return false;
 	}
 
 	public void SetReturnTimes()
