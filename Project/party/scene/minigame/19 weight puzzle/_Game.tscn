@@ -1,7 +1,37 @@
 [gd_scene format=3 uid="uid://dn00avsqt43cc"]
 
 [ext_resource type="PackedScene" uid="uid://dsbufs8tjchk7" path="res://party/scene/minigame/00 base/MinigameBase.tscn" id="1_hrrkc"]
+[ext_resource type="Resource" uid="uid://cjfa0qtpdvbh3" path="res://party/resource/minigame/19WeightPuzzle.tres" id="2_4jp1s"]
+[ext_resource type="AnimationLibrary" uid="uid://td28md54xamj" path="res://party/scene/minigame/19 weight puzzle/animation/_Library.glb" id="3_tq27j"]
+[ext_resource type="PackedScene" uid="uid://h3ew6m00yy8g" path="res://party/scene/minigame/19 weight puzzle/Environment.tscn" id="4_3m1b2"]
+[ext_resource type="PackedScene" uid="uid://f5w7fq20xmd1" path="res://party/scene/minigame/00 base/Time.tscn" id="4_tq27j"]
 
-[node name="Game" type="Node2D" unique_id=1930488302]
+[node name="Game" type="Node3D" unique_id=1617478877]
 
 [node name="Minigame" parent="." unique_id=600998337 instance=ExtResource("1_hrrkc")]
+minigame_resource = ExtResource("2_4jp1s")
+anim_library = ExtResource("3_tq27j")
+screen_mode = 1
+demo_transition_mode = 1
+
+[node name="Environment" parent="Minigame/SplitscreenLayout/GridContainer/Player1/SubViewport" parent_id_path=PackedInt32Array(600998337, 578977454) index="0" unique_id=1522425192 instance=ExtResource("4_3m1b2")]
+
+[node name="Environment" parent="Minigame/SplitscreenLayout/GridContainer/Player2/SubViewport" parent_id_path=PackedInt32Array(600998337, 1764725787) index="0" unique_id=1247750040 instance=ExtResource("4_3m1b2")]
+player_index = 1
+
+[node name="Environment" parent="Minigame/SplitscreenLayout/GridContainer/Player3/SubViewport" parent_id_path=PackedInt32Array(600998337, 274842913) index="0" unique_id=288766998 instance=ExtResource("4_3m1b2")]
+player_index = 2
+
+[node name="Environment" parent="Minigame/SplitscreenLayout/GridContainer/Player4/SubViewport" parent_id_path=PackedInt32Array(600998337, 331751543) index="0" unique_id=767816148 instance=ExtResource("4_3m1b2")]
+player_index = 3
+
+[node name="Time" parent="." unique_id=2069576343 instance=ExtResource("4_tq27j")]
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -128.0
+offset_right = 128.0
+grow_horizontal = 2
+max_game_time = 0
+
+[editable path="Minigame"]
