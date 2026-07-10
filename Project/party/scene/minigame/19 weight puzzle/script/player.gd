@@ -14,7 +14,4 @@ func on_spawn_finished() -> void:
 	super()
 
 	character_animator.play_animation("%s/19-lift-wait" % MinigameManager.ANIMATION_LIBRARY_PREFIX, true)
-	weight_animator.play("RESET")
-
-func _physics_process(delta: float) -> void:
-	weight_platform2.global_rotation = Vector3.ZERO
+	weight_animator.play("check_pos_0");
