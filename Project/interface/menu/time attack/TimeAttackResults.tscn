@@ -16,6 +16,7 @@
 [ext_resource type="AudioStream" uid="uid://huxte6rhwx58" path="res://sound/sfx/system/menu selection.wav" id="11_6y6eg"]
 [ext_resource type="Texture2D" uid="uid://brud032sdpwdy" path="res://interface/menu/time attack/texture/confetti.png" id="12_6y6eg"]
 [ext_resource type="AudioStream" uid="uid://djog8y22u5a43" path="res://sound/sfx/system/result success.wav" id="15_qb2ve"]
+[ext_resource type="AudioStream" uid="uid://g1cyymoryoj4" path="res://sound/sfx/system/time attack applause.wav" id="16_fk8dc"]
 
 [sub_resource type="Animation" id="Animation_8efxu"]
 length = 0.001
@@ -820,6 +821,20 @@ tracks/9/keys = {
 "method": &"play"
 }]
 }
+tracks/10/type = "method"
+tracks/10/imported = false
+tracks/10/enabled = true
+tracks/10/path = NodePath("SFX/Applause")
+tracks/10/interp = 1
+tracks/10/loop_wrap = true
+tracks/10/keys = {
+"times": PackedFloat32Array(0.3),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [0.0],
+"method": &"play"
+}]
+}
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_xp1cf"]
 _data = {
@@ -832,6 +847,15 @@ particles_animation = true
 particles_anim_h_frames = 2
 particles_anim_v_frames = 1
 particles_anim_loop = true
+
+[sub_resource type="Curve" id="Curve_2khbg"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_fk8dc"]
+width = 64
+texture_mode = 1
+curve = SubResource("Curve_2khbg")
 
 [sub_resource type="Gradient" id="Gradient_6y6eg"]
 offsets = PackedFloat32Array(0.3246828, 0.34659746, 0.6799308, 0.70184547, 1)
@@ -865,11 +889,11 @@ curve = SubResource("Curve_xp1cf")
 [sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_qbywm"]
 particle_flag_disable_z = true
 direction = Vector3(1, -1, 0)
-initial_velocity_min = 130.0
-initial_velocity_max = 485.22998
+initial_velocity_min = 500.0
+initial_velocity_max = 800.0
 angular_velocity_min = -1000.0
 angular_velocity_max = 999.99994
-gravity = Vector3(0, 75, 0)
+gravity = Vector3(0, 200, 0)
 linear_accel_min = 9.999997
 linear_accel_max = 29.999996
 damping_min = 74.0
@@ -879,6 +903,7 @@ scale_min = 1.5
 scale_max = 2.0
 scale_curve = SubResource("CurveTexture_kijjj")
 color_initial_ramp = SubResource("GradientTexture1D_6y6eg")
+alpha_curve = SubResource("CurveTexture_fk8dc")
 hue_variation_min = -0.020000022
 hue_variation_max = 0.019999977
 hue_variation_curve = SubResource("CurveTexture_16qco")
@@ -1159,6 +1184,11 @@ bus = &"SFX"
 
 [node name="New Record" type="AudioStreamPlayer" parent="SFX" unique_id=1704513384]
 stream = ExtResource("15_qb2ve")
+bus = &"SFX"
+
+[node name="Applause" type="AudioStreamPlayer" parent="SFX" unique_id=825807086]
+stream = ExtResource("16_fk8dc")
+volume_db = 9.0
 bus = &"SFX"
 
 [node name="Particles" type="Node2D" parent="." unique_id=448104739]
