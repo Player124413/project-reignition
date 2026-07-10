@@ -1,2 +1,20 @@
 ### Represents a player in the Weight Puzzle minigame.
 extends PartyGameCharacterSpawner
+
+@export var weight_platform2: Node3D
+@export var weight_animator: AnimationPlayer
+
+##The current number of coins in the bucket
+var num_coins: int
+
+##The amount of coins needed to win the minigame
+const COINS_TO_REACH: int = 50
+
+func on_spawn_finished() -> void:
+	super()
+
+	character_animator.play_animation("%s/19-lift-wait" % MinigameManager.ANIMATION_LIBRARY_PREFIX, true)
+	weight_animator.play("RESET")
+
+func _physics_process(delta: float) -> void:
+	weight_platform2.global_rotation = Vector3.ZERO

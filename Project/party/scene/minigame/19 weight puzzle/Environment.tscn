@@ -6,10 +6,33 @@
 [ext_resource type="PackedScene" uid="uid://dikhuu5f4533i" path="res://party/scene/minigame/19 weight puzzle/model/WeightBase.glb" id="3_wnuok"]
 [ext_resource type="PackedScene" uid="uid://bth1sjag5olu7" path="res://party/scene/minigame/19 weight puzzle/model/WeightArm.glb" id="4_u0ckp"]
 [ext_resource type="PackedScene" uid="uid://w346b02lgpng" path="res://party/scene/minigame/19 weight puzzle/model/WeightPlatform.glb" id="5_rxhfp"]
+[ext_resource type="PackedScene" uid="uid://cacdy75rk2056" path="res://party/resource/character/scene/Sonic.tscn" id="7_wnuok"]
+[ext_resource type="AnimationLibrary" uid="uid://td28md54xamj" path="res://party/scene/minigame/19 weight puzzle/animation/_Library.glb" id="8_u0ckp"]
 
-[node name="Environment" type="Node3D" unique_id=1522425192 node_paths=PackedStringArray("spawn_position")]
+[sub_resource type="Environment" id="Environment_skywb"]
+background_mode = 1
+ambient_light_source = 2
+ambient_light_color = Color(0.69135684, 0.6913568, 0.6913567, 1)
+tonemap_mode = 2
+tonemap_white = 1.2
+glow_enabled = true
+
+[sub_resource type="Animation" id="Animation_u0ckp"]
+resource_name = "RESET"
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_rxhfp"]
+_data = {
+&"RESET": SubResource("Animation_u0ckp")
+}
+
+[node name="Environment" type="Node3D" unique_id=1522425192 node_paths=PackedStringArray("weight_platform2", "weight_animator", "spawn_position")]
 script = ExtResource("1_skywb")
+weight_platform2 = NodePath("Weight/WeightArm/WeightPlatform2")
+weight_animator = NodePath("Weight/WeightArm/WeightAnimator")
 spawn_position = NodePath("CharacterPosition")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=162862610]
+environment = SubResource("Environment_skywb")
 
 [node name="Environment" parent="." unique_id=1161187366 instance=ExtResource("1_1d8vo")]
 
@@ -30,5 +53,22 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, 0)
 [node name="WeightPlatform2" parent="Weight/WeightArm" unique_id=1002915764 instance=ExtResource("5_rxhfp")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11, 0, 0)
 
+[node name="WeightAnimator" type="AnimationPlayer" parent="Weight/WeightArm" unique_id=1423264232]
+libraries/ = SubResource("AnimationLibrary_rxhfp")
+
 [node name="CharacterPosition" type="Node3D" parent="." unique_id=644847902]
 transform = Transform3D(0.7660444, -1.8473232e-08, -0.64278764, 1.6783801e-08, 1, -8.737095e-09, 0.64278764, -4.0954182e-09, 0.7660444, 11, 7.3, 1)
+
+[node name="GameCamera" type="Camera3D" parent="." unique_id=2047423510]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.53526, 11.948437, 29.323446)
+current = true
+fov = 24.8
+
+[node name="Sonic" parent="." unique_id=731316033 instance=ExtResource("7_wnuok")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -32.769768, 0, 47.613865)
+
+[node name="AnimationPlayer" parent="Sonic/Sonic" parent_id_path=PackedInt32Array(731316033, 206978815) index="1" unique_id=983732905]
+libraries/_Library = ExtResource("8_u0ckp")
+
+[editable path="Sonic"]
+[editable path="Sonic/Sonic"]
