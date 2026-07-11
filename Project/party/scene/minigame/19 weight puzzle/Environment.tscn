@@ -8,7 +8,9 @@
 [ext_resource type="PackedScene" uid="uid://w346b02lgpng" path="res://party/scene/minigame/19 weight puzzle/model/WeightPlatform.glb" id="5_rxhfp"]
 [ext_resource type="PackedScene" uid="uid://dwknauxes8he1" path="res://party/scene/minigame/19 weight puzzle/weight_platform.tscn" id="7_rxhfp"]
 [ext_resource type="PackedScene" uid="uid://cacdy75rk2056" path="res://party/resource/character/scene/Sonic.tscn" id="7_wnuok"]
+[ext_resource type="PackedScene" uid="uid://c6mwbbp0daim1" path="res://party/scene/minigame/19 weight puzzle/model/Coinbox.glb" id="8_dfnbo"]
 [ext_resource type="AnimationLibrary" uid="uid://td28md54xamj" path="res://party/scene/minigame/19 weight puzzle/animation/_Library.glb" id="8_u0ckp"]
+[ext_resource type="ArrayMesh" uid="uid://dnecmn3hykli0" path="res://party/scene/minigame/19 weight puzzle/model/coin.tres" id="11_veltv"]
 
 [sub_resource type="Environment" id="Environment_skywb"]
 background_mode = 1
@@ -51,6 +53,7 @@ tracks/0/keys = {
 
 [sub_resource type="Animation" id="Animation_dfnbo"]
 resource_name = "check_pos_1"
+length = 3.0000000000000004
 step = 0.1
 tracks/0/type = "value"
 tracks/0/imported = false
@@ -201,6 +204,23 @@ tracks/0/keys = {
 "values": [Vector3(0, 0, 0.44680429), Vector3(0, 0, -0.61784655)]
 }
 
+[sub_resource type="Animation" id="Animation_ww35w"]
+resource_name = "weight_toss"
+length = 2.0
+step = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:rotation")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.8, 1, 1.2),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 0,
+"values": [Vector3(0, 0, 0), Vector3(0, 0, -0.65449846), Vector3(0, 0, -0.65449846), Vector3(0, 0, 0.4537856)]
+}
+
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_rxhfp"]
 _data = {
 &"RESET": SubResource("Animation_u0ckp"),
@@ -213,13 +233,26 @@ _data = {
 &"check_pos_6": SubResource("Animation_37cca"),
 &"check_pos_7": SubResource("Animation_7uwec"),
 &"check_pos_8": SubResource("Animation_m41ng"),
-&"check_pos_9": SubResource("Animation_d6nuu")
+&"check_pos_9": SubResource("Animation_d6nuu"),
+&"weight_toss": SubResource("Animation_ww35w")
 }
 
-[node name="Environment" type="Node3D" unique_id=1522425192 node_paths=PackedStringArray("weight_platform2", "weight_animator", "spawn_position")]
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_nkfxl"]
+angle_min = -390.0
+angle_max = 436.7
+use_rotation_3d = true
+rotation_3d_min = Vector3(0, -360, 0)
+rotation_3d_max = Vector3(0, 360, 0)
+use_rotation_velocity_3d = true
+rotation_velocity_3d_min = Vector3(0, -720, 0)
+rotation_velocity_3d_max = Vector3(0, 720, 0)
+
+[node name="Environment" type="Node3D" unique_id=1522425192 node_paths=PackedStringArray("coin_box", "weight_platform2", "weight_animator", "debug_label", "spawn_position")]
 script = ExtResource("1_skywb")
-weight_platform2 = NodePath("")
+coin_box = NodePath("Weight/WeightArm/WeightPlatform2/Coinbox")
+weight_platform2 = NodePath("Weight/WeightArm/WeightPlatform2")
 weight_animator = NodePath("Weight/WeightAnimator")
+debug_label = NodePath("Debug")
 spawn_position = NodePath("CharacterPosition")
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=162862610]
@@ -233,10 +266,8 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12, 0, 0)
 [node name="WeightAnimator" type="AnimationPlayer" parent="Weight" unique_id=1423264232]
 root_node = NodePath("../WeightArm")
 libraries/ = SubResource("AnimationLibrary_rxhfp")
-
-[node name="AnimationTree" type="AnimationTree" parent="Weight" unique_id=1892875965]
-root_node = NodePath("../WeightArm")
-anim_player = NodePath("../WeightAnimator")
+next/check_pos_0 = &"weight_toss"
+next/check_pos_1 = &"weight_toss"
 
 [node name="WeightBase" parent="Weight" unique_id=1179335996 instance=ExtResource("3_wnuok")]
 
@@ -250,7 +281,10 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11, 0, 0)
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, 0)
 
 [node name="WeightPlatform2" parent="Weight/WeightArm" unique_id=1349553688 instance=ExtResource("7_rxhfp")]
-transform = Transform3D(0.8155288, -0.5795661, 0, 0.5795661, 0.8155288, 0, 0, 0, 1, 11.011523, 0.0018433332, 0)
+transform = Transform3D(1.0004886, 0, 0, 0, 1.0004886, 0, 0, 0, 1, 11.011549, 0.0018520355, 0)
+
+[node name="Coinbox" parent="Weight/WeightArm/WeightPlatform2" unique_id=1117549296 instance=ExtResource("8_dfnbo")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.67484075, 1.2931433, 0)
 
 [node name="CharacterPosition" type="Node3D" parent="." unique_id=644847902]
 transform = Transform3D(0.7660444, -1.8473232e-08, -0.64278764, 1.6783801e-08, 1, -8.737095e-09, 0.64278764, -4.0954182e-09, 0.7660444, 11, 7.3, 1)
@@ -260,11 +294,54 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.53526, 11.948437, 29.323446
 current = true
 fov = 25.2
 
+[node name="HandAttachment" type="BoneAttachment3D" parent="." unique_id=880504346]
+bone_name = "hand_attachment"
+bone_idx = 89
+
 [node name="Sonic" parent="." unique_id=731316033 instance=ExtResource("7_wnuok")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -32.769768, 0, 47.613865)
 
 [node name="AnimationPlayer" parent="Sonic/Sonic" parent_id_path=PackedInt32Array(731316033, 206978815) index="1" unique_id=983732905]
 libraries/_Library = ExtResource("8_u0ckp")
+
+[node name="Debug" type="Label3D" parent="." unique_id=1931390658]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 18.492245, -5.9932804)
+modulate = Color(1, 1, 0, 1)
+text = "00"
+font_size = 773
+
+[node name="CoinRain" type="Node3D" parent="." unique_id=1870482314]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.9551544, 20.489803, 0)
+
+[node name="Coins" type="GPUParticles3D" parent="CoinRain" unique_id=1009120334]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.3477592, 0)
+emitting = false
+amount = 25
+lifetime = 1.4000000000000001
+speed_scale = 1.2
+randomness = 1.0
+process_material = SubResource("ParticleProcessMaterial_nkfxl")
+draw_pass_1 = ExtResource("11_veltv")
+
+[node name="Coins2" type="GPUParticles3D" parent="CoinRain" unique_id=1565994284]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.766999, 2.3477592, 0.7023332)
+emitting = false
+amount = 25
+lifetime = 1.4000000000000001
+speed_scale = 1.2
+randomness = 1.0
+process_material = SubResource("ParticleProcessMaterial_nkfxl")
+draw_pass_1 = ExtResource("11_veltv")
+
+[node name="Coins3" type="GPUParticles3D" parent="CoinRain" unique_id=220054063]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.4785124, 2.3477592, 0)
+emitting = false
+amount = 25
+lifetime = 1.4000000000000001
+speed_scale = 1.2
+randomness = 1.0
+process_material = SubResource("ParticleProcessMaterial_nkfxl")
+draw_pass_1 = ExtResource("11_veltv")
 
 [editable path="Sonic"]
 [editable path="Sonic/Sonic"]
