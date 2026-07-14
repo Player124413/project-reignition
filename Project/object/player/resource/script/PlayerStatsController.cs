@@ -96,11 +96,15 @@ public partial class PlayerStatsController : Node
 	/// <summary> How quickly to turn when moving slowly. </summary>
 	public float MinTurnAmount { get; private set; }
 	/// <summary> How quickly to turn when moving at top speed. </summary>
-	public float MaxTurnAmount { get; private set; }
+	public float MaxTurnAmount => baseMaxTurn * GetTurnRatio();
 	/// <summary> How quickly to turn when at top speed. </summary>
-	public float RecenterTurnAmount { get; private set; }
+	public float RecenterTurnAmount => baseRecenterTurn * Mathf.Max(GetTurnRatio(), 1f);
+
 	public float GetTurnRatio()
 	{
+		if (StageSettings.Player.IsGrindstepping)
+			return 1f;
+
 		if (SkillRing.IsSkillEquipped(SkillKey.QuickTurn))
 		{
 			return SkillRing.GetAugmentIndex(SkillKey.QuickTurn) switch
@@ -313,8 +317,6 @@ public partial class PlayerStatsController : Node
 		};
 
 		MinTurnAmount = baseMinTurn;
-		MaxTurnAmount = baseMaxTurn * GetTurnRatio();
-		RecenterTurnAmount = baseRecenterTurn * Mathf.Max(GetTurnRatio(), 1f);
 	}
 }
 
