@@ -91,7 +91,10 @@ public partial class PlayerState : Node
 	protected virtual void ProcessAutorunStrafeSpeed()
 	{
 		if (!SaveManager.ActiveSkillRing.IsAutorunActive)
+		{
+			Player.StrafeSpeed = 0;
 			return;
+		}
 
 		if (Player.Controller.IsBrakeHeld() ||
 			Player.IsLockoutOverridingMovementAngle && (Player.ActiveLockoutData.movementMode != LockoutResource.MovementModes.Strafe || Player.ActiveLockoutData.recenterPlayer))

@@ -252,6 +252,9 @@ public partial class PlayerInputController : Node
 		if (GyroInvertVertical)
 			targetGyroInput.Y *= -1;
 
+		targetGyroInput.X = Mathf.Clamp(targetGyroInput.X, -1f, 1f);
+		targetGyroInput.Y = Mathf.Clamp(targetGyroInput.Y, -1f, 1f);
+
 		if (disableSmoothing)
 		{
 			GyroInput = targetGyroInput;
