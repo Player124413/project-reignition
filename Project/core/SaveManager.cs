@@ -80,7 +80,7 @@ public partial class SaveManager : Node
 
 	#region Config
 	public static ConfigData Config = new();
-	public static bool UseEnglishVoices => Config.voiceLocale.LocaleId.Equals("en");
+	public static bool UseJapaneseVoices => Config.voiceLocale.LocaleId.Equals("ja");
 	/// <summary> Determines whether the game should ask the player whether to enable quick loading on the main menu. </summary>
 	public bool IsQuickLoadAlertEnabled;
 	private const string ConfigFileName = "config.cfg";
@@ -754,8 +754,8 @@ public partial class SaveManager : Node
 		if (TranslationServer.HasTranslationForLocale(Config.textLocale.LocaleId, false))
 			TranslationServer.SetLocale(Config.textLocale.LocaleId);
 
-		if (Config.textLocale.LocaleId == "en") // Prefer the retranslation for all languages except when using the english voiceover
-			TranslationServer.SetLocale(UseEnglishVoices ? "en" : "en_US");
+		if (Config.textLocale.LocaleId == "en") // Prefer the retranslation when using the Japanese voiceover
+			TranslationServer.SetLocale(UseJapaneseVoices ? "en_US" : "en");
 	}
 	#endregion
 
