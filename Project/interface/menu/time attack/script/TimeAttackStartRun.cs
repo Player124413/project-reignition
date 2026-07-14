@@ -20,11 +20,9 @@ public partial class TimeAttackStartRun : Menu
 	private int currentSelection;
 	private int maxSelection = 2;
 
-
 	protected override void SetUp()
 	{
 		currentSelection = 1;
-
 	}
 
 	public override void ShowMenu()
@@ -36,24 +34,12 @@ public partial class TimeAttackStartRun : Menu
 		isLeaderboardActive = false;
 		leaderboard.SpawnLeaderboardOptionsSub();
 		leaderboard.SpawnLeaderboardOptionsMain();
-
-	}
-
-	public override void OpenParentMenu()
-	{
-		base.OpenParentMenu();
-	}
-
-	protected override void ProcessMenu()
-	{
-		base.ProcessMenu();
 	}
 
 	protected override void UpdateSelection()
 	{
 		Vector2I input = new(Mathf.Sign(Input.GetAxis("ui_left", "ui_right")), Mathf.Sign(Input.GetAxis("ui_up", "ui_down")));
 		StartSelectionTimer();
-
 		ProcessMenuInput(input);
 	}
 
@@ -125,14 +111,12 @@ public partial class TimeAttackStartRun : Menu
 		levelList.parentMenu = this;
 		levelList.ShowMenu();
 	}
+
 	private void OpenReadyMenu()
 	{
 		readyMenu.ShowMenu();
 	}
 
-
-
 	public void SetActive() => isActive = true;
 	public void SetInactive() => isActive = false;
-
 }

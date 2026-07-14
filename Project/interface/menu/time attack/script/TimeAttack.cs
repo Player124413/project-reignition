@@ -24,14 +24,12 @@ public partial class TimeAttack : Menu
 
 	public override void ShowMenu()
 	{
-		base.FadeBgm(0.5f, true, 1);
 		TimeAttackManager.Instance.SetRunActive(true);
 		SaveManager.ActiveSaveSlotIndex = SaveManager.SaveSlotCount; //Saves skills and presets on a hidden file
 		SaveManager.ActiveSkillRing.LoadFromActiveData();
 		SaveManager.ActiveGameData.level = 99;
 		SaveManager.ActiveGameData.UnlockAllWorlds();
 		SaveManager.ActiveSkillRing.UpdateTotalSkillPoints();
-
 
 		SaveManager.LoadTimeAttackData();//Creates a new timeattack file if there isn't one
 		SaveManager.SaveTimeAttackData();
