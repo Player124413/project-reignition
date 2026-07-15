@@ -275,11 +275,14 @@ tracks/2/path = NodePath("../..")
 tracks/2/interp = 1
 tracks/2/loop_wrap = true
 tracks/2/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
+"times": PackedFloat32Array(0, 0.6),
+"transitions": PackedFloat32Array(1, 1),
 "values": [{
 "args": [],
 "method": &"throw_chest"
+}, {
+"args": [],
+"method": &"unparent"
 }]
 }
 tracks/3/type = "value"
@@ -342,7 +345,7 @@ tracks/3/path = NodePath("../..")
 tracks/3/interp = 1
 tracks/3/loop_wrap = true
 tracks/3/keys = {
-"times": PackedFloat32Array(2),
+"times": PackedFloat32Array(1.8),
 "transitions": PackedFloat32Array(1),
 "values": [{
 "args": [],
@@ -377,11 +380,12 @@ use_rotation_velocity_3d = true
 rotation_velocity_3d_min = Vector3(0, -720, 0)
 rotation_velocity_3d_max = Vector3(0, 720, 0)
 
-[node name="Environment" type="Node3D" unique_id=1522425192 node_paths=PackedStringArray("coin_box", "weight_platform2", "weight_animator", "debug_label", "spawn_position")]
+[node name="Environment" type="Node3D" unique_id=1522425192 node_paths=PackedStringArray("coin_box", "weight_platform2", "weight_animator", "hand_attachment", "debug_label", "spawn_position")]
 script = ExtResource("1_skywb")
 coin_box = NodePath("Weight/WeightArm/WeightPlatform2/Coinbox")
 weight_platform2 = NodePath("Weight/WeightArm/WeightPlatform2")
 weight_animator = NodePath("Weight/WeightAnimator")
+hand_attachment = NodePath("HandAttachment")
 debug_label = NodePath("Debug")
 spawn_position = NodePath("CharacterPosition")
 
@@ -411,7 +415,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11, 0, 0)
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, 0)
 
 [node name="WeightPlatform2" parent="Weight/WeightArm" unique_id=1349553688 instance=ExtResource("7_rxhfp")]
-transform = Transform3D(0.9022806, 0.43230045, 0, -0.43230045, 0.9022806, 0, 0, 0, 1, 11.011644, 0.00196743, 0)
+transform = Transform3D(0.9022818, 0.432301, 0, -0.432301, 0.9022818, 0, 0, 0, 1, 11.01161, 0.0019979477, 0)
 
 [node name="Coinbox" parent="Weight/WeightArm/WeightPlatform2" unique_id=1117549296 instance=ExtResource("8_dfnbo")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.67484075, 1.2931433, 0)
@@ -429,15 +433,30 @@ bone_name = "hand_attachment"
 bone_idx = 89
 
 [node name="Sonic" parent="." unique_id=731316033 instance=ExtResource("7_wnuok")]
-transform = Transform3D(0.7660444, -1.8473234e-08, -0.6427876, 1.6783801e-08, 1, -8.737093e-09, 0.6427876, -4.0954187e-09, 0.7660444, 11, 7.3, 1)
+transform = Transform3D(0.7660444, -1.8473234e-08, -0.6427876, 1.6783801e-08, 1, -8.737093e-09, 0.6427876, -4.0954187e-09, 0.7660444, -41.399227, -2.92591, 8.541508)
 
 [node name="GeneralSkeleton" parent="Sonic/Sonic/CharacterRoot" parent_id_path=PackedInt32Array(731316033, 206978815, 19977021) index="0" unique_id=2130039051]
-bones/66/rotation = Quaternion(-0.6781846, 0.2001639, -0.20016393, 0.67818457)
-bones/67/rotation = Quaternion(0.63447434, -0.63447434, 0.31215754, 0.31215745)
+bones/66/rotation = Quaternion(-0.67818475, 0.20016392, -0.20016392, 0.6781847)
+bones/67/rotation = Quaternion(0.6344744, -0.6344744, 0.31215754, 0.3121575)
 bones/68/rotation = Quaternion(-0.62526655, 0.6252665, 0.33021483, 0.33021483)
+face = 1
+right_hand = 6
+
+[node name="face_default" parent="Sonic/Sonic/CharacterRoot/GeneralSkeleton" index="2" unique_id=641518128]
+visible = false
+
+[node name="face_happy" parent="Sonic/Sonic/CharacterRoot/GeneralSkeleton" index="3" unique_id=261401688]
+visible = true
+
+[node name="hand_fist_r" parent="Sonic/Sonic/CharacterRoot/GeneralSkeleton" index="9" unique_id=1995904668]
+visible = false
+
+[node name="hand_thumb_r" parent="Sonic/Sonic/CharacterRoot/GeneralSkeleton" index="21" unique_id=2047717984]
+visible = true
 
 [node name="AnimationPlayer" parent="Sonic/Sonic" parent_id_path=PackedInt32Array(731316033, 206978815) index="1" unique_id=983732905]
 libraries/_Library = ExtResource("8_u0ckp")
+next/_Library/19-slant1 = &""
 
 [node name="Debug" type="Label3D" parent="." unique_id=1931390658]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 18.492245, -5.9932804)
