@@ -206,11 +206,11 @@ public partial class SkillPresetSelect : Menu
 
 			switch (subIndex)
 			{
-				case 0:
+				case 1:
 					SaveSkills(VerticalSelection, false);
 					submenuAnimator.Play("select-save");
 					break;
-				case 1:
+				case 0:
 					if (!IsInvalid(VerticalSelection))
 						LoadSkills(VerticalSelection);
 					else
@@ -287,7 +287,7 @@ public partial class SkillPresetSelect : Menu
 		else
 		{
 			subIndex = 0;
-			submenuAnimator.Play(IsInvalid(VerticalSelection) ? "select-save-invalid" : "select-save");
+			submenuAnimator.Play(IsInvalid(VerticalSelection) ? "select-load-invalid" : "select-save");
 		}
 		submenuAnimator.Advance(0.0);
 
@@ -344,10 +344,10 @@ public partial class SkillPresetSelect : Menu
 				targetAnimation = "select-none";
 				break;
 			case 0:
-				targetAnimation = "select-save";
+				targetAnimation = "select-load";
 				break;
 			case 1:
-				targetAnimation = "select-load";
+				targetAnimation = "select-save";
 				break;
 			case 2:
 				targetAnimation = "select-rename";
@@ -401,7 +401,7 @@ public partial class SkillPresetSelect : Menu
 		presetList[preset].Augments.Remove(SkillKey.Character);
 
 		//  Save our new data to the file and play the animation to initialize the on-screen data
-		if (subIndex == 0) // Only play the save animation if we are selecting save
+		if (subIndex == 1) // Only play the save animation if we are selecting save
 			presetList[preset].SavePreset();
 		else
 			presetList[preset].Initialize();
