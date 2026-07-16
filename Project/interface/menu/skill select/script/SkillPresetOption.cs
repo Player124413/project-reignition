@@ -64,7 +64,10 @@ public partial class SkillPresetOption : Control
 		//}
 
 		Redraw();
-		animatorData.Play("show");
+		if (!IsInvalid)
+			animatorData.Play("show");
+		else
+			animatorData.Play("show-invalid");
 	}
 
 	public void Redraw()

@@ -165,7 +165,7 @@ public partial class SkillPresetSelect : Menu
 
 	private void SaveEmptyPreset(int preset)
 	{
-		presetList[preset].PresetName = "";
+		presetList[preset].PresetName = "New Preset";
 
 		presetList[preset].Skills.Clear();
 		presetList[preset].Augments.Clear();
