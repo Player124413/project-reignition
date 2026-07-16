@@ -49,7 +49,7 @@ public partial class SkillPresetOption : Control
 
 	public bool CheckInvalid()
 	{
-		if (Skills.Count == 0 && Augments.Count == 0 && string.IsNullOrEmpty(PresetName))
+		if (Skills.Count == 0 && Augments.Count == 0)
 			return true;
 		return false;
 	}
