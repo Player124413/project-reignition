@@ -1,0 +1,392 @@
+[gd_scene format=3 uid="uid://cgu5yes50fyei"]
+
+[ext_resource type="Texture2D" uid="uid://dx4vxnhtgd13t" path="res://interface/menu/common/common menu atlas.png" id="1_6h3ke"]
+[ext_resource type="Script" uid="uid://bh88p442r7iac" path="res://interface/menu/level select/script/ModDrawer.cs" id="1_acp7h"]
+[ext_resource type="PackedScene" uid="uid://crwawg2ivy3xd" path="res://interface/menu/NavigationButton.tscn" id="2_5g0n3"]
+[ext_resource type="Texture2D" uid="uid://dq3e58qnn7y56" path="res://interface/menu/skill select/texture/augment arrow.png" id="3_vp74l"]
+[ext_resource type="FontFile" uid="uid://w7hk0poeo3qf" path="res://interface/font/bitmap fonts/Skill Select.fnt" id="5_fhdh1"]
+[ext_resource type="PackedScene" uid="uid://b6v3sm1vo8for" path="res://interface/menu/skill select/SkillOption.tscn" id="6_ux6yi"]
+[ext_resource type="Texture2D" uid="uid://c2hlq1r5rff2u" path="res://interface/menu/skill select/texture/cursor.png" id="7_npr52"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_ux6yi"]
+font = ExtResource("5_fhdh1")
+font_size = 45
+shadow_size = 10
+shadow_color = Color(0, 0, 0, 0.509804)
+shadow_offset = Vector2(0, 0)
+
+[sub_resource type="Animation" id="Animation_fxopk"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(1, 0)]
+}
+
+[sub_resource type="Animation" id="Animation_u2gll"]
+resource_name = "hide"
+length = 0.16667001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.06666667, 0.16666667),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector2(1, 1), Vector2(1, 2), Vector2(1, 0)]
+}
+
+[sub_resource type="Animation" id="Animation_0576b"]
+resource_name = "loop"
+length = 0.4
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.2, 0.4),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector2(1, 1), Vector2(1, 1.3), Vector2(1, 1)]
+}
+
+[sub_resource type="Animation" id="Animation_g47ve"]
+resource_name = "show"
+length = 0.16667001
+step = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.06666667, 0.16666667),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector2(1, 0), Vector2(1, 2), Vector2(1, 1)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_o77ir"]
+_data = {
+&"RESET": SubResource("Animation_fxopk"),
+&"hide": SubResource("Animation_u2gll"),
+&"loop": SubResource("Animation_0576b"),
+&"show": SubResource("Animation_g47ve")
+}
+
+[sub_resource type="Animation" id="Animation_5g0n3"]
+resource_name = "RESET"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Window:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(960, 422)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Window/RotationArrow:rotation")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [4.712389]
+}
+
+[sub_resource type="Animation" id="Animation_acp7h"]
+resource_name = "hide"
+length = 0.2
+step = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Window:position")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.2),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector2(1323.95, 422), Vector2(960, 422)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Window/RotationArrow:rotation")
+tracks/1/interp = 2
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.2),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [7.8539815, 4.71238898038469]
+}
+tracks/2/type = "method"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath(".")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 0.2),
+"transitions": PackedFloat32Array(1, 1),
+"values": [{
+"args": [],
+"method": &"DisableProcessing"
+}, {
+"args": [],
+"method": &"EnableProcessing"
+}]
+}
+
+[sub_resource type="Animation" id="Animation_vp74l"]
+resource_name = "show"
+length = 0.2
+step = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Window:position")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.2),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector2(960, 422), Vector2(1323.95, 422)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Window/RotationArrow:rotation")
+tracks/1/interp = 2
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.2),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [4.712389, 7.853981633974483]
+}
+tracks/2/type = "method"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath(".")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 0.2),
+"transitions": PackedFloat32Array(1, 1),
+"values": [{
+"args": [],
+"method": &"DisableProcessing"
+}, {
+"args": [],
+"method": &"EnableProcessing"
+}]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_acp7h"]
+_data = {
+&"RESET": SubResource("Animation_5g0n3"),
+&"hide": SubResource("Animation_acp7h"),
+&"show": SubResource("Animation_vp74l")
+}
+
+[node name="ModDrawer" type="Control" unique_id=506154412 node_paths=PackedStringArray("optionContainer", "cursor", "cursorAnimator", "drawerAnimator")]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 0
+script = ExtResource("1_acp7h")
+skillOption = ExtResource("6_ux6yi")
+optionContainer = NodePath("Window/Clip/Options")
+cursor = NodePath("Window/CursorOrigin/Cursor")
+cursorAnimator = NodePath("Window/CursorOrigin/Cursor/AnimationPlayer")
+drawerAnimator = NodePath("DrawerAnimator")
+isProcessing = true
+
+[node name="Window" type="Node2D" parent="." unique_id=486895264]
+position = Vector2(960, 422)
+
+[node name="BottomBar" type="Node2D" parent="Window" unique_id=1698299303]
+position = Vector2(-960, 446)
+rotation = -1.5707964
+scale = Vector2(1.5, 1.5)
+
+[node name="BottomLeft" type="Sprite2D" parent="Window/BottomBar" unique_id=970546466]
+visible = false
+position = Vector2(-136.00003, -36)
+texture = ExtResource("1_6h3ke")
+centered = false
+region_enabled = true
+region_rect = Rect2(260, 60, 120, 60)
+
+[node name="Bottom" type="NinePatchRect" parent="Window/BottomBar" unique_id=975796053]
+custom_minimum_size = Vector2(432, 33)
+anchors_preset = -1
+anchor_left = 0.104
+anchor_top = 0.89
+anchor_right = 0.889
+anchor_bottom = 1.0
+offset_left = -63.333355
+offset_top = -36.000004
+offset_right = 492.84464
+offset_bottom = 23.999996
+texture = ExtResource("1_6h3ke")
+region_rect = Rect2(379, 60, 94, 60)
+axis_stretch_horizontal = 1
+
+[node name="BottomRight" type="Sprite2D" parent="Window/BottomBar" unique_id=766148973]
+visible = false
+position = Vector2(416, -36)
+texture = ExtResource("1_6h3ke")
+centered = false
+region_enabled = true
+region_rect = Rect2(367, 0, 140, 60)
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Window" unique_id=562575095]
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="Background" type="NinePatchRect" parent="Window" unique_id=1876486661]
+modulate = Color(0, 0, 0, 1)
+self_modulate = Color(1, 1, 1, 0.588235)
+anchors_preset = -1
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -1331.0
+offset_top = -292.0
+offset_right = -959.0
+offset_bottom = 550.0
+grow_vertical = 2
+pivot_offset = Vector2(488, 192)
+size_flags_horizontal = 0
+texture = ExtResource("1_6h3ke")
+region_rect = Rect2(128, 352, 96, 96)
+patch_margin_left = 32
+patch_margin_top = 32
+patch_margin_right = 32
+patch_margin_bottom = 32
+
+[node name="Input" parent="Window" unique_id=870845574 instance=ExtResource("2_5g0n3")]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -918.0
+offset_top = 63.0
+offset_right = -708.0
+offset_bottom = 111.0
+grow_horizontal = 2
+grow_vertical = 2
+alignment = 0
+ActionKey = &""
+inputKey = &"button_attack"
+fallbackKey = &"button_attack"
+
+[node name="RotationArrow" type="TextureRect" parent="Window" unique_id=1175920647]
+offset_left = -922.0
+offset_top = 121.0
+offset_right = -866.0
+offset_bottom = 177.0
+rotation = 4.712389
+pivot_offset = Vector2(28, 24)
+mouse_filter = 2
+texture = ExtResource("3_vp74l")
+expand_mode = 1
+stretch_mode = 5
+flip_v = true
+
+[node name="CharacterMods" type="Label" parent="Window" unique_id=674819890]
+offset_left = -1620.95
+offset_top = -292.0
+offset_right = -652.94995
+offset_bottom = -228.0
+scale = Vector2(0.75, 0.75)
+pivot_offset = Vector2(484, 32)
+text = "Character mods"
+label_settings = SubResource("LabelSettings_ux6yi")
+horizontal_alignment = 1
+vertical_alignment = 1
+uppercase = true
+
+[node name="Clip" type="Control" parent="Window" unique_id=307503532]
+modulate = Color(1, 1, 1, 0)
+clip_contents = true
+layout_mode = 3
+anchor_left = 0.102
+anchor_top = 0.178
+anchor_right = 0.894
+anchor_bottom = 0.652
+offset_left = -1310.95
+offset_top = -220.0
+offset_right = -981.0
+offset_bottom = 528.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 0
+mouse_filter = 2
+metadata/_edit_group_ = true
+
+[node name="Options" type="VBoxContainer" parent="Window/Clip" unique_id=1019950672]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 1.0
+anchor_bottom = 0.99200004
+offset_top = -3.0
+offset_bottom = -0.016052246
+grow_horizontal = 2
+mouse_filter = 2
+theme_override_constants/separation = -2
+
+[node name="SkillOption" parent="Window/Clip/Options" unique_id=1815818537 instance=ExtResource("6_ux6yi")]
+layout_mode = 2
+
+[node name="CursorOrigin" type="Node2D" parent="Window" unique_id=1653889001]
+position = Vector2(-1151, -202)
+
+[node name="Cursor" type="Node2D" parent="Window/CursorOrigin" unique_id=1182999106]
+scale = Vector2(1, 1e-05)
+
+[node name="Cursor" type="NinePatchRect" parent="Window/CursorOrigin/Cursor" unique_id=1447108661]
+anchors_preset = -1
+offset_left = -560.0
+offset_top = -64.0
+offset_right = 552.0
+offset_bottom = 64.0
+texture = ExtResource("7_npr52")
+patch_margin_left = 96
+patch_margin_top = 64
+patch_margin_right = 72
+patch_margin_bottom = 64
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Window/CursorOrigin/Cursor" unique_id=746392995]
+libraries/ = SubResource("AnimationLibrary_o77ir")
+next/show = &"loop"
+
+[node name="DrawerAnimator" type="AnimationPlayer" parent="." unique_id=2021799764]
+libraries/ = SubResource("AnimationLibrary_acp7h")
