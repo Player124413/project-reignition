@@ -35,6 +35,7 @@ public partial class DashPanel : Area3D
 			return;
 
 		isQueued = true;
+		Activate();
 	}
 
 	private void Activate()
