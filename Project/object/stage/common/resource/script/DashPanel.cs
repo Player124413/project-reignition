@@ -38,6 +38,14 @@ public partial class DashPanel : Area3D
 		Activate();
 	}
 
+	public void OnExited(Area3D a)
+	{
+		if (!a.IsInGroup("player detection"))
+			return;
+
+		isQueued = false;
+	}
+
 	private void Activate()
 	{
 		if (!Player.IsOnGround) return; // Can't activate when player is in the air
