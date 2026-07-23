@@ -123,6 +123,7 @@ public partial class TransitionManager : Node
 
 	public static void FinishTransition()
 	{
+		SoundManager.SetAudioBusVolume(SoundManager.AudioBuses.GameSfx, 100); // Unmute gameplay sound effects
 		Instance.UpdateLoadingText(null);
 		Instance.FinishFade();
 	}

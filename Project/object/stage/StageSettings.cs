@@ -54,7 +54,6 @@ public partial class StageSettings : Node3D
 		UpdateQualitySettings();
 
 		// Update gameplay sfx audio channel
-		SoundManager.SetAudioBusVolume(SoundManager.AudioBuses.GameSfx, IsControlTest ? 100 : 0);
 		SoundManager.instance?.SetStageMusicVolume(0f);
 
 		if (IsControlTest)
@@ -263,7 +262,6 @@ public partial class StageSettings : Node3D
 	private void StartLevel()
 	{
 		LevelState = LevelStateEnum.Ingame;
-		SoundManager.SetAudioBusVolume(SoundManager.AudioBuses.GameSfx, 100); // Unmute gameplay sound effects
 		TransitionManager.FinishTransition();
 		EmitSignal(SignalName.LevelStarted);
 	}
