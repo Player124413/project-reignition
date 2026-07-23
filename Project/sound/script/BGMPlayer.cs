@@ -42,7 +42,7 @@ public partial class BGMPlayer : AudioStreamPlayer
 
 		float currentPosition = GetPlaybackPosition() + (float)AudioServer.GetTimeSinceLastMix();
 		if (!Mathf.IsEqualApprox(bgmResource.LoopEnd, -1) && currentPosition >= bgmResource.LoopEnd)
-			Seek(currentPosition - LoopLength);
+			Play(currentPosition - LoopLength);
 	}
 
 	/// <summary> Updates the BgmPlayer's Stream. </summary>
