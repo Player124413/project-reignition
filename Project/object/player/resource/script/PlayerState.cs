@@ -99,8 +99,7 @@ public partial class PlayerState : Node
 			return;
 		}
 
-		if (Player.Controller.IsBrakeHeld() ||
-			Player.IsLockoutOverridingMovementAngle && (Player.ActiveLockoutData.movementMode != LockoutResource.MovementModes.Strafe || Player.ActiveLockoutData.recenterPlayer))
+		if (Player.IsLockoutOverridingMovementAngle && (Player.ActiveLockoutData.movementMode != LockoutResource.MovementModes.Strafe || Player.ActiveLockoutData.recenterPlayer))
 		{
 			Player.StrafeSpeed = Player.Stats.StrafeSettings.UpdateInterpolate(Player.StrafeSpeed, -1.0f); // Reset to 0 quickly
 			return;
