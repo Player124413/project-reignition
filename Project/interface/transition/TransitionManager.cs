@@ -98,6 +98,7 @@ public partial class TransitionManager : Node
 
 	public static void StartTransition(TransitionData data)
 	{
+		SoundManager.SetAudioBusVolume(SoundManager.AudioBuses.GameSfx, 0); // Mute gameplay sound effects
 		Instance.animator.Play("RESET"); // Reset animator, just in case
 		Instance.animator.Advance(0);
 		Instance.UpdateLoadingText(null);

@@ -40,8 +40,8 @@ public partial class LevelResult : Control
 
 		if (IsInstanceValid(Stage))
 		{
-			Stage.Connect(StageSettings.SignalName.LevelCompleted, new Callable(this, MethodName.StartResults), (uint)ConnectFlags.Deferred);
-			Stage.Connect(StageSettings.SignalName.LevelDemoStarted, new Callable(this, MethodName.MuteGameplaySoundEffects));
+			Stage.LevelCompleted += () => CallDeferred(MethodName.StartResults);
+			Stage.LevelDemoStarted += MuteGameplaySoundEffects;
 		}
 
 		if (IsInstanceValid(DebugManager.Instance))
