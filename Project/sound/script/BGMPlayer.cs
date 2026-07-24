@@ -18,7 +18,7 @@ public partial class BGMPlayer : AudioStreamPlayer
 
 	private bool canLoop;
 	private bool isFadingBgm;
-	private float LoopLength => bgmResource.LoopEnd - bgmResource.LoopStart;
+	private float LoopLength => bgmResource.LoopEnd + (float)AudioServer.GetTimeSinceLastMix() - bgmResource.LoopStart;
 
 	public override void _EnterTree() => LoadBgmResource();
 
