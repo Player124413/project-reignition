@@ -356,7 +356,7 @@ public partial class PlayerController : CharacterBody3D
 					return;
 				}
 
-				Skills.CallDeferred(PlayerSkillController.MethodName.ToggleSpeedBreak);
+				Skills.ToggleSpeedBreak();
 			}
 
 			if (reduceSpeedDuringHeadonCollision)
