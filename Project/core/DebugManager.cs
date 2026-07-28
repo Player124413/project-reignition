@@ -37,6 +37,7 @@ public partial class DebugManager : Control
 		ProcessMode = ProcessModeEnum.Always;
 
 		IsStageCullingEnabled = true;
+		IsCollisionCulled = true;
 
 		if (OS.IsDebugBuild()) // Editor Debug
 			SkipCountdown = true;
@@ -239,6 +240,15 @@ public partial class DebugManager : Control
 	{
 		IsStageCullingEnabled = enabled;
 		EmitSignal(SignalName.StageCullingToggled);
+	}
+
+	[Signal]
+	public delegate void CollisionToggledEventHandler();
+	public static bool IsCollisionCulled { get; private set; }
+	private void ToggleCollisionCulling(bool enabled)
+	{
+		IsCollisionCulled = enabled;
+		EmitSignal(SignalName.CollisionToggled);
 	}
 
 	[Export]
