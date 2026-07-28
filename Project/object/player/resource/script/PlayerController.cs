@@ -167,8 +167,10 @@ public partial class PlayerController : CharacterBody3D
 	public void ApplyMovement() => ApplyMovement(GetMovementDirection(), -PathFollower.Right());
 	public void ApplyMovement(Vector3 overrideDirection, Vector3 rightDirection)
 	{
-		Velocity = (overrideDirection * MoveSpeed) + (UpDirection * VerticalSpeed) + ExternalVelocity;
+		Velocity = overrideDirection * MoveSpeed;
 		Velocity += rightDirection * StrafeSpeed;
+		Velocity = Velocity.LimitLength(MoveSpeed); // Clamp autorun speeds
+		Velocity += (UpDirection * VerticalSpeed) + ExternalVelocity;
 		MoveAndSlide();
 	}
 

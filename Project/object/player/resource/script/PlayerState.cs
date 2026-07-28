@@ -117,7 +117,10 @@ public partial class PlayerState : Node
 		float dot = ExtensionMethods.DotAngle(Player.PathFollower.ForwardAngle, Player.Controller.XformAngle);
 		if (Mathf.Abs(dot) > 0.5f)
 			input *= Mathf.Sign(dot) >= 0 ? 1 : -1; // Take camera direction into account
+
 		Player.StrafeSpeed = Player.Stats.StrafeSettings.UpdateInterpolateSigned(Player.StrafeSpeed, input);
+		if (!Player.IsOnGround)
+			Player.StrafeSpeed = Mathf.Clamp(Player.StrafeSpeed, -Player.MoveSpeed, Player.MoveSpeed);
 	}
 
 	private bool IsBraking(float inputAngle)
