@@ -24,12 +24,14 @@ public partial class ModManager : Node
 
 	public override void _EnterTree() => Instance = this;
 
-	public override void _Ready() => SetUpMods();
+	public override void _Ready()
+	{
+		ExtractZipFiles();
+		CallDeferred(MethodName.SetUpMods);
+	}
 
 	public void SetUpMods()
 	{
-		ExtractZipFiles();
-
 		if (SaveManager.Config.areLevelModsEnabled)
 			LoadLevelMods();
 		if (SaveManager.Config.areCharaModsEnabled)
@@ -99,16 +101,19 @@ public partial class ModManager : Node
 			fileAccess.StoreBuffer(buffer);
 		}
 
-		GD.Print($"Extracted ZIP from {dir + file}");
+		reader.Close();
+		OS.MoveToTrash(dir.PathJoin(file)); // Delete the original zip file
+		GD.Print($"Extracted ZIP from {dir.PathJoin(file)} to {dir}");
 	}
 
 	/// <summary> Loads pcks from a given directory. </summary>
 	private void LoadZips(string dir)
 	{
+		GD.Print($"Loading directory {dir}");
 		DirAccess dirAccess = DirAccess.Open(dir);
 
 		foreach (string folder in dirAccess.GetDirectories())
-			LoadZips(dir + "/" + folder);
+			LoadZips(dir.PathJoin(folder));
 
 		foreach (string file in dirAccess.GetFiles())
 			LoadZip(file, dir);
