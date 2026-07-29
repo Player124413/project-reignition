@@ -19,6 +19,7 @@ public partial class ModManager : Node
 	private readonly string LanguagePaths = "lang/";
 	private readonly string ExtrasPaths = "extras/";
 	private readonly string PackExtension = "pck";
+	private readonly string ZipExtension = "zip";
 	private readonly string ResourceExtension = "tres";
 
 	public override void _EnterTree() => Instance = this;
@@ -27,6 +28,8 @@ public partial class ModManager : Node
 
 	public void SetUpMods()
 	{
+		ExtractZipFiles();
+
 		if (SaveManager.Config.areLevelModsEnabled)
 			LoadLevelMods();
 		if (SaveManager.Config.areCharaModsEnabled)
@@ -36,6 +39,20 @@ public partial class ModManager : Node
 
 		if (!DirAccess.DirExistsAbsolute(SaveManager.ModDirectory + ExtrasPaths))
 			DirAccess.MakeDirRecursiveAbsolute(SaveManager.ModDirectory + ExtrasPaths);
+	}
+
+	/// <summary> Extracts all zip files, then deletes the original zip file. </summary>
+	private void ExtractZipFiles()
+	{
+		LoadZips(SaveManager.ModDirectory);
+
+		// Switch to local resource folder, now that zip are loaded
+		DirAccess dirAccess = DirAccess.Open(ResourceModPath);
+		if (DirAccess.GetOpenError() != Error.Ok)
+			return;
+
+		foreach (string folder in dirAccess.GetDirectories())
+			LoadZips(ResourceModPath + folder + "/");
 	}
 
 	/// <summary> Loads a .pck from a directory. </summary>
@@ -56,6 +73,45 @@ public partial class ModManager : Node
 		DirAccess dirAccess = DirAccess.Open(dir);
 		foreach (string file in dirAccess.GetFiles())
 			LoadPck(file, dir);
+	}
+
+	private void LoadZip(string file, string dir)
+	{
+		if (!file.GetExtension().Equals(ZipExtension))
+			return;
+
+		ZipReader reader = new();
+		reader.Open(dir.PathJoin(file));
+
+		// Extract the zip, copied directly from Godot Docs
+		DirAccess rootDir = DirAccess.Open(dir);
+		foreach (string filePath in reader.GetFiles())
+		{
+			if (filePath.EndsWith("/"))
+			{
+				rootDir.MakeDirRecursive(filePath);
+				continue;
+			}
+
+			rootDir.MakeDirRecursive(rootDir.GetCurrentDir().PathJoin(filePath).GetBaseDir());
+			FileAccess fileAccess = FileAccess.Open(rootDir.GetCurrentDir().PathJoin(filePath), FileAccess.ModeFlags.Write);
+			byte[] buffer = reader.ReadFile(filePath);
+			fileAccess.StoreBuffer(buffer);
+		}
+
+		GD.Print($"Extracted ZIP from {dir + file}");
+	}
+
+	/// <summary> Loads pcks from a given directory. </summary>
+	private void LoadZips(string dir)
+	{
+		DirAccess dirAccess = DirAccess.Open(dir);
+
+		foreach (string folder in dirAccess.GetDirectories())
+			LoadZips(dir + "/" + folder);
+
+		foreach (string file in dirAccess.GetFiles())
+			LoadZip(file, dir);
 	}
 
 	private void LoadLevelMods()
