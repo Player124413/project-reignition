@@ -31,12 +31,6 @@ public partial class FireSoul : Pickup
 
 		UpdateLockon();
 		Respawn();
-
-		if (isTimeBreakOnly)
-		{
-			Player.Skills.TimeBreakStarted += ShowFireSoul;
-			Player.Skills.TimeBreakStopped += HideFireSoul;
-		}
 	}
 
 	protected override void Collect()
@@ -90,6 +84,12 @@ public partial class FireSoul : Pickup
 
 		StageSettings.Instance.SetFireSoulCheckpointFlag(fireSoulIndex - 1, false);
 		base.Respawn();
+
+		if (isTimeBreakOnly)
+		{
+			Player.Skills.TimeBreakStarted += ShowFireSoul;
+			Player.Skills.TimeBreakStopped += HideFireSoul;
+		}
 	}
 
 	private void UpdateLockon()

@@ -8,13 +8,17 @@ public partial class BGMPlayer : AudioStreamPlayer
 {
 	[Export] private BGMResource bgmResource;
 	public BGMResource GetBgmResource() => bgmResource;
-	public void SetBgmResource(BGMResource resource) => bgmResource = resource;
+	public void SetBgmResource(BGMResource resource)
+	{
+		Stop();
+		bgmResource = resource;
+	}
 
 	[Export] public bool loadAsyncronously;
 
 	private bool canLoop;
 	private bool isFadingBgm;
-	private float LoopLength => bgmResource.LoopEnd - bgmResource.LoopStart;
+	private float LoopLength => bgmResource.LoopEnd + (float)AudioServer.GetTimeSinceLastMix() - bgmResource.LoopStart;
 
 	public override void _EnterTree() => LoadBgmResource();
 
@@ -38,7 +42,7 @@ public partial class BGMPlayer : AudioStreamPlayer
 
 		float currentPosition = GetPlaybackPosition() + (float)AudioServer.GetTimeSinceLastMix();
 		if (!Mathf.IsEqualApprox(bgmResource.LoopEnd, -1) && currentPosition >= bgmResource.LoopEnd)
-			Seek(currentPosition - LoopLength);
+			Play(currentPosition - LoopLength);
 	}
 
 	/// <summary> Updates the BgmPlayer's Stream. </summary>

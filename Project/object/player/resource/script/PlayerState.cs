@@ -12,6 +12,9 @@ public partial class PlayerState : Node
 	/// <summary> Called when this state is entered. </summary>
 	public virtual void EnterState() { }
 
+	/// <summary> Caches last ground/aerial speed to PlayerController. Writes speed used for Bound Jump.</summary>
+	public void CacheMomentumOnExit() => Player.LastActionMoveSpeed = Player.MoveSpeed;
+
 	/// <summary> Called when this state is exited. </summary>
 	public virtual void ExitState() { }
 
@@ -96,8 +99,7 @@ public partial class PlayerState : Node
 			return;
 		}
 
-		if (Player.Controller.IsBrakeHeld() ||
-			Player.IsLockoutOverridingMovementAngle && (Player.ActiveLockoutData.movementMode != LockoutResource.MovementModes.Strafe || Player.ActiveLockoutData.recenterPlayer))
+		if (Player.IsLockoutOverridingMovementAngle && (Player.ActiveLockoutData.movementMode != LockoutResource.MovementModes.Strafe || Player.ActiveLockoutData.recenterPlayer))
 		{
 			Player.StrafeSpeed = Player.Stats.StrafeSettings.UpdateInterpolate(Player.StrafeSpeed, -1.0f); // Reset to 0 quickly
 			return;
@@ -115,7 +117,10 @@ public partial class PlayerState : Node
 		float dot = ExtensionMethods.DotAngle(Player.PathFollower.ForwardAngle, Player.Controller.XformAngle);
 		if (Mathf.Abs(dot) > 0.5f)
 			input *= Mathf.Sign(dot) >= 0 ? 1 : -1; // Take camera direction into account
+
 		Player.StrafeSpeed = Player.Stats.StrafeSettings.UpdateInterpolateSigned(Player.StrafeSpeed, input);
+		if (!Player.IsOnGround)
+			Player.StrafeSpeed = Mathf.Clamp(Player.StrafeSpeed, -Player.MoveSpeed, Player.MoveSpeed);
 	}
 
 	private bool IsBraking(float inputAngle)

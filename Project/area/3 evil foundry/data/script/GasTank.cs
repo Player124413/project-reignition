@@ -136,6 +136,7 @@ public partial class GasTank : Area3D
 		}
 
 		StrikeTank();
+		Player.StartBounce(BounceState.SnapMode.SnappingEnabledNoHeight, 1f, this);
 		return true;
 	}
 
@@ -146,7 +147,6 @@ public partial class GasTank : Area3D
 
 		currentTimeScale = StrikeTimeScale;
 
-		Player.StartBounce(BounceState.SnapMode.SnappingEnabledNoHeight, 1f, this);
 		Animator.Play("strike");
 		Animator.Advance(0);
 		EmitSignal(SignalName.OnStrike);
@@ -205,7 +205,7 @@ public partial class GasTank : Area3D
 
 		for (int i = 0; i < tankList.Count; i++)
 		{
-			tankList[i].Launch(); // Launch all gas tanks in range
+			tankList[i].StrikeTank(); // Launch all gas tanks in range
 			if (BonusManager.instance.IsEnemyComboExtenderRegistered(this))
 				BonusManager.instance.RegisterEnemyComboExtender(tankList[i]);
 		}

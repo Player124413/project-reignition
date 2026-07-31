@@ -19,11 +19,16 @@ public partial class ModManager : Node
 	private readonly string LanguagePaths = "lang/";
 	private readonly string ExtrasPaths = "extras/";
 	private readonly string PackExtension = "pck";
+	private readonly string ZipExtension = "zip";
 	private readonly string ResourceExtension = "tres";
 
 	public override void _EnterTree() => Instance = this;
 
-	public override void _Ready() => SetUpMods();
+	public override void _Ready()
+	{
+		ExtractZipFiles();
+		CallDeferred(MethodName.SetUpMods);
+	}
 
 	public void SetUpMods()
 	{
@@ -36,6 +41,20 @@ public partial class ModManager : Node
 
 		if (!DirAccess.DirExistsAbsolute(SaveManager.ModDirectory + ExtrasPaths))
 			DirAccess.MakeDirRecursiveAbsolute(SaveManager.ModDirectory + ExtrasPaths);
+	}
+
+	/// <summary> Extracts all zip files, then deletes the original zip file. </summary>
+	private void ExtractZipFiles()
+	{
+		LoadZips(SaveManager.ModDirectory);
+
+		// Switch to local resource folder, now that zip are loaded
+		DirAccess dirAccess = DirAccess.Open(ResourceModPath);
+		if (DirAccess.GetOpenError() != Error.Ok)
+			return;
+
+		foreach (string folder in dirAccess.GetDirectories())
+			LoadZips(ResourceModPath + folder + "/");
 	}
 
 	/// <summary> Loads a .pck from a directory. </summary>
@@ -56,6 +75,48 @@ public partial class ModManager : Node
 		DirAccess dirAccess = DirAccess.Open(dir);
 		foreach (string file in dirAccess.GetFiles())
 			LoadPck(file, dir);
+	}
+
+	private void LoadZip(string file, string dir)
+	{
+		if (!file.GetExtension().Equals(ZipExtension))
+			return;
+
+		ZipReader reader = new();
+		reader.Open(dir.PathJoin(file));
+
+		// Extract the zip, copied directly from Godot Docs
+		DirAccess rootDir = DirAccess.Open(dir);
+		foreach (string filePath in reader.GetFiles())
+		{
+			if (filePath.EndsWith("/"))
+			{
+				rootDir.MakeDirRecursive(filePath);
+				continue;
+			}
+
+			rootDir.MakeDirRecursive(rootDir.GetCurrentDir().PathJoin(filePath).GetBaseDir());
+			FileAccess fileAccess = FileAccess.Open(rootDir.GetCurrentDir().PathJoin(filePath), FileAccess.ModeFlags.Write);
+			byte[] buffer = reader.ReadFile(filePath);
+			fileAccess.StoreBuffer(buffer);
+		}
+
+		reader.Close();
+		OS.MoveToTrash(dir.PathJoin(file)); // Delete the original zip file
+		GD.Print($"Extracted ZIP from {dir.PathJoin(file)} to {dir}");
+	}
+
+	/// <summary> Loads pcks from a given directory. </summary>
+	private void LoadZips(string dir)
+	{
+		GD.Print($"Loading directory {dir}");
+		DirAccess dirAccess = DirAccess.Open(dir);
+
+		foreach (string folder in dirAccess.GetDirectories())
+			LoadZips(dir.PathJoin(folder));
+
+		foreach (string file in dirAccess.GetFiles())
+			LoadZip(file, dir);
 	}
 
 	private void LoadLevelMods()
@@ -80,15 +141,19 @@ public partial class ModManager : Node
 		string[] files = levelDir.GetFiles();
 		foreach (string file in files) // Find the level data resource
 		{
-			if (!file.GetFile().GetExtension().Equals(ResourceExtension))
+			string fileName = file;
+			if (fileName.EndsWith(".remap"))
+				fileName = fileName.Replace(".remap", string.Empty);
+
+			if (!fileName.GetFile().GetExtension().Equals(ResourceExtension))
 				continue;
 
-			Resource resource = ResourceLoader.Load(dir + file);
+			Resource resource = ResourceLoader.Load(dir + fileName);
 			if (resource is not LevelDataResource)
 				continue;
 
 			LevelMods.Add(resource as LevelDataResource);
-			GD.Print($"Loaded custom level {file}.");
+			GD.Print($"Loaded custom level {fileName}.");
 		}
 	}
 

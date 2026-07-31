@@ -54,7 +54,6 @@ public partial class StageSettings : Node3D
 		UpdateQualitySettings();
 
 		// Update gameplay sfx audio channel
-		SoundManager.SetAudioBusVolume(SoundManager.AudioBuses.GameSfx, IsControlTest ? 100 : 0);
 		SoundManager.instance?.SetStageMusicVolume(0f);
 
 		if (IsControlTest)
@@ -123,6 +122,13 @@ public partial class StageSettings : Node3D
 
 		SetEnvironmentFxFactor(environmentFxFactor, 0);
 
+		CollisionRoot ??= GetNodeOrNull<Node3D>("Collision");
+		if (CollisionRoot != null)
+		{
+			DebugManager.Instance.CollisionToggled += UpdateCollisionVisibility;
+			UpdateCollisionVisibility();
+		}
+
 		string bgmID;
 		currentBGM = null;
 		if (SaveManager.ActiveGameData.selectedMusic.ContainsKey(Data.LevelID))
@@ -158,6 +164,8 @@ public partial class StageSettings : Node3D
 		RevertRequiredSkill();
 		EmitSignal(SignalName.Unloaded);
 	}
+
+	private void UpdateCollisionVisibility() => CollisionRoot.Visible = !DebugManager.IsCollisionCulled;
 
 	public void UpdateQualitySettings()
 	{
@@ -263,7 +271,6 @@ public partial class StageSettings : Node3D
 	private void StartLevel()
 	{
 		LevelState = LevelStateEnum.Ingame;
-		SoundManager.SetAudioBusVolume(SoundManager.AudioBuses.GameSfx, 100); // Unmute gameplay sound effects
 		TransitionManager.FinishTransition();
 		EmitSignal(SignalName.LevelStarted);
 	}
@@ -275,6 +282,7 @@ public partial class StageSettings : Node3D
 	[Export] public BGMResource DefaultBgm { get; private set; }
 	private BGMResource currentBGM;
 	[Export] private bool disableObjectiveAutocompletion;
+	[Export] public Node3D CollisionRoot { get; private set; }
 	[Export] public CameraSettingsResource InitialCameraSettings { get; private set; }
 	[Export] public SFXLibraryResource dialogLibrary;
 

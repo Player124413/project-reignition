@@ -778,7 +778,6 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 7.8)
 [node name="SpikePanel1" parent="RaceAct/Sidle/SidleGroup2" unique_id=1585463951 instance=ExtResource("14_x5vcq")]
 transform = Transform3D(-4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 0.100006, 0.8, -4)
 stateLengths = PackedFloat32Array(2, 0.4, 0.4)
-"Start Paused" = false
 "State Lengths/inactive" = 2.0
 "State Lengths/warning" = 0.4
 "State Lengths/active" = 0.4
@@ -838,7 +837,6 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0249939, 0, -33)
 transform = Transform3D(-4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 0.125, 0.8, 1.5)
 stateLengths = PackedFloat32Array(1, 0.8, 0.6)
 "Current State" = 2
-"Start Paused" = false
 "State Lengths/inactive" = 1.0
 "State Lengths/warning" = 0.8
 "State Lengths/active" = 0.6
@@ -847,7 +845,6 @@ stateLengths = PackedFloat32Array(1, 0.8, 0.6)
 transform = Transform3D(-4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 0.125, 0.8, 0)
 stateLengths = PackedFloat32Array(1, 0.8, 0.6)
 "Current State" = 2
-"Start Paused" = false
 "State Lengths/inactive" = 1.0
 "State Lengths/warning" = 0.8
 "State Lengths/active" = 0.6
@@ -856,7 +853,6 @@ stateLengths = PackedFloat32Array(1, 0.8, 0.6)
 transform = Transform3D(-4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 0.125, 0.8, -1.5)
 stateLengths = PackedFloat32Array(1, 0.8, 0.6)
 "Current State" = 2
-"Start Paused" = false
 "State Lengths/inactive" = 1.0
 "State Lengths/warning" = 0.8
 "State Lengths/active" = 0.6
@@ -920,7 +916,6 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -16.5)
 [node name="SpikePanel1" parent="RaceAct/Sidle/SidleGroup3/SpikeGroup3" unique_id=1548274437 instance=ExtResource("14_x5vcq")]
 transform = Transform3D(-4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 0.125, 0.8, 2.25)
 stateLengths = PackedFloat32Array(2, 1, 1.5)
-"Start Paused" = false
 "Start Time" = 1.0
 "State Lengths/inactive" = 2.0
 "State Lengths/warning" = 1.0
@@ -995,8 +990,6 @@ transform = Transform3D(0.906308, 0, 0.422618, 0, 1, 0, -0.422618, 0, 0.906308, 
 "Spawn Settings/Spawn Out Offset" = Vector3(-2, 0, -2)
 "Attack Settings/Flame Active Time" = 3.0
 "Attack Settings/Flame Inactive Time" = 1.0
-"Attack Settings/Flame Aggression Radius" = 0
-"Attack Settings/Attack Instantly" = false
 rangeOverride = 20
 
 [node name="GreenMajin4" parent="RaceAct/Hall/MajinGroup1" unique_id=1756622563 instance=ExtResource("19_8vwyv")]
@@ -1166,8 +1159,6 @@ transform = Transform3D(0.866025, 0, 0.5, 0, 1, 0, -0.5, 0, 0.866025, -40, 0, -1
 "Rotation Settings/Rotation Time" = 0.8
 "Attack Settings/Flame Active Time" = 3.0
 "Attack Settings/Flame Inactive Time" = 1.0
-"Attack Settings/Flame Aggression Radius" = 0
-"Attack Settings/Attack Instantly" = false
 rangeOverride = 25
 
 [node name="FireSoul2" parent="RaceAct/Hall/MajinGroup2" unique_id=1816051941 instance=ExtResource("34_86m7c")]
@@ -1243,6 +1234,8 @@ transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -268
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -5, 0)
 shape = SubResource("BoxShape3D_bhcs1")
 
+[connection signal="Activated" from="Static/Carpet/StartTrigger" to="Static/Collision/CarpetWallOneWay" method="Deactivate"]
+[connection signal="JumpFinished" from="Static/Carpet/EndTrigger/JumpTrigger" to="Static/Collision/CarpetWallOneWay" method="Activate"]
 [connection signal="Activated" from="RaceAct/CullingMap/SidleL" to="RaceAct/Sidle" method="Activate"]
 [connection signal="Deactivated" from="RaceAct/CullingMap/SidleL" to="RaceAct/Sidle" method="Deactivate"]
 [connection signal="Activated" from="RaceAct/CullingMap/StartU" to="RaceAct/Start" method="Deactivate"]
@@ -1255,7 +1248,6 @@ shape = SubResource("BoxShape3D_bhcs1")
 [connection signal="Respawned" from="RaceAct/Hall/ItemBox1/RichRing" to="RaceAct/Hall/ItemBox1/Event" method="Respawn"]
 [connection signal="Activated" from="RaceAct/Hall/CrateGroup3/SpikeBallTrigger" to="RaceAct/Hall/CrateGroup3/Event1" method="Activate"]
 [connection signal="Activated" from="RaceAct/Hall/CrateGroup3/SpikeBallTrigger" to="RaceAct/Hall/CrateGroup3/Event2" method="Activate"]
-[connection signal="Activated" from="RaceAct/Hall/ThornSpring" to="Static/Collision/JumpPanelOneWay" method="Deactivate"]
 [connection signal="Activated" from="RaceAct/Hall/ThornSpring" to="RaceAct/Hall/ThornSpring/Camera" method="Activate"]
 [connection signal="Deactivated" from="RaceAct/Hall/ThornSpring" to="RaceAct/Hall/ThornSpring/Camera" method="Deactivate"]
 

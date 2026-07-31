@@ -76,13 +76,13 @@ public partial class LevelDataResource : Resource
 			ExtensionMethods.CreateProperty("Mission/Type Key", Variant.Type.String),
 			ExtensionMethods.CreateProperty("Mission/Description Key", Variant.Type.String),
 			ExtensionMethods.CreateProperty("Mission/Disable Countdown", Variant.Type.Bool),
-			ExtensionMethods.CreateProperty("Mission/Time Limit", Variant.Type.Int, PropertyHint.Range, "0,640"),
+			ExtensionMethods.CreateProperty("Mission/Time Limit", Variant.Type.Int, PropertyHint.Range, "0,640,or_greater"),
 		];
 
 		if (MissionType != MissionTypeEnum.None && MissionType != MissionTypeEnum.Race
 			&& MissionType != MissionTypeEnum.Deathless && MissionType != MissionTypeEnum.Perfect)
 		{
-			properties.Add(ExtensionMethods.CreateProperty("Mission/Objective Count", Variant.Type.Int, PropertyHint.Range, "0,256"));
+			properties.Add(ExtensionMethods.CreateProperty("Mission/Objective Count", Variant.Type.Int, PropertyHint.Range, "0,256,or_greater"));
 		}
 
 		properties.Add(ExtensionMethods.CreateProperty("Ranking/Skip Score", Variant.Type.Bool));

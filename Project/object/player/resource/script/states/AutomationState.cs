@@ -75,7 +75,7 @@ public partial class AutomationState : PlayerState
 		{
 			// Buffer slide; Used in Night Palace Act 1
 			if ((SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.ChargeJump) && Player.Controller.IsJumpBufferActive) ||
-				Player.Controller.IsActionBufferActive)
+				(!SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.ChargeJump) && Player.Controller.IsActionBufferActive))
 			{
 				Player.Controller.ResetJumpBuffer();
 				Player.Controller.ResetActionBuffer();

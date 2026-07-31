@@ -1,4 +1,4 @@
-[gd_scene format=3 uid="uid://ctfcgpodfhnp0"]
+[gd_scene format=4 uid="uid://ctfcgpodfhnp0"]
 
 [ext_resource type="PackedScene" uid="uid://u5so6ulpdpsk" path="res://area/7 night palace/act 1/environment/01Start.tscn" id="1_c3xql"]
 [ext_resource type="Script" uid="uid://dtkbvehtmy3em" path="res://object/stage/StageSettings.cs" id="1_siayx"]
@@ -79,6 +79,24 @@
 [ext_resource type="AudioStream" uid="uid://bps2bv273awbs" path="res://sound/sfx/stage/pirate storm/cave ambience.wav" id="76_tc8c3"]
 [ext_resource type="AudioStream" uid="uid://b7oft4g34vp5u" path="res://sound/sfx/stage/levitated ruin/ambience.wav" id="77_scag8"]
 
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_7v5kw"]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_mgnt4"]
+resource_name = "Collision_CarpetWallOneWay"
+_surfaces = [{
+"aabb": AABB(-141.11586, -103.99826, -493.173, 423.2553, 123.03414, 13.011536),
+"attribute_data": PackedByteArray("AAD//wAA//8AAP//AAD//wAA//8AAP//AAD//wAA//8="),
+"format": 34896613399,
+"index_count": 12,
+"index_data": PackedByteArray("AAABAAIAAAADAAEABAAFAAYABAAHAAUA"),
+"material": SubResource("StandardMaterial3D_7v5kw"),
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 8,
+"vertex_data": PackedByteArray("AAD//7W6/78AAIHc////vwAAgdy1uv+/AAD//////7/2/wAAAAD/////yDd1fP//9v/INwAA/////wAAdXz///9/////f////3////9///9HwP9/R8D/f0fA/39HwP9/")
+}]
+blend_shape_mode = 0
+
 [sub_resource type="BoxShape3D" id="BoxShape3D_mow5f"]
 size = Vector3(20, 20, 5)
 
@@ -154,6 +172,9 @@ size = Vector3(30, 15, 50)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_eiht3"]
 size = Vector3(20, 5, 38)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_yqb8e"]
+size = Vector3(40, 100, 5)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_scag8"]
 size = Vector3(10, 20, 3)
@@ -1036,6 +1057,9 @@ Environment = NodePath("WorldEnvironment")
 [node name="Collision" parent="." unique_id=380368419 instance=ExtResource("9_oaikh")]
 visible = false
 
+[node name="CarpetWallOneWay" parent="Collision" index="5" unique_id=1346486167]
+mesh = SubResource("ArrayMesh_mgnt4")
+
 [node name="Trigger" type="Node3D" parent="." unique_id=148784477]
 
 [node name="Checkpoint" type="Node3D" parent="Trigger" unique_id=1029333055]
@@ -1341,6 +1365,17 @@ script = ExtResource("10_tmf6t")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -5, 0)
 shape = SubResource("BoxShape3D_xr06l")
 
+[node name="TowerFallTrigger" parent="Trigger/Object" unique_id=1587183957 instance=ExtResource("4_d1bik")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -76, -20, -328)
+"Enter Mode" = 0
+
+[node name="Fall" type="Node3D" parent="Trigger/Object/TowerFallTrigger" unique_id=517066163]
+script = ExtResource("10_tmf6t")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Trigger/Object/TowerFallTrigger" unique_id=69802520]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -5, 0)
+shape = SubResource("BoxShape3D_xr06l")
+
 [node name="SpaceAAutomation" parent="Trigger/Object" unique_id=1654229503 instance=ExtResource("6_6kpe1")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 975, 0, -560)
 endPoint = 242.0
@@ -1466,7 +1501,7 @@ shape = SubResource("BoxShape3D_xr06l")
 [node name="Path" type="Node3D" parent="Trigger" unique_id=294722663]
 
 [node name="MainPath2" parent="Trigger/Path" unique_id=1184602756 instance=ExtResource("4_d1bik")]
-transform = Transform3D(0.707107, 0, -0.707107, 0, 1, 0, 0.707107, 0, 0.707107, -83.2426, -4, -325.343)
+transform = Transform3D(-4.37114e-08, 0, -1.0000002, 0, 1, 0, 1.0000002, 0, -4.37114e-08, -83.2426, -4, -332.343)
 "Enter Mode" = 0
 
 [node name="Path" type="Node3D" parent="Trigger/Path/MainPath2" unique_id=952246795 node_paths=PackedStringArray("path")]
@@ -1474,7 +1509,7 @@ script = ExtResource("7_omcuu")
 path = NodePath("../../../../Path/MainPath2")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Trigger/Path/MainPath2" unique_id=434904898]
-shape = SubResource("BoxShape3D_mow5f")
+shape = SubResource("BoxShape3D_yqb8e")
 
 [node name="MainPath3" type="Node3D" parent="Trigger/Path" unique_id=544806897 node_paths=PackedStringArray("path")]
 transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -195.024, -14.9985, -351.506)
@@ -2790,15 +2825,15 @@ attenuation_filter_db = 0.0
 [connection signal="Activated" from="Visuals/underlight_trigger_final" to="Visuals/UnderlightEvent" method="Activate"]
 [connection signal="Deactivated" from="Visuals/underlight_trigger_final" to="Visuals/UnderlightEvent" method="Deactivate"]
 [connection signal="Activated" from="Carpet/AutorunTrigger" to="Carpet/Autorun" method="Activate"]
-[connection signal="Activated" from="Carpet/StartTrigger" to="Collision/CarpetWallOneWay" method="Deactivate"]
 [connection signal="Activated" from="Carpet/StartTrigger" to="Carpet/Autorun" method="Deactivate"]
+[connection signal="Activated" from="Carpet/StartTrigger" to="Collision/CarpetWallOneWay" method="Deactivate"]
 [connection signal="JumpFinished" from="Carpet/StartTrigger/JumpTrigger" to="Carpet/Carpet" method="Activate"]
 [connection signal="Activated" from="Carpet/Carpet" to="Carpet/Carpet/Camera" method="Activate"]
 [connection signal="Activated" from="Carpet/Carpet" to="Carpet/Carpet/Path" method="Activate"]
 [connection signal="Activated" from="Carpet/EndTrigger" to="Carpet/Carpet" method="Deactivate"]
 [connection signal="Activated" from="Carpet/EndTrigger" to="Carpet/Carpet/Camera" method="Deactivate"]
-[connection signal="JumpFinished" from="Carpet/EndTrigger/JumpTrigger" to="Collision/CarpetWallOneWay" method="Activate"]
 [connection signal="JumpFinished" from="Carpet/EndTrigger/JumpTrigger" to="Trigger/Path/MainPath4" method="Activate"]
+[connection signal="JumpFinished" from="Carpet/EndTrigger/JumpTrigger" to="Collision/CarpetWallOneWay" method="Activate"]
 
 [editable path="Collision"]
 [editable path="Visuals/MainSection/Skybox"]

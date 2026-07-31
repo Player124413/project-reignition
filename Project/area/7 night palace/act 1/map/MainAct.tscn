@@ -1199,7 +1199,7 @@ _data = {
 Data = ExtResource("2_wwd1j")
 InitialCameraSettings = ExtResource("3_mltpg")
 
-[node name="Skeleton3D" parent="Static/Visuals/MainSection/Skybox/SkyRoot" parent_id_path=PackedInt32Array(1353020561, 1114181453, 1157535321) index="0" unique_id=1266463528]
+[node name="Skeleton3D" parent="Static/Visuals/MainSection/Skybox/SkyRoot" parent_id_path=PackedInt32Array(1353020561, 1114181453, 468969659) index="0" unique_id=1072610300]
 bones/1/position = Vector3(0, 0, 950.00024)
 bones/1/rotation = Quaternion(1.1520229e-07, 0.70710695, 0.7071066, 1.1520233e-07)
 
@@ -1621,7 +1621,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 5)
 [node name="Footing" type="Node3D" parent="MainAct/Sidle/SidleGroup2" unique_id=1872813746]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -3)
 
-[node name="SidleFooting1" parent="MainAct/Sidle/SidleGroup2/Footing" unique_id=1441773959 instance=ExtResource("5_6dn8w")]
+[node name="SidleFooting1" parent="MainAct/Sidle/SidleGroup2/Footing" unique_id=1441773959 groups=["player"] instance=ExtResource("5_6dn8w")]
 "Falling Platform Settings/Shake Length" = 2.0
 
 [node name="SidleFooting2" parent="MainAct/Sidle/SidleGroup2/Footing" unique_id=498286399 instance=ExtResource("5_6dn8w")]
@@ -7852,8 +7852,10 @@ shape = SubResource("BoxShape3D_uu756")
 [node name="AnimationPlayer" type="AnimationPlayer" parent="MainAct/GasRoom/GasTrigger" unique_id=487665914]
 libraries/ = SubResource("AnimationLibrary_1vic0")
 
+[connection signal="Activated" from="Static/Carpet/StartTrigger" to="Static/Collision/CarpetWallOneWay" method="Deactivate"]
 [connection signal="Activated" from="Static/Carpet/Carpet" to="MainAct/DialogTriggers/CarpetDialog" method="Activate"]
 [connection signal="Activated" from="Static/Carpet/EndTrigger" to="MainAct/DialogTriggers/CarpetEndDialog" method="Activate"]
+[connection signal="JumpFinished" from="Static/Carpet/EndTrigger/JumpTrigger" to="Static/Collision/CarpetWallOneWay" method="Activate"]
 [connection signal="Activated" from="MainAct/CullingMap/SidleL" to="MainAct/Sidle" method="Activate"]
 [connection signal="Deactivated" from="MainAct/CullingMap/SidleL" to="MainAct/Sidle" method="Deactivate"]
 [connection signal="Activated" from="MainAct/CullingMap/StartU" to="MainAct/Start" method="Deactivate"]
@@ -7885,7 +7887,6 @@ libraries/ = SubResource("AnimationLibrary_1vic0")
 [connection signal="Respawned" from="MainAct/Hall/ItemBox2" to="MainAct/Hall/ItemBox2/Event" method="Respawn"]
 [connection signal="Collected" from="MainAct/Hall/ItemBox3" to="MainAct/Hall/ItemBox3/Event" method="Activate"]
 [connection signal="Respawned" from="MainAct/Hall/ItemBox3" to="MainAct/Hall/ItemBox3/Event" method="Respawn"]
-[connection signal="Activated" from="MainAct/Hall/JumpPanel" to="Static/Collision/JumpPanelOneWay" method="Deactivate"]
 [connection signal="Activated" from="MainAct/Hall/JumpPanel" to="MainAct/Hall/JumpPanel/Camera" method="Activate"]
 [connection signal="Deactivated" from="MainAct/Hall/JumpPanel" to="MainAct/Hall/JumpPanel/Camera" method="Deactivate"]
 [connection signal="Defeated" from="MainAct/Tower/MajinGroup1/RedMajin1" to="MainAct/Tower/MajinGroup1/EnemyStone" method="IncrementCounter"]
