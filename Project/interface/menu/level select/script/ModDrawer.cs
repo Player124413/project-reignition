@@ -44,19 +44,6 @@ public partial class ModDrawer : Menu
 		base.SetUp();
 	}
 
-
-	public override void _Process(double _)
-	{
-		float targetScrollPosition = 360 * scrollRatio;
-
-		// Update cursor position
-		float targetCursorPosition = cursorPosition * ScrollInterval;
-		cursor.Position = cursor.Position.SmoothDamp(Vector2.Down * targetCursorPosition, ref cursorVelocity, CursorSmoothing);
-
-		Vector2 targetContainerPosition = new(optionContainer.Position.X, -scrollAmount * ScrollInterval);
-		optionContainer.Position = optionContainer.Position.SmoothDamp(targetContainerPosition, ref containerVelocity, ScrollSmoothing);
-	}
-
 	protected override void ProcessMenu()
 	{
 		if (Input.IsActionJustPressed("button_attack"))

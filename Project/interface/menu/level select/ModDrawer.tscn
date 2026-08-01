@@ -7,6 +7,8 @@
 [ext_resource type="FontFile" uid="uid://w7hk0poeo3qf" path="res://interface/font/bitmap fonts/Skill Select.fnt" id="5_fhdh1"]
 [ext_resource type="PackedScene" uid="uid://b6v3sm1vo8for" path="res://interface/menu/skill select/SkillOption.tscn" id="6_ux6yi"]
 [ext_resource type="Texture2D" uid="uid://c2hlq1r5rff2u" path="res://interface/menu/skill select/texture/cursor.png" id="7_npr52"]
+[ext_resource type="Script" uid="uid://djp5tmkntlvnk" path="res://interface/menu/level select/script/CharacterModSelect.cs" id="7_o77ir"]
+[ext_resource type="PackedScene" uid="uid://d08kexru3xa83" path="res://interface/menu/level select/CharacterModOption.tscn" id="8_pmxrd"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_ux6yi"]
 font = ExtResource("5_fhdh1")
@@ -253,10 +255,10 @@ anchor_left = 0.104
 anchor_top = 0.89
 anchor_right = 0.889
 anchor_bottom = 1.0
-offset_left = -63.333355
-offset_top = -36.000004
-offset_right = 492.84464
-offset_bottom = 23.999996
+offset_left = -65.9998
+offset_top = -36.0
+offset_right = 490.17816
+offset_bottom = 24.0
 texture = ExtResource("1_6h3ke")
 region_rect = Rect2(379, 60, 94, 60)
 axis_stretch_horizontal = 1
@@ -294,7 +296,6 @@ patch_margin_right = 32
 patch_margin_bottom = 32
 
 [node name="Input" parent="Window" unique_id=870845574 instance=ExtResource("2_5g0n3")]
-anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 offset_left = -918.0
@@ -334,36 +335,40 @@ horizontal_alignment = 1
 vertical_alignment = 1
 uppercase = true
 
-[node name="Clip" type="Control" parent="Window" unique_id=307503532]
-modulate = Color(1, 1, 1, 0)
+[node name="Clip" type="Control" parent="Window" unique_id=1150017004 node_paths=PackedStringArray("defaultOption", "optionContainer")]
+custom_minimum_size = Vector2(1072, 500)
 clip_contents = true
 layout_mode = 3
 anchor_left = 0.102
 anchor_top = 0.178
 anchor_right = 0.894
 anchor_bottom = 0.652
-offset_left = -1310.95
+offset_left = -1323.44
 offset_top = -220.0
-offset_right = -981.0
-offset_bottom = 528.0
+offset_right = 427.0
+offset_bottom = 505.0
 grow_horizontal = 2
 grow_vertical = 2
 size_flags_horizontal = 0
 mouse_filter = 2
+script = ExtResource("7_o77ir")
+defaultOption = NodePath("Options/Default")
+skillOption = ExtResource("8_pmxrd")
+optionContainer = NodePath("Options")
 metadata/_edit_group_ = true
 
-[node name="Options" type="VBoxContainer" parent="Window/Clip" unique_id=1019950672]
+[node name="Options" type="VBoxContainer" parent="Window/Clip" unique_id=1043386269]
 layout_mode = 1
 anchors_preset = -1
 anchor_right = 1.0
-anchor_bottom = 0.99200004
 offset_top = -3.0
-offset_bottom = -0.016052246
+offset_right = -718.0
+offset_bottom = 760.0
 grow_horizontal = 2
 mouse_filter = 2
 theme_override_constants/separation = -2
 
-[node name="SkillOption" parent="Window/Clip/Options" unique_id=1815818537 instance=ExtResource("6_ux6yi")]
+[node name="Default" parent="Window/Clip/Options" unique_id=1815818537 instance=ExtResource("8_pmxrd")]
 layout_mode = 2
 
 [node name="CursorOrigin" type="Node2D" parent="Window" unique_id=1653889001]
