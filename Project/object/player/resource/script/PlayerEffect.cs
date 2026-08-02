@@ -561,7 +561,7 @@ public partial class PlayerEffect : Node3D
 	/// <summary> Stops any currently active voice clip and mutes the voice channel. </summary>
 	private void OnSpeakerStarted(SoundManager.SpeakerEnum speaker)
 	{
-		if (speaker != SoundManager.SpeakerEnum.Sonic)
+		if (speaker != SoundManager.SpeakerEnum.Sonic || !IsInstanceValid(voiceChannel))
 			return;
 
 		voiceChannel.Stop();
@@ -571,7 +571,7 @@ public partial class PlayerEffect : Node3D
 	/// <summary> Stops any currently active voice clip and resets channel volume. </summary>
 	private void OnSpeakerFinished(SoundManager.SpeakerEnum speaker)
 	{
-		if (speaker != SoundManager.SpeakerEnum.Sonic)
+		if (speaker != SoundManager.SpeakerEnum.Sonic || !IsInstanceValid(voiceChannel))
 			return;
 
 		voiceChannel.Stop();
