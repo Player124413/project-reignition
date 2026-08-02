@@ -120,7 +120,10 @@ public partial class PlayerState : Node
 
 		Player.StrafeSpeed = Player.Stats.StrafeSettings.UpdateInterpolateSigned(Player.StrafeSpeed, input);
 		if (!Player.IsOnGround)
-			Player.StrafeSpeed = Mathf.Clamp(Player.StrafeSpeed, -Player.MoveSpeed, Player.MoveSpeed);
+		{
+			float maxSpeed = Mathf.Abs(Player.MoveSpeed);
+			Player.StrafeSpeed = Mathf.Clamp(Player.StrafeSpeed, -maxSpeed, maxSpeed);
+		}
 	}
 
 	private bool IsBraking(float inputAngle)
