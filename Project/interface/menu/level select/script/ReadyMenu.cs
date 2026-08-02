@@ -1,3 +1,5 @@
+using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using Godot;
 using Project.Core;
 using Project.Gameplay;
@@ -11,6 +13,7 @@ public partial class ReadyMenu : Menu
 	[Export] private Description description;
 	[Export] private AnimationPlayer notifAnimPlayer;
 	[Export] private AudioStreamPlayer selectSfx;
+	[Export] private ModDrawer modDrawer;
 	public void ShowDescription() => description.ShowDescription();
 	public void HideDescription() => description.HideDescription();
 
@@ -19,6 +22,8 @@ public partial class ReadyMenu : Menu
 
 	public override void ShowMenu()
 	{
+		modDrawer.Appear();
+		modDrawer.CanOpen(true);
 		if (menuMemory[MemoryKeys.SkillMenuOpen] == 1)
 		{
 			animator.Play("show-from-skill");
@@ -58,6 +63,8 @@ public partial class ReadyMenu : Menu
 	{
 		if (Runtime.Instance.IsActionJustPressed("sys_pause", "ui_accept") && !Input.IsActionJustPressed("toggle_fullscreen"))
 		{
+			modDrawer.CanOpen(false);
+			modDrawer.Disappear();
 			menuMemory[MemoryKeys.SkillMenuOpen] = 1;
 			HideDescription();
 			OpenSubmenu();
@@ -77,6 +84,8 @@ public partial class ReadyMenu : Menu
 		{
 			StopBgm(); // Stop bgm
 
+			modDrawer.Disappear();
+			modDrawer.CanOpen(false);
 			if (!TimeAttackManager.Instance.IsRunActive)
 				menuMemory[MemoryKeys.ActiveMenu] = (int)MemoryKeys.LevelSelect;
 			else
@@ -105,6 +114,7 @@ public partial class ReadyMenu : Menu
 		}
 		else
 		{
+			modDrawer.CanOpen(false);
 			Cancel();
 		}
 	}
@@ -117,6 +127,7 @@ public partial class ReadyMenu : Menu
 
 	protected override void Cancel()
 	{
+		modDrawer.CanOpen(false);
 		HorizontalSelection = 1;
 		animator.Play("select-no");
 		animator.Advance(0.0);

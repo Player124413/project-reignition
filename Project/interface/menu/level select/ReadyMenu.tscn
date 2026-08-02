@@ -897,6 +897,44 @@ tracks/9/keys = {
 "values": [Color(1, 1, 1, 1), Color(1, 1, 1, 1), Color(1, 1, 1, 0)]
 }
 
+[sub_resource type="Animation" id="Animation_a50ct"]
+resource_name = "disable-controls"
+length = 0.1
+step = 0.1
+tracks/0/type = "method"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"DisableProcessing"
+}]
+}
+
+[sub_resource type="Animation" id="Animation_ft46h"]
+resource_name = "enable-controls"
+length = 0.1
+step = 0.1
+tracks/0/type = "method"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"EnableProcessing"
+}]
+}
+
 [sub_resource type="Animation" id="Animation_6i2cj"]
 resource_name = "init"
 length = 0.001
@@ -1455,6 +1493,8 @@ _data = {
 &"RESET": SubResource("Animation_fjqwi"),
 &"cancel": SubResource("Animation_ow2hg"),
 &"confirm": SubResource("Animation_xs86i"),
+&"disable-controls": SubResource("Animation_a50ct"),
+&"enable-controls": SubResource("Animation_ft46h"),
 &"init": SubResource("Animation_6i2cj"),
 &"open-skill-menu": SubResource("Animation_sns38"),
 &"select-no": SubResource("Animation_ablxt"),
@@ -1464,7 +1504,7 @@ _data = {
 &"show-from-skill": SubResource("Animation_sgy3m")
 }
 
-[node name="ReadyMenu" type="Control" unique_id=188215903 node_paths=PackedStringArray("mapLabel", "missionLabel", "notifAnimPlayer", "selectSfx", "animator")]
+[node name="ReadyMenu" type="Control" unique_id=188215903 node_paths=PackedStringArray("mapLabel", "missionLabel", "notifAnimPlayer", "selectSfx", "modDrawer", "animator")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -1477,6 +1517,7 @@ mapLabel = NodePath("Menu/Text/MapLabel")
 missionLabel = NodePath("Menu/Text/MissionLabel")
 notifAnimPlayer = NodePath("Menu/NavigationButtons/Skill/StoryMarker/AnimationPlayer")
 selectSfx = NodePath("SFX/Select")
+modDrawer = NodePath("ModDrawer")
 submenus = Array[NodePath]([])
 animator = NodePath("AnimationPlayer")
 
@@ -2272,13 +2313,16 @@ bus = &"SFX"
 libraries/ = SubResource("AnimationLibrary_hjga2")
 autoplay = &"init"
 
-[node name="ModDrawer" parent="." unique_id=506154412 instance=ExtResource("26_o7x68")]
+[node name="ModDrawer" parent="." unique_id=506154412 node_paths=PackedStringArray("readyAnimator") instance=ExtResource("26_o7x68")]
+z_index = 500
+z_as_relative = false
 layout_mode = 1
 anchors_preset = 0
 anchor_right = 0.0
 anchor_bottom = 0.0
 grow_horizontal = 1
 grow_vertical = 1
+readyAnimator = NodePath("../AnimationPlayer")
 
 [connection signal="mouse_entered" from="Menu/Text/Buttons/Options/Yes" to="." method="ReceiveMouseInput" binds= [0]]
 [connection signal="mouse_exited" from="Menu/Text/Buttons/Options/Yes" to="." method="ReceiveMouseInput" binds= [-1]]

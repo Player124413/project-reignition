@@ -1,4 +1,5 @@
 using System.Linq;
+using System.Reflection.Metadata.Ecma335;
 using Godot;
 using Godot.Collections;
 using Project.Core;
@@ -10,33 +11,12 @@ namespace Project.Interface.Menus;
 public partial class ModDrawer : Menu
 {
 
-	[Export] private PackedScene skillOption;
-	[Export] private VBoxContainer optionContainer;
-	[Export] private Node2D cursor;
-	[Export] private AnimationPlayer cursorAnimator;
+	[Export] CharacterModSelect charSelect;
 	[Export] private AnimationPlayer drawerAnimator;
-	private SkillOption SelectedSkill => skillOptionList[VerticalSelection];
-	private bool isNothingSelected;
-
-	private SkillListResource SkillList => Runtime.Instance.SkillList;
-	private SkillRing ActiveSkillRing => SaveManager.ActiveSkillRing;
-
-	private int cursorPosition;
-	private Vector2 cursorVelocity;
-	private const float CursorSmoothing = .1f;
-
-	private int scrollAmount;
-	private float scrollRatio;
-	private Vector2 scrollVelocity;
-	private Vector2 containerVelocity;
-	private const float ScrollSmoothing = .1f;
-	/// <summary> How much to scroll per skill. </summary>
-	private readonly int ScrollInterval = 62;
-	/// <summary> Number of skills on a single page. </summary>
-	private readonly int PageSize = 8;
-	private readonly Array<SkillOption> skillOptionList = [];
+	[Export] private AnimationPlayer readyAnimator;
 
 	private bool isOpen = false;
+	private bool canOpen = false;
 
 
 	protected override void SetUp()
@@ -46,22 +26,50 @@ public partial class ModDrawer : Menu
 
 	protected override void ProcessMenu()
 	{
-		if (Input.IsActionJustPressed("button_attack"))
+		if (Input.IsActionJustPressed("button_attack") && canOpen)
 		{
 			if (!isOpen)
 			{
+				charSelect.Redraw();
 				drawerAnimator.Play("show");
+				readyAnimator.Play("disable-controls");
 				isOpen = true;
 			}
 			else
 			{
 				drawerAnimator.Play("hide");
+				readyAnimator.Play("enable-controls");
 				isOpen = false;
 			}
 			return;
 		}
 		base.ProcessMenu();
 	}
+
+    protected override void Cancel()
+    {
+		if (isOpen)
+		{
+			drawerAnimator.Play("hide");
+			readyAnimator.Play("enable-controls");
+			isOpen = false;
+		}
+        base.Cancel();
+    }
+
+	public bool IsOpen() {return isOpen;}
+
+	public void Disappear()
+	{
+		drawerAnimator.Play("disappear");
+	}
+
+	public void Appear()
+	{
+		drawerAnimator.Play("appear");
+	}
+
+	public void CanOpen(bool open) => canOpen = open;
 
 
 }
