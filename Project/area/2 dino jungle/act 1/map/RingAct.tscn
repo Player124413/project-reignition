@@ -28,8 +28,8 @@
 [sub_resource type="BoxShape3D" id="BoxShape3D_1mwhh"]
 size = Vector3(100, 100, 250)
 
-[sub_resource type="BoxShape3D" id="BoxShape3D_rumy6"]
-size = Vector3(30, 100, 40)
+[sub_resource type="BoxShape3D" id="BoxShape3D_2afqi"]
+size = Vector3(30, 100, 26)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_mynxt"]
 size = Vector3(12, 20, 1)
@@ -142,8 +142,9 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -191.607, 0, -469.66)
 script = ExtResource("3_5ajvl")
 lockoutData = ExtResource("7_rbj8t")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="MainAct/SpawnPosition/AutoRecenterLockout" unique_id=1004227116]
-shape = SubResource("BoxShape3D_rumy6")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="MainAct/SpawnPosition/AutoRecenterLockout" unique_id=693199461]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 7)
+shape = SubResource("BoxShape3D_2afqi")
 
 [node name="CharacterSpawn" parent="MainAct/SpawnPosition" unique_id=433421998 instance=ExtResource("5_4dy7b")]
 
@@ -1879,6 +1880,11 @@ transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 8.895,
 MaxSpeed = 30.0
 path = NodePath("../../../Static/Path/RiverPath")
 pathFollower = NodePath("../../../Static/Path/RiverPath/RiverBoatPathFollower")
+
+[node name="Lockout" type="Node3D" parent="MainAct/River/Boat" unique_id=922745674]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 4.42801, 55.898, -12.242)
+script = ExtResource("3_5ajvl")
+lockoutData = ExtResource("17_f6y0o")
 
 [node name="BoatStartTrigger" parent="MainAct/River" unique_id=1091402437 instance=ExtResource("2_tlcwl")]
 transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 8.59502, 0, 4.405)
@@ -3692,5 +3698,6 @@ shape = SubResource("BoxShape3D_wioka")
 
 [connection signal="Activated" from="MainAct/TrioStartTrigger" to="MainAct/Chase/DinoTrioGroup" method="Activate"]
 [connection signal="Respawned" from="MainAct/TrioStartTrigger" to="MainAct/Chase/DinoTrioGroup" method="Deactivate"]
+[connection signal="Activated" from="MainAct/River/Boat" to="MainAct/River/Boat/Lockout" method="Deactivate"]
 [connection signal="Activated" from="MainAct/River/BoatStartTrigger" to="MainAct/River/Boat" method="Activate"]
 [connection signal="Activated" from="MainAct/River/BoatEndTrigger" to="MainAct/River/Boat" method="Deactivate"]
