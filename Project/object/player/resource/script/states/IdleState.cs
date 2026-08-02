@@ -74,13 +74,15 @@ public partial class IdleState : PlayerState
 				return darkspineSpinState;
 		}
 
+		float targetInputAngle = Player.Controller.GetTargetInputAngle();
+		float targetInputStrength = Player.Controller.GetInputStrength();
 		if (SaveManager.ActiveSkillRing.IsAutorunActive && !Player.Controller.IsBrakeHeld())
-			Player.IsMovingBackward = Player.Controller.IsHoldingDirection(Player.Controller.GetTargetInputAngle(), Player.PathFollower.BackAngle);
+			Player.IsMovingBackward = Player.Controller.IsHoldingDirection(targetInputAngle, Player.PathFollower.BackAngle);
 
 		if (!Player.CheckGround())
 			return fallState;
 
-		Player.CheckWall(CalculateWallCastDirection());
+		Player.CheckWall(CalculateWallCastDirection(targetInputAngle, targetInputStrength));
 		if (Player.CheckCeiling())
 			return null;
 
@@ -92,11 +94,11 @@ public partial class IdleState : PlayerState
 			if (Player.IsLockoutActive && Player.ActiveLockoutData.overrideSpeed && !Mathf.IsZeroApprox(Player.ActiveLockoutData.speedRatio))
 				return runState;
 
-			bool hasInputStrength = !Mathf.IsZeroApprox(Player.Controller.GetInputStrength());
+			bool hasInputStrength = !Mathf.IsZeroApprox(targetInputStrength);
 			if (!Player.Controller.IsBrakeHeld() &&
 				((SaveManager.ActiveSkillRing.IsAutorunActive && !Player.IsOnWall) || hasInputStrength))
 			{
-				if (Player.Controller.GetHoldingDistance(Player.Controller.GetTargetInputAngle(), Player.PathFollower.ForwardAngle) >= 1.0f &&
+				if (Player.Controller.GetHoldingDistance(targetInputAngle, Player.PathFollower.ForwardAngle) >= 1.0f &&
 					hasInputStrength && !SaveManager.ActiveSkillRing.IsFreeRoamActive)
 				{
 					return backstepState;
@@ -117,16 +119,15 @@ public partial class IdleState : PlayerState
 		return null;
 	}
 
-	private Vector3 CalculateWallCastDirection()
+	private Vector3 CalculateWallCastDirection(float inputAngle, float inputStrength)
 	{
 		if (!SaveManager.ActiveSkillRing.IsAutorunActive &&
-			Mathf.IsZeroApprox(Player.Controller.GetInputStrength()))
+			Mathf.IsZeroApprox(inputStrength))
 		{
 			return Player.GetMovementDirection();
 		}
 
-		float targetAngle = Player.Controller.GetTargetMovementAngle();
-		float deltaAngle = ExtensionMethods.SignedDeltaAngleRad(targetAngle, Player.PathFollower.ForwardAngle);
+		float deltaAngle = ExtensionMethods.SignedDeltaAngleRad(inputAngle, Player.PathFollower.ForwardAngle);
 		return Player.PathFollower.ForwardAxis.Rotated(Player.UpDirection, deltaAngle);
 	}
 }

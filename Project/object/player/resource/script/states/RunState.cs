@@ -46,8 +46,8 @@ public partial class RunState : PlayerState
 
 	public override PlayerState ProcessPhysics()
 	{
-		ProcessMoveSpeed();
 		ProcessTurning();
+		ProcessMoveSpeed();
 		Player.AddSlopeSpeed();
 		Player.ApplyMovement();
 		Player.CheckGround();
