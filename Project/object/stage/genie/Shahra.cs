@@ -29,8 +29,8 @@ public partial class Shahra : Node3D
 
 	public override void _Ready()
 	{
-		SoundManager.instance.Connect(SoundManager.SignalName.ShahraSpeechStart, new(this, MethodName.StartShahra));
-		SoundManager.instance.Connect(SoundManager.SignalName.ShahraSpeechEnd, new(this, MethodName.StopShahra));
+		SoundManager.instance.CharacterSpeechStarted += OnSpeakerStarted;
+		SoundManager.instance.CharacterSpeechFinished += OnSpeakerFinished;
 	}
 
 	public override void _PhysicsProcess(double _)
@@ -72,14 +72,19 @@ public partial class Shahra : Node3D
 		root.Position = targetPosition + (Vector3.Up * .5f);
 	}
 
-	private void StartShahra()
+	private void OnSpeakerStarted(SoundManager.SpeakerEnum speaker)
 	{
-		// TODO allow different speeds
+		if (speaker != SoundManager.SpeakerEnum.Shahra)
+			return;
+
 		currentState = ShahraState.Active;
 	}
 
-	private void StopShahra()
+	private void OnSpeakerFinished(SoundManager.SpeakerEnum speaker)
 	{
+		if (speaker != SoundManager.SpeakerEnum.Shahra)
+			return;
+
 		currentState = ShahraState.Inactive;
 	}
 }
