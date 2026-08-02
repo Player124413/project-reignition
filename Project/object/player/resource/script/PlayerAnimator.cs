@@ -101,6 +101,10 @@ public partial class PlayerAnimator : Node3D
 	{
 		oneShotTrigger.FadeInTime = fadein;
 		oneShotTrigger.FadeOutTime = fadeout;
+
+		SnapToGround();
+		IsFallTransitionEnabled = true;
+
 		animationTree.Set(OneshotTrigger, (int)AnimationNodeOneShot.OneShotRequest.Fire);
 		animationTree.Set(OneshotSeek, 0);
 		animationTree.Set(OneshotTransition, animation);
