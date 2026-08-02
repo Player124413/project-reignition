@@ -17,8 +17,8 @@ namespace Project.CustomNodes
 		[Export]
 		private float radius = .3f; // Radius of the trail
 		[Export]
-		private int resolution = 16; // Resolution of the homing attack trail length-wise
-		[Export(PropertyHint.Range, "0.01, 1, 0.01")]
+		private int resolution = 8; // Resolution of the homing attack trail length-wise
+		[Export(PropertyHint.Range, "0.1, 10, 0.1")]
 		private float distanceDeadzone = .1f; // Resolution of the homing attack trail distance-wise
 		[Export]
 		private float lifetime = .5f; // How long each point should live
@@ -32,6 +32,8 @@ namespace Project.CustomNodes
 		private uint layer;
 		[Export]
 		public Material material;
+
+		private bool isTrailRedrawing;
 
 		private readonly List<Point> points = []; // Data of each point
 		private readonly List<float> pointLifetimes = []; // Lifetime of each point
@@ -54,7 +56,7 @@ namespace Project.CustomNodes
 			VisibilityChanged += UpdateVisibility;
 		}
 
-		public override void _PhysicsProcess(double delta) => CallDeferred(MethodName.UpdateTrail, delta);
+		public override void _Process(double delta) => CallDeferred(MethodName.UpdateTrail, delta);
 
 		private void UpdateVisibility() => trailMeshInstance.Visible = IsVisibleInTree();
 
@@ -62,7 +64,7 @@ namespace Project.CustomNodes
 		{
 			trailMeshInstance.GlobalTransform = GlobalTransform;
 
-			if (IsEmitting && trailMeshInstance.GlobalPosition.DistanceSquaredTo(previousPosition) >= Mathf.Pow(distanceDeadzone, 2.0f)) // Check for new points
+			if (IsEmitting && IsCreatingPoint()) // Check for new points
 				AddPoint();
 
 			for (int i = points.Count - 1; i >= 0; i--) // Update each point in reverse order
@@ -72,11 +74,19 @@ namespace Project.CustomNodes
 					RemovePoint(i);
 			}
 
-			RenderTrail();
+			if (isTrailRedrawing)
+				RenderTrail();
+		}
+
+		private bool IsCreatingPoint()
+		{
+			float dst = trailMeshInstance.GlobalPosition.DistanceSquaredTo(previousPosition);
+			return (points.Count < 2 && dst > 0.1f) || dst >= Mathf.Pow(distanceDeadzone, 2.0f);
 		}
 
 		private void RenderTrail()
 		{
+			isTrailRedrawing = false;
 			trailMesh.ClearSurfaces();
 
 			if (points.Count < 2) // No points to render
@@ -126,6 +136,8 @@ namespace Project.CustomNodes
 
 		private void AddPoint()
 		{
+			isTrailRedrawing = true;
+
 			if (points.Count == 0)
 				previousPosition = trailMeshInstance.GlobalPosition + this.Back();
 
@@ -138,6 +150,8 @@ namespace Project.CustomNodes
 
 		private void RemovePoint(int index)
 		{
+			isTrailRedrawing = true;
+
 			points.RemoveAt(index);
 			pointLifetimes.RemoveAt(index);
 		}
