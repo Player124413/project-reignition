@@ -281,6 +281,24 @@ public partial class TimeAttack : Menu
 	public void SetActive() => isActive = true;
 	public void SetInactive() => isActive = false;
 
-	public void ChangeButtonImage() => buttonImage.Texture = buttonList[currentSelection - 1].image;
+	//public void ChangeButtonImage() => buttonImage.Texture = buttonList[currentSelection - 1].image;
+	public void ChangeButtonImage()
+	{
+
+		if (isRunInProgress)
+		{
+			buttonImage.Texture = buttonList[currentSelection - 1].image;
+			return;
+		}
+		switch (currentSelection)
+		{
+			case 1:
+			buttonImage.Texture = buttonList[0].image;
+			break;
+			case 2:
+			buttonImage.Texture = buttonList[2].image;
+			break;
+		}
+	}
 
 }
