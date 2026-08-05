@@ -65,27 +65,22 @@ public partial class CharacterModSelect : Menu
 				optionContainer.AddChild(newSkill);
 
 
+/*
+				for (int k = 0; k < 14; k++)
+				{
+					ModOption newSkill2 = skillOption.Instantiate<ModOption>();
+					newSkill2.Skill = skill.Augments[j];
+					newSkill2.Initialize();
 
+					skillOptionList.Add(newSkill2);
+					optionContainer.AddChild(newSkill2);
 
-
-				ModOption newSkill2 = skillOption.Instantiate<ModOption>();
-				newSkill2.Skill = skill.Augments[j];
-				newSkill2.Initialize();
-
-				skillOptionList.Add(newSkill2);
-				optionContainer.AddChild(newSkill2);
-
-				ModOption newSkill3 = skillOption.Instantiate<ModOption>();
-				newSkill3.Skill = skill.Augments[j];
-				newSkill3.Initialize();
-
-				skillOptionList.Add(newSkill3);
-				optionContainer.AddChild(newSkill3);
-
-				
+					skillCount += 1;
+				}
+*/
 			}
 
-			skillCount = 3;
+			
 
 		}
 
