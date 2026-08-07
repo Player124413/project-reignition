@@ -1,0 +1,54 @@
+[gd_scene format=3 uid="uid://c55c3h6impt3l"]
+
+[ext_resource type="PackedScene" uid="uid://cv14b3r1pov0q" path="res://object/player/resource/BaseModel.tscn" id="1_sqcms"]
+[ext_resource type="Material" uid="uid://ddgjkiecp1ppu" path="res://object/player/resource/model/material/Sonic Speedbreak Overlay.tres" id="2_c4exe"]
+[ext_resource type="PackedScene" uid="uid://cja2siqtgc41y" path="res://mods/characters/06Sonic/model/06Sonic.glb" id="3_xhdoi"]
+[ext_resource type="PackedScene" uid="uid://nvbpiay8inap" path="res://area/4 levitated ruin/object/model/special/SonicStone.gltf" id="5_tfaby"]
+
+[node name="Model" unique_id=1575568576 instance=ExtResource("1_sqcms")]
+speedbreakOverlayMaterial = ExtResource("2_c4exe")
+
+[node name="Root" parent="." index="0" unique_id=1155292792 instance=ExtResource("3_xhdoi")]
+
+[node name="PetrificationModel" parent="PetrificationModel" parent_id_path=PackedInt32Array(500029751) index="0" unique_id=432863634 instance=ExtResource("5_tfaby")]
+
+[node name="SonicStoneMesh" parent="PetrificationModel/PetrificationModel" index="0" unique_id=1684356800]
+layers = 64
+
+[node name="ChestAttachment" parent="." index="2" unique_id=1656334189]
+transform = Transform3D(1, 7.926856e-07, -7.926858e-07, -7.926857e-07, 0.99999994, 1.5925403e-08, 7.926858e-07, -1.5924991e-08, 1, 5.8068068e-08, 0.55418926, -2.2351742e-08)
+external_skeleton = NodePath("../Root/SonicRoot/Skeleton3D")
+
+[node name="FlameOffset" parent="ChestAttachment" index="0" unique_id=820377634]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+
+[node name="RFoot" parent="." index="3" unique_id=417731183]
+transform = Transform3D(0.987279, 0.15914205, 0.000102379716, 0.00040021027, -0.0031550638, 0.99999493, 0.1591379, -0.9872512, -0.0031785276, -0.07177312, 0.15610445, 0.0008414076)
+bone_idx = 68
+external_skeleton = NodePath("../Root/SonicRoot/Skeleton3D")
+
+[node name="LFoot" parent="." index="4" unique_id=1634768111]
+transform = Transform3D(0.987279, -0.159142, -0.0001023649, -0.00040023308, -0.0031553004, 0.99999464, -0.15913786, -0.9872508, -0.0031787641, 0.07177314, 0.15610449, 0.00084140804)
+external_skeleton = NodePath("../Root/SonicRoot/Skeleton3D")
+
+[node name="DSDefeatRoot" parent="." index="5" unique_id=308768391]
+transform = Transform3D(-0.1736482, 0.49240386, -0.8528685, 0, 0.8660254, 0.5, 0.9848077, 0.0868241, -0.15038374, 0, 0, 0)
+
+[node name="DefeatCamera" parent="DSDefeatRoot" index="0" unique_id=122328087]
+transform = Transform3D(1, 0, 0, 0, 0.8660254, 0.5, 0, -0.5, 0.8660254, 0, 0, 10)
+
+[node name="Effect" parent="." index="7" unique_id=806076737 node_paths=PackedStringArray("landingParticles", "stepEmitters")]
+landingParticles = [NodePath("VFX/LandingFX/LandingDust"), NodePath("VFX/LandingFX/LandingSand"), NodePath("VFX/LandingFX/LandingGrass"), null, NodePath("VFX/LandingFX/LandingSnow"), null, NodePath("VFX/LandingFX/LandingWater"), null, NodePath("VFX/LandingFX/LandingWet"), NodePath("VFX/LandingFX/LandingWet"), null]
+stepEmitters = [NodePath("VFX/StepFX/PavementStep"), NodePath("VFX/StepFX/SandStep"), NodePath("VFX/StepFX/GrassStep"), null, NodePath("VFX/StepFX/SnowStep"), null, NodePath("VFX/StepFX/WaterStep"), null, NodePath("VFX/StepFX/WetStep"), NodePath("VFX/StepFX/WetStep"), null]
+
+[node name="AnimationPlayer" parent="." index="8" unique_id=1818809983]
+root_node = NodePath("../Root/SonicRoot")
+
+[node name="AnimationTree" parent="." index="10" unique_id=859972339]
+root_node = NodePath("../Root/SonicRoot")
+parameters/ground_tree/ds-idle-transition/current_state = "disabled"
+parameters/ground_tree/ds-idle-transition/current_index = 0
+parameters/ground_tree/Blend2/blend_amount = 1.0
+
+[editable path="Root"]
+[editable path="PetrificationModel/PetrificationModel"]
