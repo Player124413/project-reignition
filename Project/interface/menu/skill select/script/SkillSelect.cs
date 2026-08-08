@@ -77,6 +77,9 @@ public partial class SkillSelect : Menu
 			SkillKey key = (SkillKey)i;
 			SkillResource skill = SkillList.GetSkill(key);
 
+			if (key == SkillKey.Character)
+				continue;
+
 			if (skill == null)
 			{
 				skillOptionList.Add(null);

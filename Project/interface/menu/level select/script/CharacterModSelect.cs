@@ -38,32 +38,18 @@ public partial class CharacterModSelect : Menu
 
 	protected override void SetUp()
 	{
-		for (int i = 0; i < (int)SkillKey.Count; i++)
+		// Instance character mod list
+		SkillResource skill = SkillList.GetSkill(SkillKey.Character);
+		skillCount = skill.Augments.Count;
+
+		for (int j = 0; j < skill.Augments.Count; j++)
 		{
-			SkillKey key = (SkillKey)i;
-			SkillResource skill = SkillList.GetSkill(key);
+			ModOption newSkill = skillOption.Instantiate<ModOption>();
+			newSkill.Skill = skill.Augments[j];
+			newSkill.Initialize();
 
-			if (skill.Key != SkillKey.Character) //Only instantiate mods in this list
-				continue;
-
-			if (skill == null)
-			{
-				skillOptionList.Add(null);
-				continue;
-			}
-
-			skillCount = skill.Augments.Count;
-
-			for (int j = 0; j < skill.Augments.Count; j++)
-			{
-				ModOption newSkill = skillOption.Instantiate<ModOption>();
-				newSkill.Skill = skill.Augments[j];
-				newSkill.Initialize();
-
-				skillOptionList.Add(newSkill);
-				optionContainer.AddChild(newSkill);
-
-			}
+			skillOptionList.Add(newSkill);
+			optionContainer.AddChild(newSkill);
 		}
 
 		base.SetUp();
@@ -71,7 +57,6 @@ public partial class CharacterModSelect : Menu
 
 	public override void _Process(double _)
 	{
-		float targetScrollPosition = 360 * scrollRatio;
 		// Update cursor position
 		float targetCursorPosition = cursorPosition * ScrollInterval;
 		cursor.Position = cursor.Position.SmoothDamp(Vector2.Down * targetCursorPosition, ref cursorVelocity, CursorSmoothing);
@@ -93,8 +78,12 @@ public partial class CharacterModSelect : Menu
 			return;
 		}
 
+		int previousSelection = VerticalSelection;
 		int changeAmount = inputSign;
 		VerticalSelection = WrapSelection(VerticalSelection + inputSign, skillCount);
+
+		if (previousSelection == VerticalSelection)
+			return;
 
 		UpdateScrollAmount(changeAmount);
 		MoveCursor();
@@ -160,10 +149,7 @@ public partial class CharacterModSelect : Menu
 
 	protected override void Confirm()
 	{
-		if (!modDrawer.IsOpen)
-			return;
-
-		if (isNothingSelected)
+		if (!modDrawer.IsOpen || isNothingSelected)
 			return;
 
 		if (!ToggleSkill())
@@ -174,35 +160,27 @@ public partial class CharacterModSelect : Menu
 
 	public void Redraw()
 	{
-		
 		for (int i = 0; i < skillCount; i++)
-		{
 			skillOptionList[i].Redraw();
-		}
-
-
 	}
 
 	private bool ToggleSkill()
 	{
-		SkillKey key = SelectedSkill.Skill.Key;
-
 		int augmentIndex = VerticalSelection;
-			augmentIndex++;
+		augmentIndex++;
 
-		if (ActiveSkillRing.IsSkillEquipped(key))
+		if (ActiveSkillRing.IsSkillEquipped(SkillKey.Character))
 		{
-			SkillKey unequippedKey = ActiveSkillRing.UnequipSkill(key, augmentIndex);
-			if (unequippedKey == key)
+			SkillKey unequippedKey = ActiveSkillRing.UnequipSkill(SkillKey.Character, augmentIndex);
+			if (unequippedKey == SkillKey.Character)
 			{
 				animator.Play("unequip");
 				ActiveSkillRing.ResetAugmentIndex(SkillKey.Character);
 				return true;
 			}
-
 		}
 
-		SkillEquipStatusEnum status = ActiveSkillRing.EquipSkill(key, augmentIndex);
+		SkillEquipStatusEnum status = ActiveSkillRing.EquipSkill(SkillKey.Character, augmentIndex);
 		if (status == SkillEquipStatusEnum.Success)
 		{
 			animator.Play("equip");
@@ -240,5 +218,4 @@ public partial class CharacterModSelect : Menu
 		if (VerticalSelection != initialSelection)
 			MoveCursor();
 	}
-
 }
