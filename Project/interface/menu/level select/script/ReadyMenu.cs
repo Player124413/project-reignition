@@ -22,7 +22,6 @@ public partial class ReadyMenu : Menu
 
 	public override void ShowMenu()
 	{
-
 		if (!SaveManager.Config.areCharaModsEnabled)
 			modDrawer.Visible = false;
 

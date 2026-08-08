@@ -128,6 +128,18 @@ tracks/4/keys = {
 "update": 0,
 "values": [Vector2(0, 584)]
 }
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("..:visible")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
 
 [sub_resource type="Animation" id="Animation_rxl6c"]
 resource_name = "cancel"
@@ -306,6 +318,35 @@ tracks/13/keys = {
 "transitions": PackedFloat32Array(1, 0.5),
 "update": 0,
 "values": [Vector2(1140.0676, 123), Vector2(1140.068, 395)]
+}
+tracks/14/type = "value"
+tracks/14/imported = false
+tracks/14/enabled = true
+tracks/14/path = NodePath("..:visible")
+tracks/14/interp = 1
+tracks/14/loop_wrap = true
+tracks/14/keys = {
+"times": PackedFloat32Array(0, 0.333336),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [true, false]
+}
+
+[sub_resource type="Animation" id="Animation_myaxc"]
+resource_name = "init"
+length = 0.001
+step = 0.0333333
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("..:visible")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
 }
 
 [sub_resource type="Animation" id="Animation_g04jy"]
@@ -510,6 +551,7 @@ tracks/13/keys = {
 _data = {
 &"RESET": SubResource("Animation_h3qr1"),
 &"cancel": SubResource("Animation_rxl6c"),
+&"init": SubResource("Animation_myaxc"),
 &"select": SubResource("Animation_g04jy"),
 &"show": SubResource("Animation_8vhjs")
 }
@@ -521,6 +563,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
 script = ExtResource("1_h3qr1")
 levelSelect = NodePath("LevelSelect")
 optionsContainer = NodePath("LevelSelect/Clip/Options")
@@ -534,6 +577,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
 script = ExtResource("3_myaxc")
 description = NodePath("../Description/Description")
 clip = NodePath("Clip")
@@ -545,6 +589,7 @@ animator = NodePath("AnimationPlayer")
 metadata/_edit_group_ = true
 
 [node name="Window" type="Control" parent="LevelSelect" unique_id=1342314310]
+modulate = Color(1, 1, 1, 0)
 layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
@@ -582,6 +627,7 @@ offset_right = 57.0
 offset_bottom = -32.0
 grow_horizontal = 2
 grow_vertical = 2
+scale = Vector2(1, 1e-05)
 pivot_offset = Vector2(548, 268)
 texture = ExtResource("1_6nv6j")
 region_rect = Rect2(128, 352, 96, 96)
@@ -601,7 +647,7 @@ anchor_bottom = 1.0
 offset_left = -119.808
 offset_top = 0.16003418
 offset_right = 115.93994
-offset_bottom = -12.000122
+offset_bottom = -12.000244
 texture = ExtResource("1_6nv6j")
 region_rect = Rect2(379, 60, 94, 60)
 axis_stretch_horizontal = 1
@@ -614,10 +660,10 @@ anchor_left = 0.104
 anchor_top = 0.89
 anchor_right = 0.889
 anchor_bottom = 1.0
-offset_left = 1020.25964
-offset_top = -460.83997
+offset_left = 1020.26
+offset_top = -188.83997
 offset_right = 1275.0131
-offset_bottom = -471.89282
+offset_bottom = -199.89282
 rotation = 3.1415927
 texture = ExtResource("1_6nv6j")
 region_rect = Rect2(379, 60, 94, 60)
@@ -638,7 +684,7 @@ region_enabled = true
 region_rect = Rect2(370, 0, 140, 60)
 
 [node name="Cursor" type="NinePatchRect" parent="LevelSelect" unique_id=337111315]
-modulate = Color(1, 1, 1, 0.96326584)
+modulate = Color(1, 1, 1, 0)
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.5
@@ -668,6 +714,7 @@ offset_right = 549.0
 offset_bottom = 704.0
 grow_horizontal = 2
 size_flags_horizontal = 0
+mouse_filter = 2
 
 [node name="Options" type="VBoxContainer" parent="LevelSelect/Clip" unique_id=1525782301]
 layout_mode = 1
@@ -683,7 +730,7 @@ offset_bottom = 672.0
 theme_override_constants/separation = 32
 
 [node name="Scrollbar" type="NinePatchRect" parent="LevelSelect" unique_id=808478728]
-modulate = Color(1, 1, 1, 0.96326584)
+modulate = Color(1, 1, 1, 0)
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.5
@@ -721,6 +768,7 @@ bus = &"SFX"
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="LevelSelect" unique_id=834804925]
 libraries/ = SubResource("AnimationLibrary_rf6sp")
+autoplay = &"init"
 
 [node name="BGM" type="AudioStreamPlayer" parent="LevelSelect" unique_id=1323450866]
 bus = &"BGM"

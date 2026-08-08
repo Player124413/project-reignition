@@ -12,15 +12,9 @@ public partial class TimeAttack : Menu
 	[Export] private TextureRect buttonImage;
 	[Export] private AnimationPlayer buttonImageAnimator;
 	[Export] Array<TimeAttackButton> buttonList;
-	private bool isActive;
-	private int currentSelection;
+	private int currentSelection = 1;
 	private int maxSelection = 2;
 	private bool isRunInProgress = false;
-
-	protected override void SetUp()
-	{
-		currentSelection = 1;
-	}
 
 	public override void ShowMenu()
 	{
@@ -37,18 +31,9 @@ public partial class TimeAttack : Menu
 
 		if (SaveManager.TimeData.RunInProgress != null)
 		{
-			if (SaveManager.TimeData.RunInProgress.Count > 0)
-			{
-				maxSelection = 3;
-				isRunInProgress = true;
-			}
-			else
-			{
-				maxSelection = 2;
-				isRunInProgress = false;
-			}
+			isRunInProgress = SaveManager.TimeData.RunInProgress.Count > 0;
+			maxSelection = isRunInProgress ? 3 : 2;
 		}
-
 
 		if (!TimeAttackManager.Instance.LoadIntoSingle)
 		{
@@ -63,14 +48,16 @@ public partial class TimeAttack : Menu
 			animator.Play("show-single");
 		}
 
-
-		currentSelection = 1;
-		description.Text = buttonList[0].description;
-
 		menuMemory[MemoryKeys.ActiveMenu] = (int)MemoryKeys.TimeAttack;
 
 		if (!bgm.Playing)
 			bgm.Play();
+	}
+
+	public override void EnableProcessing()
+	{
+		base.EnableProcessing();
+		RedrawSelection();
 	}
 
 	public override void OpenParentMenu()
@@ -108,36 +95,30 @@ public partial class TimeAttack : Menu
 
 	private void ProcessMenuInput(Vector2I input)
 	{
-		if (!isActive)
+		if (input.Y == 0)
 			return;
 
-		if (input.X == 0 && input.Y == 0)
-			return;
-
-		if (input.X != 0 && input.Y == 0)
-			return;
-
+		Runtime.Instance.IsUsingMouse = false;
 		currentSelection += input.Y;
 		if (currentSelection > maxSelection || currentSelection < 1)
 			currentSelection = WrapSelection(currentSelection, maxSelection, 1);
 
-		if (input.X == 0)
-		{
-			description.Text = buttonList[currentSelection - 1].description;
-			description.ShowDescription();
-		}
+		RedrawSelection();
+	}
 
+	private void RedrawSelection()
+	{
 		for (int i = 0; i < buttonList.Count; i++)
 			buttonList[i].DeselectButton();
 
-
 		buttonImageAnimator.Play("show");
+		buttonImage.Texture = buttonList[currentSelection - 1].image;
+
 		if (isRunInProgress)
 		{
 			buttonList[currentSelection - 1].SelectButton();
 			return;
 		}
-
 
 		switch (currentSelection)
 		{
@@ -149,13 +130,13 @@ public partial class TimeAttack : Menu
 				description.Text = buttonList[2].description;
 				break;
 		}
+
+		description.Text = buttonList[currentSelection - 1].description;
+		description.ShowDescription();
 	}
 
 	protected override void Confirm()
 	{
-		if (!isActive)
-			return;
-
 		if (isReturnMenuActive)
 		{
 			if (isReturnSelected) //Yes
@@ -188,10 +169,9 @@ public partial class TimeAttack : Menu
 					ContinueRun();
 					break;
 				case 3://Single Run
-					base.FadeBgm(0.3f);
+					FadeBgm(0.3f);
 					TimeAttackManager.Instance.SetRunType(TimeAttackManager.RunType.SingleRun);
 					timeAttackAnimator.Play("confirm-3");
-					currentSelection = 1;
 
 					SaveManager.ActiveGameData.equippedSkills = SaveManager.TimeData.equippedSkillsSingle;
 					SaveManager.ActiveGameData.equippedAugments = SaveManager.TimeData.equippedAugmentsSingle;
@@ -203,21 +183,17 @@ public partial class TimeAttack : Menu
 		switch (currentSelection)
 		{
 			case 2://Single Run
-				base.FadeBgm(0.5f);
+				FadeBgm(0.5f);
 				TimeAttackManager.Instance.SetRunType(TimeAttackManager.RunType.SingleRun);
 				SaveManager.ActiveGameData.equippedSkills = SaveManager.TimeData.equippedSkillsSingle;
 				SaveManager.ActiveGameData.equippedAugments = SaveManager.TimeData.equippedAugmentsSingle;
 				break;
 		}
 		timeAttackAnimator.Play("confirm-" + currentSelection);
-		currentSelection = 1;
 	}
 
 	protected override void Cancel()
 	{
-		if (!isActive)
-			return;
-
 		if (isReturnMenuActive)
 		{
 			CancelReturnMenu();
@@ -228,7 +204,6 @@ public partial class TimeAttack : Menu
 		SaveManager.SaveGameData();
 		TimeAttackManager.Instance.SetRunActive(false);
 
-		currentSelection = 1;
 		OpenParentMenu();
 	}
 
@@ -258,9 +233,9 @@ public partial class TimeAttack : Menu
 
 		returnAnimator.Play("show");
 	}
+
 	private void CancelReturnMenu()
 	{
-
 		if (isReturnSelected)
 		{
 			returnAnimator.Play("select-no");
@@ -278,9 +253,19 @@ public partial class TimeAttack : Menu
 	}
 
 	public override void PlayReturnAnim() => timeAttackAnimator.Play("show");
-	public void SetActive() => isActive = true;
-	public void SetInactive() => isActive = false;
 
-	public void ChangeButtonImage() => buttonImage.Texture = buttonList[currentSelection - 1].image;
+	private void ReceiveMouseInput(int selection)
+	{
+		if (selection == 3 && !isRunInProgress)
+			selection--;
 
+		if (currentSelection == selection)
+			return;
+
+		Runtime.Instance.IsUsingMouse = true;
+		currentSelection = selection;
+
+		if (isProcessing)
+			RedrawSelection();
+	}
 }
