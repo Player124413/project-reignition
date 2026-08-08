@@ -36,6 +36,7 @@ public partial class LevelSelect : Menu
 	[Export] bool isModWorld = false;
 	[Export] PackedScene levelOption;
 	[Export] LevelDataResource defaultLevelModOption;
+	private readonly int PageSize = 5;
 
 	public bool HasNewLevel()
 	{
@@ -127,6 +128,31 @@ public partial class LevelSelect : Menu
 			isNothingSelected = false;
 			cursorAnimator.Play("loop");
 			ChangeSelection();
+			return;
+		}
+
+		// Quick scrolling
+		if (Input.IsActionJustPressed("button_step_left"))
+		{
+			int targetSelection = Mathf.Max(VerticalSelection - (PageSize - 1), 0);
+			while (VerticalSelection != targetSelection)
+			{
+				VerticalSelection = (int)Mathf.MoveToward(VerticalSelection, targetSelection, 1);
+				ChangeSelection();
+			}
+			return;
+		}
+
+		if (Input.IsActionJustPressed("button_step_right"))
+		{
+			GD.Print("Scrolling down!");
+			int targetSelection = Mathf.Min(VerticalSelection + (PageSize - 1), levelOptions.Count - 1);
+			while (VerticalSelection != targetSelection)
+			{
+				VerticalSelection = (int)Mathf.MoveToward(VerticalSelection, targetSelection, 1);
+				ChangeSelection();
+			}
+			return;
 		}
 
 		if (levelOptions[VerticalSelection].IsUnlocked)
@@ -254,10 +280,10 @@ public partial class LevelSelect : Menu
 
 	protected override void UpdateSelection()
 	{
-		if (Mathf.IsZeroApprox(Input.GetAxis("ui_up", "ui_down")))
+		if (menuMemory[MemoryKeys.ActiveMenu] == (int)MemoryKeys.Jukebox)
 			return;
 
-		if (menuMemory[MemoryKeys.ActiveMenu] == (int)MemoryKeys.Jukebox)
+		if (Mathf.IsZeroApprox(Input.GetAxis("ui_up", "ui_down")))
 			return;
 
 		if (isNothingSelected)
@@ -266,6 +292,9 @@ public partial class LevelSelect : Menu
 			cursorAnimator.Play("loop");
 			return;
 		}
+
+		if (levelOptions.Count == 1)
+			return;
 
 		VerticalSelection = WrapSelection(VerticalSelection + Mathf.Sign(Input.GetAxis("ui_up", "ui_down")), levelOptions.Count);
 		ChangeSelection();
