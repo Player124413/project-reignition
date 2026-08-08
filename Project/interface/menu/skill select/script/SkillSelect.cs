@@ -150,6 +150,7 @@ public partial class SkillSelect : Menu
 				int sign = targetIndex - VerticalSelection;
 				if (sign != 0)
 				{
+					isNothingSelected = false;
 					VerticalSelection = targetIndex;
 					UpdateScrollAmount(sign);
 					MoveCursor();
