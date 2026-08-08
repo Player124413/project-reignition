@@ -1,4 +1,3 @@
-using System.Linq;
 using Godot;
 using Godot.Collections;
 using Project.Core;
@@ -64,24 +63,7 @@ public partial class CharacterModSelect : Menu
 				skillOptionList.Add(newSkill);
 				optionContainer.AddChild(newSkill);
 
-
-/*
-				for (int k = 0; k < 14; k++)
-				{
-					ModOption newSkill2 = skillOption.Instantiate<ModOption>();
-					newSkill2.Skill = skill.Augments[j];
-					newSkill2.Initialize();
-
-					skillOptionList.Add(newSkill2);
-					optionContainer.AddChild(newSkill2);
-
-					skillCount += 1;
-				}
-*/
 			}
-
-			
-
 		}
 
 		base.SetUp();
@@ -96,12 +78,6 @@ public partial class CharacterModSelect : Menu
 
 		Vector2 targetContainerPosition = new(optionContainer.Position.X, -scrollAmount * ScrollInterval);
 		optionContainer.Position = optionContainer.Position.SmoothDamp(targetContainerPosition, ref containerVelocity, ScrollSmoothing);
-	}
-
-	protected override void ProcessMenu()
-	{
-
-		base.ProcessMenu();
 	}
 
 	protected override void UpdateSelection()
@@ -184,7 +160,7 @@ public partial class CharacterModSelect : Menu
 
 	protected override void Confirm()
 	{
-		if (!modDrawer.IsOpen())
+		if (!modDrawer.IsOpen)
 			return;
 
 		if (isNothingSelected)
@@ -212,7 +188,6 @@ public partial class CharacterModSelect : Menu
 		SkillKey key = SelectedSkill.Skill.Key;
 
 		int augmentIndex = VerticalSelection;
-		if (key == SkillKey.Character)
 			augmentIndex++;
 
 		if (ActiveSkillRing.IsSkillEquipped(key))
@@ -221,8 +196,10 @@ public partial class CharacterModSelect : Menu
 			if (unequippedKey == key)
 			{
 				animator.Play("unequip");
+				ActiveSkillRing.ResetAugmentIndex(SkillKey.Character);
 				return true;
 			}
+
 		}
 
 		SkillEquipStatusEnum status = ActiveSkillRing.EquipSkill(key, augmentIndex);
@@ -237,7 +214,6 @@ public partial class CharacterModSelect : Menu
 
 	private void ScrollSelection(int targetSelection)
 	{
-		//int initialSelection = VerticalSelection + AugmentSelection;
 		int initialSelection = VerticalSelection;
 		scrollAmount += targetSelection - initialSelection;
 		VerticalSelection = targetSelection;

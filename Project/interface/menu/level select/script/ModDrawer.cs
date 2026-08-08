@@ -1,9 +1,5 @@
-using System.Linq;
-using System.Reflection.Metadata.Ecma335;
 using Godot;
-using Godot.Collections;
 using Project.Core;
-using Project.Gameplay;
 
 namespace Project.Interface.Menus;
 
@@ -15,31 +11,29 @@ public partial class ModDrawer : Menu
 	[Export] private AnimationPlayer drawerAnimator;
 	[Export] private AnimationPlayer readyAnimator;
 
-	private bool isOpen = false;
-	private bool canOpen = false;
-
-
-	protected override void SetUp()
-	{
-		base.SetUp();
-	}
+	///<Summary> Is the mod drawer currently open</Summary>
+	public bool IsOpen {get; private set;}
+	/// <summary> Are character mods enabeled </summary>
+	private bool IsActive => SaveManager.Config.areCharaModsEnabled;
 
 	protected override void ProcessMenu()
 	{
-		if (Input.IsActionJustPressed("button_attack") && canOpen)
+		if (!IsActive)
+			return;
+		if (Input.IsActionJustPressed("button_attack"))
 		{
-			if (!isOpen)
+			if (!IsOpen)
 			{
 				charSelect.Redraw();
 				drawerAnimator.Play("show");
 				readyAnimator.Play("disable-controls");
-				isOpen = true;
+				IsOpen = true;
 			}
 			else
 			{
 				drawerAnimator.Play("hide");
 				readyAnimator.Play("enable-controls");
-				isOpen = false;
+				IsOpen = false;
 			}
 			return;
 		}
@@ -48,28 +42,15 @@ public partial class ModDrawer : Menu
 
     protected override void Cancel()
     {
-		if (isOpen)
-		{
-			drawerAnimator.Play("hide");
-			readyAnimator.Play("enable-controls");
-			isOpen = false;
-		}
+		if (!IsOpen)
+			return;
+
+		drawerAnimator.Play("hide");
+		readyAnimator.Play("enable-controls");
+		IsOpen = false;
+
         base.Cancel();
     }
-
-	public bool IsOpen() {return isOpen;}
-
-	public void Disappear()
-	{
-		drawerAnimator.Play("disappear");
-	}
-
-	public void Appear()
-	{
-		drawerAnimator.Play("appear");
-	}
-
-	public void CanOpen(bool open) => canOpen = open;
 
 
 }
