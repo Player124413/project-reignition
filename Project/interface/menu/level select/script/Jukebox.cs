@@ -225,7 +225,7 @@ public partial class Jukebox : Menu
 			return;
 		}
 
-		if (Input.IsActionJustPressed("button_attack") && isCustomMusicMenuActive)
+		if (Input.IsActionJustPressed("button_pause1") && isCustomMusicMenuActive)
 		{
 			RefreshMenu();
 		}
