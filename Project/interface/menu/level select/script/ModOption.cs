@@ -40,19 +40,15 @@ public partial class ModOption : Control
 
 		float final_offset = -(nameLabel.GetCombinedMinimumSize().X - labelControl.Size.X);
 		tween = CreateTween().SetLoops();
-		tween.TweenInterval(scrollDelay);
-		tween.TweenProperty(nameLabel,"offset_left", final_offset, scrollDuration).From(0).SetDelay(scrollDelay);
+		tween.TweenProperty(nameLabel, "offset_left", 0, scrollDelay).From(0);
+		tween.TweenProperty(nameLabel, "offset_left", final_offset, scrollDuration).From(0);
+		tween.TweenProperty(nameLabel, "offset_left", final_offset, scrollDelay).From(final_offset);
 	}
 
 	public void StopScrolling()
 	{
 		nameLabel.OffsetLeft = 0;
-
-		if (tween == null)
-			return;
-
-		tween.Kill();
-		
+		tween?.Kill();
 	}
 
 	private void RedrawStaticData() => nameLabel.Text = Skill.NameKey;
