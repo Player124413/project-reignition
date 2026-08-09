@@ -2,6 +2,7 @@ using System.Globalization;
 using Godot;
 using Project.Core;
 using Project.Gameplay;
+using Project.Interface.Menus;
 
 namespace Project.Interface;
 
@@ -162,7 +163,6 @@ public partial class LevelResult : Control
 		{
 			if (TimeAttackManager.Instance.CurrentRunType != TimeAttackManager.RunType.SingleRun)
 			{
-
 				timeTotal.Text = ExtensionMethods.FormatTime(TimeAttackManager.Instance.GetTotalRunTime() + Stage.CurrentTime);
 				TimeAttackManager.Instance.AddTime(Stage.CurrentTime);
 
@@ -185,8 +185,6 @@ public partial class LevelResult : Control
 			}
 		}
 
-
-
 		ring.Text = Stage.RingBonus.ToString();
 		technical.Text = "×" + Stage.TechnicalBonus.ToString("0.0", CultureInfo.InvariantCulture);
 		total.Text = ExtensionMethods.FormatMenuNumber(Stage.TotalScore);
@@ -200,7 +198,7 @@ public partial class LevelResult : Control
 			// Show rank requirements
 			requirementRoot.Visible = true;
 			requirementTime.Text = Stage.GetRequiredTime(rank);
-			requirementScore.Visible = !Stage.Data.SkipScore;
+			requirementScore.Visible = !Stage.Data.SkipScore && !TimeAttackManager.Instance.IsRunActive;
 			if (requirementScore.Visible)
 			{
 				int rankUpScore = Stage.Data.Score;
@@ -232,6 +230,13 @@ public partial class LevelResult : Control
 				animator.Play("medal-none");
 				break;
 		}
+		animator.Advance(0.0);
+
+		if (TimeAttackManager.Instance.IsRunActive)
+		{
+			animator.Play("rank-preview-ta");
+			animator.Advance(0.0);
+		}
 
 		bool isStageCleared = Stage.LevelState == StageSettings.LevelStateEnum.Success;
 
@@ -241,13 +246,11 @@ public partial class LevelResult : Control
 			bgmIndex = 0;
 		bgm[bgmIndex].Play();
 
-		animator.Advance(0.0);
 
 		if (TimeAttackManager.Instance.IsRunActive && TimeAttackManager.Instance.CurrentRunType == TimeAttackManager.RunType.SingleRun)
 			animator.Play(isStageCleared ? "success-start-timeattack-single" : "fail-start-ta");
 		else if (TimeAttackManager.Instance.IsRunActive)
 			animator.Play(isStageCleared ? "success-start-timeattack" : "fail-start-ta");
-
 		else
 			animator.Play(isStageCleared ? "success-start" : "fail-start");
 	}

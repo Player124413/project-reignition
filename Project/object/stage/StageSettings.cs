@@ -1,6 +1,7 @@
 using Godot;
 using Project.Core;
 using Project.Interface;
+using Project.Interface.Menus;
 using System.Collections.Generic;
 
 namespace Project.Gameplay;
@@ -340,6 +341,9 @@ public partial class StageSettings : Node3D
 
 	public string GetRequiredTime(int rank)
 	{
+		if (TimeAttackManager.Instance.IsRunActive)
+			return ExtensionMethods.FormatTime(Data.GoldTimeTA);
+
 		switch (rank)
 		{
 			case 0:
