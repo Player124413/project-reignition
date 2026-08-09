@@ -154,6 +154,7 @@ public partial class TransitionManager : Node
 		}
 		else
 		{
+			GetTree().UnloadCurrentScene(); // Unload the current scene
 			if (CurrentTransitionData.loadAsynchronously)
 			{
 				loadTime = 0f;
@@ -167,8 +168,8 @@ public partial class TransitionManager : Node
 					{
 						// Forget async loading
 						GD.Print("Infinite Loading Detected. Force loading.");
-						GetTree().ChangeSceneToFile(QueuedScene);
-						FinishSceneChange();
+						GetTree().CallDeferred("change_scene_to_file", QueuedScene);
+						CallDeferred(MethodName.FinishSceneChange);
 						return;
 					}
 				}

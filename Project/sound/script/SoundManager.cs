@@ -81,7 +81,7 @@ public partial class SoundManager : Control
 
 	#region Dialog
 	public bool IsSubtitlesActive { get; private set; }
-	public bool IsDialogActive => IsSubtitlesActive && (isSonicSpeaking || isShahraSpeaking);
+	public bool IsDialogActive => IsSubtitlesActive && CurrentSpeaker != SpeakerEnum.None;
 	[Export] private Label subtitleLabel;
 	[Export] private NavigationButton[] buttonPrompts;
 	private int buttonPromptIndex; // The current button prompt being calculated
@@ -138,17 +138,12 @@ public partial class SoundManager : Control
 
 	public void CancelDialog()
 	{
+		UpdateCharacterDialog();
 		if (!IsSubtitlesActive) return;
 
 		dialogQueue.Clear();
 		delayTimer.Stop();
 		dialogChannel.Stop();
-
-		if (isSonicSpeaking)
-		{
-			isSonicSpeaking = false;
-			EmitSignal(SignalName.SonicSpeechEnd);
-		}
 
 		CallDeferred(MethodName.DisableDialog);
 	}
@@ -179,8 +174,7 @@ public partial class SoundManager : Control
 		IsSubtitlesActive = false;
 		subtitleAnimator.Play("deactivate");
 
-		UpdateSonicDialog();
-		UpdateShahraDialog();
+		UpdateCharacterDialog();
 
 		// Disconnect signals
 		if (delayTimer.IsConnected(Timer.SignalName.Timeout, new Callable(this, MethodName.OnDialogDelayComplete)))
@@ -213,8 +207,7 @@ public partial class SoundManager : Control
 		if (dialogChannel.IsConnected(AudioStreamPlayer.SignalName.Finished, new Callable(this, MethodName.OnDialogFinished)))
 			dialogChannel.Disconnect(AudioStreamPlayer.SignalName.Finished, new Callable(this, MethodName.OnDialogFinished));
 
-		UpdateSonicDialog();
-		UpdateShahraDialog();
+		UpdateCharacterDialog();
 
 		if (processDelay && currentDialog.HasDelay(currentDialogIndex)) // Wait for dialog delay (if applicable)
 		{
@@ -327,38 +320,59 @@ public partial class SoundManager : Control
 		}
 	}
 
-	public bool IsSonicSfxVoiceChannelActive { get; set; }
-	private bool isSonicSpeaking;
-	[Signal]
-	public delegate void SonicSpeechStartEventHandler();
-	[Signal]
-	public delegate void SonicSpeechEndEventHandler();
-	private const string SonicVoiceSuffix = "so"; // Any dialog key that ends with this will be Sonic speaking
-	private void UpdateSonicDialog() // Checks whether Sonic is the one speaking, and mutes his gameplay audio.
+
+	/// <summary> The current character speaking. </summary>
+	public SpeakerEnum CurrentSpeaker { get; private set; }
+	public enum SpeakerEnum
 	{
-		bool wasSonicSpeaking = isSonicSpeaking;
-		isSonicSpeaking = IsSubtitlesActive && currentDialog.textKeys[currentDialogIndex].EndsWith(SonicVoiceSuffix);
-		if (isSonicSpeaking && !wasSonicSpeaking)
-			EmitSignal(SignalName.SonicSpeechStart);
-		else if (!isSonicSpeaking && wasSonicSpeaking)
-			EmitSignal(SignalName.SonicSpeechEnd);
+		None, // No character is speaking
+		Sonic,
+		Shahra,
+		Erazor, // Includes alf-layla
+		Knuckles
 	}
 
-	private bool isShahraSpeaking;
+	public bool IsSonicSfxVoiceChannelActive { get; set; }
 	[Signal]
-	public delegate void ShahraSpeechStartEventHandler();
+	public delegate void CharacterSpeechFinishedEventHandler(SpeakerEnum speaker);
 	[Signal]
-	public delegate void ShahraSpeechEndEventHandler();
-	private const string ShahraVoiceSuffix = "sh"; // Any dialog key that ends with this will be Shahra speaking
-	private void UpdateShahraDialog() // Checks whether Shahra is the one speaking, and mutes his gameplay audio.
+	public delegate void CharacterSpeechStartedEventHandler(SpeakerEnum speaker);
+	private void UpdateCharacterDialog() // Checks whether Sonic is the one speaking, and mutes his gameplay audio.
 	{
-		bool wasShahraSpeaking = isShahraSpeaking;
-		isShahraSpeaking = IsSubtitlesActive && currentDialog.textKeys[currentDialogIndex].EndsWith(ShahraVoiceSuffix);
-		if (isShahraSpeaking && !wasShahraSpeaking)
-			EmitSignal(SignalName.ShahraSpeechStart);
-		else if (!isShahraSpeaking && wasShahraSpeaking)
-			EmitSignal(SignalName.ShahraSpeechEnd);
+		SpeakerEnum previousSpeaker = CurrentSpeaker;
+		CurrentSpeaker = RecalculateCurrentSpeaker();
+		if (CurrentSpeaker != previousSpeaker)
+		{
+			EmitSignal(SignalName.CharacterSpeechFinished, (int)previousSpeaker);
+			EmitSignal(SignalName.CharacterSpeechStarted, (int)CurrentSpeaker);
+		}
 	}
+
+	private const string SonicVoiceSuffix = "so";
+	private const string ShahraVoiceSuffix = "sh";
+	private const string KnucklesVoiceSuffix = "kn";
+	private const string ErazorVoiceSuffix = "er";
+	private SpeakerEnum RecalculateCurrentSpeaker()
+	{
+		if (!IsSubtitlesActive)
+			return SpeakerEnum.None;
+
+		string currentKey = currentDialog.textKeys[currentDialogIndex];
+		if (currentKey.EndsWith(SonicVoiceSuffix))
+			return SpeakerEnum.Sonic;
+
+		if (currentKey.EndsWith(ShahraVoiceSuffix))
+			return SpeakerEnum.Shahra;
+
+		if (currentKey.EndsWith(KnucklesVoiceSuffix))
+			return SpeakerEnum.Knuckles;
+
+		if (currentKey.EndsWith(ErazorVoiceSuffix))
+			return SpeakerEnum.Erazor;
+
+		return SpeakerEnum.None;
+	}
+
 	#endregion
 
 	#region SFX

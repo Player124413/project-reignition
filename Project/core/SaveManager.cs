@@ -204,6 +204,7 @@ public partial class SaveManager : Node
 		30,
 		45,
 		60,
+		90,
 		120,
 		144,
 		165,

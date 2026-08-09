@@ -19,8 +19,8 @@ public partial class PlayerEffect : Node3D
 		// Rebuild dialog libraries to account for modded locales
 		voiceLibrary?.LocalizeAudioStreams(true);
 
-		SoundManager.instance.Connect(SoundManager.SignalName.SonicSpeechStart, new Callable(this, MethodName.MuteGameplayVoice));
-		SoundManager.instance.Connect(SoundManager.SignalName.SonicSpeechEnd, new Callable(this, MethodName.UnmuteGameplayVoice));
+		SoundManager.instance.CharacterSpeechStarted += OnSpeakerStarted;
+		SoundManager.instance.CharacterSpeechFinished += OnSpeakerFinished;
 
 		voiceChannel.Finished += DisableSonicVoiceSfx;
 
@@ -559,15 +559,21 @@ public partial class PlayerEffect : Node3D
 	private void DisableSonicVoiceSfx() => SoundManager.instance.IsSonicSfxVoiceChannelActive = false;
 
 	/// <summary> Stops any currently active voice clip and mutes the voice channel. </summary>
-	private void MuteGameplayVoice()
+	private void OnSpeakerStarted(SoundManager.SpeakerEnum speaker)
 	{
+		if (speaker != SoundManager.SpeakerEnum.Sonic || !IsInstanceValid(voiceChannel))
+			return;
+
 		voiceChannel.Stop();
 		voiceChannel.VolumeDb = -80f;
 	}
 
 	/// <summary> Stops any currently active voice clip and resets channel volume. </summary>
-	private void UnmuteGameplayVoice()
+	private void OnSpeakerFinished(SoundManager.SpeakerEnum speaker)
 	{
+		if (speaker != SoundManager.SpeakerEnum.Sonic || !IsInstanceValid(voiceChannel))
+			return;
+
 		voiceChannel.Stop();
 		voiceChannel.VolumeDb = 0f;
 	}

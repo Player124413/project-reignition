@@ -23,7 +23,7 @@ public partial class AutomationTrigger : Area3D
 	private bool isInteractingWithPlayer;
 	private bool isAutomationQueued;
 	private PlayerController Player => StageSettings.Player;
-	public bool IsFinished => Player.PathFollower.Progress >= endPoint;
+	public bool IsFinished => Player.PathFollower.Progress >= endPoint || Player.IsDrifting;
 
 	public override void _Ready() => StageSettings.Instance.Respawned += Respawn;
 

@@ -27,6 +27,8 @@ public partial class EventTrigger : StageTriggerModule
 	private float animationBlending;
 
 	[ExportGroup("Components")]
+	/// <summary> Animation Track to disable when skipping the event. </summary>
+	[Export] private NodePath[] skipDisabledAnimationTracks;
 	[Export] private AnimationPlayer animator;
 	public float AnimationLength => (float)animator.CurrentAnimationLength;
 	private float AnimationTimeLeft
@@ -274,6 +276,7 @@ public partial class EventTrigger : StageTriggerModule
 		if (!blendAnimations)
 			animator.Seek(0, true); // Reset animation if necessary
 
+		EnableTracks(animation);
 		animator.Play(animation, blendAnimations ? animationBlending : 0.0f, speedScale);
 		animator.Advance(0);
 
@@ -288,8 +291,37 @@ public partial class EventTrigger : StageTriggerModule
 		Player.Camera.StartCrossfade();
 		StageSettings.Instance.AddTime(AnimationTimeLeft);
 
+		DisableTracks(animator.CurrentAnimation);
 		animator.Advance(AnimationTimeLeft);
 		EmitSignal(SignalName.EventSkipped);
+	}
+
+	private void EnableTracks(StringName animation)
+	{
+		if (skipDisabledAnimationTracks == null || skipDisabledAnimationTracks.Length == 0)
+			return;
+
+		Animation currentAnimation = animator.GetAnimation(animation);
+		for (int i = 0; i < skipDisabledAnimationTracks.Length; i++)
+		{
+			int trackIndex = currentAnimation.FindTrack(skipDisabledAnimationTracks[i], Animation.TrackType.Method);
+			if (trackIndex != -1)
+				currentAnimation.TrackSetEnabled(trackIndex, true);
+		}
+	}
+
+	private void DisableTracks(StringName animation)
+	{
+		if (skipDisabledAnimationTracks == null || skipDisabledAnimationTracks.Length == 0)
+			return;
+
+		Animation currentAnimation = animator.GetAnimation(animation);
+		for (int i = 0; i < skipDisabledAnimationTracks.Length; i++)
+		{
+			int trackIndex = currentAnimation.FindTrack(skipDisabledAnimationTracks[i], Animation.TrackType.Method);
+			if (trackIndex != -1)
+				currentAnimation.TrackSetEnabled(trackIndex, false);
+		}
 	}
 
 	#region Event Animation

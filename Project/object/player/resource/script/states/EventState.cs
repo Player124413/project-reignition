@@ -108,7 +108,7 @@ public partial class EventState : PlayerState
 
 	private bool IsSkippingEvent()
 	{
-		if (!Player.Controller.IsJumpBufferActive)
+		if (!Input.IsActionJustPressed("button_jump"))
 			return false;
 
 		return SaveManager.ActiveGameData.CanSkipCutscene(Trigger.EventID) || OS.IsDebugBuild();
