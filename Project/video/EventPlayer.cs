@@ -274,14 +274,11 @@ public partial class EventPlayer : Node
 			if (interfaceAnimator.AssignedAnimation != "show_interface")
 				interfaceAnimator.Play("show_interface", 0.1f);
 
-			if (!skipAnimator.IsPlaying())
-				skipAnimator.Play("skip");
-
+			skipAnimator.Play("skip");
 			return;
 		}
 
-		skipAnimator.Pause();
-
+		skipAnimator.Play("skip", -1, -1);
 		if (Input.IsAnythingPressed())
 			return;
 
