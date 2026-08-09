@@ -67,6 +67,7 @@ public partial class CharacterModSelect : Menu
 
 	protected override void UpdateSelection()
 	{
+		SelectedSkill.StopScrolling();
 		int inputSign = Mathf.Sign(Input.GetAxis("ui_up", "ui_down"));
 		if (inputSign == 0)
 			return;
@@ -85,6 +86,7 @@ public partial class CharacterModSelect : Menu
 		if (previousSelection == VerticalSelection)
 			return;
 
+		SelectedSkill.StartScrolling();
 		UpdateScrollAmount(changeAmount);
 		MoveCursor();
 	}
@@ -143,6 +145,7 @@ public partial class CharacterModSelect : Menu
 		if (isNothingSelected)
 			return;
 
+		SelectedSkill.StartScrolling();
 		cursorAnimator.Play("show");
 		cursorAnimator.Queue("loop");
 	}
@@ -217,5 +220,13 @@ public partial class CharacterModSelect : Menu
 
 		if (VerticalSelection != initialSelection)
 			MoveCursor();
+	}
+
+	public void StopAllScrolling()
+	{
+		foreach (ModOption mod in skillOptionList)
+		{
+			mod.StopScrolling();
+		}
 	}
 }

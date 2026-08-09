@@ -9,9 +9,12 @@ public partial class ModOption : Control
 	public SkillResource Skill { get; set; }
 	[Export] private AnimationPlayer animator;
 	[Export] private Label nameLabel;
+	[Export] private Control labelControl;
+	const int maxChars = 14;
 
-	/// <summary> Maximum number of characters. Scroll text if there are more than this number. </summary>
-	private readonly int MaxChars = 10;
+	private float scrollDuration = 3;
+	private float scrollDelay = 2;
+	Tween tween;
 
 	public void Initialize()
 	{
@@ -27,6 +30,28 @@ public partial class ModOption : Control
 		// Redraw equip status
 		animator.Play(SaveManager.ActiveSkillRing.IsSkillEquipped(Skill) ? "equipped" : "unequipped");
 		animator.Advance(0);
+		nameLabel.OffsetLeft = 0;
+	}
+
+	public void StartScrolling()
+	{
+		if (nameLabel.GetTotalCharacterCount() <= maxChars)
+			return;
+
+		float final_offset = -(nameLabel.GetCombinedMinimumSize().X - labelControl.Size.X);
+		tween = CreateTween().SetLoops();
+		tween.TweenProperty(nameLabel,"offset_left", final_offset, scrollDuration).From(0).SetDelay(scrollDelay);
+	}
+
+	public void StopScrolling()
+	{
+		nameLabel.OffsetLeft = 0;
+
+		if (tween == null)
+			return;
+
+		tween.Kill();
+		
 	}
 
 	private void RedrawStaticData() => nameLabel.Text = Skill.NameKey;

@@ -32,6 +32,8 @@ public partial class ModDrawer : Menu
 	{
 		if (!IsOpen)
 			return;
+		
+		charSelect.StopAllScrolling();
 
 		drawerAnimator.Play("hide");
 		readyAnimator.Play("enable-controls");
