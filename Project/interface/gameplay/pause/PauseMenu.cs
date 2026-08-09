@@ -168,15 +168,21 @@ public partial class PauseMenu : Node
 		if (!Input.IsActionPressed("button_step_left") || !Input.IsActionPressed("button_step_right")) // Quick restart
 			return false;
 
-		TransitionManager.QueueSceneChange(string.Empty);
-		TransitionManager.StartTransition(new TransitionData()
+		if (TimeAttackManager.Instance.IsRunActive)
+			TimeAttackManager.Instance.RestartRun();
+
+		if (!TimeAttackManager.Instance.IsRunActive || TimeAttackManager.Instance.CurrentRunType == TimeAttackManager.RunType.SingleRun)
 		{
-			color = Colors.Black,
-			inSpeed = 0.2f,
-			outSpeed = 0.5f,
-			loadAsynchronously = true,
-			disableAutoTransition = true
-		});
+			TransitionManager.QueueSceneChange(string.Empty);
+			TransitionManager.StartTransition(new TransitionData()
+			{
+				color = Colors.Black,
+				inSpeed = 0.2f,
+				outSpeed = 0.5f,
+				loadAsynchronously = true,
+				disableAutoTransition = true
+			});
+		}
 
 		return true;
 	}
