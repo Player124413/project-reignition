@@ -11,11 +11,15 @@ public partial class ModDrawer : Menu
 
 	/// <summary> Is the mod drawer currently open? </summary>
 	public bool IsOpen { get; private set; }
+	public bool CanOpen {get; private set;}
 	/// <summary> Are character mods enabled? </summary>
 	private bool IsActive => SaveManager.Config.areCharaModsEnabled;
 
 	protected override void ProcessMenu()
 	{
+
+		if (!CanOpen)
+			return;
 		if (!IsActive)
 			return;
 
@@ -60,4 +64,6 @@ public partial class ModDrawer : Menu
 			readyAnimator.Play("enable-controls");
 		}
 	}
+
+	public void SetCanOpen(bool open) {CanOpen = open;}
 }

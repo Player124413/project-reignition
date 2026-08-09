@@ -22,6 +22,7 @@ public partial class ReadyMenu : Menu
 
 	public override void ShowMenu()
 	{
+		modDrawer.SetCanOpen(true);
 		if (!SaveManager.Config.areCharaModsEnabled)
 			modDrawer.Visible = false;
 
@@ -81,6 +82,7 @@ public partial class ReadyMenu : Menu
 
 		if (HorizontalSelection == 0) // Load level
 		{
+			modDrawer.SetCanOpen(false);
 			StopBgm(); // Stop bgm
 
 			if (!TimeAttackManager.Instance.IsRunActive)
@@ -123,6 +125,7 @@ public partial class ReadyMenu : Menu
 
 	protected override void Cancel()
 	{
+		modDrawer.SetCanOpen(false);
 		HorizontalSelection = 1;
 		animator.Play("select-no");
 		animator.Advance(0.0);
