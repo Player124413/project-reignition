@@ -1,5 +1,4 @@
 using Godot;
-using System;
 using Godot.Collections;
 using Project.Core;
 
@@ -12,28 +11,25 @@ public partial class TimeAttackStartRun : Menu
 	[Export] TimeAttackLevelList levelList;
 	[Export] TimeAttackLeaderboard leaderboard;
 	[Export] Array<TimeAttackButton> buttonList;
-	[Export]
-	private PackedScene levelOption;
+	[Export] private PackedScene levelOption;
 
-	private bool isActive;
 	private bool isLeaderboardActive;
-	private int currentSelection;
+	private int currentSelection = 1;
 	private int maxSelection = 2;
-
-	protected override void SetUp()
-	{
-		currentSelection = 1;
-	}
 
 	public override void ShowMenu()
 	{
 		base.ShowMenu();
 		SaveManager.LoadTimeAttackData();
-		currentSelection = 1;
-		description.Text = buttonList[0].description;
 		isLeaderboardActive = false;
 		leaderboard.SpawnLeaderboardOptionsSub();
 		leaderboard.SpawnLeaderboardOptionsMain();
+	}
+
+	public override void EnableProcessing()
+	{
+		base.EnableProcessing();
+		RedrawSelection();
 	}
 
 	protected override void UpdateSelection()
@@ -45,63 +41,82 @@ public partial class TimeAttackStartRun : Menu
 
 	private void ProcessMenuInput(Vector2I input)
 	{
-		if (isActive && !isLeaderboardActive)
+		if (isLeaderboardActive)
 		{
+			if (input.X != 0)
+			{
+				Runtime.Instance.IsUsingMouse = false;
+				ExitLeaderboard();
+			}
+
+			return;
+		}
+
+		if (!isLeaderboardActive)
+		{
+			Runtime.Instance.IsUsingMouse = false;
+
+			if (input.X != 0)
+			{
+				EnterLeaderboard();
+				return;
+			}
+
 			currentSelection += input.Y;
 			if (currentSelection > maxSelection || currentSelection < 1)
 				currentSelection = WrapSelection(currentSelection, maxSelection, 1);
 
-			if (input.X == 0)
-			{
-				description.Text = buttonList[currentSelection - 1].description;
-				description.ShowDescription();
-			}
-			else
-			{
-				leaderboard.EnableProcessing();
-				isLeaderboardActive = true;
-				for (int i = 0; i < buttonList.Count; i++)
-				{
-					buttonList[i].DeselectButton();
-				}
-				leaderboard.ShowMenu();
-				return;
-			}
+			RedrawSelection();
+		}
+	}
 
-			for (int i = 0; i < buttonList.Count; i++)
-			{
-				buttonList[i].DeselectButton();
-			}
-			buttonList[currentSelection - 1].SelectButton();
-		}
-		else if (isActive && isLeaderboardActive)
-		{
-			if (input.X != 0)
-			{
-				leaderboard.DisableProcessing();
-				buttonList[currentSelection - 1].SelectButton();
-				leaderboard.DeselectMenu();
-				isLeaderboardActive = false;
-			}
-		}
-		else
+	private void EnterLeaderboard()
+	{
+		if (isLeaderboardActive)
 			return;
+
+		leaderboard.EnableProcessing();
+		isLeaderboardActive = true;
+		for (int i = 0; i < buttonList.Count; i++)
+			buttonList[i].DeselectButton();
+		leaderboard.ShowMenu();
+	}
+
+	private void ExitLeaderboard()
+	{
+		if (!isLeaderboardActive)
+			return;
+
+		leaderboard.DisableProcessing();
+		buttonList[currentSelection - 1].SelectButton();
+		leaderboard.DeselectMenu();
+		isLeaderboardActive = false;
+	}
+
+	private void RedrawSelection()
+	{
+		for (int i = 0; i < buttonList.Count; i++)
+			buttonList[i].DeselectButton();
+
+		buttonList[currentSelection - 1].SelectButton();
+
+		description.Text = buttonList[currentSelection - 1].description;
+		description.ShowDescription();
 	}
 
 	protected override void Confirm()
 	{
-		if (isActive && !isLeaderboardActive)
-		{
-			if (currentSelection == 1)
-				readyMenu.SetupReadyMenu();
-			animator.Play("confirm-" + currentSelection);
-			currentSelection = 1;
-		}
+		if (isLeaderboardActive)
+			return;
+
+		if (currentSelection == 1)
+			readyMenu.SetupReadyMenu();
+		animator.Play("confirm-" + currentSelection);
 	}
 
 	protected override void Cancel()
 	{
-		if (isActive && !isLeaderboardActive)
+		if (!isLeaderboardActive)
 			animator.Play("hide");
 	}
 
@@ -112,11 +127,16 @@ public partial class TimeAttackStartRun : Menu
 		levelList.ShowMenu();
 	}
 
-	private void OpenReadyMenu()
-	{
-		readyMenu.ShowMenu();
-	}
+	private void OpenReadyMenu() => readyMenu.ShowMenu();
 
-	public void SetActive() => isActive = true;
-	public void SetInactive() => isActive = false;
+	private void ReceiveMouseInput(int selection)
+	{
+		if (currentSelection == selection)
+			return;
+
+		Runtime.Instance.IsUsingMouse = true;
+		currentSelection = selection;
+		if (isProcessing)
+			RedrawSelection();
+	}
 }

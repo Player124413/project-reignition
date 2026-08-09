@@ -10,6 +10,21 @@
 [ext_resource type="PackedScene" uid="uid://dqbpjfpthjtpe" path="res://interface/menu/time attack/TimeAttackLeaderboardOptionMain.tscn" id="8_v2eue"]
 [ext_resource type="PackedScene" uid="uid://ymirt8smjp2b" path="res://interface/menu/time attack/TimeAttackLeaderboardOptionSub.tscn" id="9_d7rtc"]
 
+[sub_resource type="Animation" id="Animation_sxxma"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:visible")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+
 [sub_resource type="Animation" id="Animation_1c1pi"]
 resource_name = "confirm-1"
 length = 3.0
@@ -58,14 +73,11 @@ tracks/2/path = NodePath(".")
 tracks/2/interp = 1
 tracks/2/loop_wrap = true
 tracks/2/keys = {
-"times": PackedFloat32Array(0, 0.1, 0.4),
-"transitions": PackedFloat32Array(1, 1, 1),
+"times": PackedFloat32Array(0, 0.4),
+"transitions": PackedFloat32Array(1, 1),
 "values": [{
 "args": [],
 "method": &"DisableProcessing"
-}, {
-"args": [],
-"method": &"SetInactive"
 }, {
 "args": [],
 "method": &"OpenReadyMenu"
@@ -144,14 +156,11 @@ tracks/2/path = NodePath(".")
 tracks/2/interp = 1
 tracks/2/loop_wrap = true
 tracks/2/keys = {
-"times": PackedFloat32Array(0, 0.1, 0.4),
-"transitions": PackedFloat32Array(1, 1, 1),
+"times": PackedFloat32Array(0, 0.4),
+"transitions": PackedFloat32Array(1, 1),
 "values": [{
 "args": [],
 "method": &"DisableProcessing"
-}, {
-"args": [],
-"method": &"SetInactive"
 }, {
 "args": [],
 "method": &"OpenLevelList"
@@ -225,14 +234,11 @@ tracks/2/path = NodePath(".")
 tracks/2/interp = 1
 tracks/2/loop_wrap = true
 tracks/2/keys = {
-"times": PackedFloat32Array(0, 0.06666666, 0.4),
-"transitions": PackedFloat32Array(1, 1, 1),
+"times": PackedFloat32Array(0, 0.4),
+"transitions": PackedFloat32Array(1, 1),
 "values": [{
 "args": [],
 "method": &"DisableProcessing"
-}, {
-"args": [],
-"method": &"SetInactive"
 }, {
 "args": [],
 "method": &"OpenParentMenu"
@@ -262,6 +268,35 @@ tracks/4/keys = {
 "clips": PackedStringArray("hide"),
 "times": PackedFloat32Array(0)
 }
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath(".:visible")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0, 1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [true, false]
+}
+
+[sub_resource type="Animation" id="Animation_ixi4w"]
+resource_name = "init"
+length = 0.001
+step = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:visible")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
 
 [sub_resource type="Animation" id="Animation_ryeoa"]
 resource_name = "show"
@@ -273,14 +308,11 @@ tracks/0/path = NodePath("Buttons/StartRun")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
-"times": PackedFloat32Array(0, 0.6),
-"transitions": PackedFloat32Array(1, 1),
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
 "values": [{
 "args": [],
 "method": &"ShowButton"
-}, {
-"args": [],
-"method": &"SelectButton"
 }]
 }
 tracks/1/type = "method"
@@ -304,14 +336,11 @@ tracks/2/path = NodePath(".")
 tracks/2/interp = 1
 tracks/2/loop_wrap = true
 tracks/2/keys = {
-"times": PackedFloat32Array(0, 0.033333335, 0.7),
-"transitions": PackedFloat32Array(1, 1, 1),
+"times": PackedFloat32Array(0, 0.7),
+"transitions": PackedFloat32Array(1, 1),
 "values": [{
 "args": [],
 "method": &"DisableProcessing"
-}, {
-"args": [],
-"method": &"SetActive"
 }, {
 "args": [],
 "method": &"EnableProcessing"
@@ -345,12 +374,26 @@ tracks/4/keys = {
 "method": &"play"
 }]
 }
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath(".:visible")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_il2ly"]
 _data = {
+&"RESET": SubResource("Animation_sxxma"),
 &"confirm-1": SubResource("Animation_1c1pi"),
 &"confirm-2": SubResource("Animation_o0p6v"),
 &"hide": SubResource("Animation_il2ly"),
+&"init": SubResource("Animation_ixi4w"),
 &"show": SubResource("Animation_ryeoa")
 }
 
@@ -925,6 +968,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
 script = ExtResource("1_1c1pi")
 description = NodePath("Description/Description")
 leaderboard = NodePath("Leaderboard")
@@ -946,7 +990,6 @@ grow_horizontal = 2
 grow_vertical = 2
 scale = Vector2(0.9, 0.9)
 pivot_offset = Vector2(1065.5557, 584.4445)
-theme_override_constants/separation = 184
 
 [node name="StartRun" parent="Buttons" unique_id=2147251040 instance=ExtResource("1_il2ly")]
 layout_mode = 2
@@ -985,6 +1028,7 @@ grow_vertical = 1
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=1756581453]
 libraries/ = SubResource("AnimationLibrary_il2ly")
+autoplay = &"init"
 
 [node name="Leaderboard" type="Control" parent="." unique_id=139349403 node_paths=PackedStringArray("clip", "cursor", "cursorAnimator", "options", "optionsSub", "scrollbar", "animator")]
 modulate = Color(1, 1, 1, 0)
@@ -1032,8 +1076,8 @@ anchor_right = 0.99300003
 anchor_bottom = 0.066
 offset_left = -3.9000003
 offset_top = 15.075
-offset_right = -94.4693
-offset_bottom = 15.477818
+offset_right = -94.470764
+offset_bottom = 15.477848
 rotation = 3.1415927
 texture = ExtResource("6_1c1pi")
 region_rect = Rect2(379, 60, 94, 60)
@@ -1050,7 +1094,7 @@ anchor_bottom = 1.033
 offset_left = -4.68
 offset_top = -569.23206
 offset_right = -95.32001
-offset_bottom = -568.7289
+offset_bottom = -568.72906
 texture = ExtResource("6_1c1pi")
 region_rect = Rect2(379, 60, 94, 60)
 axis_stretch_horizontal = 1
@@ -1147,3 +1191,6 @@ libraries/ = SubResource("AnimationLibrary_oqwnn")
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="Leaderboard" unique_id=46948175]
 libraries/ = SubResource("AnimationLibrary_d7rtc")
+
+[connection signal="mouse_entered" from="Buttons/StartRun" to="." method="ReceiveMouseInput" binds= [1]]
+[connection signal="mouse_entered" from="Buttons/ShowLevelList" to="." method="ReceiveMouseInput" binds= [2]]

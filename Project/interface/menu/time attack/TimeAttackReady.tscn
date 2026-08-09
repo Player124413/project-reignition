@@ -8,33 +8,6 @@
 [ext_resource type="Script" uid="uid://cj76gvi7tbku6" path="res://sound/script/BGMPlayer.cs" id="6_odnbn"]
 [ext_resource type="Resource" uid="uid://d1jobv68x4jm7" path="res://resource/bgm/menu/time attack ready.tres" id="8_dq2lm"]
 
-[sub_resource type="Animation" id="Animation_t0lx7"]
-resource_name = "RESET"
-
-[sub_resource type="Animation" id="Animation_mxanw"]
-resource_name = "show"
-step = 0.1
-tracks/0/type = "method"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("ReadyMenu")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"values": [{
-"args": [],
-"method": &"ShowMenu"
-}]
-}
-
-[sub_resource type="AnimationLibrary" id="AnimationLibrary_kona0"]
-_data = {
-&"RESET": SubResource("Animation_t0lx7"),
-&"show": SubResource("Animation_mxanw")
-}
-
 [node name="TimeAttackReady" type="Control" unique_id=2086501245 node_paths=PackedStringArray("readyMenu", "skillMenu", "bgm", "animator")]
 layout_mode = 3
 anchors_preset = 15
@@ -42,12 +15,13 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
 script = ExtResource("1_t0lx7")
 readyMenu = NodePath("ReadyMenu")
 skillMenu = NodePath("SkillSelect")
 submenus = Array[NodePath]([NodePath("SkillSelect")])
 bgm = NodePath("BGM")
-animator = NodePath("AnimationPlayer")
+animator = NodePath("")
 isProcessing = true
 
 [node name="ReadyMenu" parent="." unique_id=1699558802 node_paths=PackedStringArray("description") instance=ExtResource("1_mxanw")]
@@ -64,9 +38,6 @@ submenus = Array[NodePath]([NodePath("../SkillPresetSelect")])
 z_index = 20
 layout_mode = 1
 parentMenu = NodePath("../SkillSelect")
-
-[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=1243877421]
-libraries/ = SubResource("AnimationLibrary_kona0")
 
 [node name="Description" type="Control" parent="." unique_id=1358558174]
 z_index = 100

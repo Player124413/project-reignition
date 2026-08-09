@@ -1,5 +1,4 @@
 using Godot;
-using Godot.Collections;
 using Project.Core;
 
 namespace Project.Interface.Menus;
@@ -7,21 +6,19 @@ namespace Project.Interface.Menus;
 
 public partial class TimeAttackReady : Menu
 {
-	[Export]
-	private ReadyMenu readyMenu;
-	[Export]
-	private SkillSelect skillMenu;
+	[Export] private ReadyMenu readyMenu;
+	[Export] private SkillSelect skillMenu;
 
 	public override void ShowMenu()
 	{
-		if (this.parentMenu != null)
+		if (parentMenu != null)
 		{
-			readyMenu.parentMenu = this.parentMenu;
-			readyMenu.SetBgmPlayer(this.bgm);
+			readyMenu.parentMenu = parentMenu;
+			readyMenu.SetBgmPlayer(bgm);
 		}
 		else
 		{
-			this.bgm.Play();
+			bgm.Play();
 		}
 
 		SetupReadyMenu();
