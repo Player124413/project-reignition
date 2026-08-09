@@ -40,6 +40,7 @@ public partial class ModOption : Control
 
 		float final_offset = -(nameLabel.GetCombinedMinimumSize().X - labelControl.Size.X);
 		tween = CreateTween().SetLoops();
+		tween.TweenInterval(scrollDelay);
 		tween.TweenProperty(nameLabel,"offset_left", final_offset, scrollDuration).From(0).SetDelay(scrollDelay);
 	}
 
