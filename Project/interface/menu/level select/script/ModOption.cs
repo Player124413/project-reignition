@@ -48,7 +48,11 @@ public partial class ModOption : Control
 	public void StopScrolling()
 	{
 		nameLabel.OffsetLeft = 0;
-		tween?.Kill();
+
+		if (tween == null)
+			return;
+		tween.Stop();
+		tween.Kill();
 	}
 
 	private void RedrawStaticData() => nameLabel.Text = Skill.NameKey;

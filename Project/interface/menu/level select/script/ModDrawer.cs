@@ -46,6 +46,8 @@ public partial class ModDrawer : Menu
 	{
 		IsOpen = !IsOpen;
 
+		charSelect.StopAllScrolling();
+
 		if (IsOpen)
 		{
 			charSelect.Redraw();
