@@ -43,9 +43,8 @@ public partial class Score : Control
 			}
 		}
 
-
-
-		isRankPreviewShown = SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.RankPreview);
+		isRankPreviewShown = SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.RankPreview) &&
+			(!TimeAttackManager.Instance.IsRunActive || TimeAttackManager.Instance.CurrentRunType == TimeAttackManager.RunType.SingleRun);
 		styleAnimator.Play(isRankPreviewShown ? "show-rank-preview" : "hide-rank-preview");
 
 		CurrentRank = Mathf.Max(0, Stage.CalculateRank(true));

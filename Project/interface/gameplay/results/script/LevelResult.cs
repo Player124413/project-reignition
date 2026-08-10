@@ -191,9 +191,11 @@ public partial class LevelResult : Control
 
 		// Calculate rank AFTER tallying final score
 		int rank = Stage.CalculateRank();
+		bool isRankPreviewShown = SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.RankPreview) &&
+			(!TimeAttackManager.Instance.IsRunActive || TimeAttackManager.Instance.CurrentRunType == TimeAttackManager.RunType.SingleRun);
 
 		// Show the Score Requirements when Rank Preview is equipped
-		if (SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.RankPreview) && rank >= 0 && rank < 3)
+		if (isRankPreviewShown && rank >= 0 && rank < 3)
 		{
 			// Show rank requirements
 			requirementRoot.Visible = true;
