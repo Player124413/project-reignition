@@ -247,7 +247,7 @@ tracks/5/keys = {
 
 [sub_resource type="Animation" id="Animation_3y15q"]
 resource_name = "confirm-1continue"
-length = 3.0
+length = 0.001
 step = 0.1
 tracks/0/type = "method"
 tracks/0/imported = false
@@ -266,7 +266,6 @@ tracks/0/keys = {
 
 [sub_resource type="Animation" id="Animation_g3d8y"]
 resource_name = "confirm-1yes"
-length = 3.0
 step = 0.1
 tracks/0/type = "method"
 tracks/0/imported = false
@@ -289,24 +288,21 @@ tracks/1/path = NodePath("Buttons/NewRun")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/keys = {
-"times": PackedFloat32Array(0.29999998, 3),
-"transitions": PackedFloat32Array(1, 1),
+"times": PackedFloat32Array(0.29999998),
+"transitions": PackedFloat32Array(1),
 "values": [{
 "args": [],
 "method": &"HideButton"
-}, {
-"args": [],
-"method": &"DeselectButton"
 }]
 }
 tracks/2/type = "method"
 tracks/2/imported = false
 tracks/2/enabled = true
-tracks/2/path = NodePath("Buttons/SingleRun")
+tracks/2/path = NodePath("Buttons/ContinueRun")
 tracks/2/interp = 1
 tracks/2/loop_wrap = true
 tracks/2/keys = {
-"times": PackedFloat32Array(0.1),
+"times": PackedFloat32Array(0.20000002),
 "transitions": PackedFloat32Array(1),
 "values": [{
 "args": [],
@@ -316,10 +312,24 @@ tracks/2/keys = {
 tracks/3/type = "method"
 tracks/3/imported = false
 tracks/3/enabled = true
-tracks/3/path = NodePath("Description/Description")
+tracks/3/path = NodePath("Buttons/SingleRun")
 tracks/3/interp = 1
 tracks/3/loop_wrap = true
 tracks/3/keys = {
+"times": PackedFloat32Array(0.1),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"HideButton"
+}]
+}
+tracks/4/type = "method"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("Description/Description")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "values": [{
@@ -327,13 +337,13 @@ tracks/3/keys = {
 "method": &"HideDescription"
 }]
 }
-tracks/4/type = "method"
-tracks/4/imported = false
-tracks/4/enabled = true
-tracks/4/path = NodePath("TimeAttackNewRun")
-tracks/4/interp = 1
-tracks/4/loop_wrap = true
-tracks/4/keys = {
+tracks/5/type = "method"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("TimeAttackNewRun")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
 "times": PackedFloat32Array(0.4),
 "transitions": PackedFloat32Array(1),
 "values": [{
@@ -341,32 +351,18 @@ tracks/4/keys = {
 "method": &"ShowMenu"
 }]
 }
-tracks/5/type = "method"
-tracks/5/imported = false
-tracks/5/enabled = true
-tracks/5/path = NodePath("Control/ButtonImage/AnimationPlayer")
-tracks/5/interp = 1
-tracks/5/loop_wrap = true
-tracks/5/keys = {
+tracks/6/type = "method"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("Control/ButtonImage/AnimationPlayer")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
 "times": PackedFloat32Array(0.3),
 "transitions": PackedFloat32Array(1),
 "values": [{
 "args": [&"hide", -1, 1.0, false],
 "method": &"play"
-}]
-}
-tracks/6/type = "method"
-tracks/6/imported = false
-tracks/6/enabled = true
-tracks/6/path = NodePath("Buttons/ContinueRun")
-tracks/6/interp = 1
-tracks/6/loop_wrap = true
-tracks/6/keys = {
-"times": PackedFloat32Array(0.20000002),
-"transitions": PackedFloat32Array(1),
-"values": [{
-"args": [],
-"method": &"HideButton"
 }]
 }
 
@@ -1270,6 +1266,18 @@ tracks/10/keys = {
 "update": 1,
 "values": [false]
 }
+tracks/11/type = "value"
+tracks/11/imported = false
+tracks/11/enabled = true
+tracks/11/path = NodePath("Menu/Parent/Text/Cursor:visible")
+tracks/11/interp = 1
+tracks/11/loop_wrap = true
+tracks/11/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
 
 [sub_resource type="Animation" id="Animation_nyh2c"]
 resource_name = "confirm"
@@ -1330,6 +1338,18 @@ tracks/3/keys = {
 "args": [],
 "method": &"AlertMenuClosed"
 }]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath(".:visible")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0, 0.5),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [true, false]
 }
 
 [sub_resource type="Animation" id="Animation_wfhbx"]
@@ -1495,6 +1515,18 @@ tracks/6/keys = {
 "update": 1,
 "values": [ExtResource("25_3d7aw")]
 }
+tracks/7/type = "value"
+tracks/7/imported = false
+tracks/7/enabled = true
+tracks/7/path = NodePath("Menu/Parent/Text/Cursor:visible")
+tracks/7/interp = 1
+tracks/7/loop_wrap = true
+tracks/7/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
 
 [sub_resource type="Animation" id="Animation_ti0oe"]
 resource_name = "select-no"
@@ -1563,6 +1595,98 @@ tracks/4/keys = {
 "update": 1,
 "values": [ExtResource("24_ivowi")]
 }
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("Menu/Parent/Text/Cursor:visible")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+
+[sub_resource type="Animation" id="Animation_btsww"]
+resource_name = "select-none"
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Menu/Parent/Text/Cursor:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(-400, 16)]
+}
+tracks/1/type = "method"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Menu/Parent/Text/Cursor/CursorAnimationPlayer")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [0.0, false],
+"method": &"seek"
+}]
+}
+tracks/2/type = "method"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("../SFX/Select")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [0.0],
+"method": &"play"
+}]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("Menu/Parent/Text/Options/Yes:texture")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [ExtResource("22_3d7aw")]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("Menu/Parent/Text/Options/No:texture")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [ExtResource("22_3d7aw")]
+}
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("Menu/Parent/Text/Cursor:visible")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
 
 [sub_resource type="Animation" id="Animation_oei2k"]
 resource_name = "select-yes"
@@ -1630,6 +1754,18 @@ tracks/4/keys = {
 "transitions": PackedFloat32Array(1),
 "update": 1,
 "values": [ExtResource("22_3d7aw")]
+}
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("Menu/Parent/Text/Cursor:visible")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
 }
 
 [sub_resource type="Animation" id="Animation_660eh"]
@@ -1749,6 +1885,7 @@ _data = {
 &"hide": SubResource("Animation_wfhbx"),
 &"select-cancel": SubResource("Animation_5gexy"),
 &"select-no": SubResource("Animation_ti0oe"),
+&"select-none": SubResource("Animation_btsww"),
 &"select-yes": SubResource("Animation_oei2k"),
 &"show": SubResource("Animation_660eh")
 }
@@ -1823,7 +1960,7 @@ anchor_bottom = 0.5
 offset_left = -1000.0
 offset_top = -436.0
 offset_right = -144.0
-offset_bottom = -48.0
+offset_bottom = 148.0
 grow_horizontal = 2
 grow_vertical = 2
 scale = Vector2(0.9, 0.9)
@@ -2179,6 +2316,7 @@ alignment = 1
 [node name="Yes" type="TextureRect" parent="AlertMenu/Menu/Parent/Text/Options" unique_id=1746530819]
 custom_minimum_size = Vector2(300, 128)
 layout_mode = 2
+mouse_filter = 0
 texture = ExtResource("22_3d7aw")
 expand_mode = 1
 stretch_mode = 5
@@ -2199,6 +2337,7 @@ uppercase = true
 [node name="No" type="TextureRect" parent="AlertMenu/Menu/Parent/Text/Options" unique_id=416471855]
 custom_minimum_size = Vector2(300, 128)
 layout_mode = 2
+mouse_filter = 0
 texture = ExtResource("24_ivowi")
 expand_mode = 1
 stretch_mode = 5
@@ -2224,6 +2363,7 @@ offset_left = -256.0
 offset_top = 16.0
 offset_right = 256.0
 offset_bottom = 144.0
+mouse_filter = 0
 texture = ExtResource("25_3d7aw")
 expand_mode = 1
 stretch_mode = 5
@@ -2249,6 +2389,7 @@ offset_top = 16.0
 offset_right = 400.0
 offset_bottom = 144.0
 pivot_offset = Vector2(150, 64)
+mouse_filter = 2
 
 [node name="Sprite" type="TextureRect" parent="AlertMenu/Menu/Parent/Text/Cursor" unique_id=249856253]
 modulate = Color(1, 1, 1, 0)
@@ -2260,6 +2401,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 pivot_offset = Vector2(150, 64)
+mouse_filter = 2
 texture = ExtResource("24_ivowi")
 expand_mode = 1
 stretch_mode = 5
@@ -2289,3 +2431,7 @@ libraries/ = SubResource("AnimationLibrary_6tdb6")
 [connection signal="mouse_entered" from="Buttons/NewRun" to="." method="ReceiveMouseInput" binds= [1]]
 [connection signal="mouse_entered" from="Buttons/ContinueRun" to="." method="ReceiveMouseInput" binds= [2]]
 [connection signal="mouse_entered" from="Buttons/SingleRun" to="." method="ReceiveMouseInput" binds= [3]]
+[connection signal="mouse_entered" from="AlertMenu/Menu/Parent/Text/Options/Yes" to="." method="ReceiveMouseInput" binds= [0]]
+[connection signal="mouse_exited" from="AlertMenu/Menu/Parent/Text/Options/Yes" to="." method="ReceiveMouseInput" binds= [-1]]
+[connection signal="mouse_entered" from="AlertMenu/Menu/Parent/Text/Options/No" to="." method="ReceiveMouseInput" binds= [1]]
+[connection signal="mouse_exited" from="AlertMenu/Menu/Parent/Text/Options/No" to="." method="ReceiveMouseInput" binds= [-1]]
