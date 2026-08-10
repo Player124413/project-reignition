@@ -63,12 +63,7 @@ public partial class WorldSelect : Menu
 		ActiveVideoPlayer = videoPlayers[VerticalSelection];
 
 		if (menuMemory[MemoryKeys.ActiveMenu] == (int)MemoryKeys.LevelSelect) // Activate the correct submenu
-		{
-			animator.Play("init-level-select");
-			animator.Advance(0);
-			VerticalSelection = (int)SaveManager.ActiveGameData.lastPlayedWorld;
-			OpenSubmenu();
-		}
+			LoadIntoLevelSelect();
 	}
 
 	public override void ShowMenu()
@@ -297,5 +292,13 @@ public partial class WorldSelect : Menu
 	{
 		Runtime.Instance.IsUsingMouse = true;
 		mouseSelection = direction;
+	}
+
+	private void LoadIntoLevelSelect()
+	{
+		animator.Play("init-level-select");
+		animator.Advance(0);
+		VerticalSelection = (int)SaveManager.ActiveGameData.lastPlayedWorld;
+		OpenSubmenu();
 	}
 }
