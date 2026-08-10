@@ -174,10 +174,7 @@ public partial class LevelSelect : Menu
 	public override void ShowMenu()
 	{
 		if (menuMemory[MemoryKeys.ActiveMenu] == (int)MemoryKeys.TimeAttack)
-		{
-			menuMemory[MemoryKeys.LevelSelect] = 0;
-			SetUp();
-		}
+			base.SetUp();
 
 		VerticalSelection = menuMemory[MemoryKeys.LevelSelect];
 		RecalculateListPosition();
