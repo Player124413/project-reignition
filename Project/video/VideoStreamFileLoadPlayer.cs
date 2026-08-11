@@ -14,6 +14,11 @@ public partial class VideoStreamFileLoadPlayer : VideoStreamPlayer
 		if (Engine.IsEditorHint())
 			return;
 
+		ReloadVideoPath();
+	}
+
+	public void ReloadVideoPath()
+	{
 		if (string.IsNullOrEmpty(videoFilePath))
 			return;
 
