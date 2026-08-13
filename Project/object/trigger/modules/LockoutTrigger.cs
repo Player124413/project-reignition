@@ -14,7 +14,7 @@ namespace Project.Gameplay.Triggers
 			Player.CallDeferred(PlayerController.MethodName.AddLockoutData, lockoutData);
 
 			if (!StageSettings.Instance.IsConnected(StageSettings.SignalName.Respawned, new(this, MethodName.Deactivate)))
-				StageSettings.Instance.Connect(StageSettings.SignalName.Respawned, new(this, MethodName.Deactivate), (uint)ConnectFlags.OneShot + (uint)ConnectFlags.Deferred);
+				StageSettings.Instance.Connect(StageSettings.SignalName.Respawned, new(this, MethodName.Deactivate), (uint)ConnectFlags.OneShot);
 		}
 
 		public override void Deactivate()
