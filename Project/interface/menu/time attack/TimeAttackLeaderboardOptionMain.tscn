@@ -2,6 +2,73 @@
 
 [ext_resource type="FontFile" uid="uid://cislueb5bhi02" path="res://interface/font/bitmap fonts/Experience.fnt" id="1_etf1k"]
 [ext_resource type="Script" uid="uid://babwea7djmpi3" path="res://interface/menu/time attack/script/TimeAttackLeaderboardOptionMain.cs" id="1_krli1"]
+[ext_resource type="FontFile" uid="uid://d1bvfghhgreq7" path="res://interface/font/otf/Rodin DB.otf" id="2_iqr1p"]
+[ext_resource type="LabelSettings" uid="uid://bqrydgixkulbv" path="res://interface/font/NavigationFont.tres" id="3_xq44x"]
+[ext_resource type="Material" uid="uid://bhbsafmnnhtdb" path="res://effect/material/Canvas Item Add.tres" id="4_dc7bl"]
+
+[sub_resource type="Animation" id="Animation_03o5k"]
+resource_name = "RESET"
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Glow:self_modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 0)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Glow:scale")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(1, 1)]
+}
+
+[sub_resource type="Animation" id="Animation_gr487"]
+resource_name = "loop"
+length = 0.500003
+loop_mode = 1
+step = 0.0333333
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Glow:self_modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.0667, 0.3333),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 1), Color(1, 1, 1, 0)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Glow:scale")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.0667, 0.33333334),
+"transitions": PackedFloat32Array(1, 0.5, 1),
+"update": 0,
+"values": [Vector2(1, 1), Vector2(1, 1), Vector2(1.5, 1.5)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_desxn"]
+_data = {
+&"RESET": SubResource("Animation_03o5k"),
+&"loop": SubResource("Animation_gr487")
+}
 
 [sub_resource type="LabelSettings" id="LabelSettings_krli1"]
 font = ExtResource("1_etf1k")
@@ -21,6 +88,52 @@ grow_vertical = 2
 script = ExtResource("1_krli1")
 placement = NodePath("HBoxContainer/Placement")
 time = NodePath("HBoxContainer/Time")
+
+[node name="New" type="Label" parent="." unique_id=324724345]
+visible = false
+self_modulate = Color(1, 1, 0, 1)
+layout_mode = 0
+offset_left = 23.0
+offset_top = 18.0
+offset_right = 293.0
+offset_bottom = 78.0
+scale = Vector2(0.8, 0.8)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.784314)
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 2
+theme_override_fonts/font = ExtResource("2_iqr1p")
+theme_override_font_sizes/font_size = 40
+text = "sys_new"
+label_settings = ExtResource("3_xq44x")
+horizontal_alignment = 1
+vertical_alignment = 1
+uppercase = true
+
+[node name="Glow" type="Label" parent="New" unique_id=194103453]
+modulate = Color(1, 1, 0, 1)
+self_modulate = Color(1, 1, 1, 0)
+material = ExtResource("4_dc7bl")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+pivot_offset = Vector2(156, 54)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.784314)
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 2
+theme_override_fonts/font = ExtResource("2_iqr1p")
+theme_override_font_sizes/font_size = 40
+text = "sys_new"
+label_settings = ExtResource("3_xq44x")
+horizontal_alignment = 1
+vertical_alignment = 1
+uppercase = true
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="New" unique_id=1765154876]
+libraries/ = SubResource("AnimationLibrary_desxn")
+autoplay = &"loop"
 
 [node name="HBoxContainer" type="HBoxContainer" parent="." unique_id=1471066282]
 custom_minimum_size = Vector2(0, 72)
