@@ -229,6 +229,18 @@ tracks/1/keys = {
 "update": 0,
 "values": [0.0]
 }
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("MoonlightSonicSpec:light_energy")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.08]
+}
 
 [sub_resource type="Animation" id="Animation_ikryj"]
 resource_name = "event"
@@ -256,7 +268,19 @@ tracks/1/keys = {
 "times": PackedFloat32Array(0, 0.5),
 "transitions": PackedFloat32Array(1, 1),
 "update": 0,
-"values": [0.0, 1.0]
+"values": [0.0, 2.0]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("MoonlightSonicSpec:light_energy")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 0.5),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [0.08, 0.0]
 }
 
 [sub_resource type="Animation" id="Animation_5jqgc"]
@@ -285,7 +309,19 @@ tracks/1/keys = {
 "times": PackedFloat32Array(0, 0.5),
 "transitions": PackedFloat32Array(1, 1),
 "update": 0,
-"values": [1.0, 0.0]
+"values": [2.0, 0.0]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("MoonlightSonicSpec:light_energy")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 0.5),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [0.0, 0.08]
 }
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_c5pob"]
@@ -524,12 +560,12 @@ sky_horizon_color = Color(0, 0, 0.109804, 1)
 ground_bottom_color = Color(0, 0, 0.109804, 1)
 ground_horizon_color = Color(0, 0, 0.109804, 1)
 
-[sub_resource type="Sky" id="Sky_e8t8m"]
+[sub_resource type="Sky" id="Sky_tc8c3"]
 sky_material = SubResource("ProceduralSkyMaterial_kamdx")
 
 [sub_resource type="Environment" id="Environment_p0vwu"]
 background_color = Color(0, 0, 0.109804, 1)
-sky = SubResource("Sky_e8t8m")
+sky = SubResource("Sky_tc8c3")
 ambient_light_source = 3
 ambient_light_color = Color(1, 1, 1, 1)
 ambient_light_sky_contribution = 0.0
@@ -539,7 +575,7 @@ tonemap_exposure = 1.4
 glow_enabled = true
 glow_levels/3 = 0.0
 glow_normalized = true
-glow_bloom = 0.03
+glow_bloom = 0.2
 glow_hdr_threshold = 1.1
 fog_enabled = true
 fog_mode = 1
@@ -1057,7 +1093,7 @@ Environment = NodePath("WorldEnvironment")
 [node name="Collision" parent="." unique_id=380368419 instance=ExtResource("9_oaikh")]
 visible = false
 
-[node name="CarpetWallOneWay" parent="Collision" index="5" unique_id=1346486167]
+[node name="CarpetWallOneWay" parent="Collision" index="5" unique_id=710230373]
 mesh = SubResource("ArrayMesh_mgnt4")
 
 [node name="Trigger" type="Node3D" parent="." unique_id=148784477]
@@ -1326,6 +1362,7 @@ path = NodePath("../../../../../Path/MainPath1")
 
 [node name="SidleActivation" type="Node3D" parent="Trigger/Object/Sidle/SidleTrigger1" unique_id=70136076 node_paths=PackedStringArray("animator")]
 script = ExtResource("5_jhy1v")
+skipDisabledAnimationTracks = []
 animator = NodePath("AnimationPlayer")
 "Trigger Settings/Automatically Respawn" = false
 "Trigger Settings/Is One Shot" = true
@@ -2159,18 +2196,9 @@ shadow_bias = 0.001
 shadow_caster_mask = 4294967289
 directional_shadow_max_distance = 50.0
 
-[node name="MoonlightSonicSpec" type="DirectionalLight3D" parent="Visuals" unique_id=1744164842]
-transform = Transform3D(0.94410056, -1.4409795e-08, 0.32965767, -0.32965767, -4.126795e-08, 0.94410056, 0, -1, -4.371139e-08, 0, -69.52971, -4.37114e-08)
-layers = 1024
-light_energy = 0.08
-light_specular = 7.0
-light_cull_mask = 4293918785
-shadow_bias = 0.001
-shadow_caster_mask = 4294967289
-directional_shadow_max_distance = 50.0
-
 [node name="UnderlightEvent" type="Node3D" parent="Visuals" unique_id=261853973 node_paths=PackedStringArray("animator")]
 script = ExtResource("5_jhy1v")
+skipDisabledAnimationTracks = []
 animator = NodePath("AnimationPlayer")
 "Trigger Settings/Automatically Respawn" = false
 "Trigger Settings/Is One Shot" = false
@@ -2185,10 +2213,20 @@ light_specular = 0.0
 light_cull_mask = 4293918785
 directional_shadow_max_distance = 50.0
 
+[node name="MoonlightSonicSpec" type="DirectionalLight3D" parent="Visuals/UnderlightEvent" unique_id=1744164842]
+transform = Transform3D(0.94410056, -1.4409796e-08, 0.32965767, -0.32965767, -4.126795e-08, 0.94410056, 0, -1, -4.3711395e-08, 0, -69.52971, -4.37114e-08)
+layers = 1024
+light_energy = 0.08
+light_specular = 7.0
+light_cull_mask = 4293918785
+shadow_bias = 0.001
+shadow_caster_mask = 4294967289
+directional_shadow_max_distance = 50.0
+
 [node name="object_underlight" type="DirectionalLight3D" parent="Visuals/UnderlightEvent" unique_id=628538655]
 transform = Transform3D(-1, -3.8213718e-15, 8.742278e-08, -8.742278e-08, 4.37114e-08, -1, 0, -1, -4.37114e-08, 0, 1, -4.37114e-08)
 layers = 1024
-light_color = Color(0.54, 0.6, 0.597, 1)
+light_color = Color(0.60397613, 0.7818249, 0.8595992, 1)
 light_energy = 0.0
 light_specular = 0.0
 light_cull_mask = 4293918785
@@ -2825,15 +2863,15 @@ attenuation_filter_db = 0.0
 [connection signal="Activated" from="Visuals/underlight_trigger_final" to="Visuals/UnderlightEvent" method="Activate"]
 [connection signal="Deactivated" from="Visuals/underlight_trigger_final" to="Visuals/UnderlightEvent" method="Deactivate"]
 [connection signal="Activated" from="Carpet/AutorunTrigger" to="Carpet/Autorun" method="Activate"]
-[connection signal="Activated" from="Carpet/StartTrigger" to="Carpet/Autorun" method="Deactivate"]
 [connection signal="Activated" from="Carpet/StartTrigger" to="Collision/CarpetWallOneWay" method="Deactivate"]
+[connection signal="Activated" from="Carpet/StartTrigger" to="Carpet/Autorun" method="Deactivate"]
 [connection signal="JumpFinished" from="Carpet/StartTrigger/JumpTrigger" to="Carpet/Carpet" method="Activate"]
 [connection signal="Activated" from="Carpet/Carpet" to="Carpet/Carpet/Camera" method="Activate"]
 [connection signal="Activated" from="Carpet/Carpet" to="Carpet/Carpet/Path" method="Activate"]
 [connection signal="Activated" from="Carpet/EndTrigger" to="Carpet/Carpet" method="Deactivate"]
 [connection signal="Activated" from="Carpet/EndTrigger" to="Carpet/Carpet/Camera" method="Deactivate"]
-[connection signal="JumpFinished" from="Carpet/EndTrigger/JumpTrigger" to="Trigger/Path/MainPath4" method="Activate"]
 [connection signal="JumpFinished" from="Carpet/EndTrigger/JumpTrigger" to="Collision/CarpetWallOneWay" method="Activate"]
+[connection signal="JumpFinished" from="Carpet/EndTrigger/JumpTrigger" to="Trigger/Path/MainPath4" method="Activate"]
 
 [editable path="Collision"]
 [editable path="Visuals/MainSection/Skybox"]
