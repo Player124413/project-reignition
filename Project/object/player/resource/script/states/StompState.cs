@@ -18,11 +18,12 @@ public partial class StompState : PlayerState
 	public override void EnterState()
 	{
 		if (!SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.StompBounce) ||
-			Player.Controller.IsHoldingDirection(Player.Controller.GetTargetInputAngle(), Player.PathFollower.BackAngle))
+			Mathf.IsZeroApprox(Player.Controller.GetInputStrength()))
 		{
 			Player.MoveSpeed = 0; // Go STRAIGHT down
 			Player.StrafeSpeed = 0;
 		}
+
 		Player.IsStomping = true;
 		Player.Lockon.IsMonitoring = false;
 
