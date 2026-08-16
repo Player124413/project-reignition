@@ -57,6 +57,9 @@ public partial class BemothHornState : PlayerState
 		Player.Animator.ResetState();
 		Player.StopExternal();
 
+		Player.Effect.StopChargeFX();
+		Player.Effect.StopFullChargeFX();
+
 		HeadsUpDisplay.Instance.HidePrompts();
 	}
 
@@ -65,7 +68,11 @@ public partial class BemothHornState : PlayerState
 		Player.CallDeferred(PlayerController.MethodName.UpdateExternalControl, true);
 
 		if (Trigger.IsPopping || Trigger.IsPopReady)
+		{
+			Player.Effect.StopChargeFX();
+			Player.Effect.StopFullChargeFX();
 			return null;
+		}
 
 		ProcessPullCharge();
 
@@ -105,6 +112,9 @@ public partial class BemothHornState : PlayerState
 
 		if (Input.IsActionPressed("button_action") || Input.IsActionPressed("button_attack") || Player.Controller.IsGyroEnabled)
 		{
+			if (Mathf.IsZeroApprox(pullChargeTimer))
+				Player.Effect.StartChargeFX();
+
 			if (Mathf.IsEqualApprox(pullChargeTimer, OptimalPullChargeTiming)) // Already charged
 			{
 				if (Mathf.IsZeroApprox(shakeTimer))
@@ -116,12 +126,19 @@ public partial class BemothHornState : PlayerState
 			if (!Player.Controller.IsGyroEnabled || !Mathf.IsZeroApprox(shakeTimer))
 			{
 				pullChargeTimer = Mathf.MoveToward(pullChargeTimer, OptimalPullChargeTiming, PhysicsManager.physicsDelta);
+				if (Mathf.IsEqualApprox(pullChargeTimer, OptimalPullChargeTiming))
+					Player.Effect.StartFullChargeFX();
+
 				return;
 			}
 		}
 
 		if (Mathf.IsZeroApprox(pullChargeTimer))
+		{
+			Player.Effect.StopChargeFX();
+			Player.Effect.StopFullChargeFX();
 			return;
+		}
 
 		if (!Trigger.IsJoltingHorn)
 		{
@@ -134,6 +151,9 @@ public partial class BemothHornState : PlayerState
 
 	private void StartPull()
 	{
+		Player.Effect.StopChargeFX();
+		Player.Effect.StopFullChargeFX();
+
 		Trigger.JoltHorn(PullStrength);
 		if (PullStrength > 2) // Feedback
 			Player.Camera.StartMediumCameraShake();
