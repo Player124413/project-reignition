@@ -23,6 +23,8 @@ public partial class TimeAttackResults : Menu
 	[Export] private Label totalTimeLabel;
 	[Export] private PackedScene resultOptionScene;
 	private readonly List<TimeAttackResultsOption> resultsOption = [];
+	[Export] private Control tries;
+	[Export] private Label triesLabel;
 
 	protected override void SetUp()
 	{
@@ -44,6 +46,14 @@ public partial class TimeAttackResults : Menu
 
 		initialCursorPosition = cursor.Position.Y;
 		totalTimeLabel.Text = ExtensionMethods.FormatTime(TimeAttackManager.Instance.GetTotalRunTime());
+
+		if (SaveManager.TimeData.Tries > 1)
+			tries.Visible = true;
+		else
+			tries.Visible = false;
+
+		triesLabel.Text = SaveManager.TimeData.Tries.ToString();
+		SaveManager.TimeData.Tries = 0;
 		base.SetUp();
 	}
 

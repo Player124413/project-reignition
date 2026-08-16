@@ -1633,6 +1633,7 @@ public partial class SaveManager : Node
 		public TimeAttackManager.RunType CurrentRunType;
 		///<summary>The player's spot in the current run</summary>
 		public int CurrentPlacement;
+		public int Tries;
 		///<summary>The player's saved skills for the run
 		public Array<SkillKey> equippedSkillsContinue;
 		///<summary>The player's saved augments for the run
@@ -1714,6 +1715,7 @@ public partial class SaveManager : Node
 				{ nameof(RunInProgress), RunInProgress},
 				{ nameof(CurrentRunType), (int)CurrentRunType},
 				{ nameof(CurrentPlacement), CurrentPlacement},
+				{ nameof(Tries), Tries},
 				{ nameof(equippedSkillsContinue), ActiveGameData.SaveSkills(equippedSkillsContinue) },
 				{ nameof(equippedAugmentsContinue), ActiveGameData.SaveAugments(equippedAugmentsContinue) },
 				{ nameof(equippedSkillsSingle), ActiveGameData.SaveSkills(equippedSkillsSingle) },
@@ -1738,6 +1740,9 @@ public partial class SaveManager : Node
 				CurrentRunType = (TimeAttackManager.RunType)(int)var;
 			if (dictionary.TryGetValue(nameof(CurrentPlacement), out var))
 				CurrentPlacement = (int)var;
+			
+			if (dictionary.TryGetValue(nameof(Tries), out var))
+				Tries = (int)var;
 
 			if (dictionary.TryGetValue(nameof(equippedSkillsContinue), out var))
 			{
@@ -1767,23 +1772,23 @@ public partial class SaveManager : Node
 			int MinimalistCount = 7;
 			int BossRushCount = 5;
 
-			float StandardGold = 2100f; //35 Minutes
-			float StandardSilver = 2280f; //38 Minutes
-			float StandardBronze = 2460f; //41 Minutes
-			float StandardFour = 2640f; //44 Minutes
-			float StandardFive = 2820f; //47 Minutes
+			float StandardGold = 1920f; //32 Minutes
+			float StandardSilver = 2040; //34 Minutes
+			float StandardBronze = 2100; //35 Minutes
+			float StandardFour = 2280f; //38 Minutes
+			float StandardFive = 2340; //39 Minutes
 
-			float MiniGold = 900f; //15 Minutes
-			float MiniSilver = 1080f; //18 Minutes
-			float MiniBronze = 1260f; //21 Minutes
-			float MiniFour = 1440f; //24 Minutes
-			float MiniFive = 1620f; //27 Minutes
+			float MiniGold = 720f; //12 Minutes
+			float MiniSilver = 840f; //14 Minutes
+			float MiniBronze = 900f; //15 Minutes
+			float MiniFour = 960f; //16 Minutes
+			float MiniFive = 1020f; //17 Minutes
 
 			float BossGold = 300f; //5 Minutes
-			float BossSilver = 420f; //7 Minutes
-			float BossBronze = 540f; //9 Minutes
-			float BossFour = 660f; //11 Minutes
-			float BossFive = 780f; //13 Minutes
+			float BossSilver = 360f; //6 Minutes
+			float BossBronze = 420f; //7 Minutes
+			float BossFour = 480f; //8 Minutes
+			float BossFive = 540f; //9 Minutes
 
 			TimeAttackData data = new()
 			{

@@ -151,6 +151,7 @@ public partial class TimeAttackManager : Node
 
 	public void RestartRun()
 	{
+		SaveManager.TimeData.Tries = 0;
 		ResetRunTimes();
 		ResetLevelCount();
 		ClearCurrentSavedRun();
