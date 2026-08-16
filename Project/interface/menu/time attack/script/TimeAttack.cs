@@ -12,6 +12,7 @@ public partial class TimeAttack : Menu
 	[Export] private TextureRect buttonImage;
 	[Export] private AnimationPlayer buttonImageAnimator;
 	[Export] Array<TimeAttackButton> buttonList;
+	[Export] AnimationPlayer navigationButtonPlayer;
 	private int currentSelection = 1;
 	private int maxSelection = 2;
 	private bool isRunInProgress = false;
@@ -197,6 +198,7 @@ public partial class TimeAttack : Menu
 
 	private void StartSingleRun()
 	{
+		navigationButtonPlayer.Play("hide");
 		FadeBgm(0.5f);
 		TimeAttackManager.Instance.SetRunType(TimeAttackManager.RunType.SingleRun);
 		SaveManager.ActiveGameData.equippedSkills = SaveManager.TimeData.equippedSkillsSingle;
@@ -253,8 +255,8 @@ public partial class TimeAttack : Menu
 			returnAnimator.Advance(0.0);
 		}
 
-		isAlertMenuActive = false;
 		returnAnimator.Play("hide");
+		
 	}
 
 	private void AlertMenuClosed()
