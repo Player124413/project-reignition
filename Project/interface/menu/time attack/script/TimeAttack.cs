@@ -118,13 +118,12 @@ public partial class TimeAttack : Menu
 			buttonList[i].DeselectButton();
 
 		buttonImageAnimator.Play("show");
-		buttonImage.Texture = buttonList[currentSelection - 1].image;
-
-		description.Text = buttonList[currentSelection - 1].description;
-
+		
 		if (isRunInProgress)
 		{
 			buttonList[currentSelection - 1].SelectButton();
+			buttonImage.Texture = buttonList[currentSelection - 1].image;
+			description.Text = buttonList[currentSelection - 1].description;
 		}
 		else
 		{
@@ -132,9 +131,13 @@ public partial class TimeAttack : Menu
 			{
 				case 1:
 					buttonList[0].SelectButton();
+					buttonImage.Texture = buttonList[0].image;
+					description.Text = buttonList[0].description;
 					break;
 				case 2:
 					buttonList[2].SelectButton();
+					description.Text = buttonList[2].description;
+					buttonImage.Texture = buttonList[2].image;
 					description.Text = buttonList[2].description;
 					break;
 			}
