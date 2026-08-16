@@ -1761,6 +1761,30 @@ public partial class SaveManager : Node
 
 		public static TimeAttackData CreateDefaultData()
 		{
+			//Sets up default leaderboard data
+
+			int StandardCount = 28;
+			int MinimalistCount = 7;
+			int BossRushCount = 5;
+
+			float StandardGold = 2100f; //35 Minutes
+			float StandardSilver = 2280f; //38 Minutes
+			float StandardBronze = 2460f; //41 Minutes
+			float StandardFour = 2640f; //44 Minutes
+			float StandardFive = 2820f; //47 Minutes
+
+			float MiniGold = 900f; //15 Minutes
+			float MiniSilver = 1080f; //18 Minutes
+			float MiniBronze = 1260f; //21 Minutes
+			float MiniFour = 1440f; //24 Minutes
+			float MiniFive = 1620f; //27 Minutes
+
+			float BossGold = 300f; //5 Minutes
+			float BossSilver = 420f; //7 Minutes
+			float BossBronze = 540f; //9 Minutes
+			float BossFour = 660f; //11 Minutes
+			float BossFive = 780f; //13 Minutes
+
 			TimeAttackData data = new()
 			{
 				AnyP = [],
@@ -1774,6 +1798,38 @@ public partial class SaveManager : Node
 				equippedAugmentsSingle = [],
 
 			};
+			for (int i = 0; i < 5; i++)
+			{
+				data.AnyP.Add(new Array<float>());
+				data.GoalP.Add(new Array<float>());
+				data.BossRush.Add(new Array<float>());
+			}
+			for (int i = 0; i < StandardCount; i++)
+			{
+				data.AnyP[0].Add(StandardGold / StandardCount);
+				data.AnyP[1].Add(StandardSilver / StandardCount);
+				data.AnyP[2].Add(StandardBronze / StandardCount);
+				data.AnyP[3].Add(StandardFour / StandardCount);
+				data.AnyP[4].Add(StandardFive / StandardCount);
+			}
+
+			for (int i = 0; i < MinimalistCount; i++)
+			{
+				data.GoalP[0].Add(MiniGold / MinimalistCount);
+				data.GoalP[1].Add(MiniSilver / MinimalistCount);
+				data.GoalP[2].Add(MiniBronze / MinimalistCount);
+				data.GoalP[3].Add(MiniFour / MinimalistCount);
+				data.GoalP[4].Add(MiniFive / MinimalistCount);
+			}
+
+			for (int i = 0; i < BossRushCount; i++)
+			{
+				data.BossRush[0].Add(BossGold / BossRushCount);
+				data.BossRush[1].Add(BossSilver / BossRushCount);
+				data.BossRush[2].Add(BossBronze / BossRushCount);
+				data.BossRush[3].Add(BossFour / BossRushCount);
+				data.BossRush[4].Add(BossFive / BossRushCount);
+			}
 			return data;
 		}
 	}
