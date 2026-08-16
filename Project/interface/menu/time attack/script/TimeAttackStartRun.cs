@@ -12,6 +12,7 @@ public partial class TimeAttackStartRun : Menu
 	[Export] TimeAttackLeaderboard leaderboard;
 	[Export] Array<TimeAttackButton> buttonList;
 	[Export] private PackedScene levelOption;
+	[Export] AnimationPlayer navigationButtonPlayer;
 
 	private bool isLeaderboardActive;
 	private int currentSelection = 1;
@@ -24,6 +25,7 @@ public partial class TimeAttackStartRun : Menu
 		isLeaderboardActive = false;
 		leaderboard.SpawnLeaderboardOptionsSub();
 		leaderboard.SpawnLeaderboardOptionsMain();
+		navigationButtonPlayer.Play("show");
 	}
 
 	public override void EnableProcessing()
@@ -110,7 +112,10 @@ public partial class TimeAttackStartRun : Menu
 			return;
 
 		if (currentSelection == 1)
+		{
+			navigationButtonPlayer.Play("hide");
 			readyMenu.SetupReadyMenu();
+		}
 		animator.Play("confirm-" + currentSelection);
 	}
 

@@ -29,6 +29,60 @@
 [ext_resource type="Shader" uid="uid://dj2vtehay1fej" path="res://effect/shader/interface/InterfaceFlashAdd.gdshader" id="25_3y15q"]
 [ext_resource type="FontFile" uid="uid://bsoin3p4iygoo" path="res://interface/font/otf/Chiaro Std B.otf" id="26_g3d8y"]
 
+[sub_resource type="Animation" id="Animation_768ea"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 0)]
+}
+
+[sub_resource type="Animation" id="Animation_vx5bn"]
+resource_name = "hide"
+step = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.4),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 1), Color(1, 1, 1, 0)]
+}
+
+[sub_resource type="Animation" id="Animation_fyli6"]
+resource_name = "show"
+step = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_vx5bn"]
+_data = {
+&"RESET": SubResource("Animation_768ea"),
+&"hide": SubResource("Animation_vx5bn"),
+&"show": SubResource("Animation_fyli6")
+}
+
 [sub_resource type="Animation" id="Animation_ltboc"]
 length = 0.001
 tracks/0/type = "value"
@@ -148,6 +202,18 @@ tracks/1/keys = {
 "transitions": PackedFloat32Array(1),
 "update": 1,
 "values": [false]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("NavigationButtons:modulate")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 0)]
 }
 
 [sub_resource type="Animation" id="Animation_mof37"]
@@ -727,11 +793,23 @@ tracks/8/keys = {
 "method": &"HideButton"
 }]
 }
+tracks/9/type = "value"
+tracks/9/imported = false
+tracks/9/enabled = true
+tracks/9/path = NodePath("NavigationButtons:modulate")
+tracks/9/interp = 1
+tracks/9/loop_wrap = true
+tracks/9/keys = {
+"times": PackedFloat32Array(0, 0.5),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 1), Color(1, 1, 1, 0)]
+}
 
 [sub_resource type="Animation" id="Animation_f8140"]
 resource_name = "show"
 length = 1.6
-step = 0.01
+step = 0.1
 tracks/0/type = "method"
 tracks/0/imported = false
 tracks/0/enabled = true
@@ -834,10 +912,22 @@ tracks/6/keys = {
 "update": 1,
 "values": [false]
 }
+tracks/7/type = "value"
+tracks/7/imported = false
+tracks/7/enabled = true
+tracks/7/path = NodePath("NavigationButtons:modulate")
+tracks/7/interp = 1
+tracks/7/loop_wrap = true
+tracks/7/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
 
 [sub_resource type="Animation" id="Animation_udnss"]
 resource_name = "show-single"
-step = 0.01
+step = 0.1
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
@@ -1020,6 +1110,18 @@ tracks/7/keys = {
 "transitions": PackedFloat32Array(1),
 "update": 1,
 "values": [true]
+}
+tracks/8/type = "value"
+tracks/8/imported = false
+tracks/8/enabled = true
+tracks/8/path = NodePath("NavigationButtons:modulate")
+tracks/8/interp = 1
+tracks/8/loop_wrap = true
+tracks/8/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
 }
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_jqwre"]
@@ -1403,11 +1505,14 @@ tracks/3/path = NodePath("..")
 tracks/3/interp = 1
 tracks/3/loop_wrap = true
 tracks/3/keys = {
-"times": PackedFloat32Array(0, 0.5),
-"transitions": PackedFloat32Array(1, 1),
+"times": PackedFloat32Array(0, 0.46666667, 0.5),
+"transitions": PackedFloat32Array(1, 1, 1),
 "values": [{
 "args": [],
 "method": &"DisableProcessing"
+}, {
+"args": [],
+"method": &"EnableProcessing"
 }, {
 "args": [],
 "method": &"AlertMenuClosed"
@@ -1890,7 +1995,7 @@ _data = {
 &"show": SubResource("Animation_660eh")
 }
 
-[node name="TimeAttack" type="Control" unique_id=199478801 node_paths=PackedStringArray("timeAttackAnimator", "description", "readyMenu", "buttonImage", "buttonImageAnimator", "buttonList", "returnAnimator", "bgm", "animator")]
+[node name="TimeAttack" type="Control" unique_id=199478801 node_paths=PackedStringArray("timeAttackAnimator", "description", "readyMenu", "buttonImage", "buttonImageAnimator", "buttonList", "navigationButtonPlayer", "returnAnimator", "bgm", "animator")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -1905,6 +2010,7 @@ readyMenu = NodePath("TimeAttackReady")
 buttonImage = NodePath("Control/ButtonImage")
 buttonImageAnimator = NodePath("Control/ButtonImage/AnimationPlayer")
 buttonList = [NodePath("Buttons/NewRun"), NodePath("Buttons/ContinueRun"), NodePath("Buttons/SingleRun")]
+navigationButtonPlayer = NodePath("NavigationButtons/NavigationButtonPlayer")
 returnAnimator = NodePath("AlertMenu/AnimationPlayer")
 submenus = Array[NodePath]([])
 bgm = NodePath("BGM")
@@ -1949,6 +2055,9 @@ layout_mode = 2
 ActionKey = &"sys_return"
 inputKey = &"sys_cancel"
 fallbackKey = &"ui_cancel"
+
+[node name="NavigationButtonPlayer" type="AnimationPlayer" parent="NavigationButtons" unique_id=1784010829]
+libraries/ = SubResource("AnimationLibrary_vx5bn")
 
 [node name="Buttons" type="VBoxContainer" parent="." unique_id=1144913028]
 layout_mode = 1
@@ -2138,10 +2247,11 @@ layout_mode = 1
 parentMenu = NodePath("../TimeAttackStartRun")
 submenus = Array[NodePath]([])
 
-[node name="TimeAttackStartRun" parent="." unique_id=605443264 node_paths=PackedStringArray("readyMenu", "levelList", "parentMenu") instance=ExtResource("18_mof37")]
+[node name="TimeAttackStartRun" parent="." unique_id=605443264 node_paths=PackedStringArray("readyMenu", "levelList", "navigationButtonPlayer", "parentMenu") instance=ExtResource("18_mof37")]
 layout_mode = 1
 readyMenu = NodePath("../TimeAttackReady")
 levelList = NodePath("../TimeAttackLevelList")
+navigationButtonPlayer = NodePath("../NavigationButtons/NavigationButtonPlayer")
 parentMenu = NodePath("../TimeAttackNewRun")
 submenus = Array[NodePath]([NodePath("../TimeAttackReady"), NodePath("../TimeAttackLevelList")])
 
