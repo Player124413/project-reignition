@@ -92,6 +92,7 @@ public partial class ReadyMenu : Menu
 
 				if (TimeAttackManager.Instance.CurrentRunType != TimeAttackManager.RunType.SingleRun)
 				{
+					SaveManager.TimeData.Tries = 0;
 					TimeAttackManager.Instance.ClearCurrentRun();
 					TimeAttackManager.Instance.ClearCurrentSavedRun();
 
