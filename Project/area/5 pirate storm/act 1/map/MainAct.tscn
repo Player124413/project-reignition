@@ -73,6 +73,7 @@
 [ext_resource type="Resource" uid="uid://cvf0fdgojrsfs" path="res://area/5 pirate storm/act 1/camera/SurfboardWaveCam.tres" id="61_vmmrf"]
 [ext_resource type="AudioStream" uid="uid://dsmxdvvu42sag" path="res://sound/sfx/stage/pirate storm/blade group.wav" id="62_eaoup"]
 [ext_resource type="PackedScene" uid="uid://dxepb172kmp8n" path="res://object/stage/common/Goal.tscn" id="63_5y2th"]
+[ext_resource type="Resource" uid="uid://dy6dx46jqb4wq" path="res://area/5 pirate storm/act 1/camera/CaveBladeCam.tres" id="64_0kng0"]
 [ext_resource type="Resource" uid="uid://c8788hwlkasww" path="res://area/5 pirate storm/act 1/camera/SurfJumpCam.tres" id="64_4ojec"]
 [ext_resource type="Resource" uid="uid://cp5xk7qnpopua" path="res://area/5 pirate storm/act 1/camera/SurfboardMediumJumpCam.tres" id="70_dq5fv"]
 [ext_resource type="Resource" uid="uid://boihpswog6fss" path="res://area/5 pirate storm/act 1/camera/SurfboardHighJumpCam.tres" id="70_l0qrm"]
@@ -4351,20 +4352,17 @@ OneShot = true
 "Respawn Mode" = 0
 "Enter Mode" = 0
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="MainAct/Cave/GrindInvisibleWallTrigger" unique_id=299627471]
-shape = SubResource("BoxShape3D_6yc6x")
-
-[node name="PathResetTrigger" parent="MainAct/Cave" unique_id=1111353082 instance=ExtResource("26_1c4me")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -17.3749, 5.6917, 99.0369)
-OneShot = true
-"Respawn Mode" = 0
-"Enter Mode" = 0
-
-[node name="Path" type="Node3D" parent="MainAct/Cave/PathResetTrigger" unique_id=731801589 node_paths=PackedStringArray("path")]
+[node name="Path" type="Node3D" parent="MainAct/Cave/GrindInvisibleWallTrigger" unique_id=731801589 node_paths=PackedStringArray("path")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.3748779, 0.6917, 18.036865)
 script = ExtResource("51_01wgf")
 path = NodePath("../../../../Static/Path/CavePath")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="MainAct/Cave/PathResetTrigger" unique_id=381949345]
+[node name="Camera" type="Node3D" parent="MainAct/Cave/GrindInvisibleWallTrigger" unique_id=1852327757]
+script = ExtResource("21_1aofs")
+settings = ExtResource("64_0kng0")
+previousSettings = ExtResource("64_0kng0")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="MainAct/Cave/GrindInvisibleWallTrigger" unique_id=299627471]
 shape = SubResource("BoxShape3D_6yc6x")
 
 [node name="Rings1" type="Node3D" parent="MainAct/Cave" unique_id=286856747]
@@ -6593,7 +6591,7 @@ shape = SubResource("BoxShape3D_vqh3v")
 [connection signal="GrindStarted" from="MainAct/Cave/GrindPath/InvisibleGrindrail" to="MainAct/Dialog/BladeCullingTrigger" method="Deactivate"]
 [connection signal="GrindStarted" from="MainAct/Cave/GrindPath/InvisibleGrindrail" to="MainAct/Dialog/TractionCullingTrigger" method="Activate"]
 [connection signal="Activated" from="MainAct/Cave/GrindInvisibleWallTrigger" to="Static/Collision/OneWayWall" method="Activate"]
-[connection signal="Activated" from="MainAct/Cave/PathResetTrigger" to="Static/Collision/GrindOneWayWall" method="Deactivate"]
+[connection signal="Activated" from="MainAct/Cave/GrindInvisibleWallTrigger" to="Static/Collision/GrindOneWayWall" method="Activate"]
 [connection signal="Defeated" from="MainAct/GhostShip/Chair1/BlueMajin1" to="MainAct/GhostShip/Chair1/EnemyStone1" method="IncrementCounter"]
 [connection signal="Defeated" from="MainAct/GhostShip/Chair1/BlueMajin1" to="MainAct/GhostShip/Chair1/EnemyStone2" method="IncrementCounter"]
 [connection signal="Defeated" from="MainAct/GhostShip/Chair1/BlueMajin1" to="MainAct/GhostShip/Chair2/EnemyStone1" method="IncrementCounter"]
