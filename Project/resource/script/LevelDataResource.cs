@@ -91,7 +91,7 @@ public partial class LevelDataResource : Resource
 		properties.Add(ExtensionMethods.CreateProperty("Ranking/Bronze Time", Variant.Type.Int));
 
 		if (!SkipScore)
-			properties.Add(ExtensionMethods.CreateProperty("Ranking/Score Requirement", Variant.Type.Int, PropertyHint.Range, "0,999999,10"));
+			properties.Add(ExtensionMethods.CreateProperty("Ranking/Score Requirement", Variant.Type.Int, PropertyHint.Range, "0,999999,1"));
 
 		properties.Add(ExtensionMethods.CreateProperty("Ranking/Gold - Time Attack", Variant.Type.Int));
 
