@@ -391,7 +391,8 @@ public partial class EventPlayer : Node
 	private void PlayFromEditor()
 	{
 		animator.Play();
-		LoadAudioTrack(animator.CurrentAnimation);
+		if (Engine.IsEditorHint())
+			LoadAudioTrack(animator.CurrentAnimation);
 
 		audioPlayer.Play((float)animator.CurrentAnimationPosition);
 		InitializeEditorIndex();
