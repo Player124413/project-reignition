@@ -50,7 +50,7 @@ namespace Project.Gameplay.Objects
 
 		protected override void Collect()
 		{
-			if (!SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.RingRange))
+			if (!SaveManager.ActiveSkillRing.IsSkillEquipped(SkillKey.RingRange) || Player.IsLightDashing)
 			{
 				ApplyCollection();
 				return;
