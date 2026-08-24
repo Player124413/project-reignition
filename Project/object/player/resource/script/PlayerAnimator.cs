@@ -785,6 +785,7 @@ public partial class PlayerAnimator : Node3D
 		ActiveDriftStatePlayback.Start(DriftStartState);
 		animationTree.Set(DriftDirectionTransition, isFacingRight ? RightConstant : LeftConstant);
 
+		animationTree.Set(QuickSlideTransition, DisabledConstant);
 		SetStateXfade(.1f); // Transition into drift
 		animationTree.Set(StateTransition, DriftState);
 	}
