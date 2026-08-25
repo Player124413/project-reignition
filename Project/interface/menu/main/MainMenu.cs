@@ -17,7 +17,7 @@ public partial class MainMenu : Menu
 	private bool isMenuInitialized;
 
 	private bool IsTimeAttackUnlocked => SaveManager.SharedData.IsTimeAttackUnlocked;
-	private bool IsPartyModeUnlocked => true; // TODO Enable this after party mode is complete
+	private bool IsPartyModeUnlocked => false; // TODO Enable this after party mode is complete
 
 	public override void ShowMenu()
 	{

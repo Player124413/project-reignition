@@ -575,11 +575,13 @@ public partial class SaveManager : Node
 				Dictionary d = (Dictionary)Json.ParseString(file.GetAsText());
 				Config.FromDictionary(d);
 				file.Close();
+				Instance.IsQuickLoadAlertEnabled = false;
 			}
 		}
 		catch // Load Default settings
 		{
 			Config = new();
+			Instance.IsQuickLoadAlertEnabled = true;
 		}
 
 		if (Config.textLocale == null)
@@ -1740,7 +1742,7 @@ public partial class SaveManager : Node
 				CurrentRunType = (TimeAttackManager.RunType)(int)var;
 			if (dictionary.TryGetValue(nameof(CurrentPlacement), out var))
 				CurrentPlacement = (int)var;
-			
+
 			if (dictionary.TryGetValue(nameof(Tries), out var))
 				Tries = (int)var;
 
