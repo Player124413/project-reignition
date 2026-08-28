@@ -64,6 +64,7 @@ public partial class Countdown : Control
 	{
 		IsCountdownActive = false;
 		PauseMenu.AllowInputs = true;
+		SoundManager.instance.AdvanceDialogQueue();
 		EmitSignal(SignalName.CountdownFinished);
 	}
 

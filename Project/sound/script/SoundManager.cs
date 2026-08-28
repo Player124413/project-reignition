@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Project.Gameplay.Triggers;
 using Project.Interface;
 using System.Text.RegularExpressions;
+using Project.Gameplay;
 
 namespace Project.Core;
 
@@ -195,6 +196,11 @@ public partial class SoundManager : Control
 			return;
 		}
 
+		AdvanceDialogQueue();
+	}
+
+	public void AdvanceDialogQueue()
+	{
 		if (dialogQueue.Count != 0) // Start queued dialog if it exists
 			PlayDialog(dialogQueue.Dequeue());
 	}

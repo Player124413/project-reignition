@@ -1,6 +1,7 @@
 using Godot;
 using Godot.Collections;
 using Project.Core;
+using Project.Interface;
 
 namespace Project.Gameplay.Triggers;
 
@@ -42,13 +43,15 @@ public partial class DialogTrigger : StageTriggerModule
 
 		isTriggered = isOneShot;
 
-		if (IsCutscene || playbackType == PlaybackMode.Always || !SoundManager.instance.IsSubtitlesActive)
+		if (IsCutscene || playbackType == PlaybackMode.Always || (!SoundManager.instance.IsSubtitlesActive && StageSettings.Instance.LevelState == StageSettings.LevelStateEnum.Ingame))
 		{
+			GD.Print("Playing Dialog");
 			SoundManager.instance.ClearQueue();
 			SoundManager.instance.PlayDialog(GetRandomDialogTrigger());
 			return;
 		}
 
+		GD.Print("Queuing Dialog");
 		SoundManager.instance.QueueDialog(GetRandomDialogTrigger());
 	}
 
