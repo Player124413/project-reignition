@@ -81,16 +81,21 @@ public partial class StageSettings : Node3D
 		if (Data.RequiredSkill == null || SaveManager.ActiveSkillRing.IsSkillEquipped(Data.RequiredSkill))
 			return;
 
-		conflictingSkill = SaveManager.ActiveSkillRing.IsConflictingSkillEquipped(Data.RequiredSkill.Key);
+		if (SaveManager.ActiveSkillRing.IsSkillEquipped(Data.RequiredSkill.Key)) // Player has a different augment equipped
+			conflictingSkill = Data.RequiredSkill.Key;
+		else
+			conflictingSkill = SaveManager.ActiveSkillRing.IsConflictingSkillEquipped(Data.RequiredSkill.Key);
 
 		if (conflictingSkill != SkillKey.Count)
 		{
 			conflictingSkillIndex = SaveManager.ActiveSkillRing.GetAugmentIndex(conflictingSkill);
 			SaveManager.ActiveSkillRing.ForceUnequipSkill(conflictingSkill, conflictingSkillIndex);
+			GD.Print($"Force unequipped {conflictingSkill} {conflictingSkillIndex}");
 		}
 
 		wasSkillForceEquipped = true;
 		SaveManager.ActiveSkillRing.EquipSkill(Data.RequiredSkill.Key, Data.RequiredSkill.AugmentIndex, true);
+		GD.Print($"Force equipped {Data.RequiredSkill.Key} {Data.RequiredSkill.AugmentIndex}");
 	}
 
 	/// <summary> Restores skills back to whatever we started with. </summary>
@@ -100,9 +105,13 @@ public partial class StageSettings : Node3D
 			return;
 
 		SaveManager.ActiveSkillRing.UnequipSkill(Data.RequiredSkill.Key, Data.RequiredSkill.AugmentIndex);
+		GD.Print($"Unequipped {Data.RequiredSkill.Key} {Data.RequiredSkill.AugmentIndex}");
 
 		if (conflictingSkill != SkillKey.Count)
+		{
 			SaveManager.ActiveSkillRing.EquipSkill(conflictingSkill, conflictingSkillIndex);
+			GD.Print($"Requipped {conflictingSkill} {conflictingSkillIndex}");
+		}
 	}
 
 	public override void _Ready()
