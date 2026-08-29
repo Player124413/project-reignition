@@ -162,6 +162,7 @@ public partial class AlfLayla : Node3D
 
 		StageSettings.Instance.RespawnedEnemies += Respawn;
 		StageSettings.Instance.LevelStarted += StartIntroduction;
+		spiritBomb.Kicked += AttemptSpiritBombVoiceLine;
 	}
 
 	public override void _PhysicsProcess(double _delta)
@@ -882,6 +883,10 @@ public partial class AlfLayla : Node3D
 	{
 		currentDistance = BombDistance;
 		SnapPosition();
+	}
+
+	private void AttemptSpiritBombVoiceLine()
+	{
 		if (currentProgressionDialogIndex == 3)
 			PlayProgressionDialog();
 	}

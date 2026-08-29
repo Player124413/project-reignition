@@ -1,12 +1,12 @@
 using Godot;
 using Project.Core;
-using Project.CustomNodes;
 using Project.Gameplay.Triggers;
 
 namespace Project.Gameplay.Bosses;
 
 public partial class SpiritBomb : Area3D
 {
+	[Signal] public delegate void KickedEventHandler();
 	[Signal] public delegate void AlfExplodedEventHandler();
 	[Signal] public delegate void PlayerExplodedEventHandler();
 
@@ -77,6 +77,7 @@ public partial class SpiritBomb : Area3D
 			duration = 0.4f,
 			magnitude = Vector3.One * 3f,
 		});
+		EmitSignal(SignalName.Kicked);
 	}
 
 	public void Respawn()
