@@ -33,7 +33,7 @@ public partial class TimeAttackResults : Menu
 		{
 			TimeAttackResultsOption newOption = resultOptionScene.Instantiate() as TimeAttackResultsOption;
 			newOption.SetLevelLabel(TimeAttackManager.Instance.GetCurrentRunLevels()[i].MissionTypeKey);
-			newOption.SetWorldLabel(TimeAttackManager.Instance.GetCurrentRunLevels()[i].AreaKey.ToString());
+			newOption.SetWorldLabel(TimeAttackManager.Instance.GetCurrentRunLevels()[i].AreaKey.ToString().ToSnakeCase());
 			newOption.SetTimeLabel(TimeAttackManager.Instance.GetCurrentRunTimes()[i]);
 			options.AddChild(newOption);
 		}
