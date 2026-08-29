@@ -31,7 +31,6 @@ public partial class EventPlayer : Node
 	[ExportGroup("Components")]
 	[Export] private AnimationPlayer animator;
 	[Export] private AnimationPlayer interfaceAnimator;
-	[Export] private AnimationPlayer skipAnimator;
 	[Export] private AudioStreamPlayer audioPlayer;
 	[Export] private VideoStreamFileLoadPlayer videoPlayer;
 	private bool isInterfaceVisible;
@@ -252,12 +251,14 @@ public partial class EventPlayer : Node
 			return;
 		}
 
-		if (IsSpecialBook)
+		if (IsSpecialBook && Runtime.Instance.IsActionJustPressed("sys_cancel", "ui_cancel", "escape"))
 		{
-			// Allow players to exit immediately when viewing from the special book
-			if (Runtime.Instance.IsActionJustPressed("sys_cancel", "ui_cancel", "escape"))
-				OnEventFinished(true);
-
+			OnEventFinished(true);
+			return;
+		}
+		else if (!IsSpecialBook && Runtime.Instance.IsActionPressed("sys_pause", "ui_accept") && !Input.IsActionJustPressed("toggle_fullscreen"))
+		{
+			OnEventFinished(true);
 			return;
 		}
 
@@ -267,24 +268,15 @@ public partial class EventPlayer : Node
 				audioPlayer.Seek((float)animator.CurrentAnimationPosition + (float)AudioServer.GetTimeSinceLastMix()); // Resync audio (for debug TURBO support)
 		}
 
-		// Process skipping story cutscene
-		if (Runtime.Instance.IsActionPressed("sys_pause", "ui_accept") && !Input.IsActionJustPressed("toggle_fullscreen"))
-		{
-			interfaceVisibilityTimer = InterfaceVisiblityLength;
-			if (interfaceAnimator.AssignedAnimation != "show_interface")
-				interfaceAnimator.Play("show_interface", 0.1f);
-
-			skipAnimator.Play("skip");
-			return;
-		}
-
-		skipAnimator.Play("skip", -1, -1);
 		if (Input.IsAnythingPressed())
 			return;
 
 		interfaceVisibilityTimer = Mathf.MoveToward(interfaceVisibilityTimer, 0f, PhysicsManager.physicsDelta);
 		if (Mathf.IsZeroApprox(interfaceVisibilityTimer))
+		{
+			isInterfaceVisible = false;
 			interfaceAnimator.Play("hide_interface", 0.1f);
+		}
 	}
 
 	private void CheckInterfaceVisiblity()
@@ -350,13 +342,6 @@ public partial class EventPlayer : Node
 			inSpeed = isCanceled ? 0.5f : transitionSpeed,
 			outSpeed = 0.5f,
 		});
-	}
-
-	public void ResetSkipProgress()
-	{
-		skipAnimator.Play("RESET");
-		skipAnimator.Advance(0.0);
-		isInterfaceVisible = false;
 	}
 
 	#region Editor
