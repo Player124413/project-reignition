@@ -290,7 +290,13 @@ public partial class EventPlayer : Node
 	}
 
 	/// <summary> Called after the cutscene has finished playing. </summary>
-	public void OnEventFinished() => OnEventFinished(false);
+	public void OnEventFinished()
+	{
+		if (isCutsceneFinished) // Must have been manually skipped
+			return;
+
+		OnEventFinished(false);
+	}
 	public void OnEventFinished(bool isCanceled)
 	{
 		if (Engine.IsEditorHint())
