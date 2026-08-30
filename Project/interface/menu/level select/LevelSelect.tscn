@@ -14,6 +14,8 @@
 [ext_resource type="PackedScene" uid="uid://crwawg2ivy3xd" path="res://interface/menu/NavigationButton.tscn" id="8_38k76"]
 [ext_resource type="Script" uid="uid://cj76gvi7tbku6" path="res://sound/script/BGMPlayer.cs" id="14_f6v0v"]
 [ext_resource type="PackedScene" uid="uid://dchov1jbxhj4s" path="res://interface/menu/level select/Jukebox.tscn" id="14_yvgri"]
+[ext_resource type="Texture2D" uid="uid://dmdck6tgfytub" path="res://interface/menu/level select/texture/story marker.png" id="15_f6v0v"]
+[ext_resource type="Texture2D" uid="uid://bpax011hxy8ni" path="res://interface/menu/level select/texture/story marker bubble.png" id="15_jroii"]
 
 [sub_resource type="Animation" id="Animation_8efxu"]
 length = 0.001
@@ -256,6 +258,18 @@ tracks/13/keys = {
 "transitions": PackedFloat32Array(1),
 "update": 0,
 "values": [Color(1, 1, 1, 0)]
+}
+tracks/14/type = "value"
+tracks/14/imported = false
+tracks/14/enabled = true
+tracks/14/path = NodePath("StoryMarkers:modulate")
+tracks/14/interp = 1
+tracks/14/loop_wrap = true
+tracks/14/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
 }
 
 [sub_resource type="Animation" id="Animation_rxl6c"]
@@ -648,6 +662,18 @@ tracks/14/keys = {
 "update": 0,
 "values": [Color(1, 1, 1, 1), Color(1, 1, 1, 1), Color(1, 1, 1, 0)]
 }
+tracks/15/type = "value"
+tracks/15/imported = false
+tracks/15/enabled = true
+tracks/15/path = NodePath("StoryMarkers:modulate")
+tracks/15/interp = 1
+tracks/15/loop_wrap = true
+tracks/15/keys = {
+"times": PackedFloat32Array(0, 0.33333334),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 1), Color(1, 1, 1, 0)]
+}
 
 [sub_resource type="Animation" id="Animation_g04jy"]
 resource_name = "select"
@@ -856,6 +882,18 @@ tracks/14/keys = {
 "update": 0,
 "values": [Color(1, 1, 1, 0), Color(1, 1, 1, 1)]
 }
+tracks/15/type = "value"
+tracks/15/imported = false
+tracks/15/enabled = true
+tracks/15/path = NodePath("StoryMarkers:modulate")
+tracks/15/interp = 1
+tracks/15/loop_wrap = true
+tracks/15/keys = {
+"times": PackedFloat32Array(0, 0.23333335, 0.5),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 0), Color(1, 1, 1, 1)]
+}
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_rf6sp"]
 _data = {
@@ -866,7 +904,234 @@ _data = {
 &"show": SubResource("Animation_8vhjs")
 }
 
-[node name="LevelSelect" type="Control" unique_id=945247935 node_paths=PackedStringArray("cursor", "cursorAnimator", "navigationButtons", "options", "scrollbar", "jukebox", "parentMenu", "bgm", "animator")]
+[sub_resource type="Animation" id="Animation_jroii"]
+resource_name = "RESET"
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("StoryMarkers/Top:visible")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("StoryMarkers/Bottom:visible")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("StoryMarkers/Bottom:offset_transform_scale")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(1, 0)]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("StoryMarkers/Top:offset_transform_scale")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(1, 1)]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("StoryMarkers/Top:offset_transform_position")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(0, 0)]
+}
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("StoryMarkers/Bottom:offset_transform_position")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(0, 0)]
+}
+
+[sub_resource type="Animation" id="Animation_2j7a1"]
+resource_name = "hide-bottom"
+length = 0.19999999999999998
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("StoryMarkers/Bottom:visible")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.2),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [true, false]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("StoryMarkers/Bottom:offset_transform_scale")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.10000001, 0.2),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector2(1, 1), Vector2(1, 1.2), Vector2(1, 0)]
+}
+
+[sub_resource type="Animation" id="Animation_koekr"]
+resource_name = "hide-top"
+length = 0.19999999999999998
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("StoryMarkers/Top:offset_transform_scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.10000001, 0.2),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector2(1, 1), Vector2(1, 1.2), Vector2(1, 0)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("StoryMarkers/Top:visible")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.2),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [true, false]
+}
+
+[sub_resource type="Animation" id="Animation_0gkqv"]
+resource_name = "loop"
+loop_mode = 1
+step = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("StoryMarkers/Top:offset_transform_position")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.5, 1),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector2(0, 0), Vector2(0, 16), Vector2(0, 0)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("StoryMarkers/Bottom:offset_transform_position")
+tracks/1/interp = 2
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.5, 1),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector2(0, 0), Vector2(0, -16), Vector2(0, 0)]
+}
+
+[sub_resource type="Animation" id="Animation_fluts"]
+resource_name = "show-bottom"
+length = 0.19999999999999998
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("StoryMarkers/Bottom:visible")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("StoryMarkers/Bottom:offset_transform_scale")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.10000001, 0.20000002),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector2(1, 0), Vector2(1, 1.2), Vector2(1, 1)]
+}
+
+[sub_resource type="Animation" id="Animation_i0xcc"]
+resource_name = "show-top"
+length = 0.19999999999999998
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("StoryMarkers/Top:offset_transform_scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.10000001, 0.2),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector2(1, 0), Vector2(1, 1.2), Vector2(1, 1)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("StoryMarkers/Top:visible")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_0gkqv"]
+_data = {
+&"RESET": SubResource("Animation_jroii"),
+&"hide-bottom": SubResource("Animation_2j7a1"),
+&"hide-top": SubResource("Animation_koekr"),
+&"loop": SubResource("Animation_0gkqv"),
+&"show-bottom": SubResource("Animation_fluts"),
+&"show-top": SubResource("Animation_i0xcc")
+}
+
+[node name="LevelSelect" type="Control" unique_id=945247935 node_paths=PackedStringArray("cursor", "cursorAnimator", "navigationButtons", "options", "scrollbar", "storyMarkerAnimator", "jukebox", "parentMenu", "bgm", "animator")]
 visible = false
 layout_mode = 3
 anchors_preset = 15
@@ -880,6 +1145,7 @@ cursorAnimator = NodePath("Cursor/AnimationPlayer")
 navigationButtons = NodePath("NavigationButtons")
 options = NodePath("Clip/Options")
 scrollbar = NodePath("Scrollbar/ScrollPosition")
+storyMarkerAnimator = NodePath("StoryMarkerAnimator")
 jukebox = NodePath("Jukebox")
 parentMenu = NodePath("Jukebox")
 submenus = []
@@ -1046,7 +1312,7 @@ anchor_bottom = 1.0
 offset_left = -15.807999
 offset_top = 0.16003418
 offset_right = -0.12805176
-offset_bottom = -12.0
+offset_bottom = -12.000061
 texture = ExtResource("3_c1sgp")
 region_rect = Rect2(379, 60, 94, 60)
 axis_stretch_horizontal = 1
@@ -1192,3 +1458,72 @@ layout_mode = 1
 worldText = NodePath("../WorldText")
 parentNavigationButtons = NodePath("../NavigationButtons")
 parentMenu = NodePath("..")
+
+[node name="StoryMarkers" type="Control" parent="." unique_id=1557440109]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Top" type="TextureRect" parent="StoryMarkers" unique_id=1850320195]
+visible = false
+layout_mode = 0
+offset_left = 907.0
+offset_top = 190.0
+offset_right = 1027.0
+offset_bottom = 310.0
+offset_transform_enabled = true
+offset_transform_pivot_ratio = Vector2(0.5, 0)
+texture = ExtResource("15_jroii")
+expand_mode = 1
+stretch_mode = 5
+flip_v = true
+
+[node name="Icon" type="TextureRect" parent="StoryMarkers/Top" unique_id=1943564302]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+offset_transform_enabled = true
+offset_transform_position = Vector2(0, 6)
+offset_transform_scale = Vector2(0.75, 0.75)
+texture = ExtResource("15_f6v0v")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Bottom" type="TextureRect" parent="StoryMarkers" unique_id=1735583440]
+visible = false
+layout_mode = 0
+offset_left = 907.0
+offset_top = 593.0
+offset_right = 1027.0
+offset_bottom = 713.0
+offset_transform_enabled = true
+offset_transform_scale = Vector2(1, 0)
+offset_transform_pivot_ratio = Vector2(0, 1)
+texture = ExtResource("15_jroii")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Icon" type="TextureRect" parent="StoryMarkers/Bottom" unique_id=44637934]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+offset_transform_enabled = true
+offset_transform_position = Vector2(0, -6)
+offset_transform_scale = Vector2(0.75, 0.75)
+texture = ExtResource("15_f6v0v")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="StoryMarkerAnimator" type="AnimationPlayer" parent="." unique_id=402019376]
+libraries/ = SubResource("AnimationLibrary_0gkqv")
+next/show-bottom = &"loop"
+next/show-top = &"loop"

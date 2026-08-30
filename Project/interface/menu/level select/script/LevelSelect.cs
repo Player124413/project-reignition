@@ -24,19 +24,22 @@ public partial class LevelSelect : Menu
 	[Export] private Control options;
 	private Vector2 optionVelocity;
 	[Export] private Sprite2D scrollbar;
+	[Export] private AnimationPlayer storyMarkerAnimator;
 
 	public bool ContainsNewStage { get; private set; }
 
 	private int scrollAmount;
 	private float scrollRatio;
 	private Vector2 scrollVelocity;
-	private const float ScrollSmoothing = .05f;
-	private readonly List<LevelOption> levelOptions = [];
+
 	[Export] private Jukebox jukebox;
 	[Export] bool isModWorld = false;
 	[Export] PackedScene levelOption;
 	[Export] LevelDataResource defaultLevelModOption;
+
 	private readonly int PageSize = 5;
+	private const float ScrollSmoothing = .05f;
+	private readonly List<LevelOption> levelOptions = [];
 
 	public bool HasNewLevel()
 	{
@@ -193,12 +196,51 @@ public partial class LevelSelect : Menu
 		cursorAnimator.Advance(0.0);
 
 		animator.Play("show");
+		storyLevelIndex = -1;
+		storyMarkerAnimator.Play("RESET");
+		storyMarkerAnimator.Advance(0.0);
 
 		UpdateDescription();
 		for (int i = 0; i < levelOptions.Count; i++)
+		{
 			levelOptions[i].ShowOption();
 
+			if (SaveManager.ActiveGameData.CurrentStoryLevel != null &&
+				levelOptions[i].data == SaveManager.ActiveGameData.CurrentStoryLevel)
+			{
+				storyLevelIndex = i;
+				ProcessStoryMarkers();
+			}
+		}
+
 		UpdateBgm();
+	}
+
+	private int storyMarkerVisibilitySign;
+	private int storyLevelIndex = -1;
+	private void ProcessStoryMarkers()
+	{
+		if (storyLevelIndex == -1)
+			return;
+
+		int centerPosition = scrollAmount + (PageSize / 2);
+		int delta = centerPosition - storyLevelIndex;
+		if (Mathf.Abs(delta) > PageSize / 2)
+		{
+			int targetSign = Mathf.Sign(delta);
+			if (storyMarkerVisibilitySign != targetSign)
+			{
+				storyMarkerVisibilitySign = targetSign;
+				storyMarkerAnimator.Play("RESET");
+				storyMarkerAnimator.Advance(0.0);
+				storyMarkerAnimator.Play(delta > 0 ? "show-top" : "show-bottom");
+			}
+		}
+		else if (storyMarkerVisibilitySign != 0)
+		{
+			storyMarkerVisibilitySign = 0;
+			storyMarkerAnimator.Play(delta > 0 ? "hide-top" : "hide-bottom");
+		}
 	}
 
 	public void UpdateBgm()
@@ -306,6 +348,7 @@ public partial class LevelSelect : Menu
 		UpdateDescription();
 		StartSelectionTimer();
 		RecalculateListPosition();
+		ProcessStoryMarkers();
 	}
 
 	private void UpdateDescription()
