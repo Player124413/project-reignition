@@ -236,6 +236,7 @@ public partial class PlayerSkillController : Node3D
 	[Export] private AudioStreamPlayer speedBreakSFX;
 	[Export] private AnimationPlayer timeBreakAnimator;
 	[Export] private AudioStreamPlayer timeBreakSFX;
+	[Export] private AudioStreamPlayer timeBreakEndSFX;
 	[Export] private AudioStreamPlayer heartbeatSFX;
 
 	[Export] public float speedBreakSpeed; // Movement speed during speed break
@@ -293,9 +294,11 @@ public partial class PlayerSkillController : Node3D
 	private ulong previousTimeBreakTime;
 
 	private float breakDrainTimer;
+	private bool canPlayTimeBreakEndSfx;
 	private const float TimeBreakSoulDrainInterval = 3f / 60f; // Drain 1 point every x frames
 	private const float SpeedBreakSoulDrainInterval = 1.8f / 60f; // Drain 1 point every x frames
 	private const float SpiritBombSpeedBreakSoulDrainInterval = 2f / 60f; // Drain 1 point every x frames
+	private const int TimeBreakEndAmount = 10; // Drain 1 point every x frames
 	private void UpdateTimeBreak()
 	{
 		if (IsTimeBreakActive)
@@ -304,6 +307,22 @@ public partial class PlayerSkillController : Node3D
 			{
 				ModifySoulGauge(-1);
 				breakDrainTimer += TimeBreakSoulDrainInterval;
+				if (!IsSoulGaugeCharged)
+				{
+					SoundManager.FadeAudioPlayer(timeBreakSFX);
+				}
+				else
+				{
+					timeBreakSFX.VolumeDb = 0f;
+					if (!timeBreakSFX.Playing)
+						timeBreakSFX.Play();
+				}
+
+				if (SoulPower < TimeBreakEndAmount && canPlayTimeBreakEndSfx && !timeBreakEndSFX.Playing)
+				{
+					canPlayTimeBreakEndSfx = false;
+					timeBreakEndSFX.Play();
+				}
 			}
 			breakDrainTimer -= PhysicsManager.physicsDelta;
 
@@ -421,6 +440,7 @@ public partial class PlayerSkillController : Node3D
 
 		if (IsTimeBreakActive)
 		{
+			canPlayTimeBreakEndSfx = true;
 			timeBreakAnimator.Play(SaveManager.Config.useMotionBlur ? "enable-blur" : "disable-blur");
 			timeBreakAnimator.Advance(0.0);
 			timeBreakAnimator.Play("start");
@@ -538,6 +558,9 @@ public partial class PlayerSkillController : Node3D
 	public void ModifySoulGauge(int amount)
 	{
 		SoulPower = Mathf.Clamp(SoulPower + amount, 0, MaxSoulPower);
+		if (amount > 0)
+			canPlayTimeBreakEndSfx = true;
+
 		float ratio;
 		if (SoulPower < MinimumSoulPower)
 			ratio = SoulPower / (float)MinimumSoulPower;

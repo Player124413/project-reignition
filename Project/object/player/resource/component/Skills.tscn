@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://c3h7ogmmkpfhq" path="res://object/player/resource/script/PlayerSkillController.cs" id="1_ek230"]
 [ext_resource type="AudioStream" uid="uid://dgg82ed3pd114" path="res://sound/sfx/player/speed break end.wav" id="3_di5ls"]
+[ext_resource type="AudioStream" uid="uid://b5rx0j3r0auiq" path="res://sound/sfx/player/time break end.wav" id="5_d8as4"]
 [ext_resource type="Shader" uid="uid://cflm654b7g2t6" path="res://effect/shader/object/player/TimeBreak.gdshader" id="6_lb0wt"]
 [ext_resource type="Texture2D" uid="uid://47a1wqak6nce" path="res://object/player/resource/effect/texture/time break.png" id="7_0xj5j"]
 [ext_resource type="Shader" uid="uid://br0wjb2j5d51n" path="res://effect/shader/object/player/ScreenShock.gdshader" id="9_3ptpg"]
@@ -512,7 +513,7 @@ _data = {
 &"stop": SubResource("Animation_i45wl")
 }
 
-[node name="Skills" type="Node3D" unique_id=1803456563 node_paths=PackedStringArray("speedBreakShockwave", "speedBreakParticles", "speedBreakAnimator", "speedBreakSFX", "timeBreakAnimator", "timeBreakSFX", "heartbeatSFX")]
+[node name="Skills" type="Node3D" unique_id=1803456563 node_paths=PackedStringArray("speedBreakShockwave", "speedBreakParticles", "speedBreakAnimator", "speedBreakSFX", "timeBreakAnimator", "timeBreakSFX", "timeBreakEndSFX", "heartbeatSFX")]
 script = ExtResource("1_ek230")
 countdownBoostSpeed = 32.0
 landingDashSpeed = 32.0
@@ -524,6 +525,7 @@ speedBreakDeactivate = ExtResource("3_di5ls")
 speedBreakSFX = NodePath("SpeedBreakSFX")
 timeBreakAnimator = NodePath("TimeBreak/CanvasLayer/AnimationPlayer")
 timeBreakSFX = NodePath("TimeBreakSFX")
+timeBreakEndSFX = NodePath("TimeBreakEndSFX")
 heartbeatSFX = NodePath("HeartbeatSFX")
 speedBreakSpeed = 64.0
 
@@ -535,6 +537,11 @@ bus = &"GAME SFX"
 [node name="TimeBreakSFX" type="AudioStreamPlayer" parent="." unique_id=1896203543]
 process_mode = 1
 stream = ExtResource("12_vkf5a")
+bus = &"GAME SFX"
+
+[node name="TimeBreakEndSFX" type="AudioStreamPlayer" parent="." unique_id=1468089250]
+process_mode = 1
+stream = ExtResource("5_d8as4")
 bus = &"GAME SFX"
 
 [node name="HeartbeatSFX" type="AudioStreamPlayer" parent="." unique_id=974266526]
