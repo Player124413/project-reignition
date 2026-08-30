@@ -45,6 +45,9 @@ public partial class BackstepState : PlayerState
 			return idleState;
 		}
 
+		if (Player.Skills.IsSpeedBreakActive)
+			return runState;
+
 		if (!Player.Controller.IsBackTiltActive())
 		{
 			if (Player.Controller.GetHoldingDistance(Player.MovementAngle, Player.PathFollower.ForwardAngle) < 1.0f)
