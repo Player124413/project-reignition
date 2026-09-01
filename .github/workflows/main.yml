@@ -47,11 +47,11 @@ jobs:
             exit 1
           fi
           chmod +x "$GODOT_EXTRACTED"
-          echo "GODOT_BIN=$GODOT_EXTRACTED" >> "$GITHUB_ENV"
+          echo "GODOT_BIN=$(readlink -f "$GODOT_EXTRACTED")" >> "$GITHUB_ENV"
           echo "✅ Found Godot binary: $GODOT_EXTRACTED ($(du -h "$GODOT_EXTRACTED" | cut -f1))"
           
           # ─── Download and install export templates ─────────────
-          GODOT_TEMPLATES_DIR="$HOME/.local/share/godot/export_templates/${{ env.GODOT_VERSION }}.stable"
+          GODOT_TEMPLATES_DIR="$HOME/.local/share/godot/export_templates/${{ env.GODOT_VERSION }}.0.stable"
           mkdir -p "$GODOT_TEMPLATES_DIR"
           wget -q "https://github.com/godotengine/godot/releases/download/${{ env.GODOT_VERSION }}-stable/Godot_v${{ env.GODOT_VERSION }}-stable_mono_export_templates.tpz" -O templates.tpz
           unzip -q templates.tpz -d "$GODOT_TEMPLATES_DIR"
@@ -64,7 +64,7 @@ jobs:
           echo "✅ Export templates installed"
 
       - name: Setup Java JDK
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           distribution: 'temurin'
           java-version: '17'
@@ -105,7 +105,7 @@ jobs:
       - name: Pre-heat Godot cache
         run: |
           cd "${{ env.PROJECT_PATH }}"
-          "$GODOT_BIN" --headless --editor --quit --path . 2>&1 || true
+          "$GODOT_BIN" --headless --editor --quit --path . 2>&1
           echo "✅ Pre-heat done"
 
       - name: Export Android APK (Debug)
@@ -126,6 +126,14 @@ jobs:
             cat export_log.txt
             exit 1
           fi
+
+      - name: Upload export log (always)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.EXPORT_NAME }}-export-log
+          path: export_log.txt
+          if-no-files-found: ignore
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
