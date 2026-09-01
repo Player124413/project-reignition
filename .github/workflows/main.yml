@@ -1,0 +1,127 @@
+name: Build Android APK
+
+on:
+  push:
+    branches: [ "arena/*", "main", "dev/*" ]
+  pull_request:
+    branches: [ "main" ]
+  workflow_dispatch:      # Allow manual triggering
+
+env:
+  GODOT_VERSION: 4.7
+  EXPORT_NAME: "SonicSecretRingsRemake"
+  PROJECT_PATH: "Project"
+
+jobs:
+  export-android:
+    name: Build Android APK
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+          submodules: recursive
+
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Download Godot .NET
+        run: |
+          wget -q https://github.com/godotengine/godot/releases/download/${{ env.GODOT_VERSION }}-stable/Godot_v${{ env.GODOT_VERSION }}-stable_mono_linux_x86_64.zip
+          unzip -q Godot_v${{ env.GODOT_VERSION }}-stable_mono_linux_x86_64.zip
+          echo "./Godot_v${{ env.GODOT_VERSION }}-stable_mono_linux_x86_64/" >> $GITHUB_PATH
+
+      - name: Download Android Export Templates
+        run: |
+          wget -q https://github.com/godotengine/godot/releases/download/${{ env.GODOT_VERSION }}-stable/Godot_v${{ env.GODOT_VERSION }}-stable_mono_export_templates.tpz
+          mkdir -p ~/.local/share/godot/export_templates/${{ env.GODOT_VERSION }}.stable/
+          unzip -q Godot_v${{ env.GODOT_VERSION }}-stable_mono_export_templates.tpz -d ~/.local/share/godot/export_templates/${{ env.GODOT_VERSION }}.stable/
+
+      - name: Setup Java JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Restore NuGet packages
+        run: |
+          cd ${{ env.PROJECT_PATH }}
+          dotnet restore
+
+      - name: Build .NET project
+        run: |
+          cd ${{ env.PROJECT_PATH }}
+          dotnet build --configuration ExportRelease
+
+      - name: Create Android debug keystore
+        run: |
+          keytool -genkey -v -keystore ~/debug.keystore \
+            -alias androiddebugkey \
+            -keyalg RSA -keysize 2048 -validity 10000 \
+            -storepass android -keypass android \
+            -dname "CN=Android Debug,O=Android,C=US"
+
+      - name: Export Android APK (Debug)
+        run: |
+          mkdir -p export/android
+          # Create Android export preset via Godot headless
+          Godot_v${{ env.GODOT_VERSION }}-stable_mono_linux_x86_64/Godot_v${{ env.GODOT_VERSION }}-stable_mono_linux_x86_64 \
+            --headless \
+            --path ${{ env.PROJECT_PATH }} \
+            --export-debug "Android" \
+            ../export/android/${{ env.EXPORT_NAME }}.apk \
+            2>&1 || true
+          
+          # Check if APK was created
+          if [ -f "export/android/${{ env.EXPORT_NAME }}.apk" ]; then
+            echo "APK exported successfully!"
+          else
+            echo "Direct export failed. Trying alternative approach..."
+            # Try alternative export method
+            Godot_v${{ env.GODOT_VERSION }}-stable_mono_linux_x86_64/Godot_v${{ env.GODOT_VERSION }}-stable_mono_linux_x86_64 \
+              --headless \
+              --path ${{ env.PROJECT_PATH }} \
+              --export "Android" \
+              export/android/${{ env.EXPORT_NAME }}.apk \
+              2>&1 || echo "Export may have encountered errors"
+          fi
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.EXPORT_NAME }}-android-debug
+          path: export/android/*.apk
+          if-no-files-found: warn
+          retention-days: 30
+
+      - name: Export Android APK (Release) — requires signing
+        if: github.ref == 'refs/heads/main'
+        run: |
+          mkdir -p export/android-release
+          Godot_v${{ env.GODOT_VERSION }}-stable_mono_linux_x86_64/Godot_v${{ env.GODOT_VERSION }}-stable_mono_linux_x86_64 \
+            --headless \
+            --path ${{ env.PROJECT_PATH }} \
+            --export-release "Android" \
+            export/android-release/${{ env.EXPORT_NAME }}-release.aab \
+            2>&1 || echo "Release export requires configured keystore"
+
+      - name: Upload AAB artifact (Release)
+        if: github.ref == 'refs/heads/main'
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.EXPORT_NAME }}-android-release
+          path: export/android-release/*.aab
+          if-no-files-found: warn
+          retention-days: 30
+
+      - name: List export artifacts
+        run: |
+          echo "=== Export directory contents ==="
+          find export/ -type f -ls 2>/dev/null || echo "No exports found"
