@@ -76,13 +76,6 @@ public partial class MainMenu : Menu
 
 	public override void EnableProcessing()
 	{
-		// Show quick load alert (We're reusing the quit menu bc I'm too lazy to manage another alert menu)
-		if (SaveManager.Instance.IsQuickLoadAlertEnabled && !isQuitMenuActive)
-		{
-			ShowQuitMenu();
-			return;
-		}
-
 		base.EnableProcessing();
 		GD.Print("Processing!");
 	}
@@ -140,7 +133,7 @@ public partial class MainMenu : Menu
 		}
 		quitAnimator.Advance(0.0);
 
-		quitAnimator.Play(SaveManager.Instance.IsQuickLoadAlertEnabled ? "load-text" : "quit-text");
+		quitAnimator.Play("quit-text");
 		quitAnimator.Advance(0.0);
 
 		quitAnimator.Play("show");
@@ -151,8 +144,6 @@ public partial class MainMenu : Menu
 	private int quitSelection;
 	private void CancelQuitMenu()
 	{
-		SaveManager.Instance.IsQuickLoadAlertEnabled = false;
-
 		quitSelection = 1;
 		quitAnimator.Play("select-no");
 		quitAnimator.Advance(0.0);
@@ -233,22 +224,10 @@ public partial class MainMenu : Menu
 
 			if (quitSelection == 0)
 			{
-				if (SaveManager.Instance.IsQuickLoadAlertEnabled)
-				{
-					isQuitMenuActive = false;
-					SaveManager.Config.useQuickLoad = true;
-					quitAnimator.Play("confirm_load");
-				}
-				else
-				{
-					quitAnimator.Play("confirm");
-				}
+				quitAnimator.Play("confirm");
 			}
 			else
 				CancelQuitMenu();
-
-			if (SaveManager.Instance.IsQuickLoadAlertEnabled) // Enable quick load
-				SaveManager.Instance.IsQuickLoadAlertEnabled = false;
 
 			return;
 		}
