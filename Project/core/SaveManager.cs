@@ -21,6 +21,11 @@ public partial class SaveManager : Node
 	public static string SaveDirectory => DataDirectory + "saves/";
 	/// <summary> Directory for mod files. </summary>
 	public static string ModDirectory => DataDirectory + "mods/";
+	public static string CharactersModDirectory => ModDirectory + "characters/";
+	public static string MusicModDirectory => ModDirectory + "music/";
+	public static string LevelsModDirectory => ModDirectory + "levels/";
+	public static string LangModDirectory => ModDirectory + "lang/";
+	public static string ExtrasModDirectory => ModDirectory + "extras/";
 	/// <summary> Base data directory. </summary>
 	public static string DataDirectory { get; private set; }
 	/// <summary> The file that stores where the save directory is. </summary>

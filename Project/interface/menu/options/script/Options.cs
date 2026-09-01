@@ -1370,6 +1370,24 @@ public partial class Options : Menu
 
 	private void ConfirmModsOption()
 	{
+		if (!DirAccess.DirExistsAbsolute(SaveManager.ModDirectory))
+			DirAccess.MakeDirRecursiveAbsolute(SaveManager.ModDirectory);
+
+		if (!DirAccess.DirExistsAbsolute(SaveManager.MusicModDirectory))
+			DirAccess.MakeDirRecursiveAbsolute(SaveManager.MusicModDirectory);
+
+		if (!DirAccess.DirExistsAbsolute(SaveManager.LevelsModDirectory))
+			DirAccess.MakeDirRecursiveAbsolute(SaveManager.LevelsModDirectory);
+		
+		if (!DirAccess.DirExistsAbsolute(SaveManager.LangModDirectory))
+			DirAccess.MakeDirRecursiveAbsolute(SaveManager.LangModDirectory);
+
+		if (!DirAccess.DirExistsAbsolute(SaveManager.CharactersModDirectory))
+			DirAccess.MakeDirRecursiveAbsolute(SaveManager.CharactersModDirectory);
+
+		if (!DirAccess.DirExistsAbsolute(SaveManager.ExtrasModDirectory))
+			DirAccess.MakeDirRecursiveAbsolute(SaveManager.ExtrasModDirectory);
+
 		SlideModsOption(1);
 		ConfirmSFX();
 	}
