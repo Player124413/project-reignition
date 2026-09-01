@@ -152,7 +152,7 @@ public partial class CharacterModSelect : Menu
 
 	protected override void Confirm()
 	{
-		if (!modDrawer.IsOpen || isNothingSelected)
+		if (!modDrawer.IsOpen || isNothingSelected || skillCount == 0)
 			return;
 
 		if (!ToggleSkill())
