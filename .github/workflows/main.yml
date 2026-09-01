@@ -16,6 +16,8 @@ jobs:
   export-android:
     name: Build Android APK
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
 
     steps:
       - name: Checkout repository
@@ -124,8 +126,30 @@ jobs:
           else
             echo "❌ APK export failed. Full log:"
             cat export_log.txt
+            # Publish error tail into an annotation (readable via checks API)
+            TAIL=$(tail -60 export_log.txt | tr '\n' '\t' | cut -c1-3800)
+            echo "::error title=EXPORT_FAILED::$TAIL"
             exit 1
           fi
+
+      - name: Publish export log to ci-logs branch (debug)
+        if: failure()
+        run: |
+          set +e
+          git config user.name "ci-bot"
+          git config user.email "ci-bot@users.noreply.github.com"
+          LOG_SRC="export_log.txt"
+          [ -f "$LOG_SRC" ] || LOG_SRC="${{ env.PROJECT_PATH }}/export_log.txt"
+          [ -f "$LOG_SRC" ] || LOG_SRC=""
+          git fetch origin ci-logs 2>/dev/null
+          REF="$(git rev-parse --verify origin/ci-logs 2>/dev/null || echo HEAD)"
+          git checkout -B ci-logs-tmp "$REF" 2>/dev/null
+          mkdir -p ci-logs
+          if [ -n "$LOG_SRC" ]; then cp "$LOG_SRC" "ci-logs/export_log_${GITHUB_RUN_ID}.txt"; fi
+          git add -A
+          git commit -m "ci: capture export log run ${GITHUB_RUN_ID}" --allow-empty
+          git push --force origin HEAD:ci-logs
+          echo "✅ Export log pushed to ci-logs branch"
 
       - name: Upload export log (always)
         if: always()
