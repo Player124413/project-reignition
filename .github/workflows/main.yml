@@ -1,0 +1,136 @@
+name: Build Android APK
+
+on:
+  push:
+    branches: [ "arena/*", "main", "dev/*" ]
+  pull_request:
+    branches: [ "main" ]
+  workflow_dispatch:      # Allow manual triggering
+
+env:
+  GODOT_VERSION: 4.7
+  EXPORT_NAME: "SonicSecretRingsRemake"
+  PROJECT_PATH: "Project"
+  GODOT_BIN: "Godot_v4.7-stable_mono_linux_x86_64"
+
+jobs:
+  export-android:
+    name: Build Android APK
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Download Godot .NET
+        run: |
+          wget -q "https://github.com/godotengine/godot/releases/download/${{ env.GODOT_VERSION }}-stable/Godot_v${{ env.GODOT_VERSION }}-stable_mono_linux_x86_64.zip"
+          unzip -q "Godot_v${{ env.GODOT_VERSION }}-stable_mono_linux_x86_64.zip"
+          chmod +x "${{ env.GODOT_BIN }}"
+          echo "$PWD" >> "$GITHUB_PATH"
+          echo "Godot binary ready: $(ls -la ${{ env.GODOT_BIN }})"
+
+      - name: Download Android Export Templates
+        run: |
+          GODOT_TEMPLATES_DIR="$HOME/.local/share/godot/export_templates/${{ env.GODOT_VERSION }}.stable"
+          mkdir -p "$GODOT_TEMPLATES_DIR"
+          wget -q "https://github.com/godotengine/godot/releases/download/${{ env.GODOT_VERSION }}-stable/Godot_v${{ env.GODOT_VERSION }}-stable_mono_export_templates.tpz" -O export_templates.tpz
+          unzip -q export_templates.tpz -d "$GODOT_TEMPLATES_DIR"
+          # The tpz contains a 'templates/' subfolder — move contents up
+          if [ -d "$GODOT_TEMPLATES_DIR/templates" ]; then
+            mv "$GODOT_TEMPLATES_DIR/templates/"* "$GODOT_TEMPLATES_DIR/"
+            rmdir "$GODOT_TEMPLATES_DIR/templates"
+          fi
+          echo "Templates installed at: $GODOT_TEMPLATES_DIR"
+          ls -la "$GODOT_TEMPLATES_DIR/" | head -5
+
+      - name: Setup Java JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Restore NuGet packages
+        run: |
+          cd "${{ env.PROJECT_PATH }}"
+          dotnet restore
+          dotnet build --configuration ExportRelease || dotnet build
+
+      - name: Create Godot Editor Settings (Android SDK)
+        run: |
+          mkdir -p "$HOME/.config/godot"
+          cat > "$HOME/.config/godot/editor_settings-4.tres" << 'GDSETTINGS'
+          [godot_resource type="EditorSettings" format=3]
+          resource_name="editor_settings"
+          export/android/android_sdk_path = "/usr/local/lib/android/sdk"
+          export/android/debug_keystore = "/home/runner/debug.keystore"
+          export/android/debug_keystore_user = "androiddebugkey"
+          export/android/debug_keystore_pass = "android"
+          export/android/force_system_user = false
+          export/android/timestamp = 0
+          export/android/use_minizip = false
+          GDSETTINGS
+          echo "Editor settings created"
+
+      - name: Create Android debug keystore
+        run: |
+          keytool -genkey -v -keystore "$HOME/debug.keystore" \
+            -alias androiddebugkey \
+            -keyalg RSA -keysize 2048 -validity 10000 \
+            -storepass android -keypass android \
+            -dname "CN=Android Debug,O=Android,C=US" 2>/dev/null
+          echo "Debug keystore created at $HOME/debug.keystore"
+
+      - name: Build .NET Project for Android
+        run: |
+          cd "${{ env.PROJECT_PATH }}"
+          # Pre-heat godot cache (generates .godot folder)
+          ${{ env.GODOT_BIN }} --headless --editor --quit --path . 2>/dev/null || true
+          echo "Pre-heat done"
+
+      - name: Export Android APK (Debug)
+        run: |
+          mkdir -p export/android
+          ${{ env.GODOT_BIN }} \
+            --headless \
+            --path "${{ env.PROJECT_PATH }}" \
+            --export-debug "Android" \
+            "export/android/${{ env.EXPORT_NAME }}.apk" 2>&1 | tee export_log.txt
+          
+          if [ -f "export/android/${{ env.EXPORT_NAME }}.apk" ]; then
+            echo "✅ APK exported successfully!"
+            echo "APK size: $(du -h export/android/${{ env.EXPORT_NAME }}.apk | cut -f1)"
+          else
+            echo "❌ APK export failed. Last 30 lines of log:"
+            tail -30 export_log.txt
+            # Try plain --export as fallback
+            echo "Trying plain --export as fallback..."
+            ${{ env.GODOT_BIN }} \
+              --headless \
+              --path "${{ env.PROJECT_PATH }}" \
+              --export "Android" \
+              "export/android/${{ env.EXPORT_NAME }}.apk" 2>&1 || true
+          fi
+
+      - name: List export artifacts
+        run: |
+          echo "=== Export directory contents ==="
+          find export/ -type f -ls 2>/dev/null || echo "No exports found"
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.EXPORT_NAME }}-android-debug
+          path: export/android/*.apk
+          if-no-files-found: warn
+          retention-days: 30
