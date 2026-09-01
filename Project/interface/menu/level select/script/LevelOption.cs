@@ -110,6 +110,8 @@ public partial class LevelOption : Control
 			}
 			else
 			{
+				animator.Play("RESET");
+				animator.Advance(0.0);
 				ClearState = SaveManager.ActiveGameData.LevelData.GetClearStatus(data.LevelID);
 				switch (ClearState)
 				{
