@@ -82,7 +82,6 @@ public partial class SaveManager : Node
 	public static ConfigData Config = new();
 	public static bool UseJapaneseVoices => Config.voiceLocale.LocaleId.Equals("ja");
 	/// <summary> Determines whether the game should ask the player whether to enable quick loading on the main menu. </summary>
-	public bool IsQuickLoadAlertEnabled;
 	private const string ConfigFileName = "config.cfg";
 
 	#region Config Enums
@@ -282,7 +281,6 @@ public partial class SaveManager : Node
 		public bool isUsingHorizontalSoulGauge;
 		public bool isActionPromptsEnabled = true;
 
-		public bool useQuickLoad;
 		public bool skipRepeatCutscenes; // Enable this to skip cutscenes when replaying missions
 		public int subtitleOpacity = 20;
 		public int cutsceneOpacity = 20;
@@ -361,7 +359,6 @@ public partial class SaveManager : Node
 				{ nameof(isUsingHorizontalSoulGauge), isUsingHorizontalSoulGauge },
 				{ nameof(isActionPromptsEnabled), isActionPromptsEnabled },
 
-				{ nameof(useQuickLoad), useQuickLoad },
 				{ nameof(subtitleOpacity), subtitleOpacity},
 				{ nameof(cutsceneOpacity), cutsceneOpacity},
 
@@ -490,8 +487,6 @@ public partial class SaveManager : Node
 			if (dictionary.TryGetValue(nameof(isActionPromptsEnabled), out var))
 				isActionPromptsEnabled = (bool)var;
 
-			if (dictionary.TryGetValue(nameof(useQuickLoad), out var))
-				useQuickLoad = (bool)var;
 			if (dictionary.TryGetValue(nameof(subtitleOpacity), out var))
 				subtitleOpacity = (int)var;
 			if (dictionary.TryGetValue(nameof(cutsceneOpacity), out var))
@@ -575,13 +570,11 @@ public partial class SaveManager : Node
 				Dictionary d = (Dictionary)Json.ParseString(file.GetAsText());
 				Config.FromDictionary(d);
 				file.Close();
-				Instance.IsQuickLoadAlertEnabled = false;
 			}
 		}
 		catch // Load Default settings
 		{
 			Config = new();
-			Instance.IsQuickLoadAlertEnabled = true;
 		}
 
 		if (Config.textLocale == null)
