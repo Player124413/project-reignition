@@ -110,6 +110,14 @@ jobs:
           "$GODOT_BIN" --headless --editor --quit --path . 2>&1
           echo "✅ Pre-heat done"
 
+      - name: Debug - show templates and env
+        run: |
+          echo "GODOT_BIN=$GODOT_BIN"
+          echo "HOME=$HOME"
+          ls -la "$HOME/.local/share/godot/export_templates/" 2>&1
+          ls -la "$HOME/.local/share/godot/export_templates/4.7.0.stable/" 2>&1 | head -20
+          "$GODOT_BIN" --version 2>&1
+
       - name: Export Android APK (Debug)
         run: |
           mkdir -p export/android
@@ -127,7 +135,7 @@ jobs:
             echo "❌ APK export failed. Full log:"
             cat export_log.txt
             # Publish error tail into an annotation (readable via checks API)
-            TAIL=$(tail -60 export_log.txt | tr '\n' '\t' | cut -c1-3800)
+            TAIL=$(tail -50 export_log.txt | sed 's/%/%25/g; s/\r//g' | awk '{printf "%s%%0A", $0}' | cut -c1-6000)
             echo "::error title=EXPORT_FAILED::$TAIL"
             exit 1
           fi
@@ -135,21 +143,45 @@ jobs:
       - name: Publish export log to ci-logs branch (debug)
         if: failure()
         run: |
-          set +e
+          set -euxo pipefail
+          # Gather diagnostics
+          {
+            echo "===== export_log.txt ====="
+            cat export_log.txt 2>/dev/null || echo "(no export_log.txt at root)"
+            cat "${{ env.PROJECT_PATH }}/export_log.txt" 2>/dev/null || true
+            echo ""
+            echo "===== templates dir ====="
+            ls -la "$HOME/.local/share/godot/export_templates/" 2>&1 || true
+            ls -la "$HOME/.local/share/godot/export_templates/4.7.0.stable/" 2>&1 | head -20 || true
+            echo ""
+            echo "===== git status ====="
+            git status --short 2>&1 | head -30
+            echo ""
+            echo "===== godot version ====="
+            "$GODOT_BIN" --version 2>&1 || true
+            echo ""
+            echo "===== dotnet ====="
+            dotnet --version 2>&1 || true
+            echo ""
+            echo "===== android sdk ====="
+            ls "$HOME"/../usr/local/lib/android/sdk 2>&1 | head || ls /usr/local/lib/android/sdk 2>&1 | head -20
+          } > /tmp/ci_debug.txt
+          wc -l /tmp/ci_debug.txt
           git config user.name "ci-bot"
           git config user.email "ci-bot@users.noreply.github.com"
-          LOG_SRC="export_log.txt"
-          [ -f "$LOG_SRC" ] || LOG_SRC="${{ env.PROJECT_PATH }}/export_log.txt"
-          [ -f "$LOG_SRC" ] || LOG_SRC=""
-          git fetch origin ci-logs 2>/dev/null
-          REF="$(git rev-parse --verify origin/ci-logs 2>/dev/null || echo HEAD)"
-          git checkout -B ci-logs-tmp "$REF" 2>/dev/null
+          git fetch origin ci-logs 2>&1 || true
+          START_REF="$(git rev-parse --verify origin/ci-logs 2>/dev/null || echo HEAD)"
+          echo "START_REF=$START_REF"
+          git checkout -B ci-logs-tmp "$START_REF" 2>&1
           mkdir -p ci-logs
-          if [ -n "$LOG_SRC" ]; then cp "$LOG_SRC" "ci-logs/export_log_${GITHUB_RUN_ID}.txt"; fi
+          cp /tmp/ci_debug.txt "ci-logs/ci_debug_${GITHUB_RUN_ID}.txt"
+          cp export_log.txt "ci-logs/export_log_${GITHUB_RUN_ID}.txt" 2>/dev/null || cp "${{ env.PROJECT_PATH }}/export_log.txt" "ci-logs/export_log_${GITHUB_RUN_ID}.txt" 2>/dev/null || true
           git add -A
-          git commit -m "ci: capture export log run ${GITHUB_RUN_ID}" --allow-empty
-          git push --force origin HEAD:ci-logs
-          echo "✅ Export log pushed to ci-logs branch"
+          git commit -m "ci: capture export diagnostics run ${GITHUB_RUN_ID}"
+          echo "--- pushing ---"
+          git push --force origin HEAD:ci-logs 2>&1
+          echo "--- push exit: $? ---"
+          git rev-parse HEAD
 
       - name: Upload export log (always)
         if: always()
