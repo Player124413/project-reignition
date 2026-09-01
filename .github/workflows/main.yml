@@ -121,41 +121,42 @@ jobs:
       - name: Export Android APK (Debug)
         run: |
           mkdir -p export/android
-          set -o pipefail
+          set +e
           "$GODOT_BIN" \
             --headless \
             --path "${{ env.PROJECT_PATH }}" \
             --export-debug "Android" \
-            "export/android/${{ env.EXPORT_NAME }}.apk" 2>&1 | tee export_log.txt
-          
+            "export/android/${{ env.EXPORT_NAME }}.apk" > export_log.txt 2>&1
+          EXPORT_STATUS=$?
+          set -e
+          echo "GODOT_EXPORT_EXIT=$EXPORT_STATUS"
           if [ -f "export/android/${{ env.EXPORT_NAME }}.apk" ]; then
             echo "✅ APK exported successfully!"
             echo "APK size: $(du -h export/android/${{ env.EXPORT_NAME }}.apk | cut -f1)"
+            exit 0
           else
-            echo "❌ APK export failed. Full log:"
-            cat export_log.txt
-            # Publish error tail into an annotation (readable via checks API)
-            TAIL=$(tail -50 export_log.txt | sed 's/%/%25/g; s/\r//g' | awk '{printf "%s%%0A", $0}' | cut -c1-6000)
-            echo "::error title=EXPORT_FAILED::$TAIL"
+            echo "❌ APK export failed (exit $EXPORT_STATUS). Full log:"
+            tail -100 export_log.txt
             exit 1
           fi
 
       - name: Publish export log to ci-logs branch (debug)
         if: failure()
         run: |
-          set -euxo pipefail
           # Gather diagnostics
           {
-            echo "===== export_log.txt ====="
+            echo "===== export_log.txt (root) ====="
             cat export_log.txt 2>/dev/null || echo "(no export_log.txt at root)"
-            cat "${{ env.PROJECT_PATH }}/export_log.txt" 2>/dev/null || true
+            echo "===== export_log.txt (Project) ====="
+            cat "${{ env.PROJECT_PATH }}/export_log.txt" 2>/dev/null || echo "(none)"
             echo ""
             echo "===== templates dir ====="
             ls -la "$HOME/.local/share/godot/export_templates/" 2>&1 || true
             ls -la "$HOME/.local/share/godot/export_templates/4.7.0.stable/" 2>&1 | head -20 || true
             echo ""
-            echo "===== git status ====="
-            git status --short 2>&1 | head -30
+            echo "===== git status ===== (root cwd)"
+            pwd
+            git status --short 2>&1 | head -40
             echo ""
             echo "===== godot version ====="
             "$GODOT_BIN" --version 2>&1 || true
@@ -164,24 +165,37 @@ jobs:
             dotnet --version 2>&1 || true
             echo ""
             echo "===== android sdk ====="
-            ls "$HOME"/../usr/local/lib/android/sdk 2>&1 | head || ls /usr/local/lib/android/sdk 2>&1 | head -20
+            ls /usr/local/lib/android/sdk 2>&1 | head -20
+            echo ""
+            echo "===== EDITOR SETTINGS ====="
+            cat "$HOME/.config/godot/editor_settings-4.tres" 2>&1 || true
           } > /tmp/ci_debug.txt
           wc -l /tmp/ci_debug.txt
+          head -c 59000 /tmp/ci_debug.txt > /tmp/ci_debug_short.txt
+
+          # 1) Post diagnostics as a commit comment (readable via GitHub API)
+          echo "--- posting commit comment ---"
+          gh api --method POST \
+            -H "Accept: application/vnd.github+json" \
+            -f "body=@/tmp/ci_debug_short.txt" \
+            "repos/${{ github.repository }}/commits/$GITHUB_SHA/comments" 2>&1 | head -30 || echo "COMMENT POST FAILED"
+
+          # 2) Try pushing to ci-logs branch as well (best effort, no fail-stop)
           git config user.name "ci-bot"
           git config user.email "ci-bot@users.noreply.github.com"
           git fetch origin ci-logs 2>&1 || true
           START_REF="$(git rev-parse --verify origin/ci-logs 2>/dev/null || echo HEAD)"
           echo "START_REF=$START_REF"
-          git checkout -B ci-logs-tmp "$START_REF" 2>&1
+          git checkout -B ci-logs-tmp "$START_REF" 2>&1 || true
           mkdir -p ci-logs
-          cp /tmp/ci_debug.txt "ci-logs/ci_debug_${GITHUB_RUN_ID}.txt"
-          cp export_log.txt "ci-logs/export_log_${GITHUB_RUN_ID}.txt" 2>/dev/null || cp "${{ env.PROJECT_PATH }}/export_log.txt" "ci-logs/export_log_${GITHUB_RUN_ID}.txt" 2>/dev/null || true
-          git add -A
-          git commit -m "ci: capture export diagnostics run ${GITHUB_RUN_ID}"
-          echo "--- pushing ---"
-          git push --force origin HEAD:ci-logs 2>&1
-          echo "--- push exit: $? ---"
-          git rev-parse HEAD
+          cp /tmp/ci_debug.txt "ci-logs/ci_debug_${GITHUB_RUN_ID}.txt" 2>/dev/null || true
+          cp export_log.txt "ci-logs/export_log_${GITHUB_RUN_ID}.txt" 2>/dev/null || true
+          cp "${{ env.PROJECT_PATH }}/export_log.txt" "ci-logs/export_log_${GITHUB_RUN_ID}.txt" 2>/dev/null || true
+          git add -A 2>&1 || true
+          git commit -m "ci: capture export diagnostics run ${GITHUB_RUN_ID}" 2>&1 || true
+          echo "--- pushing (output below) ---"
+          git push --force origin HEAD:ci-logs 2>&1 | head -30 || echo "PUSH FAILED (see output above)"
+          git rev-parse HEAD || true
 
       - name: Upload export log (always)
         if: always()
