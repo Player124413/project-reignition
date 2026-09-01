@@ -4,7 +4,7 @@ extends Control
 ## Emulates move_left/right/up/down input actions based on touch position.
 ## Supports dynamic positioning (first touch shows joystick at touch point).
 
-class_name VirtualJoystick
+class_name TouchVirtualJoystick
 
 signal joystick_activated
 signal joystick_released

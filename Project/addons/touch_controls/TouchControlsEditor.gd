@@ -257,7 +257,7 @@ func _load_layout() -> void:
 		
 		# Update internal size for joystick
 		if el.is_joystick:
-			var js := c as VirtualJoystick
+			var js := c as TouchVirtualJoystick
 			if js:
 				js.max_radius = elem_size * 0.45
 				js._generate_textures()

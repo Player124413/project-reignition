@@ -38,7 +38,7 @@ var _physical_input_active: bool = false
 var _initialized: bool = false
 
 # References to control nodes
-var _joystick: VirtualJoystick
+var _joystick: TouchVirtualJoystick
 var _buttons: Array[VirtualButton] = []
 
 # Editor reference
@@ -143,7 +143,7 @@ func _build_layout() -> void:
 		_joystick = joystick_scene.instantiate()
 		add_child(_joystick)
 	else:
-		_joystick = VirtualJoystick.new()
+		_joystick = TouchVirtualJoystick.new()
 		add_child(_joystick)
 	
 	var joystick_size := viewport_size.y * 0.22  # 22% of screen height
