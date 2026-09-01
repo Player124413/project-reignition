@@ -9,7 +9,8 @@ Originally released in 2007 for the Nintendo Wii, Sonic and the Secret Rings' in
 
 While this remake intends to remain largely faithful to the original ideas of Secret Rings, many things will be changed to create a more enjoyable experience.
 
-<h2> </h2>
+<h2> NOTICE</h2>
+All releases starting from v1.0 are now hosted at https://gamejolt.com/games/project_reignition/1082591, since GitHub has a 2GB max file limit, and Reignition is now over that.
 
 <h2 align="center">
  <a href="https://discord.gg/k53GGE6CDM"> 
