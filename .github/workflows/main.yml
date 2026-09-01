@@ -18,6 +18,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      pull-requests: write
 
     steps:
       - name: Checkout repository
@@ -143,20 +144,21 @@ jobs:
       - name: Publish export log to ci-logs branch (debug)
         if: failure()
         run: |
-          # Gather diagnostics
+          # ---------- 1. Gather diagnostics ----------
+          LOG_SRC=""
+          if [ -f export_log.txt ]; then LOG_SRC=export_log.txt
+          elif [ -f "${{ env.PROJECT_PATH }}/export_log.txt" ]; then LOG_SRC="${{ env.PROJECT_PATH }}/export_log.txt"
+          fi
           {
-            echo "===== export_log.txt (root) ====="
-            cat export_log.txt 2>/dev/null || echo "(no export_log.txt at root)"
-            echo "===== export_log.txt (Project) ====="
-            cat "${{ env.PROJECT_PATH }}/export_log.txt" 2>/dev/null || echo "(none)"
+            echo "===== export log: $LOG_SRC ====="
+            cat "$LOG_SRC" 2>/dev/null || echo "(no export log found)"
             echo ""
             echo "===== templates dir ====="
             ls -la "$HOME/.local/share/godot/export_templates/" 2>&1 || true
             ls -la "$HOME/.local/share/godot/export_templates/4.7.0.stable/" 2>&1 | head -20 || true
             echo ""
-            echo "===== git status ===== (root cwd)"
-            pwd
-            git status --short 2>&1 | head -40
+            echo "===== git status ====="
+            pwd; git status --short 2>&1 | head -20
             echo ""
             echo "===== godot version ====="
             "$GODOT_BIN" --version 2>&1 || true
@@ -167,35 +169,61 @@ jobs:
             echo "===== android sdk ====="
             ls /usr/local/lib/android/sdk 2>&1 | head -20
             echo ""
-            echo "===== EDITOR SETTINGS ====="
+            echo "===== editor settings ====="
             cat "$HOME/.config/godot/editor_settings-4.tres" 2>&1 || true
+            echo ""
+            echo "===== token permissions (repo api) ====="
+            gh api "repos/${{ github.repository }}" --jq '.permissions' 2>&1 | head -5
           } > /tmp/ci_debug.txt
           wc -l /tmp/ci_debug.txt
           head -c 59000 /tmp/ci_debug.txt > /tmp/ci_debug_short.txt
 
-          # 1) Post diagnostics as a commit comment (readable via GitHub API)
-          echo "--- posting commit comment ---"
+          # ---------- 2. Step summary (visible on public run page) ----------
+          {
+            echo "## CI Debug run $GITHUB_RUN_ID"
+            echo ""
+            cat /tmp/ci_debug.txt
+          } >> "$GITHUB_STEP_SUMMARY"
+
+          # ---------- 3. Publish to orphan ci-logs branch (commit-tree, keeps workspace) ----------
+          git config user.name "ci-bot"
+          git config user.email "ci-bot@users.noreply.github.com"
+          export GIT_INDEX_FILE="/tmp/ci_index_${GITHUB_RUN_ID}"
+          rm -f "$GIT_INDEX_FILE"
+          git read-tree --empty
+          B1=$(git hash-object -w /tmp/ci_debug.txt)
+          git update-index --add --cacheinfo "100644,$B1,ci-logs/ci_debug_${GITHUB_RUN_ID}.txt"
+          if [ -n "$LOG_SRC" ]; then
+            B2=$(git hash-object -w "$LOG_SRC")
+            git update-index --add --cacheinfo "100644,$B2,ci-logs/export_log_${GITHUB_RUN_ID}.txt"
+          fi
+          TREE=$(git write-tree)
+          echo "TREE=$TREE"
+          git fetch origin ci-logs 2>&1 | tail -2 || true
+          PARENT=""
+          PARENT=$(git rev-parse --verify origin/ci-logs 2>/dev/null || echo "")
+          if [ -n "$PARENT" ]; then
+            COMMIT=$(git commit-tree "$TREE" -p "$PARENT" -m "ci: debug run ${GITHUB_RUN_ID}")
+          else
+            COMMIT=$(git commit-tree "$TREE" -m "ci: debug run ${GITHUB_RUN_ID}")
+          fi
+          echo "COMMIT=$COMMIT"
+          echo "--- push output ---"
+          git push --force origin "$COMMIT:ci-logs" 2>&1 | tail -20 || true
+          echo "PUSH_EXIT=${PIPESTATUS[0]}"
+
+          # ---------- 4. Commit comment attempt ----------
+          echo "--- commit comment ---"
           gh api --method POST \
             -H "Accept: application/vnd.github+json" \
             -f "body=@/tmp/ci_debug_short.txt" \
-            "repos/${{ github.repository }}/commits/$GITHUB_SHA/comments" 2>&1 | head -30 || echo "COMMENT POST FAILED"
+            "repos/${{ github.repository }}/commits/$GITHUB_SHA/comments" 2>&1 | tail -8 || echo "COMMENT POST FAILED"
 
-          # 2) Try pushing to ci-logs branch as well (best effort, no fail-stop)
-          git config user.name "ci-bot"
-          git config user.email "ci-bot@users.noreply.github.com"
-          git fetch origin ci-logs 2>&1 || true
-          START_REF="$(git rev-parse --verify origin/ci-logs 2>/dev/null || echo HEAD)"
-          echo "START_REF=$START_REF"
-          git checkout -B ci-logs-tmp "$START_REF" 2>&1 || true
-          mkdir -p ci-logs
-          cp /tmp/ci_debug.txt "ci-logs/ci_debug_${GITHUB_RUN_ID}.txt" 2>/dev/null || true
-          cp export_log.txt "ci-logs/export_log_${GITHUB_RUN_ID}.txt" 2>/dev/null || true
-          cp "${{ env.PROJECT_PATH }}/export_log.txt" "ci-logs/export_log_${GITHUB_RUN_ID}.txt" 2>/dev/null || true
-          git add -A 2>&1 || true
-          git commit -m "ci: capture export diagnostics run ${GITHUB_RUN_ID}" 2>&1 || true
-          echo "--- pushing (output below) ---"
-          git push --force origin HEAD:ci-logs 2>&1 | head -30 || echo "PUSH FAILED (see output above)"
-          git rev-parse HEAD || true
+          # ---------- 5. Short annotation hint ----------
+          if [ -n "$LOG_SRC" ]; then
+            HINT=$(grep -m1 -iE "error|failed|cannot|not found|missing" "$LOG_SRC" | cut -c1-400)
+            [ -n "$HINT" ] && echo "::error title=EXPORT_HINT::$HINT" || true
+          fi
 
       - name: Upload export log (always)
         if: always()
