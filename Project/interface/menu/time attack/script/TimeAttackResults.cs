@@ -1,5 +1,6 @@
 using Godot;
 using Project.Core;
+using System;
 using System.Collections.Generic;
 
 namespace Project.Interface.Menus;
@@ -44,8 +45,10 @@ public partial class TimeAttackResults : Menu
 				resultsOption.Add(resultOption);
 		}
 
+		TimeSpan time = TimeSpan.FromSeconds(TimeAttackManager.Instance.GetTotalRunTime());
+
 		initialCursorPosition = cursor.Position.Y;
-		totalTimeLabel.Text = ExtensionMethods.FormatTime(TimeAttackManager.Instance.GetTotalRunTime());
+		totalTimeLabel.Text = time.ToString(@"hh\:mm\:ss\.ff");
 
 		if (SaveManager.TimeData.Tries > 1)
 			tries.Visible = true;

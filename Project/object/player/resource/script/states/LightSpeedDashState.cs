@@ -125,7 +125,11 @@ public partial class LightSpeedDashState : PlayerState
 
 		Vector3 movementDirection = (CurrentTarget.GlobalPosition - Player.CenterPosition).Normalized();
 		Player.Velocity = movementDirection * Player.MoveSpeed;
-		Player.MovementAngle = ExtensionMethods.CalculateForwardAngle(movementDirection);
+		if (Mathf.Abs(Player.PathFollower.Forward().Dot(Vector3.Up)) < 0.8f)
+			Player.MovementAngle = ExtensionMethods.CalculateForwardAngle(movementDirection);
+		else
+			Player.MovementAngle = Player.PathFollower.ForwardAngle;
+
 		Player.MoveSpeed = Mathf.MoveToward(Player.MoveSpeed, lightDashSpeed, lightDashSpeedAcceleration * PhysicsManager.physicsDelta);
 
 		Player.MoveAndSlide();
