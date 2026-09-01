@@ -1,6 +1,5 @@
 using Godot;
 using Godot.Collections;
-using Godot.NativeInterop;
 using Project.Core;
 using Project.Gameplay;
 
@@ -8,6 +7,8 @@ namespace Project.Interface.Menus;
 
 public partial class Jukebox : Menu
 {
+	[Signal] public delegate void ClosedEventHandler();
+
 	[Export] private AnimationPlayer cursorAnimator;
 	[Export] private AudioStreamPlayer player;
 	[Export] private BGMResource defaultOption;
@@ -339,6 +340,7 @@ public partial class Jukebox : Menu
 		StopBgm();
 		HideMenu();
 		SaveManager.SaveGameData();
+		EmitSignal(SignalName.Closed);
 	}
 
 	protected override void UpdateSelection()

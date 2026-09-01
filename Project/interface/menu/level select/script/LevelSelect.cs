@@ -97,6 +97,7 @@ public partial class LevelSelect : Menu
 		}
 
 		initialCursorPosition = cursor.Position.Y;
+		jukebox.Closed += ProcessStoryMarkers;
 		base.SetUp();
 	}
 
@@ -233,14 +234,24 @@ public partial class LevelSelect : Menu
 				storyMarkerVisibilitySign = targetSign;
 				storyMarkerAnimator.Play("RESET");
 				storyMarkerAnimator.Advance(0.0);
-				storyMarkerAnimator.Play(delta > 0 ? "show-top" : "show-bottom");
+				storyMarkerAnimator.Play(storyMarkerVisibilitySign > 0 ? "show-top" : "show-bottom");
 			}
 		}
 		else if (storyMarkerVisibilitySign != 0)
 		{
-			storyMarkerVisibilitySign = 0;
-			storyMarkerAnimator.Play(delta > 0 ? "hide-top" : "hide-bottom");
+			HideStoryMarker();
 		}
+	}
+
+	private void HideStoryMarker()
+	{
+		int centerPosition = scrollAmount + (PageSize / 2);
+		int delta = centerPosition - storyLevelIndex;
+
+		storyMarkerVisibilitySign = 0;
+		storyMarkerAnimator.Play("RESET");
+		storyMarkerAnimator.Advance(0.0);
+		storyMarkerAnimator.Play(delta > 0 ? "hide-top" : "hide-bottom");
 	}
 
 	public void UpdateBgm()
@@ -313,6 +324,9 @@ public partial class LevelSelect : Menu
 
 	private void OpenBGMMenu()
 	{
+		if (storyMarkerVisibilitySign != 0)
+			HideStoryMarker();
+
 		jukebox.SelectedLevel = levelOptions[VerticalSelection].data;
 		jukebox.ShowMenu();
 	}
