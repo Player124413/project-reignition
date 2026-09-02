@@ -144,6 +144,7 @@ jobs:
       - name: Publish export log to ci-logs branch (debug)
         if: failure()
         run: |
+          set +e  # never abort this diagnostic step; always emit annotations
           # ---------- 1. Gather diagnostics ----------
           LOG_SRC=""
           if [ -f export_log.txt ]; then LOG_SRC=export_log.txt
