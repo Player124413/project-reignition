@@ -229,10 +229,12 @@ jobs:
             echo "======== COMMENT OUT ========"
             tail -8 /tmp/comment_out.txt 2>/dev/null || true
           } >> /tmp/ci_debug.txt
-          awk '{gsub(/%/, "%25"); printf "%s%%0A", $0}' /tmp/ci_debug.txt | cut -c1-60000 > /tmp/ann_diag.txt
+          sed -E 's/\x1B\[[0-9;]*[A-Za-z]//g' /tmp/ci_debug.txt > /tmp/ci_debug_clean.txt
+          awk '{gsub(/%/, "%25"); printf "%s%%0A", $0}' /tmp/ci_debug_clean.txt | cut -c1-60000 > /tmp/ann_diag.txt
           echo "::error title=CI_DIAG::$(cat /tmp/ann_diag.txt)"
           if [ -n "$LOG_SRC" ]; then
-            awk '{gsub(/%/, "%25"); printf "%s%%0A", $0}' "$LOG_SRC" | cut -c1-60000 > /tmp/ann_log.txt
+            sed -E 's/\x1B\[[0-9;]*[A-Za-z]//g' "$LOG_SRC" > /tmp/export_log_clean.txt
+            awk '{gsub(/%/, "%25"); printf "%s%%0A", $0}' /tmp/export_log_clean.txt | cut -c1-60000 > /tmp/ann_log.txt
             echo "::error title=EXPORT_FULL_LOG::$(cat /tmp/ann_log.txt)"
           fi
 

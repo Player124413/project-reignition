@@ -41,6 +41,12 @@ public partial class SoundManager : Control
 		subtitleAnimator.Play("RESET");
 		InitializePearlSFX();
 
+		if (buttonPrompts != null)
+		{
+			resolvedButtonPrompts = new NavigationButton[buttonPrompts.Length];
+			for (int i = 0; i < buttonPrompts.Length; i++)
+				resolvedButtonPrompts[i] = GetNode<NavigationButton>(buttonPrompts[i]);
+		}
 		buttonPromptCharacterIndexes = new int[buttonPrompts.Length];
 
 		// Cancel Dialog when switching to a new scene
@@ -84,7 +90,8 @@ public partial class SoundManager : Control
 	public bool IsSubtitlesActive { get; private set; }
 	public bool IsDialogActive => IsSubtitlesActive && CurrentSpeaker != SpeakerEnum.None;
 	[Export] private Label subtitleLabel;
-	[Export] private NavigationButton[] buttonPrompts;
+	[Export] private NodePath[] buttonPrompts;
+	private NavigationButton[] resolvedButtonPrompts;
 	private int buttonPromptIndex; // The current button prompt being calculated
 	private int[] buttonPromptCharacterIndexes; // 
 	[Export] private ColorRect subtitleLetterbox;
@@ -269,7 +276,7 @@ public partial class SoundManager : Control
 	{
 		buttonPromptIndex = 0;
 		for (int i = 0; i < buttonPrompts.Length; i++)
-			buttonPrompts[i].Visible = false;
+			resolvedButtonPrompts[i].Visible = false;
 	}
 
 	/// <summary> Replaces curly braces with quotation marks for cutscene subtitles. </summary>
@@ -289,12 +296,12 @@ public partial class SoundManager : Control
 		if (!regexMatch.Success)
 			return text;
 
-		buttonPrompts[buttonPromptIndex].Visible = true;
+		resolvedButtonPrompts[buttonPromptIndex].Visible = true;
 		string inputKey = regexMatch.Groups[0].Value.Substring(1, regexMatch.Groups[0].Length - 2);
 		if (inputKey == "button_crouch")
 			inputKey = SaveManager.ActiveSkillRing.IsSkillEquipped(Gameplay.SkillKey.ChargeJump) ? "button_jump" : "button_action";
 
-		buttonPrompts[buttonPromptIndex].SetInputKey(inputKey);
+		resolvedButtonPrompts[buttonPromptIndex].SetInputKey(inputKey);
 		text = text.Replace(regexMatch.Captures[0].Value, ButtonSpaceReplacement); // 5 Spaces
 		buttonPromptCharacterIndexes[buttonPromptIndex] = regexMatch.Captures[0].Index + 2;
 		buttonPromptIndex++;
@@ -317,12 +324,12 @@ public partial class SoundManager : Control
 	{
 		for (int i = 0; i < buttonPrompts.Length; i++)
 		{
-			if (!buttonPrompts[i].Visible)
+			if (!resolvedButtonPrompts[i].Visible)
 				return;
 
-			Vector2 buttonPromptOffset = -buttonPrompts[i].Size * 0.5f;
+			Vector2 buttonPromptOffset = -resolvedButtonPrompts[i].Size * 0.5f;
 			Rect2 charBounds = subtitleLabel.GetCharacterBounds(buttonPromptCharacterIndexes[i]);
-			buttonPrompts[i].GlobalPosition = subtitleLabel.GlobalPosition + charBounds.GetCenter() + buttonPromptOffset;
+			resolvedButtonPrompts[i].GlobalPosition = subtitleLabel.GlobalPosition + charBounds.GetCenter() + buttonPromptOffset;
 		}
 	}
 

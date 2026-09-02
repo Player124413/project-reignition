@@ -137,7 +137,7 @@ func _load_custom_layout_if_exists() -> bool:
 	return cfg.load("user://touch_layout.cfg") == OK
 
 func _build_layout() -> void:
-	var viewport_size: Vector2 = get_viewport_rect().size
+	var viewport_size: Vector2 = get_viewport().get_visible_rect().size
 	if viewport_size.x <= 0 or viewport_size.y <= 0:
 		viewport_size = Vector2(1920, 1080)
 	
@@ -204,8 +204,8 @@ func _build_layout() -> void:
 		
 		btn.custom_minimum_size = bg.custom_minimum_size
 		btn.size = bg.custom_minimum_size
-		var bx := viewport_size.x * cfg[3] - btn.size.x * 0.5
-		var by := viewport_size.y * cfg[4] - btn.size.y * 0.5
+		var bx: float = viewport_size.x * float(cfg[3]) - btn.size.x * 0.5
+		var by: float = viewport_size.y * float(cfg[4]) - btn.size.y * 0.5
 		btn.position = Vector2(bx, by)
 		
 		add_child(btn)
@@ -352,12 +352,12 @@ func open_editor() -> void:
 	# Hide regular controls during edit (they're still visible but with overlay)
 	_editor.enter_edit_mode(self)
 
-func _on_editor_closed(layout_changed: bool) -> void:
+func _on_editor_closed(changed: bool) -> void:
 	if _editor:
 		_editor.queue_free()
 		_editor = null
 	
-	if layout_changed:
+	if changed:
 		layout_changed.emit()
 
 func _apply_custom_layout() -> void:
@@ -365,14 +365,14 @@ func _apply_custom_layout() -> void:
 	if cfg.load("user://touch_layout.cfg") != OK:
 		return
 	
-	var viewport_size: Vector2 = get_viewport_rect().size
+	var viewport_size: Vector2 = get_viewport().get_visible_rect().size
 	
 	# Apply to joystick
 	if _joystick and cfg.has_section("joystick"):
 		var nx := cfg.get_value("joystick", "pos_x", 0.08)
 		var ny := cfg.get_value("joystick", "pos_y", 0.62)
 		var sz := cfg.get_value("joystick", "size_norm", 0.22)
-		var elem_size := viewport_size.y * sz
+		var elem_size: float = viewport_size.y * sz
 		_joystick.size = Vector2(elem_size, elem_size)
 		_joystick.position = Vector2(viewport_size.x * nx - elem_size * 0.5, viewport_size.y * ny - elem_size * 0.5)
 		_joystick.max_radius = elem_size * 0.45

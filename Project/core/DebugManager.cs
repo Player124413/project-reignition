@@ -45,6 +45,11 @@ public partial class DebugManager : Control
 		SetUpSkills();
 	}
 
+	public override void _Ready()
+	{
+		ResolveCamData();
+	}
+
 	public override void _PhysicsProcess(double _)
 	{
 		if (Input.IsActionJustPressed("toggle_fullscreen")) // Global shortcut used in final build as well
@@ -435,22 +440,32 @@ public partial class DebugManager : Control
 	public void ToggleDialog(bool enabled) => DisableDialog = enabled;
 
 	[Export]
-	private LineEdit[] freeCamData;
+	private NodePath[] freeCamData;
+	private LineEdit[] camDataFields;
+
+	private void ResolveCamData()
+	{
+		if (freeCamData == null) return;
+		camDataFields = new LineEdit[freeCamData.Length];
+		for (int i = 0; i < freeCamData.Length; i++)
+			camDataFields[i] = GetNode<LineEdit>(freeCamData[i]);
+	}
 	public void RedrawCamData(Vector3 position, Vector3 rotation)
 	{
-		for (int i = 0; i < freeCamData.Length; i++)
+		if (camDataFields == null) return;
+		for (int i = 0; i < camDataFields.Length; i++)
 		{
-			if (freeCamData[i].HasFocus())
+			if (camDataFields[i].HasFocus())
 				return;
 		}
 
-		freeCamData[0].Text = position.X.ToString();
-		freeCamData[1].Text = position.Y.ToString();
-		freeCamData[2].Text = position.Z.ToString();
+		camDataFields[0].Text = position.X.ToString();
+		camDataFields[1].Text = position.Y.ToString();
+		camDataFields[2].Text = position.Z.ToString();
 
-		freeCamData[3].Text = rotation.X.ToString();
-		freeCamData[4].Text = rotation.Y.ToString();
-		freeCamData[5].Text = rotation.Z.ToString();
+		camDataFields[3].Text = rotation.X.ToString();
+		camDataFields[4].Text = rotation.Y.ToString();
+		camDataFields[5].Text = rotation.Z.ToString();
 	}
 
 	private void UpdateCamData(string newData)

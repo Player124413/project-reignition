@@ -62,7 +62,7 @@ func enter_edit_mode(manager: TouchControlsManager) -> void:
 	_manager = manager
 	_is_active = true
 	_layout_changed = false
-	_viewport_size = get_viewport_rect().size
+	_viewport_size = get_viewport().get_visible_rect().size
 	visible = true
 	
 	_build_editor_overlay()

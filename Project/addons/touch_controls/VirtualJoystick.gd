@@ -117,7 +117,7 @@ func _process_touch(event: InputEvent) -> void:
 	else:
 		return
 	
-	var viewport_size: Vector2 = get_viewport_rect().size
+	var viewport_size: Vector2 = get_viewport().get_visible_rect().size
 	var is_left_side: bool = pos.x < viewport_size.x * 0.45
 	
 	if not _is_active and is_press and is_left_side:
