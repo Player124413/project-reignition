@@ -32,7 +32,21 @@ signal layout_changed
 # ─── Internal State ──────────────────────────────────────────────────
 
 var is_visible_override: bool = true
-var touch_enabled: bool = true setget _set_touch_enabled
+
+# Backing field for the touch_enabled property (Godot 4 property syntax)
+var _touch_enabled_backing: bool = true
+var touch_enabled: bool = true:
+	get:
+		return _touch_enabled_backing
+	set(value):
+		if _touch_enabled_backing == value:
+			return
+		_touch_enabled_backing = value
+		if _touch_enabled_backing:
+			show_touch_controls()
+		else:
+			hide_touch_controls()
+		touch_enabled_changed.emit(value)
 
 var _physical_input_active: bool = false
 var _initialized: bool = false
@@ -67,16 +81,6 @@ const BUTTON_CONFIG := [
 	["button_step_left",   "◀",   false,  0.75, 0.12, 0.6],   # Step Left
 	["button_step_right",  "▶",   false,  0.85, 0.12, 0.6],   # Step Right
 ]
-
-func _set_touch_enabled(value: bool) -> void:
-	if touch_enabled == value:
-		return
-	touch_enabled = value
-	if touch_enabled:
-		show_touch_controls()
-	else:
-		hide_touch_controls()
-	touch_enabled_changed.emit(value)
 
 func _ready() -> void:
 	layer = 128  # Very high layer, above everything
