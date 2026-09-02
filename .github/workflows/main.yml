@@ -208,21 +208,31 @@ jobs:
             COMMIT=$(git commit-tree "$TREE" -m "ci: debug run ${GITHUB_RUN_ID}")
           fi
           echo "COMMIT=$COMMIT"
-          echo "--- push output ---"
-          git push --force origin "$COMMIT:ci-logs" 2>&1 | tail -20 || true
-          echo "PUSH_EXIT=${PIPESTATUS[0]}"
+          git push --force origin "$COMMIT:ci-logs" > /tmp/push_out.txt 2>&1
+          echo "PUSH_EXIT=$?" >> /tmp/push_out.txt
+          cat /tmp/push_out.txt | tail -20
 
           # ---------- 4. Commit comment attempt ----------
-          echo "--- commit comment ---"
           gh api --method POST \
             -H "Accept: application/vnd.github+json" \
             -f "body=@/tmp/ci_debug_short.txt" \
-            "repos/${{ github.repository }}/commits/$GITHUB_SHA/comments" 2>&1 | tail -8 || echo "COMMENT POST FAILED"
+            "repos/${{ github.repository }}/commits/$GITHUB_SHA/comments" > /tmp/comment_out.txt 2>&1
+          echo "COMMENT_EXIT=$?" >> /tmp/comment_out.txt
+          cat /tmp/comment_out.txt | tail -8
 
-          # ---------- 5. Short annotation hint ----------
+          # ---------- 5. Deliver logs as annotations (readable via checks API) ----------
+          {
+            echo ""
+            echo "======== PUSH OUT ========"
+            tail -20 /tmp/push_out.txt 2>/dev/null || true
+            echo "======== COMMENT OUT ========"
+            tail -8 /tmp/comment_out.txt 2>/dev/null || true
+          } >> /tmp/ci_debug.txt
+          awk '{gsub(/%/, "%25"); printf "%s%%0A", $0}' /tmp/ci_debug.txt | cut -c1-60000 > /tmp/ann_diag.txt
+          echo "::error title=CI_DIAG::$(cat /tmp/ann_diag.txt)"
           if [ -n "$LOG_SRC" ]; then
-            HINT=$(grep -m1 -iE "error|failed|cannot|not found|missing" "$LOG_SRC" | cut -c1-400)
-            [ -n "$HINT" ] && echo "::error title=EXPORT_HINT::$HINT" || true
+            awk '{gsub(/%/, "%25"); printf "%s%%0A", $0}' "$LOG_SRC" | cut -c1-60000 > /tmp/ann_log.txt
+            echo "::error title=EXPORT_FULL_LOG::$(cat /tmp/ann_log.txt)"
           fi
 
       - name: Upload export log (always)
