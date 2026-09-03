@@ -111,7 +111,7 @@ func _determine_tier() -> void:
 	
 	# Override: if GPU looks very old, drop one tier
 	if is_old_gpu and device_tier > DeviceTier.LOW:
-		device_tier = DeviceTier(max(int(device_tier) - 1, int(DeviceTier.LOW)))
+		device_tier = maxi(int(device_tier) - 1, int(DeviceTier.LOW))
 	
 	# Log result
 	print("MobilePerformance: CPU=" + str(cpu_cores) + " RAM=" + str(total_ram_mb) + "MB GPU=" + gpu_name + " → Tier=" + _tier_name())
@@ -172,48 +172,48 @@ func _apply_render_scale() -> void:
 func _apply_shadows() -> void:
 	match shadow_quality:
 		0:  # Low — minimal shadows
-			RenderingServer.DirectionalShadowAtlasSetSize(512, false)
-			RenderingServer.ViewportSetPositionalShadowAtlasSize(get_viewport().get_viewport_rid(), 1024, false)
-			RenderingServer.DirectionalSoftShadowFilterSetQuality(RenderingServer.ShadowQuality.Hard)
-			RenderingServer.PositionalSoftShadowFilterSetQuality(RenderingServer.ShadowQuality.Hard)
+			RenderingServer.directional_shadow_atlas_set_size(512, false)
+			RenderingServer.viewport_set_positional_shadow_atlas_size(get_viewport().get_viewport_rid(), 1024, false)
+			RenderingServer.directional_soft_shadow_filter_set_quality(RenderingServer.SHADOW_QUALITY_HARD)
+			RenderingServer.positional_soft_shadow_filter_set_quality(RenderingServer.SHADOW_QUALITY_HARD)
 			
 		1:  # Medium
-			RenderingServer.DirectionalShadowAtlasSetSize(1024, false)
-			RenderingServer.ViewportSetPositionalShadowAtlasSize(get_viewport().get_viewport_rid(), 2048, false)
-			RenderingServer.DirectionalSoftShadowFilterSetQuality(RenderingServer.ShadowQuality.SoftLow)
-			RenderingServer.PositionalSoftShadowFilterSetQuality(RenderingServer.ShadowQuality.SoftLow)
+			RenderingServer.directional_shadow_atlas_set_size(1024, false)
+			RenderingServer.viewport_set_positional_shadow_atlas_size(get_viewport().get_viewport_rid(), 2048, false)
+			RenderingServer.directional_soft_shadow_filter_set_quality(RenderingServer.SHADOW_QUALITY_SOFT_LOW)
+			RenderingServer.positional_soft_shadow_filter_set_quality(RenderingServer.SHADOW_QUALITY_SOFT_LOW)
 			
 		2:  # High
-			RenderingServer.DirectionalShadowAtlasSetSize(2048, false)
-			RenderingServer.ViewportSetPositionalShadowAtlasSize(get_viewport().get_viewport_rid(), 4096, false)
-			RenderingServer.DirectionalSoftShadowFilterSetQuality(RenderingServer.ShadowQuality.SoftLow)
-			RenderingServer.PositionalSoftShadowFilterSetQuality(RenderingServer.ShadowQuality.SoftLow)
+			RenderingServer.directional_shadow_atlas_set_size(2048, false)
+			RenderingServer.viewport_set_positional_shadow_atlas_size(get_viewport().get_viewport_rid(), 4096, false)
+			RenderingServer.directional_soft_shadow_filter_set_quality(RenderingServer.SHADOW_QUALITY_SOFT_LOW)
+			RenderingServer.positional_soft_shadow_filter_set_quality(RenderingServer.SHADOW_QUALITY_SOFT_LOW)
 
 func _apply_effects() -> void:
 	var vp_rid := get_viewport().get_viewport_rid()
 	
 	match effects_quality:
 		0:  # Low — disable expensive effects
-			RenderingServer.ViewportSetScreenSpaceAA(vp_rid, RenderingServer.ViewportScreenSpaceAA.Disabled)
-			RenderingServer.ViewportSetMsaa3D(vp_rid, RenderingServer.ViewportMsaa.Disabled)
-			RenderingServer.EnvironmentSetSsaoQuality(RenderingServer.EnvironmentSsaoQuality.VeryLow, false, 0.25, 0, 8, 16)
-			RenderingServer.EnvironmentSetSsilQuality(RenderingServer.EnvironmentSsilQuality.VeryLow, false, 0.25, 0, 8, 16)
+			RenderingServer.viewport_set_screen_space_aa(vp_rid, RenderingServer.VIEWPORT_SCREEN_SPACE_AA_DISABLED)
+			RenderingServer.viewport_set_msaa_3d(vp_rid, RenderingServer.VIEWPORT_MSAA_DISABLED)
+			RenderingServer.environment_set_ssao_quality(RenderingServer.ENV_SSAO_QUALITY_VERY_LOW, false, 0.25, 0, 8, 16)
+			RenderingServer.environment_set_ssil_quality(RenderingServer.ENV_SSIL_QUALITY_VERY_LOW, false, 0.25, 0, 8, 16)
 			# Disable glow/bllom entirely on very low
-			var env := get_viewport().get_environment()
+			var env: Environment = get_viewport().get_environment()
 			if env:
 				env.glow_enabled = false
 			
 		1:  # Medium
-			RenderingServer.ViewportSetScreenSpaceAA(vp_rid, RenderingServer.ViewportScreenSpaceAA.FXAA)
-			RenderingServer.ViewportSetMsaa3D(vp_rid, RenderingServer.ViewportMsaa.Msaa2X)
-			RenderingServer.EnvironmentSetSsaoQuality(RenderingServer.EnvironmentSsaoQuality.Low, true, 0.5, 0, 20, 50)
-			RenderingServer.EnvironmentSetSsilQuality(RenderingServer.EnvironmentSsilQuality.Low, true, 0.5, 0, 20, 50)
+			RenderingServer.viewport_set_screen_space_aa(vp_rid, RenderingServer.VIEWPORT_SCREEN_SPACE_AA_FXAA)
+			RenderingServer.viewport_set_msaa_3d(vp_rid, RenderingServer.VIEWPORT_MSAA_2X)
+			RenderingServer.environment_set_ssao_quality(RenderingServer.ENV_SSAO_QUALITY_LOW, true, 0.5, 0, 20, 50)
+			RenderingServer.environment_set_ssil_quality(RenderingServer.ENV_SSIL_QUALITY_LOW, true, 0.5, 0, 20, 50)
 			
 		2:  # High
-			RenderingServer.ViewportSetScreenSpaceAA(vp_rid, RenderingServer.ViewportScreenSpaceAA.FXAA)
-			RenderingServer.ViewportSetMsaa3D(vp_rid, RenderingServer.ViewportMsaa.Msaa2X)
-			RenderingServer.EnvironmentSetSsaoQuality(RenderingServer.EnvironmentSsaoQuality.Medium, true, 0.5, 1, 50, 100)
-			RenderingServer.EnvironmentSetSsilQuality(RenderingServer.EnvironmentSsilQuality.Medium, true, 0.5, 1, 50, 100)
+			RenderingServer.viewport_set_screen_space_aa(vp_rid, RenderingServer.VIEWPORT_SCREEN_SPACE_AA_FXAA)
+			RenderingServer.viewport_set_msaa_3d(vp_rid, RenderingServer.VIEWPORT_MSAA_2X)
+			RenderingServer.environment_set_ssao_quality(RenderingServer.ENV_SSAO_QUALITY_MEDIUM, true, 0.5, 1, 50, 100)
+			RenderingServer.environment_set_ssil_quality(RenderingServer.ENV_SSIL_QUALITY_MEDIUM, true, 0.5, 1, 50, 100)
 
 func _apply_fps() -> void:
 	Engine.max_fps = target_fps

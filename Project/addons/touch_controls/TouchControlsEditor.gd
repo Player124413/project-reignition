@@ -56,7 +56,7 @@ class TouchEditElement:
 func _ready() -> void:
 	layer = 129  # Above TouchControlsManager
 	visible = false
-	_process_mode = PROCESS_MODE_WHEN_PAUSED
+	process_mode = PROCESS_MODE_WHEN_PAUSED
 
 func enter_edit_mode(manager: TouchControlsManager) -> void:
 	_manager = manager
@@ -304,12 +304,12 @@ func _input(event: InputEvent) -> void:
 			KEY_ESCAPE:
 				_on_close()
 				get_viewport().set_input_as_handled()
-			KEY_S and event.ctrl_pressed:
-				_on_save()
-				get_viewport().set_input_as_handled()
-			KEY_R and event.ctrl_pressed:
-				_on_reset()
-				get_viewport().set_input_as_handled()
+		if event.keycode == KEY_S and event.ctrl_pressed:
+			_on_save()
+			get_viewport().set_input_as_handled()
+		elif event.keycode == KEY_R and event.ctrl_pressed:
+			_on_reset()
+			get_viewport().set_input_as_handled()
 	
 	# Touch/Drag handling
 	if event is InputEventScreenTouch or event is InputEventScreenDrag:

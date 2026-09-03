@@ -54,7 +54,8 @@ jobs:
           echo "✅ Found Godot binary: $GODOT_EXTRACTED ($(du -h "$GODOT_EXTRACTED" | cut -f1))"
           
           # ─── Download and install export templates ─────────────
-          GODOT_TEMPLATES_DIR="$HOME/.local/share/godot/export_templates/${{ env.GODOT_VERSION }}.0.stable"
+          # Godot 4.7 mono expects templates under "<version>.stable.mono"
+          GODOT_TEMPLATES_DIR="$HOME/.local/share/godot/export_templates/${{ env.GODOT_VERSION }}.stable.mono"
           mkdir -p "$GODOT_TEMPLATES_DIR"
           wget -q "https://github.com/godotengine/godot/releases/download/${{ env.GODOT_VERSION }}-stable/Godot_v${{ env.GODOT_VERSION }}-stable_mono_export_templates.tpz" -O templates.tpz
           unzip -q templates.tpz -d "$GODOT_TEMPLATES_DIR"
@@ -116,7 +117,7 @@ jobs:
           echo "GODOT_BIN=$GODOT_BIN"
           echo "HOME=$HOME"
           ls -la "$HOME/.local/share/godot/export_templates/" 2>&1
-          ls -la "$HOME/.local/share/godot/export_templates/4.7.0.stable/" 2>&1 | head -20
+          ls -la "$HOME/.local/share/godot/export_templates/4.7.stable.mono/" 2>&1 | head -20
           "$GODOT_BIN" --version 2>&1
 
       - name: Export Android APK (Debug)
@@ -156,7 +157,7 @@ jobs:
             echo ""
             echo "===== templates dir ====="
             ls -la "$HOME/.local/share/godot/export_templates/" 2>&1 || true
-            ls -la "$HOME/.local/share/godot/export_templates/4.7.0.stable/" 2>&1 | head -20 || true
+            ls -la "$HOME/.local/share/godot/export_templates/4.7.stable.mono/" 2>&1 | head -20 || true
             echo ""
             echo "===== git status ====="
             pwd; git status --short 2>&1 | head -20
