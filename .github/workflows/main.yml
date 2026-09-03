@@ -278,18 +278,3 @@ jobs:
           path: export/android/*.apk
           if-no-files-found: error
           retention-days: 30
-
-      - name: Publish rolling canary release (stable download link)
-        run: |
-          APK="export/android/${{ env.EXPORT_NAME }}.apk"
-          if [ ! -f "$APK" ]; then echo "No APK built; skipping release"; exit 0; fi
-          NOTES="Branch: ${GITHUB_REF_NAME}
-Commit: ${GITHUB_SHA}
-Built: $(date -u '+%Y-%m-%d %H:%M') UTC
-
-Всегда свежая Debug-сборка. Скачай SonicSecretRingsRemake.apk ниже и поставь поверх текущей.
-После обновлений с новой раскладкой: ✎ Edit → ↺ RESET."
-          gh release create android-canary --prerelease --title "Android Debug (canary)" --notes "$NOTES" 2>/dev/null || true
-          gh release upload android-canary "$APK" --clobber
-          gh release edit android-canary --notes "$NOTES"
-          echo "✅ Published: https://github.com/${GITHUB_REPOSITORY}/releases/tag/android-canary"
