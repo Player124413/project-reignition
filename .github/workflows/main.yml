@@ -122,19 +122,21 @@ jobs:
 
       - name: Export Android APK (Debug)
         run: |
-          mkdir -p export/android
+          APK_OUT="$PWD/export/android/${{ env.EXPORT_NAME }}.apk"
+          mkdir -p "$(dirname "$APK_OUT")"
           set +e
           "$GODOT_BIN" \
             --headless \
             --path "${{ env.PROJECT_PATH }}" \
             --export-debug "Android" \
-            "export/android/${{ env.EXPORT_NAME }}.apk" > export_log.txt 2>&1
+            "$APK_OUT" > export_log.txt 2>&1
           EXPORT_STATUS=$?
           set -e
           echo "GODOT_EXPORT_EXIT=$EXPORT_STATUS"
-          if [ -f "export/android/${{ env.EXPORT_NAME }}.apk" ]; then
+          echo "APK_OUT=$APK_OUT"
+          if [ -f "$APK_OUT" ]; then
             echo "✅ APK exported successfully!"
-            echo "APK size: $(du -h export/android/${{ env.EXPORT_NAME }}.apk | cut -f1)"
+            echo "APK size: $(du -h "$APK_OUT" | cut -f1)"
             exit 0
           else
             echo "❌ APK export failed (exit $EXPORT_STATUS). Full log:"
@@ -251,7 +253,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ${{ env.EXPORT_NAME }}-export-log
-          path: export_log.txt
+          path: ${{ github.workspace }}/export_log.txt
           if-no-files-found: ignore
 
       - name: Upload APK artifact
