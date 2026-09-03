@@ -474,8 +474,8 @@ public partial class DebugManager : Control
 		if (!IsInstanceValid(StageSettings.Player)) return;
 		PlayerCameraController cam = StageSettings.Player.Camera;
 
-		Vector3 pos = new(freeCamData[0].Text.ToFloat(), freeCamData[1].Text.ToFloat(), freeCamData[2].Text.ToFloat());
-		Vector3 rot = new(freeCamData[3].Text.ToFloat(), freeCamData[4].Text.ToFloat(), freeCamData[5].Text.ToFloat());
+		Vector3 pos = new(camDataFields[0].Text.ToFloat(), camDataFields[1].Text.ToFloat(), camDataFields[2].Text.ToFloat());
+		Vector3 rot = new(camDataFields[3].Text.ToFloat(), camDataFields[4].Text.ToFloat(), camDataFields[5].Text.ToFloat());
 
 		cam.UpdateFreeCamData(pos, rot);
 	}
