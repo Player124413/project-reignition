@@ -106,6 +106,21 @@ jobs:
             -dname "CN=Android Debug,O=Android,C=US" 2>/dev/null
           echo "✅ Debug keystore created"
 
+      - name: Fetch boot videos (optional release assets)
+        run: |
+          # *.mp4 splash/cutscene videos are intentionally NOT in git (see .gitignore:
+          # "Video files are too large to backup"). If they are published as assets of
+          # a 'boot-videos' release, bake them into the APK; otherwise Boot.tscn falls
+          # back to the static logo image (see VideoStreamFileLoadPlayer fallbackImagePath).
+          mkdir -p "${{ env.PROJECT_PATH }}/video/boot"
+          cd "${{ env.PROJECT_PATH }}/video/boot"
+          if gh release download boot-videos --pattern "*.mp4" --clobber; then
+            echo "✅ Boot videos fetched:"
+            ls -la *.mp4
+          else
+            echo "ℹ️ No 'boot-videos' release found — splash will use static fallback logo"
+          fi
+
       - name: Pre-heat Godot cache
         run: |
           cd "${{ env.PROJECT_PATH }}"
@@ -263,3 +278,18 @@ jobs:
           path: export/android/*.apk
           if-no-files-found: error
           retention-days: 30
+
+      - name: Publish rolling canary release (stable download link)
+        run: |
+          APK="export/android/${{ env.EXPORT_NAME }}.apk"
+          if [ ! -f "$APK" ]; then echo "No APK built; skipping release"; exit 0; fi
+          NOTES="Branch: ${GITHUB_REF_NAME}
+Commit: ${GITHUB_SHA}
+Built: $(date -u '+%Y-%m-%d %H:%M') UTC
+
+Всегда свежая Debug-сборка. Скачай SonicSecretRingsRemake.apk ниже и поставь поверх текущей.
+После обновлений с новой раскладкой: ✎ Edit → ↺ RESET."
+          gh release create android-canary --prerelease --title "Android Debug (canary)" --notes "$NOTES" 2>/dev/null || true
+          gh release upload android-canary "$APK" --clobber
+          gh release edit android-canary --notes "$NOTES"
+          echo "✅ Published: https://github.com/${GITHUB_REPOSITORY}/releases/tag/android-canary"

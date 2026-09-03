@@ -135,8 +135,13 @@ func _apply_size(s: Vector2) -> void:
 func _input(event: InputEvent) -> void:
 	if not is_visible_in_tree():
 		return
-	var editor_no_touch: bool = OS.has_feature("editor") and not OS.has_feature("android") and not OS.has_feature("ios") and not OS.has_feature("mobile") and not DisplayServer.is_touchscreen_available()
-	if editor_no_touch:
+	var mouse_in_editor: bool = OS.has_feature("editor") and event is InputEventMouseButton
+	if mouse_in_editor:
+		_process_touch_event(event)
+		return
+	
+	var desktop_without_touch: bool = OS.has_feature("editor") and not OS.has_feature("android") and not OS.has_feature("ios") and not OS.has_feature("mobile") and not DisplayServer.is_touchscreen_available()
+	if desktop_without_touch:
 		return
 	
 	if event is InputEventScreenTouch or event is InputEventScreenDrag:
@@ -157,6 +162,13 @@ func _process_touch_event(event: InputEvent) -> void:
 		pos = de.position
 		touch_idx = de.index
 		is_press = true
+	elif event is InputEventMouseButton:
+		var mb = event as InputEventMouseButton
+		if mb.button_index != MOUSE_BUTTON_LEFT:
+			return
+		pos = mb.position
+		is_press = mb.pressed
+		touch_idx = 0
 	else:
 		return
 	

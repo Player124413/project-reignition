@@ -317,8 +317,9 @@ func _input(event: InputEvent) -> void:
 			_on_reset()
 			get_viewport().set_input_as_handled()
 	
-	# Touch/Drag handling
-	if event is InputEventScreenTouch or event is InputEventScreenDrag:
+	# Touch/Drag handling (mouse works as touch in the desktop editor)
+	var mouse_in_editor: bool = OS.has_feature("editor") and event is InputEventMouseButton
+	if event is InputEventScreenTouch or event is InputEventScreenDrag or mouse_in_editor:
 		_process_edit_touch(event)
 
 func _process_edit_touch(event: InputEvent) -> void:
@@ -336,6 +337,13 @@ func _process_edit_touch(event: InputEvent) -> void:
 		pos = de.position
 		touch_idx = de.index
 		is_press = true
+	elif event is InputEventMouseButton:
+		var mb := event as InputEventMouseButton
+		if mb.button_index != MOUSE_BUTTON_LEFT:
+			return
+		pos = mb.position
+		is_press = mb.pressed
+		touch_idx = 0
 	else:
 		return
 	

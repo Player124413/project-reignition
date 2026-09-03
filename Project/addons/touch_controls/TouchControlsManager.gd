@@ -54,8 +54,15 @@ var touch_enabled: bool = true:
 		_refresh_key_visibility()
 		touch_enabled_changed.emit(value)
 
-var _physical_input_active: bool = false
 var _initialized: bool = false
+# When a real gamepad last produced input (ms). We deliberately do NOT hide
+# the overlay merely because Input.get_connected_joypads() is non-empty —
+# many Android devices expose phantom "joystick" sensor devices, which used
+# to hide every key. The overlay only steps back while a pad is genuinely
+# in use (button/axis input within the last PAD_ACTIVE_WINDOW_MS).
+var _last_pad_input_ms: int = -100000
+const PAD_ACTIVE_WINDOW_MS := 4000
+var _disable_banner: Label
 
 # References to control nodes
 var _joystick: TouchVirtualJoystick
@@ -117,9 +124,9 @@ func _ready() -> void:
 	if not InputMap.has_action("edit_touch"):
 		InputMap.add_action("edit_touch")
 	
-	# Only enable where touch input makes sense (mobile, or any touchscreen,
-	# or when explicitly forced)
-	if not force_enabled and not _is_mobile() and not _has_touchscreen():
+	# Enable where touch input makes sense: mobile, any touchscreen device,
+	# the desktop editor (for testing — keys react to mouse there), or forced
+	if not force_enabled and not _is_mobile() and not _has_touchscreen() and not OS.has_feature("editor"):
 		visible = false
 		set_process_input(false)
 		return
@@ -142,12 +149,12 @@ func _ready() -> void:
 	_build_layout()
 	_initialized = true
 	
-	# Listen for controller connections
+	# Listen for controller connections (informational only — see _pad_active)
 	if auto_hide_on_controller:
 		Input.joy_connection_changed.connect(_on_joy_connection_changed)
-		_check_physical_input()
 	
 	_refresh_key_visibility()
+	_show_disable_banner_if_needed()
 
 func _is_mobile() -> bool:
 	return OS.has_feature("android") or OS.has_feature("ios") or OS.has_feature("mobile")
@@ -365,25 +372,36 @@ func _rebuild_layout() -> void:
 	# Rebuild
 	_build_layout()
 
-func _check_physical_input() -> void:
-	for i in range(Input.get_connected_joypads().size()):
-		_physical_input_active = true
-		_update_visibility()
+func _pad_active() -> bool:
+	return auto_hide_on_controller and Time.get_ticks_msec() - _last_pad_input_ms < PAD_ACTIVE_WINDOW_MS
+
+func _input(event: InputEvent) -> void:
+	if not auto_hide_on_controller:
 		return
-	
-	_physical_input_active = false
-	_update_visibility()
+	if event is InputEventJoypadButton:
+		if (event as InputEventJoypadButton).pressed:
+			_last_pad_input_ms = Time.get_ticks_msec()
+			_update_visibility()
+	elif event is InputEventJoypadMotion:
+		if absf((event as InputEventJoypadMotion).axis_value) > 0.6:
+			_last_pad_input_ms = Time.get_ticks_msec()
+			_update_visibility()
+	elif event is InputEventScreenTouch:
+		# User reached for the touchscreen — the pad is not in use anymore,
+		# bring the keycaps back immediately.
+		if _last_pad_input_ms > 0:
+			_last_pad_input_ms = -100000
+			_update_visibility()
 
 func _on_joy_connection_changed(device: int, connected: bool) -> void:
-	_physical_input_active = connected
-	_update_visibility()
+	print("TouchOverlay: joystick device %d %s (keys only hide on real pad input)" % [device, "connected" if connected else "disconnected"])
 
 func _update_visibility() -> void:
 	if not is_visible_override:
 		visible = false
 		return
 	
-	if auto_hide_on_controller and _physical_input_active and touch_enabled:
+	if _pad_active() and touch_enabled:
 		visible = false
 		_force_release_all()
 	else:
@@ -399,6 +417,11 @@ func _refresh_key_visibility() -> void:
 		return
 	
 	if touch_enabled:
+		if _disable_banner and is_instance_valid(_disable_banner):
+			var tw := create_tween()
+			tw.tween_property(_disable_banner, "modulate:a", 0.0, 0.3)
+			tw.tween_callback(_disable_banner.queue_free)
+			_disable_banner = null
 		for btn in _buttons:
 			btn.visible = true
 		if _joystick:
@@ -422,6 +445,28 @@ func _force_release_all() -> void:
 		_joystick.force_release()
 	for btn in _buttons:
 		btn.force_release()
+
+## When the controls come back soft-disabled (user pressed DISABLE earlier,
+## flag persisted in user://touch_toggle.cfg), show a blinking hint pointing
+## at the ✎ key — the only control that stays reachable.
+func _show_disable_banner_if_needed() -> void:
+	if touch_enabled or _disable_banner:
+		return
+	var vp: Vector2 = get_viewport().get_visible_rect().size
+	_disable_banner = Label.new()
+	_disable_banner.name = "DisabledBanner"
+	_disable_banner.text = "Touch controls OFF — tap the ✎ key, then ENABLE"
+	_disable_banner.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	_disable_banner.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	_disable_banner.add_theme_color_override("font_color", Color(1, 0.85, 0.3, 0.95))
+	_disable_banner.add_theme_font_size_override("font_size", maxi(int(vp.y * 0.022), 12))
+	_disable_banner.mouse_filter = MOUSE_FILTER_IGNORE
+	_disable_banner.position = Vector2(vp.x * 0.02, vp.y * 0.015)
+	_disable_banner.size = Vector2(vp.x * 0.9, vp.y * 0.05)
+	add_child(_disable_banner)
+	var tw := _disable_banner.create_tween().set_loops(4)
+	tw.tween_property(_disable_banner, "modulate:a", 0.15, 0.35)
+	tw.tween_property(_disable_banner, "modulate:a", 1.0, 0.35)
 
 ## Show touch controls (overrides auto-hide)
 func show_touch_controls() -> void:

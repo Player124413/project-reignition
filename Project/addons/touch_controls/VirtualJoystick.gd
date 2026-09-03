@@ -92,6 +92,10 @@ func _center_control(ctrl: Control) -> void:
 func _input(event: InputEvent) -> void:
 	if not is_visible_in_tree():
 		return
+	var mouse_in_editor: bool = OS.has_feature("editor") and event is InputEventMouseButton
+	if mouse_in_editor:
+		_process_touch(event)
+		return
 	if OS.has_feature("editor") and not _is_mobile() and not DisplayServer.is_touchscreen_available():
 		return
 	
@@ -116,6 +120,13 @@ func _process_touch(event: InputEvent) -> void:
 		pos = de.position
 		is_press = true
 		touch_idx = de.index
+	elif event is InputEventMouseButton:
+		var mb := event as InputEventMouseButton
+		if mb.button_index != MOUSE_BUTTON_LEFT:
+			return
+		pos = mb.position
+		is_press = mb.pressed
+		touch_idx = 0
 	else:
 		return
 	
