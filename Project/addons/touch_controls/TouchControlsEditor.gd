@@ -56,7 +56,8 @@ class TouchEditElement:
 func _ready() -> void:
 	layer = 129  # Above TouchControlsManager
 	visible = false
-	process_mode = PROCESS_MODE_WHEN_PAUSED
+	# Editing must work both while the game runs and while it is paused
+	process_mode = PROCESS_MODE_ALWAYS
 
 func enter_edit_mode(manager: TouchControlsManager) -> void:
 	_manager = manager
@@ -178,6 +179,8 @@ func _show_toolbar() -> void:
 				b.pressed.connect(_on_reset)
 			"⛔ DISABLE":
 				_disable_btn = b
+				if _manager and not _manager.touch_enabled:
+					b.text = "✅ ENABLE"
 				b.pressed.connect(_on_disable)
 			"✕ CLOSE":
 				_close_btn = b
@@ -200,9 +203,16 @@ func _on_reset() -> void:
 	_layout_changed = true
 
 func _on_disable() -> void:
-	exit_edit_mode(false)
-	_manager.hide_touch_controls()
-	_manager.set_touch_enabled(false)
+	if _manager.touch_enabled:
+		# Soft-disable: all keys hide except ✎, so this screen
+		# (with the ENABLE button) stays reachable.
+		exit_edit_mode(false)
+		_manager.set_touch_enabled(false)
+	else:
+		# Re-enable and keep editing to continue tweaking
+		_manager.set_touch_enabled(true)
+		_manager.show_touch_controls()
+		_update_element_visibility()
 
 func _on_close() -> void:
 	exit_edit_mode(true)
@@ -229,6 +239,9 @@ func _save_layout() -> void:
 		# Save size as fraction of screen height
 		var sz_norm: float = c.size.y / _viewport_size.y
 		cfg.set_value(section, "size_norm", clampf(sz_norm, 0.02, 0.5))
+		# Keycaps can be wider than tall (Enter/Shift/arrows row)
+		if c.size.y > 0.0:
+			cfg.set_value(section, "width_ratio", clampf(c.size.x / c.size.y, 0.4, 4.0))
 	
 	cfg.save("user://touch_layout.cfg")
 
@@ -249,11 +262,14 @@ func _load_layout() -> void:
 		var nx := cfg.get_value(section, "pos_x", el.orig_pos_norm.x)
 		var ny := cfg.get_value(section, "pos_y", el.orig_pos_norm.y)
 		var sz := cfg.get_value(section, "size_norm", el.control.size.y / _viewport_size.y)
+		var wr := float(cfg.get_value(section, "width_ratio", el.control.size.x / maxf(el.control.size.y, 1.0)))
 		
 		var c := el.control
 		var elem_size := maxf(_viewport_size.y * sz, MIN_ELEMENT_SIZE)
-		c.size = Vector2(elem_size, elem_size)
-		c.position = Vector2(_viewport_size.x * nx - elem_size * 0.5, _viewport_size.y * ny - elem_size * 0.5)
+		# Keycaps may be wider than tall (Enter/Shift); VirtualButton
+		# re-lays out its children itself on NOTIFICATION_RESIZED.
+		c.size = Vector2(elem_size * wr, elem_size)
+		c.position = Vector2(_viewport_size.x * nx - elem_size * wr * 0.5, _viewport_size.y * ny - elem_size * 0.5)
 		
 		# Update internal size for joystick
 		if el.is_joystick:
@@ -262,17 +278,7 @@ func _load_layout() -> void:
 				js.max_radius = elem_size * 0.45
 				js._generate_textures()
 		
-		# Update button visual size
-		if not el.is_joystick and c is VirtualButton:
-			_for_each_child(c, func(child):
-				if child is NinePatchRect:
-					child.custom_minimum_size = c.size
-					child.size = c.size
-				if child is Label:
-					child.size = c.size
-			)
-	
-	_update_element_visibility()
+		_update_element_visibility()
 
 func _reset_layout() -> void:
 	# Delete saved layout

@@ -1,14 +1,19 @@
 extends CanvasLayer
 ## Main touch controls overlay manager for Android.
 ##
-## Creates and manages virtual joystick + buttons that simulate
-## the game's existing Input actions. Automatically hides when
-## a physical controller/keyboard is detected.
+## Creates and manages virtual joystick + keyboard-style keycap buttons
+## that simulate the game's existing Input actions. The overlay lives on
+## a persistent autoload CanvasLayer, so the buttons are visible and
+## functional in EVERY screen: gameplay, title, menus, pause (the whole
+## layer is PROCESS_MODE_ALWAYS so input keeps flowing while the tree
+## is paused). Buttons automatically show the keyboard key bound to each
+## action in the InputMap (e.g. Jump = V, Menu = Enter, Brake = Shift).
 ##
 ## Features:
 ## - Virtual analog joystick (left side)
-## - Configurable action buttons (right side)
-## - Auto-detect mobile vs desktop
+## - Keycap buttons labeled with their bound keyboard key
+## - Menu navigation cluster (arrows + Enter) for title/pause/options
+## - Auto-detect mobile vs desktop (shows on any touchscreen device)
 ## - Auto-hide on gamepad connection
 ## - **Edit mode** (press ✎) — drag, resize, toggle visibility
 ## - **Save/load** custom layouts to user://touch_layout.cfg
@@ -28,6 +33,8 @@ signal layout_changed
 @export var auto_hide_on_controller: bool = true
 ## Show debug overlay for touch regions
 @export var debug_mode: bool = false
+## Show the small function caption under each keycap ("Jump", "Brake"...)
+@export var show_captions: bool = true
 
 # ─── Internal State ──────────────────────────────────────────────────
 
@@ -42,10 +49,9 @@ var touch_enabled: bool = true:
 		if _touch_enabled_backing == value:
 			return
 		_touch_enabled_backing = value
-		if _touch_enabled_backing:
-			show_touch_controls()
-		else:
-			hide_touch_controls()
+		if not _touch_enabled_backing:
+			_force_release_all()
+		_refresh_key_visibility()
 		touch_enabled_changed.emit(value)
 
 var _physical_input_active: bool = false
@@ -64,29 +70,56 @@ var _perf: MobilePerformanceManager
 # Whether we loaded a custom layout
 var _has_custom_layout: bool = false
 
-# Button configuration: [action_name, label, toggle, pos_x_norm, pos_y_norm, size_norm]
+# Base keycap size as fraction of screen height
+const KEY_BASE_SIZE := 0.085
+
+# Button configuration:
+# [action, caption, toggle, pos_x_norm, pos_y_norm, size_mult, width_mult, extra_actions]
+# The printed label is resolved at runtime from the InputMap keyboard binding.
 const BUTTON_CONFIG := [
-	# Right side — main action buttons (bottom to top)
-	["button_jump",        "A",   false,  0.82, 0.85, 1.2],   # Jump (big)
-	["button_action",      "B",   false,  0.72, 0.78, 0.9],   # Action
-	["button_attack",      "X",   false,  0.88, 0.72, 0.9],   # Attack
-	
-	# Middle-right — special abilities
-	["button_speedbreak",  "SB",  true,   0.78, 0.55, 0.7],   # Speed Break (toggle)
-	["button_timebreak",   "TB",  true,   0.88, 0.45, 0.7],   # Time Break (toggle)
-	["button_light_dash",  "LD",  false,  0.72, 0.35, 0.7],   # Light Dash
-	["button_brake",       "BR",  false,  0.65, 0.65, 0.7],   # Brake
-	
-	# Top row — step/pause
-	["button_step_left",   "◀",   false,  0.75, 0.12, 0.6],   # Step Left
-	["button_step_right",  "▶",   false,  0.85, 0.12, 0.6],   # Step Right
+	# Right side — main gameplay keys (labels follow the keyboard bindings)
+	["button_jump",        "Jump",        false, 0.835, 0.845, 1.15, 1.0, []],
+	["button_action",      "Action",      false, 0.715, 0.760, 0.85, 1.0, []],
+	["button_attack",      "Attack",      false, 0.900, 0.685, 0.85, 1.0, []],
+	["button_brake",       "Brake",       false, 0.615, 0.865, 0.70, 1.5, []],
+	["button_speedbreak",  "Speed Break", true,  0.800, 0.545, 0.62, 1.4, []],
+	["button_timebreak",   "Time Break",  true,  0.930, 0.450, 0.62, 1.4, []],
+	["button_light_dash",  "Light Dash",  false, 0.680, 0.420, 0.62, 1.4, []],
+	["button_step_left",   "Step Left",   false, 0.850, 0.130, 0.55, 1.0, []],
+	["button_step_right",  "Step Right",  false, 0.940, 0.130, 0.55, 1.0, []],
+
+	# Bottom middle — menu navigation row (works in title/options/pause).
+	# Each arrow presses ui_* AND move_* so both menu focus and gameplay
+	# movement react to the same keycap.
+	["ui_left",            "Left",        false, 0.275, 0.900, 0.62, 1.0, ["move_left"]],
+	["ui_up",              "Up",          false, 0.340, 0.900, 0.62, 1.0, ["move_up"]],
+	["ui_down",            "Down",        false, 0.405, 0.900, 0.62, 1.0, ["move_down"]],
+	["ui_right",           "Right",       false, 0.470, 0.900, 0.62, 1.0, ["move_right"]],
+	["sys_pause",          "Menu / Back", false, 0.585, 0.900, 0.62, 1.7, ["ui_accept"]],
+	["ui_select",          "Select",      false, 0.680, 0.900, 0.62, 1.4, []],
+
+	# Edit-layout key (top-right). Not a game action — opens the editor.
+	["edit_touch",         "Edit",        false, 0.965, 0.045, 0.60, 1.0, []],
 ]
+
+# Fallback printed labels for actions without keyboard bindings
+const FALLBACK_LABELS := {
+	"edit_touch": "✎",
+}
 
 func _ready() -> void:
 	layer = 128  # Very high layer, above everything
+	# Buttons must keep working while the game is paused (pause menu,
+	# world select etc. set SceneTree.paused = true).
+	process_mode = PROCESS_MODE_ALWAYS
 	
-	# Only enable on mobile or when forced
-	if not force_enabled and not _is_mobile():
+	# "edit_touch" is an internal action — register it so it always exists
+	if not InputMap.has_action("edit_touch"):
+		InputMap.add_action("edit_touch")
+	
+	# Only enable where touch input makes sense (mobile, or any touchscreen,
+	# or when explicitly forced)
+	if not force_enabled and not _is_mobile() and not _has_touchscreen():
 		visible = false
 		set_process_input(false)
 		return
@@ -114,11 +147,60 @@ func _ready() -> void:
 		Input.joy_connection_changed.connect(_on_joy_connection_changed)
 		_check_physical_input()
 	
-	if not touch_enabled:
-		visible = false
+	_refresh_key_visibility()
 
 func _is_mobile() -> bool:
 	return OS.has_feature("android") or OS.has_feature("ios") or OS.has_feature("mobile")
+
+func _has_touchscreen() -> bool:
+	return DisplayServer.is_touchscreen_available()
+
+# ─── Keyboard key label resolution ───────────────────────────────────
+
+## Returns the printable label for the first keyboard key bound to an action.
+func _primary_key_label(action: String) -> String:
+	if not InputMap.has_action(action):
+		return ""
+	for e in InputMap.action_get_events(action):
+		if e is InputEventKey:
+			var k: int = e.keycode
+			if k == KEY_NONE:
+				k = e.physical_keycode
+			if k != KEY_NONE:
+				return _key_to_text(k)
+	return ""
+
+func _key_to_text(k: int) -> String:
+	match k:
+		KEY_ESCAPE:
+			return "Esc"
+		KEY_ENTER, KEY_KP_ENTER:
+			return "Enter"
+		KEY_SPACE:
+			return "Space"
+		KEY_TAB:
+			return "Tab"
+		KEY_SHIFT:
+			return "Shift"
+		KEY_CTRL:
+			return "Ctrl"
+		KEY_ALT:
+			return "Alt"
+		KEY_LEFT:
+			return "←"
+		KEY_RIGHT:
+			return "→"
+		KEY_UP:
+			return "↑"
+		KEY_DOWN:
+			return "↓"
+		KEY_DELETE:
+			return "Del"
+		KEY_BACKSPACE:
+			return "⌫"
+	if k >= 32 and k <= 126:
+		return char(k).to_upper()
+	return "?"
 
 func _load_enabled_state() -> void:
 	var cfg := ConfigFile.new()
@@ -156,70 +238,54 @@ func _build_layout() -> void:
 	_joystick.size = Vector2(joystick_size, joystick_size)
 	_joystick.position = Vector2(viewport_size.x * 0.08 - joystick_size * 0.5, viewport_size.y * 0.62 - joystick_size * 0.5)
 	
-	# ─── Create Buttons ───────────────────────────────────────────
+	# ─── Create Keycap Buttons ────────────────────────────────────
 	_buttons.clear()
-	var btn_size := viewport_size.y * 0.085  # Base button size
+	var base_size := viewport_size.y * KEY_BASE_SIZE
 	
 	for cfg in BUTTON_CONFIG:
+		var action: String = cfg[0]
+		var cap_func: String = cfg[1]
+		var toggle: bool = cfg[2]
+		var size_mult: float = float(cfg[5])
+		var width_mult: float = float(cfg[6])
+		
 		var btn := VirtualButton.new()
-		btn.action_name = cfg[0]
-		btn.button_label = cfg[1]
-		btn.toggle_mode = cfg[2]
-		btn.button_scale = cfg[5]
+		btn.name = "Key_" + action
+		btn.action_name = action
+		btn.toggle_mode = toggle
+		btn.button_scale = 1.0
+		var extras: Array[String] = []
+		for x in cfg[7]:
+			extras.append(String(x))
+		btn.extra_actions = extras
+		btn.caption = cap_func if show_captions else ""
 		
-		# Build the button's visual tree
-		var bg := NinePatchRect.new()
-		bg.name = "Background"
-		bg.custom_minimum_size = Vector2(btn_size, btn_size) * cfg[5]
-		bg.color = Color(1, 1, 1, 0.25)
-		bg.size = bg.custom_minimum_size
-		bg.position = Vector2.ZERO
-		var style := StyleBoxFlat.new()
-		style.bg_color = Color(1, 1, 1, 0.2)
-		style.corner_radius_top_left = 12
-		style.corner_radius_top_right = 12
-		style.corner_radius_bottom_left = 12
-		style.corner_radius_bottom_right = 12
-		style.border_width_top = 2
-		style.border_width_bottom = 2
-		style.border_width_left = 2
-		style.border_width_right = 2
-		style.border_color = Color(1, 1, 1, 0.4)
-		bg.set("theme_override_styles/panel", style)
-		btn.add_child(bg)
+		var key_text: String = _primary_key_label(action)
+		if key_text.is_empty():
+			key_text = str(FALLBACK_LABELS.get(action, action.substr(0, 1).to_upper()))
+		btn.button_label = key_text
 		
-		var lbl := Label.new()
-		lbl.name = "Label"
-		lbl.text = cfg[1]
-		lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		lbl.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-		lbl.size = bg.custom_minimum_size
-		lbl.position = Vector2.ZERO
-		lbl.add_theme_color_override("font_color", Color(1, 1, 1, 0.9))
-		lbl.add_theme_font_size_override("font_size", int(18 * cfg[5]))
-		lbl.add_theme_constant_override("shadow_offset_x", 1)
-		lbl.add_theme_constant_override("shadow_offset_y", 1)
-		lbl.add_theme_color_override("font_shadow_color", Color(0, 0, 0, 0.5))
-		btn.add_child(lbl)
+		var h: float = base_size * size_mult
+		var w: float = h * width_mult
+		btn.custom_minimum_size = Vector2(w, h)
+		btn.size = Vector2(w, h)
+		btn.set_meta("width_ratio", width_mult)
+		btn.set_meta("size_mult", size_mult)
+		var bx: float = viewport_size.x * float(cfg[3]) - w * 0.5
+		var by: float = viewport_size.y * float(cfg[4]) - h * 0.5
+		btn.position = Vector2(maxf(bx, 0.0), maxf(by, 0.0))
 		
-		btn.custom_minimum_size = bg.custom_minimum_size
-		btn.size = bg.custom_minimum_size
-		var bx: float = viewport_size.x * float(cfg[3]) - btn.size.x * 0.5
-		var by: float = viewport_size.y * float(cfg[4]) - btn.size.y * 0.5
-		btn.position = Vector2(bx, by)
+		if action == "edit_touch":
+			btn.pressed_started.connect(open_editor)
 		
 		add_child(btn)
 		_buttons.append(btn)
 	
-	# ─── Pause / Menu Button (Top-Left) ───────────────────────────
-	_add_pause_button(viewport_size)
-	
-	# ─── Edit Button (Top-Right corner) ───────────────────────────
-	_add_edit_button(viewport_size)
-	
 	# ─── Apply custom layout if it exists ─────────────────────────
 	if _has_custom_layout:
 		_apply_custom_layout()
+	
+	_refresh_key_visibility()
 	
 	# ─── Debug overlay ────────────────────────────────────────────
 	if debug_mode:
@@ -230,116 +296,6 @@ func _build_layout() -> void:
 		debug_lbl.add_theme_color_override("font_color", Color(0, 1, 0, 1))
 		debug_lbl.add_theme_font_size_override("font_size", 14)
 		add_child(debug_lbl)
-
-func _add_pause_button(viewport_size: Vector2) -> void:
-	var pause_btn := VirtualButton.new()
-	pause_btn.action_name = "sys_pause"
-	pause_btn.button_label = "≡"
-	pause_btn.toggle_mode = false
-	pause_btn.idle_alpha = 0.25
-	pause_btn.pressed_alpha = 0.7
-	
-	var pause_bg := NinePatchRect.new()
-	pause_bg.name = "Background"
-	var p_size := viewport_size.y * 0.055
-	pause_bg.custom_minimum_size = Vector2(p_size, p_size)
-	pause_bg.color = Color(1, 1, 1, 0.2)
-	pause_bg.size = pause_bg.custom_minimum_size
-	pause_bg.position = Vector2.ZERO
-	var pstyle := StyleBoxFlat.new()
-	pstyle.bg_color = Color(1, 1, 1, 0.15)
-	pstyle.corner_radius_top_left = 10
-	pstyle.corner_radius_top_right = 10
-	pstyle.corner_radius_bottom_left = 10
-	pstyle.corner_radius_bottom_right = 10
-	pstyle.border_width_top = 2
-	pstyle.border_width_bottom = 2
-	pstyle.border_width_left = 2
-	pstyle.border_width_right = 2
-	pstyle.border_color = Color(1, 1, 1, 0.3)
-	pause_bg.set("theme_override_styles/panel", pstyle)
-	pause_btn.add_child(pause_bg)
-	
-	var pause_lbl := Label.new()
-	pause_lbl.name = "Label"
-	pause_lbl.text = "≡"
-	pause_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	pause_lbl.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	pause_lbl.size = pause_bg.custom_minimum_size
-	pause_lbl.position = Vector2.ZERO
-	pause_lbl.add_theme_color_override("font_color", Color(1, 1, 1, 0.9))
-	pause_lbl.add_theme_font_size_override("font_size", 24)
-	pause_btn.add_child(pause_lbl)
-	
-	pause_btn.custom_minimum_size = pause_bg.custom_minimum_size
-	pause_btn.size = pause_bg.custom_minimum_size
-	pause_btn.position = Vector2(viewport_size.x * 0.02, viewport_size.y * 0.02)
-	add_child(pause_btn)
-	_buttons.append(pause_btn)
-
-func _add_edit_button(viewport_size: Vector2) -> void:
-	var edit_btn := VirtualButton.new()
-	edit_btn.action_name = "edit_touch"
-	edit_btn.button_label = "✎"
-	edit_btn.toggle_mode = false
-	edit_btn.idle_alpha = 0.25
-	edit_btn.pressed_alpha = 0.7
-	
-	var ebg := NinePatchRect.new()
-	ebg.name = "Background"
-	var e_size := viewport_size.y * 0.05
-	ebg.custom_minimum_size = Vector2(e_size, e_size)
-	ebg.color = Color(1, 1, 1, 0.2)
-	ebg.size = ebg.custom_minimum_size
-	ebg.position = Vector2.ZERO
-	var estyle := StyleBoxFlat.new()
-	estyle.bg_color = Color(0.2, 0.5, 0.7, 0.3)
-	estyle.corner_radius_top_left = 8
-	estyle.corner_radius_top_right = 8
-	estyle.corner_radius_bottom_left = 8
-	estyle.corner_radius_bottom_right = 8
-	estyle.border_width_top = 2
-	estyle.border_width_bottom = 2
-	estyle.border_width_left = 2
-	estyle.border_width_right = 2
-	estyle.border_color = Color(0.3, 0.7, 1.0, 0.5)
-	ebg.set("theme_override_styles/panel", estyle)
-	edit_btn.add_child(ebg)
-	
-	var elbl := Label.new()
-	elbl.name = "Label"
-	elbl.text = "✎"
-	elbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	elbl.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	elbl.size = ebg.custom_minimum_size
-	elbl.position = Vector2.ZERO
-	elbl.add_theme_color_override("font_color", Color(0.5, 0.8, 1.0, 0.9))
-	elbl.add_theme_font_size_override("font_size", 22)
-	edit_btn.add_child(elbl)
-	
-	edit_btn.custom_minimum_size = ebg.custom_minimum_size
-	edit_btn.size = ebg.custom_minimum_size
-	edit_btn.position = Vector2(viewport_size.x * 0.97 - e_size, viewport_size.y * 0.02)
-	add_child(edit_btn)
-	_buttons.append(edit_btn)
-	
-	# Override input handling for edit button
-	edit_btn.set_script(_create_edit_button_script())
-
-func _create_edit_button_script() -> Script:
-	var s := GDScript.new()
-	s.source_code = """
-extends preload("res://addons/touch_controls/VirtualButton.gd")
-
-func _process_touch_event(event):
-	super(event)
-	if is_pressed and action_name == "edit_touch":
-		# Open editor
-		var manager = get_parent()
-		if manager.has_method("open_editor"):
-			manager.open_editor()
-"""
-	return s
 
 func open_editor() -> void:
 	if _editor and _editor.is_editing():
@@ -389,20 +345,13 @@ func _apply_custom_layout() -> void:
 		
 		var nx := cfg.get_value(section, "pos_x", 0.5)
 		var ny := cfg.get_value(section, "pos_y", 0.5)
-		var sz := cfg.get_value(section, "size_norm", 0.085)
-		var elem_size := maxf(viewport_size.y * sz, 30.0)
+		var sz := cfg.get_value(section, "size_norm", btn.get_meta("size_mult", 1.0) * KEY_BASE_SIZE)
+		var wr := float(cfg.get_value(section, "width_ratio", btn.get_meta("width_ratio", 1.0)))
+		var elem_size: float = maxf(viewport_size.y * sz, 30.0)
 		
-		btn.size = Vector2(elem_size, elem_size)
-		btn.position = Vector2(viewport_size.x * nx - elem_size * 0.5, viewport_size.y * ny - elem_size * 0.5)
-		
-		# Update children visuals
-		for i in btn.get_child_count():
-			var child := btn.get_child(i)
-			if child is NinePatchRect:
-				child.custom_minimum_size = btn.size
-				child.size = btn.size
-			if child is Label:
-				child.size = btn.size
+		# Keycaps keep their own child layout via NOTIFICATION_RESIZED
+		btn.size = Vector2(elem_size * wr, elem_size)
+		btn.position = Vector2(viewport_size.x * nx - btn.size.x * 0.5, viewport_size.y * ny - elem_size * 0.5)
 
 func _rebuild_layout() -> void:
 	# Clear all existing controls
@@ -430,19 +379,43 @@ func _on_joy_connection_changed(device: int, connected: bool) -> void:
 	_update_visibility()
 
 func _update_visibility() -> void:
-	if not touch_enabled:
-		visible = false
-		return
-	
 	if not is_visible_override:
 		visible = false
 		return
 	
-	if auto_hide_on_controller and _physical_input_active:
+	if auto_hide_on_controller and _physical_input_active and touch_enabled:
 		visible = false
 		_force_release_all()
 	else:
 		visible = true
+	
+	_refresh_key_visibility()
+
+## When touch is disabled, keep only the ✎ Edit key visible so the user
+## can always come back and re-enable the controls. When enabled, restore
+## per-button visibility from the saved layout.
+func _refresh_key_visibility() -> void:
+	if not _initialized:
+		return
+	
+	if touch_enabled:
+		for btn in _buttons:
+			btn.visible = true
+		if _joystick:
+			_joystick.visible = true
+		var cfg := ConfigFile.new()
+		if cfg.load("user://touch_layout.cfg") == OK:
+			for btn in _buttons:
+				var section := btn.action_name
+				if cfg.has_section(section):
+					btn.visible = bool(cfg.get_value(section, "visible", true))
+			if _joystick and cfg.has_section("joystick"):
+				_joystick.visible = bool(cfg.get_value("joystick", "visible", true))
+	else:
+		if _joystick:
+			_joystick.visible = false
+		for btn in _buttons:
+			btn.visible = (btn.action_name == "edit_touch")
 
 func _force_release_all() -> void:
 	if _joystick:
@@ -456,11 +429,15 @@ func show_touch_controls() -> void:
 	is_visible_override = true
 	_update_visibility()
 
-## Hide touch controls programmatically
+## Hide touch controls programmatically (fully — layer hidden)
 func hide_touch_controls() -> void:
 	is_visible_override = false
 	_force_release_all()
 	visible = false
+
+## Make only the ✎ Edit key reachable (soft disable — see set_touch_enabled)
+func disable_touch_controls() -> void:
+	set_touch_enabled(false)
 
 ## Enable/disable touch controls entirely (saves to disk)
 func set_touch_enabled(enabled: bool) -> void:

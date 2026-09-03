@@ -90,7 +90,9 @@ func _center_control(ctrl: Control) -> void:
 	ctrl.position = _base_position - ctrl.size * 0.5
 
 func _input(event: InputEvent) -> void:
-	if OS.has_feature("editor") and not _is_mobile():
+	if not is_visible_in_tree():
+		return
+	if OS.has_feature("editor") and not _is_mobile() and not DisplayServer.is_touchscreen_available():
 		return
 	
 	if event is InputEventScreenTouch or event is InputEventScreenDrag:
