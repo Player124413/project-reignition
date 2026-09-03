@@ -209,7 +209,7 @@ jobs:
             COMMIT=$(git commit-tree "$TREE" -m "ci: debug run ${GITHUB_RUN_ID}")
           fi
           echo "COMMIT=$COMMIT"
-          git push --force origin "$COMMIT:ci-logs" > /tmp/push_out.txt 2>&1
+          git push --force origin "$COMMIT:refs/heads/ci-logs" > /tmp/push_out.txt 2>&1
           echo "PUSH_EXIT=$?" >> /tmp/push_out.txt
           cat /tmp/push_out.txt | tail -20
 
@@ -229,13 +229,20 @@ jobs:
             echo "======== COMMENT OUT ========"
             tail -8 /tmp/comment_out.txt 2>/dev/null || true
           } >> /tmp/ci_debug.txt
-          sed -E 's/\x1B\[[0-9;]*[A-Za-z]//g' /tmp/ci_debug.txt > /tmp/ci_debug_clean.txt
-          awk '{gsub(/%/, "%25"); printf "%s%%0A", $0}' /tmp/ci_debug_clean.txt | cut -c1-60000 > /tmp/ann_diag.txt
-          echo "::error title=CI_DIAG::$(cat /tmp/ann_diag.txt)"
+          publish_annotations() {
+            # $1 = title, $2 = source file (raw text). Splits into ~3800-char annotations.
+            sed -E 's/\x1B\[[0-9;]*[A-Za-z]//g' "$2" > /tmp/ann_raw_${1}.txt
+            awk '{gsub(/%/, "%25"); printf "%s%%0A", $0}' /tmp/ann_raw_${1}.txt | cut -c1-60000 > /tmp/ann_full_${1}.txt
+            split -b 3800 -d -a 2 /tmp/ann_full_${1}.txt /tmp/ann_chunk_${1}_
+            idx=0
+            for chunk in /tmp/ann_chunk_${1}_*; do
+              idx=$((idx + 1))
+              echo "::error title=${1}_${idx}::$(cat "$chunk")"
+            done
+          }
+          publish_annotations CI_DIAG /tmp/ci_debug.txt
           if [ -n "$LOG_SRC" ]; then
-            sed -E 's/\x1B\[[0-9;]*[A-Za-z]//g' "$LOG_SRC" > /tmp/export_log_clean.txt
-            awk '{gsub(/%/, "%25"); printf "%s%%0A", $0}' /tmp/export_log_clean.txt | cut -c1-60000 > /tmp/ann_log.txt
-            echo "::error title=EXPORT_FULL_LOG::$(cat /tmp/ann_log.txt)"
+            publish_annotations EXPORT_FULL_LOG "$LOG_SRC"
           fi
 
       - name: Upload export log (always)

@@ -180,8 +180,8 @@ func _apply_shadows() -> void:
 		1:  # Medium
 			RenderingServer.DirectionalShadowAtlasSetSize(1024, false)
 			RenderingServer.ViewportSetPositionalShadowAtlasSize(get_viewport().get_viewport_rid(), 2048, false)
-			RenderingServer.DirectionalSoftShadowFilterSetQuality(RenderingServer.ShadowQuality.SoftVeryLow)
-			RenderingServer.PositionalSoftShadowFilterSetQuality(RenderingServer.ShadowQuality.SoftVeryLow)
+			RenderingServer.DirectionalSoftShadowFilterSetQuality(RenderingServer.ShadowQuality.SoftLow)
+			RenderingServer.PositionalSoftShadowFilterSetQuality(RenderingServer.ShadowQuality.SoftLow)
 			
 		2:  # High
 			RenderingServer.DirectionalShadowAtlasSetSize(2048, false)
