@@ -25,12 +25,46 @@ var _is_active: bool = false
 var _knob_offset: Vector2 = Vector2.ZERO
 var _base_position: Vector2 = Vector2.ZERO
 
-@onready var _knob: Control = $Knob
-@onready var _base: Control = $Base
-@onready var _base_tex: TextureRect = $Base/BaseTexture
-@onready var _knob_tex: TextureRect = $Knob/KnobTexture
+var _knob: Control
+var _base: Control
+var _base_tex: TextureRect
+var _knob_tex: TextureRect
+
+## Builds Base/Knob children programmatically. (The optional
+## VirtualJoystick.tscn is NOT required anymore — a scene whose root lacked
+## its script used to abort the whole overlay build at runtime.)
+func _ensure_children() -> void:
+	_base = get_node_or_null("Base") as Control
+	if _base == null:
+		_base = Control.new()
+		_base.name = "Base"
+		_base.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		add_child(_base)
+	_base_tex = _base.get_node_or_null("BaseTexture") as TextureRect
+	if _base_tex == null:
+		_base_tex = TextureRect.new()
+		_base_tex.name = "BaseTexture"
+		_base_tex.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		_base_tex.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		_base_tex.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		_base.add_child(_base_tex)
+	_knob = get_node_or_null("Knob") as Control
+	if _knob == null:
+		_knob = Control.new()
+		_knob.name = "Knob"
+		_knob.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		add_child(_knob)
+	_knob_tex = _knob.get_node_or_null("KnobTexture") as TextureRect
+	if _knob_tex == null:
+		_knob_tex = TextureRect.new()
+		_knob_tex.name = "KnobTexture"
+		_knob_tex.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		_knob_tex.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		_knob_tex.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		_knob.add_child(_knob_tex)
 
 func _ready() -> void:
+	_ensure_children()
 	modulate.a = idle_alpha
 	
 	# Generate smooth circular textures

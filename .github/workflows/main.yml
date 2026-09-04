@@ -180,7 +180,7 @@ jobs:
               print("SELFTEST: FAIL autoload missing")
               get_tree().quit(1)
               return
-            var keys: int = mgr.get("_buttons").size()
+            var keys: int = mgr.key_count()
             var vp := get_viewport().get_visible_rect().size
             print("SELFTEST: overlay built keys=", keys, " vp=", vp)
             if keys == 0:
@@ -193,15 +193,15 @@ jobs:
             ev.position = Vector2(vp.x * 0.835, vp.y * 0.845)
             Input.parse_input_event(ev)
             await get_tree().process_frame
-            var jump := Input.is_action_pressed("button_jump")
+            var jump: bool = Input.is_action_pressed("button_jump")
             print("SELFTEST: synthetic touch on jump key, action active=", jump)
             ev.pressed = false
             Input.parse_input_event(ev)
             await get_tree().process_frame
-            var perf := mgr.get("_perf")
-            if perf != null:
-              print("SELFTEST: perf tier=", perf.get("device_tier"), " initialized=", perf.get("is_initialized"))
-            var ok: bool = keys >= 5 and jump
+            var after: bool = Input.is_action_pressed("button_jump")
+            print("SELFTEST: jump released after touch-up=", not after)
+            print("SELFTEST: perf manager=", mgr.get_performance_manager())
+            var ok: bool = keys >= 5 and jump and not after
             print("SELFTEST: RESULT=", "PASS" if ok else "FAIL")
             get_tree().quit(0 if ok else 2)
           SELFTEST

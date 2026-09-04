@@ -233,13 +233,9 @@ func _build_layout() -> void:
 		viewport_size = Vector2(1920, 1080)
 	
 	# ─── Create Joystick (Left Side) ──────────────────────────────
-	var joystick_scene := preload("res://addons/touch_controls/VirtualJoystick.tscn")
-	if joystick_scene:
-		_joystick = joystick_scene.instantiate()
-		add_child(_joystick)
-	else:
-		_joystick = TouchVirtualJoystick.new()
-		add_child(_joystick)
+	_joystick = TouchVirtualJoystick.new()
+	_joystick.name = "VirtualJoystick"
+	add_child(_joystick)
 	
 	var joystick_size := viewport_size.y * 0.22  # 22% of screen height
 	_joystick.max_radius = joystick_size * 0.45
@@ -494,6 +490,10 @@ func set_touch_enabled(enabled: bool) -> void:
 ## Toggle touch on/off
 func toggle_touch_enabled() -> void:
 	set_touch_enabled(not touch_enabled)
+
+## Number of keycaps currently created (used by the CI runtime self-test).
+func key_count() -> int:
+	return _buttons.size()
 
 func is_touch_active() -> bool:
 	return visible and _initialized and touch_enabled
