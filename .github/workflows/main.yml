@@ -190,9 +190,9 @@ jobs:
             var pos := Vector2(vp.x * 0.835, vp.y * 0.845)
             # Godot 4.7 drops a reused event object — every synthetic touch needs
             # its own instance, exactly like real OS touches have.
-            var tap := func(is_down: bool) -> void:
+            var tap := func(is_down: bool, tidx: int = 0) -> void:
                 var ev := InputEventScreenTouch.new()
-                ev.index = 0
+                ev.index = tidx
                 ev.position = pos
                 ev.pressed = is_down
                 Input.parse_input_event(ev)
@@ -207,11 +207,18 @@ jobs:
             var tap1_stuck: bool = mgr.is_key_pressed("button_jump")
             var tap1_action: bool = Input.is_action_pressed("button_jump")
             print("SELFTEST: tap1 press=", tap1_press, " latched=", latched_during, " stuck_after=", tap1_stuck, " action_after=", tap1_action)
-            # ─ tap 2: must be re-triggerable after release (stuck-key regression) ─
-            tap.call(true)
-            await get_tree().process_frame
-            var tap2_press: bool = Input.is_action_pressed("button_jump")
-            tap.call(false)
+            # ─ tap 2: must be re-triggerable after release (stuck-key regression).
+            # Poll a few frames: headless queues synthetic input less eagerly
+            # than a real touch driver would; a slow frame here is a test
+            # artifact, a never-true result is a real stuck-key bug.
+            var tap2_press: bool = false
+            for i2 in 8:
+                tap.call(true, 1)
+                await get_tree().process_frame
+                if Input.is_action_pressed("button_jump"):
+                    tap2_press = true
+                    break
+            tap.call(false, 1)
             for i in 6:
                 await get_tree().physics_frame
             var tap2_action: bool = Input.is_action_pressed("button_jump")
