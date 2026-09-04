@@ -189,19 +189,33 @@ jobs:
               return
             var ev := InputEventScreenTouch.new()
             ev.index = 0
-            ev.pressed = true
             ev.position = Vector2(vp.x * 0.835, vp.y * 0.845)
+            # ─ tap 1: press then release ─
+            ev.pressed = true
             Input.parse_input_event(ev)
             await get_tree().process_frame
-            var jump: bool = Input.is_action_pressed("button_jump")
-            print("SELFTEST: synthetic touch on jump key, action active=", jump)
+            var tap1_press: bool = Input.is_action_pressed("button_jump")
+            var latched_during: bool = mgr.is_key_pressed("button_jump")
             ev.pressed = false
             Input.parse_input_event(ev)
+            for i in 6:
+                await get_tree().physics_frame
+            var tap1_stuck: bool = mgr.is_key_pressed("button_jump")
+            var tap1_action: bool = Input.is_action_pressed("button_jump")
+            print("SELFTEST: tap1 press=", tap1_press, " latched=", latched_during, " stuck_after=", tap1_stuck, " action_after=", tap1_action)
+            # ─ tap 2: must be re-triggerable after release (stuck-key regression) ─
+            ev.pressed = true
+            Input.parse_input_event(ev)
             await get_tree().process_frame
-            var after: bool = Input.is_action_pressed("button_jump")
-            print("SELFTEST: jump released after touch-up=", not after)
+            var tap2_press: bool = Input.is_action_pressed("button_jump")
+            ev.pressed = false
+            Input.parse_input_event(ev)
+            for i in 6:
+                await get_tree().physics_frame
+            var tap2_action: bool = Input.is_action_pressed("button_jump")
+            print("SELFTEST: tap2 press=", tap2_press, " released_ok=", not tap2_action)
             print("SELFTEST: perf manager=", mgr.get_performance_manager())
-            var ok: bool = keys >= 5 and jump and not after
+            var ok: bool = keys >= 5 and tap1_press and latched_during and not tap1_stuck and not tap1_action and tap2_press and not tap2_action
             print("SELFTEST: RESULT=", "PASS" if ok else "FAIL")
             get_tree().quit(0 if ok else 2)
           SELFTEST

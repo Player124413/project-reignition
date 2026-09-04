@@ -33,6 +33,8 @@ signal pressed_ended
 var is_pressed: bool = false
 var _touch_index: int = -1
 var _is_toggled: bool = false
+var _press_seq: int = 0
+var _press_frame: int = 0
 
 var _bg: Panel
 var _label: Label
@@ -178,14 +180,18 @@ func _process_touch_event(event: InputEvent) -> void:
 		# Start pressing this button
 		_touch_index = touch_idx
 		is_pressed = true
+		_press_seq += 1
+		_press_frame = Engine.get_physics_frames()
 		_update_press_state(true)
 		pressed_started.emit()
 		get_viewport().set_input_as_handled()
 		_refresh_visual()
 		
 	elif not is_press and touch_idx == _touch_index:
-		# Release
+		# Release — clear the pressed flag, otherwise the key sticks forever
+		# and can never be pressed again (is_pressed guards the press branch).
 		_touch_index = -1
+		is_pressed = false
 		_update_press_state(false)
 		pressed_ended.emit()
 		get_viewport().set_input_as_handled()
@@ -194,9 +200,19 @@ func _process_touch_event(event: InputEvent) -> void:
 	elif is_press and touch_idx == _touch_index and not is_inside:
 		# Finger slid off the button — release
 		_touch_index = -1
+		is_pressed = false
 		_update_press_state(false)
 		pressed_ended.emit()
 		get_viewport().set_input_as_handled()
+		_refresh_visual()
+	
+	elif not is_press and is_pressed:
+		# Android can occasionally renumber touch indexes on release —
+		# never leave the key latched by a stale index.
+		_touch_index = -1
+		is_pressed = false
+		_update_press_state(false)
+		pressed_ended.emit()
 		_refresh_visual()
 
 func _is_point_inside(point: Vector2) -> bool:
@@ -221,6 +237,10 @@ func _release_actions() -> void:
 		if InputMap.has_action(a):
 			Input.action_release(a)
 
+## Public API used by CI selftest + manager
+func is_actually_pressed() -> bool:
+	return is_pressed
+
 func _update_press_state(pressing: bool) -> void:
 	if pressing:
 		if not toggle_mode:
@@ -236,9 +256,21 @@ func _update_press_state(pressing: bool) -> void:
 				modulate.a = idle_alpha
 	else:
 		if not toggle_mode:
-			_release_actions()
+			_release_actions_delayed()
 			modulate.a = idle_alpha
 		# In toggle mode, release only happens when toggled off, so don't release here
+
+func _release_actions_delayed() -> void:
+	# Guarantee the game sees the press: a lightning-fast tap could otherwise
+	# press+release inside one physics frame and swallow the just-pressed edge.
+	var seq: int = _press_seq
+	while Engine.get_physics_frames() - _press_frame < 2:
+		await get_tree().physics_frame
+		if seq != _press_seq or is_pressed or not is_inside_tree():
+			return
+	if seq != _press_seq or is_pressed:
+		return  # re-pressed meanwhile — the new press owns the action now
+	_release_actions()
 
 func _refresh_visual() -> void:
 	if _bg == null:

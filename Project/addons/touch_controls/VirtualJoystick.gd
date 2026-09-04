@@ -168,6 +168,9 @@ func _process_touch(event: InputEvent) -> void:
 	var is_left_side: bool = pos.x < viewport_size.x * 0.45
 	
 	if not _is_active and is_press and is_left_side:
+		var par := get_parent()
+		if par and par.has_method("is_touch_on_key") and par.is_touch_on_key(pos):
+			return  # this touch belongs to a keycap, not to the stick
 		_touch_index = touch_idx
 		_is_active = true
 		modulate.a = active_alpha

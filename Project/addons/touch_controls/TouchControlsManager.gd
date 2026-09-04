@@ -35,7 +35,7 @@ signal layout_changed
 @export var auto_hide_on_controller: bool = false
 ## Build stamp — visible in the ✎ editor title, lets you verify WHICH APK
 ## is installed on the phone (the keycaps feature set changed per build).
-const BUILD_STAMP := "touch-v5 (always-visible + stable signature)"
+const BUILD_STAMP := "touch-v6 (fixed stuck presses, larger keys)"
 ## Show debug overlay for touch regions
 @export var debug_mode: bool = false
 ## Show the small function caption under each keycap ("Jump", "Brake"...)
@@ -83,7 +83,7 @@ var _perf: MobilePerformanceManager
 var _has_custom_layout: bool = false
 
 # Base keycap size as fraction of screen height
-const KEY_BASE_SIZE := 0.085
+const KEY_BASE_SIZE := 0.095
 
 # Button configuration:
 # [action, caption, toggle, pos_x_norm, pos_y_norm, size_mult, width_mult, extra_actions]
@@ -94,8 +94,8 @@ const BUTTON_CONFIG := [
 	["button_action",      "Action",      false, 0.715, 0.760, 0.85, 1.0, []],
 	["button_attack",      "Attack",      false, 0.900, 0.685, 0.85, 1.0, []],
 	["button_brake",       "Brake",       false, 0.615, 0.865, 0.70, 1.5, []],
-	["button_speedbreak",  "Speed Break", true,  0.800, 0.545, 0.62, 1.4, []],
-	["button_timebreak",   "Time Break",  true,  0.930, 0.450, 0.62, 1.4, []],
+	["button_speedbreak",  "Speed Break", false, 0.800, 0.545, 0.62, 1.4, []],
+	["button_timebreak",   "Time Break",  false, 0.930, 0.450, 0.62, 1.4, []],
 	["button_light_dash",  "Light Dash",  false, 0.680, 0.420, 0.62, 1.4, []],
 	["button_step_left",   "Step Left",   false, 0.850, 0.130, 0.55, 1.0, []],
 	["button_step_right",  "Step Right",  false, 0.940, 0.130, 0.55, 1.0, []],
@@ -111,13 +111,17 @@ const BUTTON_CONFIG := [
 	["ui_select",          "Select",      false, 0.680, 0.900, 0.62, 1.4, []],
 
 	# Edit-layout key (top-right). Not a game action — opens the editor.
-	["edit_touch",         "Edit",        false, 0.965, 0.045, 0.60, 1.0, []],
+	["edit_touch",         "Edit",        false, 0.500, 0.045, 0.60, 1.0, []],
 ]
 
 # Fallback printed labels for actions without keyboard bindings
 const FALLBACK_LABELS := {
 	"edit_touch": "✎",
 }
+
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_APPLICATION_FOCUS_OUT or what == NOTIFICATION_WM_CLOSE_REQUEST:
+		_force_release_all()
 
 func _ready() -> void:
 	layer = 128  # Very high layer, above everything
@@ -352,13 +356,17 @@ func _apply_custom_layout() -> void:
 		var ny := cfg.get_value(section, "pos_y", 0.5)
 		var sz := cfg.get_value(section, "size_norm", btn.get_meta("size_mult", 1.0) * KEY_BASE_SIZE)
 		var wr := float(cfg.get_value(section, "width_ratio", btn.get_meta("width_ratio", 1.0)))
-		var elem_size: float = maxf(viewport_size.y * sz, 30.0)
+		var elem_size: float = maxf(viewport_size.y * sz * 1.12, 34.0)
 		
 		# Keycaps keep their own child layout via NOTIFICATION_RESIZED
 		btn.size = Vector2(elem_size * wr, elem_size)
 		btn.position = Vector2(viewport_size.x * nx - btn.size.x * 0.5, viewport_size.y * ny - elem_size * 0.5)
 
 func _rebuild_layout() -> void:
+	# Release held actions BEFORE freeing the controls, otherwise a key that
+	# was down at rebuild time would latch the game input forever.
+	_force_release_all()
+	
 	# Clear all existing controls
 	if _joystick:
 		_joystick.queue_free()
@@ -454,12 +462,12 @@ func _show_disable_banner_if_needed() -> void:
 	_disable_banner = Label.new()
 	_disable_banner.name = "DisabledBanner"
 	_disable_banner.text = "Touch controls OFF — tap the ✎ key, then ENABLE"
-	_disable_banner.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	_disable_banner.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_disable_banner.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	_disable_banner.add_theme_color_override("font_color", Color(1, 0.85, 0.3, 0.95))
 	_disable_banner.add_theme_font_size_override("font_size", maxi(int(vp.y * 0.022), 12))
 	_disable_banner.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_disable_banner.position = Vector2(vp.x * 0.02, vp.y * 0.015)
+	_disable_banner.position = Vector2(vp.x * 0.05, vp.y * 0.09)
 	_disable_banner.size = Vector2(vp.x * 0.9, vp.y * 0.05)
 	add_child(_disable_banner)
 	var tw := _disable_banner.create_tween().set_loops(4)
@@ -494,6 +502,21 @@ func toggle_touch_enabled() -> void:
 ## Number of keycaps currently created (used by the CI runtime self-test).
 func key_count() -> int:
 	return _buttons.size()
+
+## Whether the keycap bound to [param action] is currently latched pressed.
+func is_key_pressed(action: String) -> bool:
+	for btn in _buttons:
+		if btn.action_name == action:
+			return btn.is_pressed
+	return false
+
+## Used by the joystick so taps meant for keycaps on the left half don't
+## also yank the analog stick around.
+func is_touch_on_key(pos: Vector2) -> bool:
+	for btn in _buttons:
+		if btn.visible and Rect2(btn.global_position, btn.size).grow(6.0).has_point(pos):
+			return true
+	return false
 
 func is_touch_active() -> bool:
 	return visible and _initialized and touch_enabled
