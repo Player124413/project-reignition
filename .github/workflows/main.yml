@@ -140,6 +140,80 @@ jobs:
           ls -la "$HOME/.local/share/godot/export_templates/4.7.stable.mono/" 2>&1 | head -20
           "$GODOT_BIN" --version 2>&1
 
+      - name: Touch overlay runtime self-test
+        run: |
+          set +e
+          TT=/tmp/touch_selftest
+          rm -rf "$TT"; mkdir -p "$TT/addons"
+          cp -r "${{ env.PROJECT_PATH }}/addons/touch_controls" "$TT/addons/touch_controls"
+          # Force the overlay on (desktop selftest host is neither mobile nor touch)
+          sed -i 's/@export var force_enabled: bool = false/@export var force_enabled: bool = true/' "$TT/addons/touch_controls/TouchControlsManager.gd"
+          # Also exercise the mobile-only perf manager path
+          sed -i 's/if _is_mobile():/if true:/' "$TT/addons/touch_controls/TouchControlsManager.gd"
+          sed -i 's/if not OS.has_feature("android") and not OS.has_feature("mobile"):/if false:/' "$TT/addons/touch_controls/MobilePerformanceManager.gd"
+          {
+            echo 'config_version=5'
+            echo '[application]'
+            echo 'config/name="TouchSelfTest"'
+            echo '[autoload]'
+            echo 'TouchControls="*res://addons/touch_controls/TouchControlsManager.gd"'
+            echo 'SelfTest="*res://selftest.gd"'
+            echo '[input]'
+            sed -n '/^\[input\]/,/^\[/p' "${{ env.PROJECT_PATH }}/project.godot" | sed '1d;$d'
+          } > "$TT/project.godot"
+          cat > "$TT/selftest.gd" << 'SELFTEST'
+          extends Node
+          func _ready() -> void:
+            await get_tree().process_frame
+            await get_tree().process_frame
+            await get_tree().process_frame
+            var mgr := get_node_or_null("/root/TouchControls")
+            if mgr == null:
+              print("SELFTEST: FAIL autoload missing")
+              get_tree().quit(1)
+              return
+            var keys: int = mgr.get("_buttons").size()
+            var vp := get_viewport().get_visible_rect().size
+            print("SELFTEST: overlay built keys=", keys, " vp=", vp)
+            if keys == 0:
+              print("SELFTEST: FAIL no keycaps created")
+              get_tree().quit(1)
+              return
+            var ev := InputEventScreenTouch.new()
+            ev.index = 0
+            ev.pressed = true
+            ev.position = Vector2(vp.x * 0.835, vp.y * 0.845)
+            Input.parse_input_event(ev)
+            await get_tree().process_frame
+            var jump := Input.is_action_pressed("button_jump")
+            print("SELFTEST: synthetic touch on jump key, action active=", jump)
+            ev.pressed = false
+            Input.parse_input_event(ev)
+            await get_tree().process_frame
+            var perf := mgr.get("_perf")
+            if perf != null:
+              print("SELFTEST: perf tier=", perf.get("device_tier"), " initialized=", perf.get("is_initialized"))
+            var ok: bool = keys >= 5 and jump
+            print("SELFTEST: RESULT=", "PASS" if ok else "FAIL")
+            get_tree().quit(0 if ok else 2)
+          SELFTEST
+          "$GODOT_BIN" --headless --path "$TT" --quit-after 600 > /tmp/selftest_out.txt 2>&1
+          CODE=$?
+          echo "---- selftest output (filtered) ----"
+          grep -E "SELFTEST|SCRIPT ERROR|Invalid call|MobilePerformance|Too many" /tmp/selftest_out.txt | head -40
+          echo "--------------------------------------"
+          if grep -q "SCRIPT ERROR" /tmp/selftest_out.txt; then
+            MSG=$(grep -A4 "SCRIPT ERROR" /tmp/selftest_out.txt | head -30 | sed ':a;N;$!ba;s/\n/%0A/g;s/%/%25/g' | head -c 3400)
+            echo "::error title=TOUCH_RUNTIME_SCRIPT_ERRORS::$MSG"
+            exit 1
+          fi
+          if [ $CODE -ne 0 ]; then
+            TAIL=$(tail -25 /tmp/selftest_out.txt | sed ':a;N;$!ba;s/\n/%0A/g;s/%/%25/g' | head -c 3400)
+            echo "::error title=TOUCH_SELFTEST_EXIT_$CODE::$TAIL"
+            exit 1
+          fi
+          echo "✅ Touch overlay runtime self-test passed"
+
       - name: Export Android APK (Debug)
         run: |
           APK_OUT="$PWD/export/android/${{ env.EXPORT_NAME }}.apk"
