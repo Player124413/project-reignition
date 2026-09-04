@@ -29,8 +29,13 @@ signal layout_changed
 
 ## Enable touch controls (auto-detected on mobile, force for desktop testing)
 @export var force_enabled: bool = false
-## Automatically hide controls when a physical gamepad is connected
-@export var auto_hide_on_controller: bool = true
+## Auto-hide the overlay while a gamepad is genuinely in use.
+## OFF by default: Android's gyroscope/sensors register as a phantom joystick
+## device and used to hide every key ("buttons disappeared everywhere").
+@export var auto_hide_on_controller: bool = false
+## Build stamp — visible in the ✎ editor title, lets you verify WHICH APK
+## is installed on the phone (the keycaps feature set changed per build).
+const BUILD_STAMP := "touch-v5 (always-visible + stable signature)"
 ## Show debug overlay for touch regions
 @export var debug_mode: bool = false
 ## Show the small function caption under each keycap ("Jump", "Brake"...)
@@ -131,30 +136,27 @@ func _ready() -> void:
 		set_process_input(false)
 		return
 	
+	# Wait one frame for the viewport to be ready, then build keys FIRST so no
+	# other subsystem can ever prevent them from appearing.
+	await get_tree().process_frame
+	print("TouchOverlay: %s — building %d keys" % [BUILD_STAMP, BUTTON_CONFIG.size()])
+	_build_layout()
+	_initialized = true
+	
 	# Initialize performance manager on mobile
 	if _is_mobile():
 		_perf = MobilePerformanceManager.new()
 		add_child(_perf)
 		print("MobilePerformance: Auto-tuning started")
 	
-	# Load saved enabled state
+	# Load saved enabled state (soft-disables keys except ✎ if user chose that)
 	_load_enabled_state()
-	
-	# Wait one frame for the viewport to be ready
-	await get_tree().process_frame
-	
-	# Check for saved layout first
-	_has_custom_layout = _load_custom_layout_if_exists()
-	
-	_build_layout()
-	_initialized = true
+	_refresh_key_visibility()
+	_show_disable_banner_if_needed()
 	
 	# Listen for controller connections (informational only — see _pad_active)
 	if auto_hide_on_controller:
 		Input.joy_connection_changed.connect(_on_joy_connection_changed)
-	
-	_refresh_key_visibility()
-	_show_disable_banner_if_needed()
 
 func _is_mobile() -> bool:
 	return OS.has_feature("android") or OS.has_feature("ios") or OS.has_feature("mobile")

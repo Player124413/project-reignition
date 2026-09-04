@@ -90,7 +90,7 @@ jobs:
           [godot_resource type="EditorSettings" format=3]
           resource_name="editor_settings"
           export/android/android_sdk_path = "/usr/local/lib/android/sdk"
-          export/android/debug_keystore = "/home/runner/debug.keystore"
+          export/android/debug_keystore = "/home/runner/debug.p12"
           export/android/debug_keystore_user = "androiddebugkey"
           export/android/debug_keystore_pass = "android"
           export/android/force_system_user = false
@@ -99,12 +99,17 @@ jobs:
           GDSETTINGS
           echo "✅ Editor settings created"
           
-          keytool -genkey -v -keystore "$HOME/debug.keystore" \
-            -alias androiddebugkey \
-            -keyalg RSA -keysize 2048 -validity 10000 \
-            -storepass android -keypass android \
-            -dname "CN=Android Debug,O=Android,C=US" 2>/dev/null
-          echo "✅ Debug keystore created"
+          # STABLE debug signature: .ci/debug.p12 is committed in the repo so every
+          # CI build is signed with the SAME certificate — new APKs install OVER the
+          # existing app (no "app not installed", data/layout kept). Previously the
+          # keystore was regenerated per run → Android refused updates → people kept
+          # running stale builds without touch keys.
+          if [ -f "$GITHUB_WORKSPACE/.ci/debug.p12" ]; then
+            cp "$GITHUB_WORKSPACE/.ci/debug.p12" "$HOME/debug.p12"
+            echo "✅ Stable debug keystore installed"
+          else
+            echo "⚠️ .ci/debug.p12 missing — Godot will self-generate (signature will change every build)"
+          fi
 
       - name: Fetch boot videos (optional release assets)
         run: |

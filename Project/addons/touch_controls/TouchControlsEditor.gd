@@ -135,7 +135,7 @@ func _show_toolbar() -> void:
 	_edit_panel.add_child(tb)
 	
 	var title := Label.new()
-	title.text = "✎ EDIT TOUCH LAYOUT"
+	title.text = "✎ EDIT TOUCH LAYOUT · " + TouchControlsManager.BUILD_STAMP
 	title.position = Vector2(_viewport_size.x * 0.02, _viewport_size.y * 0.01)
 	title.size = Vector2(300, tb.size.y)
 	title.add_theme_color_override("font_color", Color(1, 1, 1, 0.9))
