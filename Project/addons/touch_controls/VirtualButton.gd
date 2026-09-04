@@ -231,11 +231,25 @@ func _press_actions() -> void:
 	for a in _all_actions():
 		if InputMap.has_action(a):
 			Input.action_press(a)
+			# Also broadcast a real InputEventAction. Input.action_press()
+			# alone is invisible to `_input()`/`_unhandled_input()` handlers
+			# and to GUI focus navigation (menus), so the game would only
+			# react if it polls. Emitting the event makes the touch key a
+			# 1:1 replacement for pressing the keyboard key.
+			_broadcast_action_event(a, true)
 
 func _release_actions() -> void:
 	for a in _all_actions():
 		if InputMap.has_action(a):
 			Input.action_release(a)
+			_broadcast_action_event(a, false)
+
+func _broadcast_action_event(a: String, p_pressed: bool) -> void:
+	var ev := InputEventAction.new()
+	ev.action = a
+	ev.pressed = p_pressed
+	ev.strength = 1.0 if p_pressed else 0.0
+	Input.parse_input_event(ev)
 
 ## Public API used by CI selftest + manager
 func is_actually_pressed() -> bool:

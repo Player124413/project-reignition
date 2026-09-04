@@ -35,7 +35,7 @@ signal layout_changed
 @export var auto_hide_on_controller: bool = false
 ## Build stamp — visible in the ✎ editor title, lets you verify WHICH APK
 ## is installed on the phone (the keycaps feature set changed per build).
-const BUILD_STAMP := "touch-v6 (fixed stuck presses, larger keys)"
+const BUILD_STAMP := "touch-v7 (full input events, fixed editor focus)"
 ## Show debug overlay for touch regions
 @export var debug_mode: bool = false
 ## Show the small function caption under each keycap ("Jump", "Brake"...)
@@ -75,6 +75,7 @@ var _buttons: Array[VirtualButton] = []
 
 # Editor reference
 var _editor: TouchControlsEditor
+var _we_paused_game: bool = false
 
 # Performance manager
 var _perf: MobilePerformanceManager
@@ -310,6 +311,15 @@ func open_editor() -> void:
 	if _editor and _editor.is_editing():
 		return
 	
+	# Freeze the world while laying out keys: otherwise every touch that
+	# lands on a keycap also drives the player around during editing, and
+	# any latched action would keep being held across the edit session.
+	_force_release_all()
+	_we_paused_game = false
+	if not get_tree().paused:
+		get_tree().paused = true
+		_we_paused_game = true
+	
 	_editor = TouchControlsEditor.new()
 	add_child(_editor)
 	_editor.editor_closed.connect(_on_editor_closed)
@@ -321,6 +331,10 @@ func _on_editor_closed(changed: bool) -> void:
 	if _editor:
 		_editor.queue_free()
 		_editor = null
+	
+	if _we_paused_game:
+		_we_paused_game = false
+		get_tree().paused = false
 	
 	if changed:
 		layout_changed.emit()

@@ -171,6 +171,23 @@ jobs:
           SCTSCN
           cat > "$TT/selftest.gd" << 'SELFTEST'
           extends Node
+          # Emulates what the game does with input: PlayerController polls
+          # is_action_just_pressed in _physics_process, and generic _input
+          # listeners must see real InputEventAction broadcasts. If the probe
+          # reacts, the game reacts — that is the touch-controls contract.
+          class GameProbe extends Node:
+            var jump_edges: int = 0
+            var ev_presses: int = 0
+            var ev_releases: int = 0
+            func _physics_process(_dt: float) -> void:
+              if Input.is_action_just_pressed("button_jump"):
+                jump_edges += 1
+            func _input(ev: InputEvent) -> void:
+              if ev is InputEventAction and (ev as InputEventAction).action == &"button_jump":
+                if (ev as InputEventAction).pressed:
+                  ev_presses += 1
+                else:
+                  ev_releases += 1
           func _ready() -> void:
             await get_tree().process_frame
             await get_tree().process_frame
@@ -196,6 +213,9 @@ jobs:
                 ev.position = pos
                 ev.pressed = is_down
                 Input.parse_input_event(ev)
+            var probe := GameProbe.new()
+            add_child(probe)
+            await get_tree().process_frame
             # ─ tap 1: press then release ─
             tap.call(true)
             await get_tree().process_frame
@@ -207,6 +227,8 @@ jobs:
             var tap1_stuck: bool = mgr.is_key_pressed("button_jump")
             var tap1_action: bool = Input.is_action_pressed("button_jump")
             print("SELFTEST: tap1 press=", tap1_press, " latched=", latched_during, " stuck_after=", tap1_stuck, " action_after=", tap1_action)
+            var pe1: int = probe.jump_edges
+            var ve1: int = probe.ev_presses
             # ─ tap 2: must be re-triggerable after release (stuck-key regression).
             # Poll a few frames: headless queues synthetic input less eagerly
             # than a real touch driver would; a slow frame here is a test
@@ -223,8 +245,11 @@ jobs:
                 await get_tree().physics_frame
             var tap2_action: bool = Input.is_action_pressed("button_jump")
             print("SELFTEST: tap2 press=", tap2_press, " released_ok=", not tap2_action)
+            var pe2: int = probe.jump_edges
+            var ve2: int = probe.ev_presses
+            print("SELFTEST: game-probe physics_edges=", pe1, "->", pe2, " event_presses=", ve1, "->", ve2, " event_releases=", probe.ev_releases)
             print("SELFTEST: perf manager=", mgr.get_performance_manager())
-            var ok: bool = keys >= 5 and tap1_press and latched_during and not tap1_stuck and not tap1_action and tap2_press and not tap2_action
+            var ok: bool = keys >= 5 and tap1_press and latched_during and not tap1_stuck and not tap1_action and tap2_press and not tap2_action and pe1 >= 1 and ve1 >= 1 and pe2 > pe1 and ve2 > ve1 and probe.ev_releases >= 2
             print("SELFTEST: RESULT=", "PASS" if ok else "FAIL")
             get_tree().quit(0 if ok else 2)
           SELFTEST

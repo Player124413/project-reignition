@@ -159,6 +159,10 @@ func _show_toolbar() -> void:
 		b.size = Vector2(btn_w, btn_h)
 		b.add_theme_color_override("font_color", Color(1, 1, 1, 0.9))
 		b.add_theme_font_size_override("font_size", 14)
+		# A tapped Control takes focus on Android and Godot's default theme
+		# paints the focused button bright blue — forever, since nothing
+		# else steals focus back. This was the "Save turns blue" bug.
+		b.focus_mode = Control.FOCUS_NONE
 		
 		var bbg := StyleBoxFlat.new()
 		bbg.bg_color = cfg[1]
@@ -169,6 +173,8 @@ func _show_toolbar() -> void:
 		b.add_theme_stylebox_override("normal", bbg)
 		b.add_theme_stylebox_override("hover", bbg)
 		b.add_theme_stylebox_override("pressed", bbg)
+		b.add_theme_stylebox_override("hover_pressed", bbg)
+		b.add_theme_stylebox_override("focus", StyleBoxEmpty.new())
 		
 		match cfg[0]:
 			"💾 SAVE":
@@ -192,10 +198,13 @@ func _show_toolbar() -> void:
 func _on_save() -> void:
 	_save_layout()
 	_layout_changed = false
-	# Flash feedback
+	# Flash feedback — color AND text, so it is unmistakable on a phone
 	_save_btn.modulate = Color(1, 1, 0, 1)
-	await get_tree().create_timer(0.3).timeout
-	_save_btn.modulate = Color(1, 1, 1, 1)
+	_save_btn.text = "✓ SAVED"
+	await get_tree().create_timer(0.6).timeout
+	if _save_btn and is_instance_valid(_save_btn):
+		_save_btn.modulate = Color(1, 1, 1, 1)
+		_save_btn.text = "💾 SAVE"
 
 func _on_reset() -> void:
 	_reset_layout()
