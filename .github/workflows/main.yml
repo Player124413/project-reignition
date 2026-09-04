@@ -205,9 +205,17 @@ jobs:
             print("SELFTEST: RESULT=", "PASS" if ok else "FAIL")
             get_tree().quit(0 if ok else 2)
           SELFTEST
+          # Warm the .godot folder so class_name/global classes resolve,
+          # exactly like the exported build does via its compiled class cache
+          timeout 300 "$GODOT_BIN" --headless --editor --quit --path "$TT" > /tmp/selftest_import.txt 2>&1
           timeout 180 "$GODOT_BIN" --headless --path "$TT" --quit-after 600 > /tmp/selftest_out.txt 2>&1
           CODE=$?
           [ $CODE -eq 124 ] && echo "SELFTEST TIMEOUT (124) — overlay never finished init"
+          sed -E 's/\x1B\[[0-9;]*[A-Za-z]//g' /tmp/selftest_out.txt > /tmp/st.txt
+          awk '{gsub(/%/, "%25"); printf "%s%%0A", $0}' /tmp/st.txt | cut -c1-40000 > /tmp/st_flat.txt
+          n=0
+          split -b 3800 -d -a 2 /tmp/st_flat.txt /tmp/st_chunk_
+          for ch in /tmp/st_chunk_*; do n=$((n+1)); echo "::error title=SELFTEST_LOG_$n::$(cat "$ch")"; done
           echo "---- selftest output (filtered) ----"
           grep -E "SELFTEST|SCRIPT ERROR|Invalid call|MobilePerformance|Too many" /tmp/selftest_out.txt | head -40
           echo "--------------------------------------"

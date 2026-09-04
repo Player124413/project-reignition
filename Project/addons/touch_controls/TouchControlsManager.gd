@@ -462,7 +462,7 @@ func _show_disable_banner_if_needed() -> void:
 	_disable_banner.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	_disable_banner.add_theme_color_override("font_color", Color(1, 0.85, 0.3, 0.95))
 	_disable_banner.add_theme_font_size_override("font_size", maxi(int(vp.y * 0.022), 12))
-	_disable_banner.mouse_filter = MOUSE_FILTER_IGNORE
+	_disable_banner.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_disable_banner.position = Vector2(vp.x * 0.02, vp.y * 0.015)
 	_disable_banner.size = Vector2(vp.x * 0.9, vp.y * 0.05)
 	add_child(_disable_banner)
