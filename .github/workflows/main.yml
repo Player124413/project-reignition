@@ -155,12 +155,20 @@ jobs:
             echo 'config_version=5'
             echo '[application]'
             echo 'config/name="TouchSelfTest"'
+            echo 'run/main_scene="res://selftest.tscn"'
             echo '[autoload]'
             echo 'TouchControls="*res://addons/touch_controls/TouchControlsManager.gd"'
-            echo 'SelfTest="*res://selftest.gd"'
             echo '[input]'
             sed -n '/^\[input\]/,/^\[/p' "${{ env.PROJECT_PATH }}/project.godot" | sed '1d;$d'
           } > "$TT/project.godot"
+          cat > "$TT/selftest.tscn" << 'SCTSCN'
+          [gd_scene load_steps=2 format=3]
+
+          [ext_resource type="Script" path="res://selftest.gd" id="1"]
+
+          [node name="Root" type="Node"]
+          script = ExtResource("1")
+          SCTSCN
           cat > "$TT/selftest.gd" << 'SELFTEST'
           extends Node
           func _ready() -> void:
@@ -197,8 +205,9 @@ jobs:
             print("SELFTEST: RESULT=", "PASS" if ok else "FAIL")
             get_tree().quit(0 if ok else 2)
           SELFTEST
-          "$GODOT_BIN" --headless --path "$TT" --quit-after 600 > /tmp/selftest_out.txt 2>&1
+          timeout 180 "$GODOT_BIN" --headless --path "$TT" --quit-after 600 > /tmp/selftest_out.txt 2>&1
           CODE=$?
+          [ $CODE -eq 124 ] && echo "SELFTEST TIMEOUT (124) — overlay never finished init"
           echo "---- selftest output (filtered) ----"
           grep -E "SELFTEST|SCRIPT ERROR|Invalid call|MobilePerformance|Too many" /tmp/selftest_out.txt | head -40
           echo "--------------------------------------"
