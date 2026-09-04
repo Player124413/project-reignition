@@ -187,29 +187,31 @@ jobs:
               print("SELFTEST: FAIL no keycaps created")
               get_tree().quit(1)
               return
-            var ev := InputEventScreenTouch.new()
-            ev.index = 0
-            ev.position = Vector2(vp.x * 0.835, vp.y * 0.845)
+            var pos := Vector2(vp.x * 0.835, vp.y * 0.845)
+            # Godot 4.7 drops a reused event object — every synthetic touch needs
+            # its own instance, exactly like real OS touches have.
+            var tap := func(is_down: bool) -> void:
+                var ev := InputEventScreenTouch.new()
+                ev.index = 0
+                ev.position = pos
+                ev.pressed = is_down
+                Input.parse_input_event(ev)
             # ─ tap 1: press then release ─
-            ev.pressed = true
-            Input.parse_input_event(ev)
+            tap.call(true)
             await get_tree().process_frame
             var tap1_press: bool = Input.is_action_pressed("button_jump")
             var latched_during: bool = mgr.is_key_pressed("button_jump")
-            ev.pressed = false
-            Input.parse_input_event(ev)
+            tap.call(false)
             for i in 6:
                 await get_tree().physics_frame
             var tap1_stuck: bool = mgr.is_key_pressed("button_jump")
             var tap1_action: bool = Input.is_action_pressed("button_jump")
             print("SELFTEST: tap1 press=", tap1_press, " latched=", latched_during, " stuck_after=", tap1_stuck, " action_after=", tap1_action)
             # ─ tap 2: must be re-triggerable after release (stuck-key regression) ─
-            ev.pressed = true
-            Input.parse_input_event(ev)
+            tap.call(true)
             await get_tree().process_frame
             var tap2_press: bool = Input.is_action_pressed("button_jump")
-            ev.pressed = false
-            Input.parse_input_event(ev)
+            tap.call(false)
             for i in 6:
                 await get_tree().physics_frame
             var tap2_action: bool = Input.is_action_pressed("button_jump")
