@@ -10,17 +10,189 @@ env:
   GODOT_VERSION: "4.7.0"
   PROJECT_DIR: "Project"
   APK_PATH: "Project/build/android/ProjectReignition.apk"
+  # FFmpeg GDExtension (EIRTeam.FFmpeg) for Android. Upstream ships no Android
+  # binaries, so they are built here. FFmpeg must stay on the 6.x line
+  # (avcodec 60) to match the extension and the desktop libs in addons/ffmpeg.
+  FFMPEG_REF: "n6.1.2"
+  EIRTEAM_REF: "master"
+  NDK_VERSION: "23.2.8568313"   # hard-coded in godot-cpp/tools/android.py
+  ANDROID_API_LEVEL: "24"
+  FFMPEG_ADDON_DIR: "Project/addons/ffmpeg/android"
 
 jobs:
+  build-ffmpeg:
+    name: Build FFmpeg GDExtension (arm64-v8a)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    outputs:
+      cache-key: ${{ steps.cache-key.outputs.key }}
+
+    steps:
+      - name: Compute cache key
+        id: cache-key
+        run: echo "key=ffmpeg-gdext-android-arm64-${FFMPEG_REF}-${EIRTEAM_REF}-ndk${NDK_VERSION}-api${ANDROID_API_LEVEL}-v1" >> "$GITHUB_OUTPUT"
+
+      - name: Restore cached binaries
+        id: cache
+        uses: actions/cache@v4
+        with:
+          path: ffmpeg-android-out
+          key: ${{ steps.cache-key.outputs.key }}
+
+      - name: Checkout EIRTeam.FFmpeg
+        if: steps.cache.outputs.cache-hit != 'true'
+        uses: actions/checkout@v4
+        with:
+          repository: EIRTeam/EIRTeam.FFmpeg
+          ref: ${{ env.EIRTEAM_REF }}
+          path: eirteam-ffmpeg
+          submodules: false
+
+      - name: Checkout godot-cpp submodule
+        if: steps.cache.outputs.cache-hit != 'true'
+        working-directory: eirteam-ffmpeg
+        run: git submodule update --init --depth 1 gdextension_build/godot-cpp
+
+      - name: Checkout FFmpeg
+        if: steps.cache.outputs.cache-hit != 'true'
+        uses: actions/checkout@v4
+        with:
+          repository: FFmpeg/FFmpeg
+          ref: ${{ env.FFMPEG_REF }}
+          path: ffmpeg-src
+
+      - name: Set up Java
+        if: steps.cache.outputs.cache-hit != 'true'
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Set up Android SDK + NDK
+        if: steps.cache.outputs.cache-hit != 'true'
+        uses: android-actions/setup-android@v3
+        with:
+          packages: "platform-tools ndk;23.2.8568313"
+
+      - name: Set up Python / scons
+        if: steps.cache.outputs.cache-hit != 'true'
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install scons
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: |
+          python -m pip install --upgrade pip scons==4.4.0
+          sudo apt-get update && sudo apt-get install -y --no-install-recommends make pkg-config
+          echo "ANDROID_NDK_ROOT=${ANDROID_HOME}/ndk/${NDK_VERSION}" >> "$GITHUB_ENV"
+
+      - name: Build FFmpeg (LGPL, shared, decode-only)
+        if: steps.cache.outputs.cache-hit != 'true'
+        working-directory: ffmpeg-src
+        run: |
+          set -euxo pipefail
+          TOOLCHAIN="${ANDROID_NDK_ROOT}/toolchains/llvm/prebuilt/linux-x86_64"
+          PREFIX="${GITHUB_WORKSPACE}/ffmpeg-android-arm64"
+          API="${ANDROID_API_LEVEL}"
+          ./configure \
+            --prefix="${PREFIX}" \
+            --target-os=android --arch=aarch64 --cpu=armv8-a --enable-cross-compile \
+            --sysroot="${TOOLCHAIN}/sysroot" \
+            --cc="${TOOLCHAIN}/bin/aarch64-linux-android${API}-clang" \
+            --cxx="${TOOLCHAIN}/bin/aarch64-linux-android${API}-clang++" \
+            --ar="${TOOLCHAIN}/bin/llvm-ar" --nm="${TOOLCHAIN}/bin/llvm-nm" \
+            --ranlib="${TOOLCHAIN}/bin/llvm-ranlib" --strip="${TOOLCHAIN}/bin/llvm-strip" \
+            --extra-cflags="-fPIC -O3" \
+            --extra-ldflags="-Wl,-z,max-page-size=16384" \
+            --enable-shared --disable-static --enable-pic \
+            --disable-programs --disable-doc --disable-debug \
+            --disable-avdevice --disable-postproc --disable-network \
+            --disable-encoders --disable-muxers --disable-devices --disable-outdevs --disable-indevs \
+            --disable-filters \
+            --enable-filter=scale,format,null,anull,aformat,aresample,atrim,trim \
+            --disable-decoders \
+            --enable-decoder=h264,hevc,mpeg4,vp8,vp9,av1,theora,mjpeg,png \
+            --enable-decoder=aac,aac_latm,mp3,mp3float,vorbis,opus,flac,pcm_s16le,pcm_s16be,pcm_f32le \
+            --disable-demuxers \
+            --enable-demuxer=mov,matroska,ogg,mp3,aac,wav,flac,mpegts,avi,image2 \
+            --disable-parsers \
+            --enable-parser=h264,hevc,mpeg4video,vp8,vp9,av1,aac,aac_latm,mpegaudio,vorbis,opus,flac,mjpeg,png \
+            --disable-protocols --enable-protocol=file,pipe \
+            --disable-bsfs \
+            --enable-bsf=h264_mp4toannexb,hevc_mp4toannexb,aac_adtstoasc,extract_extradata
+          make -j"$(nproc)"
+          make install
+          "${TOOLCHAIN}/bin/llvm-readelf" -d "${PREFIX}/lib/libavcodec.so" | grep -E "SONAME|NEEDED"
+
+      - name: Build GDExtension
+        if: steps.cache.outputs.cache-hit != 'true'
+        working-directory: eirteam-ffmpeg/gdextension_build
+        run: |
+          set -euxo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path("SConstruct"); s = p.read_text()
+          marker = 'env.Append(CPPDEFINES=["GDEXTENSION"])'
+          if "max-page-size" not in s:
+              s = s.replace(marker, marker + '\nif env["platform"] == "android":\n    env.Append(LINKFLAGS=["-Wl,-z,max-page-size=16384", "-static-libstdc++"])\n', 1)
+              p.write_text(s)
+          PY
+          for target in template_release template_debug; do
+            scons platform=android arch=arm64 target="${target}" \
+              android_api_level="${ANDROID_API_LEVEL}" debug_symbols=no \
+              ffmpeg_path="${GITHUB_WORKSPACE}/ffmpeg-android-arm64" -j"$(nproc)"
+          done
+
+      - name: Collect & strip
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: |
+          set -euxo pipefail
+          TOOLCHAIN="${ANDROID_NDK_ROOT}/toolchains/llvm/prebuilt/linux-x86_64"
+          SRC="eirteam-ffmpeg/gdextension_build/build/addons/ffmpeg/android"
+          mkdir -p ffmpeg-android-out
+          for lib in avcodec avfilter avformat avutil swresample swscale; do
+            cp "${SRC}/lib${lib}.so" ffmpeg-android-out/
+          done
+          cp "${SRC}"/libgdffmpeg.android.template_{release,debug}.arm64.so ffmpeg-android-out/
+          "${TOOLCHAIN}/bin/llvm-strip" --strip-unneeded ffmpeg-android-out/*.so
+          for so in ffmpeg-android-out/*.so; do
+            echo "== $(basename "$so")"; "${TOOLCHAIN}/bin/llvm-readelf" -d "$so" | grep -E "NEEDED|SONAME" || true
+          done
+          ls -lh ffmpeg-android-out
+
+      - name: Upload FFmpeg libraries
+        uses: actions/upload-artifact@v4
+        with:
+          name: ffmpeg-gdextension-android-arm64
+          path: ffmpeg-android-out/*.so
+          if-no-files-found: error
+
   build-android:
     name: Build Android APK
     runs-on: ubuntu-24.04
+    needs: build-ffmpeg
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
           lfs: true
+
+      - name: Download FFmpeg GDExtension libraries
+        uses: actions/download-artifact@v4
+        with:
+          name: ffmpeg-gdextension-android-arm64
+          path: ${{ env.FFMPEG_ADDON_DIR }}
+
+      - name: Verify FFmpeg libraries
+        run: |
+          set -e
+          for f in libgdffmpeg.android.template_release.arm64.so libgdffmpeg.android.template_debug.arm64.so \
+                   libavcodec.so libavfilter.so libavformat.so libavutil.so libswresample.so libswscale.so; do
+            test -f "${FFMPEG_ADDON_DIR}/$f" || { echo "missing ${FFMPEG_ADDON_DIR}/$f"; exit 1; }
+          done
+          ls -lh "${FFMPEG_ADDON_DIR}"
 
       - name: Set up Java
         uses: actions/setup-java@v4
@@ -160,6 +332,15 @@ jobs:
           test -f "${APK_PATH}"
           ls -lh "${APK_PATH}"
           file "${APK_PATH}"
+
+      - name: Check FFmpeg libraries inside APK
+        run: |
+          set -e
+          unzip -l "${APK_PATH}" | grep -E "lib/arm64-v8a/.*\.so" || true
+          for lib in libgdffmpeg.android.template_release.arm64.so libavcodec.so libavformat.so libavutil.so libswscale.so libswresample.so libavfilter.so; do
+            unzip -l "${APK_PATH}" | grep -q "lib/arm64-v8a/${lib}" || { echo "FFmpeg library ${lib} not packed into the APK"; exit 1; }
+          done
+          echo "FFmpeg GDExtension is packed into the APK."
 
       - name: Upload APK
         uses: actions/upload-artifact@v4

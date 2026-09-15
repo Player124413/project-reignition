@@ -14,12 +14,11 @@ libswresample.so
 libswscale.so
 ```
 
-Upstream EIRTeam.FFmpeg does not publish Android binaries, so they are built by
-the GitHub Actions workflow `.github/workflows/ffmpeg-android.yml`
-(**Actions → "FFmpeg GDExtension (Android)" → Run workflow**). With
-`commit_to_repo` enabled the workflow commits the `.so` files here; otherwise
-download the `ffmpeg-gdextension-android-arm64` artifact and unpack it into
-this directory.
+Upstream EIRTeam.FFmpeg does not publish Android binaries. The "Android APK"
+workflow (`.github/workflows/android.yml`) builds them in its `build-ffmpeg`
+job and places them here automatically before exporting the APK. For a local
+export run `misc/build-ffmpeg-android.sh` or unpack the
+`ffmpeg-gdextension-android-arm64` workflow artifact into this directory.
 
 See `docs/android-ffmpeg.md` for details (FFmpeg version constraints, manual
 build steps and how the runtime fallback works).

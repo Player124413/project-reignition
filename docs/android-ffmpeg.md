@@ -17,19 +17,18 @@ have to be built by us.
 
 ## 1. Getting the binaries
 
-### Option A — GitHub Actions (recommended)
+### Option A — GitHub Actions (automatic)
 
-1. Open **Actions → "FFmpeg GDExtension (Android)" → Run workflow** on the
-   branch you are working on.
-2. Leave `commit_to_repo = true`. When the job finishes it pushes a commit with
-   the eight `.so` files into `Project/addons/ffmpeg/android/`.
-   (Alternatively set it to `false` and download the
-   `ffmpeg-gdextension-android-arm64` artifact, then unpack it into that folder.)
-3. Run the regular **"Android APK"** workflow — the export picks up the new
-   libraries automatically; Godot copies GDExtension `.so` files and their
-   declared dependencies into the APK's `lib/arm64-v8a/`.
+Nothing to do manually: the **"Android APK"** workflow has a `build-ffmpeg`
+job that compiles FFmpeg + the GDExtension for `arm64-v8a`, and the
+`build-android` job downloads the result into `Project/addons/ffmpeg/android/`
+before the Godot export. The final step checks that the `.so` files actually
+ended up in `lib/arm64-v8a/` of the APK.
 
-The job takes roughly 20–30 minutes (FFmpeg is compiled from source).
+The FFmpeg build is cached (`actions/cache`, keyed by FFmpeg/EIRTeam refs, NDK
+and API level), so only the first run pays the ~20–30 min compile; later runs
+restore it in seconds. The libraries are also published as the
+`ffmpeg-gdextension-android-arm64` artifact.
 
 ### Option B — local build
 

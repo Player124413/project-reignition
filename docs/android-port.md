@@ -34,9 +34,9 @@ versioned.
 ## Known blockers before a release build
 
 1. `addons/ffmpeg/ffmpeg.gdextension` declares Android ARM64 libraries. They
-   are not part of the upstream releases and must be built with the
-   "FFmpeg GDExtension (Android)" workflow (or `misc/build-ffmpeg-android.sh`)
-   before exporting — see `docs/android-ffmpeg.md`. If the extension is not
+   are not part of the upstream releases; the "Android APK" workflow builds
+   them itself (`build-ffmpeg` job), for local exports use
+   `misc/build-ffmpeg-android.sh` — see `docs/android-ffmpeg.md`. If the extension is not
    loaded at runtime, video playback is hidden while its surrounding audio and
    animation timeline continues.
 2. A first-pass touch HUD is now connected as an autoload. It feeds the existing
