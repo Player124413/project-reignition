@@ -2,7 +2,7 @@
 # Builds the EIRTeam.FFmpeg GDExtension + LGPL FFmpeg for Android arm64-v8a
 # and copies the result into Project/addons/ffmpeg/android.
 #
-# Mirrors .github/workflows/ffmpeg-android.yml for local use.
+# Mirrors the build-ffmpeg job of .github/workflows/android.yml for local use.
 #
 # Requirements (Linux or macOS host):
 #   - Android NDK 23.2.8568313 (the version hard-coded in godot-cpp/tools/android.py)
